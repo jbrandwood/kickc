@@ -4,8 +4,8 @@
 //
 // This is a recursive solution
 
-#include<stdio.h>
-#include<tod.h>
+#include <stdio.h>
+#include <conio.h>
 
 #define QUEENS 8
 #define PRINT_SOLUTIONS
@@ -20,9 +20,8 @@ void main() {
   clrscr();
   printf(" - n queens problem using backtracking -");
   printf("\nnumber of queens:%u",QUEENS);
-  tod_init(TOD_ZERO);
   queen(1);
-  printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()));
+  printf("\n\nsolutions: %lu.\n",count);
 }
  
 // Generates all valid placements of queens on a NxN board recursively

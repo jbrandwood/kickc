@@ -5,6 +5,16 @@ Fixing struct type SIZE_OF struct F018_DMAGIC to 17
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct F018_DMAGIC to 17
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
+Setting inferred volatile on symbol affected by address-of: memoryRemap::aVal in asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap::xVal in asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap::yVal in asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap::zVal in asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::lMb in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::uMb in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::aVal in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::xVal in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::yVal in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVal in asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call SEI 
 Inlined call call __init 
@@ -101,19 +111,19 @@ memoryRemap: scope:[memoryRemap]  from conio_mega65_init::@3
   memoryRemap::remapBlocks#1 = phi( conio_mega65_init::@3/memoryRemap::remapBlocks#0 )
   memoryRemap::lowerPageOffset#1 = phi( conio_mega65_init::@3/memoryRemap::lowerPageOffset#0 )
   memoryRemap::$0 = < memoryRemap::lowerPageOffset#1
-  *memoryRemap::aVal = memoryRemap::$0
+  memoryRemap::aVal = memoryRemap::$0
   memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
   memoryRemap::$2 = > memoryRemap::lowerPageOffset#1
   memoryRemap::$3 = memoryRemap::$2 & $f
   memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-  *memoryRemap::xVal = memoryRemap::$4
+  memoryRemap::xVal = memoryRemap::$4
   memoryRemap::$5 = < memoryRemap::upperPageOffset#1
-  *memoryRemap::yVal = memoryRemap::$5
+  memoryRemap::yVal = memoryRemap::$5
   memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
   memoryRemap::$7 = > memoryRemap::upperPageOffset#1
   memoryRemap::$8 = memoryRemap::$7 & $f
   memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-  *memoryRemap::zVal = memoryRemap::$9
+  memoryRemap::zVal = memoryRemap::$9
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
@@ -491,7 +501,7 @@ number~ memoryRemap::$6
 byte~ memoryRemap::$7
 number~ memoryRemap::$8
 number~ memoryRemap::$9
-const byte* memoryRemap::aVal = (byte*)$fc
+volatile byte memoryRemap::aVal loadstore
 word memoryRemap::lowerPageOffset
 word memoryRemap::lowerPageOffset#0
 word memoryRemap::lowerPageOffset#1
@@ -501,9 +511,9 @@ byte memoryRemap::remapBlocks#1
 word memoryRemap::upperPageOffset
 word memoryRemap::upperPageOffset#0
 word memoryRemap::upperPageOffset#1
-const byte* memoryRemap::xVal = (byte*)$fd
-const byte* memoryRemap::yVal = (byte*)$fe
-const byte* memoryRemap::zVal = (byte*)$ff
+volatile byte memoryRemap::xVal loadstore
+volatile byte memoryRemap::yVal loadstore
+volatile byte memoryRemap::zVal loadstore
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
@@ -614,10 +624,6 @@ Inlining cast *IO_KEY = (unumber)$53
 Inlining cast gotoxy::x#2 = (unumber)0
 Inlining cast conio_mega65_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 252
-Simplifying constant pointer cast (byte*) 253
-Simplifying constant pointer cast (byte*) 254
-Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 53295
 Simplifying constant pointer cast (byte*) 53296
 Simplifying constant pointer cast (byte*) 55296
@@ -709,6 +715,10 @@ Inversing boolean not [87] cputc::$2 = conio_cursor_x != $50 from [86] cputc::$1
 Inversing boolean not [98] cscroll::$1 = conio_cursor_y != $19 from [97] cscroll::$0 = conio_cursor_y == $19
 Inversing boolean not [153] conio_mega65_init::$4 = conio_mega65_init::line#0 < $19 from [152] conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
 Successful SSA optimization Pass2UnaryNotSimplification
+Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
+Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Alias memcpy::src_end#0 = memcpy::$0 
@@ -733,11 +743,19 @@ Alias cputs::c#1 = cputs::$0 cputs::c#2
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
 Alias conio_mega65_init::line#0 = conio_mega65_init::$2 
 Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
+Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Alias gotoxy::x#3 = gotoxy::x#5 
 Alias gotoxy::y#4 = gotoxy::y#5 
 Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
+Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Identical Phi Values memcpy::src_end#1 memcpy::src_end#0
@@ -820,6 +838,10 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
+Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Identical Phi Values gotoxy::y#3 gotoxy::y#2
@@ -862,20 +884,20 @@ Successful SSA optimization PassNEliminateUnusedVars
 Removing PHI-reference to removed block (gotoxy::@4) in block gotoxy::@2
 Removing unused block gotoxy::@4
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
-Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias memoryRemap::$4 = memoryRemap::$3 
-Alias memoryRemap::$9 = memoryRemap::$8 
-Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)memoryRemap::$4 = memoryRemap::$3 memoryRemap::xVal 
+Alias candidate removed (volatile)memoryRemap::$9 = memoryRemap::$8 memoryRemap::zVal 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Identical Phi Values gotoxy::x#4 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [22] memoryRemap::$4 = memoryRemap::$2 & $f
-Constant right-side identified [25] memoryRemap::$9 = memoryRemap::$7 & $f
+Constant right-side identified [22] memoryRemap::$3 = memoryRemap::$2 & $f
+Constant right-side identified [26] memoryRemap::$8 = memoryRemap::$7 & $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant memoryRemap::$4 = memoryRemap::$2&$f
-Constant memoryRemap::$9 = memoryRemap::$7&$f
+Constant memoryRemap::$3 = memoryRemap::$2&$f
+Constant memoryRemap::$8 = memoryRemap::$7&$f
+Successful SSA optimization Pass2ConstantIdentification
+Constant memoryRemap::$4 = memoryRemap::$3
+Constant memoryRemap::$9 = memoryRemap::$8
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero memoryRemap::$2&$f in 
 Simplifying constant evaluating to zero memoryRemap::$7&$f in 
@@ -908,29 +930,31 @@ Inlining constant with var siblings memset::c#1
 Inlining constant with var siblings gotoxy::y#0
 Inlining constant with var siblings cputs::s#1
 Inlining constant with var siblings conio_mega65_init::line#1
-Constant inlined memset::str#1 = (void*)COLORRAM+(word)$19*$50-$50
-Constant inlined memset::str#0 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50
-Constant inlined CONIO_SCREEN_COLORS = COLORRAM
 Constant inlined cputs::s#1 = main::s
 Constant inlined conio_textcolor = LIGHT_BLUE
 Constant inlined memcpy::destination#0 = (void*)DEFAULT_SCREEN
 Constant inlined memset::num#1 = $50
 Constant inlined memcpy::destination#1 = (void*)COLORRAM
 Constant inlined memset::num#0 = $50
-Constant inlined memcpy::source#0 = (void*)DEFAULT_SCREEN+$50
 Constant inlined conio_mega65_init::line#1 = (byte)$19-1
+Constant inlined memcpy::source#1 = (void*)COLORRAM+$50
+Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
+Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
+Constant inlined memset::str#1 = (void*)COLORRAM+(word)$19*$50-$50
+Constant inlined memset::str#0 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50
+Constant inlined CONIO_SCREEN_COLORS = COLORRAM
+Constant inlined memcpy::source#0 = (void*)DEFAULT_SCREEN+$50
 Constant inlined memcpy::num#1 = (word)$19*$50-$50
 Constant inlined memcpy::num#0 = (word)$19*$50-$50
-Constant inlined memcpy::source#1 = (void*)COLORRAM+$50
 Constant inlined memoryRemap::$0 = 0
 Constant inlined gotoxy::y#0 = 0
-Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
+Constant inlined memoryRemap::$3 = 0
 Constant inlined memoryRemap::$4 = 0
 Constant inlined memoryRemap::$5 = 0
 Constant inlined memset::c#0 = ' '
 Constant inlined memset::c#1 = LIGHT_BLUE
+Constant inlined memoryRemap::$8 = 0
 Constant inlined memoryRemap::$9 = 0
-Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -1114,10 +1138,10 @@ main::@return: scope:[main]  from main
 
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from conio_mega65_init::@2
-  [26] *memoryRemap::aVal = 0
-  [27] *memoryRemap::xVal = 0
-  [28] *memoryRemap::yVal = 0
-  [29] *memoryRemap::zVal = 0
+  [26] memoryRemap::aVal = 0
+  [27] memoryRemap::xVal = 0
+  [28] memoryRemap::yVal = 0
+  [29] memoryRemap::zVal = 0
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
@@ -1328,9 +1352,13 @@ byte* memcpy::src#4 1.0000001E7
 byte* memcpy::src_end
 byte* memcpy::src_end#0 1.2625000025E8
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+volatile byte memoryRemap::aVal loadstore 25.25
 word memoryRemap::lowerPageOffset
 byte memoryRemap::remapBlocks
 word memoryRemap::upperPageOffset
+volatile byte memoryRemap::xVal loadstore 33.666666666666664
+volatile byte memoryRemap::yVal loadstore 50.5
+volatile byte memoryRemap::zVal loadstore 101.0
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
 byte memset::c#4 1.42857143E8
@@ -1360,6 +1388,10 @@ Added variable conio_cursor_x to live range equivalence class [ conio_cursor_x ]
 Added variable conio_cursor_y to live range equivalence class [ conio_cursor_y ]
 Added variable conio_line_text to live range equivalence class [ conio_line_text ]
 Added variable conio_line_color to live range equivalence class [ conio_line_color ]
+Added variable memoryRemap::aVal to live range equivalence class [ memoryRemap::aVal ]
+Added variable memoryRemap::xVal to live range equivalence class [ memoryRemap::xVal ]
+Added variable memoryRemap::yVal to live range equivalence class [ memoryRemap::yVal ]
+Added variable memoryRemap::zVal to live range equivalence class [ memoryRemap::zVal ]
 Added variable gotoxy::$7 to live range equivalence class [ gotoxy::$7 ]
 Added variable gotoxy::$8 to live range equivalence class [ gotoxy::$8 ]
 Added variable gotoxy::$9 to live range equivalence class [ gotoxy::$9 ]
@@ -1385,6 +1417,10 @@ Complete equivalence classes
 [ conio_cursor_y ]
 [ conio_line_text ]
 [ conio_line_color ]
+[ memoryRemap::aVal ]
+[ memoryRemap::xVal ]
+[ memoryRemap::yVal ]
+[ memoryRemap::zVal ]
 [ gotoxy::$7 ]
 [ gotoxy::$8 ]
 [ gotoxy::$9 ]
@@ -1409,16 +1445,20 @@ Allocated zp[1]:19 [ conio_cursor_x ]
 Allocated zp[1]:20 [ conio_cursor_y ]
 Allocated zp[2]:21 [ conio_line_text ]
 Allocated zp[2]:23 [ conio_line_color ]
-Allocated zp[2]:25 [ gotoxy::$7 ]
-Allocated zp[2]:27 [ gotoxy::$8 ]
-Allocated zp[2]:29 [ gotoxy::$9 ]
-Allocated zp[2]:31 [ gotoxy::line_offset#0 ]
-Allocated zp[2]:33 [ gotoxy::$5 ]
-Allocated zp[2]:35 [ gotoxy::$6 ]
-Allocated zp[1]:37 [ cputs::c#1 ]
-Allocated zp[1]:38 [ cputc::c#0 ]
-Allocated zp[2]:39 [ memcpy::src_end#0 ]
-Allocated zp[2]:41 [ memset::end#0 ]
+Allocated zp[1]:25 [ memoryRemap::aVal ]
+Allocated zp[1]:26 [ memoryRemap::xVal ]
+Allocated zp[1]:27 [ memoryRemap::yVal ]
+Allocated zp[1]:28 [ memoryRemap::zVal ]
+Allocated zp[2]:29 [ gotoxy::$7 ]
+Allocated zp[2]:31 [ gotoxy::$8 ]
+Allocated zp[2]:33 [ gotoxy::$9 ]
+Allocated zp[2]:35 [ gotoxy::line_offset#0 ]
+Allocated zp[2]:37 [ gotoxy::$5 ]
+Allocated zp[2]:39 [ gotoxy::$6 ]
+Allocated zp[1]:41 [ cputs::c#1 ]
+Allocated zp[1]:42 [ cputc::c#0 ]
+Allocated zp[2]:43 [ memcpy::src_end#0 ]
+Allocated zp[2]:45 [ memset::end#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] conio_cursor_x = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] conio_cursor_y = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1427,10 +1467,10 @@ Statement [4] conio_line_color = COLORRAM [ ] (  [ ] { }  ) always clobbers reg 
 Statement [13] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [26] *memoryRemap::aVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *memoryRemap::xVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *memoryRemap::yVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *memoryRemap::zVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [26] memoryRemap::aVal = 0 [ memoryRemap::aVal ] ( memoryRemap:12 [ memoryRemap::aVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal ] { }  ) always clobbers reg byte a 
+Statement [27] memoryRemap::xVal = 0 [ memoryRemap::aVal memoryRemap::xVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal ] { }  ) always clobbers reg byte a 
+Statement [28] memoryRemap::yVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [29] memoryRemap::zVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [35] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ gotoxy::y#4 gotoxy::y#2 ]
@@ -1470,10 +1510,10 @@ Statement [4] conio_line_color = COLORRAM [ ] (  [ ] { }  ) always clobbers reg 
 Statement [13] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [26] *memoryRemap::aVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *memoryRemap::xVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *memoryRemap::yVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *memoryRemap::zVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [26] memoryRemap::aVal = 0 [ memoryRemap::aVal ] ( memoryRemap:12 [ memoryRemap::aVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal ] { }  ) always clobbers reg byte a 
+Statement [27] memoryRemap::xVal = 0 [ memoryRemap::aVal memoryRemap::xVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal ] { }  ) always clobbers reg byte a 
+Statement [28] memoryRemap::yVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [29] memoryRemap::zVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] ( memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  conio_mega65_init:5::memoryRemap:12 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [35] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
 Statement [37] gotoxy::$7 = (word)gotoxy::y#4 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
@@ -1517,24 +1557,29 @@ Potential registers zp[1]:19 [ conio_cursor_x ] : zp[1]:19 ,
 Potential registers zp[1]:20 [ conio_cursor_y ] : zp[1]:20 , 
 Potential registers zp[2]:21 [ conio_line_text ] : zp[2]:21 , 
 Potential registers zp[2]:23 [ conio_line_color ] : zp[2]:23 , 
-Potential registers zp[2]:25 [ gotoxy::$7 ] : zp[2]:25 , 
-Potential registers zp[2]:27 [ gotoxy::$8 ] : zp[2]:27 , 
-Potential registers zp[2]:29 [ gotoxy::$9 ] : zp[2]:29 , 
-Potential registers zp[2]:31 [ gotoxy::line_offset#0 ] : zp[2]:31 , 
-Potential registers zp[2]:33 [ gotoxy::$5 ] : zp[2]:33 , 
-Potential registers zp[2]:35 [ gotoxy::$6 ] : zp[2]:35 , 
-Potential registers zp[1]:37 [ cputs::c#1 ] : zp[1]:37 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:38 [ cputc::c#0 ] : zp[1]:38 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[2]:39 [ memcpy::src_end#0 ] : zp[2]:39 , 
-Potential registers zp[2]:41 [ memset::end#0 ] : zp[2]:41 , 
+Potential registers zp[1]:25 [ memoryRemap::aVal ] : zp[1]:25 , 
+Potential registers zp[1]:26 [ memoryRemap::xVal ] : zp[1]:26 , 
+Potential registers zp[1]:27 [ memoryRemap::yVal ] : zp[1]:27 , 
+Potential registers zp[1]:28 [ memoryRemap::zVal ] : zp[1]:28 , 
+Potential registers zp[2]:29 [ gotoxy::$7 ] : zp[2]:29 , 
+Potential registers zp[2]:31 [ gotoxy::$8 ] : zp[2]:31 , 
+Potential registers zp[2]:33 [ gotoxy::$9 ] : zp[2]:33 , 
+Potential registers zp[2]:35 [ gotoxy::line_offset#0 ] : zp[2]:35 , 
+Potential registers zp[2]:37 [ gotoxy::$5 ] : zp[2]:37 , 
+Potential registers zp[2]:39 [ gotoxy::$6 ] : zp[2]:39 , 
+Potential registers zp[1]:41 [ cputs::c#1 ] : zp[1]:41 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:42 [ cputc::c#0 ] : zp[1]:42 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:43 [ memcpy::src_end#0 ] : zp[2]:43 , 
+Potential registers zp[2]:45 [ memset::end#0 ] : zp[2]:45 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memcpy] 3,012,500,004.25: zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 2,023,333,337.67: zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 126,250,000.25: zp[2]:39 [ memcpy::src_end#0 ] 0: zp[2]:6 [ memcpy::source#2 ] 0: zp[2]:8 [ memcpy::destination#2 ] 
-Uplift Scope [memset] 3,356,666,672.33: zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 168,333,333.67: zp[2]:41 [ memset::end#0 ] 142,857,143: zp[1]:16 [ memset::c#4 ] 0: zp[2]:14 [ memset::str#3 ] 
+Uplift Scope [memcpy] 3,012,500,004.25: zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 2,023,333,337.67: zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 126,250,000.25: zp[2]:43 [ memcpy::src_end#0 ] 0: zp[2]:6 [ memcpy::source#2 ] 0: zp[2]:8 [ memcpy::destination#2 ] 
+Uplift Scope [memset] 3,356,666,672.33: zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 168,333,333.67: zp[2]:45 [ memset::end#0 ] 142,857,143: zp[1]:16 [ memset::c#4 ] 0: zp[2]:14 [ memset::str#3 ] 
 Uplift Scope [] 62,747.22: zp[1]:20 [ conio_cursor_y ] 51,397.86: zp[2]:23 [ conio_line_color ] 49,113.51: zp[2]:21 [ conio_line_text ] 4,288.83: zp[1]:19 [ conio_cursor_x ] 
-Uplift Scope [cputc] 10,501.5: zp[1]:38 [ cputc::c#0 ] 
-Uplift Scope [cputs] 2,002: zp[2]:4 [ cputs::s#2 cputs::s#0 ] 1,001: zp[1]:37 [ cputs::c#1 ] 
-Uplift Scope [gotoxy] 202: zp[2]:27 [ gotoxy::$8 ] 202: zp[2]:29 [ gotoxy::$9 ] 202: zp[2]:33 [ gotoxy::$5 ] 202: zp[2]:35 [ gotoxy::$6 ] 151.5: zp[2]:25 [ gotoxy::$7 ] 138.33: zp[1]:3 [ gotoxy::y#4 gotoxy::y#2 ] 101: zp[2]:31 [ gotoxy::line_offset#0 ] 
+Uplift Scope [cputc] 10,501.5: zp[1]:42 [ cputc::c#0 ] 
+Uplift Scope [cputs] 2,002: zp[2]:4 [ cputs::s#2 cputs::s#0 ] 1,001: zp[1]:41 [ cputs::c#1 ] 
+Uplift Scope [gotoxy] 202: zp[2]:31 [ gotoxy::$8 ] 202: zp[2]:33 [ gotoxy::$9 ] 202: zp[2]:37 [ gotoxy::$5 ] 202: zp[2]:39 [ gotoxy::$6 ] 151.5: zp[2]:29 [ gotoxy::$7 ] 138.33: zp[1]:3 [ gotoxy::y#4 gotoxy::y#2 ] 101: zp[2]:35 [ gotoxy::line_offset#0 ] 
+Uplift Scope [memoryRemap] 101: zp[1]:28 [ memoryRemap::zVal ] 50.5: zp[1]:27 [ memoryRemap::yVal ] 33.67: zp[1]:26 [ memoryRemap::xVal ] 25.25: zp[1]:25 [ memoryRemap::aVal ] 
 Uplift Scope [conio_mega65_init] 33: zp[1]:2 [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [MOS6526_CIA] 
@@ -1542,7 +1587,6 @@ Uplift Scope [MOS6569_VICII]
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [MOS4569_VICIII] 
 Uplift Scope [MEGA65_VICIV] 
-Uplift Scope [memoryRemap] 
 Uplift Scope [F018_DMAGIC] 
 Uplift Scope [DMA_LIST_F018A] 
 Uplift Scope [DMA_LIST_F018B] 
@@ -1554,53 +1598,65 @@ Uplift Scope [printf_format_string]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [memcpy] best 10812 combination zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:39 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::source#2 ] zp[2]:8 [ memcpy::destination#2 ] 
-Uplifting [memset] best 10606 combination zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:41 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:14 [ memset::str#3 ] 
-Uplifting [] best 10606 combination zp[1]:20 [ conio_cursor_y ] zp[2]:23 [ conio_line_color ] zp[2]:21 [ conio_line_text ] zp[1]:19 [ conio_cursor_x ] 
-Uplifting [cputc] best 10570 combination reg byte a [ cputc::c#0 ] 
-Uplifting [cputs] best 10480 combination zp[2]:4 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
-Uplifting [gotoxy] best 10467 combination zp[2]:27 [ gotoxy::$8 ] zp[2]:29 [ gotoxy::$9 ] zp[2]:33 [ gotoxy::$5 ] zp[2]:35 [ gotoxy::$6 ] zp[2]:25 [ gotoxy::$7 ] reg byte x [ gotoxy::y#4 gotoxy::y#2 ] zp[2]:31 [ gotoxy::line_offset#0 ] 
-Uplifting [conio_mega65_init] best 10455 combination reg byte x [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] 
-Uplifting [RADIX] best 10455 combination 
-Uplifting [MOS6526_CIA] best 10455 combination 
-Uplifting [MOS6569_VICII] best 10455 combination 
-Uplifting [MOS6581_SID] best 10455 combination 
-Uplifting [MOS4569_VICIII] best 10455 combination 
-Uplifting [MEGA65_VICIV] best 10455 combination 
-Uplifting [memoryRemap] best 10455 combination 
-Uplifting [F018_DMAGIC] best 10455 combination 
-Uplifting [DMA_LIST_F018A] best 10455 combination 
-Uplifting [DMA_LIST_F018B] best 10455 combination 
-Uplifting [cputln] best 10455 combination 
-Uplifting [cscroll] best 10455 combination 
-Uplifting [printf_format_number] best 10455 combination 
-Uplifting [printf_buffer_number] best 10455 combination 
-Uplifting [printf_format_string] best 10455 combination 
-Uplifting [main] best 10455 combination 
-Uplifting [__start] best 10455 combination 
+Uplifting [memcpy] best 10808 combination zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:43 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::source#2 ] zp[2]:8 [ memcpy::destination#2 ] 
+Uplifting [memset] best 10602 combination zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:45 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:14 [ memset::str#3 ] 
+Uplifting [] best 10602 combination zp[1]:20 [ conio_cursor_y ] zp[2]:23 [ conio_line_color ] zp[2]:21 [ conio_line_text ] zp[1]:19 [ conio_cursor_x ] 
+Uplifting [cputc] best 10566 combination reg byte a [ cputc::c#0 ] 
+Uplifting [cputs] best 10476 combination zp[2]:4 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
+Uplifting [gotoxy] best 10463 combination zp[2]:31 [ gotoxy::$8 ] zp[2]:33 [ gotoxy::$9 ] zp[2]:37 [ gotoxy::$5 ] zp[2]:39 [ gotoxy::$6 ] zp[2]:29 [ gotoxy::$7 ] reg byte x [ gotoxy::y#4 gotoxy::y#2 ] zp[2]:35 [ gotoxy::line_offset#0 ] 
+Uplifting [memoryRemap] best 10463 combination zp[1]:28 [ memoryRemap::zVal ] zp[1]:27 [ memoryRemap::yVal ] zp[1]:26 [ memoryRemap::xVal ] zp[1]:25 [ memoryRemap::aVal ] 
+Uplifting [conio_mega65_init] best 10451 combination reg byte x [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] 
+Uplifting [RADIX] best 10451 combination 
+Uplifting [MOS6526_CIA] best 10451 combination 
+Uplifting [MOS6569_VICII] best 10451 combination 
+Uplifting [MOS6581_SID] best 10451 combination 
+Uplifting [MOS4569_VICIII] best 10451 combination 
+Uplifting [MEGA65_VICIV] best 10451 combination 
+Uplifting [F018_DMAGIC] best 10451 combination 
+Uplifting [DMA_LIST_F018A] best 10451 combination 
+Uplifting [DMA_LIST_F018B] best 10451 combination 
+Uplifting [cputln] best 10451 combination 
+Uplifting [cscroll] best 10451 combination 
+Uplifting [printf_format_number] best 10451 combination 
+Uplifting [printf_buffer_number] best 10451 combination 
+Uplifting [printf_format_string] best 10451 combination 
+Uplifting [main] best 10451 combination 
+Uplifting [__start] best 10451 combination 
 Attempting to uplift remaining variables inzp[1]:20 [ conio_cursor_y ]
-Uplifting [] best 10455 combination zp[1]:20 [ conio_cursor_y ] 
+Uplifting [] best 10451 combination zp[1]:20 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:19 [ conio_cursor_x ]
-Uplifting [] best 10455 combination zp[1]:19 [ conio_cursor_x ] 
+Uplifting [] best 10451 combination zp[1]:19 [ conio_cursor_x ] 
+Attempting to uplift remaining variables inzp[1]:28 [ memoryRemap::zVal ]
+Uplifting [memoryRemap] best 10451 combination zp[1]:28 [ memoryRemap::zVal ] 
+Attempting to uplift remaining variables inzp[1]:27 [ memoryRemap::yVal ]
+Uplifting [memoryRemap] best 10451 combination zp[1]:27 [ memoryRemap::yVal ] 
+Attempting to uplift remaining variables inzp[1]:26 [ memoryRemap::xVal ]
+Uplifting [memoryRemap] best 10451 combination zp[1]:26 [ memoryRemap::xVal ] 
+Attempting to uplift remaining variables inzp[1]:25 [ memoryRemap::aVal ]
+Uplifting [memoryRemap] best 10451 combination zp[1]:25 [ memoryRemap::aVal ] 
 Coalescing zero page register [ zp[2]:6 [ memcpy::source#2 ] ] with [ zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:8 [ memcpy::destination#2 ] ] with [ zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:14 [ memset::str#3 ] ] with [ zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:25 [ gotoxy::$7 ] ] with [ zp[2]:29 [ gotoxy::$9 ] ] - score: 1
-Coalescing zero page register [ zp[2]:31 [ gotoxy::line_offset#0 ] ] with [ zp[2]:35 [ gotoxy::$6 ] ] - score: 1
-Coalescing zero page register [ zp[2]:25 [ gotoxy::$7 gotoxy::$9 ] ] with [ zp[2]:31 [ gotoxy::line_offset#0 gotoxy::$6 ] ] - score: 1
+Coalescing zero page register [ zp[2]:29 [ gotoxy::$7 ] ] with [ zp[2]:33 [ gotoxy::$9 ] ] - score: 1
+Coalescing zero page register [ zp[2]:35 [ gotoxy::line_offset#0 ] ] with [ zp[2]:39 [ gotoxy::$6 ] ] - score: 1
+Coalescing zero page register [ zp[2]:29 [ gotoxy::$7 gotoxy::$9 ] ] with [ zp[2]:35 [ gotoxy::line_offset#0 gotoxy::$6 ] ] - score: 1
 Coalescing zero page register [ zp[2]:14 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:6 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ]
-Coalescing zero page register [ zp[2]:41 [ memset::end#0 ] ] with [ zp[2]:8 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ]
+Coalescing zero page register [ zp[2]:45 [ memset::end#0 ] ] with [ zp[2]:8 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ]
 Allocated (was zp[2]:4) zp[2]:2 [ cputs::s#2 cputs::s#0 ]
 Allocated (was zp[2]:14) zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
 Allocated (was zp[1]:19) zp[1]:6 [ conio_cursor_x ]
 Allocated (was zp[1]:20) zp[1]:7 [ conio_cursor_y ]
 Allocated (was zp[2]:21) zp[2]:8 [ conio_line_text ]
 Allocated (was zp[2]:23) zp[2]:10 [ conio_line_color ]
-Allocated (was zp[2]:25) zp[2]:12 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
-Allocated (was zp[2]:27) zp[2]:14 [ gotoxy::$8 ]
-Allocated (was zp[2]:33) zp[2]:16 [ gotoxy::$5 ]
-Allocated (was zp[2]:39) zp[2]:18 [ memcpy::src_end#0 ]
-Allocated (was zp[2]:41) zp[2]:20 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+Allocated (was zp[1]:25) zp[1]:12 [ memoryRemap::aVal ]
+Allocated (was zp[1]:26) zp[1]:13 [ memoryRemap::xVal ]
+Allocated (was zp[1]:27) zp[1]:14 [ memoryRemap::yVal ]
+Allocated (was zp[1]:28) zp[1]:15 [ memoryRemap::zVal ]
+Allocated (was zp[2]:29) zp[2]:16 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
+Allocated (was zp[2]:31) zp[2]:18 [ gotoxy::$8 ]
+Allocated (was zp[2]:37) zp[2]:20 [ gotoxy::$5 ]
+Allocated (was zp[2]:43) zp[2]:22 [ memcpy::src_end#0 ]
+Allocated (was zp[2]:45) zp[2]:24 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1787,22 +1843,26 @@ main: {
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 memoryRemap: {
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    // [26] *memoryRemap::aVal = 0 -- _deref_pbuc1=vbuc2 
+    .label aVal = $c
+    .label xVal = $d
+    .label yVal = $e
+    .label zVal = $f
+    // [26] memoryRemap::aVal = 0 -- vbuz1=vbuc1 
+    // lower blocks offset page low
     lda #0
-    sta aVal
-    // [27] *memoryRemap::xVal = 0 -- _deref_pbuc1=vbuc2 
+    sta.z aVal
+    // [27] memoryRemap::xVal = 0 -- vbuz1=vbuc1 
+    // lower blocks to map + lower blocks offset high nibble
     lda #0
-    sta xVal
-    // [28] *memoryRemap::yVal = 0 -- _deref_pbuc1=vbuc2 
+    sta.z xVal
+    // [28] memoryRemap::yVal = 0 -- vbuz1=vbuc1 
+    // upper blocks offset page
     lda #0
-    sta yVal
-    // [29] *memoryRemap::zVal = 0 -- _deref_pbuc1=vbuc2 
+    sta.z yVal
+    // [29] memoryRemap::zVal = 0 -- vbuz1=vbuc1 
+    // upper blocks to map + upper blocks offset page high nibble
     lda #0
-    sta zVal
+    sta.z zVal
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
     lda aVal
     ldx xVal
@@ -1821,12 +1881,12 @@ memoryRemap: {
 // gotoxy(byte register(X) y)
 gotoxy: {
     .const x = 0
-    .label __5 = $10
-    .label __6 = $c
-    .label __7 = $c
-    .label line_offset = $c
-    .label __8 = $e
-    .label __9 = $c
+    .label __5 = $14
+    .label __6 = $10
+    .label __7 = $10
+    .label line_offset = $10
+    .label __8 = $12
+    .label __9 = $10
     // [32] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19+1
     bcc __b3_from_gotoxy
@@ -2135,13 +2195,13 @@ cscroll: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($14) destination, void* zp(4) source)
+// memcpy(void* zp($18) destination, void* zp(4) source)
 memcpy: {
-    .label src_end = $12
-    .label dst = $14
+    .label src_end = $16
+    .label dst = $18
     .label src = 4
     .label source = 4
-    .label destination = $14
+    .label destination = $18
     // [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z source
@@ -2189,7 +2249,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(4) str, byte register(Z) c)
 memset: {
-    .label end = $14
+    .label end = $18
     .label dst = 4
     .label str = 4
     jmp __b1
@@ -2375,13 +2435,13 @@ to_nomodify byte* cputs::s#0 s zp[2]:2 500.5
 to_nomodify byte* cputs::s#2 s zp[2]:2 1501.5
 void cscroll()
 void gotoxy(byte gotoxy::x , byte gotoxy::y)
-byte*~ gotoxy::$5 zp[2]:16 202.0
-byte*~ gotoxy::$6 zp[2]:12 202.0
-word~ gotoxy::$7 zp[2]:12 151.5
-word~ gotoxy::$8 zp[2]:14 202.0
-word~ gotoxy::$9 zp[2]:12 202.0
+byte*~ gotoxy::$5 zp[2]:20 202.0
+byte*~ gotoxy::$6 zp[2]:16 202.0
+word~ gotoxy::$7 zp[2]:16 151.5
+word~ gotoxy::$8 zp[2]:18 202.0
+word~ gotoxy::$9 zp[2]:16 202.0
 word gotoxy::line_offset
-word gotoxy::line_offset#0 line_offset zp[2]:12 101.0
+word gotoxy::line_offset#0 line_offset zp[2]:16 101.0
 byte gotoxy::x
 const byte gotoxy::x#2 x = 0
 byte gotoxy::y
@@ -2391,11 +2451,11 @@ void main()
 const byte* main::s[$d]  = "hello world!"
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 void* memcpy::destination
-void* memcpy::destination#2 destination zp[2]:20
+void* memcpy::destination#2 destination zp[2]:24
 byte* memcpy::dst
-byte* memcpy::dst#1 dst zp[2]:20 1.000000001E9
-byte* memcpy::dst#2 dst zp[2]:20 1.0033333346666667E9
-byte* memcpy::dst#4 dst zp[2]:20 2.0000002E7
+byte* memcpy::dst#1 dst zp[2]:24 1.000000001E9
+byte* memcpy::dst#2 dst zp[2]:24 1.0033333346666667E9
+byte* memcpy::dst#4 dst zp[2]:24 2.0000002E7
 word memcpy::num
 void* memcpy::return
 void* memcpy::source
@@ -2405,15 +2465,15 @@ byte* memcpy::src#1 src zp[2]:4 2.000000002E9
 byte* memcpy::src#2 src zp[2]:4 1.00250000125E9
 byte* memcpy::src#4 src zp[2]:4 1.0000001E7
 byte* memcpy::src_end
-byte* memcpy::src_end#0 src_end zp[2]:18 1.2625000025E8
+byte* memcpy::src_end#0 src_end zp[2]:22 1.2625000025E8
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-const byte* memoryRemap::aVal = (byte*) 252
+volatile byte memoryRemap::aVal loadstore zp[1]:12 25.25
 word memoryRemap::lowerPageOffset
 byte memoryRemap::remapBlocks
 word memoryRemap::upperPageOffset
-const byte* memoryRemap::xVal = (byte*) 253
-const byte* memoryRemap::yVal = (byte*) 254
-const byte* memoryRemap::zVal = (byte*) 255
+volatile byte memoryRemap::xVal loadstore zp[1]:13 33.666666666666664
+volatile byte memoryRemap::yVal loadstore zp[1]:14 50.5
+volatile byte memoryRemap::zVal loadstore zp[1]:15 101.0
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
 byte memset::c#4 reg byte z 1.42857143E8
@@ -2422,7 +2482,7 @@ byte* memset::dst#1 dst zp[2]:4 2.000000002E9
 byte* memset::dst#2 dst zp[2]:4 1.3366666683333335E9
 byte* memset::dst#4 dst zp[2]:4 2.0000002E7
 byte* memset::end
-byte* memset::end#0 end zp[2]:20 1.683333336666667E8
+byte* memset::end#0 end zp[2]:24 1.683333336666667E8
 word memset::num
 void* memset::return
 void* memset::str
@@ -2437,17 +2497,21 @@ zp[1]:6 [ conio_cursor_x ]
 zp[1]:7 [ conio_cursor_y ]
 zp[2]:8 [ conio_line_text ]
 zp[2]:10 [ conio_line_color ]
-zp[2]:12 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
-zp[2]:14 [ gotoxy::$8 ]
-zp[2]:16 [ gotoxy::$5 ]
+zp[1]:12 [ memoryRemap::aVal ]
+zp[1]:13 [ memoryRemap::xVal ]
+zp[1]:14 [ memoryRemap::yVal ]
+zp[1]:15 [ memoryRemap::zVal ]
+zp[2]:16 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
+zp[2]:18 [ gotoxy::$8 ]
+zp[2]:20 [ gotoxy::$5 ]
 reg byte a [ cputs::c#1 ]
 reg byte a [ cputc::c#0 ]
-zp[2]:18 [ memcpy::src_end#0 ]
-zp[2]:20 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+zp[2]:22 [ memcpy::src_end#0 ]
+zp[2]:24 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 
 
 FINAL ASSEMBLER
-Score: 8741
+Score: 8737
 
   // File Comments
 // Hello World for MEGA 65 - using stdio.h and conio.h
@@ -2620,23 +2684,27 @@ main: {
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 memoryRemap: {
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    // *aVal = <lowerPageOffset
-    // [26] *memoryRemap::aVal = 0 -- _deref_pbuc1=vbuc2 
+    .label aVal = $c
+    .label xVal = $d
+    .label yVal = $e
+    .label zVal = $f
+    // aVal = <lowerPageOffset
+    // [26] memoryRemap::aVal = 0 -- vbuz1=vbuc1 
+    // lower blocks offset page low
     lda #0
-    sta aVal
-    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
-    // [27] *memoryRemap::xVal = 0 -- _deref_pbuc1=vbuc2 
-    sta xVal
-    // *yVal = <upperPageOffset
-    // [28] *memoryRemap::yVal = 0 -- _deref_pbuc1=vbuc2 
-    sta yVal
-    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
-    // [29] *memoryRemap::zVal = 0 -- _deref_pbuc1=vbuc2 
-    sta zVal
+    sta.z aVal
+    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [27] memoryRemap::xVal = 0 -- vbuz1=vbuc1 
+    // lower blocks to map + lower blocks offset high nibble
+    sta.z xVal
+    // yVal = <upperPageOffset
+    // [28] memoryRemap::yVal = 0 -- vbuz1=vbuc1 
+    // upper blocks offset page
+    sta.z yVal
+    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [29] memoryRemap::zVal = 0 -- vbuz1=vbuc1 
+    // upper blocks to map + upper blocks offset page high nibble
+    sta.z zVal
     // asm
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
     lda aVal
@@ -2655,12 +2723,12 @@ memoryRemap: {
 // gotoxy(byte register(X) y)
 gotoxy: {
     .const x = 0
-    .label __5 = $10
-    .label __6 = $c
-    .label __7 = $c
-    .label line_offset = $c
-    .label __8 = $e
-    .label __9 = $c
+    .label __5 = $14
+    .label __6 = $10
+    .label __7 = $10
+    .label line_offset = $10
+    .label __8 = $12
+    .label __9 = $10
     // if(y>CONIO_HEIGHT)
     // [32] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19+1
@@ -2959,13 +3027,13 @@ cscroll: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($14) destination, void* zp(4) source)
+// memcpy(void* zp($18) destination, void* zp(4) source)
 memcpy: {
-    .label src_end = $12
-    .label dst = $14
+    .label src_end = $16
+    .label dst = $18
     .label src = 4
     .label source = 4
-    .label destination = $14
+    .label destination = $18
     // src_end = (char*)source+num
     // [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
     clc
@@ -3012,7 +3080,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(4) str, byte register(Z) c)
 memset: {
-    .label end = $14
+    .label end = $18
     .label dst = 4
     .label str = 4
     // memset::@1

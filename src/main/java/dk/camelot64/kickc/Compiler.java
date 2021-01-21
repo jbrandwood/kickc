@@ -251,6 +251,7 @@ public class Compiler {
       }
 
       new Pass1AddressOfHandling(program).execute();
+      new Pass1AsmUsesHandling(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, true).execute();
@@ -282,7 +283,6 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, true).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
-      new Pass1AsmUsesHandling(program).execute();
       new PassNAssertConstantModification(program).execute();
       new PassNAssertTypeDeref(program).check();
 

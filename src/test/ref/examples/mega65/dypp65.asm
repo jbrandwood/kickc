@@ -313,19 +313,23 @@ main: {
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 memoryRemap: {
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    // *aVal = <lowerPageOffset
+    .label aVal = $e
+    .label xVal = $f
+    .label yVal = $10
+    .label zVal = $11
+    // aVal = <lowerPageOffset
+    // lower blocks offset page low
     lda #0
-    sta aVal
-    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
-    sta xVal
-    // *yVal = <upperPageOffset
-    sta yVal
-    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
-    sta zVal
+    sta.z aVal
+    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // lower blocks to map + lower blocks offset high nibble
+    sta.z xVal
+    // yVal = <upperPageOffset
+    // upper blocks offset page
+    sta.z yVal
+    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // upper blocks to map + upper blocks offset page high nibble
+    sta.z zVal
     // asm
     lda aVal
     ldx xVal

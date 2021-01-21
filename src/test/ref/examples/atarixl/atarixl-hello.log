@@ -1,0 +1,282 @@
+Resolved forward reference DISPLAY_LIST to DISPLAY_LIST
+Fixing struct type size struct ATARI_GTIA_READ to 32
+Fixing struct type size struct ATARI_POKEY_READ to 16
+Fixing struct type SIZE_OF struct ATARI_GTIA_READ to 32
+Fixing struct type SIZE_OF struct ATARI_POKEY_READ to 16
+Fixing struct type SIZE_OF struct ATARI_GTIA_READ to 32
+Fixing struct type SIZE_OF struct ATARI_POKEY_READ to 16
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  *SDMCTL = $21
+  *SDLST = DISPLAY_LIST
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  main::$0 = 0 != 1
+  if(main::$0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte BLANK4 = $30
+const nomodify byte BLANK8 = $70
+const byte* DISPLAY_LIST[]  = { BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK4, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST }
+const nomodify byte JVB = $41
+const nomodify byte LMS = $40
+const nomodify byte MODE2 = 2
+const nomodify byte MODE7 = 7
+const nomodify byte** SDLST = (byte**)$230
+const nomodify byte* SDMCTL = (byte*)$22f
+const byte* TEXT[]  = "HELLO atari 8BITDemonstrates ANTIC display list"sa
+void __start()
+void main()
+bool~ main::$0
+
+Adding number conversion cast (unumber) $21 in *SDMCTL = $21
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *SDMCTL = (unumber)$21
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 559
+Simplifying constant pointer cast (byte**) 560
+Simplifying constant integer cast $21
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $21
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition main::$0 [3] if(0!=1) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+if() condition always true - replacing block destination [3] if(0!=1) goto main::@1
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main::@1
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SDMCTL = $21
+  [1] *SDLST = DISPLAY_LIST
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [2] phi()
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SDMCTL = $21 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *SDLST = DISPLAY_LIST [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [ATARI_ANTIC] 
+Uplift Scope [ATARI_GTIA_READ] 
+Uplift Scope [ATARI_GTIA_WRITE] 
+Uplift Scope [ATARI_POKEY_READ] 
+Uplift Scope [ATARI_POKEY_WRITE] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [ATARI_ANTIC] best 78 combination 
+Uplifting [ATARI_GTIA_READ] best 78 combination 
+Uplifting [ATARI_GTIA_WRITE] best 78 combination 
+Uplifting [ATARI_POKEY_READ] best 78 combination 
+Uplifting [ATARI_POKEY_WRITE] best 78 combination 
+Uplifting [main] best 78 combination 
+Uplifting [] best 78 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Hello World for Atari XL / XE
+// XEX file format https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+// Minimal Hello World https://atariage.com/forums/topic/229742-help-with-hello-world-in-mads/
+// Display Lists atariarchives.org/mapping/appendix8.php
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.plugin "dk.camelot64.kickass.xexplugin.AtariXex"
+.file [name="atarixl-hello.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile [segments="Program", modify="XexFormat", _RunAddr=main]
+.segmentdef Program [segments="Code, Data"]
+.segmentdef Code [start=$2000]
+.segmentdef Data [startAfter="Code"]
+  // Global Constants & labels
+  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  .const MODE2 = 2
+  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  .const MODE7 = 7
+  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  .const LMS = $40
+  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  .const JVB = $41
+  // Blank 4 lines
+  .const BLANK4 = $30
+  // Blank 8 lines
+  .const BLANK8 = $70
+  // Atari OS Shadow registers
+  // OS Shadow ANTIC Direct Memory Access Control ($D400)
+  .label SDMCTL = $22f
+  // OS Shadow ANTIC Display List Pointer ($D402)
+  .label SDLST = $230
+.segment Code
+  // main
+main: {
+    // [0] *SDMCTL = $21 -- _deref_pbuc1=vbuc2 
+    // Enable DMA, Narrow Playfield into Shadow ANTIC Direct Memory Access Control
+    lda #$21
+    sta SDMCTL
+    // [1] *SDLST = DISPLAY_LIST -- _deref_qbuc1=pbuc2 
+    // Set Shadow ANTIC Display List Pointer
+    lda #<DISPLAY_LIST
+    sta SDLST
+    lda #>DISPLAY_LIST
+    sta SDLST+1
+    // [2] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  __b1_from_main:
+  __b1_from___b1:
+    jmp __b1
+  // Loop forever
+    // main::@1
+  __b1:
+    jmp __b1_from___b1
+}
+  // File Data
+.segment Data
+  // Message to show
+.encoding "ascii"
+  TEXT: .text @"\$28\$25\$2c\$2c\$2f\$00atari\$00\$18\$22\$29\$34\$24emonstrates\$00\$21\$2e\$34\$29\$23\$00display\$00list"
+  .byte 0
+  // ANTIC Display List Program
+  // https://en.wikipedia.org/wiki/ANTIC
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK4, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Relabelling long label __b1_from___b1 to __b1
+Succesful ASM optimization Pass5RelabelLongLabels
+
+FINAL SYMBOL TABLE
+const nomodify byte BLANK4 = $30
+const nomodify byte BLANK8 = $70
+const byte* DISPLAY_LIST[]  = { BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK4, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST }
+const nomodify byte JVB = $41
+const nomodify byte LMS = $40
+const nomodify byte MODE2 = 2
+const nomodify byte MODE7 = 7
+const nomodify byte** SDLST = (byte**) 560
+const nomodify byte* SDMCTL = (byte*) 559
+const byte* TEXT[]  = "HELLO atari 8BITDemonstrates ANTIC display list"sa
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 48
+
+  // File Comments
+// Hello World for Atari XL / XE
+// XEX file format https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+// Minimal Hello World https://atariage.com/forums/topic/229742-help-with-hello-world-in-mads/
+// Display Lists atariarchives.org/mapping/appendix8.php
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.plugin "dk.camelot64.kickass.xexplugin.AtariXex"
+.file [name="atarixl-hello.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile [segments="Program", modify="XexFormat", _RunAddr=main]
+.segmentdef Program [segments="Code, Data"]
+.segmentdef Code [start=$2000]
+.segmentdef Data [startAfter="Code"]
+  // Global Constants & labels
+  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  .const MODE2 = 2
+  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  .const MODE7 = 7
+  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  .const LMS = $40
+  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  .const JVB = $41
+  // Blank 4 lines
+  .const BLANK4 = $30
+  // Blank 8 lines
+  .const BLANK8 = $70
+  // Atari OS Shadow registers
+  // OS Shadow ANTIC Direct Memory Access Control ($D400)
+  .label SDMCTL = $22f
+  // OS Shadow ANTIC Display List Pointer ($D402)
+  .label SDLST = $230
+.segment Code
+  // main
+main: {
+    // *SDMCTL = 0x21
+    // [0] *SDMCTL = $21 -- _deref_pbuc1=vbuc2 
+    // Enable DMA, Narrow Playfield into Shadow ANTIC Direct Memory Access Control
+    lda #$21
+    sta SDMCTL
+    // *SDLST = DISPLAY_LIST
+    // [1] *SDLST = DISPLAY_LIST -- _deref_qbuc1=pbuc2 
+    // Set Shadow ANTIC Display List Pointer
+    lda #<DISPLAY_LIST
+    sta SDLST
+    lda #>DISPLAY_LIST
+    sta SDLST+1
+    // [2] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  __b1:
+  // Loop forever
+    // main::@1
+    jmp __b1
+}
+  // File Data
+.segment Data
+  // Message to show
+.encoding "ascii"
+  TEXT: .text @"\$28\$25\$2c\$2c\$2f\$00atari\$00\$18\$22\$29\$34\$24emonstrates\$00\$21\$2e\$34\$29\$23\$00display\$00list"
+  .byte 0
+  // ANTIC Display List Program
+  // https://en.wikipedia.org/wiki/ANTIC
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK4, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
+

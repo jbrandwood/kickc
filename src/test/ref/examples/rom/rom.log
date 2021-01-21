@@ -1,0 +1,950 @@
+Loading link script "rom.ld"
+Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call call1 1 2 
+Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call call1 3 4 
+Calling convention STACK_CALL replacing param(call1::param1) with stackidx(byte,call1::OFFSET_STACK_PARAM1)
+Calling convention STACK_CALL replacing param(call1::param2) with stackidx(byte,call1::OFFSET_STACK_PARAM2)
+Calling convention STACK_CALL adding stack return stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return
+Calling convention STACK_CALL adding stack pull main::$0 = stackpull(byte)
+Calling convention STACK_CALL adding stack pull main::$1 = stackpull(byte)
+Calling convention STACK_CALL adding stack push stackpush(byte) = 1
+Calling convention STACK_CALL adding stack push stackpush(byte) = 2
+Calling convention STACK_CALL adding stack push stackpush(byte) = 3
+Calling convention STACK_CALL adding stack push stackpush(byte) = 4
+
+CONTROL FLOW GRAPH SSA
+
+__stackcall byte call1(byte call1::param1 , byte call1::param2)
+call1: scope:[call1]  from
+  call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1)
+  call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2)
+  call1::$0 = call1::param1#0 + call1::param2#0
+  call1::return#0 = call1::$0
+  to:call1::@return
+call1::@return: scope:[call1]  from call1
+  call1::return#1 = phi( call1/call1::return#0 )
+  stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#1
+  return 
+  to:@return
+
+byte call2(byte call2::param1 , byte call2::param2)
+call2: scope:[call2]  from main main::@1
+  call2::$0 = call2::param1 + call2::param2
+  call2::return = call2::$0
+  to:call2::@return
+call2::@return: scope:[call2]  from call2
+  call2::return = call2::return
+  return 
+  to:@return
+
+byte call3(byte call3::param1 , byte call3::param2)
+call3: scope:[call3]  from main::@2 main::@3
+  call3::param2#2 = phi( main::@2/call3::param2#0, main::@3/call3::param2#1 )
+  call3::param1#2 = phi( main::@2/call3::param1#0, main::@3/call3::param1#1 )
+  call3::$0 = call3::param1#2 + call3::param2#2
+  call3::return#0 = call3::$0
+  to:call3::@return
+call3::@return: scope:[call3]  from call3
+  call3::return#4 = phi( call3/call3::return#0 )
+  call3::return#1 = call3::return#4
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  stackpush(byte) = 1
+  stackpush(byte) = 2
+  callexecute call1 
+  sideeffect stackpullbytes(1)
+  main::$0 = stackpull(byte)
+  *main::ptr = main::$0
+  stackpush(byte) = 3
+  stackpush(byte) = 4
+  callexecute call1 
+  sideeffect stackpullbytes(1)
+  main::$1 = stackpull(byte)
+  *main::ptr = main::$1
+  call2::param1 = 1
+  call2::param2 = 2
+  call call2 
+  call2::return = call2::return
+  to:main::@1
+main::@1: scope:[main]  from main
+  main::$2 = call2::return
+  *main::ptr = main::$2
+  call2::param1 = 3
+  call2::param2 = 4
+  call call2 
+  call2::return = call2::return
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  main::$3 = call2::return
+  *main::ptr = main::$3
+  call3::param1#0 = 1
+  call3::param2#0 = 2
+  call call3 
+  call3::return#2 = call3::return#1
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  call3::return#5 = phi( main::@2/call3::return#2 )
+  main::$4 = call3::return#5
+  *main::ptr = main::$4
+  call3::param1#1 = 3
+  call3::param2#1 = 4
+  call call3 
+  call3::return#3 = call3::return#1
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  call3::return#6 = phi( main::@3/call3::return#3 )
+  main::$5 = call3::return#6
+  *main::ptr = main::$5
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const word STACK_BASE = $103
+void __start()
+__stackcall byte call1(byte call1::param1 , byte call1::param2)
+byte~ call1::$0
+const byte call1::OFFSET_STACK_PARAM1 = 1
+const byte call1::OFFSET_STACK_PARAM2 = 0
+const byte call1::OFFSET_STACK_RETURN = 1
+byte call1::param1
+byte call1::param1#0
+byte call1::param2
+byte call1::param2#0
+byte call1::return
+byte call1::return#0
+byte call1::return#1
+byte call2(byte call2::param1 , byte call2::param2)
+byte~ call2::$0
+byte call2::param1 loadstore
+byte call2::param2 loadstore
+byte call2::return loadstore
+byte call3(byte call3::param1 , byte call3::param2)
+byte~ call3::$0
+byte call3::param1
+byte call3::param1#0
+byte call3::param1#1
+byte call3::param1#2
+byte call3::param2
+byte call3::param2#0
+byte call3::param2#1
+byte call3::param2#2
+byte call3::return
+byte call3::return#0
+byte call3::return#1
+byte call3::return#2
+byte call3::return#3
+byte call3::return#4
+byte call3::return#5
+byte call3::return#6
+void main()
+byte~ main::$0
+byte~ main::$1
+byte~ main::$2
+byte~ main::$3
+byte~ main::$4
+byte~ main::$5
+const byte* main::ptr = (byte*)$fe
+
+Adding number conversion cast (unumber) 1 in stackpush(byte) = 1
+Adding number conversion cast (unumber) 2 in stackpush(byte) = 2
+Adding number conversion cast (unumber) 3 in stackpush(byte) = 3
+Adding number conversion cast (unumber) 4 in stackpush(byte) = 4
+Adding number conversion cast (unumber) 1 in call2::param1 = 1
+Adding number conversion cast (unumber) 2 in call2::param2 = 2
+Adding number conversion cast (unumber) 3 in call2::param1 = 3
+Adding number conversion cast (unumber) 4 in call2::param2 = 4
+Adding number conversion cast (unumber) 1 in call3::param1#0 = 1
+Adding number conversion cast (unumber) 2 in call3::param2#0 = 2
+Adding number conversion cast (unumber) 3 in call3::param1#1 = 3
+Adding number conversion cast (unumber) 4 in call3::param2#1 = 4
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast stackpush(byte) = (unumber)1
+Inlining cast stackpush(byte) = (unumber)2
+Inlining cast stackpush(byte) = (unumber)3
+Inlining cast stackpush(byte) = (unumber)4
+Inlining cast call2::param1 = (unumber)1
+Inlining cast call2::param2 = (unumber)2
+Inlining cast call2::param1 = (unumber)3
+Inlining cast call2::param2 = (unumber)4
+Inlining cast call3::param1#0 = (unumber)1
+Inlining cast call3::param2#0 = (unumber)2
+Inlining cast call3::param1#1 = (unumber)3
+Inlining cast call3::param2#1 = (unumber)4
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)call2::return = call2::$0 
+Alias call1::return#0 = call1::$0 call1::return#1 
+Alias call3::return#0 = call3::$0 call3::return#4 call3::return#1 
+Alias call3::return#2 = call3::return#5 
+Alias call3::return#3 = call3::return#6 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)call2::return = call2::$0 
+Constant call3::param1#0 = 1
+Constant call3::param2#0 = 2
+Constant call3::param1#1 = 3
+Constant call3::param2#1 = 4
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)call2::return = call2::$0 
+Inlining constant with var siblings call3::param1#0
+Inlining constant with var siblings call3::param2#0
+Inlining constant with var siblings call3::param1#1
+Inlining constant with var siblings call3::param2#1
+Constant inlined call3::param2#1 = 4
+Constant inlined call3::param1#0 = 1
+Constant inlined call3::param2#0 = 2
+Constant inlined call3::param1#1 = 3
+Successful SSA optimization Pass2ConstantInlining
+Alias candidate removed (volatile)call2::return = call2::$0 
+Alias candidate removed (volatile)call2::return = call2::$0 
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)call2::return = call2::$0 
+Alias candidate removed (volatile)call2::return = call2::$0 
+CALL GRAPH
+Calls in [main] to call1:2 call1:8 call2:14 call2:20 call3:24 call3:28 
+
+Created 2 initial phi equivalence classes
+Coalesced down to 2 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] stackpush(byte) = 1
+  [1] stackpush(byte) = 2
+  [2] callexecute call1 
+  sideeffect stackpullbytes(1)
+  [4] main::$0 = stackpull(byte)
+  [5] *main::ptr = main::$0
+  [6] stackpush(byte) = 3
+  [7] stackpush(byte) = 4
+  [8] callexecute call1 
+  sideeffect stackpullbytes(1)
+  [10] main::$1 = stackpull(byte)
+  [11] *main::ptr = main::$1
+  [12] call2::param1 = 1
+  [13] call2::param2 = 2
+  [14] call call2 
+  [15] call2::return = call2::return
+  to:main::@1
+main::@1: scope:[main]  from main
+  [16] main::$2 = call2::return
+  [17] *main::ptr = main::$2
+  [18] call2::param1 = 3
+  [19] call2::param2 = 4
+  [20] call call2 
+  [21] call2::return = call2::return
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [22] main::$3 = call2::return
+  [23] *main::ptr = main::$3
+  [24] call call3 
+  [25] call3::return#2 = call3::return#0
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [26] main::$4 = call3::return#2
+  [27] *main::ptr = main::$4
+  [28] call call3 
+  [29] call3::return#3 = call3::return#0
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  [30] main::$5 = call3::return#3
+  [31] *main::ptr = main::$5
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  [32] return 
+  to:@return
+
+__stackcall byte call1(byte call1::param1 , byte call1::param2)
+call1: scope:[call1]  from
+  [33] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1)
+  [34] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2)
+  [35] call1::return#0 = call1::param1#0 + call1::param2#0
+  to:call1::@return
+call1::@return: scope:[call1]  from call1
+  [36] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0
+  [37] return 
+  to:@return
+
+byte call2(byte call2::param1 , byte call2::param2)
+call2: scope:[call2]  from main main::@1
+  [38] call2::$0 = call2::param1 + call2::param2
+  [39] call2::return = call2::$0
+  to:call2::@return
+call2::@return: scope:[call2]  from call2
+  [40] call2::return = call2::return
+  [41] return 
+  to:@return
+
+byte call3(byte call3::param1 , byte call3::param2)
+call3: scope:[call3]  from main::@2 main::@3
+  [42] call3::param2#2 = phi( main::@2/2, main::@3/4 )
+  [42] call3::param1#2 = phi( main::@2/1, main::@3/3 )
+  [43] call3::return#0 = call3::param1#2 + call3::param2#2
+  to:call3::@return
+call3::@return: scope:[call3]  from call3
+  [44] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__stackcall byte call1(byte call1::param1 , byte call1::param2)
+byte call1::param1
+byte call1::param1#0 11.0
+byte call1::param2
+byte call1::param2#0 22.0
+byte call1::return
+byte call1::return#0 22.0
+byte call2(byte call2::param1 , byte call2::param2)
+byte~ call2::$0 22.0
+byte call2::param1 loadstore 3.75
+byte call2::param2 loadstore 7.5
+byte call2::return loadstore 6.428571428571428
+byte call3(byte call3::param1 , byte call3::param2)
+byte call3::param1
+byte call3::param1#2 11.0
+byte call3::param2
+byte call3::param2#2 11.0
+byte call3::return
+byte call3::return#0 3.75
+byte call3::return#2 4.0
+byte call3::return#3 4.0
+void main()
+byte~ main::$0 4.0
+byte~ main::$1 4.0
+byte~ main::$2 4.0
+byte~ main::$3 4.0
+byte~ main::$4 4.0
+byte~ main::$5 4.0
+
+Initial phi equivalence classes
+[ call3::param1#2 ]
+[ call3::param2#2 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable call2::param1 to live range equivalence class [ call2::param1 ]
+Added variable call2::param2 to live range equivalence class [ call2::param2 ]
+Added variable call2::return to live range equivalence class [ call2::return ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable call3::return#2 to live range equivalence class [ call3::return#2 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable call3::return#3 to live range equivalence class [ call3::return#3 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable call1::param1#0 to live range equivalence class [ call1::param1#0 ]
+Added variable call1::param2#0 to live range equivalence class [ call1::param2#0 ]
+Added variable call1::return#0 to live range equivalence class [ call1::return#0 ]
+Added variable call2::$0 to live range equivalence class [ call2::$0 ]
+Added variable call3::return#0 to live range equivalence class [ call3::return#0 ]
+Complete equivalence classes
+[ call3::param1#2 ]
+[ call3::param2#2 ]
+[ main::$0 ]
+[ main::$1 ]
+[ call2::param1 ]
+[ call2::param2 ]
+[ call2::return ]
+[ main::$2 ]
+[ main::$3 ]
+[ call3::return#2 ]
+[ main::$4 ]
+[ call3::return#3 ]
+[ main::$5 ]
+[ call1::param1#0 ]
+[ call1::param2#0 ]
+[ call1::return#0 ]
+[ call2::$0 ]
+[ call3::return#0 ]
+Allocated zp[1]:2 [ call3::param1#2 ]
+Allocated zp[1]:3 [ call3::param2#2 ]
+Allocated zp[1]:4 [ main::$0 ]
+Allocated zp[1]:5 [ main::$1 ]
+Allocated zp[1]:6 [ call2::param1 ]
+Allocated zp[1]:7 [ call2::param2 ]
+Allocated zp[1]:8 [ call2::return ]
+Allocated zp[1]:9 [ main::$2 ]
+Allocated zp[1]:10 [ main::$3 ]
+Allocated zp[1]:11 [ call3::return#2 ]
+Allocated zp[1]:12 [ main::$4 ]
+Allocated zp[1]:13 [ call3::return#3 ]
+Allocated zp[1]:14 [ main::$5 ]
+Allocated zp[1]:15 [ call1::param1#0 ]
+Allocated zp[1]:16 [ call1::param2#0 ]
+Allocated zp[1]:17 [ call1::return#0 ]
+Allocated zp[1]:18 [ call2::$0 ]
+Allocated zp[1]:19 [ call3::return#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] stackpush(byte) = 1 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [1] stackpush(byte) = 2 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Statement [4] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [6] stackpush(byte) = 3 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [7] stackpush(byte) = 4 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Statement [10] main::$1 = stackpull(byte) [ main::$1 ] (  [ main::$1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [12] call2::param1 = 1 [ call2::param1 ] (  [ call2::param1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [13] call2::param2 = 2 [ call2::param1 call2::param2 ] (  [ call2::param1 call2::param2 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [18] call2::param1 = 3 [ call2::param1 ] (  [ call2::param1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [19] call2::param2 = 4 [ call2::param1 call2::param2 ] (  [ call2::param1 call2::param2 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [33] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) [ call1::param1#0 ] ( call1:2 [ call1::param1#0 ] { }  call1:8 [ call1::param1#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [34] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) [ call1::param1#0 call1::param2#0 ] ( call1:2 [ call1::param1#0 call1::param2#0 ] { }  call1:8 [ call1::param1#0 call1::param2#0 ] { }  ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp[1]:15 [ call1::param1#0 ]
+Removing always clobbered register reg byte x as potential for zp[1]:15 [ call1::param1#0 ]
+Statement [35] call1::return#0 = call1::param1#0 + call1::param2#0 [ call1::return#0 ] ( call1:2 [ call1::return#0 ] { }  call1:8 [ call1::return#0 ] { }  ) always clobbers reg byte a 
+Statement [36] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
+Statement [38] call2::$0 = call2::param1 + call2::param2 [ call2::$0 ] ( call2:14 [ call2::$0 ] { { call2::return = } }  call2:20 [ call2::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [43] call3::return#0 = call3::param1#2 + call3::param2#2 [ call3::return#0 ] ( call3:24 [ call3::return#0 ] { { call3::return#0 = call3::return#2 } }  call3:28 [ call3::return#0 ] { { call3::return#0 = call3::return#3 } }  ) always clobbers reg byte a 
+Statement [0] stackpush(byte) = 1 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [1] stackpush(byte) = 2 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Statement [4] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [6] stackpush(byte) = 3 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [7] stackpush(byte) = 4 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Statement [10] main::$1 = stackpull(byte) [ main::$1 ] (  [ main::$1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [12] call2::param1 = 1 [ call2::param1 ] (  [ call2::param1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [13] call2::param2 = 2 [ call2::param1 call2::param2 ] (  [ call2::param1 call2::param2 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [18] call2::param1 = 3 [ call2::param1 ] (  [ call2::param1 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [19] call2::param2 = 4 [ call2::param1 call2::param2 ] (  [ call2::param1 call2::param2 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [33] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) [ call1::param1#0 ] ( call1:2 [ call1::param1#0 ] { }  call1:8 [ call1::param1#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [34] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) [ call1::param1#0 call1::param2#0 ] ( call1:2 [ call1::param1#0 call1::param2#0 ] { }  call1:8 [ call1::param1#0 call1::param2#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [35] call1::return#0 = call1::param1#0 + call1::param2#0 [ call1::return#0 ] ( call1:2 [ call1::return#0 ] { }  call1:8 [ call1::return#0 ] { }  ) always clobbers reg byte a 
+Statement [36] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
+Statement [38] call2::$0 = call2::param1 + call2::param2 [ call2::$0 ] ( call2:14 [ call2::$0 ] { { call2::return = } }  call2:20 [ call2::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
+Statement [43] call3::return#0 = call3::param1#2 + call3::param2#2 [ call3::return#0 ] ( call3:24 [ call3::return#0 ] { { call3::return#0 = call3::return#2 } }  call3:28 [ call3::return#0 ] { { call3::return#0 = call3::return#3 } }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ call3::param1#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ call3::param2#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ call2::param1 ] : zp[1]:6 , 
+Potential registers zp[1]:7 [ call2::param2 ] : zp[1]:7 , 
+Potential registers zp[1]:8 [ call2::return ] : zp[1]:8 , 
+Potential registers zp[1]:9 [ main::$2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::$3 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ call3::return#2 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:12 [ main::$4 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ call3::return#3 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:14 [ main::$5 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:15 [ call1::param1#0 ] : zp[1]:15 , reg byte y , 
+Potential registers zp[1]:16 [ call1::param2#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:17 [ call1::return#0 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:18 [ call2::$0 ] : zp[1]:18 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:19 [ call3::return#0 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [call1] 22: zp[1]:16 [ call1::param2#0 ] 22: zp[1]:17 [ call1::return#0 ] 11: zp[1]:15 [ call1::param1#0 ] 
+Uplift Scope [call2] 22: zp[1]:18 [ call2::$0 ] 7.5: zp[1]:7 [ call2::param2 ] 6.43: zp[1]:8 [ call2::return ] 3.75: zp[1]:6 [ call2::param1 ] 
+Uplift Scope [call3] 11: zp[1]:2 [ call3::param1#2 ] 11: zp[1]:3 [ call3::param2#2 ] 4: zp[1]:11 [ call3::return#2 ] 4: zp[1]:13 [ call3::return#3 ] 3.75: zp[1]:19 [ call3::return#0 ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:5 [ main::$1 ] 4: zp[1]:9 [ main::$2 ] 4: zp[1]:10 [ main::$3 ] 4: zp[1]:12 [ main::$4 ] 4: zp[1]:14 [ main::$5 ] 
+Uplift Scope [] 
+
+Uplifting [call1] best 299 combination reg byte a [ call1::param2#0 ] reg byte a [ call1::return#0 ] zp[1]:15 [ call1::param1#0 ] 
+Uplifting [call2] best 293 combination reg byte a [ call2::$0 ] zp[1]:7 [ call2::param2 ] zp[1]:8 [ call2::return ] zp[1]:6 [ call2::param1 ] 
+Uplifting [call3] best 269 combination reg byte x [ call3::param1#2 ] reg byte a [ call3::param2#2 ] reg byte a [ call3::return#2 ] reg byte a [ call3::return#3 ] zp[1]:19 [ call3::return#0 ] 
+Limited combination testing to 100 combinations of 1024 possible.
+Uplifting [main] best 245 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[1]:12 [ main::$4 ] zp[1]:14 [ main::$5 ] 
+Limited combination testing to 100 combinations of 4096 possible.
+Uplifting [] best 245 combination 
+Attempting to uplift remaining variables inzp[1]:15 [ call1::param1#0 ]
+Uplifting [call1] best 245 combination zp[1]:15 [ call1::param1#0 ] 
+Attempting to uplift remaining variables inzp[1]:7 [ call2::param2 ]
+Uplifting [call2] best 245 combination zp[1]:7 [ call2::param2 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ call2::return ]
+Uplifting [call2] best 245 combination zp[1]:8 [ call2::return ] 
+Attempting to uplift remaining variables inzp[1]:12 [ main::$4 ]
+Uplifting [main] best 239 combination reg byte a [ main::$4 ] 
+Attempting to uplift remaining variables inzp[1]:14 [ main::$5 ]
+Uplifting [main] best 233 combination reg byte a [ main::$5 ] 
+Attempting to uplift remaining variables inzp[1]:6 [ call2::param1 ]
+Uplifting [call2] best 233 combination zp[1]:6 [ call2::param1 ] 
+Attempting to uplift remaining variables inzp[1]:19 [ call3::return#0 ]
+Uplifting [call3] best 224 combination reg byte a [ call3::return#0 ] 
+Coalescing zero page register [ zp[1]:15 [ call1::param1#0 ] ] with [ zp[1]:6 [ call2::param1 ] ]
+Allocated (was zp[1]:7) zp[1]:2 [ call2::param2 ]
+Allocated (was zp[1]:8) zp[1]:3 [ call2::return ]
+Allocated (was zp[1]:15) zp[1]:4 [ call1::param1#0 call2::param1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates how to code a ROM
+// The rom.ld linker file declares segments for RomCode and RomData. 
+// It also declares a TestRom segment used for testing the ROM calls.This ensures that the compiler does not optimize them away.
+  // Upstart
+  // ROM linking file
+.file [name="rom.bin", type="bin", segments="Rom"]
+.segmentdef Rom [segments="RomCode, RomData"]
+.segmentdef RomCode [start=$f000]
+.segmentdef RomData [startAfter="RomCode"]
+.segmentdef TestRom
+  // Global Constants & labels
+  .const STACK_BASE = $103
+.segment TestRom
+  // main
+main: {
+    .label ptr = $fe
+    // [0] stackpush(byte) = 1 -- _stackpushbyte_=vbuc1 
+    lda #1
+    pha
+    // [1] stackpush(byte) = 2 -- _stackpushbyte_=vbuc1 
+    lda #2
+    pha
+    // [2] callexecute call1  -- jsr 
+    jsr call1
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    // [4] main::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // [5] *main::ptr = main::$0 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // [6] stackpush(byte) = 3 -- _stackpushbyte_=vbuc1 
+    lda #3
+    pha
+    // [7] stackpush(byte) = 4 -- _stackpushbyte_=vbuc1 
+    lda #4
+    pha
+    // [8] callexecute call1  -- jsr 
+    jsr call1
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    // [10] main::$1 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // [11] *main::ptr = main::$1 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // [12] call2::param1 = 1 -- vbuz1=vbuc1 
+    lda #1
+    sta.z call2.param1
+    // [13] call2::param2 = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z call2.param2
+    // [14] call call2 
+    jsr call2
+    // [15] call2::return = call2::return
+    jmp __b1
+    // main::@1
+  __b1:
+    // [16] main::$2 = call2::return -- vbuaa=vbuz1 
+    lda.z call2.return
+    // [17] *main::ptr = main::$2 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // [18] call2::param1 = 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z call2.param1
+    // [19] call2::param2 = 4 -- vbuz1=vbuc1 
+    lda #4
+    sta.z call2.param2
+    // [20] call call2 
+    jsr call2
+    // [21] call2::return = call2::return
+    jmp __b2
+    // main::@2
+  __b2:
+    // [22] main::$3 = call2::return -- vbuaa=vbuz1 
+    lda.z call2.return
+    // [23] *main::ptr = main::$3 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // [24] call call3 
+    // [42] phi from main::@2 to call3 [phi:main::@2->call3]
+  call3_from___b2:
+    // [42] phi call3::param2#2 = 2 [phi:main::@2->call3#0] -- vbuaa=vbuc1 
+    lda #2
+    // [42] phi call3::param1#2 = 1 [phi:main::@2->call3#1] -- vbuxx=vbuc1 
+    ldx #1
+    jsr call3
+    // [25] call3::return#2 = call3::return#0
+    jmp __b3
+    // main::@3
+  __b3:
+    // [26] main::$4 = call3::return#2
+    // [27] *main::ptr = main::$4 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // [28] call call3 
+    // [42] phi from main::@3 to call3 [phi:main::@3->call3]
+  call3_from___b3:
+    // [42] phi call3::param2#2 = 4 [phi:main::@3->call3#0] -- vbuaa=vbuc1 
+    lda #4
+    // [42] phi call3::param1#2 = 3 [phi:main::@3->call3#1] -- vbuxx=vbuc1 
+    ldx #3
+    jsr call3
+    // [29] call3::return#3 = call3::return#0
+    jmp __b4
+    // main::@4
+  __b4:
+    // [30] main::$5 = call3::return#3
+    // [31] *main::ptr = main::$5 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [32] return 
+    rts
+}
+.segment RomCode
+  // call1
+// A stack based ROM function that will transfer all parameters and return values through the stack.
+// call1(byte zp(4) param1, byte register(A) param2)
+call1: {
+    .const OFFSET_STACK_PARAM1 = 1
+    .const OFFSET_STACK_PARAM2 = 0
+    .const OFFSET_STACK_RETURN = 1
+    .label param1 = 4
+    // [33] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) -- vbuz1=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_PARAM1,x
+    sta.z param1
+    // [34] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_PARAM2,x
+    // [35] call1::return#0 = call1::param1#0 + call1::param2#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z param1
+    jmp __breturn
+    // call1::@return
+  __breturn:
+    // [36] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    // [37] return 
+    rts
+}
+  // call2
+// A memory based ROM function that will transfer all parameters and return values through zeropage.
+// call2(byte zp(4) param1, byte zp(2) param2)
+call2: {
+    .label return = 3
+    .label param1 = 4
+    .label param2 = 2
+    // [38] call2::$0 = call2::param1 + call2::param2 -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z param1
+    clc
+    adc.z param2
+    // [39] call2::return = call2::$0 -- vbuz1=vbuaa 
+    sta.z return
+    jmp __breturn
+    // call2::@return
+  __breturn:
+    // [40] call2::return = call2::return
+    // [41] return 
+    rts
+}
+  // call3
+// A "normal" optimized ROM function that will transfer parameters and return value through registers or zeropage.
+// call3(byte register(X) param1, byte register(A) param2)
+call3: {
+    // [43] call3::return#0 = call3::param1#2 + call3::param2#2 -- vbuaa=vbuxx_plus_vbuaa 
+    stx.z $ff
+    clc
+    adc.z $ff
+    jmp __breturn
+    // call3::@return
+  __breturn:
+    // [44] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction call3_from___b2:
+Removing instruction __b3:
+Removing instruction call3_from___b3:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const word STACK_BASE = $103
+__stackcall byte call1(byte call1::param1 , byte call1::param2)
+const byte call1::OFFSET_STACK_PARAM1 = 1
+const byte call1::OFFSET_STACK_PARAM2 = 0
+const byte call1::OFFSET_STACK_RETURN = 1
+byte call1::param1
+byte call1::param1#0 param1 zp[1]:4 11.0
+byte call1::param2
+byte call1::param2#0 reg byte a 22.0
+byte call1::return
+byte call1::return#0 reg byte a 22.0
+byte call2(byte call2::param1 , byte call2::param2)
+byte~ call2::$0 reg byte a 22.0
+byte call2::param1 loadstore zp[1]:4 3.75
+byte call2::param2 loadstore zp[1]:2 7.5
+byte call2::return loadstore zp[1]:3 6.428571428571428
+byte call3(byte call3::param1 , byte call3::param2)
+byte call3::param1
+byte call3::param1#2 reg byte x 11.0
+byte call3::param2
+byte call3::param2#2 reg byte a 11.0
+byte call3::return
+byte call3::return#0 reg byte a 3.75
+byte call3::return#2 reg byte a 4.0
+byte call3::return#3 reg byte a 4.0
+void main()
+byte~ main::$0 reg byte a 4.0
+byte~ main::$1 reg byte a 4.0
+byte~ main::$2 reg byte a 4.0
+byte~ main::$3 reg byte a 4.0
+byte~ main::$4 reg byte a 4.0
+byte~ main::$5 reg byte a 4.0
+const byte* main::ptr = (byte*) 254
+
+reg byte x [ call3::param1#2 ]
+reg byte a [ call3::param2#2 ]
+reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
+zp[1]:2 [ call2::param2 ]
+zp[1]:3 [ call2::return ]
+reg byte a [ main::$2 ]
+reg byte a [ main::$3 ]
+reg byte a [ call3::return#2 ]
+reg byte a [ main::$4 ]
+reg byte a [ call3::return#3 ]
+reg byte a [ main::$5 ]
+zp[1]:4 [ call1::param1#0 call2::param1 ]
+reg byte a [ call1::param2#0 ]
+reg byte a [ call1::return#0 ]
+reg byte a [ call2::$0 ]
+reg byte a [ call3::return#0 ]
+
+
+FINAL ASSEMBLER
+Score: 200
+
+  // File Comments
+// Demonstrates how to code a ROM
+// The rom.ld linker file declares segments for RomCode and RomData. 
+// It also declares a TestRom segment used for testing the ROM calls.This ensures that the compiler does not optimize them away.
+  // Upstart
+  // ROM linking file
+.file [name="rom.bin", type="bin", segments="Rom"]
+.segmentdef Rom [segments="RomCode, RomData"]
+.segmentdef RomCode [start=$f000]
+.segmentdef RomData [startAfter="RomCode"]
+.segmentdef TestRom
+  // Global Constants & labels
+  .const STACK_BASE = $103
+.segment TestRom
+  // main
+main: {
+    .label ptr = $fe
+    // call1(1,2)
+    // [0] stackpush(byte) = 1 -- _stackpushbyte_=vbuc1 
+    lda #1
+    pha
+    // [1] stackpush(byte) = 2 -- _stackpushbyte_=vbuc1 
+    lda #2
+    pha
+    // [2] callexecute call1  -- jsr 
+    jsr call1
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    // [4] main::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // *ptr = call1(1,2)
+    // [5] *main::ptr = main::$0 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // call1(3,4)
+    // [6] stackpush(byte) = 3 -- _stackpushbyte_=vbuc1 
+    lda #3
+    pha
+    // [7] stackpush(byte) = 4 -- _stackpushbyte_=vbuc1 
+    lda #4
+    pha
+    // [8] callexecute call1  -- jsr 
+    jsr call1
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    // [10] main::$1 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // *ptr = call1(3,4)
+    // [11] *main::ptr = main::$1 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // call2(1,2)
+    // [12] call2::param1 = 1 -- vbuz1=vbuc1 
+    lda #1
+    sta.z call2.param1
+    // [13] call2::param2 = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z call2.param2
+    // [14] call call2 
+    jsr call2
+    // [15] call2::return = call2::return
+    // main::@1
+    // [16] main::$2 = call2::return -- vbuaa=vbuz1 
+    lda.z call2.return
+    // *ptr = call2(1,2)
+    // [17] *main::ptr = main::$2 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // call2(3,4)
+    // [18] call2::param1 = 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z call2.param1
+    // [19] call2::param2 = 4 -- vbuz1=vbuc1 
+    lda #4
+    sta.z call2.param2
+    // [20] call call2 
+    jsr call2
+    // [21] call2::return = call2::return
+    // main::@2
+    // [22] main::$3 = call2::return -- vbuaa=vbuz1 
+    lda.z call2.return
+    // *ptr = call2(3,4)
+    // [23] *main::ptr = main::$3 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // call3(1,2)
+    // [24] call call3 
+    // [42] phi from main::@2 to call3 [phi:main::@2->call3]
+    // [42] phi call3::param2#2 = 2 [phi:main::@2->call3#0] -- vbuaa=vbuc1 
+    lda #2
+    // [42] phi call3::param1#2 = 1 [phi:main::@2->call3#1] -- vbuxx=vbuc1 
+    ldx #1
+    jsr call3
+    // call3(1,2)
+    // [25] call3::return#2 = call3::return#0
+    // main::@3
+    // [26] main::$4 = call3::return#2
+    // *ptr = call3(1,2)
+    // [27] *main::ptr = main::$4 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // call3(3,4)
+    // [28] call call3 
+    // [42] phi from main::@3 to call3 [phi:main::@3->call3]
+    // [42] phi call3::param2#2 = 4 [phi:main::@3->call3#0] -- vbuaa=vbuc1 
+    lda #4
+    // [42] phi call3::param1#2 = 3 [phi:main::@3->call3#1] -- vbuxx=vbuc1 
+    ldx #3
+    jsr call3
+    // call3(3,4)
+    // [29] call3::return#3 = call3::return#0
+    // main::@4
+    // [30] main::$5 = call3::return#3
+    // *ptr = call3(3,4)
+    // [31] *main::ptr = main::$5 -- _deref_pbuc1=vbuaa 
+    sta ptr
+    // main::@return
+    // }
+    // [32] return 
+    rts
+}
+.segment RomCode
+  // call1
+// A stack based ROM function that will transfer all parameters and return values through the stack.
+// call1(byte zp(4) param1, byte register(A) param2)
+call1: {
+    .const OFFSET_STACK_PARAM1 = 1
+    .const OFFSET_STACK_PARAM2 = 0
+    .const OFFSET_STACK_RETURN = 1
+    .label param1 = 4
+    // [33] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) -- vbuz1=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_PARAM1,x
+    sta.z param1
+    // [34] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_PARAM2,x
+    // return param1+param2;
+    // [35] call1::return#0 = call1::param1#0 + call1::param2#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z param1
+    // call1::@return
+    // }
+    // [36] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    // [37] return 
+    rts
+}
+  // call2
+// A memory based ROM function that will transfer all parameters and return values through zeropage.
+// call2(byte zp(4) param1, byte zp(2) param2)
+call2: {
+    .label return = 3
+    .label param1 = 4
+    .label param2 = 2
+    // param1+param2
+    // [38] call2::$0 = call2::param1 + call2::param2 -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z param1
+    clc
+    adc.z param2
+    // return param1+param2;
+    // [39] call2::return = call2::$0 -- vbuz1=vbuaa 
+    sta.z return
+    // call2::@return
+    // }
+    // [40] call2::return = call2::return
+    // [41] return 
+    rts
+}
+  // call3
+// A "normal" optimized ROM function that will transfer parameters and return value through registers or zeropage.
+// call3(byte register(X) param1, byte register(A) param2)
+call3: {
+    // param1+param2
+    // [43] call3::return#0 = call3::param1#2 + call3::param2#2 -- vbuaa=vbuxx_plus_vbuaa 
+    stx.z $ff
+    clc
+    adc.z $ff
+    // call3::@return
+    // }
+    // [44] return 
+    rts
+}
+  // File Data
+

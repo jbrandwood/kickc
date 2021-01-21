@@ -9,7 +9,7 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .const long_ptr_zp = <long_ptr
+    .const long_ptr_zp = long_ptr
     .label long_ptr = 2
     // long_ptr = 0x12345678
     lda #<$12345678

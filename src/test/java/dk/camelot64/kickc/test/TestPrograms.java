@@ -84,6 +84,10 @@ public class TestPrograms {
       compileAndCompare("missing-band.c");
    }
 
+   @Test
+   public void testUnknownVarProblem2() throws IOException, URISyntaxException {
+      assertError("unknown-var-problem-2.c", "error: Initializer is not a constant value.");
+   }
 
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test
@@ -444,6 +448,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRom() throws IOException, URISyntaxException {
+      compileAndCompare("examples/rom/rom.c");
+   }
+
+   @Test
    public void testNesDxycp() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes/nes-dxycp.c");
    }
@@ -460,28 +469,27 @@ public class TestPrograms {
 
    @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/veralayers.c");
+      compileAndCompare("examples/cx16/cx16-veralayers.c");
    }
 
    @Test
    public void testCx16TileMap() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/tilemap.c");
+      compileAndCompare("examples/cx16/cx16-tilemap.c");
    }
-
 
    @Test
    public void testCx16Sprites() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/sprites.c");
+      compileAndCompare("examples/cx16/cx16-sprites.c");
    }
 
    @Test
    public void testCx16Text() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/text.c");
+      compileAndCompare("examples/cx16/cx16-text.c");
    }
 
    @Test
    public void testCx16Rasterbars() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/rasterbars.c");
+      compileAndCompare("examples/cx16/cx16-rasterbars.c");
    }
 
    @Test
@@ -556,17 +564,17 @@ public class TestPrograms {
 
    @Test
    public void testAtariXlConioTest() throws IOException, URISyntaxException {
-      compileAndCompare("examples/atarixl/conio-test.c");
+      compileAndCompare("examples/atarixl/atarixl-conio.c");
    }
 
    @Test
    public void testAtariXlRasterbars() throws IOException, URISyntaxException {
-      compileAndCompare("examples/atarixl/rasterbars.c");
+      compileAndCompare("examples/atarixl/atarixl-rasterbars.c");
    }
 
    @Test
    public void testAtariXlHello() throws IOException, URISyntaxException {
-      compileAndCompare("examples/atarixl/helloxl.c");
+      compileAndCompare("examples/atarixl/atarixl-hello.c");
    }
 
    @Test
@@ -621,7 +629,7 @@ public class TestPrograms {
 
    @Test
    public void testPlus4Walk() throws IOException, URISyntaxException {
-      compileAndCompare("examples/plus4walk/plus4walk.c");
+      compileAndCompare("examples/plus4/plus4-randomwalk.c");
    }
 
    @Test
@@ -1169,12 +1177,12 @@ public class TestPrograms {
 
    @Test
    public void testKernalLoad() throws IOException, URISyntaxException {
-      compileAndCompare("examples/kernalload/kernalload.c");
+      compileAndCompare("examples/c64/kernalload/kernalload.c");
    }
 
    @Test
    public void testKrillLoad() throws IOException, URISyntaxException {
-      compileAndCompare("examples/krillload/krillload.c");
+      compileAndCompare("examples/c64/krillload/krillload.c");
    }
 
    @Test
@@ -1348,7 +1356,7 @@ public class TestPrograms {
 
    @Test
    public void testZpCode() throws IOException, URISyntaxException {
-      compileAndCompare("examples/zpcode/zpcode.c");
+      compileAndCompare("examples/c64/zpcode/zpcode.c");
    }
 
    // Fix parameter type problem - https://gitlab.com/camelot/kickc/issues/299
@@ -1450,11 +1458,6 @@ public class TestPrograms {
    @Test
    public void testParseNegatedStructRef() throws IOException, URISyntaxException {
       compileAndCompare("parse-negated-struct-ref.c");
-   }
-
-   @Test
-   public void testLongPointer1() throws IOException, URISyntaxException {
-      compileAndCompare("long-pointer-1.c");
    }
 
    @Test
@@ -1568,6 +1571,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineAsmUses1() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-uses-1.c");
+   }
+
+   @Test
    public void testInlineAsmMaVar() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-ma-var.c");
    }
@@ -1594,12 +1602,12 @@ public class TestPrograms {
 
    @Test
    public void testLinking() throws IOException, URISyntaxException {
-      compileAndCompare("examples/linking/linking.c");
+      compileAndCompare("examples/c64/linking/linking.c");
    }
 
    @Test
    public void testNmiSamples() throws IOException, URISyntaxException {
-      compileAndCompare("examples/nmisamples/nmisamples.c");
+      compileAndCompare("examples/c64/nmisamples/nmisamples.c");
    }
 
    @Test
@@ -3078,12 +3086,12 @@ public class TestPrograms {
 
    @Test
    public void testFire() throws IOException, URISyntaxException {
-      compileAndCompare("examples/fire/fire.c");
+      compileAndCompare("examples/c64/fire/fire.c");
    }
 
    @Test
    public void testFont2x2() throws IOException, URISyntaxException {
-      compileAndCompare("examples/font-2x2/font-2x2.c");
+      compileAndCompare("examples/c64/font-2x2/font-2x2.c");
    }
 
    @Test
@@ -3098,12 +3106,12 @@ public class TestPrograms {
 
    @Test
    public void testPlasmaUnroll() throws IOException, URISyntaxException {
-      compileAndCompare("examples/plasma/plasma-unroll.c");
+      compileAndCompare("examples/c64/plasma/plasma-unroll.c");
    }
 
    @Test
    public void testPlasma() throws IOException, URISyntaxException {
-      compileAndCompare("examples/plasma/plasma.c");
+      compileAndCompare("examples/c64/plasma/plasma.c");
    }
 
    // TODO: Fix bool auto-conversion type conversion https://gitlab.com/camelot/kickc/issues/199
@@ -3321,22 +3329,22 @@ public class TestPrograms {
 
    @Test
    public void testMusicIrq() throws IOException, URISyntaxException {
-      compileAndCompare("examples/music/music_irq.c");
+      compileAndCompare("examples/c64/music/music_irq.c");
    }
 
    @Test
    public void testCrunchingExomizer() throws IOException, URISyntaxException {
-      compileAndCompare("examples/crunching/test-exomizer.c");
+      compileAndCompare("examples/c64/crunching/test-exomizer.c");
    }
 
    @Test
    public void testCrunchingByteboozer() throws IOException, URISyntaxException {
-      compileAndCompare("examples/crunching/test-byteboozer.c");
+      compileAndCompare("examples/c64/crunching/test-byteboozer.c");
    }
 
    @Test
    public void testMusic() throws IOException, URISyntaxException {
-      compileAndCompare("examples/music/music.c");
+      compileAndCompare("examples/c64/music/music.c");
    }
 
    @Test
@@ -3651,17 +3659,17 @@ public class TestPrograms {
 
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
-      compileAndCompare("examples/fastmultiply/fastmultiply8.c");
+      compileAndCompare("examples/c64/fastmultiply/fastmultiply8.c");
    }
 
    @Test
    public void test3DPerspective() throws IOException, URISyntaxException {
-      compileAndCompare("examples/3d/perspective.c");
+      compileAndCompare("examples/c64/3d/perspective.c");
    }
 
    @Test
    public void test3D() throws IOException, URISyntaxException {
-      compileAndCompare("examples/3d/3d.c");
+      compileAndCompare("examples/c64/3d/3d.c");
    }
 
    @Test
@@ -3671,7 +3679,7 @@ public class TestPrograms {
 
    @Test
    public void testRotate() throws IOException, URISyntaxException {
-      compileAndCompare("examples/rotate/rotate.c");
+      compileAndCompare("examples/c64/rotate/rotate.c");
    }
 
    @Test
@@ -3781,7 +3789,7 @@ public class TestPrograms {
 
    @Test
    public void testIrqHyperscreen() throws IOException, URISyntaxException {
-      compileAndCompare("examples/irq/irq-hyperscreen.c");
+      compileAndCompare("examples/c64/irq/irq-hyperscreen.c");
    }
 
    @Test
@@ -3806,7 +3814,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("examples/multiplexer/simple-multiplexer.c", 10);
+      compileAndCompare("examples/c64/multiplexer/simple-multiplexer.c", 10);
    }
 
    @Test
@@ -3836,17 +3844,17 @@ public class TestPrograms {
 
    @Test
    public void testSinePlotter() throws IOException, URISyntaxException {
-      compileAndCompare("examples/sinplotter/sine-plotter.c");
+      compileAndCompare("examples/c64/sinplotter/sine-plotter.c");
    }
 
    @Test
    public void testScrollLogo() throws IOException, URISyntaxException {
-      compileAndCompare("examples/scrolllogo/scrolllogo.c");
+      compileAndCompare("examples/c64/scrolllogo/scrolllogo.c");
    }
 
    @Test
    public void testShowLogo() throws IOException, URISyntaxException {
-      compileAndCompare("examples/showlogo/showlogo.c");
+      compileAndCompare("examples/c64/showlogo/showlogo.c");
    }
 
    @Test
@@ -4081,7 +4089,7 @@ public class TestPrograms {
 
    @Test
    public void testChargenAnalysis() throws IOException, URISyntaxException {
-      compileAndCompare("examples/chargen/chargen-analysis.c");
+      compileAndCompare("examples/c64/chargen/chargen-analysis.c");
    }
 
    @Test
@@ -4221,7 +4229,7 @@ public class TestPrograms {
 
    @Test
    public void testRasterBars() throws IOException, URISyntaxException {
-      compileAndCompare("examples/rasterbars/raster-bars.c");
+      compileAndCompare("examples/c64/rasterbars/raster-bars.c");
    }
 
    @Test
@@ -4321,7 +4329,7 @@ public class TestPrograms {
 
    @Test
    public void testSinusSprites() throws IOException, URISyntaxException {
-      compileAndCompare("examples/sinsprites/sinus-sprites.c");
+      compileAndCompare("examples/c64/sinsprites/sinus-sprites.c");
    }
 
    @Test
@@ -4426,7 +4434,7 @@ public class TestPrograms {
 
    @Test
    public void testScrollBig() throws IOException, URISyntaxException {
-      compileAndCompare("examples/scrollbig/scrollbig.c");
+      compileAndCompare("examples/c64/scrollbig/scrollbig.c");
    }
 
    @Test
@@ -4456,7 +4464,7 @@ public class TestPrograms {
 
    @Test
    public void testBitmapBresenham() throws IOException, URISyntaxException {
-      compileAndCompare("examples/bresenham/bitmap-bresenham.c");
+      compileAndCompare("examples/c64/bresenham/bitmap-bresenham.c");
    }
 
    @Test
@@ -4502,7 +4510,7 @@ public class TestPrograms {
 
    @Test
    public void testScroll() throws IOException, URISyntaxException {
-      compileAndCompare("examples/scroll/scroll.c");
+      compileAndCompare("examples/c64/scroll/scroll.c");
    }
 
    @Test

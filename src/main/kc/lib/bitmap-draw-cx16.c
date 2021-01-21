@@ -6,13 +6,16 @@
 #include <multiply.h>
 
 // Tables for the plotter - initialized by calling bitmap_draw_init();
-const word bitmap_plot_x[640];
-const dword bitmap_plot_y[480];
-const byte bitmap_plot_bitmask[640];
-const byte bitmap_plot_bitshift[640];
+const word  __bitmap_plot_x[640];
+const dword __bitmap_plot_y[480];
+const byte  __bitmap_plot_bitmask[640];
+const byte  __bitmap_plot_bitshift[640];
 
-__ma dword bitmap_address = 0;
-__ma byte bitmap_layer = 0;
+__ma dword __bitmap_address = 0;
+__ma byte __bitmap_layer = 0;
+__ma byte __bitmap_hscale = 0;
+__ma byte __bitmap_vscale = 0;
+__ma byte __bitmap_color_depth = 0;
 
 word hdeltas[16] = {
     0, 80, 40, 20,    // 1 BPP
@@ -27,85 +30,82 @@ const signed byte bitshifts[5] = {7, 6, 4, 0};
 
 // Initialize the bitmap plotter tables for a specific bitmap
 void bitmap_init(byte layer, dword address) {
-    bitmap_address = address;
-    bitmap_layer = layer;
-    byte color_depth = vera_layer_get_color_depth(bitmap_layer);
-    byte hscale = vera_display_get_hscale(); // Returns 1 when 640 and 2 when 320.
-    byte vscale = vera_display_get_vscale(); // Returns 1 when 480 and 2 when 240.
+    __bitmap_address = address;
+    __bitmap_layer = layer;
+    __bitmap_color_depth = vera_layer_get_color_depth(__bitmap_layer);
+    __bitmap_hscale = vera_display_get_hscale(); // Returns 1 when 640 and 2 when 320.
+    __bitmap_vscale = vera_display_get_vscale(); // Returns 1 when 480 and 2 when 240.
 
-    byte bitmask = bitmasks[color_depth];
-    signed byte bitshift = bitshifts[color_depth];
+    byte bitmask = bitmasks[__bitmap_color_depth];
+    signed byte bitshift = bitshifts[__bitmap_color_depth];
 
     for(word x : 0..639) {
         // 1 BPP
-        if(color_depth==0) {
-            bitmap_plot_x[x] = (x >> 3);
-            bitmap_plot_bitmask[x] = bitmask;
-            bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap_color_depth==0) {
+            __bitmap_plot_x[x] = (x >> 3);
+            __bitmap_plot_bitmask[x] = bitmask;
+            __bitmap_plot_bitshift[x] = (byte)bitshift;
             bitshift -= 1;
             bitmask >>= 1;
         }
         // 2 BPP
-        if(color_depth==1) {
-            bitmap_plot_x[x] = (x >> 2);
-            bitmap_plot_bitmask[x] = bitmask;
-            bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap_color_depth==1) {
+            __bitmap_plot_x[x] = (x >> 2);
+            __bitmap_plot_bitmask[x] = bitmask;
+            __bitmap_plot_bitshift[x] = (byte)bitshift;
             bitshift -= 2;
             bitmask >>= 2;
         }
         // 4 BPP
-        if(color_depth==2) {
-            bitmap_plot_x[x] = (x >> 1);
-            bitmap_plot_bitmask[x] = bitmask;
-            bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap_color_depth==2) {
+            __bitmap_plot_x[x] = (x >> 1);
+            __bitmap_plot_bitmask[x] = bitmask;
+            __bitmap_plot_bitshift[x] = (byte)bitshift;
             bitshift -= 4;
             bitmask >>= 4;
         }
         // 8 BPP
-        if(color_depth==3) {
-            bitmap_plot_x[x] = x;
-            bitmap_plot_bitmask[x] = bitmask;
-            bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap_color_depth==3) {
+            __bitmap_plot_x[x] = x;
+            __bitmap_plot_bitmask[x] = bitmask;
+            __bitmap_plot_bitshift[x] = (byte)bitshift;
         }
         if(bitshift<0) {
-            bitshift = bitshifts[color_depth];
+            bitshift = bitshifts[__bitmap_color_depth];
         }
         if(bitmask==0) {
-            bitmask = bitmasks[color_depth];
+            bitmask = bitmasks[__bitmap_color_depth];
         }
     }
 
     // This sets the right delta to skip a whole line based on the scale, depending on the color depth.
-    word hdelta = hdeltas[(color_depth<<2)+hscale];
+    word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale];
     // We start at the bitmap address; The plot_y contains the bitmap address embedded so we know where a line starts.
-    dword yoffs = bitmap_address;
+    dword yoffs = __bitmap_address;
     for(word y : 0..479) {
-        bitmap_plot_y[y] = yoffs;
+        __bitmap_plot_y[y] = yoffs;
         yoffs = yoffs + hdelta;
     }
 }
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    byte color_depth = vera_layer_get_color_depth(bitmap_layer);
-    byte bitmask = bitmasks[color_depth];
-    byte hscale = vera_display_get_hscale(); // Returns 1 when 640 and 2 when 320.
-    byte vscale = vera_display_get_vscale(); // Returns 1 when 480 and 2 when 240.
-    word vdelta = vdeltas[vscale];
-    word hdelta = hdeltas[(color_depth<<2)+hscale];
+    byte bitmask = bitmasks[__bitmap_color_depth];
+    word vdelta = vdeltas[__bitmap_vscale];
+    word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale];
     dword count = mul16u(hdelta,vdelta);
-    memset_vram_address(bitmap_address,0,count);
+    memset_vram_address(__bitmap_address,0,count);
 }
 
 void bitmap_plot(word x, word y, byte c) {
     // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
-    dword plot_x = bitmap_plot_x[x];
-    dword plot_y = bitmap_plot_y[y];
+    dword plot_x = __bitmap_plot_x[x];
+    dword plot_y = __bitmap_plot_y[y];
     dword plotter = plot_x+plot_y;
-    byte bitshift = bitmap_plot_bitshift[x];
+    byte bitshift = __bitmap_plot_bitshift[x];
     c = bitshift?c<<(bitshift):c;
     vera_vram_address0(plotter,VERA_INC_0);
-    *VERA_DATA0 = (*VERA_DATA0 & ~bitmap_plot_bitmask[x]) | c;
+    *VERA_DATA0 = (*VERA_DATA0 & ~__bitmap_plot_bitmask[x]) | c;
 }
 
 

@@ -3273,3 +3273,17 @@ sta {z1}
 bcc !+
 inc {z1}+1
 !:
+//FRAGMENT vbsyy=pbsc1_derefidx_vbuz1
+ldx {z1}
+ldy {c1},x
+//FRAGMENT vbuxx=vbuxx_plus_1
+inx
+//FRAGMENT vbuyy=vbuyy_plus_1
+iny
+//FRAGMENT vbuz1=vbuz1_rol_4
+lda {z1}
+asl
+asl
+asl
+asl
+sta {z1}

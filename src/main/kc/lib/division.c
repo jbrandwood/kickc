@@ -71,6 +71,28 @@ unsigned int divr16u(unsigned int dividend, unsigned int divisor, unsigned int r
     return quotient;
 }
 
+// Performs modulo on two 16 bit unsigned ints and an initial remainder
+// Returns the remainder.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+unsigned int modr16u(unsigned int dividend, unsigned int divisor, unsigned int rem) {
+    unsigned int quotient = 0;
+    for( char i : 0..15) {
+        rem = rem << 1;
+        if( (>dividend & $80) != 0 ) {
+            rem = rem | 1;
+        }
+        dividend = dividend << 1;
+        quotient = quotient << 1;
+        if(rem>=divisor) {
+            quotient++;
+            rem = rem - divisor;
+        }
+    }
+    rem16u = rem;
+    return rem;
+}
+
 // Performs division on two 16 bit unsigned ints
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u

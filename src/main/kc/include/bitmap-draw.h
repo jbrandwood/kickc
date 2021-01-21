@@ -7,7 +7,7 @@ void bitmap_init(byte layer, dword address);
 // Clear all graphics on the bitmap
 void bitmap_clear();
 
-void bitmap_plot(word x, word y);
+void bitmap_plot(word x, word y, byte c);
 
 // Draw a line on the bitmap
-void bitmap_line(word x0, word x1, word y0, word y1);
+void bitmap_line(word x0, word x1, word y0, word y1, byte c);

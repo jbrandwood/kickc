@@ -87,6 +87,7 @@ byte vera_display_get_vscale() {
 
 word vera_display_get_height() {
     byte scale = vera_display_get_vscale();
+    *VERA_CTRL = *VERA_CTRL | VERA_DCSEL;
     word height = (word)(*VERA_DC_VSTOP - *VERA_DC_VSTART);
     switch( scale ) {
         case 2:
@@ -96,9 +97,25 @@ word vera_display_get_height() {
             height = height >> 2;
             break;
     }
+    *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL;
     return height<<1;
 }
 
+word vera_display_get_width() {
+    byte scale = vera_display_get_hscale();
+    *VERA_CTRL = *VERA_CTRL | VERA_DCSEL;
+    word width = (word)(*VERA_DC_HSTOP - *VERA_DC_HSTART);
+    switch( scale ) {
+        case 2:
+            width = width >> 1;
+            break;
+        case 3:
+            width = width >> 2;
+            break;
+    }
+    *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL;
+    return width<<1;
+}
 
 // --- VERA layer management ---
 
@@ -224,13 +241,13 @@ inline void vera_layer_set_color_depth_8BPP(byte layer) {
     *addr |= VERA_LAYER_COLOR_DEPTH_8BPP;
 }
 
-// Get the map width or height of the layer.
+// Get the color depth of the layer.
 // - layer: Value of 0 or 1.
-// - return: 1, 2, 4 or 8.
+// - return: 0 = 1 color, 1 = 2 colors, 2 = 4 colors or 3 = 8 colors.
 byte vera_layer_get_color_depth(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = (byte)VERA_LAYER_COLOR_DEPTH_MASK;
-    return VERA_LAYER_COLOR_DEPTH[(*config & mask)];
+    return *config & mask;
 }
 
 // Enable the layer to be displayed on the screen.
@@ -664,8 +681,8 @@ void vera_layer_mode_bitmap(byte layer, dword bitmap_address, word mapwidth, wor
             break;
     }
 
-    vera_layer_set_tilebase(layer,tilebase);
     vera_layer_set_config(layer, config);
+    vera_layer_set_tilebase(layer,tilebase);
 }
 
 // --- TILE FUNCTIONS ---

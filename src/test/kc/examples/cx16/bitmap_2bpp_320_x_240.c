@@ -1,12 +1,7 @@
 // Example program for the Commander X16.
-// Demonstrates the usage of the VERA tile map modes and layering.
+// Demonstrates the usage of the VERA graphic modes and layering.
 
 // Author: Sven Van de Velde
-
-// The default layer of the CX16 is layer 1, but the tiles are written on layer 0.
-
-// An explanation is given how this mode is organized, and how the tiles display and coloring works.
-// Pälette offsets are explained also.
 
 #include <conio.h>
 #include <printf.h>
@@ -27,7 +22,7 @@ void main() {
     memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
     vera_layer_mode_tile(1, 0x14000, 0x1F000, 128, 64, 8, 8, 1);
 
-    vera_layer_mode_bitmap(0, (dword)0x00000, 320, 8);
+    vera_layer_mode_bitmap(0, (dword)0x00000, 320, 2);
 
     screenlayer(1);
     textcolor(WHITE);
@@ -36,9 +31,9 @@ void main() {
 
     gotoxy(0,25);
     printf("vera in bitmap mode,\n");
-    printf("color depth 8 bits per pixel.\n");
+    printf("color depth 2 bits per pixel.\n");
     printf("in this mode, it is possible to display\n");
-    printf("graphics in 256 colors.\n");
+    printf("graphics in 4 colors.\n");
 
     vera_layer_show(0);
 
@@ -50,7 +45,7 @@ void main() {
     printf("press a key ...");
 
     while(!kbhit()) {
-        bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255);
+        bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&3);
     };
 
     textcolor(WHITE);
@@ -69,6 +64,7 @@ void main() {
     while(!kbhit()) {
         bitmap_line(x, x, 0, 199, color);
         color++;
+        if(color>3) color=0;
         x++;
         if(x>319) x=0;
     };

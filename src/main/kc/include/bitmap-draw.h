@@ -1,13 +1,9 @@
-// Plot and line drawing routines for HIRES bitmaps
-// Currently it can only plot on the first 256 x-positions.
-
-// Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(byte layer, dword address);
-
-// Clear all graphics on the bitmap
-void bitmap_clear();
-
-void bitmap_plot(word x, word y, byte c);
-
-// Draw a line on the bitmap
-void bitmap_line(word x0, word x1, word y0, word y1, byte c);
+// Provides provide bitmap output
+// Currently C64/PLUS4/VIC20/CX16 platforms are supported
+#if defined(__CX16__)
+#include "bitmap-draw-cx16.h"
+#elif defined(__C64__)
+#include "bitmap-draw-c64.h"
+#else
+#error "Target platform does not support bitmap-draw.h"
+#endif

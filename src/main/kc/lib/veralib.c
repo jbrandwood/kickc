@@ -13,7 +13,7 @@
 
 // --- VERA addressing ---
 
-void vera_vram_bank_offset(byte bank, word offset, byte incr) {
+inline void vera_vram_bank_offset(byte bank, word offset, byte incr) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
@@ -22,41 +22,37 @@ void vera_vram_bank_offset(byte bank, word offset, byte incr) {
     *VERA_ADDRX_H = bank | incr;
 }
 
-void vera_vram_address0(dword bankaddr, byte incr) {
-    word* word_l = &(<bankaddr);
-    word* word_h = &(>bankaddr);
+inline void vera_vram_address0(dword bankaddr, byte incr) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(*word_l);
-    *VERA_ADDRX_M = >(*word_l);
-    *VERA_ADDRX_H = <(*word_h) | incr;
+    *VERA_ADDRX_L = <(<bankaddr);
+    *VERA_ADDRX_M = >(<bankaddr);
+    *VERA_ADDRX_H = <(>bankaddr) | incr;
 }
 
-void vera_vram_address1(dword bankaddr, byte incr) {
-    word* word_l = &(<bankaddr);
-    word* word_h = &(>bankaddr);
+inline void vera_vram_address1(dword bankaddr, byte incr) {
     // Select DATA1
     *VERA_CTRL |= VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(*word_l);
-    *VERA_ADDRX_M = >(*word_l);
-    *VERA_ADDRX_H = <(*word_h) | incr;
+    *VERA_ADDRX_L = <(<bankaddr);
+    *VERA_ADDRX_M = >(<bankaddr);
+    *VERA_ADDRX_H = <(>bankaddr) | incr;
 }
 
 // --- VERA active display management ---
 
-void vera_display_set_scale_none() {
+inline void vera_display_set_scale_none() {
     *VERA_DC_HSCALE = 128;
     *VERA_DC_VSCALE = 128;
 }
 
-void vera_display_set_scale_double() {
+inline void vera_display_set_scale_double() {
     *VERA_DC_HSCALE = 64;
     *VERA_DC_VSCALE = 64;
 }
 
-void vera_display_set_scale_triple() {
+inline void vera_display_set_scale_triple() {
     *VERA_DC_HSCALE = 32;
     *VERA_DC_VSCALE = 32;
 }

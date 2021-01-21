@@ -35,17 +35,19 @@ byte* vera_layer_hscroll_h[2] = {VERA_L0_HSCROLL_H, VERA_L1_HSCROLL_H};
 byte vera_layer_textcolor[2] = {WHITE, WHITE};
 byte vera_layer_backcolor[2] = {BLUE, BLUE};
 
+byte hscale[4] = {0,128,64,32};
+
 // --- VERA addressing ---
 
-void vera_vram_bank_offset(byte bank, word offset, byte incr);
-void vera_vram_address0(dword bankaddr, byte incr);
-void vera_vram_address1(dword bankaddr, byte incr);
+inline void vera_vram_bank_offset(byte bank, word offset, byte incr);
+inline void vera_vram_address0(dword bankaddr, byte incr);
+inline void vera_vram_address1(dword bankaddr, byte incr);
 
 // --- VERA active display management ---
 
-void vera_display_set_scale_none();
-void vera_display_set_scale_double();
-void vera_display_set_scale_triple();
+inline void vera_display_set_scale_none();
+inline void vera_display_set_scale_double();
+inline void vera_display_set_scale_triple();
 byte vera_display_get_hscale();
 byte vera_display_get_vscale();
 word vera_display_get_height();

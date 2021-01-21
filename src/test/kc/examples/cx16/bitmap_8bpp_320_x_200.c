@@ -24,7 +24,7 @@ void lines() {
 }
 void main() {
 
-    vera_layer_mode_bitmap(0, (dword)0x04000, 320, 1);
+    vera_layer_mode_bitmap(0, (dword)0x04000, 640, 1);
 
     screenlayer(1);
     textcolor(RED);

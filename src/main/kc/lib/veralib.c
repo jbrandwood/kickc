@@ -85,6 +85,20 @@ byte vera_display_get_vscale() {
     return scale;
 }
 
+word vera_display_get_height() {
+    byte scale = vera_display_get_vscale();
+    word height = (word)(*VERA_DC_VSTOP - *VERA_DC_VSTART);
+    switch( scale ) {
+        case 2:
+            height = height >> 1;
+            break;
+        case 3:
+            height = height >> 2;
+            break;
+    }
+    return height<<1;
+}
+
 
 // --- VERA layer management ---
 

@@ -12,12 +12,12 @@
 
 void main() {
 
-    vera_layer_mode_text(1, 0x00000, 0x0f800, 64, 64, 8, 8, 4);
-    vera_display_set_scale_double();
-    vera_layer_show(1);
-    screenlayer(1);
-
     do {
+        vera_layer_mode_text(1, 0x00000, 0x0f800, 64, 64, 8, 8, 4);
+        vera_display_set_scale_double();
+        vera_layer_show(1);
+        screenlayer(1);
+
         textcolor(WHITE);
         bgcolor(BLUE);
         clrscr();
@@ -77,7 +77,7 @@ void main() {
                 //text_8_x_8_1BPP_256_color();
                 break;
             case 67:
-                //tile_8_x_8_2BPP_4_color();
+                tile_8_x_8_2BPP_4_color();
                 break;
             case 68:
                 //tile_16_x_16_2BPP_4_color();
@@ -108,7 +108,7 @@ void main() {
         bgcolor(BLUE);
         clrscr();
 
-    } while( menu != 58 );
+    } while( menu != 57 );
 
 }
 

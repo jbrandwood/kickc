@@ -105,7 +105,7 @@ void main() {
         bgcolor(BLUE);
         clrscr();
 
-    } while( menu != 57 );
+    } while( menu != 48 );
 
 }
 

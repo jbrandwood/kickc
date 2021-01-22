@@ -3477,3 +3477,25 @@ NO_SYNTHESIS
 //FRAGMENT pbuc1_derefidx_vbuaa=vbuaa
 tax
 sta {c1},x
+//FRAGMENT _deref_pwuc1=vwuz1
+lda {z1}
+sta {c1}
+lda {z1}+1
+sta {c1}+1
+//FRAGMENT _deref_pbuc1=_byte_vwuz1
+lda {z1}
+sta {c1}
+//FRAGMENT _deref_pduc1=vduz1
+lda {z1}
+sta {c1}
+lda {z1}+1
+sta {c1}+1
+lda {z1}+2
+sta {c1}+2
+lda {z1}+3
+sta {c1}+3
+//FRAGMENT _deref_pwuc1=vbuc2
+lda #0
+sta {c1}+1
+lda #<{c2}
+sta {c1}

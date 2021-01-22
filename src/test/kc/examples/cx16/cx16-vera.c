@@ -97,9 +97,6 @@ void main() {
         }
 
         vera_layer_hide(0);
-        memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
-        vera_layer_mode_tile(1, 0x00000, 0x0F800, 128, 64, 8, 8, 1);
-
         vera_layer_mode_text(1, 0x00000, 0x0f800, 64, 64, 8, 8, 4);
         vera_layer_show(1);
 
@@ -147,6 +144,7 @@ void tile_16_x_16_8BPP_256_color() {
 
     memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
     vera_layer_mode_tile(1, 0x10000, 0x1F000, 128, 64, 8, 8, 1);
+    vera_display_set_scale_none();
 
     screenlayer(1);
     textcolor(WHITE);
@@ -220,12 +218,15 @@ void tile_16_x_16_8BPP_256_color() {
     }
 
     while(!fgetc());
+
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 
 void tile_8_x_8_8BPP_256_color() {
 
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 8, 8, 8);
+    vera_display_set_scale_none();
 
     byte tiles[64] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -295,12 +296,15 @@ void tile_8_x_8_8BPP_256_color() {
     printf("however, the first color will always be transparent (black).\n");
 
     while(!fgetc());
+
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 
 void tile_16_x_16_4BPP_16_color() {
 
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 4);
+    vera_display_set_scale_none();
 
     byte tiles[2048] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -507,6 +511,7 @@ void tile_16_x_16_4BPP_16_color() {
 void tile_8_x_8_4BPP_16_color() {
 
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 8, 8, 4);
+    vera_display_set_scale_none();
 
     byte tiles[512] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -615,6 +620,7 @@ void tile_8_x_8_4BPP_16_color() {
 void tile_16_x_16_2BPP_4_color() {
 
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 2);
+    vera_display_set_scale_none();
 
     byte tiles[256] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -690,6 +696,7 @@ void tile_16_x_16_2BPP_4_color() {
 void tile_8_x_8_2BPP_4_color() {
 
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 8, 8, 2);
+    vera_display_set_scale_none();
 
     byte tiles[64] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
                      0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,
@@ -748,12 +755,10 @@ void tile_8_x_8_2BPP_4_color() {
 void text_8_x_8_1BPP_256_color() {
 
     // Configure the VERA card to work in text, 256 mode.
-   // The color mode is here 256 colors, (256 foreground on a black transparent background).
-     vera_layer_mode_text( 1, 0x00000, 0x0F800, 128, 128, 8, 8, 256 );
-
-    // or you can use the below statement, but that includes setting a "mode", including
-    // layer, map base address, tile base address, map width, map height, tile width, tile height, color mode.
-    //vera_layer_mode_text(1, 0x00000, 0x0F800, 128, 128, 8, 8, 256);
+    // The color mode is here 256 colors, (256 foreground on a black transparent background).
+    vera_layer_mode_text( 1, 0x00000, 0x0F800, 128, 128, 8, 8, 256 );
+    vera_display_set_scale_none();
+    screenlayer(1);
 
     for(byte c:0..255) {
         textcolor(c);
@@ -777,17 +782,15 @@ void text_8_x_8_1BPP_256_color() {
 
 void text_8_x_8_1BPP_16_color() {
 
-    // Configure the VERA card to work in text, 16x16 mode.
-    // The color mode is here 16 colors, indicating 16x16 color mode, (16 foreground and 16 background colors).
-    vera_layer_set_text_color_mode( 1, VERA_LAYER_CONFIG_16C );
-
-    // or you can use the below statement, but that includes setting a "mode", including
-    // layer, map base address, tile base address, map width, map height, tile width, tile height, color mode.
-    //vera_layer_mode_text(1, 0x00000, 0x0F800, 128, 128, 8, 8, 16);
+    // Configure the VERA card to work in text.
+    // The color mode is here 16 colors, (16 foreground and 16 background colors).
+    vera_layer_mode_text(1, 0x00000, 0x0F800, 128, 128, 8, 8, 16);
+    vera_display_set_scale_none();
+    screenlayer(1);
 
     for(byte c:0..255) {
         bgcolor(c);
-        printf(" ****** ");
+        printf(" ++++++ ");
     }
 
     vera_layer_show(1);
@@ -817,11 +820,12 @@ void bitmap_320_x_240_1BPP() {
     // We also will need to realign for layer 1 the map base from 0x00000 to 0x14000.
     // This is now all easily done with a few statements in the new kickc vera lib ...
     memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
-    vera_layer_mode_tile(1, 0x14000, 0x1F000, 128, 64, 8, 8, 1);
-
     vera_layer_mode_bitmap(0, (dword)0x00000, 320, 1);
 
+    vera_layer_mode_tile(1, 0x14000, 0x1F000, 128, 64, 8, 8, 1);
+    vera_display_set_scale_none();
     screenlayer(1);
+
     textcolor(WHITE);
     bgcolor(BLACK);
     clrscr();
@@ -865,7 +869,7 @@ void bitmap_320_x_240_1BPP() {
         x++;
         if(x>319) x=0;
     };
-
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 void bitmap_640_x_480_1BPP() {
@@ -927,7 +931,7 @@ void bitmap_640_x_480_1BPP() {
         x++;
         if(x>639) x=0;
     };
-
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 void bitmap_320_x_240_2BPP() {
@@ -989,6 +993,7 @@ void bitmap_320_x_240_2BPP() {
         x++;
         if(x>319) x=0;
     };
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 void bitmap_640_x_480_2BPP() {
@@ -1050,6 +1055,7 @@ void bitmap_640_x_480_2BPP() {
         x++;
         if(x>639) x=0;
     };
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 void bitmap_320_x_240_4BPP() {
@@ -1112,6 +1118,8 @@ void bitmap_320_x_240_4BPP() {
         x++;
         if(x>319) x=0;
     };
+
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }
 
 void bitmap_320_x_240_8BPP() {
@@ -1172,4 +1180,6 @@ void bitmap_320_x_240_8BPP() {
         x++;
         if(x>319) x=0;
     };
+
+    memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
 }

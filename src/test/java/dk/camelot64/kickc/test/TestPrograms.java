@@ -468,6 +468,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCx16Vera() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/cx16-vera.c");
+   }
+
+   @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/cx16-veralayers.c");
    }
@@ -3544,6 +3549,11 @@ public class TestPrograms {
    @Test
    public void testStringConstConsolidation() throws IOException, URISyntaxException {
       compileAndCompare("string-const-consolidation.c");
+   }
+
+   @Test
+   public void testStringConstConsolidationRoot() throws IOException, URISyntaxException {
+      compileAndCompare("string-const-consolidation-root.c", log());
    }
 
    @Test

@@ -134,6 +134,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
          if(getScope().getLocalSymbol(candidateName) == null) {
             return candidateName;
          }
+         i++;
       } while(true);
    }
 

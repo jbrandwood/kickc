@@ -74,25 +74,25 @@ void main() {
                 text_8_x_8_1BPP_16_color();
                 break;
             case 66:
-                //text_8_x_8_1BPP_256_color();
+                text_8_x_8_1BPP_256_color();
                 break;
             case 67:
                 tile_8_x_8_2BPP_4_color();
                 break;
             case 68:
-                //tile_16_x_16_2BPP_4_color();
+                tile_16_x_16_2BPP_4_color();
                 break;
             case 69:
-                //tile_8_x_8_4BPP_16_color();
+                tile_8_x_8_4BPP_16_color();
                 break;
             case 70:
-                //tile_16_x_16_4BPP_16_color();
+                tile_16_x_16_4BPP_16_color();
                 break;
             case 71:
-                //tile_8_x_8_8BPP_256_color();
+                tile_8_x_8_8BPP_256_color();
                 break;
             case 72:
-                //tile_16_x_16_8BPP_256_color();
+                tile_16_x_16_8BPP_256_color();
                 break;
         }
 

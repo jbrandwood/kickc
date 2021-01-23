@@ -467,10 +467,10 @@ public class TestPrograms {
       compileAndCompare("examples/nes/nes-demo.c");
    }
 
-   @Test
-   public void testCx16Vera() throws IOException, URISyntaxException {
-      compileAndCompare("examples/cx16/cx16-vera.c");
-   }
+   //@Test
+   //public void testCx16Vera() throws IOException, URISyntaxException {
+   //   compileAndCompare("examples/cx16/cx16-vera.c");
+   //}
 
    @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {

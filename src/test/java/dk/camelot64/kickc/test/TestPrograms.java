@@ -3553,7 +3553,7 @@ public class TestPrograms {
 
    @Test
    public void testStringConstConsolidationRoot() throws IOException, URISyntaxException {
-      compileAndCompare("string-const-consolidation-root.c", log());
+      compileAndCompare("string-const-consolidation-root.c");
    }
 
    @Test

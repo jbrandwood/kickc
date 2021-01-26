@@ -63,3 +63,7 @@ unsigned char cursor(unsigned char onoff);
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
 unsigned char scroll(unsigned char onoff);
+
+// Set the layer with which the conio will interact.
+// - layer: value of 0 or 1.
+void screenlayer(unsigned byte layer);

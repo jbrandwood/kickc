@@ -43,6 +43,7 @@ void main() {
         printf( "\n0. exit.\n");
 
         byte menu = 0;
+        
         while(menu==0) {
             menu = fgetc();
         }

@@ -262,5 +262,6 @@ struct VERA_SPRITE {
     // - bits 0-3 Palette offset (if 4bpp Color index 1-15 is modified by adding 16 x palette offset)
     char CTRL2;
 };
-// 8BPP sprite mode (add to VERA_SPRITE.ADDR to enable)
+// xBPP sprite modes
+const unsigned int VERA_SPRITE_4BPP = 0x0000;
 const unsigned int VERA_SPRITE_8BPP = 0x8000;

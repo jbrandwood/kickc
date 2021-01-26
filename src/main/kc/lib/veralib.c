@@ -6,6 +6,7 @@
 #include <cx16.h>
 #include <veralib.h>
 
+
 // --- VERA function encapsulation ---
 
 // --- VERA layer management ---
@@ -714,4 +715,3 @@ void vera_tile_area(byte layer, word tileindex, byte x, byte y, byte w, byte h, 
     }
 
 }
-

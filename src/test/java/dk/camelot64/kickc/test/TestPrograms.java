@@ -473,6 +473,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testBankAddressing() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/bankaddressing.c");
+   }
+
+   @Test
+   public void testLoadFileInBank() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/load_file_in_bank.c");
+   }
+
+   @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/cx16-veralayers.c");
    }

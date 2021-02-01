@@ -8,8 +8,9 @@
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x0F800.
 
 #pragma target(cx16)
+#include <cx16.h>
 #include <conio.h>
-#include <veralib.h>
+#include <cx16-veralib.h>
 #include <stdio.h>
 #include <6502.h>
 
@@ -19,13 +20,9 @@ void main() {
     bgcolor(BLACK);
     clrscr();
 
-    // Now we set the tile map width and height.
-    vera_set_layer_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
-    vera_set_layer_config(0, vera_get_layer_config(1));
-    vera_set_layer_tilebase(0, vera_get_layer_tilebase(1));
-    vera_set_layer_map_width_128(0);
-    vera_set_layer_map_height_128(0);
-    dword tilebase = vera_get_layer_tilebase_address(0);
+    dword tilebase = vera_layer_get_tilebase_address(1);
+
+    vera_layer_mode_tile(0, 0x10000, tilebase, 128, 128, 8, 8, 1);
 
     screenlayer(0);
     scroll(0); // Scrolling on conio is deactivated, so conio will output beyond the borders of the visible screen.
@@ -40,14 +37,14 @@ void main() {
     *VERA_IEN = VERA_VSYNC;
     CLI();
 
-    vera_show_layer(0);
+    vera_layer_show(0);
     while(!kbhit());
 
-    vera_hide_layer(0);
+    vera_layer_hide(0);
     textcolor(GREY);
     bgcolor(GREEN);
     draw_characters(tilebase);
-    vera_show_layer(0);
+    vera_layer_show(0);
 
     screenlayer(1);
 
@@ -68,11 +65,11 @@ void main() {
     while(!kbhit());
 
     screenlayer(0);
-    vera_hide_layer(0);
+    vera_layer_hide(0);
     textcolor(DARK_GREY);
     bgcolor(BLACK);
     draw_characters(tilebase);
-    vera_show_layer(0);
+    vera_layer_show(0);
 
     screenlayer(1);
     gotoxy(0,20);
@@ -140,8 +137,8 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
         scroll_y = 0;
    }
 
-    vera_set_layer_horizontal_scroll(0,(word)scroll_x);
-    vera_set_layer_vertical_scroll(0,(word)scroll_y);
+    vera_layer_set_horizontal_scroll(0,(word)scroll_x);
+    vera_layer_set_vertical_scroll(0,(word)scroll_y);
 
     // Reset the VSYNC interrupt
     *VERA_ISR = VERA_VSYNC;

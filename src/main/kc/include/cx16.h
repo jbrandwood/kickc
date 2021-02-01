@@ -76,3 +76,10 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 // - num: The number of bytes to copy
 void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_bank, void *src, char src_increment, unsigned int num );
 
+// Set block of memory to a value in VRAM.
+// Sets num bytes to a value to the memory block pointed to by destination in VRAM.
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vdest: The destination address in VRAM
+// - data: The value to set the vram with.
+// - num: The number of bytes to set
+void memset_vram(char vbank, void* vdest, char data, unsigned long num );

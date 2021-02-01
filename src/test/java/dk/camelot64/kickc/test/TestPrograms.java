@@ -473,6 +473,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testCx16VeralibTilemap8bpp() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/veralib/tilemap_8bpp_16_x_16.c");
+   }
+
+   @Test
+   public void testCx16VeralibBitmap8bpp() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/veralib/bitmap_8bpp_320_x_240.c");
+   }
+
+   @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/cx16-veralayers.c");
    }

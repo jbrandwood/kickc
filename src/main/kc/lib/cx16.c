@@ -55,6 +55,24 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
         *VERA_DATA0 = *s;
 }
 
+// Set block of memory to a value in VRAM.
+// Sets num bytes to a value to the memory block pointed to by destination in VRAM.
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vdest: The destination address in VRAM
+// - data: The value to set the vram with.
+// - num: The number of bytes to set
+void memset_vram(char vbank, void* vdest, char data, unsigned long num ) {
+    // Select DATA0
+    *VERA_CTRL &= ~VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <vdest;
+    *VERA_ADDRX_M = >vdest;
+    *VERA_ADDRX_H = VERA_INC_1 | vbank;
+    // Transfer the data
+    for(unsigned long i = 0; i<num; i++)
+        *VERA_DATA0 = data;
+}
+
 // Copy block of memory (from VRAM to VRAM)
 // Copies the values from the location pointed by src to the location pointed by dest.
 // The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.

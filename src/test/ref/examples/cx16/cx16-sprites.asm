@@ -462,7 +462,7 @@ memcpy_to_vram: {
 }
 .segment Data
   // A 64*64 8bpp TUT sprite and palette
-  .align $1000
+  .align $400
 SPRITE_PIXELS:
 .var pic = LoadPicture("tut.png")
     // palette: rgb->idx

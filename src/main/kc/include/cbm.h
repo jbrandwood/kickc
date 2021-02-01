@@ -16,7 +16,11 @@ void cbm_k_ciout (unsigned char C);
 unsigned char cbm_k_ckout (unsigned char FN);
 void cbm_k_clall (void);
 void cbm_k_clrch (void);
+
+// Read a byte from the input channel
+// return: next byte in buffer or 0 if buffer is empty.
 unsigned char cbm_k_getin (void);
+
 unsigned cbm_k_iobase (void);
 void cbm_k_listen (unsigned char dev);
 unsigned char cbm_k_readst (void);
@@ -51,7 +55,6 @@ char* cbm_k_load(unsigned char flag, char* addr);
 // end: End address
 // return: 
 unsigned char cbm_k_save(char* start, char* end);
-
 
 void cbm_k_settim (unsigned long timer);
 void cbm_k_talk (unsigned char dev);

@@ -37,10 +37,18 @@ void()** const KERNEL_IRQ = 0x0314;
 // $0316	(RAM) BRK vector - The vector used when the KERNAL serves IRQ caused by a BRK
 void()** const KERNEL_BRK = 0x0316;
 
+
 // VRAM Address of the default screen
 char * const DEFAULT_SCREEN = 0x0000;
 // VRAM Bank (0/1) of the default screen
 char * const DEFAULT_SCREEN_VBANK = 0;
+
+
+// Load a file to memory
+// Returns a status:
+// - 0xff: Success
+// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+char LoadFileBanked( char device, char* filename, dword address);
 
 // Put a single byte into VRAM.
 // Uses VERA DATA0
@@ -64,6 +72,13 @@ char vpeek(char vbank, char* vaddr);
 // - num: The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 
+// Copy block of banked internal memory (256 banks at A000-BFFF) to VERA VRAM.
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
+// - vdest: dword of the destination address in VRAM
+// - src: dword of source banked address in RAM. This address is a linair project of the banked memory of 512K to 2048K.
+// - num: dword of the number of bytes to copy
+void bnkcpy_vram_address(dword vdest, dword src, dword num );
+
 // Copy block of memory (from VRAM to VRAM)
 // Copies the values from the location pointed by src to the location pointed by dest.
 // The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.
@@ -76,10 +91,18 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 // - num: The number of bytes to copy
 void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_bank, void *src, char src_increment, unsigned int num );
 
-// Set block of memory to a value in VRAM.
+// Set block of memory in VRAM to a value .
 // Sets num bytes to a value to the memory block pointed to by destination in VRAM.
 // - vbank: Which 64K VRAM bank to put data into (0/1)
 // - vdest: The destination address in VRAM
 // - data: The value to set the vram with.
 // - num: The number of bytes to set
 void memset_vram(char vbank, void* vdest, char data, unsigned long num );
+
+// Set block of memory in VRAM to a word value .
+// Sets num words  to a value to the memory block pointed to by destination in VRAM.
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vdest: The destination address in VRAM
+// - data: The value to set the vram with.
+// - num: The number of bytes to set
+void memset_vram_word(char vbank, void* vdest, unsigned int data, unsigned long num );

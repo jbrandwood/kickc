@@ -79,15 +79,17 @@ void main() {
     clrscr();
     printf("\n\nsprite banked file load and display demo.\n");
 
-    const dword BANK_SPRITE = 0x12000; // Load in bank 9.
-    const dword VRAM_SPRITE = 0x10000; // Load in bank 9.
+    // RAM Bank where sprite is loaded
+    const dword BANK_SPRITE = 0x12000;
+    // VRAM address of sprite
+    const dword VRAM_SPRITE = 0x10000;
     // Sprite attributes: 8bpp, in front, 64x64, address SPRITE_PIXELS_VRAM
     struct VERA_SPRITE SPRITE_ATTR = { <(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 };
 
-    char status = LoadFileBanked(8, "SPRITE", BANK_SPRITE );
+    char status = load_to_bank(8, "SPRITE", BANK_SPRITE );
 
-    bnkcpy_vram_address(VERA_PALETTE+32, BANK_SPRITE-2, 32);
-    bnkcpy_vram_address(VRAM_SPRITE, BANK_SPRITE+32-2, 64*32);
+    memcpy_bank_to_vram(VERA_PALETTE+32, BANK_SPRITE-2, 32);
+    memcpy_bank_to_vram(VRAM_SPRITE, BANK_SPRITE+32-2, 64*32);
 
     SPRITE_ATTR.ADDR = <(VRAM_SPRITE/32)|VERA_SPRITE_4BPP;
     SPRITE_ATTR.X = 100;

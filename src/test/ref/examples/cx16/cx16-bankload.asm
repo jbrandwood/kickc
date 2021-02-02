@@ -187,8 +187,9 @@ conio_x16_init: {
     rts
 }
 main: {
+    // RAM Bank where sprite is loaded
     .label BANK_SPRITE = $12000
-    // Load in bank 9.
+    // VRAM address of sprite
     .label VRAM_SPRITE = $10000
     .label SPRITE_ATTR = $43
     // vera_layer_set_text_color_mode( 1, VERA_LAYER_CONFIG_16C )
@@ -207,58 +208,58 @@ main: {
     sta SPRITE_ATTR-1,y
     dey
     bne !-
-    // LoadFileBanked(8, "SPRITE", BANK_SPRITE )
-    jsr LoadFileBanked
-    // bnkcpy_vram_address(VERA_PALETTE+32, BANK_SPRITE-2, 32)
+    // load_to_bank(8, "SPRITE", BANK_SPRITE )
+    jsr load_to_bank
+    // memcpy_bank_to_vram(VERA_PALETTE+32, BANK_SPRITE-2, 32)
     lda #$20
-    sta.z bnkcpy_vram_address.num
+    sta.z memcpy_bank_to_vram.num
     lda #0
-    sta.z bnkcpy_vram_address.num+1
-    sta.z bnkcpy_vram_address.num+2
-    sta.z bnkcpy_vram_address.num+3
+    sta.z memcpy_bank_to_vram.num+1
+    sta.z memcpy_bank_to_vram.num+2
+    sta.z memcpy_bank_to_vram.num+3
     lda #<BANK_SPRITE-2
-    sta.z bnkcpy_vram_address.beg
+    sta.z memcpy_bank_to_vram.beg
     lda #>BANK_SPRITE-2
-    sta.z bnkcpy_vram_address.beg+1
+    sta.z memcpy_bank_to_vram.beg+1
     lda #<BANK_SPRITE-2>>$10
-    sta.z bnkcpy_vram_address.beg+2
+    sta.z memcpy_bank_to_vram.beg+2
     lda #>BANK_SPRITE-2>>$10
-    sta.z bnkcpy_vram_address.beg+3
+    sta.z memcpy_bank_to_vram.beg+3
     lda #<VERA_PALETTE+$20
-    sta.z bnkcpy_vram_address.vdest
+    sta.z memcpy_bank_to_vram.vdest
     lda #>VERA_PALETTE+$20
-    sta.z bnkcpy_vram_address.vdest+1
+    sta.z memcpy_bank_to_vram.vdest+1
     lda #<VERA_PALETTE+$20>>$10
-    sta.z bnkcpy_vram_address.vdest+2
+    sta.z memcpy_bank_to_vram.vdest+2
     lda #>VERA_PALETTE+$20>>$10
-    sta.z bnkcpy_vram_address.vdest+3
-    jsr bnkcpy_vram_address
-    // bnkcpy_vram_address(VRAM_SPRITE, BANK_SPRITE+32-2, 64*32)
+    sta.z memcpy_bank_to_vram.vdest+3
+    jsr memcpy_bank_to_vram
+    // memcpy_bank_to_vram(VRAM_SPRITE, BANK_SPRITE+32-2, 64*32)
     lda #<$40*$20
-    sta.z bnkcpy_vram_address.num
+    sta.z memcpy_bank_to_vram.num
     lda #>$40*$20
-    sta.z bnkcpy_vram_address.num+1
+    sta.z memcpy_bank_to_vram.num+1
     lda #<$40*$20>>$10
-    sta.z bnkcpy_vram_address.num+2
+    sta.z memcpy_bank_to_vram.num+2
     lda #>$40*$20>>$10
-    sta.z bnkcpy_vram_address.num+3
+    sta.z memcpy_bank_to_vram.num+3
     lda #<BANK_SPRITE+$20-2
-    sta.z bnkcpy_vram_address.beg
+    sta.z memcpy_bank_to_vram.beg
     lda #>BANK_SPRITE+$20-2
-    sta.z bnkcpy_vram_address.beg+1
+    sta.z memcpy_bank_to_vram.beg+1
     lda #<BANK_SPRITE+$20-2>>$10
-    sta.z bnkcpy_vram_address.beg+2
+    sta.z memcpy_bank_to_vram.beg+2
     lda #>BANK_SPRITE+$20-2>>$10
-    sta.z bnkcpy_vram_address.beg+3
+    sta.z memcpy_bank_to_vram.beg+3
     lda #<VRAM_SPRITE
-    sta.z bnkcpy_vram_address.vdest
+    sta.z memcpy_bank_to_vram.vdest
     lda #>VRAM_SPRITE
-    sta.z bnkcpy_vram_address.vdest+1
+    sta.z memcpy_bank_to_vram.vdest+1
     lda #<VRAM_SPRITE>>$10
-    sta.z bnkcpy_vram_address.vdest+2
+    sta.z memcpy_bank_to_vram.vdest+2
     lda #>VRAM_SPRITE>>$10
-    sta.z bnkcpy_vram_address.vdest+3
-    jsr bnkcpy_vram_address
+    sta.z memcpy_bank_to_vram.vdest+3
+    jsr memcpy_bank_to_vram
     // SPRITE_ATTR.ADDR = <(VRAM_SPRITE/32)|VERA_SPRITE_4BPP
     lda #<VRAM_SPRITE/$20&$ffff
     sta.z SPRITE_ATTR
@@ -708,11 +709,13 @@ cputs: {
     jsr cputc
     jmp __b1
 }
-// Load a file to memory
-// Returns a status:
-// - 0xff: Success
-// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
-LoadFileBanked: {
+// Load a file into one of the 256 8KB RAM banks.
+// - device: The device to load from
+// - filename: The file name
+// - address: The absolute address in banked memory to load the file too
+// - returns: 0xff: Success, other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// Note: This function only works if the entire file fits within the selected bank. The function cannot load to multiple banks.
+load_to_bank: {
     .const device = 8
     .const bank = ((>((main.BANK_SPRITE&$ffff)))>>5)+(<((main.BANK_SPRITE>>$10)<<3))
     // setnam(filename)
@@ -739,13 +742,14 @@ LoadFileBanked: {
     // }
     rts
 }
-// Copy block of banked internal memory (256 banks at A000-BFFF) to VERA VRAM.
+// Copy block of memory (from banked RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
-// - vdest: dword of the destination address in VRAM
-// - src: dword of source banked address in RAM. This address is a linair project of the banked memory of 512K to 2048K.
+// - vdest: absolute address in VRAM
+// - src: absolute address in the banked RAM  of the CX16.
 // - num: dword of the number of bytes to copy
-// bnkcpy_vram_address(dword zp(3) vdest, dword zp(7) num)
-bnkcpy_vram_address: {
+// Note: This function can switch RAM bank during copying to copy data from multiple RAM banks.
+// memcpy_bank_to_vram(dword zp(3) vdest, dword zp(7) num)
+memcpy_bank_to_vram: {
     .label __0 = $2b
     .label __2 = $2d
     .label __4 = $35
@@ -903,11 +907,11 @@ bnkcpy_vram_address: {
     lda.z addr+1
     adc #>$a000
     sta.z addr+1
-    // POKE
-    stx $9f61
+    // VIA1->PORT_A = (char)bank
+    stx VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A
   __b1:
   // select the bank
-    // for(dword pos=beg; pos<end; pos++)
+    // for(unsigned long pos=beg; pos<end; pos++)
     lda.z pos+3
     cmp.z end+3
     bcc __b2
@@ -934,10 +938,10 @@ bnkcpy_vram_address: {
     lda.z addr
     cmp #<$c000
     bne __b3
-    // POKE(0x9f61, (byte)++bank);
+    // VIA1->PORT_A = (char)++bank;
     inx
-    // POKE
-    stx $9f61
+    // VIA1->PORT_A = (char)++bank
+    stx VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A
     lda #<$a000
     sta.z addr
     lda #>$a000
@@ -952,7 +956,7 @@ bnkcpy_vram_address: {
     bne !+
     inc.z addr+1
   !:
-    // for(dword pos=beg; pos<end; pos++)
+    // for(unsigned long pos=beg; pos<end; pos++)
     inc.z pos
     bne !+
     inc.z pos+1

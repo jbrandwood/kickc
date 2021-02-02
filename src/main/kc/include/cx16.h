@@ -43,13 +43,6 @@ char * const DEFAULT_SCREEN = 0x0000;
 // VRAM Bank (0/1) of the default screen
 char * const DEFAULT_SCREEN_VBANK = 0;
 
-
-// Load a file to memory
-// Returns a status:
-// - 0xff: Success
-// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
-char LoadFileBanked( char device, char* filename, dword address);
-
 // Put a single byte into VRAM.
 // Uses VERA DATA0
 // - vbank: Which 64K VRAM bank to put data into (0/1)
@@ -72,12 +65,13 @@ char vpeek(char vbank, char* vaddr);
 // - num: The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 
-// Copy block of banked internal memory (256 banks at A000-BFFF) to VERA VRAM.
+// Copy block of memory (from banked RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
-// - vdest: dword of the destination address in VRAM
-// - src: dword of source banked address in RAM. This address is a linair project of the banked memory of 512K to 2048K.
+// - vdest: absolute address in VRAM
+// - src: absolute address in the banked RAM  of the CX16.
 // - num: dword of the number of bytes to copy
-void bnkcpy_vram_address(dword vdest, dword src, dword num );
+// Note: This function can switch RAM bank during copying to copy data from multiple RAM banks.
+void memcpy_bank_to_vram(unsigned long vdest, unsigned long src, unsigned long num );
 
 // Copy block of memory (from VRAM to VRAM)
 // Copies the values from the location pointed by src to the location pointed by dest.
@@ -106,3 +100,11 @@ void memset_vram(char vbank, void* vdest, char data, unsigned long num );
 // - data: The value to set the vram with.
 // - num: The number of bytes to set
 void memset_vram_word(char vbank, void* vdest, unsigned int data, unsigned long num );
+
+// Load a file into one of the 256 8KB RAM banks.
+// - device: The device to load from
+// - filename: The file name
+// - address: The absolute address in banked memory to load the file too
+// - returns: 0xff: Success, other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// Note: This function only works if the entire file fits within the selected bank. The function cannot load to multiple banks.
+char load_to_bank( char device, char* filename, unsigned long address);

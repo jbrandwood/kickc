@@ -4,21 +4,6 @@
 
 #include <cx16.h>
 #include <cx16-kernal.h>
-#include <peekpoke.h>
-
-// Load a file to memory
-// Returns a status:
-// - 0xff: Success
-// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
-char LoadFileBanked( char device, char* filename, dword address) {
-    setnam(filename);
-    setlfs(device);
-    char bank = (byte)(((((word)<(>address)<<8)|>(<address))>>5)+((word)<(>address)<<3));
-    char* addr = ((<address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
-    addr += 0xA000;
-    VIA1->PORT_A = (char)bank; // select the bank
-    return load(addr, 0);
-}
 
 // Put a single byte into VRAM.
 // Uses VERA DATA0
@@ -71,12 +56,13 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
         *VERA_DATA0 = *s;
 }
 
-// Copy block of banked internal memory (256 banks at A000-BFFF) to VERA VRAM.
+// Copy block of memory (from banked RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
-// - vdest: dword of the destination address in VRAM
-// - src: dword of source banked address in RAM. This address is a linair project of the banked memory of 512K to 2048K.
+// - vdest: absolute address in VRAM
+// - src: absolute address in the banked RAM  of the CX16.
 // - num: dword of the number of bytes to copy
-void bnkcpy_vram_address(dword vdest, dword src, dword num ) {
+// Note: This function can switch RAM bank during copying to copy data from multiple RAM banks.
+void memcpy_bank_to_vram(unsigned long vdest, unsigned long src, unsigned long num ) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
@@ -85,18 +71,17 @@ void bnkcpy_vram_address(dword vdest, dword src, dword num ) {
     *VERA_ADDRX_H = <(>vdest);
     *VERA_ADDRX_H |= VERA_INC_1;
 
-    dword beg = src;
-    dword end = src+num; 
+    unsigned long beg = src;
+    unsigned long end = src+num;
 
     char bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3));
-
     char* addr = ((<beg)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
     addr += 0xA000;
 
-    POKE(0x9f61, (byte)bank); // select the bank
-    for(dword pos=beg; pos<end; pos++) {
+    VIA1->PORT_A = (char)bank; // select the bank
+    for(unsigned long pos=beg; pos<end; pos++) {
         if(addr == 0xC000) {
-            POKE(0x9f61, (byte)++bank); // select the bank
+            VIA1->PORT_A = (char)++bank; // select the bank
             addr = 0xA000;
         }
         *VERA_DATA0 = *addr;
@@ -173,3 +158,18 @@ void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_ba
         }
 }
 
+// Load a file into one of the 256 8KB RAM banks.
+// - device: The device to load from
+// - filename: The file name
+// - address: The absolute address in banked memory to load the file too
+// - returns: 0xff: Success, other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// Note: This function only works if the entire file fits within the selected bank. The function cannot load to multiple banks.
+char load_to_bank( char device, char* filename, dword address) {
+    setnam(filename);
+    setlfs(device);
+    char bank = (byte)(((((word)<(>address)<<8)|>(<address))>>5)+((word)<(>address)<<3));
+    char* addr = ((<address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
+    addr += 0xA000;
+    VIA1->PORT_A = (char)bank; // select the bank
+    return load(addr, 0);
+}

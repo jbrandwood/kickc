@@ -9,6 +9,7 @@
 #include <cx16-kernal.h>
 #include <cx16-veralib.h>
 #include <6502.h>
+#include <peekpoke.h>
 #include <conio.h>
 #include <printf.h>
 #include <stdio.h>
@@ -251,20 +252,20 @@ void main() {
     clrscr();
 
     // Loading the graphics in main banked memory.
-    char status = LoadFileBanked(8, "SPRITES", BANK_SPRITES);
-    status = LoadFileBanked(8, "TILES", BANK_TILES_SMALL);
-    status = LoadFileBanked(8, "TILEB", BANK_TILES_LARGE);
+    char status = load_to_bank(8, "SPRITES", BANK_SPRITES);
+    status = load_to_bank(8, "TILES", BANK_TILES_SMALL);
+    status = load_to_bank(8, "TILEB", BANK_TILES_LARGE);
     
     // Load the palette in main banked memory.
-    status = LoadFileBanked(8, "PALETTES", BANK_PALETTE);
+    status = load_to_bank(8, "PALETTES", BANK_PALETTE);
 
     // Copy graphics to the VERA VRAM.
-    bnkcpy_vram_address(VRAM_SPRITES, BANK_SPRITES-2, (dword)64*64*NUM_SPRITES/2);
-    bnkcpy_vram_address(VRAM_TILES_SMALL, BANK_TILES_SMALL-2, (dword)32*32*(NUM_TILES_SMALL)/2);
-    bnkcpy_vram_address(VRAM_TILES_LARGE, BANK_TILES_LARGE-2, (dword)64*64*(NUM_TILES_LARGE)/2);
+    memcpy_bank_to_vram(VRAM_SPRITES, BANK_SPRITES-2, (dword)64*64*NUM_SPRITES/2);
+    memcpy_bank_to_vram(VRAM_TILES_SMALL, BANK_TILES_SMALL-2, (dword)32*32*(NUM_TILES_SMALL)/2);
+    memcpy_bank_to_vram(VRAM_TILES_LARGE, BANK_TILES_LARGE-2, (dword)64*64*(NUM_TILES_LARGE)/2);
 
     // Load the palette in VERA palette registers, but keep the first 16 colors untouched.
-    bnkcpy_vram_address(VERA_PALETTE+32, BANK_PALETTE-2, (dword)32*3);
+    memcpy_bank_to_vram(VERA_PALETTE+32, BANK_PALETTE-2, (dword)32*3);
 
     // Now we activate the tile mode.
     vera_layer_mode_tile(0, (dword)0x10000, VRAM_TILES_SMALL, 128, 64, 16, 16, 4);

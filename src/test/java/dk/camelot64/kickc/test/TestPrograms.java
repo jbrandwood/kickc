@@ -482,6 +482,11 @@ public class TestPrograms {
       compileAndCompare("examples/cx16/cx16-bankaddressing.c");
    }
 
+   //@Test
+   //public void testCx16SpaceDemo() throws IOException, URISyntaxException {
+   //   compileAndCompare("examples/cx16/spacedemo/spacedemo.c");
+   //}
+
    @Test
    public void testCx16LoadFileInBank() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/cx16-bankload.c");

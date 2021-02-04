@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter
 // Plots a few lines using the bresenham line algorithm
 #include <c64.h>
-#include <bitmap2.h>
+#include <c64-bitmap.h>
 #include <print.h>
 
 byte* BITMAP = 0x2000;

@@ -2,7 +2,7 @@
 #include <c64dtv.h>
 #include <print.h>
 #include <keyboard.h>
-#include <bitmap-draw.h>
+#include <c64-bitmap.h>
 
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
@@ -485,13 +485,13 @@ void gfx_init_screen4() {
 // Initialize VIC bitmap
 void gfx_init_VICII_bitmap() {
     // Draw some lines on the bitmap
-    bitmap_init(VICII_BITMAP);
-    bitmap_clear();
+    bitmap_init(VICII_BITMAP, VICII_SCREEN0);
+    bitmap_clear(BLACK, WHITE);
     byte lines_x[] = { $00, $ff, $ff, $00, $00, $80, $ff, $80, $00, $80 };
     byte lines_y[] = { $00, $00, $c7, $c7, $00, $00, $64, $c7, $64, $00 };
     byte lines_cnt = 9;
     for(byte l=0; l<lines_cnt;l++) {
-        bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1]);
+        bitmap_line(lines_x[l], lines_y[l], lines_x[l+1], lines_y[l+1]);
     }
 }
 

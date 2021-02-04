@@ -3,7 +3,7 @@
 #include <c64.h>
 #include <sine.h>
 #include <multiply.h>
-#include <bitmap2.h>
+#include <c64-bitmap.h>
 
 byte* BITMAP = 0x2000;
 byte* SCREEN = 0x0400;

@@ -26,6 +26,7 @@
   .const PROCPORT_RAM_CHARROM = 1
   // The colors of the C64
   .const BLACK = 0
+  .const WHITE = 1
   .const GREEN = 5
   .const BLUE = 6
   .const LIGHT_GREEN = $d
@@ -104,7 +105,11 @@
   // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .label print_char_cursor = 2
-  .label print_line_cursor = $11
+  .label print_line_cursor = 9
+  // The adddress of the bitmap graphics (used for pixels)
+  .label bitmap_gfx = 4
+  // The adddress of the bitmap screen (used for colors)
+  .label bitmap_screen = $b
 .segment Code
 main: {
     // asm
@@ -121,10 +126,16 @@ main: {
     // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  __b1:
+    lda #<0
+    sta.z bitmap_screen
+    sta.z bitmap_screen+1
+    sta.z bitmap_gfx
+    sta.z bitmap_gfx+1
+  // Enter the menu for ever
+  __b2:
     // menu()
     jsr menu
-    jmp __b1
+    jmp __b2
 }
 menu: {
     .label SCREEN = $8000
@@ -246,6 +257,14 @@ menu: {
     beq __b9
     // mode_stdbitmap()
     jsr mode_stdbitmap
+    lda #<mode_stdbitmap.SCREEN
+    sta.z bitmap_screen
+    lda #>mode_stdbitmap.SCREEN
+    sta.z bitmap_screen+1
+    lda #<mode_stdbitmap.BITMAP
+    sta.z bitmap_gfx
+    lda #>mode_stdbitmap.BITMAP
+    sta.z bitmap_gfx+1
     rts
   __b9:
     // keyboard_key_pressed(KEY_6)
@@ -352,15 +371,24 @@ menu: {
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
+    ldx #' '
+    lda #<menu.SCREEN
+    sta.z memset.str
+    lda #>menu.SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
     jsr memset
     // }
     rts
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp(8) str)
+// print_str_lines(byte* zp($d) str)
 print_str_lines: {
-    .label str = 8
+    .label str = $d
     lda #<menu.SCREEN
     sta.z print_line_cursor
     lda #>menu.SCREEN
@@ -412,7 +440,7 @@ print_str_lines: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
-    .label colidx = $e
+    .label colidx = $1c
     // colidx = key&7
     tya
     and #7
@@ -443,10 +471,10 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __5 = $f
+    .label __5 = $18
     // Char Colors and screen chars
-    .label col = 8
-    .label ch = 4
+    .label col = $d
+    .label ch = $f
     .label cy = 6
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -578,10 +606,10 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __5 = $b
+    .label __5 = $19
     // Char Colors and screen chars
-    .label col = 4
-    .label ch = 8
+    .label col = $f
+    .label ch = $d
     .label cy = 6
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -723,10 +751,10 @@ mode_mcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __5 = $c
+    .label __5 = $1c
     // Char Colors and screen chars
-    .label col = 8
-    .label ch = 4
+    .label col = $d
+    .label ch = $f
     .label cy = 6
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -860,7 +888,7 @@ mode_stdbitmap: {
     .const lines_cnt = 9
     .label SCREEN = $4000
     .label BITMAP = $6000
-    .label col2 = $c
+    .label col2 = $17
     // Bitmap Colors
     .label ch = 4
     .label cy = 6
@@ -907,6 +935,11 @@ mode_stdbitmap: {
     sta BG_COLOR
     // *BORDER_COLOR = BLACK
     sta BORDER_COLOR
+    // bitmap_init(BITMAP, SCREEN)
+  // Draw some lines on the bitmap
+    jsr bitmap_init
+    // bitmap_clear(BLACK, WHITE)
+    jsr bitmap_clear
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -954,38 +987,42 @@ mode_stdbitmap: {
     lda #$19
     cmp.z cy
     bne __b3
-    // bitmap_init(BITMAP)
-  // Draw some lines on the bitmap
-    jsr bitmap_init
-    // bitmap_clear()
-    jsr bitmap_clear
     lda #0
     sta.z l
-  __b7:
+  __b6:
     // for(byte l=0; l<lines_cnt;l++)
     lda.z l
     cmp #lines_cnt
-    bcc __b8
+    bcc __b7
     // mode_ctrl()
   // Leave control to the user until exit
     ldx #0
     jsr mode_ctrl
     // }
     rts
-  __b8:
-    // bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1])
+  __b7:
+    // bitmap_line(lines_x[l], lines_y[l], lines_x[l+1], lines_y[l+1])
     ldy.z l
     lda lines_x,y
-    sta.z bitmap_line.x0
-    lda lines_x+1,y
     sta.z bitmap_line.x1
-    ldx lines_y,y
-    lda lines_y+1,y
+    lda #0
+    sta.z bitmap_line.x1+1
+    lda lines_y,y
     sta.z bitmap_line.y1
+    lda #0
+    sta.z bitmap_line.y1+1
+    lda lines_x+1,y
+    sta.z bitmap_line.x2
+    lda #0
+    sta.z bitmap_line.x2+1
+    lda lines_y+1,y
+    sta.z bitmap_line.y2
+    lda #0
+    sta.z bitmap_line.y2+1
     jsr bitmap_line
     // for(byte l=0; l<lines_cnt;l++)
     inc.z l
-    jmp __b7
+    jmp __b6
   .segment Data
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
@@ -1003,10 +1040,10 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __3 = $d
+    .label __3 = $17
     // Char Colors and screen chars
-    .label col = 8
-    .label ch = 4
+    .label col = $f
+    .label ch = $d
     .label cy = 7
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -1133,10 +1170,10 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __3 = $d
+    .label __3 = $18
     // Char Colors and screen chars
-    .label col = 8
-    .label ch = 4
+    .label col = $d
+    .label ch = $f
     .label cy = 7
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -1274,10 +1311,10 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __3 = $e
+    .label __3 = $18
     // Char Colors and screen chars
-    .label col = 8
-    .label ch = 4
+    .label col = $f
+    .label ch = $d
     .label cy = 7
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
@@ -1405,16 +1442,16 @@ mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __3 = $e
+    .label __3 = $19
     // Colors for high 4 bits of 8bpp
-    .label col = 8
+    .label col = $d
     .label cy = 6
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    .label gfxa = 4
+    .label gfxa = $f
     .label ay = 7
     // Graphics for Plane B - vertical stripes every 2 pixels
-    .label gfxb = $11
-    .label by = $a
+    .label gfxb = 9
+    .label by = 8
     // *DTV_CONTROL = DTV_LINEAR
     lda #DTV_LINEAR
     sta DTV_CONTROL
@@ -1604,17 +1641,17 @@ mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __3 = $f
+    .label __3 = $19
     // Color for bits 11
     // Colors for bits 01 / 10
-    .label col = $11
+    .label col = $f
     .label cy = 6
     // Graphics for Plane A - horizontal stripes
-    .label gfxa = $13
+    .label gfxa = 9
     .label ay = 7
     // Graphics for Plane B - vertical stripes
-    .label gfxb = 8
-    .label by = $a
+    .label gfxb = $d
+    .label by = 8
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -1818,14 +1855,14 @@ mode_sixsfred: {
     .label PLANEB = $6000
     .label COLORS = $8000
     // Colors for high 4 bits of 8bpp
-    .label col = $13
+    .label col = $d
     .label cy = 6
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    .label gfxa = 8
+    .label gfxa = 9
     .label ay = 7
     // Graphics for Plane B - vertical stripes every 2 pixels
-    .label gfxb = $11
-    .label by = $a
+    .label gfxb = $f
+    .label by = 8
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -2009,15 +2046,15 @@ mode_8bpppixelcell: {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label CHARGEN = $d000
-    .label __3 = $f
+    .label __3 = $1c
     // Screen Chars for Plane A (screen) - 16x16 repeating
-    .label gfxa = $11
+    .label gfxa = 9
     .label ay = 6
-    .label bits = $d
-    .label chargen = $13
-    .label gfxb = 8
-    .label col = $10
-    .label cr = $a
+    .label bits = $17
+    .label chargen = $f
+    .label gfxb = $d
+    .label col = $18
+    .label cr = 8
     .label ch = 7
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
@@ -2200,10 +2237,10 @@ mode_8bpppixelcell: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label __7 = $11
-    .label gfxb = 8
-    .label x = $13
-    .label y = $d
+    .label __7 = $1a
+    .label gfxb = $f
+    .label x = $d
+    .label y = $17
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
@@ -2322,29 +2359,40 @@ mode_8bppchunkybmm: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(9) str, byte register(X) c, word zp($f) num)
 memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = menu.SCREEN
-    .label end = str+num
-    .label dst = $11
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
+    .label end = $f
+    .label dst = 9
+    .label num = $f
+    .label str = 9
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
     // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
-    cmp #>end
-    bne __b2
+    cmp.z end+1
+    bne __b3
     lda.z dst
-    cmp #<end
-    bne __b2
+    cmp.z end
+    bne __b3
+  __breturn:
     // }
     rts
-  __b2:
+  __b3:
     // *dst = c
-    lda #c
+    txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
@@ -2352,7 +2400,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp __b1
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -2410,7 +2458,7 @@ keyboard_matrix_read: {
 // Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
     // DTV Graphics Mode - Reset
-    .label ctrl = $c
+    .label ctrl = $19
   __b1:
   // Wait for the raster
   __b2:
@@ -2526,49 +2574,39 @@ mode_ctrl: {
     sta BORDER_COLOR
     jmp __b1
 }
-// Initialize the bitmap plotter tables for a specific bitmap
+// Initialize bitmap plotting tables
 bitmap_init: {
-    .label __10 = $10
-    .label yoffs = $11
-    ldy #$80
+    .label __7 = $1c
+    .label yoffs = $b
     ldx #0
+    lda #$80
   __b1:
-    // x&$f8
-    txa
-    and #$f8
-    // bitmap_plot_xlo[x] = x&$f8
-    sta bitmap_plot_xlo,x
-    // bitmap_plot_xhi[x] = >bitmap
-    lda #>mode_stdbitmap.BITMAP
-    sta bitmap_plot_xhi,x
     // bitmap_plot_bit[x] = bits
-    tya
     sta bitmap_plot_bit,x
-    // bits = bits>>1
-    tya
+    // bits >>= 1
     lsr
-    tay
     // if(bits==0)
-    cpy #0
+    cmp #0
     bne __b2
-    ldy #$80
+    lda #$80
   __b2:
     // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
-    lda #<0
+    lda #<mode_stdbitmap.BITMAP
     sta.z yoffs
+    lda #>mode_stdbitmap.BITMAP
     sta.z yoffs+1
-    tax
+    ldx #0
   __b3:
     // y&$7
     lda #7
-    sax.z __10
+    sax.z __7
     // <yoffs
     lda.z yoffs
     // y&$7 | <yoffs
-    ora.z __10
+    ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
     sta bitmap_plot_ylo,x
     // >yoffs
@@ -2577,7 +2615,7 @@ bitmap_init: {
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
-    cmp.z __10
+    cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
     clc
@@ -2596,165 +2634,251 @@ bitmap_init: {
     rts
 }
 // Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
 bitmap_clear: {
-    .label bitmap = $11
-    .label y = $10
-    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
-    lda bitmap_plot_xlo
-    sta.z bitmap
-    lda bitmap_plot_xhi
-    sta.z bitmap+1
-    lda #0
-    sta.z y
-  __b1:
+    .const col = WHITE*$10
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<mode_stdbitmap.SCREEN
+    sta.z memset.str
+    lda #>mode_stdbitmap.SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
     ldx #0
-  __b2:
-    // *bitmap++ = 0
-    lda #0
-    tay
-    sta (bitmap),y
-    // *bitmap++ = 0;
-    inc.z bitmap
-    bne !+
-    inc.z bitmap+1
-  !:
-    // for( char x: 0..199 )
-    inx
-    cpx #$c8
-    bne __b2
-    // for( char y: 0..39 )
-    inc.z y
-    lda #$28
-    cmp.z y
-    bne __b1
+    lda #<mode_stdbitmap.BITMAP
+    sta.z memset.str
+    lda #>mode_stdbitmap.BITMAP
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
     // }
     rts
 }
-// Draw a line on the bitmap
-// bitmap_line(byte zp($f) x0, byte zp($10) x1, byte register(X) y0, byte zp($e) y1)
+// Draw a line on the bitmap using bresenhams algorithm
+// bitmap_line(word zp(9) x1, word zp($b) y1, word zp($13) x2, word zp($15) y2)
 bitmap_line: {
-    .label xd = $c
-    .label x0 = $f
-    .label x1 = $10
-    .label y1 = $e
-    // if(x0<x1)
-    lda.z x0
-    cmp.z x1
-    bcc __b1
-    // xd = x0-x1
+    .label dx = $1d
+    .label dy = $f
+    .label sx = $1f
+    .label sy = $11
+    .label e1 = $d
+    .label e = $1a
+    .label y = $b
+    .label x = 9
+    .label x1 = 9
+    .label y1 = $b
+    .label x2 = $13
+    .label y2 = $15
+    // abs_u16(x2-x1)
+    lda.z x2
     sec
     sbc.z x1
-    sta.z xd
-    // if(y0<y1)
-    cpx.z y1
-    bcc __b7
-    // yd = y0-y1
-    txa
+    sta.z abs_u16.w
+    lda.z x2+1
+    sbc.z x1+1
+    sta.z abs_u16.w+1
+    jsr abs_u16
+    // abs_u16(x2-x1)
+    // dx = abs_u16(x2-x1)
+    lda.z abs_u16.return
+    sta.z dx
+    lda.z abs_u16.return+1
+    sta.z dx+1
+    // abs_u16(y2-y1)
+    lda.z y2
     sec
     sbc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b8
-    // bitmap_line_ydxi(y1, x1, y0, yd, xd)
-    lda.z y1
-    sta.z bitmap_line_ydxi.y
-    lda.z x1
-    sta.z bitmap_line_ydxi.x
-    stx.z bitmap_line_ydxi.y1
-    sty.z bitmap_line_ydxi.yd
-    jsr bitmap_line_ydxi
+    sta.z abs_u16.w
+    lda.z y2+1
+    sbc.z y1+1
+    sta.z abs_u16.w+1
+    jsr abs_u16
+    // abs_u16(y2-y1)
+    // dy = abs_u16(y2-y1)
+    // if(dx==0 && dy==0)
+    lda.z dx
+    ora.z dx+1
+    bne __b1
+    lda.z dy
+    ora.z dy+1
+    bne !__b4+
+    jmp __b4
+  !__b4:
+  __b1:
+    // sgn_u16(x2-x1)
+    lda.z x2
+    sec
+    sbc.z x1
+    sta.z sgn_u16.w
+    lda.z x2+1
+    sbc.z x1+1
+    sta.z sgn_u16.w+1
+    jsr sgn_u16
+    // sgn_u16(x2-x1)
+    // sx = sgn_u16(x2-x1)
+    lda.z sgn_u16.return
+    sta.z sx
+    lda.z sgn_u16.return+1
+    sta.z sx+1
+    // sgn_u16(y2-y1)
+    lda.z y2
+    sec
+    sbc.z y1
+    sta.z sgn_u16.w
+    lda.z y2+1
+    sbc.z y1+1
+    sta.z sgn_u16.w+1
+    jsr sgn_u16
+    // sgn_u16(y2-y1)
+    // sy = sgn_u16(y2-y1)
+    // if(dx > dy)
+    lda.z dy+1
+    cmp.z dx+1
+    bcc __b2
+    bne !+
+    lda.z dy
+    cmp.z dx
+    bcc __b2
+  !:
+    // e = dx/2
+    lda.z dx+1
+    lsr
+    sta.z e+1
+    lda.z dx
+    ror
+    sta.z e
+  __b6:
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    jsr bitmap_plot
+    // y += sy
+    lda.z y
+    clc
+    adc.z sy
+    sta.z y
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    // e += dx
+    lda.z e
+    clc
+    adc.z dx
+    sta.z e
+    lda.z e+1
+    adc.z dx+1
+    sta.z e+1
+    // if(dy<e)
+    cmp.z dy+1
+    bne !+
+    lda.z e
+    cmp.z dy
+    beq __b7
+  !:
+    bcc __b7
+    // x += sx
+    lda.z x
+    clc
+    adc.z sx
+    sta.z x
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    // e -= dy
+    lda.z e
+    sec
+    sbc.z dy
+    sta.z e
+    lda.z e+1
+    sbc.z dy+1
+    sta.z e+1
+  __b7:
+    // while (y != y2)
+    lda.z y+1
+    cmp.z y2+1
+    bne __b6
+    lda.z y
+    cmp.z y2
+    bne __b6
+  __b3:
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    jsr bitmap_plot
     // }
     rts
-  __b8:
-    // bitmap_line_xdyi(x1, y1, x0, xd, yd)
-    lda.z x1
-    sta.z bitmap_line_xdyi.x
-    ldx.z y1
-    lda.z x0
-    sta.z bitmap_line_xdyi.x1
-    sty.z bitmap_line_xdyi.yd
-    jsr bitmap_line_xdyi
-    rts
-  __b7:
-    // yd = y1-y0
-    txa
-    eor #$ff
-    sec
-    adc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b9
-    // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxd.y
-    sty.z bitmap_line_ydxd.yd
-    jsr bitmap_line_ydxd
-    rts
+  __b2:
+    // e = dy/2
+    lda.z dy+1
+    lsr
+    sta.z e1+1
+    lda.z dy
+    ror
+    sta.z e1
   __b9:
-    // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    lda.z x1
-    sta.z bitmap_line_xdyd.x
-    ldx.z y1
-    sty.z bitmap_line_xdyd.yd
-    jsr bitmap_line_xdyd
-    rts
-  __b1:
-    // xd = x1-x0
-    lda.z x1
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    jsr bitmap_plot
+    // x += sx
+    lda.z x
+    clc
+    adc.z sx
+    sta.z x
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    // e += dy
+    lda.z e1
+    clc
+    adc.z dy
+    sta.z e1
+    lda.z e1+1
+    adc.z dy+1
+    sta.z e1+1
+    // if(dx < e)
+    cmp.z dx+1
+    bne !+
+    lda.z e1
+    cmp.z dx
+    beq __b10
+  !:
+    bcc __b10
+    // y += sy
+    lda.z y
+    clc
+    adc.z sy
+    sta.z y
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    // e -= dx
+    lda.z e1
     sec
-    sbc.z x0
-    sta.z xd
-    // if(y0<y1)
-    cpx.z y1
-    bcc __b11
-    // yd = y0-y1
-    txa
-    sec
-    sbc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b12
-    // bitmap_line_ydxd(y1, x1, y0, yd, xd)
+    sbc.z dx
+    sta.z e1
+    lda.z e1+1
+    sbc.z dx+1
+    sta.z e1+1
+  __b10:
+    // while (x != x2)
+    lda.z x+1
+    cmp.z x2+1
+    bne __b9
+    lda.z x
+    cmp.z x2
+    bne __b9
+    jmp __b3
+  __b4:
+    // bitmap_plot(x,(char)y)
     lda.z y1
-    sta.z bitmap_line_ydxd.y
-    lda.z x1
-    sta.z bitmap_line_ydxd.x
-    stx.z bitmap_line_ydxd.y1
-    sty.z bitmap_line_ydxd.yd
-    jsr bitmap_line_ydxd
-    rts
-  __b12:
-    // bitmap_line_xdyd(x0, y0, x1, xd, yd)
-    lda.z x0
-    sta.z bitmap_line_xdyd.x
-    lda.z x1
-    sta.z bitmap_line_xdyd.x1
-    sty.z bitmap_line_xdyd.yd
-    jsr bitmap_line_xdyd
-    rts
-  __b11:
-    // yd = y1-y0
-    txa
-    eor #$ff
-    sec
-    adc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b13
-    // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxi.y
-    sty.z bitmap_line_ydxi.yd
-    jsr bitmap_line_ydxi
-    rts
-  __b13:
-    // bitmap_line_xdyi(x0, y0, x1, xd, yd)
-    lda.z x0
-    sta.z bitmap_line_xdyi.x
-    sty.z bitmap_line_xdyi.yd
-    jsr bitmap_line_xdyi
+    jsr bitmap_plot
     rts
 }
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
@@ -2773,212 +2897,89 @@ dtvSetCpuBankSegment1: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp($a) y, byte zp($f) x, byte zp($e) y1, byte zp($d) yd, byte zp($c) xd)
-bitmap_line_ydxi: {
-    .label y = $a
-    .label x = $f
-    .label y1 = $e
-    .label yd = $d
-    .label xd = $c
-    .label e = $10
-    // e = xd>>1
-    lda.z xd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z x
-    ldx.z y
-    jsr bitmap_plot
-    // y++;
-    inc.z y
-    // e = e+xd
-    lda.z e
-    clc
-    adc.z xd
-    sta.z e
-    // if(yd<e)
-    lda.z yd
-    cmp.z e
-    bcs __b2
-    // x++;
-    inc.z x
-    // e = e - yd
-    lda.z e
-    sec
-    sbc.z yd
-    sta.z e
-  __b2:
-    // y1+1
-    ldx.z y1
-    inx
-    // while (y!=(y1+1))
-    cpx.z y
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+// abs_u16(word zp($f) w)
+abs_u16: {
+    .label w = $f
+    .label return = $f
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
     bne __b1
+    rts
+  __b1:
+    // return -w;
+    sec
+    lda #0
+    sbc.z return
+    sta.z return
+    lda #0
+    sbc.z return+1
+    sta.z return+1
     // }
     rts
 }
-// bitmap_line_xdyi(byte zp($a) x, byte register(X) y, byte zp($10) x1, byte zp($c) xd, byte zp($d) yd)
-bitmap_line_xdyi: {
-    .label x = $a
-    .label x1 = $10
-    .label xd = $c
-    .label yd = $d
-    .label e = $b
-    // e = yd>>1
-    lda.z yd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z x
-    jsr bitmap_plot
-    // x++;
-    inc.z x
-    // e = e+yd
-    lda.z e
-    clc
-    adc.z yd
-    sta.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y++;
-    inx
-    // e = e - xd
-    lda.z e
-    sec
-    sbc.z xd
-    sta.z e
-  __b2:
-    // x1+1
-    lda.z x1
-    clc
-    adc #1
-    // while (x!=(x1+1))
-    cmp.z x
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+// sgn_u16(word zp($21) w)
+sgn_u16: {
+    .label w = $21
+    .label return = $11
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
     bne __b1
+    lda #<1
+    sta.z return
+    lda #>1
+    sta.z return+1
+    rts
+  __b1:
+    lda #<-1
+    sta.z return
+    sta.z return+1
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp($a) y, byte zp($f) x, byte zp($e) y1, byte zp($b) yd, byte zp($c) xd)
-bitmap_line_ydxd: {
-    .label y = $a
-    .label x = $f
-    .label y1 = $e
-    .label yd = $b
-    .label xd = $c
-    .label e = $d
-    // e = xd>>1
-    lda.z xd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z x
-    ldx.z y
-    jsr bitmap_plot
-    // y = y++;
-    inc.z y
-    // e = e+xd
-    lda.z e
-    clc
-    adc.z xd
-    sta.z e
-    // if(yd<e)
-    lda.z yd
-    cmp.z e
-    bcs __b2
-    // x--;
-    dec.z x
-    // e = e - yd
-    lda.z e
-    sec
-    sbc.z yd
-    sta.z e
-  __b2:
-    // y1+1
-    ldx.z y1
-    inx
-    // while (y!=(y1+1))
-    cpx.z y
-    bne __b1
-    // }
-    rts
-}
-// bitmap_line_xdyd(byte zp($d) x, byte register(X) y, byte zp($f) x1, byte zp($c) xd, byte zp($a) yd)
-bitmap_line_xdyd: {
-    .label x = $d
-    .label x1 = $f
-    .label xd = $c
-    .label yd = $a
-    .label e = $b
-    // e = yd>>1
-    lda.z yd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z x
-    jsr bitmap_plot
-    // x++;
-    inc.z x
-    // e = e+yd
-    lda.z e
-    clc
-    adc.z yd
-    sta.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y--;
-    dex
-    // e = e - xd
-    lda.z e
-    sec
-    sbc.z xd
-    sta.z e
-  __b2:
-    // x1+1
-    lda.z x1
-    clc
-    adc #1
-    // while (x!=(x1+1))
-    cmp.z x
-    bne __b1
-    // }
-    rts
-}
-// bitmap_plot(byte register(Y) x, byte register(X) y)
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp(9) x, byte register(A) y)
 bitmap_plot: {
-    .label plotter_x = $11
-    .label plotter_y = $13
-    .label plotter = $11
-    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,y
-    sta.z plotter_x+1
-    lda bitmap_plot_xlo,y
-    sta.z plotter_x
-    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
-    sta.z plotter_y+1
-    lda bitmap_plot_ylo,x
-    sta.z plotter_y
-    // plotter_x+plotter_y
+    .label __0 = $23
+    .label plotter = $21
+    .label x = 9
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
+    sta.z plotter+1
+    lda bitmap_plot_ylo,y
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z plotter_y
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z plotter_y+1
+    adc.z __0+1
     sta.z plotter+1
-    // *plotter | bitmap_plot_bit[x]
-    lda bitmap_plot_bit,y
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
-    // *plotter = *plotter | bitmap_plot_bit[x]
     sta (plotter),y
     // }
     rts
@@ -2990,9 +2991,7 @@ bitmap_plot: {
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  // Tables for the plotter - initialized by calling bitmap_draw_init();
-  bitmap_plot_xlo: .fill $100, 0
-  bitmap_plot_xhi: .fill $100, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

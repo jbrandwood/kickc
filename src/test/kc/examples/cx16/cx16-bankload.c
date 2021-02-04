@@ -68,10 +68,6 @@ export char SPRITE_PIXELS[] = kickasm(resource "ship.png") {{
 
 #pragma data_seg(Data)
 
-
-
-
-
 void main() {
 
     vera_layer_set_text_color_mode( 1, VERA_LAYER_CONFIG_16C );

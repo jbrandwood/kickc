@@ -18999,3 +18999,25 @@ bmi !+
 lda #0
 !:
 sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuz2
+ldy {z2}
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuaa
+tay
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuxx
+lda {c1},x
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuyy
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1

@@ -1,6 +1,6 @@
 // Tests the speed of printf()
 #include <stdio.h>
-#include <tod.h>
+#include <c64-tod.h>
 
 void main() {
   tod_init(TOD_ZERO);

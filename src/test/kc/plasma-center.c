@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sqr.h>
 #include <atan2.h>
-#include <print.h>
+#include <c64-print.h>
 
 const char __align(0x100) SINTABLE[0x200] = kickasm {{
     .for(var i=0;i<$200;i++)

@@ -1,7 +1,7 @@
 // Linear table generator
 // Work in progress towards a sine generator
 #include <division.h>
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     word lintab1[20];

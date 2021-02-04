@@ -1,7 +1,7 @@
 // C standard library time.h
 //  Functions to get and manipulate date and time information.
-#include <time.h>
 #include <c64.h>
+#include <c64-time.h>
 
 
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).

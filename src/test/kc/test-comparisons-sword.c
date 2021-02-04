@@ -1,7 +1,7 @@
 // Test signed word comparisons
 
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 signed word swords[] = { -$6fed, $0012, $7fed };
 

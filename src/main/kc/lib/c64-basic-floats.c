@@ -2,7 +2,7 @@
 // See https://www.c64-wiki.com/wiki/Floating_point_arithmetic
 // See http://www.pagetable.com/c64rom/c64rom_sc.html
 
-#include <basic-floats.h>
+#include <c64-basic-floats.h>
 
 // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
 char* const memLo = 0xfe;

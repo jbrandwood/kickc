@@ -4,8 +4,8 @@
 #include <c64.h>
 #include "font-hex.c"
 #include <atan2.h>
-#include <time.h>
-#include <print.h>
+#include <c64-time.h>
+#include <c64-print.h>
 
 byte* const CHARSET = 0x2000;
 byte* const SCREEN = 0x2800;

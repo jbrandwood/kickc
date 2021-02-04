@@ -2,7 +2,7 @@
 // Plots a few lines using the bresenham line algorithm
 #include <c64.h>
 #include <c64-bitmap.h>
-#include <print.h>
+#include <c64-print.h>
 
 byte* BITMAP = 0x2000;
 byte* SCREEN = 0x0400;

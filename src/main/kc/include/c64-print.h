@@ -1,4 +1,5 @@
-#include <print.h>
+// A lightweight library for printing on the C64.
+// Printing with this library is done by calling print_ function for each element
 
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.

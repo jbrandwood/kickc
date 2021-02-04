@@ -2,7 +2,7 @@
 // https://gitlab.com/camelot/kickc/issues/270
 
 
-#include <print.h>
+#include <c64-print.h>
 
 struct fileentry {
     char *bufEdit;

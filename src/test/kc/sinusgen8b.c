@@ -1,5 +1,5 @@
 #include <sine.h>
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     word wavelength = 192;

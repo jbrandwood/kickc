@@ -2,7 +2,7 @@
 // From A Comparison of Language Speed, The Transactor, March 1987, Volume 7, Issue 5
 // http://csbruce.com/cbm/transactor/pdfs/trans_v7_i05.pdf
 
-#include <print.h>
+#include <c64-print.h>
 #include <multiply.h>
 #include <division.h>
 

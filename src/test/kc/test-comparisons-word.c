@@ -1,5 +1,5 @@
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 word words[] = { $0012, $3f34, $cfed };
 

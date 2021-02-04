@@ -1,6 +1,6 @@
 // Time-of-day helper
 // Uses the MOS6526 CIA#1 on Commodore 64
-#include <tod.h>
+#include <c64-tod.h>
 #include <c64.h>
 
 // Initialize time-of-day clock

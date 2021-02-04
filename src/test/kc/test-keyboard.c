@@ -1,6 +1,6 @@
 // Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
 
-#include <keyboard.h>
+#include <c64-keyboard.h>
 
 void main() {
     // Clear screen

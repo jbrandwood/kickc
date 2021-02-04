@@ -1,5 +1,5 @@
 // Test the binary division library
-#include <print.h>
+#include <c64-print.h>
 #include <division.h>
 
 void main() {

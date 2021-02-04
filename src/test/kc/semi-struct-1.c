@@ -6,7 +6,7 @@
 // };
 // Point points[NUM_POINTS];
 
-#include <print.h>
+#include <c64-print.h>
 
 // The size of a point
 const byte SIZEOF_POINT = 2;

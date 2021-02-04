@@ -1,4 +1,4 @@
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     print_cls();

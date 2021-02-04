@@ -1,7 +1,7 @@
 // Interactive Explorer for C64DTV Screen Modes
 #include <c64dtv.h>
-#include <print.h>
-#include <keyboard.h>
+#include <c64-print.h>
+#include <c64-keyboard.h>
 #include <c64-bitmap.h>
 
 void main() {

@@ -1,7 +1,7 @@
 // Test the write through to RAM when writing to VIC/CIA/colorram
 
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     // Avoid interrupts

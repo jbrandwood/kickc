@@ -16,8 +16,8 @@
 // |7.  | #%01111111 (127/$7f) | STOP  ($  )|   q   ($11)|COMMODR($  )| SPACE ($20)|   2   ($32)|CONTROL($  )|  <-   ($1f)|   1   ($31)|
 // +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+
 
-#include <keyboard.h>
 #include <c64.h>
+#include <c64-keyboard.h>
 
 // Keycodes for each screen code character from $00-$3f.
 // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).

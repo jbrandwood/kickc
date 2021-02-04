@@ -7,7 +7,7 @@
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
 
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 unsigned char* const SCREEN1 = $2800;
 unsigned char* const CHARSET = $2000;

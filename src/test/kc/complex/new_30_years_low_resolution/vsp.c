@@ -23,7 +23,7 @@ volatile __zp char vsp_scroll = 0;
 // - Set the raster IRQ to occur on line 0x2d (since this modifies the IRQ line)
 // - Set the hardware IRQ vector (since this modifies the hardware IRQ vector)
 void inline vsp_perform() {
-    kickasm(uses vsp_scroll, uses HARDWARE_IRQ, uses RASTER, uses IRQ_STATUS, uses IRQ_RASTER, uses VICII_CONTROL, clobbers "AX") {{
+    kickasm(uses vsp_scroll, uses HARDWARE_IRQ, uses RASTER, uses IRQ_STATUS, uses IRQ_RASTER, uses VICII_CONTROL1, clobbers "AX") {{
         // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
@@ -71,7 +71,7 @@ void inline vsp_perform() {
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
     }}
 }

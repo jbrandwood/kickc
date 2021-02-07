@@ -28,7 +28,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label D011 = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
@@ -268,11 +268,11 @@ init_irq: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VICII_CONTROL |=$80
+    // *VICII_CONTROL1 |=$80
     // Set raster line to $100
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = $00
     lda #0
     sta RASTER

@@ -14,7 +14,7 @@ void main() {
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
     // 8BPP Pixel Cell Mode
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_COLORRAM_OFF | DTV_CHUNKY | DTV_BADLINE_OFF;
-    *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
+    *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
     *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Plane B: CHUNKY
     *DTV_PLANEB_START_LO = < CHUNKY;
@@ -50,14 +50,14 @@ void main() {
             bne stabilize
         }
 
-        *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
+        *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
         *BORDER_COLOR = 0;
         byte rst = $42;
         while(*RASTER!=rst) {}
         asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         do {
             rst = *RASTER;
-            *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7);
+            *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7);
             *BORDER_COLOR = rst*$10;
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         } while (rst!=$f2);

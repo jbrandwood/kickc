@@ -128,7 +128,7 @@ void part1_run() {
     // Acknowledge any VIC IRQ
     *IRQ_STATUS = 0x0f;
     // Set raster line to 0x136
-    *VICII_CONTROL |= 0x80;
+    *VICII_CONTROL1 |= 0x80;
     *RASTER = IRQ_PART1_TOP_LINE;
     // Set the IRQ routine
     *HARDWARE_IRQ = &irq_part1_top;
@@ -214,9 +214,9 @@ __interrupt void irq_part1_top() {
 
     // Set up the flipper IRQ
     if(>irq_flipper_top_line)
-        *VICII_CONTROL |= 0x80;
+        *VICII_CONTROL1 |= 0x80;
     else
-        *VICII_CONTROL &= 0x7f;
+        *VICII_CONTROL1 &= 0x7f;
     *RASTER = (<irq_flipper_top_line)&0xf8;
     *HARDWARE_IRQ = &irq_flipper_top;
     // Signal main routine to play music    
@@ -236,16 +236,16 @@ __interrupt void irq_flipper_top() {
         ldy #$1b            // VICII->CONTROL1 &= ~VICII_BMM;
         sta VICII_MEMORY
         stx BORDER_COLOR
-        sty VICII_CONTROL   
+        sty VICII_CONTROL1
         stx BG_COLOR
         lda #$c8            // VICII->CONTROL2 &= ~VICII_MCM;
         sta VICII_CONTROL2
     }
     // Set up the flipper IRQ
     if(>irq_flipper_bottom_line)
-        *VICII_CONTROL |= 0x80;
+        *VICII_CONTROL1 |= 0x80;
     else
-        *VICII_CONTROL &= 0x7f;
+        *VICII_CONTROL1 &= 0x7f;
     *RASTER = (<irq_flipper_bottom_line)&0xf8;
     *HARDWARE_IRQ = &irq_flipper_bottom;
     // Acknowledge the IRQ
@@ -287,7 +287,7 @@ __interrupt void irq_flipper_bottom() {
     }
 
     // Set up the IRQ again
-    *VICII_CONTROL |=0x80;
+    *VICII_CONTROL1 |=0x80;
     *RASTER = IRQ_PART1_TOP_LINE;
     *HARDWARE_IRQ = &irq_part1_top;
     // Acknowledge the IRQ

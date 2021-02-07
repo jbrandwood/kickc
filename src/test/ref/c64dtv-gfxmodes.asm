@@ -64,7 +64,7 @@
   .label BG_COLOR1 = $d022
   .label BG_COLOR2 = $d023
   .label BG_COLOR3 = $d024
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // Processor port data direction register
@@ -164,11 +164,11 @@ menu: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -497,11 +497,11 @@ mode_stdchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -632,11 +632,11 @@ mode_ecmchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|VICII_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|VICII_ECM|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -777,11 +777,11 @@ mode_mcchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL|VICII_MCM
     lda #VICII_CSEL|VICII_MCM
     sta VICII_CONTROL2
@@ -907,11 +907,11 @@ mode_stdbitmap: {
     // Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_BMM|VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -1067,11 +1067,11 @@ mode_hicolstdchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -1197,11 +1197,11 @@ mode_hicolecmchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|VICII_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|VICII_ECM|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -1338,11 +1338,11 @@ mode_hicolmcchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
     lda #VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL|VICII_MCM
     lda #VICII_CSEL|VICII_MCM
     sta VICII_CONTROL2
@@ -1455,10 +1455,10 @@ mode_sixsfred2: {
     // *DTV_CONTROL = DTV_LINEAR
     lda #DTV_LINEAR
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
     lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
@@ -1655,10 +1655,10 @@ mode_twoplanebitmap: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
     lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
@@ -1866,10 +1866,10 @@ mode_sixsfred: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
     lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
@@ -2059,10 +2059,10 @@ mode_8bpppixelcell: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_ECM|VICII_DEN|VICII_RSEL|3
+    // *VICII_CONTROL1 = VICII_ECM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
     lda #VICII_ECM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
@@ -2244,10 +2244,10 @@ mode_8bppchunkybmm: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_ECM | VICII_DEN | VICII_RSEL | 3
+    // *VICII_CONTROL1 = VICII_ECM | VICII_DEN | VICII_RSEL | 3
     // VIC Graphics Mode
     lda #VICII_ECM|VICII_DEN|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2

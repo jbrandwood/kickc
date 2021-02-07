@@ -82,7 +82,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // Number of form fields
   .const form_fields_cnt = $24
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // Processor port data direction register
@@ -499,8 +499,8 @@ gfx_mode: {
     ora #VICII_BMM
     tax
   __b8:
-    // *VICII_CONTROL = VICII_control
-    stx VICII_CONTROL
+    // *VICII_CONTROL1 = VICII_control
+    stx VICII_CONTROL1
     // if(*form_ctrl_mcm!=0)
     lda form_ctrl_mcm
     cmp #0

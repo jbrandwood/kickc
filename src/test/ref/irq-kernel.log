@@ -6,7 +6,7 @@ void main()
 main: scope:[main]  from __start
   asm { sei  }
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
   *KERNEL_IRQ = &irq
@@ -46,13 +46,13 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*)$d019
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL1 = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
 __interrupt(rom_sys_c64) void irq()
 void main()
 
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)0
@@ -96,7 +96,7 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [6] *VICII_CONTROL = *VICII_CONTROL | $80
+  [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [7] *RASTER = 0
   [8] *IRQ_ENABLE = IRQ_RASTER
   [9] *KERNEL_IRQ = &irq
@@ -118,7 +118,7 @@ Statement [0] *BG_COLOR = WHITE [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [1] *BG_COLOR = BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -151,7 +151,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -186,11 +186,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // [7] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -232,7 +232,7 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*) 53273
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
 const nomodify byte WHITE = 1
 __interrupt(rom_sys_c64) void irq()
 void main()
@@ -260,7 +260,7 @@ Score: 98
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -299,12 +299,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VICII_CONTROL |=$80
-    // [6] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |=$80
+    // [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = $00
     // [7] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0

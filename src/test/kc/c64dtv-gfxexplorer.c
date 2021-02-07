@@ -324,7 +324,7 @@ void gfx_mode() {
     if(*form_ctrl_bmm!=0) {
         VICII_control = VICII_control | VICII_BMM;
     }
-    *VICII_CONTROL = VICII_control;
+    *VICII_CONTROL1 = VICII_control;
     byte VICII_control2 = VICII_CSEL;
     if(*form_ctrl_mcm!=0) {
         VICII_control2 = VICII_control2 | VICII_MCM;

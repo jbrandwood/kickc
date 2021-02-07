@@ -29,7 +29,7 @@
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -291,10 +291,10 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = 0x0
     lda #0
     sta RASTER

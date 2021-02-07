@@ -8,7 +8,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   *RASTER = $60
   *IRQ_ENABLE = IRQ_RASTER
   *IRQ_STATUS = IRQ_RASTER
@@ -94,7 +94,7 @@ const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* SCREEN = (byte*)$400
 const nomodify byte* VICII_BASE = (byte*)$d000
-const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL1 = (byte*)$d011
 const nomodify byte VICII_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore
@@ -118,7 +118,7 @@ byte table_driven_irq::val#2
 byte table_driven_irq::val#3
 byte table_driven_irq::val#4
 
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) $60 in *RASTER = $60
 Adding number conversion cast (unumber) VICII_SIZE+8 in table_driven_irq::$1 = table_driven_irq::idx#2 < VICII_SIZE+8
 Adding number conversion cast (unumber) 8 in table_driven_irq::$1 = table_driven_irq::idx#2 < (unumber)VICII_SIZE+8
@@ -249,7 +249,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [20] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [20] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   [21] *RASTER = $60
   [22] *IRQ_ENABLE = IRQ_RASTER
   [23] *IRQ_STATUS = IRQ_RASTER
@@ -293,7 +293,7 @@ Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
@@ -306,7 +306,7 @@ Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
@@ -358,7 +358,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const IRQ_CHANGE_NEXT = $7f
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -463,11 +463,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [20] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [20] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60
     sta RASTER
@@ -542,7 +542,7 @@ const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* SCREEN = (byte*) 1024
 const nomodify byte* VICII_BASE = (byte*) 53248
-const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
 const nomodify byte VICII_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore zp[1]:2 6.0
@@ -584,7 +584,7 @@ Score: 631
   .const IRQ_CHANGE_NEXT = $7f
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -689,12 +689,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VICII_CONTROL &=$7f
-    // [20] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &=$7f
+    // [20] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = $60
     // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60

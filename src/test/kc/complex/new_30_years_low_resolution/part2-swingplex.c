@@ -301,7 +301,7 @@ void part2_run() {
     // Acknowledge any VIC IRQ
     *IRQ_STATUS = 0x0f;
     // Set raster line to first bucket
-    *VICII_CONTROL &=0x7f;
+    *VICII_CONTROL1 &=0x7f;
     *RASTER = BUCKET_YPOS[0];
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

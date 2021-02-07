@@ -172,7 +172,7 @@ char*  const BG_COLOR3 = $d024;
 char*  const SPRITES_MC1 = $d025;
 char*  const SPRITES_MC2 = $d026;
 
-char*  const VICII_CONTROL = $d011;
+char*  const VICII_CONTROL1 = $d011;
 char*  const D011 = $d011;
 const char VICII_RST8 = %10000000;
 const char VICII_ECM =  %01000000;

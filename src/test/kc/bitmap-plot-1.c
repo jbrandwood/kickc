@@ -47,7 +47,7 @@ void init_irq() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VICII_CONTROL |=$80;
+    *VICII_CONTROL1 |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

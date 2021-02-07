@@ -910,7 +910,7 @@ init_irq: scope:[init_irq]  from main::@11
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
   *HARDWARE_IRQ = &irq
@@ -997,7 +997,7 @@ const byte* SCREEN = (byte*)$400
 const signed word* SINE[$200]  = { fill( $200, 0) }
 const byte SIZEOF_SIGNED_WORD = 2
 const nomodify byte VICII_BMM = $20
-const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL1 = (byte*)$d011
 const nomodify byte VICII_DEN = $10
 const nomodify byte VICII_RSEL = 8
 const nomodify byte WHITE = 1
@@ -1821,7 +1821,7 @@ Adding number conversion cast (unumber) 1 in main::$20 = main::r_add#4 != 1
 Adding number conversion cast (unumber) 0 in main::idx_y#2 = 0
 Adding number conversion cast (snumber) $200*$c+$100 in main::$23 = main::r#5 >= $200*$c+$100
 Adding number conversion cast (unumber) 2 in main::r_add#1 = main::r_add#5 / 2
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Adding number conversion cast (unumber) 0 in irq::$1 = 0 != frame_cnt
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -2952,7 +2952,7 @@ init_irq: scope:[init_irq]  from main::@8
   [110] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [111] *PROCPORT = PROCPORT_RAM_IO
   [112] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [113] *VICII_CONTROL = *VICII_CONTROL | $80
+  [113] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [114] *RASTER = 0
   [115] *IRQ_ENABLE = IRQ_RASTER
   [116] *HARDWARE_IRQ = &irq
@@ -3837,7 +3837,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:19 [ bitmap
 Statement [110] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [111] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [112] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [113] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [113] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [114] *RASTER = 0 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [115] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [116] *HARDWARE_IRQ = &irq [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
@@ -3974,7 +3974,7 @@ Statement [99] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8 [ bitma
 Statement [110] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [111] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [112] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [113] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [113] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [114] *RASTER = 0 [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [115] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [116] *HARDWARE_IRQ = &irq [ ] ( main:3::init_irq:20 [ frame_cnt ] { }  ) always clobbers reg byte a 
@@ -4327,7 +4327,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label D011 = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
@@ -5073,11 +5073,11 @@ init_irq: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [113] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [113] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // [114] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -6216,7 +6216,7 @@ const byte* SCREEN = (byte*) 1024
 const signed word* SINE[$200]  = { fill( $200, 0) }
 const byte SIZEOF_SIGNED_WORD = 2
 const nomodify byte VICII_BMM = $20
-const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
 const nomodify byte VICII_DEN = $10
 const nomodify byte VICII_RSEL = 8
 const nomodify byte WHITE = 1
@@ -6572,7 +6572,7 @@ Score: 20654
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label D011 = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
@@ -7276,12 +7276,12 @@ init_irq: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VICII_CONTROL |=$80
-    // [113] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |=$80
+    // [113] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = $00
     // [114] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0

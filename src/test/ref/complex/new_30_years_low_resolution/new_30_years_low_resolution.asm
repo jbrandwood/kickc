@@ -82,7 +82,7 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // VIC II IRQ Status Register
@@ -629,8 +629,8 @@ irq_swing_vsp: {
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
     
     // VICII->CONTROL1 |= VICII_BMM
     // Set BMM
@@ -869,11 +869,11 @@ irq_flipper_bottom: {
     lda #1
     sta.z flipper_done
   __b1:
-    // *VICII_CONTROL |=0x80
+    // *VICII_CONTROL1 |=0x80
     // Set up the IRQ again
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -951,7 +951,7 @@ irq_flipper_top: {
     ldy #$1b
     sta VICII_MEMORY
     stx BORDER_COLOR
-    sty VICII_CONTROL
+    sty VICII_CONTROL1
     stx BG_COLOR
     lda #$c8
     sta VICII_CONTROL2
@@ -961,10 +961,10 @@ irq_flipper_top: {
     // Set up the flipper IRQ
     cmp #0
     bne __b1
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
   __b2:
     // <irq_flipper_bottom_line
     lda.z irq_flipper_bottom_line
@@ -990,10 +990,10 @@ irq_flipper_top: {
     ldy #0
     rti
   __b1:
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 // IRQ running during set-up
@@ -1031,10 +1031,10 @@ irq_part1_top: {
     // Set up the flipper IRQ
     cmp #0
     bne __b1
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
   __b2:
     // <irq_flipper_top_line
     lda.z irq_flipper_top_line
@@ -1060,10 +1060,10 @@ irq_part1_top: {
     lda #0
     rti
   __b1:
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 .segment Code
@@ -1510,11 +1510,11 @@ byteboozer_decrunch: {
 demo_start: {
     // demo_init()
     jsr demo_init
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     // Set raster line to 0x00
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = 0
     lda #0
     sta RASTER
@@ -1682,11 +1682,11 @@ part1_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     // Set raster line to 0x136
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -2004,11 +2004,11 @@ part2_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL &=0x7f
+    // *VICII_CONTROL1 &=0x7f
     // Set raster line to first bucket
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = BUCKET_YPOS[0]
     lda BUCKET_YPOS
     sta RASTER

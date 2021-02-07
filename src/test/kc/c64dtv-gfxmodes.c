@@ -55,7 +55,7 @@ void menu() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -202,7 +202,7 @@ void mode_stdchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -253,7 +253,7 @@ void mode_ecmchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|VICII_ECM|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -309,7 +309,7 @@ void mode_mcchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL|VICII_MCM;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -355,7 +355,7 @@ void mode_stdbitmap() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
@@ -411,7 +411,7 @@ void mode_hicolstdchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -464,7 +464,7 @@ void mode_hicolecmchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|VICII_ECM|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -520,7 +520,7 @@ void mode_hicolmcchar() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL|VICII_MCM;
     // VIC Memory Pointers
     *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
@@ -564,7 +564,7 @@ void mode_twoplanebitmap() {
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // Linear Graphics Plane A Counter
     *DTV_PLANEA_START_LO = <PLANEA;
@@ -634,7 +634,7 @@ void mode_sixsfred() {
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
     *DTV_PLANEA_START_LO = <PLANEA;
@@ -700,7 +700,7 @@ void mode_sixsfred2() {
     dtv_control = DTV_LINEAR;
     *DTV_CONTROL = DTV_LINEAR;
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
     *DTV_PLANEA_START_LO = <PLANEA;
@@ -771,7 +771,7 @@ void mode_8bpppixelcell() {
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_ECM|VICII_DEN|VICII_RSEL|3;
+    *VICII_CONTROL1 = VICII_ECM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
     *DTV_PLANEA_START_LO = <PLANEA;
@@ -839,7 +839,7 @@ void mode_8bppchunkybmm() {
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF;
     // VIC Graphics Mode
-    *VICII_CONTROL = VICII_ECM | VICII_DEN | VICII_RSEL | 3;
+    *VICII_CONTROL1 = VICII_ECM | VICII_DEN | VICII_RSEL | 3;
     *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Linear Graphics Plane B Counter
     *DTV_PLANEB_START_LO = < < PLANEB;

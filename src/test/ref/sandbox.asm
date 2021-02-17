@@ -230,7 +230,6 @@ myprintf: {
     tax
     // if (bFormat != 0)
     lda.z bFormat
-    cmp #0
     bne !__b4+
     jmp __b4
   !__b4:
@@ -351,7 +350,6 @@ myprintf: {
     bne __b15
     // if (bTrailing == 0 && bDigits > b)
     lda.z bTrailing
-    cmp #0
     bne __b17
     tya
     cmp.z bDigits
@@ -369,13 +367,10 @@ myprintf: {
     bcc __b23
     // if (bTrailing != 0 && bDigits > b)
     lda.z bTrailing
-    cmp #0
     beq __b3
     lda.z b
     cmp.z bDigits
-    bcc !__b3+
-    jmp __b3
-  !__b3:
+    bcs __b3
   __b25:
     // for (; bDigits > b; --bDigits)
     lda.z b
@@ -405,7 +400,6 @@ myprintf: {
   __b19:
     // (bLeadZero == 0) ? ' ' : '0'
     lda.z bLeadZero
-    cmp #0
     beq __b20
     lda #'0'
     jmp __b21
@@ -448,7 +442,6 @@ myprintf: {
     // default format
     //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
     lda.z bArg
-    cmp #0
     beq __b34
     // if (bArg == 1)
     lda #1

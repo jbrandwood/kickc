@@ -286,7 +286,6 @@ printf_string: {
   __b1:
     // if(!format.justify_left && padding)
     lda.z format_justify_left
-    cmp #0
     bne __b2
     lda.z padding
     cmp #0
@@ -304,7 +303,6 @@ printf_string: {
     jsr cputs
     // if(format.justify_left && padding)
     lda.z format_justify_left
-    cmp #0
     beq __breturn
     lda.z padding
     cmp #0

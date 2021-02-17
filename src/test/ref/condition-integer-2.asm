@@ -32,7 +32,6 @@ main: {
     ldy.z j
     dey
     lda.z j
-    cmp #0
     bne __b5
     // SCREEN[idx++] = ' '
     lda #' '

@@ -408,12 +408,10 @@ mul8u_compare: {
     // for(byte b: 0..255)
     inc.z b
     lda.z b
-    cmp #0
     bne __b2
     // for(byte a: 0..255)
     inc.z a
     lda.z a
-    cmp #0
     bne __b1
     // print_str("multiply results match!")
     lda #<str
@@ -627,7 +625,6 @@ muls8u: {
     .label a = 4
     // if(a!=0)
     lda.z a
-    cmp #0
     beq __b4
     lda #<0
     sta.z m

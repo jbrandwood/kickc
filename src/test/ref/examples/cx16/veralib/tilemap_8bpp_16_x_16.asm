@@ -332,7 +332,6 @@ main: {
     // for(byte t:1..255)
     inc.z t
     lda.z t
-    cmp #0
     bne __b1
     // vera_tile_area(0, 0, 0, 0, 40, 30, 0, 0, 0)
   //vera_tile_area(byte layer, word tileindex, byte x, byte y, byte w, byte h, byte hflip, byte vflip, byte offset)

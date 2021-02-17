@@ -22,7 +22,6 @@ main: {
     sax.z __6
     // (i&1)?i+3:i*4
     lda.z __6
-    cmp #0
     bne __b2
     txa
     asl
@@ -38,7 +37,6 @@ main: {
   !:
     // (i&1)?i+3:i*4
     lda.z __6
-    cmp #0
     bne __b5
     txa
     asl

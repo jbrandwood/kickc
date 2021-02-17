@@ -468,7 +468,6 @@ sin8s: {
   __b3:
     // if(isUpper!=0)
     lda.z isUpper
-    cmp #0
     beq __b14
     // sinx = -(signed char)usinx
     txa

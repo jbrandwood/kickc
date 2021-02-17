@@ -1816,7 +1816,6 @@ uctoa: {
     tay
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b10
     sty.z $ff
     cpx.z $ff

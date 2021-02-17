@@ -387,7 +387,6 @@ irq: {
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // if(greet_zoomx==0)
     lda.z greet_zoomx
-    cmp #0
     bne __b7
     // if(++greet_idx == GREET_COUNT)
     inc.z greet_idx

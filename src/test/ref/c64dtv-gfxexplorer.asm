@@ -1107,7 +1107,6 @@ gfx_init_charset: {
     // for(byte c: 0..$ff)
     inc.z c
     lda.z c
-    cmp #0
     bne __b1
     // *PROCPORT = $37
     lda #$37
@@ -1316,7 +1315,6 @@ gfx_init_plane_charset8: {
     // for(byte ch : $00..$ff)
     inc.z ch
     lda.z ch
-    cmp #0
     bne __b1
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
@@ -2464,7 +2462,6 @@ keyboard_event_scan: {
 keyboard_event_get: {
     // if(keyboard_events_size==0)
     lda.z keyboard_events_size
-    cmp #0
     beq __b1
     // return keyboard_events[--keyboard_events_size];
     dec.z keyboard_events_size

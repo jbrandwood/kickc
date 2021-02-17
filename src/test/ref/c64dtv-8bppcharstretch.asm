@@ -391,7 +391,6 @@ gfx_init_plane_charset8: {
     // for(byte ch : $00..$ff)
     inc.z ch
     lda.z ch
-    cmp #0
     bne __b1
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO

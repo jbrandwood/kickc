@@ -112,7 +112,6 @@ scroll_bit: {
     lsr.z current_bit
     // if(current_bit==0)
     lda.z current_bit
-    cmp #0
     bne __b1
     // next_char()
     jsr next_char

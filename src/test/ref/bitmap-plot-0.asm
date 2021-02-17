@@ -63,7 +63,6 @@ irq: {
     sta BG_COLOR
     // if(frame_cnt)
     lda.z frame_cnt
-    cmp #0
     beq __b1
     // frame_cnt++;
     inc.z frame_cnt
@@ -149,7 +148,6 @@ main: {
     cmp.z y
     beq __b6
     lda.z y
-    cmp #0
     bne __b4
   __b6:
     // vy = -vy

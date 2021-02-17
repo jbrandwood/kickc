@@ -335,7 +335,6 @@ uctoa: {
     sta.z digit_value
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5

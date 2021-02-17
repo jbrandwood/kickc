@@ -1573,7 +1573,6 @@ draw_characters: {
     // for(byte b:8..1)
     dec.z b
     lda.z b
-    cmp #0
     bne __b4
     // tilecolumn += 8
     lda.z tilecolumn_1

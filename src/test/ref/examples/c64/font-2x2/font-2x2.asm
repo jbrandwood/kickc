@@ -303,7 +303,6 @@ font_compress: {
     // for(char i: 0..0xff)
     inc.z i
     lda.z i
-    cmp #0
     bne __b6
     // }
     rts

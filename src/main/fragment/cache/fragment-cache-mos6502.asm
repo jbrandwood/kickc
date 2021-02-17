@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 1006a86fd4 1006a88e44
+//KICKC FRAGMENT CACHE fda5310c5 fda532f51
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -16,7 +16,6 @@ and {z2}
 sta {z1}
 //FRAGMENT vbuz1_neq_0_then_la1
 lda {z1}
-cmp #0
 bne {la1}
 //FRAGMENT vbuz1=vbuz1_plus_vbuc1
 lda #{c1}

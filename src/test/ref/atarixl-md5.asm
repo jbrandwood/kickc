@@ -1645,7 +1645,6 @@ uctoa: {
     sta.z digit_value
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5
@@ -1689,7 +1688,6 @@ printf_number_buffer: {
     ldx.z __19
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b10
     // len++;
     inx
@@ -1708,7 +1706,6 @@ printf_number_buffer: {
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
     lda.z format_zero_padding
-    cmp #0
     bne __b2
     lda.z padding
     cmp #0
@@ -1724,7 +1721,6 @@ printf_number_buffer: {
   __b2:
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b3
     // cputc(buffer.sign)
     sta.z cputc.c
@@ -1732,7 +1728,6 @@ printf_number_buffer: {
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
-    cmp #0
     beq __b4
     lda.z padding
     cmp #0

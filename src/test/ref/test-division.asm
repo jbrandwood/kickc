@@ -532,7 +532,6 @@ div8s: {
     tay
     // if(neg==0)
     lda.z neg
-    cmp #0
     beq __b5
     // rem8s = -(signed char)rem8u
     txa

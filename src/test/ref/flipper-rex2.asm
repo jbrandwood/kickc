@@ -71,14 +71,12 @@ flip: {
     // for( byte c : 16..1)
     dec.z c
     lda.z c
-    cmp #0
     bne __b2
     // dstIdx--;
     dex
     // for( byte r : 16..1)
     dec.z r
     lda.z r
-    cmp #0
     bne __b1
     ldx #0
   __b4:
@@ -120,7 +118,6 @@ plot: {
     // for(byte y : 16..1)
     dec.z y
     lda.z y
-    cmp #0
     bne __b1
     // }
     rts

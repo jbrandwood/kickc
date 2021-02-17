@@ -208,7 +208,6 @@ plexShowSprite: {
     asl.z plex_sprite_msb
     // if(plex_sprite_msb==0)
     lda.z plex_sprite_msb
-    cmp #0
     bne __breturn
     // plex_sprite_msb = 1
     lda #1

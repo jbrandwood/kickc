@@ -430,7 +430,6 @@ irq_swing_plex: {
     jsr update_frame_plex_id_offset
     // if(p2_logo_swinging)
     lda.z p2_logo_swinging
-    cmp #0
     beq __b6
     // scroll = VSP_SINTABLE[(unsigned int)(vsp_sin_idx++)]
     lda.z vsp_sin_idx
@@ -510,7 +509,6 @@ irq_swing_plex: {
   __b6:
     // if(p2_plex_scroller_moving)
     lda.z p2_plex_scroller_moving
-    cmp #0
     beq __b9
     // plex_scroller_move()
     jsr plex_scroller_move
@@ -784,7 +782,6 @@ irq_flipper_bottom: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
     // if(!flipper_done)
     lda.z flipper_done
-    cmp #0
     bne __b1
     // irq_flipper_line = FLIPPER_EASING[irq_flipper_idx++]
     lda.z irq_flipper_idx
@@ -1138,7 +1135,6 @@ demo_work: {
     jsr musicPlay
     // if(sparkler_active)
     lda.z sparkler_active
-    cmp #0
     beq __breturn
     // sparkler_anim()
     jsr sparkler_anim
@@ -2218,7 +2214,6 @@ part1_loop: {
   __b1:
     // while(p1_work_ready==0)
     lda.z p1_work_ready
-    cmp #0
     beq __b1
     // flipper_fix_colors()
     // Fix colors
@@ -2230,7 +2225,6 @@ part1_loop: {
     sta.z __11+1
     // if(!sparkler_active && demo_frame_count>9*50-3)
     lda.z sparkler_active
-    cmp #0
     bne __b4
     lda.z __11+1
     cmp #>9*$32-3
@@ -2514,17 +2508,14 @@ part2_loop: {
   __b1:
     // while(p2_work_ready==0)
     lda.z p2_work_ready
-    cmp #0
     beq __b1
     // demo_work()
     // Play music
     jsr demo_work
     // if(p2_logo_revealing && !p2_logo_reveal_done)
     lda.z p2_logo_revealing
-    cmp #0
     beq __b4
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b3
     jmp __b4
   __b3:
@@ -2538,7 +2529,6 @@ part2_loop: {
     sta.z __23+1
     // if(!p2_logo_revealing && demo_frame_count>18*50+25)
     lda.z p2_logo_revealing
-    cmp #0
     bne __b5
     lda.z __23+1
     cmp #>$12*$32+$19
@@ -2554,10 +2544,8 @@ part2_loop: {
   __b5:
     // if(!p2_logo_swinging && p2_logo_reveal_done)
     lda.z p2_logo_swinging
-    cmp #0
     bne __b6
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b6
     // p2_logo_swinging = 1
     lda #1
@@ -2570,7 +2558,6 @@ part2_loop: {
     sta.z __24+1
     // if(!p2_plex_scroller_moving && demo_frame_count>26*50)
     lda.z p2_plex_scroller_moving
-    cmp #0
     bne __b7
     lda.z __24+1
     cmp #>$1a*$32

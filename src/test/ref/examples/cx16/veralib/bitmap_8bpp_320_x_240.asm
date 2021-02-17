@@ -1485,7 +1485,6 @@ bitmap_init: {
   __b1:
     // if(__bitmap_color_depth==0)
     lda.z __bitmap_color_depth
-    cmp #0
     bne __b2
     // x >> 3
     lda.z x+1
@@ -1727,7 +1726,6 @@ bitmap_init: {
   __b6:
     // if(bitmask==0)
     lda.z bitmask
-    cmp #0
     bne __b7
     // bitmask = bitmasks[__bitmap_color_depth]
     ldy.z __bitmap_color_depth

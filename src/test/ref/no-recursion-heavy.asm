@@ -27,7 +27,6 @@ main: {
 f0: {
     // if(ba==0)
     lda.z ba
-    cmp #0
     bne __b1
     // bb++;
     inc.z bb
@@ -142,7 +141,6 @@ f0: {
 fa: {
     // if(bb==0)
     lda.z bb_1
-    cmp #0
     bne __b1
     // bc++;
     inx
@@ -247,7 +245,6 @@ fa: {
 fb: {
     // if(bc==0)
     lda.z bc
-    cmp #0
     bne __b1
     // bd++;
     iny

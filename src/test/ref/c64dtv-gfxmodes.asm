@@ -2216,7 +2216,6 @@ mode_8bpppixelcell: {
     // for(byte ch : $00..$ff)
     inc.z ch
     lda.z ch
-    cmp #0
     bne __b6
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO

@@ -2074,11 +2074,6 @@ public class TestPrograms {
    */
 
    @Test
-   public void testStructError6() throws IOException, URISyntaxException {
-      assertError("struct-error-6.c", "Value list cannot initialize type");
-   }
-
-   @Test
    public void testStructPtr34() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-34.c");
    }
@@ -2253,6 +2248,17 @@ public class TestPrograms {
    public void testStructPtr0() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-0.c");
    }
+
+   @Test
+   public void testStructError7() throws IOException, URISyntaxException {
+      assertError("struct-err-7.c", "Unknown struct member");
+   }
+
+   @Test
+   public void testStructError6() throws IOException, URISyntaxException {
+      assertError("struct-err-6.c", "Value list cannot initialize type");
+   }
+
 
    @Test
    public void testStructError5() throws IOException, URISyntaxException {

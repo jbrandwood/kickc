@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE fda5310c5 fda532f51
+//KICKC FRAGMENT CACHE fdb40b9db fdb40d86d
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}

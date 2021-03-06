@@ -1,6 +1,5 @@
 Resolved forward reference irq_vsync to __interrupt(rom_sys_cx16) void irq_vsync()
 Setting struct to load/store in variable affected by address-of main::$6 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR main::vram_sprite_attr &SPRITE_ATTR main::$5 
-Setting struct to load/store in variable affected by address-of irq_vsync::$5 = call memcpy_to_vram irq_vsync::vram_sprite_attr_bank irq_vsync::vram_sprite_pos &SPRITE_ATTR+2 4 
 Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -239,7 +238,7 @@ const word* SINY[SINY_LEN]  = kickasm {{ .fillword 256, 208+208*sin(i*2*PI/SINY_
 const nomodify byte SINY_LEN = $fb
 const byte SIZEOF_STRUCT_VERA_SPRITE = 8
 const byte SIZEOF_WORD = 2
-struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: (word)<SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: (word)$140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
+volatile struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: (word)<SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: (word)$140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
 const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()
@@ -796,7 +795,7 @@ memcpy_to_vram::@2: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
 
 
 VARIABLE REGISTER WEIGHTS
-struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
+volatile struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
 void __start()
 __interrupt(rom_sys_cx16) void irq_vsync()
 word~ irq_vsync::$11 22.0
@@ -1806,7 +1805,7 @@ const word* SINY[SINY_LEN]  = kickasm {{ .fillword 256, 208+208*sin(i*2*PI/SINY_
  }}
 const nomodify byte SINY_LEN = $fb
 const byte SIZEOF_STRUCT_VERA_SPRITE = 8
-struct VERA_SPRITE SPRITE_ATTR loadstore mem[8] = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
+volatile struct VERA_SPRITE SPRITE_ATTR loadstore mem[8] = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
 const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()

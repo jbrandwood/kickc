@@ -73,7 +73,7 @@ public class Compiler {
       this.upliftCombinations = upliftCombinations;
    }
 
-   void enableZeroPageCoalesce() {
+   public void enableZeroPageCoalesce() {
       this.enableZeroPageCoalasce = true;
    }
 

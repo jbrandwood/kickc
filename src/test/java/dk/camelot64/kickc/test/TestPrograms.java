@@ -2074,6 +2074,11 @@ public class TestPrograms {
    */
 
    @Test
+   public void testStructPtr35() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-35.c");
+   }
+
+   @Test
    public void testStructPtr34() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-34.c");
    }
@@ -5011,6 +5016,7 @@ public class TestPrograms {
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
+      //compiler.enableZeroPageCoalesce();
       compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
       if(compileLog != null) {

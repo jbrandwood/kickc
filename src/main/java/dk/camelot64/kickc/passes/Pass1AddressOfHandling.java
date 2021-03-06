@@ -60,6 +60,7 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
    private void updateAddressOfVariable(Variable variable, String stmtStr) {
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
+         variable.setVolatile(true);
          getLog().append("Setting struct to load/store in variable affected by address-of " + stmtStr);
          //getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {

@@ -2,8 +2,8 @@
 
 #include <c64.h>
 #include <fastmultiply.h>
-#include <time.h>
-#include <print.h>
+#include <c64-time.h>
+#include <c64-print.h>
 
 char* SCREEN = $0400;
 

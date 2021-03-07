@@ -8,7 +8,7 @@
 #define NUM_SPRITES 32
 
 // A 64*64 8bpp TUT sprite and palette
-__align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
+__align(0x0400) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
 	.var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()

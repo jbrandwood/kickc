@@ -82,7 +82,7 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // VIC II IRQ Status Register
@@ -430,7 +430,6 @@ irq_swing_plex: {
     jsr update_frame_plex_id_offset
     // if(p2_logo_swinging)
     lda.z p2_logo_swinging
-    cmp #0
     beq __b6
     // scroll = VSP_SINTABLE[(unsigned int)(vsp_sin_idx++)]
     lda.z vsp_sin_idx
@@ -510,7 +509,6 @@ irq_swing_plex: {
   __b6:
     // if(p2_plex_scroller_moving)
     lda.z p2_plex_scroller_moving
-    cmp #0
     beq __b9
     // plex_scroller_move()
     jsr plex_scroller_move
@@ -629,8 +627,8 @@ irq_swing_vsp: {
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
     
     // VICII->CONTROL1 |= VICII_BMM
     // Set BMM
@@ -784,7 +782,6 @@ irq_flipper_bottom: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
     // if(!flipper_done)
     lda.z flipper_done
-    cmp #0
     bne __b1
     // irq_flipper_line = FLIPPER_EASING[irq_flipper_idx++]
     lda.z irq_flipper_idx
@@ -869,11 +866,11 @@ irq_flipper_bottom: {
     lda #1
     sta.z flipper_done
   __b1:
-    // *VICII_CONTROL |=0x80
+    // *VICII_CONTROL1 |=0x80
     // Set up the IRQ again
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -951,7 +948,7 @@ irq_flipper_top: {
     ldy #$1b
     sta VICII_MEMORY
     stx BORDER_COLOR
-    sty VICII_CONTROL
+    sty VICII_CONTROL1
     stx BG_COLOR
     lda #$c8
     sta VICII_CONTROL2
@@ -961,10 +958,10 @@ irq_flipper_top: {
     // Set up the flipper IRQ
     cmp #0
     bne __b1
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
   __b2:
     // <irq_flipper_bottom_line
     lda.z irq_flipper_bottom_line
@@ -990,10 +987,10 @@ irq_flipper_top: {
     ldy #0
     rti
   __b1:
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 // IRQ running during set-up
@@ -1031,10 +1028,10 @@ irq_part1_top: {
     // Set up the flipper IRQ
     cmp #0
     bne __b1
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
   __b2:
     // <irq_flipper_top_line
     lda.z irq_flipper_top_line
@@ -1060,10 +1057,10 @@ irq_part1_top: {
     lda #0
     rti
   __b1:
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 .segment Code
@@ -1138,7 +1135,6 @@ demo_work: {
     jsr musicPlay
     // if(sparkler_active)
     lda.z sparkler_active
-    cmp #0
     beq __breturn
     // sparkler_anim()
     jsr sparkler_anim
@@ -1510,11 +1506,11 @@ byteboozer_decrunch: {
 demo_start: {
     // demo_init()
     jsr demo_init
-    // *VICII_CONTROL &= 0x7f
+    // *VICII_CONTROL1 &= 0x7f
     // Set raster line to 0x00
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = 0
     lda #0
     sta RASTER
@@ -1682,11 +1678,11 @@ part1_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL |= 0x80
+    // *VICII_CONTROL1 |= 0x80
     // Set raster line to 0x136
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -2004,11 +2000,11 @@ part2_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL &=0x7f
+    // *VICII_CONTROL1 &=0x7f
     // Set raster line to first bucket
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = BUCKET_YPOS[0]
     lda BUCKET_YPOS
     sta RASTER
@@ -2218,7 +2214,6 @@ part1_loop: {
   __b1:
     // while(p1_work_ready==0)
     lda.z p1_work_ready
-    cmp #0
     beq __b1
     // flipper_fix_colors()
     // Fix colors
@@ -2230,7 +2225,6 @@ part1_loop: {
     sta.z __11+1
     // if(!sparkler_active && demo_frame_count>9*50-3)
     lda.z sparkler_active
-    cmp #0
     bne __b4
     lda.z __11+1
     cmp #>9*$32-3
@@ -2514,17 +2508,14 @@ part2_loop: {
   __b1:
     // while(p2_work_ready==0)
     lda.z p2_work_ready
-    cmp #0
     beq __b1
     // demo_work()
     // Play music
     jsr demo_work
     // if(p2_logo_revealing && !p2_logo_reveal_done)
     lda.z p2_logo_revealing
-    cmp #0
     beq __b4
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b3
     jmp __b4
   __b3:
@@ -2538,7 +2529,6 @@ part2_loop: {
     sta.z __23+1
     // if(!p2_logo_revealing && demo_frame_count>18*50+25)
     lda.z p2_logo_revealing
-    cmp #0
     bne __b5
     lda.z __23+1
     cmp #>$12*$32+$19
@@ -2554,10 +2544,8 @@ part2_loop: {
   __b5:
     // if(!p2_logo_swinging && p2_logo_reveal_done)
     lda.z p2_logo_swinging
-    cmp #0
     bne __b6
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b6
     // p2_logo_swinging = 1
     lda #1
@@ -2570,7 +2558,6 @@ part2_loop: {
     sta.z __24+1
     // if(!p2_plex_scroller_moving && demo_frame_count>26*50)
     lda.z p2_plex_scroller_moving
-    cmp #0
     bne __b7
     lda.z __24+1
     cmp #>$1a*$32

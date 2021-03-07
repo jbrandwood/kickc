@@ -1,4 +1,4 @@
-#include <print.h>
+#include <c64-print.h>
 
 byte msg[] = "hello world! ";
 byte msg2[] = "hello c64! ";

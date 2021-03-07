@@ -5,7 +5,7 @@
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
 
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 char* const SCREEN1 = 0x2800;
 char* const SCREEN2 = 0x2c00;

@@ -3,7 +3,7 @@
 // - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 // The rotated point - updated by calling rotate_matrix()
 signed char xr;

@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 11327739d8 113277581a
+//KICKC FRAGMENT CACHE fdb40b9db fdb40d86d
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -94,7 +94,6 @@ sta {z1}
 inw {z1}
 //FRAGMENT 0_neq_vbuz1_then_la1
 lda {z1}
-cmp #0
 bne {la1}
 //FRAGMENT _deref_pbuc1=vbuc2
 lda #{c2}
@@ -122,7 +121,6 @@ lda {c1},y
 sta {z1}
 //FRAGMENT 0_eq_vbuz1_then_la1
 lda {z1}
-cmp #0
 beq {la1}
 //FRAGMENT vbuz1_eq_vbuc1_then_la1
 lda #{c1}

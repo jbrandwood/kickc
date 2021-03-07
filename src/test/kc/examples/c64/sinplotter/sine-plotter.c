@@ -3,7 +3,7 @@
 #include <c64.h>
 #include <sine.h>
 #include <string.h>
-#include <bitmap2.h>
+#include <c64-bitmap.h>
 
 char* SCREEN = $400;
 char* BITMAP = $2000;

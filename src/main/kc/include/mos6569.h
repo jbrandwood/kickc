@@ -40,6 +40,10 @@ struct MOS6569_VICII {
     // $D011 Control Register #1
     // - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
     // - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+    //          RSEL|  Display window height   | First line  | Last line
+    //          ----+--------------------------+-------------+----------
+    //            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+    //            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
     // - Bit#4: DEN Switch VIC-II output on/off
     // - Bit#5: BMM Turn Bitmap Mode on/off
     // - Bit#6: ECM Turn Extended Color Mode on/off
@@ -60,6 +64,10 @@ struct MOS6569_VICII {
     // $D016 Control register 2
     // -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
     // -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+    //           CSEL|   Display window width   | First X coo. | Last X coo.
+    //           ----+--------------------------+--------------+------------
+    //             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+    //             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
     // -  Bit#4: MCM Turn Multicolor Mode on/off
     // -  Bit#5-#7: not used
     // Initial Value: %00001000
@@ -164,7 +172,7 @@ char*  const BG_COLOR3 = $d024;
 char*  const SPRITES_MC1 = $d025;
 char*  const SPRITES_MC2 = $d026;
 
-char*  const VICII_CONTROL = $d011;
+char*  const VICII_CONTROL1 = $d011;
 char*  const D011 = $d011;
 const char VICII_RST8 = %10000000;
 const char VICII_ECM =  %01000000;

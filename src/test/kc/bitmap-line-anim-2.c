@@ -1,8 +1,8 @@
-// Shows that bitmap2.kc line() does not have the same problem as bitmap-draw.kc
+// Shows that c64-bitmap.kc line() does not have the same problem as bitmap-draw.kc
 // See bitmap-line-anim-1.kc
 
 #include <c64.h>
-#include <bitmap2.h>
+#include <c64-bitmap.h>
 
 byte* const SCREEN = $400;
 byte* const BITMAP = $2000;

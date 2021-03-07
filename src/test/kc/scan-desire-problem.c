@@ -1,6 +1,6 @@
 // Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
 #include <c64.h>
-#include <keyboard.h>
+#include <c64-keyboard.h>
 #include <string.h>
 #include <multiply.h>
 

@@ -828,7 +828,6 @@ printf_number_buffer: {
     ldy.z __19
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b13
     // len++;
     iny
@@ -848,10 +847,8 @@ printf_number_buffer: {
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     bne __b2
     lda.z format_zero_padding
-    cmp #0
     bne __b2
     lda.z padding
     cmp #0
@@ -867,14 +864,12 @@ printf_number_buffer: {
   __b2:
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b3
     // cputc(buffer.sign)
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
-    cmp #0
     beq __b4
     lda.z padding
     cmp #0
@@ -890,7 +885,6 @@ printf_number_buffer: {
   __b4:
     // if(format.upper_case)
     lda.z format_upper_case
-    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -903,10 +897,8 @@ printf_number_buffer: {
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     beq __breturn
     lda.z format_zero_padding
-    cmp #0
     bne __breturn
     lda.z padding
     cmp #0
@@ -968,7 +960,6 @@ uctoa: {
     sta.z digit_value
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5

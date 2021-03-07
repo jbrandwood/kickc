@@ -79,7 +79,6 @@ main: {
     // for(char c:0..0xff)
     inc.z c
     lda.z c
-    cmp #0
     bne __b1
     // return conio_cursor_y;
     ldx.z conio_cursor_y
@@ -99,7 +98,6 @@ main: {
     // for(char c:0..0xff)
     inc.z c1
     lda.z c1
-    cmp #0
     bne __b2
     // }
     rts

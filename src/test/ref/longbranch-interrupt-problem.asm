@@ -26,7 +26,6 @@ irq: {
     sta BG_COLOR
     // if(col!=0)
     lda.z col
-    cmp #0
     bne !__ea81+
     jmp $ea81
   !__ea81:

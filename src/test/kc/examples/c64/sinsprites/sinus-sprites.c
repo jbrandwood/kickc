@@ -1,6 +1,6 @@
 #include <c64.h>
-#include <basic-floats.h>
-#include <print.h>
+#include <c64-basic-floats.h>
+#include <c64-print.h>
 
 const char sinlen_x = 221;
 const char sintab_x[221];

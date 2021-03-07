@@ -425,7 +425,6 @@ setcursor: {
     sta OLDADR+1
     // if (conio_display_cursor == 0)
     lda.z conio_display_cursor
-    cmp #0
     beq __b1
     // *CRSINH = 0
     // cursor is on, so invert the inverse bit and turn cursor on

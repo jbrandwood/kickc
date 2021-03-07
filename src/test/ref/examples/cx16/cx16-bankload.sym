@@ -1,0 +1,605 @@
+const struct VERA_SPRITE $0 = { ADDR: <main::VRAM_SPRITE/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f1 }
+const nomodify byte BLUE = 6
+byte CONIO_SCREEN_BANK
+byte CONIO_SCREEN_BANK#14 CONIO_SCREEN_BANK zp[1]:27 100.93636363636364
+byte* CONIO_SCREEN_TEXT
+word CONIO_SCREEN_TEXT#16 CONIO_SCREEN_TEXT zp[2]:28 0.6392405063291139
+const byte OFFSET_STRUCT_MOS6522_VIA_PORT_A = 1
+const byte OFFSET_STRUCT_VERA_SPRITE_X = 2
+const byte OFFSET_STRUCT_VERA_SPRITE_Y = 4
+const byte RADIX::BINARY = 2
+const byte RADIX::DECIMAL = $a
+const byte RADIX::HEXADECIMAL = $10
+const byte RADIX::OCTAL = 8
+const byte SIZEOF_DWORD = 4
+const byte SIZEOF_POINTER = 2
+const byte SIZEOF_STRUCT_VERA_SPRITE = 8
+const byte SIZEOF_WORD = 2
+const byte* SPRITE_PIXELS[]  = kickasm {{ .var pic = LoadPicture("ship.png")
+    // palette: rgb->idx
+    .var palette = Hashtable()
+    // RGB value for each palette index
+    .var palList = List()
+    // Next palette index
+    .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
+    .for (var y=0; y<64; y++) {
+        .for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
+            .var rgb = pic.getPixel(x,y);
+            .var idx = palette.get(rgb)
+            .if(idx==null) {
+                .eval idx = nxt_idx++;
+                .eval palette.put(rgb,idx);
+                .eval palList.add(rgb)
+            }
+        }
+    }
+    .if(nxt_idx>16) .error "Image has too many colours "+nxt_idx
+
+    .for(var i=0;i<16;i++) {
+        .var rgb = palList.get(i)
+        .var red = floor(rgb / [256*256])
+        .var green = floor(rgb/256) & 255
+        .var blue = rgb & 255
+        // bits 4-8: green, bits 0-3 blue
+        .byte green&$f0  | blue/16
+        // bits bits 0-3 red
+        .byte red/16
+    }
+
+    .for (var y=0; y<64; y++) {
+        .for (var x=0;x<64; x+=2) {
+            // Find palette index (add if not known)
+            .var rgb = pic.getPixel(x,y);
+            .var idx1 = palette.get(rgb)
+            .if(idx1==null) {
+                .printnow "unknown rgb value!"
+            }
+            // Find palette index (add if not known)
+            .eval rgb = pic.getPixel(x+1,y);
+            .var idx2 = palette.get(rgb)
+            .if(idx2==null) {
+                .printnow "unknown rgb value!"
+            }
+            .byte idx1*16+idx2;
+        }
+    }
+ }}
+const nomodify byte VERA_ADDRSEL = 1
+const nomodify byte* VERA_ADDRX_H = (byte*) 40738
+const nomodify byte* VERA_ADDRX_L = (byte*) 40736
+const nomodify byte* VERA_ADDRX_M = (byte*) 40737
+const nomodify byte* VERA_CTRL = (byte*) 40741
+const nomodify byte* VERA_DATA0 = (byte*) 40739
+const nomodify byte* VERA_DATA1 = (byte*) 40740
+const nomodify byte VERA_DCSEL = 2
+const nomodify byte* VERA_DC_HSCALE = (byte*) 40746
+const nomodify byte* VERA_DC_VIDEO = (byte*) 40745
+const nomodify byte* VERA_DC_VSCALE = (byte*) 40747
+const nomodify byte VERA_INC_1 = $10
+const nomodify byte* VERA_L0_CONFIG = (byte*) 40749
+const nomodify byte* VERA_L0_MAPBASE = (byte*) 40750
+const nomodify byte* VERA_L0_TILEBASE = (byte*) 40751
+const nomodify byte* VERA_L1_CONFIG = (byte*) 40756
+const nomodify byte* VERA_L1_MAPBASE = (byte*) 40757
+const nomodify byte* VERA_L1_TILEBASE = (byte*) 40758
+const nomodify byte VERA_LAYER_CONFIG_256C = 8
+const to_nomodify word* VERA_LAYER_HEIGHT[4]  = { $20, $40, $80, $100 }
+const nomodify byte VERA_LAYER_HEIGHT_64 = $40
+const nomodify byte VERA_LAYER_HEIGHT_MASK = $c0
+const nomodify byte VERA_LAYER_TILEBASE_MASK = $fc
+const to_nomodify word* VERA_LAYER_WIDTH[4]  = { $20, $40, $80, $100 }
+const nomodify byte VERA_LAYER_WIDTH_128 = $20
+const nomodify byte VERA_LAYER_WIDTH_MASK = $30
+const nomodify dword VERA_PALETTE = $1fa00
+const nomodify byte VERA_SPRITES_ENABLE = $40
+const nomodify word VERA_SPRITE_8BPP = $8000
+const nomodify dword VERA_SPRITE_ATTR = $1fc00
+const nomodify struct MOS6522_VIA* VIA1 = (struct MOS6522_VIA*) 40800
+const nomodify byte WHITE = 1
+void __start()
+void clearline()
+byte~ clearline::$1 reg byte a 2.00000002E8
+byte~ clearline::$2 reg byte a 2.00000002E8
+byte~ clearline::$5 reg byte a 2.00000002E8
+byte* clearline::addr
+byte* clearline::addr#0 addr zp[2]:65 1.00000001E8
+word clearline::c
+word clearline::c#1 c zp[2]:43 2.0000000002E10
+word clearline::c#2 c zp[2]:43 7.50000000075E9
+byte clearline::color
+byte clearline::color#0 reg byte x 1.6833333336666665E9
+void clrscr()
+byte~ clrscr::$0 reg byte a 202.0
+byte~ clrscr::$1 zp[1]:36 40.4
+byte~ clrscr::$2 reg byte a 202.0
+byte~ clrscr::$5 reg byte a 2002.0
+byte~ clrscr::$6 reg byte a 2002.0
+byte~ clrscr::$7 reg byte a 2002.0
+byte~ clrscr::$9 reg byte a 202.0
+byte clrscr::c
+byte clrscr::c#1 reg byte y 20002.0
+byte clrscr::c#2 reg byte y 7500.75
+byte* clrscr::ch
+byte clrscr::color
+byte clrscr::color#0 color zp[1]:36 594.2352941176471
+byte clrscr::l
+byte clrscr::l#1 reg byte x 2002.0
+byte clrscr::l#2 reg byte x 200.2
+byte* clrscr::line_text
+byte* clrscr::line_text#0 line_text zp[2]:15 18.363636363636363
+byte* clrscr::line_text#1 line_text zp[2]:15 1001.0
+byte* clrscr::line_text#2 line_text zp[2]:15 293.2142857142857
+const byte* conio_cursor_x[2]  = { 0, 0 }
+const byte* conio_cursor_y[2]  = { 0, 0 }
+word conio_height loadstore zp[2]:22 10650.053191489362
+const word* conio_line_text[2]  = { 0, 0 }
+byte conio_rowshift loadstore zp[1]:24 8559322.923728812
+word conio_rowskip loadstore zp[2]:25 8404210.974789916
+volatile byte conio_screen_height loadstore zp[1]:18 115384.875
+byte conio_screen_layer loadstore zp[1]:19 1789433.5208333333
+volatile byte conio_screen_width loadstore zp[1]:17 7.208640292086332E7
+const byte* conio_scroll_enable[2]  = { 1, 1 }
+word conio_width loadstore zp[2]:20 209.42708333333331
+void conio_x16_init()
+const nomodify byte* conio_x16_init::BASIC_CURSOR_LINE = (byte*) 214
+byte conio_x16_init::line
+byte conio_x16_init::line#0 line zp[1]:2 2.1999999999999997
+byte conio_x16_init::line#1 line zp[1]:2 22.0
+byte conio_x16_init::line#3 line zp[1]:2 33.0
+void cputc(byte cputc::c)
+byte~ cputc::$15 reg byte a 20002.0
+word~ cputc::$16 zp[2]:45 20002.0
+byte~ cputc::$2 reg byte a 20002.0
+byte~ cputc::$4 reg byte a 20002.0
+byte~ cputc::$5 reg byte a 20002.0
+byte~ cputc::$6 reg byte a 20002.0
+byte cputc::c
+byte cputc::c#0 c zp[1]:36 1235.4705882352941
+byte cputc::color
+byte cputc::color#0 reg byte x 1428.7142857142858
+byte* cputc::conio_addr
+byte* cputc::conio_addr#0 conio_addr zp[2]:43 10001.0
+byte* cputc::conio_addr#1 conio_addr zp[2]:43 6000.6
+byte cputc::scroll_enable
+byte cputc::scroll_enable#0 reg byte a 20002.0
+void cputln()
+byte~ cputln::$2 reg byte a 200002.0
+byte~ cputln::$3 reg byte a 200002.0
+word cputln::temp
+word cputln::temp#0 temp zp[2]:55 200002.0
+word cputln::temp#1 temp zp[2]:55 100001.0
+void cputs(to_nomodify byte* cputs::s)
+byte cputs::c
+byte cputs::c#1 reg byte a 1001.0
+to_nomodify byte* cputs::s
+to_nomodify byte* cputs::s#0 s zp[2]:15 500.5
+to_nomodify byte* cputs::s#2 s zp[2]:15 1501.5
+void cscroll()
+void gotoxy(byte gotoxy::x , byte gotoxy::y)
+byte~ gotoxy::$5 reg byte a 2.0000002E7
+word~ gotoxy::$6 zp[2]:32 2.0000002E7
+word gotoxy::line_offset
+word gotoxy::line_offset#0 line_offset zp[2]:32 1.0000001E7
+byte gotoxy::x
+byte gotoxy::y
+byte gotoxy::y#0 reg byte x 22.0
+byte gotoxy::y#2 reg byte x 2000002.0
+byte gotoxy::y#3 reg byte x 7000004.666666666
+byte gotoxy::y#4 reg byte x 4000000.4
+void insertup()
+byte~ insertup::$3 reg byte a 2.000000002E9
+byte insertup::cy
+byte insertup::cy#0 cy zp[1]:57 8.416666683333334E7
+byte insertup::i
+byte insertup::i#1 reg byte x 2.000000002E9
+byte insertup::i#2 reg byte x 4.444444448888889E8
+word insertup::line
+word insertup::line#0 line zp[2]:59 2.000000002E9
+byte* insertup::start
+byte* insertup::start#0 start zp[2]:59 1.000000001E9
+byte insertup::width
+byte insertup::width#0 width zp[1]:58 9.1818182E7
+byte load(volatile byte* load::address , volatile byte load::verify)
+volatile byte* load::address loadstore zp[2]:40 33.666666666666664
+byte load::return
+volatile byte load::status loadstore zp[1]:48 1001.0
+volatile byte load::verify loadstore zp[1]:42 50.5
+byte load_to_bank(byte load_to_bank::device , byte* load_to_bank::filename , dword load_to_bank::address)
+byte* load_to_bank::addr
+dword load_to_bank::address
+byte load_to_bank::bank
+const byte load_to_bank::bank#0 bank = (byte)><main::BANK_SPRITE>>5+(word)<>main::BANK_SPRITE<<3
+byte load_to_bank::device
+const byte load_to_bank::device#0 device = 8
+byte* load_to_bank::filename
+byte load_to_bank::return
+void main()
+const nomodify dword main::BANK_SPRITE = $12000
+volatile struct VERA_SPRITE main::SPRITE_ATTR loadstore zp[8]:67
+const nomodify dword main::VRAM_SPRITE = $10000
+const byte* main::filename[7]  = "SPRITE"
+const byte* main::s[$2d]  = "
+
+sprite banked file load and display demo.
+"
+void memcpy_bank_to_vram(dword memcpy_bank_to_vram::vdest , dword memcpy_bank_to_vram::src , dword memcpy_bank_to_vram::num)
+word~ memcpy_bank_to_vram::$0 zp[2]:43 202.0
+byte~ memcpy_bank_to_vram::$1 reg byte a 202.0
+word~ memcpy_bank_to_vram::$10 zp[2]:59 202.0
+byte~ memcpy_bank_to_vram::$11 reg byte x 101.0
+word~ memcpy_bank_to_vram::$12 zp[2]:61 202.0
+word~ memcpy_bank_to_vram::$13 zp[2]:61 40.4
+word~ memcpy_bank_to_vram::$14 zp[2]:63 202.0
+word~ memcpy_bank_to_vram::$15 zp[2]:63 202.0
+byte~ memcpy_bank_to_vram::$16 reg byte a 101.0
+word~ memcpy_bank_to_vram::$17 zp[2]:61 101.0
+word~ memcpy_bank_to_vram::$18 zp[2]:15 202.0
+word~ memcpy_bank_to_vram::$2 zp[2]:45 202.0
+word~ memcpy_bank_to_vram::$23 zp[2]:61 202.0
+word~ memcpy_bank_to_vram::$24 zp[2]:65 202.0
+byte~ memcpy_bank_to_vram::$3 reg byte a 202.0
+word~ memcpy_bank_to_vram::$4 zp[2]:53 202.0
+byte~ memcpy_bank_to_vram::$5 reg byte a 202.0
+word~ memcpy_bank_to_vram::$7 zp[2]:55 202.0
+word~ memcpy_bank_to_vram::$8 zp[2]:55 202.0
+byte~ memcpy_bank_to_vram::$9 reg byte y 33.666666666666664
+byte* memcpy_bank_to_vram::addr
+word memcpy_bank_to_vram::addr#0 addr zp[2]:15 101.0
+byte* memcpy_bank_to_vram::addr#1 addr zp[2]:15 101.0
+byte* memcpy_bank_to_vram::addr#2 addr zp[2]:15 1001.0
+byte* memcpy_bank_to_vram::addr#4 addr zp[2]:15 1034.6666666666667
+byte* memcpy_bank_to_vram::addr#5 addr zp[2]:15 1501.5
+byte memcpy_bank_to_vram::bank
+byte memcpy_bank_to_vram::bank#0 reg byte x 60.599999999999994
+byte memcpy_bank_to_vram::bank#1 reg byte x 1501.5
+byte memcpy_bank_to_vram::bank#2 reg byte x 1034.6666666666667
+byte memcpy_bank_to_vram::bank#5 reg byte x 750.75
+dword memcpy_bank_to_vram::beg
+dword memcpy_bank_to_vram::beg#0 beg zp[4]:11 19.548387096774196
+dword memcpy_bank_to_vram::end
+dword memcpy_bank_to_vram::end#0 end zp[4]:7 39.357142857142854
+dword memcpy_bank_to_vram::num
+dword memcpy_bank_to_vram::num#2 num zp[4]:7 8.416666666666666
+dword memcpy_bank_to_vram::pos
+dword memcpy_bank_to_vram::pos#1 pos zp[4]:11 2002.0
+dword memcpy_bank_to_vram::pos#2 pos zp[4]:11 388.0
+dword memcpy_bank_to_vram::src
+dword memcpy_bank_to_vram::vdest
+dword memcpy_bank_to_vram::vdest#2 vdest zp[4]:3 37.875
+void memcpy_in_vram(byte memcpy_in_vram::dest_bank , void* memcpy_in_vram::dest , byte memcpy_in_vram::dest_increment , byte memcpy_in_vram::src_bank , void* memcpy_in_vram::src , byte memcpy_in_vram::src_increment , word memcpy_in_vram::num)
+byte~ memcpy_in_vram::$0 reg byte a 2.0000000002E10
+byte~ memcpy_in_vram::$1 reg byte a 2.0000000002E10
+byte~ memcpy_in_vram::$3 reg byte a 2.0000000002E10
+byte~ memcpy_in_vram::$4 reg byte a 2.0000000002E10
+void* memcpy_in_vram::dest
+void* memcpy_in_vram::dest#0 dest zp[2]:59 1.9090909093636363E9
+byte memcpy_in_vram::dest_bank
+byte memcpy_in_vram::dest_increment
+word memcpy_in_vram::i
+word memcpy_in_vram::i#1 i zp[2]:45 2.0000000000002E13
+word memcpy_in_vram::i#2 i zp[2]:45 1.0000000000001E13
+word memcpy_in_vram::num
+word memcpy_in_vram::num#0 num zp[2]:63 5.882941176471765E11
+void* memcpy_in_vram::src
+byte* memcpy_in_vram::src#0 src zp[2]:61 1.6666666683333334E8
+byte memcpy_in_vram::src_bank
+byte memcpy_in_vram::src_increment
+void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
+byte* memcpy_to_vram::end
+const byte* memcpy_to_vram::end#0 end = (byte*)memcpy_to_vram::src#0+SIZEOF_STRUCT_VERA_SPRITE
+word memcpy_to_vram::num
+byte* memcpy_to_vram::s
+byte* memcpy_to_vram::s#1 s zp[2]:15 2002.0
+byte* memcpy_to_vram::s#2 s zp[2]:15 1334.6666666666667
+void* memcpy_to_vram::src
+const void* memcpy_to_vram::src#0 src = (void*)&main::SPRITE_ATTR
+byte memcpy_to_vram::vbank
+const byte memcpy_to_vram::vbank#0 vbank = (byte)>VERA_SPRITE_ATTR
+void* memcpy_to_vram::vdest
+const void* memcpy_to_vram::vdest#0 vdest = (void*)<VERA_SPRITE_ATTR
+void screenlayer(byte screenlayer::layer)
+word~ screenlayer::$2 zp[2]:30 202.0
+byte~ screenlayer::$3 reg byte a 202.0
+word~ screenlayer::$4 zp[2]:32 202.0
+word~ screenlayer::$5 zp[2]:49 202.0
+byte screenlayer::layer
+byte~ screenlayer::vera_layer_get_height1_$0 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_height1_$1 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_height1_$2 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_height1_$3 reg byte a 202.0
+byte* screenlayer::vera_layer_get_height1_config
+byte* screenlayer::vera_layer_get_height1_config#0 vera_layer_get_height1_config zp[2]:34 202.0
+byte screenlayer::vera_layer_get_height1_layer
+byte screenlayer::vera_layer_get_height1_layer#0 reg byte a 202.0
+word screenlayer::vera_layer_get_height1_return
+word screenlayer::vera_layer_get_height1_return#0 vera_layer_get_height1_return zp[2]:49 202.0
+word screenlayer::vera_layer_get_height1_return#1 vera_layer_get_height1_return zp[2]:49 202.0
+byte~ screenlayer::vera_layer_get_width1_$0 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_width1_$1 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_width1_$2 reg byte a 202.0
+byte~ screenlayer::vera_layer_get_width1_$3 reg byte a 202.0
+byte* screenlayer::vera_layer_get_width1_config
+byte* screenlayer::vera_layer_get_width1_config#0 vera_layer_get_width1_config zp[2]:51 202.0
+byte screenlayer::vera_layer_get_width1_layer
+byte screenlayer::vera_layer_get_width1_layer#0 reg byte a 202.0
+word screenlayer::vera_layer_get_width1_return
+word screenlayer::vera_layer_get_width1_return#0 vera_layer_get_width1_return zp[2]:30 202.0
+word screenlayer::vera_layer_get_width1_return#1 vera_layer_get_width1_return zp[2]:30 202.0
+void screensize(byte* screensize::x , byte* screensize::y)
+byte~ screensize::$1 reg byte a 202.0
+byte~ screensize::$3 reg byte a 202.0
+byte screensize::hscale
+byte screensize::hscale#0 reg byte a 202.0
+byte screensize::vscale
+byte screensize::vscale#0 reg byte a 202.0
+byte* screensize::x
+const byte* screensize::x#0 x = &conio_screen_width
+byte* screensize::y
+const byte* screensize::y#0 y = &conio_screen_height
+void setlfs(volatile byte setlfs::device)
+volatile byte setlfs::device loadstore zp[1]:39 101.0
+void setnam(volatile byte* setnam::filename)
+word~ setnam::$0 zp[2]:45 1001.0
+volatile byte* setnam::filename loadstore zp[2]:37 183.66666666666669
+volatile byte setnam::filename_len loadstore zp[1]:47 1001.0
+word strlen(byte* strlen::str)
+word strlen::len
+word strlen::len#1 len zp[2]:45 100001.0
+word strlen::len#2 len zp[2]:45 50250.75
+word strlen::return
+word strlen::return#2 return zp[2]:45 2002.0
+byte* strlen::str
+byte* strlen::str#0 str zp[2]:43 200002.0
+byte* strlen::str#1 str zp[2]:43 5501.0
+byte* strlen::str#2 str zp[2]:43 103334.66666666666
+const byte* vera_layer_backcolor[2]  = { BLUE, BLUE }
+const byte** vera_layer_config[2]  = { VERA_L0_CONFIG, VERA_L1_CONFIG }
+byte vera_layer_get_backcolor(byte vera_layer_get_backcolor::layer)
+byte vera_layer_get_backcolor::layer
+byte vera_layer_get_backcolor::layer#0 reg byte x 1102.0
+byte vera_layer_get_backcolor::return
+byte vera_layer_get_backcolor::return#0 reg byte a 367.33333333333337
+byte vera_layer_get_backcolor::return#2 reg byte a 202.0
+byte vera_layer_get_color(byte vera_layer_get_color::layer)
+byte~ vera_layer_get_color::$0 reg byte a 2.000000002E9
+byte~ vera_layer_get_color::$1 reg byte a 2.000000002E9
+byte~ vera_layer_get_color::$3 reg byte a 2.000000002E9
+byte* vera_layer_get_color::addr
+byte* vera_layer_get_color::addr#0 addr zp[2]:53 2.000000002E9
+byte vera_layer_get_color::layer
+byte vera_layer_get_color::layer#0 reg byte x 20002.0
+byte vera_layer_get_color::layer#1 reg byte x 2.00000002E8
+byte vera_layer_get_color::layer#2 reg byte x 6.833350010000001E8
+byte vera_layer_get_color::return
+byte vera_layer_get_color::return#0 reg byte a 2.000000002E9
+byte vera_layer_get_color::return#1 reg byte a 2.000000002E9
+byte vera_layer_get_color::return#2 reg byte a 5.25002501E8
+byte vera_layer_get_color::return#3 reg byte a 20002.0
+byte vera_layer_get_color::return#4 reg byte a 2.00000002E8
+byte vera_layer_get_mapbase_bank(byte vera_layer_get_mapbase_bank::layer)
+byte vera_layer_get_mapbase_bank::layer
+byte vera_layer_get_mapbase_bank::layer#0 reg byte x 1102.0
+byte vera_layer_get_mapbase_bank::return
+byte vera_layer_get_mapbase_bank::return#0 reg byte a 367.33333333333337
+byte vera_layer_get_mapbase_bank::return#2 reg byte a 202.0
+word vera_layer_get_mapbase_offset(byte vera_layer_get_mapbase_offset::layer)
+byte~ vera_layer_get_mapbase_offset::$0 reg byte a 2002.0
+byte vera_layer_get_mapbase_offset::layer
+byte vera_layer_get_mapbase_offset::layer#0 reg byte a 1102.0
+word vera_layer_get_mapbase_offset::return
+word vera_layer_get_mapbase_offset::return#0 return zp[2]:51 367.33333333333337
+word vera_layer_get_mapbase_offset::return#2 return zp[2]:51 202.0
+byte vera_layer_get_rowshift(byte vera_layer_get_rowshift::layer)
+byte vera_layer_get_rowshift::layer
+byte vera_layer_get_rowshift::layer#0 reg byte x 1102.0
+byte vera_layer_get_rowshift::return
+byte vera_layer_get_rowshift::return#0 reg byte a 367.33333333333337
+byte vera_layer_get_rowshift::return#2 reg byte a 202.0
+word vera_layer_get_rowskip(byte vera_layer_get_rowskip::layer)
+byte~ vera_layer_get_rowskip::$0 reg byte a 2002.0
+byte vera_layer_get_rowskip::layer
+byte vera_layer_get_rowskip::layer#0 reg byte a 1102.0
+word vera_layer_get_rowskip::return
+word vera_layer_get_rowskip::return#0 return zp[2]:32 367.33333333333337
+word vera_layer_get_rowskip::return#2 return zp[2]:32 202.0
+byte vera_layer_get_textcolor(byte vera_layer_get_textcolor::layer)
+byte vera_layer_get_textcolor::layer
+byte vera_layer_get_textcolor::layer#0 reg byte x 1102.0
+byte vera_layer_get_textcolor::return
+byte vera_layer_get_textcolor::return#0 reg byte a 367.33333333333337
+byte vera_layer_get_textcolor::return#2 reg byte a 202.0
+const byte** vera_layer_mapbase[2]  = { VERA_L0_MAPBASE, VERA_L1_MAPBASE }
+void vera_layer_mode_text(byte vera_layer_mode_text::layer , dword vera_layer_mode_text::mapbase_address , dword vera_layer_mode_text::tilebase_address , word vera_layer_mode_text::mapwidth , word vera_layer_mode_text::mapheight , byte vera_layer_mode_text::tilewidth , byte vera_layer_mode_text::tileheight , word vera_layer_mode_text::color_mode)
+word vera_layer_mode_text::color_mode
+byte vera_layer_mode_text::layer
+const byte vera_layer_mode_text::layer#0 layer = 1
+dword vera_layer_mode_text::mapbase_address
+const dword vera_layer_mode_text::mapbase_address#0 mapbase_address = 0
+word vera_layer_mode_text::mapheight
+word vera_layer_mode_text::mapwidth
+dword vera_layer_mode_text::tilebase_address
+const dword vera_layer_mode_text::tilebase_address#0 tilebase_address = $f800
+byte vera_layer_mode_text::tileheight
+byte vera_layer_mode_text::tilewidth
+void vera_layer_mode_tile(byte vera_layer_mode_tile::layer , dword vera_layer_mode_tile::mapbase_address , dword vera_layer_mode_tile::tilebase_address , word vera_layer_mode_tile::mapwidth , word vera_layer_mode_tile::mapheight , byte vera_layer_mode_tile::tilewidth , byte vera_layer_mode_tile::tileheight , byte vera_layer_mode_tile::color_depth)
+byte vera_layer_mode_tile::color_depth
+byte vera_layer_mode_tile::config
+const byte vera_layer_mode_tile::config#10 config = VERA_LAYER_WIDTH_128|VERA_LAYER_HEIGHT_64
+byte vera_layer_mode_tile::layer
+byte vera_layer_mode_tile::mapbase
+const byte vera_layer_mode_tile::mapbase#0 mapbase = 0
+dword vera_layer_mode_tile::mapbase_address
+word vera_layer_mode_tile::mapheight
+word vera_layer_mode_tile::mapwidth
+byte vera_layer_mode_tile::tilebase
+dword vera_layer_mode_tile::tilebase_address
+const dword vera_layer_mode_tile::tilebase_address#0 tilebase_address = vera_layer_mode_text::tilebase_address#0>>1
+byte vera_layer_mode_tile::tileheight
+byte vera_layer_mode_tile::tilewidth
+const byte* vera_layer_rowshift[2]  = { 0, 0 }
+const word* vera_layer_rowskip[2]  = { 0, 0 }
+byte vera_layer_set_backcolor(byte vera_layer_set_backcolor::layer , byte vera_layer_set_backcolor::color)
+byte vera_layer_set_backcolor::color
+byte vera_layer_set_backcolor::layer
+const byte vera_layer_set_backcolor::layer#0 layer = 1
+byte vera_layer_set_backcolor::old
+byte vera_layer_set_backcolor::return
+void vera_layer_set_config(byte vera_layer_set_config::layer , byte vera_layer_set_config::config)
+byte* vera_layer_set_config::addr
+byte* vera_layer_set_config::addr#0 addr zp[2]:49 20002.0
+byte vera_layer_set_config::config
+byte vera_layer_set_config::layer
+void vera_layer_set_mapbase(byte vera_layer_set_mapbase::layer , byte vera_layer_set_mapbase::mapbase)
+byte~ vera_layer_set_mapbase::$0 reg byte a 20002.0
+byte* vera_layer_set_mapbase::addr
+byte* vera_layer_set_mapbase::addr#0 addr zp[2]:30 20002.0
+byte vera_layer_set_mapbase::layer
+byte vera_layer_set_mapbase::layer#3 reg byte a 10001.0
+byte vera_layer_set_mapbase::mapbase
+byte vera_layer_set_mapbase::mapbase#3 reg byte x 3333.6666666666665
+void vera_layer_set_text_color_mode(byte vera_layer_set_text_color_mode::layer , byte vera_layer_set_text_color_mode::color_mode)
+byte~ vera_layer_set_text_color_mode::$0 reg byte a 2002.0
+byte* vera_layer_set_text_color_mode::addr
+byte* vera_layer_set_text_color_mode::addr#0 addr zp[2]:34 2502.5
+byte vera_layer_set_text_color_mode::color_mode
+byte vera_layer_set_text_color_mode::layer
+byte vera_layer_set_text_color_mode::layer#3 reg byte a 1001.0
+byte vera_layer_set_textcolor(byte vera_layer_set_textcolor::layer , byte vera_layer_set_textcolor::color)
+byte vera_layer_set_textcolor::color
+byte vera_layer_set_textcolor::layer
+const byte vera_layer_set_textcolor::layer#0 layer = 1
+byte vera_layer_set_textcolor::old
+byte vera_layer_set_textcolor::return
+void vera_layer_set_tilebase(byte vera_layer_set_tilebase::layer , byte vera_layer_set_tilebase::tilebase)
+byte* vera_layer_set_tilebase::addr
+byte* vera_layer_set_tilebase::addr#0 addr zp[2]:51 20002.0
+byte vera_layer_set_tilebase::layer
+byte vera_layer_set_tilebase::tilebase
+const byte* vera_layer_textcolor[2]  = { WHITE, WHITE }
+const byte** vera_layer_tilebase[2]  = { VERA_L0_TILEBASE, VERA_L1_TILEBASE }
+const dword* vera_mapbase_address[2]  = { 0, 0 }
+const byte* vera_mapbase_bank[2]  = { 0, 0 }
+const word* vera_mapbase_offset[2]  = { 0, 0 }
+const dword* vera_tilebase_address[2]  = { 0, 0 }
+const byte* vera_tilebase_bank[2]  = { 0, 0 }
+const word* vera_tilebase_offset[2]  = { 0, 0 }
+
+zp[1]:2 [ conio_x16_init::line#3 conio_x16_init::line#1 conio_x16_init::line#0 ]
+reg byte a [ vera_layer_set_mapbase::layer#3 ]
+reg byte x [ vera_layer_set_mapbase::mapbase#3 ]
+reg byte x [ gotoxy::y#4 gotoxy::y#3 gotoxy::y#0 gotoxy::y#2 ]
+reg byte a [ vera_layer_set_text_color_mode::layer#3 ]
+reg byte x [ clrscr::l#2 clrscr::l#1 ]
+reg byte y [ clrscr::c#2 clrscr::c#1 ]
+zp[4]:3 [ memcpy_bank_to_vram::vdest#2 ]
+zp[4]:7 [ memcpy_bank_to_vram::num#2 memcpy_bank_to_vram::end#0 ]
+zp[4]:11 [ memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::pos#1 ]
+reg byte x [ memcpy_bank_to_vram::bank#2 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::bank#1 ]
+zp[2]:15 [ memcpy_to_vram::s#2 memcpy_to_vram::s#1 memcpy_bank_to_vram::addr#5 memcpy_bank_to_vram::addr#4 memcpy_bank_to_vram::addr#1 memcpy_bank_to_vram::addr#2 memcpy_bank_to_vram::addr#0 memcpy_bank_to_vram::$18 cputs::s#2 cputs::s#0 clrscr::line_text#2 clrscr::line_text#1 clrscr::line_text#0 ]
+reg byte x [ vera_layer_get_color::layer#2 vera_layer_get_color::layer#1 vera_layer_get_color::layer#0 ]
+reg byte a [ vera_layer_get_color::return#2 vera_layer_get_color::return#0 vera_layer_get_color::return#1 ]
+reg byte x [ insertup::i#2 insertup::i#1 ]
+zp[1]:17 [ conio_screen_width ]
+zp[1]:18 [ conio_screen_height ]
+zp[1]:19 [ conio_screen_layer ]
+zp[2]:20 [ conio_width ]
+zp[2]:22 [ conio_height ]
+zp[1]:24 [ conio_rowshift ]
+zp[2]:25 [ conio_rowskip ]
+reg byte a [ screensize::hscale#0 ]
+reg byte a [ screensize::$1 ]
+reg byte a [ screensize::vscale#0 ]
+reg byte a [ screensize::$3 ]
+reg byte x [ vera_layer_get_mapbase_bank::layer#0 ]
+reg byte a [ vera_layer_get_mapbase_bank::return#2 ]
+zp[1]:27 [ CONIO_SCREEN_BANK#14 ]
+reg byte a [ vera_layer_get_mapbase_offset::layer#0 ]
+zp[2]:28 [ CONIO_SCREEN_TEXT#16 ]
+reg byte a [ screenlayer::vera_layer_get_width1_layer#0 ]
+reg byte a [ screenlayer::vera_layer_get_width1_$2 ]
+reg byte a [ screenlayer::vera_layer_get_width1_$0 ]
+reg byte a [ screenlayer::vera_layer_get_width1_$1 ]
+reg byte a [ screenlayer::vera_layer_get_width1_$3 ]
+reg byte x [ vera_layer_get_rowshift::layer#0 ]
+reg byte a [ vera_layer_get_rowshift::return#2 ]
+reg byte a [ screenlayer::$3 ]
+reg byte a [ vera_layer_get_rowskip::layer#0 ]
+reg byte a [ screenlayer::vera_layer_get_height1_layer#0 ]
+reg byte a [ screenlayer::vera_layer_get_height1_$2 ]
+reg byte a [ screenlayer::vera_layer_get_height1_$0 ]
+reg byte a [ screenlayer::vera_layer_get_height1_$1 ]
+reg byte a [ screenlayer::vera_layer_get_height1_$3 ]
+reg byte a [ vera_layer_set_mapbase::$0 ]
+zp[2]:30 [ vera_layer_set_mapbase::addr#0 screenlayer::vera_layer_get_width1_return#0 screenlayer::vera_layer_get_width1_return#1 screenlayer::$2 ]
+zp[2]:32 [ gotoxy::$6 gotoxy::line_offset#0 vera_layer_get_rowskip::return#2 screenlayer::$4 vera_layer_get_rowskip::return#0 ]
+reg byte a [ gotoxy::$5 ]
+reg byte a [ vera_layer_set_text_color_mode::$0 ]
+zp[2]:34 [ vera_layer_set_text_color_mode::addr#0 screenlayer::vera_layer_get_height1_config#0 ]
+reg byte x [ vera_layer_get_backcolor::layer#0 ]
+reg byte a [ vera_layer_get_backcolor::return#2 ]
+reg byte a [ clrscr::$0 ]
+reg byte x [ vera_layer_get_textcolor::layer#0 ]
+reg byte a [ vera_layer_get_textcolor::return#2 ]
+reg byte a [ clrscr::$2 ]
+reg byte a [ clrscr::$9 ]
+reg byte a [ clrscr::$5 ]
+reg byte a [ clrscr::$6 ]
+reg byte a [ clrscr::$7 ]
+reg byte a [ cputs::c#1 ]
+zp[1]:36 [ cputc::c#0 clrscr::$1 clrscr::color#0 ]
+zp[2]:37 [ setnam::filename ]
+zp[1]:39 [ setlfs::device ]
+zp[2]:40 [ load::address ]
+zp[1]:42 [ load::verify ]
+reg byte a [ memcpy_bank_to_vram::$1 ]
+reg byte a [ memcpy_bank_to_vram::$3 ]
+reg byte a [ memcpy_bank_to_vram::$5 ]
+reg byte y [ memcpy_bank_to_vram::$9 ]
+reg byte x [ memcpy_bank_to_vram::$11 ]
+reg byte a [ memcpy_bank_to_vram::$16 ]
+reg byte a [ vera_layer_get_mapbase_bank::return#0 ]
+reg byte a [ vera_layer_get_mapbase_offset::$0 ]
+reg byte a [ vera_layer_get_rowshift::return#0 ]
+reg byte a [ vera_layer_get_rowskip::$0 ]
+reg byte a [ vera_layer_get_backcolor::return#0 ]
+reg byte a [ vera_layer_get_textcolor::return#0 ]
+reg byte a [ vera_layer_get_color::return#3 ]
+reg byte x [ cputc::color#0 ]
+reg byte a [ cputc::$15 ]
+zp[2]:43 [ cputc::conio_addr#0 cputc::conio_addr#1 memcpy_bank_to_vram::$0 clearline::c#2 clearline::c#1 strlen::str#2 strlen::str#1 strlen::str#0 ]
+reg byte a [ cputc::$2 ]
+reg byte a [ cputc::$4 ]
+reg byte a [ cputc::$5 ]
+reg byte a [ cputc::$6 ]
+reg byte a [ cputc::scroll_enable#0 ]
+zp[2]:45 [ cputc::$16 memcpy_bank_to_vram::$2 memcpy_in_vram::i#2 memcpy_in_vram::i#1 strlen::len#2 strlen::len#1 strlen::return#2 setnam::$0 ]
+zp[1]:47 [ setnam::filename_len ]
+zp[1]:48 [ load::status ]
+zp[2]:49 [ vera_layer_set_config::addr#0 screenlayer::vera_layer_get_height1_return#0 screenlayer::vera_layer_get_height1_return#1 screenlayer::$5 ]
+zp[2]:51 [ vera_layer_set_tilebase::addr#0 screenlayer::vera_layer_get_width1_config#0 vera_layer_get_mapbase_offset::return#2 vera_layer_get_mapbase_offset::return#0 ]
+reg byte a [ vera_layer_get_color::$3 ]
+zp[2]:53 [ vera_layer_get_color::addr#0 memcpy_bank_to_vram::$4 ]
+reg byte a [ vera_layer_get_color::$0 ]
+reg byte a [ vera_layer_get_color::$1 ]
+reg byte a [ cputln::$2 ]
+zp[2]:55 [ cputln::temp#0 cputln::temp#1 memcpy_bank_to_vram::$7 memcpy_bank_to_vram::$8 ]
+reg byte a [ cputln::$3 ]
+zp[1]:57 [ insertup::cy#0 ]
+zp[1]:58 [ insertup::width#0 ]
+reg byte a [ insertup::$3 ]
+zp[2]:59 [ insertup::line#0 insertup::start#0 memcpy_in_vram::dest#0 memcpy_bank_to_vram::$10 ]
+zp[2]:61 [ memcpy_in_vram::src#0 memcpy_bank_to_vram::$23 memcpy_bank_to_vram::$12 memcpy_bank_to_vram::$13 memcpy_bank_to_vram::$17 ]
+zp[2]:63 [ memcpy_in_vram::num#0 memcpy_bank_to_vram::$14 memcpy_bank_to_vram::$15 ]
+reg byte a [ clearline::$5 ]
+zp[2]:65 [ clearline::addr#0 memcpy_bank_to_vram::$24 ]
+reg byte a [ clearline::$1 ]
+reg byte a [ clearline::$2 ]
+reg byte a [ vera_layer_get_color::return#4 ]
+reg byte x [ clearline::color#0 ]
+reg byte a [ memcpy_in_vram::$0 ]
+reg byte a [ memcpy_in_vram::$1 ]
+reg byte a [ memcpy_in_vram::$3 ]
+reg byte a [ memcpy_in_vram::$4 ]
+zp[8]:67 [ main::SPRITE_ATTR ]

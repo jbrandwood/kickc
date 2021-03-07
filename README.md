@@ -28,6 +28,8 @@ KickC uses the very versatile [Kick Assembler](http://theweb.dk/KickAssembler). 
 
 * [Discuss](https://www.facebook.com/groups/302286200587943/) the compiler and receive news on facebook
 
+* [Chat](https://discord.gg/q6TFMZvfg5) on discord
+
 * [Contribute](https://gitlab.com/camelot/kickc/blob/master/CONTRIBUTING.md) to the development of KickC 
 
 ## BETA

@@ -1,6 +1,6 @@
 // A simple usage of the flexible sprite multiplexer routine
 #include <c64.h>
-#include <multiplexer.h>
+#include <c64-multiplexer.h>
 // Location of screen & sprites
 char* SCREEN = 0x0400;
 
@@ -44,7 +44,7 @@ void init() {
     *IRQ_ENABLE = IRQ_RASTER;
     *IRQ_STATUS = IRQ_RASTER;
     *KERNEL_IRQ = &plex_irq;
-    *VICII_CONTROL &= 0x7f;
+    *VICII_CONTROL1 &= 0x7f;
     *RASTER = 0x0;
     asm { cli }
 }

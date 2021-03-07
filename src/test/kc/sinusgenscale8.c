@@ -1,6 +1,6 @@
 #include <sine.h>
 #include <multiply.h>
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     word tabsize = 20;

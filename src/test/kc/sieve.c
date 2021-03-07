@@ -1,9 +1,9 @@
 #include <string.h>
-#include <time.h>
+#include <c64-time.h>
 #include <stdint.h>
 #include <division.h>
 #include <c64.h>
-#include <print.h>
+#include <c64-print.h>
 
 
 char* const SCREEN = 0x0400;

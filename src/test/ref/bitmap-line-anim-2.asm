@@ -1,4 +1,4 @@
-// Shows that bitmap2.kc line() does not have the same problem as bitmap-draw.kc
+// Shows that c64-bitmap.kc line() does not have the same problem as bitmap-draw.kc
 // See bitmap-line-anim-1.kc
   // Commodore 64 PRG executable file
 .file [name="bitmap-line-anim-2.prg", type="prg", segments="Program"]

@@ -4,8 +4,8 @@
 #include <sqr.h>
 #include <c64.h>
 #include "font-hex.c"
-#include <time.h>
-#include <print.h>
+#include <c64-time.h>
+#include <c64-print.h>
 
 #pragma zp_reserve(08)
 

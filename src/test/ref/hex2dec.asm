@@ -234,7 +234,6 @@ utoa10w: {
     beq __b6
     // if(bStarted!=0)
     lda.z bStarted
-    cmp #0
     beq __b7
     // *dst++ = DIGITS[digit]
     ldy.z digit

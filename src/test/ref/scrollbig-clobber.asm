@@ -28,7 +28,6 @@ main: {
     // for( byte i: 0..255)
     inc.z i
     lda.z i
-    cmp #0
     bne __b1
     // }
     rts

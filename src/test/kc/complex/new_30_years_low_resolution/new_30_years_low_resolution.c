@@ -89,7 +89,7 @@ void demo_init() {
 void demo_start() {
     demo_init();
     // Set raster line to 0x00
-    *VICII_CONTROL &= 0x7f;
+    *VICII_CONTROL1 &= 0x7f;
     *RASTER = 0;
     // Set the IRQ routine
     *HARDWARE_IRQ = &irq_demo;

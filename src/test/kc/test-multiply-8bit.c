@@ -1,5 +1,5 @@
 // Test the fast multiplication library
-#include <print.h>
+#include <c64-print.h>
 #include <multiply.h>
 #include <fastmultiply.h>
 

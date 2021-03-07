@@ -467,10 +467,30 @@ public class TestPrograms {
       compileAndCompare("examples/nes/nes-demo.c");
    }
 
+   @Test
+   public void testCx16VeralibTilemap8bpp() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/veralib/tilemap_8bpp_16_x_16.c");
+   }
+
+   @Test
+   public void testCx16VeralibBitmap8bpp() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/veralib/bitmap_8bpp_320_x_240.c");
+   }
+
+   @Test
+   public void testCx16BankAddressing() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/cx16-bankaddressing.c");
+   }
+
    //@Test
-   //public void testCx16Vera() throws IOException, URISyntaxException {
-   //   compileAndCompare("examples/cx16/cx16-vera.c");
+   //public void testCx16SpaceDemo() throws IOException, URISyntaxException {
+   //   compileAndCompare("examples/cx16/spacedemo/spacedemo.c");
    //}
+
+   @Test
+   public void testCx16LoadFileInBank() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/cx16-bankload.c");
+   }
 
    @Test
    public void testCx16VeraLayers() throws IOException, URISyntaxException {
@@ -2054,8 +2074,8 @@ public class TestPrograms {
    */
 
    @Test
-   public void testStructError6() throws IOException, URISyntaxException {
-      assertError("struct-error-6.c", "Value list cannot initialize type");
+   public void testStructPtr35() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-35.c");
    }
 
    @Test
@@ -2233,6 +2253,17 @@ public class TestPrograms {
    public void testStructPtr0() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-0.c");
    }
+
+   @Test
+   public void testStructError7() throws IOException, URISyntaxException {
+      assertError("struct-err-7.c", "Unknown struct member");
+   }
+
+   @Test
+   public void testStructError6() throws IOException, URISyntaxException {
+      assertError("struct-err-6.c", "Value list cannot initialize type");
+   }
+
 
    @Test
    public void testStructError5() throws IOException, URISyntaxException {
@@ -4985,6 +5016,7 @@ public class TestPrograms {
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
+      //compiler.enableZeroPageCoalesce();
       compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
       if(compileLog != null) {

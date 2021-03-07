@@ -43,7 +43,7 @@ public class SymbolTypeInference {
          SymbolType rightType = inferType(symbols, constBin.getRight());
          return constBin.getOperator().inferType(leftType, rightType);
       } else if(rValue instanceof ValueList) {
-         return SymbolType.VAR;          
+         return SymbolType.VAR;
       } else if(rValue instanceof PointerDereference) {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if(pointerType instanceof SymbolTypePointer) {
@@ -105,6 +105,8 @@ public class SymbolTypeInference {
             String typeName = ((SymbolTypeStruct) structType).getStructTypeName();
             StructDefinition structDefinition = symbols.getLocalStructDefinition(typeName);
             Variable structMember = structDefinition.getLocalVar(structMemberRef.getMemberName());
+            if(structMember == null)
+               throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName());
             return structMember.getType();
          } else {
             throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());

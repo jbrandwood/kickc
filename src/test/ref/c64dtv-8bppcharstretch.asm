@@ -31,7 +31,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // Processor port data direction register
@@ -88,9 +88,9 @@ main: {
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    // *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3
     lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
@@ -189,9 +189,9 @@ main: {
     inx
     cpx #8
     bne stabilize
-    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    // *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3
     lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
-    sta VICII_CONTROL
+    sta VICII_CONTROL1
     // *BORDER_COLOR = 0
     lda #0
     sta BORDER_COLOR
@@ -227,8 +227,8 @@ main: {
     and #7
     // VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
     ora #VICII_DEN|VICII_ECM|VICII_RSEL
-    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
-    sta VICII_CONTROL
+    // *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
+    sta VICII_CONTROL1
     // rst*$10
     txa
     asl
@@ -391,7 +391,6 @@ gfx_init_plane_charset8: {
     // for(byte ch : $00..$ff)
     inc.z ch
     lda.z ch
-    cmp #0
     bne __b1
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO

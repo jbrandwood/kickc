@@ -8,9 +8,10 @@
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x0F800.
 
 #pragma target(cx16)
+#include <cx16.h>
 #include <conio.h>
 #include <stdio.h>
-#include <veralib.h>
+#include <cx16-veralib.h>
 
 void main() {
 
@@ -39,12 +40,12 @@ void main() {
     // It displays the characters in 1BPP 16x16 color mode!
     unsigned byte dcvideo = *VERA_DC_VIDEO;
     printf("\nvera dc video = %x\n", dcvideo);
-    unsigned byte config = vera_get_layer_config(1);
+    unsigned byte config = vera_layer_get_config(1);
     printf("\nvera layer 1 config = %x\n", config);
-    unsigned byte layershown = vera_is_layer_shown(1);
+    unsigned byte layershown = vera_layer_is_visible(1);
     printf("vera layer 1 shown = %c\n", layershown);
-    unsigned byte mapbase = vera_get_layer_mapbase(1);
-    unsigned byte tilebase = vera_get_layer_tilebase(1);
+    unsigned byte mapbase = vera_layer_get_mapbase(1);
+    unsigned byte tilebase = vera_layer_get_tilebase(1);
     printf("vera layer 1 mapbase = %hhx, tilebase = %hhx\n", mapbase, tilebase);
 
     // Wait for a keypress and after clear the line!
@@ -62,17 +63,17 @@ void main() {
     // But first, we also print the layer 0 VERA configuration.
     // This statement sets the base of the display layer 1 at VRAM address 0x0200
 
-    vera_set_layer_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
-    vera_set_layer_config(0, vera_get_layer_config(1));
-    vera_set_layer_tilebase(0, vera_get_layer_tilebase(1));
+    vera_layer_set_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
+    vera_layer_set_config(0, vera_layer_get_config(1));
+    vera_layer_set_tilebase(0, vera_layer_get_tilebase(1));
 
     textcolor(WHITE);
-    config = vera_get_layer_config(0);
-    printf("\nvera layer 0 config = %x\n", vera_get_layer_config(0));
-    layershown = vera_is_layer_shown(0);
+    config = vera_layer_get_config(0);
+    printf("\nvera layer 0 config = %x\n", vera_layer_get_config(0));
+    layershown = vera_layer_is_visible(0);
     printf("vera layer 0 shown = %x\n", layershown);
-    mapbase = vera_get_layer_mapbase(0);
-    tilebase = vera_get_layer_tilebase(0);
+    mapbase = vera_layer_get_mapbase(0);
+    tilebase = vera_layer_get_tilebase(0);
     printf("vera layer 0 mapbase = %x, tilebase = %x\n", mapbase, tilebase);
 
     // Now we print the layer 0 text on the layer 0!
@@ -98,10 +99,10 @@ void main() {
     clearline();
 
     // Now we activate layer 0.
-    vera_show_layer(0);
+    vera_layer_show(0);
     textcolor(WHITE);
     bgcolor(BLACK);
-    printf("vera layer 0 shown = %x. ", vera_is_layer_shown(0));
+    printf("vera layer 0 shown = %x. ", vera_layer_is_visible(0));
 
     // Wait for a keypress and after clear the line!
     textcolor(YELLOW);
@@ -110,10 +111,10 @@ void main() {
     while(!kbhit());
     clearline();
 
-    vera_hide_layer(0);
+    vera_layer_hide(0);
     textcolor(WHITE);
     bgcolor(BLACK);
-    printf("vera layer 0 shown = %x. ", vera_is_layer_shown(0));
+    printf("vera layer 0 shown = %x. ", vera_layer_is_visible(0));
 
   // Wait for a keypress and after clear the line!
     textcolor(YELLOW);

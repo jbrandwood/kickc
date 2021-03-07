@@ -1,6 +1,6 @@
 // Allows analysis of the CHARGEN ROM font
 #include <c64.h>
-#include <keyboard.h>
+#include <c64-keyboard.h>
 
 char* SCREEN = $400;
 

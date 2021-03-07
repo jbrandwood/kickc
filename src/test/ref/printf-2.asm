@@ -72,9 +72,8 @@ main: {
     // printf_schar(-77, { 6, 0, 0, 0, 0, DECIMAL})
     lda #0
     sta.z printf_schar.format_zero_padding
-    lda #DECIMAL
-    sta.z printf_schar.format_radix
-    ldy #0
+    ldy #DECIMAL
+    sta.z printf_schar.format_sign_always
     ldx #-$4d
     jsr printf_schar
     // cputln()
@@ -82,9 +81,8 @@ main: {
     // printf_schar(99, {6, 0, 1, 1, 0, OCTAL})
     lda #1
     sta.z printf_schar.format_zero_padding
-    lda #OCTAL
-    sta.z printf_schar.format_radix
-    ldy #1
+    ldy #OCTAL
+    sta.z printf_schar.format_sign_always
     ldx #$63
     jsr printf_schar
     // cputln()
@@ -243,9 +241,9 @@ clrscr: {
     jmp __b3
 }
 // Print a signed char using a specific format
-// printf_schar(signed byte register(X) value, byte register(Y) format_sign_always, byte zp(2) format_zero_padding, byte zp(5) format_radix)
+// printf_schar(signed byte register(X) value, byte zp(5) format_sign_always, byte zp(2) format_zero_padding, byte register(Y) format_radix)
 printf_schar: {
-    .label format_radix = 5
+    .label format_sign_always = 5
     .label format_zero_padding = 2
     // printf_buffer.sign = 0
     // Handle any sign
@@ -255,14 +253,13 @@ printf_schar: {
     cpx #0
     bmi __b1
     // if(format.sign_always)
-    cpy #0
+    lda.z format_sign_always
     beq __b2
     // printf_buffer.sign = '+'
     lda #'+'
     sta printf_buffer
   __b2:
     // uctoa(uvalue, printf_buffer.digits, format.radix)
-    lda.z format_radix
     jsr uctoa
     // printf_number_buffer(printf_buffer, format)
     lda printf_buffer
@@ -349,7 +346,7 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp(6) buffer, byte register(A) radix)
+// uctoa(byte register(X) value, byte* zp(6) buffer, byte register(Y) radix)
 uctoa: {
     .label buffer = 6
     .label digit = 3
@@ -357,16 +354,16 @@ uctoa: {
     .label max_digits = 5
     .label digit_values = $b
     // if(radix==DECIMAL)
-    cmp #DECIMAL
+    cpy #DECIMAL
     beq __b2
     // if(radix==HEXADECIMAL)
-    cmp #HEXADECIMAL
+    cpy #HEXADECIMAL
     beq __b3
     // if(radix==OCTAL)
-    cmp #OCTAL
+    cpy #OCTAL
     beq __b4
     // if(radix==BINARY)
-    cmp #BINARY
+    cpy #BINARY
     beq __b5
     // *buffer++ = 'e'
     // Unknown radix
@@ -451,7 +448,6 @@ uctoa: {
     tay
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b10
     sty.z $ff
     cpx.z $ff
@@ -496,7 +492,6 @@ printf_number_buffer: {
     ldy.z __19
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b13
     // len++;
     iny
@@ -516,10 +511,8 @@ printf_number_buffer: {
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     bne __b2
     lda.z format_zero_padding
-    cmp #0
     bne __b2
     lda.z padding
     cmp #0
@@ -535,14 +528,12 @@ printf_number_buffer: {
   __b2:
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b3
     // cputc(buffer.sign)
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
-    cmp #0
     beq __b4
     lda.z padding
     cmp #0
@@ -558,7 +549,6 @@ printf_number_buffer: {
   __b4:
     // if(format.upper_case)
     lda.z format_upper_case
-    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -567,10 +557,8 @@ printf_number_buffer: {
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     beq __breturn
     lda.z format_zero_padding
-    cmp #0
     bne __breturn
     lda.z padding
     cmp #0

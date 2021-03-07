@@ -97,7 +97,6 @@ queen: {
     // legal(r,column)
     // if(legal(r,column))
     lda.z __1
-    cmp #0
     beq __b3
     // board[r]=column
     //no conflicts so place queen
@@ -571,7 +570,6 @@ cputs: {
     inc.z s+1
   !:
     lda.z c
-    cmp #0
     bne __b2
     // }
     rts
@@ -779,7 +777,6 @@ utoa: {
     sta.z digit_value+1
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     lda.z digit_value+1
     cmp.z value+1
@@ -821,7 +818,6 @@ printf_number_buffer: {
     .label format_upper_case = $c
     // if(format.min_length)
     lda.z format_min_length
-    cmp #0
     beq __b6
     // strlen(buffer.digits)
     jsr strlen
@@ -832,7 +828,6 @@ printf_number_buffer: {
     sta.z len
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b13
     // len++;
     inc.z len
@@ -851,10 +846,8 @@ printf_number_buffer: {
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     bne __b2
     lda.z format_zero_padding
-    cmp #0
     bne __b2
     lda.z padding
     cmp #0
@@ -870,7 +863,6 @@ printf_number_buffer: {
   __b2:
     // if(buffer.sign)
     lda.z buffer_sign
-    cmp #0
     beq __b3
     // cputc(buffer.sign)
     sta.z cputc.c
@@ -878,7 +870,6 @@ printf_number_buffer: {
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
-    cmp #0
     beq __b4
     lda.z padding
     cmp #0
@@ -894,7 +885,6 @@ printf_number_buffer: {
   __b4:
     // if(format.upper_case)
     lda.z format_upper_case
-    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -907,10 +897,8 @@ printf_number_buffer: {
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
     lda.z format_justify_left
-    cmp #0
     beq __breturn
     lda.z format_zero_padding
-    cmp #0
     bne __breturn
     lda.z padding
     cmp #0
@@ -988,7 +976,6 @@ ultoa: {
     sta.z digit_value+3
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     lda.z value+3
     cmp.z digit_value+3
@@ -1071,7 +1058,6 @@ uctoa: {
     sta.z digit_value
     // if (started || value >= digit_value)
     lda.z started
-    cmp #0
     bne __b5
     lda.z value
     cmp.z digit_value

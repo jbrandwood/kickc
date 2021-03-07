@@ -272,7 +272,7 @@ part1_run::@1: scope:[part1_run]  from part1_run::SEI1
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   asm { ldaCIA1_INTERRUPT  }
   *IRQ_STATUS = $f
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = IRQ_PART1_TOP_LINE
   *HARDWARE_IRQ = &irq_part1_top
   *IRQ_ENABLE = IRQ_RASTER
@@ -439,10 +439,10 @@ irq_part1_top::@5: scope:[irq_part1_top]  from irq_part1_top::toD0181_@return
   if(irq_part1_top::$5) goto irq_part1_top::@1
   to:irq_part1_top::@3
 irq_part1_top::@1: scope:[irq_part1_top]  from irq_part1_top::@5
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   to:irq_part1_top::@2
 irq_part1_top::@3: scope:[irq_part1_top]  from irq_part1_top::@5
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   to:irq_part1_top::@2
 irq_part1_top::@2: scope:[irq_part1_top]  from irq_part1_top::@1 irq_part1_top::@3
   irq_part1_top::$3 = < irq_flipper_top_line
@@ -465,16 +465,16 @@ irq_flipper_top: scope:[irq_flipper_top]  from
   call raster_fine 
   to:irq_flipper_top::@4
 irq_flipper_top::@4: scope:[irq_flipper_top]  from irq_flipper_top
-  asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
+  asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
   irq_flipper_top::$3 = > irq_flipper_bottom_line
   irq_flipper_top::$6 = 0 != irq_flipper_top::$3
   if(irq_flipper_top::$6) goto irq_flipper_top::@1
   to:irq_flipper_top::@3
 irq_flipper_top::@1: scope:[irq_flipper_top]  from irq_flipper_top::@4
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   to:irq_flipper_top::@2
 irq_flipper_top::@3: scope:[irq_flipper_top]  from irq_flipper_top::@4
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   to:irq_flipper_top::@2
 irq_flipper_top::@2: scope:[irq_flipper_top]  from irq_flipper_top::@1 irq_flipper_top::@3
   irq_flipper_top::$4 = < irq_flipper_bottom_line
@@ -529,7 +529,7 @@ irq_flipper_bottom::@10: scope:[irq_flipper_bottom]  from irq_flipper_bottom::to
   if(irq_flipper_bottom::$5) goto irq_flipper_bottom::@1
   to:irq_flipper_bottom::@2
 irq_flipper_bottom::@1: scope:[irq_flipper_bottom]  from irq_flipper_bottom::@10 irq_flipper_bottom::@7 irq_flipper_bottom::@9
-  *VICII_CONTROL = *VICII_CONTROL | $80
+  *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = IRQ_PART1_TOP_LINE
   *HARDWARE_IRQ = &irq_part1_top
   *IRQ_STATUS = IRQ_RASTER
@@ -1169,7 +1169,7 @@ part2_run::@3: scope:[part2_run]  from part2_run::toD0181_@return
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   asm { ldaCIA1_INTERRUPT  }
   *IRQ_STATUS = $f
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   *RASTER = BUCKET_YPOS[0]
   *IRQ_ENABLE = IRQ_RASTER
   *HARDWARE_IRQ = &irq_swing_top
@@ -1386,7 +1386,7 @@ __interrupt(hardware_clobber) void irq_swing_vsp()
 irq_swing_vsp: scope:[irq_swing_vsp]  from
   to:irq_swing_vsp::vsp_perform1
 irq_swing_vsp::vsp_perform1: scope:[irq_swing_vsp]  from irq_swing_vsp
-  kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method
+  kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
         sta IRQ_STATUS
@@ -1433,8 +1433,8 @@ irq_swing_vsp::vsp_perform1: scope:[irq_swing_vsp]  from irq_swing_vsp
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
      }}
   to:irq_swing_vsp::@1
 irq_swing_vsp::@1: scope:[irq_swing_vsp]  from irq_swing_vsp::vsp_perform1
@@ -1728,7 +1728,7 @@ demo_start: scope:[demo_start]  from main::@7 part1_loop::@6
   call demo_init 
   to:demo_start::@1
 demo_start::@1: scope:[demo_start]  from demo_start
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   *RASTER = 0
   *HARDWARE_IRQ = &irq_demo
   *IRQ_ENABLE = IRQ_RASTER
@@ -2055,7 +2055,7 @@ const nomodify byte* SPRITES_YPOS = (byte*)$d001
 const byte* SPRITE_COLOR_SEQUENCE[]  = { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, YELLOW, CYAN, GREEN, PURPLE, RED, BLUE, RED, PURPLE, GREEN, CYAN, YELLOW, WHITE, WHITE }
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 const nomodify byte VICII_BMM = $20
-const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL1 = (byte*)$d011
 const nomodify byte* VICII_CONTROL2 = (byte*)$d016
 const nomodify byte VICII_MCM = $10
 const nomodify byte* VICII_MEMORY = (byte*)$d018
@@ -2842,7 +2842,7 @@ Adding number conversion cast (unumber) $800 in memcpy::num#0 = $800
 Adding number conversion cast (unumber) $400 in memcpy::num#1 = $400
 Adding number conversion cast (unumber) $3e8 in memcpy::num#2 = $3e8
 Adding number conversion cast (unumber) $f in *IRQ_STATUS = $f
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
 Adding number conversion cast (unumber) 1 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_MC) = 1
 Adding number conversion cast (unumber) 1 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) = 1
 Adding number conversion cast (unumber) $16 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X) = $16
@@ -2877,16 +2877,16 @@ Adding number conversion cast (unumber) $f in irq_part1_top::toD0181_$5 = irq_pa
 Adding number conversion cast (unumber) irq_part1_top::toD0181_$5 in irq_part1_top::toD0181_$5 = irq_part1_top::toD0181_$4 & (unumber)$f
 Adding number conversion cast (unumber) irq_part1_top::toD0181_$6 in irq_part1_top::toD0181_$6 = irq_part1_top::toD0181_$2 | irq_part1_top::toD0181_$5
 Adding number conversion cast (unumber) 0 in irq_part1_top::$5 = 0 != irq_part1_top::$2
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) $f8 in irq_part1_top::$4 = irq_part1_top::$3 & $f8
 Adding number conversion cast (unumber) irq_part1_top::$4 in irq_part1_top::$4 = irq_part1_top::$3 & (unumber)$f8
 Adding number conversion cast (unumber) 1 in p1_work_ready = 1
 Adding number conversion cast (unumber) 7 in irq_flipper_top::$1 = irq_flipper_top::$0 & 7
 Adding number conversion cast (unumber) irq_flipper_top::$1 in irq_flipper_top::$1 = irq_flipper_top::$0 & (unumber)7
 Adding number conversion cast (unumber) 0 in irq_flipper_top::$6 = 0 != irq_flipper_top::$3
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) $f8 in irq_flipper_top::$5 = irq_flipper_top::$4 & $f8
 Adding number conversion cast (unumber) irq_flipper_top::$5 in irq_flipper_top::$5 = irq_flipper_top::$4 & (unumber)$f8
 Adding number conversion cast (unumber) 7 in irq_flipper_bottom::$1 = irq_flipper_bottom::$0 & 7
@@ -2902,7 +2902,7 @@ Adding number conversion cast (unumber) $f in irq_flipper_bottom::toD0181_$5 = i
 Adding number conversion cast (unumber) irq_flipper_bottom::toD0181_$5 in irq_flipper_bottom::toD0181_$5 = irq_flipper_bottom::toD0181_$4 & (unumber)$f
 Adding number conversion cast (unumber) irq_flipper_bottom::toD0181_$6 in irq_flipper_bottom::toD0181_$6 = irq_flipper_bottom::toD0181_$2 | irq_flipper_bottom::toD0181_$5
 Adding number conversion cast (unumber) 0 in irq_flipper_bottom::$13 = 0 != flipper_done
-Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL1 = *VICII_CONTROL1 | $80
 Adding number conversion cast (unumber) 8 in irq_flipper_bottom::$6 = irq_flipper_bottom::irq_flipper_line#0 < 8
 Adding number conversion cast (unumber) 0 in irq_flipper_top_line = 0
 Adding number conversion cast (unumber) 8 in irq_flipper_bottom::$7 = irq_flipper_bottom::irq_flipper_line#1 - 8
@@ -2996,7 +2996,7 @@ Adding number conversion cast (unumber) part2_run::toD0181_$5 in part2_run::toD0
 Adding number conversion cast (unumber) part2_run::toD0181_$6 in part2_run::toD0181_$6 = part2_run::toD0181_$2 | part2_run::toD0181_$5
 Adding number conversion cast (unumber) $ff in *SPRITES_ENABLE = $ff
 Adding number conversion cast (unumber) $f in *IRQ_STATUS = $f
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) 0 in *RASTER = BUCKET_YPOS[0]
 Adding number conversion cast (unumber) 0 in plex_frame_id = 0
 Adding number conversion cast (unumber) 0 in plex_id_offset = 0
@@ -3066,7 +3066,7 @@ Adding number conversion cast (unumber) 5*$32 in main::$8 = demo_frame_count < 5
 Adding number conversion cast (unumber) $10*$32 in main::$9 = demo_frame_count < $10*$32
 Adding number conversion cast (unumber) 0 in sparkler_active = 0
 Adding number conversion cast (unumber) $f in *IRQ_STATUS = $f
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Adding number conversion cast (unumber) 0 in demo_work::$3 = 0 != sparkler_active
 Adding number conversion cast (unumber) $1e in sparkler_anim::$0 = sparkler_idx == $1e
@@ -4919,7 +4919,7 @@ irq_swing_vsp: scope:[irq_swing_vsp]  from
   [96] phi()
   to:irq_swing_vsp::vsp_perform1
 irq_swing_vsp::vsp_perform1: scope:[irq_swing_vsp]  from irq_swing_vsp
-  kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method
+  kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
         sta IRQ_STATUS
@@ -4966,8 +4966,8 @@ irq_swing_vsp::vsp_perform1: scope:[irq_swing_vsp]  from irq_swing_vsp
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
      }}
   to:irq_swing_vsp::@1
 irq_swing_vsp::@1: scope:[irq_swing_vsp]  from irq_swing_vsp::vsp_perform1
@@ -5049,7 +5049,7 @@ irq_flipper_bottom::@9: scope:[irq_flipper_bottom]  from irq_flipper_bottom::@7
   [139] flipper_done = 1
   to:irq_flipper_bottom::@1
 irq_flipper_bottom::@1: scope:[irq_flipper_bottom]  from irq_flipper_bottom::@10 irq_flipper_bottom::@7 irq_flipper_bottom::@9
-  [140] *VICII_CONTROL = *VICII_CONTROL | $80
+  [140] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [141] *RASTER = IRQ_PART1_TOP_LINE
   [142] *HARDWARE_IRQ = &irq_part1_top
   [143] *IRQ_STATUS = IRQ_RASTER
@@ -5073,12 +5073,12 @@ irq_flipper_top: scope:[irq_flipper_top]  from
   [151] call raster_fine 
   to:irq_flipper_top::@4
 irq_flipper_top::@4: scope:[irq_flipper_top]  from irq_flipper_top
-  asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
+  asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
   [153] irq_flipper_top::$3 = > irq_flipper_bottom_line
   [154] if(0!=irq_flipper_top::$3) goto irq_flipper_top::@1
   to:irq_flipper_top::@3
 irq_flipper_top::@3: scope:[irq_flipper_top]  from irq_flipper_top::@4
-  [155] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [155] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   to:irq_flipper_top::@2
 irq_flipper_top::@2: scope:[irq_flipper_top]  from irq_flipper_top::@1 irq_flipper_top::@3
   [156] irq_flipper_top::$4 = < irq_flipper_bottom_line
@@ -5091,7 +5091,7 @@ irq_flipper_top::@return: scope:[irq_flipper_top]  from irq_flipper_top::@2
   [161] return 
   to:@return
 irq_flipper_top::@1: scope:[irq_flipper_top]  from irq_flipper_top::@4
-  [162] *VICII_CONTROL = *VICII_CONTROL | $80
+  [162] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   to:irq_flipper_top::@2
 
 __interrupt(hardware_clobber) void irq_part1_top()
@@ -5116,7 +5116,7 @@ irq_part1_top::@5: scope:[irq_part1_top]  from irq_part1_top::toD0181
   [172] if(0!=irq_part1_top::$2) goto irq_part1_top::@1
   to:irq_part1_top::@3
 irq_part1_top::@3: scope:[irq_part1_top]  from irq_part1_top::@5
-  [173] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [173] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   to:irq_part1_top::@2
 irq_part1_top::@2: scope:[irq_part1_top]  from irq_part1_top::@1 irq_part1_top::@3
   [174] irq_part1_top::$3 = < irq_flipper_top_line
@@ -5130,7 +5130,7 @@ irq_part1_top::@return: scope:[irq_part1_top]  from irq_part1_top::@2
   [180] return 
   to:@return
 irq_part1_top::@1: scope:[irq_part1_top]  from irq_part1_top::@5
-  [181] *VICII_CONTROL = *VICII_CONTROL | $80
+  [181] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   to:irq_part1_top::@2
 
 void main()
@@ -5432,7 +5432,7 @@ demo_start: scope:[demo_start]  from main::@7 part1_loop::@6
   [283] call demo_init 
   to:demo_start::@1
 demo_start::@1: scope:[demo_start]  from demo_start
-  [284] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [284] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   [285] *RASTER = 0
   [286] *HARDWARE_IRQ = &irq_demo
   [287] *IRQ_ENABLE = IRQ_RASTER
@@ -5508,7 +5508,7 @@ part1_run::@1: scope:[part1_run]  from part1_run::SEI1
   [321] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   asm { ldaCIA1_INTERRUPT  }
   [323] *IRQ_STATUS = $f
-  [324] *VICII_CONTROL = *VICII_CONTROL | $80
+  [324] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [325] *RASTER = IRQ_PART1_TOP_LINE
   [326] *HARDWARE_IRQ = &irq_part1_top
   [327] *IRQ_ENABLE = IRQ_RASTER
@@ -5668,7 +5668,7 @@ part2_run::@3: scope:[part2_run]  from part2_run::toD0181
   [403] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   asm { ldaCIA1_INTERRUPT  }
   [405] *IRQ_STATUS = $f
-  [406] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [406] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   [407] *RASTER = *BUCKET_YPOS
   [408] *IRQ_ENABLE = IRQ_RASTER
   [409] *HARDWARE_IRQ = &irq_swing_top
@@ -6818,7 +6818,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq_swi
 Statement [91] irq_swing_plex::x_offset1#0 = $50 - vsp_coarse_scroll [ p2_plex_scroller_moving x_movement_idx scroll_text_next sprite_color_idx irq_swing_plex::new_coarse_scroll#0 irq_swing_plex::x_offset1#0 ] (  [ p2_plex_scroller_moving x_movement_idx scroll_text_next sprite_color_idx irq_swing_plex::new_coarse_scroll#0 irq_swing_plex::x_offset1#0 ] { { irq_swing_plex::x_offset1#0 = vsp_update_screen::x_offset } }  ) always clobbers reg byte a 
 Statement [94] *HARDWARE_IRQ = &irq_swing_plex [ plex_bucket_id ] (  [ plex_bucket_id ] { }  ) always clobbers reg byte a 
 Statement [95] *RASTER = BUCKET_YPOS[plex_bucket_id] [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method
+Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
         sta IRQ_STATUS
@@ -6865,8 +6865,8 @@ Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
      }} always clobbers reg byte a reg byte x 
 Statement [98] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VICII_BMM [ vsp_fine_scroll ] (  [ vsp_fine_scroll ] { }  ) always clobbers reg byte a 
 Statement [99] irq_swing_vsp::$1 = vsp_fine_scroll | VICII_MCM [ irq_swing_vsp::$1 ] (  [ irq_swing_vsp::$1 ] { }  ) always clobbers reg byte a 
@@ -6897,31 +6897,31 @@ Statement [136] irq_flipper_bottom::$9 = irq_flipper_bottom::irq_flipper_line#0 
 Statement [137] irq_flipper_bottom_line = irq_flipper_bottom::$9 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
 Statement [138] if(irq_flipper_bottom::irq_flipper_line#0!=$130) goto irq_flipper_bottom::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [139] flipper_done = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [140] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [140] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [141] *RASTER = IRQ_PART1_TOP_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [142] *HARDWARE_IRQ = &irq_part1_top [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [143] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [144] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [145] irq_flipper_bottom_line = $130 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
 Statement [146] irq_flipper_top_line = 0 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
-Statement asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  } always clobbers reg byte a reg byte x reg byte y 
-Statement [155] *VICII_CONTROL = *VICII_CONTROL & $7f [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
+Statement asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  } always clobbers reg byte a reg byte x reg byte y 
+Statement [155] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
 Statement [159] *HARDWARE_IRQ = &irq_flipper_bottom [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [160] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [161] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [162] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
+Statement [162] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
 Statement [163] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = BLACK [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [164] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) = BLACK [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [165] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VICII_BMM [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [166] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) | VICII_MCM [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [168] *((byte*)CIA2) = irq_part1_top::toDd001_return#0 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [170] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY) = irq_part1_top::toD0181_return#0 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
-Statement [173] *VICII_CONTROL = *VICII_CONTROL & $7f [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
+Statement [173] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [177] *HARDWARE_IRQ = &irq_flipper_top [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [178] p1_work_ready = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [179] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [180] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [181] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
+Statement [181] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [184] byteboozer_decrunch::crunched = DEMO_MUSIC_CRUNCHED [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx byteboozer_decrunch::crunched ] ( main:30 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx byteboozer_decrunch::crunched ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [187] call *musicInit  [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a reg byte x reg byte y 
@@ -7045,7 +7045,7 @@ Statement [276] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRU
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [278] *IRQ_STATUS = $f [ ] ( main:30::demo_init:183 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::demo_start:188::demo_init:283 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467::demo_init:283 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldycrunched ldxcrunched+1 jsrb2.Decrunch  } always clobbers reg byte a reg byte x reg byte y 
-Statement [284] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [284] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [285] *RASTER = 0 [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [286] *HARDWARE_IRQ = &irq_demo [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [287] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7067,7 +7067,7 @@ Statement [320] *PROCPORT = PROCPORT_RAM_IO [ irq_flipper_top_line flipper_charl
 Statement [321] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [323] *IRQ_STATUS = $f [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
-Statement [324] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [324] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [325] *RASTER = IRQ_PART1_TOP_LINE [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [326] *HARDWARE_IRQ = &irq_part1_top [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [327] *IRQ_ENABLE = IRQ_RASTER [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7113,7 +7113,7 @@ Statement [402] *SPRITES_ENABLE = $ff [ p2_logo_revealing p2_logo_reveal_done p2
 Statement [403] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [405] *IRQ_STATUS = $f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
-Statement [406] *VICII_CONTROL = *VICII_CONTROL & $7f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [406] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [407] *RASTER = *BUCKET_YPOS [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [408] *IRQ_ENABLE = IRQ_RASTER [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [409] *HARDWARE_IRQ = &irq_swing_top [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7288,7 +7288,7 @@ Statement [89] SPRITES_COLOR[irq_swing_plex::s#2] = SPRITE_COLOR_SEQUENCE[sprite
 Statement [91] irq_swing_plex::x_offset1#0 = $50 - vsp_coarse_scroll [ p2_plex_scroller_moving x_movement_idx scroll_text_next sprite_color_idx irq_swing_plex::new_coarse_scroll#0 irq_swing_plex::x_offset1#0 ] (  [ p2_plex_scroller_moving x_movement_idx scroll_text_next sprite_color_idx irq_swing_plex::new_coarse_scroll#0 irq_swing_plex::x_offset1#0 ] { { irq_swing_plex::x_offset1#0 = vsp_update_screen::x_offset } }  ) always clobbers reg byte a 
 Statement [94] *HARDWARE_IRQ = &irq_swing_plex [ plex_bucket_id ] (  [ plex_bucket_id ] { }  ) always clobbers reg byte a 
 Statement [95] *RASTER = BUCKET_YPOS[plex_bucket_id] [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method
+Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
         sta IRQ_STATUS
@@ -7335,8 +7335,8 @@ Statement kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
      }} always clobbers reg byte a reg byte x 
 Statement [98] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VICII_BMM [ vsp_fine_scroll ] (  [ vsp_fine_scroll ] { }  ) always clobbers reg byte a 
 Statement [99] irq_swing_vsp::$1 = vsp_fine_scroll | VICII_MCM [ irq_swing_vsp::$1 ] (  [ irq_swing_vsp::$1 ] { }  ) always clobbers reg byte a 
@@ -7367,31 +7367,31 @@ Statement [136] irq_flipper_bottom::$9 = irq_flipper_bottom::irq_flipper_line#0 
 Statement [137] irq_flipper_bottom_line = irq_flipper_bottom::$9 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
 Statement [138] if(irq_flipper_bottom::irq_flipper_line#0!=$130) goto irq_flipper_bottom::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [139] flipper_done = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [140] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [140] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [141] *RASTER = IRQ_PART1_TOP_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [142] *HARDWARE_IRQ = &irq_part1_top [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [143] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [144] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [145] irq_flipper_bottom_line = $130 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
 Statement [146] irq_flipper_top_line = 0 [ irq_flipper_bottom::irq_flipper_line#0 ] (  [ irq_flipper_bottom::irq_flipper_line#0 ] { }  ) always clobbers reg byte a 
-Statement asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  } always clobbers reg byte a reg byte x reg byte y 
-Statement [155] *VICII_CONTROL = *VICII_CONTROL & $7f [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
+Statement asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  } always clobbers reg byte a reg byte x reg byte y 
+Statement [155] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
 Statement [159] *HARDWARE_IRQ = &irq_flipper_bottom [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [160] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [161] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [162] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
+Statement [162] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_bottom_line ] (  [ irq_flipper_bottom_line ] { }  ) always clobbers reg byte a 
 Statement [163] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = BLACK [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [164] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) = BLACK [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [165] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VICII_BMM [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [166] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) | VICII_MCM [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [168] *((byte*)CIA2) = irq_part1_top::toDd001_return#0 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [170] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY) = irq_part1_top::toD0181_return#0 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
-Statement [173] *VICII_CONTROL = *VICII_CONTROL & $7f [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
+Statement [173] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [177] *HARDWARE_IRQ = &irq_flipper_top [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [178] p1_work_ready = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [179] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [180] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [181] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
+Statement [181] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_top_line ] (  [ irq_flipper_top_line ] { }  ) always clobbers reg byte a 
 Statement [184] byteboozer_decrunch::crunched = DEMO_MUSIC_CRUNCHED [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx byteboozer_decrunch::crunched ] ( main:30 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx byteboozer_decrunch::crunched ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [187] call *musicInit  [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a reg byte x reg byte y 
@@ -7501,7 +7501,7 @@ Statement [276] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRU
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [278] *IRQ_STATUS = $f [ ] ( main:30::demo_init:183 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::demo_start:188::demo_init:283 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467::demo_init:283 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldycrunched ldxcrunched+1 jsrb2.Decrunch  } always clobbers reg byte a reg byte x reg byte y 
-Statement [284] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [284] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [285] *RASTER = 0 [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [286] *HARDWARE_IRQ = &irq_demo [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [287] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:30::demo_start:188 [ irq_flipper_top_line flipper_charline p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  main:30::part1_run:193::part1_loop:339::demo_start:467 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7523,7 +7523,7 @@ Statement [320] *PROCPORT = PROCPORT_RAM_IO [ irq_flipper_top_line flipper_charl
 Statement [321] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [323] *IRQ_STATUS = $f [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
-Statement [324] *VICII_CONTROL = *VICII_CONTROL | $80 [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [324] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [325] *RASTER = IRQ_PART1_TOP_LINE [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [326] *HARDWARE_IRQ = &irq_part1_top [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [327] *IRQ_ENABLE = IRQ_RASTER [ irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] ( main:30::part1_run:193 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx irq_flipper_top_line flipper_charline demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7564,7 +7564,7 @@ Statement [402] *SPRITES_ENABLE = $ff [ p2_logo_revealing p2_logo_reveal_done p2
 Statement [403] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
 Statement [405] *IRQ_STATUS = $f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
-Statement [406] *VICII_CONTROL = *VICII_CONTROL & $7f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
+Statement [406] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [407] *RASTER = *BUCKET_YPOS [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [408] *IRQ_ENABLE = IRQ_RASTER [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
 Statement [409] *HARDWARE_IRQ = &irq_swing_top [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] ( main:30::part2_run:198 [ p2_logo_revealing p2_logo_reveal_done p2_logo_swinging p2_plex_scroller_moving p2_logo_reveal_idx demo_frame_count sparkler_active sparkler_idx ] { }  ) always clobbers reg byte a 
@@ -7823,143 +7823,143 @@ Uplift Scope [demo_start]
 Uplift Scope [demo_work] 
 Uplift Scope [__start] 
 
-Uplifting [plexPrepareFrame] best 103828 combination reg byte x [ plexPrepareFrame::s#3 plexPrepareFrame::s#1 plexPrepareFrame::s#6 ] zp[2]:45 [ plexPrepareFrame::sprite#4 plexPrepareFrame::sprite#3 plexPrepareFrame::frame#0 plexPrepareFrame::sprite#1 plexPrepareFrame::sprite#13 ] reg byte x [ plexPrepareFrame::i#2 plexPrepareFrame::i#1 ] zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] zp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ] zp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ] zp[1]:161 [ plexPrepareFrame::$16 ] zp[1]:162 [ plexPrepareFrame::$17 ] zp[1]:165 [ plexPrepareFrame::s#2 ] zp[2]:42 [ plexPrepareFrame::bucket#3 plexPrepareFrame::bucket#10 plexPrepareFrame::bucket#9 plexPrepareFrame::sprite#2 ] zp[1]:164 [ plexPrepareFrame::nxt_y#0 ] zp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ] zp[1]:41 [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ] zp[1]:163 [ plexPrepareFrame::nxt_idx#0 ] zp[1]:159 [ plexPrepareFrame::plex_id#0 ] zp[1]:160 [ plexPrepareFrame::ypos#0 ] zp[2]:157 [ plexPrepareFrame::bucket#1 ] 
+Uplifting [plexPrepareFrame] best 103254 combination reg byte x [ plexPrepareFrame::s#3 plexPrepareFrame::s#1 plexPrepareFrame::s#6 ] zp[2]:45 [ plexPrepareFrame::sprite#4 plexPrepareFrame::sprite#3 plexPrepareFrame::frame#0 plexPrepareFrame::sprite#1 plexPrepareFrame::sprite#13 ] reg byte x [ plexPrepareFrame::i#2 plexPrepareFrame::i#1 ] zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] zp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ] zp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ] zp[1]:161 [ plexPrepareFrame::$16 ] zp[1]:162 [ plexPrepareFrame::$17 ] zp[1]:165 [ plexPrepareFrame::s#2 ] zp[2]:42 [ plexPrepareFrame::bucket#3 plexPrepareFrame::bucket#10 plexPrepareFrame::bucket#9 plexPrepareFrame::sprite#2 ] zp[1]:164 [ plexPrepareFrame::nxt_y#0 ] zp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ] zp[1]:41 [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ] zp[1]:163 [ plexPrepareFrame::nxt_idx#0 ] zp[1]:159 [ plexPrepareFrame::plex_id#0 ] zp[1]:160 [ plexPrepareFrame::ypos#0 ] zp[2]:157 [ plexPrepareFrame::bucket#1 ] 
 Limited combination testing to 100 combinations of 995328 possible.
-Uplifting [flipper_fix_colors] best 102622 combination reg byte y [ flipper_fix_colors::i#2 flipper_fix_colors::i#1 ] zp[2]:185 [ flipper_fix_colors::happy_cols#0 ] zp[2]:183 [ flipper_fix_colors::colors#0 ] zp[2]:170 [ flipper_fix_colors::$4 ] reg byte a [ flipper_fix_colors::charline#0 ] zp[2]:177 [ flipper_fix_colors::$13 ] zp[2]:179 [ flipper_fix_colors::$14 ] zp[2]:175 [ flipper_fix_colors::$12 ] zp[2]:181 [ flipper_fix_colors::offset#0 ] zp[2]:172 [ flipper_fix_colors::$5 ] 
-Uplifting [vsp_update_screen] best 102610 combination zp[2]:138 [ vsp_update_screen::$5 ] zp[2]:140 [ vsp_update_screen::$0 ] reg byte a [ vsp_update_screen::$1 ] reg byte a [ vsp_update_screen::$3 ] zp[2]:142 [ vsp_update_screen::x_offset8 ] zp[1]:102 [ vsp_update_screen::x_offset ] 
-Uplifting [sparkler_anim] best 102600 combination reg byte a [ sparkler_anim::$3 ] reg byte a [ sparkler_anim::$4 ] 
-Uplifting [] best 102600 combination zp[1]:84 [ sparkler_idx ] zp[1]:50 [ p1_work_ready ] zp[1]:61 [ p2_work_ready ] zp[1]:66 [ p2_logo_reveal_idx ] zp[1]:58 [ flipper_charline ] zp[2]:51 [ irq_flipper_top_line ] zp[2]:81 [ demo_frame_count ] zp[1]:63 [ p2_logo_reveal_done ] zp[1]:83 [ sparkler_active ] zp[1]:62 [ p2_logo_revealing ] zp[1]:64 [ p2_logo_swinging ] zp[1]:65 [ p2_plex_scroller_moving ] zp[2]:71 [ plex_frame ] zp[1]:73 [ plex_id_offset ] zp[1]:70 [ plex_frame_id ] zp[2]:68 [ scroll_text_next ] zp[1]:60 [ plex_real_sprite_idx ] zp[1]:59 [ vsp_scroll ] zp[2]:74 [ plex_bucket ] zp[1]:77 [ vsp_fine_scroll ] zp[1]:76 [ plex_bucket_id ] zp[2]:53 [ irq_flipper_bottom_line ] zp[1]:55 [ flipper_done ] zp[1]:67 [ x_movement_idx ] zp[2]:56 [ irq_flipper_idx ] zp[1]:80 [ sprite_color_idx ] zp[1]:78 [ vsp_coarse_scroll ] zp[1]:79 [ vsp_sin_idx ] 
-Uplifting [init_rasters] best 102470 combination reg byte x [ init_rasters::b#2 init_rasters::b#1 ] zp[2]:17 [ init_rasters::i#2 init_rasters::i#1 ] zp[2]:149 [ init_rasters::$3 ] 
-Uplifting [part2_init] best 100300 combination reg byte y [ part2_init::s#2 part2_init::s#1 ] reg byte x [ part2_init::sin_idx#2 part2_init::sin_idx#4 part2_init::sin_idx#1 ] reg byte x [ part2_init::s2#2 part2_init::s2#1 ] reg byte x [ part2_init::s1#2 part2_init::s1#1 ] zp[1]:10 [ part2_init::frame_idx#2 part2_init::frame_idx#1 ] zp[2]:11 [ part2_init::frame#5 part2_init::frame#1 ] 
+Uplifting [flipper_fix_colors] best 102048 combination reg byte y [ flipper_fix_colors::i#2 flipper_fix_colors::i#1 ] zp[2]:185 [ flipper_fix_colors::happy_cols#0 ] zp[2]:183 [ flipper_fix_colors::colors#0 ] zp[2]:170 [ flipper_fix_colors::$4 ] reg byte a [ flipper_fix_colors::charline#0 ] zp[2]:177 [ flipper_fix_colors::$13 ] zp[2]:179 [ flipper_fix_colors::$14 ] zp[2]:175 [ flipper_fix_colors::$12 ] zp[2]:181 [ flipper_fix_colors::offset#0 ] zp[2]:172 [ flipper_fix_colors::$5 ] 
+Uplifting [vsp_update_screen] best 102038 combination zp[2]:138 [ vsp_update_screen::$5 ] zp[2]:140 [ vsp_update_screen::$0 ] reg byte a [ vsp_update_screen::$1 ] reg byte a [ vsp_update_screen::$3 ] zp[2]:142 [ vsp_update_screen::x_offset8 ] zp[1]:102 [ vsp_update_screen::x_offset ] 
+Uplifting [sparkler_anim] best 102028 combination reg byte a [ sparkler_anim::$3 ] reg byte a [ sparkler_anim::$4 ] 
+Uplifting [] best 102028 combination zp[1]:84 [ sparkler_idx ] zp[1]:50 [ p1_work_ready ] zp[1]:61 [ p2_work_ready ] zp[1]:66 [ p2_logo_reveal_idx ] zp[1]:58 [ flipper_charline ] zp[2]:51 [ irq_flipper_top_line ] zp[2]:81 [ demo_frame_count ] zp[1]:63 [ p2_logo_reveal_done ] zp[1]:83 [ sparkler_active ] zp[1]:62 [ p2_logo_revealing ] zp[1]:64 [ p2_logo_swinging ] zp[1]:65 [ p2_plex_scroller_moving ] zp[2]:71 [ plex_frame ] zp[1]:73 [ plex_id_offset ] zp[1]:70 [ plex_frame_id ] zp[2]:68 [ scroll_text_next ] zp[1]:60 [ plex_real_sprite_idx ] zp[1]:59 [ vsp_scroll ] zp[2]:74 [ plex_bucket ] zp[1]:77 [ vsp_fine_scroll ] zp[1]:76 [ plex_bucket_id ] zp[2]:53 [ irq_flipper_bottom_line ] zp[1]:55 [ flipper_done ] zp[1]:67 [ x_movement_idx ] zp[2]:56 [ irq_flipper_idx ] zp[1]:80 [ sprite_color_idx ] zp[1]:78 [ vsp_coarse_scroll ] zp[1]:79 [ vsp_sin_idx ] 
+Uplifting [init_rasters] best 101898 combination reg byte x [ init_rasters::b#2 init_rasters::b#1 ] zp[2]:17 [ init_rasters::i#2 init_rasters::i#1 ] zp[2]:149 [ init_rasters::$3 ] 
+Uplifting [part2_init] best 99728 combination reg byte y [ part2_init::s#2 part2_init::s#1 ] reg byte x [ part2_init::sin_idx#2 part2_init::sin_idx#4 part2_init::sin_idx#1 ] reg byte x [ part2_init::s2#2 part2_init::s2#1 ] reg byte x [ part2_init::s1#2 part2_init::s1#1 ] zp[1]:10 [ part2_init::frame_idx#2 part2_init::frame_idx#1 ] zp[2]:11 [ part2_init::frame#5 part2_init::frame#1 ] 
 Limited combination testing to 100 combinations of 162 possible.
-Uplifting [memcpy] best 100300 combination zp[2]:33 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:35 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:153 [ memcpy::src_end#0 ] zp[2]:31 [ memcpy::num#6 ] zp[2]:27 [ memcpy::source#6 ] zp[2]:29 [ memcpy::destination#6 ] 
-Uplifting [memset] best 100275 combination zp[2]:25 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:151 [ memset::end#0 ] reg byte x [ memset::c#7 ] zp[2]:20 [ memset::num#5 ] zp[2]:22 [ memset::str#6 ] 
-Uplifting [plexPrepareInit] best 100155 combination reg byte x [ plexPrepareInit::i#2 plexPrepareInit::i#1 ] 
-Uplifting [part2_loop] best 100155 combination zp[2]:166 [ part2_loop::$23 ] zp[2]:168 [ part2_loop::$24 ] 
-Uplifting [part1_loop] best 100155 combination zp[2]:155 [ part1_loop::$11 ] 
-Uplifting [plexBucketShow] best 99793 combination reg byte x [ plexBucketShow::real_idx#8 plexBucketShow::real_idx#4 plexBucketShow::real_idx#0 plexBucketShow::real_idx#3 ] reg byte y [ plexBucketShow::i#3 plexBucketShow::i#2 ] reg byte a [ plexBucketShow::$2 ] reg byte a [ plexBucketShow::real_idx#2 ] zp[1]:132 [ plexBucketShow::real_idx#1 ] zp[1]:131 [ plexBucketShow::plex_id#0 ] zp[1]:130 [ plexBucketShow::i#1 ] zp[1]:129 [ plexBucketShow::$1 ] zp[2]:3 [ plexBucketShow::bucket#2 plexBucketShow::bucket#1 plexBucketShow::bucket#0 ] 
+Uplifting [memcpy] best 99728 combination zp[2]:33 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:35 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:153 [ memcpy::src_end#0 ] zp[2]:31 [ memcpy::num#6 ] zp[2]:27 [ memcpy::source#6 ] zp[2]:29 [ memcpy::destination#6 ] 
+Uplifting [memset] best 99703 combination zp[2]:25 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:151 [ memset::end#0 ] reg byte x [ memset::c#7 ] zp[2]:20 [ memset::num#5 ] zp[2]:22 [ memset::str#6 ] 
+Uplifting [plexPrepareInit] best 99583 combination reg byte x [ plexPrepareInit::i#2 plexPrepareInit::i#1 ] 
+Uplifting [part2_loop] best 99583 combination zp[2]:166 [ part2_loop::$23 ] zp[2]:168 [ part2_loop::$24 ] 
+Uplifting [part1_loop] best 99583 combination zp[2]:155 [ part1_loop::$11 ] 
+Uplifting [plexBucketShow] best 99221 combination reg byte x [ plexBucketShow::real_idx#8 plexBucketShow::real_idx#4 plexBucketShow::real_idx#0 plexBucketShow::real_idx#3 ] reg byte y [ plexBucketShow::i#3 plexBucketShow::i#2 ] reg byte a [ plexBucketShow::$2 ] reg byte a [ plexBucketShow::real_idx#2 ] zp[1]:132 [ plexBucketShow::real_idx#1 ] zp[1]:131 [ plexBucketShow::plex_id#0 ] zp[1]:130 [ plexBucketShow::i#1 ] zp[1]:129 [ plexBucketShow::$1 ] zp[2]:3 [ plexBucketShow::bucket#2 plexBucketShow::bucket#1 plexBucketShow::bucket#0 ] 
 Limited combination testing to 100 combinations of 15552 possible.
-Uplifting [plex_scroller_move] best 99500 combination zp[1]:7 [ plex_scroller_move::s#10 plex_scroller_move::s#1 ] reg byte a [ plex_scroller_move::$8 ] reg byte a [ plex_scroller_move::letter#2 plex_scroller_move::letter#0 ] reg byte x [ plex_scroller_move::x_idx#10 plex_scroller_move::x_idx#0 plex_scroller_move::x_idx#1 ] 
-Uplifting [byteboozer_decrunch] best 99500 combination zp[2]:127 [ byteboozer_decrunch::crunched ] 
-Uplifting [irq_swing_plex] best 99362 combination reg byte x [ irq_swing_plex::s#2 irq_swing_plex::s#1 ] zp[2]:87 [ irq_swing_plex::$27 ] zp[2]:89 [ irq_swing_plex::$26 ] zp[2]:91 [ irq_swing_plex::$31 ] reg byte a [ irq_swing_plex::$28 ] reg byte a [ irq_swing_plex::$6 ] reg byte a [ irq_swing_plex::$16 ] zp[1]:104 [ irq_swing_plex::x_offset1#0 ] zp[1]:100 [ irq_swing_plex::coarse_scroll_diff#0 ] zp[2]:97 [ irq_swing_plex::$7 ] zp[1]:101 [ irq_swing_plex::x_offset#0 ] zp[2]:93 [ irq_swing_plex::scroll#0 ] zp[1]:99 [ irq_swing_plex::new_coarse_scroll#0 ] 
+Uplifting [plex_scroller_move] best 98948 combination zp[1]:7 [ plex_scroller_move::s#10 plex_scroller_move::s#1 ] reg byte a [ plex_scroller_move::$8 ] reg byte a [ plex_scroller_move::letter#2 plex_scroller_move::letter#0 ] reg byte x [ plex_scroller_move::x_idx#10 plex_scroller_move::x_idx#0 plex_scroller_move::x_idx#1 ] 
+Uplifting [byteboozer_decrunch] best 98948 combination zp[2]:127 [ byteboozer_decrunch::crunched ] 
+Uplifting [irq_swing_plex] best 98810 combination reg byte x [ irq_swing_plex::s#2 irq_swing_plex::s#1 ] zp[2]:87 [ irq_swing_plex::$27 ] zp[2]:89 [ irq_swing_plex::$26 ] zp[2]:91 [ irq_swing_plex::$31 ] reg byte a [ irq_swing_plex::$28 ] reg byte a [ irq_swing_plex::$6 ] reg byte a [ irq_swing_plex::$16 ] zp[1]:104 [ irq_swing_plex::x_offset1#0 ] zp[1]:100 [ irq_swing_plex::coarse_scroll_diff#0 ] zp[2]:97 [ irq_swing_plex::$7 ] zp[1]:101 [ irq_swing_plex::x_offset#0 ] zp[2]:93 [ irq_swing_plex::scroll#0 ] zp[1]:99 [ irq_swing_plex::new_coarse_scroll#0 ] 
 Limited combination testing to 100 combinations of 3072 possible.
-Uplifting [update_frame_plex_id_offset] best 99352 combination reg byte a [ update_frame_plex_id_offset::$0 ] reg byte a [ update_frame_plex_id_offset::plex_frame_id#0 ] zp[2]:136 [ update_frame_plex_id_offset::jmp_address ] 
-Uplifting [irq_flipper_bottom] best 99340 combination reg byte a [ irq_flipper_bottom::$0 ] reg byte a [ irq_flipper_bottom::$1 ] zp[2]:109 [ irq_flipper_bottom::$12 ] zp[2]:111 [ irq_flipper_bottom::$14 ] zp[2]:115 [ irq_flipper_bottom::$7 ] zp[2]:117 [ irq_flipper_bottom::$9 ] zp[2]:113 [ irq_flipper_bottom::irq_flipper_line#0 ] 
-Uplifting [irq_flipper_top] best 99316 combination reg byte a [ irq_flipper_top::$0 ] reg byte a [ irq_flipper_top::$1 ] reg byte a [ irq_flipper_top::$3 ] reg byte a [ irq_flipper_top::$4 ] zp[1]:123 [ irq_flipper_top::$5 ] 
+Uplifting [update_frame_plex_id_offset] best 98800 combination reg byte a [ update_frame_plex_id_offset::$0 ] reg byte a [ update_frame_plex_id_offset::plex_frame_id#0 ] zp[2]:136 [ update_frame_plex_id_offset::jmp_address ] 
+Uplifting [irq_flipper_bottom] best 98788 combination reg byte a [ irq_flipper_bottom::$0 ] reg byte a [ irq_flipper_bottom::$1 ] zp[2]:109 [ irq_flipper_bottom::$12 ] zp[2]:111 [ irq_flipper_bottom::$14 ] zp[2]:115 [ irq_flipper_bottom::$7 ] zp[2]:117 [ irq_flipper_bottom::$9 ] zp[2]:113 [ irq_flipper_bottom::irq_flipper_line#0 ] 
+Uplifting [irq_flipper_top] best 98766 combination reg byte a [ irq_flipper_top::$0 ] reg byte a [ irq_flipper_top::$1 ] reg byte a [ irq_flipper_top::$3 ] reg byte a [ irq_flipper_top::$4 ] zp[1]:123 [ irq_flipper_top::$5 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [irq_part1_top] best 99298 combination reg byte a [ irq_part1_top::$2 ] reg byte a [ irq_part1_top::$3 ] reg byte a [ irq_part1_top::$4 ] 
-Uplifting [irq_swing_vsp] best 99292 combination reg byte a [ irq_swing_vsp::$1 ] 
-Uplifting [raster_fine] best 99292 combination zp[1]:108 [ raster_fine::line_offset ] 
-Uplifting [irq_demo] best 99292 combination zp[1]:85 [ irq_demo::port_value#0 ] 
-Uplifting [MOS6526_CIA] best 99292 combination 
-Uplifting [MOS6569_VICII] best 99292 combination 
-Uplifting [MOS6581_SID] best 99292 combination 
-Uplifting [part1_init] best 99292 combination 
-Uplifting [part1_run] best 99292 combination 
-Uplifting [BucketSprite] best 99292 combination 
-Uplifting [plexFrameStart] best 99292 combination 
-Uplifting [part2_run] best 99292 combination 
-Uplifting [p2_logo_reveal] best 99292 combination 
-Uplifting [irq_swing_top] best 99292 combination 
-Uplifting [main] best 99292 combination 
-Uplifting [demo_init] best 99292 combination 
-Uplifting [demo_start] best 99292 combination 
-Uplifting [demo_work] best 99292 combination 
-Uplifting [__start] best 99292 combination 
+Uplifting [irq_part1_top] best 98750 combination reg byte a [ irq_part1_top::$2 ] reg byte a [ irq_part1_top::$3 ] reg byte a [ irq_part1_top::$4 ] 
+Uplifting [irq_swing_vsp] best 98744 combination reg byte a [ irq_swing_vsp::$1 ] 
+Uplifting [raster_fine] best 98744 combination zp[1]:108 [ raster_fine::line_offset ] 
+Uplifting [irq_demo] best 98744 combination zp[1]:85 [ irq_demo::port_value#0 ] 
+Uplifting [MOS6526_CIA] best 98744 combination 
+Uplifting [MOS6569_VICII] best 98744 combination 
+Uplifting [MOS6581_SID] best 98744 combination 
+Uplifting [part1_init] best 98744 combination 
+Uplifting [part1_run] best 98744 combination 
+Uplifting [BucketSprite] best 98744 combination 
+Uplifting [plexFrameStart] best 98744 combination 
+Uplifting [part2_run] best 98744 combination 
+Uplifting [p2_logo_reveal] best 98744 combination 
+Uplifting [irq_swing_top] best 98744 combination 
+Uplifting [main] best 98744 combination 
+Uplifting [demo_init] best 98744 combination 
+Uplifting [demo_start] best 98744 combination 
+Uplifting [demo_work] best 98744 combination 
+Uplifting [__start] best 98744 combination 
 Attempting to uplift remaining variables inzp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ]
-Uplifting [plexPrepareFrame] best 99292 combination zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] 
+Uplifting [plexPrepareFrame] best 98744 combination zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] 
 Attempting to uplift remaining variables inzp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ]
-Uplifting [plexPrepareFrame] best 99292 combination zp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ] 
+Uplifting [plexPrepareFrame] best 98744 combination zp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ] 
 Attempting to uplift remaining variables inzp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ]
-Uplifting [plexPrepareFrame] best 99292 combination zp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ] 
+Uplifting [plexPrepareFrame] best 98744 combination zp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ] 
 Attempting to uplift remaining variables inzp[1]:161 [ plexPrepareFrame::$16 ]
-Uplifting [plexPrepareFrame] best 98892 combination reg byte a [ plexPrepareFrame::$16 ] 
+Uplifting [plexPrepareFrame] best 98344 combination reg byte a [ plexPrepareFrame::$16 ] 
 Attempting to uplift remaining variables inzp[1]:162 [ plexPrepareFrame::$17 ]
-Uplifting [plexPrepareFrame] best 98292 combination reg byte x [ plexPrepareFrame::$17 ] 
+Uplifting [plexPrepareFrame] best 97744 combination reg byte x [ plexPrepareFrame::$17 ] 
 Attempting to uplift remaining variables inzp[1]:165 [ plexPrepareFrame::s#2 ]
-Uplifting [plexPrepareFrame] best 97692 combination reg byte x [ plexPrepareFrame::s#2 ] 
+Uplifting [plexPrepareFrame] best 97144 combination reg byte x [ plexPrepareFrame::s#2 ] 
 Attempting to uplift remaining variables inzp[1]:164 [ plexPrepareFrame::nxt_y#0 ]
-Uplifting [plexPrepareFrame] best 97692 combination zp[1]:164 [ plexPrepareFrame::nxt_y#0 ] 
+Uplifting [plexPrepareFrame] best 97144 combination zp[1]:164 [ plexPrepareFrame::nxt_y#0 ] 
 Attempting to uplift remaining variables inzp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ]
-Uplifting [plexPrepareFrame] best 97692 combination zp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ] 
+Uplifting [plexPrepareFrame] best 97144 combination zp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ] 
 Attempting to uplift remaining variables inzp[1]:41 [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ]
-Uplifting [plexPrepareFrame] best 96792 combination reg byte x [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ] 
+Uplifting [plexPrepareFrame] best 96244 combination reg byte x [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ] 
 Attempting to uplift remaining variables inzp[1]:163 [ plexPrepareFrame::nxt_idx#0 ]
-Uplifting [plexPrepareFrame] best 96792 combination zp[1]:163 [ plexPrepareFrame::nxt_idx#0 ] 
+Uplifting [plexPrepareFrame] best 96244 combination zp[1]:163 [ plexPrepareFrame::nxt_idx#0 ] 
 Attempting to uplift remaining variables inzp[1]:159 [ plexPrepareFrame::plex_id#0 ]
-Uplifting [plexPrepareFrame] best 96792 combination zp[1]:159 [ plexPrepareFrame::plex_id#0 ] 
+Uplifting [plexPrepareFrame] best 96244 combination zp[1]:159 [ plexPrepareFrame::plex_id#0 ] 
 Attempting to uplift remaining variables inzp[1]:160 [ plexPrepareFrame::ypos#0 ]
-Uplifting [plexPrepareFrame] best 96792 combination zp[1]:160 [ plexPrepareFrame::ypos#0 ] 
+Uplifting [plexPrepareFrame] best 96244 combination zp[1]:160 [ plexPrepareFrame::ypos#0 ] 
 Attempting to uplift remaining variables inzp[1]:84 [ sparkler_idx ]
-Uplifting [] best 96792 combination zp[1]:84 [ sparkler_idx ] 
+Uplifting [] best 96244 combination zp[1]:84 [ sparkler_idx ] 
 Attempting to uplift remaining variables inzp[1]:50 [ p1_work_ready ]
-Uplifting [] best 96792 combination zp[1]:50 [ p1_work_ready ] 
+Uplifting [] best 96244 combination zp[1]:50 [ p1_work_ready ] 
 Attempting to uplift remaining variables inzp[1]:61 [ p2_work_ready ]
-Uplifting [] best 96792 combination zp[1]:61 [ p2_work_ready ] 
+Uplifting [] best 96244 combination zp[1]:61 [ p2_work_ready ] 
 Attempting to uplift remaining variables inzp[1]:102 [ vsp_update_screen::x_offset ]
-Uplifting [vsp_update_screen] best 96792 combination zp[1]:102 [ vsp_update_screen::x_offset ] 
+Uplifting [vsp_update_screen] best 96244 combination zp[1]:102 [ vsp_update_screen::x_offset ] 
 Attempting to uplift remaining variables inzp[1]:66 [ p2_logo_reveal_idx ]
-Uplifting [] best 96792 combination zp[1]:66 [ p2_logo_reveal_idx ] 
+Uplifting [] best 96244 combination zp[1]:66 [ p2_logo_reveal_idx ] 
 Attempting to uplift remaining variables inzp[1]:58 [ flipper_charline ]
-Uplifting [] best 96792 combination zp[1]:58 [ flipper_charline ] 
+Uplifting [] best 96244 combination zp[1]:58 [ flipper_charline ] 
 Attempting to uplift remaining variables inzp[1]:10 [ part2_init::frame_idx#2 part2_init::frame_idx#1 ]
-Uplifting [part2_init] best 96792 combination zp[1]:10 [ part2_init::frame_idx#2 part2_init::frame_idx#1 ] 
+Uplifting [part2_init] best 96244 combination zp[1]:10 [ part2_init::frame_idx#2 part2_init::frame_idx#1 ] 
 Attempting to uplift remaining variables inzp[1]:63 [ p2_logo_reveal_done ]
-Uplifting [] best 96792 combination zp[1]:63 [ p2_logo_reveal_done ] 
+Uplifting [] best 96244 combination zp[1]:63 [ p2_logo_reveal_done ] 
 Attempting to uplift remaining variables inzp[1]:83 [ sparkler_active ]
-Uplifting [] best 96792 combination zp[1]:83 [ sparkler_active ] 
+Uplifting [] best 96244 combination zp[1]:83 [ sparkler_active ] 
 Attempting to uplift remaining variables inzp[1]:62 [ p2_logo_revealing ]
-Uplifting [] best 96792 combination zp[1]:62 [ p2_logo_revealing ] 
+Uplifting [] best 96244 combination zp[1]:62 [ p2_logo_revealing ] 
 Attempting to uplift remaining variables inzp[1]:7 [ plex_scroller_move::s#10 plex_scroller_move::s#1 ]
-Uplifting [plex_scroller_move] best 96792 combination zp[1]:7 [ plex_scroller_move::s#10 plex_scroller_move::s#1 ] 
+Uplifting [plex_scroller_move] best 96244 combination zp[1]:7 [ plex_scroller_move::s#10 plex_scroller_move::s#1 ] 
 Attempting to uplift remaining variables inzp[1]:64 [ p2_logo_swinging ]
-Uplifting [] best 96792 combination zp[1]:64 [ p2_logo_swinging ] 
+Uplifting [] best 96244 combination zp[1]:64 [ p2_logo_swinging ] 
 Attempting to uplift remaining variables inzp[1]:65 [ p2_plex_scroller_moving ]
-Uplifting [] best 96792 combination zp[1]:65 [ p2_plex_scroller_moving ] 
+Uplifting [] best 96244 combination zp[1]:65 [ p2_plex_scroller_moving ] 
 Attempting to uplift remaining variables inzp[1]:132 [ plexBucketShow::real_idx#1 ]
-Uplifting [plexBucketShow] best 96662 combination reg byte x [ plexBucketShow::real_idx#1 ] 
+Uplifting [plexBucketShow] best 96114 combination reg byte x [ plexBucketShow::real_idx#1 ] 
 Attempting to uplift remaining variables inzp[1]:131 [ plexBucketShow::plex_id#0 ]
-Uplifting [plexBucketShow] best 96562 combination reg byte y [ plexBucketShow::plex_id#0 ] 
+Uplifting [plexBucketShow] best 96014 combination reg byte y [ plexBucketShow::plex_id#0 ] 
 Attempting to uplift remaining variables inzp[1]:130 [ plexBucketShow::i#1 ]
-Uplifting [plexBucketShow] best 96562 combination zp[1]:130 [ plexBucketShow::i#1 ] 
+Uplifting [plexBucketShow] best 96014 combination zp[1]:130 [ plexBucketShow::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:129 [ plexBucketShow::$1 ]
-Uplifting [plexBucketShow] best 96556 combination reg byte a [ plexBucketShow::$1 ] 
+Uplifting [plexBucketShow] best 96008 combination reg byte a [ plexBucketShow::$1 ] 
 Attempting to uplift remaining variables inzp[1]:73 [ plex_id_offset ]
-Uplifting [] best 96556 combination zp[1]:73 [ plex_id_offset ] 
+Uplifting [] best 96008 combination zp[1]:73 [ plex_id_offset ] 
 Attempting to uplift remaining variables inzp[1]:70 [ plex_frame_id ]
-Uplifting [] best 96556 combination zp[1]:70 [ plex_frame_id ] 
+Uplifting [] best 96008 combination zp[1]:70 [ plex_frame_id ] 
 Attempting to uplift remaining variables inzp[1]:60 [ plex_real_sprite_idx ]
-Uplifting [] best 96556 combination zp[1]:60 [ plex_real_sprite_idx ] 
+Uplifting [] best 96008 combination zp[1]:60 [ plex_real_sprite_idx ] 
 Attempting to uplift remaining variables inzp[1]:59 [ vsp_scroll ]
-Uplifting [] best 96556 combination zp[1]:59 [ vsp_scroll ] 
+Uplifting [] best 96008 combination zp[1]:59 [ vsp_scroll ] 
 Attempting to uplift remaining variables inzp[1]:104 [ irq_swing_plex::x_offset1#0 ]
-Uplifting [irq_swing_plex] best 96550 combination reg byte a [ irq_swing_plex::x_offset1#0 ] 
+Uplifting [irq_swing_plex] best 96002 combination reg byte a [ irq_swing_plex::x_offset1#0 ] 
 Attempting to uplift remaining variables inzp[1]:123 [ irq_flipper_top::$5 ]
-Uplifting [irq_flipper_top] best 96544 combination reg byte a [ irq_flipper_top::$5 ] 
+Uplifting [irq_flipper_top] best 95996 combination reg byte a [ irq_flipper_top::$5 ] 
 Attempting to uplift remaining variables inzp[1]:100 [ irq_swing_plex::coarse_scroll_diff#0 ]
-Uplifting [irq_swing_plex] best 96535 combination reg byte a [ irq_swing_plex::coarse_scroll_diff#0 ] 
+Uplifting [irq_swing_plex] best 95987 combination reg byte a [ irq_swing_plex::coarse_scroll_diff#0 ] 
 Attempting to uplift remaining variables inzp[1]:77 [ vsp_fine_scroll ]
-Uplifting [] best 96535 combination zp[1]:77 [ vsp_fine_scroll ] 
+Uplifting [] best 95987 combination zp[1]:77 [ vsp_fine_scroll ] 
 Attempting to uplift remaining variables inzp[1]:101 [ irq_swing_plex::x_offset#0 ]
-Uplifting [irq_swing_plex] best 96535 combination zp[1]:101 [ irq_swing_plex::x_offset#0 ] 
+Uplifting [irq_swing_plex] best 95987 combination zp[1]:101 [ irq_swing_plex::x_offset#0 ] 
 Attempting to uplift remaining variables inzp[1]:108 [ raster_fine::line_offset ]
-Uplifting [raster_fine] best 96535 combination zp[1]:108 [ raster_fine::line_offset ] 
+Uplifting [raster_fine] best 95987 combination zp[1]:108 [ raster_fine::line_offset ] 
 Attempting to uplift remaining variables inzp[1]:76 [ plex_bucket_id ]
-Uplifting [] best 96535 combination zp[1]:76 [ plex_bucket_id ] 
+Uplifting [] best 95987 combination zp[1]:76 [ plex_bucket_id ] 
 Attempting to uplift remaining variables inzp[1]:85 [ irq_demo::port_value#0 ]
-Uplifting [irq_demo] best 96535 combination zp[1]:85 [ irq_demo::port_value#0 ] 
+Uplifting [irq_demo] best 95987 combination zp[1]:85 [ irq_demo::port_value#0 ] 
 Attempting to uplift remaining variables inzp[1]:55 [ flipper_done ]
-Uplifting [] best 96535 combination zp[1]:55 [ flipper_done ] 
+Uplifting [] best 95987 combination zp[1]:55 [ flipper_done ] 
 Attempting to uplift remaining variables inzp[1]:67 [ x_movement_idx ]
-Uplifting [] best 96535 combination zp[1]:67 [ x_movement_idx ] 
+Uplifting [] best 95987 combination zp[1]:67 [ x_movement_idx ] 
 Attempting to uplift remaining variables inzp[1]:99 [ irq_swing_plex::new_coarse_scroll#0 ]
-Uplifting [irq_swing_plex] best 96535 combination zp[1]:99 [ irq_swing_plex::new_coarse_scroll#0 ] 
+Uplifting [irq_swing_plex] best 95987 combination zp[1]:99 [ irq_swing_plex::new_coarse_scroll#0 ] 
 Attempting to uplift remaining variables inzp[1]:80 [ sprite_color_idx ]
-Uplifting [] best 96535 combination zp[1]:80 [ sprite_color_idx ] 
+Uplifting [] best 95987 combination zp[1]:80 [ sprite_color_idx ] 
 Attempting to uplift remaining variables inzp[1]:78 [ vsp_coarse_scroll ]
-Uplifting [] best 96535 combination zp[1]:78 [ vsp_coarse_scroll ] 
+Uplifting [] best 95987 combination zp[1]:78 [ vsp_coarse_scroll ] 
 Attempting to uplift remaining variables inzp[1]:79 [ vsp_sin_idx ]
-Uplifting [] best 96535 combination zp[1]:79 [ vsp_sin_idx ] 
+Uplifting [] best 95987 combination zp[1]:79 [ vsp_sin_idx ] 
 Coalescing zero page register [ zp[2]:20 [ memset::num#5 ] ] with [ zp[2]:151 [ memset::end#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:22 [ memset::str#6 ] ] with [ zp[2]:25 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:27 [ memcpy::source#6 ] ] with [ zp[2]:33 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
@@ -8143,7 +8143,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // VIC II IRQ Status Register
@@ -8556,7 +8556,6 @@ irq_swing_plex: {
   __b18:
     // [56] if(0==p2_logo_swinging) goto irq_swing_plex::@6 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_swinging
-    cmp #0
     beq __b6
     jmp __b12
     // irq_swing_plex::@12
@@ -8662,7 +8661,6 @@ irq_swing_plex: {
   __b6:
     // [78] if(0==p2_plex_scroller_moving) goto irq_swing_plex::@9 -- 0_eq_vbuz1_then_la1 
     lda.z p2_plex_scroller_moving
-    cmp #0
     beq __b9
     // [79] phi from irq_swing_plex::@6 to irq_swing_plex::@15 [phi:irq_swing_plex::@6->irq_swing_plex::@15]
   __b15_from___b6:
@@ -8770,7 +8768,7 @@ irq_swing_vsp: {
     jmp vsp_perform1
     // irq_swing_vsp::vsp_perform1
   vsp_perform1:
-    // kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method         // Acknowledge the IRQ         lda #IRQ_RASTER         sta IRQ_STATUS         // Set-up IRQ for the next line         inc RASTER         // Point IRQ to almost stable code         lda #<stable         sta HARDWARE_IRQ         lda #>stable         sta HARDWARE_IRQ+1         tsx       // Save stack pointer         cli       // Reenable interrupts         // Wait for new IRQ using NOP's to ensure minimal jitter when it hits         .fill 15, NOP         .align $100     stable:         txs             // Restore stack pointer         ldx #9          // Wait till the raster has almost crossed to the next line (48 cycles)         !: dex         bne !-         nop         lda RASTER         cmp RASTER         bne !+          // And correct the last cycle of potential jitter         !:         // Raster is now completely stable! (Line $2f cycle 7)         // Perform VSP by waiting an exact number of cycles and then enabling the display         // See http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt (Section 3.14.6. DMA delay)         ldx #8          // Wait 45 cycles to get the VSP timing right         !: dex         bne !-         nop         nop         lda vsp_scroll         lsr         //  Put bit 0 into carry          bcc dma1    // Spend 2 or 3 cycles depending on the carry (bit 0)     dma1:         sta dma2+1  // Update the branch         clv     dma2:         bvc dma2    // This branch is updated with vsp_scroll/2 - changing the number of NOP's executed         // 20 NOP's - enabling vsp scroll from 0-40         .fill 20, NOP         ldx #$18         lda #$1b  // TODO: To control Y-scrolling this must be flexible!         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0         stx VICII_CONTROL // Enable the display - starts DMA         sta VICII_CONTROL      }}
+    // kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method         // Acknowledge the IRQ         lda #IRQ_RASTER         sta IRQ_STATUS         // Set-up IRQ for the next line         inc RASTER         // Point IRQ to almost stable code         lda #<stable         sta HARDWARE_IRQ         lda #>stable         sta HARDWARE_IRQ+1         tsx       // Save stack pointer         cli       // Reenable interrupts         // Wait for new IRQ using NOP's to ensure minimal jitter when it hits         .fill 15, NOP         .align $100     stable:         txs             // Restore stack pointer         ldx #9          // Wait till the raster has almost crossed to the next line (48 cycles)         !: dex         bne !-         nop         lda RASTER         cmp RASTER         bne !+          // And correct the last cycle of potential jitter         !:         // Raster is now completely stable! (Line $2f cycle 7)         // Perform VSP by waiting an exact number of cycles and then enabling the display         // See http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt (Section 3.14.6. DMA delay)         ldx #8          // Wait 45 cycles to get the VSP timing right         !: dex         bne !-         nop         nop         lda vsp_scroll         lsr         //  Put bit 0 into carry          bcc dma1    // Spend 2 or 3 cycles depending on the carry (bit 0)     dma1:         sta dma2+1  // Update the branch         clv     dma2:         bvc dma2    // This branch is updated with vsp_scroll/2 - changing the number of NOP's executed         // 20 NOP's - enabling vsp scroll from 0-40         .fill 20, NOP         ldx #$18         lda #$1b  // TODO: To control Y-scrolling this must be flexible!         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0         stx VICII_CONTROL1 // Enable the display - starts DMA         sta VICII_CONTROL1      }}
     // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
@@ -8818,8 +8816,8 @@ irq_swing_vsp: {
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
     
     jmp __b1
     // irq_swing_vsp::@1
@@ -9010,7 +9008,6 @@ irq_flipper_bottom: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
     // [127] if(0!=flipper_done) goto irq_flipper_bottom::@1 -- 0_neq_vbuz1_then_la1 
     lda.z flipper_done
-    cmp #0
     bne __b1
     jmp __b2
     // irq_flipper_bottom::@2
@@ -9116,11 +9113,11 @@ irq_flipper_bottom: {
     jmp __b1
     // irq_flipper_bottom::@1
   __b1:
-    // [140] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [140] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set up the IRQ again
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // [141] *RASTER = IRQ_PART1_TOP_LINE -- _deref_pbuc1=vbuc2 
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -9205,13 +9202,13 @@ irq_flipper_top: {
     jmp __b4
     // irq_flipper_top::@4
   __b4:
-    // asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
+    // asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
     lda #$9a
     ldx #LIGHT_GREEN
     ldy #$1b
     sta VICII_MEMORY
     stx BORDER_COLOR
-    sty VICII_CONTROL
+    sty VICII_CONTROL1
     stx BG_COLOR
     lda #$c8
     sta VICII_CONTROL2
@@ -9224,10 +9221,10 @@ irq_flipper_top: {
     jmp __b3
     // irq_flipper_top::@3
   __b3:
-    // [155] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [155] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
     // irq_flipper_top::@2
   __b2:
@@ -9260,10 +9257,10 @@ irq_flipper_top: {
     rti
     // irq_flipper_top::@1
   __b1:
-    // [162] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [162] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
   // irq_part1_top
@@ -9323,10 +9320,10 @@ irq_part1_top: {
     jmp __b3
     // irq_part1_top::@3
   __b3:
-    // [173] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [173] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
     // irq_part1_top::@2
   __b2:
@@ -9359,10 +9356,10 @@ irq_part1_top: {
     rti
     // irq_part1_top::@1
   __b1:
-    // [181] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [181] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 .segment Code
@@ -9481,7 +9478,6 @@ demo_work: {
     jsr musicPlay
     // [202] if(0==sparkler_active) goto demo_work::@return -- 0_eq_vbuz1_then_la1 
     lda.z sparkler_active
-    cmp #0
     beq __breturn
     // [203] phi from demo_work to demo_work::@1 [phi:demo_work->demo_work::@1]
   __b1_from_demo_work:
@@ -9987,11 +9983,11 @@ demo_start: {
     jmp __b1
     // demo_start::@1
   __b1:
-    // [284] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [284] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to 0x00
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // [285] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -10236,11 +10232,11 @@ part1_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // [324] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [324] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to 0x136
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // [325] *RASTER = IRQ_PART1_TOP_LINE -- _deref_pbuc1=vbuc2 
     lda #IRQ_PART1_TOP_LINE
     sta RASTER
@@ -10747,11 +10743,11 @@ part2_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // [406] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [406] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to first bucket
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // [407] *RASTER = *BUCKET_YPOS -- _deref_pbuc1=_deref_pbuc2 
     lda BUCKET_YPOS
     sta RASTER
@@ -11043,7 +11039,6 @@ part1_loop: {
   __b1:
     // [455] if(p1_work_ready==0) goto part1_loop::@1 -- vbuz1_eq_0_then_la1 
     lda.z p1_work_ready
-    cmp #0
     beq __b1
     // [456] phi from part1_loop::@1 to part1_loop::@2 [phi:part1_loop::@1->part1_loop::@2]
   __b2_from___b1:
@@ -11063,7 +11058,6 @@ part1_loop: {
     sta.z __11+1
     // [459] if(0!=sparkler_active) goto part1_loop::@4 -- 0_neq_vbuz1_then_la1 
     lda.z sparkler_active
-    cmp #0
     bne __b4_from___b7
     jmp __b9
     // part1_loop::@9
@@ -11476,7 +11470,6 @@ part2_loop: {
   __b1:
     // [523] if(p2_work_ready==0) goto part2_loop::@1 -- vbuz1_eq_0_then_la1 
     lda.z p2_work_ready
-    cmp #0
     beq __b1
     // [524] phi from part2_loop::@1 to part2_loop::@2 [phi:part2_loop::@1->part2_loop::@2]
   __b2_from___b1:
@@ -11491,14 +11484,12 @@ part2_loop: {
   __b11:
     // [526] if(0==p2_logo_revealing) goto part2_loop::@4 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_revealing
-    cmp #0
     beq __b4
     jmp __b12
     // part2_loop::@12
   __b12:
     // [527] if(0==p2_logo_reveal_done) goto part2_loop::@3 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b3_from___b12
     jmp __b4
     // [528] phi from part2_loop::@12 to part2_loop::@3 [phi:part2_loop::@12->part2_loop::@3]
@@ -11518,7 +11509,6 @@ part2_loop: {
     sta.z __23+1
     // [531] if(0!=p2_logo_revealing) goto part2_loop::@5 -- 0_neq_vbuz1_then_la1 
     lda.z p2_logo_revealing
-    cmp #0
     bne __b5
     jmp __b13
     // part2_loop::@13
@@ -11543,14 +11533,12 @@ part2_loop: {
   __b5:
     // [534] if(0!=p2_logo_swinging) goto part2_loop::@6 -- 0_neq_vbuz1_then_la1 
     lda.z p2_logo_swinging
-    cmp #0
     bne __b6
     jmp __b14
     // part2_loop::@14
   __b14:
     // [535] if(0==p2_logo_reveal_done) goto part2_loop::@6 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b6
     jmp __b9
     // part2_loop::@9
@@ -11568,7 +11556,6 @@ part2_loop: {
     sta.z __24+1
     // [538] if(0!=p2_plex_scroller_moving) goto part2_loop::@7 -- 0_neq_vbuz1_then_la1 
     lda.z p2_plex_scroller_moving
-    cmp #0
     bne __b7
     jmp __b15
     // part2_loop::@15
@@ -12459,10 +12446,10 @@ Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [338] bcc __b1 to bcs
-Fixing long branch [1095] beq __b1 to bne
-Fixing long branch [1099] beq __b2 to bne
-Fixing long branch [1941] bcc __b2 to bcs
-Fixing long branch [1948] bcc __b8 to bcs
+Fixing long branch [1091] beq __b1 to bne
+Fixing long branch [1095] beq __b2 to bne
+Fixing long branch [1935] bcc __b2 to bcs
+Fixing long branch [1942] bcc __b8 to bcs
 
 FINAL SYMBOL TABLE
 const nomodify byte* BG_COLOR = (byte*) 53281
@@ -12664,7 +12651,7 @@ const nomodify byte* SPRITES_YPOS = (byte*) 53249
 const byte* SPRITE_COLOR_SEQUENCE[]  = { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, YELLOW, CYAN, GREEN, PURPLE, RED, BLUE, RED, PURPLE, GREEN, CYAN, YELLOW, WHITE, WHITE }
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
 const nomodify byte VICII_BMM = $20
-const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
 const nomodify byte* VICII_CONTROL2 = (byte*) 53270
 const nomodify byte VICII_MCM = $10
 const nomodify byte* VICII_MEMORY = (byte*) 53272
@@ -13098,7 +13085,7 @@ zp[2]:78 [ flipper_fix_colors::colors#0 ]
 
 
 FINAL ASSEMBLER
-Score: 79918
+Score: 79370
 
   // File Comments
 // The Demo collects the parts and handles overall control
@@ -13187,7 +13174,7 @@ Score: 79918
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label VICII_CONTROL2 = $d016
   .label VICII_MEMORY = $d018
   // VIC II IRQ Status Register
@@ -13610,7 +13597,6 @@ irq_swing_plex: {
     // if(p2_logo_swinging)
     // [56] if(0==p2_logo_swinging) goto irq_swing_plex::@6 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_swinging
-    cmp #0
     beq __b6
     // irq_swing_plex::@12
     // scroll = VSP_SINTABLE[(unsigned int)(vsp_sin_idx++)]
@@ -13718,7 +13704,6 @@ irq_swing_plex: {
     // if(p2_plex_scroller_moving)
     // [78] if(0==p2_plex_scroller_moving) goto irq_swing_plex::@9 -- 0_eq_vbuz1_then_la1 
     lda.z p2_plex_scroller_moving
-    cmp #0
     beq __b9
     // [79] phi from irq_swing_plex::@6 to irq_swing_plex::@15 [phi:irq_swing_plex::@6->irq_swing_plex::@15]
     // irq_swing_plex::@15
@@ -13824,7 +13809,7 @@ irq_swing_vsp: {
     stx regx+1
     // irq_swing_vsp::vsp_perform1
     // kickasm
-    // kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL) {{ // Stabilize the raster by using the double IRQ method         // Acknowledge the IRQ         lda #IRQ_RASTER         sta IRQ_STATUS         // Set-up IRQ for the next line         inc RASTER         // Point IRQ to almost stable code         lda #<stable         sta HARDWARE_IRQ         lda #>stable         sta HARDWARE_IRQ+1         tsx       // Save stack pointer         cli       // Reenable interrupts         // Wait for new IRQ using NOP's to ensure minimal jitter when it hits         .fill 15, NOP         .align $100     stable:         txs             // Restore stack pointer         ldx #9          // Wait till the raster has almost crossed to the next line (48 cycles)         !: dex         bne !-         nop         lda RASTER         cmp RASTER         bne !+          // And correct the last cycle of potential jitter         !:         // Raster is now completely stable! (Line $2f cycle 7)         // Perform VSP by waiting an exact number of cycles and then enabling the display         // See http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt (Section 3.14.6. DMA delay)         ldx #8          // Wait 45 cycles to get the VSP timing right         !: dex         bne !-         nop         nop         lda vsp_scroll         lsr         //  Put bit 0 into carry          bcc dma1    // Spend 2 or 3 cycles depending on the carry (bit 0)     dma1:         sta dma2+1  // Update the branch         clv     dma2:         bvc dma2    // This branch is updated with vsp_scroll/2 - changing the number of NOP's executed         // 20 NOP's - enabling vsp scroll from 0-40         .fill 20, NOP         ldx #$18         lda #$1b  // TODO: To control Y-scrolling this must be flexible!         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0         stx VICII_CONTROL // Enable the display - starts DMA         sta VICII_CONTROL      }}
+    // kickasm( uses vsp_scroll uses HARDWARE_IRQ uses RASTER uses IRQ_STATUS uses IRQ_RASTER uses VICII_CONTROL1) {{ // Stabilize the raster by using the double IRQ method         // Acknowledge the IRQ         lda #IRQ_RASTER         sta IRQ_STATUS         // Set-up IRQ for the next line         inc RASTER         // Point IRQ to almost stable code         lda #<stable         sta HARDWARE_IRQ         lda #>stable         sta HARDWARE_IRQ+1         tsx       // Save stack pointer         cli       // Reenable interrupts         // Wait for new IRQ using NOP's to ensure minimal jitter when it hits         .fill 15, NOP         .align $100     stable:         txs             // Restore stack pointer         ldx #9          // Wait till the raster has almost crossed to the next line (48 cycles)         !: dex         bne !-         nop         lda RASTER         cmp RASTER         bne !+          // And correct the last cycle of potential jitter         !:         // Raster is now completely stable! (Line $2f cycle 7)         // Perform VSP by waiting an exact number of cycles and then enabling the display         // See http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt (Section 3.14.6. DMA delay)         ldx #8          // Wait 45 cycles to get the VSP timing right         !: dex         bne !-         nop         nop         lda vsp_scroll         lsr         //  Put bit 0 into carry          bcc dma1    // Spend 2 or 3 cycles depending on the carry (bit 0)     dma1:         sta dma2+1  // Update the branch         clv     dma2:         bvc dma2    // This branch is updated with vsp_scroll/2 - changing the number of NOP's executed         // 20 NOP's - enabling vsp scroll from 0-40         .fill 20, NOP         ldx #$18         lda #$1b  // TODO: To control Y-scrolling this must be flexible!         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0         stx VICII_CONTROL1 // Enable the display - starts DMA         sta VICII_CONTROL1      }}
     // Stabilize the raster by using the double IRQ method
         // Acknowledge the IRQ
         lda #IRQ_RASTER
@@ -13872,8 +13857,8 @@ irq_swing_vsp: {
         ldx #$18
         lda #$1b  // TODO: To control Y-scrolling this must be flexible!
         // The STX $d011 must be line $30 cycle $10 for vsp_scroll==0
-        stx VICII_CONTROL // Enable the display - starts DMA
-        sta VICII_CONTROL
+        stx VICII_CONTROL1 // Enable the display - starts DMA
+        sta VICII_CONTROL1
     
     // irq_swing_vsp::@1
     // VICII->CONTROL1 |= VICII_BMM
@@ -14072,7 +14057,6 @@ irq_flipper_bottom: {
     // if(!flipper_done)
     // [127] if(0!=flipper_done) goto irq_flipper_bottom::@1 -- 0_neq_vbuz1_then_la1 
     lda.z flipper_done
-    cmp #0
     bne __b1
     // irq_flipper_bottom::@2
     // irq_flipper_line = FLIPPER_EASING[irq_flipper_idx++]
@@ -14176,12 +14160,12 @@ irq_flipper_bottom: {
     sta.z flipper_done
     // irq_flipper_bottom::@1
   __b1:
-    // *VICII_CONTROL |=0x80
-    // [140] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |=0x80
+    // [140] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set up the IRQ again
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     // [141] *RASTER = IRQ_PART1_TOP_LINE -- _deref_pbuc1=vbuc2 
     lda #IRQ_PART1_TOP_LINE
@@ -14272,13 +14256,13 @@ irq_flipper_top: {
     jsr raster_fine
     // irq_flipper_top::@4
     // asm
-    // asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
+    // asm { lda#$9a ldx#LIGHT_GREEN ldy#$1b staVICII_MEMORY stxBORDER_COLOR styVICII_CONTROL1 stxBG_COLOR lda#$c8 staVICII_CONTROL2  }
     lda #$9a
     ldx #LIGHT_GREEN
     ldy #$1b
     sta VICII_MEMORY
     stx BORDER_COLOR
-    sty VICII_CONTROL
+    sty VICII_CONTROL1
     stx BG_COLOR
     lda #$c8
     sta VICII_CONTROL2
@@ -14291,11 +14275,11 @@ irq_flipper_top: {
     cmp #0
     bne __b1
     // irq_flipper_top::@3
-    // *VICII_CONTROL &= 0x7f
-    // [155] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &= 0x7f
+    // [155] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // irq_flipper_top::@2
   __b2:
     // <irq_flipper_bottom_line
@@ -14331,11 +14315,11 @@ irq_flipper_top: {
     rti
     // irq_flipper_top::@1
   __b1:
-    // *VICII_CONTROL |= 0x80
-    // [162] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |= 0x80
+    // [162] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
   // irq_part1_top
@@ -14390,11 +14374,11 @@ irq_part1_top: {
     cmp #0
     bne __b1
     // irq_part1_top::@3
-    // *VICII_CONTROL &= 0x7f
-    // [173] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &= 0x7f
+    // [173] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // irq_part1_top::@2
   __b2:
     // <irq_flipper_top_line
@@ -14431,11 +14415,11 @@ irq_part1_top: {
     rti
     // irq_part1_top::@1
   __b1:
-    // *VICII_CONTROL |= 0x80
-    // [181] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |= 0x80
+    // [181] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     jmp __b2
 }
 .segment Code
@@ -14545,7 +14529,6 @@ demo_work: {
     // if(sparkler_active)
     // [202] if(0==sparkler_active) goto demo_work::@return -- 0_eq_vbuz1_then_la1 
     lda.z sparkler_active
-    cmp #0
     beq __breturn
     // [203] phi from demo_work to demo_work::@1 [phi:demo_work->demo_work::@1]
     // demo_work::@1
@@ -15054,12 +15037,12 @@ demo_start: {
     // [272] phi from demo_start to demo_init [phi:demo_start->demo_init]
     jsr demo_init
     // demo_start::@1
-    // *VICII_CONTROL &= 0x7f
-    // [284] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &= 0x7f
+    // [284] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to 0x00
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = 0
     // [285] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
@@ -15298,12 +15281,12 @@ part1_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL |= 0x80
-    // [324] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL1 |= 0x80
+    // [324] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to 0x136
     lda #$80
-    ora VICII_CONTROL
-    sta VICII_CONTROL
+    ora VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = IRQ_PART1_TOP_LINE
     // [325] *RASTER = IRQ_PART1_TOP_LINE -- _deref_pbuc1=vbuc2 
     lda #IRQ_PART1_TOP_LINE
@@ -15783,12 +15766,12 @@ part2_run: {
     // Acknowledge any VIC IRQ
     lda #$f
     sta IRQ_STATUS
-    // *VICII_CONTROL &=0x7f
-    // [406] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &=0x7f
+    // [406] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to first bucket
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = BUCKET_YPOS[0]
     // [407] *RASTER = *BUCKET_YPOS -- _deref_pbuc1=_deref_pbuc2 
     lda BUCKET_YPOS
@@ -16078,7 +16061,6 @@ part1_loop: {
     // while(p1_work_ready==0)
     // [455] if(p1_work_ready==0) goto part1_loop::@1 -- vbuz1_eq_0_then_la1 
     lda.z p1_work_ready
-    cmp #0
     beq __b1
     // [456] phi from part1_loop::@1 to part1_loop::@2 [phi:part1_loop::@1->part1_loop::@2]
     // part1_loop::@2
@@ -16096,7 +16078,6 @@ part1_loop: {
     // if(!sparkler_active && demo_frame_count>9*50-3)
     // [459] if(0!=sparkler_active) goto part1_loop::@4 -- 0_neq_vbuz1_then_la1 
     lda.z sparkler_active
-    cmp #0
     bne __b4
     // part1_loop::@9
     // [460] if(part1_loop::$11<=(word)9*$32-3) goto part1_loop::@4 -- vwuz1_le_vwuc1_then_la1 
@@ -16503,7 +16484,6 @@ part2_loop: {
     // while(p2_work_ready==0)
     // [523] if(p2_work_ready==0) goto part2_loop::@1 -- vbuz1_eq_0_then_la1 
     lda.z p2_work_ready
-    cmp #0
     beq __b1
     // [524] phi from part2_loop::@1 to part2_loop::@2 [phi:part2_loop::@1->part2_loop::@2]
     // part2_loop::@2
@@ -16515,12 +16495,10 @@ part2_loop: {
     // if(p2_logo_revealing && !p2_logo_reveal_done)
     // [526] if(0==p2_logo_revealing) goto part2_loop::@4 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_revealing
-    cmp #0
     beq __b4
     // part2_loop::@12
     // [527] if(0==p2_logo_reveal_done) goto part2_loop::@3 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b3
     jmp __b4
     // [528] phi from part2_loop::@12 to part2_loop::@3 [phi:part2_loop::@12->part2_loop::@3]
@@ -16540,7 +16518,6 @@ part2_loop: {
     // if(!p2_logo_revealing && demo_frame_count>18*50+25)
     // [531] if(0!=p2_logo_revealing) goto part2_loop::@5 -- 0_neq_vbuz1_then_la1 
     lda.z p2_logo_revealing
-    cmp #0
     bne __b5
     // part2_loop::@13
     // [532] if(part2_loop::$23<=(word)$12*$32+$19) goto part2_loop::@5 -- vwuz1_le_vwuc1_then_la1 
@@ -16562,12 +16539,10 @@ part2_loop: {
     // if(!p2_logo_swinging && p2_logo_reveal_done)
     // [534] if(0!=p2_logo_swinging) goto part2_loop::@6 -- 0_neq_vbuz1_then_la1 
     lda.z p2_logo_swinging
-    cmp #0
     bne __b6
     // part2_loop::@14
     // [535] if(0==p2_logo_reveal_done) goto part2_loop::@6 -- 0_eq_vbuz1_then_la1 
     lda.z p2_logo_reveal_done
-    cmp #0
     beq __b6
     // part2_loop::@9
     // p2_logo_swinging = 1
@@ -16585,7 +16560,6 @@ part2_loop: {
     // if(!p2_plex_scroller_moving && demo_frame_count>26*50)
     // [538] if(0!=p2_plex_scroller_moving) goto part2_loop::@7 -- 0_neq_vbuz1_then_la1 
     lda.z p2_plex_scroller_moving
-    cmp #0
     bne __b7
     // part2_loop::@15
     // [539] if(part2_loop::$24<=(word)$1a*$32) goto part2_loop::@7 -- vwuz1_le_vwuc1_then_la1 

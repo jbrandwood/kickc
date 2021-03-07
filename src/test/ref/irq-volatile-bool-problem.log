@@ -8,7 +8,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VICII_CONTROL = *VICII_CONTROL & $7f
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   *RASTER = $fd
   *IRQ_ENABLE = IRQ_RASTER
   *KERNEL_IRQ = &irq
@@ -68,7 +68,7 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*)$d019
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL1 = (byte*)$d011
 void __start()
 __interrupt(rom_min_c64) void irq()
 bool~ irq::$1
@@ -77,7 +77,7 @@ void main()
 bool~ main::$0
 bool~ main::$1
 
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
 Adding number conversion cast (unumber) $fd in *RASTER = $fd
 Adding number conversion cast (unumber) $14 in main::$0 = *RASTER < $14
 Adding number conversion cast (unumber) $32 in irq::$1 = *RASTER > $32
@@ -162,7 +162,7 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [8] *VICII_CONTROL = *VICII_CONTROL & $7f
+  [8] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
   [9] *RASTER = $fd
   [10] *IRQ_ENABLE = IRQ_RASTER
   [11] *KERNEL_IRQ = &irq
@@ -186,7 +186,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(*RASTER<$32+1) goto irq::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *RASTER = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -219,7 +219,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -262,11 +262,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [8] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // [9] *RASTER = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
@@ -326,7 +326,7 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*) 53273
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
 __interrupt(rom_min_c64) void irq()
 void main()
 
@@ -352,7 +352,7 @@ Score: 978
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL1 = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -394,12 +394,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VICII_CONTROL &=$7f
-    // [8] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL1 &=$7f
+    // [8] *VICII_CONTROL1 = *VICII_CONTROL1 & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
-    and VICII_CONTROL
-    sta VICII_CONTROL
+    and VICII_CONTROL1
+    sta VICII_CONTROL1
     // *RASTER = $fd
     // [9] *RASTER = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd

@@ -27,7 +27,6 @@ irq: {
     sta BG_COLOR
     // if(col!=0)
     lda.z col
-    cmp #0
     bne __b1
     // col += 2
     clc

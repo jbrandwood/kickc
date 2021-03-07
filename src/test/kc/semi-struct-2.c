@@ -19,8 +19,8 @@
 //    ENTRY files[MAX_FILES];
 
 #include <multiply.h>
-#include <print.h>
-#include <keyboard.h>
+#include <c64-print.h>
+#include <c64-keyboard.h>
 
 // The size of a file ENTRY
 const byte SIZEOF_ENTRY = 18;

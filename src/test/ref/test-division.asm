@@ -1,4 +1,6 @@
 // Test the binary division library
+// A lightweight library for printing on the C64.
+// Printing with this library is done by calling print_ function for each element
   // Commodore 64 PRG executable file
 .file [name="test-division.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -530,7 +532,6 @@ div8s: {
     tay
     // if(neg==0)
     lda.z neg
-    cmp #0
     beq __b5
     // rem8s = -(signed char)rem8u
     txa

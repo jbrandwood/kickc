@@ -11,13 +11,14 @@
   .const VICII_BMM = $20
   .const VICII_DEN = $10
   .const VICII_RSEL = 8
+  .const WHITE = 1
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
   .label D011 = $d011
   .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = 5
+  .label next = $10
 .segment Code
 main: {
     // *BORDER_COLOR = 0
@@ -31,65 +32,58 @@ main: {
     // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VICII_MEMORY
-    // bitmap_init(BITMAP)
+    // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
-    // bitmap_clear()
+    // bitmap_clear(BLACK, WHITE)
     jsr bitmap_clear
     // init_screen()
     jsr init_screen
     lda #0
     sta.z next
   __b1:
-    // bitmap_line(0,next,0,100)
+    // bitmap_line(0,0,next,100)
     lda.z next
+    sta.z bitmap_line.x2
+    lda #0
+    sta.z bitmap_line.x2+1
     jsr bitmap_line
     // next++;
     inc.z next
     jmp __b1
 }
-// Initialize the bitmap plotter tables for a specific bitmap
+// Initialize bitmap plotting tables
 bitmap_init: {
-    .label __10 = 6
-    .label yoffs = 7
-    ldy #$80
+    .label __7 = $10
+    .label yoffs = 2
     ldx #0
+    lda #$80
   __b1:
-    // x&$f8
-    txa
-    and #$f8
-    // bitmap_plot_xlo[x] = x&$f8
-    sta bitmap_plot_xlo,x
-    // bitmap_plot_xhi[x] = >bitmap
-    lda #>BITMAP
-    sta bitmap_plot_xhi,x
     // bitmap_plot_bit[x] = bits
-    tya
     sta bitmap_plot_bit,x
-    // bits = bits>>1
-    tya
+    // bits >>= 1
     lsr
-    tay
     // if(bits==0)
-    cpy #0
+    cmp #0
     bne __b2
-    ldy #$80
+    lda #$80
   __b2:
     // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
-    lda #<0
+    lda #<BITMAP
     sta.z yoffs
+    lda #>BITMAP
     sta.z yoffs+1
-    tax
+    ldx #0
   __b3:
     // y&$7
     lda #7
-    sax.z __10
+    sax.z __7
     // <yoffs
     lda.z yoffs
     // y&$7 | <yoffs
-    ora.z __10
+    ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
     sta bitmap_plot_ylo,x
     // >yoffs
@@ -98,7 +92,7 @@ bitmap_init: {
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
-    cmp.z __10
+    cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
     clc
@@ -117,42 +111,37 @@ bitmap_init: {
     rts
 }
 // Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
 bitmap_clear: {
-    .label bitmap = 7
-    .label y = 5
-    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
-    lda bitmap_plot_xlo
-    sta.z bitmap
-    lda bitmap_plot_xhi
-    sta.z bitmap+1
-    lda #0
-    sta.z y
-  __b1:
+    .const col = WHITE*$10
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
     ldx #0
-  __b2:
-    // *bitmap++ = 0
-    lda #0
-    tay
-    sta (bitmap),y
-    // *bitmap++ = 0;
-    inc.z bitmap
-    bne !+
-    inc.z bitmap+1
-  !:
-    // for( char x: 0..199 )
-    inx
-    cpx #$c8
-    bne __b2
-    // for( char y: 0..39 )
-    inc.z y
-    lda #$28
-    cmp.z y
-    bne __b1
+    lda #<BITMAP
+    sta.z memset.str
+    lda #>BITMAP
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
     // }
     rts
 }
 init_screen: {
-    .label c = 7
+    .label c = 2
     lda #<SCREEN
     sta.z c
     lda #>SCREEN
@@ -179,263 +168,367 @@ init_screen: {
   !:
     jmp __b1
 }
-// Draw a line on the bitmap
-// bitmap_line(byte register(A) x1)
+// Draw a line on the bitmap using bresenhams algorithm
+// bitmap_line(word zp($e) x2)
 bitmap_line: {
-    .label x0 = 0
-    .label y0 = 0
-    .label y1 = $64
-    // if(x0<x1)
-    cmp #x0
-    beq !+
-    bcs __b1
-  !:
-    // xd = x0-x1
-    tax
-    // if(yd<xd)
-    cpx #y1
-    beq !+
-    bcs __b4
-  !:
-    // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxd.xd
-    jsr bitmap_line_ydxd
-    // }
-    rts
-  __b4:
-    // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    sta.z bitmap_line_xdyd.x
-    stx.z bitmap_line_xdyd.xd
-    jsr bitmap_line_xdyd
-    rts
+    .const x1 = 0
+    .const y1 = 0
+    .const y2 = $64
+    .label dx = $11
+    .label dy = $a
+    .label sx = $13
+    .label sy = $c
+    .label e1 = 4
+    .label e = 6
+    .label y = 2
+    .label x = 8
+    .label x2 = $e
+    // abs_u16(x2-x1)
+    lda.z x2
+    sta.z abs_u16.w
+    lda.z x2+1
+    sta.z abs_u16.w+1
+    jsr abs_u16
+    // abs_u16(x2-x1)
+    // dx = abs_u16(x2-x1)
+    lda.z abs_u16.return
+    sta.z dx
+    lda.z abs_u16.return+1
+    sta.z dx+1
+    // abs_u16(y2-y1)
+    lda #<y2
+    sta.z abs_u16.w
+    lda #>y2
+    sta.z abs_u16.w+1
+    jsr abs_u16
+    // abs_u16(y2-y1)
+    // dy = abs_u16(y2-y1)
+    // if(dx==0 && dy==0)
+    lda.z dx
+    ora.z dx+1
+    bne __b1
+    lda.z dy
+    ora.z dy+1
+    bne !__b4+
+    jmp __b4
+  !__b4:
   __b1:
-    // xd = x1-x0
-    tax
-    // if(yd<xd)
-    cpx #y1
-    beq !+
-    bcs __b7
+    // sgn_u16(x2-x1)
+    lda.z x2
+    sta.z sgn_u16.w
+    lda.z x2+1
+    sta.z sgn_u16.w+1
+    jsr sgn_u16
+    // sgn_u16(x2-x1)
+    // sx = sgn_u16(x2-x1)
+    lda.z sgn_u16.return
+    sta.z sx
+    lda.z sgn_u16.return+1
+    sta.z sx+1
+    // sgn_u16(y2-y1)
+    lda #<y2
+    sta.z sgn_u16.w
+    lda #>y2
+    sta.z sgn_u16.w+1
+    jsr sgn_u16
+    // sgn_u16(y2-y1)
+    // sy = sgn_u16(y2-y1)
+    // if(dx > dy)
+    lda.z dy+1
+    cmp.z dx+1
+    bcc __b2
+    bne !+
+    lda.z dy
+    cmp.z dx
+    bcc __b2
   !:
-    // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxi.xd
-    jsr bitmap_line_ydxi
-    rts
+    // e = dx/2
+    lda.z dx+1
+    lsr
+    sta.z e+1
+    lda.z dx
+    ror
+    sta.z e
+    lda #<y1
+    sta.z y
+    lda #>y1
+    sta.z y+1
+    lda #<x1
+    sta.z x
+    lda #>x1
+    sta.z x+1
+  __b6:
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    tax
+    jsr bitmap_plot
+    // y += sy
+    lda.z y
+    clc
+    adc.z sy
+    sta.z y
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    // e += dx
+    lda.z e
+    clc
+    adc.z dx
+    sta.z e
+    lda.z e+1
+    adc.z dx+1
+    sta.z e+1
+    // if(dy<e)
+    cmp.z dy+1
+    bne !+
+    lda.z e
+    cmp.z dy
+    beq __b7
+  !:
+    bcc __b7
+    // x += sx
+    lda.z x
+    clc
+    adc.z sx
+    sta.z x
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    // e -= dy
+    lda.z e
+    sec
+    sbc.z dy
+    sta.z e
+    lda.z e+1
+    sbc.z dy+1
+    sta.z e+1
   __b7:
-    // bitmap_line_xdyi(x0, y0, x1, xd, yd)
-    sta.z bitmap_line_xdyi.x1
-    stx.z bitmap_line_xdyi.xd
-    jsr bitmap_line_xdyi
+    // while (y != y2)
+    lda.z y+1
+    cmp #>y2
+    bne __b6
+    lda.z y
+    cmp #<y2
+    bne __b6
+  __b3:
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    tax
+    jsr bitmap_plot
+    // }
     rts
-}
-// bitmap_line_ydxd(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
-bitmap_line_ydxd: {
-    .label xd = 6
-    .label e = 4
-    .label y = 3
-    .label x = 2
-    // e = xd>>1
-    lda.z xd
+  __b2:
+    // e = dy/2
+    lda.z dy+1
     lsr
-    sta.z e
-    lda #bitmap_line.y0
+    sta.z e1+1
+    lda.z dy
+    ror
+    sta.z e1
+    lda #<y1
     sta.z y
-    lda #bitmap_line.x0
+    lda #>y1
+    sta.z y+1
+    lda #<x1
     sta.z x
-  __b1:
-    // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
+    lda #>x1
+    sta.z x+1
+  __b9:
+    // bitmap_plot(x,(char)y)
+    lda.z y
+    tax
     jsr bitmap_plot
-    // y = y++;
-    inc.z y
-    // e = e+xd
-    lda.z e
+    // x += sx
+    lda.z x
     clc
-    adc.z xd
-    sta.z e
-    // if(yd<e)
-    lda #bitmap_line.y1
-    cmp.z e
-    bcs __b2
-    // x--;
-    dec.z x
-    // e = e - yd
-    lax.z e
-    axs #bitmap_line.y1
-    stx.z e
-  __b2:
-    // while (y!=(y1+1))
-    lda #bitmap_line.y1+1
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// bitmap_line_xdyd(byte zp(2) x, byte zp(3) y, byte zp(6) xd)
-bitmap_line_xdyd: {
-    .label x = 2
-    .label xd = 6
-    .label e = 4
-    .label y = 3
-    lda #bitmap_line.y1>>1
-    sta.z e
-    lda #bitmap_line.y1
-    sta.z y
-  __b1:
-    // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
-    jsr bitmap_plot
-    // x++;
-    inc.z x
-    // e = e+yd
-    lax.z e
-    axs #-[bitmap_line.y1]
-    stx.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y--;
-    dec.z y
-    // e = e - xd
-    txa
-    sec
-    sbc.z xd
-    sta.z e
-  __b2:
-    // while (x!=(x1+1))
-    lda #1
-    cmp.z x
-    bne __b1
-    // }
-    rts
-}
-// bitmap_line_ydxi(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
-bitmap_line_ydxi: {
-    .label xd = 6
-    .label e = 4
-    .label y = 3
-    .label x = 2
-    // e = xd>>1
-    lda.z xd
-    lsr
-    sta.z e
-    lda #bitmap_line.y0
-    sta.z y
-    lda #bitmap_line.x0
+    adc.z sx
     sta.z x
-  __b1:
-    // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
-    jsr bitmap_plot
-    // y++;
-    inc.z y
-    // e = e+xd
-    lda.z e
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    // e += dy
+    lda.z e1
     clc
-    adc.z xd
-    sta.z e
-    // if(yd<e)
-    lda #bitmap_line.y1
-    cmp.z e
-    bcs __b2
-    // x++;
-    inc.z x
-    // e = e - yd
-    lax.z e
-    axs #bitmap_line.y1
-    stx.z e
-  __b2:
-    // while (y!=(y1+1))
-    lda #bitmap_line.y1+1
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// bitmap_line_xdyi(byte zp(2) x, byte zp(3) y, byte zp(5) x1, byte zp(6) xd)
-bitmap_line_xdyi: {
-    .label x1 = 5
-    .label xd = 6
-    .label x = 2
-    .label e = 4
-    .label y = 3
-    lda #bitmap_line.y1>>1
-    sta.z e
-    lda #bitmap_line.y0
+    adc.z dy
+    sta.z e1
+    lda.z e1+1
+    adc.z dy+1
+    sta.z e1+1
+    // if(dx < e)
+    cmp.z dx+1
+    bne !+
+    lda.z e1
+    cmp.z dx
+    beq __b10
+  !:
+    bcc __b10
+    // y += sy
+    lda.z y
+    clc
+    adc.z sy
     sta.z y
-    lda #bitmap_line.x0
-    sta.z x
-  __b1:
-    // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
-    jsr bitmap_plot
-    // x++;
-    inc.z x
-    // e = e+yd
-    lax.z e
-    axs #-[bitmap_line.y1]
-    stx.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y++;
-    inc.z y
-    // e = e - xd
-    txa
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    // e -= dx
+    lda.z e1
     sec
-    sbc.z xd
-    sta.z e
+    sbc.z dx
+    sta.z e1
+    lda.z e1+1
+    sbc.z dx+1
+    sta.z e1+1
+  __b10:
+    // while (x != x2)
+    lda.z x+1
+    cmp.z x2+1
+    bne __b9
+    lda.z x
+    cmp.z x2
+    bne __b9
+    jmp __b3
+  __b4:
+    // bitmap_plot(x,(char)y)
+    lda #<x1
+    sta.z bitmap_plot.x
+    lda #>x1
+    sta.z bitmap_plot.x+1
+    ldx #0
+    jsr bitmap_plot
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(8) str, byte register(X) c, word zp(6) num)
+memset: {
+    .label end = 6
+    .label dst = 8
+    .label num = 6
+    .label str = 8
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   __b2:
-    // x1+1
-    ldx.z x1
-    inx
-    // while (x!=(x1+1))
-    cpx.z x
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+// abs_u16(word zp($a) w)
+abs_u16: {
+    .label w = $a
+    .label return = $a
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
     bne __b1
+    rts
+  __b1:
+    // return -w;
+    sec
+    lda #0
+    sbc.z return
+    sta.z return
+    lda #0
+    sbc.z return+1
+    sta.z return+1
     // }
     rts
 }
-// bitmap_plot(byte register(X) x, byte register(Y) y)
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+// sgn_u16(word zp($15) w)
+sgn_u16: {
+    .label w = $15
+    .label return = $c
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
+    bne __b1
+    lda #<1
+    sta.z return
+    lda #>1
+    sta.z return+1
+    rts
+  __b1:
+    lda #<-1
+    sta.z return
+    sta.z return+1
+    // }
+    rts
+}
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp(8) x, byte register(X) y)
 bitmap_plot: {
-    .label plotter_x = 7
-    .label plotter_y = 9
-    .label plotter = 7
-    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,x
-    sta.z plotter_x+1
-    lda bitmap_plot_xlo,x
-    sta.z plotter_x
-    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,y
-    sta.z plotter_y+1
-    lda bitmap_plot_ylo,y
-    sta.z plotter_y
-    // plotter_x+plotter_y
+    .label __0 = $17
+    .label plotter = $15
+    .label x = 8
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,x
+    sta.z plotter+1
+    lda bitmap_plot_ylo,x
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z plotter_y
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z plotter_y+1
+    adc.z __0+1
     sta.z plotter+1
-    // *plotter | bitmap_plot_bit[x]
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
-    // *plotter = *plotter | bitmap_plot_bit[x]
     sta (plotter),y
     // }
     rts
 }
 .segment Data
-  // Tables for the plotter - initialized by calling bitmap_draw_init();
-  bitmap_plot_xlo: .fill $100, 0
-  bitmap_plot_xhi: .fill $100, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

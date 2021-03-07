@@ -1,6 +1,6 @@
 // Generates a 16-bit signed sine
 #include <sine.h>
-#include <print.h>
+#include <c64-print.h>
 
 void main() {
     word wavelength = 120;

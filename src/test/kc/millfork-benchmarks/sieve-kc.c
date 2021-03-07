@@ -1,4 +1,4 @@
-#include <print.h>
+#include <c64-print.h>
 #include "benchcommon.c"
 
 const unsigned int COUNT = 16384;

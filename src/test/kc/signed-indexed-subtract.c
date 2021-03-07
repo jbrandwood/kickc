@@ -1,6 +1,6 @@
 // Tests that signed indexed subtract works as intended
 
-#include <print.h>
+#include <c64-print.h>
 
 signed word words[] = {-$6000, -$600, -$60, -6, 0, 6, $60, $600, $6000};
 

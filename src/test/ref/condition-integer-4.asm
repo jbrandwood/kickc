@@ -21,7 +21,6 @@ main: {
     sax.z __4
     // if(i&1)
     lda.z __4
-    cmp #0
     beq __b2
     // (SCREEN+40*0)[idx] = '+'
     lda #'+'
@@ -32,7 +31,6 @@ main: {
     sax.z __5
     // if(i&2)
     lda.z __5
-    cmp #0
     beq __b3
     // (SCREEN+40*1)[idx] = '+'
     lda #'+'
@@ -40,10 +38,8 @@ main: {
   __b3:
     // if(i&1 && i&2)
     lda.z __4
-    cmp #0
     beq __b4
     lda.z __5
-    cmp #0
     beq __b4
     // (SCREEN+40*2)[idx] = '+'
     lda #'+'
@@ -51,10 +47,8 @@ main: {
   __b4:
     // if(i&1 || i&2)
     lda.z __4
-    cmp #0
     bne __b9
     lda.z __5
-    cmp #0
     beq __b5
   __b9:
     // (SCREEN+40*3)[idx] = '+'

@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 11327739d8 113277581a
+//KICKC FRAGMENT CACHE fdb40b9db fdb40d86d
 //FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
 inc {c1}
 //FRAGMENT isr_hardware_all_entry
@@ -72,7 +72,6 @@ and {z2}
 sta {z1}
 //FRAGMENT 0_eq_vbuz1_then_la1
 lda {z1}
-cmp #0
 beq {la1}
 //FRAGMENT _deref_pbuc1=_dec__deref_pbuc1
 dec {c1}
@@ -86,7 +85,6 @@ ldy {z1}
 sta {c1},y
 //FRAGMENT 0_neq_vbuz1_then_la1
 lda {z1}
-cmp #0
 bne {la1}
 //FRAGMENT vwuz1=vwuc1
 lda #<{c1}

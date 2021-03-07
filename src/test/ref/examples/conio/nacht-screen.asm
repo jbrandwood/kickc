@@ -724,7 +724,6 @@ cscroll: {
     bne __breturn
     // if(conio_scroll_enable)
     lda.z conio_scroll_enable
-    cmp #0
     bne __b3
     // gotoxy(0,0)
     ldx #0

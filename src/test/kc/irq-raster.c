@@ -2,7 +2,7 @@
 
 void()** const  KERNEL_IRQ = $0314;
 byte* const RASTER = $d012;
-byte* const VICII_CONTROL = $d011;
+byte* const VICII_CONTROL1 = $d011;
 byte* const IRQ_STATUS = $d019;
 byte* const IRQ_ENABLE = $d01a;
 const byte IRQ_RASTER = %00000001;
@@ -21,7 +21,7 @@ void main() {
     // Disable CIA 1 Timer IRQ
     *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VICII_CONTROL |=$80;
+    *VICII_CONTROL1 |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

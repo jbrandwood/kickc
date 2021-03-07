@@ -119,7 +119,6 @@ irq_line: {
     // if(--cnt==0)
     dec.z cnt
     lda.z cnt
-    cmp #0
     bne __b1
     // cnt = 2
     lda #2

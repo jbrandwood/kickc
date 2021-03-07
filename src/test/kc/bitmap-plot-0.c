@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots simple plots
 #include <c64.h>
-#include <bitmap2.h>
+#include <c64-bitmap.h>
 
 byte* BITMAP = 0x2000;
 byte* SCREEN = 0x0400;
@@ -40,7 +40,7 @@ void init_irq() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VICII_CONTROL |=$80;
+    *VICII_CONTROL1 |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

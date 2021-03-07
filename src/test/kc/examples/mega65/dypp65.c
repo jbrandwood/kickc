@@ -25,6 +25,12 @@ void main() {
     SEI();
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
     memoryRemap(0,0,0);
+    // Enable 48MHz fast mode
+    VICIV->CONTROLB |= 0x40;
+    VICIV->CONTROLC |= 0x40;
+    // Enable the VIC 4
+    VICIV->KEY = 0x47;
+    VICIV->KEY = 0x53;
     // Set sideborder width=0, disable raster delay and hot registers
     VICIV->SIDBDRWD_LO = 0;
     VICIV->SIDBDRWD_HI = 0;   
@@ -33,12 +39,6 @@ void main() {
     VICIV->TBDRPOS_HI = 0;
     VICIV->BBDRPOS_LO = 0;
     VICIV->BBDRPOS_HI = 2;
-    // Enable 48MHz fast mode
-    VICIV->CONTROLB |= 0x40;
-    VICIV->CONTROLC |= 0x40;
-    // Enable the VIC 4
-    VICIV->KEY = 0x47;
-    VICIV->KEY = 0x53;
     // Enable Super Extended Attribute Mode
     VICIV->CONTROLC |= 1;
     // Mode 40x25 chars - will be 45*25 when utilizing the borders

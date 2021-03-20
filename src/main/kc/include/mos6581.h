@@ -49,6 +49,31 @@ struct MOS6581_SID {
     char CH3_ENV;
 };
 
+// Channel 1 Frequency Low byte
+char * const SID_CH1_FREQ_LO = 0xd400;
+// Channel 1 Frequency High byte
+char * const SID_CH1_FREQ_HI = 0xd401;
+// Channel 1 Pulse Width (0-4095) Low byte
+char * const SID_CH1_PULSE_WIDTH_LO = 0xd402;
+// Channel 1 Pulse Width (0-4095) High byte
+char * const SID_CH1_PULSE_WIDTH_HI = 0xd403;
+// Channel 2 Frequency Low byte
+char * const SID_CH2_FREQ_LO = 0xd407;
+// Channel 2 Frequency High byte
+char * const SID_CH2_FREQ_HI = 0xd408;
+// Channel 2 Pulse Width (0-4095) Low byte
+char * const SID_CH2_PULSE_WIDTH_LO = 0xd409;
+// Channel 2 Pulse Width (0-4095) High byte
+char * const SID_CH2_PULSE_WIDTH_HI = 0xd40a;
+// Channel 3 Frequency Low byte
+char * const SID_CH3_FREQ_LO = 0xd40e;
+// Channel 3 Frequency High byte
+char * const SID_CH3_FREQ_HI = 0xd40f;
+// Channel 3 Pulse Width (0-4095) Low byte
+char * const SID_CH3_PULSE_WIDTH_LO = 0xd410;
+// Channel 3 Pulse Width (0-4095) High byte
+char * const SID_CH3_PULSE_WIDTH_HI = 0xd411;
+
 // SID Channel Control Register Noise Waveform
 const char SID_CONTROL_NOISE = 0x80;
 // SID Channel Control Register Pulse Waveform / Square Wave

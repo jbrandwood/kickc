@@ -42,14 +42,14 @@ main: {
     sta.z x
   __b2:
     // xw = (signed word)(word){ (byte)x, 0 }
-    lda.z x
-    ldy #0
-    sta.z xw+1
-    sty.z xw
+    lda #0
+    ldy.z x
+    sty.z xw+1
+    sta.z xw
     // yw = (signed word)(word){ (byte)y, 0 }
-    lda.z y
-    sta.z yw+1
-    sty.z yw
+    ldy.z y
+    sty.z yw+1
+    sta.z yw
     // atan2_16(xw, yw)
     jsr atan2_16
     // angle_w = atan2_16(xw, yw)

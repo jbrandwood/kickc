@@ -50,6 +50,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComplexBorderlinePacman() throws IOException, URISyntaxException {
+      compileAndCompare("complex/borderline_pacman/pacman.c");
+   }
+
+   @Test
    public void testComplexNew30YearsLowResolution() throws IOException, URISyntaxException {
       compileAndCompare("complex/new_30_years_low_resolution/new_30_years_low_resolution.c");
    }

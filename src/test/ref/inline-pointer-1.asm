@@ -10,22 +10,22 @@
 .segment Code
 main: {
     // puta(4, 0x00)
-    ldx #0
-    lda #4
+    lda #0
+    ldx #4
     jsr puta
     // puta(5, 0x18)
-    ldx #$18
-    lda #5
+    lda #$18
+    ldx #5
     jsr puta
     // }
     rts
 }
-// puta(byte register(A) ph, byte register(X) pl)
+// puta(byte register(X) ph, byte register(A) pl)
 puta: {
     .label screen = 2
     // screen = (byte*) { ph, pl }
-    sta.z screen+1
-    stx.z screen
+    stx.z screen+1
+    sta.z screen
     // *screen = 'a'
     lda #'a'
     ldy #0

@@ -1,0 +1,1741 @@
+const byte* ABS[$100]  = kickasm {{ .for(var i=0;i<$100;i++) {
+        .var x = (i<$80)?i:($100-i);
+        .byte abs(x)
+    }
+ }}
+const byte* ABS_POST[1]  = { 0 }
+const byte* ABS_PRE[1]  = { 1 }
+const nomodify byte* BANK_1 = (byte*) 16384
+const nomodify byte* BANK_2 = (byte*) 49152
+const nomodify byte BLACK = 0
+const nomodify byte BLUE = 6
+const byte* BOB_GRAPHICS_CRUNCHED[]  = kickasm(  uses BOB_MASK_LEFT) {{ .modify B2() {
+        .pc = BOB_MASK_LEFT "BOB GRAPHICS TABLES"
+        .var bobs_pic = LoadPicture("pacman-bobs.png", List().add($000000, $352879, $bfce72, $883932))
+        // TABLE char BOB_MASK_LEFT[BOB_ROW_SIZE*6]
+        .for(var row=0; row<6;row++) {
+            .align BOB_ROW_SIZE
+            .for(var pac=0; pac<9;pac++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(0,scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(0,24+scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(0,48+scroll*6+row)
+        }    
+        // TABLE char BOB_MASK_RIGT[BOB_ROW_SIZE*6]
+        .for(var row=0; row<6;row++) {
+            .align BOB_ROW_SIZE
+            .for(var pac=0; pac<9;pac++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(1,scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(1,24+scroll*6+row)
+            .for(var blue=0; blue<8;blue++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(1,48+scroll*6+row)
+        }    
+        // TABLE char BOB_PIXEL_LEFT[BOB_ROW_SIZE*6]
+        .for(var row=0; row<6;row++) {
+            .align BOB_ROW_SIZE
+            .for(var pac=0; pac<9;pac++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(2+pac*2,scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(2+ghost*2,24+scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(2+ghost*2,48+scroll*6+row)
+        }    
+        // TABLE char BOB_PIXEL_RIGT[BOB_ROW_SIZE*6]
+        .for(var row=0; row<6;row++) {
+            .align BOB_ROW_SIZE
+            .for(var pac=0; pac<9;pac++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(3+pac*2,scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(3+ghost*2,24+scroll*6+row)
+            .for(var ghost=0; ghost<8;ghost++)
+                .for(var scroll=0; scroll<4;scroll++)
+                    .byte bobs_pic.getMulticolorByte(3+ghost*2,48+scroll*6+row)
+        }  
+    }  
+ }}
+const nomodify byte* BOB_MASK_LEFT = (byte*) 21504
+const nomodify byte* BOB_MASK_RIGT = BOB_MASK_LEFT+BOB_ROW_SIZE*6
+const nomodify byte* BOB_PIXEL_LEFT = BOB_MASK_LEFT+BOB_ROW_SIZE*$c
+const nomodify byte* BOB_PIXEL_RIGT = BOB_MASK_LEFT+BOB_ROW_SIZE*$12
+const nomodify byte BOB_ROW_SIZE = $80
+const nomodify byte* BORDER_COLOR = (byte*) 53280
+const byte* BYTEBOOZER[]  = kickasm {{ .const B2_ZP_BASE = $fc
+    #import "byteboozer_decrunch.asm"
+ }}
+const byte CHASE = 0
+const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
+const nomodify byte* CIA1_INTERRUPT = (byte*) 56333
+const nomodify struct MOS6526_CIA* CIA2 = (struct MOS6526_CIA*) 56576
+const nomodify byte CIA_INTERRUPT_CLEAR = $7f
+const byte DIRECTION::DOWN = 8
+const byte DIRECTION::LEFT = $10
+const byte DIRECTION::RIGHT = $20
+const byte DIRECTION::STOP = 0
+const byte DIRECTION::UP = 4
+const byte* DIRECTION_ELIMINATE[$21]  = { $ff, 0, 0, 0, $f7, 0, 0, 0, $fb, 0, 0, 0, 0, 0, 0, 0, $df, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, $ef }
+const byte* DIRECTION_REVERSE[$21]  = { 0, 0, 0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, $20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, $10 }
+const byte* DIRECTION_SINGLE[$40]  = { 0, 0, 0, 0, 4, 4, 4, 4, 8, 8, 8, 8, 4, 4, 4, 4, $10, $10, $10, $10, 4, 4, 4, 4, 8, 8, 8, 8, 4, 4, 4, 4, $20, $20, $20, $20, 4, 4, 4, 4, 8, 8, 8, 8, 4, 4, 4, 4, $10, $10, $10, $10, 4, 4, 4, 4, 8, 8, 8, 8, 4, 4, 4, 4 }
+const byte DOWN = 8
+const byte EMPTY = 0
+const byte FRIGHTENED = 2
+const nomodify byte* GAMEOVER_GFX = (byte*) 42752
+const byte* GAMEOVER_GFX_CRUNCHED[]  = kickasm(  uses GAMEOVER_GFX) {{ .modify B2() {
+        .pc = GAMEOVER_GFX "GAMEOVER GRAPHICS"                           //       00:BLACK, 01:BLUE, 10:YELLOW, 11:RED
+        .var pic_gameover = LoadPicture("pacman-gameover.png", List().add($000000, $352879, $bfce72, $883932))
+        .for(var xcol=0; xcol<25; xcol++) {
+            .for(var ypos=0; ypos<25; ypos++) {
+                .byte pic_gameover.getMulticolorByte(xcol,ypos)
+            }
+        }
+    }
+ }}
+const byte GHOSTS_MODE::CHASE = 0
+const byte GHOSTS_MODE::FRIGHTENED = 2
+const byte GHOSTS_MODE::SCATTER = 1
+const nomodify void()** HARDWARE_IRQ = (void()**) 65534
+const nomodify byte* INTRO_MUSIC = (byte*) 12288
+const byte* INTRO_MUSIC_CRUNCHED[]  = kickasm(  uses INTRO_MUSIC) {{ .modify B2() {
+        .pc = INTRO_MUSIC "INTRO MUSIC"
+        .const music = LoadBinary("pacman-2chn-simpler.prg", BF_C64FILE)
+        .fill music.getSize(), music.get(i)
+    }
+ }}
+const nomodify word INTRO_MUSIC_CRUNCHED_SIZE = $600
+const nomodify byte* INTRO_MUSIC_CRUNCHED_UPPER = (byte*) 42752
+const nomodify byte IRQ_RASTER = 1
+const nomodify byte IRQ_SCREEN_TOP_LINE = 5
+const nomodify byte* IRQ_STATUS = (byte*) 53273
+const byte LEFT = $10
+const nomodify byte* LEVEL_TILES = (byte*) 18432
+const byte* LEVEL_TILES_CRUNCHED[]  = kickasm(  uses LEVEL_TILES) {{ .modify B2() {
+        .pc = LEVEL_TILES "LEVEL TILE GRAPHICS"
+        .var pic_level = LoadPicture("pacman-tiled.png", List().add($000000, $352879, $bfce72, $883932))
+        // Maps the tile pixels (a 16 bit number) to the tile ID
+        .var TILESET = Hashtable()
+        // Maps the tile ID to the pixels (a 16 bit number)
+        .var TILESET_BY_ID = Hashtable()
+        // Tile ID 0 is empty
+        .eval TILESET.put(0, 0)
+        .eval TILESET_BY_ID.put(0, 0)
+
+        .align $100
+        // TABLE LEVEL_TILES[64*37]
+        // The level is 50 tiles * 37 tiles. The first tile line are special half-tiles (where only the last 2 pixel rows are shown).
+        // The level data is organized as 37 rows of 64 bytes containing tile IDs. (the last 14 are unused to achieve 64-byte alignment)
+        .for(var ytile=0; ytile<37; ytile++) {
+            .for(var xtile=0; xtile<50; xtile++) {
+                // Find the tile pixels (4x4 px - 16 bits)
+                .var pixels = 0;
+                .for(var i=0; i<4; i++) {
+                    .var pix = pic_level.getMulticolorByte(xtile/2,ytile*4+i)
+                    .if((xtile&1)==0) {
+                        // left nibble
+                        .eval pix = floor(pix / $10)
+                    } else {
+                        // right nibble
+                        .eval pix = pix & $0f
+                    }
+                    .eval pixels = pixels*$10 + pix                
+                }
+                .var tile_id = 0
+                .if(TILESET.containsKey(pixels)) {
+                    .eval tile_id = TILESET.get(pixels)
+                } else {
+                    .eval tile_id = TILESET.keys().size()
+                    .eval TILESET.put(pixels, tile_id)
+                    .eval TILESET_BY_ID.put(tile_id, pixels)
+//                    .print "tile "+tile_id+" : "+toHexString(pixels,4)
+                }
+                // Output the tile ID
+                .byte tile_id
+            }
+            .fill 14, 0
+        }
+
+        .align $100
+        // TABLE char TILES_LEFT[0x80] 
+        // The left tile graphics. A tile is 4x4 px. The left tiles contain tile graphics for the 4 left bits of a char. Each tile is 4 bytes.
+        .for(var tile_id=0;tile_id<TILESET_BY_ID.keys().size();tile_id++) {
+            .var pixels = TILESET_BY_ID.get(tile_id)
+            .for(var i=0; i<4; i++) {
+                .var pix = (pixels & $f000) >> 12
+                .byte pix<<4
+                .eval pixels = pixels << 4
+            }
+        }
+
+        .align $80
+        // TABLE char TILES_RIGHT[0x80]
+        // The right tile graphics. A tile is 4x4 px. The right tiles contain tile graphics for the 4 right bits of a char. Each tile is 4 bytes.
+        .for(var tile_id=0;tile_id<TILESET_BY_ID.keys().size();tile_id++) {
+            .var pixels = TILESET_BY_ID.get(tile_id)
+            .for(var i=0; i<4; i++) {
+                .var pix = (pixels & $f000) >> 12
+                .byte pix
+                .eval pixels = pixels << 4
+            }
+        }
+        .align $80
+        // TABLE char TILES_TYPE[0x20]
+        // 0: empty (all black), 1:pill, 2:powerup, 4: wall (contains blue pixels)
+        .for(var tile_id=0;tile_id<TILESET_BY_ID.keys().size();tile_id++) {
+            .var pixels = TILESET_BY_ID.get(tile_id)
+            .var tile_type = 0
+            .if(pixels==$0220) .eval tile_type=1 // 1:pill
+            .if(pixels==$aaaa) .eval tile_type=2 // 2:powerup
+            .for(var i=0; i<4; i++) {
+                .var pix = (pixels & $f000) >> 12
+                // Detect wall - any blue pixels (%01)
+                .if( (pix&%0100)==%0100) .eval tile_type = 4; // 4:wall
+                .if( (pix&%0001)==%0001) .eval tile_type = 4; // 4:wall
+                .eval pixels = pixels << 4
+            }
+            .byte tile_type
+            //.print "tile "+tile_id+" gfx "+toHexString(TILESET_BY_ID.get(tile_id),4) + " type "+tile_type
+        }
+
+    }
+ }}
+const nomodify byte* LEVEL_TILES_DIRECTIONS = (byte*) 15872
+const word* LEVEL_YTILE_OFFSET[$25]  = { 0, $40, $80, $c0, $100, $140, $180, $1c0, $200, $240, $280, $2c0, $300, $340, $380, $3c0, $400, $440, $480, $4c0, $500, $540, $580, $5c0, $600, $640, $680, $6c0, $700, $740, $780, $7c0, $800, $840, $880, $8c0, $900 }
+const byte* LOGIC_CODE_CRUNCHED[]  = kickasm(  uses bobs_xcol uses bobs_yfine uses bobs_bob_id uses bobs_restore uses RENDER_INDEX uses RENDER_OFFSET_CANVAS_LO uses RENDER_OFFSET_CANVAS_HI uses RENDER_OFFSET_YPOS_INC uses SIZE_BOB_RESTORE uses BOB_ROW_SIZE uses NUM_BOBS uses left_render_index_xcol uses left_canvas uses left_ypos_inc_offset uses rigt_render_index_xcol uses rigt_canvas uses rigt_ypos_inc_offset uses BOB_MASK_LEFT uses BOB_PIXEL_LEFT uses BOB_MASK_RIGT uses BOB_PIXEL_RIGT uses canvas_base_hi uses bobs_restore_base uses RENDER_YPOS_INC uses logic_tile_ptr uses logic_tile_xcol uses logic_tile_yfine uses logic_tile_left_idx uses logic_tile_right_idx) {{ .macro LOGIC_BEGIN(cycles) {
+        .byte cycles
+    }
+    .macro LOGIC_END() {
+        .byte $ff
+    }
+    .modify B2() {
+        .pc = LOGIC_CODE_UNMERGED "LOGIC CODE UNMERGED"
+        LOGIC_BEGIN(2)
+        clc
+        LOGIC_END()
+
+        // ******************************************
+        // Restores the canvas under the rendered bobs
+        // ******************************************
+
+        .for(var bob=NUM_BOBS-1;bob>=0; bob--) {
+            //LOGIC_BEGIN(6)
+            //inc $d021
+            //LOGIC_END()
+
+            LOGIC_BEGIN(3)
+            ldx bobs_restore_base
+            LOGIC_END()
+            // char * volatile left_canvas = *((char**)&bob_restore[0]);
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+0,x
+            sta.z left_canvas
+            LOGIC_END()
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+1,x
+            sta.z left_canvas+1            
+            LOGIC_END()
+            // char left_ypos_inc_offset = bob_restore[2];
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+2,x
+            sta.z left_ypos_inc_offset            
+            LOGIC_END()
+            // char * volatile rigt_canvas = *((char**)&bob_restore[3]);
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+3,x
+            sta.z rigt_canvas
+            LOGIC_END()
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+4,x
+            sta.z rigt_canvas+1
+            LOGIC_END()
+            // char rigt_ypos_inc_offset = bob_restore[5];
+            LOGIC_BEGIN(7)
+            lda bobs_restore+SIZE_BOB_RESTORE*bob+5,x
+            sta.z rigt_ypos_inc_offset 
+            LOGIC_END()
+
+            // Restore Bob Rows 
+            LOGIC_BEGIN(2)
+            ldy #0
+            LOGIC_END()
+            .for(var row=0;row<6;row++) {
+                //left_canvas += RENDER_YPOS_INC[left_ypos_inc_offset++];
+                LOGIC_BEGIN(3)
+                ldx.z left_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(5)
+                inc.z left_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(18)
+                lda RENDER_YPOS_INC,x
+                adc.z left_canvas
+                sta.z left_canvas
+                lda.z left_canvas+1
+                adc #0
+                sta.z left_canvas+1
+                LOGIC_END()
+                //rigt_canvas += RENDER_YPOS_INC[rigt_ypos_inc_offset++];
+                LOGIC_BEGIN(3)
+                ldx.z rigt_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(5)
+                inc.z rigt_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(18)
+                lda RENDER_YPOS_INC,x
+                adc.z rigt_canvas
+                sta.z rigt_canvas
+                lda.z rigt_canvas+1
+                adc #0
+                sta.z rigt_canvas+1
+                LOGIC_END()
+
+                LOGIC_BEGIN(3)
+                ldx bobs_restore_base
+                LOGIC_END()            
+                // *left_canvas = bob_restore[6] ;
+                LOGIC_BEGIN(10)
+                lda bobs_restore+SIZE_BOB_RESTORE*bob+6+row,x
+                sta (left_canvas),y 
+                LOGIC_END()
+                // *rigt_canvas = bob_restore[7];
+                LOGIC_BEGIN(10)
+                lda bobs_restore+SIZE_BOB_RESTORE*bob+12+row,x
+                sta (rigt_canvas),y
+                LOGIC_END()
+            }
+        }
+
+        // ******************************************
+        // Render two tiles on the canvas
+        // ******************************************
+
+        // y==0 from bob restore
+        LOGIC_BEGIN(12)
+        // char tile_left_idx = 4 * logic_tile_ptr[0];
+        lda (logic_tile_ptr),y
+        asl
+        asl
+        sta logic_tile_left_idx
+        LOGIC_END()
+        // char logic_tile_right_idx = 4 * logic_tile_ptr[1];
+        LOGIC_BEGIN(2)
+        iny
+        LOGIC_END()
+        LOGIC_BEGIN(12)
+        lda (logic_tile_ptr),y
+        asl
+        asl
+        sta logic_tile_right_idx
+        LOGIC_END()    
+        // char * render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 };
+        LOGIC_BEGIN(8)
+        lda #>RENDER_INDEX
+        adc logic_tile_xcol
+        sta.z left_render_index_xcol+1
+        LOGIC_END()
+        LOGIC_BEGIN(6)
+        lda logic_tile_yfine
+        sta.z left_render_index_xcol
+        LOGIC_END()
+
+        // unsigned int canvas_offset = {render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] };
+        // char * left_canvas = canvas_base_hi*$100 + canvas_offset;
+        LOGIC_BEGIN(2)
+        ldy #RENDER_OFFSET_CANVAS_LO
+        LOGIC_END()
+        LOGIC_BEGIN(8)
+        lda (left_render_index_xcol),y
+        sta.z left_canvas
+        LOGIC_END()
+        LOGIC_BEGIN(2)
+        ldy #RENDER_OFFSET_CANVAS_HI
+        LOGIC_END()
+        LOGIC_BEGIN(11)
+        lda (left_render_index_xcol),y
+        adc canvas_base_hi
+        sta.z left_canvas+1
+        LOGIC_END()
+        // char left_ypos_inc_offset = render_index_xcol[RENDER_OFFSET_YPOS_INC];
+        LOGIC_BEGIN(2)
+        ldy #RENDER_OFFSET_YPOS_INC
+        LOGIC_END()
+        LOGIC_BEGIN(8)
+        lda (left_render_index_xcol),y
+        sta.z left_ypos_inc_offset            
+        LOGIC_END()
+
+        // Render Tile Rows 
+        LOGIC_BEGIN(2)
+        ldy #0                
+        LOGIC_END()  
+        .for(var row=0;row<4;row++) {
+
+            //   *left_canvas = tile_left_pixels[y] | tile_right_pixels[y];
+            LOGIC_BEGIN(3)
+            ldx logic_tile_left_idx
+            LOGIC_END()
+            LOGIC_BEGIN(17)
+            lda TILES_LEFT+row,x
+            ldx logic_tile_right_idx
+            ora TILES_RIGHT+row,x            
+            sta (left_canvas),y
+            LOGIC_END()
+
+            //left_canvas += RENDER_YPOS_INC[left_ypos_inc_offset++];
+            LOGIC_BEGIN(3)
+            ldx.z left_ypos_inc_offset
+            LOGIC_END()
+            LOGIC_BEGIN(18)
+            lda RENDER_YPOS_INC,x
+            adc.z left_canvas
+            sta.z left_canvas
+            lda.z left_canvas+1
+            adc #0
+            sta.z left_canvas+1
+            LOGIC_END()
+            LOGIC_BEGIN(5)
+            inc.z left_ypos_inc_offset
+            LOGIC_END()
+        }
+
+        // ******************************************
+        // Renders the BOBs at the given positions
+        // ******************************************
+
+        .for(var bob=0;bob<NUM_BOBS; bob++) {
+            // char * left_render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, yfine };
+            // char * rigt_render_index_xcol = (char*){ (>RENDER_INDEX) + xcol+1, yfine };
+
+            //LOGIC_BEGIN(6)
+            //inc $d021
+            //LOGIC_END()
+
+            LOGIC_BEGIN(14)
+            lda #>RENDER_INDEX
+            adc bobs_xcol+bob
+            sta.z left_render_index_xcol+1
+            adc #1
+            sta.z rigt_render_index_xcol+1
+            LOGIC_END()
+
+            LOGIC_BEGIN(10)
+            lda bobs_yfine+bob
+            sta.z left_render_index_xcol
+            sta.z rigt_render_index_xcol
+            LOGIC_END()
+
+            // char * left_canvas = (char*){ left_render_index_xcol[85], left_render_index_xcol[0] };
+            // bob_restore[0] = <left_canvas; bob_restore[1] = >left_canvas;
+            // char * rigt_canvas = (char*){ rigt_render_index_xcol[85], rigt_render_index_xcol[0] };
+            // bob_restore[3] = <rigt_canvas; bob_restore[4] = >rigt_canvas;
+            LOGIC_BEGIN(3)
+            ldx bobs_restore_base
+            LOGIC_END()            
+            LOGIC_BEGIN(2)
+            ldy #RENDER_OFFSET_CANVAS_LO
+            LOGIC_END()
+            LOGIC_BEGIN(13)
+            lda (left_render_index_xcol),y
+            sta.z left_canvas
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+0,x
+            LOGIC_END()
+            LOGIC_BEGIN(13)
+            lda (rigt_render_index_xcol),y
+            sta.z rigt_canvas
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+3,x
+            LOGIC_END()
+            LOGIC_BEGIN(2)
+            ldy #RENDER_OFFSET_CANVAS_HI
+            LOGIC_END()
+            LOGIC_BEGIN(16)
+            lda (left_render_index_xcol),y
+            adc canvas_base_hi
+            sta.z left_canvas+1
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+1,x
+            LOGIC_END()
+            LOGIC_BEGIN(16)
+            lda (rigt_render_index_xcol),y
+            adc canvas_base_hi
+            sta.z rigt_canvas+1
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+4,x
+            LOGIC_END()
+
+            // char left_ypos_inc_offset = left_render_index_xcol[170];
+            // bob_restore[2] = left_ypos_inc_offset;
+            // char rigt_ypos_inc_offset = rigt_render_index_xcol[170];
+            // bob_restore[5] = rigt_ypos_inc_offset;            
+
+            LOGIC_BEGIN(2)
+            ldy #RENDER_OFFSET_YPOS_INC
+            LOGIC_END()
+            LOGIC_BEGIN(13)
+            lda (left_render_index_xcol),y
+            sta.z left_ypos_inc_offset            
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+2,x
+            LOGIC_END()
+            LOGIC_BEGIN(13)
+            lda (rigt_render_index_xcol),y
+            sta.z rigt_ypos_inc_offset            
+            sta bobs_restore+SIZE_BOB_RESTORE*bob+5,x
+            LOGIC_END()
+
+            // Render Bob Rows 
+            LOGIC_BEGIN(2)
+            ldy #0                
+            LOGIC_END()  
+            .for(var row=0;row<6;row++) {
+
+                //left_canvas += RENDER_YPOS_INC[left_ypos_inc_offset++];
+                LOGIC_BEGIN(3)
+                ldx.z left_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(18)
+                lda RENDER_YPOS_INC,x
+                adc.z left_canvas
+                sta.z left_canvas
+                lda.z left_canvas+1
+                adc #0
+                sta.z left_canvas+1
+                LOGIC_END()
+                LOGIC_BEGIN(5)
+                inc.z left_ypos_inc_offset
+                LOGIC_END()
+                //rigt_canvas += RENDER_YPOS_INC[rigt_ypos_inc_offset++];
+                LOGIC_BEGIN(3)
+                ldx.z rigt_ypos_inc_offset
+                LOGIC_END()
+                LOGIC_BEGIN(18)
+                lda RENDER_YPOS_INC,x
+                adc.z rigt_canvas
+                sta.z rigt_canvas
+                lda.z rigt_canvas+1
+                adc #0
+                sta.z rigt_canvas+1
+                LOGIC_END()
+                LOGIC_BEGIN(5)
+                inc.z rigt_ypos_inc_offset
+                LOGIC_END()
+
+                // bob_restore[6] = *left_canvas;
+                // *left_canvas = *left_canvas & BOB_MASK_LEFT_0[bob_id] | BOB_PIXEL_LEFT_0[bob_id];
+                LOGIC_BEGIN(3)
+                ldx bobs_restore_base
+                LOGIC_END()            
+                LOGIC_BEGIN(10)
+                lda (left_canvas),y
+                sta bobs_restore+SIZE_BOB_RESTORE*bob+6+row,x
+                LOGIC_END()
+                LOGIC_BEGIN(10)
+                lda (rigt_canvas),y
+                sta bobs_restore+SIZE_BOB_RESTORE*bob+12+row,x
+                LOGIC_END()
+
+                LOGIC_BEGIN(4)
+                ldx bobs_bob_id+bob
+                LOGIC_END()
+                LOGIC_BEGIN(19)
+                lda (left_canvas),y
+                and BOB_MASK_LEFT+row*BOB_ROW_SIZE,x
+                ora BOB_PIXEL_LEFT+row*BOB_ROW_SIZE,x
+                sta (left_canvas),y
+                LOGIC_END()
+                // bob_restore[7] = *rigt_canvas;
+                // *rigt_canvas = *rigt_canvas & BOB_MASK_RIGT_0[bob_id] | BOB_PIXEL_RIGT_0[bob_id];
+                LOGIC_BEGIN(19)
+                lda (rigt_canvas),y
+                and BOB_MASK_RIGT+row*BOB_ROW_SIZE,x
+                ora BOB_PIXEL_RIGT+row*BOB_ROW_SIZE,x
+                sta (rigt_canvas),y
+                LOGIC_END()
+            }
+        }
+        //LOGIC_BEGIN(6)
+        //lda #0
+        //sta $d021
+        //LOGIC_END()
+
+        LOGIC_BEGIN(0) // end of logic code
+    }
+ }}
+const nomodify byte* LOGIC_CODE_UNMERGED = (byte*) 57344
+const nomodify byte NUM_BOBS = 5
+const nomodify word OFFSET_SPRITE_PTRS = $3f8
+const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+const byte OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+const byte OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+const byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+const byte OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+const byte OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
+const byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+const byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+const byte OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
+const byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE0_COLOR = $27
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE0_Y = 1
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE1_COLOR = $28
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE1_Y = 3
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE2_Y = 5
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE3_Y = 7
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE4_Y = 9
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE5_Y = $b
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE6_Y = $d
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITE7_Y = $f
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X = $1d
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_MC = $1c
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_MCOLOR1 = $25
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_MCOLOR2 = $26
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
+const byte OFFSET_STRUCT_MOS6581_SID_CH1_ATTACK_DECAY = 5
+const byte OFFSET_STRUCT_MOS6581_SID_CH1_CONTROL = 4
+const byte OFFSET_STRUCT_MOS6581_SID_CH1_PULSE_WIDTH = 2
+const byte OFFSET_STRUCT_MOS6581_SID_CH1_SUSTAIN_RELEASE = 6
+const byte OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
+const byte* PACMAN_CH1_CONTROL[]  = { $21, $21, $21, $21, $21, $21, 0, 0, 0, 0, 0, $21, $21, $21, $21, $21, $21, 0, 0, 0, 0, 0 }
+const byte* PACMAN_CH1_FREQ_HI[]  = { $23, $1d, $1a, $17, $15, $12, 0, 0, 0, 0, 0, $19, $1a, $1c, $1d, $20, $23, 0, 0, 0, 0, 0 }
+const byte PILL = 1
+const byte POWERUP = 2
+const nomodify byte* PROCPORT = (byte*) 1
+const nomodify byte* PROCPORT_DDR = (byte*) 0
+const nomodify byte PROCPORT_DDR_MEMORY_MASK = 7
+const nomodify byte PROCPORT_RAM_ALL = 0
+const nomodify byte PROCPORT_RAM_IO = 5
+const nomodify byte* RASTER = (byte*) 53266
+const nomodify byte* RASTER_CODE = (byte*) 32768
+const byte* RASTER_CODE_CRUNCHED[]  = kickasm(  uses VICII_CONTROL2 uses BORDER_COLOR uses RASTER_CODE_UNMERGED uses side_sprites_color uses side_sprites_mc uses bottom_sprites_color uses bottom_sprites_mc) {{ .macro RASTER_CYCLES(cycles) {
+        .byte $ff, cycles
+    }
+    .modify B2() {
+        .pc = RASTER_CODE_UNMERGED "RASTER CODE UNMERGED"
+        RASTER_CYCLES(29)
+        // Line 7 cycle 44
+        // Raster Line
+        .var raster_line = 7    
+        // Line in the sprite
+        .var sprite_line = 20
+        // Current sprite ypos
+        .var sprite_ypos = 7
+        // Current sprite screen (graphics bank not important since sprite layout in the banks is identical)
+        .var sprite_screen = SCREENS_1
+        .var available_cycles = 0;
+        .for(var i=0;i<293;i++) {
+            // Line cycle count            
+            .var line_cycles = 46
+            .if(raster_line>=70 && raster_line<238) {
+                // Only 2 sprites on these lines - so more cycles available
+                .eval line_cycles = 58
+            }            
+            // Create 9th sprite by moving sprite 0
+            .if(mod(raster_line,2)==0) {
+                lda #$6f            
+                sta $d000           
+            } else {
+                lda #$e7
+                sta $d000
+            }
+            .eval line_cycles -= 6;
+            lda #$8
+            // Cycle 50. LSR abs is a 6 cycle RWM instruction.
+            lsr VICII_CONTROL2  
+            sta VICII_CONTROL2
+            .eval line_cycles -= 12;
+            .eval raster_line++
+            .eval sprite_line++
+            .if(sprite_line==21) {
+                .eval sprite_line = 0
+                .eval sprite_ypos += 21
+            }
+            // Set sprite single-color mode on splash
+            .if(raster_line==53) {
+                lda side_sprites_mc
+                sta $d01c
+                lda side_sprites_color
+                sta $d027
+                sta $d028
+                .eval line_cycles -= 18
+            }
+            // Set sprite multi-color mode on splash
+            .if(raster_line==248) {
+                lda bottom_sprites_mc
+                sta $d01c
+                lda bottom_sprites_color
+                sta $d027
+                sta $d028
+                .eval line_cycles -= 18
+                //.print "raster:"+raster_line+" multi-color"
+            }
+            // Open top border
+            .if(raster_line==55) {
+                lda #VICII_RSEL|VICII_ECM|VICII_BMM|7
+                sta VICII_CONTROL1
+                .eval line_cycles -= 6
+                //.print "raster:"+raster_line+" top border rsel=1"
+            }
+            // Open bottom border
+            .if(raster_line==250) {
+                lda #VICII_ECM|VICII_BMM|7 // DEN=0, RSEL=0
+                sta VICII_CONTROL1
+                .eval line_cycles -= 6
+                //.print "raster:"+raster_line+" bottom border rsel=0"
+            }
+            // Move sprites down
+            .if(sprite_line>=2 && sprite_line<=9) {
+                .if(sprite_ypos<300) {
+                    .var sprite_id = sprite_line-2
+                    .if(sprite_id==0 || sprite_id==1 || sprite_ypos<=55 || sprite_ypos>=(246-21)) {
+                        lda #sprite_ypos
+                        sta SPRITES_YPOS+2*sprite_id
+                        .eval line_cycles -= 6;
+                        //.print "raster:"+raster_line+" sprite:"+sprite_id+" ypos:"+sprite_ypos
+                    }
+                }
+            }
+            // Change sprite data
+            .if(sprite_line==20) {
+                .eval sprite_screen += $400
+                lda #sprite_screen/$40
+                sta VICII_MEMORY
+                .eval line_cycles -= 6
+                //.print "raster:"+raster_line+" sprite data $"+toHexString(sprite_screen)
+            }
+            // Spend the rest of the cycles on NOPS
+            .if(line_cycles<0 || line_cycles==1) .error "Too many cycles spent on line "+raster_line            
+            .if(line_cycles>0) {
+                //.print "raster:"+raster_line+"  cycles $"+toHexString(line_cycles)                
+                RASTER_CYCLES(line_cycles)
+                .eval line_cycles -= line_cycles
+                .eval available_cycles += line_cycles
+            }
+        } 
+        //.print "Available cycles: "+available_cycles
+
+        lda #$6f            
+        sta $d000   
+        lda #$8
+        // Cycle 50. LSR abs is a 6 cycle RWM instruction.
+        lsr VICII_CONTROL2  
+        sta VICII_CONTROL2
+        RASTER_CYCLES(00) // End of raster code
+    }
+ }}
+const nomodify byte* RASTER_CODE_UNMERGED = (byte*) 24576
+const nomodify byte RED = 2
+const nomodify byte* RENDER_INDEX = (byte*) 46592
+const nomodify byte RENDER_OFFSET_CANVAS_HI = $50
+const nomodify byte RENDER_OFFSET_CANVAS_LO = 0
+const nomodify byte RENDER_OFFSET_YPOS_INC = $a0
+const byte** RENDER_XCOLS[$1a]  = { (byte*) 0, (byte*) 1, (byte*) 2, (byte*) 1024, (byte*) 1025, (byte*) 1026, (byte*) 2048, (byte*) 2049, (byte*) 2050, (byte*) 3072, (byte*) 3073, (byte*) 3074, (byte*) 4096, (byte*) 4097, (byte*) 4098, (byte*) 5120, (byte*) 5121, (byte*) 5122, (byte*) 6144, (byte*) 6145, (byte*) 6146, (byte*) 7168, (byte*) 7169, (byte*) 7170, (byte*) 0, (byte*) 0 }
+const word* RENDER_YPOS[$95]  = { 0, 0, 0, 6, $c, $12, $18, $1e, $24, $2a, $30, $36, $3c, (word)$40+3, (word)$40+9, (word)$40+$f, (word)$40+$15, (word)$40+$1b, (word)$40+$21, (word)$40+$27, (word)$40+$2d, (word)$40+$33, (word)$40+$39, $80, (word)$80+6, (word)$80+$c, (word)$80+$12, (word)$80+$18, (word)$80+$1e, (word)$80+$24, (word)$80+$2a, (word)$80+$30, (word)$80+$36, (word)$80+$3c, (word)$c0+3, (word)$c0+9, (word)$c0+$f, (word)$c0+$15, (word)$c0+$1b, (word)$c0+$21, (word)$c0+$27, (word)$c0+$2d, (word)$c0+$33, (word)$c0+$39, $100, $100+6, $100+$c, $100+$12, $100+$18, $100+$1e, $100+$24, $100+$2a, $100+$30, $100+$36, $100+$3c, $140+3, $140+9, $140+$f, $140+$15, $140+$1b, $140+$21, $140+$27, $140+$2d, $140+$33, $140+$39, $180, $180+6, $180+$c, $180+$12, $180+$18, $180+$1e, $180+$24, $180+$2a, $180+$30, $180+$36, $180+$3c, $1c0+3, $1c0+9, $1c0+$f, $1c0+$15, $1c0+$1b, $1c0+$21, $1c0+$27, $1c0+$2d, $1c0+$33, $1c0+$39, $200, $200+6, $200+$c, $200+$12, $200+$18, $200+$1e, $200+$24, $200+$2a, $200+$30, $200+$36, $200+$3c, $240+3, $240+9, $240+$f, $240+$15, $240+$1b, $240+$21, $240+$27, $240+$2d, $240+$33, $240+$39, $280, $280+6, $280+$c, $280+$12, $280+$18, $280+$1e, $280+$24, $280+$2a, $280+$30, $280+$36, $280+$3c, $2c0+3, $2c0+9, $2c0+$f, $2c0+$15, $2c0+$1b, $2c0+$21, $2c0+$27, $2c0+$2d, $2c0+$33, $2c0+$39, $300, $300+6, $300+$c, $300+$12, $300+$18, $300+$1e, $300+$24, $300+$2a, $300+$30, $300+$36, $300+$3c, $340+3, $340+9, $340+$f, $340+$15, $340+$1b, $340+$21, $340+$27, $340+$2d, $340+$33, $340+$39 }
+const word* RENDER_YPOS_9TH[$95]  = { 3, 3, 3, 9, $f, $15, $1b, $21, $27, $2d, $33, $39, $40, (word)$40+6, (word)$40+$c, (word)$40+$12, (word)$40+$18, (word)$40+$1e, (word)$40+$24, (word)$40+$2a, (word)$40+$30, (word)$40+$36, (word)$40+$3c, (word)$80+3, (word)$80+9, (word)$80+$f, (word)$80+$15, (word)$80+$1b, (word)$80+$21, (word)$80+$27, (word)$80+$2d, (word)$80+$33, (word)$80+$39, $c0, (word)$c0+6, (word)$c0+$c, (word)$c0+$12, (word)$c0+$18, (word)$c0+$1e, (word)$c0+$24, (word)$c0+$2a, (word)$c0+$30, (word)$c0+$36, (word)$c0+$3c, $100+3, $100+9, $100+$f, $100+$15, $100+$1b, $100+$21, $100+$27, $100+$2d, $100+$33, $100+$39, $140, $140+6, $140+$c, $140+$12, $140+$18, $140+$1e, $140+$24, $140+$2a, $140+$30, $140+$36, $140+$3c, $180+3, $180+9, $180+$f, $180+$15, $180+$1b, $180+$21, $180+$27, $180+$2d, $180+$33, $180+$39, $1c0, $1c0+6, $1c0+$c, $1c0+$12, $1c0+$18, $1c0+$1e, $1c0+$24, $1c0+$2a, $1c0+$30, $1c0+$36, $1c0+$3c, $200+3, $200+9, $200+$f, $200+$15, $200+$1b, $200+$21, $200+$27, $200+$2d, $200+$33, $200+$39, $240, $240+6, $240+$c, $240+$12, $240+$18, $240+$1e, $240+$24, $240+$2a, $240+$30, $240+$36, $240+$3c, $280+3, $280+9, $280+$f, $280+$15, $280+$1b, $280+$21, $280+$27, $280+$2d, $280+$33, $280+$39, $2c0, $2c0+6, $2c0+$c, $2c0+$12, $2c0+$18, $2c0+$1e, $2c0+$24, $2c0+$2a, $2c0+$30, $2c0+$36, $2c0+$3c, $300+3, $300+9, $300+$f, $300+$15, $300+$1b, $300+$21, $300+$27, $300+$2d, $300+$33, $300+$39, $340, $340+6, $340+$c, $340+$12, $340+$18, $340+$1e, $340+$24, $340+$2a, $340+$30, $340+$36, $340+$3c }
+const byte* RENDER_YPOS_INC[$a0]  = { 0, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7 }
+const byte RIGHT = $20
+const byte SCATTER = 1
+const nomodify byte* SCREENS_1 = (byte*) 16384
+const nomodify byte* SCREENS_2 = (byte*) 49152
+const nomodify struct MOS6581_SID* SID = (struct MOS6581_SID*) 54272
+const nomodify byte* SID_CH1_FREQ_HI = (byte*) 54273
+const byte SIZEOF_BYTE = 1
+const nomodify byte SIZE_BOB_RESTORE = $12
+const nomodify byte* SPLASH = (byte*) 16384
+const byte* SPLASH_CRUNCHED[]  = kickasm(  uses SPLASH) {{ .modify B2() {
+        .pc = SPLASH "SPLASH SCREEN"                           //       00:BLACK, 01:BLUE, 10:YELLOW, 11:RED
+        .var pic_splash_mc = LoadPicture("pacman-splash.png", List().add($000000, $352879, $bfce72, $883932))
+                                                           //                0:BLACK, 1:YELLOW
+        .var pic_splash_yellow = LoadPicture("pacman-splash.png", List().add($000000, $bfce72))
+                                                           //                0:BLACK, 1:BLUE
+        .var pic_splash_blue = LoadPicture("pacman-splash.png", List().add($000000, $352879))
+        .for(var xcol=0; xcol<25; xcol++) {
+            .for(var ypos=0; ypos<147; ypos++) {
+                .if(ypos>25 && ypos<123) {
+                    // Sprites in the sides are in single color blue on splash screen
+                    .byte pic_splash_blue.getSinglecolorByte(xcol,ypos)
+                } else .if(xcol>2 && xcol<21) {
+                    // Sprites 2-7 are in single color yellow on splash screen
+                    .byte pic_splash_yellow.getSinglecolorByte(xcol,ypos)
+                } else {
+                    // Sprites 0&1 are in multi color on splash screen
+                    .byte pic_splash_mc.getMulticolorByte(xcol,ypos)
+                }
+            }        
+        }
+    }
+ }}
+const nomodify byte* SPRITES_1 = (byte*) 24576
+const nomodify byte* SPRITES_2 = (byte*) 57344
+const nomodify byte* SPRITES_COLOR = (byte*) 53287
+const nomodify byte* SPRITES_XPOS = (byte*) 53248
+const nomodify byte* SPRITES_YPOS = (byte*) 53249
+const byte STOP = 0
+const nomodify byte* TILES_LEFT = LEVEL_TILES+$a00
+const nomodify byte* TILES_RIGHT = LEVEL_TILES+$a80
+const nomodify byte* TILES_TYPE = LEVEL_TILES+$b00
+const byte TILE_TYPE::EMPTY = 0
+const byte TILE_TYPE::PILL = 1
+const byte TILE_TYPE::POWERUP = 2
+const byte TILE_TYPE::WALL = 4
+const byte UP = 4
+const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
+const nomodify byte VICII_BMM = $20
+const nomodify byte* VICII_CONTROL1 = (byte*) 53265
+const nomodify byte* VICII_CONTROL2 = (byte*) 53270
+const nomodify byte VICII_DEN = $10
+const nomodify byte VICII_ECM = $40
+const nomodify byte* VICII_MEMORY = (byte*) 53272
+const nomodify byte VICII_RSEL = 8
+const nomodify byte VICII_RST8 = $80
+const byte WALL = 4
+const nomodify byte* WIN_GFX = (byte*) 42752
+const byte* WIN_GFX_CRUNCHED[]  = kickasm(  uses WIN_GFX) {{ .modify B2() {
+        .pc = WIN_GFX "WIN GRAPHICS"                           //       00:BLACK, 01:BLUE, 10:YELLOW, 11:RED
+        .var pic_win = LoadPicture("pacman-win.png", List().add($000000, $352879, $bfce72, $883932))
+        .for(var xcol=0; xcol<25; xcol++) {
+            .for(var ypos=0; ypos<25; ypos++) {
+                .byte pic_win.getMulticolorByte(xcol,ypos)
+            }
+        }
+    }
+ }}
+const nomodify byte YELLOW = 7
+void __start()
+volatile byte anim_frame_idx loadstore zp[1]:46 0.9019607843137255
+const byte* bobs_bob_id[NUM_BOBS]  = { 0, 0, 0, 0, 0 }
+const byte* bobs_restore[NUM_BOBS*SIZE_BOB_RESTORE*2]  = { fill( NUM_BOBS*SIZE_BOB_RESTORE*2, 0) }
+volatile byte bobs_restore_base loadstore zp[1]:32 1070.0
+const byte* bobs_xcol[NUM_BOBS]  = { $a, $a, $a, $a, $a }
+const byte* bobs_yfine[NUM_BOBS]  = { $2d, $2d, $2d, $2d, $2d }
+volatile byte bottom_sprites_color loadstore zp[1]:37 11040.0
+volatile byte bottom_sprites_mc loadstore zp[1]:38 11040.0
+void byteboozer_decrunch(volatile byte* byteboozer_decrunch::crunched)
+volatile byte* byteboozer_decrunch::crunched loadstore zp[2]:87 438.5
+volatile byte canvas_base_hi loadstore zp[1]:31 1070.0
+byte choose_direction(byte choose_direction::open_directions , byte choose_direction::ghost_xtile , byte choose_direction::ghost_ytile , byte choose_direction::target_xtile , byte choose_direction::target_ytile)
+byte~ choose_direction::$2 reg byte a 202.0
+byte~ choose_direction::$4 reg byte a 202.0
+byte~ choose_direction::$6 reg byte a 202.0
+byte~ choose_direction::$8 reg byte a 202.0
+byte choose_direction::direction
+byte choose_direction::direction#10 direction zp[1]:83 28.857142857142858
+byte choose_direction::direction#6 direction zp[1]:83 67.33333333333333
+byte choose_direction::direction#8 direction zp[1]:83 57.714285714285715
+byte choose_direction::dist_down
+byte choose_direction::dist_down#0 reg byte x 151.5
+byte choose_direction::dist_left
+byte choose_direction::dist_left#0 dist_left zp[1]:80 151.5
+byte choose_direction::dist_min
+byte choose_direction::dist_min#10 reg byte x 121.2
+byte choose_direction::dist_min#11 dist_min zp[1]:80 101.0
+byte choose_direction::dist_min#13 reg byte x 202.0
+byte choose_direction::dist_min#14 reg byte x 202.0
+byte choose_direction::dist_min#17 dist_min zp[1]:80 202.0
+byte choose_direction::dist_min#18 dist_min zp[1]:80 202.0
+byte choose_direction::dist_min#6 reg byte y 80.8
+byte choose_direction::dist_right
+byte choose_direction::dist_right#0 reg byte a 202.0
+byte choose_direction::dist_up
+byte choose_direction::dist_up#0 reg byte y 101.0
+byte choose_direction::ghost_xtile
+byte choose_direction::ghost_xtile#0 reg byte y 5.5
+byte choose_direction::ghost_xtile#1 reg byte y 5.5
+byte choose_direction::ghost_xtile#2 reg byte y 5.5
+byte choose_direction::ghost_xtile#3 reg byte y 5.5
+byte choose_direction::ghost_xtile#4 reg byte y 145.0
+byte choose_direction::ghost_ytile
+byte choose_direction::ghost_ytile#0 ghost_ytile zp[1]:4 7.333333333333333
+byte choose_direction::ghost_ytile#1 ghost_ytile zp[1]:4 7.333333333333333
+byte choose_direction::ghost_ytile#2 ghost_ytile zp[1]:4 7.333333333333333
+byte choose_direction::ghost_ytile#3 ghost_ytile zp[1]:4 7.333333333333333
+byte choose_direction::ghost_ytile#4 ghost_ytile zp[1]:4 72.5
+byte choose_direction::open_directions
+byte choose_direction::open_directions#0 open_directions zp[1]:79 4.4
+byte choose_direction::open_directions#1 open_directions zp[1]:79 4.4
+byte choose_direction::open_directions#10 open_directions zp[1]:79 19.478260869565215
+byte choose_direction::open_directions#2 open_directions zp[1]:79 4.4
+byte choose_direction::open_directions#3 open_directions zp[1]:79 4.4
+byte choose_direction::return
+byte choose_direction::return#0 reg byte a 22.0
+byte choose_direction::return#1 reg byte a 22.0
+byte choose_direction::return#10 return zp[1]:83 41.0
+byte choose_direction::return#2 reg byte a 22.0
+byte choose_direction::return#3 reg byte a 22.0
+byte choose_direction::target_xtile
+byte choose_direction::target_xtile#0 reg byte x 11.0
+byte choose_direction::target_xtile#1 reg byte x 11.0
+byte choose_direction::target_xtile#2 reg byte x 11.0
+byte choose_direction::target_xtile#3 reg byte x 11.0
+byte choose_direction::target_xtile#4 reg byte x 145.0
+byte choose_direction::target_ytile
+byte choose_direction::target_ytile#0 target_ytile zp[1]:3 22.0
+byte choose_direction::target_ytile#1 target_ytile zp[1]:3 22.0
+byte choose_direction::target_ytile#2 target_ytile zp[1]:3 22.0
+byte choose_direction::target_ytile#3 target_ytile zp[1]:3 22.0
+byte choose_direction::target_ytile#4 target_ytile zp[1]:3 72.5
+byte choose_direction::xdiff
+byte choose_direction::xdiff#0 xdiff zp[1]:93 21.041666666666664
+byte choose_direction::ydiff
+byte choose_direction::ydiff#0 ydiff zp[1]:4 21.956521739130434
+void done_run()
+byte~ done_run::$8 reg byte a 2000002.0
+byte* done_run::gfx
+byte* done_run::gfx#1 gfx zp[2]:89 333333.6666666667
+byte* done_run::gfx#2 gfx zp[2]:89 800001.25
+byte* done_run::gfx#4 gfx zp[2]:89 100001.0
+byte done_run::i
+byte done_run::i#1 reg byte x 200002.0
+byte done_run::i#2 reg byte x 133334.66666666666
+byte done_run::i1
+byte done_run::i1#1 reg byte x 200002.0
+byte done_run::i1#2 reg byte x 120001.2
+byte done_run::pixels
+byte done_run::pixels#0 reg byte x 500000.5
+byte done_run::xcol
+byte done_run::xcol#1 xcol zp[1]:5 200002.0
+byte done_run::xcol#2 xcol zp[1]:5 118182.18181818182
+byte done_run::ypos
+byte done_run::ypos#1 ypos zp[1]:6 2000002.0
+byte done_run::ypos#2 ypos zp[1]:6 500000.5
+volatile byte frame loadstore zp[1]:45 0.5
+void game_logic()
+byte~ game_logic::$119 reg byte a 22.0
+byte~ game_logic::$14 reg byte x 22.0
+byte~ game_logic::$140 reg byte a 22.0
+byte~ game_logic::$15 reg byte a 22.0
+byte~ game_logic::$161 reg byte a 22.0
+byte~ game_logic::$17 reg byte a 22.0
+byte~ game_logic::$18 reg byte x 22.0
+byte~ game_logic::$182 reg byte a 22.0
+byte~ game_logic::$19 reg byte x 11.0
+byte~ game_logic::$199 reg byte a 22.0
+byte~ game_logic::$2 reg byte x 22.0
+byte~ game_logic::$20 reg byte a 22.0
+byte~ game_logic::$200 reg byte a 22.0
+byte~ game_logic::$204 reg byte a 22.0
+byte~ game_logic::$21 reg byte a 22.0
+byte~ game_logic::$210 zp[1]:80 2.588235294117647
+byte~ game_logic::$220 reg byte x 11.0
+byte~ game_logic::$223 reg byte x 11.0
+byte~ game_logic::$226 reg byte x 11.0
+byte~ game_logic::$229 reg byte x 11.0
+byte~ game_logic::$232 reg byte x 11.0
+byte~ game_logic::$25 reg byte a 22.0
+byte~ game_logic::$26 reg byte x 22.0
+byte~ game_logic::$27 reg byte x 11.0
+byte~ game_logic::$28 reg byte a 22.0
+byte~ game_logic::$29 reg byte a 22.0
+byte~ game_logic::$3 reg byte a 22.0
+byte~ game_logic::$31 reg byte a 22.0
+byte~ game_logic::$32 reg byte x 22.0
+byte~ game_logic::$33 reg byte x 11.0
+byte~ game_logic::$34 reg byte a 22.0
+byte~ game_logic::$35 reg byte a 22.0
+byte~ game_logic::$37 reg byte a 22.0
+byte~ game_logic::$38 reg byte x 22.0
+byte~ game_logic::$39 reg byte x 11.0
+byte~ game_logic::$40 reg byte a 22.0
+byte~ game_logic::$41 reg byte a 22.0
+byte~ game_logic::$43 reg byte a 22.0
+byte~ game_logic::$44 reg byte x 22.0
+byte~ game_logic::$45 reg byte x 11.0
+byte~ game_logic::$46 reg byte a 22.0
+byte~ game_logic::$47 reg byte a 22.0
+byte~ game_logic::$65 reg byte a 22.0
+byte~ game_logic::$66 reg byte a 22.0
+byte*~ game_logic::$67 zp[2]:81 22.0
+byte~ game_logic::$68 reg byte a 22.0
+byte~ game_logic::$69 reg byte a 22.0
+byte~ game_logic::$70 reg byte a 22.0
+byte*~ game_logic::$71 zp[2]:81 22.0
+byte~ game_logic::$72 reg byte a 22.0
+byte~ game_logic::$75 reg byte x 11.0
+byte~ game_logic::$77 reg byte y 11.0
+byte~ game_logic::$80 reg byte x 11.0
+byte~ game_logic::$82 reg byte y 11.0
+byte~ game_logic::$85 reg byte x 11.0
+byte~ game_logic::$87 reg byte y 11.0
+byte~ game_logic::$90 reg byte x 11.0
+byte~ game_logic::$92 reg byte y 11.0
+byte game_logic::do_reverse
+byte game_logic::do_reverse#4 reg byte a 11.0
+byte game_logic::ghost1_bob_xfine
+byte game_logic::ghost1_bob_xfine#0 reg byte y 5.5
+byte game_logic::ghost1_xtile
+byte game_logic::ghost1_xtile#0 ghost1_xtile zp[1]:86 2.357142857142857
+byte game_logic::ghost1_ytile
+byte game_logic::ghost1_ytile#0 ghost1_ytile zp[1]:4 2.357142857142857
+byte game_logic::ghost2_bob_xfine
+byte game_logic::ghost2_bob_xfine#0 reg byte y 5.5
+byte game_logic::ghost2_xtile
+byte game_logic::ghost2_xtile#0 ghost2_xtile zp[1]:85 2.357142857142857
+byte game_logic::ghost2_ytile
+byte game_logic::ghost2_ytile#0 ghost2_ytile zp[1]:4 2.357142857142857
+byte game_logic::ghost3_bob_xfine
+byte game_logic::ghost3_bob_xfine#0 reg byte y 5.5
+byte game_logic::ghost3_xtile
+byte game_logic::ghost3_xtile#0 ghost3_xtile zp[1]:84 2.357142857142857
+byte game_logic::ghost3_ytile
+byte game_logic::ghost3_ytile#0 ghost3_ytile zp[1]:4 2.357142857142857
+byte game_logic::ghost4_bob_xfine
+byte game_logic::ghost4_bob_xfine#0 reg byte y 5.5
+byte game_logic::ghost4_xtile
+byte game_logic::ghost4_xtile#0 ghost4_xtile zp[1]:83 2.357142857142857
+byte game_logic::ghost4_ytile
+byte game_logic::ghost4_ytile#0 ghost4_ytile zp[1]:4 2.357142857142857
+byte game_logic::ghost_frame_idx
+byte game_logic::ghost_frame_idx#0 ghost_frame_idx zp[1]:2 16.5
+byte game_logic::ghost_frame_idx#1 ghost_frame_idx zp[1]:2 22.0
+byte game_logic::ghost_frame_idx#2 ghost_frame_idx zp[1]:2 1.9999999999999998
+byte game_logic::joy_directions
+byte game_logic::joy_directions#0 reg byte a 16.5
+byte game_logic::new_direction
+byte game_logic::new_direction#0 reg byte a 16.5
+byte game_logic::open_directions
+byte game_logic::open_directions#0 reg byte a 22.0
+byte game_logic::open_directions#1 reg byte y 5.5
+byte game_logic::open_directions1
+byte game_logic::open_directions1#0 reg byte a 22.0
+byte game_logic::open_directions1#1 reg byte y 5.5
+byte game_logic::open_directions2
+byte game_logic::open_directions2#0 reg byte a 22.0
+byte game_logic::open_directions2#1 reg byte y 5.5
+byte game_logic::open_directions3
+byte game_logic::open_directions3#0 reg byte a 22.0
+byte game_logic::open_directions3#1 reg byte y 5.5
+byte game_logic::open_directions4
+byte game_logic::open_directions4#0 reg byte x 3.666666666666667
+byte game_logic::pacman_bob_xfine
+byte game_logic::pacman_bob_xfine#0 reg byte y 5.5
+byte game_logic::pacman_xtile
+byte game_logic::pacman_xtile#0 pacman_xtile zp[1]:79 6.769230769230768
+byte game_logic::pacman_xtile1
+byte game_logic::pacman_xtile1#0 reg byte x 11.0
+byte game_logic::pacman_ytile
+byte game_logic::pacman_ytile#0 reg byte a 22.0
+byte game_logic::pacman_ytile1
+byte game_logic::pacman_ytile1#0 reg byte a 11.0
+byte game_logic::target_xtile
+byte game_logic::target_xtile#2 reg byte x 11.0
+byte game_logic::target_xtile#3 reg byte x 5.5
+byte game_logic::target_xtile1
+byte game_logic::target_xtile1#2 reg byte x 11.0
+byte game_logic::target_xtile1#3 reg byte x 5.5
+byte game_logic::target_xtile2
+byte game_logic::target_xtile2#2 reg byte x 11.0
+byte game_logic::target_xtile2#3 reg byte x 5.5
+byte game_logic::target_xtile3
+byte game_logic::target_xtile3#2 reg byte x 11.0
+byte game_logic::target_xtile3#3 reg byte x 5.5
+byte game_logic::target_ytile
+byte game_logic::target_ytile#2 target_ytile zp[1]:3 22.0
+byte game_logic::target_ytile#3 target_ytile zp[1]:3 4.4
+byte game_logic::target_ytile1
+byte game_logic::target_ytile1#2 target_ytile1 zp[1]:3 22.0
+byte game_logic::target_ytile1#3 target_ytile1 zp[1]:3 4.4
+byte game_logic::target_ytile2
+byte game_logic::target_ytile2#2 target_ytile2 zp[1]:3 22.0
+byte game_logic::target_ytile2#3 target_ytile2 zp[1]:3 4.4
+byte game_logic::target_ytile3
+byte game_logic::target_ytile3#2 target_ytile3 zp[1]:3 22.0
+byte game_logic::target_ytile3#3 target_ytile3 zp[1]:3 4.4
+byte game_logic::tile_id
+byte game_logic::tile_id#0 reg byte x 16.5
+byte* game_logic::ytiles
+byte* game_logic::ytiles#0 ytiles zp[2]:81 5.5
+volatile byte game_logic_substep loadstore zp[1]:77 2.947368421052632
+volatile byte game_playable loadstore zp[1]:78 69.48275862068965
+void gameplay_run()
+word~ gameplay_run::$4 zp[2]:11 2002.0
+byte gameplay_run::i
+byte gameplay_run::i#1 reg byte x 200002.0
+byte gameplay_run::i#2 reg byte x 133334.66666666666
+byte gameplay_run::i1
+byte gameplay_run::i1#1 reg byte x 200002.0
+byte gameplay_run::i1#2 reg byte x 133334.66666666666
+byte gameplay_run::i2
+byte gameplay_run::i2#1 reg byte x 200002.0
+byte gameplay_run::i2#2 reg byte x 133334.66666666666
+volatile byte ghost1_direction loadstore zp[1]:55 122.24096385542168
+volatile byte ghost1_respawn loadstore zp[1]:58 271.8378378378378
+volatile byte ghost1_reverse loadstore zp[1]:57 0.7291666666666666
+volatile byte ghost1_substep loadstore zp[1]:56 223.51111111111112
+volatile byte ghost1_xfine loadstore zp[1]:53 84.55
+volatile byte ghost1_yfine loadstore zp[1]:54 82.13008130081302
+volatile byte ghost2_direction loadstore zp[1]:61 110.28260869565217
+volatile byte ghost2_respawn loadstore zp[1]:64 264.6842105263158
+volatile byte ghost2_reverse loadstore zp[1]:63 0.7142857142857143
+volatile byte ghost2_substep loadstore zp[1]:62 218.65217391304347
+volatile byte ghost2_xfine loadstore zp[1]:59 76.28571428571428
+volatile byte ghost2_yfine loadstore zp[1]:60 74.27941176470588
+volatile byte ghost3_direction loadstore zp[1]:67 100.45544554455446
+volatile byte ghost3_respawn loadstore zp[1]:70 257.8974358974359
+volatile byte ghost3_reverse loadstore zp[1]:69 0.7
+volatile byte ghost3_substep loadstore zp[1]:68 214.0
+volatile byte ghost3_xfine loadstore zp[1]:65 69.4931506849315
+volatile byte ghost3_yfine loadstore zp[1]:66 67.7986577181208
+volatile byte ghost4_direction loadstore zp[1]:73 92.23636363636363
+volatile byte ghost4_respawn loadstore zp[1]:76 251.45000000000002
+volatile byte ghost4_reverse loadstore zp[1]:75 0.6862745098039216
+volatile byte ghost4_substep loadstore zp[1]:74 209.54166666666666
+volatile byte ghost4_xfine loadstore zp[1]:71 63.81132075471698
+volatile byte ghost4_yfine loadstore zp[1]:72 62.358024691358025
+const byte* ghost_frames[]  = { 0, 0, 0, 0, $3c, $40, $3c, $40, $34, $38, $34, $38, 0, 0, 0, 0, $2c, $30, $2c, $30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, $24, $28, $24, $28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, $5c, $60, $5c, $60, $54, $58, $54, $58, 0, 0, 0, 0, $4c, $50, $4c, $50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, $44, $48, $44, $48 }
+volatile byte ghosts_mode loadstore zp[1]:51 1.1044776119402984
+volatile byte ghosts_mode_count loadstore zp[1]:52 234.93023255813955
+void init_bobs_restore()
+const byte* init_bobs_restore::CANVAS_HIDDEN = (byte*) 59904
+byte init_bobs_restore::bob
+byte init_bobs_restore::bob#1 reg byte x 20002.0
+byte init_bobs_restore::bob#2 reg byte x 2727.5454545454545
+byte* init_bobs_restore::bob_restore
+byte* init_bobs_restore::bob_restore#1 bob_restore zp[2]:11 10001.0
+byte* init_bobs_restore::bob_restore#5 bob_restore zp[2]:11 16000.7
+byte init_bobs_restore::i
+byte init_bobs_restore::i#1 reg byte y 200002.0
+byte init_bobs_restore::i#2 reg byte y 133334.66666666666
+void init_level_tile_directions()
+byte~ init_level_tile_directions::$11 reg byte a 2.0000002E7
+byte~ init_level_tile_directions::$15 reg byte a 2.0000002E7
+byte~ init_level_tile_directions::$3 reg byte x 2.0000002E7
+byte~ init_level_tile_directions::$7 reg byte x 2.0000002E7
+byte* init_level_tile_directions::directions
+byte* init_level_tile_directions::directions#1 directions zp[2]:11 1000001.0
+byte* init_level_tile_directions::directions#7 directions zp[2]:11 315789.55263157893
+byte init_level_tile_directions::open_directions
+byte init_level_tile_directions::open_directions#11 open_directions zp[1]:7 2857143.1428571427
+byte init_level_tile_directions::open_directions#12 open_directions zp[1]:7 5714286.285714285
+byte init_level_tile_directions::open_directions#13 open_directions zp[1]:7 5714286.285714285
+byte init_level_tile_directions::open_directions#2 open_directions zp[1]:7 2.0000002E7
+byte init_level_tile_directions::open_directions#3 open_directions zp[1]:7 2.0000002E7
+byte init_level_tile_directions::open_directions#4 open_directions zp[1]:7 2.0000002E7
+byte init_level_tile_directions::open_directions#8 open_directions zp[1]:7 3.0000003E7
+byte init_level_tile_directions::xtile
+byte init_level_tile_directions::xtile#1 xtile zp[1]:6 2.0000002E7
+byte init_level_tile_directions::xtile#10 xtile zp[1]:6 2285714.514285714
+byte init_level_tile_directions::ytile
+byte init_level_tile_directions::ytile#1 ytile zp[1]:5 2000002.0
+byte init_level_tile_directions::ytile#15 ytile zp[1]:5 1102564.282051282
+void init_render_index()
+word~ init_render_index::$10 zp[2]:97 200002.0
+word~ init_render_index::$11 zp[2]:97 200002.0
+word*~ init_render_index::$12 zp[2]:97 200002.0
+byte~ init_render_index::$5 reg byte a 200002.0
+byte~ init_render_index::$6 reg byte a 200002.0
+byte~ init_render_index::$9 reg byte a 20002.0
+byte* init_render_index::canvas
+byte* init_render_index::canvas#0 canvas zp[2]:97 100001.0
+byte* init_render_index::canvas_xcol
+byte* init_render_index::canvas_xcol#0 canvas_xcol zp[2]:94 5789.578947368421
+byte* init_render_index::render_index
+byte* init_render_index::render_index#1 render_index zp[2]:89 10001.0
+byte* init_render_index::render_index_xcol
+byte* init_render_index::render_index_xcol#0 render_index_xcol zp[2]:89 1200.1200000000001
+byte* init_render_index::render_index_xcol#1 render_index_xcol_1 zp[2]:99 100001.0
+byte* init_render_index::render_index_xcol#2 render_index_xcol_1 zp[2]:99 34000.4
+byte* init_render_index::render_index_xcol#7 render_index_xcol_1 zp[2]:99 20002.0
+word* init_render_index::render_ypos_table
+word* init_render_index::render_ypos_table#4 render_ypos_table zp[2]:11 4761.952380952381
+byte init_render_index::x_col
+byte init_render_index::x_col#1 x_col zp[1]:5 20002.0
+byte init_render_index::x_col#2 x_col zp[1]:5 1923.2692307692307
+byte init_render_index::y_pos
+byte init_render_index::y_pos#1 y_pos zp[1]:6 200002.0
+byte init_render_index::y_pos#2 y_pos zp[1]:6 18750.1875
+byte init_render_index::ypos_inc_offset
+byte init_render_index::ypos_inc_offset#2 reg byte x 200002.0
+byte init_render_index::ypos_inc_offset#3 reg byte x 200002.0
+byte init_render_index::ypos_inc_offset#4 reg byte x 28182.181818181816
+byte init_render_index::ypos_inc_offset#7 reg byte x 2500.25
+byte init_render_index::ypos_inc_offset#8 reg byte x 100001.0
+void init_sprite_pointers()
+byte~ init_sprite_pointers::$2 reg byte a 2.0000002E7
+const nomodify byte init_sprite_pointers::SPRITE_ID_0 = (byte)SPRITES_1&$3fff/$40
+byte init_sprite_pointers::screen
+byte init_sprite_pointers::screen#1 reg byte x 2000002.0
+byte init_sprite_pointers::screen#2 reg byte x 1181818.5454545454
+byte init_sprite_pointers::sprite
+byte init_sprite_pointers::sprite#1 reg byte y 2.0000002E7
+byte init_sprite_pointers::sprite#2 reg byte y 1.0000001E7
+byte init_sprite_pointers::sprite_id
+byte init_sprite_pointers::sprite_id#0 reg byte a 1.50000015E7
+const byte* init_sprite_pointers::sprites_id[]  = { 0, $70, $60, $50, $40, $30, $20, $10 }
+byte* init_sprite_pointers::sprites_ptr_1
+byte* init_sprite_pointers::sprites_ptr_1#1 sprites_ptr_1 zp[2]:11 666667.3333333334
+byte* init_sprite_pointers::sprites_ptr_1#5 sprites_ptr_1 zp[2]:11 1333333.6666666667
+byte* init_sprite_pointers::sprites_ptr_2
+byte* init_sprite_pointers::sprites_ptr_2#1 sprites_ptr_2 zp[2]:9 1000001.0
+byte* init_sprite_pointers::sprites_ptr_2#5 sprites_ptr_2 zp[2]:9 1200000.3
+__interrupt(hardware_clobber) void irq_screen_top()
+byte~ irq_screen_top::$1 reg byte a 4.0
+byte~ irq_screen_top::$2 reg byte a 4.0
+byte* irq_screen_top::toD0181_gfx
+byte irq_screen_top::toD0181_return
+const byte irq_screen_top::toD0181_return#0 toD0181_return = 0
+byte* irq_screen_top::toD0181_screen
+byte* irq_screen_top::toDd001_gfx
+byte irq_screen_top::toDd001_return
+const byte irq_screen_top::toDd001_return#0 toDd001_return = 0
+byte* irq_screen_top::toDd002_gfx
+byte irq_screen_top::toDd002_return
+const byte irq_screen_top::toDd002_return#0 toDd002_return = 3^>(word)SCREENS_1/$40
+byte joyfire()
+byte~ joyfire::$0 reg byte a 2.0000002E7
+byte joyfire::return
+byte joyfire::return#0 reg byte a 2000002.0
+byte joyfire::return#1 reg byte a 20002.0
+byte joyfire::return#4 reg byte a 252500.5
+void joyinit()
+volatile byte* left_canvas loadstore zp[2]:23 20.0
+volatile byte* left_render_index_xcol loadstore zp[2]:21 20.0
+volatile byte left_ypos_inc_offset loadstore zp[1]:25 20.0
+word level_show()
+word level_show::count
+word level_show::count#1 count zp[2]:11 2.0000002E7
+word level_show::count#10 count zp[2]:11 4571429.285714285
+word level_show::count#11 count zp[2]:11 4285714.714285715
+word level_show::count#12 count zp[2]:11 500250.75
+word level_show::count#2 count zp[2]:11 2.0000002E7
+word level_show::count#5 count zp[2]:11 1.0000001E7
+byte* level_show::level
+byte* level_show::level#1 level zp[2]:9 1000001.0
+byte* level_show::level#8 level zp[2]:9 1100000.2
+word level_show::return
+word level_show::return#0 return zp[2]:11 2002.0
+byte level_show::tile_left
+byte level_show::tile_left#0 reg byte x 2500000.25
+byte level_show::tile_right
+byte level_show::tile_right#0 tile_right zp[1]:96 3750000.375
+byte level_show::xcol
+byte level_show::xcol#1 xcol zp[1]:7 2.0000002E7
+byte level_show::xcol#2 xcol zp[1]:7 2352941.411764706
+byte level_show::xtile
+byte level_show::xtile#1 reg byte y 6000000.6
+byte level_show::xtile#2 xtile zp[1]:8 2000000.2
+byte level_show::xtile#3 xtile zp[1]:8 1.0000001E7
+byte level_show::ytile
+byte level_show::ytile#1 ytile zp[1]:6 2000002.0
+byte level_show::ytile#2 ytile zp[1]:6 619047.8095238095
+byte level_tile_directions(byte level_tile_directions::xtile , byte level_tile_directions::ytile)
+byte~ level_tile_directions::$5 reg byte a 202.0
+byte level_tile_directions::return
+byte level_tile_directions::return#0 reg byte a 202.0
+byte level_tile_directions::return#10 reg byte a 22.0
+byte level_tile_directions::return#11 reg byte a 22.0
+byte level_tile_directions::return#12 reg byte a 22.0
+byte level_tile_directions::return#13 reg byte a 22.0
+byte level_tile_directions::return#2 reg byte a 22.285714285714285
+byte level_tile_directions::return#3 reg byte a 22.0
+byte level_tile_directions::xtile
+byte level_tile_directions::xtile#0 reg byte x 11.0
+byte level_tile_directions::xtile#1 reg byte x 11.0
+byte level_tile_directions::xtile#2 reg byte x 11.0
+byte level_tile_directions::xtile#3 reg byte x 11.0
+byte level_tile_directions::xtile#4 reg byte x 11.0
+byte level_tile_directions::xtile#5 reg byte x 51.4
+byte level_tile_directions::ytile
+byte level_tile_directions::ytile#0 reg byte a 22.0
+byte level_tile_directions::ytile#1 reg byte a 22.0
+byte level_tile_directions::ytile#2 reg byte a 22.0
+byte level_tile_directions::ytile#3 reg byte a 22.0
+byte level_tile_directions::ytile#4 reg byte a 22.0
+byte level_tile_directions::ytile#5 reg byte a 85.66666666666666
+byte* level_tile_directions::ytiles
+byte* level_tile_directions::ytiles#0 ytiles zp[2]:91 202.0
+byte level_tile_get(byte level_tile_get::xtile , byte level_tile_get::ytile)
+byte~ level_tile_get::$5 reg byte a 2.00000002E8
+byte level_tile_get::return
+byte level_tile_get::return#0 reg byte a 2.00000002E8
+byte level_tile_get::return#10 reg byte a 2.0000002E7
+byte level_tile_get::return#11 reg byte a 2.0000002E7
+byte level_tile_get::return#2 reg byte a 2.3333334166666668E7
+byte level_tile_get::return#3 reg byte a 2.0000002E7
+byte level_tile_get::return#4 reg byte a 2.0000002E7
+byte level_tile_get::xtile
+byte level_tile_get::xtile#0 reg byte x 1.0000001E7
+byte level_tile_get::xtile#1 reg byte x 1.0000001E7
+byte level_tile_get::xtile#2 reg byte x 2.0000002E7
+byte level_tile_get::xtile#3 reg byte x 2.0000002E7
+byte level_tile_get::xtile#4 reg byte x 4.80000012E7
+byte level_tile_get::ytile
+byte level_tile_get::ytile#0 reg byte a 2.0000002E7
+byte level_tile_get::ytile#1 reg byte a 2.0000002E7
+byte level_tile_get::ytile#2 reg byte a 1.0000001E7
+byte level_tile_get::ytile#3 reg byte a 1.0000001E7
+byte level_tile_get::ytile#4 reg byte a 8.0000002E7
+byte* level_tile_get::ytiles
+byte* level_tile_get::ytiles#0 ytiles zp[2]:97 2.00000002E8
+volatile byte logic_tile_left_idx loadstore zp[1]:19 20.0
+volatile to_volatile byte* logic_tile_ptr loadstore zp[2]:15 10250.0
+volatile byte logic_tile_right_idx loadstore zp[1]:20 20.0
+volatile byte logic_tile_xcol loadstore zp[1]:17 10250.0
+volatile byte logic_tile_yfine loadstore zp[1]:18 10250.0
+void main()
+void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
+void* memcpy::destination
+const void* memcpy::destination#0 destination = (void*)INTRO_MUSIC_CRUNCHED_UPPER
+byte* memcpy::dst
+byte* memcpy::dst#1 dst zp[2]:11 10001.0
+byte* memcpy::dst#2 dst zp[2]:11 10001.0
+word memcpy::num
+void* memcpy::return
+void* memcpy::source
+const void* memcpy::source#0 source = (void*)INTRO_MUSIC_CRUNCHED
+byte* memcpy::src
+byte* memcpy::src#1 src zp[2]:9 20002.0
+byte* memcpy::src#2 src zp[2]:9 10001.0
+byte* memcpy::src_end
+const byte* memcpy::src_end#0 src_end = (byte*)memcpy::source#0+INTRO_MUSIC_CRUNCHED_SIZE
+void* memset(void* memset::str , byte memset::c , word memset::num)
+byte memset::c
+byte* memset::dst
+byte* memset::dst#1 dst zp[2]:99 20002.0
+byte* memset::dst#2 dst zp[2]:99 13668.333333333332
+byte* memset::dst#4 dst zp[2]:99 2002.0
+byte* memset::end
+byte* memset::end#0 end zp[2]:89 1833.6666666666665
+word memset::num
+word memset::num#5 num zp[2]:89 1001.0
+void* memset::return
+void* memset::str
+void* memset::str#6 str zp[2]:99
+void merge_code(byte* merge_code::dest_code , byte* merge_code::raster_code , byte* merge_code::logic_code)
+byte~ merge_code::$5 reg byte y 100001.0
+const nomodify byte merge_code::LOGIC_END = $ff
+const nomodify byte merge_code::LOGIC_EXIT = 0
+const nomodify byte merge_code::RASTER_END = $ff
+const nomodify byte merge_code::RASTER_EXIT = 0
+byte merge_code::cycle_budget
+byte merge_code::cycle_budget#0 reg byte x 10001.0
+byte merge_code::cycle_budget#1 reg byte x 200002.0
+byte merge_code::cycle_budget#10 reg byte x 88889.77777777777
+byte merge_code::cycle_budget#13 reg byte x 50714.857142857145
+byte merge_code::cycle_budget#2 reg byte x 200002.0
+byte merge_code::cycle_budget#3 reg byte x 200002.0
+byte* merge_code::dest_code
+byte* merge_code::dest_code#0 dest_code zp[2]:11 10001.0
+byte* merge_code::dest_code#1 dest_code zp[2]:11 1000001.0
+byte* merge_code::dest_code#10 dest_code zp[2]:11 180001.80000000002
+byte* merge_code::dest_code#12 dest_code zp[2]:11 10334.666666666666
+byte* merge_code::dest_code#13 dest_code zp[2]:11 80001.25
+byte* merge_code::dest_code#14 dest_code zp[2]:11 21429.428571428572
+byte* merge_code::dest_code#15 dest_code zp[2]:11 640001.0
+byte* merge_code::dest_code#2 dest_code zp[2]:11 150001.5
+byte* merge_code::dest_code#21 dest_code zp[2]:11 51250.625
+byte* merge_code::dest_code#3 dest_code zp[2]:11 100001.0
+byte* merge_code::dest_code#4 dest_code zp[2]:11 100001.0
+byte* merge_code::dest_code#6 dest_code zp[2]:11 100001.0
+byte* merge_code::logic_code
+byte* merge_code::logic_code#0 logic_code zp[2]:89 200002.0
+byte* merge_code::logic_code#1 logic_code zp[2]:89 2000002.0
+byte* merge_code::logic_code#10 logic_code zp[2]:89 1050001.5
+byte* merge_code::logic_code#12 logic_code zp[2]:89 20002.0
+byte* merge_code::logic_code#14 logic_code zp[2]:89 105001.5
+byte* merge_code::logic_code#17 logic_code zp[2]:89 22778.055555555555
+byte* merge_code::logic_code#18 logic_code zp[2]:89 15556.111111111113
+byte* merge_code::logic_code#2 logic_code zp[2]:89 100001.0
+byte* merge_code::logic_code#3 logic_code zp[2]:89 20002.0
+byte* merge_code::logic_code#4 logic_code zp[2]:89 200002.0
+byte* merge_code::logic_code#5 logic_code zp[2]:89 20002.0
+byte merge_code::logic_cycles
+byte merge_code::logic_cycles#0 logic_cycles zp[1]:96 41667.08333333333
+byte* merge_code::raster_code
+byte* merge_code::raster_code#0 raster_code zp[2]:99 20002.0
+byte* merge_code::raster_code#1 raster_code zp[2]:99 15001.5
+byte* merge_code::raster_code#2 raster_code zp[2]:99 3928.6428571428573
+byte* merge_code::raster_code#4 raster_code zp[2]:99 37501.5
+const nomodify void()* musicInit = (void()*)INTRO_MUSIC
+const nomodify void()* musicPlay = (void()*)INTRO_MUSIC+6
+volatile byte music_play_next loadstore zp[1]:43 69506.875
+volatile byte pacman_ch1_enabled loadstore zp[1]:13 0.08254716981132076
+volatile byte pacman_ch1_idx loadstore zp[1]:14 1.9428571428571428
+volatile byte pacman_direction loadstore zp[1]:49 132.92105263157893
+const byte* pacman_frames[]  = { 8, 8, 8, 8, 8, $18, $14, $18, 8, $20, $1c, $20, 0, 0, 0, 0, 8, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, $c, $10, $c }
+volatile byte pacman_lives loadstore zp[1]:42 656.4415584415585
+void pacman_sound_init()
+void pacman_sound_play()
+volatile byte pacman_substep loadstore zp[1]:50 233.39534883720933
+volatile byte pacman_wins loadstore zp[1]:41 1545.6969696969697
+volatile byte pacman_xfine loadstore zp[1]:47 47.719626168224295
+volatile byte pacman_yfine loadstore zp[1]:48 46.21818181818182
+volatile byte phase loadstore zp[1]:44 78.03703703703704
+volatile word pill_count loadstore zp[2]:39 14.191780821917808
+void render(byte render::xcol , byte render::ypos , byte render::pixels)
+byte~ render::$1 reg byte x 1.0000001E7
+byte~ render::$2 reg byte a 2.0000002E7
+byte* render::canvas1
+byte* render::canvas1#0 canvas1 zp[2]:9 5000000.5
+byte* render::canvas1#1 canvas1 zp[2]:9 5.00000000005E10
+byte* render::canvas1#2 canvas1 zp[2]:9 1.00010000002E11
+byte* render::canvas2
+byte* render::canvas2#0 canvas2 zp[2]:11 6666667.333333333
+byte* render::canvas2#1 canvas2 zp[2]:11 6.6666666667333336E10
+byte* render::canvas2#2 canvas2 zp[2]:11 5.0005000001E10
+word render::canvas_offset
+word render::canvas_offset#0 canvas_offset zp[2]:11 1.50000015E7
+byte render::i
+byte render::i#1 reg byte y 2.00000000002E11
+byte render::i#2 reg byte y 6.0000000000600006E10
+byte render::pixels
+byte render::pixels#0 pixels zp[1]:8 2000002.0
+byte render::pixels#1 pixels zp[1]:8 200002.0
+byte render::pixels#4 pixels zp[1]:8 1241176.705882353
+byte* render::render_index_xcol
+word render::render_index_xcol#0 render_index_xcol zp[2]:97 2500000.25
+byte render::xcol
+byte render::xcol#0 xcol zp[1]:5 666667.3333333334
+byte render::xcol#1 xcol zp[1]:5 66667.33333333333
+byte render::xcol#2 xcol zp[1]:5 5550001.5
+byte render::ypix
+byte render::ypix#0 ypix zp[1]:96 1.4287142857428572E10
+byte render::ypos
+byte render::ypos#0 ypos zp[1]:6 1000001.0
+byte render::ypos#1 ypos zp[1]:6 100001.0
+byte render::ypos#2 ypos zp[1]:6 2344444.888888889
+byte render::ypos_inc_offset
+byte render::ypos_inc_offset#0 reg byte x 1.0000001E7
+byte render::ypos_inc_offset#1 reg byte x 1.00000000001E11
+byte render::ypos_inc_offset#2 reg byte x 1.0000250000125E11
+byte render::ytile
+byte render::ytile#0 reg byte y 1.0000001E7
+void render_tiles(byte render_tiles::xcol , byte render_tiles::ytile , byte render_tiles::tile_left , byte render_tiles::tile_right)
+byte~ render_tiles::$0 reg byte a 2.00000002E8
+byte~ render_tiles::$2 reg byte a 2.00000002E8
+byte~ render_tiles::$4 reg byte x 1.00000001E8
+byte~ render_tiles::$5 reg byte a 2.00000002E8
+byte* render_tiles::canvas1
+byte* render_tiles::canvas1#0 canvas1 zp[2]:89 6.6666667333333336E7
+byte* render_tiles::canvas1#1 canvas1 zp[2]:89 5.000000000005E11
+byte* render_tiles::canvas1#2 canvas1 zp[2]:89 6.000200000008E11
+byte* render_tiles::canvas2
+byte* render_tiles::canvas2#0 canvas2 zp[2]:94 1.00000001E8
+byte* render_tiles::canvas2#1 canvas2 zp[2]:94 6.666666666673334E11
+byte* render_tiles::canvas2#2 canvas2 zp[2]:94 5.000166666673334E11
+word render_tiles::canvas_offset
+word render_tiles::canvas_offset#0 canvas_offset zp[2]:94 1.500000015E8
+byte render_tiles::pixels
+byte render_tiles::pixels#0 reg byte a 1.5000000000015E12
+byte* render_tiles::render_index_xcol
+word render_tiles::render_index_xcol#0 render_index_xcol zp[2]:101 2.500000025E7
+byte render_tiles::tile_left
+byte render_tiles::tile_left#0 reg byte x 5.5000001E7
+byte* render_tiles::tile_left_pixels
+byte* render_tiles::tile_left_pixels#0 tile_left_pixels zp[2]:97 5.2636842105368416E10
+byte render_tiles::tile_right
+byte render_tiles::tile_right#0 reg byte y 3.6666667333333336E7
+byte* render_tiles::tile_right_pixels
+byte* render_tiles::tile_right_pixels#0 tile_right_pixels zp[2]:99 5.882941176482353E10
+byte render_tiles::xcol
+byte render_tiles::xcol#0 xcol zp[1]:7 1.375000025E7
+byte render_tiles::y
+byte render_tiles::y#1 y zp[1]:96 2.000000000002E12
+byte render_tiles::y#2 y zp[1]:96 6.25000000000625E11
+byte render_tiles::ypos_inc_offset
+byte render_tiles::ypos_inc_offset#0 reg byte x 2.00000002E8
+byte render_tiles::ypos_inc_offset#1 reg byte x 1.000000000001E12
+byte render_tiles::ypos_inc_offset#2 reg byte x 5.714428571435714E11
+byte render_tiles::ytile
+byte render_tiles::ytile#0 ytile zp[1]:6 1.375000025E7
+volatile byte* rigt_canvas loadstore zp[2]:28 20.0
+volatile byte* rigt_render_index_xcol loadstore zp[2]:26 20.0
+volatile byte rigt_ypos_inc_offset loadstore zp[1]:30 20.0
+volatile byte side_sprites_color loadstore zp[1]:35 11040.0
+volatile byte side_sprites_mc loadstore zp[1]:36 11040.0
+void spawn_all()
+void splash_run()
+byte~ splash_run::$25 reg byte a 2002.0
+byte~ splash_run::$30 reg byte a 20002.0
+byte~ splash_run::$34 reg byte y 1334.6666666666667
+byte splash_run::i
+byte splash_run::i#1 i zp[1]:5 2002.0
+byte splash_run::i#2 i zp[1]:5 364.0
+byte splash_run::i1
+byte splash_run::i1#1 reg byte x 2002.0
+byte splash_run::i1#2 reg byte x 1334.6666666666667
+byte splash_run::i2
+byte splash_run::i2#1 reg byte x 2002.0
+byte splash_run::i2#2 reg byte x 1201.2
+byte splash_run::msb
+byte splash_run::msb#1 reg byte x 1001.0
+byte splash_run::msb#10 reg byte x 175.25
+byte splash_run::msb#2 reg byte x 2002.0
+byte splash_run::msb#8 reg byte x 1501.5
+const word* splash_run::sprites_xpos[]  = { $1e7, $13f, $10f, $df, $af, $7f, $4f, $1f }
+byte* splash_run::toD0181_gfx
+byte splash_run::toD0181_return
+const byte splash_run::toD0181_return#0 toD0181_return = 0
+byte* splash_run::toD0181_screen
+byte* splash_run::toDd001_gfx
+byte splash_run::toDd001_return
+const byte splash_run::toDd001_return#0 toDd001_return = 3^>(word)SCREENS_1/$40
+word splash_run::xpos
+word splash_run::xpos#0 xpos zp[2]:89 667.3333333333334
+void splash_show()
+byte splash_show::pixels
+byte splash_show::pixels#0 reg byte x 50000.5
+byte* splash_show::splash
+byte* splash_show::splash#1 splash zp[2]:99 33333.666666666664
+byte* splash_show::splash#2 splash zp[2]:99 80001.25
+byte* splash_show::splash#4 splash zp[2]:99 10001.0
+byte splash_show::xcol
+byte splash_show::xcol#1 xcol zp[1]:5 20002.0
+byte splash_show::xcol#2 xcol zp[1]:5 11818.545454545454
+byte splash_show::ypos
+byte splash_show::ypos#1 ypos zp[1]:6 200002.0
+byte splash_show::ypos#2 ypos zp[1]:6 50000.5
+volatile byte top_sprites_color loadstore zp[1]:33 3403.666666666667
+volatile byte top_sprites_mc loadstore zp[1]:34 92.0
+
+zp[1]:2 [ game_logic::ghost_frame_idx#2 game_logic::ghost_frame_idx#0 game_logic::ghost_frame_idx#1 ]
+reg byte a [ game_logic::do_reverse#4 ]
+reg byte x [ game_logic::target_xtile#3 game_logic::target_xtile#2 ]
+zp[1]:3 [ game_logic::target_ytile#3 game_logic::target_ytile#2 choose_direction::target_ytile#4 choose_direction::target_ytile#2 choose_direction::target_ytile#3 choose_direction::target_ytile#0 choose_direction::target_ytile#1 game_logic::target_ytile1#3 game_logic::target_ytile1#2 game_logic::target_ytile2#3 game_logic::target_ytile2#2 game_logic::target_ytile3#3 game_logic::target_ytile3#2 ]
+reg byte x [ game_logic::target_xtile1#3 game_logic::target_xtile1#2 ]
+reg byte x [ game_logic::target_xtile2#3 game_logic::target_xtile2#2 ]
+reg byte x [ game_logic::target_xtile3#3 game_logic::target_xtile3#2 ]
+reg byte x [ splash_run::msb#10 splash_run::msb#8 splash_run::msb#1 splash_run::msb#2 ]
+reg byte x [ splash_run::i1#2 splash_run::i1#1 ]
+reg byte x [ splash_run::i2#2 splash_run::i2#1 ]
+reg byte x [ gameplay_run::i#2 gameplay_run::i#1 ]
+reg byte x [ gameplay_run::i1#2 gameplay_run::i1#1 ]
+reg byte x [ gameplay_run::i2#2 gameplay_run::i2#1 ]
+reg byte x [ done_run::i#2 done_run::i#1 ]
+reg byte x [ done_run::i1#2 done_run::i1#1 ]
+reg byte x [ level_tile_directions::xtile#5 level_tile_directions::xtile#1 level_tile_directions::xtile#2 level_tile_directions::xtile#3 level_tile_directions::xtile#4 level_tile_directions::xtile#0 ]
+reg byte a [ level_tile_directions::ytile#5 level_tile_directions::ytile#1 level_tile_directions::ytile#2 level_tile_directions::ytile#3 level_tile_directions::ytile#4 level_tile_directions::ytile#0 ]
+reg byte a [ level_tile_directions::return#2 level_tile_directions::return#0 ]
+reg byte y [ choose_direction::ghost_xtile#4 choose_direction::ghost_xtile#2 choose_direction::ghost_xtile#3 choose_direction::ghost_xtile#0 choose_direction::ghost_xtile#1 ]
+reg byte x [ choose_direction::target_xtile#4 choose_direction::target_xtile#2 choose_direction::target_xtile#3 choose_direction::target_xtile#0 choose_direction::target_xtile#1 ]
+zp[1]:4 [ choose_direction::ghost_ytile#4 choose_direction::ghost_ytile#2 choose_direction::ghost_ytile#3 choose_direction::ghost_ytile#0 choose_direction::ghost_ytile#1 game_logic::ghost4_ytile#0 game_logic::ghost3_ytile#0 game_logic::ghost2_ytile#0 game_logic::ghost1_ytile#0 choose_direction::ydiff#0 ]
+reg byte y [ choose_direction::dist_min#6 choose_direction::dist_up#0 ]
+reg byte x [ choose_direction::dist_min#10 choose_direction::dist_min#13 choose_direction::dist_min#14 choose_direction::dist_down#0 ]
+reg byte x [ merge_code::cycle_budget#10 merge_code::cycle_budget#2 merge_code::cycle_budget#3 merge_code::cycle_budget#13 merge_code::cycle_budget#0 merge_code::cycle_budget#1 ]
+reg byte x [ init_render_index::ypos_inc_offset#4 init_render_index::ypos_inc_offset#7 init_render_index::ypos_inc_offset#8 init_render_index::ypos_inc_offset#2 init_render_index::ypos_inc_offset#3 ]
+reg byte x [ init_bobs_restore::bob#2 init_bobs_restore::bob#1 ]
+reg byte y [ init_bobs_restore::i#2 init_bobs_restore::i#1 ]
+reg byte x [ init_sprite_pointers::screen#2 init_sprite_pointers::screen#1 ]
+reg byte y [ init_sprite_pointers::sprite#2 init_sprite_pointers::sprite#1 ]
+reg byte a [ joyfire::return#4 ]
+zp[1]:5 [ init_level_tile_directions::ytile#15 init_level_tile_directions::ytile#1 splash_run::i#2 splash_run::i#1 init_render_index::x_col#2 init_render_index::x_col#1 done_run::xcol#2 done_run::xcol#1 render::xcol#2 render::xcol#0 render::xcol#1 splash_show::xcol#2 splash_show::xcol#1 ]
+zp[1]:6 [ level_show::ytile#2 level_show::ytile#1 render_tiles::ytile#0 init_level_tile_directions::xtile#10 init_level_tile_directions::xtile#1 init_render_index::y_pos#2 init_render_index::y_pos#1 done_run::ypos#2 done_run::ypos#1 render::ypos#2 render::ypos#0 render::ypos#1 splash_show::ypos#2 splash_show::ypos#1 ]
+zp[1]:7 [ level_show::xcol#2 level_show::xcol#1 render_tiles::xcol#0 init_level_tile_directions::open_directions#8 init_level_tile_directions::open_directions#4 init_level_tile_directions::open_directions#13 init_level_tile_directions::open_directions#3 init_level_tile_directions::open_directions#12 init_level_tile_directions::open_directions#2 init_level_tile_directions::open_directions#11 ]
+zp[1]:8 [ render::pixels#4 render::pixels#0 render::pixels#1 level_show::xtile#3 level_show::xtile#2 ]
+reg byte y [ render::i#2 render::i#1 ]
+zp[2]:9 [ render::canvas1#2 render::canvas1#0 render::canvas1#1 level_show::level#8 level_show::level#1 memcpy::src#2 memcpy::src#1 init_sprite_pointers::sprites_ptr_2#5 init_sprite_pointers::sprites_ptr_2#1 ]
+reg byte x [ render::ypos_inc_offset#2 render::ypos_inc_offset#0 render::ypos_inc_offset#1 ]
+zp[2]:11 [ render::canvas2#2 render::canvas2#0 render::canvas2#1 render::canvas_offset#0 level_show::count#5 level_show::count#12 level_show::count#10 level_show::count#11 level_show::count#1 level_show::count#2 level_show::return#0 gameplay_run::$4 init_level_tile_directions::directions#7 init_level_tile_directions::directions#1 memcpy::dst#2 memcpy::dst#1 init_sprite_pointers::sprites_ptr_1#5 init_sprite_pointers::sprites_ptr_1#1 init_bobs_restore::bob_restore#5 init_bobs_restore::bob_restore#1 init_render_index::render_ypos_table#4 merge_code::dest_code#21 merge_code::dest_code#12 merge_code::dest_code#13 merge_code::dest_code#14 merge_code::dest_code#10 merge_code::dest_code#0 merge_code::dest_code#6 merge_code::dest_code#15 merge_code::dest_code#3 merge_code::dest_code#4 merge_code::dest_code#1 merge_code::dest_code#2 ]
+reg byte x [ level_tile_get::xtile#4 level_tile_get::xtile#0 level_tile_get::xtile#1 level_tile_get::xtile#2 level_tile_get::xtile#3 ]
+reg byte a [ level_tile_get::ytile#4 level_tile_get::ytile#0 level_tile_get::ytile#1 level_tile_get::ytile#2 level_tile_get::ytile#3 ]
+reg byte a [ level_tile_get::return#2 level_tile_get::return#0 ]
+reg byte x [ render_tiles::ypos_inc_offset#2 render_tiles::ypos_inc_offset#0 render_tiles::ypos_inc_offset#1 ]
+zp[1]:13 [ pacman_ch1_enabled ]
+zp[1]:14 [ pacman_ch1_idx ]
+zp[2]:15 [ logic_tile_ptr ]
+zp[1]:17 [ logic_tile_xcol ]
+zp[1]:18 [ logic_tile_yfine ]
+zp[1]:19 [ logic_tile_left_idx ]
+zp[1]:20 [ logic_tile_right_idx ]
+zp[2]:21 [ left_render_index_xcol ]
+zp[2]:23 [ left_canvas ]
+zp[1]:25 [ left_ypos_inc_offset ]
+zp[2]:26 [ rigt_render_index_xcol ]
+zp[2]:28 [ rigt_canvas ]
+zp[1]:30 [ rigt_ypos_inc_offset ]
+zp[1]:31 [ canvas_base_hi ]
+zp[1]:32 [ bobs_restore_base ]
+zp[1]:33 [ top_sprites_color ]
+zp[1]:34 [ top_sprites_mc ]
+zp[1]:35 [ side_sprites_color ]
+zp[1]:36 [ side_sprites_mc ]
+zp[1]:37 [ bottom_sprites_color ]
+zp[1]:38 [ bottom_sprites_mc ]
+zp[2]:39 [ pill_count ]
+zp[1]:41 [ pacman_wins ]
+zp[1]:42 [ pacman_lives ]
+zp[1]:43 [ music_play_next ]
+zp[1]:44 [ phase ]
+zp[1]:45 [ frame ]
+zp[1]:46 [ anim_frame_idx ]
+zp[1]:47 [ pacman_xfine ]
+zp[1]:48 [ pacman_yfine ]
+zp[1]:49 [ pacman_direction ]
+zp[1]:50 [ pacman_substep ]
+zp[1]:51 [ ghosts_mode ]
+zp[1]:52 [ ghosts_mode_count ]
+zp[1]:53 [ ghost1_xfine ]
+zp[1]:54 [ ghost1_yfine ]
+zp[1]:55 [ ghost1_direction ]
+zp[1]:56 [ ghost1_substep ]
+zp[1]:57 [ ghost1_reverse ]
+zp[1]:58 [ ghost1_respawn ]
+zp[1]:59 [ ghost2_xfine ]
+zp[1]:60 [ ghost2_yfine ]
+zp[1]:61 [ ghost2_direction ]
+zp[1]:62 [ ghost2_substep ]
+zp[1]:63 [ ghost2_reverse ]
+zp[1]:64 [ ghost2_respawn ]
+zp[1]:65 [ ghost3_xfine ]
+zp[1]:66 [ ghost3_yfine ]
+zp[1]:67 [ ghost3_direction ]
+zp[1]:68 [ ghost3_substep ]
+zp[1]:69 [ ghost3_reverse ]
+zp[1]:70 [ ghost3_respawn ]
+zp[1]:71 [ ghost4_xfine ]
+zp[1]:72 [ ghost4_yfine ]
+zp[1]:73 [ ghost4_direction ]
+zp[1]:74 [ ghost4_substep ]
+zp[1]:75 [ ghost4_reverse ]
+zp[1]:76 [ ghost4_respawn ]
+zp[1]:77 [ game_logic_substep ]
+zp[1]:78 [ game_playable ]
+reg byte a [ irq_screen_top::$1 ]
+reg byte a [ irq_screen_top::$2 ]
+reg byte x [ game_logic::$2 ]
+reg byte a [ game_logic::$3 ]
+reg byte x [ game_logic::$14 ]
+reg byte a [ game_logic::$15 ]
+reg byte y [ game_logic::pacman_bob_xfine#0 ]
+reg byte a [ game_logic::$17 ]
+reg byte x [ game_logic::$18 ]
+reg byte x [ game_logic::$19 ]
+reg byte a [ game_logic::$20 ]
+reg byte a [ game_logic::$21 ]
+reg byte y [ game_logic::ghost1_bob_xfine#0 ]
+reg byte a [ game_logic::$25 ]
+reg byte x [ game_logic::$26 ]
+reg byte x [ game_logic::$27 ]
+reg byte a [ game_logic::$28 ]
+reg byte a [ game_logic::$29 ]
+reg byte y [ game_logic::ghost2_bob_xfine#0 ]
+reg byte a [ game_logic::$31 ]
+reg byte x [ game_logic::$32 ]
+reg byte x [ game_logic::$33 ]
+reg byte a [ game_logic::$34 ]
+reg byte a [ game_logic::$35 ]
+reg byte y [ game_logic::ghost3_bob_xfine#0 ]
+reg byte a [ game_logic::$37 ]
+reg byte x [ game_logic::$38 ]
+reg byte x [ game_logic::$39 ]
+reg byte a [ game_logic::$40 ]
+reg byte a [ game_logic::$41 ]
+reg byte y [ game_logic::ghost4_bob_xfine#0 ]
+reg byte a [ game_logic::$43 ]
+reg byte x [ game_logic::$44 ]
+reg byte x [ game_logic::$45 ]
+reg byte a [ game_logic::$46 ]
+reg byte a [ game_logic::$47 ]
+zp[1]:79 [ game_logic::pacman_xtile#0 choose_direction::open_directions#10 choose_direction::open_directions#2 choose_direction::open_directions#3 choose_direction::open_directions#0 choose_direction::open_directions#1 ]
+reg byte a [ game_logic::pacman_ytile#0 ]
+zp[1]:80 [ game_logic::$210 choose_direction::dist_min#11 choose_direction::dist_left#0 choose_direction::dist_min#17 choose_direction::dist_min#18 ]
+zp[2]:81 [ game_logic::ytiles#0 game_logic::$67 game_logic::$71 ]
+reg byte x [ game_logic::tile_id#0 ]
+reg byte a [ game_logic::$65 ]
+reg byte a [ game_logic::$66 ]
+reg byte a [ game_logic::$68 ]
+reg byte x [ game_logic::$75 ]
+reg byte y [ game_logic::$77 ]
+reg byte x [ game_logic::$80 ]
+reg byte y [ game_logic::$82 ]
+reg byte x [ game_logic::$85 ]
+reg byte y [ game_logic::$87 ]
+reg byte x [ game_logic::$90 ]
+reg byte y [ game_logic::$92 ]
+reg byte a [ game_logic::$69 ]
+reg byte a [ game_logic::$70 ]
+reg byte a [ game_logic::$72 ]
+reg byte x [ game_logic::$220 ]
+zp[1]:83 [ game_logic::ghost4_xtile#0 choose_direction::return#10 choose_direction::direction#6 choose_direction::direction#8 choose_direction::direction#10 ]
+reg byte a [ level_tile_directions::return#3 ]
+reg byte a [ game_logic::open_directions#0 ]
+reg byte y [ game_logic::open_directions#1 ]
+reg byte a [ choose_direction::return#0 ]
+reg byte a [ game_logic::$119 ]
+reg byte x [ game_logic::$223 ]
+zp[1]:84 [ game_logic::ghost3_xtile#0 ]
+reg byte a [ level_tile_directions::return#10 ]
+reg byte a [ game_logic::open_directions1#0 ]
+reg byte y [ game_logic::open_directions1#1 ]
+reg byte a [ choose_direction::return#1 ]
+reg byte a [ game_logic::$140 ]
+reg byte x [ game_logic::$226 ]
+zp[1]:85 [ game_logic::ghost2_xtile#0 ]
+reg byte a [ level_tile_directions::return#11 ]
+reg byte a [ game_logic::open_directions2#0 ]
+reg byte y [ game_logic::open_directions2#1 ]
+reg byte a [ choose_direction::return#2 ]
+reg byte a [ game_logic::$161 ]
+reg byte x [ game_logic::$229 ]
+zp[1]:86 [ game_logic::ghost1_xtile#0 ]
+reg byte a [ level_tile_directions::return#12 ]
+reg byte a [ game_logic::open_directions3#0 ]
+reg byte y [ game_logic::open_directions3#1 ]
+reg byte a [ choose_direction::return#3 ]
+reg byte a [ game_logic::$182 ]
+reg byte x [ game_logic::$232 ]
+reg byte x [ game_logic::pacman_xtile1#0 ]
+reg byte a [ game_logic::pacman_ytile1#0 ]
+reg byte a [ level_tile_directions::return#13 ]
+reg byte x [ game_logic::open_directions4#0 ]
+reg byte a [ game_logic::$199 ]
+reg byte a [ game_logic::$200 ]
+reg byte a [ game_logic::joy_directions#0 ]
+reg byte a [ game_logic::$204 ]
+reg byte a [ game_logic::new_direction#0 ]
+zp[2]:87 [ byteboozer_decrunch::crunched ]
+reg byte a [ joyfire::return#1 ]
+reg byte a [ splash_run::$30 ]
+reg byte y [ splash_run::$34 ]
+zp[2]:89 [ splash_run::xpos#0 render_tiles::canvas1#2 render_tiles::canvas1#0 render_tiles::canvas1#1 init_render_index::render_index_xcol#0 init_render_index::render_index#1 merge_code::logic_code#12 merge_code::logic_code#5 merge_code::logic_code#18 merge_code::logic_code#17 merge_code::logic_code#2 merge_code::logic_code#14 merge_code::logic_code#3 merge_code::logic_code#4 merge_code::logic_code#10 merge_code::logic_code#1 merge_code::logic_code#0 memset::num#5 memset::end#0 done_run::gfx#4 done_run::gfx#2 done_run::gfx#1 ]
+reg byte a [ splash_run::$25 ]
+reg byte a [ joyfire::return#0 ]
+reg byte a [ done_run::$8 ]
+reg byte x [ done_run::pixels#0 ]
+reg byte a [ level_tile_directions::$5 ]
+zp[2]:91 [ level_tile_directions::ytiles#0 ]
+zp[1]:93 [ choose_direction::xdiff#0 ]
+reg byte a [ choose_direction::$2 ]
+reg byte a [ choose_direction::$4 ]
+reg byte a [ choose_direction::$6 ]
+reg byte a [ choose_direction::$8 ]
+reg byte a [ choose_direction::dist_right#0 ]
+reg byte y [ merge_code::$5 ]
+reg byte a [ init_render_index::$9 ]
+zp[2]:94 [ init_render_index::canvas_xcol#0 render_tiles::canvas2#2 render_tiles::canvas2#0 render_tiles::canvas2#1 render_tiles::canvas_offset#0 ]
+reg byte a [ init_render_index::$5 ]
+reg byte a [ init_render_index::$6 ]
+reg byte x [ splash_show::pixels#0 ]
+reg byte a [ init_sprite_pointers::$2 ]
+reg byte a [ init_sprite_pointers::sprite_id#0 ]
+reg byte a [ joyfire::$0 ]
+reg byte a [ level_tile_get::return#3 ]
+reg byte x [ init_level_tile_directions::$3 ]
+reg byte a [ level_tile_get::return#4 ]
+reg byte x [ init_level_tile_directions::$7 ]
+reg byte a [ level_tile_get::return#10 ]
+reg byte a [ init_level_tile_directions::$11 ]
+reg byte a [ level_tile_get::return#11 ]
+reg byte a [ init_level_tile_directions::$15 ]
+reg byte x [ level_show::tile_left#0 ]
+reg byte y [ level_show::xtile#1 ]
+reg byte x [ render_tiles::tile_left#0 ]
+reg byte y [ render_tiles::tile_right#0 ]
+reg byte y [ render::ytile#0 ]
+reg byte x [ render::$1 ]
+reg byte a [ render::$2 ]
+zp[1]:96 [ render::ypix#0 level_show::tile_right#0 merge_code::logic_cycles#0 render_tiles::y#2 render_tiles::y#1 ]
+reg byte a [ level_tile_get::$5 ]
+reg byte a [ render_tiles::$0 ]
+zp[2]:97 [ render_tiles::tile_left_pixels#0 level_tile_get::ytiles#0 render::render_index_xcol#0 init_render_index::$11 init_render_index::$10 init_render_index::$12 init_render_index::canvas#0 ]
+reg byte a [ render_tiles::$2 ]
+zp[2]:99 [ render_tiles::tile_right_pixels#0 splash_show::splash#4 splash_show::splash#2 splash_show::splash#1 init_render_index::render_index_xcol#2 init_render_index::render_index_xcol#7 init_render_index::render_index_xcol#1 merge_code::raster_code#4 merge_code::raster_code#2 merge_code::raster_code#0 merge_code::raster_code#1 memset::str#6 memset::dst#2 memset::dst#4 memset::dst#1 ]
+reg byte x [ render_tiles::$4 ]
+reg byte a [ render_tiles::$5 ]
+zp[2]:101 [ render_tiles::render_index_xcol#0 ]
+reg byte a [ render_tiles::pixels#0 ]

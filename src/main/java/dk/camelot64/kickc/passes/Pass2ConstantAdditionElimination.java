@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
@@ -9,6 +12,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.VarAssignments;
 
@@ -204,9 +208,12 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          if(assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
             if(assignment.getrValue1() instanceof ConstantValue) {
                ConstantValue constant = (ConstantValue) assignment.getrValue1();
-               assignment.setrValue1(null);
-               assignment.setOperator(null);
-               return constant;
+               SymbolType constantType = constant.getType(getScope());
+               if(SymbolType.isInteger(constantType)) {
+                  assignment.setrValue1(null);
+                  assignment.setOperator(null);
+                  return constant;
+               }
             } else if(assignment.getrValue2() instanceof ConstantValue) {
                ConstantValue constant = (ConstantValue) assignment.getrValue2();
                assignment.setrValue2(assignment.getrValue1());

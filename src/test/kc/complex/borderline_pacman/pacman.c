@@ -125,8 +125,7 @@ void()* const musicPlay = (void()*) INTRO_MUSIC+0x06;
 
 #pragma data_seg(Init)
 // SID tune
-// Pacmania Shaun Southern https://csdb.dk/sid/?id=53795
-// Relocated using ./sidreloc-1.0/sidreloc -p30  c64src/borderline/Pacmania.sid c64src/borderline/Pacmania_3000.sid
+// Pacman 2 channel music by Metal/Camelot
 char INTRO_MUSIC_CRUNCHED[] = kickasm(resource "pacman-2chn-simpler.prg", uses INTRO_MUSIC) {{
     .modify B2() {
         .pc = INTRO_MUSIC "INTRO MUSIC"

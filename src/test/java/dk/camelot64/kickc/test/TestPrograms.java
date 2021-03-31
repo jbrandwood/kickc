@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStdlibStringMemChr1() throws IOException, URISyntaxException {
+      compileAndCompare("stdlib-string-memchr-1.c");
+   }
+
+   @Test
    public void testProblemArraySizeDecl() throws IOException, URISyntaxException {
       assertError("problem-arraysize-decl.c", "BAR is not constant or is not defined");
    }

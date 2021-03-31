@@ -106,7 +106,7 @@ void memoryRemap256M(unsigned char remapBlocks, unsigned long lowerPageOffset, u
         lda lMb     // lower blocks offset megabytes
         ldx #$0f    // lower signal for MB offset
         ldy uMb     // upper blocks offset megabytes
-        ldz #$00    // upper signal for MB offset
+        ldz #$0f    // upper signal for MB offset
         map
         lda aVal    // lower blocks offset page low
         ldx xVal    // lower blocks to map + lower blocks offset high nibble

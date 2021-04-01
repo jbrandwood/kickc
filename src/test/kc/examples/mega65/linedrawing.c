@@ -72,24 +72,19 @@ void main() {
   VICIV->CONTROLC |= 0x40;
 
   graphics_mode();
-  draw_line(160, 100, 0, 198, 1);  
-  draw_line(160, 100, 319, 198, 2);  
+  draw_line(160, 100,   0, 199, 1);  
+  draw_line(160, 100, 319, 199, 2);  
+  draw_line(  0,   0, 160, 100, 3);  
+  draw_line(160, 100, 319, 0, 4);  
+
   for(;;) ;
-
-/*
-  int x1 = 160;
-  for(int x2=0;x2<320;x2+=11) {
-    draw_line(x1, 100, x2, 198, 1);  
-  }
-  */
-
   
 }
 
 // Address of the screen
-unsigned char* SCREEN = 0xc000;
-// Address of the graphics
-unsigned long GRAPHICS = 0x40000;
+unsigned char * const SCREEN = 0xc000;
+// // Absolute address of the graphics
+const long GRAPHICS = 0x40000;
 
 void graphics_mode(void) {
   // 16-bit text mode, full-colour text for high chars
@@ -103,15 +98,14 @@ void graphics_mode(void) {
   // Draw 40 chars per row
   VICIV->CHRCOUNT = 40;
   // Put 2KB screen at $C000
-  VICIV->SCRNPTR_LOLO = 0x00;
-  VICIV->SCRNPTR_LOHI = 0xc0;
+  VICIV->SCRNPTR_LOLO = <(SCREEN);
+  VICIV->SCRNPTR_LOHI = >(SCREEN);
   VICIV->SCRNPTR_HILO = 0x00;
- 
  
   // Layout screen so that graphics data comes from $40000 -- $4FFFF
   // Each column is consequtive values
-  unsigned int * screen = 0xc000;
-  unsigned int ch = 0x40000 / 0x40;
+  unsigned int * screen = (unsigned int *)SCREEN;
+  unsigned int ch = (unsigned int)(GRAPHICS / 0x40);
   for(char y=0;y<25;y++) {
     unsigned int ch_x = ch;
     for(char x=0;x<40;x++) {
@@ -137,17 +131,13 @@ void graphics_mode(void) {
 }
 
 
-void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
-{
-  long addr;
-  int temp, slope, dx, dy;
-
+void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
   // Ignore if we choose to draw a point
   if (x2 == x1 && y2 == y1)
     return;
 
-  dx = x2 - x1;
-  dy = y2 - y1;
+  int dx = x2 - x1;
+  int dy = y2 - y1;
   if (dx < 0)
     dx = -dx;
   if (dy < 0)
@@ -158,7 +148,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     // Y is major axis
 
     if (y2 < y1) {
-      temp = x1;
+      int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -180,14 +170,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    slope = *MATH_DIVOUT_FRAC_INT1;
+    int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
-    addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25l;
+    long addr = GRAPHICS + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25l;
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
@@ -200,10 +190,10 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dy);
 
     // Command is FILL
-    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
+    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = DMA_COMMAND_FILL;
 
     // Line mode active, major axis is Y
-    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x40 + (((x2 - x1) < 0) ? 0x20 : 0x00);
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + DMA_OPTION_LINE_MODE_DIRECTION_Y + (((x2 - x1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
 
     VICIV->BORDER_COLOR = 1;
     // Set address of DMA list
@@ -218,7 +208,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     // X is major axis
 
     if (x2 < x1) {
-      temp = x1;
+      int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -239,14 +229,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part of the division result
-    slope = *MATH_DIVOUT_FRAC_INT1;
+    int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
-    addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25;
+    long addr = GRAPHICS + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25;
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
@@ -259,11 +249,10 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dx);
 
     // Command is FILL
-    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
+    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = DMA_COMMAND_FILL;
 
     // Line mode active, major axis is X
-    char line_mode = (((y2 - y1) < 0) ? 0x20 : 0x00);
-    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x00 + line_mode;
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (((y2 - y1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
 
     VICIV->BORDER_COLOR = 1;
     // Set address of DMA list

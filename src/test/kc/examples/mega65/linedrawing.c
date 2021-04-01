@@ -164,7 +164,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope
+    /*
     POKE(0xD770, (char)(dx & 0xff));
     POKE(0xD771, (char)(dx >> 8));
     POKE(0xD772, 0);
@@ -173,7 +173,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     POKE(0xD775, (char)(dy >> 8));
     POKE(0xD776, 0);
     POKE(0xD777, 0);
+    */
 
+    // Use hardware divider to get the slope
+    *MATH_MULTINA_INT0 = dx;
+    *MATH_MULTINB_INT0 = dy;
+    *MATH_MULTINA_INT1 = 0;
+    *MATH_MULTINB_INT1 = 0;
+    
     // Wait 16 cycles
     POKE(0xD020, 0);
     POKE(0xD020, 0);
@@ -182,7 +189,8 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
+    // slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
+    slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);
@@ -230,6 +238,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     }
 
     // Use hardware divider to get the slope
+    /*
     POKE(0xD770, (char)(dy & 0xff));
     POKE(0xD771, (char)(dy >> 8));
     POKE(0xD772, 0);
@@ -238,6 +247,13 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     POKE(0xD775, (char)(dx >> 8));
     POKE(0xD776, 0);
     POKE(0xD777, 0);
+    */
+
+    // Use hardware divider to get the slope
+    *MATH_MULTINA_INT0 = dy;
+    *MATH_MULTINB_INT0 = dx;
+    *MATH_MULTINA_INT1 = 0;
+    *MATH_MULTINB_INT1 = 0;
 
     // Wait 16 cycles
     POKE(0xD020, 0);
@@ -245,9 +261,9 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     POKE(0xD020, 0);
     POKE(0xD020, 0);
 
-    // Slope is the most significant bytes of the fractional part
-    // of the division result
-    slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
+    // Slope is the most significant bytes of the fractional part of the division result
+    // slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
+    slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);

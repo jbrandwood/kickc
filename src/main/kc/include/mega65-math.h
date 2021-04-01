@@ -1,0 +1,52 @@
+// MEGA65 CPU MATHS ACCELERATION REGISTERS
+// Every MEGA65 contains a combined 32-bit hardware multiplier and divider. This device
+// takes two 32-bit inputs, MULTINA and MULTINB, and simultaneously calculates:
+// • the 64-bit product of MULTINA and MULTINB
+// • the 32-bit whole part of MULTINA / MULTINB
+// • the 32-bit fractional part of MULTINA / MULTINB
+// It is always updating the outputs based on the inputs, so there is no need to take special
+// action when changing the inputs. The multiplier takes 1 cycle to calculate, and the updated result will thus be available immediately.
+// The hardware divider, however, can take up to 16 cycles depending on the particular inputs. Thus programmers should insert a short
+// delay after changing the inputs before reading the output. As this delay is so short, it can be implemented by simply reading the first
+// byte of the result four times consecutively, as the 4th read will occur after the result has settled.
+
+// $D70F MATH BUSY
+// Bit 7: DIVBUSY
+// Bit 6: MULBUSY
+char * const MATH_BUSY = 0xd70f;
+
+// $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
+// $D768-$D76B DIVOUT FRAC 32-bit output of MULTINA ÷ MULTINB
+signed char * const MATH_DIVOUT_FRAC_CHAR0 = 0xd768;
+signed int  * const MATH_DIVOUT_FRAC_INT0  = 0xd768;
+signed int  * const MATH_DIVOUT_FRAC_INT1  = 0xd76a;
+signed long * const MATH_DIVOUT_FRAC_LONG0 = 0xd768;
+// $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
+signed char * const MATH_DIVOUT_WHOLE_CHAR0 = 0xd76c;
+signed int  * const MATH_DIVOUT_WHOLE_INT0  = 0xd76c;
+signed int  * const MATH_DIVOUT_WHOLE_INT1  = 0xd76e;
+signed long * const MATH_DIVOUT_WHOLE_LONG  = 0xd76c;
+
+// $D770-$D773 MULTINA Multiplier input A / Divider numerator (32 bit)
+signed char * const MATH_MULTINA_CHAR0 = 0xd770;
+signed char * const MATH_MULTINA_CHAR1 = 0xd771;
+signed char * const MATH_MULTINA_CHAR2 = 0xd772;
+signed char * const MATH_MULTINA_CHAR3 = 0xd773;
+signed int  * const MATH_MULTINA_INT0  = 0xd770;
+signed int  * const MATH_MULTINA_INT1  = 0xd772;
+signed long * const MATH_MULTINA_LONG  = 0xd770;
+
+// $D774-$D777 MULTINB Multiplier input B / Divider denominator (32 bit)
+signed char * const MATH_MULTINB_CHAR0 = 0xd774;
+signed char * const MATH_MULTINB_CHAR1 = 0xd775;
+signed char * const MATH_MULTINB_CHAR2 = 0xd776;
+signed char * const MATH_MULTINB_CHAR3 = 0xd777;
+signed int  * const MATH_MULTINB_INT0  = 0xd774;
+signed int  * const MATH_MULTINB_INT1  = 0xd776;
+signed long * const MATH_MULTINB_LONG  = 0xd774;
+
+// $D778-$D77F MULTOUT 64-bit output of MULTINA × MULTINB
+signed char * const MATH_MULTOUT_CHAR0 = 0xd778;
+signed int  * const MATH_MULTOUT_INT0  = 0xd778;
+signed long * const MATH_MULTOUT_LONG0 = 0xd778;
+signed long * const MATH_MULTOUT_LONG1 = 0xd77c;

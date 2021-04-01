@@ -9,6 +9,7 @@
 #include <mega65-viciv.h>
 #include <mega65-memorymapper.h>
 #include <mega65-f018.h>
+#include <mega65-math.h>
 
 // I/O Personality selection
 volatile char * const IO_KEY = 0xd02f;

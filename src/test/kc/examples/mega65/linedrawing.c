@@ -1,7 +1,7 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65_remote)
+#pragma target(mega65)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -21,9 +21,36 @@ void lpoke(__zp unsigned long addr, char val) {
     }
 }
 
-char line_dmalist[256];
-char slope_ofs, line_mode_ofs, cmd_ofs, count_ofs;
-char src_ofs, dst_ofs;
+// DMA command structure for drawing lines
+char line_dma_command[] = {
+  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25 = 1600
+  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 = 1600
+  DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
+  DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
+  DMA_OPTION_LINE_MODE, 0,                      // Line Mode
+  DMA_OPTION_FORMAT_F018A,                      // F018A list format
+  DMA_OPTION_END,                               // end of options
+  0,                                            // DMA command
+  0, 0,                                         // Count of bytes to copy/fill
+  0, 0,                                         // Source address
+  0,                                            // Source bank
+  0, 0,                                         // Destination address
+  0,                                            // Destination bank
+  0, 0                                          // Modulo value (unused)
+};
+
+// Offset of the DMA line SLOPE
+const char LINE_DMA_COMMAND_SLOPE_OFFSET = 5;
+// Offset of the DMA line MODE
+const char LINE_DMA_COMMAND_MODE_OFFSET = 9;
+// Offset of the DMA command
+const char LINE_DMA_COMMAND_COMMAND_OFFSET = 12;
+// Offset of the DMA count
+const char LINE_DMA_COMMAND_COUNT_OFFSET = 13;
+// Offset of the DMA source
+const char LINE_DMA_COMMAND_SRC_OFFSET = 15;
+// Offset of the DMA destination
+const char LINE_DMA_COMMAND_DEST_OFFSET = 18;
 
 void main() {
 
@@ -43,38 +70,20 @@ void main() {
 
 
 
-   // Set up common structure of the DMA list
-   char ofs = 0;
-  // Screen layout is in vertical stripes, so we need only to setup the
-  // X offset step.  64x25 =
-  line_dmalist[ofs++] = 0x87;
-  line_dmalist[ofs++] = (1600 - 8) & 0xff;
-  line_dmalist[ofs++] = 0x88;
-  line_dmalist[ofs++] = (1600 - 8) >> 8;
-  line_dmalist[ofs++] = 0x8b;
-  slope_ofs = ofs++; // remember where we have to put the slope in
-  line_dmalist[ofs++] = 0x8c;
-  ofs++;
-  line_dmalist[ofs++] = 0x8f;
-  line_mode_ofs = ofs++;
-  line_dmalist[ofs++] = 0x0a; // F018A list format
-  line_dmalist[ofs++] = 0x00; // end of options
-  cmd_ofs = ofs++;            // command byte
-  count_ofs = ofs;
-  ofs += 2;
-  src_ofs = ofs;
-  ofs += 3;
-  dst_ofs = ofs;
-  ofs += 3;
-  line_dmalist[ofs++] = 0x00; // modulo
-  line_dmalist[ofs++] = 0x00;
+    //draw_line(160, 100, 0, 198, 1);  
+    
+    draw_line(160, 100, 319, 198, 1);  
 
+    for(;;) ;
 
+/*
   int x1 = 160;
   for(int x2=0;x2<320;x2+=11) {
     draw_line(x1, 100, x2, 198, 1);  
   }
+  */
 
+  
 }
 
 
@@ -116,10 +125,9 @@ void graphics_mode(void) {
   POKE(0xD021, 0);
 
   // Fill the graphics
-  memset_dma256(0x0, 0x4, 0x0000, 0x00, 320*200);
-  memset_dma256(0x0, 0x4, 0x0000, 0x055, 8*200);
-  memset_dma256(0x0, 0x4, 0x0000+200*39*8, 0x055, 8*200);
-
+  memset_dma256(0x0, 0x4, 0x0000, 0x0b, 320*200);
+  memset_dma256(0x0, 0x4, 0x0000, 0x0c, 8*200);
+  memset_dma256(0x0, 0x4, 0x0000+200*39*8, 0x0c, 8*200);
 
 }
 
@@ -177,35 +185,35 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
 
     // Put slope into DMA options
-    line_dmalist[slope_ofs] = (char)(slope & 0xff);
-    line_dmalist[slope_ofs + 2] = (char)(slope >> 8);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = (char)(slope >> 8);
 
     // Load DMA dest address with the address of the first pixel
     addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25l;
-    line_dmalist[dst_ofs + 0] = <(<(addr));
-    line_dmalist[dst_ofs + 1] = >(<(addr));
-    line_dmalist[dst_ofs + 2] = <(>(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
 
     // Source is the colour
-    line_dmalist[src_ofs] = colour & 0xf;
+    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour & 0xf;
 
     // Count is number of pixels, i.e., dy.
-    line_dmalist[count_ofs] = (char)(dy & 0xff);
-    line_dmalist[count_ofs + 1] = (char)(dy >> 8);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = (char)(dy & 0xff);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = (char)(dy >> 8);
 
     // Command is FILL
-    line_dmalist[cmd_ofs] = 0x03;
+    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
 
     // Line mode active, major axis is Y
-    line_dmalist[line_mode_ofs] = 0x80 + 0x40 + (((x2 - x1) < 0) ? 0x20 : 0x00);
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x40 + (((x2 - x1) < 0) ? 0x20 : 0x00);
 
     //    snprintf(msg,41,"Y: (%d,%d) - (%d,%d) m=%04x",x1,y1,x2,y2,slope);
     //    print_text(0,2,1,msg);
 
     POKE(0xD020, 1);
 
-    POKE(0xD701, (char)(((unsigned int)(line_dmalist)) >> 8));
-    POKE(0xD705, (char)(((unsigned int)(line_dmalist)) >> 0));
+    POKE(0xD701, (char)(((unsigned int)(line_dma_command)) >> 8));
+    POKE(0xD705, (char)(((unsigned int)(line_dma_command)) >> 0));
 
     POKE(0xD020, 0);
   }
@@ -242,36 +250,36 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
 
     // Put slope into DMA options
-    line_dmalist[slope_ofs] = (char)(slope & 0xff);
-    line_dmalist[slope_ofs + 2] = (char)(slope >> 8);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = (char)(slope >> 8);
 
     // Load DMA dest address with the address of the first pixel
     addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25;
-    line_dmalist[dst_ofs + 0] = <(<(addr));
-    line_dmalist[dst_ofs + 1] = >(<(addr));
-    line_dmalist[dst_ofs + 2] = <(>(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
 
     // Source is the colour
-    line_dmalist[src_ofs] = colour & 0xf;
+    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour & 0xf;
 
     // Count is number of pixels, i.e., dy.
-    line_dmalist[count_ofs] = (char)(dx & 0xff);
-    line_dmalist[count_ofs + 1] = (char)(dx >> 8);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = (char)(dx & 0xff);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = (char)(dx >> 8);
 
     // Command is FILL
-    line_dmalist[cmd_ofs] = 0x03;
+    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
 
     // Line mode active, major axis is X
     char line_mode = (((y2 - y1) < 0) ? 0x20 : 0x00);
-    line_dmalist[line_mode_ofs] = 0x80 + 0x00 + line_mode;
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x00 + line_mode;
 
     //    snprintf(msg,41,"X: (%d,%d) - (%d,%d) m=%04x",x1,y1,x2,y2,slope);
     //    print_text(0,2,1,msg);
 
     POKE(0xD020, 1);
 
-    POKE(0xD701, (char)(((unsigned int)(line_dmalist)) >> 8));
-    POKE(0xD705, (char)(((unsigned int)(line_dmalist)) >> 0));
+    POKE(0xD701, (char)(((unsigned int)(line_dma_command)) >> 8));
+    POKE(0xD705, (char)(((unsigned int)(line_dma_command)) >> 0));
 
     POKE(0xD020, 0);
   }

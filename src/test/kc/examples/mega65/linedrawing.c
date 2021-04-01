@@ -59,22 +59,22 @@ void main() {
 
   // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
   memoryRemap(0x00,0,0);
+
   // Fast CPU, M65 IO
   POKE(0, 65);
-  POKE(0xD02F, 0x47);
-  POKE(0xD02F, 0x53);    
+  // Enable MEGA65 features
+  VICIII->KEY = 0x47;   
+  VICIII->KEY = 0x53;
   // No C65 ROMs are mapped
-  POKE(0xD030, 0x00);    
+  VICIV->CONTROLA = 0;
+  // Enable 48MHz fast mode
+  VICIV->CONTROLB |= 0x40;
+  VICIV->CONTROLC |= 0x40;
 
   graphics_mode();
-
-
-
-    //draw_line(160, 100, 0, 198, 1);  
-    
-    draw_line(160, 100, 319, 198, 1);  
-
-    for(;;) ;
+  draw_line(160, 100, 0, 198, 1);  
+  draw_line(160, 100, 319, 198, 2);  
+  for(;;) ;
 
 /*
   int x1 = 160;
@@ -86,43 +86,48 @@ void main() {
   
 }
 
+// Address of the screen
+unsigned char* SCREEN = 0xc000;
+// Address of the graphics
+unsigned long GRAPHICS = 0x40000;
 
 void graphics_mode(void) {
-
   // 16-bit text mode, full-colour text for high chars
-  POKE(0xD054, 0x05);
+  VICIV->CONTROLC = 5;
   // H320, fast CPU
-  POKE(0xD031, 0x40);
+  VICIV->CONTROLB = 0x40;
   // 320x200 per char, 16 pixels wide per char
   // = 320/8 x 16 bits = 80 bytes per row
-  POKE(0xD058, 80);
-  POKE(0xD059, 80 / 256);
+  VICIV->CHARSTEP_LO = 80;
+  VICIV->CHARSTEP_HI = 0;
   // Draw 40 chars per row
-  POKE(0xD05E, 40);
-  
+  VICIV->CHRCOUNT = 40;
   // Put 2KB screen at $C000
-  POKE(0xD060, 0x00);
-  POKE(0xD061, 0xc0);
-  POKE(0xD062, 0x00);
+  VICIV->SCRNPTR_LOLO = 0x00;
+  VICIV->SCRNPTR_LOHI = 0xc0;
+  VICIV->SCRNPTR_HILO = 0x00;
+ 
  
   // Layout screen so that graphics data comes from $40000 -- $4FFFF
-  unsigned int i = 0x40000 / 0x40;
-  for (unsigned int a = 0; a < 40; a++)
-    for (unsigned int b = 0; b < 25; b++) {
-      POKE(0xC000 + b * 80 + a * 2 + 0, (char)(i & 0xff));
-      POKE(0xC000 + b * 80 + a * 2 + 1, (char)(i >> 8));
-      i++;
+  // Each column is consequtive values
+  unsigned int * screen = 0xc000;
+  unsigned int ch = 0x40000 / 0x40;
+  for(char y=0;y<25;y++) {
+    unsigned int ch_x = ch;
+    for(char x=0;x<40;x++) {
+      screen[x] = ch_x;
+      ch_x += 25;      
     }
+    screen += 40;
+    ch++;
+  }  
 
   // Clear colour RAM
-  for (unsigned int i = 0; i < 2000; i++) {
-    lpoke(0xff80000l + 0 + i, 0x00);
-    lpoke(0xff80000l + 1 + i, 0x00);
-  }
+  memset_dma256(0xff, 0x08, 0x0000, 0, 2000);
 
   // Black border and background
-  POKE(0xD020, 0);
-  POKE(0xD021, 0);
+  VICIV->BORDER_COLOR = 0;
+  VICIV->BG_COLOR = 0;
 
   // Fill the graphics
   memset_dma256(0x0, 0x4, 0x0000, 0x0b, 320*200);
@@ -148,9 +153,6 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
   if (dy < 0)
     dy = -dy;
 
-  //  snprintf(msg,41,"(%d,%d) - (%d,%d)    ",x1,y1,x2,y2);
-  //  print_text(0,1,1,msg);
-
   // Draw line from x1,y1 to x2,y2
   if (dx < dy) {
     // Y is major axis
@@ -164,17 +166,6 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
       y2 = temp;
     }
 
-    /*
-    POKE(0xD770, (char)(dx & 0xff));
-    POKE(0xD771, (char)(dx >> 8));
-    POKE(0xD772, 0);
-    POKE(0xD773, 0);
-    POKE(0xD774, (char)(dy & 0xff));
-    POKE(0xD775, (char)(dy >> 8));
-    POKE(0xD776, 0);
-    POKE(0xD777, 0);
-    */
-
     // Use hardware divider to get the slope
     *MATH_MULTINA_INT0 = dx;
     *MATH_MULTINB_INT0 = dy;
@@ -182,19 +173,18 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     *MATH_MULTINB_INT1 = 0;
     
     // Wait 16 cycles
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    // slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
     slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = (char)(slope >> 8);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
     addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25l;
@@ -203,11 +193,11 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
 
     // Source is the colour
-    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour & 0xf;
+    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
 
     // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = (char)(dy & 0xff);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = (char)(dy >> 8);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dy);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dy);
 
     // Command is FILL
     line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
@@ -215,15 +205,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     // Line mode active, major axis is Y
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x40 + (((x2 - x1) < 0) ? 0x20 : 0x00);
 
-    //    snprintf(msg,41,"Y: (%d,%d) - (%d,%d) m=%04x",x1,y1,x2,y2,slope);
-    //    print_text(0,2,1,msg);
-
-    POKE(0xD020, 1);
-
-    POKE(0xD701, (char)(((unsigned int)(line_dma_command)) >> 8));
-    POKE(0xD705, (char)(((unsigned int)(line_dma_command)) >> 0));
-
-    POKE(0xD020, 0);
+    VICIV->BORDER_COLOR = 1;
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = >line_dma_command;
+    // Trigger the DMA (with option lists)
+    DMA-> ETRIG = <line_dma_command;
+    VICIV->BORDER_COLOR = 0;
   }
   else {
     // X is major axis
@@ -238,36 +227,23 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     }
 
     // Use hardware divider to get the slope
-    /*
-    POKE(0xD770, (char)(dy & 0xff));
-    POKE(0xD771, (char)(dy >> 8));
-    POKE(0xD772, 0);
-    POKE(0xD773, 0);
-    POKE(0xD774, (char)(dx & 0xff));
-    POKE(0xD775, (char)(dx >> 8));
-    POKE(0xD776, 0);
-    POKE(0xD777, 0);
-    */
-
-    // Use hardware divider to get the slope
     *MATH_MULTINA_INT0 = dy;
     *MATH_MULTINB_INT0 = dx;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
 
     // Wait 16 cycles
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
-    POKE(0xD020, 0);
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
+    VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part of the division result
-    // slope = (int)PEEK(0xD76A) + ((int)PEEK(0xD76B) << 8);
     slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = (char)(slope & 0xff);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = (char)(slope >> 8);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
     addr = 0x40000 + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25;
@@ -276,11 +252,11 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
 
     // Source is the colour
-    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour & 0xf;
+    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
 
     // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = (char)(dx & 0xff);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = (char)(dx >> 8);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dx);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dx);
 
     // Command is FILL
     line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = 0x03;
@@ -289,14 +265,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour)
     char line_mode = (((y2 - y1) < 0) ? 0x20 : 0x00);
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = 0x80 + 0x00 + line_mode;
 
-    //    snprintf(msg,41,"X: (%d,%d) - (%d,%d) m=%04x",x1,y1,x2,y2,slope);
-    //    print_text(0,2,1,msg);
+    VICIV->BORDER_COLOR = 1;
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = >line_dma_command;
+    // Trigger the DMA (with option lists)
+    DMA-> ETRIG = <line_dma_command;
+    VICIV->BORDER_COLOR = 0;
 
-    POKE(0xD020, 1);
-
-    POKE(0xD701, (char)(((unsigned int)(line_dma_command)) >> 8));
-    POKE(0xD705, (char)(((unsigned int)(line_dma_command)) >> 0));
-
-    POKE(0xD020, 0);
   }
 }

@@ -143,13 +143,13 @@ void graphics_mode(void) {
 
 }
 
-void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, unsigned char colour) {
+void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
   // Ignore if we choose to draw a point
   if (x2 == x1 && y2 == y1)
     return;
 
-  int dx = (int)x2 - (int)x1;
-  int dy = (int)y2 - (int)y1;
+  int dx = x2 - x1;
+  int dy = y2 - y1;
   if (dx < 0)
     dx = -dx;
   if (dy < 0)
@@ -160,7 +160,7 @@ void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y
     // Y is major axis
 
     if (y2 < y1) {
-      unsigned int temp = x1;
+      int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -182,7 +182,7 @@ void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    unsigned int slope = (unsigned int )*MATH_DIVOUT_FRAC_INT1;
+    int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
@@ -215,7 +215,7 @@ void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y
     // X is major axis
 
     if (x2 < x1) {
-      unsigned int temp = x1;
+      int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -236,7 +236,7 @@ void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y
     VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part of the division result
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
+    int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);

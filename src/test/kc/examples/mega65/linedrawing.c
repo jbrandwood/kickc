@@ -97,7 +97,7 @@ void main() {
 // Address of the screen
 unsigned char * const SCREEN = 0xc000;
 // // Absolute address of the graphics
-const long GRAPHICS = 0x40000;
+const unsigned long GRAPHICS = 0x40000;
 
 void graphics_mode(void) {
   // 16-bit text mode, full-colour text for high chars
@@ -143,13 +143,13 @@ void graphics_mode(void) {
 
 }
 
-void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
+void draw_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, unsigned char colour) {
   // Ignore if we choose to draw a point
   if (x2 == x1 && y2 == y1)
     return;
 
-  int dx = x2 - x1;
-  int dy = y2 - y1;
+  int dx = (int)x2 - (int)x1;
+  int dy = (int)y2 - (int)y1;
   if (dx < 0)
     dx = -dx;
   if (dy < 0)
@@ -160,7 +160,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     // Y is major axis
 
     if (y2 < y1) {
-      int temp = x1;
+      unsigned int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -182,14 +182,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    int slope = *MATH_DIVOUT_FRAC_INT1;
+    unsigned int slope = (unsigned int )*MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
 
     // Load DMA dest address with the address of the first pixel
-    long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
+    unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
@@ -215,7 +215,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     // X is major axis
 
     if (x2 < x1) {
-      int temp = x1;
+      unsigned int temp = x1;
       x1 = x2;
       x2 = temp;
       temp = y1;
@@ -236,14 +236,14 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part of the division result
-    int slope = *MATH_DIVOUT_FRAC_INT1;
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
 
     // Load DMA dest address with the address of the first pixel
-    long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
+    unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);

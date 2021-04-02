@@ -44,6 +44,8 @@ char line_dma_command[] = {
   DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 
   DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
+  DMA_OPTION_LINE_SLOPE_INIT_LO, 0,             // Line slope init
+  DMA_OPTION_LINE_SLOPE_INIT_HI, 0,             // Line slope init
   DMA_OPTION_LINE_MODE, 0,                      // Line Mode
   DMA_OPTION_FORMAT_F018A,                      // F018A list format
   DMA_OPTION_END,                               // end of options
@@ -58,14 +60,16 @@ char line_dma_command[] = {
 
 // Offset of the DMA line SLOPE
 const char LINE_DMA_COMMAND_SLOPE_OFFSET = 5;
+// Offset of the DMA line SLOPE init
+const char LINE_DMA_COMMAND_SLOPE_INIT_OFFSET = 9;
 // Offset of the DMA line MODE
-const char LINE_DMA_COMMAND_MODE_OFFSET = 9;
+const char LINE_DMA_COMMAND_MODE_OFFSET = 13;
 // Offset of the DMA count
-const char LINE_DMA_COMMAND_COUNT_OFFSET = 13;
+const char LINE_DMA_COMMAND_COUNT_OFFSET = 17;
 // Offset of the DMA source
-const char LINE_DMA_COMMAND_SRC_OFFSET = 15;
+const char LINE_DMA_COMMAND_SRC_OFFSET = 19;
 // Offset of the DMA destination
-const char LINE_DMA_COMMAND_DEST_OFFSET = 18;
+const char LINE_DMA_COMMAND_DEST_OFFSET = 22;
 
 void main() {
 
@@ -85,10 +89,25 @@ void main() {
   VICIV->CONTROLC |= VICIV_VFAST;
 
   graphics_mode();
-  draw_line(160, 100,   0, 199, 1);  
+
+  draw_line(0, 100, 319, 0, 1);    
+
+  /*
+  draw_line(160, 100,   0, 199, 1);    
   draw_line(160, 100, 319, 199, 2);  
   draw_line(  0,   0, 160, 100, 3);  
   draw_line(160, 100, 319, 0, 4);  
+
+  for(int x1=0;x1<320;x1+=10) {
+      draw_line(x1, 0, 160, 199, 5);      
+      draw_line(160, 0, x1, 199, 5);      
+  }
+
+  for(int y1=0;y1<200;y1+=10) {
+      draw_line(0, y1, 319, 100, 6);
+      draw_line(0, 100, 319, y1, 6);
+  }
+  */
 
   for(;;) ;
   
@@ -182,11 +201,15 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
 
     // Slope is the most significant bytes of the fractional part
     // of the division result
-    int slope = *MATH_DIVOUT_FRAC_INT1;
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
+    // Put slope init into DMA options
+    unsigned int slope_init = slope/2;
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
 
     // Load DMA dest address with the address of the first pixel
     unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
@@ -236,11 +259,16 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     VICIV->BORDER_COLOR = 0;
 
     // Slope is the most significant bytes of the fractional part of the division result
-    int slope = *MATH_DIVOUT_FRAC_INT1;
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
+
+    // Put slope init into DMA options
+    unsigned int slope_init = slope/2;
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
 
     // Load DMA dest address with the address of the first pixel
     unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);

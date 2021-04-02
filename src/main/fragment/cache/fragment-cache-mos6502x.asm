@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE f0802c8e6 f0802e789
+//KICKC FRAGMENT CACHE f3ad13084 f3ad14fda
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -18974,6 +18974,45 @@ ldy {m2}
 lda {c2},y
 ldy {m1}
 sta {c1},y
+//FRAGMENT vwuz1=pbuz2_minus_pbuc1
+lda {z2}
+sec
+sbc #<{c1}
+sta {z1}
+lda {z2}+1
+sbc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuc1_neq_vwuz1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bne {la1}
+lda {z1}
+cmp #<{c1}
+bne {la1}
+//FRAGMENT pvoc1_neq_pvoz1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bne {la1}
+lda {z1}
+cmp #<{c1}
+bne {la1}
+//FRAGMENT _deref_pbuz1_neq_vbuyy_then_la1
+tya
+tax
+ldy #0
+lda ({z1}),y
+tay
+stx $ff
+cpy $ff
+bne {la1}
+//FRAGMENT vwuz1=pbuz1_minus_pbuc1
+lda {z1}
+sec
+sbc #<{c1}
+sta {z1}
+lda {z1}+1
+sbc #>{c1}
+sta {z1}+1
 //FRAGMENT pbuc1_derefidx_vbuz1=pbuc1_derefidx_vbuz1_bor_vbuc2
 lda #{c2}
 ldy {z1}

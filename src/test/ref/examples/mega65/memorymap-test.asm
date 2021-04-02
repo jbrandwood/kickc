@@ -364,7 +364,7 @@ memoryRemap256M: {
     lda lMb
     ldx #$f
     ldy uMb
-    ldz #0
+    ldz #$f
     map
     lda aVal
     ldx xVal

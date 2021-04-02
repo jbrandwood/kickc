@@ -17,15 +17,15 @@ char * const MATH_BUSY = 0xd70f;
 
 // $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
 // $D768-$D76B DIVOUT FRAC 32-bit output of MULTINA ÷ MULTINB
-signed char * const MATH_DIVOUT_FRAC_CHAR0 = 0xd768;
-signed int  * const MATH_DIVOUT_FRAC_INT0  = 0xd768;
-signed int  * const MATH_DIVOUT_FRAC_INT1  = 0xd76a;
-signed long * const MATH_DIVOUT_FRAC_LONG0 = 0xd768;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR0 = 0xd768;
+signed int  volatile * const MATH_DIVOUT_FRAC_INT0  = 0xd768;
+signed int  volatile * const MATH_DIVOUT_FRAC_INT1  = 0xd76a;
+signed long volatile * const MATH_DIVOUT_FRAC_LONG0 = 0xd768;
 // $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
-signed char * const MATH_DIVOUT_WHOLE_CHAR0 = 0xd76c;
-signed int  * const MATH_DIVOUT_WHOLE_INT0  = 0xd76c;
-signed int  * const MATH_DIVOUT_WHOLE_INT1  = 0xd76e;
-signed long * const MATH_DIVOUT_WHOLE_LONG  = 0xd76c;
+signed char volatile * const MATH_DIVOUT_WHOLE_CHAR0 = 0xd76c;
+signed int  volatile * const MATH_DIVOUT_WHOLE_INT0  = 0xd76c;
+signed int  volatile * const MATH_DIVOUT_WHOLE_INT1  = 0xd76e;
+signed long volatile * const MATH_DIVOUT_WHOLE_LONG  = 0xd76c;
 
 // $D770-$D773 MULTINA Multiplier input A / Divider numerator (32 bit)
 signed char * const MATH_MULTINA_CHAR0 = 0xd770;
@@ -46,7 +46,7 @@ signed int  * const MATH_MULTINB_INT1  = 0xd776;
 signed long * const MATH_MULTINB_LONG  = 0xd774;
 
 // $D778-$D77F MULTOUT 64-bit output of MULTINA × MULTINB
-signed char * const MATH_MULTOUT_CHAR0 = 0xd778;
-signed int  * const MATH_MULTOUT_INT0  = 0xd778;
-signed long * const MATH_MULTOUT_LONG0 = 0xd778;
-signed long * const MATH_MULTOUT_LONG1 = 0xd77c;
+signed char volatile * const MATH_MULTOUT_CHAR0 = 0xd778;
+signed int  volatile * const MATH_MULTOUT_INT0  = 0xd778;
+signed long volatile * const MATH_MULTOUT_LONG0 = 0xd778;
+signed long volatile * const MATH_MULTOUT_LONG1 = 0xd77c;

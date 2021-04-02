@@ -1,7 +1,7 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65)
+#pragma target(mega65_remote)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -30,7 +30,7 @@ char line_dma_command[] = {
   DMA_OPTION_LINE_MODE, 0,                      // Line Mode
   DMA_OPTION_FORMAT_F018A,                      // F018A list format
   DMA_OPTION_END,                               // end of options
-  0,                                            // DMA command
+  DMA_COMMAND_FILL,                             // DMA command
   0, 0,                                         // Count of bytes to copy/fill
   0, 0,                                         // Source address
   0,                                            // Source bank
@@ -43,8 +43,6 @@ char line_dma_command[] = {
 const char LINE_DMA_COMMAND_SLOPE_OFFSET = 5;
 // Offset of the DMA line MODE
 const char LINE_DMA_COMMAND_MODE_OFFSET = 9;
-// Offset of the DMA command
-const char LINE_DMA_COMMAND_COMMAND_OFFSET = 12;
 // Offset of the DMA count
 const char LINE_DMA_COMMAND_COUNT_OFFSET = 13;
 // Offset of the DMA source
@@ -56,20 +54,18 @@ void main() {
 
   // Avoid interrupts
   SEI();
-
   // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
   memoryRemap(0x00,0,0);
-
   // Fast CPU, M65 IO
   POKE(0, 65);
   // Enable MEGA65 features
-  VICIII->KEY = 0x47;   
+  VICIII->KEY = 0x47;
   VICIII->KEY = 0x53;
   // No C65 ROMs are mapped
   VICIV->CONTROLA = 0;
   // Enable 48MHz fast mode
-  VICIV->CONTROLB |= 0x40;
-  VICIV->CONTROLC |= 0x40;
+  VICIV->CONTROLB |= VICIII_FAST;
+  VICIV->CONTROLC |= VICIV_VFAST;
 
   graphics_mode();
   draw_line(160, 100,   0, 199, 1);  
@@ -88,9 +84,9 @@ const long GRAPHICS = 0x40000;
 
 void graphics_mode(void) {
   // 16-bit text mode, full-colour text for high chars
-  VICIV->CONTROLC = 5;
+  VICIV->CONTROLC = VICIV_FCLRHI | VICIV_CHR16;
   // H320, fast CPU
-  VICIV->CONTROLB = 0x40;
+  VICIV->CONTROLB = VICIII_FAST;
   // 320x200 per char, 16 pixels wide per char
   // = 320/8 x 16 bits = 80 bytes per row
   VICIV->CHARSTEP_LO = 80;
@@ -177,7 +173,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
-    long addr = GRAPHICS + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25l;
+    long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
@@ -189,20 +185,15 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dy);
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dy);
 
-    // Command is FILL
-    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = DMA_COMMAND_FILL;
-
     // Line mode active, major axis is Y
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + DMA_OPTION_LINE_MODE_DIRECTION_Y + (((x2 - x1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
 
-    VICIV->BORDER_COLOR = 1;
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
     DMA-> ADDRMSB = >line_dma_command;
     // Trigger the DMA (with option lists)
     DMA-> ETRIG = <line_dma_command;
-    VICIV->BORDER_COLOR = 0;
   }
   else {
     // X is major axis
@@ -236,7 +227,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
 
     // Load DMA dest address with the address of the first pixel
-    long addr = GRAPHICS + (y1 << 3) + (x1 & 7) + (x1 >> 3) * 64 * 25;
+    long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
@@ -248,20 +239,15 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dx);
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dx);
 
-    // Command is FILL
-    line_dma_command[LINE_DMA_COMMAND_COMMAND_OFFSET] = DMA_COMMAND_FILL;
-
     // Line mode active, major axis is X
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (((y2 - y1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
 
-    VICIV->BORDER_COLOR = 1;
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
     DMA-> ADDRMSB = >line_dma_command;
     // Trigger the DMA (with option lists)
     DMA-> ETRIG = <line_dma_command;
-    VICIV->BORDER_COLOR = 0;
 
   }
 }

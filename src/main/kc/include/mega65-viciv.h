@@ -306,3 +306,54 @@ struct MEGA65_VICIV {
   char DEBUGXY;
 };
 
+// $D030 VIC-III Control Register A (ROM banks)
+// Bit        20-bit Address       16-bit Address  Read-Write
+// 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
+//            $FF80000 – $FF807FF
+const char VICIII_CRAM2K = 0x01;
+// 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
+const char VICIII_ROM8 = 0x08;
+// 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
+const char VICIII_ROMA = 0x10;
+// 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
+const char VICIII_ROMC = 0x20;
+// 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
+const char VICIII_CROM9 = 0x40;
+// 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
+const char VICIII_ROME = 0x80;
+
+// $D031 VIC-III Control Register B
+// 0    INT   Enable VIC-III interlaced mode
+const char VICIII_INT = 0x01;
+// 1    MONO  Enable VIC-III MONO video output (not implemented)
+const char VICIII_MONO = 0x02;
+// 2    H1280 Enable 1280 horizontal pixels (not implemented)
+const char VICIII_H1280 = 0x04;
+// 3    V400  Enable 400 vertical pixels
+const char VICIII_V400 = 0x08;
+// 4    BPM   Bit-Plane Mode
+const char VICIII_BPM = 0x10;
+// 5    ATTR  Enable extended attributes and 8 bit colour entries
+const char VICIII_ATTR = 0x20;
+// 6    FAST  Enable C65 FAST mode (3 .5MHz)
+const char VICIII_FAST = 0x40;
+// 7    H640  Enable C64 640 horizontal pixels / 80 column mode
+const char VICIII_H640 = 0x80;
+
+// $D054 VIC-IV Control register C
+// 0 CHR16 enable 16-bit character numbers (two screen bytes per character)
+const char VICIV_CHR16 = 0x01;
+// 1 FCLRLO enable full-colour mode for character numbers <=\$FF
+const char VICIV_FCLRLO = 0x02;
+// 2 FCLRHI enable full-colour mode for character numbers >\$FF
+const char VICIV_FCLRHI = 0x04;
+// 3 SMTH video output horizontal smoothing enable
+const char VICIV_CSMTH = 0x08;
+// 4 VIC-IV:SPR640 Sprite H640 enable;
+const char VICIV_SPR640 = 0x10;
+// 5 VIC-IV:PALEMU video output pal simulation
+const char VICIV_PALEMU = 0x20;
+// 6 VIC-IV:VFAST C65GS FAST mode (48MHz)
+const char VICIV_VFAST = 0x40;
+// 7 VIC-IV:ALPHEN Alpha compositor enable
+const char VICIV_ALPHEN = 0x80;

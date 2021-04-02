@@ -1,12 +1,27 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65_remote)
+#pragma target(mega65)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
 
+// Get the 0th byte of a double value
+#define BYTE0(d) <(<(d))
+// Get the 1th byte of a double value
+#define BYTE1(d) >(<(d))
+// Get the 2th byte of a double value
+#define BYTE2(d) <(>(d))
+// Get the 3th byte of a double value
+#define BYTE3(d) >(>(d))
+// Get the low byte from a word/int
+#define LOBYTE(w) <(w)
+// Get the high byte from a word/int
+#define HIBYTE(w) >(w)
+
+// Poke a byte value into memory
 #define POKE(addr,val) *((char*)(addr)) = val
+// Peek a byte value from memory
 #define PEEK(addr) *((char*)addr)
 
 // Poke a value directly into memory
@@ -22,9 +37,11 @@ void lpoke(__zp unsigned long addr, char val) {
 }
 
 // DMA command structure for drawing lines
+// Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
+// addr = (x/8) * 64 * 25 + (y*8) + (x&7)
 char line_dma_command[] = {
-  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25 = 1600
-  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 = 1600
+  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25 
+  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 
   DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
   DMA_OPTION_LINE_MODE, 0,                      // Line Mode
@@ -59,12 +76,12 @@ void main() {
   // Fast CPU, M65 IO
   POKE(0, 65);
   // Enable MEGA65 features
-  VICIII->KEY = 0x47;
-  VICIII->KEY = 0x53;
+  VICIV->KEY = VICIV_KEY_M65_A;
+  VICIV->KEY = VICIV_KEY_M65_B;
   // No C65 ROMs are mapped
   VICIV->CONTROLA = 0;
   // Enable 48MHz fast mode
-  VICIV->CONTROLB |= VICIII_FAST;
+  VICIV->CONTROLB |= VICIV_FAST;
   VICIV->CONTROLC |= VICIV_VFAST;
 
   graphics_mode();
@@ -86,7 +103,7 @@ void graphics_mode(void) {
   // 16-bit text mode, full-colour text for high chars
   VICIV->CONTROLC = VICIV_FCLRHI | VICIV_CHR16;
   // H320, fast CPU
-  VICIV->CONTROLB = VICIII_FAST;
+  VICIV->CONTROLB = VICIV_FAST;
   // 320x200 per char, 16 pixels wide per char
   // = 320/8 x 16 bits = 80 bytes per row
   VICIV->CHARSTEP_LO = 80;
@@ -94,8 +111,8 @@ void graphics_mode(void) {
   // Draw 40 chars per row
   VICIV->CHRCOUNT = 40;
   // Put 2KB screen at $C000
-  VICIV->SCRNPTR_LOLO = <(SCREEN);
-  VICIV->SCRNPTR_LOHI = >(SCREEN);
+  VICIV->SCRNPTR_LOLO = LOBYTE(SCREEN);
+  VICIV->SCRNPTR_LOHI = HIBYTE(SCREEN);
   VICIV->SCRNPTR_HILO = 0x00;
  
   // Layout screen so that graphics data comes from $40000 -- $4FFFF
@@ -125,7 +142,6 @@ void graphics_mode(void) {
   memset_dma256(0x0, 0x4, 0x0000+200*39*8, 0x0c, 8*200);
 
 }
-
 
 void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
   // Ignore if we choose to draw a point
@@ -169,21 +185,21 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
 
     // Load DMA dest address with the address of the first pixel
     long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
 
     // Source is the colour
     line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
 
     // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dy);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dy);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(dy);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(dy);
 
     // Line mode active, major axis is Y
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + DMA_OPTION_LINE_MODE_DIRECTION_Y + (((x2 - x1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
@@ -223,21 +239,21 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     int slope = *MATH_DIVOUT_FRAC_INT1;
 
     // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = <(slope);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = >(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
 
     // Load DMA dest address with the address of the first pixel
     long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = <(<(addr));
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = >(<(addr));
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = <(>(addr));
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
 
     // Source is the colour
     line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
 
     // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = <(dx);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = >(dx);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(dx);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(dx);
 
     // Line mode active, major axis is X
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (((y2 - y1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);

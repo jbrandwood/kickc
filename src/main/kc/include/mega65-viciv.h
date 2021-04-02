@@ -306,39 +306,53 @@ struct MEGA65_VICIV {
   char DEBUGXY;
 };
 
+// $D02f KEY register is used for choosing between the different I/O personalities.
+// This disables/enables different registers in $D000-$DFFF
+// $00: C64 personality
+const char VICIV_KEY_C64 = 0x00;
+// $A5, $96: C65 personality
+const char VICIV_KEY_C65_A = 0xa5;
+const char VICIV_KEY_C65_B = 0x96;
+// $45, $54: MEGA65 ETHERNET personality
+const char VICIV_KEY_ETHERNET_A = 0x45;
+const char VICIV_KEY_ETHERNET_B = 0x54;
+// $47, $53: MEGA65 personality
+const char VICIV_KEY_M65_A = 0x47;
+const char VICIV_KEY_M65_B = 0x53;
+
 // $D030 VIC-III Control Register A (ROM banks)
 // Bit        20-bit Address       16-bit Address  Read-Write
 // 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
 //            $FF80000 – $FF807FF
-const char VICIII_CRAM2K = 0x01;
+const char VICIV_CRAM2K = 0x01;
 // 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
-const char VICIII_ROM8 = 0x08;
+const char VICIV_ROM8 = 0x08;
 // 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
-const char VICIII_ROMA = 0x10;
+const char VICIV_ROMA = 0x10;
 // 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
-const char VICIII_ROMC = 0x20;
+const char VICIV_ROMC = 0x20;
 // 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
-const char VICIII_CROM9 = 0x40;
+const char VICIV_CROM9 = 0x40;
 // 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
-const char VICIII_ROME = 0x80;
+const char VICIV_ROME = 0x80;
 
 // $D031 VIC-III Control Register B
 // 0    INT   Enable VIC-III interlaced mode
-const char VICIII_INT = 0x01;
+const char VICIV_INT = 0x01;
 // 1    MONO  Enable VIC-III MONO video output (not implemented)
-const char VICIII_MONO = 0x02;
+const char VICIV_MONO = 0x02;
 // 2    H1280 Enable 1280 horizontal pixels (not implemented)
-const char VICIII_H1280 = 0x04;
+const char VICIV_H1280 = 0x04;
 // 3    V400  Enable 400 vertical pixels
-const char VICIII_V400 = 0x08;
+const char VICIV_V400 = 0x08;
 // 4    BPM   Bit-Plane Mode
-const char VICIII_BPM = 0x10;
+const char VICIV_BPM = 0x10;
 // 5    ATTR  Enable extended attributes and 8 bit colour entries
-const char VICIII_ATTR = 0x20;
+const char VICIV_ATTR = 0x20;
 // 6    FAST  Enable C65 FAST mode (3 .5MHz)
-const char VICIII_FAST = 0x40;
+const char VICIV_FAST = 0x40;
 // 7    H640  Enable C64 640 horizontal pixels / 80 column mode
-const char VICIII_H640 = 0x80;
+const char VICIV_H640 = 0x80;
 
 // $D054 VIC-IV Control register C
 // 0 CHR16 enable 16-bit character numbers (two screen bytes per character)

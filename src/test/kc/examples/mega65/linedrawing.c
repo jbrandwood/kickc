@@ -90,13 +90,16 @@ void main() {
 
   graphics_mode();
 
-  draw_line(0, 100, 319, 0, 1);    
+  //draw_line(150, 0, 160, 40, 5);
+  //draw_line(160, 0, 160, 40, 6);
+  //draw_line(170, 0, 160, 40, 7);
 
   /*
   draw_line(160, 100,   0, 199, 1);    
   draw_line(160, 100, 319, 199, 2);  
   draw_line(  0,   0, 160, 100, 3);  
   draw_line(160, 100, 319, 0, 4);  
+  */
 
   for(int x1=0;x1<320;x1+=10) {
       draw_line(x1, 0, 160, 199, 5);      
@@ -107,7 +110,6 @@ void main() {
       draw_line(0, y1, 319, 100, 6);
       draw_line(0, 100, 319, y1, 6);
   }
-  */
 
   for(;;) ;
   
@@ -207,12 +209,12 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
     // Put slope init into DMA options
-    unsigned int slope_init = slope/2;
+    unsigned int slope_init = 32768;
     line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
 
     // Load DMA dest address with the address of the first pixel
-    unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
+    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
@@ -266,12 +268,12 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
 
     // Put slope init into DMA options
-    unsigned int slope_init = slope/2;
+    unsigned int slope_init = 32768;
     line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
 
     // Load DMA dest address with the address of the first pixel
-    unsigned long addr = GRAPHICS + (x1/8) * 64 * 25 + (y1*8) + (x1&7);
+    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);

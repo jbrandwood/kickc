@@ -216,9 +216,9 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope (add 1/2 to get better rounding )
-    *MATH_MULTINA_INT0 = dx*2+1;
-    *MATH_MULTINB_INT0 = dy*2;
+    // Use hardware divider to get the slope 
+    *MATH_MULTINA_INT0 = dx;
+    *MATH_MULTINB_INT0 = dy;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
     
@@ -229,9 +229,9 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
     }
-    // Slope is the most significant bytes of the fractional part
-    // of the division result
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
+    // Slope is the most significant bytes of the fractional part of the division result
+    // Perform rounding by examining the next bit also
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1 + (((char)*MATH_DIVOUT_FRAC_CHAR1&0x80)?1:0);
     unsigned int slope_init = 32768;
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     unsigned int count = (unsigned int)dy;
@@ -249,9 +249,9 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope (add 1/2 to get better rounding )
-    *MATH_MULTINA_INT0 = dy*2+1;
-    *MATH_MULTINB_INT0 = dx*2;
+    // Use hardware divider to get the slope 
+    *MATH_MULTINA_INT0 = dy;
+    *MATH_MULTINB_INT0 = dx;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
 
@@ -264,7 +264,8 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     }
 
     // Slope is the most significant bytes of the fractional part of the division result
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
+    // Perform rounding by examining the next bit also
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1 + (((char)*MATH_DIVOUT_FRAC_CHAR1&0x80)?1:0);
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     unsigned int count = (unsigned int)dx;
     char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;

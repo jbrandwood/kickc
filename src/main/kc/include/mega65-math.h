@@ -18,6 +18,9 @@ char * const MATH_BUSY = 0xd70f;
 // $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
 // $D768-$D76B DIVOUT FRAC 32-bit output of MULTINA ÷ MULTINB
 signed char volatile * const MATH_DIVOUT_FRAC_CHAR0 = 0xd768;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR1 = 0xd769;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR2 = 0xd76a;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR3 = 0xd76b;
 signed int  volatile * const MATH_DIVOUT_FRAC_INT0  = 0xd768;
 signed int  volatile * const MATH_DIVOUT_FRAC_INT1  = 0xd76a;
 signed long volatile * const MATH_DIVOUT_FRAC_LONG0 = 0xd768;

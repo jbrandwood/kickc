@@ -40,12 +40,12 @@ void lpoke(__zp unsigned long addr, char val) {
 // Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
 // addr = (x/8) * 64 * 25 + (y*8) + (x&7)
 char line_dma_command[] = {
-  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25 
-  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 
+  DMA_OPTION_LINE_XSTEP_LO, LOBYTE(25*64 - 8),  // Line X step bytes 64x25 
+  DMA_OPTION_LINE_XSTEP_HI, HIBYTE(25*64 - 8),  // Line X step bytes 64x25 
   DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
-  DMA_OPTION_LINE_SLOPE_INIT_LO, 0,             // Line slope init
-  DMA_OPTION_LINE_SLOPE_INIT_HI, 0,             // Line slope init
+  DMA_OPTION_LINE_SLOPE_INIT_LO, LOBYTE(32768), // Line slope init
+  DMA_OPTION_LINE_SLOPE_INIT_HI, HIBYTE(32768), // Line slope init
   DMA_OPTION_LINE_MODE, 0,                      // Line Mode
   DMA_OPTION_FORMAT_F018A,                      // F018A list format
   DMA_OPTION_END,                               // end of options
@@ -60,8 +60,6 @@ char line_dma_command[] = {
 
 // Offset of the DMA line SLOPE
 const char LINE_DMA_COMMAND_SLOPE_OFFSET = 5;
-// Offset of the DMA line SLOPE init
-const char LINE_DMA_COMMAND_SLOPE_INIT_OFFSET = 9;
 // Offset of the DMA line MODE
 const char LINE_DMA_COMMAND_MODE_OFFSET = 13;
 // Offset of the DMA count
@@ -70,6 +68,35 @@ const char LINE_DMA_COMMAND_COUNT_OFFSET = 17;
 const char LINE_DMA_COMMAND_SRC_OFFSET = 19;
 // Offset of the DMA destination
 const char LINE_DMA_COMMAND_DEST_OFFSET = 22;
+
+void line_dma_execute(unsigned long addr, unsigned int slope, unsigned int count, char colour, char is_direction_y, char is_slope_negative) {
+
+    // Put slope into DMA options
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
+    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
+
+    // Load DMA dest address with the address of the first pixel
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
+    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
+
+    // Source is the colour
+    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
+
+    // Count is number of pixels, i.e., dy.
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(count);
+    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(count);
+
+    // Line mode active, major axis is Y
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (is_direction_y ? DMA_OPTION_LINE_MODE_DIRECTION_Y : 0x00) + (is_slope_negative ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
+
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = HIBYTE(line_dma_command);
+    // Trigger the DMA (with option lists)
+    DMA-> ETRIG = LOBYTE(line_dma_command);
+}
 
 void main() {
 
@@ -189,54 +216,28 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dx;
-    *MATH_MULTINB_INT0 = dy;
+    // Use hardware divider to get the slope (add 1/2 to get better rounding )
+    *MATH_MULTINA_INT0 = dx*2+1;
+    *MATH_MULTINB_INT0 = dy*2;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
     
     // Wait 16 cycles
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
-
+    asm {
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+    }
     // Slope is the most significant bytes of the fractional part
     // of the division result
     unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
-
-    // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
-    // Put slope init into DMA options
     unsigned int slope_init = 32768;
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
-
-    // Load DMA dest address with the address of the first pixel
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
-
-    // Source is the colour
-    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
-
-    // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(dy);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(dy);
-
-    // Line mode active, major axis is Y
-    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + DMA_OPTION_LINE_MODE_DIRECTION_Y + (((x2 - x1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
-
-    // Set address of DMA list
-    DMA->ADDRMB = 0;
-    DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >line_dma_command;
-    // Trigger the DMA (with option lists)
-    DMA-> ETRIG = <line_dma_command;
-  }
-  else {
+    unsigned int count = (unsigned int)dy;
+    char is_slope_negative = ((x2 - x1) < 0)?1:0;
+    line_dma_execute(addr, slope, count, colour, 1, is_slope_negative);
+  } else {
     // X is major axis
 
     if (x2 < x1) {
@@ -248,52 +249,26 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dy;
-    *MATH_MULTINB_INT0 = dx;
+    // Use hardware divider to get the slope (add 1/2 to get better rounding )
+    *MATH_MULTINA_INT0 = dy*2+1;
+    *MATH_MULTINB_INT0 = dx*2;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
 
     // Wait 16 cycles
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
-    VICIV->BORDER_COLOR = 0;
+    asm {
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+    }
 
     // Slope is the most significant bytes of the fractional part of the division result
     unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
-
-    // Put slope into DMA options
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
-
-    // Put slope init into DMA options
-    unsigned int slope_init = 32768;
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET] = LOBYTE(slope_init);
-    line_dma_command[LINE_DMA_COMMAND_SLOPE_INIT_OFFSET + 2] = HIBYTE(slope_init);
-
-    // Load DMA dest address with the address of the first pixel
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
-    line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
-
-    // Source is the colour
-    line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
-
-    // Count is number of pixels, i.e., dy.
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(dx);
-    line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(dx);
-
-    // Line mode active, major axis is X
-    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (((y2 - y1) < 0) ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
-
-    // Set address of DMA list
-    DMA->ADDRMB = 0;
-    DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >line_dma_command;
-    // Trigger the DMA (with option lists)
-    DMA-> ETRIG = <line_dma_command;
+    unsigned int count = (unsigned int)dx;
+    char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;
+    line_dma_execute(addr, slope, count, colour, 0, is_slope_negative);    
 
   }
 }

@@ -1,7 +1,7 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65)
+#pragma target(mega65_remote)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -40,8 +40,8 @@ void lpoke(__zp unsigned long addr, char val) {
 // Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
 // addr = (x/8) * 64 * 25 + (y*8) + (x&7)
 char line_dma_command[] = {
-  DMA_OPTION_LINE_XSTEP_LO, LOBYTE(25*64 - 8),  // Line X step bytes 64x25 
-  DMA_OPTION_LINE_XSTEP_HI, HIBYTE(25*64 - 8),  // Line X step bytes 64x25 
+  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25 
+  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25 
   DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_INIT_LO, LOBYTE(32768), // Line slope init
@@ -69,7 +69,7 @@ const char LINE_DMA_COMMAND_SRC_OFFSET = 19;
 // Offset of the DMA destination
 const char LINE_DMA_COMMAND_DEST_OFFSET = 22;
 
-void line_dma_execute(unsigned long addr, unsigned int slope, unsigned int count, char colour, char is_direction_y, char is_slope_negative) {
+void line_dma_execute( unsigned long addr, unsigned int slope, unsigned int count, char colour, char is_slope_negative, char  is_direction_y) {
 
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
@@ -87,15 +87,15 @@ void line_dma_execute(unsigned long addr, unsigned int slope, unsigned int count
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(count);
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(count);
 
-    // Line mode active, major axis is Y
-    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (is_direction_y ? DMA_OPTION_LINE_MODE_DIRECTION_Y : 0x00) + (is_slope_negative ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
+    // Line mode active, major axis is X
+    line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (is_direction_y?DMA_OPTION_LINE_MODE_DIRECTION_Y:0) + (is_slope_negative?DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE:0);
 
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
     DMA-> ADDRMSB = HIBYTE(line_dma_command);
     // Trigger the DMA (with option lists)
-    DMA-> ETRIG = LOBYTE(line_dma_command);
+    DMA-> ETRIG = LOBYTE(line_dma_command);  
 }
 
 void main() {
@@ -216,7 +216,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope 
+    // Use hardware divider to get the slope
     *MATH_MULTINA_INT0 = dx;
     *MATH_MULTINB_INT0 = dy;
     *MATH_MULTINA_INT1 = 0;
@@ -230,13 +230,12 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
     }
     // Slope is the most significant bytes of the fractional part of the division result
-    // Perform rounding by examining the next bit also
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1 + (((char)*MATH_DIVOUT_FRAC_CHAR1&0x80)?1:0);
-    unsigned int slope_init = 32768;
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     unsigned int count = (unsigned int)dy;
-    char is_slope_negative = ((x2 - x1) < 0)?1:0;
-    line_dma_execute(addr, slope, count, colour, 1, is_slope_negative);
+    char is_slope_negative = ((x2 - x1) < 0) ? 1 : 0;
+    char is_direction_y = 1;
+    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
   } else {
     // X is major axis
 
@@ -249,7 +248,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       y2 = temp;
     }
 
-    // Use hardware divider to get the slope 
+    // Use hardware divider to get the slope
     *MATH_MULTINA_INT0 = dy;
     *MATH_MULTINB_INT0 = dx;
     *MATH_MULTINA_INT1 = 0;
@@ -262,14 +261,12 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
     }
-
     // Slope is the most significant bytes of the fractional part of the division result
-    // Perform rounding by examining the next bit also
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1 + (((char)*MATH_DIVOUT_FRAC_CHAR1&0x80)?1:0);
+    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1; 
     unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
     unsigned int count = (unsigned int)dx;
     char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;
-    line_dma_execute(addr, slope, count, colour, 0, is_slope_negative);    
-
+    char is_direction_y = 0;
+    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
   }
 }

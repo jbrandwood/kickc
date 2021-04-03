@@ -128,12 +128,12 @@ void main() {
   draw_line(160, 100, 319, 0, 4);  
   */
 
-  for(int x1=0;x1<320;x1+=10) {
+  for(int x1=0;x1<320;x1+=11) {
       draw_line(x1, 0, 160, 199, 5);      
       draw_line(160, 0, x1, 199, 5);      
   }
 
-  for(int y1=0;y1<200;y1+=10) {
+  for(int y1=0;y1<200;y1+=11) {
       draw_line(0, y1, 319, 100, 6);
       draw_line(0, 100, 319, y1, 6);
   }
@@ -217,8 +217,8 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     }
 
     // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dx;
-    *MATH_MULTINB_INT0 = dy;
+    *MATH_MULTINA_INT0 = dx*2+1;
+    *MATH_MULTINB_INT0 = dy*2;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
     
@@ -249,8 +249,8 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     }
 
     // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dy;
-    *MATH_MULTINB_INT0 = dx;
+    *MATH_MULTINA_INT0 = dy*2+1;
+    *MATH_MULTINB_INT0 = dx*2;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
 

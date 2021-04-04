@@ -36,6 +36,70 @@ void lpoke(__zp unsigned long addr, char val) {
     }
 }
 
+void main() {
+  // Avoid interrupts
+  SEI();
+  // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
+  memoryRemap(0x00,0,0);
+  // Fast CPU, M65 IO
+  POKE(0, 65);
+  // Enable MEGA65 features
+  VICIV->KEY = VICIV_KEY_M65_A;
+  VICIV->KEY = VICIV_KEY_M65_B;
+  // No C65 ROMs are mapped
+  VICIV->CONTROLA = 0;
+  // Enable 48MHz fast mode
+  VICIV->CONTROLB |= VICIV_FAST;
+  VICIV->CONTROLC |= VICIV_VFAST;
+
+  graphics_mode();
+
+  //draw_line(150, 0, 160, 40, 5);
+  //draw_line(160, 0, 160, 40, 6);
+  //draw_line(170, 0, 160, 40, 7);
+
+  /*
+  draw_line(160, 100,   0, 199, 1);
+  draw_line(160, 100, 319, 199, 2);
+  draw_line(  0,   0, 160, 100, 3);
+  draw_line(160, 100, 319, 0, 4);
+  */
+
+  for(int x1=0;x1<320;x1+=11) {
+      draw_line(x1, 0, 160, 199, 5);
+      draw_line(160, 0, x1, 199, 5);
+  }
+
+  for(int y1=0;y1<200;y1+=11) {
+      draw_line(0, y1, 319, 100, 6);
+      draw_line(0, 100, 319, y1, 6);
+  }
+
+  for(;;) ;
+
+}
+
+
+// Performs division on two 16 bit unsigned ints
+// Returns the fractional part top 16 bit of the result
+// Uses the MEGA65 hardware math unit
+unsigned int m65_div16u_frac(unsigned int dividend, unsigned int divisor) {
+    // Use hardware divider to get the slope
+    *MATH_MULTINA_INT0 = (signed int)dividend;
+    *MATH_MULTINB_INT0 = (signed int)divisor;
+    *MATH_MULTINA_INT1 = 0;
+    *MATH_MULTINB_INT1 = 0;
+    // Wait 16 cycles
+    asm {
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
+    }
+    // Return the most significant bytes of the fractional part of the division result
+    return (unsigned int)*MATH_DIVOUT_FRAC_INT1;
+}
+
 // DMA command structure for drawing lines
 // Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
 // addr = (x/8) * 64 * 25 + (y*8) + (x&7)
@@ -101,49 +165,52 @@ void line_dma_execute(unsigned long addr, unsigned int slope, unsigned int count
     DMA-> ETRIG = LOBYTE(line_dma_command);
 }
 
-void main() {
-
-  // Avoid interrupts
-  SEI();
-  // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-  memoryRemap(0x00,0,0);
-  // Fast CPU, M65 IO
-  POKE(0, 65);
-  // Enable MEGA65 features
-  VICIV->KEY = VICIV_KEY_M65_A;
-  VICIV->KEY = VICIV_KEY_M65_B;
-  // No C65 ROMs are mapped
-  VICIV->CONTROLA = 0;
-  // Enable 48MHz fast mode
-  VICIV->CONTROLB |= VICIV_FAST;
-  VICIV->CONTROLC |= VICIV_VFAST;
-
-  graphics_mode();
-
-  //draw_line(150, 0, 160, 40, 5);
-  //draw_line(160, 0, 160, 40, 6);
-  //draw_line(170, 0, 160, 40, 7);
-
-  /*
-  draw_line(160, 100,   0, 199, 1);    
-  draw_line(160, 100, 319, 199, 2);  
-  draw_line(  0,   0, 160, 100, 3);  
-  draw_line(160, 100, 319, 0, 4);  
-  */
-
-  for(int x1=0;x1<320;x1+=11) {
-      draw_line(x1, 0, 160, 199, 5);      
-      draw_line(160, 0, x1, 199, 5);      
+// Draw a line between two points on a canvas 
+// Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
+// - x1: X-position of the first point.
+// - y1: Y-position of the first point.
+// - x2: X-position of the second point.
+// - x2: Y-position of the second point.
+// - colour: The colour of the line
+void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
+  if (x2 == x1 && y2 == y1)
+    // Ignore if we choose to draw a point
+    return;
+  // Find abs(dx) and abs(dy)  
+  int dx = x2 - x1;
+  if (dx < 0) dx = -dx;
+  int dy = y2 - y1;
+  if (dy < 0) dy = -dy;
+  // Find major axis
+  if (dx < dy) {
+    // Y is major axis
+    if (y2 < y1) {
+      // Ensure y1<y2
+      int temp = x1; x1 = x2; x2 = temp;
+      temp = y1; y1 = y2; y2 = temp;
+    }
+    unsigned int slope = m65_div16u_frac((unsigned int)dx*2+1, (unsigned int)dy*2); 
+    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
+    unsigned int count = (unsigned int)dy;
+    char is_slope_negative = ((x2 - x1) < 0) ? 1 : 0;
+    char is_direction_y = 1;
+    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
+  } else {
+    // X is major axis
+    if (x2 < x1) {
+      // Ensure x1<x2
+      int temp = x1; x1 = x2; x2 = temp;
+      temp = y1; y1 = y2; y2 = temp;
+    }
+    unsigned int slope = m65_div16u_frac((unsigned int)dy*2+1, (unsigned int)dx*2); 
+    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
+    unsigned int count = (unsigned int)dx;
+    char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;
+    char is_direction_y = 0;
+    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
   }
-
-  for(int y1=0;y1<200;y1+=11) {
-      draw_line(0, y1, 319, 100, 6);
-      draw_line(0, 100, 319, y1, 6);
-  }
-
-  for(;;) ;
-  
 }
+
 
 // Address of the screen
 unsigned char * const SCREEN = 0xc000;
@@ -192,84 +259,4 @@ void graphics_mode(void) {
   memset_dma256(0x0, 0x4, 0x0000, 0x0c, 8*200);
   memset_dma256(0x0, 0x4, 0x0000+200*39*8, 0x0c, 8*200);
 
-}
-
-void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
-  // Ignore if we choose to draw a point
-  if (x2 == x1 && y2 == y1)
-    return;
-
-  int dx = x2 - x1;
-  int dy = y2 - y1;
-  if (dx < 0)
-    dx = -dx;
-  if (dy < 0)
-    dy = -dy;
-
-  // Draw line from x1,y1 to x2,y2
-  if (dx < dy) {
-    // Y is major axis
-
-    if (y2 < y1) {
-      int temp = x1;
-      x1 = x2;
-      x2 = temp;
-      temp = y1;
-      y1 = y2;
-      y2 = temp;
-    }
-
-    // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dx*2+1;
-    *MATH_MULTINB_INT0 = dy*2;
-    *MATH_MULTINA_INT1 = 0;
-    *MATH_MULTINB_INT1 = 0;
-    
-    // Wait 16 cycles
-    asm {
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-    }
-    // Slope is the most significant bytes of the fractional part of the division result
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
-    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
-    unsigned int count = (unsigned int)dy;
-    char is_slope_negative = ((x2 - x1) < 0) ? 1 : 0;
-    char is_direction_y = 1;
-    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
-  } else {
-    // X is major axis
-
-    if (x2 < x1) {
-      int temp = x1;
-      x1 = x2;
-      x2 = temp;
-      temp = y1;
-      y1 = y2;
-      y2 = temp;
-    }
-
-    // Use hardware divider to get the slope
-    *MATH_MULTINA_INT0 = dy*2+1;
-    *MATH_MULTINB_INT0 = dx*2;
-    *MATH_MULTINA_INT1 = 0;
-    *MATH_MULTINB_INT1 = 0;
-
-    // Wait 16 cycles
-    asm {
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-    }
-    // Slope is the most significant bytes of the fractional part of the division result
-    unsigned int slope = (unsigned int)*MATH_DIVOUT_FRAC_INT1;
-    unsigned long addr = GRAPHICS + (unsigned int)(x1/8) * 64 * 25 + (unsigned int)(y1*8) + (unsigned char)(x1&7);
-    unsigned int count = (unsigned int)dx;
-    char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;
-    char is_direction_y = 0;
-    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
-  }
 }

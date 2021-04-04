@@ -37,7 +37,13 @@ public class Procedure extends Scope {
    private boolean isConstructor;
 
    /** The names of all legal intrinsic procedures. */
-   final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME, Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME, Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME );
+   final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
+         Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME,
+         Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME,
+         Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME,
+         Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME,
+         Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME
+   );
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {

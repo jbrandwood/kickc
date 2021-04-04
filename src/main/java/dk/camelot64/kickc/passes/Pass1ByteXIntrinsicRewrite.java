@@ -22,6 +22,10 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String INTRINSIC_BYTE0_NAME = "BYTE0";
    /** The byte1 procedure name. */
    public static final String INTRINSIC_BYTE1_NAME = "BYTE1";
+   /** The byte2 procedure name. */
+   public static final String INTRINSIC_BYTE2_NAME = "BYTE2";
+   /** The byte3 procedure name. */
+   public static final String INTRINSIC_BYTE3_NAME = "BYTE3";
 
    public Pass1ByteXIntrinsicRewrite(Program program) {
       super(program);
@@ -40,6 +44,10 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
                   generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE0);
                } else if(INTRINSIC_BYTE1_NAME.equals(call.getProcedureName())) {
                   generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE1);
+               } else if(INTRINSIC_BYTE2_NAME.equals(call.getProcedureName())) {
+                  generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE2);
+               } else if(INTRINSIC_BYTE3_NAME.equals(call.getProcedureName())) {
+                  generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE3);
                }
             }
          }

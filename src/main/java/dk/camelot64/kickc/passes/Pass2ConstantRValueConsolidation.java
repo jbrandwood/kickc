@@ -9,6 +9,8 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -78,6 +80,22 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
                (OperatorBinary) assignment.getOperator(),
                Pass2ConstantIdentification.getConstant(assignment.getrValue2()),
                getScope());
+      } else if(Operators.BYTE1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 2)
+            return new ConstantInteger(0l, SymbolType.BYTE);
+      } else if(Operators.BYTE2.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 3)
+            return new ConstantInteger(0l, SymbolType.BYTE);
+         else if(rVal2Type instanceof SymbolTypePointer)
+            return new ConstantInteger(0l, SymbolType.BYTE);
+      } else if(Operators.BYTE3.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 4)
+            return new ConstantInteger(0l, SymbolType.BYTE);
+         else if(rVal2Type instanceof SymbolTypePointer)
+            return new ConstantInteger(0l, SymbolType.BYTE);
       } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
          // Constant address-of variable
          if(assignment.getrValue2() instanceof SymbolRef) {

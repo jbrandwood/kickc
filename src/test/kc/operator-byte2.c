@@ -1,4 +1,4 @@
-// Test operator BYTE1()
+// Test operator BYTE2()
 
 void main() {
     volatile unsigned char bu = 7;
@@ -11,13 +11,14 @@ void main() {
 
     char * const SCREEN = 0x0400;
     char i = 0;
-    SCREEN[i++] = BYTE1(17);
-    SCREEN[i++] = BYTE1(377);
-    SCREEN[i++] = BYTE1(bu);
-    SCREEN[i++] = BYTE1(bs);
-    SCREEN[i++] = BYTE1(wu);
-    SCREEN[i++] = BYTE1(ws);
-    SCREEN[i++] = BYTE1(du);
-    SCREEN[i++] = BYTE1(ds);
-    SCREEN[i++] = BYTE1(ptr);
+    SCREEN[i++] = BYTE2(17);
+    SCREEN[i++] = BYTE2(377);
+    SCREEN[i++] = BYTE2(377777);
+    SCREEN[i++] = BYTE2(bu);
+    SCREEN[i++] = BYTE2(bs);
+    SCREEN[i++] = BYTE2(wu);
+    SCREEN[i++] = BYTE2(ws);
+    SCREEN[i++] = BYTE2(du);
+    SCREEN[i++] = BYTE2(ds);
+    SCREEN[i++] = BYTE2(ptr);
 }

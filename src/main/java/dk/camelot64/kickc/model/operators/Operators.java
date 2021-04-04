@@ -42,8 +42,8 @@ public class Operators {
    public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
    public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
    public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
-   //public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
-   //public static final OperatorUnary BYTE3 = new OperatorGetByte3(14);
+   public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
+   public static final OperatorUnary BYTE3 = new OperatorGetByte3(14);
    public static final OperatorBinary LT = new OperatorLessThan(7);
    public static final OperatorBinary LE = new OperatorLessThanEqual(7);
    public static final OperatorBinary GT = new OperatorGreaterThan(7);

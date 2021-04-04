@@ -1,4 +1,4 @@
-// Test operator BYTE0()
+// Test operator BYTE1()
   // Commodore 64 PRG executable file
 .file [name="operator-byte1.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,18 +10,11 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label bu = 2
-    .label bs = 3
-    .label wu = 4
-    .label ws = 6
-    .label du = 8
-    .label ds = $c
-    .label ptr = $10
-    // bu = 7
-    lda #7
-    sta.z bu
-    // bs = 7
-    sta.z bs
+    .label wu = 2
+    .label ws = 4
+    .label du = 6
+    .label ds = $a
+    .label ptr = $e
     // wu = 20000
     lda #<$4e20
     sta.z wu
@@ -59,11 +52,9 @@ main: {
     // SCREEN[i++] = BYTE1(377)
     lda #>($179)
     sta SCREEN+1
-    // BYTE1(bu)
-    lda #0
     // SCREEN[i++] = BYTE1(bu)
+    lda #0
     sta SCREEN+2
-    // BYTE1(bs)
     // SCREEN[i++] = BYTE1(bs)
     sta SCREEN+3
     // BYTE1(wu)

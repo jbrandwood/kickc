@@ -69,27 +69,30 @@ const char LINE_DMA_COMMAND_SRC_OFFSET = 19;
 // Offset of the DMA destination
 const char LINE_DMA_COMMAND_DEST_OFFSET = 22;
 
+// Use the DMA to draw a line on a canvas.
+// Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
+// The line is based on a major axis and a minor axis. The major axis is incremented by 1 for each dot. The minor axis is incremented or decremented based on the slope.
+// - addr: Start address where the first pixel is placed
+// - slope: The slope of the minor axis. Unsigned number representing [0;1[
+// - count: The length of the line along the major axis
+// - colour: The colour of the line
+// - is_direction_y: Defines the major axis. 0: X-axis, 1: Y-axis.
+// - is_slope_negative: Defines whether the minor axis is incremented or decremented whenever slope>65536. 0: increment 1: decrement.
 void line_dma_execute(unsigned long addr, unsigned int slope, unsigned int count, char colour, char is_direction_y, char is_slope_negative) {
-
     // Put slope into DMA options
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET] = LOBYTE(slope);
     line_dma_command[LINE_DMA_COMMAND_SLOPE_OFFSET + 2] = HIBYTE(slope);
-
     // Load DMA dest address with the address of the first pixel
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 0] = BYTE0(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 1] = BYTE1(addr);
     line_dma_command[LINE_DMA_COMMAND_DEST_OFFSET + 2] = BYTE2(addr);
-
     // Source is the colour
     line_dma_command[LINE_DMA_COMMAND_SRC_OFFSET] = colour;
-
     // Count is number of pixels, i.e., dy.
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET] = LOBYTE(count);
     line_dma_command[LINE_DMA_COMMAND_COUNT_OFFSET + 1] = HIBYTE(count);
-
     // Line mode active, major axis is Y
     line_dma_command[LINE_DMA_COMMAND_MODE_OFFSET] = DMA_OPTION_LINE_MODE_ENABLE + (is_direction_y ? DMA_OPTION_LINE_MODE_DIRECTION_Y : 0x00) + (is_slope_negative ? DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE : 0x00);
-
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;

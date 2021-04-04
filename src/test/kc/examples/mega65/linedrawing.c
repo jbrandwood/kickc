@@ -1,7 +1,7 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65)
+#pragma target(mega65_remote)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -79,9 +79,8 @@ void main() {
 
 }
 
-
 // Performs division on two 16 bit unsigned ints
-// Returns the fractional part top 16 bit of the result
+// Returns the 16 bit fractional part of the result
 // Uses the MEGA65 hardware math unit
 unsigned int m65_div16u_frac(unsigned int dividend, unsigned int divisor) {
     // Use hardware divider to get the slope
@@ -89,7 +88,7 @@ unsigned int m65_div16u_frac(unsigned int dividend, unsigned int divisor) {
     *MATH_MULTINB_INT0 = (signed int)divisor;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
-    // Wait 16 cycles
+    // Wait 16 cycles (only neeeded for some values)
     asm {
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
       lda MATH_DIVOUT_FRAC_INT1 @nooptimize
@@ -194,7 +193,7 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     unsigned int count = (unsigned int)dy;
     char is_slope_negative = ((x2 - x1) < 0) ? 1 : 0;
     char is_direction_y = 1;
-    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
+    line_dma_execute(addr, slope, count, colour, is_direction_y, is_slope_negative);
   } else {
     // X is major axis
     if (x2 < x1) {
@@ -207,10 +206,9 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char colour) {
     unsigned int count = (unsigned int)dx;
     char is_slope_negative = ((y2 - y1) < 0) ? 1 : 0;
     char is_direction_y = 0;
-    line_dma_execute(addr, slope, count, colour, is_slope_negative, is_direction_y);
+    line_dma_execute(addr, slope, count, colour, is_direction_y, is_slope_negative);
   }
 }
-
 
 // Address of the screen
 unsigned char * const SCREEN = 0xc000;

@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.passes.Pass1ByteXIntrinsicRewrite;
 import dk.camelot64.kickc.passes.Pass1PrintfIntrinsicRewrite;
 
 import java.util.*;
@@ -36,7 +37,7 @@ public class Procedure extends Scope {
    private boolean isConstructor;
 
    /** The names of all legal intrinsic procedures. */
-   final public static List<String> INTRINSIC_PROCEDURES = Collections.singletonList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME);
+   final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME, Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME, Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME );
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {

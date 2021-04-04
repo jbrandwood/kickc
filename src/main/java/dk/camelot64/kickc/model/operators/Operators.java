@@ -40,6 +40,10 @@ public class Operators {
    public static final OperatorBinary SHIFT_RIGHT = new OperatorShiftRight(5);
    public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
    public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
+   public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
+   public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
+   //public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
+   //public static final OperatorUnary BYTE3 = new OperatorGetByte3(14);
    public static final OperatorBinary LT = new OperatorLessThan(7);
    public static final OperatorBinary LE = new OperatorLessThanEqual(7);
    public static final OperatorBinary GT = new OperatorGreaterThan(7);
@@ -132,6 +136,14 @@ public class Operators {
             return LOWBYTE;
          case ">":
             return HIBYTE;
+         case "b0":
+            return BYTE0;
+         //case "b1":
+         //   return BYTE1;
+         //case "b2":
+         //   return BYTE2;
+         //case "b3":
+         //   return BYTE3;
          case "&":
             return ADDRESS_OF;
          default:

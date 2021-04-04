@@ -212,6 +212,10 @@ public class AsmFormat {
          } else {
             throw new CompileError("Operator _hi_ cannot handle " + operand.toString(program));
          }
+      } else if(Operators.BYTE0.equals(operator)) {
+         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
+      } else if(Operators.BYTE1.equals(operator)) {
+         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
       } else if(Operators.INCREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
       } else if(Operators.DECREMENT.equals(operator)) {

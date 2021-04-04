@@ -231,6 +231,7 @@ public class Compiler {
          getLog().append(program.getGraph().toString(program));
       }
       new Pass1ResolveForwardReferences(program).execute();
+      new Pass1ByteXIntrinsicRewrite(program).execute();
       new Pass1AssertProcedureDefined(program).execute();
       new Pass1AssertVariableDefined(program).execute();
       new PassNAssertStructMembers(program).execute();

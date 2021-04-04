@@ -44,6 +44,17 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testOperatorByte1() throws IOException, URISyntaxException {
+      compileAndCompare("operator-byte1.c", log());
+   }
+
+   @Test
+   public void testOperatorByte0() throws IOException, URISyntaxException {
+      compileAndCompare("operator-byte0.c", log());
+   }
+
    @Test
    public void testStdlibStringMemChr1() throws IOException, URISyntaxException {
       compileAndCompare("stdlib-string-memchr-1.c");

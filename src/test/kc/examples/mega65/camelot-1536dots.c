@@ -1,6 +1,6 @@
 // A pretty simple double sine plotter
 
-#pragma target(mega65_remote)
+#pragma target(mega65)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -35,6 +35,39 @@ void lpoke(__zp unsigned long addr, char val) {
     }
 }
 
+// Address of the screen
+char * const SCREEN = 0xc800;
+// // Absolute address of graphics buffer 1
+char * const GRAPHICS1 = 0xa000;
+// // Absolute address of graphics buffer 2
+char * const GRAPHICS2 = 0x7000;
+
+// SID tune at an absolute address
+__address(0x5000) char MUSIC[] = kickasm(resource "Thaw_5000.sid") {{
+    .const music = LoadSid("Thaw_5000.sid")
+    .fill music.size, music.getData(i)
+}};
+// Pointer to the music init routine
+void()* musicInit = (void()*) MUSIC;
+// Pointer to the music play routine
+void()* musicPlay = (void()*) MUSIC+3;
+
+
+__align(0x40) char SPRITES[0xc0] = kickasm(resource "camelot-sprites.png") {{
+    .var pic = LoadPicture("camelot-sprites.png", List().add($000000, $ffffff))
+    .for (var s=0; s<3; s++) {
+      .for (var y=0; y<21; y++) {
+          .for (var x=0;x<3; x++) {
+              .byte pic.getSinglecolorByte(s*3+x,y)
+          }
+      }
+      .byte 0
+    }       
+}};
+
+// The sprite pointers
+unsigned int SPRITE_PTRS[8];
+
 void main() {
   // Avoid interrupts
   SEI();
@@ -53,9 +86,33 @@ void main() {
   // Enable 48MHz fast mode
   VICIV->CONTROLB |= VICIV_FAST;
   VICIV->CONTROLC |= VICIV_VFAST;
+  // Initialize graphics
   graphics_mode();
+  // Show sprites
+  VICIV->SPRPTRADR_LOLO = LOBYTE(SPRITE_PTRS);
+  VICIV->SPRPTRADR_LOHI = HIBYTE(SPRITE_PTRS);
+  VICIV->SPRPTRADR_HILO = VICIV_SPRPTR16;
+  SPRITE_PTRS[0] = toSpritePtr(SPRITES+0x40);
+  SPRITE_PTRS[1] = toSpritePtr(SPRITES+0x80);
+  SPRITE_PTRS[2] = toSpritePtr(SPRITES+0x00);
+  VICIV->SPRITES_ENABLE = 7;
+  VICIV->SPRITES_PRIORITY = 0xff;
+  SPRITES_COLOR[0] = DARK_GREY;
+  SPRITES_COLOR[1] = DARK_GREY;
+  SPRITES_COLOR[2] = DARK_GREY;
+  SPRITES_YPOS[0] = 0xe3;
+  SPRITES_YPOS[2] = 0xe3;
+  SPRITES_YPOS[4] = 0xe3;
+  SPRITES_XPOS[0] = 46;
+  SPRITES_XPOS[2] = 46+24;
+  SPRITES_XPOS[4] = 25;
+  *SPRITES_XMSB = 3;
+
   // Initialize plotter
   init_plot();
+  // Initialize SID 
+  asm { lda #0 }
+  (*musicInit)();
 
   // Main loop
   for(;;) {
@@ -79,6 +136,9 @@ void main() {
     memset_dma(graphics_render, 0x00, 40*25*8);
     // Render some dots
     render_dots();
+    //Play  SID
+    (*musicPlay)();
+
   }
 }
 
@@ -157,14 +217,6 @@ const unsigned int SINX2_SIZE = 547;
 unsigned int SINX2[SINX2_SIZE+256] = kickasm {{
     .fillword 547+256, round(60+60*sin(toRadians(360*i/547)))
 }};
-
-
-// Address of the screen
-char * const SCREEN = 0xc000;
-// // Absolute address of graphics buffer 1
-char * const GRAPHICS1 = 0x6000;
-// // Absolute address of graphics buffer 2
-char * const GRAPHICS2 = 0xa000;
 
 void graphics_mode(void) {
   // 16-bit text mode

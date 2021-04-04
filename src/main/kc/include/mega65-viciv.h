@@ -241,7 +241,7 @@ struct MEGA65_VICIV {
   char SPRPTRADR_LOLO;
   // $D06D SPRPTRADR sprite pointer address (bits 15 - 8)
   char SPRPTRADR_LOHI;
-  // $D06E.0-6 SPRPTRBNK sprite pointer address (bits 22 - 16)
+  // $D06E.0-6 SPRPTRADR sprite pointer address (bits 22 - 16)
   // 0-6 sprite pointer address (bits 22 - 16)
   //   7 SPRPTR16 16-bit sprite pointer mode (allows sprites to be located on any 64 byte boundary in chip RAM)
   char SPRPTRADR_HILO;
@@ -371,3 +371,7 @@ const char VICIV_PALEMU = 0x20;
 const char VICIV_VFAST = 0x40;
 // 7 VIC-IV:ALPHEN Alpha compositor enable
 const char VICIV_ALPHEN = 0x80;
+
+// $D06E.0-6 SPRPTRADR sprite pointer address (bits 22 - 16)
+//   7 SPRPTR16 16-bit sprite pointer mode (allows sprites to be located on any 64 byte boundary in chip RAM)
+const char VICIV_SPRPTR16 = 0x80;

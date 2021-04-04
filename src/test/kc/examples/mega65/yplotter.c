@@ -1,4 +1,4 @@
-// A pretty simple sine plotter
+// A pretty simple double sine plotter
 
 #pragma target(mega65_remote)
 #include <mega65.h>
@@ -42,6 +42,9 @@ void main() {
   memoryRemap(0x00,0,0);
   // Fast CPU, M65 IO
   POKE(0,65);
+  // Disable Kernal & Basic
+  *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+  *PROCPORT = PROCPORT_RAM_IO;
   // Enable MEGA65 features
   VICIV->KEY = VICIV_KEY_M65_A;
   VICIV->KEY = VICIV_KEY_M65_B;
@@ -52,12 +55,6 @@ void main() {
   VICIV->CONTROLC |= VICIV_VFAST;
   graphics_mode();
 
-  // initialize sine index
-  char idx = 0;
-  for(unsigned int i=0;i<320;i++) {
-    sin_idx[i] = idx;
-    idx += 11;
-  }
   // Initialize plotter
   init_plot();
 
@@ -66,29 +63,55 @@ void main() {
     while(VICIV->RASTER!=0xe3) ;
     // White border and background
     VICIV->BORDER_COLOR = RED;
+    // Switch buffer
+    buffer ^=1;
+    // Select charset 
+    if(buffer==0) {
+      VICIV->CHARPTR_LOLO = LOBYTE(GRAPHICS1);
+      VICIV->CHARPTR_LOHI = HIBYTE(GRAPHICS1);
+      VICIV->CHARPTR_HILO = 0;
+      graphics_render = GRAPHICS2;
+    } else {
+      VICIV->CHARPTR_LOLO = LOBYTE(GRAPHICS2);
+      VICIV->CHARPTR_LOHI = HIBYTE(GRAPHICS2);
+      VICIV->CHARPTR_HILO = 0;
+      graphics_render = GRAPHICS1;
+    }
+
     // Clear the graphics
-    memset_dma256(0x0, 0x0, 0x6000, 0x00, 40*25*8);
+    memset_dma(graphics_render, 0x00, 40*25*8);
     VICIV->BORDER_COLOR = WHITE;
     // Render some dots
     render_dots();
     // Black  border and background
-    VICIV->BORDER_COLOR = BLACK;
+    VICIV->BORDER_COLOR = BLUE;
   }
 }
 
+// 0: show GRAPHICS1, render to GRAPHICS2
+// 1: show GRAPHICS2, render to GRAPHICS1
+volatile char buffer = 0;
+
+// The graphics being rendered to
+char * volatile graphics_render = GRAPHICS1;
+
 // Sine idx for each plot
-char sin_idx[320];
+volatile unsigned int sin_x1_idx;
+volatile unsigned int sin_x2_idx;
+
+volatile unsigned int sin_y1_idx;
+volatile unsigned int sin_y2_idx;
 
 // Graphics bit
 char GFX_BIT[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
-// Pointer to graphics for (x, 0)
-char * GFX_PTR[320];
+// Offset to graphics for (x, 0)
+unsigned int GFX_OFFSET[320];
 
 void init_plot() {
-  char * gfx = GRAPHICS;
+  unsigned int gfx = 0;
   for(unsigned int i=0; i<320;i++) {    
-    GFX_PTR[i] = gfx;
+    GFX_OFFSET[i] = gfx;
     if((i&7)==7)
       gfx +=200;
   }
@@ -96,27 +119,58 @@ void init_plot() {
 
 // Do a single plot on the canvas
 void plot(unsigned int x, char y) {
-  char * gfx = GFX_PTR[x] + y;
+  char * gfx = graphics_render + GFX_OFFSET[x] + y;
   *gfx |= GFX_BIT[x&7];
 }
 
 void render_dots() {
     // Plot some dots
-    for(unsigned int i=0;i<320;i++) {
-      char idx = sin_idx[i]++;
-      plot(i, SINE[idx]);
+    unsigned int idx_x1 = sin_x1_idx;
+    sin_x1_idx += 1; if(sin_x1_idx>SINX1_SIZE) sin_x1_idx -=SINX1_SIZE;
+    unsigned int idx_x2 = sin_x2_idx;
+    sin_x2_idx -= 1; if(sin_x2_idx>SINX2_SIZE) sin_x2_idx +=SINX2_SIZE;
+    unsigned int idx_y1 = sin_y1_idx;
+    sin_y1_idx -= 1; if(sin_y1_idx>SINY1_SIZE) sin_y1_idx +=SINY1_SIZE;
+    unsigned int idx_y2 = sin_y2_idx;
+    sin_y2_idx += 1; if(sin_y2_idx>SINY2_SIZE) sin_y2_idx -=SINY2_SIZE;
+
+    for(unsigned int i=0;i<1536;i++) {
+      plot(SINX1[idx_x1]+SINX2[idx_x2], SINY1[idx_y1]+SINY2[idx_y2]);
+      idx_x1 -= 11; if(idx_x1>SINX1_SIZE) idx_x1 += SINX1_SIZE;
+      idx_x2 += 3; if(idx_x2>SINX2_SIZE) idx_x2 -= SINX2_SIZE;
+      idx_y1 += 9; if(idx_y1>SINY1_SIZE) idx_y1 -= SINY1_SIZE;
+      idx_y2 -= 5; if(idx_y2>SINY2_SIZE) idx_y2 += SINY2_SIZE;
     }
 }
 
 // Sine table
-char SINE[0x200] = kickasm {{
-    .fill $200, round(99.5+99.5*sin(toRadians(360*i/256)))
+const unsigned int SINY1_SIZE = 733;
+char SINY1[SINY1_SIZE+256] = kickasm {{
+    .fill 733+256, round(66.5+66.5*sin(toRadians(360*i/733)))
 }};
+
+const unsigned int SINY2_SIZE = 317;
+char SINY2[SINY2_SIZE+256] = kickasm {{
+    .fill 317+256, round(33+33*sin(toRadians(360*i/317)))
+}};
+
+const unsigned int SINX1_SIZE = 1613;
+unsigned int SINX1[SINX1_SIZE+256] = kickasm {{
+    .fillword 1613+256, round(99.5+99.5*sin(toRadians(360*i/1613)))
+}};
+
+const unsigned int SINX2_SIZE = 547;
+unsigned int SINX2[SINX2_SIZE+256] = kickasm {{
+    .fillword 547+256, round(60+60*sin(toRadians(360*i/547)))
+}};
+
 
 // Address of the screen
 char * const SCREEN = 0xc000;
-// // Absolute address of the graphics
-char * const GRAPHICS = 0x6000;
+// // Absolute address of graphics buffer 1
+char * const GRAPHICS1 = 0x6000;
+// // Absolute address of graphics buffer 2
+char * const GRAPHICS2 = 0xa000;
 
 void graphics_mode(void) {
   // 16-bit text mode
@@ -129,13 +183,13 @@ void graphics_mode(void) {
   VICIV->CHARSTEP_HI = 0;
   // Draw 40 chars per row
   VICIV->CHRCOUNT = 40;
-  // Put 2KB screen
+  // Select 2KB screen
   VICIV->SCRNPTR_LOLO = LOBYTE(SCREEN);
   VICIV->SCRNPTR_LOHI = HIBYTE(SCREEN);
   VICIV->SCRNPTR_HILO = 0x00;
-  // Put charset 
-  VICIV->CHARPTR_LOLO = LOBYTE(GRAPHICS);
-  VICIV->CHARPTR_LOHI = HIBYTE(GRAPHICS);
+  // Select charset 
+  VICIV->CHARPTR_LOLO = LOBYTE(GRAPHICS1);
+  VICIV->CHARPTR_LOHI = HIBYTE(GRAPHICS1);
   VICIV->CHARPTR_HILO = 0;
  
   // Layout screen so that graphics data comes from $40000 -- $4FFFF
@@ -164,8 +218,8 @@ void graphics_mode(void) {
   VICIV->BG_COLOR = 0;
 
   // Clear the graphics
-  memset_dma256(0x0, 0x0, 0x6000, 0x00, 40*25*8);
-  //memset_dma256(0x0, 0x0, 0x6000, 0xff, 25*8);
-  //memset_dma256(0x0, 0x0, 0x6000+25*39*8, 0xff, 25*8);
+  memset_dma(GRAPHICS1, 0x00, 40*25*8);
+  memset_dma(GRAPHICS2, 0x00, 40*25*8);
 
 }
+

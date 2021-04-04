@@ -54,15 +54,13 @@ void main() {
   VICIV->CONTROLB |= VICIV_FAST;
   VICIV->CONTROLC |= VICIV_VFAST;
   graphics_mode();
-
   // Initialize plotter
   init_plot();
 
+  // Main loop
   for(;;) {
     // Wait for the raster
     while(VICIV->RASTER!=0xe3) ;
-    // White border and background
-    VICIV->BORDER_COLOR = RED;
     // Switch buffer
     buffer ^=1;
     // Select charset 
@@ -77,14 +75,10 @@ void main() {
       VICIV->CHARPTR_HILO = 0;
       graphics_render = GRAPHICS1;
     }
-
     // Clear the graphics
     memset_dma(graphics_render, 0x00, 40*25*8);
-    VICIV->BORDER_COLOR = WHITE;
     // Render some dots
     render_dots();
-    // Black  border and background
-    VICIV->BORDER_COLOR = BLUE;
   }
 }
 
@@ -156,7 +150,7 @@ char SINY2[SINY2_SIZE+256] = kickasm {{
 
 const unsigned int SINX1_SIZE = 1613;
 unsigned int SINX1[SINX1_SIZE+256] = kickasm {{
-    .fillword 1613+256, round(99.5+99.5*sin(toRadians(360*i/1613)))
+    .fillword 1613+256, round(98+98*sin(toRadians(360*i/1613)))
 }};
 
 const unsigned int SINX2_SIZE = 547;

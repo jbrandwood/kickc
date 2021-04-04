@@ -88,13 +88,8 @@ unsigned int m65_div16u_frac(unsigned int dividend, unsigned int divisor) {
     *MATH_MULTINB_INT0 = (signed int)divisor;
     *MATH_MULTINA_INT1 = 0;
     *MATH_MULTINB_INT1 = 0;
-    // Wait 16 cycles (only neeeded for some values)
-    asm {
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-      lda MATH_DIVOUT_FRAC_INT1 @nooptimize
-    }
+    // Wait for the result to be ready
+    while(*MATH_BUSY) ;
     // Return the most significant bytes of the fractional part of the division result
     return (unsigned int)*MATH_DIVOUT_FRAC_INT1;
 }

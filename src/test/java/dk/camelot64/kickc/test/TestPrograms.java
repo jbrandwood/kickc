@@ -50,6 +50,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testOperatorWord1() throws IOException, URISyntaxException {
+      compileAndCompare("operator-word1.c");
+   }
+
+   @Test
+   public void testOperatorWord0() throws IOException, URISyntaxException {
+      compileAndCompare("operator-word0.c");
+   }
+
+   @Test
    public void testOperatorByte3() throws IOException, URISyntaxException {
       compileAndCompare("operator-byte3.c");
    }

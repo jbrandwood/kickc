@@ -217,9 +217,13 @@ public class AsmFormat {
       } else if(Operators.BYTE1.equals(operator)) {
          return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
       } else if(Operators.BYTE2.equals(operator)) {
-         return "<" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), operator.getPrecedence(), codeScope) + ")";
+         return "<" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope) + ")";
       } else if(Operators.BYTE3.equals(operator)) {
-         return ">" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), operator.getPrecedence(), codeScope) + ")";
+         return ">" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope) + ")";
+      } else if(Operators.WORD0.equals(operator)) {
+         return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
+      } else if(Operators.WORD1.equals(operator)) {
+         return getAsmConstant(program, new ConstantBinary(new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
       } else if(Operators.INCREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
       } else if(Operators.DECREMENT.equals(operator)) {

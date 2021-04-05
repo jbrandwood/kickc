@@ -2392,6 +2392,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             result =  addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
          } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size()==1) {
             result =  addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD0_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.WORD0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.WORD1, parameters.get(0));
          } else {
             // A normal named call
             result = addIntermediateVar().getRef();

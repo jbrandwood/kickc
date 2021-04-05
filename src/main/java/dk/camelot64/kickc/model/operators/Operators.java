@@ -38,12 +38,6 @@ public class Operators {
    public static final OperatorBinary MINUS = new OperatorMinus(4);
    public static final OperatorBinary SHIFT_LEFT = new OperatorShiftLeft(5);
    public static final OperatorBinary SHIFT_RIGHT = new OperatorShiftRight(5);
-   public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
-   public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
-   public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
-   public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
-   public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
-   public static final OperatorUnary BYTE3 = new OperatorGetByte3(14);
    public static final OperatorBinary LT = new OperatorLessThan(7);
    public static final OperatorBinary LE = new OperatorLessThanEqual(7);
    public static final OperatorBinary GT = new OperatorGreaterThan(7);
@@ -56,6 +50,14 @@ public class Operators {
    public static final OperatorBinary LOGIC_AND = new OperatorLogicAnd(12);
    public static final OperatorBinary LOGIC_OR = new OperatorLogicOr(13);
    public static final OperatorBinary ASSIGNMENT = new OperatorAssignment(14);
+   public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
+   public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
+   public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
+   public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
+   public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
+   public static final OperatorUnary BYTE3 = new OperatorGetByte3(14);
+   public static final OperatorUnary WORD0 = new OperatorGetWord0(14);
+   public static final OperatorUnary WORD1 = new OperatorGetWord1(14);
 
    public static Operator getBinary(String op) {
       switch(op) {
@@ -136,14 +138,16 @@ public class Operators {
             return LOWBYTE;
          case ">":
             return HIBYTE;
-         case "b0":
+         case "byte0":
             return BYTE0;
-         //case "b1":
-         //   return BYTE1;
-         //case "b2":
-         //   return BYTE2;
-         //case "b3":
-         //   return BYTE3;
+         case "byte1":
+            return BYTE1;
+         case "byte2":
+            return BYTE2;
+         case "byte3":
+            return BYTE3;
+         case "word0":
+            return WORD0;
          case "&":
             return ADDRESS_OF;
          default:

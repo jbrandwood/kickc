@@ -96,6 +96,12 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
             return new ConstantInteger(0l, SymbolType.BYTE);
          else if(rVal2Type instanceof SymbolTypePointer)
             return new ConstantInteger(0l, SymbolType.BYTE);
+      } else if(Operators.WORD1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 3)
+            return new ConstantInteger(0l, SymbolType.WORD);
+         else if(rVal2Type instanceof SymbolTypePointer)
+            return new ConstantInteger(0l, SymbolType.WORD);
       } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
          // Constant address-of variable
          if(assignment.getrValue2() instanceof SymbolRef) {

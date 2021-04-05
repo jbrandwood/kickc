@@ -26,6 +26,10 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String INTRINSIC_BYTE2_NAME = "BYTE2";
    /** The byte3 procedure name. */
    public static final String INTRINSIC_BYTE3_NAME = "BYTE3";
+   /** The word0 procedure name. */
+   public static final String INTRINSIC_WORD0_NAME = "WORD0";
+   /** The word1 procedure name. */
+   public static final String INTRINSIC_WORD1_NAME = "WORD1";
 
    public Pass1ByteXIntrinsicRewrite(Program program) {
       super(program);
@@ -48,6 +52,10 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
                   generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE2);
                } else if(INTRINSIC_BYTE3_NAME.equals(call.getProcedureName())) {
                   generateUnaryOperator(stmtIt, call, parameters, Operators.BYTE3);
+               } else if(INTRINSIC_WORD0_NAME.equals(call.getProcedureName())) {
+                  generateUnaryOperator(stmtIt, call, parameters, Operators.WORD0);
+               } else if(INTRINSIC_WORD1_NAME.equals(call.getProcedureName())) {
+                  generateUnaryOperator(stmtIt, call, parameters, Operators.WORD1);
                }
             }
          }
@@ -56,7 +64,7 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
    }
 
    /**
-    * Generate an unary operator expression for the BYTEX()
+    * Generate an unary operator expression for the BYTEX()/WORDX()
     */
    private void generateUnaryOperator(ListIterator<Statement> stmtIt, StatementCall call, List<RValue> parameters, OperatorUnary operator) {
       if(parameters.size()!=1) {
@@ -64,7 +72,7 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
       }
       // Remove the call
       stmtIt.remove();
-      // Add the unary byte0 operator
+      // Add the unary operator
       stmtIt.add(new StatementAssignment(call.getlValue(), operator, parameters.get(0), call.isInitialAssignment(), call.getSource(), call.getComments()));
    }
 

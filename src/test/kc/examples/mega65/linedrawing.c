@@ -1,7 +1,7 @@
 // Test hardware line drawing
 // Based on https://github.com/MEGA65/mega65-tools/blob/master/src/tests/test_290.c
 
-#pragma target(mega65_remote)
+#pragma target(mega65)
 #include <mega65.h>
 #include <mega65-dma.h>
 #include <6502.h>
@@ -90,8 +90,8 @@ unsigned int m65_div16u_frac(unsigned int dividend, unsigned int divisor) {
 // Graphics mode is 1 byte per pixel. Addressing is based on columns of 8px * 200px arranged to have linear addressing.
 // addr = (x/8) * 64 * 25 + (y*8) + (x&7)
 char line_dma_command[] = {
-  DMA_OPTION_LINE_XSTEP_LO, (25*64 - 8) & 0xff, // Line X step bytes 64x25
-  DMA_OPTION_LINE_XSTEP_HI, (25*64 - 8) >> 8,   // Line X step bytes 64x25
+  DMA_OPTION_LINE_XSTEP_LO, LOBYTE(25*64 - 8), // Line X step bytes 64x25
+  DMA_OPTION_LINE_XSTEP_HI, HIBYTE(25*64 - 8),   // Line X step bytes 64x25
   DMA_OPTION_LINE_SLOPE_LO, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_HI, 0,                  // Line Slope
   DMA_OPTION_LINE_SLOPE_INIT_LO, LOBYTE(32768), // Line slope init

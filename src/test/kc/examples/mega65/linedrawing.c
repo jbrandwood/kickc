@@ -6,18 +6,10 @@
 #include <mega65-dma.h>
 #include <6502.h>
 
-// Get the 0th byte of a double value
-#define BYTE0(d) <(<(d))
-// Get the 1th byte of a double value
-#define BYTE1(d) >(<(d))
-// Get the 2th byte of a double value
-#define BYTE2(d) <(>(d))
-// Get the 3th byte of a double value
-#define BYTE3(d) >(>(d))
 // Get the low byte from a word/int
-#define LOBYTE(w) <(w)
+#define LOBYTE(w) BYTE0(w)
 // Get the high byte from a word/int
-#define HIBYTE(w) >(w)
+#define HIBYTE(w) BYTE1(w)
 
 // Poke a byte value into memory
 #define POKE(addr,val) *((char*)(addr)) = val

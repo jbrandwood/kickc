@@ -45,8 +45,13 @@ public class TestPrograms {
    }
 
    @Test
+   public void testOperatorByte0Iintializer() throws IOException, URISyntaxException {
+      compileAndCompare("operator-byte0-initializer.c");
+   }
+
+   @Test
    public void testOperatorByte3() throws IOException, URISyntaxException {
-      compileAndCompare("operator-byte3.c", log());
+      compileAndCompare("operator-byte3.c");
    }
 
    @Test

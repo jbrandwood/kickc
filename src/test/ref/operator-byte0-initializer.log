@@ -1,0 +1,244 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  main::SCREEN[main::i#0] = VALS[0]
+  main::i#1 = ++ main::i#0
+  main::SCREEN[main::i#1] = VALS[1]
+  main::i#2 = ++ main::i#1
+  main::SCREEN[main::i#2] = VALS[2]
+  main::i#3 = ++ main::i#2
+  main::SCREEN[main::i#3] = VALS[3]
+  main::i#4 = ++ main::i#3
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const byte* VALS[]  = { <$756b5b3, >$756b5b3, _byte2_$756b5b3, _byte3_$756b5b3 }
+void __start()
+void main()
+const nomodify byte* main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+
+Adding number conversion cast (unumber) 0 in main::SCREEN[main::i#0] = VALS[0]
+Adding number conversion cast (unumber) 1 in main::SCREEN[main::i#1] = VALS[1]
+Adding number conversion cast (unumber) 2 in main::SCREEN[main::i#2] = VALS[2]
+Adding number conversion cast (unumber) 3 in main::SCREEN[main::i#3] = VALS[3]
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero VALS in [1] main::SCREEN[main::i#0] = VALS[0]
+Simplifying expression containing zero main::SCREEN in [1] main::SCREEN[main::i#0] = *VALS
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable main::i#4 and assignment [7] main::i#4 = ++ main::i#3
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [1] main::i#1 = ++ main::i#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#1 = ++main::i#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [2] main::i#2 = ++ main::i#1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#2 = ++main::i#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [3] main::i#3 = ++ main::i#2
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#3 = ++main::i#2
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings main::i#0
+Inlining constant with different constant siblings main::i#1
+Inlining constant with different constant siblings main::i#2
+Inlining constant with different constant siblings main::i#3
+Constant inlined main::i#0 = 0
+Constant inlined main::i#2 = ++++0
+Constant inlined main::i#1 = ++0
+Constant inlined main::i#3 = ++++++0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(VALS+1)
+Consolidated array index constant in *(main::SCREEN+++0)
+Consolidated array index constant in *(VALS+2)
+Consolidated array index constant in *(main::SCREEN+++++0)
+Consolidated array index constant in *(VALS+3)
+Consolidated array index constant in *(main::SCREEN+++++++0)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer increment ++0
+Simplifying constant integer increment ++0
+Simplifying constant integer increment ++1
+Successful SSA optimization Pass2ConstantSimplification
+Simplifying constant integer increment ++1
+Simplifying constant integer increment ++2
+Successful SSA optimization Pass2ConstantSimplification
+Finalized unsigned number type (dword) $756b5b3
+Finalized unsigned number type (dword) $756b5b3
+Finalized unsigned number type (dword) $756b5b3
+Finalized unsigned number type (dword) $756b5b3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *main::SCREEN = *VALS
+  [1] *(main::SCREEN+1) = *(VALS+1)
+  [2] *(main::SCREEN+2) = *(VALS+2)
+  [3] *(main::SCREEN+3) = *(VALS+3)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [4] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::SCREEN = *VALS [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = *(VALS+1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::SCREEN+2) = *(VALS+2) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *(main::SCREEN+3) = *(VALS+3) [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 41 combination 
+Uplifting [] best 41 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test operator BYTE0() / BYTE1() in initializers
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="operator-byte0-initializer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [0] *main::SCREEN = *VALS -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS
+    sta SCREEN
+    // [1] *(main::SCREEN+1) = *(VALS+1) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+1
+    sta SCREEN+1
+    // [2] *(main::SCREEN+2) = *(VALS+2) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+2
+    sta SCREEN+2
+    // [3] *(main::SCREEN+3) = *(VALS+3) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+3
+    sta SCREEN+3
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // File Data
+.segment Data
+  VALS: .byte <($756b5b3), >($756b5b3), <($756b5b3>>$10), >($756b5b3>>$10)
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const byte* VALS[]  = { <$756b5b3, >$756b5b3, _byte2_$756b5b3, _byte3_$756b5b3 }
+void main()
+const nomodify byte* main::SCREEN = (byte*) 1024
+byte main::i
+
+
+
+FINAL ASSEMBLER
+Score: 38
+
+  // File Comments
+// Test operator BYTE0() / BYTE1() in initializers
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="operator-byte0-initializer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // SCREEN[i++] = VALS[0]
+    // [0] *main::SCREEN = *VALS -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS
+    sta SCREEN
+    // SCREEN[i++] = VALS[1]
+    // [1] *(main::SCREEN+1) = *(VALS+1) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+1
+    sta SCREEN+1
+    // SCREEN[i++] = VALS[2]
+    // [2] *(main::SCREEN+2) = *(VALS+2) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+2
+    sta SCREEN+2
+    // SCREEN[i++] = VALS[3]
+    // [3] *(main::SCREEN+3) = *(VALS+3) -- _deref_pbuc1=_deref_pbuc2 
+    lda VALS+3
+    sta SCREEN+3
+    // main::@return
+    // }
+    // [4] return 
+    rts
+}
+  // File Data
+.segment Data
+  VALS: .byte <($756b5b3), >($756b5b3), <($756b5b3>>$10), >($756b5b3>>$10)
+

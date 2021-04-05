@@ -219,7 +219,7 @@ public class AsmFormat {
       } else if(Operators.BYTE2.equals(operator)) {
          return "<" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), operator.getPrecedence(), codeScope) + ")";
       } else if(Operators.BYTE3.equals(operator)) {
-         return "<" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 24)), operator.getPrecedence(), codeScope) + ")";
+         return ">" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), operator.getPrecedence(), codeScope) + ")";
       } else if(Operators.INCREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
       } else if(Operators.DECREMENT.equals(operator)) {

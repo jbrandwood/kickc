@@ -2378,22 +2378,35 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          parameters = new ArrayList<>();
       }
-      Variable tmpVar = addIntermediateVar();
-      SymbolVariableRef tmpVarRef = tmpVar.getRef();
 
       String procedureName;
+      RValue result;
       if(ctx.expr() instanceof KickCParser.ExprIdContext) {
          procedureName = ctx.expr().getText();
-         addStatement(new StatementCall((LValue) tmpVarRef, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         // Handle the special BYTE0/1/2/3 calls
+         if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.BYTE1, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size()==1) {
+            result =  addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
+         } else {
+            // A normal named call
+            result = addIntermediateVar().getRef();
+            addStatement(new StatementCall((LValue) result, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         }
       } else {
          RValue procedurePointer = (RValue) this.visit(ctx.expr());
-         addStatement(new StatementCallPointer((LValue) tmpVarRef, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         result = addIntermediateVar().getRef();
+         addStatement(new StatementCallPointer((LValue) result, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
          consumeExpr(procedurePointer);
       }
       for(RValue parameter : parameters) {
          consumeExpr(parameter);
       }
-      return tmpVarRef;
+      return result;
    }
 
    @Override
@@ -2506,6 +2519,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operators.getUnary(op);
+      return addExprUnary(ctx, operator, child);
+   }
+
+   private RValue addExprUnary(ParserRuleContext ctx, Operator operator, RValue child) {
       // Special handling of negative literal number
       if(operator.equals(Operators.ADDRESS_OF)) {
          ConstantValue constantAddressOf = constantifyAddressOf(child, new StatementSource(ctx));

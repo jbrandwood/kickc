@@ -23,7 +23,7 @@ fn1: {
     rts
 }
 main: {
-    .label __1 = 3
+    .label __0 = 3
     .label i = 2
     lda #0
     sta.z i
@@ -34,10 +34,10 @@ main: {
     lda.z i
     jsr getfn
     // (*getfn(++i))()
-    jsr bi___1
+    jsr bi___0
     jmp __b2
-  bi___1:
-    jmp (__1)
+  bi___0:
+    jmp (__0)
 }
 // getfn(byte register(A) b)
 getfn: {

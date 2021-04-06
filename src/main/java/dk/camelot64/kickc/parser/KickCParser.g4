@@ -10,9 +10,12 @@ options { tokenVocab=KickCLexer; }
 @members {
     CParser cParser;
 
+    boolean isTypedef;
+
 	public KickCParser(TokenStream input, CParser cParser) {
 		this(input);
 		this.cParser = cParser;
+		this.isTypedef = false;
 	}
 
 }
@@ -38,34 +41,34 @@ decl
     | typeDef ';'
     ;
 
-declVariables
-    : declType declVariableList
-    ;
-
-declVariableList
-    : declPointer* declVariableInit
-    | declVariableList COMMA declPointer* declVariableInit
-    ;
-
 typeDef
-    : TYPEDEF declType declPointer* NAME declArray* {cParser.addTypedef($NAME.text);}
+    : TYPEDEF declType declarator
     ;
 
-declVariableInit
-    : NAME declArray* ('=' expr)? #declVariableInitExpr
-    | NAME declArray* '=' kasmContent #declVariableInitKasm
+declVariables
+    : declType declaratorInitList
     ;
 
 declType
     : directive* type directive*
     ;
 
-declPointer
-    : ASTERISK directive*
+declaratorInitList
+    : declaratorInit
+    | declaratorInitList COMMA declaratorInit
     ;
 
-declArray
-    : BRACKET_BEGIN (expr)? BRACKET_END
+declaratorInit
+    : declarator ('=' expr)? #declVariableInitExpr
+    | declarator '=' kasmContent #declVariableInitKasm
+    ;
+
+declarator
+    : NAME {if(isTypedef) Parser.addTypedef($NAME.text);} #declaratorName
+    | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
+    | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
+    | ASTERISK directive* declarator #declaratorPointer
+    | PAR_BEGIN declarator PAR_END #declaratorPar
     ;
 
 typeSpecifier
@@ -75,11 +78,8 @@ typeSpecifier
     ;
 
 type
-    : PAR_BEGIN type PAR_END #typePar
-    | SIMPLETYPE  #typeSimple
+    : SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | type BRACKET_BEGIN (expr)? BRACKET_END #typeArray
-    | type PAR_BEGIN PAR_END #typeProcedure
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef
@@ -117,7 +117,7 @@ enumMember
     ;
 
 declFunction
-    : declType declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
+    : declType declarator declFunctionBody
     ;
 
 declFunctionBody
@@ -128,8 +128,8 @@ parameterListDecl
     : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
-    : declType declPointer* NAME #parameterDeclType
-    | SIMPLETYPE #parameterDeclVoid
+    : declType declarator #parameterDeclType
+    | typeSpecifier #parameterDeclTypeSpecifier
     | PARAM_LIST #parameterDeclList
     ;
 
@@ -196,7 +196,8 @@ switchCase:
 
 forLoop
     : forClassicInit ';' forClassicCondition? ';' commaExpr? #forClassic
-    | (declType declPointer*)? NAME COLON expr RANGE expr  #forRange
+    | declType declarator COLON expr RANGE expr  #forRangeDecl
+    | NAME COLON expr RANGE expr  #forRangeName
     ;
 
 forClassicInit

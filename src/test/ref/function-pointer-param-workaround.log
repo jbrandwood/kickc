@@ -1,0 +1,1058 @@
+Setting inferred volatile on symbol affected by address-of: fn1::param_char in asm { pla staparam_char  }
+Setting inferred volatile on symbol affected by address-of: fn2::param_char in asm { pla staparam_char  }
+Setting inferred volatile on symbol affected by address-of: main::param_char in asm { ldaparam_char pha  }
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void fn1()
+fn1: scope:[fn1]  from
+  fn1::ret_addr = 0
+  fn1::param_char = 0
+  asm { pla staret_addr pla staret_addr+1  }
+  asm { pla staparam_char  }
+  fn1::b#0 = fn1::param_char
+  asm { pla staparam_char  }
+  fn1::c#0 = fn1::param_char
+  asm { ldaret_addr+1 pha ldaret_addr pha  }
+  SCREEN1[idx1] = fn1::b#0
+  idx1 = ++ idx1
+  SCREEN1[idx1] = fn1::c#0
+  idx1 = ++ idx1
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  return 
+  to:@return
+
+void fn2()
+fn2: scope:[fn2]  from
+  fn2::ret_addr = 0
+  fn2::param_char = 0
+  asm { pla staret_addr pla staret_addr+1  }
+  asm { pla staparam_char  }
+  fn2::b#0 = fn2::param_char
+  asm { pla staparam_char  }
+  fn2::c#0 = fn2::param_char
+  asm { ldaret_addr+1 pha ldaret_addr pha  }
+  SCREEN2[idx2] = fn2::b#0
+  idx2 = ++ idx2
+  SCREEN2[idx2] = fn2::c#0
+  idx2 = ++ idx2
+  to:fn2::@return
+fn2::@return: scope:[fn2]  from fn2
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start::@1
+  main::i#0 = 'a'
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  main::i#2 = phi( main/main::i#0, main::@5/main::i#1 )
+  main::$0 = main::i#2 <= 'p'
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#6 = phi( main::@1/main::i#2 )
+  main::j#0 = 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  main::i#5 = phi( main::@2/main::i#6, main::@4/main::i#3 )
+  main::j#2 = phi( main::@2/main::j#0, main::@4/main::j#1 )
+  main::$1 = main::j#2 < 2
+  if(main::$1) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3
+  main::j#3 = phi( main::@3/main::j#2 )
+  main::i#3 = phi( main::@3/main::i#5 )
+  main::param_char = 0
+  main::param_char = main::i#3
+  asm { ldaparam_char pha  }
+  main::param_char = main::j#3
+  asm { ldaparam_char pha  }
+  main::$3 = main::j#3 * SIZEOF_POINTER
+  main::f#0 = main::fns[main::$3]
+  call *main::f#0 
+  main::j#1 = ++ main::j#3
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  main::i#4 = phi( main::@3/main::i#5 )
+  main::i#1 = ++ main::i#4
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  idx1 = 0
+  idx2 = 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* SCREEN1 = (byte*)$400
+const nomodify byte* SCREEN2 = (byte*)$428
+const byte SIZEOF_POINTER = 2
+void __start()
+void fn1()
+byte fn1::b
+byte fn1::b#0
+byte fn1::c
+byte fn1::c#0
+volatile byte fn1::param_char loadstore
+volatile word fn1::ret_addr loadstore
+void fn2()
+byte fn2::b
+byte fn2::b#0
+byte fn2::c
+byte fn2::c#0
+volatile byte fn2::param_char loadstore
+volatile word fn2::ret_addr loadstore
+volatile byte idx1 loadstore
+volatile byte idx2 loadstore
+void main()
+bool~ main::$0
+bool~ main::$1
+byte~ main::$3
+void()* main::f
+void()* main::f#0
+const void()** main::fns[2]  = { &fn1, &fn2 }
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte main::i#6
+byte main::j
+byte main::j#0
+byte main::j#1
+byte main::j#2
+byte main::j#3
+volatile byte main::param_char loadstore
+
+Adding number conversion cast (unumber) 2 in main::$1 = main::j#2 < 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1064
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#3 = main::i#5 main::param_char main::j#3 main::j#2 main::i#4 
+Alias main::i#2 = main::i#6 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#3 = main::i#5 main::param_char main::j#3 main::j#2 main::i#4 
+Identical Phi Values main::i#3 main::i#5
+Identical Phi Values main::j#3 main::j#2
+Identical Phi Values main::i#4 main::i#5
+Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Values main::i#5 main::i#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [29] if(main::i#2<='p') goto main::@2
+Simple Condition main::$1 [33] if(main::j#2<2) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 'a'
+Constant main::j#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#2 = main::param_char main::j#2 
+Rewriting multiplication to use shift [35] main::$3 = main::j#2 * SIZEOF_POINTER
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings main::i#0
+Inlining constant with var siblings main::j#0
+Constant inlined main::i#0 = 'a'
+Constant inlined main::j#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#2 = main::param_char main::j#2 
+Eliminating unused constant SIZEOF_POINTER
+Successful SSA optimization PassNEliminateUnusedVars
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#2 = main::param_char main::j#2 
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#2 = main::param_char main::j#2 
+Alias candidate removed (volatile)fn1::b#0 = fn1::param_char fn1::c#0 
+Alias candidate removed (volatile)fn2::b#0 = fn2::param_char fn2::c#0 
+Alias candidate removed (volatile)main::i#2 = main::param_char main::j#2 
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+CALL GRAPH
+Calls in [__start] to main:4 
+
+Created 2 initial phi equivalence classes
+Coalesced [41] main::i#7 = main::i#1
+Coalesced [51] main::j#4 = main::j#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block label __start::@2
+Culled Empty Block label main::@2
+Renumbering block main::@3 to main::@2
+Renumbering block main::@4 to main::@3
+Renumbering block main::@5 to main::@4
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void __start()
+__start: scope:[__start]  from
+  [0] phi()
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  [1] idx1 = 0
+  [2] idx2 = 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  [3] phi()
+  [4] call main 
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  [5] return 
+  to:@return
+
+void fn2()
+fn2: scope:[fn2]  from
+  [6] fn2::ret_addr = 0
+  [7] fn2::param_char = 0
+  asm { pla staret_addr pla staret_addr+1  }
+  asm { pla staparam_char  }
+  [10] fn2::b#0 = fn2::param_char
+  asm { pla staparam_char  }
+  [12] fn2::c#0 = fn2::param_char
+  asm { ldaret_addr+1 pha ldaret_addr pha  }
+  [14] SCREEN2[idx2] = fn2::b#0
+  [15] idx2 = ++ idx2
+  [16] SCREEN2[idx2] = fn2::c#0
+  [17] idx2 = ++ idx2
+  to:fn2::@return
+fn2::@return: scope:[fn2]  from fn2
+  [18] return 
+  to:@return
+
+void fn1()
+fn1: scope:[fn1]  from
+  [19] fn1::ret_addr = 0
+  [20] fn1::param_char = 0
+  asm { pla staret_addr pla staret_addr+1  }
+  asm { pla staparam_char  }
+  [23] fn1::b#0 = fn1::param_char
+  asm { pla staparam_char  }
+  [25] fn1::c#0 = fn1::param_char
+  asm { ldaret_addr+1 pha ldaret_addr pha  }
+  [27] SCREEN1[idx1] = fn1::b#0
+  [28] idx1 = ++ idx1
+  [29] SCREEN1[idx1] = fn1::c#0
+  [30] idx1 = ++ idx1
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  [31] return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start::@1
+  [32] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [33] main::i#2 = phi( main/'a', main::@4/main::i#1 )
+  [34] if(main::i#2<='p') goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [35] return 
+  to:@return
+main::@2: scope:[main]  from main::@1 main::@3
+  [36] main::j#2 = phi( main::@1/0, main::@3/main::j#1 )
+  [37] if(main::j#2<2) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  [38] main::i#1 = ++ main::i#2
+  to:main::@1
+main::@3: scope:[main]  from main::@2
+  [39] main::param_char = 0
+  [40] main::param_char = main::i#2
+  asm { ldaparam_char pha  }
+  [42] main::param_char = main::j#2
+  asm { ldaparam_char pha  }
+  [44] main::$3 = main::j#2 << 1
+  [45] main::f#0 = main::fns[main::$3]
+  [46] call *main::f#0 
+  [47] main::j#1 = ++ main::j#2
+  to:main::@2
+
+
+VARIABLE REGISTER WEIGHTS
+void __start()
+void fn1()
+byte fn1::b
+byte fn1::b#0 1.0
+byte fn1::c
+byte fn1::c#0 1.0
+volatile byte fn1::param_char loadstore 1.2000000000000002
+volatile word fn1::ret_addr loadstore 0.2857142857142857
+void fn2()
+byte fn2::b
+byte fn2::b#0 1.0
+byte fn2::c
+byte fn2::c#0 1.0
+volatile byte fn2::param_char loadstore 1.2000000000000002
+volatile word fn2::ret_addr loadstore 0.2857142857142857
+volatile byte idx1 loadstore 1.272727272727273
+volatile byte idx2 loadstore 1.272727272727273
+void main()
+byte~ main::$3 2002.0
+void()* main::f
+void()* main::f#0 1001.0
+byte main::i
+byte main::i#1 202.0
+byte main::i#2 100.3076923076923
+byte main::j
+byte main::j#1 2002.0
+byte main::j#2 500.5
+volatile byte main::param_char loadstore 1501.5
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::j#2 main::j#1 ]
+Added variable idx1 to live range equivalence class [ idx1 ]
+Added variable idx2 to live range equivalence class [ idx2 ]
+Added variable fn2::ret_addr to live range equivalence class [ fn2::ret_addr ]
+Added variable fn2::param_char to live range equivalence class [ fn2::param_char ]
+Added variable fn2::b#0 to live range equivalence class [ fn2::b#0 ]
+Added variable fn2::c#0 to live range equivalence class [ fn2::c#0 ]
+Added variable fn1::ret_addr to live range equivalence class [ fn1::ret_addr ]
+Added variable fn1::param_char to live range equivalence class [ fn1::param_char ]
+Added variable fn1::b#0 to live range equivalence class [ fn1::b#0 ]
+Added variable fn1::c#0 to live range equivalence class [ fn1::c#0 ]
+Added variable main::param_char to live range equivalence class [ main::param_char ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable main::f#0 to live range equivalence class [ main::f#0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::j#2 main::j#1 ]
+[ idx1 ]
+[ idx2 ]
+[ fn2::ret_addr ]
+[ fn2::param_char ]
+[ fn2::b#0 ]
+[ fn2::c#0 ]
+[ fn1::ret_addr ]
+[ fn1::param_char ]
+[ fn1::b#0 ]
+[ fn1::c#0 ]
+[ main::param_char ]
+[ main::$3 ]
+[ main::f#0 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::j#2 main::j#1 ]
+Allocated zp[1]:4 [ idx1 ]
+Allocated zp[1]:5 [ idx2 ]
+Allocated zp[2]:6 [ fn2::ret_addr ]
+Allocated zp[1]:8 [ fn2::param_char ]
+Allocated zp[1]:9 [ fn2::b#0 ]
+Allocated zp[1]:10 [ fn2::c#0 ]
+Allocated zp[2]:11 [ fn1::ret_addr ]
+Allocated zp[1]:13 [ fn1::param_char ]
+Allocated zp[1]:14 [ fn1::b#0 ]
+Allocated zp[1]:15 [ fn1::c#0 ]
+Allocated zp[1]:16 [ main::param_char ]
+Allocated zp[1]:17 [ main::$3 ]
+Allocated zp[2]:18 [ main::f#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] idx1 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] idx2 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] fn2::ret_addr = 0 [ idx2 fn2::ret_addr ] (  [ idx2 fn2::ret_addr ] { }  ) always clobbers reg byte a 
+Statement [7] fn2::param_char = 0 [ idx2 fn2::ret_addr fn2::param_char ] (  [ idx2 fn2::ret_addr fn2::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { pla staret_addr pla staret_addr+1  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ fn2::b#0 ]
+Statement asm { ldaret_addr+1 pha ldaret_addr pha  } always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ fn2::c#0 ]
+Statement [14] SCREEN2[idx2] = fn2::b#0 [ idx2 fn2::c#0 ] (  [ idx2 fn2::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:10 [ fn2::c#0 ]
+Statement [16] SCREEN2[idx2] = fn2::c#0 [ idx2 ] (  [ idx2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] fn1::ret_addr = 0 [ idx1 fn1::ret_addr ] (  [ idx1 fn1::ret_addr ] { }  ) always clobbers reg byte a 
+Statement [20] fn1::param_char = 0 [ idx1 fn1::ret_addr fn1::param_char ] (  [ idx1 fn1::ret_addr fn1::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { pla staret_addr pla staret_addr+1  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:14 [ fn1::b#0 ]
+Statement asm { ldaret_addr+1 pha ldaret_addr pha  } always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:15 [ fn1::c#0 ]
+Statement [27] SCREEN1[idx1] = fn1::b#0 [ idx1 fn1::c#0 ] (  [ idx1 fn1::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:15 [ fn1::c#0 ]
+Statement [29] SCREEN1[idx1] = fn1::c#0 [ idx1 ] (  [ idx1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [39] main::param_char = 0 [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::j#2 main::j#1 ]
+Statement asm { ldaparam_char pha  } always clobbers reg byte a 
+Statement asm { ldaparam_char pha  } always clobbers reg byte a 
+Statement [44] main::$3 = main::j#2 << 1 [ main::i#2 main::j#2 main::$3 ] ( main:4 [ main::i#2 main::j#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [45] main::f#0 = main::fns[main::$3] [ main::i#2 main::j#2 main::f#0 ] ( main:4 [ main::i#2 main::j#2 main::f#0 ] { }  ) always clobbers reg byte a 
+Statement [46] call *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::j#2 main::j#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::j#2 main::j#1 ]
+Statement [1] idx1 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] idx2 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] fn2::ret_addr = 0 [ idx2 fn2::ret_addr ] (  [ idx2 fn2::ret_addr ] { }  ) always clobbers reg byte a 
+Statement [7] fn2::param_char = 0 [ idx2 fn2::ret_addr fn2::param_char ] (  [ idx2 fn2::ret_addr fn2::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { pla staret_addr pla staret_addr+1  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { ldaret_addr+1 pha ldaret_addr pha  } always clobbers reg byte a 
+Statement [14] SCREEN2[idx2] = fn2::b#0 [ idx2 fn2::c#0 ] (  [ idx2 fn2::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] SCREEN2[idx2] = fn2::c#0 [ idx2 ] (  [ idx2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] fn1::ret_addr = 0 [ idx1 fn1::ret_addr ] (  [ idx1 fn1::ret_addr ] { }  ) always clobbers reg byte a 
+Statement [20] fn1::param_char = 0 [ idx1 fn1::ret_addr fn1::param_char ] (  [ idx1 fn1::ret_addr fn1::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { pla staret_addr pla staret_addr+1  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { pla staparam_char  } always clobbers reg byte a 
+Statement asm { ldaret_addr+1 pha ldaret_addr pha  } always clobbers reg byte a 
+Statement [27] SCREEN1[idx1] = fn1::b#0 [ idx1 fn1::c#0 ] (  [ idx1 fn1::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [29] SCREEN1[idx1] = fn1::c#0 [ idx1 ] (  [ idx1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [34] if(main::i#2<='p') goto main::@2 [ main::i#2 ] ( main:4 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [37] if(main::j#2<2) goto main::@3 [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a 
+Statement [39] main::param_char = 0 [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a 
+Statement [40] main::param_char = main::i#2 [ main::i#2 main::j#2 main::param_char ] ( main:4 [ main::i#2 main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { ldaparam_char pha  } always clobbers reg byte a 
+Statement [42] main::param_char = main::j#2 [ main::i#2 main::j#2 main::param_char ] ( main:4 [ main::i#2 main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
+Statement asm { ldaparam_char pha  } always clobbers reg byte a 
+Statement [44] main::$3 = main::j#2 << 1 [ main::i#2 main::j#2 main::$3 ] ( main:4 [ main::i#2 main::j#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [45] main::f#0 = main::fns[main::$3] [ main::i#2 main::j#2 main::f#0 ] ( main:4 [ main::i#2 main::j#2 main::f#0 ] { }  ) always clobbers reg byte a 
+Statement [46] call *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ main::j#2 main::j#1 ] : zp[1]:3 , 
+Potential registers zp[1]:4 [ idx1 ] : zp[1]:4 , 
+Potential registers zp[1]:5 [ idx2 ] : zp[1]:5 , 
+Potential registers zp[2]:6 [ fn2::ret_addr ] : zp[2]:6 , 
+Potential registers zp[1]:8 [ fn2::param_char ] : zp[1]:8 , 
+Potential registers zp[1]:9 [ fn2::b#0 ] : zp[1]:9 , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ fn2::c#0 ] : zp[1]:10 , reg byte x , 
+Potential registers zp[2]:11 [ fn1::ret_addr ] : zp[2]:11 , 
+Potential registers zp[1]:13 [ fn1::param_char ] : zp[1]:13 , 
+Potential registers zp[1]:14 [ fn1::b#0 ] : zp[1]:14 , reg byte x , reg byte y , 
+Potential registers zp[1]:15 [ fn1::c#0 ] : zp[1]:15 , reg byte x , 
+Potential registers zp[1]:16 [ main::param_char ] : zp[1]:16 , 
+Potential registers zp[1]:17 [ main::$3 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:18 [ main::f#0 ] : zp[2]:18 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 2,502.5: zp[1]:3 [ main::j#2 main::j#1 ] 2,002: zp[1]:17 [ main::$3 ] 1,501.5: zp[1]:16 [ main::param_char ] 1,001: zp[2]:18 [ main::f#0 ] 302.31: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [fn1] 1.2: zp[1]:13 [ fn1::param_char ] 1: zp[1]:14 [ fn1::b#0 ] 1: zp[1]:15 [ fn1::c#0 ] 0.29: zp[2]:11 [ fn1::ret_addr ] 
+Uplift Scope [fn2] 1.2: zp[1]:8 [ fn2::param_char ] 1: zp[1]:9 [ fn2::b#0 ] 1: zp[1]:10 [ fn2::c#0 ] 0.29: zp[2]:6 [ fn2::ret_addr ] 
+Uplift Scope [] 1.27: zp[1]:4 [ idx1 ] 1.27: zp[1]:5 [ idx2 ] 
+Uplift Scope [__start] 
+
+Uplifting [main] best 9607 combination zp[1]:3 [ main::j#2 main::j#1 ] reg byte a [ main::$3 ] zp[1]:16 [ main::param_char ] zp[2]:18 [ main::f#0 ] zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [fn1] best 9599 combination zp[1]:13 [ fn1::param_char ] reg byte y [ fn1::b#0 ] reg byte x [ fn1::c#0 ] zp[2]:11 [ fn1::ret_addr ] 
+Uplifting [fn2] best 9591 combination zp[1]:8 [ fn2::param_char ] reg byte y [ fn2::b#0 ] reg byte x [ fn2::c#0 ] zp[2]:6 [ fn2::ret_addr ] 
+Uplifting [] best 9591 combination zp[1]:4 [ idx1 ] zp[1]:5 [ idx2 ] 
+Uplifting [__start] best 9591 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::j#2 main::j#1 ]
+Uplifting [main] best 9591 combination zp[1]:3 [ main::j#2 main::j#1 ] 
+Attempting to uplift remaining variables inzp[1]:16 [ main::param_char ]
+Uplifting [main] best 9591 combination zp[1]:16 [ main::param_char ] 
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 9591 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:4 [ idx1 ]
+Uplifting [] best 9591 combination zp[1]:4 [ idx1 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ idx2 ]
+Uplifting [] best 9591 combination zp[1]:5 [ idx2 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ fn2::param_char ]
+Uplifting [fn2] best 9591 combination zp[1]:8 [ fn2::param_char ] 
+Attempting to uplift remaining variables inzp[1]:13 [ fn1::param_char ]
+Uplifting [fn1] best 9591 combination zp[1]:13 [ fn1::param_char ] 
+Allocated (was zp[2]:11) zp[2]:9 [ fn1::ret_addr ]
+Allocated (was zp[1]:13) zp[1]:11 [ fn1::param_char ]
+Allocated (was zp[1]:16) zp[1]:12 [ main::param_char ]
+Allocated (was zp[2]:18) zp[2]:13 [ main::f#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates work-around for passing parameters to function pointers
+// Save the return address, declare parameter variables
+// Restore the return address
+// Declare and pull a char parameter
+// Begin passing parameters using the stack. Declares parameter variables.
+// Pass a char parameter
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-param-workaround.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+  // Global Constants & labels
+  .label SCREEN1 = $400
+  .label SCREEN2 = $428
+  .label idx1 = 4
+  .label idx2 = 5
+.segment Code
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
+    // [1] idx1 = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx1
+    // [2] idx2 = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx2
+    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
+    jmp __b1
+    // __start::@1
+  __b1:
+    // [4] call main 
+    // [32] phi from __start::@1 to main [phi:__start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // __start::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // fn2
+fn2: {
+    .label ret_addr = 6
+    .label param_char = 8
+    // [6] fn2::ret_addr = 0 -- vwuz1=vwuc1 
+    lda #<0
+    sta.z ret_addr
+    lda #>0
+    sta.z ret_addr+1
+    // [7] fn2::param_char = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z param_char
+    // asm { pla staret_addr pla staret_addr+1  }
+    pla
+    sta ret_addr
+    pla
+    sta ret_addr+1
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [10] fn2::b#0 = fn2::param_char -- vbuyy=vbuz1 
+    ldy.z param_char
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [12] fn2::c#0 = fn2::param_char -- vbuxx=vbuz1 
+    ldx.z param_char
+    // asm { ldaret_addr+1 pha ldaret_addr pha  }
+    lda ret_addr+1
+    pha
+    lda ret_addr
+    pha
+    // [14] SCREEN2[idx2] = fn2::b#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // Function body
+    tya
+    ldy.z idx2
+    sta SCREEN2,y
+    // [15] idx2 = ++ idx2 -- vbuz1=_inc_vbuz1 
+    inc.z idx2
+    // [16] SCREEN2[idx2] = fn2::c#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    ldy.z idx2
+    txa
+    sta SCREEN2,y
+    // [17] idx2 = ++ idx2 -- vbuz1=_inc_vbuz1 
+    inc.z idx2
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [18] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label ret_addr = 9
+    .label param_char = $b
+    // [19] fn1::ret_addr = 0 -- vwuz1=vwuc1 
+    lda #<0
+    sta.z ret_addr
+    lda #>0
+    sta.z ret_addr+1
+    // [20] fn1::param_char = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z param_char
+    // asm { pla staret_addr pla staret_addr+1  }
+    pla
+    sta ret_addr
+    pla
+    sta ret_addr+1
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [23] fn1::b#0 = fn1::param_char -- vbuyy=vbuz1 
+    ldy.z param_char
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [25] fn1::c#0 = fn1::param_char -- vbuxx=vbuz1 
+    ldx.z param_char
+    // asm { ldaret_addr+1 pha ldaret_addr pha  }
+    lda ret_addr+1
+    pha
+    lda ret_addr
+    pha
+    // [27] SCREEN1[idx1] = fn1::b#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // Function body
+    tya
+    ldy.z idx1
+    sta SCREEN1,y
+    // [28] idx1 = ++ idx1 -- vbuz1=_inc_vbuz1 
+    inc.z idx1
+    // [29] SCREEN1[idx1] = fn1::c#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    ldy.z idx1
+    txa
+    sta SCREEN1,y
+    // [30] idx1 = ++ idx1 -- vbuz1=_inc_vbuz1 
+    inc.z idx1
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [31] return 
+    rts
+}
+  // main
+main: {
+    .label param_char = $c
+    .label f = $d
+    .label j = 3
+    .label i = 2
+    // [33] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [33] phi main::i#2 = 'a' [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #'a'
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [34] if(main::i#2<='p') goto main::@2 -- vbuz1_le_vbuc1_then_la1 
+    lda #'p'
+    cmp.z i
+    bcs __b2_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [35] return 
+    rts
+    // [36] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b2_from___b1:
+    // [36] phi main::j#2 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z j
+    jmp __b2
+    // main::@2
+  __b2:
+    // [37] if(main::j#2<2) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z j
+    cmp #2
+    bcc __b3
+    jmp __b4
+    // main::@4
+  __b4:
+    // [38] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [33] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [33] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@3
+  __b3:
+    // [39] main::param_char = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z param_char
+    // [40] main::param_char = main::i#2 -- vbuz1=vbuz2 
+    lda.z i
+    sta.z param_char
+    // asm { ldaparam_char pha  }
+    lda param_char
+    pha
+    // [42] main::param_char = main::j#2 -- vbuz1=vbuz2 
+    lda.z j
+    sta.z param_char
+    // asm { ldaparam_char pha  }
+    lda param_char
+    pha
+    // [44] main::$3 = main::j#2 << 1 -- vbuaa=vbuz1_rol_1 
+    lda.z j
+    asl
+    // [45] main::f#0 = main::fns[main::$3] -- pprz1=qprc1_derefidx_vbuaa 
+    tay
+    lda fns,y
+    sta.z f
+    lda fns+1,y
+    sta.z f+1
+    // [46] call *main::f#0 
+    jsr bi_f
+    // [47] main::j#1 = ++ main::j#2 -- vbuz1=_inc_vbuz1 
+    inc.z j
+    // [36] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  __b2_from___b3:
+    // [36] phi main::j#2 = main::j#1 [phi:main::@3->main::@2#0] -- register_copy 
+    jmp __b2
+  bi_f:
+    jmp (f)
+  .segment Data
+    fns: .word fn1, fn2
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __init1
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Removing instruction lda #>0
+Removing instruction lda #0
+Replacing instruction ldy.z param_char with TAY
+Replacing instruction ldx.z param_char with TAX
+Removing instruction lda #>0
+Removing instruction lda #0
+Replacing instruction ldy.z param_char with TAY
+Replacing instruction ldx.z param_char with TAX
+Removing instruction lda param_char
+Removing instruction lda param_char
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from___init1:
+Removing instruction main_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __init1:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __b2_from___b3:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Relabelling long label __b2_from___b1 to __b4
+Succesful ASM optimization Pass5RelabelLongLabels
+
+FINAL SYMBOL TABLE
+const nomodify byte* SCREEN1 = (byte*) 1024
+const nomodify byte* SCREEN2 = (byte*) 1064
+void __start()
+void fn1()
+byte fn1::b
+byte fn1::b#0 reg byte y 1.0
+byte fn1::c
+byte fn1::c#0 reg byte x 1.0
+volatile byte fn1::param_char loadstore zp[1]:11 1.2000000000000002
+volatile word fn1::ret_addr loadstore zp[2]:9 0.2857142857142857
+void fn2()
+byte fn2::b
+byte fn2::b#0 reg byte y 1.0
+byte fn2::c
+byte fn2::c#0 reg byte x 1.0
+volatile byte fn2::param_char loadstore zp[1]:8 1.2000000000000002
+volatile word fn2::ret_addr loadstore zp[2]:6 0.2857142857142857
+volatile byte idx1 loadstore zp[1]:4 1.272727272727273
+volatile byte idx2 loadstore zp[1]:5 1.272727272727273
+void main()
+byte~ main::$3 reg byte a 2002.0
+void()* main::f
+void()* main::f#0 f zp[2]:13 1001.0
+const void()** main::fns[2]  = { &fn1, &fn2 }
+byte main::i
+byte main::i#1 i zp[1]:2 202.0
+byte main::i#2 i zp[1]:2 100.3076923076923
+byte main::j
+byte main::j#1 j zp[1]:3 2002.0
+byte main::j#2 j zp[1]:3 500.5
+volatile byte main::param_char loadstore zp[1]:12 1501.5
+
+zp[1]:2 [ main::i#2 main::i#1 ]
+zp[1]:3 [ main::j#2 main::j#1 ]
+zp[1]:4 [ idx1 ]
+zp[1]:5 [ idx2 ]
+zp[2]:6 [ fn2::ret_addr ]
+zp[1]:8 [ fn2::param_char ]
+reg byte y [ fn2::b#0 ]
+reg byte x [ fn2::c#0 ]
+zp[2]:9 [ fn1::ret_addr ]
+zp[1]:11 [ fn1::param_char ]
+reg byte y [ fn1::b#0 ]
+reg byte x [ fn1::c#0 ]
+zp[1]:12 [ main::param_char ]
+reg byte a [ main::$3 ]
+zp[2]:13 [ main::f#0 ]
+
+
+FINAL ASSEMBLER
+Score: 8075
+
+  // File Comments
+// Demonstrates work-around for passing parameters to function pointers
+// Save the return address, declare parameter variables
+// Restore the return address
+// Declare and pull a char parameter
+// Begin passing parameters using the stack. Declares parameter variables.
+// Pass a char parameter
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-param-workaround.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+  // Global Constants & labels
+  .label SCREEN1 = $400
+  .label SCREEN2 = $428
+  .label idx1 = 4
+  .label idx2 = 5
+.segment Code
+  // __start
+__start: {
+    // __start::__init1
+    // idx1 = 0
+    // [1] idx1 = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx1
+    // idx2 = 0
+    // [2] idx2 = 0 -- vbuz1=vbuc1 
+    sta.z idx2
+    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
+    // [4] call main 
+    // [32] phi from __start::@1 to main [phi:__start::@1->main]
+    jsr main
+    // __start::@return
+    // [5] return 
+    rts
+}
+  // fn2
+fn2: {
+    .label ret_addr = 6
+    .label param_char = 8
+    // PARAM_BEGIN
+    // [6] fn2::ret_addr = 0 -- vwuz1=vwuc1 
+    lda #<0
+    sta.z ret_addr
+    sta.z ret_addr+1
+    // [7] fn2::param_char = 0 -- vbuz1=vbuc1 
+    sta.z param_char
+    // asm { pla staret_addr pla staret_addr+1  }
+    pla
+    sta ret_addr
+    pla
+    sta ret_addr+1
+    // PARAM_CHAR
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [10] fn2::b#0 = fn2::param_char -- vbuyy=vbuz1 
+    tay
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [12] fn2::c#0 = fn2::param_char -- vbuxx=vbuz1 
+    tax
+    // PARAM_END
+    // asm { ldaret_addr+1 pha ldaret_addr pha  }
+    lda ret_addr+1
+    pha
+    lda ret_addr
+    pha
+    // SCREEN2[idx2++] = b
+    // [14] SCREEN2[idx2] = fn2::b#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // Function body
+    tya
+    ldy.z idx2
+    sta SCREEN2,y
+    // SCREEN2[idx2++] = b;
+    // [15] idx2 = ++ idx2 -- vbuz1=_inc_vbuz1 
+    inc.z idx2
+    // SCREEN2[idx2++] = c
+    // [16] SCREEN2[idx2] = fn2::c#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    ldy.z idx2
+    txa
+    sta SCREEN2,y
+    // SCREEN2[idx2++] = c;
+    // [17] idx2 = ++ idx2 -- vbuz1=_inc_vbuz1 
+    inc.z idx2
+    // fn2::@return
+    // }
+    // [18] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label ret_addr = 9
+    .label param_char = $b
+    // PARAM_BEGIN
+    // [19] fn1::ret_addr = 0 -- vwuz1=vwuc1 
+    lda #<0
+    sta.z ret_addr
+    sta.z ret_addr+1
+    // [20] fn1::param_char = 0 -- vbuz1=vbuc1 
+    sta.z param_char
+    // asm { pla staret_addr pla staret_addr+1  }
+    pla
+    sta ret_addr
+    pla
+    sta ret_addr+1
+    // PARAM_CHAR
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [23] fn1::b#0 = fn1::param_char -- vbuyy=vbuz1 
+    tay
+    // asm { pla staparam_char  }
+    pla
+    sta param_char
+    // [25] fn1::c#0 = fn1::param_char -- vbuxx=vbuz1 
+    tax
+    // PARAM_END
+    // asm { ldaret_addr+1 pha ldaret_addr pha  }
+    lda ret_addr+1
+    pha
+    lda ret_addr
+    pha
+    // SCREEN1[idx1++] = b
+    // [27] SCREEN1[idx1] = fn1::b#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // Function body
+    tya
+    ldy.z idx1
+    sta SCREEN1,y
+    // SCREEN1[idx1++] = b;
+    // [28] idx1 = ++ idx1 -- vbuz1=_inc_vbuz1 
+    inc.z idx1
+    // SCREEN1[idx1++] = c
+    // [29] SCREEN1[idx1] = fn1::c#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    ldy.z idx1
+    txa
+    sta SCREEN1,y
+    // SCREEN1[idx1++] = c;
+    // [30] idx1 = ++ idx1 -- vbuz1=_inc_vbuz1 
+    inc.z idx1
+    // fn1::@return
+    // }
+    // [31] return 
+    rts
+}
+  // main
+main: {
+    .label param_char = $c
+    .label f = $d
+    .label j = 3
+    .label i = 2
+    // [33] phi from main to main::@1 [phi:main->main::@1]
+    // [33] phi main::i#2 = 'a' [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #'a'
+    sta.z i
+    // main::@1
+  __b1:
+    // for(char i='a';i<='p';i++)
+    // [34] if(main::i#2<='p') goto main::@2 -- vbuz1_le_vbuc1_then_la1 
+    lda #'p'
+    cmp.z i
+    bcs __b4
+    // main::@return
+    // }
+    // [35] return 
+    rts
+    // [36] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b4:
+    // [36] phi main::j#2 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z j
+    // main::@2
+  __b2:
+    // for(char j=0;j<2;j++)
+    // [37] if(main::j#2<2) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z j
+    cmp #2
+    bcc __b3
+    // main::@4
+    // for(char i='a';i<='p';i++)
+    // [38] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [33] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [33] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@3
+  __b3:
+    // CALL_BEGIN
+    // [39] main::param_char = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z param_char
+    // CALL_CHAR
+    // [40] main::param_char = main::i#2 -- vbuz1=vbuz2 
+    lda.z i
+    sta.z param_char
+    // asm { ldaparam_char pha  }
+    pha
+    // [42] main::param_char = main::j#2 -- vbuz1=vbuz2 
+    lda.z j
+    sta.z param_char
+    // asm { ldaparam_char pha  }
+    pha
+    // f = fns[j]
+    // [44] main::$3 = main::j#2 << 1 -- vbuaa=vbuz1_rol_1 
+    lda.z j
+    asl
+    // [45] main::f#0 = main::fns[main::$3] -- pprz1=qprc1_derefidx_vbuaa 
+    tay
+    lda fns,y
+    sta.z f
+    lda fns+1,y
+    sta.z f+1
+    // (*f)()
+    // [46] call *main::f#0 
+    jsr bi_f
+    // for(char j=0;j<2;j++)
+    // [47] main::j#1 = ++ main::j#2 -- vbuz1=_inc_vbuz1 
+    inc.z j
+    // [36] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [36] phi main::j#2 = main::j#1 [phi:main::@3->main::@2#0] -- register_copy 
+    jmp __b2
+  bi_f:
+    jmp (f)
+  .segment Data
+    fns: .word fn1, fn2
+}
+  // File Data
+

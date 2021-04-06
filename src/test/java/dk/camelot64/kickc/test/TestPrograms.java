@@ -3249,6 +3249,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerParamWorkaround() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-param-workaround.c");
+   }
+
+   @Test
    public void testFunctionPointerNoargCall14() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-noarg-call-14.c");
    }

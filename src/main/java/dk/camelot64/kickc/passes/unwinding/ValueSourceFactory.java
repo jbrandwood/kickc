@@ -55,7 +55,7 @@ public class ValueSourceFactory {
          return new ValueSourceZero(((StructZero) value).getTypeStruct(), null);
       }
       if(value instanceof ConstantValue)
-         return new ValueSourceConstant(((ConstantValue) value).getType(programScope), null, (ConstantValue) value);
+         return new ValueSourceConstant(((ConstantValue) value).getType(programScope), (ConstantValue) value);
       if(value instanceof PointerDereferenceSimple)
          return new ValueSourcePointerDereferenceSimple((PointerDereferenceSimple) value, valueType, null);
       if(value instanceof PointerDereferenceIndexed)

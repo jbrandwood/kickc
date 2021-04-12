@@ -44,7 +44,7 @@ public class ValueSourceZero extends ValueSourceBase {
 
    @Override
    public RValue getSimpleValue(ProgramScope programScope) {
-      return Initializers.createZeroValue(new Initializers.ValueTypeSpec(getSymbolType(), getArraySpec()), null);
+      return Initializers.createZeroValue(new Initializers.ValueTypeSpec(getSymbolType()), null);
    }
 
    @Override

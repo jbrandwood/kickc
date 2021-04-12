@@ -37,7 +37,7 @@ public class Pass1UnwindStructPrepare extends Pass2SsaOptimization {
                   RValue rValue = assignment.getrValue2();
                   if(!(rValue instanceof ConstantValue) && lValueType instanceof SymbolTypeStruct) {
                      // TODO: Constantify all R-Values?
-                     Initializers.ValueTypeSpec lValueTypeSpec = new Initializers.ValueTypeSpec(lValueType, null);
+                     Initializers.ValueTypeSpec lValueTypeSpec = new Initializers.ValueTypeSpec(lValueType);
                      RValue rValueConstantified = Initializers.constantify(rValue, lValueTypeSpec, getProgram(), assignment.getSource());
                      if(!rValue.equals(rValueConstantified)) {
                         assignment.setrValue2(rValueConstantified);

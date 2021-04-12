@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.symbols.ArraySpec;
+
+import java.util.Objects;
+
 /** A pointer */
 public class SymbolTypePointer implements SymbolType {
 
@@ -8,8 +12,16 @@ public class SymbolTypePointer implements SymbolType {
 
    private SymbolType elementType;
 
-   public SymbolTypePointer(SymbolType elementType) {
+   /** If non-null the pointer is an array. */
+   private ArraySpec arraySpec;
+
+   public SymbolTypePointer(SymbolType elementType, ArraySpec arraySpec) {
       this.elementType = elementType;
+      this.arraySpec = arraySpec;
+   }
+
+   public SymbolTypePointer(SymbolType elementType) {
+      this(elementType, null);
    }
 
    public SymbolType getElementType() {
@@ -18,6 +30,10 @@ public class SymbolTypePointer implements SymbolType {
 
    public void setElementType(SymbolType elementType) {
       this.elementType = elementType;
+   }
+
+   public ArraySpec getArraySpec() {
+      return arraySpec;
    }
 
    @Override
@@ -32,19 +48,15 @@ public class SymbolTypePointer implements SymbolType {
 
    @Override
    public boolean equals(Object o) {
-      if(this == o) {
-         return true;
-      }
-      if(o == null || getClass() != o.getClass()) {
-         return false;
-      }
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       SymbolTypePointer that = (SymbolTypePointer) o;
-      return elementType != null ? elementType.equals(that.elementType) : that.elementType == null;
+      return Objects.equals(elementType, that.elementType);
    }
 
    @Override
    public int hashCode() {
-      return elementType != null ? elementType.hashCode() : 0;
+      return Objects.hash(elementType);
    }
 
    @Override

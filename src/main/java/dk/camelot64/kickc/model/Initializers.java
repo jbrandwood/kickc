@@ -16,7 +16,7 @@ public class Initializers {
    /**
     * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
     *
-    * @param type The type of the variable
+    * @param typeSpec The type of the variable
     * @param statementSource The source line
     * @return The new statement
     */
@@ -32,15 +32,15 @@ public class Initializers {
          return new StructZero(typeStruct);
       } else if(typeSpec.getType() instanceof SymbolTypePointer) {
          SymbolTypePointer typePointer = (SymbolTypePointer) typeSpec.getType();
-         if(typeSpec.getArraySpec() == null) {
+         if(typePointer.getArraySpec() == null) {
             // Add an zero value initializer
             return new ConstantPointer(0L, typePointer.getElementType());
          } else {
             // Add an zero-filled array initializer
-            if(typeSpec.getArraySpec().getArraySize() == null) {
+            if(typePointer.getArraySpec().getArraySize() == null) {
                throw new CompileError("Array has no declared size.", statementSource);
             }
-            return new ConstantArrayFilled(typePointer.getElementType(), typeSpec.getArraySpec().getArraySize());
+            return new ConstantArrayFilled(typePointer.getElementType(), typePointer.getArraySpec().getArraySize());
          }
       } else {
          throw new CompileError("Default initializer not implemented for type " + typeSpec.getType().getTypeName(), statementSource);
@@ -52,20 +52,14 @@ public class Initializers {
 
       SymbolType type;
 
-      ArraySpec arraySpec;
-
-      public ValueTypeSpec(SymbolType type, ArraySpec arraySpec) {
+      public ValueTypeSpec(SymbolType type) {
          this.type = type;
-         this.arraySpec = arraySpec;
       }
 
       public SymbolType getType() {
          return type;
       }
 
-      public ArraySpec getArraySpec() {
-         return arraySpec;
-      }
    }
 
 
@@ -88,16 +82,16 @@ public class Initializers {
          final CastValue castValue = (CastValue) initValue;
          if(castValue.getValue() instanceof ValueList && castValue.getToType() instanceof SymbolTypeStruct) {
             final SymbolType toType = castValue.getToType();
-            final RValue constantSub = constantify(castValue.getValue(), new ValueTypeSpec(toType, null), program, source);
+            final RValue constantSub = constantify(castValue.getValue(), new ValueTypeSpec(toType), program, source);
             if(constantSub instanceof ConstantValue) {
                return new ConstantCastValue(toType, (ConstantValue) constantSub);
             }
          }
       } else if(initValue instanceof ValueList) {
          ValueList initList = (ValueList) initValue;
-         if(typeSpec.getType() instanceof SymbolTypePointer && typeSpec.getArraySpec() != null) {
+         if(typeSpec.getType() instanceof SymbolTypePointer && ((SymbolTypePointer)typeSpec.getType()).getArraySpec() != null) {
             // Type is an array
-            initValue = constantifyArray(initList, (SymbolTypePointer) typeSpec.getType(), typeSpec.getArraySpec(), program, source);
+            initValue = constantifyArray(initList, (SymbolTypePointer) typeSpec.getType(), program, source);
          } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
             // Type is a struct
             initValue = constantifyStruct(initList, (SymbolTypeStruct) typeSpec.getType(), program, source);
@@ -145,7 +139,7 @@ public class Initializers {
       boolean allConst = true;
       List<RValue> constantifiedList = new ArrayList<>();
       for(RValue elementValue : valueList.getList()) {
-         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.BYTE, null), program, source);
+         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.BYTE), program, source);
          constantifiedList.add(constantifiedElement);
          if(!(constantifiedElement instanceof ConstantValue))
             allConst = false;
@@ -163,7 +157,7 @@ public class Initializers {
       boolean allConst = true;
       List<RValue> constantifiedList = new ArrayList<>();
       for(RValue elementValue : valueList.getList()) {
-         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.WORD, null), program, source);
+         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.WORD), program, source);
          constantifiedList.add(constantifiedElement);
          if(!(constantifiedElement instanceof ConstantValue))
             allConst = false;
@@ -209,7 +203,7 @@ public class Initializers {
       for(int i = 0; i < size; i++) {
          Variable memberDef = memberDefIt.next();
          RValue memberValue = valueIt.next();
-         RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType(), memberDef.getArraySpec()), program, source);
+         RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType()), program, source);
          constantifiedList.add(constantifiedMemberValue);
          if(constantifiedMemberValue instanceof ConstantValue)
             constMemberMap.put(memberDef.getRef(), (ConstantValue) constantifiedMemberValue);
@@ -230,15 +224,15 @@ public class Initializers {
     *
     * @param valueList The list of values
     * @param arrayType The pointer type of the array
-    * @param arraySpec The array spec holding the array size.
     * @param program The program
     * @param source The source line
     * @return The constantified value
     */
-   private static RValue constantifyArray(ValueList valueList, SymbolTypePointer arrayType, ArraySpec arraySpec, Program program, StatementSource source) {
+   private static RValue constantifyArray(ValueList valueList, SymbolTypePointer arrayType, Program program, StatementSource source) {
+      ArraySpec arraySpec = arrayType.getArraySpec();
       SymbolType elementType = arrayType.getElementType();
       // TODO: Handle array of array
-      ValueTypeSpec elementTypeSpec = new ValueTypeSpec(elementType, null);
+      ValueTypeSpec elementTypeSpec = new ValueTypeSpec(elementType);
       boolean allConst = true;
       List<RValue> constantifiedList = new ArrayList<>();
       for(RValue elementValue : valueList.getList()) {

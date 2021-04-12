@@ -103,9 +103,6 @@ public class Variable implements Symbol {
    /** Comments preceding the procedure in the source code. [ALL] */
    private List<Comment> comments;
 
-   /** Non-null if the variable is an array. [Only constants that are arrays] */
-   private ArraySpec arraySpec;
-
    /** The initial compiletime-value of the variable. Null if no initial value present. [Constants, Arrays, global/local-static loadstore-variables ] */
    private ConstantValue initValue;
 
@@ -127,17 +124,15 @@ public class Variable implements Symbol {
     * @param scope The scope
     * @param memoryArea The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
-    * @param arraySpec The array specification of the variable (if it is an array)
     * @param initValue The constant value of the variable (if it is constant)
     */
-   public Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue initValue) {
+   public Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ConstantValue initValue) {
       this.name = name;
       this.kind = kind;
       if(Kind.PHI_MASTER.equals(kind))
          this.nextPhiVersionNumber = 0;
       this.type = type;
       this.scope = scope;
-      this.arraySpec = arraySpec;
       this.dataSegment = dataSegment;
       this.memoryArea = memoryArea;
       this.initValue = initValue;
@@ -154,7 +149,7 @@ public class Variable implements Symbol {
     * @return The new intermediate variable
     */
    public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
-      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null);
+      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null);
    }
 
    /**
@@ -168,7 +163,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null);
+      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null);
    }
 
    /**
@@ -182,7 +177,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null);
+      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null);
    }
 
    /**
@@ -194,7 +189,7 @@ public class Variable implements Symbol {
    public static Variable createPhiVersion(Variable phiMaster, int versionNum) {
       if(!phiMaster.isKindPhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + phiMaster.toString());
-      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
+      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), null);
       version.setMemoryAlignment(phiMaster.getMemoryAlignment());
       version.setMemoryAddress(phiMaster.getMemoryAddress());
       version.setOptimize(phiMaster.isOptimize());
@@ -226,12 +221,11 @@ public class Variable implements Symbol {
     * @param name The name
     * @param type The type
     * @param scope The scope
-    * @param arraySpec The array specification (if an array)
     * @param constantValue The constant value
     * @param dataSegment The data segment (in main memory)
     */
-   public static Variable createConstant(String name, SymbolType type, Scope scope, ArraySpec arraySpec, ConstantValue constantValue, String dataSegment) {
-      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, constantValue);
+   public static Variable createConstant(String name, SymbolType type, Scope scope, ConstantValue constantValue, String dataSegment) {
+      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, constantValue);
    }
 
    /**
@@ -241,7 +235,7 @@ public class Variable implements Symbol {
     * @param constantValue The constant value
     */
    public static Variable createConstant(Variable variable, ConstantValue constantValue) {
-      Variable constVar = new Variable(variable.getName(), Kind.CONSTANT, variable.getType(), variable.getScope(), MemoryArea.MAIN_MEMORY, variable.getDataSegment(), variable.getArraySpec(), constantValue);
+      Variable constVar = new Variable(variable.getName(), Kind.CONSTANT, variable.getType(), variable.getScope(), MemoryArea.MAIN_MEMORY, variable.getDataSegment(), constantValue);
       constVar.setMemoryAlignment(variable.getMemoryAlignment());
       constVar.setMemoryAddress(variable.getMemoryAddress());
       constVar.setOptimize(variable.isOptimize());
@@ -264,7 +258,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public static Variable createCopy(String name, Scope scope, Variable original) {
-      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getInitValue());
+      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getInitValue());
       copy.setMemoryAlignment(original.getMemoryAlignment());
       copy.setMemoryAddress(original.getMemoryAddress());
       copy.setOptimize(original.isOptimize());
@@ -293,13 +287,14 @@ public class Variable implements Symbol {
       Variable memberVariable;
       if(isParameter && memberDefinition.isArray()) {
          // Array struct members are converted to pointers when unwound (use same kind as the struct variable)
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null);
+         SymbolTypePointer arrayType = (SymbolTypePointer) memberDefinition.getType();
+         memberVariable = new Variable(name, structVar.getKind(), new SymbolTypePointer(arrayType.getElementType()), structVar.getScope(), memoryArea, structVar.getDataSegment(), null);
       } else if(memberDefinition.isKindConstant()) {
          // Constant members are unwound as constants
-         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
+         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       } else {
          // For others the kind is preserved from the member definition
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       }
       memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setNoModify(structVar.isNoModify());
@@ -390,7 +385,7 @@ public class Variable implements Symbol {
     * @return True if the variable is an array.
     */
    public boolean isArray() {
-      return arraySpec != null;
+      return (getType() instanceof SymbolTypePointer) && (((SymbolTypePointer) getType()).getArraySpec() != null);
    }
 
    /**
@@ -399,18 +394,17 @@ public class Variable implements Symbol {
     * @return The size of the array if declared. Null if not an array or an array without a declared size.
     */
    public ConstantValue getArraySize() {
-      if(arraySpec != null)
-         return arraySpec.getArraySize();
+      if(isArray())
+         return ((SymbolTypePointer) getType()).getArraySpec().getArraySize();
       else
          return null;
    }
 
    public ArraySpec getArraySpec() {
-      return arraySpec;
-   }
-
-   public void setArraySpec(ArraySpec arraySpec) {
-      this.arraySpec = arraySpec;
+      if(isArray())
+         return ((SymbolTypePointer) getType()).getArraySpec();
+      else
+         return null;
    }
 
    public boolean isStruct() {

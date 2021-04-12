@@ -43,8 +43,8 @@ public interface ValueSource {
    SymbolType getSymbolType();
 
    /**
-    * Get the array nature of the value
-    * @return The array nature of the value
+    * Get the array nature of the type of the value
+    * @return The array nature
     */
    ArraySpec getArraySpec();
 

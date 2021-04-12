@@ -83,7 +83,7 @@ public class ValueSourceVariable extends ValueSourceBase {
             // Calculate member address  (elmtype*)&struct + OFFSET_MEMBER
             ConstantBinary memberArrayPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
             // Unwind to (elmtype*)&struct + OFFSET_MEMBER
-            return new ValueSourceConstant(pointerToElementType, null, memberArrayPointer);
+            return new ValueSourceConstant(pointerToElementType, memberArrayPointer);
          } else {
             // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
             // Pointer to member type

@@ -606,7 +606,7 @@ public class Pass4CodeGeneration {
                      } else {
                         // Zero-fill variable
                         AsmDataChunk asmDataChunk = new AsmDataChunk();
-                        ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);
+                        ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType()), null);
                         addChunkData(asmDataChunk, zeroValue, variable.getType(), variable.getArraySpec(), scopeRef);
                         asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
                      }
@@ -735,7 +735,7 @@ public class Pass4CodeGeneration {
                } else {
                   paddingBytesAsm = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
                }
-               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType, null), null);
+               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType), null);
                if(zeroValue instanceof ConstantInteger | zeroValue instanceof ConstantPointer) {
                   dataChunk.addDataZeroFilled(getNumericType(elementType), paddingBytesAsm, (int) paddingSize, getEncoding(zeroValue));
                } else {

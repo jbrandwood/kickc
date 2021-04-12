@@ -403,7 +403,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(procedure);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          returnVar = builder.build();
       }
       varDecl.exitType();
@@ -507,7 +507,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declPointerContext);
       }
       String varName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), null, varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable param = varBuilder.build();
       varDecl.exitType();
       return param;
@@ -797,8 +797,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       static class VariableDeclType {
          /** The type. */
          SymbolType type;
-         /** The array specification (non-null if it is an array, also holds size) */
-         ArraySpec arraySpec;
          /** Const / Volatile Directives if applied to the type */
          List<Directive> typeDirectives;
          /** If the type is SymbolTypePointer this holds the declaration type of the elements. */
@@ -816,10 +814,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             return type;
          }
 
-         public ArraySpec getArraySpec() {
-            return arraySpec;
-         }
-
          List<Directive> getTypeDirectives() {
             return typeDirectives;
          }
@@ -830,10 +824,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
          void setElementDeclType(VariableDeclType elementDeclType) {
             this.elementDeclType = elementDeclType;
-         }
-
-         void setArraySpec(ArraySpec arraySpec) {
-            this.arraySpec = arraySpec;
          }
 
          VariableDeclType getElementDeclType() {
@@ -851,10 +841,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(declType != null)
             return declType.getType();
          return null;
-      }
-
-      ArraySpec getEffectiveArraySpec() {
-         return varDeclType != null ? varDeclType.getArraySpec() : declType.getArraySpec();
       }
 
       /**
@@ -994,9 +980,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
       VariableDeclaration.VariableDeclType arrayDeclType = new VariableDeclaration.VariableDeclType();
-      arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType()));
+      arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec));
       arrayDeclType.setElementDeclType(elementDeclType);
-      arrayDeclType.setArraySpec(arraySpec);
       varDecl.setVarDeclType(arrayDeclType);
       return null;
    }
@@ -1049,11 +1034,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          final boolean isStructMember = varDecl.isStructMember();
          final SymbolType effectiveType = varDecl.getEffectiveType();
-         final ArraySpec effectiveArraySpec = varDecl.getEffectiveArraySpec();
          final List<Directive> effectiveDirectives = varDecl.getEffectiveDirectives();
          final List<Comment> declComments = varDecl.getDeclComments();
          varDecl.exitVar();
-         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveArraySpec, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          Variable variable = varBuilder.build();
          if(isStructMember && (initializer != null))
             throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), statementSource);
@@ -1066,7 +1050,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             if(initializer != null)
                PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
             RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-            initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType, effectiveArraySpec), program, statementSource);
+            initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType), program, statementSource);
             boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
             if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !isStructMember && variable.getRegister() == null)) {
                // Set initial value
@@ -1122,7 +1106,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       String varName = ctx.NAME().getText();
       StatementSource statementSource = new StatementSource(ctx);
-      if(!(this.varDecl.getEffectiveType() instanceof SymbolTypePointer) || varDecl.getEffectiveArraySpec() == null) {
+      SymbolType effectiveType = this.varDecl.getEffectiveType();
+      if(!(effectiveType instanceof SymbolTypePointer) || ((SymbolTypePointer) effectiveType).getArraySpec() == null) {
          throw new CompileError("KickAsm initializers only supported for arrays " + varDecl.getEffectiveType().getTypeName(), statementSource);
       }
       // Add KickAsm statement
@@ -1136,10 +1121,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(kasm.declaredClobber != null) {
          throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", statementSource);
       }
-      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.kickAsmCode, kasm.uses, varDecl.getEffectiveArraySpec().getArraySize());
+      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.kickAsmCode, kasm.uses, ((SymbolTypePointer) effectiveType).getArraySpec().getArraySize());
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1683,7 +1668,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = ctx.NAME().getText();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().findVariable(varName);
@@ -1980,7 +1965,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, null, member.getInitValue(), currentDataSegment));
+            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, member.getInitValue(), currentDataSegment));
          }
          varDecl.setDeclType(SymbolType.BYTE);
          return null;
@@ -2015,7 +2000,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(Variable.createConstant(memberName, SymbolType.BYTE, getCurrentScope(), null, enumValue, currentDataSegment));
+      currentEnum.add(Variable.createConstant(memberName, SymbolType.BYTE, getCurrentScope(), enumValue, currentDataSegment));
       return null;
    }
 
@@ -2054,9 +2039,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             type = elementType;
             declType = elementDeclType;
          }
-
-         if(typeDefVariable.getArraySpec() != null)
-            varDecl.getDeclType().setArraySpec(typeDefVariable.getArraySpec());
          if(typeDefVariable.isNoModify())
             varDecl.getDeclType().getTypeDirectives().add(new Directive.Const());
          if(typeDefVariable.isVolatile())
@@ -2105,14 +2087,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          visit(ctx.type());
          final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
          final VariableDeclaration.VariableDeclType arrayDeclType = new VariableDeclaration.VariableDeclType();
-         arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType()));
-         arrayDeclType.setElementDeclType(elementDeclType);
+
+         ArraySpec arraySpec;
          if(ctx.expr() != null) {
             RValue sizeVal = (RValue) visit(ctx.expr());
-            arrayDeclType.setArraySpec(new ArraySpec((ConstantValue) sizeVal));
+            arraySpec = new ArraySpec((ConstantValue) sizeVal);
          } else {
-            arrayDeclType.setArraySpec(new ArraySpec());
+            arraySpec = new ArraySpec();
          }
+
+         arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec));
+         arrayDeclType.setElementDeclType(elementDeclType);
          varDecl.setVarDeclType(arrayDeclType);
          return null;
       } else {
@@ -2140,7 +2125,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declArrayContext);
       }
       String typedefName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       final Variable typeDefVar = varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();

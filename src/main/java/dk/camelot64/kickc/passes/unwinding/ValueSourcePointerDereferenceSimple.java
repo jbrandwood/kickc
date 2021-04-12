@@ -77,7 +77,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
             // Calculate member address  (elmtype*)&struct + OFFSET_MEMBER
             ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
             // Unwind to (type*)&struct + OFFSET_MEMBER
-            return new ValueSourceConstant(pointerToElementType, null, memberPointer);
+            return new ValueSourceConstant(pointerToElementType, memberPointer);
          }  else {
             // Pointer to member type
             ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);

@@ -26,7 +26,7 @@ public class SizeOfConstants {
       if(typeSizeConstant == null) {
          // Constant not found - create it
          long typeSize = type.getSizeBytes();
-         typeSizeConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, null, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         typeSizeConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeSizeConstant);
       }
       return typeSizeConstant.getConstantRef();
@@ -77,7 +77,7 @@ public class SizeOfConstants {
          // Constant not found - create it
          Variable memberDef = structDefinition.getMember(memberName);
          long memberByteOffset = structDefinition.getMemberByteOffset(memberDef, programScope);
-         memberOffsetConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, null, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         memberOffsetConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(memberOffsetConstant);
       }
       return memberOffsetConstant.getConstantRef();

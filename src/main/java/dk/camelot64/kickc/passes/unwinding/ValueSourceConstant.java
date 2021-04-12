@@ -15,12 +15,10 @@ import java.util.ListIterator;
 /** Unwinding a constant value. */
 public class ValueSourceConstant extends ValueSourceBase {
    private final SymbolType symbolType;
-   private final ArraySpec arraySpec;
    private final ConstantValue value;
 
-   public ValueSourceConstant(SymbolType symbolType, ArraySpec arraySpec, ConstantValue value) {
+   public ValueSourceConstant(SymbolType symbolType, ConstantValue value) {
       this.symbolType = symbolType;
-      this.arraySpec = arraySpec;
       this.value = value;
    }
 
@@ -29,10 +27,6 @@ public class ValueSourceConstant extends ValueSourceBase {
       return symbolType;
    }
 
-   @Override
-   public ArraySpec getArraySpec() {
-      return arraySpec;
-   }
 
    @Override
    protected boolean isStructClassic() {
@@ -54,14 +48,12 @@ public class ValueSourceConstant extends ValueSourceBase {
          ConstantStructValue constantStructValue = (ConstantStructValue) val;
          final Variable member = structDefinition.getMember(memberName);
          final SymbolType type = member.getType();
-         final ArraySpec arraySpec = member.getArraySpec();
          final ConstantValue memberValue = constantStructValue.getValue(member.getRef());
-         return new ValueSourceConstant(type, arraySpec, memberValue);
+         return new ValueSourceConstant(type, memberValue);
       } else if(val instanceof StructZero) {
          final SymbolType memberType = structDefinition.getMember(memberName).getType();
-         final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
-         final ConstantValue memberZeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(memberType, memberArraySpec), currentStmt.getSource());
-         return new ValueSourceConstant(memberType, memberArraySpec, memberZeroValue);
+         final ConstantValue memberZeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(memberType), currentStmt.getSource());
+         return new ValueSourceConstant(memberType, memberZeroValue);
       }
       throw new InternalError("Not supported "+ val);
    }
@@ -74,7 +66,7 @@ public class ValueSourceConstant extends ValueSourceBase {
    @Override
    public RValue getBulkRValue(ProgramScope scope) {
       String constName = scope.allocateIntermediateVariableName();
-      Variable constVar = Variable.createConstant(constName, symbolType, scope, getArraySpec(), value, Scope.SEGMENT_DATA_DEFAULT);
+      Variable constVar = Variable.createConstant(constName, symbolType, scope, value, Scope.SEGMENT_DATA_DEFAULT);
       scope.add(constVar);
       if(getArraySpec()!=null) {
          final SymbolType elementType = ((SymbolTypePointer) getSymbolType()).getElementType();

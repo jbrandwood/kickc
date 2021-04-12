@@ -29,9 +29,6 @@ public class VariableBuilder {
    /** The type of the variable. */
    private SymbolType type;
 
-   /** Non-null if the variable is an array. */
-   private ArraySpec arraySpec;
-
    /** The directives of the variable declaration. */
    private List<Directive> directives;
 
@@ -41,12 +38,11 @@ public class VariableBuilder {
    /** Configuration of how to setup optimization/memory area for variables. */
    private VariableBuilderConfig config;
 
-   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, ArraySpec arraySpec, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
+   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
       this.varName = varName;
       this.scope = scope;
       this.isParameter = isParameter;
       this.type = type;
-      this.arraySpec = arraySpec;
       this.directives = directives;
       this.dataSegment = dataSegment;
       this.config = config;
@@ -58,7 +54,7 @@ public class VariableBuilder {
     * @return The variable
     */
    public Variable build() {
-      Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, arraySpec, null);
+      Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, null);
       variable.setNoModify(this.isNoModify());
       variable.setVolatile(this.isVolatile());
       variable.setExport(this.isExport());
@@ -113,21 +109,21 @@ public class VariableBuilder {
    }
 
    /**
-    * Is the type is a pointer type.
-    *
-    * @return True if the type is a pointer type.
-    */
-   public boolean isTypePointer() {
-      return type instanceof SymbolTypePointer;
-   }
-
-   /**
     * Is the type is a struct type.
     *
     * @return True if the type is a struct type.
     */
    public boolean isTypeStruct() {
       return type instanceof SymbolTypeStruct;
+   }
+
+   /**
+    * Is the type is a pointer type.
+    *
+    * @return True if the type is a pointer type.
+    */
+   public boolean isTypePointer() {
+      return type instanceof SymbolTypePointer;
    }
 
    /**
@@ -178,7 +174,7 @@ public class VariableBuilder {
     * @return true if the variable is an array declaration
     */
    public boolean isArray() {
-      return arraySpec != null;
+      return isTypePointer() && ((SymbolTypePointer)type).getArraySpec()!=null;
    }
 
    /**

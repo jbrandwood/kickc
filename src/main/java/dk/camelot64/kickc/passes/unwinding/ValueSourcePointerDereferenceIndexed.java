@@ -37,11 +37,6 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
    }
 
    @Override
-   public ArraySpec getArraySpec() {
-      return valueArraySpec;
-   }
-
-   @Override
    protected boolean isStructClassic() {
       return getSymbolType() instanceof SymbolTypeStruct;
    }
@@ -87,7 +82,7 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
             if(pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
                // Unwind to (elmType*)&struct + OFFSET_MEMBER + idx
                ConstantBinary elmPointer = new ConstantBinary(memberPointer, Operators.PLUS, (ConstantValue) pointerDereferenceIndexed.getIndex());
-               return new ValueSourceConstant(new SymbolTypePointer(elementType), null, elmPointer);
+               return new ValueSourceConstant(new SymbolTypePointer(elementType), elmPointer);
             } else {
                // Unwind to (elmType*)&struct + OFFSET_MEMBER + idx
                Scope scope = programScope.getScope(currentBlock.getScope());

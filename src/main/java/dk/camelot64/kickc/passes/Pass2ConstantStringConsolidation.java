@@ -93,7 +93,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             String localName = getRootName(constantVars);
             final long stringLength = constString.getStringLength();
             final ConstantInteger arraySize = new ConstantInteger(stringLength, stringLength<256?SymbolType.BYTE : SymbolType.WORD);
-            Variable newRootConstant = Variable.createConstant(localName, new SymbolTypePointer(SymbolType.BYTE, new ArraySpec(arraySize)), rootScope, constString, segmentData);
+            Variable newRootConstant = Variable.createConstant(localName, new SymbolTypePointer(SymbolType.BYTE, new ArraySpec(arraySize), false, false), rootScope, constString, segmentData);
             rootScope.add(newRootConstant);
             rootConstant = newRootConstant;
          }

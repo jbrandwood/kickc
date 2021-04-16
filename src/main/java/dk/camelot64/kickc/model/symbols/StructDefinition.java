@@ -15,7 +15,7 @@ public class StructDefinition extends Scope {
 
    @Override
    public SymbolType getType() {
-      return new SymbolTypeStruct(this);
+      return new SymbolTypeStruct(this, false, false);
    }
 
    /**

@@ -13,6 +13,16 @@ public class SymbolTypeBlockScope implements SymbolType {
    }
 
    @Override
+   public boolean isVolatile() {
+      return false;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return false;
+   }
+
+   @Override
    public int getSizeBytes() {
       return -1;
    }

@@ -15,13 +15,29 @@ public class SymbolTypePointer implements SymbolType {
    /** If non-null the pointer is an array. */
    private ArraySpec arraySpec;
 
-   public SymbolTypePointer(SymbolType elementType, ArraySpec arraySpec) {
+   private final boolean isVolatile;
+   private final boolean isNomodify;
+
+
+   public SymbolTypePointer(SymbolType elementType, ArraySpec arraySpec, boolean isVolatile, boolean isNomodify) {
       this.elementType = elementType;
       this.arraySpec = arraySpec;
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
    }
 
    public SymbolTypePointer(SymbolType elementType) {
-      this(elementType, null);
+      this(elementType, null, false, false);
+   }
+
+   @Override
+   public boolean isVolatile() {
+      return false;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return false;
    }
 
    public SymbolType getElementType() {

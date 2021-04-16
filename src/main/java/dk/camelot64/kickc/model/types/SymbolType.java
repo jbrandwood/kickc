@@ -5,18 +5,24 @@ import java.io.Serializable;
 /** Symbol Types */
 public interface SymbolType extends Serializable {
 
+   /** Specifies that the value of the variable may change at any time, so the optimizer must not make assumptions. The variable must always live in memory to be available for any multi-threaded access (eg. in interrupts). (volatile keyword) */
+   boolean isVolatile();
+
+   /** Specifies that the variable is not allowed to be modified (const keyword). The compiler should try to detect modifications and generate compile-time errors if they occur.*/
+   boolean isNomodify();
+
    /** Unsigned byte (8 bits)). */
-   SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8);
+   SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8, false, false);
    /** Signed byte (8 bits). */
-   SymbolTypeIntegerFixed SBYTE = new SymbolTypeIntegerFixed("signed byte", -128, 127, true, 8);
+   SymbolTypeIntegerFixed SBYTE = new SymbolTypeIntegerFixed("signed byte", -128, 127, true, 8, false, false);
    /** Unsigned word (2 bytes, 16 bits). */
-   SymbolTypeIntegerFixed WORD = new SymbolTypeIntegerFixed("word", 0, 65_535, false, 16);
+   SymbolTypeIntegerFixed WORD = new SymbolTypeIntegerFixed("word", 0, 65_535, false, 16, false, false);
    /** Signed word (2 bytes, 16 bits). */
-   SymbolTypeIntegerFixed SWORD = new SymbolTypeIntegerFixed("signed word", -32_768, 32_767, true, 16);
+   SymbolTypeIntegerFixed SWORD = new SymbolTypeIntegerFixed("signed word", -32_768, 32_767, true, 16, false, false);
    /** Unsigned double word (4 bytes, 32 bits). */
-   SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", 0, 4_294_967_296L, false, 32);
+   SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", 0, 4_294_967_296L, false, 32, false, false);
    /** Signed double word (4 bytes, 32 bits). */
-   SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
+   SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", -2_147_483_648, 2_147_483_647, true, 32, false, false);
    /** Integer with unknown size and unknown signedness (used for constant expressions). */
    SymbolTypeIntegerAuto NUMBER = new SymbolTypeIntegerAuto("number");
    /** Unsigned integer with unknown size (used for constant expressions). */
@@ -24,15 +30,15 @@ public interface SymbolType extends Serializable {
    /** Signed integer with unknown size (used for constant expressions). */
    SymbolTypeIntegerAuto SNUMBER = new SymbolTypeIntegerAuto("snumber");
    /** Boolean value. */
-   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool", 1);
+   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool", 1, false, false);
    /** Numeric floating point value. */
-   SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double", 1);
+   SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double", 1, false, false);
    /** A label. Name of functions of jump-targets. */
-   SymbolTypeNamed LABEL = new SymbolTypeNamed("label", 1);
+   SymbolTypeNamed LABEL = new SymbolTypeNamed("label", 1, false, false);
    /** Void type representing no value. */
-   SymbolTypeNamed VOID = new SymbolTypeNamed("void", 0);
+   SymbolTypeNamed VOID = new SymbolTypeNamed("void", 0, false, false);
    /** An unresolved type. Will be infered later. */
-   SymbolTypeNamed VAR = new SymbolTypeNamed("var", -1);
+   SymbolTypeNamed VAR = new SymbolTypeNamed("var", -1, false, false);
 
    /**
     * Get a simple symbol type from the type name.
@@ -43,45 +49,30 @@ public interface SymbolType extends Serializable {
    static SymbolType get(String name) {
       switch(name) {
          case "byte":
-            return BYTE;
          case "unsigned byte":
-            return BYTE;
-         case "signed byte":
-            return SBYTE;
          case "char":
-            return BYTE;
          case "unsigned char":
             return BYTE;
+         case "signed byte":
          case "signed char":
             return SBYTE;
          case "word":
-            return WORD;
          case "unsigned word":
-            return WORD;
-         case "signed word":
-            return SWORD;
-         case "short":
-            return SWORD;
          case "unsigned short":
-            return WORD;
-         case "signed short":
-            return SWORD;
-         case "int":
-            return SWORD;
          case "unsigned int":
             return WORD;
+         case "signed word":
+         case "short":
+         case "signed short":
+         case "int":
          case "signed int":
             return SWORD;
          case "dword":
-            return DWORD;
          case "unsigned dword":
-            return DWORD;
-         case "signed dword":
-            return SDWORD;
-         case "long":
-            return SDWORD;
          case "unsigned long":
             return DWORD;
+         case "signed dword":
+         case "long":
          case "signed long":
             return SDWORD;
          case "bool":
@@ -93,7 +84,6 @@ public interface SymbolType extends Serializable {
       }
       return null;
    }
-
 
    /**
     * Get the name of the type

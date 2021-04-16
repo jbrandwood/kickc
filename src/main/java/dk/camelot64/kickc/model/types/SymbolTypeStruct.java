@@ -18,9 +18,24 @@ public class SymbolTypeStruct implements SymbolType {
    /** Size of the struct in bytes. */
    private int sizeBytes;
 
-   public SymbolTypeStruct(StructDefinition structDefinition) {
+   private final boolean isVolatile;
+   private final boolean isNomodify;
+
+   public SymbolTypeStruct(StructDefinition structDefinition, boolean isVolatile, boolean isNomodify) {
       this.name = structDefinition.getLocalName();
       this.sizeBytes = calculateSizeBytes(structDefinition, null);
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public boolean isVolatile() {
+      return isVolatile;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return isNomodify;
    }
 
    @Override

@@ -980,7 +980,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
       VariableDeclaration.VariableDeclType arrayDeclType = new VariableDeclaration.VariableDeclType();
-      arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec));
+      arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec, false, false));
       arrayDeclType.setElementDeclType(elementDeclType);
       varDecl.setVarDeclType(arrayDeclType);
       return null;
@@ -2096,7 +2096,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             arraySpec = new ArraySpec();
          }
 
-         arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec));
+         arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec, false, false));
          arrayDeclType.setElementDeclType(elementDeclType);
          varDecl.setVarDeclType(arrayDeclType);
          return null;

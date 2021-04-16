@@ -13,9 +13,24 @@ public class SymbolTypeEnum implements SymbolType {
    /** The enum definition. */
    private EnumDefinition definition;
 
-   public SymbolTypeEnum(EnumDefinition definition) {
+   private final boolean isVolatile;
+   private final boolean isNomodify;
+
+   public SymbolTypeEnum(EnumDefinition definition, boolean isVolatile, boolean isNomodify) {
       this.definition = definition;
       this.name = definition.getLocalName();
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public boolean isVolatile() {
+      return isVolatile;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return isNomodify;
    }
 
    @Override

@@ -13,7 +13,7 @@ public class EnumDefinition extends Scope {
 
    @Override
    public SymbolType getType() {
-      return new SymbolTypeEnum(this);
+      return new SymbolTypeEnum(this, false, false);
    }
 
    @Override

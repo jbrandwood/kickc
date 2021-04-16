@@ -12,13 +12,17 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    private final long maxValue;
    private final boolean signed;
    private final int bits;
+   private final boolean isVolatile;
+   private final boolean isNomodify;
 
-   SymbolTypeIntegerFixed(String typeName, long minValue, long maxValue, boolean signed, int bits) {
+   SymbolTypeIntegerFixed(String typeName, long minValue, long maxValue, boolean signed, int bits, boolean isVolatile, boolean isNomodify) {
       this.typeName = typeName;
       this.minValue = minValue;
       this.maxValue = maxValue;
       this.signed = signed;
       this.bits = bits;
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
    }
 
    /**
@@ -62,6 +66,15 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
       return null;
    }
 
+   @Override
+   public boolean isVolatile() {
+      return isVolatile;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return isNomodify;
+   }
 
    /**
     * Determines if a value can be represented by the type without loss of information

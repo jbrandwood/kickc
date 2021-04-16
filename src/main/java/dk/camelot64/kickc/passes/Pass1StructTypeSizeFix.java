@@ -30,7 +30,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
       // Update all SIZEOF_XXX constants
       for(Scope subScope : getScope().getAllScopes(false)) {
          if(subScope instanceof StructDefinition) {
-            SymbolTypeStruct typeStruct = new SymbolTypeStruct((StructDefinition) subScope);
+            SymbolTypeStruct typeStruct = new SymbolTypeStruct((StructDefinition) subScope, false, false);
             StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
             int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
             if(sizeBytes != typeStruct.getSizeBytes()) {

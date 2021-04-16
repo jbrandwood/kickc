@@ -8,6 +8,16 @@ public class SymbolTypeProgram implements SymbolType {
    }
 
    @Override
+   public boolean isVolatile() {
+      return false;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return false;
+   }
+
+   @Override
    public String getTypeName() {
       return "PROGRAM";
    }

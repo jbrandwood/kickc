@@ -4,12 +4,25 @@ package dk.camelot64.kickc.model.types;
 public class SymbolTypeNamed implements SymbolType {
 
    private String typeName;
-
    private int sizeBytes;
+   private final boolean isVolatile;
+   private final boolean isNomodify;
 
-   SymbolTypeNamed(String typeName, int sizeBytes) {
+   SymbolTypeNamed(String typeName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
       this.typeName = typeName;
       this.sizeBytes = sizeBytes;
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public boolean isVolatile() {
+      return isVolatile;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return isNomodify;
    }
 
    public String getTypeName() {

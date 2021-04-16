@@ -12,6 +12,16 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
    }
 
    @Override
+   public boolean isVolatile() {
+      return false;
+   }
+
+   @Override
+   public boolean isNomodify() {
+      return false;
+   }
+
+   @Override
    public String getTypeName() {
       return typeName;
    }
@@ -25,7 +35,6 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
    public String toString() {
       return getTypeName();
    }
-
 
    @Override
    public boolean equals(Object o) {

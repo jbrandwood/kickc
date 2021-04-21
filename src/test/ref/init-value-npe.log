@@ -1,0 +1,325 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  bitmap_screen#16 = phi( __start::@1/bitmap_screen#15 )
+  memset::str#0 = (void*)myscreen
+  call memset 
+  to:main::@2
+main::@2: scope:[main]  from main
+  bitmap_screen#13 = phi( main/bitmap_screen#16 )
+  main::$1 = ! 0!=0
+  if(main::$1) goto main::@return
+  to:main::@1
+main::@1: scope:[main]  from main::@2
+  bitmap_screen#12 = phi( main::@2/bitmap_screen#13 )
+  bitmap_init::screen#0 = myscreen
+  call bitmap_init 
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  bitmap_screen#7 = phi( main::@1/bitmap_screen#3 )
+  bitmap_screen#0 = bitmap_screen#7
+  memset::str#1 = (void*)bitmap_screen#0
+  call memset 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  bitmap_screen#14 = phi( main::@3/bitmap_screen#0 )
+  to:main::@return
+main::@return: scope:[main]  from main::@2 main::@4
+  bitmap_screen#8 = phi( main::@2/bitmap_screen#13, main::@4/bitmap_screen#14 )
+  bitmap_screen#1 = bitmap_screen#8
+  return 
+  to:@return
+
+void bitmap_init(byte* bitmap_init::screen)
+bitmap_init: scope:[bitmap_init]  from main::@1
+  bitmap_init::screen#1 = phi( main::@1/bitmap_init::screen#0 )
+  bitmap_screen#2 = bitmap_init::screen#1
+  to:bitmap_init::@return
+bitmap_init::@return: scope:[bitmap_init]  from bitmap_init
+  bitmap_screen#9 = phi( bitmap_init/bitmap_screen#2 )
+  bitmap_screen#3 = bitmap_screen#9
+  return 
+  to:@return
+
+void memset(void* memset::str)
+memset: scope:[memset]  from main main::@3
+  memset::str#2 = phi( main/memset::str#0, main::@3/memset::str#1 )
+  memset::dst#0 = (byte*)memset::str#2
+  *memset::dst#0 = 0
+  to:memset::@return
+memset::@return: scope:[memset]  from memset
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  bitmap_screen#4 = (byte*) 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  bitmap_screen#15 = phi( __start::__init1/bitmap_screen#4 )
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  bitmap_screen#10 = phi( __start::@1/bitmap_screen#1 )
+  bitmap_screen#5 = bitmap_screen#10
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  bitmap_screen#11 = phi( __start::@2/bitmap_screen#5 )
+  bitmap_screen#6 = bitmap_screen#11
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void bitmap_init(byte* bitmap_init::screen)
+byte* bitmap_init::screen
+byte* bitmap_init::screen#0
+byte* bitmap_init::screen#1
+byte* bitmap_screen
+byte* bitmap_screen#0
+byte* bitmap_screen#1
+byte* bitmap_screen#10
+byte* bitmap_screen#11
+byte* bitmap_screen#12
+byte* bitmap_screen#13
+byte* bitmap_screen#14
+byte* bitmap_screen#15
+byte* bitmap_screen#16
+byte* bitmap_screen#2
+byte* bitmap_screen#3
+byte* bitmap_screen#4
+byte* bitmap_screen#5
+byte* bitmap_screen#6
+byte* bitmap_screen#7
+byte* bitmap_screen#8
+byte* bitmap_screen#9
+void main()
+bool~ main::$1
+void memset(void* memset::str)
+byte* memset::dst
+byte* memset::dst#0
+void* memset::str
+void* memset::str#0
+void* memset::str#1
+void* memset::str#2
+const nomodify byte* myscreen = (byte*)$7000
+
+Adding number conversion cast (unumber) 0 in *memset::dst#0 = 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *memset::dst#0 = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 28672
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias bitmap_screen#12 = bitmap_screen#13 bitmap_screen#16 
+Alias bitmap_screen#0 = bitmap_screen#7 bitmap_screen#14 
+Alias bitmap_screen#1 = bitmap_screen#8 
+Alias bitmap_screen#2 = bitmap_screen#9 bitmap_screen#3 
+Alias bitmap_screen#15 = bitmap_screen#4 
+Alias bitmap_screen#10 = bitmap_screen#5 bitmap_screen#11 bitmap_screen#6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values bitmap_screen#12 bitmap_screen#15
+Identical Phi Values bitmap_screen#0 bitmap_screen#2
+Identical Phi Values bitmap_init::screen#1 bitmap_init::screen#0
+Identical Phi Values bitmap_screen#10 bitmap_screen#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Rewriting ! if()-condition to reversed if() [3] main::$1 = ! 0!=0
+Successful SSA optimization Pass2ConditionalAndOrRewriting
+Constant memset::str#0 = (void*)myscreen
+Constant bitmap_init::screen#0 = myscreen
+Constant bitmap_screen#15 = (byte*) 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant bitmap_screen#2 = bitmap_init::screen#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant memset::str#1 = (void*)bitmap_screen#2
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always false - eliminating [4] if(0!=0) goto main::@1
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@1
+Removing PHI-reference to removed block (main::@3) in block memset
+Removing unused block main::@3
+Removing PHI-reference to removed block (main::@4) in block main::@return
+Removing unused block main::@4
+Removing unused procedure bitmap_init
+Removing unused procedure block bitmap_init
+Removing unused procedure block bitmap_init::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Eliminating unused variable - keeping the phi block bitmap_screen#1
+Eliminating unused constant memset::str#1
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant bitmap_screen#15
+Eliminating unused constant bitmap_screen#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Identical Phi Values memset::str#2 memset::str#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [3] memset::dst#0 = (byte*)memset::str#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant memset::dst#0 = (byte*)memset::str#0
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+CALL GRAPH
+Calls in [main] to memset:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block label main::@2
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call memset 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+void memset(void* memset::str)
+memset: scope:[memset]  from main
+  [3] *memset::dst#0 = 0
+  to:memset::@return
+memset::@return: scope:[memset]  from memset
+  [4] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+byte* bitmap_screen
+void main()
+void memset(void* memset::str)
+byte* memset::dst
+void* memset::str
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [3] *memset::dst#0 = 0 [ ] ( memset:1 [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [memset] 
+Uplift Scope [] 
+
+Uplifting [main] best 30 combination 
+Uplifting [memset] best 30 combination 
+Uplifting [] best 30 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/650
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="init-value-npe.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label myscreen = $7000
+.segment Code
+  // main
+main: {
+    // [1] call memset 
+    jsr memset
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // memset
+memset: {
+    .label str = myscreen
+    .label dst = str
+    // [3] *memset::dst#0 = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta dst
+    jmp __breturn
+    // memset::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+byte* bitmap_screen
+void main()
+void memset(void* memset::str)
+byte* memset::dst
+const byte* memset::dst#0 dst = (byte*)memset::str#0
+void* memset::str
+const void* memset::str#0 str = (void*)myscreen
+const nomodify byte* myscreen = (byte*) 28672
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/650
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="init-value-npe.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label myscreen = $7000
+.segment Code
+  // main
+main: {
+    // memset(myscreen)
+    // [1] call memset 
+    jsr memset
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // memset
+memset: {
+    .label str = myscreen
+    .label dst = str
+    // *dst = 0
+    // [3] *memset::dst#0 = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta dst
+    // memset::@return
+    // }
+    // [4] return 
+    rts
+}
+  // File Data
+

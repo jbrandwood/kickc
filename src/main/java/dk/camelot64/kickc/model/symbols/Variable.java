@@ -193,11 +193,14 @@ public class Variable implements Symbol {
       version.setMemoryAlignment(phiMaster.getMemoryAlignment());
       version.setMemoryAddress(phiMaster.getMemoryAddress());
       version.setOptimize(phiMaster.isOptimize());
-      version.setNoModify(phiMaster.isNoModify());
-      version.setRegister(phiMaster.getRegister());
+
+      // TODO: remove
       version.setVolatile(phiMaster.isVolatile());
+      version.setNoModify(phiMaster.isNoModify());
       version.setToNoModify(phiMaster.isToNoModify());
       version.setToVolatile(phiMaster.isToVolatile());
+
+      version.setRegister(phiMaster.getRegister());
       version.setPermanent(phiMaster.isPermanent());
       version.setExport(phiMaster.isExport());
       version.setComments(phiMaster.getComments());
@@ -239,11 +242,13 @@ public class Variable implements Symbol {
       constVar.setMemoryAlignment(variable.getMemoryAlignment());
       constVar.setMemoryAddress(variable.getMemoryAddress());
       constVar.setOptimize(variable.isOptimize());
-      constVar.setNoModify(variable.isNoModify());
       constVar.setRegister(variable.getRegister());
+      // Todo: remove
       constVar.setVolatile(variable.isVolatile());
+      constVar.setNoModify(variable.isNoModify());
       constVar.setToNoModify(variable.isToNoModify());
       constVar.setToVolatile(variable.isToVolatile());
+
       constVar.setPermanent(variable.isPermanent());
       constVar.setExport(variable.isExport());
       constVar.setComments(variable.getComments());
@@ -262,11 +267,14 @@ public class Variable implements Symbol {
       copy.setMemoryAlignment(original.getMemoryAlignment());
       copy.setMemoryAddress(original.getMemoryAddress());
       copy.setOptimize(original.isOptimize());
-      copy.setNoModify(original.isNoModify());
       copy.setPermanent(original.isPermanent());
+
+      // Todo: remove
       copy.setVolatile(original.isVolatile());
+      copy.setNoModify(original.isNoModify());
       copy.setToNoModify(original.isToNoModify());
       copy.setToVolatile(original.isToVolatile());
+
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
       copy.setComments(original.getComments());
@@ -288,18 +296,24 @@ public class Variable implements Symbol {
       if(isParameter && memberDefinition.isArray()) {
          // Array struct members are converted to pointers when unwound (use same kind as the struct variable)
          SymbolTypePointer arrayType = (SymbolTypePointer) memberDefinition.getType();
-         memberVariable = new Variable(name, structVar.getKind(), new SymbolTypePointer(arrayType.getElementType()), structVar.getScope(), memoryArea, structVar.getDataSegment(), null);
+         SymbolType typeQualified = new SymbolTypePointer(arrayType.getElementType()).getQualified(structVar.isVolatile, structVar.isNoModify());
+         memberVariable = new Variable(name, structVar.getKind(), typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), null);
       } else if(memberDefinition.isKindConstant()) {
          // Constant members are unwound as constants
-         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
+         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile, structVar.isNoModify());
+         memberVariable = new Variable(name, Kind.CONSTANT, typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       } else {
          // For others the kind is preserved from the member definition
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
+         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile, structVar.isNoModify());
+         memberVariable = new Variable(name, structVar.getKind(),typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       }
+
+      // Todo: fix struct member qualifiers - and remove!
       memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setNoModify(structVar.isNoModify());
       memberVariable.setToNoModify(structVar.isToNoModify());
       memberVariable.setToVolatile(structVar.isToVolatile());
+
       memberVariable.setExport(structVar.isExport());
       memberVariable.setPermanent(structVar.isPermanent());
       return memberVariable;

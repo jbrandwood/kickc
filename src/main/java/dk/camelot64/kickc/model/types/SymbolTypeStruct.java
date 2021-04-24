@@ -13,7 +13,7 @@ import java.util.Objects;
 public class SymbolTypeStruct implements SymbolType {
 
    /** Name of the struct type. */
-   private String name;
+   private String structName;
 
    /** Size of the struct in bytes. */
    private int sizeBytes;
@@ -21,11 +21,23 @@ public class SymbolTypeStruct implements SymbolType {
    private final boolean isVolatile;
    private final boolean isNomodify;
 
+   public SymbolTypeStruct(String structName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
+      this.structName = structName;
+      this.sizeBytes = sizeBytes;
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
+   }
+
    public SymbolTypeStruct(StructDefinition structDefinition, boolean isVolatile, boolean isNomodify) {
-      this.name = structDefinition.getLocalName();
+      this.structName = structDefinition.getLocalName();
       this.sizeBytes = calculateSizeBytes(structDefinition, null);
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return new SymbolTypeStruct(this.structName, this.sizeBytes, isVolatile, isNomodify);
    }
 
    @Override
@@ -40,15 +52,23 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public String getTypeName() {
-      return "struct " + name;
-   }
-
-   public String getStructTypeName() {
+      String name = "";
+      /*
+      if(isVolatile)
+         name += "volatile ";
+      if(isNomodify)
+         name += "const ";
+   */
+      name += "struct " + this.structName;
       return name;
    }
 
+   public String getStructTypeName() {
+      return structName;
+   }
+
    public StructDefinition getStructDefinition(ProgramScope programScope) {
-      return programScope.getLocalStructDefinition(name);
+      return programScope.getLocalStructDefinition(structName);
    }
 
    @Override
@@ -98,12 +118,12 @@ public class SymbolTypeStruct implements SymbolType {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeStruct that = (SymbolTypeStruct) o;
-      return Objects.equals(name, that.name);
+      return Objects.equals(structName, that.structName);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, sizeBytes);
+      return Objects.hash(structName, sizeBytes);
    }
 
    @Override

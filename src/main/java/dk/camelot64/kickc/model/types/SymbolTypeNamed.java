@@ -3,16 +3,21 @@ package dk.camelot64.kickc.model.types;
 /** Basic named (string, char, ...) Symbol Types */
 public class SymbolTypeNamed implements SymbolType {
 
-   private String typeName;
+   private String typeBaseName;
    private int sizeBytes;
    private final boolean isVolatile;
    private final boolean isNomodify;
 
-   SymbolTypeNamed(String typeName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
-      this.typeName = typeName;
+   SymbolTypeNamed(String typeBaseName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
+      this.typeBaseName = typeBaseName;
       this.sizeBytes = sizeBytes;
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return new SymbolTypeNamed(this.typeBaseName, this.sizeBytes, isVolatile, isNomodify);
    }
 
    @Override
@@ -26,7 +31,15 @@ public class SymbolTypeNamed implements SymbolType {
    }
 
    public String getTypeName() {
-      return typeName;
+      String name = "";
+      /*
+      if(isVolatile)
+         name += "volatile ";
+      if(isNomodify)
+         name += "const ";
+       */
+      name += typeBaseName;
+      return name;
    }
 
    @Override
@@ -45,12 +58,12 @@ public class SymbolTypeNamed implements SymbolType {
 
       SymbolTypeNamed that = (SymbolTypeNamed) o;
 
-      return typeName != null ? typeName.equals(that.typeName) : that.typeName == null;
+      return typeBaseName != null ? typeBaseName.equals(that.typeBaseName) : that.typeBaseName == null;
    }
 
    @Override
    public int hashCode() {
-      return typeName != null ? typeName.hashCode() : 0;
+      return typeBaseName != null ? typeBaseName.hashCode() : 0;
    }
 
    @Override

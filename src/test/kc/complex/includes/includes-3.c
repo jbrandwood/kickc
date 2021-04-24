@@ -2,7 +2,7 @@
 
 #include "lib.h"
 
-const char* SCREEN = 0x0400;
+char* const SCREEN = 0x0400;
 
 void main() {
 

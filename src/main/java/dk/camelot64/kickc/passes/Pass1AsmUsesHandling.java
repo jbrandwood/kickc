@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.Value;
@@ -39,9 +40,13 @@ public class Pass1AsmUsesHandling extends Pass2SsaOptimization {
    private void updateAddressOfVariable(Variable variable, String stmtStr) {
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
+         // TODO: Add volatile??
          getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);
+         SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
+         variable.setType(typeQualified);
+         // TODO: Remove
          variable.setVolatile(true);
          getLog().append("Setting inferred volatile on symbol affected by address-of: " + variable.toString() + " in " + stmtStr);
       }

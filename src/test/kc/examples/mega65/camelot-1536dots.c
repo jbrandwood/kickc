@@ -65,8 +65,6 @@ void main() {
   SEI();
   // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
   memoryRemap(0x00,0,0);
-  // Fast CPU, M65 IO
-  POKE(0,65);
   // Disable Kernal & Basic
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
   *PROCPORT = PROCPORT_RAM_IO;
@@ -124,10 +122,13 @@ void main() {
       VICIV->CHARPTR_HILO = 0;
       graphics_render = GRAPHICS1;
     }
+    VICIV->BORDER_COLOR = BLUE;
     // Clear the graphics
     memset_dma(graphics_render, 0x00, 40*25*8);
+    VICIV->BORDER_COLOR = PURPLE;
     // Render some dots
     render_dots();
+    VICIV->BORDER_COLOR = BLACK;
     //Play  SID
     (*musicPlay)();
 
@@ -212,7 +213,7 @@ unsigned int SINX2[SINX2_SIZE+256] = kickasm {{
 
 void graphics_mode(void) {
   // 16-bit text mode
-  VICIV->CONTROLC = VICIV_CHR16;
+  VICIV->CONTROLC = VICIV_CHR16|VICIV_VFAST;
   // H320, fast CPU
   VICIV->CONTROLB = VICIV_FAST;
   // 320x200 per char, 16 pixels wide per char

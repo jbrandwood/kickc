@@ -18,7 +18,6 @@ public class SymbolTypePointer implements SymbolType {
    private final boolean isVolatile;
    private final boolean isNomodify;
 
-
    public SymbolTypePointer(SymbolType elementType, ArraySpec arraySpec, boolean isVolatile, boolean isNomodify) {
       this.elementType = elementType;
       this.arraySpec = arraySpec;
@@ -31,13 +30,18 @@ public class SymbolTypePointer implements SymbolType {
    }
 
    @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return new SymbolTypePointer(this.elementType, this.arraySpec, isVolatile, isNomodify);
+   }
+
+   @Override
    public boolean isVolatile() {
-      return false;
+      return isVolatile;
    }
 
    @Override
    public boolean isNomodify() {
-      return false;
+      return isNomodify;
    }
 
    public SymbolType getElementType() {
@@ -54,7 +58,14 @@ public class SymbolTypePointer implements SymbolType {
 
    @Override
    public String getTypeName() {
-      return elementType.getTypeName() + "*";
+      String name = elementType.getTypeName() + "*";
+      /*
+      if(isVolatile)
+         name += " volatile";
+      if(isNomodify)
+         name += " const";
+       */
+      return name;
    }
 
    @Override

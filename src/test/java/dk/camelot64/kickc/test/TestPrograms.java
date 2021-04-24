@@ -8,6 +8,10 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.parser.CTargetPlatformParser;
 import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
@@ -5094,6 +5098,25 @@ public class TestPrograms {
       defines.put("__KICKC__", "1");
       defines.putAll(program.getTargetPlatform().getDefines());
       compiler.compile(files, defines);
+
+      // TODO: Delete when const/volatile is confirmed to work on SymbolType
+      for(Symbol symbol : program.getScope().getAllSymbols(true)) {
+         if(symbol instanceof Variable) {
+            Variable var = (Variable) symbol;
+            SymbolType varType = var.getType();
+            assertEquals(var.isVolatile(), varType.isVolatile(), "Variable volatile "+var.toString());
+            assertEquals(var.isNoModify(), varType.isNomodify(), "Variable nomodify "+var.toString());
+            boolean isToVolatile = false;
+            boolean isToNomodify = false;
+            if(varType instanceof SymbolTypePointer) {
+               isToVolatile = ((SymbolTypePointer) varType).getElementType().isVolatile();
+               isToNomodify = ((SymbolTypePointer) varType).getElementType().isNomodify();
+            }
+            assertEquals(var.isToVolatile(), isToVolatile, "Variable to volatile "+var.toString());
+            assertEquals(var.isToNoModify(), isToNomodify, "Variable to nomodify "+var.toString());
+         }
+      }
+
       compileAsm(fileName, program);
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);

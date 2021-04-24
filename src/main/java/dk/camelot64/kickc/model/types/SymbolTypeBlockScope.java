@@ -4,12 +4,11 @@ package dk.camelot64.kickc.model.types;
 public class SymbolTypeBlockScope implements SymbolType {
 
    public SymbolTypeBlockScope() {
-
    }
 
    @Override
-   public String getTypeName() {
-      return "BLOCK";
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return this;
    }
 
    @Override
@@ -20,6 +19,11 @@ public class SymbolTypeBlockScope implements SymbolType {
    @Override
    public boolean isNomodify() {
       return false;
+   }
+
+   @Override
+   public String getTypeName() {
+      return "BLOCK";
    }
 
    @Override

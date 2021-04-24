@@ -12,6 +12,11 @@ public class SymbolTypeProcedure implements SymbolType {
    }
 
    @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return this;
+   }
+
+   @Override
    public boolean isVolatile() {
       return false;
    }

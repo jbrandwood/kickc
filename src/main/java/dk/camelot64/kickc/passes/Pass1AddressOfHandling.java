@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
 import dk.camelot64.kickc.model.values.RValue;
@@ -60,11 +61,17 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
    private void updateAddressOfVariable(Variable variable, String stmtStr) {
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
+         SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
+         variable.setType(typeQualified);
+         // TODO: #121 remove
          variable.setVolatile(true);
          getLog().append("Setting struct to load/store in variable affected by address-of " + stmtStr);
          //getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);
+         SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
+         variable.setType(typeQualified);
+         // TODO: #121 remove
          variable.setVolatile(true);
          getLog().append("Setting inferred volatile on symbol affected by address-of " + stmtStr);
          //getLog().append("Setting inferred volatile on symbol affected by address-of: " + variable.toString() + " in " + stmtStr);

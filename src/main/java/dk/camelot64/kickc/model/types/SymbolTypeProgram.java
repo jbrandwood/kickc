@@ -4,7 +4,11 @@ package dk.camelot64.kickc.model.types;
 public class SymbolTypeProgram implements SymbolType {
 
    public SymbolTypeProgram() {
+   }
 
+   @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return this;
    }
 
    @Override

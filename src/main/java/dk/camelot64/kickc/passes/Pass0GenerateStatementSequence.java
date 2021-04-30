@@ -794,9 +794,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
 
       /** The declared type of a variable. Combines SymbolType, type directives (const, volatile) and ArraySpec. It holds advanced type information like <p><code>char volatile * const * [42]</code> */
+      // TODO: #121 Remove when const/volatile are put into type
       static class VariableDeclType {
          /** The type. */
          SymbolType type;
+         // TODO: #121 Remove when const/volatile are put into type
          /** Const / Volatile Directives if applied to the type */
          List<Directive> typeDirectives;
          /** If the type is SymbolTypePointer this holds the declaration type of the elements. */
@@ -820,6 +822,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
          void setTypeDirectives(List<Directive> directives) {
             this.typeDirectives = directives;
+            for(Directive directive : directives) {
+               if(directive instanceof Directive.Const)
+                  setType(type.getQualified(type.isVolatile(), true));
+               if(directive instanceof Directive.Volatile)
+                  setType(type.getQualified(true, type.isNomodify()));
+            }
          }
 
          void setElementDeclType(VariableDeclType elementDeclType) {
@@ -851,8 +859,20 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       void setDeclDirectives(List<Directive> directives) {
          this.declDirectives = new ArrayList<>();
          for(Directive directive : directives) {
-            if(directive instanceof Directive.Const || directive instanceof Directive.Volatile) {
+            if(directive instanceof Directive.Volatile) {
                // Type directive
+               SymbolType type = this.declType.getType();
+               SymbolType typeQualified = type.getQualified(true, type.isNomodify());
+               this.declType.setType(typeQualified);
+               // TODO: #121 Remove when const/volatile are put into type
+               if(!this.declType.getTypeDirectives().contains(directive))
+                  this.declType.getTypeDirectives().add(directive);
+            } else if(directive instanceof Directive.Const) {
+               // Type directive
+               SymbolType type = this.declType.getType();
+               SymbolType typeQualified = type.getQualified(type.isVolatile(), true);
+               this.declType.setType(typeQualified);
+               // TODO: #121 Remove when const/volatile are put into type
                if(!this.declType.getTypeDirectives().contains(directive))
                   this.declType.getTypeDirectives().add(directive);
             } else {
@@ -868,9 +888,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Add all general directives
          dirs.addAll(declDirectives);
          // Add type-directives
+         // TODO: #121 Remove when const/volatile are put into type
          final VariableDeclType effectiveDeclType = getEffectiveDeclType();
          dirs.addAll(effectiveDeclType.getTypeDirectives());
          // Convert element directives
+         // TODO: #121 Remove when const/volatile are put into type
          final VariableDeclType elementDeclType = effectiveDeclType.getElementDeclType();
          if(elementDeclType != null) {
             for(Directive elementTypeDirective : elementDeclType.getTypeDirectives()) {
@@ -881,6 +903,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                }
             }
             // Produce error on any deeper directives
+            // TODO: #121 Remove when const/volatile are put into type
             VariableDeclType deepDeclType = elementDeclType.getElementDeclType();
             while(deepDeclType != null) {
                if(!deepDeclType.getTypeDirectives().isEmpty()) {
@@ -2039,6 +2062,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             type = elementType;
             declType = elementDeclType;
          }
+         // TODO: #121 Remove when const/volatile are put into type
          if(typeDefVariable.isNoModify())
             varDecl.getDeclType().getTypeDirectives().add(new Directive.Const());
          if(typeDefVariable.isVolatile())

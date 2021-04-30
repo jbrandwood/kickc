@@ -77,7 +77,9 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               delete.add((SymbolRef) castValue.getValue());
                               // Change the type of the assignment variable
                               Variable castVar = getScope().getVariable((VariableRef) castValue.getValue());
-                              assignmentVar.setType(castVar.getType());
+                              // Copy type qualifiers from the variable being assigned
+                              SymbolType qualifiedType = castVar.getType().getQualified(assignmentVar.getType().isVolatile(), assignmentVar.getType().isNomodify());
+                              assignmentVar.setType(qualifiedType);
                               // Remove the assignment
                               stmtIt.remove();
                            }

@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.StatementInfos;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -134,7 +135,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                   final ScopeRef conditionDefineScopeRef = conditionDefineBlock.getScope();
                   final Scope conditionDefineScope = getScope().getScope(conditionDefineScopeRef);
                   final Variable intermediateLoadStoreVar = conditionDefineScope.addVariableIntermediate();
-                  intermediateLoadStoreVar.setType(referencedLoadStoreVariable.getType());
+                  SymbolType typeQualified = referencedLoadStoreVariable.getType().getQualified(false, referencedLoadStoreVariable.getType().isNomodify());
+                  intermediateLoadStoreVar.setType(typeQualified);
                   final StatementAssignment intermediateLoadStoreAssignment = new StatementAssignment(intermediateLoadStoreVar.getVariableRef(), referencedLoadStoreVariable.getRef(), true, simpleCondition.conditionAssignment.getSource(), Comment.NO_COMMENTS);
                   conditionDefineBlock.addStatementAfter(intermediateLoadStoreAssignment, simpleCondition.conditionAssignment);
                   // Replace all references to the load/store variable in the expressions with the new intermediate

@@ -8,7 +8,7 @@ import java.util.Objects;
 public class SymbolTypeEnum implements SymbolType {
 
    /** Name of the enum type. */
-   private String name;
+   private String enumName;
 
    /** The enum definition. */
    private EnumDefinition definition;
@@ -18,9 +18,14 @@ public class SymbolTypeEnum implements SymbolType {
 
    public SymbolTypeEnum(EnumDefinition definition, boolean isVolatile, boolean isNomodify) {
       this.definition = definition;
-      this.name = definition.getLocalName();
+      this.enumName = definition.getLocalName();
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
+   }
+
+   @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return new SymbolTypeEnum(this.definition, isVolatile, isNomodify);
    }
 
    @Override
@@ -35,7 +40,17 @@ public class SymbolTypeEnum implements SymbolType {
 
    @Override
    public String getTypeName() {
-      return "enum " + name;
+      String name = "";
+
+      // TODO #121 Add
+      /*
+      if(isVolatile)
+         name += "volatile ";
+      if(isNomodify)
+         name += "const ";
+      */
+      name += "enum  " + this.enumName;
+      return name;
    }
 
    @Override
@@ -57,12 +72,12 @@ public class SymbolTypeEnum implements SymbolType {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeEnum that = (SymbolTypeEnum) o;
-      return Objects.equals(name, that.name);
+      return Objects.equals(enumName, that.enumName);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name);
+      return Objects.hash(enumName);
    }
 
 }

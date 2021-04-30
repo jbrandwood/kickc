@@ -54,13 +54,20 @@ public class VariableBuilder {
     * @return The variable
     */
    public Variable build() {
-      Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, null);
+
+      // Todo: #121 move to type parsing!
+      SymbolType typeQualified = type.getQualified(this.isVolatile(), this.isNoModify());
+
+      Variable variable = new Variable(varName, getKind(), typeQualified, scope, getMemoryArea(), dataSegment, null);
+
+      // Todo: #121 remove!
       variable.setNoModify(this.isNoModify());
       variable.setVolatile(this.isVolatile());
-      variable.setExport(this.isExport());
-      variable.setPermanent(this.isPermanent());
       variable.setToNoModify(this.isToNoModify());
       variable.setToVolatile(this.isToVolatile());
+
+      variable.setExport(this.isExport());
+      variable.setPermanent(this.isPermanent());
       variable.setOptimize(this.isOptimize());
       variable.setRegister(this.getRegister());
       if(variable.getRegister() instanceof Registers.RegisterMainMem) {

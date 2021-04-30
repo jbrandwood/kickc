@@ -19,10 +19,10 @@ public class SymbolTypeInference {
          Variable variable = symbols.getVar((SymbolVariableRef) rValue);
          if(variable==null)
             throw new CompileError("Unknown variable "+rValue.toString());
-         type = variable.getType();
+         type = variable.getType().getQualified(false, variable.getType().isNomodify());
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
-         type = rSymbol.getType();
+         type = rSymbol.getType().getQualified(false, rSymbol.getType().isNomodify());
       } else if(rValue instanceof LvalueIntermediate) {
          return inferType(symbols, ((LvalueIntermediate) rValue).getVariable());
       } else if(rValue instanceof ConstantInteger) {
@@ -36,12 +36,14 @@ public class SymbolTypeInference {
       } else if(rValue instanceof ConstantUnary) {
          ConstantUnary constUnary = (ConstantUnary) rValue;
          SymbolType valueType = inferType(symbols, constUnary.getOperand());
-         return constUnary.getOperator().inferType(valueType);
+         final SymbolType unaryType = constUnary.getOperator().inferType(valueType);
+         return unaryType.getQualified(false, true);
       } else if(rValue instanceof ConstantBinary) {
          ConstantBinary constBin = (ConstantBinary) rValue;
          SymbolType leftType = inferType(symbols, constBin.getLeft());
          SymbolType rightType = inferType(symbols, constBin.getRight());
-         return constBin.getOperator().inferType(leftType, rightType);
+         final SymbolType binaryType = constBin.getOperator().inferType(leftType, rightType);
+         return binaryType.getQualified(false, true);
       } else if(rValue instanceof ValueList) {
          return SymbolType.VAR;
       } else if(rValue instanceof PointerDereference) {
@@ -97,7 +99,7 @@ public class SymbolTypeInference {
          } else {
             throw new InternalError("Cannot infer type of " + assignment.toString());
          }
-         return rValueType;
+         return rValueType.getQualified(false, false);
       } else if(rValue instanceof StructMemberRef) {
          StructMemberRef structMemberRef = (StructMemberRef) rValue;
          SymbolType structType = inferType(symbols, structMemberRef.getStruct());

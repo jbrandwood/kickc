@@ -73,6 +73,9 @@ public class Initializers {
     * @return The constantified value. A {@link ConstantValue} is possible
     */
    public static RValue constantify(RValue initValue, ValueTypeSpec typeSpec, Program program, StatementSource source) {
+      // Remove any const/volatile qualifiers
+      typeSpec = new ValueTypeSpec(typeSpec.getType().getQualified(false, false));
+
       if(initValue == null) {
          // Add an zero-value
          initValue = createZeroValue(typeSpec, source);

@@ -1,12 +1,16 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.values.ConstantStructValue;
+import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
+import dk.camelot64.kickc.model.values.StructZero;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 /**
@@ -26,6 +30,20 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
       for(Variable variable : getScope().getAllVars(true)) {
          modified |= fixStructSize(variable.getType());
       }
+
+      // Update all types hidden inside values
+      ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof StructZero) {
+            final SymbolTypeStruct typeStruct = ((StructZero) programValue.get()).getTypeStruct();
+            fixStructSize(typeStruct);
+         } else if(programValue.get() instanceof ConstantStructValue) {
+            final SymbolTypeStruct typeStruct = ((ConstantStructValue) programValue.get()).getStructType();
+            fixStructSize(typeStruct);
+         } else if(programValue.get() instanceof StructUnwoundPlaceholder) {
+            final SymbolTypeStruct typeStruct = ((StructUnwoundPlaceholder) programValue.get()).getTypeStruct();
+            fixStructSize(typeStruct);
+         }
+      });
 
       // Update all SIZEOF_XXX constants
       for(Scope subScope : getScope().getAllScopes(false)) {

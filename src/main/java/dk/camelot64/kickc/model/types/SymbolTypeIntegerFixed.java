@@ -7,16 +7,19 @@ import java.util.Objects;
 /** Integer type with a fixed size (byte, signed byte, word, ...). */
 public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
 
-   private final String typeName;
+   /** The basename of the the type (without any qualifiers). */
+   private final String typeBaseName;
+
    private final long minValue;
    private final long maxValue;
    private final boolean signed;
    private final int bits;
+
    private final boolean isVolatile;
    private final boolean isNomodify;
 
-   SymbolTypeIntegerFixed(String typeName, long minValue, long maxValue, boolean signed, int bits, boolean isVolatile, boolean isNomodify) {
-      this.typeName = typeName;
+   SymbolTypeIntegerFixed(String typeBaseName, long minValue, long maxValue, boolean signed, int bits, boolean isVolatile, boolean isNomodify) {
+      this.typeBaseName = typeBaseName;
       this.minValue = minValue;
       this.maxValue = maxValue;
       this.signed = signed;
@@ -25,10 +28,15 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
       this.isNomodify = isNomodify;
    }
 
+   @Override
+   public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
+      return new SymbolTypeIntegerFixed(this.typeBaseName, this.minValue, this.maxValue, this.signed, this.bits, isVolatile, isNomodify);
+   }
+
    /**
-    * Get all fixed size integer types.
+    * Get all (unqualified) fixed size integer types.
     *
-    * @return All fixed size integer types
+    * @return All (unqualified) fixed size integer types
     */
    public static Collection<SymbolTypeIntegerFixed> getIntegerFixedTypes() {
       ArrayList<SymbolTypeIntegerFixed> types = new ArrayList<>();
@@ -88,7 +96,16 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
 
    @Override
    public String getTypeName() {
-      return typeName;
+      String name = "";
+      // TODO #121 Add
+      /*
+      if(isVolatile)
+         name += "volatile ";
+      if(isNomodify)
+         name += "const ";
+       */
+      name += typeBaseName;
+      return name;
    }
 
    public long getMinValue() {
@@ -122,11 +139,11 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeIntegerFixed that = (SymbolTypeIntegerFixed) o;
-      return Objects.equals(typeName, that.typeName);
+      return Objects.equals(typeBaseName, that.typeBaseName);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(typeName);
+      return Objects.hash(typeBaseName);
    }
 }

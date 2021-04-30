@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,6 +41,10 @@ public class Pass2DeInlineWordDerefIdx extends Pass2SsaOptimization {
                programValue.set(new PointerDereferenceSimple(tmpVar.getRef()));
                SymbolType pointerType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(tmpVarAssignment));
                tmpVar.setType(pointerType);
+               if(((SymbolTypePointer)pointerType).getElementType().isNomodify())
+                  tmpVar.setToNoModify(true);
+               if(((SymbolTypePointer)pointerType).getElementType().isVolatile())
+                  tmpVar.setToVolatile(true);
                optimized.set(true);
             }
          }

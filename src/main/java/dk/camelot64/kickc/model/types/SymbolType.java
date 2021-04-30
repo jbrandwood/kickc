@@ -11,6 +11,14 @@ public interface SymbolType extends Serializable {
    /** Specifies that the variable is not allowed to be modified (const keyword). The compiler should try to detect modifications and generate compile-time errors if they occur.*/
    boolean isNomodify();
 
+   /** Get the type with different type qualifiers.
+    *
+    * @param isVolatile Should the type be marked as volatile
+    * @param isNomodify Should the type be marked as nomodify (keyword const)
+    * @return The type with different qualifiers
+    */
+   SymbolType getQualified(boolean isVolatile, boolean isNomodify);
+
    /** Unsigned byte (8 bits)). */
    SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8, false, false);
    /** Signed byte (8 bits). */

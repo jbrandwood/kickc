@@ -413,8 +413,8 @@ public class Compiler {
       optimizations.add(new PassNSimplifyConstantZero(program));
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedConstructors(program));
-      optimizations.add(new PassNEliminateUnusedVars(program, true));
-      optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      optimizations.add(new Pass2EliminateUnusedBlocks(program));       // Notice sequence is important
+      optimizations.add(new PassNEliminateUnusedVars(program, true));   // Notice sequence is important
       optimizations.add(new PassNEliminateEmptyProcedure(program));
       optimizations.add(new PassNEliminateEmptyStart(program));
       if(enableLoopHeadConstant) {

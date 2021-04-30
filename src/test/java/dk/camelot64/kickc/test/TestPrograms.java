@@ -49,6 +49,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInitValueNpe() throws IOException, URISyntaxException {
+      compileAndCompare("init-value-npe.c");
+   }
+
+   @Test
    public void testOperatorByte0Iintializer() throws IOException, URISyntaxException {
       compileAndCompare("operator-byte0-initializer.c");
    }

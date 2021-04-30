@@ -19749,3 +19749,13 @@ sta {z1}
 lda {z1}+1
 adc {z2}+1
 sta {z1}+1
+//FRAGMENT vwuz1=_word1_vduz2
+lda {z2}+2
+sta {z1}
+lda {z2}+3
+sta {z1}+1
+//FRAGMENT vwuz1=_word1_vdsz2
+lda {z2}+2
+sta {z1}
+lda {z2}+3
+sta {z1}+1

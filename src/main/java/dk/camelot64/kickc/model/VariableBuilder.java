@@ -59,13 +59,6 @@ public class VariableBuilder {
       SymbolType typeQualified = type.getQualified(this.isVolatile(), this.isNoModify());
 
       Variable variable = new Variable(varName, getKind(), typeQualified, scope, getMemoryArea(), dataSegment, null);
-
-      // Todo: #121 remove!
-      variable.setNoModify(this.isNoModify());
-      variable.setVolatile(this.isVolatile());
-      variable.setToNoModify(this.isToNoModify());
-      variable.setToVolatile(this.isToVolatile());
-
       variable.setExport(this.isExport());
       variable.setPermanent(this.isPermanent());
       variable.setOptimize(this.isOptimize());

@@ -59,20 +59,8 @@ public class Variable implements Symbol {
    /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL] */
    private SymbolType type;
 
-   /** Specifies that the variable is not allowed to be modified (const keyword) */
-   private boolean noModify;
-
    /** Specifies that the variable is a local permanent variable (local variable static keyword) */
    private boolean permanent;
-
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). (volatile keyword) [Only Variables] */
-   private boolean isVolatile;
-
-   /** Specifies that the variable points to a volatile. (volatile* keyword) */
-   private boolean isToVolatile;
-
-   /** Specifies that the variable points to a a nomodify. (const* keyword) */
-   private boolean isToNoModify;
 
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. (export keyword) */
    private boolean export;
@@ -193,13 +181,6 @@ public class Variable implements Symbol {
       version.setMemoryAlignment(phiMaster.getMemoryAlignment());
       version.setMemoryAddress(phiMaster.getMemoryAddress());
       version.setOptimize(phiMaster.isOptimize());
-
-      // TODO: #121 remove
-      version.setVolatile(phiMaster.isVolatile());
-      version.setNoModify(phiMaster.isNoModify());
-      version.setToNoModify(phiMaster.isToNoModify());
-      version.setToVolatile(phiMaster.isToVolatile());
-
       version.setRegister(phiMaster.getRegister());
       version.setPermanent(phiMaster.isPermanent());
       version.setExport(phiMaster.isExport());
@@ -243,12 +224,6 @@ public class Variable implements Symbol {
       constVar.setMemoryAddress(variable.getMemoryAddress());
       constVar.setOptimize(variable.isOptimize());
       constVar.setRegister(variable.getRegister());
-      // Todo: #121 remove
-      constVar.setVolatile(variable.isVolatile());
-      constVar.setNoModify(variable.isNoModify());
-      constVar.setToNoModify(variable.isToNoModify());
-      constVar.setToVolatile(variable.isToVolatile());
-
       constVar.setPermanent(variable.isPermanent());
       constVar.setExport(variable.isExport());
       constVar.setComments(variable.getComments());
@@ -268,13 +243,6 @@ public class Variable implements Symbol {
       copy.setMemoryAddress(original.getMemoryAddress());
       copy.setOptimize(original.isOptimize());
       copy.setPermanent(original.isPermanent());
-
-      // Todo: #121 remove
-      copy.setVolatile(original.isVolatile());
-      copy.setNoModify(original.isNoModify());
-      copy.setToNoModify(original.isToNoModify());
-      copy.setToVolatile(original.isToVolatile());
-
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
       copy.setComments(original.getComments());
@@ -296,24 +264,17 @@ public class Variable implements Symbol {
       if(isParameter && memberDefinition.isArray()) {
          // Array struct members are converted to pointers when unwound (use same kind as the struct variable)
          SymbolTypePointer arrayType = (SymbolTypePointer) memberDefinition.getType();
-         SymbolType typeQualified = new SymbolTypePointer(arrayType.getElementType()).getQualified(structVar.isVolatile, structVar.isNoModify());
+         SymbolType typeQualified = new SymbolTypePointer(arrayType.getElementType()).getQualified(structVar.isVolatile(), structVar.isNoModify());
          memberVariable = new Variable(name, structVar.getKind(), typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), null);
       } else if(memberDefinition.isKindConstant()) {
          // Constant members are unwound as constants
-         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile, structVar.isNoModify());
+         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile(), structVar.isNoModify());
          memberVariable = new Variable(name, Kind.CONSTANT, typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       } else {
          // For others the kind is preserved from the member definition
-         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile, structVar.isNoModify());
+         SymbolType typeQualified = memberDefinition.getType().getQualified(structVar.isVolatile(), structVar.isNoModify());
          memberVariable = new Variable(name, structVar.getKind(),typeQualified, structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getInitValue());
       }
-
-      // Todo: #121 fix struct member qualifiers - and remove!
-      memberVariable.setVolatile(structVar.isVolatile());
-      memberVariable.setNoModify(structVar.isNoModify());
-      memberVariable.setToNoModify(structVar.isToNoModify());
-      memberVariable.setToVolatile(structVar.isToVolatile());
-
       memberVariable.setExport(structVar.isExport());
       memberVariable.setPermanent(structVar.isPermanent());
       return memberVariable;
@@ -503,35 +464,19 @@ public class Variable implements Symbol {
    }
 
    public boolean isNoModify() {
-      return noModify;
-   }
-
-   public void setNoModify(boolean noModify) {
-      this.noModify = noModify;
+      return type.isNomodify();
    }
 
    public boolean isVolatile() {
-      return isVolatile;
-   }
-
-   public void setVolatile(boolean aVolatile) {
-      this.isVolatile = aVolatile;
+      return type.isVolatile();
    }
 
    public boolean isToNoModify() {
-      return isToNoModify;
-   }
-
-   public void setToNoModify(boolean toNoModify) {
-      isToNoModify = toNoModify;
+      return type instanceof SymbolTypePointer && ((SymbolTypePointer) type).getElementType().isNomodify();
    }
 
    public boolean isToVolatile() {
-      return isToVolatile;
-   }
-
-   public void setToVolatile(boolean toVolatile) {
-      isToVolatile = toVolatile;
+      return type instanceof SymbolTypePointer && ((SymbolTypePointer) type).getElementType().isVolatile();
    }
 
    public boolean isPermanent() {

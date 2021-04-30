@@ -63,16 +63,12 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
          variable.setKind(Variable.Kind.LOAD_STORE);
          SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
          variable.setType(typeQualified);
-         // TODO: #121 remove
-         variable.setVolatile(true);
          getLog().append("Setting struct to load/store in variable affected by address-of " + stmtStr);
          //getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);
          SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
          variable.setType(typeQualified);
-         // TODO: #121 remove
-         variable.setVolatile(true);
          getLog().append("Setting inferred volatile on symbol affected by address-of " + stmtStr);
          //getLog().append("Setting inferred volatile on symbol affected by address-of: " + variable.toString() + " in " + stmtStr);
       }

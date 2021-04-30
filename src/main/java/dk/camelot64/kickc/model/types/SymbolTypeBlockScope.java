@@ -22,7 +22,7 @@ public class SymbolTypeBlockScope implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
+   public String getTypeBaseName() {
       return "BLOCK";
    }
 

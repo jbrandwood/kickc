@@ -65,7 +65,7 @@ public class OperatorTypeId extends OperatorUnary {
       } else if(type instanceof SymbolTypePointer) {
          return "POINTER_" + getTypeIdConstantName(((SymbolTypePointer) type).getElementType());
       } else {
-         return type.getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
+         return type.getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
       }
    }
 

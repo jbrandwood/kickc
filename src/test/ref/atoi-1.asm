@@ -252,7 +252,7 @@ clrscr: {
     jmp __b3
 }
 // Converts the string argument str to an integer.
-// atoi(byte* zp(5) str)
+// atoi(const byte* zp(5) str)
 atoi: {
     .label __3 = 2
     .label __4 = 2
@@ -374,7 +374,7 @@ printf_sint: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(5) s)
+// cputs(const byte* zp(5) s)
 cputs: {
     .label s = 5
   __b1:

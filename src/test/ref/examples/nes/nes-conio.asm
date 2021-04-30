@@ -704,7 +704,7 @@ gotoxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($17) s)
+// cputs(const byte* zp($17) s)
 cputs: {
     .label s = $17
     lda #<num_buffer

@@ -1735,7 +1735,7 @@ vera_tile_area: {
     jmp __b2
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($3b) s)
+// cputs(const byte* zp($3b) s)
 cputs: {
     .label s = $3b
   __b1:

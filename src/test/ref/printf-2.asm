@@ -868,7 +868,7 @@ strupr: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($b) s)
+// cputs(const byte* zp($b) s)
 cputs: {
     .label s = $b
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS

@@ -22,7 +22,7 @@ public class SymbolTypeProgram implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
+   public String getTypeBaseName() {
       return "PROGRAM";
    }
 

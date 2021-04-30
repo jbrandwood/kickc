@@ -27,7 +27,7 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
    }
 
    @Override
-   public String getTypeName() {
+   public String getTypeBaseName() {
       return typeName;
    }
 

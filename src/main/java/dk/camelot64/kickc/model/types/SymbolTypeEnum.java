@@ -39,18 +39,8 @@ public class SymbolTypeEnum implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
-      String name = "";
-
-      // TODO #121 Add
-      /*
-      if(isVolatile)
-         name += "volatile ";
-      if(isNomodify)
-         name += "const ";
-      */
-      name += "enum  " + this.enumName;
-      return name;
+   public String getTypeBaseName() {
+      return  "enum  " + this.enumName;
    }
 
    @Override

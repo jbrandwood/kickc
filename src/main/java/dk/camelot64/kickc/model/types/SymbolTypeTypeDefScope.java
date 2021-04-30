@@ -22,7 +22,7 @@ public class SymbolTypeTypeDefScope implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
+   public String getTypeBaseName() {
       return "TYPEDEF";
    }
 

@@ -270,7 +270,7 @@ printf_uchar: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(3) s)
+// cputs(const byte* zp(3) s)
 cputs: {
     .label s = 3
   __b1:

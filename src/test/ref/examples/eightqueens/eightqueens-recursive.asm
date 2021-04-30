@@ -556,7 +556,7 @@ clrscr: {
     jmp __b3
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($a) s)
+// cputs(const byte* zp($a) s)
 cputs: {
     .label c = $d
     .label s = $a

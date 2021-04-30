@@ -21,7 +21,7 @@ Inlined call ppuDataFetch::$2 = call ppuDataRead
 Inlined call call ppuDataPrepare ppuDataPutTile::ppuData 
 Inlined call call ppuDataPut ppuDataPutTile::tile[0] 
 Inlined call call ppuDataPut ppuDataPutTile::tile[1] 
-Inlined call call ppuDataPrepare (void*)ppuDataPutTile::$3 
+Inlined call call ppuDataPrepare (void* const)ppuDataPutTile::$3 
 Inlined call call ppuDataPut ppuDataPutTile::tile[2] 
 Inlined call call ppuDataPut ppuDataPutTile::tile[3] 
 Inlined call call ppuDataPrepare ppuDataSet::ppuData 
@@ -78,7 +78,7 @@ readJoy1::@return: scope:[readJoy1]  from readJoy1::@3
   return 
   to:@return
 
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 ppuDataFill: scope:[ppuDataFill]  from clrscr cscroll::@6 main::@14 main::@15
   ppuDataFill::val#10 = phi( clrscr/ppuDataFill::val#0, cscroll::@6/ppuDataFill::val#1, main::@14/ppuDataFill::val#2, main::@15/ppuDataFill::val#3 )
   ppuDataFill::size#9 = phi( clrscr/ppuDataFill::size#0, cscroll::@6/ppuDataFill::size#1, main::@14/ppuDataFill::size#2, main::@15/ppuDataFill::size#3 )
@@ -135,7 +135,7 @@ ppuDataFill::@return: scope:[ppuDataFill]  from ppuDataFill::@1
   return 
   to:@return
 
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 ppuDataTransfer: scope:[ppuDataTransfer]  from cscroll::@8 main::@8
   ppuDataTransfer::size#7 = phi( cscroll::@8/ppuDataTransfer::size#0, main::@8/ppuDataTransfer::size#1 )
   ppuDataTransfer::cpuData#4 = phi( cscroll::@8/ppuDataTransfer::cpuData#0, main::@8/ppuDataTransfer::cpuData#1 )
@@ -194,7 +194,7 @@ ppuDataTransfer::@return: scope:[ppuDataTransfer]  from ppuDataTransfer::@1
   return 
   to:@return
 
-void ppuDataFetch(nomodify void* ppuDataFetch::cpuData , nomodify void* ppuDataFetch::ppuData , word ppuDataFetch::size)
+void ppuDataFetch(void* const ppuDataFetch::cpuData , void* const ppuDataFetch::ppuData , word ppuDataFetch::size)
 ppuDataFetch: scope:[ppuDataFetch]  from cscroll::@5
   ppuDataFetch::size#6 = phi( cscroll::@5/ppuDataFetch::size#0 )
   ppuDataFetch::cpuData#3 = phi( cscroll::@5/ppuDataFetch::cpuData#0 )
@@ -257,7 +257,7 @@ ppuDataFetch::@return: scope:[ppuDataFetch]  from ppuDataFetch::@1
   return 
   to:@return
 
-void ppuDataSet(nomodify void* ppuDataSet::ppuData , byte ppuDataSet::val)
+void ppuDataSet(void* const ppuDataSet::ppuData , byte ppuDataSet::val)
 ppuDataSet: scope:[ppuDataSet]  from cputc::@2
   ppuDataSet::val#3 = phi( cputc::@2/ppuDataSet::val#0 )
   ppuDataSet::ppuData#1 = phi( cputc::@2/ppuDataSet::ppuData#0 )
@@ -291,7 +291,7 @@ ppuDataSet::@return: scope:[ppuDataSet]  from ppuDataSet::ppuDataPut1
 
 void clrscr()
 clrscr: scope:[clrscr]  from main::@16
-  ppuDataFill::ppuData#0 = (void*)CONIO_SCREEN_TEXT
+  ppuDataFill::ppuData#0 = (void* const)CONIO_SCREEN_TEXT
   ppuDataFill::val#0 = ' '
   ppuDataFill::size#0 = $3c0
   call ppuDataFill 
@@ -358,7 +358,7 @@ cputc::@4: scope:[cputc]  from cputc::@1
 cputc::@2: scope:[cputc]  from cputc
   cputc::c#3 = phi( cputc/cputc::c#2 )
   cputc::$1 = conio_line_text + conio_cursor_x
-  ppuDataSet::ppuData#0 = (void*)cputc::$1
+  ppuDataSet::ppuData#0 = (void* const)cputc::$1
   ppuDataSet::val#0 = cputc::c#3
   call ppuDataSet 
   to:cputc::@5
@@ -423,8 +423,8 @@ cscroll::@5: scope:[cscroll]  from cscroll::@4
   cscroll::y#5 = phi( cscroll::@4/cscroll::y#2 )
   cscroll::line1#4 = phi( cscroll::@4/cscroll::line1#5 )
   cscroll::line2#2 = phi( cscroll::@4/cscroll::line2#4 )
-  ppuDataFetch::cpuData#0 = (void*)conio_cscroll_buffer
-  ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2
+  ppuDataFetch::cpuData#0 = (void* const)conio_cscroll_buffer
+  ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2
   ppuDataFetch::size#0 = $20
   call ppuDataFetch 
   to:cscroll::@8
@@ -432,8 +432,8 @@ cscroll::@8: scope:[cscroll]  from cscroll::@5
   cscroll::y#4 = phi( cscroll::@5/cscroll::y#5 )
   cscroll::line2#5 = phi( cscroll::@5/cscroll::line2#2 )
   cscroll::line1#2 = phi( cscroll::@5/cscroll::line1#4 )
-  ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2
-  ppuDataTransfer::cpuData#0 = (void*)conio_cscroll_buffer
+  ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2
+  ppuDataTransfer::cpuData#0 = (void* const)conio_cscroll_buffer
   ppuDataTransfer::size#0 = $20
   call ppuDataTransfer 
   to:cscroll::@9
@@ -446,7 +446,7 @@ cscroll::@9: scope:[cscroll]  from cscroll::@8
   cscroll::y#1 = ++ cscroll::y#3
   to:cscroll::@4
 cscroll::@6: scope:[cscroll]  from cscroll::@4
-  ppuDataFill::ppuData#1 = (void*)CONIO_SCREEN_TEXT+$1e*$20-$20
+  ppuDataFill::ppuData#1 = (void* const)CONIO_SCREEN_TEXT+$1e*$20-$20
   ppuDataFill::val#1 = ' '
   ppuDataFill::size#1 = $20
   call ppuDataFill 
@@ -459,7 +459,7 @@ cscroll::@return: scope:[cscroll]  from cscroll cscroll::@10 cscroll::@7
   return 
   to:@return
 
-void cputs(to_nomodify byte* cputs::s)
+void cputs(const byte* cputs::s)
 cputs: scope:[cputs]  from cputsxy::@1
   cputs::s#3 = phi( cputsxy::@1/cputs::s#1 )
   cputs::c#0 = 0
@@ -505,7 +505,7 @@ cputcxy::@return: scope:[cputcxy]  from cputcxy::@2
   return 
   to:@return
 
-void cputsxy(byte cputsxy::x , byte cputsxy::y , to_nomodify byte* cputsxy::s)
+void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
 cputsxy: scope:[cputsxy]  from main::@22
   cputsxy::s#2 = phi( main::@22/cputsxy::s#0 )
   cputsxy::y#1 = phi( main::@22/cputsxy::y#0 )
@@ -729,7 +729,7 @@ main::initNES1_clearVBlankFlag1: scope:[main]  from main::initNES1_disableAudioO
 main::initNES1_waitForVBlank1: scope:[main]  from main::initNES1_clearVBlankFlag1
   to:main::initNES1_waitForVBlank1_@1
 main::initNES1_waitForVBlank1_@1: scope:[main]  from main::initNES1_waitForVBlank1 main::initNES1_waitForVBlank1_@1
-  main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+  main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
   main::initNES1_waitForVBlank1_$2 = main::initNES1_waitForVBlank1_$3 + OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
   main::initNES1_waitForVBlank1_$0 = *main::initNES1_waitForVBlank1_$2 & $80
   main::initNES1_waitForVBlank1_$4 = 0 != main::initNES1_waitForVBlank1_$0
@@ -756,7 +756,7 @@ main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_@6
 main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   to:main::initNES1_waitForVBlank2_@1
 main::initNES1_waitForVBlank2_@1: scope:[main]  from main::initNES1_waitForVBlank2 main::initNES1_waitForVBlank2_@1
-  main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+  main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
   main::initNES1_waitForVBlank2_$2 = main::initNES1_waitForVBlank2_$3 + OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
   main::initNES1_waitForVBlank2_$0 = *main::initNES1_waitForVBlank2_$2 & $80
   main::initNES1_waitForVBlank2_$4 = 0 != main::initNES1_waitForVBlank2_$0
@@ -768,19 +768,19 @@ main::initNES1_@7: scope:[main]  from main::initNES1_waitForVBlank2_@1
   to:main::@8
 main::@8: scope:[main]  from main::initNES1_@7
   main::$1 = sizeof  PALETTE
-  ppuDataTransfer::ppuData#1 = (void*)PPU_PALETTE
-  ppuDataTransfer::cpuData#1 = (void*)PALETTE
+  ppuDataTransfer::ppuData#1 = (void* const)PPU_PALETTE
+  ppuDataTransfer::cpuData#1 = (void* const)PALETTE
   ppuDataTransfer::size#1 = main::$1
   call ppuDataTransfer 
   to:main::@14
 main::@14: scope:[main]  from main::@8
-  ppuDataFill::ppuData#2 = (void*)PPU_ATTRIBUTE_TABLE_0
+  ppuDataFill::ppuData#2 = (void* const)PPU_ATTRIBUTE_TABLE_0
   ppuDataFill::val#2 = 0
   ppuDataFill::size#2 = $40
   call ppuDataFill 
   to:main::@15
 main::@15: scope:[main]  from main::@14
-  ppuDataFill::ppuData#3 = (void*)PPU_ATTRIBUTE_TABLE_1
+  ppuDataFill::ppuData#3 = (void* const)PPU_ATTRIBUTE_TABLE_1
   ppuDataFill::val#3 = 0
   ppuDataFill::size#3 = $40
   call ppuDataFill 
@@ -1049,44 +1049,44 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-const struct RICOH_2A03* APU = (struct RICOH_2A03*)$4000
-const byte BINARY = 2
-const nomodify byte* CONIO_SCREEN_TEXT = PPU_NAME_TABLE_0
-const byte DECIMAL = $a
-const byte* DIGITS[]  = "0123456789abcdef"z
-const nomodify byte* FR_COUNTER = (byte*)$4017
-const byte HEXADECIMAL = $10
-const nomodify byte JOY_DOWN = 4
-const nomodify byte JOY_LEFT = 2
-const nomodify byte JOY_RIGHT = 1
-const nomodify byte JOY_UP = 8
-const nomodify byte* MEMORY = (byte*)0
-const byte OCTAL = 8
-const byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
-const byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
-const byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
-const byte OFFSET_STRUCT_RICOH_2C02_PPUCTRL = 0
-const byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-const byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
-const byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
-const struct RICOH_2C02* PPU = (struct RICOH_2C02*)$2000
-const nomodify byte* PPU_ATTRIBUTE_TABLE_0 = (byte*)$23c0
-const nomodify byte* PPU_ATTRIBUTE_TABLE_1 = (byte*)$27c0
-const nomodify byte* PPU_NAME_TABLE_0 = (byte*)$2000
-const nomodify byte* PPU_PALETTE = (byte*)$3f00
-const nomodify to_volatile byte* PPU_PPUDATA = (byte*)$2007
-const nomodify to_volatile byte* PPU_PPUSTATUS = (byte*)$2002
-const byte RADIX::BINARY = 2
-const byte RADIX::DECIMAL = $a
-const byte RADIX::HEXADECIMAL = $10
-const byte RADIX::OCTAL = 8
-const byte* RADIX_BINARY_VALUES_CHAR[]  = { $80, $40, $20, $10, 8, 4, 2 }
-const byte* RADIX_DECIMAL_VALUES_CHAR[]  = { $64, $a }
-const byte* RADIX_HEXADECIMAL_VALUES_CHAR[]  = { $10 }
-const byte* RADIX_OCTAL_VALUES_CHAR[]  = { $40, 8 }
-const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
+constant struct RICOH_2A03* APU = (struct RICOH_2A03*)$4000
+constant byte BINARY = 2
+constant byte* const CONIO_SCREEN_TEXT = PPU_NAME_TABLE_0
+constant byte DECIMAL = $a
+constant byte* DIGITS[]  = "0123456789abcdef"z
+constant byte* const FR_COUNTER = (byte*)$4017
+constant byte HEXADECIMAL = $10
+constant const byte JOY_DOWN = 4
+constant const byte JOY_LEFT = 2
+constant const byte JOY_RIGHT = 1
+constant const byte JOY_UP = 8
+constant byte* const MEMORY = (byte*)0
+constant byte OCTAL = 8
+constant byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
+constant byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUCTRL = 0
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+constant byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
+constant struct RICOH_2C02* PPU = (struct RICOH_2C02*)$2000
+constant byte* const PPU_ATTRIBUTE_TABLE_0 = (byte*)$23c0
+constant byte* const PPU_ATTRIBUTE_TABLE_1 = (byte*)$27c0
+constant byte* const PPU_NAME_TABLE_0 = (byte*)$2000
+constant byte* const PPU_PALETTE = (byte*)$3f00
+constant volatile byte* const PPU_PPUDATA = (volatile byte*)$2007
+constant volatile byte* const PPU_PPUSTATUS = (volatile byte*)$2002
+constant byte RADIX::BINARY = 2
+constant byte RADIX::DECIMAL = $a
+constant byte RADIX::HEXADECIMAL = $10
+constant byte RADIX::OCTAL = 8
+constant byte* RADIX_BINARY_VALUES_CHAR[]  = { $80, $40, $20, $10, 8, 4, 2 }
+constant byte* RADIX_DECIMAL_VALUES_CHAR[]  = { $64, $a }
+constant byte* RADIX_HEXADECIMAL_VALUES_CHAR[]  = { $10 }
+constant byte* RADIX_OCTAL_VALUES_CHAR[]  = { $40, 8 }
+constant byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
         .fill 8, filechargen.get(c*8+i)
@@ -1094,10 +1094,10 @@ const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.9012
         .fill 8, 0
     }
  }}
-const to_nomodify void()** VECTORS[]  = { &vblank, &main, (void()*)0 }
+constant void()* const* VECTORS[]  = { &vblank, &main, (void()*)0 }
 void __start()
 void clrscr()
-const byte* conio_cscroll_buffer[$20]  = { fill( $20, 0) }
+constant byte* conio_cscroll_buffer[$20]  = { fill( $20, 0) }
 byte conio_cursor_x loadstore
 byte conio_cursor_y loadstore
 byte* conio_line_text loadstore
@@ -1133,25 +1133,25 @@ byte cputcxy::y#2
 byte cputcxy::y#3
 byte cputcxy::y#4
 void cputln()
-void cputs(to_nomodify byte* cputs::s)
+void cputs(const byte* cputs::s)
 byte~ cputs::$0
 bool~ cputs::$2
 byte cputs::c
 byte cputs::c#0
 byte cputs::c#1
 byte cputs::c#2
-to_nomodify byte* cputs::s
-to_nomodify byte* cputs::s#0
-to_nomodify byte* cputs::s#1
-to_nomodify byte* cputs::s#2
-to_nomodify byte* cputs::s#3
-to_nomodify byte* cputs::s#4
-to_nomodify byte* cputs::s#5
-void cputsxy(byte cputsxy::x , byte cputsxy::y , to_nomodify byte* cputsxy::s)
-to_nomodify byte* cputsxy::s
-to_nomodify byte* cputsxy::s#0
-to_nomodify byte* cputsxy::s#1
-to_nomodify byte* cputsxy::s#2
+const byte* cputs::s
+const byte* cputs::s#0
+const byte* cputs::s#1
+const byte* cputs::s#2
+const byte* cputs::s#3
+const byte* cputs::s#4
+const byte* cputs::s#5
+void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
+const byte* cputsxy::s
+const byte* cputsxy::s#0
+const byte* cputsxy::s#1
+const byte* cputsxy::s#2
 byte cputsxy::x
 byte cputsxy::x#0
 byte cputsxy::x#1
@@ -1254,13 +1254,13 @@ byte main::initNES1_i#1
 byte main::initNES1_i#2
 number~ main::initNES1_waitForVBlank1_$0
 bool~ main::initNES1_waitForVBlank1_$1
-to_volatile byte*~ main::initNES1_waitForVBlank1_$2
-to_volatile byte*~ main::initNES1_waitForVBlank1_$3
+volatile byte*~ main::initNES1_waitForVBlank1_$2
+volatile byte*~ main::initNES1_waitForVBlank1_$3
 bool~ main::initNES1_waitForVBlank1_$4
 number~ main::initNES1_waitForVBlank2_$0
 bool~ main::initNES1_waitForVBlank2_$1
-to_volatile byte*~ main::initNES1_waitForVBlank2_$2
-to_volatile byte*~ main::initNES1_waitForVBlank2_$3
+volatile byte*~ main::initNES1_waitForVBlank2_$2
+volatile byte*~ main::initNES1_waitForVBlank2_$3
 bool~ main::initNES1_waitForVBlank2_$4
 byte main::screensizex1_return
 byte main::screensizex1_return#0
@@ -1311,15 +1311,15 @@ byte main::y#6
 byte main::y#7
 byte main::y#8
 byte main::y#9
-const byte* num_buffer[$b]  = { fill( $b, 0) }
-void ppuDataFetch(nomodify void* ppuDataFetch::cpuData , nomodify void* ppuDataFetch::ppuData , word ppuDataFetch::size)
+constant byte* num_buffer[$b]  = { fill( $b, 0) }
+void ppuDataFetch(void* const ppuDataFetch::cpuData , void* const ppuDataFetch::ppuData , word ppuDataFetch::size)
 bool~ ppuDataFetch::$1
 byte~ ppuDataFetch::$2
-nomodify void* ppuDataFetch::cpuData
-nomodify void* ppuDataFetch::cpuData#0
-nomodify void* ppuDataFetch::cpuData#1
-nomodify void* ppuDataFetch::cpuData#2
-nomodify void* ppuDataFetch::cpuData#3
+void* const ppuDataFetch::cpuData
+void* const ppuDataFetch::cpuData#0
+void* const ppuDataFetch::cpuData#1
+void* const ppuDataFetch::cpuData#2
+void* const ppuDataFetch::cpuData#3
 byte* ppuDataFetch::cpuDst
 byte* ppuDataFetch::cpuDst#0
 byte* ppuDataFetch::cpuDst#1
@@ -1334,18 +1334,18 @@ word ppuDataFetch::i#2
 word ppuDataFetch::i#3
 word ppuDataFetch::i#4
 word ppuDataFetch::i#5
-nomodify void* ppuDataFetch::ppuData
-nomodify void* ppuDataFetch::ppuData#0
-nomodify void* ppuDataFetch::ppuData#1
+void* const ppuDataFetch::ppuData
+void* const ppuDataFetch::ppuData#0
+void* const ppuDataFetch::ppuData#1
 byte~ ppuDataFetch::ppuDataPrepare1_$0
 byte~ ppuDataFetch::ppuDataPrepare1_$1
 byte*~ ppuDataFetch::ppuDataPrepare1_$2
 byte*~ ppuDataFetch::ppuDataPrepare1_$3
 byte*~ ppuDataFetch::ppuDataPrepare1_$4
 byte*~ ppuDataFetch::ppuDataPrepare1_$5
-nomodify void* ppuDataFetch::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFetch::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataFetch::ppuDataPrepare1_ppuData#1
+void* const ppuDataFetch::ppuDataPrepare1_ppuData
+void* const ppuDataFetch::ppuDataPrepare1_ppuData#0
+void* const ppuDataFetch::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataFetch::ppuDataRead1_$0
 byte*~ ppuDataFetch::ppuDataRead1_$1
 byte ppuDataFetch::ppuDataRead1_return
@@ -1362,7 +1362,7 @@ word ppuDataFetch::size#4
 word ppuDataFetch::size#5
 word ppuDataFetch::size#6
 word ppuDataFetch::size#7
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 bool~ ppuDataFill::$1
 word ppuDataFill::i
 word ppuDataFill::i#0
@@ -1371,21 +1371,21 @@ word ppuDataFill::i#2
 word ppuDataFill::i#3
 word ppuDataFill::i#4
 word ppuDataFill::i#5
-nomodify void* ppuDataFill::ppuData
-nomodify void* ppuDataFill::ppuData#0
-nomodify void* ppuDataFill::ppuData#1
-nomodify void* ppuDataFill::ppuData#2
-nomodify void* ppuDataFill::ppuData#3
-nomodify void* ppuDataFill::ppuData#4
+void* const ppuDataFill::ppuData
+void* const ppuDataFill::ppuData#0
+void* const ppuDataFill::ppuData#1
+void* const ppuDataFill::ppuData#2
+void* const ppuDataFill::ppuData#3
+void* const ppuDataFill::ppuData#4
 byte~ ppuDataFill::ppuDataPrepare1_$0
 byte~ ppuDataFill::ppuDataPrepare1_$1
 byte*~ ppuDataFill::ppuDataPrepare1_$2
 byte*~ ppuDataFill::ppuDataPrepare1_$3
 byte*~ ppuDataFill::ppuDataPrepare1_$4
 byte*~ ppuDataFill::ppuDataPrepare1_$5
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#1
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0
+void* const ppuDataFill::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataFill::ppuDataPut1_$0
 byte*~ ppuDataFill::ppuDataPut1_$1
 byte ppuDataFill::ppuDataPut1_val
@@ -1415,19 +1415,19 @@ byte ppuDataFill::val#6
 byte ppuDataFill::val#7
 byte ppuDataFill::val#8
 byte ppuDataFill::val#9
-void ppuDataSet(nomodify void* ppuDataSet::ppuData , byte ppuDataSet::val)
-nomodify void* ppuDataSet::ppuData
-nomodify void* ppuDataSet::ppuData#0
-nomodify void* ppuDataSet::ppuData#1
+void ppuDataSet(void* const ppuDataSet::ppuData , byte ppuDataSet::val)
+void* const ppuDataSet::ppuData
+void* const ppuDataSet::ppuData#0
+void* const ppuDataSet::ppuData#1
 byte~ ppuDataSet::ppuDataPrepare1_$0
 byte~ ppuDataSet::ppuDataPrepare1_$1
 byte*~ ppuDataSet::ppuDataPrepare1_$2
 byte*~ ppuDataSet::ppuDataPrepare1_$3
 byte*~ ppuDataSet::ppuDataPrepare1_$4
 byte*~ ppuDataSet::ppuDataPrepare1_$5
-nomodify void* ppuDataSet::ppuDataPrepare1_ppuData
-nomodify void* ppuDataSet::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataSet::ppuDataPrepare1_ppuData#1
+void* const ppuDataSet::ppuDataPrepare1_ppuData
+void* const ppuDataSet::ppuDataPrepare1_ppuData#0
+void* const ppuDataSet::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataSet::ppuDataPut1_$0
 byte*~ ppuDataSet::ppuDataPut1_$1
 byte ppuDataSet::ppuDataPut1_val
@@ -1438,14 +1438,14 @@ byte ppuDataSet::val#0
 byte ppuDataSet::val#1
 byte ppuDataSet::val#2
 byte ppuDataSet::val#3
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 bool~ ppuDataTransfer::$1
-nomodify void* ppuDataTransfer::cpuData
-nomodify void* ppuDataTransfer::cpuData#0
-nomodify void* ppuDataTransfer::cpuData#1
-nomodify void* ppuDataTransfer::cpuData#2
-nomodify void* ppuDataTransfer::cpuData#3
-nomodify void* ppuDataTransfer::cpuData#4
+void* const ppuDataTransfer::cpuData
+void* const ppuDataTransfer::cpuData#0
+void* const ppuDataTransfer::cpuData#1
+void* const ppuDataTransfer::cpuData#2
+void* const ppuDataTransfer::cpuData#3
+void* const ppuDataTransfer::cpuData#4
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#0
 byte* ppuDataTransfer::cpuSrc#1
@@ -1460,19 +1460,19 @@ word ppuDataTransfer::i#2
 word ppuDataTransfer::i#3
 word ppuDataTransfer::i#4
 word ppuDataTransfer::i#5
-nomodify void* ppuDataTransfer::ppuData
-nomodify void* ppuDataTransfer::ppuData#0
-nomodify void* ppuDataTransfer::ppuData#1
-nomodify void* ppuDataTransfer::ppuData#2
+void* const ppuDataTransfer::ppuData
+void* const ppuDataTransfer::ppuData#0
+void* const ppuDataTransfer::ppuData#1
+void* const ppuDataTransfer::ppuData#2
 byte~ ppuDataTransfer::ppuDataPrepare1_$0
 byte~ ppuDataTransfer::ppuDataPrepare1_$1
 byte*~ ppuDataTransfer::ppuDataPrepare1_$2
 byte*~ ppuDataTransfer::ppuDataPrepare1_$3
 byte*~ ppuDataTransfer::ppuDataPrepare1_$4
 byte*~ ppuDataTransfer::ppuDataPrepare1_$5
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#1
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#0
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataTransfer::ppuDataPut1_$0
 byte*~ ppuDataTransfer::ppuDataPut1_$1
 byte ppuDataTransfer::ppuDataPut1_val
@@ -1711,8 +1711,8 @@ Adding number conversion cast (unumber) $20 in ppuDataFetch::size#0 = $20
 Adding number conversion cast (unumber) $20 in ppuDataTransfer::size#0 = $20
 Adding number conversion cast (unumber) $20 in cscroll::line1#1 = cscroll::line1#3 + $20
 Adding number conversion cast (unumber) $20 in cscroll::line2#1 = cscroll::line2#3 + $20
-Adding number conversion cast (unumber) $20 in ppuDataFill::ppuData#1 = (void*)CONIO_SCREEN_TEXT+$1e*$20-$20
-Adding number conversion cast (unumber) $1e*$20 in ppuDataFill::ppuData#1 = (void*)CONIO_SCREEN_TEXT+$1e*$20-(unumber)$20
+Adding number conversion cast (unumber) $20 in ppuDataFill::ppuData#1 = (void* const)CONIO_SCREEN_TEXT+$1e*$20-$20
+Adding number conversion cast (unumber) $1e*$20 in ppuDataFill::ppuData#1 = (void* const)CONIO_SCREEN_TEXT+$1e*$20-(unumber)$20
 Adding number conversion cast (unumber) $20 in ppuDataFill::size#1 = $20
 Adding number conversion cast (unumber) $20 in conio_line_text = conio_line_text - $20
 Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
@@ -1840,8 +1840,8 @@ Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 9152
 Simplifying constant pointer cast (byte*) 10176
 Simplifying constant pointer cast (byte*) 16128
-Simplifying constant pointer cast (byte*) 8194
-Simplifying constant pointer cast (byte*) 8199
+Simplifying constant pointer cast (volatile byte*) 8194
+Simplifying constant pointer cast (volatile byte*) 8199
 Simplifying constant pointer cast (byte*) 16407
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (void()*) 0
@@ -2214,8 +2214,8 @@ Constant right-side identified [88] ppuDataSet::ppuDataPut1_$1 = (byte*)PPU
 Constant right-side identified [251] main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
 Constant right-side identified [254] main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant right-side identified [258] main::initNES1_disableAudioOutput1_$1 = (byte*)APU
-Constant right-side identified [262] main::initNES1_waitForVBlank1_$3 = (byte*)PPU
-Constant right-side identified [280] main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant right-side identified [262] main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
+Constant right-side identified [280] main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant right-side identified [286] ppuDataTransfer::size#1 = sizeof  PALETTE
 Constant right-side identified [347] main::enableVideoOutput1_$2 = (byte*)PPU
 Constant right-side identified [350] main::enableVideoOutput1_$3 = (byte*)PPU
@@ -2242,7 +2242,7 @@ Constant ppuDataFetch::ppuDataRead1_$1 = (byte*)PPU
 Constant ppuDataSet::ppuDataPrepare1_$4 = (byte*)PPU
 Constant ppuDataSet::ppuDataPrepare1_$5 = (byte*)PPU
 Constant ppuDataSet::ppuDataPut1_$1 = (byte*)PPU
-Constant ppuDataFill::ppuData#0 = (void*)CONIO_SCREEN_TEXT
+Constant ppuDataFill::ppuData#0 = (void* const)CONIO_SCREEN_TEXT
 Constant ppuDataFill::val#0 = ' '
 Constant ppuDataFill::size#0 = $3c0
 Constant gotoxy::y#0 = 0
@@ -2252,11 +2252,11 @@ Constant cscroll::line2#0 = CONIO_SCREEN_TEXT+$20
 Constant cscroll::y#0 = 0
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
-Constant ppuDataFetch::cpuData#0 = (void*)conio_cscroll_buffer
+Constant ppuDataFetch::cpuData#0 = (void* const)conio_cscroll_buffer
 Constant ppuDataFetch::size#0 = $20
-Constant ppuDataTransfer::cpuData#0 = (void*)conio_cscroll_buffer
+Constant ppuDataTransfer::cpuData#0 = (void* const)conio_cscroll_buffer
 Constant ppuDataTransfer::size#0 = $20
-Constant ppuDataFill::ppuData#1 = (void*)CONIO_SCREEN_TEXT+(word)$1e*$20-$20
+Constant ppuDataFill::ppuData#1 = (void* const)CONIO_SCREEN_TEXT+(word)$1e*$20-$20
 Constant ppuDataFill::val#1 = ' '
 Constant ppuDataFill::size#1 = $20
 Constant cputs::c#0 = 0
@@ -2277,16 +2277,16 @@ Constant uctoa_append::digit#0 = 0
 Constant main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
 Constant main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant main::initNES1_disableAudioOutput1_$1 = (byte*)APU
-Constant main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+Constant main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
 Constant main::initNES1_i#0 = 0
-Constant main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant ppuDataTransfer::size#1 = sizeof PALETTE
-Constant ppuDataTransfer::ppuData#1 = (void*)PPU_PALETTE
-Constant ppuDataTransfer::cpuData#1 = (void*)PALETTE
-Constant ppuDataFill::ppuData#2 = (void*)PPU_ATTRIBUTE_TABLE_0
+Constant ppuDataTransfer::ppuData#1 = (void* const)PPU_PALETTE
+Constant ppuDataTransfer::cpuData#1 = (void* const)PALETTE
+Constant ppuDataFill::ppuData#2 = (void* const)PPU_ATTRIBUTE_TABLE_0
 Constant ppuDataFill::val#2 = 0
 Constant ppuDataFill::size#2 = $40
-Constant ppuDataFill::ppuData#3 = (void*)PPU_ATTRIBUTE_TABLE_1
+Constant ppuDataFill::ppuData#3 = (void* const)PPU_ATTRIBUTE_TABLE_1
 Constant ppuDataFill::val#3 = 0
 Constant ppuDataFill::size#3 = $40
 Constant main::x#0 = 1
@@ -2464,7 +2464,7 @@ Alias candidate removed (volatile)conio_line_text = gotoxy::$5
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Inlining Noop Cast [24] ppuDataTransfer::cpuSrc#0 = (byte*)ppuDataTransfer::cpuData#2 keeping ppuDataTransfer::cpuData#2
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [71] ppuDataSet::ppuData#0 = (void*)cputc::$1 keeping ppuDataSet::ppuData#0
+Inlining Noop Cast [71] ppuDataSet::ppuData#0 = (void* const)cputc::$1 keeping ppuDataSet::ppuData#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [63] gotoxy::line_offset#0 = gotoxy::$6 * $20
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -2520,7 +2520,7 @@ Constant inlined cputs::s#1 = num_buffer
 Constant inlined main::$15 = main::screensizey2_return#0-3
 Constant inlined cputcxy::y#0 = 1
 Constant inlined cputcxy::y#1 = main::screensizey1_return#0-4
-Constant inlined main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant inlined main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant inlined ppuDataFetch::ppuDataPrepare1_$4 = (byte*)PPU
 Constant inlined ppuDataFetch::ppuDataPrepare1_$5 = (byte*)PPU
 Constant inlined CONIO_SCREEN_TEXT = PPU_NAME_TABLE_0
@@ -2528,10 +2528,10 @@ Constant inlined ppuDataFill::ppuDataPrepare1_$4 = (byte*)PPU
 Constant inlined ppuDataTransfer::ppuDataPrepare1_$5 = (byte*)PPU
 Constant inlined ppuDataFill::ppuDataPrepare1_$5 = (byte*)PPU
 Constant inlined ppuDataTransfer::ppuDataPrepare1_$4 = (byte*)PPU
-Constant inlined ppuDataFill::ppuData#1 = (void*)PPU_NAME_TABLE_0+(word)$1e*$20-$20
-Constant inlined ppuDataFill::ppuData#0 = (void*)PPU_NAME_TABLE_0
-Constant inlined ppuDataFill::ppuData#3 = (void*)PPU_ATTRIBUTE_TABLE_1
-Constant inlined ppuDataFill::ppuData#2 = (void*)PPU_ATTRIBUTE_TABLE_0
+Constant inlined ppuDataFill::ppuData#1 = (void* const)PPU_NAME_TABLE_0+(word)$1e*$20-$20
+Constant inlined ppuDataFill::ppuData#0 = (void* const)PPU_NAME_TABLE_0
+Constant inlined ppuDataFill::ppuData#3 = (void* const)PPU_ATTRIBUTE_TABLE_1
+Constant inlined ppuDataFill::ppuData#2 = (void* const)PPU_ATTRIBUTE_TABLE_0
 Constant inlined cscroll::line1#0 = PPU_NAME_TABLE_0
 Constant inlined uctoa::digit#0 = 0
 Constant inlined vblank::$15 = (byte*)PPU
@@ -2565,11 +2565,11 @@ Constant inlined main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant inlined main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
 Constant inlined main::initNES1_disableAudioOutput1_$1 = (byte*)APU
 Constant inlined readJoy1::joy#0 = 0
-Constant inlined ppuDataTransfer::cpuData#1 = (void*)PALETTE
+Constant inlined ppuDataTransfer::cpuData#1 = (void* const)PALETTE
 Constant inlined cscroll::y#0 = 0
 Constant inlined cscroll::line2#0 = PPU_NAME_TABLE_0+$20
-Constant inlined ppuDataTransfer::cpuData#0 = (void*)conio_cscroll_buffer
-Constant inlined ppuDataTransfer::ppuData#1 = (void*)PPU_PALETTE
+Constant inlined ppuDataTransfer::cpuData#0 = (void* const)conio_cscroll_buffer
+Constant inlined ppuDataTransfer::ppuData#1 = (void* const)PPU_PALETTE
 Constant inlined cputcxy::c#3 = 'i'
 Constant inlined cputcxy::c#2 = 'i'
 Constant inlined cputcxy::c#1 = '-'
@@ -2581,7 +2581,7 @@ Constant inlined uctoa::buffer#5 = num_buffer
 Constant inlined readJoy1::$9 = (byte*)APU
 Constant inlined ppuDataFetch::i#0 = 0
 Constant inlined gotoxy::y#0 = 0
-Constant inlined main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+Constant inlined main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
 Constant inlined ppuDataSet::ppuDataPut1_$1 = (byte*)PPU
 Constant inlined ppuDataFill::size#1 = $20
 Constant inlined ppuDataFill::size#0 = $3c0
@@ -2608,8 +2608,8 @@ Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUAD
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ)
-Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
-Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
+Consolidated array index constant in *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
+Consolidated array index constant in *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL)
@@ -2932,7 +2932,7 @@ main::initNES1_waitForVBlank1: scope:[main]  from main::initNES1_clearVBlankFlag
   [39] phi()
   to:main::initNES1_waitForVBlank1_@1
 main::initNES1_waitForVBlank1_@1: scope:[main]  from main::initNES1_waitForVBlank1 main::initNES1_waitForVBlank1_@1
-  [40] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
+  [40] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
   [41] if(0==main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1
   to:main::initNES1_@1
 main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_waitForVBlank1_@1
@@ -2952,7 +2952,7 @@ main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   [53] phi()
   to:main::initNES1_waitForVBlank2_@1
 main::initNES1_waitForVBlank2_@1: scope:[main]  from main::initNES1_waitForVBlank2 main::initNES1_waitForVBlank2_@1
-  [54] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
+  [54] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
   [55] if(0==main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1
   to:main::initNES1_@7
 main::initNES1_@7: scope:[main]  from main::initNES1_waitForVBlank2_@1
@@ -3064,11 +3064,11 @@ readJoy1::@2: scope:[readJoy1]  from readJoy1::@1
   [102] readJoy1::i#1 = ++ readJoy1::i#2
   to:readJoy1::@1
 
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 ppuDataTransfer: scope:[ppuDataTransfer]  from cscroll::@4 main::@6
   [103] ppuDataTransfer::size#3 = phi( cscroll::@4/$20, main::@6/$20*SIZEOF_BYTE )
-  [103] ppuDataTransfer::cpuData#2 = phi( cscroll::@4/(void*)conio_cscroll_buffer, main::@6/(void*)PALETTE )
-  [103] ppuDataTransfer::ppuDataPrepare1_ppuData#0 = phi( cscroll::@4/ppuDataTransfer::ppuData#0, main::@6/(void*)PPU_PALETTE )
+  [103] ppuDataTransfer::cpuData#2 = phi( cscroll::@4/(void* const)conio_cscroll_buffer, main::@6/(void* const)PALETTE )
+  [103] ppuDataTransfer::ppuDataPrepare1_ppuData#0 = phi( cscroll::@4/ppuDataTransfer::ppuData#0, main::@6/(void* const)PPU_PALETTE )
   to:ppuDataTransfer::ppuDataPrepare1
 ppuDataTransfer::ppuDataPrepare1: scope:[ppuDataTransfer]  from ppuDataTransfer
   [104] ppuDataTransfer::ppuDataPrepare1_$0 = > ppuDataTransfer::ppuDataPrepare1_ppuData#0
@@ -3098,11 +3098,11 @@ ppuDataTransfer::@4: scope:[ppuDataTransfer]  from ppuDataTransfer::ppuDataPut1
   [115] ppuDataTransfer::i#1 = ++ ppuDataTransfer::i#2
   to:ppuDataTransfer::@1
 
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 ppuDataFill: scope:[ppuDataFill]  from clrscr cscroll::@3 main::@12 main::@13
   [116] ppuDataFill::val#10 = phi( clrscr/' ', cscroll::@3/' ', main::@12/0, main::@13/0 )
   [116] ppuDataFill::size#5 = phi( clrscr/$3c0, cscroll::@3/$20, main::@12/$40, main::@13/$40 )
-  [116] ppuDataFill::ppuDataPrepare1_ppuData#0 = phi( clrscr/(void*)PPU_NAME_TABLE_0, cscroll::@3/(void*)PPU_NAME_TABLE_0+(word)$1e*$20-$20, main::@12/(void*)PPU_ATTRIBUTE_TABLE_0, main::@13/(void*)PPU_ATTRIBUTE_TABLE_1 )
+  [116] ppuDataFill::ppuDataPrepare1_ppuData#0 = phi( clrscr/(void* const)PPU_NAME_TABLE_0, cscroll::@3/(void* const)PPU_NAME_TABLE_0+(word)$1e*$20-$20, main::@12/(void* const)PPU_ATTRIBUTE_TABLE_0, main::@13/(void* const)PPU_ATTRIBUTE_TABLE_1 )
   to:ppuDataFill::ppuDataPrepare1
 ppuDataFill::ppuDataPrepare1: scope:[ppuDataFill]  from ppuDataFill
   [117] ppuDataFill::ppuDataPrepare1_$0 = > ppuDataFill::ppuDataPrepare1_ppuData#0
@@ -3182,7 +3182,7 @@ uctoa::@6: scope:[uctoa]  from uctoa::@5
   [150] uctoa::buffer#4 = ++ uctoa::buffer#11
   to:uctoa::@4
 
-void cputsxy(byte cputsxy::x , byte cputsxy::y , to_nomodify byte* cputsxy::s)
+void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
 cputsxy: scope:[cputsxy]  from main::@17
   [151] gotoxy::x#3 = cputsxy::x#0
   [152] gotoxy::y#3 = cputsxy::y#0
@@ -3262,7 +3262,7 @@ gotoxy::@return: scope:[gotoxy]  from gotoxy::@2
   [184] return 
   to:@return
 
-void cputs(to_nomodify byte* cputs::s)
+void cputs(const byte* cputs::s)
 cputs: scope:[cputs]  from cputsxy::@1
   [185] phi()
   to:cputs::@1
@@ -3307,14 +3307,14 @@ cputc::@1: scope:[cputc]  from cputc
   [204] call cputln 
   to:cputc::@return
 
-void ppuDataSet(nomodify void* ppuDataSet::ppuData , byte ppuDataSet::val)
+void ppuDataSet(void* const ppuDataSet::ppuData , byte ppuDataSet::val)
 ppuDataSet: scope:[ppuDataSet]  from cputc::@2
   [205] phi()
   to:ppuDataSet::ppuDataPrepare1
 ppuDataSet::ppuDataPrepare1: scope:[ppuDataSet]  from ppuDataSet
-  [206] ppuDataSet::ppuDataPrepare1_$0 = > (void*)ppuDataSet::ppuData#0
+  [206] ppuDataSet::ppuDataPrepare1_$0 = > (void* const)ppuDataSet::ppuData#0
   [207] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$0
-  [208] ppuDataSet::ppuDataPrepare1_$1 = < (void*)ppuDataSet::ppuData#0
+  [208] ppuDataSet::ppuDataPrepare1_$1 = < (void* const)ppuDataSet::ppuData#0
   [209] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$1
   to:ppuDataSet::ppuDataPut1
 ppuDataSet::ppuDataPut1: scope:[ppuDataSet]  from ppuDataSet::ppuDataPrepare1
@@ -3357,11 +3357,11 @@ cscroll::@return: scope:[cscroll]  from cscroll cscroll::@6
   [224] return 
   to:@return
 cscroll::@2: scope:[cscroll]  from cscroll::@1
-  [225] ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2
+  [225] ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2
   [226] call ppuDataFetch 
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@2
-  [227] ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2
+  [227] ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2
   [228] call ppuDataTransfer 
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
@@ -3370,7 +3370,7 @@ cscroll::@5: scope:[cscroll]  from cscroll::@4
   [231] cscroll::y#1 = ++ cscroll::y#2
   to:cscroll::@1
 
-void ppuDataFetch(nomodify void* ppuDataFetch::cpuData , nomodify void* ppuDataFetch::ppuData , word ppuDataFetch::size)
+void ppuDataFetch(void* const ppuDataFetch::cpuData , void* const ppuDataFetch::ppuData , word ppuDataFetch::size)
 ppuDataFetch: scope:[ppuDataFetch]  from cscroll::@2
   [232] phi()
   to:ppuDataFetch::ppuDataPrepare1
@@ -3429,14 +3429,14 @@ byte cputcxy::y#2 202.0
 byte cputcxy::y#3 202.0
 byte cputcxy::y#4 601.5
 void cputln()
-void cputs(to_nomodify byte* cputs::s)
+void cputs(const byte* cputs::s)
 byte cputs::c
 byte cputs::c#1 1000001.0
-to_nomodify byte* cputs::s
-to_nomodify byte* cputs::s#0 500000.5
-to_nomodify byte* cputs::s#2 1500001.5
-void cputsxy(byte cputsxy::x , byte cputsxy::y , to_nomodify byte* cputsxy::s)
-to_nomodify byte* cputsxy::s
+const byte* cputs::s
+const byte* cputs::s#0 500000.5
+const byte* cputs::s#2 1500001.5
+void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
+const byte* cputsxy::s
 byte cputsxy::x
 byte cputsxy::x#0 551.0
 byte cputsxy::y
@@ -3486,48 +3486,48 @@ byte main::x#10 72.14285714285714
 byte main::y
 byte main::y#1 202.0
 byte main::y#10 72.14285714285714
-void ppuDataFetch(nomodify void* ppuDataFetch::cpuData , nomodify void* ppuDataFetch::ppuData , word ppuDataFetch::size)
-nomodify void* ppuDataFetch::cpuData
+void ppuDataFetch(void* const ppuDataFetch::cpuData , void* const ppuDataFetch::ppuData , word ppuDataFetch::size)
+void* const ppuDataFetch::cpuData
 byte* ppuDataFetch::cpuDst
 byte* ppuDataFetch::cpuDst#1 1.0E17
 byte* ppuDataFetch::cpuDst#2 7.5E16
 word ppuDataFetch::i
 word ppuDataFetch::i#1 2.0E17
 word ppuDataFetch::i#2 6.0E16
-nomodify void* ppuDataFetch::ppuData
-nomodify void* ppuDataFetch::ppuData#0 5.25000000000075E12
+void* const ppuDataFetch::ppuData
+void* const ppuDataFetch::ppuData#0 5.25000000000075E12
 byte~ ppuDataFetch::ppuDataPrepare1_$0 2.0000000000002E13
 byte~ ppuDataFetch::ppuDataPrepare1_$1 2.0000000000002E13
-nomodify void* ppuDataFetch::ppuDataPrepare1_ppuData
+void* const ppuDataFetch::ppuDataPrepare1_ppuData
 byte ppuDataFetch::ppuDataRead1_return
 byte ppuDataFetch::ppuDataRead1_return#0 2.0E17
 word ppuDataFetch::size
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 word ppuDataFill::i
 word ppuDataFill::i#1 2.000000000002E12
 word ppuDataFill::i#2 1.000000000001E12
-nomodify void* ppuDataFill::ppuData
+void* const ppuDataFill::ppuData
 byte~ ppuDataFill::ppuDataPrepare1_$0 2.0000000002E10
 byte~ ppuDataFill::ppuDataPrepare1_$1 2.0000000002E10
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0 6.666666667333333E9
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0 6.666666667333333E9
 byte ppuDataFill::ppuDataPut1_val
 word ppuDataFill::size
 word ppuDataFill::size#5 1.1111111111122223E11
 byte ppuDataFill::val
 byte ppuDataFill::val#10 1.1111111111122223E11
-void ppuDataSet(nomodify void* ppuDataSet::ppuData , byte ppuDataSet::val)
-nomodify void* ppuDataSet::ppuData
-nomodify byte* ppuDataSet::ppuData#0 2000000.2
+void ppuDataSet(void* const ppuDataSet::ppuData , byte ppuDataSet::val)
+void* const ppuDataSet::ppuData
+byte* const ppuDataSet::ppuData#0 2000000.2
 byte~ ppuDataSet::ppuDataPrepare1_$0 2.00000002E8
 byte~ ppuDataSet::ppuDataPrepare1_$1 2.00000002E8
-nomodify void* ppuDataSet::ppuDataPrepare1_ppuData
+void* const ppuDataSet::ppuDataPrepare1_ppuData
 byte ppuDataSet::ppuDataPut1_val
 byte ppuDataSet::val
 byte ppuDataSet::val#0 1.8333333666666668E7
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
-nomodify void* ppuDataTransfer::cpuData
-nomodify void* ppuDataTransfer::cpuData#2
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void* const ppuDataTransfer::cpuData
+void* const ppuDataTransfer::cpuData#2
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#1 1.000000000000001E15
 byte* ppuDataTransfer::cpuSrc#2 7.52500000000001E14
@@ -3535,12 +3535,12 @@ byte* ppuDataTransfer::cpuSrc#6 2.0000000000002E13
 word ppuDataTransfer::i
 word ppuDataTransfer::i#1 2.000000000000002E15
 word ppuDataTransfer::i#2 6.000000000000005E14
-nomodify void* ppuDataTransfer::ppuData
-nomodify void* ppuDataTransfer::ppuData#0 2.000000000002E12
+void* const ppuDataTransfer::ppuData
+void* const ppuDataTransfer::ppuData#0 2.000000000002E12
 byte~ ppuDataTransfer::ppuDataPrepare1_$0 2.0000000000002E13
 byte~ ppuDataTransfer::ppuDataPrepare1_$1 2.0000000000002E13
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#0 7.000000000001E12
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#0 7.000000000001E12
 byte ppuDataTransfer::ppuDataPut1_val
 byte ppuDataTransfer::ppuDataPut1_val#0 2.000000000000002E15
 word ppuDataTransfer::size
@@ -3843,7 +3843,7 @@ Statement [35] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = 0 [ ] (  [ ] { }
 Statement [36] *FR_COUNTER = $40 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [37] *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ) = $40 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [40] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:7 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
+Statement [40] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:7 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
 Statement [43] MEMORY[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::initNES1_i#2 main::initNES1_i#1 ]
 Statement [44] (MEMORY+$100)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
@@ -3853,7 +3853,7 @@ Statement [47] (MEMORY+$400)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [
 Statement [48] (MEMORY+$500)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [49] (MEMORY+$600)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [50] (MEMORY+$700)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
-Statement [54] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:7 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
+Statement [54] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:7 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
 Statement [71] x_scroll = 0 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [72] y_scroll = -8 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
@@ -3908,8 +3908,8 @@ Statement [212] conio_line_text = conio_line_text + $20 [ conio_cursor_y conio_l
 Statement [213] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [217] if(conio_cursor_y!=$1e) goto cscroll::@return [ conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [222] conio_line_text = conio_line_text - $20 [ conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [225] ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [227] ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2 [ conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  ) always clobbers reg byte a 
+Statement [225] ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [227] ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2 [ conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  ) always clobbers reg byte a 
 Statement [229] cscroll::line1#1 = cscroll::line1#2 + $20 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [230] cscroll::line2#1 = cscroll::line2#2 + $20 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUDATA  } always clobbers reg byte a 
@@ -3937,7 +3937,7 @@ Statement [35] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = 0 [ ] (  [ ] { }
 Statement [36] *FR_COUNTER = $40 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [37] *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ) = $40 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [40] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:7 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
+Statement [40] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:7 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
 Statement [43] MEMORY[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [44] (MEMORY+$100)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [45] (MEMORY+$200)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
@@ -3946,7 +3946,7 @@ Statement [47] (MEMORY+$400)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [
 Statement [48] (MEMORY+$500)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [49] (MEMORY+$600)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [50] (MEMORY+$700)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:7 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
-Statement [54] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:7 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
+Statement [54] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:7 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
 Statement [71] x_scroll = 0 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [72] y_scroll = -8 [ ] (  [ ] { }  main:7 [ ] { }  ) always clobbers reg byte a 
@@ -3981,8 +3981,8 @@ Statement [212] conio_line_text = conio_line_text + $20 [ conio_cursor_y conio_l
 Statement [213] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [217] if(conio_cursor_y!=$1e) goto cscroll::@return [ conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [222] conio_line_text = conio_line_text - $20 [ conio_cursor_y conio_line_text ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [225] ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [227] ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2 [ conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  ) always clobbers reg byte a 
+Statement [225] ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ppuDataFetch::ppuData#0 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [227] ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2 [ conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text ppuDataTransfer::ppuData#0 cscroll::y#2 cscroll::line2#2 cscroll::line1#2 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } { ppuDataTransfer::ppuDataPrepare1_ppuData#0 = ppuDataTransfer::ppuData#0 } }  ) always clobbers reg byte a 
 Statement [229] cscroll::line1#1 = cscroll::line1#2 + $20 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#2 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement [230] cscroll::line2#1 = cscroll::line2#2 + $20 [ conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] ( cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:201::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:201::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:201::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:83::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#2 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:86::cputc:162::cputln:204::cscroll:215 [ main::y#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::y#3 = cputcxy::y#4 main::y#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:89::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#0 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  main:7::cputcxy:92::cputc:162::cputln:204::cscroll:215 [ main::x#10 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputcxy::x#1 = cputcxy::x#4 main::x#10 } { cputc::c#1 = cputc::c#2 cputcxy::c#4 } }  cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  main:7::cputsxy:80::cputs:155::cputc:192::cputln:204::cscroll:215 [ main::i#2 cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text cscroll::y#2 cscroll::line2#1 cscroll::line1#1 ] { { cputsxy::x#0 = main::i#2 cputsxy::y#0 } { cputc::c#0 = cputc::c#2 cputs::c#1 } }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUDATA  } always clobbers reg byte a 
@@ -4478,7 +4478,7 @@ main: {
     jmp initNES1_waitForVBlank1___b1
     // main::initNES1_waitForVBlank1_@1
   initNES1_waitForVBlank1___b1:
-    // [40] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [40] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // [41] if(0==main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1 -- 0_eq_vbuaa_then_la1 
@@ -4532,7 +4532,7 @@ main: {
     jmp initNES1_waitForVBlank2___b1
     // main::initNES1_waitForVBlank2_@1
   initNES1_waitForVBlank2___b1:
-    // [54] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [54] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // [55] if(0==main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1 -- 0_eq_vbuaa_then_la1 
@@ -4557,12 +4557,12 @@ main: {
     sta.z ppuDataTransfer.size
     lda #>$20*SIZEOF_BYTE
     sta.z ppuDataTransfer.size+1
-    // [103] phi ppuDataTransfer::cpuData#2 = (void*)PALETTE [phi:main::@6->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::cpuData#2 = (void* const)PALETTE [phi:main::@6->ppuDataTransfer#1] -- pvoz1=pvoc1 
     lda #<PALETTE
     sta.z ppuDataTransfer.cpuData
     lda #>PALETTE
     sta.z ppuDataTransfer.cpuData+1
-    // [103] phi ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (void*)PPU_PALETTE [phi:main::@6->ppuDataTransfer#2] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (void* const)PPU_PALETTE [phi:main::@6->ppuDataTransfer#2] -- pvoz1=pvoc1 
     lda #<PPU_PALETTE
     sta.z ppuDataTransfer.ppuDataPrepare1_ppuData
     lda #>PPU_PALETTE
@@ -4584,7 +4584,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_0 [phi:main::@12->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_0 [phi:main::@12->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_0
@@ -4605,7 +4605,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_1 [phi:main::@13->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_1 [phi:main::@13->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_1
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_1
@@ -5015,7 +5015,7 @@ clrscr: {
     sta.z ppuDataFill.size
     lda #>$3c0
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0 [phi:clrscr->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0 [phi:clrscr->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0
@@ -5350,7 +5350,7 @@ gotoxy: {
 }
   // cputs
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($17) s)
+// cputs(const byte* zp($17) s)
 cputs: {
     .label s = $17
     // [186] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
@@ -5458,11 +5458,11 @@ ppuDataSet: {
     jmp ppuDataPrepare1
     // ppuDataSet::ppuDataPrepare1
   ppuDataPrepare1:
-    // [206] ppuDataSet::ppuDataPrepare1_$0 = > (void*)ppuDataSet::ppuData#0 -- vbuxx=_hi_pvoz1 
+    // [206] ppuDataSet::ppuDataPrepare1_$0 = > (void* const)ppuDataSet::ppuData#0 -- vbuxx=_hi_pvoz1 
     ldx.z ppuData+1
     // [207] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$0 -- _deref_pbuc1=vbuxx 
     stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // [208] ppuDataSet::ppuDataPrepare1_$1 = < (void*)ppuDataSet::ppuData#0 -- vbuxx=_lo_pvoz1 
+    // [208] ppuDataSet::ppuDataPrepare1_$1 = < (void* const)ppuDataSet::ppuData#0 -- vbuxx=_lo_pvoz1 
     ldx.z ppuData
     // [209] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$1 -- _deref_pbuc1=vbuxx 
     stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
@@ -5547,7 +5547,7 @@ cscroll: {
     sta.z ppuDataFill.size
     lda #>$20
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0+(word)$1e*$20-$20 [phi:cscroll::@3->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0+(word)$1e*$20-$20 [phi:cscroll::@3->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0+$1e*$20-$20
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0+$1e*$20-$20
@@ -5573,7 +5573,7 @@ cscroll: {
     rts
     // cscroll::@2
   __b2:
-    // [225] ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2 -- pvoz1=pvoz2 
+    // [225] ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2 -- pvoz1=pvoz2 
     lda.z line2
     sta.z ppuDataFetch.ppuData
     lda.z line2+1
@@ -5585,7 +5585,7 @@ cscroll: {
     jmp __b4
     // cscroll::@4
   __b4:
-    // [227] ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2 -- pvoz1=pvoz2 
+    // [227] ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2 -- pvoz1=pvoz2 
     lda.z line1
     sta.z ppuDataTransfer.ppuData
     lda.z line1+1
@@ -5598,7 +5598,7 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    // [103] phi ppuDataTransfer::cpuData#2 = (void*)conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::cpuData#2 = (void* const)conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
     lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
     lda #>conio_cscroll_buffer
@@ -6033,36 +6033,36 @@ Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-const struct RICOH_2A03* APU = (struct RICOH_2A03*) 16384
-const byte* DIGITS[]  = "0123456789abcdef"z
-const nomodify byte* FR_COUNTER = (byte*) 16407
-const nomodify byte JOY_DOWN = 4
-const nomodify byte JOY_LEFT = 2
-const nomodify byte JOY_RIGHT = 1
-const nomodify byte JOY_UP = 8
-const nomodify byte* MEMORY = (byte*) 0
-const byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
-const byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
-const byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
-const byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-const byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
-const byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
-const struct RICOH_2C02* PPU = (struct RICOH_2C02*) 8192
-const nomodify byte* PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
-const nomodify byte* PPU_ATTRIBUTE_TABLE_1 = (byte*) 10176
-const nomodify byte* PPU_NAME_TABLE_0 = (byte*) 8192
-const nomodify byte* PPU_PALETTE = (byte*) 16128
-const nomodify to_volatile byte* PPU_PPUDATA = (byte*) 8199
-const nomodify to_volatile byte* PPU_PPUSTATUS = (byte*) 8194
-const byte RADIX::BINARY = 2
-const byte RADIX::DECIMAL = $a
-const byte RADIX::HEXADECIMAL = $10
-const byte RADIX::OCTAL = 8
-const byte* RADIX_HEXADECIMAL_VALUES_CHAR[]  = { $10 }
-const byte SIZEOF_BYTE = 1
-const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
+constant struct RICOH_2A03* APU = (struct RICOH_2A03*) 16384
+constant byte* DIGITS[]  = "0123456789abcdef"z
+constant byte* const FR_COUNTER = (byte*) 16407
+constant const byte JOY_DOWN = 4
+constant const byte JOY_LEFT = 2
+constant const byte JOY_RIGHT = 1
+constant const byte JOY_UP = 8
+constant byte* const MEMORY = (byte*) 0
+constant byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
+constant byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+constant byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
+constant struct RICOH_2C02* PPU = (struct RICOH_2C02*) 8192
+constant byte* const PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
+constant byte* const PPU_ATTRIBUTE_TABLE_1 = (byte*) 10176
+constant byte* const PPU_NAME_TABLE_0 = (byte*) 8192
+constant byte* const PPU_PALETTE = (byte*) 16128
+constant volatile byte* const PPU_PPUDATA = (volatile byte*) 8199
+constant volatile byte* const PPU_PPUSTATUS = (volatile byte*) 8194
+constant byte RADIX::BINARY = 2
+constant byte RADIX::DECIMAL = $a
+constant byte RADIX::HEXADECIMAL = $10
+constant byte RADIX::OCTAL = 8
+constant byte* RADIX_HEXADECIMAL_VALUES_CHAR[]  = { $10 }
+constant byte SIZEOF_BYTE = 1
+constant byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
         .fill 8, filechargen.get(c*8+i)
@@ -6070,10 +6070,10 @@ const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.9012
         .fill 8, 0
     }
  }}
-const to_nomodify void()** VECTORS[]  = { &vblank, &main, (void()*) 0 }
+constant void()* const* VECTORS[]  = { &vblank, &main, (void()*) 0 }
 void __start()
 void clrscr()
-const byte* conio_cscroll_buffer[$20]  = { fill( $20, 0) }
+constant byte* conio_cscroll_buffer[$20]  = { fill( $20, 0) }
 byte conio_cursor_x loadstore zp[1]:15 4375315.90625
 byte conio_cursor_y loadstore zp[1]:16 6.530632875510204E7
 byte* conio_line_text loadstore zp[2]:17 4.9111335755555555E7
@@ -6094,14 +6094,14 @@ byte cputcxy::y#2 reg byte a 202.0
 byte cputcxy::y#3 reg byte a 202.0
 byte cputcxy::y#4 reg byte a 601.5
 void cputln()
-void cputs(to_nomodify byte* cputs::s)
+void cputs(const byte* cputs::s)
 byte cputs::c
 byte cputs::c#1 reg byte a 1000001.0
-to_nomodify byte* cputs::s
-to_nomodify byte* cputs::s#0 s zp[2]:23 500000.5
-to_nomodify byte* cputs::s#2 s zp[2]:23 1500001.5
-void cputsxy(byte cputsxy::x , byte cputsxy::y , to_nomodify byte* cputsxy::s)
-to_nomodify byte* cputsxy::s
+const byte* cputs::s
+const byte* cputs::s#0 s zp[2]:23 500000.5
+const byte* cputs::s#2 s zp[2]:23 1500001.5
+void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
+const byte* cputsxy::s
 byte cputsxy::x
 byte cputsxy::x#0 reg byte x 551.0
 byte cputsxy::y
@@ -6141,66 +6141,66 @@ byte main::initNES1_i#2 reg byte x 112.22222222222223
 byte~ main::initNES1_waitForVBlank1_$0 reg byte a 202.0
 byte~ main::initNES1_waitForVBlank2_$0 reg byte a 202.0
 byte main::screensizex1_return
-const byte main::screensizex1_return#0 screensizex1_return = $20
+constant byte main::screensizex1_return#0 screensizex1_return = $20
 byte main::screensizex2_return
-const byte main::screensizex2_return#0 screensizex2_return = $20
+constant byte main::screensizex2_return#0 screensizex2_return = $20
 byte main::screensizey1_return
-const byte main::screensizey1_return#0 screensizey1_return = $1e
+constant byte main::screensizey1_return#0 screensizey1_return = $1e
 byte main::screensizey2_return
-const byte main::screensizey2_return#0 screensizey2_return = $1e
+constant byte main::screensizey2_return#0 screensizey2_return = $1e
 byte main::screensizey3_return
-const byte main::screensizey3_return#0 screensizey3_return = $1e
+constant byte main::screensizey3_return#0 screensizey3_return = $1e
 byte main::x
 byte main::x#1 x zp[1]:2 202.0
 byte main::x#10 x zp[1]:2 72.14285714285714
 byte main::y
 byte main::y#1 y zp[1]:3 202.0
 byte main::y#10 y zp[1]:3 72.14285714285714
-const byte* num_buffer[$b]  = { fill( $b, 0) }
-void ppuDataFetch(nomodify void* ppuDataFetch::cpuData , nomodify void* ppuDataFetch::ppuData , word ppuDataFetch::size)
-nomodify void* ppuDataFetch::cpuData
-const nomodify void* ppuDataFetch::cpuData#0 cpuData = (void*)conio_cscroll_buffer
+constant byte* num_buffer[$b]  = { fill( $b, 0) }
+void ppuDataFetch(void* const ppuDataFetch::cpuData , void* const ppuDataFetch::ppuData , word ppuDataFetch::size)
+void* const ppuDataFetch::cpuData
+constant void* const ppuDataFetch::cpuData#0 cpuData = (void* const)conio_cscroll_buffer
 byte* ppuDataFetch::cpuDst
 byte* ppuDataFetch::cpuDst#1 cpuDst zp[2]:13 1.0E17
 byte* ppuDataFetch::cpuDst#2 cpuDst zp[2]:13 7.5E16
 word ppuDataFetch::i
 word ppuDataFetch::i#1 i zp[2]:11 2.0E17
 word ppuDataFetch::i#2 i zp[2]:11 6.0E16
-nomodify void* ppuDataFetch::ppuData
-nomodify void* ppuDataFetch::ppuData#0 ppuData zp[2]:27 5.25000000000075E12
+void* const ppuDataFetch::ppuData
+void* const ppuDataFetch::ppuData#0 ppuData zp[2]:27 5.25000000000075E12
 byte~ ppuDataFetch::ppuDataPrepare1_$0 reg byte a 2.0000000000002E13
 byte~ ppuDataFetch::ppuDataPrepare1_$1 reg byte a 2.0000000000002E13
-nomodify void* ppuDataFetch::ppuDataPrepare1_ppuData
+void* const ppuDataFetch::ppuDataPrepare1_ppuData
 byte ppuDataFetch::ppuDataRead1_return
 byte ppuDataFetch::ppuDataRead1_return#0 reg byte a 2.0E17
 word ppuDataFetch::size
-const word ppuDataFetch::size#0 size = $20
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+constant word ppuDataFetch::size#0 size = $20
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 word ppuDataFill::i
 word ppuDataFill::i#1 i zp[2]:27 2.000000000002E12
 word ppuDataFill::i#2 i zp[2]:27 1.000000000001E12
-nomodify void* ppuDataFill::ppuData
+void* const ppuDataFill::ppuData
 byte~ ppuDataFill::ppuDataPrepare1_$0 reg byte a 2.0000000002E10
 byte~ ppuDataFill::ppuDataPrepare1_$1 reg byte a 2.0000000002E10
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:11 6.666666667333333E9
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:11 6.666666667333333E9
 byte ppuDataFill::ppuDataPut1_val
 word ppuDataFill::size
 word ppuDataFill::size#5 size zp[2]:13 1.1111111111122223E11
 byte ppuDataFill::val
 byte ppuDataFill::val#10 reg byte x 1.1111111111122223E11
-void ppuDataSet(nomodify void* ppuDataSet::ppuData , byte ppuDataSet::val)
-nomodify void* ppuDataSet::ppuData
-nomodify byte* ppuDataSet::ppuData#0 ppuData zp[2]:25 2000000.2
+void ppuDataSet(void* const ppuDataSet::ppuData , byte ppuDataSet::val)
+void* const ppuDataSet::ppuData
+byte* const ppuDataSet::ppuData#0 ppuData zp[2]:25 2000000.2
 byte~ ppuDataSet::ppuDataPrepare1_$0 reg byte x 2.00000002E8
 byte~ ppuDataSet::ppuDataPrepare1_$1 reg byte x 2.00000002E8
-nomodify void* ppuDataSet::ppuDataPrepare1_ppuData
+void* const ppuDataSet::ppuDataPrepare1_ppuData
 byte ppuDataSet::ppuDataPut1_val
 byte ppuDataSet::val
 byte ppuDataSet::val#0 reg byte a 1.8333333666666668E7
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
-nomodify void* ppuDataTransfer::cpuData
-nomodify void* ppuDataTransfer::cpuData#2 cpuData zp[2]:13
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void* const ppuDataTransfer::cpuData
+void* const ppuDataTransfer::cpuData#2 cpuData zp[2]:13
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#1 cpuSrc zp[2]:13 1.000000000000001E15
 byte* ppuDataTransfer::cpuSrc#2 cpuSrc zp[2]:13 7.52500000000001E14
@@ -6208,12 +6208,12 @@ byte* ppuDataTransfer::cpuSrc#6 cpuSrc zp[2]:13 2.0000000000002E13
 word ppuDataTransfer::i
 word ppuDataTransfer::i#1 i zp[2]:7 2.000000000000002E15
 word ppuDataTransfer::i#2 i zp[2]:7 6.000000000000005E14
-nomodify void* ppuDataTransfer::ppuData
-nomodify void* ppuDataTransfer::ppuData#0 ppuData zp[2]:11 2.000000000002E12
+void* const ppuDataTransfer::ppuData
+void* const ppuDataTransfer::ppuData#0 ppuData zp[2]:11 2.000000000002E12
 byte~ ppuDataTransfer::ppuDataPrepare1_$0 reg byte a 2.0000000000002E13
 byte~ ppuDataTransfer::ppuDataPrepare1_$1 reg byte a 2.0000000000002E13
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:11 7.000000000001E12
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:11 7.000000000001E12
 byte ppuDataTransfer::ppuDataPut1_val
 byte ppuDataTransfer::ppuDataPut1_val#0 reg byte a 2.000000000000002E15
 word ppuDataTransfer::size
@@ -6242,7 +6242,7 @@ byte uctoa::digit_value
 byte uctoa::digit_value#0 digit_value zp[1]:22 60000.600000000006
 byte* uctoa::digit_values
 byte uctoa::max_digits
-const byte uctoa::max_digits#2 max_digits = 2
+constant byte uctoa::max_digits#2 max_digits = 2
 byte uctoa::radix
 byte uctoa::started
 byte uctoa::started#2 started zp[1]:6 60000.600000000006
@@ -6619,7 +6619,7 @@ main: {
   initNES1_waitForVBlank1:
     // main::initNES1_waitForVBlank1_@1
     // PPU->PPUSTATUS&0x80
-    // [40] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [40] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
@@ -6669,7 +6669,7 @@ main: {
   initNES1_waitForVBlank2:
     // main::initNES1_waitForVBlank2_@1
     // PPU->PPUSTATUS&0x80
-    // [54] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [54] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
@@ -6691,12 +6691,12 @@ main: {
     sta.z ppuDataTransfer.size
     lda #>$20*SIZEOF_BYTE
     sta.z ppuDataTransfer.size+1
-    // [103] phi ppuDataTransfer::cpuData#2 = (void*)PALETTE [phi:main::@6->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::cpuData#2 = (void* const)PALETTE [phi:main::@6->ppuDataTransfer#1] -- pvoz1=pvoc1 
     lda #<PALETTE
     sta.z ppuDataTransfer.cpuData
     lda #>PALETTE
     sta.z ppuDataTransfer.cpuData+1
-    // [103] phi ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (void*)PPU_PALETTE [phi:main::@6->ppuDataTransfer#2] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (void* const)PPU_PALETTE [phi:main::@6->ppuDataTransfer#2] -- pvoz1=pvoc1 
     lda #<PPU_PALETTE
     sta.z ppuDataTransfer.ppuDataPrepare1_ppuData
     lda #>PPU_PALETTE
@@ -6715,7 +6715,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_0 [phi:main::@12->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_0 [phi:main::@12->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_0
@@ -6733,7 +6733,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_1 [phi:main::@13->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_1 [phi:main::@13->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_1
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_1
@@ -7107,7 +7107,7 @@ clrscr: {
     sta.z ppuDataFill.size
     lda #>$3c0
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0 [phi:clrscr->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0 [phi:clrscr->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0
@@ -7421,7 +7421,7 @@ gotoxy: {
 }
   // cputs
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($17) s)
+// cputs(const byte* zp($17) s)
 cputs: {
     .label s = $17
     // [186] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
@@ -7521,13 +7521,13 @@ ppuDataSet: {
     .label ppuData = $19
     // ppuDataSet::ppuDataPrepare1
     // >ppuData
-    // [206] ppuDataSet::ppuDataPrepare1_$0 = > (void*)ppuDataSet::ppuData#0 -- vbuxx=_hi_pvoz1 
+    // [206] ppuDataSet::ppuDataPrepare1_$0 = > (void* const)ppuDataSet::ppuData#0 -- vbuxx=_hi_pvoz1 
     ldx.z ppuData+1
     // PPU->PPUADDR = >ppuData
     // [207] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$0 -- _deref_pbuc1=vbuxx 
     stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     // <ppuData
-    // [208] ppuDataSet::ppuDataPrepare1_$1 = < (void*)ppuDataSet::ppuData#0 -- vbuxx=_lo_pvoz1 
+    // [208] ppuDataSet::ppuDataPrepare1_$1 = < (void* const)ppuDataSet::ppuData#0 -- vbuxx=_lo_pvoz1 
     ldx.z ppuData
     // PPU->PPUADDR = <ppuData
     // [209] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR) = ppuDataSet::ppuDataPrepare1_$1 -- _deref_pbuc1=vbuxx 
@@ -7611,7 +7611,7 @@ cscroll: {
     sta.z ppuDataFill.size
     lda #>$20
     sta.z ppuDataFill.size+1
-    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0+(word)$1e*$20-$20 [phi:cscroll::@3->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [116] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0+(word)$1e*$20-$20 [phi:cscroll::@3->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0+$1e*$20-$20
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0+$1e*$20-$20
@@ -7638,7 +7638,7 @@ cscroll: {
     // cscroll::@2
   __b2:
     // ppuDataFetch(conio_cscroll_buffer, line2, CONIO_WIDTH)
-    // [225] ppuDataFetch::ppuData#0 = (void*)cscroll::line2#2 -- pvoz1=pvoz2 
+    // [225] ppuDataFetch::ppuData#0 = (void* const)cscroll::line2#2 -- pvoz1=pvoz2 
     lda.z line2
     sta.z ppuDataFetch.ppuData
     lda.z line2+1
@@ -7648,7 +7648,7 @@ cscroll: {
     jsr ppuDataFetch
     // cscroll::@4
     // ppuDataTransfer(line1, conio_cscroll_buffer, CONIO_WIDTH)
-    // [227] ppuDataTransfer::ppuData#0 = (void*)cscroll::line1#2 -- pvoz1=pvoz2 
+    // [227] ppuDataTransfer::ppuData#0 = (void* const)cscroll::line1#2 -- pvoz1=pvoz2 
     lda.z line1
     sta.z ppuDataTransfer.ppuData
     lda.z line1+1
@@ -7660,7 +7660,7 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    // [103] phi ppuDataTransfer::cpuData#2 = (void*)conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    // [103] phi ppuDataTransfer::cpuData#2 = (void* const)conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
     lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
     lda #>conio_cscroll_buffer

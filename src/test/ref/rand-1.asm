@@ -353,7 +353,7 @@ textcolor: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($11) s)
+// cputs(const byte* zp($11) s)
 cputs: {
     .label s = $11
   __b1:

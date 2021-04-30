@@ -12,7 +12,7 @@ public class OperatorCastStruct extends OperatorCast {
    private final SymbolTypeStruct structType;
 
    public OperatorCastStruct(int precedence, SymbolTypeStruct structType) {
-      super("((" + structType.getTypeName()+ "))", "_struct_", precedence, structType);
+      super("((" + structType.getStructTypeName()+ "))", "_struct_", precedence, structType);
       this.structType = structType;
    }
 

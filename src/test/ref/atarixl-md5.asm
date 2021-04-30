@@ -56,7 +56,7 @@ main: {
 }
 .segment Code
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($b6) s)
+// cputs(const byte* zp($b6) s)
 cputs: {
     .label s = $b6
   __b1:

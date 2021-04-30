@@ -36,7 +36,7 @@ public class SymbolTypeProcedure implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
+   public String getTypeBaseName() {
       return returnType.getTypeName() + "()";
    }
 

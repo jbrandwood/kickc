@@ -379,7 +379,7 @@ cputc: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(4) s)
+// cputs(const byte* zp(4) s)
 cputs: {
     .label s = 4
     lda #<printf_number_buffer.buffer_digits

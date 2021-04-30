@@ -1681,7 +1681,7 @@ kbhit: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($52) s)
+// cputs(const byte* zp($52) s)
 cputs: {
     .label s = $52
   __b1:

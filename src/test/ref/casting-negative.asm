@@ -288,7 +288,7 @@ printf_sint: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(5) s)
+// cputs(const byte* zp(5) s)
 cputs: {
     .label s = 5
   __b1:

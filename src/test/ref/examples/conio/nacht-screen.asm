@@ -622,7 +622,7 @@ strlen: {
 }
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-// cputsxy(byte register(X) x, byte register(A) y, byte* zp(9) s)
+// cputsxy(byte register(X) x, byte register(A) y, const byte* zp(9) s)
 cputsxy: {
     .label s = 9
     // gotoxy(x, y)
@@ -696,7 +696,7 @@ cvline: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(9) s)
+// cputs(const byte* zp(9) s)
 cputs: {
     .label s = 9
   __b1:

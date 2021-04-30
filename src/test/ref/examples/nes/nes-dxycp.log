@@ -23,7 +23,7 @@ Inlined call ppuDataFetch::$2 = call ppuDataRead
 Inlined call call ppuDataPrepare ppuDataPutTile::ppuData 
 Inlined call call ppuDataPut ppuDataPutTile::tile[0] 
 Inlined call call ppuDataPut ppuDataPutTile::tile[1] 
-Inlined call call ppuDataPrepare (void*)ppuDataPutTile::$3 
+Inlined call call ppuDataPrepare (void* const)ppuDataPutTile::$3 
 Inlined call call ppuDataPut ppuDataPutTile::tile[2] 
 Inlined call call ppuDataPut ppuDataPutTile::tile[3] 
 Inlined call call ppuDataPrepare ppuDataSet::ppuData 
@@ -75,7 +75,7 @@ readJoy1::@return: scope:[readJoy1]  from readJoy1::@3
   return 
   to:@return
 
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 ppuDataFill: scope:[ppuDataFill]  from main::@5 main::@6
   ppuDataFill::val#8 = phi( main::@5/ppuDataFill::val#0, main::@6/ppuDataFill::val#1 )
   ppuDataFill::size#7 = phi( main::@5/ppuDataFill::size#0, main::@6/ppuDataFill::size#1 )
@@ -132,7 +132,7 @@ ppuDataFill::@return: scope:[ppuDataFill]  from ppuDataFill::@1
   return 
   to:@return
 
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 ppuDataTransfer: scope:[ppuDataTransfer]  from main::@4
   ppuDataTransfer::size#6 = phi( main::@4/ppuDataTransfer::size#0 )
   ppuDataTransfer::cpuData#3 = phi( main::@4/ppuDataTransfer::cpuData#0 )
@@ -217,7 +217,7 @@ main::initNES1_clearVBlankFlag1: scope:[main]  from main::initNES1_disableAudioO
 main::initNES1_waitForVBlank1: scope:[main]  from main::initNES1_clearVBlankFlag1
   to:main::initNES1_waitForVBlank1_@1
 main::initNES1_waitForVBlank1_@1: scope:[main]  from main::initNES1_waitForVBlank1 main::initNES1_waitForVBlank1_@1
-  main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+  main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
   main::initNES1_waitForVBlank1_$2 = main::initNES1_waitForVBlank1_$3 + OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
   main::initNES1_waitForVBlank1_$0 = *main::initNES1_waitForVBlank1_$2 & $80
   main::initNES1_waitForVBlank1_$4 = 0 != main::initNES1_waitForVBlank1_$0
@@ -244,7 +244,7 @@ main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_@6
 main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   to:main::initNES1_waitForVBlank2_@1
 main::initNES1_waitForVBlank2_@1: scope:[main]  from main::initNES1_waitForVBlank2 main::initNES1_waitForVBlank2_@1
-  main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+  main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
   main::initNES1_waitForVBlank2_$2 = main::initNES1_waitForVBlank2_$3 + OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
   main::initNES1_waitForVBlank2_$0 = *main::initNES1_waitForVBlank2_$2 & $80
   main::initNES1_waitForVBlank2_$4 = 0 != main::initNES1_waitForVBlank2_$0
@@ -256,19 +256,19 @@ main::initNES1_@7: scope:[main]  from main::initNES1_waitForVBlank2_@1
   to:main::@4
 main::@4: scope:[main]  from main::initNES1_@7
   main::$1 = sizeof  PALETTE
-  ppuDataTransfer::ppuData#0 = (void*)PPU_PALETTE
-  ppuDataTransfer::cpuData#0 = (void*)PALETTE
+  ppuDataTransfer::ppuData#0 = (void* const)PPU_PALETTE
+  ppuDataTransfer::cpuData#0 = (void* const)PALETTE
   ppuDataTransfer::size#0 = main::$1
   call ppuDataTransfer 
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  ppuDataFill::ppuData#0 = (void*)PPU_NAME_TABLE_0
+  ppuDataFill::ppuData#0 = (void* const)PPU_NAME_TABLE_0
   ppuDataFill::val#0 = '*'
   ppuDataFill::size#0 = $20*$1e
   call ppuDataFill 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  ppuDataFill::ppuData#1 = (void*)PPU_ATTRIBUTE_TABLE_0
+  ppuDataFill::ppuData#1 = (void* const)PPU_ATTRIBUTE_TABLE_0
   ppuDataFill::val#1 = 0
   ppuDataFill::size#1 = $40
   call ppuDataFill 
@@ -473,39 +473,39 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-const struct RICOH_2A03* APU = (struct RICOH_2A03*)$4000
-const nomodify byte* FR_COUNTER = (byte*)$4017
-const nomodify byte* MEMORY = (byte*)0
-const byte* MESSAGE[$40]  = "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z
-const byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
-const byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
-const byte OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-const byte OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
-const byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
-const byte OFFSET_STRUCT_RICOH_2C02_PPUCTRL = 0
-const byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-const byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
-const byte OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES = 2
-const byte OFFSET_STRUCT_SPRITEDATA_TILE = 1
-const byte OFFSET_STRUCT_SPRITEDATA_X = 3
-const byte OFFSET_STRUCT_SPRITEDATA_Y = 0
-const byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
-const struct RICOH_2C02* PPU = (struct RICOH_2C02*)$2000
-const nomodify byte* PPU_ATTRIBUTE_TABLE_0 = (byte*)$23c0
-const nomodify byte* PPU_NAME_TABLE_0 = (byte*)$2000
-const nomodify byte* PPU_PALETTE = (byte*)$3f00
-const nomodify to_volatile byte* PPU_PPUSTATUS = (byte*)$2002
-const to_nomodify byte* SINTABLE_184[$ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
+constant struct RICOH_2A03* APU = (struct RICOH_2A03*)$4000
+constant byte* const FR_COUNTER = (byte*)$4017
+constant byte* const MEMORY = (byte*)0
+constant byte* MESSAGE[$40]  = "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z
+constant byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
+constant byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+constant byte OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
+constant byte OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUCTRL = 0
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+constant byte OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES = 2
+constant byte OFFSET_STRUCT_SPRITEDATA_TILE = 1
+constant byte OFFSET_STRUCT_SPRITEDATA_X = 3
+constant byte OFFSET_STRUCT_SPRITEDATA_Y = 0
+constant byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
+constant struct RICOH_2C02* PPU = (struct RICOH_2C02*)$2000
+constant byte* const PPU_ATTRIBUTE_TABLE_0 = (byte*)$23c0
+constant byte* const PPU_NAME_TABLE_0 = (byte*)$2000
+constant byte* const PPU_PALETTE = (byte*)$3f00
+constant volatile byte* const PPU_PPUSTATUS = (volatile byte*)$2002
+constant const byte* SINTABLE_184[$ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
  }}
-const to_nomodify byte* SINTABLE_240[$100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+constant const byte* SINTABLE_240[$100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
  }}
-const to_nomodify byte* SINTABLE_64[$59]  = kickasm {{ .fill 89, round(52.5+52.5*sin(2*PI*i/89))
+constant const byte* SINTABLE_64[$59]  = kickasm {{ .fill 89, round(52.5+52.5*sin(2*PI*i/89))
  }}
-const byte SIZEOF_STRUCT_SPRITEDATA = 4
-const struct SpriteData* SPRITE_BUFFER[$100]  = { fill( $100, 0) }
-const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
+constant byte SIZEOF_STRUCT_SPRITEDATA = 4
+constant struct SpriteData* SPRITE_BUFFER[$100]  = { fill( $100, 0) }
+constant byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
         .fill 8, filechargen.get(c*8+i)
@@ -513,7 +513,7 @@ const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.9012
         .fill 8, 0
     }
  }}
-const to_nomodify void()** VECTORS[]  = { &vblank, &main, (void()*)0 }
+constant void()* const* VECTORS[]  = { &vblank, &main, (void()*)0 }
 void __start()
 void main()
 byte~ main::$1
@@ -537,20 +537,20 @@ byte main::initNES1_i#1
 byte main::initNES1_i#2
 number~ main::initNES1_waitForVBlank1_$0
 bool~ main::initNES1_waitForVBlank1_$1
-to_volatile byte*~ main::initNES1_waitForVBlank1_$2
-to_volatile byte*~ main::initNES1_waitForVBlank1_$3
+volatile byte*~ main::initNES1_waitForVBlank1_$2
+volatile byte*~ main::initNES1_waitForVBlank1_$3
 bool~ main::initNES1_waitForVBlank1_$4
 number~ main::initNES1_waitForVBlank2_$0
 bool~ main::initNES1_waitForVBlank2_$1
-to_volatile byte*~ main::initNES1_waitForVBlank2_$2
-to_volatile byte*~ main::initNES1_waitForVBlank2_$3
+volatile byte*~ main::initNES1_waitForVBlank2_$2
+volatile byte*~ main::initNES1_waitForVBlank2_$3
 bool~ main::initNES1_waitForVBlank2_$4
 byte main::s
 byte main::s#0
 byte main::s#1
 byte main::s#2
 byte main::s#3
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 bool~ ppuDataFill::$1
 word ppuDataFill::i
 word ppuDataFill::i#0
@@ -559,19 +559,19 @@ word ppuDataFill::i#2
 word ppuDataFill::i#3
 word ppuDataFill::i#4
 word ppuDataFill::i#5
-nomodify void* ppuDataFill::ppuData
-nomodify void* ppuDataFill::ppuData#0
-nomodify void* ppuDataFill::ppuData#1
-nomodify void* ppuDataFill::ppuData#2
+void* const ppuDataFill::ppuData
+void* const ppuDataFill::ppuData#0
+void* const ppuDataFill::ppuData#1
+void* const ppuDataFill::ppuData#2
 byte~ ppuDataFill::ppuDataPrepare1_$0
 byte~ ppuDataFill::ppuDataPrepare1_$1
 byte*~ ppuDataFill::ppuDataPrepare1_$2
 byte*~ ppuDataFill::ppuDataPrepare1_$3
 byte*~ ppuDataFill::ppuDataPrepare1_$4
 byte*~ ppuDataFill::ppuDataPrepare1_$5
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#1
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0
+void* const ppuDataFill::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataFill::ppuDataPut1_$0
 byte*~ ppuDataFill::ppuDataPut1_$1
 byte ppuDataFill::ppuDataPut1_val
@@ -597,13 +597,13 @@ byte ppuDataFill::val#5
 byte ppuDataFill::val#6
 byte ppuDataFill::val#7
 byte ppuDataFill::val#8
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 bool~ ppuDataTransfer::$1
-nomodify void* ppuDataTransfer::cpuData
-nomodify void* ppuDataTransfer::cpuData#0
-nomodify void* ppuDataTransfer::cpuData#1
-nomodify void* ppuDataTransfer::cpuData#2
-nomodify void* ppuDataTransfer::cpuData#3
+void* const ppuDataTransfer::cpuData
+void* const ppuDataTransfer::cpuData#0
+void* const ppuDataTransfer::cpuData#1
+void* const ppuDataTransfer::cpuData#2
+void* const ppuDataTransfer::cpuData#3
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#0
 byte* ppuDataTransfer::cpuSrc#1
@@ -618,18 +618,18 @@ word ppuDataTransfer::i#2
 word ppuDataTransfer::i#3
 word ppuDataTransfer::i#4
 word ppuDataTransfer::i#5
-nomodify void* ppuDataTransfer::ppuData
-nomodify void* ppuDataTransfer::ppuData#0
-nomodify void* ppuDataTransfer::ppuData#1
+void* const ppuDataTransfer::ppuData
+void* const ppuDataTransfer::ppuData#0
+void* const ppuDataTransfer::ppuData#1
 byte~ ppuDataTransfer::ppuDataPrepare1_$0
 byte~ ppuDataTransfer::ppuDataPrepare1_$1
 byte*~ ppuDataTransfer::ppuDataPrepare1_$2
 byte*~ ppuDataTransfer::ppuDataPrepare1_$3
 byte*~ ppuDataTransfer::ppuDataPrepare1_$4
 byte*~ ppuDataTransfer::ppuDataPrepare1_$5
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#0
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData#1
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#0
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData#1
 byte*~ ppuDataTransfer::ppuDataPut1_$0
 byte*~ ppuDataTransfer::ppuDataPut1_$1
 byte ppuDataTransfer::ppuDataPut1_val
@@ -890,7 +890,7 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 9152
 Simplifying constant pointer cast (byte*) 16128
-Simplifying constant pointer cast (byte*) 8194
+Simplifying constant pointer cast (volatile byte*) 8194
 Simplifying constant pointer cast (byte*) 16407
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (void()*) 0
@@ -1120,8 +1120,8 @@ Constant right-side identified [51] ppuDataTransfer::ppuDataPut1_$1 = (byte*)PPU
 Constant right-side identified [58] main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
 Constant right-side identified [61] main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant right-side identified [65] main::initNES1_disableAudioOutput1_$1 = (byte*)APU
-Constant right-side identified [69] main::initNES1_waitForVBlank1_$3 = (byte*)PPU
-Constant right-side identified [87] main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant right-side identified [69] main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
+Constant right-side identified [87] main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant right-side identified [93] ppuDataTransfer::size#0 = sizeof  PALETTE
 Constant right-side identified [99] ppuDataFill::size#0 = (unumber)$20*$1e
 Constant right-side identified [115] main::enableVideoOutput1_$2 = (byte*)PPU
@@ -1147,16 +1147,16 @@ Constant ppuDataTransfer::ppuDataPut1_$1 = (byte*)PPU
 Constant main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
 Constant main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant main::initNES1_disableAudioOutput1_$1 = (byte*)APU
-Constant main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+Constant main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
 Constant main::initNES1_i#0 = 0
-Constant main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant ppuDataTransfer::size#0 = sizeof PALETTE
-Constant ppuDataTransfer::ppuData#0 = (void*)PPU_PALETTE
-Constant ppuDataTransfer::cpuData#0 = (void*)PALETTE
-Constant ppuDataFill::ppuData#0 = (void*)PPU_NAME_TABLE_0
+Constant ppuDataTransfer::ppuData#0 = (void* const)PPU_PALETTE
+Constant ppuDataTransfer::cpuData#0 = (void* const)PALETTE
+Constant ppuDataFill::ppuData#0 = (void* const)PPU_NAME_TABLE_0
 Constant ppuDataFill::val#0 = '*'
 Constant ppuDataFill::size#0 = (unumber)$20*$1e
-Constant ppuDataFill::ppuData#1 = (void*)PPU_ATTRIBUTE_TABLE_0
+Constant ppuDataFill::ppuData#1 = (void* const)PPU_ATTRIBUTE_TABLE_0
 Constant ppuDataFill::val#1 = 0
 Constant ppuDataFill::size#1 = $40
 Constant main::s#0 = 0
@@ -1286,15 +1286,15 @@ Constant inlined ppuDataTransfer::ppuDataPut1_$1 = (byte*)PPU
 Constant inlined ppuDataFill::val#1 = 0
 Constant inlined ppuDataFill::ppuDataPut1_$1 = (byte*)PPU
 Constant inlined ppuDataFill::val#0 = '*'
-Constant inlined main::initNES1_waitForVBlank2_$3 = (byte*)PPU
+Constant inlined main::initNES1_waitForVBlank2_$3 = (volatile byte*)PPU
 Constant inlined ppuDataFill::ppuDataPrepare1_$4 = (byte*)PPU
 Constant inlined ppuDataTransfer::ppuDataPrepare1_$5 = (byte*)PPU
 Constant inlined ppuDataFill::ppuDataPrepare1_$5 = (byte*)PPU
 Constant inlined ppuDataTransfer::ppuDataPrepare1_$4 = (byte*)PPU
 Constant inlined main::initNES1_disableVideoOutput1_$3 = (byte*)PPU
 Constant inlined main::initNES1_disableVideoOutput1_$2 = (byte*)PPU
-Constant inlined ppuDataFill::ppuData#1 = (void*)PPU_ATTRIBUTE_TABLE_0
-Constant inlined ppuDataFill::ppuData#0 = (void*)PPU_NAME_TABLE_0
+Constant inlined ppuDataFill::ppuData#1 = (void* const)PPU_ATTRIBUTE_TABLE_0
+Constant inlined ppuDataFill::ppuData#0 = (void* const)PPU_NAME_TABLE_0
 Constant inlined main::initNES1_disableAudioOutput1_$1 = (byte*)APU
 Constant inlined readJoy1::joy#0 = 0
 Constant inlined ppuDataTransfer::cpuSrc#0 = (byte*)ppuDataTransfer::cpuData#0
@@ -1305,7 +1305,7 @@ Constant inlined vblank::$32 = (byte*)PPU
 Constant inlined vblank::$11 = 0
 Constant inlined readJoy1::$9 = (byte*)APU
 Constant inlined vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer#0 = SPRITE_BUFFER
-Constant inlined main::initNES1_waitForVBlank1_$3 = (byte*)PPU
+Constant inlined main::initNES1_waitForVBlank1_$3 = (volatile byte*)PPU
 Constant inlined vblank::ppuSpriteBufferDmaTransfer1_$0 = >SPRITE_BUFFER
 Constant inlined ppuDataFill::size#1 = $40
 Constant inlined ppuDataFill::size#0 = (word)$20*$1e
@@ -1326,8 +1326,8 @@ Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUAD
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ)
-Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
-Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
+Consolidated array index constant in *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
+Consolidated array index constant in *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL)
@@ -1560,7 +1560,7 @@ main::initNES1_waitForVBlank1: scope:[main]  from main::initNES1_clearVBlankFlag
   [52] phi()
   to:main::initNES1_waitForVBlank1_@1
 main::initNES1_waitForVBlank1_@1: scope:[main]  from main::initNES1_waitForVBlank1 main::initNES1_waitForVBlank1_@1
-  [53] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
+  [53] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
   [54] if(0==main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1
   to:main::initNES1_@1
 main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_waitForVBlank1_@1
@@ -1580,7 +1580,7 @@ main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   [66] phi()
   to:main::initNES1_waitForVBlank2_@1
 main::initNES1_waitForVBlank2_@1: scope:[main]  from main::initNES1_waitForVBlank2 main::initNES1_waitForVBlank2_@1
-  [67] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
+  [67] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80
   [68] if(0==main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1
   to:main::initNES1_@7
 main::initNES1_@7: scope:[main]  from main::initNES1_waitForVBlank2_@1
@@ -1638,7 +1638,7 @@ readJoy1::@2: scope:[readJoy1]  from readJoy1::@1
   [95] readJoy1::i#1 = ++ readJoy1::i#2
   to:readJoy1::@1
 
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
 ppuDataTransfer: scope:[ppuDataTransfer]  from main::@4
   [96] phi()
   to:ppuDataTransfer::ppuDataPrepare1
@@ -1665,11 +1665,11 @@ ppuDataTransfer::@3: scope:[ppuDataTransfer]  from ppuDataTransfer::ppuDataPut1
   [105] ppuDataTransfer::i#1 = ++ ppuDataTransfer::i#2
   to:ppuDataTransfer::@1
 
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 ppuDataFill: scope:[ppuDataFill]  from main::@5 main::@6
   [106] ppuDataFill::val#4 = phi( main::@5/'*', main::@6/0 )
   [106] ppuDataFill::size#3 = phi( main::@5/(word)$20*$1e, main::@6/$40 )
-  [106] ppuDataFill::ppuDataPrepare1_ppuData#0 = phi( main::@5/(void*)PPU_NAME_TABLE_0, main::@6/(void*)PPU_ATTRIBUTE_TABLE_0 )
+  [106] ppuDataFill::ppuDataPrepare1_ppuData#0 = phi( main::@5/(void* const)PPU_NAME_TABLE_0, main::@6/(void* const)PPU_ATTRIBUTE_TABLE_0 )
   to:ppuDataFill::ppuDataPrepare1
 ppuDataFill::ppuDataPrepare1: scope:[ppuDataFill]  from ppuDataFill
   [107] ppuDataFill::ppuDataPrepare1_$0 = > ppuDataFill::ppuDataPrepare1_ppuData#0
@@ -1704,30 +1704,30 @@ byte~ main::initNES1_waitForVBlank2_$0 202.0
 byte main::s
 byte main::s#1 202.0
 byte main::s#2 72.14285714285714
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 word ppuDataFill::i
 word ppuDataFill::i#1 2002.0
 word ppuDataFill::i#2 1001.0
-nomodify void* ppuDataFill::ppuData
+void* const ppuDataFill::ppuData
 byte~ ppuDataFill::ppuDataPrepare1_$0 202.0
 byte~ ppuDataFill::ppuDataPrepare1_$1 202.0
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0 67.33333333333333
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0 67.33333333333333
 byte ppuDataFill::ppuDataPut1_val
 word ppuDataFill::size
 word ppuDataFill::size#3 111.22222222222223
 byte ppuDataFill::val
 byte ppuDataFill::val#4 111.22222222222223
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
-nomodify void* ppuDataTransfer::cpuData
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void* const ppuDataTransfer::cpuData
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#1 1001.0
 byte* ppuDataTransfer::cpuSrc#2 750.75
 word ppuDataTransfer::i
 word ppuDataTransfer::i#1 2002.0
 word ppuDataTransfer::i#2 600.5999999999999
-nomodify void* ppuDataTransfer::ppuData
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuData
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
 byte ppuDataTransfer::ppuDataPut1_val
 byte ppuDataTransfer::ppuDataPut1_val#0 2002.0
 word ppuDataTransfer::size
@@ -1900,7 +1900,7 @@ Statement [48] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = 0 [ ] (  [ ] { }
 Statement [49] *FR_COUNTER = $40 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement [50] *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ) = $40 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [53] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:5 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
+Statement [53] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:5 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
 Statement [56] MEMORY[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::initNES1_i#2 main::initNES1_i#1 ]
 Statement [57] (MEMORY+$100)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
@@ -1910,7 +1910,7 @@ Statement [60] (MEMORY+$400)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [
 Statement [61] (MEMORY+$500)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [62] (MEMORY+$600)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [63] (MEMORY+$700)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
-Statement [67] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:5 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
+Statement [67] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:5 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
 Statement [78] *((byte*)PPU) = $80 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement [79] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = $1e [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
@@ -1957,7 +1957,7 @@ Statement [48] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = 0 [ ] (  [ ] { }
 Statement [49] *FR_COUNTER = $40 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement [50] *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ) = $40 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [53] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:5 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
+Statement [53] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank1_$0 ] (  [ main::initNES1_waitForVBlank1_$0 ] { }  main:5 [ main::initNES1_waitForVBlank1_$0 ] { }  ) always clobbers reg byte a 
 Statement [56] MEMORY[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [57] (MEMORY+$100)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [58] (MEMORY+$200)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
@@ -1966,7 +1966,7 @@ Statement [60] (MEMORY+$400)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [
 Statement [61] (MEMORY+$500)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [62] (MEMORY+$600)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
 Statement [63] (MEMORY+$700)[main::initNES1_i#2] = 0 [ main::initNES1_i#2 ] (  [ main::initNES1_i#2 ] { }  main:5 [ main::initNES1_i#2 ] { }  ) always clobbers reg byte a 
-Statement [67] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:5 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
+Statement [67] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 [ main::initNES1_waitForVBlank2_$0 ] (  [ main::initNES1_waitForVBlank2_$0 ] { }  main:5 [ main::initNES1_waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
 Statement [78] *((byte*)PPU) = $80 [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
 Statement [79] *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK) = $1e [ ] (  [ ] { }  main:5 [ ] { }  ) always clobbers reg byte a 
@@ -2464,7 +2464,7 @@ main: {
     jmp initNES1_waitForVBlank1___b1
     // main::initNES1_waitForVBlank1_@1
   initNES1_waitForVBlank1___b1:
-    // [53] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [53] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // [54] if(0==main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1 -- 0_eq_vbuaa_then_la1 
@@ -2518,7 +2518,7 @@ main: {
     jmp initNES1_waitForVBlank2___b1
     // main::initNES1_waitForVBlank2_@1
   initNES1_waitForVBlank2___b1:
-    // [67] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [67] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // [68] if(0==main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1 -- 0_eq_vbuaa_then_la1 
@@ -2555,7 +2555,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$20*$1e
     sta.z ppuDataFill.size+1
-    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0 [phi:main::@5->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0 [phi:main::@5->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0
@@ -2576,7 +2576,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_0 [phi:main::@6->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_0 [phi:main::@6->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_0
@@ -3005,37 +3005,37 @@ Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-const struct RICOH_2A03* APU = (struct RICOH_2A03*) 16384
-const nomodify byte* FR_COUNTER = (byte*) 16407
-const nomodify byte* MEMORY = (byte*) 0
-const byte* MESSAGE[$40]  = "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z
-const byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
-const byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
-const byte OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-const byte OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
-const byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
-const byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-const byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-const byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
-const byte OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES = 2
-const byte OFFSET_STRUCT_SPRITEDATA_TILE = 1
-const byte OFFSET_STRUCT_SPRITEDATA_X = 3
-const byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
-const struct RICOH_2C02* PPU = (struct RICOH_2C02*) 8192
-const nomodify byte* PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
-const nomodify byte* PPU_NAME_TABLE_0 = (byte*) 8192
-const nomodify byte* PPU_PALETTE = (byte*) 16128
-const nomodify to_volatile byte* PPU_PPUSTATUS = (byte*) 8194
-const to_nomodify byte* SINTABLE_184[$ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
+constant struct RICOH_2A03* APU = (struct RICOH_2A03*) 16384
+constant byte* const FR_COUNTER = (byte*) 16407
+constant byte* const MEMORY = (byte*) 0
+constant byte* MESSAGE[$40]  = "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z
+constant byte OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
+constant byte OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+constant byte OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
+constant byte OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
+constant byte OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+constant byte OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES = 2
+constant byte OFFSET_STRUCT_SPRITEDATA_TILE = 1
+constant byte OFFSET_STRUCT_SPRITEDATA_X = 3
+constant byte* PALETTE[$20]  = { 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f }
+constant struct RICOH_2C02* PPU = (struct RICOH_2C02*) 8192
+constant byte* const PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
+constant byte* const PPU_NAME_TABLE_0 = (byte*) 8192
+constant byte* const PPU_PALETTE = (byte*) 16128
+constant volatile byte* const PPU_PPUSTATUS = (volatile byte*) 8194
+constant const byte* SINTABLE_184[$ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
  }}
-const to_nomodify byte* SINTABLE_240[$100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+constant const byte* SINTABLE_240[$100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
  }}
-const to_nomodify byte* SINTABLE_64[$59]  = kickasm {{ .fill 89, round(52.5+52.5*sin(2*PI*i/89))
+constant const byte* SINTABLE_64[$59]  = kickasm {{ .fill 89, round(52.5+52.5*sin(2*PI*i/89))
  }}
-const byte SIZEOF_BYTE = 1
-const struct SpriteData* SPRITE_BUFFER[$100]  = { fill( $100, 0) }
-const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
+constant byte SIZEOF_BYTE = 1
+constant struct SpriteData* SPRITE_BUFFER[$100]  = { fill( $100, 0) }
+constant byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
         .fill 8, filechargen.get(c*8+i)
@@ -3043,7 +3043,7 @@ const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.9012
         .fill 8, 0
     }
  }}
-const to_nomodify void()** VECTORS[]  = { &vblank, &main, (void()*) 0 }
+constant void()* const* VECTORS[]  = { &vblank, &main, (void()*) 0 }
 void __start()
 void main()
 byte~ main::$7 reg byte y 126.25
@@ -3055,36 +3055,36 @@ byte~ main::initNES1_waitForVBlank2_$0 reg byte a 202.0
 byte main::s
 byte main::s#1 reg byte x 202.0
 byte main::s#2 reg byte x 72.14285714285714
-void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
+void ppuDataFill(void* const ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
 word ppuDataFill::i
 word ppuDataFill::i#1 i zp[2]:10 2002.0
 word ppuDataFill::i#2 i zp[2]:10 1001.0
-nomodify void* ppuDataFill::ppuData
+void* const ppuDataFill::ppuData
 byte~ ppuDataFill::ppuDataPrepare1_$0 reg byte a 202.0
 byte~ ppuDataFill::ppuDataPrepare1_$1 reg byte a 202.0
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
-nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:6 67.33333333333333
+void* const ppuDataFill::ppuDataPrepare1_ppuData
+void* const ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:6 67.33333333333333
 byte ppuDataFill::ppuDataPut1_val
 word ppuDataFill::size
 word ppuDataFill::size#3 size zp[2]:8 111.22222222222223
 byte ppuDataFill::val
 byte ppuDataFill::val#4 reg byte x 111.22222222222223
-void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
-nomodify void* ppuDataTransfer::cpuData
-const nomodify void* ppuDataTransfer::cpuData#0 cpuData = (void*)PALETTE
+void ppuDataTransfer(void* const ppuDataTransfer::ppuData , void* const ppuDataTransfer::cpuData , word ppuDataTransfer::size)
+void* const ppuDataTransfer::cpuData
+constant void* const ppuDataTransfer::cpuData#0 cpuData = (void* const)PALETTE
 byte* ppuDataTransfer::cpuSrc
 byte* ppuDataTransfer::cpuSrc#1 cpuSrc zp[2]:8 1001.0
 byte* ppuDataTransfer::cpuSrc#2 cpuSrc zp[2]:8 750.75
 word ppuDataTransfer::i
 word ppuDataTransfer::i#1 i zp[2]:6 2002.0
 word ppuDataTransfer::i#2 i zp[2]:6 600.5999999999999
-nomodify void* ppuDataTransfer::ppuData
-const nomodify void* ppuDataTransfer::ppuData#0 ppuData = (void*)PPU_PALETTE
-nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
+void* const ppuDataTransfer::ppuData
+constant void* const ppuDataTransfer::ppuData#0 ppuData = (void* const)PPU_PALETTE
+void* const ppuDataTransfer::ppuDataPrepare1_ppuData
 byte ppuDataTransfer::ppuDataPut1_val
 byte ppuDataTransfer::ppuDataPut1_val#0 reg byte a 2002.0
 word ppuDataTransfer::size
-const word ppuDataTransfer::size#0 size = $20*SIZEOF_BYTE
+constant word ppuDataTransfer::size#0 size = $20*SIZEOF_BYTE
 byte readJoy1()
 byte~ readJoy1::$1 zp[1]:16 101.0
 byte~ readJoy1::$2 reg byte a 202.0
@@ -3523,7 +3523,7 @@ main: {
   initNES1_waitForVBlank1:
     // main::initNES1_waitForVBlank1_@1
     // PPU->PPUSTATUS&0x80
-    // [53] main::initNES1_waitForVBlank1_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [53] main::initNES1_waitForVBlank1_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
@@ -3573,7 +3573,7 @@ main: {
   initNES1_waitForVBlank2:
     // main::initNES1_waitForVBlank2_@1
     // PPU->PPUSTATUS&0x80
-    // [67] main::initNES1_waitForVBlank2_$0 = *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [67] main::initNES1_waitForVBlank2_$0 = *((volatile byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & $80 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
@@ -3604,7 +3604,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$20*$1e
     sta.z ppuDataFill.size+1
-    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_NAME_TABLE_0 [phi:main::@5->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_NAME_TABLE_0 [phi:main::@5->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_NAME_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_NAME_TABLE_0
@@ -3622,7 +3622,7 @@ main: {
     sta.z ppuDataFill.size
     lda #>$40
     sta.z ppuDataFill.size+1
-    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void*)PPU_ATTRIBUTE_TABLE_0 [phi:main::@6->ppuDataFill#2] -- pvoz1=pvoc1 
+    // [106] phi ppuDataFill::ppuDataPrepare1_ppuData#0 = (void* const)PPU_ATTRIBUTE_TABLE_0 [phi:main::@6->ppuDataFill#2] -- pvoz1=pvoc1 
     lda #<PPU_ATTRIBUTE_TABLE_0
     sta.z ppuDataFill.ppuDataPrepare1_ppuData
     lda #>PPU_ATTRIBUTE_TABLE_0

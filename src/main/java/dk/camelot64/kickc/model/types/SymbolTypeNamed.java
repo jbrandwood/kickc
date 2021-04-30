@@ -30,17 +30,8 @@ public class SymbolTypeNamed implements SymbolType {
       return isNomodify;
    }
 
-   public String getTypeName() {
-      String name = "";
-      // TODO #121 Add
-      /*
-      if(isVolatile)
-         name += "volatile ";
-      if(isNomodify)
-         name += "const ";
-       */
-      name += typeBaseName;
-      return name;
+   public String getTypeBaseName() {
+      return typeBaseName;
    }
 
    @Override

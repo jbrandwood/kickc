@@ -58,7 +58,7 @@ public class SizeOfConstants {
       if(type instanceof SymbolTypePointer) {
          return "SIZEOF_POINTER";
       } else {
-         return "SIZEOF_" + type.getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
+         return "SIZEOF_" + type.getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
       }
    }
 
@@ -91,6 +91,6 @@ public class SizeOfConstants {
     * @return The name of the constant
     */
    private static String getStructMemberOffsetConstantName(StructDefinition structDefinition, String memberName) {
-      return "OFFSET_" + structDefinition.getType().getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_") + "_" + memberName.toUpperCase();
+      return "OFFSET_" + structDefinition.getType().getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_") + "_" + memberName.toUpperCase();
    }
 }

@@ -337,7 +337,7 @@ printf_uint: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($b) s)
+// cputs(const byte* zp($b) s)
 cputs: {
     .label s = $b
   __b1:

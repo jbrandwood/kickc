@@ -281,7 +281,7 @@ revers: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($84) s)
+// cputs(const byte* zp($84) s)
 cputs: {
     .label s = $84
   __b1:

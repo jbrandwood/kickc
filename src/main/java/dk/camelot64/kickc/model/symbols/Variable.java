@@ -598,11 +598,7 @@ public class Variable implements Symbol {
    public String typeString() {
       final StringBuilder print = new StringBuilder();
       print
-            .append(isKindConstant() ? "const " : "")
-            .append(isNoModify() ? "nomodify " : "")
-            .append(isVolatile() ? "volatile " : "")
-            .append(isToNoModify() ? "to_nomodify " : "")
-            .append(isToVolatile() ? "to_volatile " : "")
+            .append(isKindConstant() ? "constant " : "")
             .append(getType().getTypeName())
             .append(isKindIntermediate() ? "~" : "")
             ;

@@ -721,7 +721,7 @@ clrscr: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($8a) s)
+// cputs(const byte* zp($8a) s)
 cputs: {
     .label s = $8a
   __b1:

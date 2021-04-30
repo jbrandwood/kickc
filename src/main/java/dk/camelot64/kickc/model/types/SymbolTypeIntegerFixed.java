@@ -95,17 +95,8 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    }
 
    @Override
-   public String getTypeName() {
-      String name = "";
-      // TODO #121 Add
-      /*
-      if(isVolatile)
-         name += "volatile ";
-      if(isNomodify)
-         name += "const ";
-       */
-      name += typeBaseName;
-      return name;
+   public String getTypeBaseName() {
+      return typeBaseName;
    }
 
    public long getMinValue() {

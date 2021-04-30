@@ -471,7 +471,7 @@ cputc: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(2) s)
+// cputs(const byte* zp(2) s)
 cputs: {
     .label s = 2
   __b1:

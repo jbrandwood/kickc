@@ -98,7 +98,15 @@ public interface SymbolType extends Serializable {
     *
     * @return The type name
     */
-   String getTypeName();
+   default String getTypeName() {
+      return (isVolatile()?"volatile ":"") + (isNomodify()?"const ":"") + getTypeBaseName();
+   }
+
+   /**
+    * Get the type base name (without const/volatile)
+    * @return type base name
+    */
+   String getTypeBaseName();
 
    /**
     * Get the size of the type (in bytes).

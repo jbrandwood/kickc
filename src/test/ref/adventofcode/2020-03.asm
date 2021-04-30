@@ -283,7 +283,7 @@ test_slope: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($83) s)
+// cputs(const byte* zp($83) s)
 cputs: {
     .label s = $83
   __b1:

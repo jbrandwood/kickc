@@ -254,7 +254,7 @@ public class Pass4CodeGeneration {
 
          Registers.Register allocation = param.getAllocation();
          if(i++ > 0) signature.append(", ");
-         signature.append(param.getType().getTypeName()).append(" ");
+         signature.append(param.getType().getTypeBaseName()).append(" ");
          if(allocation instanceof Registers.RegisterZpMem) {
             Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
             signature.append("zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");

@@ -1986,7 +1986,7 @@ ror_var: {
 }
 .segment Code
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($c) s)
+// cputs(const byte* zp($c) s)
 cputs: {
     .label s = $c
   __b1:

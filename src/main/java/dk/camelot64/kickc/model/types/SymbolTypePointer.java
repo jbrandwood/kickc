@@ -59,14 +59,16 @@ public class SymbolTypePointer implements SymbolType {
    @Override
    public String getTypeName() {
       String name = elementType.getTypeName() + "*";
-      // TODO #121 Add
-      /*
       if(isVolatile)
          name += " volatile";
       if(isNomodify)
          name += " const";
-       */
       return name;
+   }
+
+   @Override
+   public String getTypeBaseName() {
+      return elementType.getTypeName() + "*";
    }
 
    @Override

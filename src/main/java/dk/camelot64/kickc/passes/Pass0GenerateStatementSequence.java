@@ -394,7 +394,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declPointerContext);
       }
       SymbolType type = varDecl.getEffectiveType();
-      List<Directive> directives = varDecl.getEffectiveDirectives();
+      List<Directive> directives = varDecl.getDeclDirectives();
       String name = ctx.NAME().getText();
       Procedure procedure = new Procedure(name, type, program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureDecl(ctx));
@@ -403,7 +403,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(procedure);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          returnVar = builder.build();
       }
       varDecl.exitType();
@@ -507,7 +507,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declPointerContext);
       }
       String varName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable param = varBuilder.build();
       varDecl.exitType();
       return param;
@@ -604,7 +604,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** KickAssembler directive specifying the number of bytes for generated code/data. */
    public static class AsmDirectiveBytes implements AsmDirective {
       /** bytes for the KickAssembler-code. */
-      private RValue bytes;
+      private final RValue bytes;
 
       AsmDirectiveBytes(RValue bytes) {
          this.bytes = bytes;
@@ -672,7 +672,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** KickAssembler directive specifying the number of cycles for generated code/data. */
    public static class AsmDirectiveCycles implements AsmDirective {
       /** cycles for the KickAssembler-code. */
-      private RValue cycles;
+      private final RValue cycles;
 
       AsmDirectiveCycles(RValue cycles) {
          this.cycles = cycles;
@@ -768,13 +768,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /** Holds the declared comments when descending into a Variable Declaration. (type level) */
       private List<Comment> declComments = null;
       /** The declared type (type level) */
-      private VariableDeclType declType;
+      private SymbolType declType;
       /** The declared type (variable level) */
-      private VariableDeclType varDeclType;
-
-      VariableDeclaration() {
-         this.declType = new VariableDeclType();
-      }
+      private SymbolType varDeclType;
 
       /**
        * Exits the type layer (clears everything except struct information)
@@ -782,7 +778,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       void exitType() {
          this.declDirectives = null;
          this.declComments = null;
-         this.declType = new VariableDeclType();
+         this.declType = null;
          this.varDeclType = null;
       }
 
@@ -793,61 +789,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.varDeclType = null;
       }
 
-      /** The declared type of a variable. Combines SymbolType, type directives (const, volatile) and ArraySpec. It holds advanced type information like <p><code>char volatile * const * [42]</code> */
-      // TODO: #121 Remove when const/volatile are put into type
-      static class VariableDeclType {
-         /** The type. */
-         SymbolType type;
-         // TODO: #121 Remove when const/volatile are put into type
-         /** Const / Volatile Directives if applied to the type */
-         List<Directive> typeDirectives;
-         /** If the type is SymbolTypePointer this holds the declaration type of the elements. */
-         VariableDeclType elementDeclType;
-
-         VariableDeclType() {
-            this.typeDirectives = new ArrayList<>();
-         }
-
-         public void setType(SymbolType type) {
-            this.type = type;
-         }
-
-         public SymbolType getType() {
-            return type;
-         }
-
-         List<Directive> getTypeDirectives() {
-            return typeDirectives;
-         }
-
-         void setTypeDirectives(List<Directive> directives) {
-            this.typeDirectives = directives;
-            for(Directive directive : directives) {
-               if(directive instanceof Directive.Const)
-                  setType(type.getQualified(type.isVolatile(), true));
-               if(directive instanceof Directive.Volatile)
-                  setType(type.getQualified(true, type.isNomodify()));
-            }
-         }
-
-         void setElementDeclType(VariableDeclType elementDeclType) {
-            this.elementDeclType = elementDeclType;
-         }
-
-         VariableDeclType getElementDeclType() {
-            return elementDeclType;
-         }
-      }
-
-      VariableDeclType getEffectiveDeclType() {
-         return varDeclType != null ? varDeclType : declType;
-      }
-
       SymbolType getEffectiveType() {
-         if(varDeclType != null)
-            return varDeclType.getType();
-         if(declType != null)
-            return declType.getType();
+         if(this.varDeclType != null)
+            return this.varDeclType;
+         if(this.declType != null)
+            return this.declType;
          return null;
       }
 
@@ -860,59 +806,32 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.declDirectives = new ArrayList<>();
          for(Directive directive : directives) {
             if(directive instanceof Directive.Volatile) {
-               // Type directive
-               SymbolType type = this.declType.getType();
-               SymbolType typeQualified = type.getQualified(true, type.isNomodify());
-               this.declType.setType(typeQualified);
-               // TODO: #121 Remove when const/volatile are put into type
-               if(!this.declType.getTypeDirectives().contains(directive))
-                  this.declType.getTypeDirectives().add(directive);
+               // Type-qualifier directive volatile
+               this.declType = this.declType.getQualified(true, this.declType.isNomodify());
             } else if(directive instanceof Directive.Const) {
-               // Type directive
-               SymbolType type = this.declType.getType();
-               SymbolType typeQualified = type.getQualified(type.isVolatile(), true);
-               this.declType.setType(typeQualified);
-               // TODO: #121 Remove when const/volatile are put into type
-               if(!this.declType.getTypeDirectives().contains(directive))
-                  this.declType.getTypeDirectives().add(directive);
+               // Type-qualifier directive const
+               this.declType = this.declType.getQualified(this.declType.isVolatile(), true);
             } else {
-               // general directive
+               // variable directive
                if(!this.declDirectives.contains(directive))
                   this.declDirectives.add(directive);
             }
          }
       }
 
-      List<Directive> getEffectiveDirectives() {
-         final ArrayList<Directive> dirs = new ArrayList<>();
-         // Add all general directives
-         dirs.addAll(declDirectives);
-         // Add type-directives
-         // TODO: #121 Remove when const/volatile are put into type
-         final VariableDeclType effectiveDeclType = getEffectiveDeclType();
-         dirs.addAll(effectiveDeclType.getTypeDirectives());
-         // Convert element directives
-         // TODO: #121 Remove when const/volatile are put into type
-         final VariableDeclType elementDeclType = effectiveDeclType.getElementDeclType();
-         if(elementDeclType != null) {
-            for(Directive elementTypeDirective : elementDeclType.getTypeDirectives()) {
-               if(elementTypeDirective instanceof Directive.Const) {
-                  dirs.add(new Directive.ToConst());
-               } else if(elementTypeDirective instanceof Directive.Volatile) {
-                  dirs.add(new Directive.ToVolatile());
-               }
-            }
-            // Produce error on any deeper directives
-            // TODO: #121 Remove when const/volatile are put into type
-            VariableDeclType deepDeclType = elementDeclType.getElementDeclType();
-            while(deepDeclType != null) {
-               if(!deepDeclType.getTypeDirectives().isEmpty()) {
-                  throw new CompileError("Deep const/volatile not supported.");
-               }
-               deepDeclType = deepDeclType.getElementDeclType();
-            }
+      private void setVarDeclTypeAndDirectives(SymbolType type, List<Directive> typeDirectives) {
+         for(Directive directive : typeDirectives) {
+            if(directive instanceof Directive.Const)
+               type = type.getQualified(type.isVolatile(), true);
+            if(directive instanceof Directive.Volatile)
+               type = type.getQualified(true, type.isNomodify());
          }
-         return dirs;
+         setVarDeclType(type);
+      }
+
+
+      List<Directive> getDeclDirectives() {
+         return declDirectives;
       }
 
       List<Comment> getDeclComments() {
@@ -923,20 +842,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          return structMember;
       }
 
-      public VariableDeclType getDeclType() {
-         return declType;
-      }
-
       public void setDeclType(SymbolType type) {
-         this.declType.setType(type);
+         this.declType = type;
       }
 
-      void setVarDeclType(VariableDeclType varDeclType) {
+      void setVarDeclType(SymbolType varDeclType) {
          this.varDeclType = varDeclType;
-      }
-
-      public VariableDeclType getVarDeclType() {
-         return varDeclType;
       }
 
       void setDeclComments(List<Comment> declComments) {
@@ -953,7 +864,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private VariableDeclaration varDecl = new VariableDeclaration();
 
    /** The stack of variable type / directive declarataions being handled. Pushed/popped when entering into a nested type declaration (eg. struct member or a cast inside an initializer) */
-   private Deque<VariableDeclaration> varDeclStack = new LinkedList<>();
+   private final Deque<VariableDeclaration> varDeclStack = new LinkedList<>();
 
    /**
     * Push the current type declaration handler onto the stack and initialize a new empty current type declaration handler.
@@ -972,20 +883,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDeclPointer(KickCParser.DeclPointerContext ctx) {
-      // Detect char * const * x;
-      //if(varDecl.getDeclDirectives()!=null && !varDecl.getDeclDirectives().isEmpty()) {
-      //   throw new CompileError("Pointer directives (const/volatile) not supported between pointers.", new StatementSource(ctx.getParent().getParent()));
-      //};
       // Create a var-level declaration type
-      final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
-      VariableDeclaration.VariableDeclType pointerDeclType = new VariableDeclaration.VariableDeclType();
-      pointerDeclType.setType(new SymbolTypePointer(elementDeclType.getType()));
-      pointerDeclType.setElementDeclType(elementDeclType);
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolTypePointer pointerType = new SymbolTypePointer(elementDeclType);
       final List<Directive> typeDirectives = getDirectives(ctx.directive());
-      pointerDeclType.setTypeDirectives(typeDirectives);
-      varDecl.setVarDeclType(pointerDeclType);
+      varDecl.setVarDeclTypeAndDirectives(pointerType, typeDirectives);
       return null;
    }
+
 
    @Override
    public Object visitDeclArray(KickCParser.DeclArrayContext ctx) {
@@ -1001,10 +906,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          arraySpec = new ArraySpec();
       }
-      final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
-      VariableDeclaration.VariableDeclType arrayDeclType = new VariableDeclaration.VariableDeclType();
-      arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec, false, false));
-      arrayDeclType.setElementDeclType(elementDeclType);
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolType arrayDeclType =  new SymbolTypePointer(elementDeclType, arraySpec, false, false);
       varDecl.setVarDeclType(arrayDeclType);
       return null;
    }
@@ -1057,7 +960,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          final boolean isStructMember = varDecl.isStructMember();
          final SymbolType effectiveType = varDecl.getEffectiveType();
-         final List<Directive> effectiveDirectives = varDecl.getEffectiveDirectives();
+         final List<Directive> effectiveDirectives = varDecl.getDeclDirectives();
          final List<Comment> declComments = varDecl.getDeclComments();
          varDecl.exitVar();
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
@@ -1147,7 +1050,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.kickAsmCode, kasm.uses, ((SymbolTypePointer) effectiveType).getArraySpec().getArraySize());
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1691,7 +1594,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = ctx.NAME().getText();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().findVariable(varName);
@@ -2050,31 +1953,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Variable typeDefVariable = typeDefScope.getLocalVar(ctx.getText());
       if(typeDefVariable != null) {
          varDecl.setDeclType(typeDefVariable.getType());
-
-         // Handle pointer types by creating sub-decltypes
-         VariableDeclaration.VariableDeclType declType = varDecl.getDeclType();
-         SymbolType type = typeDefVariable.getType();
-         while(type instanceof SymbolTypePointer) {
-            VariableDeclaration.VariableDeclType elementDeclType = new VariableDeclaration.VariableDeclType();
-            SymbolType elementType = ((SymbolTypePointer) type).getElementType();
-            elementDeclType.setType(elementType);
-            declType.setElementDeclType(elementDeclType);
-            type = elementType;
-            declType = elementDeclType;
-         }
-         // TODO: #121 Remove when const/volatile are put into type
-         if(typeDefVariable.isNoModify())
-            varDecl.getDeclType().getTypeDirectives().add(new Directive.Const());
-         if(typeDefVariable.isVolatile())
-            varDecl.getDeclType().getTypeDirectives().add(new Directive.Volatile());
-         if(typeDefVariable.isToNoModify()) {
-            // Find sub-type and add const
-            varDecl.getDeclType().getElementDeclType().getTypeDirectives().add(new Directive.Const());
-         }
-         if(typeDefVariable.isToVolatile()) {
-            // Find sub-type and add volatile
-            varDecl.getDeclType().getElementDeclType().getTypeDirectives().add(new Directive.Volatile());
-         }
          return null;
       }
       throw new CompileError("Unknown type " + ctx.getText(), new StatementSource(ctx));
@@ -2109,8 +1987,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(program.isWarnArrayType()) {
          program.getLog().append("Non-standard array declaration.\n" + new StatementSource(ctx).toString());
          visit(ctx.type());
-         final VariableDeclaration.VariableDeclType elementDeclType = varDecl.getEffectiveDeclType();
-         final VariableDeclaration.VariableDeclType arrayDeclType = new VariableDeclaration.VariableDeclType();
 
          ArraySpec arraySpec;
          if(ctx.expr() != null) {
@@ -2120,8 +1996,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             arraySpec = new ArraySpec();
          }
 
-         arrayDeclType.setType(new SymbolTypePointer(elementDeclType.getType(), arraySpec, false, false));
-         arrayDeclType.setElementDeclType(elementDeclType);
+         final SymbolType elementDeclType = varDecl.getEffectiveType();
+         final SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
          varDecl.setVarDeclType(arrayDeclType);
          return null;
       } else {
@@ -2149,8 +2025,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declArrayContext);
       }
       String typedefName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
-      final Variable typeDefVar = varBuilder.build();
+      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();
       return null;
@@ -2718,7 +2594,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /** Set containing the token index of all comment blocks that have already been used. */
-   private HashSet<Integer> usedCommentTokenIndices = new HashSet<>();
+   private final HashSet<Integer> usedCommentTokenIndices = new HashSet<>();
 
    /**
     * Ensures that the comments have not already been "used" in another context.
@@ -2774,9 +2650,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    private static class PrePostModifierHandler extends KickCParserBaseVisitor<Void> {
 
-      private List<PrePostModifier> postMods;
-      private List<PrePostModifier> preMods;
-      private Pass0GenerateStatementSequence mainParser;
+      private final List<PrePostModifier> postMods;
+      private final List<PrePostModifier> preMods;
+      private final Pass0GenerateStatementSequence mainParser;
 
       PrePostModifierHandler(Pass0GenerateStatementSequence mainParser) {
          this.mainParser = mainParser;

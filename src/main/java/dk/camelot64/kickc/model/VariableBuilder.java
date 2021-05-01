@@ -55,10 +55,7 @@ public class VariableBuilder {
     */
    public Variable build() {
 
-      // Todo: #121 move to type parsing!
-      SymbolType typeQualified = type.getQualified(this.isVolatile(), this.isNoModify());
-
-      Variable variable = new Variable(varName, getKind(), typeQualified, scope, getMemoryArea(), dataSegment, null);
+      Variable variable = new Variable(this.varName, getKind(), this.type, scope, getMemoryArea(), this.dataSegment, null);
       variable.setExport(this.isExport());
       variable.setPermanent(this.isPermanent());
       variable.setOptimize(this.isOptimize());
@@ -72,7 +69,7 @@ public class VariableBuilder {
       variable.setDeclarationOnly(this.isDeclarationOnly());
 
       // Check if the symbol has already been declared
-      Symbol declaredSymbol = scope.getLocalSymbol(varName);
+      Symbol declaredSymbol = this.scope.getLocalSymbol(this.varName);
       if(declaredSymbol != null && !declaredSymbol.getFullName().equals(variable.getFullName()))
          // We found another symbol!
          declaredSymbol = null;
@@ -88,12 +85,12 @@ public class VariableBuilder {
 
          // Update the variable with the definition
          if(!variable.isDeclarationOnly()) {
-            scope.remove(declaredSymbol);
-            scope.add(variable);
+            this.scope.remove(declaredSymbol);
+            this.scope.add(variable);
          }
       } else {
          // Not already declared - add it
-         scope.add(variable);
+         this.scope.add(variable);
       }
 
       return variable;
@@ -183,13 +180,13 @@ public class VariableBuilder {
     * @return true if the variable is a compile-time constant
     */
    public boolean isConstant() {
-      if(isScopeGlobal() && hasDirective(Directive.Const.class) && !hasDirective(Directive.Volatile.class))
+      if(isScopeGlobal() && isNoModify() && !isVolatile())
          // Global const
          return true;
-      else if(isScopeLocal() && hasDirective(Directive.Const.class) && hasDirective(Directive.Static.class) && !hasDirective(Directive.Volatile.class))
+      else if(isScopeLocal() && isNoModify() && hasDirective(Directive.Static.class) && !isVolatile())
          // Global static const
          return true;
-      else if(isScopeLocal() && hasDirective(Directive.Const.class) && !hasDirective(Directive.Volatile.class))
+      else if(isScopeLocal() && isNoModify() && !isVolatile())
          // Local const
          // TODO: Only allow local const variables with an init-value that is instanceof ConstantValue
          return true;
@@ -212,27 +209,17 @@ public class VariableBuilder {
 
    /** Declared as volatile (volatile keyword) */
    public boolean isVolatile() {
-      return hasDirective(Directive.Volatile.class);
+      return type.isVolatile();
    }
 
    /** Declared as no-modify (const keyword) */
    public boolean isNoModify() {
-      return hasDirective(Directive.Const.class);
+      return type.isNomodify();
    }
 
    /** Declared as optimize (register keyword) */
    public boolean isOptimize() {
       return hasDirective(Directive.Register.class) || hasDirective(Directive.NamedRegister.class);
-   }
-
-   /** Declared as pointer to volatile (volatile* keyword) */
-   public boolean isToVolatile() {
-      return hasDirective(Directive.ToVolatile.class);
-   }
-
-   /** Declared as pointer to no-modify (const* keyword) */
-   public boolean isToNoModify() {
-      return hasDirective(Directive.ToConst.class);
    }
 
    /**

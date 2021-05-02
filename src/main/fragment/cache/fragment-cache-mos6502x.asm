@@ -19759,3 +19759,8 @@ lda {z2}+2
 sta {z1}
 lda {z2}+3
 sta {z1}+1
+//FRAGMENT _deref_qvoc1=pvoc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1

@@ -70,7 +70,7 @@ typeSpecifier
     ;
 
 declarator
-    : NAME {if(isTypedef) Parser.addTypedef($NAME.text);} #declaratorName
+    : NAME {if(isTypedef) { Parser.addTypedef($NAME.text); isTypedef=false; } } #declaratorName
     | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
     | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
     | ASTERISK directive* declarator #declaratorPointer

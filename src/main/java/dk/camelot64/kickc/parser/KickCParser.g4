@@ -8,11 +8,15 @@ options { tokenVocab=KickCLexer; }
 
 
 @members {
+    // The C parser
     CParser cParser;
+    // true when a typedef is being created
+    boolean isTypedef;
 
 	public KickCParser(TokenStream input, CParser cParser) {
 		this(input);
 		this.cParser = cParser;
+		this.isTypedef = false;
 	}
 
 }
@@ -53,7 +57,7 @@ declaratorInit
     ;
 
 typeDef
-    : TYPEDEF declType declPointer* NAME declArray* {cParser.addTypedef($NAME.text);}
+    : TYPEDEF declType { isTypedef=true; }  declarator
     ;
 
 declType
@@ -75,7 +79,7 @@ typeSpecifier
     ;
 
 declarator
-    : NAME #declaratorName // {if(isTypedef) Parser.addTypedef($NAME.text);}
+    : NAME {if(isTypedef) { cParser.addTypedef($NAME.text); isTypedef=false; } } #declaratorName
     | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
     | ASTERISK directive* declarator #declaratorPointer
     | PAR_BEGIN declarator PAR_END #declaratorPar

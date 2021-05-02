@@ -2030,13 +2030,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Scope typedefScope = program.getScope().getTypeDefScope();
       scopeStack.push(typedefScope);
       this.visit(ctx.declType());
-      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
-         this.visit(declPointerContext);
-      }
-      for(KickCParser.DeclArrayContext declArrayContext : ctx.declArray()) {
-         this.visit(declArrayContext);
-      }
-      String typedefName = ctx.NAME().getText();
+      this.visit(ctx.declarator());
+      String typedefName = varDecl.getVarName();
       VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       varBuilder.build();
       scopeStack.pop();

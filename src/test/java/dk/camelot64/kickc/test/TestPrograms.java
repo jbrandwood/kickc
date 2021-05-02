@@ -18,7 +18,6 @@ import java.io.*;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
-import java.net.URISyntaxException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,11 +93,11 @@ public class TestPrograms {
       return log;
    }
 
-   protected void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
+   protected void assertError(String kcFile, String expectError) throws IOException {
       assertError(kcFile, expectError, true);
    }
 
-   protected void assertError(String kcFile, String expectError, boolean expectSource) throws IOException, URISyntaxException {
+   protected void assertError(String kcFile, String expectError, boolean expectSource) throws IOException {
       try {
          compileAndCompare(kcFile);
       } catch(CompileError e) {

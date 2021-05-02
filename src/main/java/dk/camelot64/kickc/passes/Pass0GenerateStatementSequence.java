@@ -501,10 +501,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visit(ctx.declType());
-      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
-         this.visit(declPointerContext);
-      }
-      String varName = ctx.NAME().getText();
+      this.visit(ctx.declarator());
+      String varName = varDecl.getVarName();
       VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable param = varBuilder.build();
       varDecl.exitType();

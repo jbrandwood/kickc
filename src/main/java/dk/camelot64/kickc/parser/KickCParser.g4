@@ -137,7 +137,7 @@ parameterListDecl
     : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
-    : declType declPointer* NAME #parameterDeclType
+    : declType declarator #parameterDeclType
     | SIMPLETYPE #parameterDeclVoid
     | PARAM_LIST #parameterDeclList
     ;

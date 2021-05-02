@@ -18,7 +18,7 @@
   .label PLEX_SCREEN_PTR1 = 2
 .segment Code
 __start: {
-    // idx = 0
+    // volatile char idx = 0
     lda #0
     sta.z idx
     jsr main

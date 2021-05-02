@@ -21,10 +21,10 @@ main: {
 benchmarkCountdownFor: {
     .label a = $41
     .label b = $4b
-    // a
+    // __address(0x41) signed char a
     lda #0
     sta.z a
-    // b
+    // __address(0x4b) signed char b
     sta.z b
     // a = 1
     lda #1
@@ -87,7 +87,7 @@ benchmarkLandscape: {
     // }
     rts
   __b4:
-    // screenAddress = lms + x
+    // char *screenAddress = lms + x
     lda.z x
     clc
     adc #<lms
@@ -111,7 +111,7 @@ benchmarkLandscape: {
     dec.z x
     jmp __b3
   __b7:
-    // stop = colHeight[uc]
+    // char stop = colHeight[uc]
     ldy.z c
     lda colHeight,y
     sta.z stop

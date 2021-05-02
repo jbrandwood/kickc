@@ -32,7 +32,7 @@ main: {
     lda #7
     sta.z a
   __b1:
-    // b = $ce-a
+    // byte b = $ce-a
     lda #$ce
     sec
     sbc.z a

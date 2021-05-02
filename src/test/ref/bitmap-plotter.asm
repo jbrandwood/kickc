@@ -211,7 +211,7 @@ plot: {
     // <plotter_y = plot_ylo[y]
     lda plot_ylo,y
     sta.z plotter_y
-    // plotter = plotter_x+plotter_y
+    // byte* plotter = plotter_x+plotter_y
     lda.z plotter
     clc
     adc.z plotter_y

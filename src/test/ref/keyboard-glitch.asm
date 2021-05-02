@@ -104,11 +104,11 @@ menu: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-    // colidx = key&7
+    // char colidx = key&7
     txa
     and #7
     tay
-    // rowidx = key>>3
+    // char rowidx = key>>3
     txa
     lsr
     lsr

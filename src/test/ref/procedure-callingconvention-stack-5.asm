@@ -14,7 +14,7 @@
   .label current = 4
 .segment Code
 __start: {
-    // current = 48
+    // int  current = 48
     lda #<$30
     sta.z current
     lda #>$30

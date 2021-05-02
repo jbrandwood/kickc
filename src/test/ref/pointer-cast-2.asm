@@ -15,7 +15,7 @@ main: {
     .label ub_ptr = sb
     .label ub = 2
     .label sb = 3
-    // ub = 0xff
+    // byte ub = 0xff
     lda #$ff
     sta.z ub
     // *sb_ptr = 1
@@ -24,7 +24,7 @@ main: {
     // *ub_screen = ub
     lda.z ub
     sta ub_screen
-    // sb = (signed byte)0x7f
+    // signed byte sb = (signed byte)0x7f
     lda #$7f
     sta.z sb
     // *ub_ptr = 1

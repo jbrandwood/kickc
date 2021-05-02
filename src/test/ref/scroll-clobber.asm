@@ -16,7 +16,7 @@ main: {
     lda #>TEXT
     sta.z nxt+1
   __b1:
-    // c = *nxt
+    // byte c = *nxt
     ldy #0
     lda (nxt),y
     tay

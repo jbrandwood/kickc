@@ -78,7 +78,7 @@ main: {
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
-    // c = SINTABLE[idx++]
+    // char c = SINTABLE[idx++]
     // D1=1, turns off Vertical Blank signal (image output on)
     ldy.z idx
     ldx SINTABLE,y

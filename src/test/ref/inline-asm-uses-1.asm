@@ -17,7 +17,7 @@ main: {
     lda #7
     sta.z fgetc.channel
     jsr fgetc
-    // x = fgetc(7)
+    // char x = fgetc(7)
     // *SCREEN = x
     sta SCREEN
     // }
@@ -27,7 +27,7 @@ main: {
 fgetc: {
     .label channel = 2
     .label ret = 3
-    // ret
+    // char ret
     lda #0
     sta.z ret
     // asm

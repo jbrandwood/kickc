@@ -27,7 +27,7 @@ pow2: {
     // pow2(n-1)
     pha
     jsr pow2
-    // c = pow2(n-1)
+    // char c = pow2(n-1)
     pla
     // return c+c;
     asl

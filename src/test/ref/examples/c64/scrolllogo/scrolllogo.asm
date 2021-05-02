@@ -95,7 +95,7 @@ memset: {
     .label end = $22
     .label dst = $24
     .label str = $24
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     clc
     lda.z str
     adc #<$3e8
@@ -144,7 +144,7 @@ sin16s_gen2: {
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
-    // step = div32u16u(PI2_u4f28, wavelength)
+    // unsigned long step = div32u16u(PI2_u4f28, wavelength)
     lda #<xsin
     sta.z sintab
     lda #>xsin
@@ -256,7 +256,7 @@ loop: {
     lda.z __2+1
     adc #>xsin
     sta.z __2+1
-    // xpos = *(xsin+xsin_idx)
+    // signed int xpos = *(xsin+xsin_idx)
     ldy #0
     lda (xpos),y
     pha
@@ -302,7 +302,7 @@ div32u16u: {
     sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
+    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
@@ -314,8 +314,8 @@ div32u16u: {
     sta.z divr16u.dividend+1
     jsr divr16u
     // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
+    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -433,7 +433,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // x1 = >x<<3
+    // unsigned int x1 = >x<<3
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -450,7 +450,7 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
-    // x2 = mulu16_sel(x1, x1, 0)
+    // unsigned int x2 = mulu16_sel(x1, x1, 0)
     lda.z mulu16_sel.return
     sta.z x2
     lda.z mulu16_sel.return+1
@@ -467,7 +467,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x3 = mulu16_sel(x2, x1, 1)
+    // unsigned int x3 = mulu16_sel(x2, x1, 1)
     // mulu16_sel(x3, $10000/6, 1)
     ldx #1
     lda #<$10000/6
@@ -476,8 +476,8 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
-    // x3_6 = mulu16_sel(x3, $10000/6, 1)
-    // usinx = x1 - x3_6
+    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int usinx = x1 - x3_6
     lda.z x1
     sec
     sbc.z x3_6
@@ -497,7 +497,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x4 = mulu16_sel(x3, x1, 0)
+    // unsigned int x4 = mulu16_sel(x3, x1, 0)
     // mulu16_sel(x4, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v2
@@ -506,8 +506,8 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x4, x1, 0)
-    // x5 = mulu16_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // unsigned int x5 = mulu16_sel(x4, x1, 0)
+    // unsigned int x5_128 = x5>>4
     lsr.z x5_128+1
     ror.z x5_128
     lsr.z x5_128+1
@@ -559,7 +559,7 @@ mul16s: {
     sta.z mul16u.b+1
     jsr mul16u
     // mul16u((unsigned int)a, (unsigned int) b)
-    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b2
@@ -615,7 +615,7 @@ render_logo: {
     cmp #$80
     ror.z __2+1
     ror.z __2
-    // x_char = (signed char)(xpos/8)
+    // signed char x_char = (signed char)(xpos/8)
     lda.z __2
     sta.z x_char
     // if(xpos<0)
@@ -866,7 +866,7 @@ mul16u: {
     .label res = $c
     .label return = $c
     .label b = $14
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1

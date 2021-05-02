@@ -9,7 +9,7 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    // screen = 0x0400
+    // char* screen = 0x0400
     // A local pointer 
     lda #<$400
     sta screen

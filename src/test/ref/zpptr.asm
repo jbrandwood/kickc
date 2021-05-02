@@ -21,7 +21,7 @@ main: {
   __b2:
     ldx #0
   __b3:
-    // zpptr2 = zpptr+i
+    // byte* zpptr2 = zpptr+i
     lda.z i
     clc
     adc #<zpptr
@@ -29,7 +29,7 @@ main: {
     lda #>zpptr
     adc #0
     sta.z zpptr2+1
-    // w = (word)j
+    // word w = (word)j
     lda.z j
     sta.z w
     lda #0

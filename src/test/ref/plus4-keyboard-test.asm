@@ -54,7 +54,7 @@ main: {
     // *KEYBOARD_INPUT = 0
     lda #0
     sta KEYBOARD_INPUT
-    // key_bit = *KEYBOARD_INPUT^0xff
+    // char key_bit = *KEYBOARD_INPUT^0xff
     lda #$ff
     eor KEYBOARD_INPUT
     tax

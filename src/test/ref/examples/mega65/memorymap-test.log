@@ -1996,7 +1996,7 @@ main: {
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
     .label pageOffset = $11
-    // pageOffset = memoryPage-blockPage
+    // unsigned int pageOffset = memoryPage-blockPage
     // [25] memoryRemapBlock::pageOffset#0 = $100 - memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
     stx.z $ff
     lda #<$100
@@ -2006,7 +2006,7 @@ memoryRemapBlock: {
     lda #>$100
     sbc #0
     sta.z pageOffset+1
-    // block = blockPage / $20
+    // char block = blockPage / $20
     // [26] memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 >> 5 -- vbuaa=vbuxx_ror_5 
     txa
     lsr
@@ -2014,7 +2014,7 @@ memoryRemapBlock: {
     lsr
     lsr
     lsr
-    // blockBits = 1<<block
+    // char blockBits = 1<<block
     // [27] memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
     tay
     lda #1
@@ -2083,7 +2083,7 @@ memoryRemap: {
     // <lowerPageOffset
     // [34] memoryRemap::$0 = < memoryRemap::lowerPageOffset#2 -- vbuaa=_lo_vwuz1 
     lda.z lowerPageOffset
-    // aVal = <lowerPageOffset
+    // char aVal = <lowerPageOffset
     // [35] memoryRemap::aVal = memoryRemap::$0 -- vbuz1=vbuaa 
     // lower blocks offset page low
     sta.z aVal
@@ -2104,14 +2104,14 @@ memoryRemap: {
     // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     // [39] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
-    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     // [40] memoryRemap::xVal = memoryRemap::$4 -- vbuz1=vbuaa 
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
     // <upperPageOffset
     // [41] memoryRemap::$5 = < memoryRemap::upperPageOffset#2 -- vbuaa=_lo_vwuz1 
     lda.z upperPageOffset
-    // yVal = <upperPageOffset
+    // char yVal = <upperPageOffset
     // [42] memoryRemap::yVal = memoryRemap::$5 -- vbuz1=vbuaa 
     // upper blocks offset page
     sta.z yVal
@@ -2129,7 +2129,7 @@ memoryRemap: {
     // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     // [46] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __6
-    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     // [47] memoryRemap::zVal = memoryRemap::$9 -- vbuz1=vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
@@ -2214,11 +2214,11 @@ memoryRemap256M: {
     // >((unsigned int)(lowerPageOffset>>4))
     // [52] memoryRemap256M::$1 = > (word)memoryRemap256M::$0 -- vbuaa=_hi__word_vduz1 
     lda.z __0+1
-    // lMb = >((unsigned int)(lowerPageOffset>>4))
+    // char lMb = >((unsigned int)(lowerPageOffset>>4))
     // [53] memoryRemap256M::lMb = memoryRemap256M::$1 -- vbuz1=vbuaa 
     // lower blocks offset megabytes
     sta.z lMb
-    // uMb = >((unsigned int)(upperPageOffset>>4))
+    // char uMb = >((unsigned int)(upperPageOffset>>4))
     // [54] memoryRemap256M::uMb = 0 -- vbuz1=vbuc1 
     // upper blocks offset megabytes
     lda #0
@@ -2232,7 +2232,7 @@ memoryRemap256M: {
     // < <lowerPageOffset
     // [56] memoryRemap256M::$5 = < memoryRemap256M::$4 -- vbuaa=_lo_vwuz1 
     lda.z __4
-    // aVal = < <lowerPageOffset
+    // char aVal = < <lowerPageOffset
     // [57] memoryRemap256M::aVal = memoryRemap256M::$5 -- vbuz1=vbuaa 
     // lower blocks offset page low
     sta.z aVal
@@ -2258,11 +2258,11 @@ memoryRemap256M: {
     // (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
     // [62] memoryRemap256M::$10 = memoryRemap256M::$6 | memoryRemap256M::$9 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __6
-    // xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
     // [63] memoryRemap256M::xVal = memoryRemap256M::$10 -- vbuz1=vbuaa 
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // yVal = < <upperPageOffset
+    // char yVal = < <upperPageOffset
     // [64] memoryRemap256M::yVal = 0 -- vbuz1=vbuc1 
     // upper blocks offset page
     lda #0
@@ -2273,7 +2273,7 @@ memoryRemap256M: {
     and #$f0
     // (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
     // [66] memoryRemap256M::$17 = memoryRemap256M::$13
-    // zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
     // [67] memoryRemap256M::zVal = memoryRemap256M::$17 -- vbuz1=vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal

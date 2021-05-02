@@ -24,7 +24,7 @@ fn1: {
 }
 main: {
     .label f = 2
-    // f
+    // void()* f
     lda #<0
     sta.z f
     sta.z f+1

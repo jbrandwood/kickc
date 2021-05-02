@@ -127,7 +127,7 @@ makecharset: {
   __b2:
     // <c
     ldx.z c
-    // s = SINTABLE[<c]
+    // unsigned char s = SINTABLE[<c]
     lda SINTABLE,x
     sta.z s
     lda #0
@@ -223,10 +223,10 @@ doplasma: {
     .label c2a = $c
     .label c2b = $d
     .label i1 = $b
-    // c1a = c1A
+    // unsigned char c1a = c1A
     lda.z c1A
     sta.z c1a
-    // c1b = c1B
+    // unsigned char c1b = c1B
     lda.z c1B
     sta.z c1b
     ldx #0
@@ -248,10 +248,10 @@ doplasma: {
     lax.z c1B
     axs #5
     stx.z c1B
-    // c2a = c2A
+    // unsigned char c2a = c2A
     lda.z c2A
     sta.z c2a
-    // c2b = c2B
+    // unsigned char c2b = c2B
     lda.z c2B
     sta.z c2b
     lda #0
@@ -280,7 +280,7 @@ doplasma: {
     // }
     rts
   __b8:
-    // val =  xbuf[i]
+    // unsigned char val =  xbuf[i]
     // Find the first value on the row
     lda xbuf,x
     // val += ybuf[ii]

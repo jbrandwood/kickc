@@ -39,7 +39,7 @@ main: {
     lda #0
     sta.z i
   __b1:
-    // w1 = words[i]
+    // word w1 = words[i]
     lda.z i
     asl
     tay
@@ -50,7 +50,7 @@ main: {
     lda #0
     sta.z j
   __b2:
-    // w2 = words[j]
+    // word w2 = words[j]
     lda.z j
     asl
     tay

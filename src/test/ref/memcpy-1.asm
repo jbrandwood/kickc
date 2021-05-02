@@ -116,7 +116,7 @@ memcpy: {
     .label source = $a
     .label destination = $c
     .label num = $e
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     lda.z src_end
     clc
     adc.z source

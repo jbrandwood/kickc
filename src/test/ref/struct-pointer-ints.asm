@@ -12,7 +12,7 @@
 .segment Code
 main: {
     .label s = 2
-    // s
+    // myStruct s
     ldy #SIZEOF_STRUCT_MYSTRUCT
     lda #0
   !:

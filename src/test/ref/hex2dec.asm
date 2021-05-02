@@ -26,7 +26,7 @@ main: {
     // *raster>>1
     lda raster
     lsr
-    // rst = (*control&0x80)|(*raster>>1)
+    // unsigned char rst = (*control&0x80)|(*raster>>1)
     ora.z __1
     // while (rst!=0x30)
     cmp #$30
@@ -34,7 +34,7 @@ main: {
     // *BORDER_COLOR = 1
     lda #1
     sta BORDER_COLOR
-    // time_start = *raster
+    // unsigned char time_start = *raster
     lda raster
     sta.z time_start
     // utoa16w(00000, screen)
@@ -94,12 +94,12 @@ main: {
     lda #>$e608
     sta.z utoa16w.value+1
     jsr utoa16w
-    // time_end = *raster
+    // unsigned char time_end = *raster
     ldx raster
     // *BORDER_COLOR = 0
     lda #0
     sta BORDER_COLOR
-    // time = time_end - time_start
+    // unsigned char time = time_end - time_start
     txa
     sec
     sbc.z time_start

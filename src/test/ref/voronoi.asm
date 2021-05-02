@@ -71,7 +71,7 @@ render: {
     jsr findcol
     // findcol(x, y)
     txa
-    // col = findcol(x, y)
+    // byte col = findcol(x, y)
     // colline[x] = col
     ldy.z x
     sta (colline),y
@@ -201,11 +201,11 @@ findcol: {
     // }
     rts
   __b2:
-    // xp = XPOS[i]
+    // byte xp = XPOS[i]
     ldy.z i
     lda XPOS,y
     sta.z xp
-    // yp = YPOS[i]
+    // byte yp = YPOS[i]
     lda YPOS,y
     sta.z yp
     // if(x==xp)

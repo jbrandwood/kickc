@@ -17,8 +17,8 @@ main: {
     // mul16u(4,123)
     jsr mul16u
     // mul16u(4,123)
-    // result = mul16u(4,123)
-    // kaputt = <result
+    // dword result = mul16u(4,123)
+    // word kaputt = <result
     lda.z result
     sta.z kaputt
     lda.z result+1

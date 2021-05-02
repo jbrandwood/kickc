@@ -116,7 +116,7 @@ scroll_bit: {
     // next_char()
     jsr next_char
     txa
-    // c = next_char()
+    // unsigned int c = next_char()
     sta.z c
     lda #0
     sta.z c+1
@@ -151,7 +151,7 @@ scroll_bit: {
     sta.z sc+1
     ldx #0
   __b3:
-    // bits = current_chargen[r]
+    // char bits = current_chargen[r]
     txa
     tay
     lda (current_chargen),y
@@ -190,7 +190,7 @@ scroll_bit: {
 }
 // Find the next char of the scroll text
 next_char: {
-    // c = *nxt
+    // char c = *nxt
     ldy #0
     lda (nxt),y
     tax

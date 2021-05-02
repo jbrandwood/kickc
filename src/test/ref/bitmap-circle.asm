@@ -62,7 +62,7 @@ fill: {
     .label end = 2
     .label addr = 4
     .label size = 2
-    // end = start + size
+    // byte* end = start + size
     lda.z end
     clc
     adc.z addr

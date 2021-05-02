@@ -51,7 +51,7 @@ mul8u: {
     .label mb = 6
     .label res = 4
     .label return = 4
-    // mb = b
+    // unsigned int mb = b
     sta.z mb
     lda #0
     sta.z mb+1

@@ -110,24 +110,24 @@
   .label CONIO_SCREEN_TEXT = $28
 .segment Code
 __start: {
-    // conio_screen_width = 0
+    // __ma unsigned byte conio_screen_width = 0
     lda #0
     sta.z conio_screen_width
-    // conio_screen_height = 0
+    // __ma unsigned byte conio_screen_height = 0
     sta.z conio_screen_height
-    // conio_screen_layer = 1
+    // __ma unsigned byte conio_screen_layer = 1
     lda #1
     sta.z conio_screen_layer
-    // conio_width = 0
+    // __ma word conio_width = 0
     lda #<0
     sta.z conio_width
     sta.z conio_width+1
-    // conio_height = 0
+    // __ma word conio_height = 0
     sta.z conio_height
     sta.z conio_height+1
-    // conio_rowshift = 0
+    // __ma byte conio_rowshift = 0
     sta.z conio_rowshift
-    // conio_rowskip = 0
+    // __ma word conio_rowskip = 0
     sta.z conio_rowskip
     sta.z conio_rowskip+1
     // #pragma constructor_for(conio_x16_init, cputc, clrscr, cscroll)
@@ -140,7 +140,7 @@ conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     .label line = 2
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
     // vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16)
@@ -708,7 +708,7 @@ vera_layer_mode_text: {
 screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
-    // hscale = (*VERA_DC_HSCALE) >> 7
+    // char hscale = (*VERA_DC_HSCALE) >> 7
     lda VERA_DC_HSCALE
     rol
     rol
@@ -725,7 +725,7 @@ screensize: {
   !e:
     // *x = 40 << hscale
     sta.z x
-    // vscale = (*VERA_DC_VSCALE) >> 7
+    // char vscale = (*VERA_DC_VSCALE) >> 7
     lda VERA_DC_VSCALE
     rol
     rol
@@ -771,7 +771,7 @@ screenlayer: {
     sta.z CONIO_SCREEN_TEXT+1
     // vera_layer_get_width(conio_screen_layer)
     lda.z conio_screen_layer
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -816,7 +816,7 @@ screenlayer: {
     sta.z conio_rowskip+1
     // vera_layer_get_height(conio_screen_layer)
     lda.z conio_screen_layer
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -882,7 +882,7 @@ vera_layer_set_backcolor: {
 // vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
 vera_layer_set_mapbase: {
     .label addr = $34
-    // addr = vera_layer_mapbase[layer]
+    // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
     lda vera_layer_mapbase,y
@@ -922,7 +922,7 @@ gotoxy: {
     sta.z __6
     lda #0
     sta.z __6+1
-    // line_offset = (unsigned int)y << conio_rowshift
+    // unsigned int line_offset = (unsigned int)y << conio_rowshift
     ldy.z conio_rowshift
     beq !e+
   !:
@@ -1251,7 +1251,7 @@ vera_layer_mode_tile: {
     sta.z __4
     lda.z mapbase_address+1
     sta.z __4+1
-    // mapbase = >(<mapbase_address)
+    // byte mapbase = >(<mapbase_address)
     tax
     // vera_layer_set_mapbase(layer,mapbase)
     lda.z layer
@@ -1297,7 +1297,7 @@ vera_layer_mode_tile: {
     sta.z __10
     lda.z tilebase_address+1
     sta.z __10+1
-    // tilebase = >(<tilebase_address)
+    // byte tilebase = >(<tilebase_address)
     // tilebase &= VERA_LAYER_TILEBASE_MASK
     and #VERA_LAYER_TILEBASE_MASK
     tax
@@ -1408,7 +1408,7 @@ clrscr: {
     .label __1 = $3a
     .label line_text = $45
     .label color = $3a
-    // line_text = CONIO_SCREEN_TEXT
+    // char* line_text = CONIO_SCREEN_TEXT
     lda.z CONIO_SCREEN_TEXT
     sta.z line_text
     lda.z CONIO_SCREEN_TEXT+1
@@ -1425,7 +1425,7 @@ clrscr: {
     // vera_layer_get_textcolor(conio_screen_layer)
     ldx.z conio_screen_layer
     jsr vera_layer_get_textcolor
-    // color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
+    // char color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
     ora.z color
     sta.z color
     ldx #0
@@ -1574,7 +1574,7 @@ vera_tile_area: {
     .label y = 6
     .label h = $18
     .label w = $3a
-    // mapbase = vera_mapbase_address[layer]
+    // dword mapbase = vera_mapbase_address[layer]
     lda vera_mapbase_address
     sta.z mapbase
     lda vera_mapbase_address+1
@@ -1583,10 +1583,10 @@ vera_tile_area: {
     sta.z mapbase+2
     lda vera_mapbase_address+3
     sta.z mapbase+3
-    // shift = vera_layer_rowshift[layer]
+    // byte shift = vera_layer_rowshift[layer]
     lda vera_layer_rowshift
     sta.z shift
-    // rowskip = (word)1 << shift
+    // word rowskip = (word)1 << shift
     tay
     lda #<1
     sta.z rowskip
@@ -1606,10 +1606,10 @@ vera_tile_area: {
     // vflip = vera_layer_vflip[vflip]
     lda vera_layer_vflip
     sta.z vflip
-    // index_l = <tileindex
+    // byte index_l = <tileindex
     lda.z tileindex
     sta.z index_l
-    // index_h = >tileindex
+    // byte index_h = >tileindex
     lda.z tileindex+1
     // index_h |= hflip
     ora.z hflip
@@ -1763,7 +1763,7 @@ kbhit: {
     // Current input device number
     .label GETIN = $ffe4
     .label ch = $40
-    // ch = 0
+    // char ch = 0
     lda #0
     sta.z ch
     // kickasm
@@ -1806,7 +1806,7 @@ kbhit: {
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 vera_layer_set_text_color_mode: {
     .label addr = $41
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER+1
@@ -1880,7 +1880,7 @@ vera_layer_get_rowskip: {
 // vera_layer_set_config(byte register(A) layer, byte register(X) config)
 vera_layer_set_config: {
     .label addr = $43
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -1902,7 +1902,7 @@ vera_layer_set_config: {
 // vera_layer_set_tilebase(byte register(A) layer, byte register(X) tilebase)
 vera_layer_set_tilebase: {
     .label addr = $43
-    // addr = vera_layer_tilebase[layer]
+    // byte* addr = vera_layer_tilebase[layer]
     asl
     tay
     lda vera_layer_tilebase,y
@@ -1951,12 +1951,12 @@ cputc: {
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
     // vera_layer_get_color( conio_screen_layer)
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     tax
     // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     tay
     clc
     lda.z CONIO_SCREEN_TEXT
@@ -2007,7 +2007,7 @@ cputc: {
     // conio_cursor_x[conio_screen_layer]++;
     ldx.z conio_screen_layer
     inc conio_cursor_x,x
-    // scroll_enable = conio_scroll_enable[conio_screen_layer]
+    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_scroll_enable,y
     // if(scroll_enable)
@@ -2051,7 +2051,7 @@ cputc: {
 // vera_layer_get_color(byte register(X) layer)
 vera_layer_get_color: {
     .label addr = $4d
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     txa
     asl
     tay
@@ -2084,7 +2084,7 @@ vera_layer_get_color: {
 // Print a newline
 cputln: {
     .label temp = $49
-    // temp = conio_line_text[conio_screen_layer]
+    // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
     // TODO: This needs to be optimized! other variations don't compile because of sections not available!
@@ -2155,11 +2155,11 @@ insertup: {
     .label width = $4c
     .label line = $47
     .label start = $47
-    // cy = conio_cursor_y[conio_screen_layer]
+    // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
     sta.z cy
-    // width = CONIO_WIDTH * 2
+    // unsigned byte width = CONIO_WIDTH * 2
     lda.z conio_screen_width
     asl
     sta.z width
@@ -2179,7 +2179,7 @@ insertup: {
     txa
     sec
     sbc #1
-    // line = (i-1) << conio_rowshift
+    // unsigned int line = (i-1) << conio_rowshift
     ldy.z conio_rowshift
     sta.z line
     lda #0
@@ -2192,7 +2192,7 @@ insertup: {
     dey
     bne !-
   !e:
-    // start = CONIO_SCREEN_TEXT + line
+    // unsigned char* start = CONIO_SCREEN_TEXT + line
     lda.z start
     clc
     adc.z CONIO_SCREEN_TEXT
@@ -2232,7 +2232,7 @@ clearline: {
     // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     tay
     clc
     lda.z CONIO_SCREEN_TEXT
@@ -2256,7 +2256,7 @@ clearline: {
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
     // vera_layer_get_color( conio_screen_layer)
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     tax
     lda #<0
     sta.z c

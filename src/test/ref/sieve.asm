@@ -128,7 +128,7 @@ main: {
   !:
     // clock()
     jsr clock
-    // cyclecount = clock()-CLOCKS_PER_INIT
+    // clock_t cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -144,7 +144,7 @@ main: {
     sta.z cyclecount+3
     // div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
     jsr div32u16u
-    // sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
+    // unsigned int sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
     lda.z __12
     sta.z sec100s
     lda.z __12+1
@@ -235,14 +235,14 @@ main: {
     lda (sieve_i),y
     cmp #0
     bne __b4
-    // j = i*2
+    // unsigned int j = i*2
     lda.z i
     asl
     sta.z j
     lda.z i+1
     rol
     sta.z j+1
-    // s = &sieve[j]
+    // unsigned char* s = &sieve[j]
     clc
     lda.z j
     adc #<sieve
@@ -406,7 +406,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -505,7 +505,7 @@ div32u16u: {
     sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
+    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
@@ -517,8 +517,8 @@ div32u16u: {
     sta.z divr16u.dividend+1
     jsr divr16u
     // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
+    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -604,7 +604,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -748,7 +748,7 @@ ultoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned long digit_value = digit_values[digit]
     lda.z digit
     asl
     asl

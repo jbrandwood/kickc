@@ -22,7 +22,7 @@ main: {
     sta addrtable+1*SIZEOF_POINTER
     lda #>myFunc2
     sta addrtable+1*SIZEOF_POINTER+1
-    // fn = addrtable[0]
+    // void()* fn = addrtable[0]
     lda addrtable
     sta.z fn
     lda addrtable+1

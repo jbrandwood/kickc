@@ -11,7 +11,7 @@
 main: {
     .const long_ptr_zp = long_ptr
     .label long_ptr = 2
-    // long_ptr = 0x12345678
+    // __zp unsigned long long_ptr = 0x12345678
     lda #<$12345678
     sta.z long_ptr
     lda #>$12345678

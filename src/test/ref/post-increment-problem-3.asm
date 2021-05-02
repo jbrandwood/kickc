@@ -10,7 +10,7 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    // n = *(ptr++)
+    // unsigned char n = *(ptr++)
     lda mmap
   __b1:
     // while (n--)

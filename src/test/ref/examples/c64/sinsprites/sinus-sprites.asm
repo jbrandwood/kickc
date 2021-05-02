@@ -123,10 +123,10 @@ anim: {
     .label j = 3
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // xidx = sin_idx_x
+    // char xidx = sin_idx_x
     lda.z sin_idx_x
     sta.z xidx
-    // yidx = sin_idx_y
+    // char yidx = sin_idx_y
     lda.z sin_idx_y
     sta.z yidx
     lda #0
@@ -136,7 +136,7 @@ anim: {
     lda #0
     sta.z x_msb
   __b3:
-    // x = (unsigned int)$1e + sintab_x[xidx]
+    // unsigned int x = (unsigned int)$1e + sintab_x[xidx]
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -542,7 +542,7 @@ gen_chargen_sprite: {
     rol.z __0+1
     asl.z __0
     rol.z __0+1
-    // chargen = CHARGEN+((unsigned int)ch)*8
+    // char* chargen = CHARGEN+((unsigned int)ch)*8
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -558,7 +558,7 @@ gen_chargen_sprite: {
     lda #0
     sta.z y
   __b1:
-    // bits = chargen[y]
+    // char bits = chargen[y]
     // current chargen line
     ldy.z y
     lda (chargen),y
@@ -781,7 +781,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // w = { *memHi, *memLo }
+    // unsigned int w = { *memHi, *memLo }
     tya
     sta.z return
     lda memHi

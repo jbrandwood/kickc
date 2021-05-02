@@ -12,7 +12,7 @@
   .label idx = 3
 .segment Code
 __start: {
-    // idx
+    // volatile char __address(0x03) idx
     lda #0
     sta.z idx
     jsr main

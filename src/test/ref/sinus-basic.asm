@@ -229,7 +229,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // w = { *memHi, *memLo }
+    // unsigned int w = { *memHi, *memLo }
     tya
     sta.z return
     lda memHi

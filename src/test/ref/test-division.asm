@@ -54,18 +54,18 @@ test_8u: {
     lda #0
     sta.z i
   __b1:
-    // dividend = dividends[i]
+    // byte dividend = dividends[i]
     ldy.z i
     lda dividends,y
     sta.z dividend
-    // divisor = divisors[i]
+    // byte divisor = divisors[i]
     lda divisors,y
     sta.z divisor
     // div8u(dividend, divisor)
     ldx.z dividend
     jsr div8u
     // div8u(dividend, divisor)
-    // res = div8u(dividend, divisor)
+    // byte res = div8u(dividend, divisor)
     sta.z res
     // print_uchar(dividend)
     jsr print_uchar
@@ -126,7 +126,7 @@ test_16u: {
     lda #0
     sta.z i
   __b1:
-    // dividend = dividends[i]
+    // word dividend = dividends[i]
     lda.z i
     asl
     tax
@@ -134,7 +134,7 @@ test_16u: {
     sta.z dividend
     lda dividends+1,x
     sta.z dividend+1
-    // divisor = divisors[i]
+    // word divisor = divisors[i]
     lda divisors,x
     sta.z divisor
     lda divisors+1,x
@@ -145,7 +145,7 @@ test_16u: {
     lda.z dividend+1
     sta.z div16u.dividend+1
     jsr div16u
-    // res = div16u(dividend, divisor)
+    // word res = div16u(dividend, divisor)
     // print_uint(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -211,18 +211,18 @@ test_8s: {
     lda #0
     sta.z i
   __b1:
-    // dividend = dividends[i]
+    // signed byte dividend = dividends[i]
     ldy.z i
     lda dividends,y
     sta.z dividend
-    // divisor = divisors[i]
+    // signed byte divisor = divisors[i]
     lda divisors,y
     sta.z divisor
     // div8s(dividend, divisor)
     ldx.z dividend
     tay
     jsr div8s
-    // res = div8s(dividend, divisor)
+    // signed byte res = div8s(dividend, divisor)
     sta.z res
     // print_schar(dividend)
     lda.z print_line_cursor
@@ -282,7 +282,7 @@ test_16s: {
     lda #0
     sta.z i
   __b1:
-    // dividend = dividends[i]
+    // signed word dividend = dividends[i]
     lda.z i
     asl
     tax
@@ -290,14 +290,14 @@ test_16s: {
     sta.z dividend
     lda dividends+1,x
     sta.z dividend+1
-    // divisor = divisors[i]
+    // signed word divisor = divisors[i]
     lda divisors,x
     sta.z divisor
     lda divisors+1,x
     sta.z divisor+1
     // div16s(dividend, divisor)
     jsr div16s
-    // res = div16s(dividend, divisor)
+    // signed word res = div16s(dividend, divisor)
     // print_sint(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -528,7 +528,7 @@ div8s: {
     // div8u(dividendu, divisoru)
     jsr div8u
     // div8u(dividendu, divisoru)
-    // resultu = div8u(dividendu, divisoru)
+    // char resultu = div8u(dividendu, divisoru)
     tay
     // if(neg==0)
     lda.z neg
@@ -817,7 +817,7 @@ divr16s: {
     // divr16u(dividendu, divisoru, remu)
     jsr divr16u
     // divr16u(dividendu, divisoru, remu)
-    // resultu = divr16u(dividendu, divisoru, remu)
+    // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     // if(neg==0)
     cpy #0
     beq __breturn

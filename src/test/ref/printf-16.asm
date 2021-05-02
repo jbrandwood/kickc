@@ -26,17 +26,17 @@
   .label conio_line_color = $d
 .segment Code
 __start: {
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     lda #<COLORRAM
     sta.z conio_line_color
     lda #>COLORRAM
@@ -50,7 +50,7 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     ldx BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
     cpx #$19
@@ -321,7 +321,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -594,7 +594,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -764,7 +764,7 @@ memcpy: {
     .label src = $17
     .label source = $17
     .label destination = 7
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<$19*$28-$28
@@ -804,7 +804,7 @@ memset: {
     .label end = $17
     .label dst = 7
     .label str = 7
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda #$28
     clc
     adc.z str

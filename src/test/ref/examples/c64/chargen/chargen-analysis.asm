@@ -219,7 +219,7 @@ main: {
     // keyboard_get_keycode(ch)
     ldx.z ch
     jsr keyboard_get_keycode
-    // key = keyboard_get_keycode(ch)
+    // char key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
     beq __b3
@@ -319,7 +319,7 @@ plot_chargen: {
     rol.z __0+1
     asl.z __0
     rol.z __0+1
-    // chargen = CHARGEN+(unsigned int)ch*8
+    // char* chargen = CHARGEN+(unsigned int)ch*8
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -350,7 +350,7 @@ plot_chargen: {
     clc
     adc.z $ff
     asl
-    // sc = SCREEN + 41 + pos*10
+    // char* sc = SCREEN + 41 + pos*10
     clc
     adc #<SCREEN+$29
     sta.z sc
@@ -360,7 +360,7 @@ plot_chargen: {
     lda #0
     sta.z y
   __b3:
-    // bits = chargen[y]
+    // char bits = chargen[y]
     ldy.z y
     lda (chargen),y
     sta.z bits
@@ -418,11 +418,11 @@ plot_chargen: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-    // colidx = key&7
+    // char colidx = key&7
     txa
     and #7
     tay
-    // rowidx = key>>3
+    // char rowidx = key>>3
     txa
     lsr
     lsr

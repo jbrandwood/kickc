@@ -33,7 +33,7 @@ main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     jsr loadFileToMemory
-    // status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
+    // char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     tax
     // if(status!=0xff)
     cpx #$ff
@@ -120,7 +120,7 @@ setnam: {
     sta.z strlen.str+1
     jsr strlen
     // strlen(filename)
-    // filename_len = (char)strlen(filename)
+    // char filename_len = (char)strlen(filename)
     lda.z __0
     sta.z filename_len
     // asm
@@ -151,7 +151,7 @@ load: {
     .label address = $a
     .label verify = $c
     .label status = $e
-    // status
+    // char status
     lda #0
     sta.z status
     // asm

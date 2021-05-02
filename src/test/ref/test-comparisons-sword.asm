@@ -43,7 +43,7 @@ main: {
     lda #0
     sta.z i
   __b1:
-    // w1 = swords[i]
+    // signed word w1 = swords[i]
     lda.z i
     asl
     tay
@@ -54,7 +54,7 @@ main: {
     lda #0
     sta.z j
   __b2:
-    // w2 = swords[j]
+    // signed word w2 = swords[j]
     lda.z j
     asl
     tay

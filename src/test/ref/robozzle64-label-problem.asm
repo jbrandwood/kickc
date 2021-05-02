@@ -25,7 +25,7 @@ main: {
     ldx.z y
     jsr mul8u
     // mul8u(y,40)
-    // z1 = mul8u(y,40)
+    // word z1 = mul8u(y,40)
     // *screen++ = z1
     ldy #0
     lda.z z1
@@ -37,7 +37,7 @@ main: {
     ldx.z y
     jsr mul8u
     // mul8u(y,40)
-    // z2 = mul8u(y,40)
+    // word z2 = mul8u(y,40)
     // *screen++ = z2
     ldy #SIZEOF_WORD
     lda.z z2

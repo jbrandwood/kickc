@@ -210,7 +210,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(x2-x1)
-    // dx = abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     lda.z abs_u16.return
     sta.z dx
     lda.z abs_u16.return+1
@@ -225,7 +225,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(y2-y1)
-    // dy = abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
     ora.z dx+1
@@ -246,7 +246,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(x2-x1)
-    // sx = sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     lda.z sgn_u16.return
     sta.z sx
     lda.z sgn_u16.return+1
@@ -261,7 +261,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(y2-y1)
-    // sy = sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     // if(dx > dy)
     lda.z dy+1
     cmp.z dx+1
@@ -271,7 +271,7 @@ bitmap_line: {
     cmp.z dx
     bcc __b2
   !:
-    // e = dx/2
+    // unsigned int e = dx/2
     lda.z dx+1
     lsr
     sta.z e+1
@@ -337,7 +337,7 @@ bitmap_line: {
     // }
     rts
   __b2:
-    // e = dy/2
+    // unsigned int e = dy/2
     lda.z dy+1
     lsr
     sta.z e1+1
@@ -416,7 +416,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -503,7 +503,7 @@ bitmap_plot: {
     .label __0 = $1b
     .label plotter = $19
     .label x = 6
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     tay
     lda bitmap_plot_yhi,y
     sta.z plotter+1

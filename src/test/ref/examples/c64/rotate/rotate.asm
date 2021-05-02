@@ -100,11 +100,11 @@ anim: {
     sta.z sprite_msb
     sta.z i
   __b4:
-    // x = xs[i]
+    // signed char x = xs[i]
     ldy.z i
     lda xs,y
     sta.z x
-    // y = ys[i]
+    // signed char y = ys[i]
     // signed fixed[7.0]
     lda ys,y
     sta.z y
@@ -116,7 +116,7 @@ anim: {
     ldy.z x
     jsr mulf8s_prepared
     // mulf8s_prepared(x)
-    // xr = mulf8s_prepared(x)*2
+    // signed int xr = mulf8s_prepared(x)*2
     lda.z __4
     asl
     sta.z xr
@@ -127,7 +127,7 @@ anim: {
     ldy.z y
     jsr mulf8s_prepared
     // mulf8s_prepared(y)
-    // yr = mulf8s_prepared(y)*2
+    // signed int yr = mulf8s_prepared(y)*2
     lda.z __6
     asl
     sta.z yr
@@ -171,7 +171,7 @@ anim: {
     sta.z yr+1
     // >xr
     lda.z xr+1
-    // xpos = ((signed char) >xr) + 24 /*border*/ + 149
+    // signed int xpos = ((signed char) >xr) + 24 /*border*/ + 149
     tax
     clc
     adc #<$18+$95
@@ -196,11 +196,11 @@ anim: {
   __b5:
     // (>yr) + 89
     lda.z yr+1
-    // ypos = (>yr) + 89 /*center*/+ 51
+    // char ypos = (>yr) + 89 /*center*/+ 51
     clc
     adc #$59+$33
     tay
-    // i2 = i*2
+    // char i2 = i*2
     lda.z i
     asl
     tax
@@ -225,7 +225,7 @@ anim: {
     inc.z angle
     // clock()
     jsr clock
-    // cyclecount = clock()-CLOCKS_PER_INIT
+    // unsigned long cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -438,7 +438,7 @@ mulf8s_prepared: {
     // mulf8u_prepared((char) b)
     tya
     jsr mulf8u_prepared
-    // m = mulf8u_prepared((char) b)
+    // unsigned int m = mulf8u_prepared((char) b)
     // if(*memA<0)
     lda memA
     cmp #0

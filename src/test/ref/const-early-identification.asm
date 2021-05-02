@@ -12,7 +12,7 @@
   .label A = 2
 .segment Code
 __start: {
-    // A = 'a'
+    // byte A = 'a'
     lda #'a'
     sta.z A
     jsr main
@@ -40,7 +40,7 @@ sub: {
     // SCREEN[3] = C
     lda #C
     sta SCREEN+3
-    // D = A+1
+    // byte D = A+1
     ldx.z A
     inx
     // SCREEN[4] = D

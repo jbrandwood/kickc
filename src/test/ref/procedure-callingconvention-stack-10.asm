@@ -14,7 +14,7 @@
   .label idx = 3
 .segment Code
 __start: {
-    // idx = 0
+    // char idx = 0
     lda #0
     sta.z idx
     jsr main
@@ -81,7 +81,7 @@ main: {
     pha
     pha
     jsr get
-    // p = get(i)
+    // struct Point p = get(i)
     pla
     tay
     pla

@@ -18,10 +18,10 @@
   .label idx2 = 5
 .segment Code
 __start: {
-    // idx1 = 0
+    // volatile char idx1 = 0
     lda #0
     sta.z idx1
-    // idx2 = 0
+    // volatile char idx2 = 0
     sta.z idx2
     jsr main
     rts
@@ -142,7 +142,7 @@ main: {
     lda.z j
     sta.z param_char
     pha
-    // f = fns[j]
+    // void()* f = fns[j]
     lda.z j
     asl
     tay

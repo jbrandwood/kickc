@@ -12,10 +12,10 @@
 .segment Code
 main: {
   __b1:
-    // c1a = c1A
+    // char c1a = c1A
     lda c1A
     sta c1a
-    // i = 0
+    // char i = 0
     lda #0
     sta i
   __b2:

@@ -140,7 +140,7 @@ makecharset: {
   __b2:
     // <c
     ldx.z c
-    // s = SINTABLE[<c]
+    // char s = SINTABLE[<c]
     lda SINTABLE,x
     sta.z s
     lda #0
@@ -237,10 +237,10 @@ doplasma: {
     .label c2b = $b
     .label i1 = 9
     .label screen = $c
-    // c1a = c1A
+    // char c1a = c1A
     lda.z c1A
     sta.z c1a
-    // c1b = c1B
+    // char c1b = c1B
     lda.z c1B
     sta.z c1b
     lda #0
@@ -258,10 +258,10 @@ doplasma: {
     lax.z c1B
     axs #5
     stx.z c1B
-    // c2a = c2A
+    // char c2a = c2A
     lda.z c2A
     sta.z c2a
-    // c2b = c2B
+    // char c2b = c2B
     lda.z c2B
     sta.z c2b
     lda #0

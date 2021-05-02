@@ -13,7 +13,7 @@
 main: {
     .const jesper_id = 4
     .const henriette_id = 7
-    // jesper = { 4, "jesper" }
+    // struct Person jesper = { 4, "jesper" }
     ldy #$10
   !:
     lda __0-1,y
@@ -29,7 +29,7 @@ main: {
     sta.z idx
     ldx #jesper_id
     jsr print_person
-    // henriette = { 7, "henriette" }
+    // struct Person henriette = { 7, "henriette" }
     ldy #$10
   !:
     lda __1-1,y

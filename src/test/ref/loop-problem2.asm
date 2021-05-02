@@ -47,7 +47,7 @@ print_cls: {
 }
 mode_ctrl: {
   __b1:
-    // before = *BORDER_COLOR
+    // byte before = *BORDER_COLOR
     lda BORDER_COLOR
     // if(before==$ff)
     cmp #$ff

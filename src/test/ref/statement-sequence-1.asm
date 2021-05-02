@@ -12,7 +12,7 @@ main: {
     .label SCREEN = $400
     ldy #0
   __b1:
-    // c = i+5
+    // byte c = i+5
     tya
     tax
     axs #-[5]

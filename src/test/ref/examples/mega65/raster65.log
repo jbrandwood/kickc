@@ -3334,25 +3334,25 @@ Score: 10121
   // __start
 __start: {
     // __start::__init1
-    // sin_idx
+    // volatile char sin_idx
     // [1] sin_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z sin_idx
-    // scroll_soft = 7
+    // volatile char scroll_soft = 7
     // [2] scroll_soft = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z scroll_soft
-    // scroll_ptr = SCROLL_TEXT
+    // char * volatile scroll_ptr = SCROLL_TEXT
     // [3] scroll_ptr = SCROLL_TEXT -- pbuz1=pbuc1 
     lda #<SCROLL_TEXT
     sta.z scroll_ptr
     lda #>SCROLL_TEXT
     sta.z scroll_ptr+1
-    // greet_zoomx
+    // volatile char greet_zoomx
     // [4] greet_zoomx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greet_zoomx
-    // greet_idx
+    // volatile char greet_idx
     // [5] greet_idx = 0 -- vbuz1=vbuc1 
     sta.z greet_idx
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -3389,7 +3389,7 @@ irq: {
     // reset x scroll
     lda #0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // wobble_idx = ++sin_idx
+    // char wobble_idx = ++sin_idx
     // [12] sin_idx = ++ sin_idx -- vbuz1=_inc_vbuz1 
     inc.z sin_idx
     // [13] irq::wobble_idx#0 = sin_idx -- vbuxx=vbuz1 
@@ -3412,7 +3412,7 @@ irq: {
     // [16] call *songPlay 
     // play music
     jsr songPlay
-    // sin_col = sin_idx
+    // char sin_col = sin_idx
     // [17] irq::sin_col#0 = sin_idx -- vbuyy=vbuz1 
     // Set up colors behind logo, scroll and greets
     ldy.z sin_idx
@@ -3441,7 +3441,7 @@ irq: {
     jmp __b19
   !__b19:
     // irq::@20
-    // sin_bar = sin_idx
+    // char sin_bar = sin_idx
     // [22] irq::sin_bar#0 = sin_idx -- vbuz1=vbuz2 
     // Big block of bars (16)
     lda.z sin_idx
@@ -3469,7 +3469,7 @@ irq: {
     cpx #$13
     bcc __b29
     // irq::@30
-    // greet_offset = greet_idx*16
+    // char greet_offset = greet_idx*16
     // [27] irq::greet_offset#0 = greet_idx << 4 -- vbuyy=vbuz1_rol_4 
     lda.z greet_idx
     asl
@@ -3511,7 +3511,7 @@ irq: {
     cpx #$27
     bcc __b36
     // irq::@37
-    // nxt = *(scroll_ptr++)
+    // char nxt = *(scroll_ptr++)
     // [35] irq::nxt#0 = *scroll_ptr -- vbuaa=_deref_pbuz1 
     // Show next char
     ldy #0
@@ -3603,11 +3603,11 @@ irq: {
     jmp __b28
     // irq::@22
   __b22:
-    // idx = SINE[sin_bar]
+    // char idx = SINE[sin_bar]
     // [54] irq::idx#0 = SINE[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z sin_bar
     ldx SINE,y
-    // barcol = barcnt*16
+    // char barcol = barcnt*16
     // [55] irq::barcol#0 = irq::barcnt#2 << 4 -- vbuzz=vbuz1_rol_4 
     lda.z barcnt
     asl
@@ -3704,7 +3704,7 @@ irq: {
     jmp __b18
     // irq::@17
   __b17:
-    // col = SINE[sin_col]/4
+    // char col = SINE[sin_col]/4
     // [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
     lda SINE,y
     lsr
@@ -3751,7 +3751,7 @@ irq: {
     jmp __b16
     // irq::@2
   __b2:
-    // col = rasters[line]
+    // char col = rasters[line]
     // [84] irq::col#0 = rasters[irq::line#10] -- vbuaa=pbuc1_derefidx_vbuzz 
     tza
     tay
@@ -3782,7 +3782,7 @@ irq: {
     cpz #SCROLL_Y+SCROLL_BLACKBARS+1
     bne __b7
     // irq::@13
-    // zoomval = SINE[greet_zoomx++]
+    // char zoomval = SINE[greet_zoomx++]
     // [91] irq::zoomval#0 = SINE[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
@@ -3819,7 +3819,7 @@ irq: {
     // [100] phi irq::wobble_idx#7 = irq::wobble_idx#10 [phi:irq::@12/irq::@13/irq::@14/irq::@15/irq::@4/irq::@5/irq::@6->irq::@7#0] -- register_copy 
     // irq::@7
   __b7:
-    // raster = VICII->RASTER
+    // char raster = VICII->RASTER
     // [101] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER

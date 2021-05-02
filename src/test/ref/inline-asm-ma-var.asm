@@ -11,7 +11,7 @@
 .segment Code
 main: {
     .label value = 2
-    // value = 0
+    // __ma char value = 0
     lda #0
     sta.z value
     tax

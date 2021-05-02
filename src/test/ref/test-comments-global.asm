@@ -11,7 +11,7 @@
   .label screen = 2
 .segment Code
 __start: {
-    // screen = 0x0400
+    // __ma char * screen = 0x0400
     lda #<$400
     sta.z screen
     lda #>$400

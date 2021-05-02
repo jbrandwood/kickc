@@ -14,7 +14,7 @@ main: {
     .label SCREEN = $400
     ldx #0
   __b1:
-    // glyph_bits = BASIC[i]
+    // char glyph_bits = BASIC[i]
     lda BASIC,x
     // glyph_bits&0x80
     and #$80

@@ -19,7 +19,7 @@ main: {
   __b2:
     ldy #0
   __b3:
-    // ca = c+a
+    // char ca = c+a
     tya
     clc
     adc.z a

@@ -22,7 +22,7 @@ main: {
     sta.z j
     sta.z i
   __b1:
-    // to = letter_c[i].to
+    // __ma struct Vector to = letter_c[i].to
     lda.z i
     asl
     asl

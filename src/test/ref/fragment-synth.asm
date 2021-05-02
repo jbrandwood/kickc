@@ -25,7 +25,7 @@ main: {
     ldx #$aa
     jsr fct
     // fct(x, z)
-    // a1 = fct(x, z)
+    // byte a1 = fct(x, z)
     // screen[0] = a1
     sta screen
     // fct(x, z)
@@ -36,7 +36,7 @@ main: {
     ldx #$55
     jsr fct
     // fct(x, z)
-    // a2 = fct(x, z)
+    // byte a2 = fct(x, z)
     // screen[1] = a2
     sta screen+1
     // }

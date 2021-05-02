@@ -50,7 +50,7 @@ main: {
     lda #0
     sta.z i
   __b1:
-    // sb = sintabb[i]
+    // signed byte sb = sintabb[i]
     ldy.z i
     lda sintabb,y
     sta.z sb
@@ -68,7 +68,7 @@ main: {
     lda.z __3+1
     adc #>sintabw
     sta.z __3+1
-    // sw = *(sintabw+(word)i)
+    // signed word sw = *(sintabw+(word)i)
     ldy #0
     lda (sw),y
     pha
@@ -79,7 +79,7 @@ main: {
     sta.z sw
     // >sw
     lda.z sw+1
-    // sd = sb-(signed byte)>sw
+    // signed byte sd = sb-(signed byte)>sw
     eor #$ff
     sec
     adc.z sb
@@ -116,7 +116,7 @@ sin8s_gen: {
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
     // div16u(PI2_u4f12, wavelength)
-    // step = div16u(PI2_u4f12, wavelength)
+    // unsigned int step = div16u(PI2_u4f12, wavelength)
     lda #<main.sintabb
     sta.z sintab
     lda #>main.sintabb
@@ -184,7 +184,7 @@ sin16s_gen: {
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
-    // step = div32u16u(PI2_u4f28, wavelength)
+    // unsigned long step = div32u16u(PI2_u4f28, wavelength)
     lda #<main.sintabw
     sta.z sintab
     lda #>main.sintabw
@@ -402,7 +402,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // x1 = >x<<3
+    // char x1 = >x<<3
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -412,7 +412,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x1, x1, 0)
-    // x2 = mulu8_sel(x1, x1, 0)
+    // char x2 = mulu8_sel(x1, x1, 0)
     // mulu8_sel(x2, x1, 1)
     tax
     ldy.z x1
@@ -420,7 +420,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x2, x1, 1)
-    // x3 = mulu8_sel(x2, x1, 1)
+    // char x3 = mulu8_sel(x2, x1, 1)
     sta.z x3
     // mulu8_sel(x3, DIV_6, 1)
     tax
@@ -429,8 +429,8 @@ sin8s: {
     ldy #DIV_6
     jsr mulu8_sel
     // mulu8_sel(x3, DIV_6, 1)
-    // x3_6 = mulu8_sel(x3, DIV_6, 1)
-    // usinx = x1 - x3_6
+    // char x3_6 = mulu8_sel(x3, DIV_6, 1)
+    // char usinx = x1 - x3_6
     eor #$ff
     sec
     adc.z x1
@@ -442,7 +442,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x3, x1, 0)
-    // x4 = mulu8_sel(x3, x1, 0)
+    // char x4 = mulu8_sel(x3, x1, 0)
     // mulu8_sel(x4, x1, 0)
     tax
     ldy.z x1
@@ -450,8 +450,8 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x4, x1, 0)
-    // x5 = mulu8_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // char x5 = mulu8_sel(x4, x1, 0)
+    // char x5_128 = x5>>4
     lsr
     lsr
     lsr
@@ -496,7 +496,7 @@ div32u16u: {
     sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
+    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
@@ -508,8 +508,8 @@ div32u16u: {
     sta.z divr16u.dividend+1
     jsr divr16u
     // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
+    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -627,7 +627,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // x1 = >x<<3
+    // unsigned int x1 = >x<<3
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -644,7 +644,7 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
-    // x2 = mulu16_sel(x1, x1, 0)
+    // unsigned int x2 = mulu16_sel(x1, x1, 0)
     lda.z mulu16_sel.return
     sta.z x2
     lda.z mulu16_sel.return+1
@@ -661,7 +661,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x3 = mulu16_sel(x2, x1, 1)
+    // unsigned int x3 = mulu16_sel(x2, x1, 1)
     // mulu16_sel(x3, $10000/6, 1)
     ldx #1
     lda #<$10000/6
@@ -670,8 +670,8 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
-    // x3_6 = mulu16_sel(x3, $10000/6, 1)
-    // usinx = x1 - x3_6
+    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int usinx = x1 - x3_6
     lda.z x1
     sec
     sbc.z x3_6
@@ -691,7 +691,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x4 = mulu16_sel(x3, x1, 0)
+    // unsigned int x4 = mulu16_sel(x3, x1, 0)
     // mulu16_sel(x4, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v2
@@ -700,8 +700,8 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x4, x1, 0)
-    // x5 = mulu16_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // unsigned int x5 = mulu16_sel(x4, x1, 0)
+    // unsigned int x5_128 = x5>>4
     lsr.z x5_128+1
     ror.z x5_128
     lsr.z x5_128+1
@@ -935,7 +935,7 @@ mul8u: {
     .label mb = $22
     .label res = $19
     .label return = $19
-    // mb = b
+    // unsigned int mb = b
     sta.z mb
     lda #0
     sta.z mb+1
@@ -980,7 +980,7 @@ mul16u: {
     .label res = $24
     .label b = $12
     .label return = $24
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1

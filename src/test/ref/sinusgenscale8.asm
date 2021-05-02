@@ -63,7 +63,7 @@ sin8u_table: {
     // div16u(PI2_u4f12, tabsize)
     jsr div16u
     // div16u(PI2_u4f12, tabsize)
-    // step = div16u(PI2_u4f12, tabsize)
+    // word step = div16u(PI2_u4f12, tabsize)
     // print_str("step:")
   // u[4.12]
     lda #<print_screen
@@ -152,15 +152,15 @@ sin8u_table: {
     lda.z x+1
     sta.z sin8s.x+1
     jsr sin8s
-    // sinx = sin8s(x)
+    // signed byte sinx = sin8s(x)
     sta.z sinx
     // mul8su(sinx, amplitude+1)
     tay
     jsr mul8su
-    // sinx_sc = mul8su(sinx, amplitude+1)
+    // signed word sinx_sc = mul8su(sinx, amplitude+1)
     // >sinx_sc
     lda.z sinx_sc+1
-    // sinx_tr = mid+>sinx_sc
+    // byte sinx_tr = mid+>sinx_sc
     clc
     adc #mid
     sta.z sinx_tr
@@ -446,7 +446,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // x1 = >x<<3
+    // char x1 = >x<<3
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -456,7 +456,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x1, x1, 0)
-    // x2 = mulu8_sel(x1, x1, 0)
+    // char x2 = mulu8_sel(x1, x1, 0)
     // mulu8_sel(x2, x1, 1)
     tax
     ldy.z x1
@@ -464,7 +464,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x2, x1, 1)
-    // x3 = mulu8_sel(x2, x1, 1)
+    // char x3 = mulu8_sel(x2, x1, 1)
     sta.z x3
     // mulu8_sel(x3, DIV_6, 1)
     tax
@@ -473,8 +473,8 @@ sin8s: {
     ldy #DIV_6
     jsr mulu8_sel
     // mulu8_sel(x3, DIV_6, 1)
-    // x3_6 = mulu8_sel(x3, DIV_6, 1)
-    // usinx = x1 - x3_6
+    // char x3_6 = mulu8_sel(x3, DIV_6, 1)
+    // char usinx = x1 - x3_6
     eor #$ff
     sec
     adc.z x1
@@ -486,7 +486,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x3, x1, 0)
-    // x4 = mulu8_sel(x3, x1, 0)
+    // char x4 = mulu8_sel(x3, x1, 0)
     // mulu8_sel(x4, x1, 0)
     tax
     ldy.z x1
@@ -494,8 +494,8 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x4, x1, 0)
-    // x5 = mulu8_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // char x5 = mulu8_sel(x4, x1, 0)
+    // char x5_128 = x5>>4
     lsr
     lsr
     lsr
@@ -536,7 +536,7 @@ mul8su: {
     lda #b
     jsr mul8u
     // mul8u((char)a, (char) b)
-    // m = mul8u((char)a, (char) b)
+    // unsigned int m = mul8u((char)a, (char) b)
     // if(a<0)
     cpy #0
     bpl __b1
@@ -723,7 +723,7 @@ mul8u: {
     .label mb = $10
     .label res = 8
     .label return = 8
-    // mb = b
+    // unsigned int mb = b
     sta.z mb
     lda #0
     sta.z mb+1

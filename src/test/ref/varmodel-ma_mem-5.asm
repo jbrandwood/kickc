@@ -11,7 +11,7 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    // i=0
+    // char i=0
     lda #0
     sta i
   __b1:

@@ -217,82 +217,82 @@
   .label sparkler_idx = $2b
 .segment Code
 __start: {
-    // p1_work_ready = 0
+    // volatile char p1_work_ready = 0
     lda #0
     sta.z p1_work_ready
-    // irq_flipper_top_line = 0x00
+    // volatile unsigned int irq_flipper_top_line = 0x00
     sta.z irq_flipper_top_line
     sta.z irq_flipper_top_line+1
-    // irq_flipper_bottom_line = 0x08
+    // volatile unsigned int irq_flipper_bottom_line = 0x08
     lda #<8
     sta.z irq_flipper_bottom_line
     lda #>8
     sta.z irq_flipper_bottom_line+1
-    // flipper_done = 0
+    // volatile char flipper_done = 0
     sta.z flipper_done
-    // irq_flipper_idx = 0x00
+    // volatile unsigned int irq_flipper_idx = 0x00
     sta.z irq_flipper_idx
     sta.z irq_flipper_idx+1
-    // flipper_charline = 0
+    // volatile char flipper_charline = 0
     sta.z flipper_charline
-    // vsp_scroll = 0
+    // volatile __zp char vsp_scroll = 0
     sta.z vsp_scroll
-    // plex_real_sprite_idx = 0
+    // volatile char plex_real_sprite_idx = 0
     sta.z plex_real_sprite_idx
-    // p2_work_ready
+    // volatile char p2_work_ready
     sta.z p2_work_ready
-    // p2_logo_revealing = 0
+    // volatile char p2_logo_revealing = 0
     sta.z p2_logo_revealing
-    // p2_logo_reveal_done = 0
+    // volatile char p2_logo_reveal_done = 0
     sta.z p2_logo_reveal_done
-    // p2_logo_swinging = 0
+    // volatile char p2_logo_swinging = 0
     sta.z p2_logo_swinging
-    // p2_plex_scroller_moving = 0
+    // volatile char p2_plex_scroller_moving = 0
     sta.z p2_plex_scroller_moving
-    // p2_logo_reveal_idx = 0
+    // volatile char p2_logo_reveal_idx = 0
     sta.z p2_logo_reveal_idx
-    // x_movement_idx = 0
+    // volatile char x_movement_idx = 0
     sta.z x_movement_idx
-    // scroll_text_next = SCROLL_TEXT
+    // char* volatile scroll_text_next = SCROLL_TEXT
     lda #<SCROLL_TEXT
     sta.z scroll_text_next
     lda #>SCROLL_TEXT
     sta.z scroll_text_next+1
-    // plex_frame_id = 0
+    // volatile char plex_frame_id = 0
     lda #0
     sta.z plex_frame_id
-    // plex_frame = BUCKET_SPRITES
+    // struct BucketSprite* volatile plex_frame = BUCKET_SPRITES
     lda #<BUCKET_SPRITES
     sta.z plex_frame
     lda #>BUCKET_SPRITES
     sta.z plex_frame+1
-    // plex_id_offset = 0
+    // volatile char plex_id_offset = 0
     lda #0
     sta.z plex_id_offset
-    // plex_bucket = BUCKET_SPRITES
+    // struct BucketSprite* volatile plex_bucket = BUCKET_SPRITES
     lda #<BUCKET_SPRITES
     sta.z plex_bucket
     lda #>BUCKET_SPRITES
     sta.z plex_bucket+1
-    // plex_bucket_id = 0
+    // volatile char plex_bucket_id = 0
     lda #0
     sta.z plex_bucket_id
-    // vsp_fine_scroll
+    // volatile char vsp_fine_scroll
     sta.z vsp_fine_scroll
-    // vsp_coarse_scroll
+    // volatile char vsp_coarse_scroll
     sta.z vsp_coarse_scroll
-    // vsp_sin_idx = 0x40
+    // volatile char vsp_sin_idx = 0x40
     lda #$40
     sta.z vsp_sin_idx
-    // sprite_color_idx = 0
+    // volatile char sprite_color_idx = 0
     lda #0
     sta.z sprite_color_idx
-    // demo_frame_count = 0
+    // volatile unsigned int demo_frame_count = 0
     sta.z demo_frame_count
     sta.z demo_frame_count+1
-    // sparkler_active = 0
+    // volatile char sparkler_active = 0
     sta.z sparkler_active
-    // sparkler_idx = 0
+    // volatile char sparkler_idx = 0
     sta.z sparkler_idx
     jsr main
     rts
@@ -307,7 +307,7 @@ irq_demo: {
     // Remember processor port value
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // port_value = *PROCPORT
+    // char port_value = *PROCPORT
     lda PROCPORT
     sta.z port_value
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
@@ -431,7 +431,7 @@ irq_swing_plex: {
     // if(p2_logo_swinging)
     lda.z p2_logo_swinging
     beq __b6
-    // scroll = VSP_SINTABLE[(unsigned int)(vsp_sin_idx++)]
+    // unsigned int scroll = VSP_SINTABLE[(unsigned int)(vsp_sin_idx++)]
     lda.z vsp_sin_idx
     sta.z __27
     lda #0
@@ -466,10 +466,10 @@ irq_swing_plex: {
     ror.z __7
     lsr.z __7+1
     ror.z __7
-    // new_coarse_scroll = (char)(scroll/8)
+    // char new_coarse_scroll = (char)(scroll/8)
     lda.z __7
     sta.z new_coarse_scroll
-    // coarse_scroll_diff = vsp_coarse_scroll - new_coarse_scroll
+    // char coarse_scroll_diff = vsp_coarse_scroll - new_coarse_scroll
     lda.z vsp_coarse_scroll
     sec
     sbc.z new_coarse_scroll
@@ -480,7 +480,7 @@ irq_swing_plex: {
     // if(coarse_scroll_diff==0xff)
     cmp #$ff
     bne __b8
-    // x_offset = 0x27-vsp_coarse_scroll
+    // char x_offset = 0x27-vsp_coarse_scroll
     lda #$27
     sec
     sbc.z vsp_coarse_scroll
@@ -553,7 +553,7 @@ irq_swing_plex: {
     inx
     jmp __b10
   __b7:
-    // x_offset = 0x50-vsp_coarse_scroll
+    // char x_offset = 0x50-vsp_coarse_scroll
     lda #$50
     sec
     sbc.z vsp_coarse_scroll
@@ -783,7 +783,7 @@ irq_flipper_bottom: {
     // if(!flipper_done)
     lda.z flipper_done
     bne __b1
-    // irq_flipper_line = FLIPPER_EASING[irq_flipper_idx++]
+    // unsigned int irq_flipper_line = FLIPPER_EASING[irq_flipper_idx++]
     lda.z irq_flipper_idx
     asl
     sta.z __12
@@ -1149,7 +1149,7 @@ demo_work: {
 plexBucketShow: {
     .label i = $3b
     .label bucket = 2
-    // real_idx = plex_real_sprite_idx*2
+    // char real_idx = plex_real_sprite_idx*2
     lda.z plex_real_sprite_idx
     asl
     tax
@@ -1174,7 +1174,7 @@ plexBucketShow: {
     // SPRITES_YPOS[real_idx] = bucket_ptr[i++];
     iny
     sty.z i
-    // plex_id = bucket_ptr[i]
+    // char plex_id = bucket_ptr[i]
     lda (bucket),y
     tay
     // SPRITES_XPOS[real_idx] = PLEX_XPOS[plex_id]
@@ -1228,7 +1228,7 @@ plexBucketShow: {
 update_frame_plex_id_offset: {
     .label jmp_table = PLEX_ID_UPDATERS
     .label jmp_address = $3c
-    // jmp_address = jmp_table[plex_frame_id]
+    // unsigned int jmp_address = jmp_table[plex_frame_id]
     asl
     tay
     lda jmp_table,y
@@ -1281,7 +1281,7 @@ vsp_update_screen: {
     rol.z __0+1
     asl.z __0
     rol.z __0+1
-    // x_offset8 = (unsigned int)x_offset*8
+    // unsigned int x_offset8 = (unsigned int)x_offset*8
     // Update bitmap (using 3 routines to handle all bitmap columns)
     lda.z __0
     sta.z x_offset8
@@ -1344,7 +1344,7 @@ vsp_update_screen: {
 plex_scroller_move: {
     .const toSpritePtr1_return = $ff&PART2_SPRITES/$40
     .label s = $2f
-    // x_idx = x_movement_idx
+    // char x_idx = x_movement_idx
     ldx.z x_movement_idx
     lda #0
     sta.z s
@@ -1379,7 +1379,7 @@ plex_scroller_move: {
     lda #>SCROLL_TEXT
     sta.z scroll_text_next+1
   __b5:
-    // letter = *scroll_text_next++
+    // char letter = *scroll_text_next++
     // Read next char from the scroll text
     ldy #0
     lda (scroll_text_next),y
@@ -2129,7 +2129,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -2170,7 +2170,7 @@ memcpy: {
     .label source = $4c
     .label destination = $48
     .label num = $4a
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     lda.z src_end
     clc
     adc.z source
@@ -2325,7 +2325,7 @@ plexPrepareFrame: {
     bcs !__b8+
     jmp __b8
   !__b8:
-    // bucket_ypos = BUCKET_YPOS[bucket_id]
+    // char bucket_ypos = BUCKET_YPOS[bucket_id]
     // The current bucket start y-position
     lda BUCKET_YPOS
     sta.z bucket_ypos
@@ -2367,11 +2367,11 @@ plexPrepareFrame: {
     // }
     rts
   __b11:
-    // plex_id = PLEX_SORTED_IDX[i]
+    // char plex_id = PLEX_SORTED_IDX[i]
     ldy.z i1
     lda PLEX_SORTED_IDX,y
     sta.z plex_id
-    // ypos = PLEX_YPOS[plex_id]
+    // unsigned char ypos = PLEX_YPOS[plex_id]
     tay
     lda PLEX_YPOS,y
     sta.z ypos
@@ -2457,11 +2457,11 @@ plexPrepareFrame: {
     inx
     jmp __b7
   __b2:
-    // nxt_idx = PLEX_SORTED_IDX[m+1]
+    // char nxt_idx = PLEX_SORTED_IDX[m+1]
     ldy.z m
     lda PLEX_SORTED_IDX+1,y
     sta.z nxt_idx
-    // nxt_y = PLEX_YPOS[nxt_idx]
+    // char nxt_y = PLEX_YPOS[nxt_idx]
     tay
     lda PLEX_YPOS,y
     sta.z nxt_y
@@ -2621,7 +2621,7 @@ flipper_fix_colors: {
     ror.z __5
     lsr.z __5+1
     ror.z __5
-    // charline = (char)((irq_flipper_top_line-0x2e)/8)
+    // char charline = (char)((irq_flipper_top_line-0x2e)/8)
     lda.z __5
     // if(charline>=flipper_charline)
     cmp.z flipper_charline
@@ -2631,7 +2631,7 @@ flipper_fix_colors: {
     sta.z __12
     lda #0
     sta.z __12+1
-    // offset = (unsigned int)flipper_charline*40
+    // unsigned int offset = (unsigned int)flipper_charline*40
     lda.z __12
     asl
     sta.z __13
@@ -2653,7 +2653,7 @@ flipper_fix_colors: {
     rol.z offset+1
     asl.z offset
     rol.z offset+1
-    // colors = COLS+offset
+    // char* colors = COLS+offset
     clc
     lda.z offset
     adc #<COLS
@@ -2661,7 +2661,7 @@ flipper_fix_colors: {
     lda.z offset+1
     adc #>COLS
     sta.z colors+1
-    // happy_cols = P1_COLORS+offset
+    // char* happy_cols = P1_COLORS+offset
     clc
     lda.z happy_cols
     adc #<P1_COLORS

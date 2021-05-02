@@ -277,7 +277,7 @@ gfx_init_chunky: {
     lda #0
     adc.z x+1
     sta.z __5+1
-    // c = (byte)(x+y)
+    // byte c = (byte)(x+y)
     lda.z __5
     // *gfxb++ = c
     ldy #0

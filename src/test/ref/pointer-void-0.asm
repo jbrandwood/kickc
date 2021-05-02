@@ -14,7 +14,7 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // w = 1234
+    // word w = 1234
     lda #<$4d2
     sta.z w
     lda #>$4d2

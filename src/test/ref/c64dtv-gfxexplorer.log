@@ -21112,7 +21112,7 @@ form_mode: {
     // VICII->BORDER_COLOR = 0
     // [81] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 0 -- _deref_pbuc1=vbuc2 
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // preset_current = *form_preset
+    // byte preset_current = *form_preset
     // [82] form_mode::preset_current#0 = *form_fields_val -- vbuz1=_deref_pbuc1 
     lda form_fields_val
     sta.z preset_current
@@ -21359,7 +21359,7 @@ gfx_mode: {
     asl
     asl
     asl
-    // plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo
+    // byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo
     // [129] gfx_mode::plane_a_offs#0 = gfx_mode::$18 | *form_a_start_lo -- vbuxx=vbuaa_bor__deref_pbuc1 
     ora form_a_start_lo
     tax
@@ -21374,7 +21374,7 @@ gfx_mode: {
     // [132] get_plane::return#16 = get_plane::return#14
     // gfx_mode::@27
     // [133] gfx_mode::$20 = get_plane::return#16
-    // plane_a = get_plane(*form_a_pattern) + plane_a_offs
+    // dword plane_a = get_plane(*form_a_pattern) + plane_a_offs
     // [134] gfx_mode::plane_a#0 = gfx_mode::$20 + gfx_mode::plane_a_offs#0 -- vduz1=vduz1_plus_vbuxx 
     txa
     clc
@@ -21461,7 +21461,7 @@ gfx_mode: {
     asl
     asl
     asl
-    // plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
+    // byte plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
     // [152] gfx_mode::plane_b_offs#0 = gfx_mode::$32 | *form_b_start_lo -- vbuxx=vbuaa_bor__deref_pbuc1 
     ora form_b_start_lo
     tax
@@ -21476,7 +21476,7 @@ gfx_mode: {
     // [155] get_plane::return#17 = get_plane::return#14
     // gfx_mode::@28
     // [156] gfx_mode::$34 = get_plane::return#17
-    // plane_b = get_plane(*form_b_pattern) + plane_b_offs
+    // dword plane_b = get_plane(*form_b_pattern) + plane_b_offs
     // [157] gfx_mode::plane_b#0 = gfx_mode::$34 + gfx_mode::plane_b_offs#0 -- vduz1=vduz1_plus_vbuxx 
     txa
     clc
@@ -21642,7 +21642,7 @@ gfx_mode: {
     // get_VICII_screen(*form_VICII_cols)
     // [194] get_VICII_screen::return#11 = get_VICII_screen::return#5
     // gfx_mode::@31
-    // VICII_colors = get_VICII_screen(*form_VICII_cols)
+    // byte* VICII_colors = get_VICII_screen(*form_VICII_cols)
     // [195] gfx_mode::VICII_colors#0 = get_VICII_screen::return#11
     // [196] phi from gfx_mode::@31 to gfx_mode::@19 [phi:gfx_mode::@31->gfx_mode::@19]
     // [196] phi gfx_mode::cy#4 = 0 [phi:gfx_mode::@31->gfx_mode::@19#0] -- vbuz1=vbuc1 
@@ -21804,7 +21804,7 @@ gfx_mode: {
     jsr keyboard_event_get
     // [228] keyboard_event_get::return#3 = keyboard_event_get::return#2
     // gfx_mode::@33
-    // keyboard_event = keyboard_event_get()
+    // byte keyboard_event = keyboard_event_get()
     // [229] gfx_mode::keyboard_event#0 = keyboard_event_get::return#3
     // if(keyboard_event==KEY_SPACE)
     // [230] if(gfx_mode::keyboard_event#0==KEY_SPACE) goto gfx_mode::@return -- vbuaa_eq_vbuc1_then_la1 
@@ -22012,11 +22012,11 @@ gfx_init_screen2: {
     txa
     clc
     adc.z cy
-    // col = (cx+cy)&$f
+    // byte col = (cx+cy)&$f
     // [266] gfx_init_screen2::col#0 = gfx_init_screen2::$0 & $f -- vbuyy=vbuaa_band_vbuc1 
     and #$f
     tay
-    // col2 = ($f-col)
+    // byte col2 = ($f-col)
     // [267] gfx_init_screen2::col2#0 = $f - gfx_init_screen2::col#0 -- vbuz1=vbuc1_minus_vbuyy 
     tya
     eor #$ff
@@ -22428,7 +22428,7 @@ gfx_init_plane_8bppchunky: {
     lda #0
     adc.z x+1
     sta.z __5+1
-    // c = (byte)(x+y)
+    // byte c = (byte)(x+y)
     // [336] gfx_init_plane_8bppchunky::c#0 = (byte)gfx_init_plane_8bppchunky::$5 -- vbuaa=_byte_vwuz1 
     lda.z __5
     // *gfxb++ = c
@@ -22535,7 +22535,7 @@ gfx_init_plane_charset8: {
     // [350] phi gfx_init_plane_charset8::chargen#2 = gfx_init_plane_charset8::chargen#1 [phi:gfx_init_plane_charset8::@6->gfx_init_plane_charset8::@2#3] -- register_copy 
     // gfx_init_plane_charset8::@2
   __b2:
-    // bits = *chargen++
+    // byte bits = *chargen++
     // [351] gfx_init_plane_charset8::bits#0 = *gfx_init_plane_charset8::chargen#2 -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (chargen),y
@@ -22846,7 +22846,7 @@ gfx_init_plane_horisontal2: {
     // [406] gfx_init_plane_horisontal2::$2 = gfx_init_plane_horisontal2::ay#4 >> 1 -- vbuaa=vbuz1_ror_1 
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     // [407] gfx_init_plane_horisontal2::row#0 = gfx_init_plane_horisontal2::$2 & 3 -- vbuaa=vbuaa_band_vbuc1 
     and #3
     // *gfxa++ = row_bitmask[row]
@@ -23033,7 +23033,7 @@ print_str_lines: {
     // [437] phi print_str_lines::str#4 = print_str_lines::str#3 [phi:print_str_lines::@1/print_str_lines::@3->print_str_lines::@2#1] -- register_copy 
     // print_str_lines::@2
   __b2:
-    // ch = *(str++)
+    // char ch = *(str++)
     // [438] print_str_lines::ch#0 = *print_str_lines::str#4 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (str),y
@@ -23362,7 +23362,7 @@ form_control: {
     // form_field_ptr(form_field_idx)
     // [485] form_field_ptr::return#3 = form_field_ptr::return#0
     // form_control::@18
-    // field = form_field_ptr(form_field_idx)
+    // byte* field = form_field_ptr(form_field_idx)
     // [486] form_control::field#0 = form_field_ptr::return#3
     // if(--form_cursor_count < 0)
     // [487] form_cursor_count#4 = -- form_cursor_count#23 -- vbsz1=_dec_vbsz1 
@@ -23417,7 +23417,7 @@ form_control: {
     jsr keyboard_event_get
     // [498] keyboard_event_get::return#4 = keyboard_event_get::return#2
     // form_control::@20
-    // key_event = keyboard_event_get()
+    // byte key_event = keyboard_event_get()
     // [499] form_control::key_event#0 = keyboard_event_get::return#4
     // if(key_event==KEY_CRSR_DOWN)
     // [500] if(form_control::key_event#0!=KEY_CRSR_DOWN) goto form_control::@4 -- vbuaa_neq_vbuc1_then_la1 
@@ -24155,7 +24155,7 @@ keyboard_event_scan: {
     jsr keyboard_matrix_read
     // [582] keyboard_matrix_read::return#2 = keyboard_matrix_read::return#0
     // keyboard_event_scan::@19
-    // row_scan = keyboard_matrix_read(row)
+    // char row_scan = keyboard_matrix_read(row)
     // [583] keyboard_event_scan::row_scan#0 = keyboard_matrix_read::return#2 -- vbuz1=vbuaa 
     sta.z row_scan
     // if(row_scan!=keyboard_scan_values[row])
@@ -24320,7 +24320,7 @@ keyboard_event_scan: {
     cmp.z keyboard_events_size
     beq __b10
     // keyboard_event_scan::@13
-    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
+    // char event_type = row_scan&keyboard_matrix_col_bitmask[col]
     // [620] keyboard_event_scan::event_type#0 = keyboard_event_scan::row_scan#0 & keyboard_matrix_col_bitmask[keyboard_event_scan::col#2] -- vbuaa=vbuz1_band_pbuc1_derefidx_vbuxx 
     lda keyboard_matrix_col_bitmask,x
     and.z row_scan
@@ -24584,7 +24584,7 @@ bitmap_line: {
     // abs_u16(x2-x1)
     // [666] abs_u16::return#0 = abs_u16::return#4
     // bitmap_line::@12
-    // dx = abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     // [667] bitmap_line::dx#0 = abs_u16::return#0 -- vwuz1=vwuz2 
     lda.z abs_u16.return
     sta.z dx
@@ -24606,7 +24606,7 @@ bitmap_line: {
     // abs_u16(y2-y1)
     // [670] abs_u16::return#1 = abs_u16::return#4
     // bitmap_line::@13
-    // dy = abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     // [671] bitmap_line::dy#0 = abs_u16::return#1
     // if(dx==0 && dy==0)
     // [672] if(bitmap_line::dx#0!=0) goto bitmap_line::@1 -- vwuz1_neq_0_then_la1 
@@ -24638,7 +24638,7 @@ bitmap_line: {
     // sgn_u16(x2-x1)
     // [676] sgn_u16::return#0 = sgn_u16::return#4
     // bitmap_line::@14
-    // sx = sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     // [677] bitmap_line::sx#0 = sgn_u16::return#0 -- vwuz1=vwuz2 
     lda.z sgn_u16.return
     sta.z sx
@@ -24660,7 +24660,7 @@ bitmap_line: {
     // sgn_u16(y2-y1)
     // [680] sgn_u16::return#1 = sgn_u16::return#4
     // bitmap_line::@15
-    // sy = sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     // [681] bitmap_line::sy#0 = sgn_u16::return#1
     // if(dx > dy)
     // [682] if(bitmap_line::dx#0>bitmap_line::dy#0) goto bitmap_line::@2 -- vwuz1_gt_vwuz2_then_la1 
@@ -24673,7 +24673,7 @@ bitmap_line: {
     bcc __b2
   !:
     // bitmap_line::@5
-    // e = dx/2
+    // unsigned int e = dx/2
     // [683] bitmap_line::e#0 = bitmap_line::dx#0 >> 1 -- vwuz1=vwuz2_ror_1 
     lda.z dx+1
     lsr
@@ -24776,7 +24776,7 @@ bitmap_line: {
     rts
     // bitmap_line::@2
   __b2:
-    // e = dy/2
+    // unsigned int e = dy/2
     // [700] bitmap_line::e1#0 = bitmap_line::dy#0 >> 1 -- vwuz1=vwuz2_ror_1 
     lda.z dy+1
     lsr
@@ -24930,7 +24930,7 @@ gfx_init_plane_fill: {
     sta.z __1
     lda.z __0+3
     sta.z __1+1
-    // gfxbCpuBank = < >(plane_addr*4)
+    // byte gfxbCpuBank = < >(plane_addr*4)
     // [722] gfx_init_plane_fill::gfxbCpuBank#0 = < gfx_init_plane_fill::$1 -- vbuaa=_lo_vwuz1 
     lda.z __1
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
@@ -25038,7 +25038,7 @@ memset: {
     beq __breturn
   !:
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [742] memset::end#0 = (byte*)memset::str#4 + memset::num#3 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
@@ -25138,16 +25138,16 @@ form_field_ptr: {
     .label line = $27
     .label x = $25
     .label return = $1d
-    // y = form_fields_y[field_idx]
+    // byte y = form_fields_y[field_idx]
     // [758] form_field_ptr::y#0 = form_fields_y[form_field_ptr::field_idx#2] -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy form_fields_y,x
-    // line = (byte*) { form_line_hi[y], form_line_lo[y] }
+    // byte* line = (byte*) { form_line_hi[y], form_line_lo[y] }
     // [759] form_field_ptr::line#0 = form_line_hi[form_field_ptr::y#0] w= form_line_lo[form_field_ptr::y#0] -- vwuz1=pbuc1_derefidx_vbuyy_word_pbuc2_derefidx_vbuyy 
     lda form_line_hi,y
     sta.z line+1
     lda form_line_lo,y
     sta.z line
-    // x = form_fields_x[field_idx]
+    // byte x = form_fields_x[field_idx]
     // [760] form_field_ptr::x#0 = form_fields_x[form_field_ptr::field_idx#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda form_fields_x,x
     sta.z x
@@ -25246,7 +25246,7 @@ keyboard_event_pressed: {
     lsr
     lsr
     lsr
-    // row_bits = keyboard_scan_values[keycode>>3]
+    // char row_bits = keyboard_scan_values[keycode>>3]
     // [775] keyboard_event_pressed::row_bits#0 = keyboard_scan_values[keyboard_event_pressed::$0] -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda keyboard_scan_values,y
@@ -25344,7 +25344,7 @@ bitmap_plot: {
     .label __0 = $29
     .label plotter = $27
     .label x = $d
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     // [794] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] -- vwuz1=pbuc1_derefidx_vbuaa_word_pbuc2_derefidx_vbuaa 
     tay
     lda bitmap_plot_yhi,y

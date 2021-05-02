@@ -16,7 +16,7 @@ main: {
     jsr scan_for_lowest
     // scan_for_lowest()
     lda.z scan_for_lowest.lowest
-    // hit_check=scan_for_lowest()
+    // char hit_check=scan_for_lowest()
     // screen[0] = hit_check
     sta screen
     // <ball_y[hit_check]

@@ -1,0 +1,139 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *IRQ = (void*)$1003
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant void** const IRQ = (void**)$fffe
+void __start()
+void main()
+
+Simplifying constant pointer cast (void**) 65534
+Simplifying constant pointer cast (void*) 4099
+Successful SSA optimization PassNCastSimplification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *IRQ = (void*) 4099
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *IRQ = (void*) 4099 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates const pointer to pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="pointer-to-pointer-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label IRQ = $fffe
+.segment Code
+  // main
+main: {
+    // [0] *IRQ = (void*) 4099 -- _deref_qvoc1=pvoc2 
+    lda #<$1003
+    sta IRQ
+    lda #>$1003
+    sta IRQ+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant void** const IRQ = (void**) 65534
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+  // File Comments
+// Demonstrates const pointer to pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="pointer-to-pointer-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label IRQ = $fffe
+.segment Code
+  // main
+main: {
+    // *IRQ = (void*) 0x1003
+    // [0] *IRQ = (void*) 4099 -- _deref_qvoc1=pvoc2 
+    lda #<$1003
+    sta IRQ
+    lda #>$1003
+    sta IRQ+1
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

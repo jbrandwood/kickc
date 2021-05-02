@@ -13,12 +13,12 @@ main: {
     .label b1 = 4
     .label b2 = 5
     .label b3 = 6
-    // b1 = 0
+    // byte b1 = 0
     lda #0
     sta.z b1
-    // b2 = 0
+    // byte b2 = 0
     sta.z b2
-    // b3 = 0
+    // byte b3 = 0
     sta.z b3
     // setByte(&b1, 'c')
     lda #<b1

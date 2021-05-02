@@ -14,7 +14,7 @@
 main: {
     .label point1 = 2
     .label point2 = 4
-    // point1
+    // __ma struct Point point1
     ldy #SIZEOF_STRUCT_POINT
     lda #0
   !:
@@ -27,7 +27,7 @@ main: {
     // point1.y = 3
     lda #3
     sta point1+OFFSET_STRUCT_POINT_Y
-    // point2 = point1
+    // __ma struct Point point2 = point1
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda point1-1,y

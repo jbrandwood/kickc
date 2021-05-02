@@ -5904,20 +5904,20 @@ Score: 86187
   // __start
 __start: {
     // __start::__init1
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     // [1] conio_cursor_x = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     // [2] conio_cursor_y = 0 -- vbuz1=vbuc1 
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     // [3] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     // [4] conio_line_color = COLORRAM -- pbuz1=pbuc1 
     lda #<COLORRAM
     sta.z conio_line_color
@@ -5940,7 +5940,7 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuxx=_deref_pbuc1 
     ldx BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
@@ -6078,7 +6078,7 @@ main: {
     // [30] main::$5 = main::x#2 << 1 -- vbsaa=vbsz1_rol_1 
     lda.z x
     asl
-    // xd = x*2-39
+    // signed char xd = x*2-39
     // [31] main::xd#0 = main::$5 - $27 -- vbsxx=vbsaa_minus_vbsc1 
     tax
     axs #$27
@@ -6086,7 +6086,7 @@ main: {
     // [32] main::$7 = main::y#2 << 1 -- vbsaa=vbsz1_rol_1 
     lda.z y
     asl
-    // yd = y*2-24
+    // signed char yd = y*2-24
     // [33] main::yd#0 = main::$7 - $18 -- vbsz1=vbsaa_minus_vbsc1 
     sec
     sbc #$18
@@ -6123,7 +6123,7 @@ main: {
     // main::@11
     // mul8s(yd,yd)
     // [41] main::$10 = (signed word)mul8s::m#4
-    // dist_sq = mul8s(xd,xd) + mul8s(yd,yd)
+    // signed int dist_sq = mul8s(xd,xd) + mul8s(yd,yd)
     // [42] main::dist_sq#0 = main::$9 + main::$10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z dist_sq
     clc
@@ -6214,7 +6214,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [56] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl
@@ -6290,7 +6290,7 @@ memset: {
     beq __breturn
   !:
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [66] memset::end#0 = (byte*)memset::str#4 + memset::num#3 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
@@ -6413,7 +6413,7 @@ mul8s: {
     jsr mul8u
     // [92] mul8u::return#2 = mul8u::res#2
     // mul8s::@5
-    // m = mul8u((char)a, (char) b)
+    // unsigned int m = mul8u((char)a, (char) b)
     // [93] mul8s::m#0 = mul8u::return#2
     // if(a<0)
     // [94] if(mul8s::a#2>=0) goto mul8s::@1 -- vbsz1_ge_0_then_la1 
@@ -6516,7 +6516,7 @@ utoa: {
     rts
     // utoa::@2
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     // [113] utoa::$10 = utoa::digit#2 << 1 -- vbuaa=vbuz1_rol_1 
     lda.z digit
     asl
@@ -6666,7 +6666,7 @@ mul8u: {
     .label mb = $b
     .label res = 8
     .label return = 8
-    // mb = b
+    // unsigned int mb = b
     // [144] mul8u::mb#0 = (word)mul8u::b#0 -- vwuz1=_word_vbuaa 
     sta.z mb
     lda #0
@@ -6936,7 +6936,7 @@ memcpy: {
     .label src = $14
     .label source = $14
     .label destination = $1c
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     // [181] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$28-$28 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z source

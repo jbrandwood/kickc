@@ -11,7 +11,7 @@
   .label ch = 2
 .segment Code
 __start: {
-    // ch = 3
+    // const volatile char ch = 3
     lda #3
     sta.z ch
     jsr main

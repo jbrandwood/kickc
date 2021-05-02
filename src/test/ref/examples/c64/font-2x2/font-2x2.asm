@@ -100,7 +100,7 @@ font_2x2: {
     lda #>FONT_ORIGINAL
     sta.z next_2x2_left+1
   __b1:
-    // next_2x2_right = next_2x2 + 0x40*8
+    // char* next_2x2_right = next_2x2 + 0x40*8
     clc
     lda.z next_2x2_left
     adc #<$40*8
@@ -116,7 +116,7 @@ font_2x2: {
     sta.z l2
     sta.z l
   __b2:
-    // glyph_bits = next_original[l]
+    // char glyph_bits = next_original[l]
     ldy.z l
     lda (next_original),y
     sta.z glyph_bits
@@ -262,7 +262,7 @@ font_compress: {
     jsr font_find
     // font_find(next_original, font_compressed, font_size)
     txa
-    // found = font_find(next_original, font_compressed, font_size)
+    // char found = font_find(next_original, font_compressed, font_size)
     // if(found==0xff)
     cmp #$ff
     bne __b7
@@ -394,7 +394,7 @@ show: {
     // x*2
     txa
     asl
-    // ptr = SCREEN + (unsigned int)y*80 + x*2
+    // char* ptr = SCREEN + (unsigned int)y*80 + x*2
     clc
     adc.z ptr
     sta.z ptr

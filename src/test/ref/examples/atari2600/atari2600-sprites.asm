@@ -41,7 +41,7 @@
   .label idx2 = $81
 .segment Code
 __start: {
-    // p0_xpos
+    // __ma char p0_xpos
     lda #0
     sta.z p0_xpos
     jsr main
@@ -193,7 +193,7 @@ main: {
     inx
     jmp __b6
   __b9:
-    // gfx = SPRITE_C[p0_idx]
+    // char gfx = SPRITE_C[p0_idx]
     // Player 0 is active - show it
     lda SPRITE_C,y
     // TIA->GRP0 = gfx

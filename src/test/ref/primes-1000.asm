@@ -58,7 +58,7 @@ main: {
     lda #>2
     sta.z lasttest+1
   __b1:
-    // p = primenum[lasttest]
+    // int p = primenum[lasttest]
     lda.z lasttest
     asl
     sta.z __12
@@ -239,7 +239,7 @@ mul16s: {
     lda.z b+1
     sta.z mul16u.b+1
     jsr mul16u
-    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b1
@@ -358,7 +358,7 @@ mul16u: {
     .label res = 8
     .label b = $1b
     .label return = 8
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1
@@ -515,7 +515,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay

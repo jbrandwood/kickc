@@ -49,7 +49,7 @@
   .label frame_cnt = 8
 .segment Code
 __start: {
-    // frame_cnt = 1
+    // volatile byte frame_cnt = 1
     lda #1
     sta.z frame_cnt
     jsr main
@@ -295,7 +295,7 @@ bitmap_plot: {
     .label __0 = $c
     .label plotter = $a
     .label x = 2
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -338,7 +338,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str

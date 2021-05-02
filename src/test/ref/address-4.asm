@@ -13,7 +13,7 @@
 main: {
     .const ch = $102
     .label i = 2
-    // i=0
+    // __address(0x2) char i=0
     lda #0
     sta.z i
   __b1:

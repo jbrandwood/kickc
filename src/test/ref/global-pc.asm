@@ -14,7 +14,7 @@ main: {
     // asm
     sei
   __b1:
-    // col = *RASTER
+    // byte col = *RASTER
     lda RASTER
     // *BG_COLOR = col
     sta BG_COLOR

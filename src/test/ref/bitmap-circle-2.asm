@@ -91,7 +91,7 @@ fill: {
     .label end = 4
     .label addr = 6
     .label size = 4
-    // end = start + size
+    // byte* end = start + size
     lda.z end
     clc
     adc.z addr
@@ -142,7 +142,7 @@ circle: {
     lda.z r+1
     rol
     sta.z __0+1
-    // p = 3-(r << 1)
+    // int p = 3-(r << 1)
     sec
     lda #<3
     sbc.z p

@@ -383,7 +383,7 @@ fire: {
     ldy #$29
     clc
     adc (buffer),y
-    // c = ( buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41] )/4
+    // unsigned char c = ( buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41] )/4
     lsr
     lsr
     // if (c > 2)

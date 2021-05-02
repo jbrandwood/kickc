@@ -15,7 +15,7 @@ main: {
     .label screen = $400
     ldx #0
   __b1:
-    // b = i&1
+    // char b = i&1
     txa
     and #1
     // !b ? 1 : 0

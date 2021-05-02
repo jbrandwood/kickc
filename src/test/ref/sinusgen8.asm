@@ -34,7 +34,7 @@ main: {
     lda #0
     sta.z i
   __b1:
-    // sb = sintab2[i]-(signed byte)sintabref[i]
+    // signed byte sb = sintab2[i]-(signed byte)sintabref[i]
     ldy.z i
     lda sintab2,y
     sec
@@ -70,7 +70,7 @@ sin8s_gen: {
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
     // div16u(PI2_u4f12, wavelength)
-    // step = div16u(PI2_u4f12, wavelength)
+    // unsigned int step = div16u(PI2_u4f12, wavelength)
     lda #<sintab2
     sta.z sintab
     lda #>sintab2
@@ -259,7 +259,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // x1 = >x<<3
+    // char x1 = >x<<3
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -269,7 +269,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x1, x1, 0)
-    // x2 = mulu8_sel(x1, x1, 0)
+    // char x2 = mulu8_sel(x1, x1, 0)
     // mulu8_sel(x2, x1, 1)
     tax
     ldy.z x1
@@ -277,7 +277,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x2, x1, 1)
-    // x3 = mulu8_sel(x2, x1, 1)
+    // char x3 = mulu8_sel(x2, x1, 1)
     sta.z x3
     // mulu8_sel(x3, DIV_6, 1)
     tax
@@ -286,8 +286,8 @@ sin8s: {
     ldy #DIV_6
     jsr mulu8_sel
     // mulu8_sel(x3, DIV_6, 1)
-    // x3_6 = mulu8_sel(x3, DIV_6, 1)
-    // usinx = x1 - x3_6
+    // char x3_6 = mulu8_sel(x3, DIV_6, 1)
+    // char usinx = x1 - x3_6
     eor #$ff
     sec
     adc.z x1
@@ -299,7 +299,7 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x3, x1, 0)
-    // x4 = mulu8_sel(x3, x1, 0)
+    // char x4 = mulu8_sel(x3, x1, 0)
     // mulu8_sel(x4, x1, 0)
     tax
     ldy.z x1
@@ -307,8 +307,8 @@ sin8s: {
     sta.z mulu8_sel.select
     jsr mulu8_sel
     // mulu8_sel(x4, x1, 0)
-    // x5 = mulu8_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // char x5 = mulu8_sel(x4, x1, 0)
+    // char x5_128 = x5>>4
     lsr
     lsr
     lsr
@@ -510,7 +510,7 @@ mul8u: {
     .label mb = $11
     .label res = $f
     .label return = $f
-    // mb = b
+    // unsigned int mb = b
     sta.z mb
     lda #0
     sta.z mb+1

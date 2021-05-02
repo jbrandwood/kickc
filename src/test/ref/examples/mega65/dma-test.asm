@@ -83,17 +83,17 @@ memoryRemap: {
     .label xVal = 3
     .label yVal = 4
     .label zVal = 5
-    // aVal = <lowerPageOffset
+    // char aVal = <lowerPageOffset
     // lower blocks offset page low
     lda #0
     sta.z aVal
-    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // yVal = <upperPageOffset
+    // char yVal = <upperPageOffset
     // upper blocks offset page
     sta.z yVal
-    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm

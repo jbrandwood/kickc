@@ -26,7 +26,7 @@
   .label print_char_cursor = $11
 .segment Code
 __start: {
-    // last_time
+    // unsigned int last_time
     lda #<0
     sta.z last_time
     sta.z last_time+1

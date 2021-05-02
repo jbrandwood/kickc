@@ -410,7 +410,7 @@ print_str_lines: {
     // }
     rts
   __b2:
-    // ch = *(str++)
+    // char ch = *(str++)
     ldy #0
     lda (str),y
     inc.z str
@@ -441,11 +441,11 @@ print_str_lines: {
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = $1c
-    // colidx = key&7
+    // char colidx = key&7
     tya
     and #7
     sta.z colidx
-    // rowidx = key>>3
+    // char rowidx = key>>3
     tya
     lsr
     lsr
@@ -953,10 +953,10 @@ mode_stdbitmap: {
     txa
     clc
     adc.z cy
-    // col = (cx+cy)&$f
+    // byte col = (cx+cy)&$f
     and #$f
     tay
-    // col2 = ($f-col)
+    // byte col2 = ($f-col)
     tya
     eor #$ff
     sec
@@ -1120,7 +1120,7 @@ mode_hicolstdchar: {
     // cx&$f
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     ora.z __3
     // *col++ = v
     ldy #0
@@ -1260,7 +1260,7 @@ mode_hicolecmchar: {
     // cx&$f
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     ora.z __3
     // *col++ = v
     ldy #0
@@ -1398,7 +1398,7 @@ mode_hicolmcchar: {
     // cx&$f
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     ora.z __3
     // *col++ = v
     ldy #0
@@ -1570,7 +1570,7 @@ mode_sixsfred2: {
     // ay/2
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     and #3
     // *gfxa++ = row_bitmask[row]
     tay
@@ -1973,7 +1973,7 @@ mode_sixsfred: {
     // ay/2
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     and #3
     // *gfxa++ = row_bitmask[row]
     tay
@@ -2171,7 +2171,7 @@ mode_8bpppixelcell: {
     lda #0
     sta.z cr
   __b7:
-    // bits = *chargen++
+    // byte bits = *chargen++
     ldy #0
     lda (chargen),y
     sta.z bits
@@ -2320,7 +2320,7 @@ mode_8bppchunkybmm: {
     lda #0
     adc.z x+1
     sta.z __7+1
-    // c = (byte)(x+y)
+    // byte c = (byte)(x+y)
     lda.z __7
     // *gfxb++ = c
     ldy #0
@@ -2370,7 +2370,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -2475,7 +2475,7 @@ mode_ctrl: {
     // }
     rts
   __b4:
-    // ctrl = dtv_control
+    // byte ctrl = dtv_control
     // Read the current control byte
     stx.z ctrl
     // keyboard_key_pressed(KEY_L)
@@ -2687,7 +2687,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(x2-x1)
-    // dx = abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     lda.z abs_u16.return
     sta.z dx
     lda.z abs_u16.return+1
@@ -2702,7 +2702,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(y2-y1)
-    // dy = abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
     ora.z dx+1
@@ -2723,7 +2723,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(x2-x1)
-    // sx = sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     lda.z sgn_u16.return
     sta.z sx
     lda.z sgn_u16.return+1
@@ -2738,7 +2738,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(y2-y1)
-    // sy = sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     // if(dx > dy)
     lda.z dy+1
     cmp.z dx+1
@@ -2748,7 +2748,7 @@ bitmap_line: {
     cmp.z dx
     bcc __b2
   !:
-    // e = dx/2
+    // unsigned int e = dx/2
     lda.z dx+1
     lsr
     sta.z e+1
@@ -2814,7 +2814,7 @@ bitmap_line: {
     // }
     rts
   __b2:
-    // e = dy/2
+    // unsigned int e = dy/2
     lda.z dy+1
     lsr
     sta.z e1+1
@@ -2952,7 +2952,7 @@ bitmap_plot: {
     .label __0 = $23
     .label plotter = $21
     .label x = 9
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     tay
     lda bitmap_plot_yhi,y
     sta.z plotter+1

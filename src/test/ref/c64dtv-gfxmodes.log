@@ -19989,7 +19989,7 @@ print_str_lines: {
     // [123] phi print_str_lines::str#3 = print_str_lines::str#2 [phi:print_str_lines::@1/print_str_lines::@3->print_str_lines::@2#1] -- register_copy 
     // print_str_lines::@2
   __b2:
-    // ch = *(str++)
+    // char ch = *(str++)
     // [124] print_str_lines::ch#0 = *print_str_lines::str#3 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (str),y
@@ -20041,12 +20041,12 @@ print_str_lines: {
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = $1c
-    // colidx = key&7
+    // char colidx = key&7
     // [135] keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#20 & 7 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #7
     sta.z colidx
-    // rowidx = key>>3
+    // char rowidx = key>>3
     // [136] keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#20 >> 3 -- vbuaa=vbuyy_ror_3 
     tya
     lsr
@@ -20791,11 +20791,11 @@ mode_stdbitmap: {
     txa
     clc
     adc.z cy
-    // col = (cx+cy)&$f
+    // byte col = (cx+cy)&$f
     // [269] mode_stdbitmap::col#0 = mode_stdbitmap::$4 & $f -- vbuyy=vbuaa_band_vbuc1 
     and #$f
     tay
-    // col2 = ($f-col)
+    // byte col2 = ($f-col)
     // [270] mode_stdbitmap::col2#0 = $f - mode_stdbitmap::col#0 -- vbuz1=vbuc1_minus_vbuyy 
     tya
     eor #$ff
@@ -21032,7 +21032,7 @@ mode_hicolstdchar: {
     // [309] mode_hicolstdchar::$4 = mode_hicolstdchar::cx#2 & $f -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     // [310] mode_hicolstdchar::v#0 = mode_hicolstdchar::$3 | mode_hicolstdchar::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __3
     // *col++ = v
@@ -21234,7 +21234,7 @@ mode_hicolecmchar: {
     // [344] mode_hicolecmchar::$4 = mode_hicolecmchar::cx#2 & $f -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     // [345] mode_hicolecmchar::v#0 = mode_hicolecmchar::$3 | mode_hicolecmchar::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __3
     // *col++ = v
@@ -21433,7 +21433,7 @@ mode_hicolmcchar: {
     // [378] mode_hicolmcchar::$4 = mode_hicolmcchar::cx#2 & $f -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-    // v = (cy&$f)*$10|(cx&$f)
+    // byte v = (cy&$f)*$10|(cx&$f)
     // [379] mode_hicolmcchar::v#0 = mode_hicolmcchar::$3 | mode_hicolmcchar::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __3
     // *col++ = v
@@ -21690,7 +21690,7 @@ mode_sixsfred2: {
     // [427] mode_sixsfred2::$8 = mode_sixsfred2::ay#4 >> 1 -- vbuaa=vbuz1_ror_1 
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     // [428] mode_sixsfred2::row#0 = mode_sixsfred2::$8 & 3 -- vbuaa=vbuaa_band_vbuc1 
     and #3
     // *gfxa++ = row_bitmask[row]
@@ -22308,7 +22308,7 @@ mode_sixsfred: {
     // [540] mode_sixsfred::$6 = mode_sixsfred::ay#4 >> 1 -- vbuaa=vbuz1_ror_1 
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     // [541] mode_sixsfred::row#0 = mode_sixsfred::$6 & 3 -- vbuaa=vbuaa_band_vbuc1 
     and #3
     // *gfxa++ = row_bitmask[row]
@@ -22616,7 +22616,7 @@ mode_8bpppixelcell: {
     // [593] phi mode_8bpppixelcell::chargen#2 = mode_8bpppixelcell::chargen#1 [phi:mode_8bpppixelcell::@11->mode_8bpppixelcell::@7#3] -- register_copy 
     // mode_8bpppixelcell::@7
   __b7:
-    // bits = *chargen++
+    // byte bits = *chargen++
     // [594] mode_8bpppixelcell::bits#0 = *mode_8bpppixelcell::chargen#2 -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (chargen),y
@@ -22864,7 +22864,7 @@ mode_8bppchunkybmm: {
     lda #0
     adc.z x+1
     sta.z __7+1
-    // c = (byte)(x+y)
+    // byte c = (byte)(x+y)
     // [638] mode_8bppchunkybmm::c#0 = (byte)mode_8bppchunkybmm::$7 -- vbuaa=_byte_vwuz1 
     lda.z __7
     // *gfxb++ = c
@@ -22937,7 +22937,7 @@ memset: {
     beq __breturn
   !:
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [652] memset::end#0 = (byte*)memset::str#4 + memset::num#3 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
@@ -23089,7 +23089,7 @@ mode_ctrl: {
     rts
     // mode_ctrl::@4
   __b4:
-    // ctrl = dtv_control
+    // byte ctrl = dtv_control
     // [679] mode_ctrl::ctrl#0 = dtv_control#116 -- vbuz1=vbuxx 
     // Read the current control byte
     stx.z ctrl
@@ -23458,7 +23458,7 @@ bitmap_line: {
     // abs_u16(x2-x1)
     // [755] abs_u16::return#0 = abs_u16::return#4
     // bitmap_line::@12
-    // dx = abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     // [756] bitmap_line::dx#0 = abs_u16::return#0 -- vwuz1=vwuz2 
     lda.z abs_u16.return
     sta.z dx
@@ -23480,7 +23480,7 @@ bitmap_line: {
     // abs_u16(y2-y1)
     // [759] abs_u16::return#1 = abs_u16::return#4
     // bitmap_line::@13
-    // dy = abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     // [760] bitmap_line::dy#0 = abs_u16::return#1
     // if(dx==0 && dy==0)
     // [761] if(bitmap_line::dx#0!=0) goto bitmap_line::@1 -- vwuz1_neq_0_then_la1 
@@ -23512,7 +23512,7 @@ bitmap_line: {
     // sgn_u16(x2-x1)
     // [765] sgn_u16::return#0 = sgn_u16::return#4
     // bitmap_line::@14
-    // sx = sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     // [766] bitmap_line::sx#0 = sgn_u16::return#0 -- vwuz1=vwuz2 
     lda.z sgn_u16.return
     sta.z sx
@@ -23534,7 +23534,7 @@ bitmap_line: {
     // sgn_u16(y2-y1)
     // [769] sgn_u16::return#1 = sgn_u16::return#4
     // bitmap_line::@15
-    // sy = sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     // [770] bitmap_line::sy#0 = sgn_u16::return#1
     // if(dx > dy)
     // [771] if(bitmap_line::dx#0>bitmap_line::dy#0) goto bitmap_line::@2 -- vwuz1_gt_vwuz2_then_la1 
@@ -23547,7 +23547,7 @@ bitmap_line: {
     bcc __b2
   !:
     // bitmap_line::@5
-    // e = dx/2
+    // unsigned int e = dx/2
     // [772] bitmap_line::e#0 = bitmap_line::dx#0 >> 1 -- vwuz1=vwuz2_ror_1 
     lda.z dx+1
     lsr
@@ -23650,7 +23650,7 @@ bitmap_line: {
     rts
     // bitmap_line::@2
   __b2:
-    // e = dy/2
+    // unsigned int e = dy/2
     // [789] bitmap_line::e1#0 = bitmap_line::dy#0 >> 1 -- vwuz1=vwuz2_ror_1 
     lda.z dy+1
     lsr
@@ -23847,7 +23847,7 @@ bitmap_plot: {
     .label __0 = $23
     .label plotter = $21
     .label x = 9
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     // [823] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] -- vwuz1=pbuc1_derefidx_vbuaa_word_pbuc2_derefidx_vbuaa 
     tay
     lda bitmap_plot_yhi,y

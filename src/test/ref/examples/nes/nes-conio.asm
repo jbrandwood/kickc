@@ -93,20 +93,20 @@
   .label y_scroll = $14
 .segment Code
 __start: {
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<PPU_NAME_TABLE_0
     sta.z conio_line_text
     lda #>PPU_NAME_TABLE_0
     sta.z conio_line_text+1
-    // x_scroll
+    // volatile char x_scroll
     lda #0
     sta.z x_scroll
-    // y_scroll
+    // volatile char y_scroll
     sta.z y_scroll
     jsr main
     rts
@@ -120,7 +120,7 @@ vblank: {
     pha
     // readJoy1()
     jsr readJoy1
-    // joy = readJoy1()
+    // char joy = readJoy1()
     tax
     // joy&JOY_DOWN
     txa
@@ -568,7 +568,7 @@ uctoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned char digit_value = digit_values[digit]
     ldy.z digit
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
@@ -676,7 +676,7 @@ gotoxy: {
     sta.z __6
     lda #0
     sta.z __6+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     asl.z line_offset
     rol.z line_offset+1
     asl.z line_offset

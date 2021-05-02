@@ -45,7 +45,7 @@ main: {
     rol.z __0+1
     asl.z __0
     rol.z __0+1
-    // line = SCREEN+(word)y*40
+    // byte* line = SCREEN+(word)y*40
     clc
     lda.z line
     adc #<SCREEN

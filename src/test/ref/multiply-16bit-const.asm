@@ -302,7 +302,7 @@ ultoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned long digit_value = digit_values[digit]
     lda.z digit
     asl
     asl

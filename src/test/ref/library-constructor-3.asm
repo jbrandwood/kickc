@@ -12,10 +12,10 @@
   .label SCREEN = 3
 .segment Code
 __start: {
-    // sym
+    // volatile char sym
     lda #0
     sta.z sym
-    // SCREEN
+    // char * volatile SCREEN
     sta.z SCREEN
     sta.z SCREEN+1
     // #pragma constructor_for(init_1, print)

@@ -13,7 +13,7 @@
   .label i = 3
 .segment Code
 __start: {
-    // i = 0
+    // char i = 0
     lda #0
     sta.z i
     jsr main
@@ -46,7 +46,7 @@ main: {
     lda #0
     sta.z a
   __b1:
-    // v = a+1
+    // char v = a+1
     ldx.z a
     inx
     // plus('0', v)
@@ -56,7 +56,7 @@ main: {
     pha
     jsr plus
     pla
-    // w = plus('0', v)
+    // char w = plus('0', v)
     pla
     // w+a
     clc

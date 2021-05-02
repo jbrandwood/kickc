@@ -22,7 +22,7 @@ main: {
     lda #>words
     sta.z wp+1
   __b1:
-    // w = *(wp++)
+    // word w = *(wp++)
     ldy #0
     lda (wp),y
     sta.z w

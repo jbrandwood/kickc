@@ -15,7 +15,7 @@
 main: {
     .label ptr = point
     .label point = 3
-    // point = { 1, 2 }
+    // struct Point point = { 1, 2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y

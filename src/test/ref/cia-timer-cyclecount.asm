@@ -33,7 +33,7 @@ main: {
     nop
     // clock()
     jsr clock
-    // cyclecount = clock()-CLOCKS_PER_INIT
+    // dword cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT

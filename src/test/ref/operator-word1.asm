@@ -15,7 +15,7 @@ main: {
     .label ds = 6
     .label __4 = $a
     .label __5 = $c
-    // du = 2000000
+    // volatile unsigned long du = 2000000
     lda #<$1e8480
     sta.z du
     lda #>$1e8480
@@ -24,7 +24,7 @@ main: {
     sta.z du+2
     lda #>$1e8480>>$10
     sta.z du+3
-    // ds = -3777777
+    // volatile signed long ds = -3777777
     lda #<-$39a4f1
     sta.z ds
     lda #>-$39a4f1

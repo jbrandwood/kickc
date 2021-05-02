@@ -13,7 +13,7 @@
 .segment Code
 main: {
     .label point1 = 2
-    // point1 = { 2, 3 }
+    // __ma struct Point point1 = { 2, 3 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y

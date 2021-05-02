@@ -12,7 +12,7 @@
 main: {
     .label text = 5
     .label screen = 3
-    // text
+    // byte* text
     lda #<0
     sta.z text
     sta.z text+1

@@ -78,25 +78,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclVariableList(KickCParser.DeclVariableListContext ctx) { }
+	@Override public void enterDeclaratorInitList(KickCParser.DeclaratorInitListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclVariableList(KickCParser.DeclVariableListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeDef(KickCParser.TypeDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeDef(KickCParser.TypeDefContext ctx) { }
+	@Override public void exitDeclaratorInitList(KickCParser.DeclaratorInitListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -121,6 +109,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeDef(KickCParser.TypeDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeDef(KickCParser.TypeDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -198,13 +198,49 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePar(KickCParser.TypeParContext ctx) { }
+	@Override public void enterDeclaratorPointer(KickCParser.DeclaratorPointerContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePar(KickCParser.TypeParContext ctx) { }
+	@Override public void exitDeclaratorPointer(KickCParser.DeclaratorPointerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclaratorArray(KickCParser.DeclaratorArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclaratorArray(KickCParser.DeclaratorArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclaratorPar(KickCParser.DeclaratorParContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclaratorPar(KickCParser.DeclaratorParContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclaratorName(KickCParser.DeclaratorNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclaratorName(KickCParser.DeclaratorNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -217,18 +253,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeProcedure(KickCParser.TypeProcedureContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeArray(KickCParser.TypeArrayContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeArray(KickCParser.TypeArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

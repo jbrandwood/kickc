@@ -12,7 +12,7 @@
 .segment Code
 main: {
   __b1:
-    // key = *RASTER
+    // byte key = *RASTER
     lda RASTER
     // if (key > $20 || key < $40)
     cmp #$20+1

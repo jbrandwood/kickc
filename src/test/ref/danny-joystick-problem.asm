@@ -20,7 +20,7 @@ main: {
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // asm
     lda #0
-    // port4Value = CIA2->PORT_B
+    // char port4Value = CIA2->PORT_B
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // *SCREEN = port4Value
     sta SCREEN

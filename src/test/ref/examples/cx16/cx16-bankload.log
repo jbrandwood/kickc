@@ -10187,30 +10187,30 @@ Score: 75871
   // __start
 __start: {
     // __start::__init1
-    // conio_screen_width = 0
+    // __ma unsigned byte conio_screen_width = 0
     // [1] conio_screen_width = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z conio_screen_width
-    // conio_screen_height = 0
+    // __ma unsigned byte conio_screen_height = 0
     // [2] conio_screen_height = 0 -- vbuz1=vbuc1 
     sta.z conio_screen_height
-    // conio_screen_layer = 1
+    // __ma unsigned byte conio_screen_layer = 1
     // [3] conio_screen_layer = 1 -- vbuz1=vbuc1 
     lda #1
     sta.z conio_screen_layer
-    // conio_width = 0
+    // __ma word conio_width = 0
     // [4] conio_width = 0 -- vwuz1=vwuc1 
     lda #<0
     sta.z conio_width
     sta.z conio_width+1
-    // conio_height = 0
+    // __ma word conio_height = 0
     // [5] conio_height = 0 -- vwuz1=vwuc1 
     sta.z conio_height
     sta.z conio_height+1
-    // conio_rowshift = 0
+    // __ma byte conio_rowshift = 0
     // [6] conio_rowshift = 0 -- vbuz1=vbuc1 
     sta.z conio_rowshift
-    // conio_rowskip = 0
+    // __ma word conio_rowskip = 0
     // [7] conio_rowskip = 0 -- vwuz1=vwuc1 
     sta.z conio_rowskip
     sta.z conio_rowskip+1
@@ -10232,7 +10232,7 @@ conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     .label line = 2
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     // [12] conio_x16_init::line#0 = *conio_x16_init::BASIC_CURSOR_LINE -- vbuz1=_deref_pbuc1 
     lda BASIC_CURSOR_LINE
     sta.z line
@@ -10338,7 +10338,7 @@ main: {
     // [165] phi from main::@3 to cputs [phi:main::@3->cputs]
     jsr cputs
     // main::@4
-    // SPRITE_ATTR = { <(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 }
+    // struct VERA_SPRITE SPRITE_ATTR = { <(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 }
     // [40] *(&main::SPRITE_ATTR) = memcpy(*(&$0), struct VERA_SPRITE, SIZEOF_STRUCT_VERA_SPRITE) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_VERA_SPRITE
   !:
@@ -10502,7 +10502,7 @@ vera_layer_mode_text: {
 screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
-    // hscale = (*VERA_DC_HSCALE) >> 7
+    // char hscale = (*VERA_DC_HSCALE) >> 7
     // [58] screensize::hscale#0 = *VERA_DC_HSCALE >> 7 -- vbuaa=_deref_pbuc1_ror_7 
     lda VERA_DC_HSCALE
     rol
@@ -10522,7 +10522,7 @@ screensize: {
     // *x = 40 << hscale
     // [60] *screensize::x#0 = screensize::$1 -- _deref_pbuc1=vbuaa 
     sta.z x
-    // vscale = (*VERA_DC_VSCALE) >> 7
+    // char vscale = (*VERA_DC_VSCALE) >> 7
     // [61] screensize::vscale#0 = *VERA_DC_VSCALE >> 7 -- vbuaa=_deref_pbuc1_ror_7 
     lda VERA_DC_VSCALE
     rol
@@ -10587,7 +10587,7 @@ screenlayer: {
     // [74] screenlayer::vera_layer_get_width1_layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
     // screenlayer::vera_layer_get_width1
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     // [75] screenlayer::vera_layer_get_width1_$2 = screenlayer::vera_layer_get_width1_layer#0 << 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [76] screenlayer::vera_layer_get_width1_config#0 = vera_layer_config[screenlayer::vera_layer_get_width1_$2] -- pbuz1=qbuc1_derefidx_vbuaa 
@@ -10657,7 +10657,7 @@ screenlayer: {
     // [94] screenlayer::vera_layer_get_height1_layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
     // screenlayer::vera_layer_get_height1
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     // [95] screenlayer::vera_layer_get_height1_$2 = screenlayer::vera_layer_get_height1_layer#0 << 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [96] screenlayer::vera_layer_get_height1_config#0 = vera_layer_config[screenlayer::vera_layer_get_height1_$2] -- pbuz1=qbuc1_derefidx_vbuaa 
@@ -10746,7 +10746,7 @@ vera_layer_set_backcolor: {
 // vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
 vera_layer_set_mapbase: {
     .label addr = $1e
-    // addr = vera_layer_mapbase[layer]
+    // byte* addr = vera_layer_mapbase[layer]
     // [110] vera_layer_set_mapbase::$0 = vera_layer_set_mapbase::layer#3 << 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [111] vera_layer_set_mapbase::addr#0 = vera_layer_mapbase[vera_layer_set_mapbase::$0] -- pbuz1=qbuc1_derefidx_vbuaa 
@@ -10807,7 +10807,7 @@ gotoxy: {
     sta.z __6
     lda #0
     sta.z __6+1
-    // line_offset = (unsigned int)y << conio_rowshift
+    // unsigned int line_offset = (unsigned int)y << conio_rowshift
     // [123] gotoxy::line_offset#0 = gotoxy::$6 << conio_rowshift -- vwuz1=vwuz1_rol_vbuz2 
     ldy.z conio_rowshift
     beq !e+
@@ -10839,7 +10839,7 @@ gotoxy: {
 // vera_layer_set_text_color_mode(byte register(A) layer)
 vera_layer_set_text_color_mode: {
     .label addr = $22
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     // [128] vera_layer_set_text_color_mode::$0 = vera_layer_set_text_color_mode::layer#3 << 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [129] vera_layer_set_text_color_mode::addr#0 = vera_layer_config[vera_layer_set_text_color_mode::$0] -- pbuz1=qbuc1_derefidx_vbuaa 
@@ -10869,7 +10869,7 @@ clrscr: {
     .label __1 = $24
     .label line_text = $f
     .label color = $24
-    // line_text = CONIO_SCREEN_TEXT
+    // char* line_text = CONIO_SCREEN_TEXT
     // [133] clrscr::line_text#0 = (byte*)CONIO_SCREEN_TEXT#16 -- pbuz1=pbuz2 
     lda.z CONIO_SCREEN_TEXT
     sta.z line_text
@@ -10898,7 +10898,7 @@ clrscr: {
     // [141] vera_layer_get_textcolor::return#2 = vera_layer_get_textcolor::return#0
     // clrscr::@8
     // [142] clrscr::$2 = vera_layer_get_textcolor::return#2
-    // color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
+    // char color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
     // [143] clrscr::color#0 = clrscr::$1 | clrscr::$2 -- vbuz1=vbuz1_bor_vbuaa 
     ora.z color
     sta.z color
@@ -11172,7 +11172,7 @@ memcpy_bank_to_vram: {
     lda #VERA_INC_1
     ora VERA_ADDRX_H
     sta VERA_ADDRX_H
-    // end = src+num
+    // unsigned long end = src+num
     // [194] memcpy_bank_to_vram::end#0 = memcpy_bank_to_vram::beg#0 + memcpy_bank_to_vram::num#2 -- vduz1=vduz2_plus_vduz1 
     lda.z end
     clc
@@ -11262,7 +11262,7 @@ memcpy_bank_to_vram: {
     lda.z __17+1
     adc.z __24+1
     sta.z __17+1
-    // bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3))
+    // char bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3))
     // [208] memcpy_bank_to_vram::bank#0 = (byte)memcpy_bank_to_vram::$17 -- vbuxx=_byte_vwuz1 
     lda.z __17
     tax
@@ -11662,14 +11662,14 @@ cputc: {
     // vera_layer_get_color( conio_screen_layer)
     // [263] vera_layer_get_color::return#3 = vera_layer_get_color::return#2
     // cputc::@7
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     // [264] cputc::color#0 = vera_layer_get_color::return#3 -- vbuxx=vbuaa 
     tax
     // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     // [265] cputc::$15 = conio_screen_layer << 1 -- vbuaa=vbuz1_rol_1 
     lda.z conio_screen_layer
     asl
-    // conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     // [266] cputc::conio_addr#0 = (byte*)CONIO_SCREEN_TEXT#16 + conio_line_text[cputc::$15] -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
@@ -11735,7 +11735,7 @@ cputc: {
     // [279] conio_cursor_x[conio_screen_layer] = ++ conio_cursor_x[conio_screen_layer] -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z conio_screen_layer
     inc conio_cursor_x,x
-    // scroll_enable = conio_scroll_enable[conio_screen_layer]
+    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
     // [280] cputc::scroll_enable#0 = conio_scroll_enable[conio_screen_layer] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z conio_screen_layer
     lda conio_scroll_enable,y
@@ -11810,7 +11810,7 @@ setnam: {
     // [294] strlen::return#2 = strlen::len#2
     // setnam::@1
     // [295] setnam::$0 = strlen::return#2
-    // filename_len = (char)strlen(filename)
+    // char filename_len = (char)strlen(filename)
     // [296] setnam::filename_len = (byte)setnam::$0 -- vbuz1=_byte_vwuz2 
     lda.z __0
     sta.z filename_len
@@ -11850,7 +11850,7 @@ load: {
     .label address = $28
     .label verify = $2a
     .label status = $30
-    // status
+    // char status
     // [301] load::status = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z status
@@ -11875,7 +11875,7 @@ load: {
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 vera_layer_set_config: {
     .label addr = $31
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     // [304] vera_layer_set_config::addr#0 = *(vera_layer_config+vera_layer_mode_text::layer#0*SIZEOF_POINTER) -- pbuz1=_deref_qbuc1 
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -11899,7 +11899,7 @@ vera_layer_set_config: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
 vera_layer_set_tilebase: {
     .label addr = $33
-    // addr = vera_layer_tilebase[layer]
+    // byte* addr = vera_layer_tilebase[layer]
     // [307] vera_layer_set_tilebase::addr#0 = *(vera_layer_tilebase+vera_layer_mode_text::layer#0*SIZEOF_POINTER) -- pbuz1=_deref_qbuc1 
     lda vera_layer_tilebase+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -11924,7 +11924,7 @@ vera_layer_set_tilebase: {
 // vera_layer_get_color(byte register(X) layer)
 vera_layer_get_color: {
     .label addr = $35
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     // [311] vera_layer_get_color::$3 = vera_layer_get_color::layer#2 << 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
@@ -11971,7 +11971,7 @@ vera_layer_get_color: {
 // Print a newline
 cputln: {
     .label temp = $37
-    // temp = conio_line_text[conio_screen_layer]
+    // word temp = conio_line_text[conio_screen_layer]
     // [320] cputln::$2 = conio_screen_layer << 1 -- vbuaa=vbuz1_rol_1 
     lda.z conio_screen_layer
     asl
@@ -12115,12 +12115,12 @@ insertup: {
     .label width = $3a
     .label line = $3b
     .label start = $3b
-    // cy = conio_cursor_y[conio_screen_layer]
+    // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     // [344] insertup::cy#0 = conio_cursor_y[conio_screen_layer] -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
     sta.z cy
-    // width = CONIO_WIDTH * 2
+    // unsigned byte width = CONIO_WIDTH * 2
     // [345] insertup::width#0 = conio_screen_width << 1 -- vbuz1=vbuz2_rol_1 
     lda.z conio_screen_width
     asl
@@ -12152,7 +12152,7 @@ insertup: {
     txa
     sec
     sbc #1
-    // line = (i-1) << conio_rowshift
+    // unsigned int line = (i-1) << conio_rowshift
     // [352] insertup::line#0 = insertup::$3 << conio_rowshift -- vwuz1=vbuaa_rol_vbuz2 
     ldy.z conio_rowshift
     sta.z line
@@ -12166,7 +12166,7 @@ insertup: {
     dey
     bne !-
   !e:
-    // start = CONIO_SCREEN_TEXT + line
+    // unsigned char* start = CONIO_SCREEN_TEXT + line
     // [353] insertup::start#0 = (byte*)CONIO_SCREEN_TEXT#16 + insertup::line#0 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z start
     clc
@@ -12215,7 +12215,7 @@ clearline: {
     // [360] clearline::$5 = conio_screen_layer << 1 -- vbuaa=vbuz1_rol_1 
     lda.z conio_screen_layer
     asl
-    // addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     // [361] clearline::addr#0 = (byte*)CONIO_SCREEN_TEXT#16 + conio_line_text[clearline::$5] -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
@@ -12251,7 +12251,7 @@ clearline: {
     // vera_layer_get_color( conio_screen_layer)
     // [369] vera_layer_get_color::return#4 = vera_layer_get_color::return#2
     // clearline::@4
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     // [370] clearline::color#0 = vera_layer_get_color::return#4 -- vbuxx=vbuaa 
     tax
     // [371] phi from clearline::@4 to clearline::@1 [phi:clearline::@4->clearline::@1]

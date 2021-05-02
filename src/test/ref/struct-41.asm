@@ -23,7 +23,7 @@ main: {
     .label v2 = 2
     .label v3 = 6
     .label v4 = $a
-    // v2 = v1
+    // __ma struct Vector v2 = v1
     lda #v1_p_x
     sta.z v2
     lda #v1_p_y
@@ -32,7 +32,7 @@ main: {
     sta v2+OFFSET_STRUCT_VECTOR_Q
     lda #v1_q_y
     sta v2+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
-    // v3 = { v2.p, {6, 7} }
+    // __ma struct Vector v3 = { v2.p, {6, 7} }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda v2-1,y
@@ -45,14 +45,14 @@ main: {
     sta v3+OFFSET_STRUCT_VECTOR_Q-1,y
     dey
     bne !-
-    // v4 = v3
+    // __ma struct Vector v4 = v3
     ldy #SIZEOF_STRUCT_VECTOR
   !:
     lda v3-1,y
     sta v4-1,y
     dey
     bne !-
-    // v5 = { {v4.p.x, v4.p.y }, {8, 9} }
+    // __ssa struct Vector v5 = { {v4.p.x, v4.p.y }, {8, 9} }
     ldy.z v4
     ldx v4+OFFSET_STRUCT_POINT_Y
     // SCREEN[idx++] = v1.p.x

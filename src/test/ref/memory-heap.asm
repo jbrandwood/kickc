@@ -59,7 +59,7 @@ main: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 6
-    // mem = heap_head-size
+    // unsigned char* mem = heap_head-size
     sec
     lda.z heap_head
     sbc #$64

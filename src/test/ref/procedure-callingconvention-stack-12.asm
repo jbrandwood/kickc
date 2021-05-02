@@ -13,7 +13,7 @@
   .label idx = 4
 .segment Code
 __start: {
-    // idx = 0
+    // char idx = 0
     lda #0
     sta.z idx
     jsr main

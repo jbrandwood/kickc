@@ -15,7 +15,7 @@
   .label idx = 3
 .segment Code
 __start: {
-    // idx = 0
+    // char idx = 0
     lda #0
     sta.z idx
     jsr main
@@ -130,7 +130,7 @@ main: {
     pha
     pha
     jsr get
-    // v = get(i)
+    // struct Vector v = get(i)
     pla
     tay
     pla

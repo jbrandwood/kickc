@@ -76,7 +76,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     lda.z src_end
     clc
     adc.z source

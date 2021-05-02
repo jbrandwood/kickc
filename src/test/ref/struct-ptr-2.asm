@@ -19,7 +19,7 @@ main: {
     txa
     asl
     tay
-    // point_i = points+i
+    // struct Point* point_i = points+i
     tya
     clc
     adc #<points
@@ -48,7 +48,7 @@ main: {
     txa
     asl
     tay
-    // point_i = points+i
+    // struct Point* point_i = points+i
     tya
     clc
     adc #<points

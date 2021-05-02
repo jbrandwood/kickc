@@ -346,7 +346,7 @@ gfx_init_plane_charset8: {
     lda #0
     sta.z cr
   __b2:
-    // bits = *chargen++
+    // byte bits = *chargen++
     ldy #0
     lda (chargen),y
     sta.z bits

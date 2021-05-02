@@ -18,7 +18,7 @@ main: {
     lda #>-$a
     sta.z i+1
   __b1:
-    // sc = SCREEN + i
+    // char* sc = SCREEN + i
     clc
     lda.z i
     adc #<SCREEN

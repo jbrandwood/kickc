@@ -21,7 +21,7 @@ main: {
     sta.z screen+1
     ldx #0
   __b1:
-    // sin = sintab[i]
+    // byte sin = sintab[i]
     ldy sintab,x
     // screen[sin] = '*'
     lda #'*'

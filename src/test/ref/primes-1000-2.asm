@@ -50,7 +50,7 @@ main: {
     lda #2
     sta.z test_last
   __b1:
-    // p = (char)PRIMES[test_last]
+    // char p = (char)PRIMES[test_last]
     lda.z test_last
     asl
     tay
@@ -160,7 +160,7 @@ mul8u: {
     .label mb = $11
     .label res = 7
     .label return = 7
-    // mb = b
+    // unsigned int mb = b
     sta.z mb
     lda #0
     sta.z mb+1
@@ -338,7 +338,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay

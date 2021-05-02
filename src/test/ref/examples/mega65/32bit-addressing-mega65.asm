@@ -17,7 +17,7 @@
   .label ADDR32 = 2
 .segment Code
 __start: {
-    // ADDR32
+    // volatile __zp unsigned long ADDR32
     lda #<0
     sta.z ADDR32
     sta.z ADDR32+1

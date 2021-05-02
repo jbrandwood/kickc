@@ -12,7 +12,7 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // p = { 2, 3 }
+    // word p = { 2, 3 }
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3

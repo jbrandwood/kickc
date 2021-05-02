@@ -32,22 +32,22 @@
   .label count = $17
 .segment Code
 __start: {
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     lda #<COLORRAM
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // count = 0
+    // unsigned long count = 0
     lda #<0
     sta.z count
     sta.z count+1
@@ -75,9 +75,9 @@ queen: {
     tsx
     lda STACK_BASE+OFFSET_STACK_ROW,x
     sta.z row
-    // r = row
+    // __ma char r = row
     sta.z r
-    // column=1
+    // __ma char column=1
     lda #1
     sta.z column
   __b1:
@@ -153,7 +153,7 @@ conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     .label line = 2
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
     // if(line>=CONIO_HEIGHT)
@@ -427,7 +427,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -766,7 +766,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     sta.z __10
@@ -822,7 +822,7 @@ printf_number_buffer: {
     // strlen(buffer.digits)
     jsr strlen
     // strlen(buffer.digits)
-    // len = (signed char)strlen(buffer.digits)
+    // signed char len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
     lda.z __19
     sta.z len
@@ -960,7 +960,7 @@ ultoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned long digit_value = digit_values[digit]
     lda.z digit
     asl
     asl
@@ -1052,7 +1052,7 @@ uctoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned char digit_value = digit_values[digit]
     ldy.z digit
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
@@ -1441,7 +1441,7 @@ memcpy: {
     .label src = $27
     .label source = $27
     .label destination = $f
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<$19*$28-$28
@@ -1482,7 +1482,7 @@ memset: {
     .label dst = $f
     .label str = $f
     .label c = $1b
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda #$28
     clc
     adc.z str

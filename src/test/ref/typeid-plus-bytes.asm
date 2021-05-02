@@ -57,7 +57,7 @@ testUnsigned: {
 testUnsignedVals: {
     .const ubc1 = $fa
     .label ubv1 = 2
-    // ubv1 = 250
+    // volatile unsigned byte ubv1 = 250
     lda #$fa
     sta.z ubv1
     // SCREEN[idx++] = 250
@@ -140,7 +140,7 @@ testSigned: {
 testSignedVals: {
     .const sbc1 = -$78
     .label sbv1 = 3
-    // sbv1 = -120
+    // volatile signed byte sbv1 = -120
     lda #-$78
     sta.z sbv1
     // SSCREEN[idx++] = (-120)

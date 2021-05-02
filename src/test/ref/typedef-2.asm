@@ -10,7 +10,7 @@
   .label ptr = 2
 .segment Code
 __start: {
-    // ptr = 0x1000
+    // char* ptr = 0x1000
     lda #<$1000
     sta.z ptr
     lda #>$1000

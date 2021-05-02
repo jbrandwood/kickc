@@ -19,7 +19,7 @@ main: {
     sta.z i
     sta.z i+1
   __b1:
-    // tile = TileDB[i]
+    // struct Tile *tile = TileDB[i]
     lda.z i
     asl
     sta.z __1

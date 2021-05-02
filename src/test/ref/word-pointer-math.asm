@@ -19,7 +19,7 @@ main: {
     // words+i
     txa
     asl
-    // w = *(words+i)
+    // word w = *(words+i)
     tay
     lda words,y
     sta.z w

@@ -27,7 +27,7 @@ main: {
     lda #0
     sta.z y
   __b1:
-    // bits = CHAR_A[y]
+    // byte bits = CHAR_A[y]
     ldy.z y
     lda CHAR_A,y
     sta.z bits

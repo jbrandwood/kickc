@@ -11,7 +11,7 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    // x = *SCREEN
+    // char x = *SCREEN
     ldx SCREEN
     ldy #0
   __b1:

@@ -191,7 +191,7 @@ sin16s_gen2: {
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
-    // step = div32u16u(PI2_u4f28, wavelength)
+    // unsigned long step = div32u16u(PI2_u4f28, wavelength)
     lda #<sin
     sta.z sintab
     lda #>sin
@@ -313,7 +313,7 @@ render_sine: {
     lda.z __11+1
     adc #>sin
     sta.z __1+1
-    // sin_val = *(sin+sin_idx)
+    // signed int sin_val = *(sin+sin_idx)
     ldy #0
     lda (sin_val),y
     pha
@@ -325,7 +325,7 @@ render_sine: {
     // wrap_y(sin_val)
     jsr wrap_y
     // wrap_y(sin_val)
-    // ypos = wrap_y(sin_val)
+    // char ypos = wrap_y(sin_val)
     tax
     // bitmap_plot(xpos,ypos)
     jsr bitmap_plot
@@ -337,7 +337,7 @@ render_sine: {
     lda.z __4+1
     adc #>sin2
     sta.z __4+1
-    // sin2_val = *(sin2+sin_idx)
+    // signed int sin2_val = *(sin2+sin_idx)
     ldy #0
     lda (__4),y
     sta.z sin2_val
@@ -354,7 +354,7 @@ render_sine: {
     sta.z wrap_y.y+1
     jsr wrap_y
     // wrap_y(sin2_val+10)
-    // ypos2 = wrap_y(sin2_val+10)
+    // char ypos2 = wrap_y(sin2_val+10)
     tax
     // bitmap_plot(xpos,ypos2)
     jsr bitmap_plot
@@ -394,7 +394,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -441,7 +441,7 @@ div32u16u: {
     sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
+    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
@@ -453,8 +453,8 @@ div32u16u: {
     sta.z divr16u.dividend+1
     jsr divr16u
     // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
+    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -572,7 +572,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // x1 = >x<<3
+    // unsigned int x1 = >x<<3
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -589,7 +589,7 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
-    // x2 = mulu16_sel(x1, x1, 0)
+    // unsigned int x2 = mulu16_sel(x1, x1, 0)
     lda.z mulu16_sel.return
     sta.z x2
     lda.z mulu16_sel.return+1
@@ -606,7 +606,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x3 = mulu16_sel(x2, x1, 1)
+    // unsigned int x3 = mulu16_sel(x2, x1, 1)
     // mulu16_sel(x3, $10000/6, 1)
     ldx #1
     lda #<$10000/6
@@ -615,8 +615,8 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
-    // x3_6 = mulu16_sel(x3, $10000/6, 1)
-    // usinx = x1 - x3_6
+    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int usinx = x1 - x3_6
     lda.z x1
     sec
     sbc.z x3_6
@@ -636,7 +636,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // x4 = mulu16_sel(x3, x1, 0)
+    // unsigned int x4 = mulu16_sel(x3, x1, 0)
     // mulu16_sel(x4, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v2
@@ -645,8 +645,8 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x4, x1, 0)
-    // x5 = mulu16_sel(x4, x1, 0)
-    // x5_128 = x5>>4
+    // unsigned int x5 = mulu16_sel(x4, x1, 0)
+    // unsigned int x5_128 = x5>>4
     lsr.z x5_128+1
     ror.z x5_128
     lsr.z x5_128+1
@@ -698,7 +698,7 @@ mul16s: {
     sta.z mul16u.b+1
     jsr mul16u
     // mul16u((unsigned int)a, (unsigned int) b)
-    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b2
@@ -772,7 +772,7 @@ bitmap_plot: {
     .label __0 = $25
     .label plotter = $23
     .label x = 8
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -913,7 +913,7 @@ mul16u: {
     .label res = $e
     .label return = $e
     .label b = $14
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1

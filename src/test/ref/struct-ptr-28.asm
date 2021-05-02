@@ -16,7 +16,7 @@
 main: {
     .label jesper = 8
     .label henriette = $19
-    // jesper = { 4, "jesper" }
+    // struct Person jesper = { 4, "jesper" }
     ldy #SIZEOF_STRUCT_PERSON
   !:
     lda __0-1,y
@@ -30,7 +30,7 @@ main: {
     lda #>jesper
     sta.z print_person.person+1
     jsr print_person
-    // henriette = { 7, "henriette" }
+    // struct Person henriette = { 7, "henriette" }
     ldy #SIZEOF_STRUCT_PERSON
   !:
     lda __1-1,y

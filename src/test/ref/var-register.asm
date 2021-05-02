@@ -16,7 +16,7 @@ main: {
     lda #0
     sta.z a
   __b3:
-    // val1 = a+x
+    // register(A) byte val1 = a+x
     tya
     clc
     adc.z a

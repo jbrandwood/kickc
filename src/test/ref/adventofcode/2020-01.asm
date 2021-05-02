@@ -130,7 +130,7 @@ main: {
     // }
     rts
   __b10:
-    // j=i+1
+    // unsigned int j=i+1
     clc
     lda.z i1
     adc #1
@@ -161,7 +161,7 @@ main: {
   !:
     jmp __b9
   __b12:
-    // k=j+1
+    // unsigned int k=j+1
     clc
     lda.z j1
     adc #1
@@ -410,7 +410,7 @@ main: {
     sta.z mul16u.b
     jsr mul16u
     // mul16u(entries[i],entries[k])
-    // mul1 = mul16u(entries[i],entries[k])
+    // unsigned long mul1 = mul16u(entries[i],entries[k])
     // mul16u( <mul1 ,entries[j] )
     lda.z mul1
     sta.z mul16u.a
@@ -433,7 +433,7 @@ main: {
     sta.z mul16u.b
     jsr mul16u
     // mul16u( <mul1 ,entries[j] )
-    // mul2 = mul16u( <mul1 ,entries[j] )
+    // unsigned long mul2 = mul16u( <mul1 ,entries[j] )
     // printf("multiplied %lu\n", mul2)
     lda #<s11
     sta.z cputs.s
@@ -456,7 +456,7 @@ main: {
   !:
     jmp __b14
   __b2:
-    // j=i+1
+    // unsigned int j=i+1
     clc
     lda.z i
     adc #1
@@ -651,7 +651,7 @@ main: {
     sta.z mul16u.b
     jsr mul16u
     // mul16u(entries[i],entries[j])
-    // mul = mul16u(entries[i],entries[j])
+    // unsigned long mul = mul16u(entries[i],entries[j])
     // printf("multiplied %lu\n", mul)
     lda #<s11
     sta.z cputs.s
@@ -768,7 +768,7 @@ mul16u: {
     .label res = $90
     .label b = $8c
     .label return = $90
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1
@@ -852,7 +852,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -1006,7 +1006,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -1102,7 +1102,7 @@ ultoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned long digit_value = digit_values[digit]
     lda.z digit
     asl
     asl
@@ -1165,8 +1165,8 @@ setcursor: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // c = *loc
+    // char * loc = cursorLocation()
+    // char c = *loc
     ldy #0
     lda (loc),y
     tax
@@ -1207,8 +1207,8 @@ putchar: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // newChar = code | conio_reverse_value
+    // char * loc = cursorLocation()
+    // char newChar = code | conio_reverse_value
     txa
     // *loc = newChar
     ldy #0
@@ -1236,7 +1236,7 @@ newline: {
     lda ($fe),y
     eor #$80
     sta ($fe),y
-    // start = *SAVMSC
+    // char * start = *SAVMSC
     // move screen up 1 line
     lda SAVMSC
     sta.z start
@@ -1444,7 +1444,7 @@ memcpy: {
     .label src = $97
     .label destination = $99
     .label source = $97
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<num

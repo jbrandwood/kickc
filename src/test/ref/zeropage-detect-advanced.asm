@@ -12,7 +12,7 @@
 main: {
     .label c = t
     .label t = 2
-    // t
+    // unsigned dword t
     lda #<0
     sta.z t
     sta.z t+1

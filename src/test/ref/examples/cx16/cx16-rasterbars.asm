@@ -64,22 +64,22 @@
   .label sin_idx = 8
 .segment Code
 __start: {
-    // hstart = 0/4
+    // volatile char hstart = 0/4
     lda #0
     sta.z hstart
-    // hstop = 640/4
+    // volatile char hstop = 640/4
     lda #$280/4
     sta.z hstop
-    // vstart = 0/2
+    // volatile char vstart = 0/2
     lda #0
     sta.z vstart
-    // vstop = 480/2
+    // volatile char vstop = 480/2
     lda #$1e0/2
     sta.z vstop
-    // cnt = 2
+    // volatile char cnt = 2
     lda #2
     sta.z cnt
-    // sin_idx = 100
+    // volatile char sin_idx = 100
     lda #$64
     sta.z sin_idx
     jsr main
@@ -139,7 +139,7 @@ irq_line: {
     // memset(BARS, 0, sizeof(BARS))
   // Animate the bars
     jsr memset
-    // idx = sin_idx--
+    // char idx = sin_idx--
     lda.z sin_idx
     sta.z idx
     dec.z sin_idx
@@ -155,7 +155,7 @@ irq_line: {
     // }
     jmp $e049
   __b14:
-    // bar = BARS + SIN[idx]
+    // char * bar = BARS + SIN[idx]
     ldy.z idx
     lda SIN,y
     clc

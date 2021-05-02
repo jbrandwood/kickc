@@ -16,7 +16,7 @@ main: {
     .label d = 4
     .label w = 8
     .label b = $a
-    // d = 0x12345678
+    // dword d = 0x12345678
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -25,12 +25,12 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // w = 0x1234
+    // word w = 0x1234
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // b = 0x12
+    // byte b = 0x12
     lda #$12
     sta.z b
     // print(vb)

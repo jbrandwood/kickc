@@ -12,7 +12,7 @@
   .label screen = 4
 .segment Code
 __start: {
-    // screen = $400
+    // byte* screen = $400
     lda #<$400
     sta.z screen
     lda #>$400

@@ -34,7 +34,7 @@ main: {
     inc BORDER_COLOR
     // mulf16u(a, b)
     jsr mulf16u
-    // r = mulf16u(a, b)
+    // dword r = mulf16u(a, b)
     // (*BORDER_COLOR)--;
     dec BORDER_COLOR
     // print_ulong(r)

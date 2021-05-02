@@ -13,7 +13,7 @@ main: {
     .label cols = $d800
     ldy #0
   __b1:
-    // y=x+12
+    // byte y=x+12
     tya
     tax
     axs #-[$c]

@@ -12,11 +12,11 @@
   .label idx = 5
 .segment Code
 __start: {
-    // msg
+    // byte* volatile msg
     lda #<0
     sta.z msg
     sta.z msg+1
-    // idx = 0
+    // byte volatile idx = 0
     sta.z idx
     jsr main
     rts

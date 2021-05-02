@@ -16,12 +16,12 @@ main: {
     .label y2 = 6
     .label __0 = 2
     .label __1 = 2
-    // y1 = 0x1234
+    // int y1 = 0x1234
     lda #<$1234
     sta.z y1
     lda #>$1234
     sta.z y1+1
-    // y2 = 0x1234
+    // int y2 = 0x1234
     lda #<$1234
     sta.z y2
     lda #>$1234

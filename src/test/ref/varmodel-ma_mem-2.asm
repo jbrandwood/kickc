@@ -10,7 +10,7 @@
 .segment Code
 main: {
     .label screen = 2
-    // screen = 0x0400
+    // char* screen = 0x0400
     // A local pointer 
     lda #<$400
     sta.z screen

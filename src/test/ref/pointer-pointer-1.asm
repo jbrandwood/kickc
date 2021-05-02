@@ -13,10 +13,10 @@ main: {
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // b = 'a'
+    // byte b = 'a'
     lda #'a'
     sta.z b
-    // pb = &b
+    // byte* pb = &b
     lda #<b
     sta.z pb
     lda #>b

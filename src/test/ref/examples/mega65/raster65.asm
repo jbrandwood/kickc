@@ -94,21 +94,21 @@
   .label greet_idx = $b
 .segment Code
 __start: {
-    // sin_idx
+    // volatile char sin_idx
     lda #0
     sta.z sin_idx
-    // scroll_soft = 7
+    // volatile char scroll_soft = 7
     lda #7
     sta.z scroll_soft
-    // scroll_ptr = SCROLL_TEXT
+    // char * volatile scroll_ptr = SCROLL_TEXT
     lda #<SCROLL_TEXT
     sta.z scroll_ptr
     lda #>SCROLL_TEXT
     sta.z scroll_ptr+1
-    // greet_zoomx
+    // volatile char greet_zoomx
     lda #0
     sta.z greet_zoomx
-    // greet_idx
+    // volatile char greet_idx
     sta.z greet_idx
     jsr main
     rts
@@ -134,7 +134,7 @@ irq: {
     // reset x scroll
     lda #0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // wobble_idx = ++sin_idx
+    // char wobble_idx = ++sin_idx
     inc.z sin_idx
     // Generate Raster Bars and more
     ldx.z sin_idx
@@ -148,7 +148,7 @@ irq: {
     // (*songPlay)()
     // play music
     jsr songPlay
-    // sin_col = sin_idx
+    // char sin_col = sin_idx
     // Set up colors behind logo, scroll and greets
     ldy.z sin_idx
     ldx #0
@@ -166,7 +166,7 @@ irq: {
     beq !__b19+
     jmp __b19
   !__b19:
-    // sin_bar = sin_idx
+    // char sin_bar = sin_idx
     // Big block of bars (16)
     lda.z sin_idx
     sta.z sin_bar
@@ -183,7 +183,7 @@ irq: {
     // for(char i=0;i<19;i++)
     cpx #$13
     bcc __b29
-    // greet_offset = greet_idx*16
+    // char greet_offset = greet_idx*16
     lda.z greet_idx
     asl
     asl
@@ -209,7 +209,7 @@ irq: {
     // for(char i=0;i<39;i++)
     cpx #$27
     bcc __b36
-    // nxt = *(scroll_ptr++)
+    // char nxt = *(scroll_ptr++)
     // Show next char
     ldy #0
     lda (scroll_ptr),y
@@ -266,10 +266,10 @@ irq: {
     inx
     jmp __b28
   __b22:
-    // idx = SINE[sin_bar]
+    // char idx = SINE[sin_bar]
     ldy.z sin_bar
     ldx SINE,y
-    // barcol = barcnt*16
+    // char barcol = barcnt*16
     lda.z barcnt
     asl
     asl
@@ -323,7 +323,7 @@ irq: {
     inx
     jmp __b18
   __b17:
-    // col = SINE[sin_col]/4
+    // char col = SINE[sin_col]/4
     lda SINE,y
     lsr
     lsr
@@ -354,7 +354,7 @@ irq: {
     inx
     jmp __b16
   __b2:
-    // col = rasters[line]
+    // char col = rasters[line]
     tza
     tay
     lda rasters,y
@@ -374,7 +374,7 @@ irq: {
     // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
     cpz #SCROLL_Y+SCROLL_BLACKBARS+1
     bne __b7
-    // zoomval = SINE[greet_zoomx++]
+    // char zoomval = SINE[greet_zoomx++]
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
     lda SINE,y
@@ -397,7 +397,7 @@ irq: {
     lda #0
     sta.z greet_idx
   __b7:
-    // raster = VICII->RASTER
+    // char raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
   __b8:

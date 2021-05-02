@@ -96,14 +96,14 @@ main: {
     lda (sieve_i),y
     cmp #0
     bne __b3
-    // j = i*2
+    // unsigned int j = i*2
     lda.z i
     asl
     sta.z j
     lda.z i+1
     rol
     sta.z j+1
-    // s = &sieve[j]
+    // unsigned char* s = &sieve[j]
     clc
     lda.z j
     adc #<sieve

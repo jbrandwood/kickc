@@ -11,7 +11,7 @@
 .segment Code
 main: {
     .const point1_x = 2
-    // point1 = { 2, "jg" }
+    // struct Point point1 = { 2, "jg" }
     ldy #3
   !:
     lda __0-1,y

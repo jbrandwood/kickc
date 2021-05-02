@@ -65,7 +65,7 @@ main: {
     lda #$28
     cmp ANTIC+OFFSET_STRUCT_ATARI_ANTIC_VCOUNT
     bne __b1
-    // c = col++
+    // char c = col++
     tya
     tax
     inx

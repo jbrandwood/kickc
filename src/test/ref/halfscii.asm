@@ -34,7 +34,7 @@ main: {
     lda #>CHARGEN
     sta.z chargen+1
   __b1:
-    // chargen1 = chargen+1
+    // byte* chargen1 = chargen+1
     clc
     lda.z chargen
     adc #1
@@ -60,7 +60,7 @@ main: {
     // ((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2/4
     lsr
     lsr
-    // bits = bits_count[((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2/4]
+    // byte bits = bits_count[((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2/4]
     tay
     lda bits_count,y
     // if(bits>=2)

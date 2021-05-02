@@ -20,7 +20,7 @@ main: {
     // *(PTR+1)= >STRING
     lda #>STRING
     sta PTR+1
-    // ptr = (byte*) { *(PTR+1), *PTR }
+    // byte* ptr = (byte*) { *(PTR+1), *PTR }
     lda PTR
     sta.z ptr
     lda PTR+1

@@ -110,7 +110,7 @@ main: {
     ldx.z row
     jsr keyboard_matrix_read
     // keyboard_matrix_read(row)
-    // row_pressed_bits = keyboard_matrix_read(row)
+    // byte row_pressed_bits = keyboard_matrix_read(row)
     tax
     ldy #0
   __b6:
@@ -160,7 +160,7 @@ main: {
     // keyboard_get_keycode(ch)
     ldx.z ch
     jsr keyboard_get_keycode
-    // key = keyboard_get_keycode(ch)
+    // byte key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
     beq __b13
@@ -258,11 +258,11 @@ keyboard_get_keycode: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-    // colidx = key&7
+    // char colidx = key&7
     txa
     and #7
     tay
-    // rowidx = key>>3
+    // char rowidx = key>>3
     txa
     lsr
     lsr

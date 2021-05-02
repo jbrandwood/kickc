@@ -31,17 +31,17 @@
   .label count = 2
 .segment Code
 __start: {
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     lda #<COLORRAM
     sta.z conio_line_color
     lda #>COLORRAM
@@ -55,7 +55,7 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     ldx BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
     cpx #$19
@@ -149,7 +149,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -506,7 +506,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -557,7 +557,7 @@ printf_number_buffer: {
     // strlen(buffer.digits)
     jsr strlen
     // strlen(buffer.digits)
-    // len = (signed char)strlen(buffer.digits)
+    // signed char len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
     ldy.z __19
     // if(buffer.sign)
@@ -866,7 +866,7 @@ ultoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned long digit_value = digit_values[digit]
     lda.z digit
     asl
     asl
@@ -1276,7 +1276,7 @@ uctoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned char digit_value = digit_values[digit]
     ldy.z digit
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
@@ -1312,7 +1312,7 @@ memcpy: {
     .label src = $15
     .label source = $15
     .label destination = $24
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<$19*$28-$28
@@ -1352,7 +1352,7 @@ memset: {
     .label end = $2b
     .label dst = $15
     .label str = $15
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda #$28
     clc
     adc.z str

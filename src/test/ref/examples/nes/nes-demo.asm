@@ -94,7 +94,7 @@ vblank: {
     pha
     // readJoy1()
     jsr readJoy1
-    // joy = readJoy1()
+    // char joy = readJoy1()
     tax
     // joy&JOY_DOWN
     txa

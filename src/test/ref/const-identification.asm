@@ -46,7 +46,7 @@ line: {
 }
 // plot(byte register(X) x)
 plot: {
-    // idx = plots[x]
+    // byte idx = plots[x]
     ldy plots,x
     // SCREEN[idx]+1
     lda SCREEN,y

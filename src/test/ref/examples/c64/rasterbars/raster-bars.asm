@@ -53,7 +53,7 @@ raster: {
     nop
     nop
     nop
-    // col = rastercols[i]
+    // char col = rastercols[i]
     lda rastercols
     ldx #0
   __b1:

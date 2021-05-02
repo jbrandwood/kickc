@@ -20,14 +20,14 @@ main: {
     .label default_mem_abs = $1001
     .label reg_zp_abs = $10
     .label reg_mem_abs = $1000
-    // reg_zp_abs = '.'
+    // char __ssa __address(0x10) reg_zp_abs = '.'
     lda #'.'
     sta.z reg_zp_abs
-    // reg_mem_abs = '.'
+    // char __ssa __address(0x1000) reg_mem_abs = '.'
     sta reg_mem_abs
-    // default_zp_abs = '.'
+    // char __address(0x11)  default_zp_abs = '.'
     sta.z default_zp_abs
-    // default_mem_abs = '.'
+    // char __address(0x1001) default_mem_abs = '.'
     sta default_mem_abs
     // out(reg_zp_flex)
     ldy #0

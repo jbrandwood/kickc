@@ -226,19 +226,19 @@ init_angle_screen: {
     eor #$ff
     sec
     adc #$27
-    // xw = (signed word)(word){ 39-x*2, 0 }
+    // signed word xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // yw = (signed word)(word){ y*2, 0 }
+    // signed word yw = (signed word)(word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
     jsr atan2_16
-    // angle_w = atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // angle_w+0x0080
     lda #$80
     clc
@@ -247,7 +247,7 @@ init_angle_screen: {
     bcc !+
     inc.z __7+1
   !:
-    // ang_w = >(angle_w+0x0080)
+    // byte ang_w = >(angle_w+0x0080)
     lda.z __7+1
     sta.z ang_w
     // 0x80+ang_w

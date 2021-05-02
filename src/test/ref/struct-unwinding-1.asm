@@ -13,7 +13,7 @@
 .segment Code
 main: {
     .label p1 = 2
-    // p1 = { 1, 2 }
+    // __ma struct Point p1 = { 1, 2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
@@ -27,7 +27,7 @@ main: {
     sta SCREEN-1,y
     dey
     bne !-
-    // p2 = p1
+    // struct Point p2 = p1
     lda.z p1
     ldx p1+OFFSET_STRUCT_POINT_Y
     // SCREEN[2] = p2

@@ -32,7 +32,7 @@ main: {
     lda #>$4d2
     sta.z w1+1
   __b1:
-    // w2 = w1 - 91
+    // signed word w2 = w1 - 91
     lda.z w1
     sec
     sbc #$5b

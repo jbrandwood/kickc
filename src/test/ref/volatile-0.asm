@@ -11,7 +11,7 @@
   .label i = 2
 .segment Code
 __start: {
-    // i = 3
+    // volatile char i = 3
     lda #3
     sta.z i
     jsr main

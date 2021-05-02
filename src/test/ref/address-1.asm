@@ -12,7 +12,7 @@
 .segment Code
 main: {
     .label i = 2
-    // i = 3
+    // char __address(0x02) i = 3
     lda #3
     sta.z i
   __b1:

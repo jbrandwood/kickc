@@ -129,9 +129,9 @@ textbox: {
     .label __34 = $c
     // draw_window(x1, y1, x2, y2)
     jsr draw_window
-    // y = y1+1
+    // byte y = y1+1
     inc.z y
-    // x = x1+1
+    // byte x = x1+1
     ldy.z x1
     iny
     sty.z x
@@ -140,7 +140,7 @@ textbox: {
     sta.z __31
     lda #0
     sta.z __31+1
-    // z = (word)y*40
+    // word z = (word)y*40
     lda.z __31
     asl
     sta.z __33
@@ -197,7 +197,7 @@ textbox: {
     lda (text),y
     cmp #$20
     bne __b2
-    // ls = i+1
+    // byte ls = i+1
     iny
     ldx #0
   __b3:
@@ -334,7 +334,7 @@ draw_window: {
     .label __33 = $19
     .label __34 = $15
     .label __35 = $1d
-    // z = y1*40
+    // word z = y1*40
     lda.z y1
     asl
     asl
@@ -349,7 +349,7 @@ draw_window: {
     rol.z z+1
     asl.z z
     rol.z z+1
-    // q = y2*40
+    // word q = y2*40
     lda.z y2
     asl
     asl
@@ -364,7 +364,7 @@ draw_window: {
     rol.z q+1
     asl.z q
     rol.z q+1
-    // x = x1+1
+    // byte x = x1+1
     ldx.z x1
     inx
   __b1:
@@ -413,7 +413,7 @@ draw_window: {
     lda #$49
     ldy #0
     sta (__30),y
-    // y = y1+1
+    // byte y = y1+1
     ldx.z y1
     inx
   __b3:
@@ -480,7 +480,7 @@ draw_window: {
     // }
     rts
   __b7:
-    // y = y1+1
+    // byte y = y1+1
     ldy.z y1
     iny
     sty.z y3
@@ -507,7 +507,7 @@ draw_window: {
     rol.z z_2+1
     asl.z z_2
     rol.z z_2+1
-    // x = x1+1
+    // byte x = x1+1
     ldx.z x1
     inx
   __b10:

@@ -34,7 +34,7 @@ main: {
 }
 // Find the next char of the text
 next_char: {
-    // c = *nxt
+    // byte c = *nxt
     ldy #0
     lda (nxt),y
     tax

@@ -33,7 +33,7 @@ main: {
     asl
     // (SCREEN+3*40)[i] = i*8
     sta SCREEN+3*$28,x
-    // sb = -(signed byte)i
+    // signed byte sb = -(signed byte)i
     txa
     eor #$ff
     clc

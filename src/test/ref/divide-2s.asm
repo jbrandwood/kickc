@@ -33,7 +33,7 @@ main: {
     lsr
     // (SCREEN+40*3)[i] = i/8
     sta SCREEN+$28*3,x
-    // sb = -(signed byte)i
+    // signed byte sb = -(signed byte)i
     txa
     eor #$ff
     clc

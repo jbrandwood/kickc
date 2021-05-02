@@ -8011,7 +8011,7 @@ __start: {
 malloc: {
     .label mem = 2
     .label size = 2
-    // mem = heap_head-size
+    // unsigned char* mem = heap_head-size
     // [10] malloc::mem#0 = heap_head#13 - malloc::size#3 -- pbuz1=pbuz2_minus_vwuz1 
     lda.z heap_head
     sec
@@ -8143,7 +8143,7 @@ init_dist_screen: {
     // [158] phi from init_dist_screen to init_squares [phi:init_dist_screen->init_squares]
     jsr init_squares
     // init_dist_screen::@11
-    // screen_bottomline = screen+40*24
+    // byte *screen_bottomline = screen+40*24
     // [31] init_dist_screen::screen_bottomline#0 = init_dist_screen::screen#0 + (word)$28*$18 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z screen
@@ -8164,7 +8164,7 @@ init_dist_screen: {
     // [32] phi init_dist_screen::y#10 = init_dist_screen::y#1 [phi:init_dist_screen::@7->init_dist_screen::@1#2] -- register_copy 
     // init_dist_screen::@1
   __b1:
-    // y2 = y*2
+    // byte y2 = y*2
     // [33] init_dist_screen::y2#0 = init_dist_screen::y#10 << 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
@@ -8194,7 +8194,7 @@ init_dist_screen: {
     lda.z sqr.return+1
     sta.z sqr.return_1+1
     // init_dist_screen::@12
-    // yds = sqr(yd)
+    // word yds = sqr(yd)
     // [40] init_dist_screen::yds#0 = sqr::return#2
     // [41] phi from init_dist_screen::@12 to init_dist_screen::@5 [phi:init_dist_screen::@12->init_dist_screen::@5]
     // [41] phi init_dist_screen::xb#2 = $27 [phi:init_dist_screen::@12->init_dist_screen::@5#0] -- vbuz1=vbuc1 
@@ -8242,7 +8242,7 @@ init_dist_screen: {
     rts
     // init_dist_screen::@6
   __b6:
-    // x2 = x*2
+    // byte x2 = x*2
     // [48] init_dist_screen::x2#0 = init_dist_screen::x#2 << 1 -- vbuaa=vbuz1_rol_1 
     lda.z x
     asl
@@ -8268,9 +8268,9 @@ init_dist_screen: {
     // sqr(xd)
     // [54] sqr::return#3 = sqr::return#0
     // init_dist_screen::@13
-    // xds = sqr(xd)
+    // word xds = sqr(xd)
     // [55] init_dist_screen::xds#0 = sqr::return#3
-    // ds = xds+yds
+    // word ds = xds+yds
     // [56] init_dist_screen::ds#0 = init_dist_screen::xds#0 + init_dist_screen::yds#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z ds
     clc
@@ -8285,7 +8285,7 @@ init_dist_screen: {
     jsr sqrt
     // [59] sqrt::return#2 = sqrt::return#0
     // init_dist_screen::@14
-    // d = sqrt(ds)
+    // byte d = sqrt(ds)
     // [60] init_dist_screen::d#0 = sqrt::return#2
     // screen_topline[x] = d
     // [61] init_dist_screen::screen_topline#11[init_dist_screen::x#2] = init_dist_screen::d#0 -- pbuz1_derefidx_vbuz2=vbuaa 
@@ -8341,7 +8341,7 @@ init_angle_screen: {
     .label xb = $15
     .label screen_topline = 2
     .label y = 6
-    // screen_topline = screen+40*12
+    // byte* screen_topline = screen+40*12
     // [69] init_angle_screen::screen_bottomline#0 = init_angle_screen::screen#0 + (word)$28*$c -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z screen_bottomline
@@ -8422,7 +8422,7 @@ init_angle_screen: {
     eor #$ff
     sec
     adc #$27
-    // xw = (signed word)(word){ 39-x*2, 0 }
+    // signed word xw = (signed word)(word){ 39-x*2, 0 }
     // [81] init_angle_screen::xw#0 = init_angle_screen::$4 w= 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
     sta.z xw+1
@@ -8431,7 +8431,7 @@ init_angle_screen: {
     // [82] init_angle_screen::$5 = init_angle_screen::y#5 << 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
-    // yw = (signed word)(word){ y*2, 0 }
+    // signed word yw = (signed word)(word){ y*2, 0 }
     // [83] init_angle_screen::yw#0 = init_angle_screen::$5 w= 0 -- vwuz1=vbuaa_word_vbuc1 
     sta.z yw+1
     sty.z yw
@@ -8442,7 +8442,7 @@ init_angle_screen: {
     jsr atan2_16
     // [87] atan2_16::return#2 = atan2_16::return#0
     // init_angle_screen::@5
-    // angle_w = atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // [88] init_angle_screen::angle_w#0 = atan2_16::return#2
     // angle_w+0x0080
     // [89] init_angle_screen::$7 = init_angle_screen::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 
@@ -8453,7 +8453,7 @@ init_angle_screen: {
     bcc !+
     inc.z __7+1
   !:
-    // ang_w = >(angle_w+0x0080)
+    // byte ang_w = >(angle_w+0x0080)
     // [90] init_angle_screen::ang_w#0 = > init_angle_screen::$7 -- vbuz1=_hi_vwuz2 
     lda.z __7+1
     sta.z ang_w
@@ -8554,7 +8554,7 @@ make_plasma_charset: {
     // <c
     // [108] make_plasma_charset::$3 = < make_plasma_charset::c#2 -- vbuxx=_lo_vwuz1 
     ldx.z c
-    // s = SINTABLE[<c]
+    // char s = SINTABLE[<c]
     // [109] make_plasma_charset::s#0 = SINTABLE[make_plasma_charset::$3] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda SINTABLE,x
     sta.z s
@@ -8694,7 +8694,7 @@ memset: {
     .label dst = 4
     .label str = 4
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [132] memset::end#0 = (byte*)memset::str#3 + $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z str
@@ -8745,19 +8745,19 @@ doplasma: {
     .label sin_y = $18
     .label screen = $f
     .label y = $14
-    // angle = SCREEN_ANGLE
+    // char* angle = SCREEN_ANGLE
     // [140] doplasma::angle#0 = (byte*)SCREEN_ANGLE#0 -- pbuz1=pbuz2 
     lda.z SCREEN_ANGLE
     sta.z angle
     lda.z SCREEN_ANGLE+1
     sta.z angle+1
-    // dist = SCREEN_DIST
+    // char* dist = SCREEN_DIST
     // [141] doplasma::dist#0 = (byte*)SCREEN_DIST#0 -- pbuz1=pbuz2 
     lda.z SCREEN_DIST
     sta.z dist
     lda.z SCREEN_DIST+1
     sta.z dist+1
-    // sin_x = SINTABLE+sin_offset_x
+    // byte* sin_x = SINTABLE+sin_offset_x
     // [142] doplasma::sin_x#0 = SINTABLE + sin_offset_x#11 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_x
     clc
@@ -8766,7 +8766,7 @@ doplasma: {
     lda #>SINTABLE
     adc #0
     sta.z sin_x+1
-    // sin_y = SINTABLE+sin_offset_y
+    // byte* sin_y = SINTABLE+sin_offset_y
     // [143] doplasma::sin_y#0 = SINTABLE + sin_offset_y#11 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_y
     clc
@@ -8889,7 +8889,7 @@ init_squares: {
     // init_squares::@3
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     // [160] SQUARES#0 = (void*)malloc::mem#0
-    // squares = SQUARES
+    // unsigned int* squares = SQUARES
     // [161] init_squares::squares#0 = (word*)SQUARES#0 -- pwuz1=pwuz2 
     lda.z SQUARES
     sta.z squares
@@ -9002,7 +9002,7 @@ sqrt: {
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     // [178] bsearch16u::return#3 = bsearch16u::return#1
     // sqrt::@1
-    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
+    // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // [179] sqrt::found#0 = bsearch16u::return#3
     // found-SQUARES
     // [180] sqrt::$2 = sqrt::found#0 - (word*)SQUARES#0 -- vwuz1=pwuz1_minus_pwuz2 
@@ -9016,7 +9016,7 @@ sqrt: {
     // [181] sqrt::$1 = sqrt::$2 >> 1 -- vwuz1=vwuz1_ror_1 
     lsr.z __1+1
     ror.z __1
-    // sq = (char)(found-SQUARES)
+    // char sq = (char)(found-SQUARES)
     // [182] sqrt::return#0 = (byte)sqrt::$1 -- vbuaa=_byte_vwuz1 
     lda.z __1
     // sqrt::@return
@@ -9437,7 +9437,7 @@ bsearch16u: {
     lda #0
     adc.z items+1
     sta.z pivot+1
-    // result = (signed int)key-(signed int)*pivot
+    // signed int result = (signed int)key-(signed int)*pivot
     // [244] bsearch16u::result#0 = (signed word)bsearch16u::key#0 - (signed word)*bsearch16u::pivot#0 -- vwsz1=vwsz2_minus__deref_pwsz3 
     sec
     lda.z key

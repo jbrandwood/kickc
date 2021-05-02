@@ -437,6 +437,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerToPointerConst() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-to-pointer-const.c");
+   }
+
+   @Test
    public void testStmtEmpty1() throws IOException, URISyntaxException {
       compileAndCompare("stmt-empty-1.c");
    }
@@ -4359,7 +4364,7 @@ public class TestPrograms {
 
    @Test
    public void testArraysNonstandardSyntax() throws IOException, URISyntaxException {
-      assertError("arrays-nonstandard-syntax.c", "Non-standard array declaration.");
+      assertError("arrays-nonstandard-syntax.c", "Error parsing file: no viable alternative at input 'char['");
    }
 
    @Test
@@ -5098,24 +5103,6 @@ public class TestPrograms {
       defines.put("__KICKC__", "1");
       defines.putAll(program.getTargetPlatform().getDefines());
       compiler.compile(files, defines);
-
-      // TODO: #121 Delete when const/volatile is confirmed to work on SymbolType
-      for(Symbol symbol : program.getScope().getAllSymbols(true)) {
-         if(symbol instanceof Variable) {
-            Variable var = (Variable) symbol;
-            SymbolType varType = var.getType();
-            assertEquals(var.isVolatile(), varType.isVolatile(), "Variable volatile "+var.toString());
-            assertEquals(var.isNoModify(), varType.isNomodify(), "Variable nomodify "+var.toString());
-            boolean isToVolatile = false;
-            boolean isToNomodify = false;
-            if(varType instanceof SymbolTypePointer) {
-               isToVolatile = ((SymbolTypePointer) varType).getElementType().isVolatile();
-               isToNomodify = ((SymbolTypePointer) varType).getElementType().isNomodify();
-            }
-            assertEquals(var.isToVolatile(), isToVolatile, "Variable to volatile "+var.toString());
-            assertEquals(var.isToNoModify(), isToNomodify, "Variable to nomodify "+var.toString());
-         }
-      }
 
       compileAsm(fileName, program);
       boolean success = true;

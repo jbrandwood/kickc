@@ -214,7 +214,7 @@ print_mulf8u127: {
     lda.z b
     jsr mulf8u127
     // mulf8u127(a,b)
-    // c = mulf8u127(a,b)
+    // unsigned word c = mulf8u127(a,b)
     // print_uchar(a)
     tya
     tax
@@ -248,7 +248,7 @@ print_mulf8s127: {
     // mulf8s127(a,b)
     ldy.z b
     jsr mulf8s127
-    // c = mulf8s127(a,b)
+    // signed word c = mulf8s127(a,b)
     // print_schar(a)
     ldx.z a
     lda.z print_line_cursor

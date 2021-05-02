@@ -101,7 +101,7 @@ main: {
     lda vals,y
     sta.z fmul8.bb
     jsr fmul8
-    // r = fmul8(vals[i], vals[j])
+    // signed char r = fmul8(vals[i], vals[j])
     // print_schar_at(r, at)
     sta.z print_schar_at.b
     lda.z at_2
@@ -206,7 +206,7 @@ fmul8: {
     .label aa = $10
     .label bb = $11
     .label cc = $12
-    // cc
+    // signed char cc
     lda #0
     sta.z cc
     // asm

@@ -16,7 +16,7 @@ main: {
     sta.z idx
     tax
   __b1:
-    // w = words[i]
+    // word w = words[i]
     txa
     asl
     tay

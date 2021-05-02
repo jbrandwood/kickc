@@ -368,7 +368,7 @@ form_mode: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // VICII->BORDER_COLOR = 0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // preset_current = *form_preset
+    // byte preset_current = *form_preset
     lda form_fields_val
     sta.z preset_current
   __b2:
@@ -518,14 +518,14 @@ gfx_mode: {
     asl
     asl
     asl
-    // plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo
+    // byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo
     ora form_a_start_lo
     tax
     // get_plane(*form_a_pattern)
     lda form_a_pattern
     jsr get_plane
     // get_plane(*form_a_pattern)
-    // plane_a = get_plane(*form_a_pattern) + plane_a_offs
+    // dword plane_a = get_plane(*form_a_pattern) + plane_a_offs
     txa
     clc
     adc.z plane_a
@@ -594,14 +594,14 @@ gfx_mode: {
     asl
     asl
     asl
-    // plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
+    // byte plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
     ora form_b_start_lo
     tax
     // get_plane(*form_b_pattern)
     lda form_b_pattern
     jsr get_plane
     // get_plane(*form_b_pattern)
-    // plane_b = get_plane(*form_b_pattern) + plane_b_offs
+    // dword plane_b = get_plane(*form_b_pattern) + plane_b_offs
     txa
     clc
     adc.z plane_b
@@ -722,7 +722,7 @@ gfx_mode: {
     lda form_VICII_cols
     jsr get_VICII_screen
     // get_VICII_screen(*form_VICII_cols)
-    // VICII_colors = get_VICII_screen(*form_VICII_cols)
+    // byte* VICII_colors = get_VICII_screen(*form_VICII_cols)
     lda #0
     sta.z cy
     lda #<COLS
@@ -822,7 +822,7 @@ gfx_mode: {
     jsr keyboard_event_scan
     // keyboard_event_get()
     jsr keyboard_event_get
-    // keyboard_event = keyboard_event_get()
+    // byte keyboard_event = keyboard_event_get()
     // if(keyboard_event==KEY_SPACE)
     cmp #KEY_SPACE
     beq __breturn
@@ -948,10 +948,10 @@ gfx_init_screen2: {
     txa
     clc
     adc.z cy
-    // col = (cx+cy)&$f
+    // byte col = (cx+cy)&$f
     and #$f
     tay
-    // col2 = ($f-col)
+    // byte col2 = ($f-col)
     tya
     eor #$ff
     sec
@@ -1206,7 +1206,7 @@ gfx_init_plane_8bppchunky: {
     lda #0
     adc.z x+1
     sta.z __5+1
-    // c = (byte)(x+y)
+    // byte c = (byte)(x+y)
     lda.z __5
     // *gfxb++ = c
     ldy #0
@@ -1270,7 +1270,7 @@ gfx_init_plane_charset8: {
     lda #0
     sta.z cr
   __b2:
-    // bits = *chargen++
+    // byte bits = *chargen++
     ldy #0
     lda (chargen),y
     sta.z bits
@@ -1448,7 +1448,7 @@ gfx_init_plane_horisontal2: {
     // ay/2
     lda.z ay
     lsr
-    // row = (ay/2) & 3
+    // byte row = (ay/2) & 3
     and #3
     // *gfxa++ = row_bitmask[row]
     tay
@@ -1572,7 +1572,7 @@ print_str_lines: {
     // }
     rts
   __b2:
-    // ch = *(str++)
+    // char ch = *(str++)
     ldy #0
     lda (str),y
     inc.z str
@@ -1792,7 +1792,7 @@ form_control: {
     ldx.z form_field_idx
     jsr form_field_ptr
     // form_field_ptr(form_field_idx)
-    // field = form_field_ptr(form_field_idx)
+    // byte* field = form_field_ptr(form_field_idx)
     // if(--form_cursor_count < 0)
     dec.z form_cursor_count
     lda.z form_cursor_count
@@ -1823,7 +1823,7 @@ form_control: {
     jsr keyboard_event_scan
     // keyboard_event_get()
     jsr keyboard_event_get
-    // key_event = keyboard_event_get()
+    // byte key_event = keyboard_event_get()
     // if(key_event==KEY_CRSR_DOWN)
     cmp #KEY_CRSR_DOWN
     bne __b4
@@ -2331,7 +2331,7 @@ keyboard_event_scan: {
     // keyboard_matrix_read(row)
     ldx.z row
     jsr keyboard_matrix_read
-    // row_scan = keyboard_matrix_read(row)
+    // char row_scan = keyboard_matrix_read(row)
     sta.z row_scan
     // if(row_scan!=keyboard_scan_values[row])
     ldy.z row
@@ -2418,7 +2418,7 @@ keyboard_event_scan: {
     lda #8
     cmp.z keyboard_events_size
     beq __b10
-    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
+    // char event_type = row_scan&keyboard_matrix_col_bitmask[col]
     lda keyboard_matrix_col_bitmask,x
     and.z row_scan
     // if(event_type==0)
@@ -2587,7 +2587,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(x2-x1)
-    // dx = abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     lda.z abs_u16.return
     sta.z dx
     lda.z abs_u16.return+1
@@ -2602,7 +2602,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     // abs_u16(y2-y1)
-    // dy = abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
     ora.z dx+1
@@ -2623,7 +2623,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(x2-x1)
-    // sx = sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     lda.z sgn_u16.return
     sta.z sx
     lda.z sgn_u16.return+1
@@ -2638,7 +2638,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     jsr sgn_u16
     // sgn_u16(y2-y1)
-    // sy = sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     // if(dx > dy)
     lda.z dy+1
     cmp.z dx+1
@@ -2648,7 +2648,7 @@ bitmap_line: {
     cmp.z dx
     bcc __b2
   !:
-    // e = dx/2
+    // unsigned int e = dx/2
     lda.z dx+1
     lsr
     sta.z e+1
@@ -2714,7 +2714,7 @@ bitmap_line: {
     // }
     rts
   __b2:
-    // e = dy/2
+    // unsigned int e = dy/2
     lda.z dy+1
     lsr
     sta.z e1+1
@@ -2829,7 +2829,7 @@ gfx_init_plane_fill: {
     sta.z __1
     lda.z __0+3
     sta.z __1+1
-    // gfxbCpuBank = < >(plane_addr*4)
+    // byte gfxbCpuBank = < >(plane_addr*4)
     lda.z __1
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     jsr dtvSetCpuBankSegment1
@@ -2896,7 +2896,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -2971,14 +2971,14 @@ form_field_ptr: {
     .label line = $27
     .label x = $25
     .label return = $1d
-    // y = form_fields_y[field_idx]
+    // byte y = form_fields_y[field_idx]
     ldy form_fields_y,x
-    // line = (byte*) { form_line_hi[y], form_line_lo[y] }
+    // byte* line = (byte*) { form_line_hi[y], form_line_lo[y] }
     lda form_line_hi,y
     sta.z line+1
     lda form_line_lo,y
     sta.z line
-    // x = form_fields_x[field_idx]
+    // byte x = form_fields_x[field_idx]
     lda form_fields_x,x
     sta.z x
     // line+x
@@ -3051,7 +3051,7 @@ keyboard_event_pressed: {
     lsr
     lsr
     lsr
-    // row_bits = keyboard_scan_values[keycode>>3]
+    // char row_bits = keyboard_scan_values[keycode>>3]
     tay
     lda keyboard_scan_values,y
     sta.z row_bits
@@ -3121,7 +3121,7 @@ bitmap_plot: {
     .label __0 = $29
     .label plotter = $27
     .label x = $d
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     tay
     lda bitmap_plot_yhi,y
     sta.z plotter+1

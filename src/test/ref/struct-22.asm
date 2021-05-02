@@ -14,14 +14,14 @@
 main: {
     .label point1 = 2
     .label point2 = 4
-    // point1 = { 2, 3 }
+    // __ma struct Point point1 = { 2, 3 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
     sta point1-1,y
     dey
     bne !-
-    // point2 = { 4, 5 }
+    // __ma struct Point point2 = { 4, 5 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __1-1,y

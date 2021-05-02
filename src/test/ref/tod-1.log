@@ -3195,20 +3195,20 @@ Score: 106431
   // __start
 __start: {
     // __start::__init1
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     // [1] conio_cursor_x = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     // [2] conio_cursor_y = 0 -- vbuz1=vbuc1 
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     // [3] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     // [4] conio_line_color = COLORRAM -- pbuz1=pbuc1 
     lda #<COLORRAM
     sta.z conio_line_color
@@ -3230,7 +3230,7 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuxx=_deref_pbuc1 
     ldx BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
@@ -3349,7 +3349,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [43] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl
@@ -3454,18 +3454,18 @@ tod_init: {
 tod_read: {
     .label return_HOURS = $14
     .label return_MIN = $c
-    // hours = CIA1->TOD_HOURS
+    // char hours = CIA1->TOD_HOURS
     // [58] tod_read::return_HOURS#0 = *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS) -- vbuz1=_deref_pbuc1 
     // Reading sequence is important. TOD latches on reading hours until 10ths is read.
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
     sta.z return_HOURS
-    // mins = CIA1->TOD_MIN
+    // char mins = CIA1->TOD_MIN
     // [59] tod_read::return_MIN#0 = *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN) -- vbuaa=_deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
-    // secs = CIA1->TOD_SEC
+    // char secs = CIA1->TOD_SEC
     // [60] tod_read::return_SEC#0 = *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC) -- vbuxx=_deref_pbuc1 
     ldx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
-    // tenths = CIA1->TOD_10THS
+    // char tenths = CIA1->TOD_10THS
     // [61] tod_read::return_TENTHS#0 = *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS) -- vbuyy=_deref_pbuc1 
     ldy CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
     // tod_read::@return
@@ -3806,7 +3806,7 @@ memcpy: {
     .label src = 4
     .label source = 4
     .label destination = $17
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     // [126] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$28-$28 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z source
@@ -3862,7 +3862,7 @@ memset: {
     .label dst = 4
     .label str = 4
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [136] memset::end#0 = (byte*)memset::str#3 + $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc

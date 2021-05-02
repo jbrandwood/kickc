@@ -50,7 +50,7 @@ main: {
     jsr init_dist_screen
     // clock()
     jsr clock
-    // cyclecount = clock()-CLOCKS_PER_INIT
+    // clock_t cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -230,7 +230,7 @@ init_dist_screen: {
     lda #0
     sta.z y
   __b1:
-    // y2 = y*2
+    // byte y2 = y*2
     lda.z y
     asl
     // (y2>=24)?(y2-24):(24-y2)
@@ -247,7 +247,7 @@ init_dist_screen: {
     sta.z sqr.return_1
     lda.z sqr.return+1
     sta.z sqr.return_1+1
-    // yds = sqr(yd)
+    // word yds = sqr(yd)
     lda #$27
     sta.z xb
     lda #0
@@ -281,7 +281,7 @@ init_dist_screen: {
     // }
     rts
   __b6:
-    // x2 = x*2
+    // byte x2 = x*2
     lda.z x
     asl
     // (x2>=39)?(x2-39):(39-x2)
@@ -294,8 +294,8 @@ init_dist_screen: {
     // sqr(xd)
     jsr sqr
     // sqr(xd)
-    // xds = sqr(xd)
-    // ds = xds+yds
+    // word xds = sqr(xd)
+    // word ds = xds+yds
     lda.z ds
     clc
     adc.z yds
@@ -305,7 +305,7 @@ init_dist_screen: {
     sta.z ds+1
     // sqrt(ds)
     jsr sqrt
-    // d = sqrt(ds)
+    // byte d = sqrt(ds)
     // screen_topline[x] = d
     ldy.z x
     sta (screen_topline),y
@@ -461,7 +461,7 @@ sqrt: {
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     jsr bsearch16u
     // bsearch16u(val, SQUARES, NUM_SQUARES)
-    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
+    // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
     lda.z __2
     sec
@@ -472,7 +472,7 @@ sqrt: {
     sta.z __2+1
     lsr.z __1+1
     ror.z __1
-    // sq = (char)(found-SQUARES)
+    // char sq = (char)(found-SQUARES)
     lda.z __1
     // }
     rts
@@ -563,7 +563,7 @@ bsearch16u: {
     lda #0
     adc.z items+1
     sta.z pivot+1
-    // result = (signed int)key-(signed int)*pivot
+    // signed int result = (signed int)key-(signed int)*pivot
     sec
     lda.z key
     ldy #0

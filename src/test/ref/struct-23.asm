@@ -18,7 +18,7 @@ main: {
     ldx #2
     jsr getPoint
     // getPoint(2, 3)
-    // point1 = getPoint(2, 3)
+    // __ma struct Point point1 = getPoint(2, 3)
     stx.z point1
     sta point1+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = point1.x
@@ -32,7 +32,7 @@ main: {
     ldx #4
     jsr getPoint
     // getPoint(4, 5)
-    // point2 = getPoint(4, 5)
+    // __ma struct Point point2 = getPoint(4, 5)
     stx.z point2
     sta point2+OFFSET_STRUCT_POINT_Y
     // SCREEN[2] = point2.x

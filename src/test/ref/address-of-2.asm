@@ -10,7 +10,7 @@
   .label val = 2
 .segment Code
 __start: {
-    // val = 0
+    // byte val = 0
     lda #0
     sta.z val
     jsr main

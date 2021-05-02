@@ -30,7 +30,7 @@
   .label sample = 2
 .segment Code
 __start: {
-    // sample = SAMPLE
+    // char* volatile sample = SAMPLE
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE

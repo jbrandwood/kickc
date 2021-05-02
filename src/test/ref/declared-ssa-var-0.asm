@@ -14,7 +14,7 @@
   .label idx_nssa_g = 2
 .segment Code
 __start: {
-    // idx_nssa_g
+    // char __ma idx_nssa_g
     lda #0
     sta.z idx_nssa_g
     jsr main
@@ -22,7 +22,7 @@ __start: {
 }
 main: {
     .label idx_nssa_l = 3
-    // idx_nssa_l
+    // char __ma idx_nssa_l
     lda #0
     sta.z idx_nssa_l
     // SCREEN1[idx_ssa_g++] = 'C'

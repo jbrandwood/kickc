@@ -13,7 +13,7 @@ main: {
     .label w = 2
     ldx #0
   __b1:
-    // w = i
+    // word w = i
     txa
     sta.z w
     lda #0

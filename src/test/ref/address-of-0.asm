@@ -16,7 +16,7 @@ main: {
     lda #0
     sta.z b
   __b1:
-    // c = *bp +1
+    // byte c = *bp +1
     lda.z bp
     clc
     adc #1

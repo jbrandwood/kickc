@@ -12,7 +12,7 @@
 .segment Code
 main: {
     .label i = $2000
-    // i = 3
+    // char __address(0x2000) i = 3
     lda #3
     sta i
   __b1:

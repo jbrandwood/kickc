@@ -14,7 +14,7 @@
   .label irq_raster_next = 2
 .segment Code
 __start: {
-    // irq_raster_next = 0
+    // volatile byte irq_raster_next = 0
     lda #0
     sta.z irq_raster_next
     jsr main
@@ -30,7 +30,7 @@ irq: {
     lax.z irq_raster_next
     axs #-[$15]
     stx.z irq_raster_next
-    // raster_next = irq_raster_next
+    // byte raster_next = irq_raster_next
   // Setup next interrupt
     // raster_next&7
     txa

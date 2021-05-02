@@ -21,7 +21,7 @@ main: {
     sta.z j
     tax
   __b1:
-    // to = letter_c[i].to
+    // struct SplineVector16 to = letter_c[i].to
     txa
     asl
     asl

@@ -16,7 +16,7 @@ main: {
     .const p2_x = 3
     .const p2_y = 4
     .label p1 = 3
-    // p1 = { 1, 2 }
+    // __ma struct Point p1 = { 1, 2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y

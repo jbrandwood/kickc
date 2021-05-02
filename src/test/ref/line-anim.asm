@@ -159,7 +159,7 @@ bitmap_init: {
 bitmap_clear: {
     .label bitmap = 3
     .label y = 9
-    // bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
+    // byte* bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
     lda bitmap_plot_ylo
     sta.z bitmap
     lda bitmap_plot_yhi
@@ -263,7 +263,7 @@ point_init: {
     sta.z __18
     lda #0
     sta.z __18+1
-    // y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
+    // signed word y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     lda.z y_diff
     sec
     sbc.z __18
@@ -360,7 +360,7 @@ point_init: {
     // divr16s(0, x_diff, y_diff)
     jsr divr16s
     // divr16s(0, x_diff, y_diff)
-    // x_stepf = divr16s(0, x_diff, y_diff)
+    // signed word x_stepf = divr16s(0, x_diff, y_diff)
     // >x_stepf
     lda.z x_stepf+1
     // (>x_stepf)/$10
@@ -406,7 +406,7 @@ bitmap_plot: {
     .label __0 = $12
     .label x = 7
     .label plotter = $10
-    // plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -461,7 +461,7 @@ divr16s: {
     // divr16u(dividendu, divisoru, remu)
     jsr divr16u
     // divr16u(dividendu, divisoru, remu)
-    // resultu = divr16u(dividendu, divisoru, remu)
+    // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     // if(neg==0)
     cpy #0
     beq __breturn

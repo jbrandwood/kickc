@@ -49,7 +49,7 @@ main: {
     // for(char i=0;i!=39;i++)
     cpx #$27
     bne __b6
-    // c = *nxt
+    // char c = *nxt
     // Render next char
     ldy #0
     lda (nxt),y

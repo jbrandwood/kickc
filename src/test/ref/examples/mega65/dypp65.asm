@@ -245,7 +245,7 @@ main: {
     iny
     jmp __b7
   __b2:
-    // c = r
+    // unsigned int c = r
     txa
     sta.z c
     lda #0
@@ -317,17 +317,17 @@ memoryRemap: {
     .label xVal = $f
     .label yVal = $10
     .label zVal = $11
-    // aVal = <lowerPageOffset
+    // char aVal = <lowerPageOffset
     // lower blocks offset page low
     lda #0
     sta.z aVal
-    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // yVal = <upperPageOffset
+    // char yVal = <upperPageOffset
     // upper blocks offset page
     sta.z yVal
-    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm
@@ -349,7 +349,7 @@ memoryRemap: {
 memset_dma: {
     .label num = $a
     .label dest = $c
-    // dmaMode = DMA->EN018B
+    // char dmaMode = DMA->EN018B
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memset_dma_command.count = num
@@ -403,7 +403,7 @@ memset_dma256: {
     .const num = $2d*$19*2
     .label dest = 0
     .label f018b = memset_dma_command256+4
-    // dmaMode = DMA->EN018B
+    // char dmaMode = DMA->EN018B
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memset_dma_command256[1] = dest_mb

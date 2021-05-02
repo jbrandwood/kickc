@@ -61,11 +61,11 @@ main: {
     inc.z x
     jmp __b1
   __b3:
-    // z = x+y
+    // byte z = x+y
     lda.z x
     clc
     adc.z y
-    // tile = level_address[z]
+    // byte tile = level_address[z]
     tax
     ldy level_address,x
     // draw_block(tile,x,y,YELLOW)
@@ -138,7 +138,7 @@ draw_block: {
     asl
     asl
     tay
-    // x1 = x << 1
+    // word x1 = x << 1
     txa
     asl
     sta.z x1
@@ -152,7 +152,7 @@ draw_block: {
     tax
     jsr mul8u
     // mul8u(y,40)
-    // z = mul8u(y,40)
+    // word z = mul8u(y,40)
     // z = z + x1
     lda.z z_1
     clc
@@ -161,7 +161,7 @@ draw_block: {
     lda.z z_1+1
     adc.z z+1
     sta.z z_1+1
-    // drawtile = tileset[tileno]
+    // byte drawtile = tileset[tileno]
     ldx tileset,y
     // screen[z] = drawtile
     clc
@@ -299,7 +299,7 @@ memset: {
     .label end = $14
     .label dst = 4
     .label str = 4
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     clc
     lda.z str
     adc #<$3e8

@@ -11,7 +11,7 @@
 main: {
     .label pscreen = screen
     .label screen = 2
-    // screen = 0x400
+    // byte* screen = 0x400
     lda #<$400
     sta.z screen
     lda #>$400

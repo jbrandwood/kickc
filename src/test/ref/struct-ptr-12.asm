@@ -14,7 +14,7 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // p = { 2, 3 }
+    // volatile struct Point p = { 2, 3 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y

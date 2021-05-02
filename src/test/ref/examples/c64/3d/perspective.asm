@@ -25,17 +25,17 @@
   .label print_line_cursor = 4
 .segment Code
 __start: {
-    // xr
+    // signed char xr
     lda #0
     sta.z xr
-    // yr
+    // signed char yr
     sta.z yr
-    // zr
+    // signed char zr
     sta.z zr
-    // psp1
+    // unsigned int psp1
     sta.z psp1
     sta.z psp1+1
-    // psp2
+    // unsigned int psp2
     sta.z psp2
     sta.z psp2+1
     jsr main
@@ -76,7 +76,7 @@ mulf_init: {
     sta.z sqr
     sta.z sqr+1
   __b1:
-    // val = >sqr
+    // char val = >sqr
     lda.z sqr+1
     sta.z val
     // mulf_sqr1[i] = val

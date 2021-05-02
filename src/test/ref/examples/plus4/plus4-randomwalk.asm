@@ -97,7 +97,7 @@ main: {
     rol.z __3+1
     asl.z __3
     rol.z __3+1
-    // offset = (unsigned int)y*40+x
+    // unsigned int offset = (unsigned int)y*40+x
     txa
     clc
     adc.z offset
@@ -113,7 +113,7 @@ main: {
     lda.z offset+1
     adc #>VISITS
     sta.z __6+1
-    // cnt = ++*(VISITS+offset)
+    // char cnt = ++*(VISITS+offset)
     ldy #0
     lda (__6),y
     clc
@@ -139,7 +139,7 @@ main: {
     sta (__8),y
     // rand()
     jsr rand
-    // rnd = >rand()
+    // char rnd = >rand()
     ldy.z __10+1
     // rnd & 0x80
     tya
@@ -206,7 +206,7 @@ memset: {
     .label end = $d
     .label dst = 3
     .label str = 3
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     clc
     lda.z str
     adc #<$3e8

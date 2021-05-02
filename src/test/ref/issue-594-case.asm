@@ -13,7 +13,7 @@
 main: {
     .label ss = substate
     .label substate = 2
-    // substate = HOSTS
+    // SubState substate = HOSTS
     lda #HOSTS
     sta.z substate
     // *ss == DEVICES ? ORIGIN_DEVICE_SLOTS : ORIGIN_HOST_SLOTS

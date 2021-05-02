@@ -82,12 +82,12 @@
   .label sin_idx_y = $14
 .segment Code
 __start: {
-    // sin_idx_x = 119
+    // volatile unsigned int sin_idx_x = 119
     lda #<$77
     sta.z sin_idx_x
     lda #>$77
     sta.z sin_idx_x+1
-    // sin_idx_y = 79
+    // volatile unsigned int sin_idx_y = 79
     lda #<$4f
     sta.z sin_idx_y
     lda #>$4f
@@ -140,12 +140,12 @@ irq_vsync: {
     lda #>SINY_LEN-1
     sta.z sin_idx_y+1
   __b2:
-    // i_x = sin_idx_x
+    // unsigned int i_x = sin_idx_x
     lda.z sin_idx_x
     sta.z i_x
     lda.z sin_idx_x+1
     sta.z i_x+1
-    // i_y = sin_idx_y
+    // unsigned int i_y = sin_idx_y
     lda.z sin_idx_y
     sta.z i_y
     lda.z sin_idx_y+1
@@ -430,7 +430,7 @@ memcpy_to_vram: {
     ora #VERA_INC_1
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
     sta VERA_ADDRX_H
-    // end = (char*)src+num
+    // char *end = (char*)src+num
     lda.z end
     clc
     adc.z src

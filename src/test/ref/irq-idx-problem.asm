@@ -32,7 +32,7 @@
   .label irq_idx = 2
 .segment Code
 __start: {
-    // irq_idx = 0
+    // volatile byte irq_idx = 0
     lda #0
     sta.z irq_idx
     jsr main
@@ -40,10 +40,10 @@ __start: {
 }
 table_driven_irq: {
   __b1:
-    // idx = IRQ_CHANGE_IDX[irq_idx]
+    // byte idx = IRQ_CHANGE_IDX[irq_idx]
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
-    // val = IRQ_CHANGE_VAL[irq_idx]
+    // byte val = IRQ_CHANGE_VAL[irq_idx]
     ldx IRQ_CHANGE_VAL,y
     // irq_idx++;
     inc.z irq_idx

@@ -14,7 +14,7 @@
 .segment Code
 main: {
     .label v = 2
-    // v = { {2, 3}, {4, 5} }
+    // __ma struct Vector v = { {2, 3}, {4, 5} }
     ldy #SIZEOF_STRUCT_VECTOR
   !:
     lda __0-1,y

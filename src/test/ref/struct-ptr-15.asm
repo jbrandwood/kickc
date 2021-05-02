@@ -43,11 +43,11 @@ main: {
     lda #>circles
     sta.z ptr+1
   __b1:
-    // x = ptr->center.x
+    // byte x = ptr->center.x
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
     sta.z x
-    // y = ptr->center.y
+    // byte y = ptr->center.y
     tya
     clc
     adc.z ptr

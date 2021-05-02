@@ -17,21 +17,21 @@ main: {
     .label v = 2
     .label p1 = 6
     .label p2 = 8
-    // v
+    // __ma struct Vector v
     ldy #SIZEOF_STRUCT_VECTOR
     lda #0
   !:
     dey
     sta v,y
     bne !-
-    // p1 = { 2, 3 }
+    // __ma struct Point p1 = { 2, 3 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
     sta p1-1,y
     dey
     bne !-
-    // p2 = { 4, 5 }
+    // __ma struct Point p2 = { 4, 5 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __1-1,y

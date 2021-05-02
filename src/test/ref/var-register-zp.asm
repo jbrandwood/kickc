@@ -14,10 +14,10 @@ main: {
     .label j = 4
     .label __4 = 6
     .label k = 6
-    // i=0
+    // __address(0x2) char i=0
     lda #0
     sta.z i
-    // j=0
+    // __address(0x4) int j=0
     sta.z j
     sta.z j+1
   __b1:
@@ -47,7 +47,7 @@ main: {
     sta.z __4
     lda #0
     sta.z __4+1
-    // k = (int)i*2
+    // int k = (int)i*2
     asl.z k
     rol.z k+1
     // SCREEN[i++] = k

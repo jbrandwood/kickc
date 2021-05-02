@@ -97,7 +97,7 @@ irq: {
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
-    // raster = VICII->RASTER
+    // char raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
   __b1:
@@ -278,7 +278,7 @@ memoryRemap: {
     .label upperPageOffset = 4
     // <lowerPageOffset
     lda.z lowerPageOffset
-    // aVal = <lowerPageOffset
+    // char aVal = <lowerPageOffset
     // lower blocks offset page low
     sta.z aVal
     // remapBlocks << 4
@@ -294,12 +294,12 @@ memoryRemap: {
     and #$f
     // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     ora.z __1
-    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
     // <upperPageOffset
     lda.z upperPageOffset
-    // yVal = <upperPageOffset
+    // char yVal = <upperPageOffset
     // upper blocks offset page
     sta.z yVal
     // remapBlocks & 0xf0
@@ -312,7 +312,7 @@ memoryRemap: {
     and #$f
     // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     ora.z __6
-    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm
@@ -338,7 +338,7 @@ memcpy_dma4: {
     .const src_bank = 0
     .label dest = 0
     .label src = upperCodeData
-    // dmaMode = DMA->EN018B
+    // char dmaMode = DMA->EN018B
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma_command4.count = num

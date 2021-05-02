@@ -12,7 +12,7 @@
   .label idx = $3000
 .segment Code
 __start: {
-    // idx
+    // volatile char __address(0x3000) idx
     lda #0
     sta idx
     jsr main

@@ -42,20 +42,20 @@
   .label plex_free_next = $b
 .segment Code
 __start: {
-    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    // char* volatile PLEX_SCREEN_PTR = 0x400+0x3f8
     lda #<$400+$3f8
     sta.z PLEX_SCREEN_PTR
     lda #>$400+$3f8
     sta.z PLEX_SCREEN_PTR+1
-    // plex_show_idx=0
+    // volatile char plex_show_idx=0
     lda #0
     sta.z plex_show_idx
-    // plex_sprite_idx=0
+    // volatile char plex_sprite_idx=0
     sta.z plex_sprite_idx
-    // plex_sprite_msb=1
+    // volatile char plex_sprite_msb=1
     lda #1
     sta.z plex_sprite_msb
-    // plex_free_next = 0
+    // volatile char plex_free_next = 0
     lda #0
     sta.z plex_free_next
     jsr main
@@ -235,11 +235,11 @@ plexSort: {
     lda #0
     sta.z m
   __b1:
-    // nxt_idx = PLEX_SORTED_IDX[m+1]
+    // char nxt_idx = PLEX_SORTED_IDX[m+1]
     ldy.z m
     lda PLEX_SORTED_IDX+1,y
     sta.z nxt_idx
-    // nxt_y = PLEX_YPOS[nxt_idx]
+    // char nxt_y = PLEX_YPOS[nxt_idx]
     tay
     lda PLEX_YPOS,y
     sta.z nxt_y
@@ -300,11 +300,11 @@ plexSort: {
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = $e
-    // plex_sprite_idx2 = plex_sprite_idx*2
+    // char plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
     sta.z plex_sprite_idx2
-    // ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
+    // char ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
@@ -331,7 +331,7 @@ plexShowSprite: {
     lda PLEX_PTR,y
     ldy.z plex_sprite_idx
     sta (PLEX_SCREEN_PTR),y
-    // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
+    // char xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
     // <PLEX_XPOS[xpos_idx]

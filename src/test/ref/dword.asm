@@ -13,7 +13,7 @@ main: {
     .label b = 2
     ldx #0
   __b1:
-    // b = a + i
+    // dword b = a + i
     txa
     clc
     adc #<a
@@ -27,7 +27,7 @@ main: {
     lda #>a>>$10
     adc #0
     sta.z b+3
-    // c = (byte) b
+    // byte c = (byte) b
     lda.z b
     // SCREEN[i] = c
     sta SCREEN,x

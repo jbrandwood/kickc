@@ -10,7 +10,7 @@
   .label x = 2
 .segment Code
 __start: {
-    // x = 12
+    // volatile byte x = 12
     lda #$c
     sta.z x
     jsr main

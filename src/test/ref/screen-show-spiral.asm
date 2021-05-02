@@ -63,7 +63,7 @@ __start: {
 malloc: {
     .label mem = 4
     .label size = 4
-    // mem = heap_head-size
+    // unsigned char* mem = heap_head-size
     lda.z heap_head
     sec
     sbc.z mem
@@ -100,13 +100,13 @@ main: {
     sta.z init_angle_screen.screen+1
     jsr init_angle_screen
   __b1:
-    // dist = SCREEN_DIST
+    // byte* dist = SCREEN_DIST
     // Find the minimum dist/angle that is not already filled
     lda.z SCREEN_DIST
     sta.z dist
     lda.z SCREEN_DIST+1
     sta.z dist+1
-    // angle = SCREEN_ANGLE
+    // byte* angle = SCREEN_ANGLE
     lda.z SCREEN_ANGLE
     sta.z angle
     lda.z SCREEN_ANGLE+1
@@ -129,7 +129,7 @@ main: {
     ldy #0
     cmp (fill),y
     beq __b10
-    // dist_angle = { *dist, *angle }
+    // word dist_angle = { *dist, *angle }
     lda (angle),y
     sta.z dist_angle
     lda (dist),y
@@ -222,7 +222,7 @@ init_dist_screen: {
     .label xb = $14
     // init_squares()
     jsr init_squares
-    // screen_bottomline = screen+40*24
+    // byte *screen_bottomline = screen+40*24
     clc
     lda.z screen
     adc #<$28*$18
@@ -233,7 +233,7 @@ init_dist_screen: {
     lda #0
     sta.z y
   __b1:
-    // y2 = y*2
+    // byte y2 = y*2
     lda.z y
     asl
     // (y2>=24)?(y2-24):(24-y2)
@@ -250,7 +250,7 @@ init_dist_screen: {
     sta.z sqr.return_1
     lda.z sqr.return+1
     sta.z sqr.return_1+1
-    // yds = sqr(yd)
+    // word yds = sqr(yd)
     lda #$27
     sta.z xb
     lda #0
@@ -284,7 +284,7 @@ init_dist_screen: {
     // }
     rts
   __b6:
-    // x2 = x*2
+    // byte x2 = x*2
     lda.z x
     asl
     // (x2>=39)?(x2-39):(39-x2)
@@ -297,8 +297,8 @@ init_dist_screen: {
     // sqr(xd)
     jsr sqr
     // sqr(xd)
-    // xds = sqr(xd)
-    // ds = xds+yds
+    // word xds = sqr(xd)
+    // word ds = xds+yds
     lda.z ds
     clc
     adc.z yds
@@ -308,7 +308,7 @@ init_dist_screen: {
     sta.z ds+1
     // sqrt(ds)
     jsr sqrt
-    // d = sqrt(ds)
+    // byte d = sqrt(ds)
     // screen_topline[x] = d
     ldy.z x
     sta (screen_topline),y
@@ -349,7 +349,7 @@ init_angle_screen: {
     .label xb = $14
     .label screen_topline = $f
     .label y = $e
-    // screen_topline = screen+40*12
+    // byte* screen_topline = screen+40*12
     clc
     lda.z screen_bottomline
     adc #<$28*$c
@@ -404,19 +404,19 @@ init_angle_screen: {
     eor #$ff
     sec
     adc #$27
-    // xw = (signed word)(word){ 39-x*2, 0 }
+    // signed word xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // yw = (signed word)(word){ y*2, 0 }
+    // signed word yw = (signed word)(word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
     jsr atan2_16
-    // angle_w = atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // angle_w+0x0080
     lda #$80
     clc
@@ -425,7 +425,7 @@ init_angle_screen: {
     bcc !+
     inc.z __7+1
   !:
-    // ang_w = >(angle_w+0x0080)
+    // byte ang_w = >(angle_w+0x0080)
     lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
@@ -467,7 +467,7 @@ init_squares: {
     sta.z malloc.size+1
     jsr malloc
     // malloc(NUM_SQUARES*sizeof(unsigned int))
-    // squares = SQUARES
+    // unsigned int* squares = SQUARES
     lda.z SQUARES
     sta.z squares
     lda.z SQUARES+1
@@ -548,7 +548,7 @@ sqrt: {
     sta.z bsearch16u.items+1
     jsr bsearch16u
     // bsearch16u(val, SQUARES, NUM_SQUARES)
-    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
+    // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
     lda.z __2
     sec
@@ -559,7 +559,7 @@ sqrt: {
     sta.z __2+1
     lsr.z __1+1
     ror.z __1
-    // sq = (char)(found-SQUARES)
+    // char sq = (char)(found-SQUARES)
     lda.z __1
     // }
     rts
@@ -829,7 +829,7 @@ bsearch16u: {
     lda #0
     adc.z items+1
     sta.z pivot+1
-    // result = (signed int)key-(signed int)*pivot
+    // signed int result = (signed int)key-(signed int)*pivot
     sec
     lda.z key
     ldy #0

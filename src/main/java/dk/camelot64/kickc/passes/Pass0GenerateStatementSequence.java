@@ -92,7 +92,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Variable addIntermediateVar() {
       Scope currentScope = getCurrentScope();
-      if(currentScope==null || ScopeRef.ROOT.equals(currentScope.getRef())) {
+      if(currentScope == null || ScopeRef.ROOT.equals(currentScope.getRef())) {
          currentScope = getInitProc();
       }
       return currentScope.addVariableIntermediate();
@@ -465,8 +465,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
          scopeStack.pop();
       }
-
-
       return null;
    }
 
@@ -762,7 +760,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       /** State specifying that we are currently populating struct members. */
       private boolean structMember = false;
-
       /** Holds directives that are not part of the type-spec (all other than const & volatile) when descending into a Variable Declaration. (type level) */
       private List<Directive> declDirectives = null;
       /** Holds the declared comments when descending into a Variable Declaration. (type level) */
@@ -771,6 +768,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       private SymbolType declType;
       /** The declared type (variable level) */
       private SymbolType varDeclType;
+      /** The variable name (variable level) */
+      private String varName;
 
       /**
        * Exits the type layer (clears everything except struct information)
@@ -780,6 +779,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.declComments = null;
          this.declType = null;
          this.varDeclType = null;
+         this.varName = null;
       }
 
       /**
@@ -787,6 +787,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
        */
       void exitVar() {
          this.varDeclType = null;
+         this.varName = null;
       }
 
       SymbolType getEffectiveType() {
@@ -829,6 +830,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          setVarDeclType(type);
       }
 
+      public String getVarName() {
+         return varName;
+      }
+
+      public void setVarName(String varName) {
+         this.varName = varName;
+      }
 
       List<Directive> getDeclDirectives() {
          return declDirectives;
@@ -899,7 +907,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.expr() != null) {
          varDeclPush();
          RValue sizeVal = (RValue) visit(ctx.expr());
-         if (!(sizeVal instanceof ConstantValue))
+         if(!(sizeVal instanceof ConstantValue))
             throw new CompileError(sizeVal.toString() + " is not constant or is not defined", new StatementSource(ctx));
          varDeclPop();
          arraySpec = new ArraySpec((ConstantValue) sizeVal);
@@ -907,7 +915,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          arraySpec = new ArraySpec();
       }
       final SymbolType elementDeclType = varDecl.getEffectiveType();
-      SymbolType arrayDeclType =  new SymbolTypePointer(elementDeclType, arraySpec, false, false);
+      SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
       varDecl.setVarDeclType(arrayDeclType);
       return null;
    }
@@ -930,33 +938,27 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariables(KickCParser.DeclVariablesContext ctx) {
       this.visit(ctx.declType());
-      this.visit(ctx.declVariableList());
+      this.visit(ctx.declaratorInitList());
       varDecl.exitType();
       return null;
    }
 
    @Override
-   public Object visitDeclVariableList(KickCParser.DeclVariableListContext ctx) {
-      if(ctx.declVariableList() != null) {
-         this.visit(ctx.declVariableList());
-      }
-      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
-         this.visit(declPointerContext);
-      }
-      this.visit(ctx.declVariableInit());
+   public Object visitDeclaratorInitList(KickCParser.DeclaratorInitListContext ctx) {
+      if(ctx.declaratorInitList() != null)
+         this.visit(ctx.declaratorInitList());
+      this.visit(ctx.declaratorInit());
       varDecl.exitVar();
       return null;
    }
 
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
-      for(KickCParser.DeclArrayContext declArrayContext : ctx.declArray()) {
-         this.visit(declArrayContext);
-      }
-      String varName = ctx.NAME().getText();
+      this.visit(ctx.declarator());
+      String varName = varDecl.getVarName();
       KickCParser.ExprContext initializer = ctx.expr();
-      StatementSource statementSource = new StatementSource(ctx);
       StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
+      StatementSource statementSource = declSource;
       try {
          final boolean isStructMember = varDecl.isStructMember();
          final SymbolType effectiveType = varDecl.getEffectiveType();
@@ -1027,10 +1029,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
-      for(KickCParser.DeclArrayContext declArrayContext : ctx.declArray()) {
-         this.visit(declArrayContext);
-      }
-      String varName = ctx.NAME().getText();
+      this.visit(ctx.declarator());
+      String varName = varDecl.getVarName();
       StatementSource statementSource = new StatementSource(ctx);
       SymbolType effectiveType = this.varDecl.getEffectiveType();
       if(!(effectiveType instanceof SymbolTypePointer) || ((SymbolTypePointer) effectiveType).getArraySpec() == null) {
@@ -1093,8 +1093,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             procedure.setReservedZps(((Directive.ReserveZp) directive).reservedZp);
          } else if(directive instanceof Directive.Intrinsic) {
             procedure.setDeclaredIntrinsic(true);
-         //} else {
-         //   throw new CompileError("Unsupported function directive " + directive.getName(), source);
+            //} else {
+            //   throw new CompileError("Unsupported function directive " + directive.getName(), source);
          }
       }
    }
@@ -1948,6 +1948,60 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitDeclaratorPointer(KickCParser.DeclaratorPointerContext ctx) {
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolTypePointer pointerType = new SymbolTypePointer(elementDeclType);
+      final List<Directive> typeDirectives = getDirectives(ctx.directive());
+      varDecl.setVarDeclTypeAndDirectives(pointerType, typeDirectives);
+      this.visit(ctx.declarator());
+      return null;
+   }
+
+   @Override
+   public Object visitDeclaratorArray(KickCParser.DeclaratorArrayContext ctx) {
+      this.visit(ctx.declarator());
+      // Handle array type declaration by updating the declared type and the array spec
+      ArraySpec arraySpec;
+      if(ctx.expr() != null) {
+         varDeclPush();
+         RValue sizeVal = (RValue) visit(ctx.expr());
+         if(!(sizeVal instanceof ConstantValue))
+            throw new CompileError(sizeVal.toString() + " is not constant or is not defined", new StatementSource(ctx));
+         varDeclPop();
+         arraySpec = new ArraySpec((ConstantValue) sizeVal);
+      } else {
+         arraySpec = new ArraySpec();
+      }
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
+      varDecl.setVarDeclType(arrayDeclType);
+      return null;
+   }
+
+   @Override
+   public Object visitDeclaratorPar(KickCParser.DeclaratorParContext ctx) {
+      this.visit(ctx.declarator());
+      return null;
+   }
+
+   @Override
+   public Object visitDeclaratorName(KickCParser.DeclaratorNameContext ctx) {
+      varDecl.setVarName(ctx.getText());
+      return null;
+   }
+
+   /*
+   @Override
+   public Object visitDeclaratorProcedure(KickCParser.DeclaratorProcedureContext ctx) {
+      visit(ctx.declarator());
+      // TODO: Handle parameters!
+      SymbolType returnType = varDecl.getEffectiveType();
+      varDecl.setDeclType(new SymbolTypeProcedure(returnType));
+      return null;
+   }
+    */
+
+   @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
       Variable typeDefVariable = typeDefScope.getLocalVar(ctx.getText());
@@ -1977,43 +2031,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitTypePar(KickCParser.TypeParContext ctx) {
-      visit(ctx.type());
-      return null;
-   }
-
-   @Override
-   public Object visitTypeArray(KickCParser.TypeArrayContext ctx) {
-      if(program.isWarnArrayType()) {
-         program.getLog().append("Non-standard array declaration.\n" + new StatementSource(ctx).toString());
-         visit(ctx.type());
-
-         ArraySpec arraySpec;
-         if(ctx.expr() != null) {
-            RValue sizeVal = (RValue) visit(ctx.expr());
-            arraySpec = new ArraySpec((ConstantValue) sizeVal);
-         } else {
-            arraySpec = new ArraySpec();
-         }
-
-         final SymbolType elementDeclType = varDecl.getEffectiveType();
-         final SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
-         varDecl.setVarDeclType(arrayDeclType);
-         return null;
-      } else {
-         throw new CompileError("Non-standard array declaration. Allow using commandline option -Warraytype", new StatementSource(ctx));
-      }
-   }
-
-   @Override
-   public Object visitTypeProcedure(KickCParser.TypeProcedureContext ctx) {
-      visit(ctx.type());
-      SymbolType returnType = varDecl.getEffectiveType();
-      varDecl.setDeclType(new SymbolTypeProcedure(returnType));
-      return null;
-   }
-
-   @Override
    public Object visitTypeDef(KickCParser.TypeDefContext ctx) {
       Scope typedefScope = program.getScope().getTypeDefScope();
       scopeStack.push(typedefScope);
@@ -2029,6 +2046,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();
+      return null;
+   }
+
+   @Override
+   public Object visitTypeProcedure(KickCParser.TypeProcedureContext ctx) {
+      visit(ctx.type());
+      SymbolType returnType = varDecl.getEffectiveType();
+      varDecl.setDeclType(new SymbolTypeProcedure(returnType));
       return null;
    }
 
@@ -2269,18 +2294,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.expr() instanceof KickCParser.ExprIdContext) {
          procedureName = ctx.expr().getText();
          // Handle the special BYTE0/1/2/3 calls
-         if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.BYTE1, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD0_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.WORD0, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size()==1) {
-            result =  addExprUnary(ctx, Operators.WORD1, parameters.get(0));
+         if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.BYTE1, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD0_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.WORD0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size() == 1) {
+            result = addExprUnary(ctx, Operators.WORD1, parameters.get(0));
          } else {
             // A normal named call
             result = addIntermediateVar().getRef();

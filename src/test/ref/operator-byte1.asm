@@ -15,17 +15,17 @@ main: {
     .label du = 6
     .label ds = $a
     .label ptr = $e
-    // wu = 20000
+    // volatile unsigned int wu = 20000
     lda #<$4e20
     sta.z wu
     lda #>$4e20
     sta.z wu+1
-    // ws = -177
+    // volatile signed int ws = -177
     lda #<-$b1
     sta.z ws
     lda #>-$b1
     sta.z ws+1
-    // du = 2000000
+    // volatile unsigned long du = 2000000
     lda #<$1e8480
     sta.z du
     lda #>$1e8480
@@ -34,7 +34,7 @@ main: {
     sta.z du+2
     lda #>$1e8480>>$10
     sta.z du+3
-    // ds = -3777777
+    // volatile signed long ds = -3777777
     lda #<-$39a4f1
     sta.z ds
     lda #>-$39a4f1
@@ -43,7 +43,7 @@ main: {
     sta.z ds+2
     lda #>-$39a4f1>>$10
     sta.z ds+3
-    // ptr = 0x0000
+    // char * volatile ptr = 0x0000
     lda #<0
     sta.z ptr
     sta.z ptr+1

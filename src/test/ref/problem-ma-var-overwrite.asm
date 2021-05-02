@@ -10,7 +10,7 @@
   .label h1 = 2
 .segment Code
 __start: {
-    // h1
+    // unsigned char *volatile h1
     lda #<0
     sta.z h1
     sta.z h1+1
@@ -36,7 +36,7 @@ test: {
     .label __1 = 4
     .label diff = 4
     .label videoMem = 4
-    // dst
+    // __ma unsigned char *dst
     lda #<0
     sta.z dst
     sta.z dst+1

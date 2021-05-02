@@ -13,7 +13,7 @@ main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-    // w = $0d03
+    // word w = $0d03
     lda #<$d03
     sta.z w
     lda #>$d03

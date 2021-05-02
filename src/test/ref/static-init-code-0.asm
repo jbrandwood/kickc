@@ -16,10 +16,10 @@
   .label c2 = 3
 .segment Code
 __start: {
-    // c1 = 'o'
+    // volatile char c1 = 'o'
     lda #'o'
     sta.z c1
-    // c2 = 'k'
+    // volatile char c2 = 'k'
     lda #'k'
     sta.z c2
     jsr main

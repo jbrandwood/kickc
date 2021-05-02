@@ -11,12 +11,12 @@
   .label idx = $b
 .segment Code
 __start: {
-    // line = 0x0400
+    // __ma char * line = 0x0400
     lda #<$400
     sta.z line
     lda #>$400
     sta.z line+1
-    // idx = 0
+    // __ma char idx = 0
     lda #0
     sta.z idx
     jsr main

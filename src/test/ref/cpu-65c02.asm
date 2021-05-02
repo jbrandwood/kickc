@@ -12,7 +12,7 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    // a = SCREEN[0]
+    // char a = SCREEN[0]
     lda SCREEN
     // a+1
     inc

@@ -241,7 +241,7 @@ lin16u_gen: {
     .label i = $b
     .label max = 7
     .label min = 9
-    // ampl = max-min
+    // word ampl = max-min
     lda.z ampl
     sec
     sbc.z min
@@ -255,7 +255,7 @@ lin16u_gen: {
     sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(ampl, length-1, 0)
-    // stepi = divr16u(ampl, length-1, 0)
+    // word stepi = divr16u(ampl, length-1, 0)
     lda.z divr16u.return
     sta.z stepi
     lda.z divr16u.return+1
@@ -266,8 +266,8 @@ lin16u_gen: {
     sta.z divr16u.dividend+1
     jsr divr16u
     // divr16u(0, length-1, rem16u)
-    // stepf = divr16u(0, length-1, rem16u)
-    // step = { stepi, stepf }
+    // word stepf = divr16u(0, length-1, rem16u)
+    // dword step = { stepi, stepf }
     lda.z stepi
     sta.z step+2
     lda.z stepi+1
@@ -276,7 +276,7 @@ lin16u_gen: {
     sta.z step
     lda.z stepf+1
     sta.z step+1
-    // val = { min, 0 }
+    // dword val = { min, 0 }
     lda #<0
     sta.z val
     sta.z val+1

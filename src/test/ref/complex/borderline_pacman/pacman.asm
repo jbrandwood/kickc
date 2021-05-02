@@ -281,156 +281,156 @@
   .label game_playable = $4e
 .segment Code
 __start: {
-    // pacman_ch1_enabled = 0
+    // volatile char pacman_ch1_enabled = 0
     lda #0
     sta.z pacman_ch1_enabled
-    // pacman_ch1_idx = 0
+    // volatile char pacman_ch1_idx = 0
     sta.z pacman_ch1_idx
-    // logic_tile_ptr
+    // volatile char* logic_tile_ptr
     sta.z logic_tile_ptr
     sta.z logic_tile_ptr+1
-    // logic_tile_xcol
+    // volatile char logic_tile_xcol
     sta.z logic_tile_xcol
-    // logic_tile_yfine
+    // volatile char logic_tile_yfine
     sta.z logic_tile_yfine
-    // logic_tile_left_idx
+    // volatile char logic_tile_left_idx
     sta.z logic_tile_left_idx
-    // logic_tile_right_idx
+    // volatile char logic_tile_right_idx
     sta.z logic_tile_right_idx
-    // left_render_index_xcol
+    // char * volatile left_render_index_xcol
     sta.z left_render_index_xcol
     sta.z left_render_index_xcol+1
-    // left_canvas
+    // char * volatile left_canvas
     sta.z left_canvas
     sta.z left_canvas+1
-    // left_ypos_inc_offset
+    // volatile char left_ypos_inc_offset
     sta.z left_ypos_inc_offset
-    // rigt_render_index_xcol
+    // char * volatile rigt_render_index_xcol
     sta.z rigt_render_index_xcol
     sta.z rigt_render_index_xcol+1
-    // rigt_canvas
+    // char * volatile rigt_canvas
     sta.z rigt_canvas
     sta.z rigt_canvas+1
-    // rigt_ypos_inc_offset
+    // volatile char rigt_ypos_inc_offset
     sta.z rigt_ypos_inc_offset
-    // canvas_base_hi
+    // volatile char canvas_base_hi
     sta.z canvas_base_hi
-    // bobs_restore_base
+    // volatile char bobs_restore_base
     sta.z bobs_restore_base
-    // top_sprites_color
+    // volatile char top_sprites_color
     sta.z top_sprites_color
-    // top_sprites_mc
+    // volatile char top_sprites_mc
     sta.z top_sprites_mc
-    // side_sprites_color
+    // volatile char side_sprites_color
     sta.z side_sprites_color
-    // side_sprites_mc
+    // volatile char side_sprites_mc
     sta.z side_sprites_mc
-    // bottom_sprites_color
+    // volatile char bottom_sprites_color
     sta.z bottom_sprites_color
-    // bottom_sprites_mc
+    // volatile char bottom_sprites_mc
     sta.z bottom_sprites_mc
-    // pill_count
+    // volatile unsigned int pill_count
     sta.z pill_count
     sta.z pill_count+1
-    // pacman_wins = 0
+    // volatile char pacman_wins = 0
     sta.z pacman_wins
-    // pacman_lives = 3
+    // volatile char pacman_lives = 3
     lda #3
     sta.z pacman_lives
-    // music_play_next = 0
+    // volatile char music_play_next = 0
     lda #0
     sta.z music_play_next
-    // phase = 0
+    // volatile char phase = 0
     sta.z phase
-    // frame = 0
+    // volatile char frame = 0
     sta.z frame
-    // anim_frame_idx = 0
+    // volatile char anim_frame_idx = 0
     sta.z anim_frame_idx
-    // pacman_xfine = 45
+    // volatile char pacman_xfine = 45
     lda #$2d
     sta.z pacman_xfine
-    // pacman_yfine = 35
+    // volatile char pacman_yfine = 35
     lda #$23
     sta.z pacman_yfine
-    // pacman_direction = STOP
+    // volatile enum DIRECTION pacman_direction = STOP
     lda #STOP
     sta.z pacman_direction
-    // pacman_substep = 0
+    // volatile char pacman_substep = 0
     lda #0
     sta.z pacman_substep
-    // ghosts_mode = 1
+    // volatile enum GHOSTS_MODE ghosts_mode = 1
     lda #1
     sta.z ghosts_mode
-    // ghosts_mode_count = 0
+    // volatile char ghosts_mode_count = 0
     lda #0
     sta.z ghosts_mode_count
-    // ghost1_xfine = 45
+    // volatile char ghost1_xfine = 45
     lda #$2d
     sta.z ghost1_xfine
-    // ghost1_yfine = 35
+    // volatile char ghost1_yfine = 35
     lda #$23
     sta.z ghost1_yfine
-    // ghost1_direction = STOP
+    // volatile enum DIRECTION ghost1_direction = STOP
     lda #STOP
     sta.z ghost1_direction
-    // ghost1_substep = 0
+    // volatile char ghost1_substep = 0
     lda #0
     sta.z ghost1_substep
-    // ghost1_reverse = 0
+    // volatile char ghost1_reverse = 0
     sta.z ghost1_reverse
-    // ghost1_respawn = 0
+    // volatile char ghost1_respawn = 0
     sta.z ghost1_respawn
-    // ghost2_xfine = 45
+    // volatile char ghost2_xfine = 45
     lda #$2d
     sta.z ghost2_xfine
-    // ghost2_yfine = 35
+    // volatile char ghost2_yfine = 35
     lda #$23
     sta.z ghost2_yfine
-    // ghost2_direction = STOP
+    // volatile enum DIRECTION ghost2_direction = STOP
     lda #STOP
     sta.z ghost2_direction
-    // ghost2_substep = 0
+    // volatile char ghost2_substep = 0
     lda #0
     sta.z ghost2_substep
-    // ghost2_reverse = 0
+    // volatile char ghost2_reverse = 0
     sta.z ghost2_reverse
-    // ghost2_respawn = 0
+    // volatile char ghost2_respawn = 0
     sta.z ghost2_respawn
-    // ghost3_xfine = 45
+    // volatile char ghost3_xfine = 45
     lda #$2d
     sta.z ghost3_xfine
-    // ghost3_yfine = 35
+    // volatile char ghost3_yfine = 35
     lda #$23
     sta.z ghost3_yfine
-    // ghost3_direction = STOP
+    // volatile enum DIRECTION ghost3_direction = STOP
     lda #STOP
     sta.z ghost3_direction
-    // ghost3_substep = 0
+    // volatile char ghost3_substep = 0
     lda #0
     sta.z ghost3_substep
-    // ghost3_reverse = 0
+    // volatile char ghost3_reverse = 0
     sta.z ghost3_reverse
-    // ghost3_respawn = 0
+    // volatile char ghost3_respawn = 0
     sta.z ghost3_respawn
-    // ghost4_xfine = 45
+    // volatile char ghost4_xfine = 45
     lda #$2d
     sta.z ghost4_xfine
-    // ghost4_yfine = 35
+    // volatile char ghost4_yfine = 35
     lda #$23
     sta.z ghost4_yfine
-    // ghost4_direction = STOP
+    // volatile enum DIRECTION ghost4_direction = STOP
     lda #STOP
     sta.z ghost4_direction
-    // ghost4_substep = 0
+    // volatile char ghost4_substep = 0
     lda #0
     sta.z ghost4_substep
-    // ghost4_reverse = 0
+    // volatile char ghost4_reverse = 0
     sta.z ghost4_reverse
-    // ghost4_respawn = 0
+    // volatile char ghost4_respawn = 0
     sta.z ghost4_respawn
-    // game_logic_substep = 0
+    // volatile char game_logic_substep = 0
     sta.z game_logic_substep
-    // game_playable = 0
+    // volatile char game_playable = 0
     sta.z game_playable
     jsr main
     rts
@@ -683,7 +683,7 @@ game_logic: {
     // anim_frame_idx = (anim_frame_idx+1) & 3
     // Update animation and bobs
     sta.z anim_frame_idx
-    // pacman_bob_xfine = pacman_xfine-1
+    // char pacman_bob_xfine = pacman_xfine-1
     lda.z pacman_xfine
     tay
     dey
@@ -710,7 +710,7 @@ game_logic: {
     adc pacman_frames,x
     // bobs_bob_id[0] = pacman_frames[pacman_direction|anim_frame_idx] +  (pacman_bob_xfine&3)
     sta bobs_bob_id
-    // ghost_frame_idx = anim_frame_idx
+    // char ghost_frame_idx = anim_frame_idx
     lda.z anim_frame_idx
     sta.z ghost_frame_idx
     // if(ghosts_mode==FRIGHTENED)
@@ -722,7 +722,7 @@ game_logic: {
     ora.z ghost_frame_idx
     sta.z ghost_frame_idx
   __b44:
-    // ghost1_bob_xfine = ghost1_xfine-1
+    // char ghost1_bob_xfine = ghost1_xfine-1
     lda.z ghost1_xfine
     tay
     dey
@@ -749,7 +749,7 @@ game_logic: {
     adc ghost_frames,x
     // bobs_bob_id[1] = ghost_frames[ghost1_direction|ghost_frame_idx] +  (ghost1_bob_xfine&3)
     sta bobs_bob_id+1
-    // ghost2_bob_xfine = ghost2_xfine-1
+    // char ghost2_bob_xfine = ghost2_xfine-1
     lda.z ghost2_xfine
     tay
     dey
@@ -776,7 +776,7 @@ game_logic: {
     adc ghost_frames,x
     // bobs_bob_id[2] = ghost_frames[ghost2_direction|ghost_frame_idx] +  (ghost2_bob_xfine&3)
     sta bobs_bob_id+2
-    // ghost3_bob_xfine = ghost3_xfine-1
+    // char ghost3_bob_xfine = ghost3_xfine-1
     lda.z ghost3_xfine
     tay
     dey
@@ -803,7 +803,7 @@ game_logic: {
     adc ghost_frames,x
     // bobs_bob_id[3] = ghost_frames[ghost3_direction|ghost_frame_idx] +  (ghost3_bob_xfine&3)
     sta bobs_bob_id+3
-    // ghost4_bob_xfine = ghost4_xfine-1
+    // char ghost4_bob_xfine = ghost4_xfine-1
     lda.z ghost4_xfine
     tay
     dey
@@ -879,17 +879,17 @@ game_logic: {
     // ghost4_reverse = 1
     sta.z ghost4_reverse
   __b48:
-    // pacman_xtile = pacman_xfine/2
+    // char pacman_xtile = pacman_xfine/2
     lda.z pacman_xfine
     lsr
     sta.z pacman_xtile
-    // pacman_ytile = pacman_yfine/2
+    // char pacman_ytile = pacman_yfine/2
     lda.z pacman_yfine
     lsr
     // LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
     asl
     sta.z __210
-    // ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
+    // char* ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
     tay
     clc
     lda #<LEVEL_TILES
@@ -898,7 +898,7 @@ game_logic: {
     lda #>LEVEL_TILES
     adc LEVEL_YTILE_OFFSET+1,y
     sta.z ytiles+1
-    // tile_id = ytiles[pacman_xtile]
+    // char tile_id = ytiles[pacman_xtile]
     ldy.z pacman_xtile
     lda (ytiles),y
     tax
@@ -1257,11 +1257,11 @@ game_logic: {
     // if(ghost4_reverse)
     lda.z ghost4_reverse
     bne __b78
-    // ghost4_xtile = ghost4_xfine/2
+    // char ghost4_xtile = ghost4_xfine/2
     lda.z ghost4_xfine
     lsr
     sta.z ghost4_xtile
-    // ghost4_ytile = ghost4_yfine/2
+    // char ghost4_ytile = ghost4_yfine/2
     lda.z ghost4_yfine
     lsr
     sta.z ghost4_ytile
@@ -1269,7 +1269,7 @@ game_logic: {
     ldx.z ghost4_xtile
     jsr level_tile_directions
     // level_tile_directions(ghost4_xtile, ghost4_ytile)
-    // open_directions = level_tile_directions(ghost4_xtile, ghost4_ytile)
+    // char open_directions = level_tile_directions(ghost4_xtile, ghost4_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost4_direction]
     // Eliminate the direction ghost came from
     ldy.z ghost4_direction
@@ -1426,11 +1426,11 @@ game_logic: {
     // if(ghost3_reverse)
     lda.z ghost3_reverse
     bne __b95
-    // ghost3_xtile = ghost3_xfine/2
+    // char ghost3_xtile = ghost3_xfine/2
     lda.z ghost3_xfine
     lsr
     sta.z ghost3_xtile
-    // ghost3_ytile = ghost3_yfine/2
+    // char ghost3_ytile = ghost3_yfine/2
     lda.z ghost3_yfine
     lsr
     sta.z ghost3_ytile
@@ -1438,7 +1438,7 @@ game_logic: {
     ldx.z ghost3_xtile
     jsr level_tile_directions
     // level_tile_directions(ghost3_xtile, ghost3_ytile)
-    // open_directions = level_tile_directions(ghost3_xtile, ghost3_ytile)
+    // char open_directions = level_tile_directions(ghost3_xtile, ghost3_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost3_direction]
     // Eliminate the direction ghost came from
     ldy.z ghost3_direction
@@ -1596,11 +1596,11 @@ game_logic: {
     // if(ghost2_reverse)
     lda.z ghost2_reverse
     bne __b112
-    // ghost2_xtile = ghost2_xfine/2
+    // char ghost2_xtile = ghost2_xfine/2
     lda.z ghost2_xfine
     lsr
     sta.z ghost2_xtile
-    // ghost2_ytile = ghost2_yfine/2
+    // char ghost2_ytile = ghost2_yfine/2
     lda.z ghost2_yfine
     lsr
     sta.z ghost2_ytile
@@ -1608,7 +1608,7 @@ game_logic: {
     ldx.z ghost2_xtile
     jsr level_tile_directions
     // level_tile_directions(ghost2_xtile, ghost2_ytile)
-    // open_directions = level_tile_directions(ghost2_xtile, ghost2_ytile)
+    // char open_directions = level_tile_directions(ghost2_xtile, ghost2_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost2_direction]
     // Eliminate the direction ghost came from
     ldy.z ghost2_direction
@@ -1767,11 +1767,11 @@ game_logic: {
     // if(ghost1_reverse)
     lda.z ghost1_reverse
     bne __b129
-    // ghost1_xtile = ghost1_xfine/2
+    // char ghost1_xtile = ghost1_xfine/2
     lda.z ghost1_xfine
     lsr
     sta.z ghost1_xtile
-    // ghost1_ytile = ghost1_yfine/2
+    // char ghost1_ytile = ghost1_yfine/2
     lda.z ghost1_yfine
     lsr
     sta.z ghost1_ytile
@@ -1779,7 +1779,7 @@ game_logic: {
     ldx.z ghost1_xtile
     jsr level_tile_directions
     // level_tile_directions(ghost1_xtile, ghost1_ytile)
-    // open_directions = level_tile_directions(ghost1_xtile, ghost1_ytile)
+    // char open_directions = level_tile_directions(ghost1_xtile, ghost1_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost1_direction]
     // Eliminate the direction ghost came from
     ldy.z ghost1_direction
@@ -1923,24 +1923,24 @@ game_logic: {
     // Pacman is on a (new) tile
     lda #0
     sta.z pacman_substep
-    // pacman_xtile = pacman_xfine/2
+    // char pacman_xtile = pacman_xfine/2
     lda.z pacman_xfine
     lsr
     tax
-    // pacman_ytile = pacman_yfine/2
+    // char pacman_ytile = pacman_yfine/2
     lda.z pacman_yfine
     lsr
     // level_tile_directions(pacman_xtile, pacman_ytile)
     jsr level_tile_directions
     // level_tile_directions(pacman_xtile, pacman_ytile)
-    // open_directions = level_tile_directions(pacman_xtile, pacman_ytile)
+    // char open_directions = level_tile_directions(pacman_xtile, pacman_ytile)
     tax
     // CIA1->PORT_A & 0x0f
     lda #$f
     and CIA1
     // (CIA1->PORT_A & 0x0f)^0x0f
     eor #$f
-    // joy_directions = ((CIA1->PORT_A & 0x0f)^0x0f)*4
+    // char joy_directions = ((CIA1->PORT_A & 0x0f)^0x0f)*4
     asl
     asl
     // if(joy_directions!=0)
@@ -1949,7 +1949,7 @@ game_logic: {
     // joy_directions&open_directions
     stx.z $ff
     and.z $ff
-    // new_direction = DIRECTION_SINGLE[joy_directions&open_directions]
+    // char new_direction = DIRECTION_SINGLE[joy_directions&open_directions]
     tay
     lda DIRECTION_SINGLE,y
     // if(new_direction!=0)
@@ -2354,7 +2354,7 @@ splash_run: {
     // SPRITES_YPOS[i*2] = 7
     lda #7
     sta SPRITES_YPOS,y
-    // xpos = sprites_xpos[i]
+    // unsigned int xpos = sprites_xpos[i]
     lda sprites_xpos,y
     sta.z xpos
     lda sprites_xpos+1,y
@@ -2655,7 +2655,7 @@ done_run: {
     inc.z xcol
     jmp __b8
   __b11:
-    // pixels = *gfx++
+    // char pixels = *gfx++
     // Render 8px x 1px
     ldy #0
     lda (gfx),y
@@ -2777,7 +2777,7 @@ level_tile_directions: {
     bcs __b1
     // LEVEL_TILES_DIRECTIONS + LEVEL_YTILE_OFFSET[ytile]
     asl
-    // ytiles = LEVEL_TILES_DIRECTIONS + LEVEL_YTILE_OFFSET[ytile]
+    // char* ytiles = LEVEL_TILES_DIRECTIONS + LEVEL_YTILE_OFFSET[ytile]
     tay
     clc
     lda #<LEVEL_TILES_DIRECTIONS
@@ -2809,13 +2809,13 @@ choose_direction: {
     .label return = $53
     .label direction = $53
     .label dist_min = $50
-    // xdiff = ghost_xtile-target_xtile
+    // char xdiff = ghost_xtile-target_xtile
     tya
     stx.z $ff
     sec
     sbc.z $ff
     sta.z xdiff
-    // ydiff = ghost_ytile-target_ytile
+    // char ydiff = ghost_ytile-target_ytile
     lda.z ydiff
     sec
     sbc.z target_ytile
@@ -2933,7 +2933,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -3042,7 +3042,7 @@ merge_code: {
     bne !+
     inc.z raster_code+1
   !:
-    // cycle_budget = *raster_code++
+    // char cycle_budget = *raster_code++
     // Find the number of cycles
     ldy #0
     lda (raster_code),y
@@ -3106,7 +3106,7 @@ merge_code: {
     // while(cycle_budget>0)
     cpx #0
     beq __b6
-    // logic_cycles = *logic_code
+    // char logic_cycles = *logic_code
     // Find the number of logic code cycles
     ldy #0
     lda (logic_code),y
@@ -3284,7 +3284,7 @@ init_render_index: {
     lda #>RENDER_YPOS
     sta.z render_ypos_table+1
   __b4:
-    // canvas_xcol = RENDER_XCOLS[x_col]
+    // char * canvas_xcol = RENDER_XCOLS[x_col]
     lda.z x_col
     asl
     tay
@@ -3322,7 +3322,7 @@ init_render_index: {
     sta.z __11+1
     asl.z __10
     rol.z __10+1
-    // canvas = canvas_xcol + render_ypos_table[(unsigned int)y_pos]
+    // char * canvas = canvas_xcol + render_ypos_table[(unsigned int)y_pos]
     lda.z __12
     clc
     adc.z render_ypos_table
@@ -3407,7 +3407,7 @@ splash_show: {
     inc.z xcol
     jmp __b1
   __b3:
-    // pixels = *splash++
+    // char pixels = *splash++
     // Render 8px x 1px
     ldy #0
     lda (splash),y
@@ -3541,7 +3541,7 @@ init_sprite_pointers: {
     txa
     clc
     adc #SPRITE_ID_0
-    // sprite_id = SPRITE_ID_0 + screen + sprites_id[sprite]
+    // char sprite_id = SPRITE_ID_0 + screen + sprites_id[sprite]
     clc
     adc sprites_id,y
     // sprites_ptr_1[sprite] = sprite_id
@@ -3782,7 +3782,7 @@ level_show: {
     inc.z ytile
     jmp __b1
   __b3:
-    // tile_left = level[xtile++]
+    // char tile_left = level[xtile++]
     ldy.z xtile
     lda (level),y
     tax
@@ -3797,7 +3797,7 @@ level_show: {
     inc.z count+1
   !:
   __b5:
-    // tile_right = level[xtile++]
+    // char tile_right = level[xtile++]
     lda (level),y
     sta.z tile_right
     iny
@@ -3858,7 +3858,7 @@ render: {
     .label xcol = 5
     .label ypos = 6
     .label pixels = 8
-    // ytile = ypos/4
+    // char ytile = ypos/4
     lda.z ypos
     lsr
     lsr
@@ -3869,24 +3869,24 @@ render: {
     // ytile*2
     tya
     asl
-    // render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
+    // char * render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
     stx.z render_index_xcol+1
     sta.z render_index_xcol
-    // canvas_offset = { render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
+    // unsigned int canvas_offset = { render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
     ldy #RENDER_OFFSET_CANVAS_HI
     lda (render_index_xcol),y
     sta.z canvas_offset+1
     ldy #0
     lda (render_index_xcol),y
     sta.z canvas_offset
-    // canvas1 = SPRITES_1 + canvas_offset
+    // char * canvas1 = SPRITES_1 + canvas_offset
     clc
     adc #<SPRITES_1
     sta.z canvas1
     lda.z canvas_offset+1
     adc #>SPRITES_1
     sta.z canvas1+1
-    // canvas2 = SPRITES_2 + canvas_offset
+    // char * canvas2 = SPRITES_2 + canvas_offset
     clc
     lda.z canvas2
     adc #<SPRITES_2
@@ -3894,11 +3894,11 @@ render: {
     lda.z canvas2+1
     adc #>SPRITES_2
     sta.z canvas2+1
-    // ypos_inc_offset = render_index_xcol[RENDER_OFFSET_YPOS_INC]
+    // char ypos_inc_offset = render_index_xcol[RENDER_OFFSET_YPOS_INC]
     ldy #RENDER_OFFSET_YPOS_INC
     lda (render_index_xcol),y
     tax
-    // ypix = ypos&3
+    // char ypix = ypos&3
     lda #3
     and.z ypos
     sta.z ypix
@@ -3952,7 +3952,7 @@ level_tile_get: {
     bcs __b1
     // LEVEL_TILES + LEVEL_YTILE_OFFSET[ytile]
     asl
-    // ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[ytile]
+    // char* ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[ytile]
     tay
     clc
     lda #<LEVEL_TILES
@@ -3992,7 +3992,7 @@ render_tiles: {
     txa
     asl
     asl
-    // tile_left_pixels = TILES_LEFT + tile_left*4
+    // char * tile_left_pixels = TILES_LEFT + tile_left*4
     clc
     adc #<TILES_LEFT
     sta.z tile_left_pixels
@@ -4003,7 +4003,7 @@ render_tiles: {
     tya
     asl
     asl
-    // tile_right_pixels = TILES_RIGHT + tile_right*4
+    // char * tile_right_pixels = TILES_RIGHT + tile_right*4
     clc
     adc #<TILES_RIGHT
     sta.z tile_right_pixels
@@ -4016,24 +4016,24 @@ render_tiles: {
     // ytile*2
     lda.z ytile
     asl
-    // render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
+    // char * render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
     stx.z render_index_xcol+1
     sta.z render_index_xcol
-    // canvas_offset = {render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
+    // unsigned int canvas_offset = {render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
     ldy #RENDER_OFFSET_CANVAS_HI
     lda (render_index_xcol),y
     sta.z canvas_offset+1
     ldy #0
     lda (render_index_xcol),y
     sta.z canvas_offset
-    // canvas1 = SPRITES_1 + canvas_offset
+    // char * canvas1 = SPRITES_1 + canvas_offset
     clc
     adc #<SPRITES_1
     sta.z canvas1
     lda.z canvas_offset+1
     adc #>SPRITES_1
     sta.z canvas1+1
-    // canvas2 = SPRITES_2 + canvas_offset
+    // char * canvas2 = SPRITES_2 + canvas_offset
     clc
     lda.z canvas2
     adc #<SPRITES_2
@@ -4041,7 +4041,7 @@ render_tiles: {
     lda.z canvas2+1
     adc #>SPRITES_2
     sta.z canvas2+1
-    // ypos_inc_offset = render_index_xcol[RENDER_OFFSET_YPOS_INC]
+    // char ypos_inc_offset = render_index_xcol[RENDER_OFFSET_YPOS_INC]
     ldy #RENDER_OFFSET_YPOS_INC
     lda (render_index_xcol),y
     tax
@@ -4055,7 +4055,7 @@ render_tiles: {
     // }
     rts
   __b2:
-    // pixels = tile_left_pixels[y] | tile_right_pixels[y]
+    // char pixels = tile_left_pixels[y] | tile_right_pixels[y]
     ldy.z y
     lda (tile_left_pixels),y
     ora (tile_right_pixels),y

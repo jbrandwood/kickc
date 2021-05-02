@@ -13,7 +13,7 @@
   .label col = 2
 .segment Code
 __start: {
-    // col = 0
+    // volatile byte col = 0
     lda #0
     sta.z col
     jsr main

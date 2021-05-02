@@ -186,7 +186,7 @@ md5: {
     lsr.z $ff
     ror.z __3+1
     ror.z __3
-    // new_len = ((((initial_len + 8) / 64) + 1) * 64) - 8
+    // uint16_t new_len = ((((initial_len + 8) / 64) + 1) * 64) - 8
     sec
     lda.z new_len
     sbc #8
@@ -232,7 +232,7 @@ md5: {
     rol.z __8+1
     asl.z __8
     rol.z __8+1
-    // bits_len = initial_len * 8
+    // uint32_t bits_len = initial_len * 8
     lda.z __8
     sta.z bits_len
     lda.z __8+1
@@ -315,7 +315,7 @@ md5: {
     lda.z msg+1
     adc.z offset+1
     sta.z w+1
-    // a = h0
+    // uint32_t a = h0
     lda.z h0
     sta.z a
     lda.z h0+1
@@ -324,7 +324,7 @@ md5: {
     sta.z a+2
     lda.z h0+3
     sta.z a+3
-    // b = h1
+    // uint32_t b = h1
     lda.z h1
     sta.z b
     lda.z h1+1
@@ -333,7 +333,7 @@ md5: {
     sta.z b+2
     lda.z h1+3
     sta.z b+3
-    // c = h2
+    // uint32_t c = h2
     lda.z h2
     sta.z c
     lda.z h2+1
@@ -342,7 +342,7 @@ md5: {
     sta.z c+2
     lda.z h2+3
     sta.z c+3
-    // d = h3
+    // uint32_t d = h3
     lda.z h3
     sta.z d
     lda.z h3+1
@@ -750,7 +750,7 @@ md5: {
     lda r,y
     sta.z leftRotate.r
     jsr leftRotate
-    // lr = leftRotate((a + f + k[i] + w[g]), r[i])
+    // uint32_t lr = leftRotate((a + f + k[i] + w[g]), r[i])
     // b += lr
     lda.z b_1
     clc
@@ -1130,7 +1130,7 @@ memcpy: {
     .label destination = $db
     .label source = $aa
     .label num = $80
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     lda.z source
     clc
     adc.z num
@@ -1342,7 +1342,7 @@ mul7: {
 mod16: {
     .label t = $aa
     .label a = $aa
-    // t = a % 16
+    // uint16_t t = a % 16
     lda #$10-1
     and.z t
     sta.z t
@@ -1419,8 +1419,8 @@ putchar: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // newChar = code | conio_reverse_value
+    // char * loc = cursorLocation()
+    // char newChar = code | conio_reverse_value
     txa
     // *loc = newChar
     ldy #0
@@ -1446,8 +1446,8 @@ setcursor: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // c = *loc
+    // char * loc = cursorLocation()
+    // char c = *loc
     ldy #0
     lda (loc),y
     tax
@@ -1491,7 +1491,7 @@ newline: {
     lda ($fe),y
     eor #$80
     sta ($fe),y
-    // start = *SAVMSC
+    // char * start = *SAVMSC
     // move screen up 1 line
     lda SAVMSC
     sta.z start
@@ -1545,7 +1545,7 @@ newline: {
 malloc: {
     .label mem = $b4
     .label size = $b4
-    // mem = heap_head-size
+    // unsigned char* mem = heap_head-size
     sec
     lda #<HEAP_TOP
     sbc.z mem
@@ -1569,7 +1569,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -1639,7 +1639,7 @@ uctoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned char digit_value = digit_values[digit]
     ldy.z digit
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
@@ -1683,7 +1683,7 @@ printf_number_buffer: {
     sta.z strlen.str+1
     jsr strlen
     // strlen(buffer.digits)
-    // len = (signed char)strlen(buffer.digits)
+    // signed char len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
     ldx.z __19
     // if(buffer.sign)
@@ -1751,9 +1751,9 @@ printf_number_buffer: {
     rts
 }
 move16Left: {
-    // s = *p
+    // uint8_t s = *p
     ldy.z leftRotate.p
-    // t = *(p + 1)
+    // uint8_t t = *(p + 1)
     ldx leftRotate.p+1
     // *(p + 0) = *(p + 2)
     lda leftRotate.p+2
@@ -1790,7 +1790,7 @@ rotateLeft: {
     rts
 }
 move8Left: {
-    // t = *p
+    // uint8_t t = *p
     ldx.z leftRotate.p
     // *(p + 0) = *(p + 1)
     lda leftRotate.p+1

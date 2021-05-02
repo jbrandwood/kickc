@@ -12,7 +12,7 @@
   .label v = 2
 .segment Code
 __start: {
-    // v = 'v'
+    // volatile V v = 'v'
     lda #'v'
     sta.z v
     jsr main

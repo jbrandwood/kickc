@@ -17,7 +17,7 @@
   .label Ticks_1 = $d
 .segment Code
 __start: {
-    // last_time
+    // unsigned int last_time
     lda #<0
     sta.z last_time
     sta.z last_time+1
@@ -244,7 +244,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay

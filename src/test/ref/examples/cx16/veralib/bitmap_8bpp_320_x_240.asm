@@ -120,41 +120,41 @@
   .label CONIO_SCREEN_TEXT = $2c
 .segment Code
 __start: {
-    // conio_screen_width = 0
+    // __ma unsigned byte conio_screen_width = 0
     lda #0
     sta.z conio_screen_width
-    // conio_screen_height = 0
+    // __ma unsigned byte conio_screen_height = 0
     sta.z conio_screen_height
-    // conio_screen_layer = 1
+    // __ma unsigned byte conio_screen_layer = 1
     lda #1
     sta.z conio_screen_layer
-    // conio_width = 0
+    // __ma word conio_width = 0
     lda #<0
     sta.z conio_width
     sta.z conio_width+1
-    // conio_height = 0
+    // __ma word conio_height = 0
     sta.z conio_height
     sta.z conio_height+1
-    // conio_rowshift = 0
+    // __ma byte conio_rowshift = 0
     sta.z conio_rowshift
-    // conio_rowskip = 0
+    // __ma word conio_rowskip = 0
     sta.z conio_rowskip
     sta.z conio_rowskip+1
-    // __bitmap_address = 0
+    // __ma dword __bitmap_address = 0
     sta.z __bitmap_address
     sta.z __bitmap_address+1
     lda #<0>>$10
     sta.z __bitmap_address+2
     lda #>0>>$10
     sta.z __bitmap_address+3
-    // __bitmap_layer = 0
+    // __ma byte __bitmap_layer = 0
     lda #0
     sta.z __bitmap_layer
-    // __bitmap_hscale = 0
+    // __ma byte __bitmap_hscale = 0
     sta.z __bitmap_hscale
-    // __bitmap_vscale = 0
+    // __ma byte __bitmap_vscale = 0
     sta.z __bitmap_vscale
-    // __bitmap_color_depth = 0
+    // __ma byte __bitmap_color_depth = 0
     sta.z __bitmap_color_depth
     // #pragma constructor_for(conio_x16_init, cputc, clrscr, cscroll)
     jsr conio_x16_init
@@ -166,7 +166,7 @@ conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     .label line = 2
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
     // vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16)
@@ -577,7 +577,7 @@ vera_layer_mode_text: {
 screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
-    // hscale = (*VERA_DC_HSCALE) >> 7
+    // char hscale = (*VERA_DC_HSCALE) >> 7
     lda VERA_DC_HSCALE
     rol
     rol
@@ -594,7 +594,7 @@ screensize: {
   !e:
     // *x = 40 << hscale
     sta.z x
-    // vscale = (*VERA_DC_VSCALE) >> 7
+    // char vscale = (*VERA_DC_VSCALE) >> 7
     lda VERA_DC_VSCALE
     rol
     rol
@@ -640,7 +640,7 @@ screenlayer: {
     sta.z CONIO_SCREEN_TEXT+1
     // vera_layer_get_width(conio_screen_layer)
     lda.z conio_screen_layer
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -685,7 +685,7 @@ screenlayer: {
     sta.z conio_rowskip+1
     // vera_layer_get_height(conio_screen_layer)
     lda.z conio_screen_layer
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -750,7 +750,7 @@ vera_layer_set_backcolor: {
 // vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
 vera_layer_set_mapbase: {
     .label addr = $38
-    // addr = vera_layer_mapbase[layer]
+    // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
     lda vera_layer_mapbase,y
@@ -790,7 +790,7 @@ gotoxy: {
     sta.z __6
     lda #0
     sta.z __6+1
-    // line_offset = (unsigned int)y << conio_rowshift
+    // unsigned int line_offset = (unsigned int)y << conio_rowshift
     ldy.z conio_rowshift
     beq !e+
   !:
@@ -1082,7 +1082,7 @@ vera_layer_mode_tile: {
     sta.z __4
     lda.z mapbase_address+1
     sta.z __4+1
-    // mapbase = >(<mapbase_address)
+    // byte mapbase = >(<mapbase_address)
     tax
     // vera_layer_set_mapbase(layer,mapbase)
     lda.z layer
@@ -1128,7 +1128,7 @@ vera_layer_mode_tile: {
     sta.z __10
     lda.z tilebase_address+1
     sta.z __10+1
-    // tilebase = >(<tilebase_address)
+    // byte tilebase = >(<tilebase_address)
     // tilebase &= VERA_LAYER_TILEBASE_MASK
     and #VERA_LAYER_TILEBASE_MASK
     tax
@@ -1288,7 +1288,7 @@ clrscr: {
     .label __1 = $3e
     .label line_text = $13
     .label color = $3e
-    // line_text = CONIO_SCREEN_TEXT
+    // char* line_text = CONIO_SCREEN_TEXT
     lda.z CONIO_SCREEN_TEXT
     sta.z line_text
     lda.z CONIO_SCREEN_TEXT+1
@@ -1305,7 +1305,7 @@ clrscr: {
     // vera_layer_get_textcolor(conio_screen_layer)
     ldx.z conio_screen_layer
     jsr vera_layer_get_textcolor
-    // color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
+    // char color = ( vera_layer_get_backcolor(conio_screen_layer) << 4 ) | vera_layer_get_textcolor(conio_screen_layer)
     ora.z color
     sta.z color
     ldx #0
@@ -1445,7 +1445,7 @@ bitmap_init: {
     lda #layer
     sta.z __bitmap_layer
     // vera_layer_get_color_depth(__bitmap_layer)
-    // config = vera_layer_config[layer]
+    // byte* config = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -1472,12 +1472,12 @@ bitmap_init: {
     // __bitmap_vscale = vera_display_get_vscale()
     // Returns 1 when 640 and 2 when 320.
     stx.z __bitmap_vscale
-    // bitmask = bitmasks[__bitmap_color_depth]
+    // byte bitmask = bitmasks[__bitmap_color_depth]
     // Returns 1 when 480 and 2 when 240.
     ldy.z __bitmap_color_depth
     lda bitmasks,y
     sta.z bitmask
-    // bitshift = bitshifts[__bitmap_color_depth]
+    // signed byte bitshift = bitshifts[__bitmap_color_depth]
     ldx bitshifts,y
     lda #<0
     sta.z x
@@ -1754,7 +1754,7 @@ bitmap_init: {
     // (__bitmap_color_depth<<2)+__bitmap_hscale
     clc
     adc.z __bitmap_hscale
-    // hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale]
+    // word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale]
     asl
     // This sets the right delta to skip a whole line based on the scale, depending on the color depth.
     tay
@@ -1762,7 +1762,7 @@ bitmap_init: {
     sta.z hdelta
     lda hdeltas+1,y
     sta.z hdelta+1
-    // yoffs = __bitmap_address
+    // dword yoffs = __bitmap_address
     // We start at the bitmap address; The plot_y contains the bitmap address embedded so we know where a line starts.
     lda.z __bitmap_address
     sta.z yoffs
@@ -1839,7 +1839,7 @@ bitmap_clear: {
     .label hdelta = $15
     .label count = $5e
     .label vdest = $45
-    // vdelta = vdeltas[__bitmap_vscale]
+    // word vdelta = vdeltas[__bitmap_vscale]
     lda.z __bitmap_vscale
     asl
     tay
@@ -1854,7 +1854,7 @@ bitmap_clear: {
     // (__bitmap_color_depth<<2)+__bitmap_hscale
     clc
     adc.z __bitmap_hscale
-    // hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale]
+    // word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale]
     asl
     tay
     lda hdeltas,y
@@ -1863,13 +1863,13 @@ bitmap_clear: {
     sta.z hdelta+1
     // mul16u(hdelta,vdelta)
     jsr mul16u
-    // count = mul16u(hdelta,vdelta)
+    // dword count = mul16u(hdelta,vdelta)
     // >__bitmap_address
     lda.z __bitmap_address+2
     sta.z __3
     lda.z __bitmap_address+3
     sta.z __3+1
-    // vbank = <(>__bitmap_address)
+    // char vbank = <(>__bitmap_address)
     ldx.z __3
     // <__bitmap_address
     lda.z __bitmap_address
@@ -1888,7 +1888,7 @@ kbhit: {
     // Current input device number
     .label GETIN = $ffe4
     .label ch = $47
-    // ch = 0
+    // char ch = 0
     lda #0
     sta.z ch
     // kickasm
@@ -2234,7 +2234,7 @@ modr16u: {
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 vera_layer_set_text_color_mode: {
     .label addr = $4c
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER+1
@@ -2308,7 +2308,7 @@ vera_layer_get_rowskip: {
 // vera_layer_set_config(byte register(A) layer, byte register(X) config)
 vera_layer_set_config: {
     .label addr = $4e
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     asl
     tay
     lda vera_layer_config,y
@@ -2330,7 +2330,7 @@ vera_layer_set_config: {
 // vera_layer_set_tilebase(byte register(A) layer, byte register(X) tilebase)
 vera_layer_set_tilebase: {
     .label addr = $4e
-    // addr = vera_layer_tilebase[layer]
+    // byte* addr = vera_layer_tilebase[layer]
     asl
     tay
     lda vera_layer_tilebase,y
@@ -2379,12 +2379,12 @@ cputc: {
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
     // vera_layer_get_color( conio_screen_layer)
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     tax
     // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     tay
     clc
     lda.z CONIO_SCREEN_TEXT
@@ -2435,7 +2435,7 @@ cputc: {
     // conio_cursor_x[conio_screen_layer]++;
     ldx.z conio_screen_layer
     inc conio_cursor_x,x
-    // scroll_enable = conio_scroll_enable[conio_screen_layer]
+    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_scroll_enable,y
     // if(scroll_enable)
@@ -2521,7 +2521,7 @@ mul16u: {
     .label res = $5e
     .label b = $41
     .label return = $5e
-    // mb = b
+    // unsigned long mb = b
     lda.z b
     sta.z mb
     lda.z b+1
@@ -2658,7 +2658,7 @@ bitmap_line_ydxi: {
     .label xd = $17
     .label c = $3e
     .label e = $5a
-    // e = xd>>1
+    // word e = xd>>1
     lda.z xd+1
     lsr
     sta.z e+1
@@ -2736,7 +2736,7 @@ bitmap_line_xdyi: {
     .label yd = $45
     .label c = $3e
     .label e = $5a
-    // e = yd>>1
+    // word e = yd>>1
     lda.z yd+1
     lsr
     sta.z e+1
@@ -2814,7 +2814,7 @@ bitmap_line_ydxd: {
     .label xd = $17
     .label c = $3e
     .label e = $5a
-    // e = xd>>1
+    // word e = xd>>1
     lda.z xd+1
     lsr
     sta.z e+1
@@ -2893,7 +2893,7 @@ bitmap_line_xdyd: {
     .label yd = $3f
     .label c = $3e
     .label e = $5a
-    // e = yd>>1
+    // word e = yd>>1
     lda.z yd+1
     lsr
     sta.z e+1
@@ -3044,7 +3044,7 @@ divr16u: {
 // vera_layer_get_color(byte register(X) layer)
 vera_layer_get_color: {
     .label addr = $72
-    // addr = vera_layer_config[layer]
+    // byte* addr = vera_layer_config[layer]
     txa
     asl
     tay
@@ -3077,7 +3077,7 @@ vera_layer_get_color: {
 // Print a newline
 cputln: {
     .label temp = $5a
-    // temp = conio_line_text[conio_screen_layer]
+    // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
     // TODO: This needs to be optimized! other variations don't compile because of sections not available!
@@ -3130,7 +3130,7 @@ bitmap_plot: {
     .label __13 = $62
     .label __14 = $68
     .label __15 = $6e
-    // plot_x = __bitmap_plot_x[x]
+    // dword plot_x = __bitmap_plot_x[x]
     lda.z x
     asl
     sta.z __9
@@ -3153,7 +3153,7 @@ bitmap_plot: {
     iny
     lda (__12),y
     sta.z plot_x+1
-    // plot_y = __bitmap_plot_y[y]
+    // dword plot_y = __bitmap_plot_y[y]
     lda.z y
     asl
     sta.z __10
@@ -3181,7 +3181,7 @@ bitmap_plot: {
     iny
     lda (__13),y
     sta.z plot_y+3
-    // plotter = plot_x+plot_y
+    // dword plotter = plot_x+plot_y
     lda.z vera_vram_address01_bankaddr
     clc
     adc.z plot_y
@@ -3195,7 +3195,7 @@ bitmap_plot: {
     lda.z vera_vram_address01_bankaddr+3
     adc.z plot_y+3
     sta.z vera_vram_address01_bankaddr+3
-    // bitshift = __bitmap_plot_bitshift[x]
+    // byte bitshift = __bitmap_plot_bitshift[x]
     clc
     lda.z x
     adc #<__bitmap_plot_bitshift
@@ -3306,11 +3306,11 @@ insertup: {
     .label width = $71
     .label line = $15
     .label start = $15
-    // cy = conio_cursor_y[conio_screen_layer]
+    // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
     sta.z cy
-    // width = CONIO_WIDTH * 2
+    // unsigned byte width = CONIO_WIDTH * 2
     lda.z conio_screen_width
     asl
     sta.z width
@@ -3330,7 +3330,7 @@ insertup: {
     txa
     sec
     sbc #1
-    // line = (i-1) << conio_rowshift
+    // unsigned int line = (i-1) << conio_rowshift
     ldy.z conio_rowshift
     sta.z line
     lda #0
@@ -3343,7 +3343,7 @@ insertup: {
     dey
     bne !-
   !e:
-    // start = CONIO_SCREEN_TEXT + line
+    // unsigned char* start = CONIO_SCREEN_TEXT + line
     lda.z start
     clc
     adc.z CONIO_SCREEN_TEXT
@@ -3382,7 +3382,7 @@ clearline: {
     // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     tay
     clc
     lda.z CONIO_SCREEN_TEXT
@@ -3406,7 +3406,7 @@ clearline: {
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
     // vera_layer_get_color( conio_screen_layer)
-    // color = vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     tax
     lda #<0
     sta.z c

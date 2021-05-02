@@ -14,12 +14,12 @@ main: {
     lda #0
     sta.z i
   __b2:
-    // f = fns[++i&1]
+    // void()* f = fns[++i&1]
     inc.z i
     // ++i&1
     lda #1
     and.z i
-    // f = fns[++i&1]
+    // void()* f = fns[++i&1]
     asl
     tay
     lda fns,y

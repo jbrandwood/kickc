@@ -23,14 +23,14 @@ foo: {
     .label v1 = $80
     .label v2 = $82
     .label a2 = $84
-    // v1
+    // volatile uint8_t * v1
     lda #<0
     sta.z v1
     sta.z v1+1
-    // v2
+    // uint8_t * v2
     sta.z v2
     sta.z v2+1
-    // a2 = 2
+    // uint8_t a2 = 2
     lda #2
     sta.z a2
     // v1 = x1

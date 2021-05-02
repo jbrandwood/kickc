@@ -109,7 +109,7 @@ bool_complex: {
     .label screen = $478
     ldy #0
   __b1:
-    // o1 = (i<10)
+    // bool o1 = (i<10)
     cpy #$a
     lda #0
     rol
@@ -118,7 +118,7 @@ bool_complex: {
     // i&1
     tya
     and #1
-    // o2 = (i&1)==0
+    // bool o2 = (i&1)==0
     eor #0
     beq !+
     lda #1

@@ -41,18 +41,18 @@ main: {
     lda #-$13
     sta.z x
   __b2:
-    // xw = (signed word)(word){ (byte)x, 0 }
+    // signed word xw = (signed word)(word){ (byte)x, 0 }
     lda #0
     ldy.z x
     sty.z xw+1
     sta.z xw
-    // yw = (signed word)(word){ (byte)y, 0 }
+    // signed word yw = (signed word)(word){ (byte)y, 0 }
     ldy.z y
     sty.z yw+1
     sta.z yw
     // atan2_16(xw, yw)
     jsr atan2_16
-    // angle_w = atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // angle_w+0x0080
     lda #$80
     clc
@@ -61,7 +61,7 @@ main: {
     bcc !+
     inc.z __3+1
   !:
-    // ang_w = >(angle_w+0x0080)
+    // byte ang_w = >(angle_w+0x0080)
     lda.z __3+1
     // *screen++ = ang_w
     ldy #0

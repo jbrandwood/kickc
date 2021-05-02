@@ -20,7 +20,7 @@ main: {
     // }
     rts
   __b2:
-    // c3 = c1*c2
+    // char c3 = c1*c2
     txa
     asl
     stx.z $ff

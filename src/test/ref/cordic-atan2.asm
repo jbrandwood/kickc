@@ -40,7 +40,7 @@ main: {
     // atan2_8(x, y)
     jsr atan2_8
     txa
-    // angle = atan2_8(x, y)
+    // byte angle = atan2_8(x, y)
     // *screen++ = angle
     ldy #0
     sta (screen),y
@@ -245,7 +245,7 @@ atan2_8: {
     // }
     rts
   __b11:
-    // xd = xi>>i
+    // signed char xd = xi>>i
     lda.z xi
     ldy.z i
     cpy #0
@@ -257,7 +257,7 @@ atan2_8: {
     bne !l-
   !e:
     sta.z xd
-    // yd = yi>>i
+    // signed char yd = yi>>i
     ldy.z i
     txa
     cpy #0

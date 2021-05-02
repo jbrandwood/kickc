@@ -84,13 +84,13 @@
   .label x_sin_idx_2 = $e
 .segment Code
 __start: {
-    // y_sin_idx = 0
+    // volatile char y_sin_idx = 0
     lda #0
     sta.z y_sin_idx
-    // x_sin_idx = 73
+    // volatile char x_sin_idx = 73
     lda #$49
     sta.z x_sin_idx
-    // x_sin_idx_2 = 82
+    // volatile char x_sin_idx_2 = 82
     lda #$52
     sta.z x_sin_idx_2
     jsr main
@@ -124,7 +124,7 @@ vblank: {
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // readJoy1()
     jsr readJoy1
-    // joy = readJoy1()
+    // char joy = readJoy1()
     // if(joy)
     cmp #0
     beq __b1
@@ -137,7 +137,7 @@ vblank: {
     pla
     rti
   __b1:
-    // y_idx = y_sin_idx++
+    // char y_idx = y_sin_idx++
     // Update sprite positions
     lda.z y_sin_idx
     sta.z y_idx
@@ -154,7 +154,7 @@ vblank: {
   __b3:
     // x_sin_idx = (x_sin_idx==238) ? 0 : x_sin_idx+1
     stx.z x_sin_idx
-    // x_idx = x_sin_idx
+    // char x_idx = x_sin_idx
     txa
     sta.z x_idx
     // (x_sin_idx_2==88) ? 0 : x_sin_idx_2+1
@@ -169,7 +169,7 @@ vblank: {
   __b5:
     // x_sin_idx_2 = (x_sin_idx_2==88) ? 0 : x_sin_idx_2+1
     stx.z x_sin_idx_2
-    // x_idx_2 = x_sin_idx_2
+    // char x_idx_2 = x_sin_idx_2
     txa
     sta.z x_idx_2
     lda #0

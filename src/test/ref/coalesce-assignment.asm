@@ -17,11 +17,11 @@ main: {
   __b1:
     ldy #0
   __b2:
-    // e = b+c
+    // byte e = b+c
     tya
     clc
     adc.z a
-    // g = e+f
+    // byte g = e+f
     asl
     // SCREEN[idx++] = g
     sta SCREEN,x

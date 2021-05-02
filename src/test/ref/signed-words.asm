@@ -201,7 +201,7 @@ anim: {
     rol
     rol.z __5
     rol.z __5+1
-    // sprite_x = xpos>>7 + 160
+    // signed word sprite_x = xpos>>7 + 160
     clc
     lda.z sprite_x
     adc #<$a0
@@ -229,7 +229,7 @@ anim: {
     rol.z $ff
     rol.z __7
     rol.z __7+1
-    // sprite_y = 230 - ypos>>5
+    // signed word sprite_y = 230 - ypos>>5
     lda #<$e6
     sec
     sbc.z sprite_y

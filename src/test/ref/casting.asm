@@ -14,14 +14,14 @@
 main: {
     ldx #0
   __b1:
-    // b2 = 200-b
+    // byte b2 = 200-b
     txa
     eor #$ff
     sec
     adc #$c8
     // SCREEN[b] = b2
     sta SCREEN,x
-    // sb = - (signed byte)b
+    // signed byte sb = - (signed byte)b
     txa
     eor #$ff
     clc
@@ -43,7 +43,7 @@ w: {
     .const b = w1-w2
     ldy #0
   __b1:
-    // b2 = 1400-1350+i
+    // byte b2 = 1400-1350+i
     tya
     tax
     axs #-[$578-$546]

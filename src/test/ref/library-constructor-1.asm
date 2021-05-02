@@ -12,7 +12,7 @@
   .label my_value = 2
 .segment Code
 __start: {
-    // my_value
+    // volatile char my_value
     lda #0
     sta.z my_value
     // #pragma constructor_for(my_init, print)

@@ -51,31 +51,31 @@
   .label YSize = $16
 .segment Code
 __start: {
-    // conio_cursor_x = 0
+    // __ma char conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
-    // conio_cursor_y = 0
+    // __ma char conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
+    // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
     lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
+    // __ma char *conio_line_color = CONIO_SCREEN_COLORS
     lda #<COLORRAM
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+    // __ma char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
     lda #LIGHT_BLUE
     sta.z conio_textcolor
-    // conio_scroll_enable = 1
+    // __ma char conio_scroll_enable = 1
     lda #1
     sta.z conio_scroll_enable
-    // XSize
+    // XSize, YSize
     lda #0
     sta.z XSize
-    // YSize
+    // static unsigned char XSize, YSize
     sta.z YSize
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
     jsr conio_c64_init
@@ -86,7 +86,7 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // line = *BASIC_CURSOR_LINE
+    // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
     cmp #$19
@@ -145,7 +145,7 @@ gotoxy: {
     sta.z __7
     lda #0
     sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -666,10 +666,10 @@ cvline: {
     .label x = $1d
     .label y = 8
     .label i = 7
-    // x = conio_cursor_x
+    // char x = conio_cursor_x
     lda.z conio_cursor_x
     sta.z x
-    // y = conio_cursor_y
+    // char y = conio_cursor_y
     lda.z conio_cursor_y
     sta.z y
     lda #0
@@ -796,7 +796,7 @@ memcpy: {
     .label src = $b
     .label source = $b
     .label destination = $20
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<$19*$28-$28
@@ -836,7 +836,7 @@ memset: {
     .label end = $20
     .label dst = $b
     .label str = $b
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda #$28
     clc
     adc.z str

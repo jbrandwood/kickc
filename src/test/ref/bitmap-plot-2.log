@@ -6596,7 +6596,7 @@ Score: 20652
   // __start
 __start: {
     // __start::__init1
-    // frame_cnt = 1
+    // volatile byte frame_cnt = 1
     // [1] frame_cnt = 1 -- vbuz1=vbuc1 
     lda #1
     sta.z frame_cnt
@@ -6716,7 +6716,7 @@ main: {
     // main::@1
     // main::@2
   __b2:
-    // cos_x = SINE[idx_x]
+    // signed word cos_x = SINE[idx_x]
     // [22] main::$26 = main::idx_x#11 << 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_x
     asl
@@ -6752,7 +6752,7 @@ main: {
     // mul16s(r, cos_x)
     // [28] mul16s::return#3 = mul16s::return#0
     // main::@12
-    // xpos = mul16s(r, cos_x)
+    // signed dword xpos = mul16s(r, cos_x)
     // [29] main::xpos#0 = mul16s::return#3
     // >xpos
     // [30] main::$28 = > main::xpos#0 -- vwuz1=_hi_vdsz2 
@@ -6779,7 +6779,7 @@ main: {
     lda.z x+1
     adc #>$a0
     sta.z x+1
-    // sin_y = SINE[idx_y]
+    // signed word sin_y = SINE[idx_y]
     // [33] main::$27 = main::idx_y#3 << 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_y
     asl
@@ -6815,7 +6815,7 @@ main: {
     // mul16s(r, sin_y)
     // [39] mul16s::return#4 = mul16s::return#0
     // main::@13
-    // ypos = mul16s(r, sin_y)
+    // signed dword ypos = mul16s(r, sin_y)
     // [40] main::ypos#0 = mul16s::return#4
     // >ypos
     // [41] main::$29 = > main::ypos#0 -- vwuz1=_hi_vdsz2 
@@ -6989,7 +6989,7 @@ sin16s_gen2: {
     // div32u16u(PI2_u4f28, wavelength)
     // [65] div32u16u::return#2 = div32u16u::return#0
     // sin16s_gen2::@3
-    // step = div32u16u(PI2_u4f28, wavelength)
+    // unsigned long step = div32u16u(PI2_u4f28, wavelength)
     // [66] sin16s_gen2::step#0 = div32u16u::return#2
     // [67] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
     // [67] phi sin16s_gen2::sintab#2 = SINE [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
@@ -7336,7 +7336,7 @@ mul16s: {
     // mul16u((unsigned int)a, (unsigned int) b)
     // [123] mul16u::return#2 = mul16u::res#2
     // mul16s::@5
-    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // [124] mul16s::m#0 = mul16u::return#2
     // if(a<0)
     // [125] if(mul16s::a#3>=0) goto mul16s::@1 -- vwsz1_ge_0_then_la1 
@@ -7410,7 +7410,7 @@ bitmap_plot: {
     .label __0 = $2d
     .label plotter = $25
     .label x = $1c
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     // [137] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#0] w= bitmap_plot_ylo[bitmap_plot::y#0] -- vwuz1=pbuc1_derefidx_vbuaa_word_pbuc2_derefidx_vbuaa 
     tay
     lda bitmap_plot_yhi,y
@@ -7471,7 +7471,7 @@ div32u16u: {
     // divr16u(>dividend, divisor, 0)
     // [145] divr16u::return#2 = divr16u::return#0
     // div32u16u::@1
-    // quotient_hi = divr16u(>dividend, divisor, 0)
+    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
     // [146] div32u16u::quotient_hi#0 = divr16u::return#2 -- vwuz1=vwuz2 
     lda.z divr16u.return
     sta.z quotient_hi
@@ -7495,9 +7495,9 @@ div32u16u: {
     // divr16u(<dividend, divisor, rem16u)
     // [149] divr16u::return#3 = divr16u::return#0
     // div32u16u::@2
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
     // [150] div32u16u::quotient_lo#0 = divr16u::return#3
-    // quotient = { quotient_hi, quotient_lo}
+    // unsigned long quotient = { quotient_hi, quotient_lo}
     // [151] div32u16u::return#0 = div32u16u::quotient_hi#0 dw= div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
     lda.z quotient_hi
     sta.z return+2
@@ -7636,7 +7636,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // x1 = >x<<3
+    // unsigned int x1 = >x<<3
     // [160] sin16s::x1#0 = > sin16s::$4 -- vwuz1=_hi_vduz2 
     lda.z __4+2
     sta.z x1
@@ -7663,7 +7663,7 @@ sin16s: {
     // mulu16_sel(x1, x1, 0)
     // [164] mulu16_sel::return#0 = mulu16_sel::return#12
     // sin16s::@7
-    // x2 = mulu16_sel(x1, x1, 0)
+    // unsigned int x2 = mulu16_sel(x1, x1, 0)
     // [165] sin16s::x2#0 = mulu16_sel::return#0 -- vwuz1=vwuz2 
     lda.z mulu16_sel.return
     sta.z x2
@@ -7690,7 +7690,7 @@ sin16s: {
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
     // sin16s::@8
-    // x3 = mulu16_sel(x2, x1, 1)
+    // unsigned int x3 = mulu16_sel(x2, x1, 1)
     // [170] sin16s::x3#0 = mulu16_sel::return#1
     // mulu16_sel(x3, $10000/6, 1)
     // [171] mulu16_sel::v1#2 = sin16s::x3#0
@@ -7708,9 +7708,9 @@ sin16s: {
     // mulu16_sel(x3, $10000/6, 1)
     // [173] mulu16_sel::return#2 = mulu16_sel::return#12
     // sin16s::@9
-    // x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
     // [174] sin16s::x3_6#0 = mulu16_sel::return#2
-    // usinx = x1 - x3_6
+    // unsigned int usinx = x1 - x3_6
     // [175] sin16s::usinx#0 = sin16s::x1#0 - sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda.z x1
     sec
@@ -7740,7 +7740,7 @@ sin16s: {
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
     // sin16s::@10
-    // x4 = mulu16_sel(x3, x1, 0)
+    // unsigned int x4 = mulu16_sel(x3, x1, 0)
     // [180] sin16s::x4#0 = mulu16_sel::return#10
     // mulu16_sel(x4, x1, 0)
     // [181] mulu16_sel::v1#4 = sin16s::x4#0
@@ -7759,9 +7759,9 @@ sin16s: {
     // mulu16_sel(x4, x1, 0)
     // [184] mulu16_sel::return#11 = mulu16_sel::return#12
     // sin16s::@11
-    // x5 = mulu16_sel(x4, x1, 0)
+    // unsigned int x5 = mulu16_sel(x4, x1, 0)
     // [185] sin16s::x5#0 = mulu16_sel::return#11
-    // x5_128 = x5>>4
+    // unsigned int x5_128 = x5>>4
     // [186] sin16s::x5_128#0 = sin16s::x5#0 >> 4 -- vwuz1=vwuz1_ror_4 
     lsr.z x5_128+1
     ror.z x5_128
@@ -7821,7 +7821,7 @@ memset: {
     beq __breturn
   !:
     // memset::@1
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     // [195] memset::end#0 = (byte*)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
@@ -7872,7 +7872,7 @@ mul16u: {
     .label res = $f
     .label b = $25
     .label return = $f
-    // mb = b
+    // unsigned long mb = b
     // [203] mul16u::mb#0 = (dword)mul16u::b#2 -- vduz1=_dword_vwuz2 
     lda.z b
     sta.z mb

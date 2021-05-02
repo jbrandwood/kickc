@@ -43,13 +43,13 @@
   .label conio_scroll_enable = $89
 .segment Code
 __start: {
-    // conio_reverse_value = 0
+    // __ma char conio_reverse_value = 0
     lda #0
     sta.z conio_reverse_value
-    // conio_display_cursor = 1
+    // __ma char conio_display_cursor = 1
     lda #1
     sta.z conio_display_cursor
-    // conio_scroll_enable = 1
+    // __ma char conio_scroll_enable = 1
     sta.z conio_scroll_enable
     jsr main
     rts
@@ -411,8 +411,8 @@ setcursor: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // c = *loc
+    // char * loc = cursorLocation()
+    // char c = *loc
     ldy #0
     lda (loc),y
     tax
@@ -543,7 +543,7 @@ memset: {
     lda.z num+1
     beq __breturn
   !:
-    // end = (char*)str + num
+    // char* end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -615,7 +615,7 @@ utoa: {
     // }
     rts
   __b2:
-    // digit_value = digit_values[digit]
+    // unsigned int digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -737,8 +737,8 @@ putchar: {
     sta ($fe),y
     // cursorLocation()
     jsr cursorLocation
-    // loc = cursorLocation()
-    // newChar = code | conio_reverse_value
+    // char * loc = cursorLocation()
+    // char newChar = code | conio_reverse_value
     txa
     ora.z conio_reverse_value
     // *loc = newChar
@@ -786,7 +786,7 @@ newline: {
     eor #$80
     sta ($fe),y
   __b5:
-    // start = *SAVMSC
+    // char * start = *SAVMSC
     // move screen up 1 line
     lda SAVMSC
     sta.z start
@@ -879,7 +879,7 @@ memcpy: {
     .label src = $8b
     .label destination = $8f
     .label source = $8b
-    // src_end = (char*)source+num
+    // char* src_end = (char*)source+num
     clc
     lda.z source
     adc #<num

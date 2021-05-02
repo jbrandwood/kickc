@@ -40,7 +40,8 @@ public class Pass1AsmUsesHandling extends Pass2SsaOptimization {
    private void updateAddressOfVariable(Variable variable, String stmtStr) {
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
-         // TODO: #121 Add volatile??
+         SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
+         variable.setType(typeQualified);
          getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);

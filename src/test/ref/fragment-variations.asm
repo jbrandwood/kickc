@@ -63,7 +63,7 @@ mul16u: {
     .label mb = 6
     .label b = 2
     .label a = 4
-    // mb = b
+    // dword mb = b
     lda.z b
     sta.z mb
     lda.z b+1

@@ -2674,28 +2674,28 @@ Score: 43652
   // __start
 __start: {
     // __start::__init1
-    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    // char* volatile PLEX_SCREEN_PTR = 0x400+0x3f8
     // [1] PLEX_SCREEN_PTR = (byte*)$400+$3f8 -- pbuz1=pbuc1 
     lda #<$400+$3f8
     sta.z PLEX_SCREEN_PTR
     lda #>$400+$3f8
     sta.z PLEX_SCREEN_PTR+1
-    // plex_show_idx=0
+    // volatile char plex_show_idx=0
     // [2] plex_show_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z plex_show_idx
-    // plex_sprite_idx=0
+    // volatile char plex_sprite_idx=0
     // [3] plex_sprite_idx = 0 -- vbuz1=vbuc1 
     sta.z plex_sprite_idx
-    // plex_sprite_msb=1
+    // volatile char plex_sprite_msb=1
     // [4] plex_sprite_msb = 1 -- vbuz1=vbuc1 
     lda #1
     sta.z plex_sprite_msb
-    // plex_free_next = 0
+    // volatile char plex_free_next = 0
     // [5] plex_free_next = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z plex_free_next
-    // framedone = true
+    // volatile bool framedone = true
     // [6] framedone = true -- vboz1=vboc1 
     lda #1
     sta.z framedone
@@ -2810,12 +2810,12 @@ main: {
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = $e
-    // plex_sprite_idx2 = plex_sprite_idx*2
+    // char plex_sprite_idx2 = plex_sprite_idx*2
     // [31] plexShowSprite::plex_sprite_idx2#0 = plex_sprite_idx << 1 -- vbuz1=vbuz2_rol_1 
     lda.z plex_sprite_idx
     asl
     sta.z plex_sprite_idx2
-    // ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
+    // char ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
     // [32] plexShowSprite::plexFreeAdd1_ypos#0 = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]] -- vbuaa=pbuc1_derefidx_(pbuc2_derefidx_vbuz1) 
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
@@ -2852,7 +2852,7 @@ plexShowSprite: {
     lda PLEX_PTR,y
     ldy.z plex_sprite_idx
     sta (PLEX_SCREEN_PTR),y
-    // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
+    // char xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     // [40] plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
@@ -3169,12 +3169,12 @@ plexSort: {
     // [103] phi plexSort::m#2 = plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
     // plexSort::@1
   __b1:
-    // nxt_idx = PLEX_SORTED_IDX[m+1]
+    // char nxt_idx = PLEX_SORTED_IDX[m+1]
     // [104] plexSort::nxt_idx#0 = (PLEX_SORTED_IDX+1)[plexSort::m#2] -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z m
     lda PLEX_SORTED_IDX+1,y
     sta.z nxt_idx
-    // nxt_y = PLEX_YPOS[nxt_idx]
+    // char nxt_y = PLEX_YPOS[nxt_idx]
     // [105] plexSort::nxt_y#0 = PLEX_YPOS[plexSort::nxt_idx#0] -- vbuz1=pbuc1_derefidx_vbuz2 
     tay
     lda PLEX_YPOS,y

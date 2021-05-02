@@ -44,23 +44,23 @@
   .label sy = 3
 .segment Code
 __start: {
-    // xr
+    // signed char xr
     lda #0
     sta.z xr
-    // yr
+    // signed char yr
     sta.z yr
-    // zr
+    // signed char zr
     sta.z zr
-    // pp
+    // signed char pp
     sta.z pp
-    // xp
+    // signed char xp
     sta.z xp
-    // yp
+    // signed char yp
     sta.z yp
-    // psp1
+    // unsigned int psp1
     sta.z psp1
     sta.z psp1+1
-    // psp2
+    // unsigned int psp2
     sta.z psp2
     sta.z psp2+1
     jsr main
@@ -292,7 +292,7 @@ debug_print_init: {
     jsr print_schar_at
     ldy #0
   __b2:
-    // col = 8+i
+    // char col = 8+i
     lax.z i
     axs #-[8]
     // at_cols+40*0+c
@@ -500,7 +500,7 @@ anim: {
     // yps[i] = yp
     lda.z yp
     sta yps,y
-    // i2 = i*2
+    // char i2 = i*2
     tya
     asl
     tax
@@ -622,44 +622,44 @@ calculate_matrix: {
     .label t7 = $27
     .label t8 = $28
     .label t9 = $29
-    // t1 = sy-sz
+    // signed char t1 = sy-sz
     lda.z sy
     sta.z t1
-    // t2 = sy+sz
+    // signed char t2 = sy+sz
     lda.z sy
     sta.z t2
-    // t3 = sx+sz
+    // signed char t3 = sx+sz
     stx.z t3
-    // t4 = sx-sz
+    // signed char t4 = sx-sz
     stx.z t4
-    // t5 = sx+t2
+    // signed char t5 = sx+t2
     txa
     clc
     adc.z t2
     sta.z t5
-    // t6 = sx-t1
+    // signed char t6 = sx-t1
     txa
     sec
     sbc.z t1
     sta.z t6
-    // t7 = sx+t1
+    // signed char t7 = sx+t1
     txa
     clc
     adc.z t1
     sta.z t7
-    // t8 = t2-sx
+    // signed char t8 = t2-sx
     txa
     eor #$ff
     sec
     adc.z t2
     sta.z t8
-    // t9 = sy-sx
+    // signed char t9 = sy-sx
     txa
     eor #$ff
     sec
     adc.z sy
     sta.z t9
-    // t10 = sy+sx
+    // signed char t10 = sy+sx
     txa
     clc
     adc.z sy

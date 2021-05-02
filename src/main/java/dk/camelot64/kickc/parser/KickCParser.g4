@@ -31,29 +31,29 @@ declSeq
 
 decl
     : declVariables ';'
+    | declFunction
     | structDef ';'
     | enumDef ';'
-    | declFunction
     | pragma
     | typeDef ';'
     ;
 
 declVariables
-    : declType declVariableList
+    : declType declaratorInitList
     ;
 
-declVariableList
-    : declPointer* declVariableInit
-    | declVariableList COMMA declPointer* declVariableInit
+declaratorInitList
+    : declaratorInit
+    | declaratorInitList COMMA declaratorInit
+    ;
+
+declaratorInit
+    : declarator ('=' expr)? #declVariableInitExpr
+    | declarator '=' kasmContent #declVariableInitKasm
     ;
 
 typeDef
     : TYPEDEF declType declPointer* NAME declArray* {cParser.addTypedef($NAME.text);}
-    ;
-
-declVariableInit
-    : NAME declArray* ('=' expr)? #declVariableInitExpr
-    | NAME declArray* '=' kasmContent #declVariableInitKasm
     ;
 
 declType
@@ -74,12 +74,18 @@ typeSpecifier
     | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
     ;
 
+declarator
+    : NAME #declaratorName // {if(isTypedef) Parser.addTypedef($NAME.text);}
+    //| declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
+    | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
+    | ASTERISK directive* declarator #declaratorPointer
+    | PAR_BEGIN declarator PAR_END #declaratorPar
+    ;
+
 type
-    : PAR_BEGIN type PAR_END #typePar
-    | SIMPLETYPE  #typeSimple
+    : SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | type BRACKET_BEGIN (expr)? BRACKET_END #typeArray
-    | type PAR_BEGIN PAR_END #typeProcedure
+    | type PAR_BEGIN PAR_END #typeProcedure // TODO: Move to declarator
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef

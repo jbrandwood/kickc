@@ -52,20 +52,19 @@ void render_logo(signed int xpos) {
     char screen_idx;
     *D016 = VICII_MCM|((char)xpos&7);
     signed char x_char = (signed char)(xpos/8);
-    char line = 0;
     if(xpos<0) {
         // Render right side of the logo and some spaces
         logo_idx = (char)(-x_char);
         screen_idx = 0;
         while(logo_idx!=40) {
-            inline for(line: 0..5) {
+            inline for(char line: 0..5) {
                 (SCREEN+40*line)[screen_idx] = logo_idx+40*line;
             }
             screen_idx++;
             logo_idx++;
         }
         while(screen_idx!=40) {
-            inline for(line: 0..5) {
+            inline for(char line: 0..5) {
                 (SCREEN+40*line)[screen_idx] = $00;
             }
             screen_idx++;
@@ -75,14 +74,14 @@ void render_logo(signed int xpos) {
         char logo_start = (char)x_char;
         screen_idx = 0;
         while(screen_idx!=logo_start) {
-            inline for(line: 0..5) {
+            inline for(char line: 0..5) {
                 (SCREEN+40*line)[screen_idx] = $00;
             }
             screen_idx++;
         }
         logo_idx = 0;
         while(screen_idx!=40) {
-            inline for(line: 0..5) {
+            inline for(char line: 0..5) {
                 (SCREEN+40*line)[screen_idx] = logo_idx+40*line;
             }
             screen_idx++;

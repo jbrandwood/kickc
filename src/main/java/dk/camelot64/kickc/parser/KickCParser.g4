@@ -76,7 +76,6 @@ typeSpecifier
 
 declarator
     : NAME #declaratorName // {if(isTypedef) Parser.addTypedef($NAME.text);}
-    //| declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
     | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
     | ASTERISK directive* declarator #declaratorPointer
     | PAR_BEGIN declarator PAR_END #declaratorPar
@@ -202,7 +201,7 @@ switchCase:
 
 forLoop
     : forClassicInit ';' forClassicCondition? ';' commaExpr? #forClassic
-    | (declType declPointer*)? NAME COLON expr RANGE expr  #forRange
+    | declType declarator COLON expr RANGE expr  #forRange
     ;
 
 forClassicInit

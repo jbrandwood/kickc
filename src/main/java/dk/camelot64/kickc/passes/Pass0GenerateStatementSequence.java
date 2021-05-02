@@ -1583,15 +1583,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(blockScope);
       loopStack.push(new Loop(blockScope, false));
       StatementSource statementSource = StatementSource.forRanged(ctx);
-      // Create / find declared loop variable
-      if(ctx.declType() != null) {
-         this.visit(ctx.declType());
-         for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
-            this.visit(declPointerContext);
-         }
-      }
+      this.visit(ctx.declType());
+      this.visit(ctx.declarator());
       SymbolType varType = varDecl.getEffectiveType();
-      String varName = ctx.NAME().getText();
+      String varName = varDecl.getVarName();
       Variable lValue;
       if(varType != null) {
          VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());

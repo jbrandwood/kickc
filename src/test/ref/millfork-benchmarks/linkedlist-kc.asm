@@ -47,7 +47,7 @@ main: {
   __b2:
     // prepend(i)
     jsr prepend
-    // for(i : 0..2999)
+    // for(unsigned int i : 0..2999)
     inc.z i
     bne !+
     inc.z i+1
@@ -63,7 +63,7 @@ main: {
     // print_char((byte)sum())
     lda.z __5
     jsr print_char
-    // for(c : 0..4)
+    // for(unsigned char c : 0..4)
     inx
     cpx #5
     bne __b1

@@ -34,24 +34,15 @@ declSeq
 
 decl
     : declVariables ';'
+    | declFunction
     | structDef ';'
     | enumDef ';'
-    | declFunction
     | pragma
     | typeDef ';'
     ;
 
-
-typeDef
-    : TYPEDEF declType declarator
-    ;
-
 declVariables
     : declType declaratorInitList
-    ;
-
-declType
-    : directive* type directive*
     ;
 
 declaratorInitList
@@ -64,18 +55,26 @@ declaratorInit
     | declarator '=' kasmContent #declVariableInitKasm
     ;
 
-declarator
-    : NAME {if(isTypedef) Parser.addTypedef($NAME.text);} #declaratorName
-    | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
-    | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
-    | ASTERISK directive* declarator #declaratorPointer
-    | PAR_BEGIN declarator PAR_END #declaratorPar
+typeDef
+    : TYPEDEF declType declarator
+    ;
+
+declType
+    : directive* type directive*
     ;
 
 typeSpecifier
     : type #typeSpecifierSimple
     | typeSpecifier ASTERISK #typeSpecifierPointer
     | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
+    ;
+
+declarator
+    : NAME {if(isTypedef) Parser.addTypedef($NAME.text);} #declaratorName
+    | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
+    | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
+    | ASTERISK directive* declarator #declaratorPointer
+    | PAR_BEGIN declarator PAR_END #declaratorPar
     ;
 
 type
@@ -197,8 +196,7 @@ switchCase:
 
 forLoop
     : forClassicInit ';' forClassicCondition? ';' commaExpr? #forClassic
-    | declType declarator COLON expr RANGE expr  #forRangeDecl
-    | NAME COLON expr RANGE expr  #forRangeName
+    | declType declarator COLON expr RANGE expr  #forRange
     ;
 
 forClassicInit

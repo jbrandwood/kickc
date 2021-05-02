@@ -43,12 +43,10 @@ unsigned int sum(void) {
 }
 
 void main(void) {
-    unsigned int i;
-    unsigned char c;
     start();
-    for(c : 0..4) {
+    for(unsigned char c : 0..4) {
         init();
-        for(i : 0..2999) {
+        for(unsigned int i : 0..2999) {
             prepend(i);
         }
         print_char((byte)sum());

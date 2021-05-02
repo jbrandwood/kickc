@@ -390,12 +390,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       this.visit(ctx.declType());
-      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
-         this.visit(declPointerContext);
-      }
+      this.visit(ctx.declarator());
       SymbolType type = varDecl.getEffectiveType();
       List<Directive> directives = varDecl.getDeclDirectives();
-      String name = ctx.NAME().getText();
+      String name = varDecl.getVarName();
       Procedure procedure = new Procedure(name, type, program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureDecl(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
@@ -885,37 +883,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private void varDeclPop() {
       this.varDecl = varDeclStack.pop();
-   }
-
-   @Override
-   public Object visitDeclPointer(KickCParser.DeclPointerContext ctx) {
-      // Create a var-level declaration type
-      final SymbolType elementDeclType = varDecl.getEffectiveType();
-      SymbolTypePointer pointerType = new SymbolTypePointer(elementDeclType);
-      final List<Directive> typeDirectives = getDirectives(ctx.directive());
-      varDecl.setVarDeclTypeAndDirectives(pointerType, typeDirectives);
-      return null;
-   }
-
-
-   @Override
-   public Object visitDeclArray(KickCParser.DeclArrayContext ctx) {
-      // Handle array type declaration by updating the declared type and the array spec
-      ArraySpec arraySpec;
-      if(ctx.expr() != null) {
-         varDeclPush();
-         RValue sizeVal = (RValue) visit(ctx.expr());
-         if(!(sizeVal instanceof ConstantValue))
-            throw new CompileError(sizeVal.toString() + " is not constant or is not defined", new StatementSource(ctx));
-         varDeclPop();
-         arraySpec = new ArraySpec((ConstantValue) sizeVal);
-      } else {
-         arraySpec = new ArraySpec();
-      }
-      final SymbolType elementDeclType = varDecl.getEffectiveType();
-      SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
-      varDecl.setVarDeclType(arrayDeclType);
-      return null;
    }
 
    /**

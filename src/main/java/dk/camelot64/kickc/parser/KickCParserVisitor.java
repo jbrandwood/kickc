@@ -75,18 +75,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclType(KickCParser.DeclTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#declPointer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclPointer(KickCParser.DeclPointerContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#declArray}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclArray(KickCParser.DeclArrayContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code typeSpecifierSimple}
 	 * labeled alternative in {@link KickCParser#typeSpecifier}.
 	 * @param ctx the parse tree

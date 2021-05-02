@@ -64,14 +64,6 @@ declType
     : directive* type directive*
     ;
 
-declPointer
-    : ASTERISK directive*
-    ;
-
-declArray
-    : BRACKET_BEGIN (expr)? BRACKET_END
-    ;
-
 typeSpecifier
     : type #typeSpecifierSimple
     | typeSpecifier ASTERISK #typeSpecifierPointer
@@ -126,7 +118,7 @@ enumMember
     ;
 
 declFunction
-    : declType declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
+    : declType declarator PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
     ;
 
 declFunctionBody

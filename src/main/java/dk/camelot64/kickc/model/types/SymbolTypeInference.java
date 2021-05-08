@@ -110,6 +110,8 @@ public class SymbolTypeInference {
             if(structMember == null)
                throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName());
             return structMember.getType();
+         } else if(structType.equals(SymbolType.VAR)) {
+            return SymbolType.VAR;
          } else {
             throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());
          }

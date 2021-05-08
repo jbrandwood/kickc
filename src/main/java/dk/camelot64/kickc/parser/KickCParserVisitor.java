@@ -124,19 +124,12 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclaratorName(KickCParser.DeclaratorNameContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeProcedure}
-	 * labeled alternative in {@link KickCParser#type}.
+	 * Visit a parse tree produced by the {@code declaratorProcedure}
+	 * labeled alternative in {@link KickCParser#declarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeProcedure(KickCParser.TypeProcedureContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeStructRef}
-	 * labeled alternative in {@link KickCParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeStructRef(KickCParser.TypeStructRefContext ctx);
+	T visitDeclaratorProcedure(KickCParser.DeclaratorProcedureContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typeSimple}
 	 * labeled alternative in {@link KickCParser#type}.
@@ -145,6 +138,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code typeSignedSimple}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code typeStructDef}
 	 * labeled alternative in {@link KickCParser#type}.
 	 * @param ctx the parse tree
@@ -152,19 +152,19 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeStructDef(KickCParser.TypeStructDefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeNamedRef}
+	 * Visit a parse tree produced by the {@code typeStructRef}
 	 * labeled alternative in {@link KickCParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
+	T visitTypeStructRef(KickCParser.TypeStructRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeSignedSimple}
+	 * Visit a parse tree produced by the {@code typeEnumDef}
 	 * labeled alternative in {@link KickCParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	T visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typeEnumRef}
 	 * labeled alternative in {@link KickCParser#type}.
@@ -173,12 +173,12 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeEnumDef}
+	 * Visit a parse tree produced by the {@code typeNamedRef}
 	 * labeled alternative in {@link KickCParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	T visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#structRef}.
 	 * @param ctx the parse tree
@@ -227,12 +227,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclFunction(KickCParser.DeclFunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#declFunctionBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclFunctionBody(KickCParser.DeclFunctionBodyContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

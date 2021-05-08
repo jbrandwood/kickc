@@ -1,13 +1,7 @@
-// Procedure Declaration
-
-char f(char a);
+// Procedure Declaration - a single procedure without parameters declared and defined at once
 
 void main() {
     char * const SCREEN = 0x0400;
-    SCREEN[0] = f('a');
-    SCREEN[1] = f('b');
+    SCREEN[0] = 'a';
 }
 
-char f(char a) {
-    return a+1;
-}

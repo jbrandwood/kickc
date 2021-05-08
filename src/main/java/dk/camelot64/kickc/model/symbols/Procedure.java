@@ -8,13 +8,16 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.passes.Pass1ByteXIntrinsicRewrite;
 import dk.camelot64.kickc.passes.Pass1PrintfIntrinsicRewrite;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
 
    /** The return type. {@link SymbolType#VOID} if the procedure does not return a value. */
-   private final SymbolType returnType;
+   private final SymbolTypeProcedure procedureType;
    /** The names of the parameters of the procedure. */
    private List<String> parameterNames;
    /** True if the parameter list ends with a variable length parameter list "..." */
@@ -78,9 +81,9 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention) {
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention) {
       super(name, parentScope, dataSegment);
-      this.returnType = returnType;
+      this.procedureType = procedureType;
       this.declaredInline = false;
       this.interruptType = null;
       this.comments = new ArrayList<>();
@@ -127,7 +130,7 @@ public class Procedure extends Scope {
    }
 
    public SymbolType getReturnType() {
-      return returnType;
+      return procedureType.getReturnType();
    }
 
    public List<Variable> getParameters() {
@@ -172,7 +175,7 @@ public class Procedure extends Scope {
 
    @Override
    public SymbolType getType() {
-      return new SymbolTypeProcedure(returnType);
+      return procedureType;
    }
 
    public boolean isDeclaredInline() {
@@ -245,7 +248,7 @@ public class Procedure extends Scope {
       if(interruptType != null) {
          res.append("__interrupt(").append(interruptType).append(") ");
       }
-      res.append(returnType.getTypeName()).append(" ").append(getFullName()).append("(");
+      res.append(getReturnType().getTypeName()).append(" ").append(getFullName()).append("(");
       boolean first = true;
       if(parameterNames != null) {
          for(Variable parameter : getParameters()) {
@@ -271,18 +274,22 @@ public class Procedure extends Scope {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       Procedure procedure = (Procedure) o;
-      return declaredInline == procedure.declaredInline &&
-            Objects.equals(returnType, procedure.returnType) &&
+      return variableLengthParameterList == procedure.variableLengthParameterList &&
+            declaredInline == procedure.declaredInline &&
+            declaredIntrinsic == procedure.declaredIntrinsic &&
+            isConstructor == procedure.isConstructor &&
+            Objects.equals(procedureType, procedure.procedureType) &&
             Objects.equals(parameterNames, procedure.parameterNames) &&
             Objects.equals(interruptType, procedure.interruptType) &&
             Objects.equals(comments, procedure.comments) &&
             Objects.equals(reservedZps, procedure.reservedZps) &&
             Objects.equals(codeSegment, procedure.codeSegment) &&
+            Objects.equals(constructorRefs, procedure.constructorRefs) &&
             callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), returnType, parameterNames, declaredInline, interruptType, comments, reservedZps, codeSegment, callingConvention);
+      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, codeSegment, constructorRefs, isConstructor, callingConvention);
    }
 }

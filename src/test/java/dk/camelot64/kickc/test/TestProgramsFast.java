@@ -10,8 +10,43 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testProcedureDeclare7() throws IOException {
+      compileAndCompare("procedure-declare-7.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare6() throws IOException {
+      compileAndCompare("procedure-declare-6.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare5() throws IOException {
+      compileAndCompare("procedure-declare-5.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare4() throws IOException {
+      compileAndCompare("procedure-declare-4.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare3() throws IOException {
+      compileAndCompare("procedure-declare-3.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare2() throws IOException {
+      compileAndCompare("procedure-declare-2.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare1() throws IOException {
+      compileAndCompare("procedure-declare-1.c", log());
+   }
+
+   @Test
    public void testProcedureDeclare0() throws IOException {
-      compileAndCompare("procedure-declare-0.c");
+      compileAndCompare("procedure-declare-0.c", log());
    }
 
    @Test

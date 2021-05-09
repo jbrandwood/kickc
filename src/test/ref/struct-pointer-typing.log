@@ -1,0 +1,358 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::ptr#0 = blocks
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::ptr#3 = phi( main/main::ptr#0, main::@2/main::ptr#1 )
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < $a
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::ptr#2 = phi( main::@1/main::ptr#3 )
+  main::ptr2#0 = (struct Block*) 0
+  main::$4 = (word*)main::ptr#2
+  main::$1 = main::$4 + OFFSET_STRUCT_BLOCK_PREV
+  main::ptr2#1 = (struct Block*)*main::$1
+  main::$5 = (word*)main::ptr#2
+  main::$2 = main::$5 + OFFSET_STRUCT_BLOCK_NEXT
+  main::$6 = (word*)main::ptr2#1
+  main::$3 = main::$6 + OFFSET_STRUCT_BLOCK_NEXT
+  *main::$3 = *main::$2
+  main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_STRUCT_BLOCK_NEXT = 2
+constant byte OFFSET_STRUCT_BLOCK_PREV = 4
+constant byte SIZEOF_STRUCT_BLOCK = 6
+void __start()
+constant struct Block* blocks[$a]  = { fill( $a, 0) }
+void main()
+bool~ main::$0
+word*~ main::$1
+word*~ main::$2
+word*~ main::$3
+word*~ main::$4
+word*~ main::$5
+word*~ main::$6
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+struct Block* main::ptr
+struct Block* main::ptr#0
+struct Block* main::ptr#1
+struct Block* main::ptr#2
+struct Block* main::ptr#3
+struct Block* main::ptr2
+struct Block* main::ptr2#0
+struct Block* main::ptr2#1
+
+Adding number conversion cast (unumber) $a in main::$0 = main::i#2 < $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::ptr#2 = main::ptr#3 
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [4] if(main::i#2<$a) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::ptr#0 = blocks
+Constant main::i#0 = 0
+Constant main::ptr2#0 = (struct Block*) 0
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [8] main::ptr2#1 = (struct Block*)*main::$1  -- main::$4[OFFSET_STRUCT_BLOCK_PREV]
+Converting *(pointer+n) to pointer[n] [13] *main::$3 = *main::$2  -- main::$5[OFFSET_STRUCT_BLOCK_NEXT]
+Converting *(pointer+n) to pointer[n] [13] *main::$3 = main::$5[OFFSET_STRUCT_BLOCK_NEXT]  -- main::$6[OFFSET_STRUCT_BLOCK_NEXT]
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable main::$1 and assignment [3] main::$1 = main::$4 + OFFSET_STRUCT_BLOCK_PREV
+Eliminating unused variable main::$2 and assignment [6] main::$2 = main::$5 + OFFSET_STRUCT_BLOCK_NEXT
+Eliminating unused variable main::$3 and assignment [8] main::$3 = main::$6 + OFFSET_STRUCT_BLOCK_NEXT
+Eliminating unused constant main::ptr2#0
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining Noop Cast [2] main::$4 = (word*)main::ptr#2 keeping main::ptr#2
+Inlining Noop Cast [3] main::ptr2#1 = (struct Block*)main::$4[OFFSET_STRUCT_BLOCK_PREV] keeping main::$4[OFFSET_STRUCT_BLOCK_PREV]
+Inlining Noop Cast [4] main::$5 = (word*)main::ptr#2 keeping main::ptr#2
+Inlining Noop Cast [5] main::$6 = (word*)main::ptr2#1 keeping main::ptr2#1
+Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings main::ptr#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Constant inlined main::ptr#0 = blocks
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 2 initial phi equivalence classes
+Coalesced [7] main::i#4 = main::i#1
+Coalesced [8] main::ptr#4 = main::ptr#1
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] main::ptr#2 = phi( main/blocks, main::@2/main::ptr#1 )
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [2] if(main::i#2<$a) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] ((word*)(struct Block*)((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_PREV])[OFFSET_STRUCT_BLOCK_NEXT] = ((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_NEXT]
+  [5] main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK
+  [6] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 8.25
+struct Block* main::ptr
+struct Block* main::ptr#1 11.0
+struct Block* main::ptr#2 7.333333333333333
+struct Block* main::ptr2
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::ptr#2 main::ptr#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::ptr#2 main::ptr#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ main::ptr#2 main::ptr#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] ((word*)(struct Block*)((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_PREV])[OFFSET_STRUCT_BLOCK_NEXT] = ((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_NEXT] [ main::i#2 main::ptr#2 ] (  [ main::i#2 main::ptr#2 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [5] main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK [ main::i#2 main::ptr#1 ] (  [ main::i#2 main::ptr#1 ] { }  ) always clobbers reg byte a 
+Statement [4] ((word*)(struct Block*)((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_PREV])[OFFSET_STRUCT_BLOCK_NEXT] = ((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_NEXT] [ main::i#2 main::ptr#2 ] (  [ main::i#2 main::ptr#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK [ main::i#2 main::ptr#1 ] (  [ main::i#2 main::ptr#1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ main::ptr#2 main::ptr#1 ] : zp[2]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 30.25: zp[1]:2 [ main::i#2 main::i#1 ] 18.33: zp[2]:3 [ main::ptr#2 main::ptr#1 ] 
+Uplift Scope [Block] 
+Uplift Scope [] 
+
+Uplifting [main] best 936 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:3 [ main::ptr#2 main::ptr#1 ] 
+Uplifting [Block] best 936 combination 
+Uplifting [] best 936 combination 
+Allocated (was zp[2]:3) zp[2]:2 [ main::ptr#2 main::ptr#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-pointer-typing.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_BLOCK = 6
+  .const OFFSET_STRUCT_BLOCK_PREV = 4
+  .const OFFSET_STRUCT_BLOCK_NEXT = 2
+.segment Code
+  // main
+main: {
+    .label ptr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::ptr#2 = blocks [phi:main->main::@1#0] -- pssz1=pssc1 
+    lda #<blocks
+    sta.z ptr
+    lda #>blocks
+    sta.z ptr+1
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<$a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] ((word*)(struct Block*)((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_PREV])[OFFSET_STRUCT_BLOCK_NEXT] = ((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_NEXT] -- (qwuz1_derefidx_vbuc1)_derefidx_vbuc2=pwuz1_derefidx_vbuc2 
+    ldy #OFFSET_STRUCT_BLOCK_PREV
+    lda (ptr),y
+    sta.z $fe
+    iny
+    lda (ptr),y
+    sta.z $ff
+    ldy #OFFSET_STRUCT_BLOCK_NEXT
+    lda (ptr),y
+    sta ($fe),y
+    iny
+    lda (ptr),y
+    sta ($fe),y
+    // [5] main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK -- pssz1=pssz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_BLOCK
+    clc
+    adc.z ptr
+    sta.z ptr
+    bcc !+
+    inc.z ptr+1
+  !:
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi main::ptr#2 = main::ptr#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  blocks: .fill 6*$a, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte OFFSET_STRUCT_BLOCK_NEXT = 2
+constant byte OFFSET_STRUCT_BLOCK_PREV = 4
+constant byte SIZEOF_STRUCT_BLOCK = 6
+constant struct Block* blocks[$a]  = { fill( $a, 0) }
+void main()
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 8.25
+struct Block* main::ptr
+struct Block* main::ptr#1 ptr zp[2]:2 11.0
+struct Block* main::ptr#2 ptr zp[2]:2 7.333333333333333
+struct Block* main::ptr2
+
+reg byte x [ main::i#2 main::i#1 ]
+zp[2]:2 [ main::ptr#2 main::ptr#1 ]
+
+
+FINAL ASSEMBLER
+Score: 876
+
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-pointer-typing.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_BLOCK = 6
+  .const OFFSET_STRUCT_BLOCK_PREV = 4
+  .const OFFSET_STRUCT_BLOCK_NEXT = 2
+.segment Code
+  // main
+main: {
+    .label ptr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::ptr#2 = blocks [phi:main->main::@1#0] -- pssz1=pssc1 
+    lda #<blocks
+    sta.z ptr
+    lda #>blocks
+    sta.z ptr+1
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char i=0;i<10;i++)
+    // [2] if(main::i#2<$a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // ptr2->next = ptr->next
+    // [4] ((word*)(struct Block*)((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_PREV])[OFFSET_STRUCT_BLOCK_NEXT] = ((word*)main::ptr#2)[OFFSET_STRUCT_BLOCK_NEXT] -- (qwuz1_derefidx_vbuc1)_derefidx_vbuc2=pwuz1_derefidx_vbuc2 
+    ldy #OFFSET_STRUCT_BLOCK_PREV
+    lda (ptr),y
+    sta.z $fe
+    iny
+    lda (ptr),y
+    sta.z $ff
+    ldy #OFFSET_STRUCT_BLOCK_NEXT
+    lda (ptr),y
+    sta ($fe),y
+    iny
+    lda (ptr),y
+    sta ($fe),y
+    // ptr++;
+    // [5] main::ptr#1 = main::ptr#2 + SIZEOF_STRUCT_BLOCK -- pssz1=pssz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_BLOCK
+    clc
+    adc.z ptr
+    sta.z ptr
+    bcc !+
+    inc.z ptr+1
+  !:
+    // for(char i=0;i<10;i++)
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi main::ptr#2 = main::ptr#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  blocks: .fill 6*$a, 0
+

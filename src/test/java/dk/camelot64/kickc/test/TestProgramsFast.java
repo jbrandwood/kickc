@@ -15,6 +15,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testStructPointerTyping() throws IOException {
+      compileAndCompare("struct-pointer-typing.c");
+   }
+
+   @Test
    public void testInitValueNpe() throws IOException {
       compileAndCompare("init-value-npe.c");
    }

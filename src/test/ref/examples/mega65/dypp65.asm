@@ -170,7 +170,7 @@ main: {
     lda #>$2d*$19*2
     sta.z memset_dma.num+1
     jsr memset_dma
-    // memset_dma256(0xff,0x08,0x0000, WHITE, 45*25*2)
+    // memset_dma256(0xff,0x08,(void*)0x0000, WHITE, 45*25*2)
     // Fill the colours with WHITE - directly into $ff80000
     jsr memset_dma256
     // memset_dma(CHARSET, 0x55, 45*32*8)

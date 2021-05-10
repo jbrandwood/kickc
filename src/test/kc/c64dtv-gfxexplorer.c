@@ -506,7 +506,7 @@ void gfx_init_plane_8bppchunky() {
             // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
             if(gfxb==$8000) {
                 dtvSetCpuBankSegment1(gfxbCpuBank++);
-                gfxb = $4000;
+                gfxb = (byte*)$4000;
             }
             byte c = (byte)(x+y);
             *gfxb++ = c;
@@ -611,7 +611,7 @@ void gfx_init_plane_full() {
 void gfx_init_plane_fill(dword plane_addr, byte fill) {
     byte gfxbCpuBank = < >(plane_addr*4);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000 + (<plane_addr & $3fff);
+    byte* gfxb = (byte*)$4000 + (<plane_addr & $3fff);
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
                 *gfxb++ = fill;

@@ -27,7 +27,7 @@ main: {
     lda #>$400
     sta.z sc+1
   __b1:
-    // for(byte* sc = $400;sc<$400+1000;sc++)
+    // for(byte* sc = (byte*)$400;sc<$400+1000;sc++)
     lda.z sc+1
     cmp #>$400+$3e8
     bcc __b2
@@ -120,7 +120,7 @@ main: {
     lda #' '
     ldy #0
     sta (sc),y
-    // for(byte* sc = $400;sc<$400+1000;sc++)
+    // for(byte* sc = (byte*)$400;sc<$400+1000;sc++)
     inc.z sc
     bne !+
     inc.z sc+1

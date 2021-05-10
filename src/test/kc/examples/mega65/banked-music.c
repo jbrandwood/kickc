@@ -24,7 +24,7 @@ void main() {
     VICIV->SIDBDRWD_LO = 1;    
 
     // Transfer banked code/data to upper memory ($10000)
-    memcpy_dma4(1, 0x0000, 0, upperCodeData, MUSIC_END-MUSIC);
+    memcpy_dma4(1, (void*)0x0000, 0, upperCodeData, MUSIC_END-MUSIC);
 
     // Remap [$4000-$5fff] to point to [$10000-$11fff]
     memoryRemapBlock(0x40, 0x100);

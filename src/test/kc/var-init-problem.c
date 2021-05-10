@@ -1,9 +1,9 @@
 // Variables without initialization causes problems when compiling
 
 
-byte* screen;
+char* screen;
 
 void main() {
-    screen = $400;
+    screen = (char*)$400;
     *screen = 'a';
 }

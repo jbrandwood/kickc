@@ -66,7 +66,7 @@ void main() {
     // Fill the screen with 0
     memset_dma(SCREEN, 0, 45*25*2);
     // Fill the colours with WHITE - directly into $ff80000
-    memset_dma256(0xff,0x08,0x0000, WHITE, 45*25*2);
+    memset_dma256(0xff,0x08,(void*)0x0000, WHITE, 45*25*2);
     // Fill the charset with 0x55
     memset_dma(CHARSET, 0x55, 45*32*8);
 

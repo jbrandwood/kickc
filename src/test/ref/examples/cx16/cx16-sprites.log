@@ -53,14 +53,14 @@ memcpy_to_vram::@return: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
 void main()
 main: scope:[main]  from __start::@1
   memcpy_to_vram::vbank#0 = (byte)>SPRITE_PIXELS_VRAM
-  memcpy_to_vram::vdest#0 = (void*)<SPRITE_PIXELS_VRAM
+  memcpy_to_vram::vdest#0 = (void*)(byte*)<SPRITE_PIXELS_VRAM
   memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
   memcpy_to_vram::num#0 = $40*$40
   call memcpy_to_vram 
   to:main::@5
 main::@5: scope:[main]  from main
   memcpy_to_vram::vbank#1 = (byte)>VERA_PALETTE
-  memcpy_to_vram::vdest#1 = (void*)<VERA_PALETTE
+  memcpy_to_vram::vdest#1 = (void*)(byte*)<VERA_PALETTE
   memcpy_to_vram::src#1 = (void*)SPRITE_PIXELS+$40*$40
   memcpy_to_vram::num#1 = $200
   call memcpy_to_vram 
@@ -514,11 +514,11 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [20] memcpy_to_vram::num#0 = (unumber)$40*$40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memcpy_to_vram::vbank#0 = (byte)>SPRITE_PIXELS_VRAM
-Constant memcpy_to_vram::vdest#0 = (void*)<SPRITE_PIXELS_VRAM
+Constant memcpy_to_vram::vdest#0 = (void*)(byte*)<SPRITE_PIXELS_VRAM
 Constant memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
 Constant memcpy_to_vram::num#0 = (unumber)$40*$40
 Constant memcpy_to_vram::vbank#1 = (byte)>VERA_PALETTE
-Constant memcpy_to_vram::vdest#1 = (void*)<VERA_PALETTE
+Constant memcpy_to_vram::vdest#1 = (void*)(byte*)<VERA_PALETTE
 Constant memcpy_to_vram::src#1 = (void*)SPRITE_PIXELS+(word)$40*$40
 Constant memcpy_to_vram::num#1 = $200
 Constant main::vram_sprite_attr#0 = (byte*)<VERA_SPRITE_ATTR
@@ -568,8 +568,8 @@ Inlining constant with var siblings irq_vsync::s#0
 Constant inlined memcpy_to_vram::num#0 = (word)$40*$40
 Constant inlined main::s#0 = 0
 Constant inlined memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2
-Constant inlined memcpy_to_vram::vdest#0 = (void*)<SPRITE_PIXELS_VRAM
-Constant inlined memcpy_to_vram::vdest#1 = (void*)<VERA_PALETTE
+Constant inlined memcpy_to_vram::vdest#0 = (void*)(byte*)<SPRITE_PIXELS_VRAM
+Constant inlined memcpy_to_vram::vdest#1 = (void*)(byte*)<VERA_PALETTE
 Constant inlined irq_vsync::vram_sprite_pos#0 = (byte*)<VERA_SPRITE_ATTR+2
 Constant inlined irq_vsync::s#0 = 0
 Constant inlined irq_vsync::$6 = SIZEOF_STRUCT_VERA_SPRITE
@@ -770,7 +770,7 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@6 main main::@2 main::@
   [55] memcpy_to_vram::num#4 = phi( irq_vsync::@6/4, main/(word)$40*$40, main::@2/SIZEOF_STRUCT_VERA_SPRITE, main::@5/$200 )
   [55] memcpy_to_vram::src#4 = phi( irq_vsync::@6/(void*)&SPRITE_ATTR+2, main/(void*)SPRITE_PIXELS, main::@2/(void*)&SPRITE_ATTR, main::@5/(void*)SPRITE_PIXELS+(word)$40*$40 )
   [55] memcpy_to_vram::vbank#4 = phi( irq_vsync::@6/irq_vsync::vram_sprite_attr_bank, main/0, main::@2/(byte)>VERA_SPRITE_ATTR, main::@5/(byte)>VERA_PALETTE )
-  [55] memcpy_to_vram::vdest#4 = phi( irq_vsync::@6/memcpy_to_vram::vdest#3, main/(void*)<SPRITE_PIXELS_VRAM, main::@2/memcpy_to_vram::vdest#2, main::@5/(void*)<VERA_PALETTE )
+  [55] memcpy_to_vram::vdest#4 = phi( irq_vsync::@6/memcpy_to_vram::vdest#3, main/(void*)(byte*)<SPRITE_PIXELS_VRAM, main::@2/memcpy_to_vram::vdest#2, main::@5/(void*)(byte*)<VERA_PALETTE )
   [56] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
   [57] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#4
   [58] *VERA_ADDRX_L = memcpy_to_vram::$0
@@ -1451,7 +1451,7 @@ main: {
     sta.z memcpy_to_vram.src+1
     // [55] phi memcpy_to_vram::vbank#4 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #0
-    // [55] phi memcpy_to_vram::vdest#4 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [55] phi memcpy_to_vram::vdest#4 = (void*)(byte*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>SPRITE_PIXELS_VRAM&$ffff
@@ -1478,7 +1478,7 @@ main: {
     sta.z memcpy_to_vram.src+1
     // [55] phi memcpy_to_vram::vbank#4 = (byte)>VERA_PALETTE [phi:main::@5->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #VERA_PALETTE>>$10
-    // [55] phi memcpy_to_vram::vdest#4 = (void*)<VERA_PALETTE [phi:main::@5->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [55] phi memcpy_to_vram::vdest#4 = (void*)(byte*)<VERA_PALETTE [phi:main::@5->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<VERA_PALETTE&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>VERA_PALETTE&$ffff
@@ -2302,7 +2302,7 @@ main: {
     // Copy 8* sprite attributes to VRAM    
     .label vram_sprite_attr = $a
     .label s = 9
-    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
+    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, (char*)<SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
     // [37] call memcpy_to_vram 
   // Copy sprite data to VRAM
     // [55] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
@@ -2318,7 +2318,7 @@ main: {
     sta.z memcpy_to_vram.src+1
     // [55] phi memcpy_to_vram::vbank#4 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #0
-    // [55] phi memcpy_to_vram::vdest#4 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [55] phi memcpy_to_vram::vdest#4 = (void*)(byte*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>SPRITE_PIXELS_VRAM&$ffff
@@ -2326,7 +2326,7 @@ main: {
     jsr memcpy_to_vram
     // [38] phi from main to main::@5 [phi:main->main::@5]
     // main::@5
-    // memcpy_to_vram((char)>VERA_PALETTE, <VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
+    // memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
     // [39] call memcpy_to_vram 
   // Copy sprite palette to VRAM
     // [55] phi from main::@5 to memcpy_to_vram [phi:main::@5->memcpy_to_vram]
@@ -2342,7 +2342,7 @@ main: {
     sta.z memcpy_to_vram.src+1
     // [55] phi memcpy_to_vram::vbank#4 = (byte)>VERA_PALETTE [phi:main::@5->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #VERA_PALETTE>>$10
-    // [55] phi memcpy_to_vram::vdest#4 = (void*)<VERA_PALETTE [phi:main::@5->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [55] phi memcpy_to_vram::vdest#4 = (void*)(byte*)<VERA_PALETTE [phi:main::@5->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<VERA_PALETTE&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>VERA_PALETTE&$ffff

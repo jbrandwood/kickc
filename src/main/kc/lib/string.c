@@ -78,5 +78,5 @@ void *memchr(const void *str, char c, size_t n) {
             return ptr;
         ptr++;
     }
-    return 0;
+    return (void*)0;
 }

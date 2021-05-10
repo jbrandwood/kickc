@@ -4,11 +4,11 @@ unsigned char *volatile h1;  // This must be volatile because is used in an inte
 
 void test(unsigned char *videoMem, unsigned char *colorMem, unsigned char *other)
 {
-    unsigned char *diff;
+    unsigned int diff;
     __ma unsigned char *dst;  // This must be declared as __ma because is used in an assembly routine...
 
 
-    diff = colorMem - videoMem;   
+    diff = colorMem - videoMem;
     dst = other + ((unsigned int)diff);
     dst[0] = 1;
 
@@ -21,5 +21,5 @@ void test(unsigned char *videoMem, unsigned char *colorMem, unsigned char *other
 
 void main(void)
 {
-    test(h1, 0xD800, 0xC000);
+    test(h1, (char*)0xD800, (char*)0xC000);
 }

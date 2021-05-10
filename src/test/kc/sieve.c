@@ -14,7 +14,7 @@ uint8_t* sieve = 0x1000;
 
 void main (void) {
     //Show lower case font
-    *D018 = toD018(SCREEN, 0x1800);
+    *D018 = toD018(SCREEN, (char*)0x1800);
     print_cls();
     print_str("Sieve benchmark - calculating primes");
     print_ln();

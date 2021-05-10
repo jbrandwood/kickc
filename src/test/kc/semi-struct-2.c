@@ -125,10 +125,10 @@ void main() {
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
 void initEntry(byte* entry, byte n) {
-    *entryBufDisk(entry) = 0x1111+n;
-    *entryBufEdit(entry) = 0x2222+n;
+    *entryBufDisk(entry) = (byte*)(0x1111+n);
+    *entryBufEdit(entry) = (byte*)(0x2222+n);
     *entryTsLen(entry) = 0x3333+n;
-    *entryTsOrder(entry) = 0x4444+n;
+    *entryTsOrder(entry) = (word*)(0x4444+n);
     *entryTLastLink(entry) = 0x55+n;
     *entrySLastLink(entry) = 0x66+n;
     *entryBFlag(entry) = 0x77+n;

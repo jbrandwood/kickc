@@ -340,7 +340,7 @@ unsigned byte scroll(unsigned byte onoff) {
 void screenlayer(unsigned byte layer) {
     conio_screen_layer = layer;
     CONIO_SCREEN_BANK = vera_layer_get_mapbase_bank(conio_screen_layer);
-    CONIO_SCREEN_TEXT = vera_layer_get_mapbase_offset(conio_screen_layer);
+    CONIO_SCREEN_TEXT = (char*)vera_layer_get_mapbase_offset(conio_screen_layer);
     conio_width = vera_layer_get_width(conio_screen_layer);
     conio_rowshift = vera_layer_get_rowshift(conio_screen_layer);
     conio_rowskip = vera_layer_get_rowskip(conio_screen_layer);

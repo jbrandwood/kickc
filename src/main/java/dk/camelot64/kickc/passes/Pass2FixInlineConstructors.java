@@ -46,14 +46,14 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
                      OperatorCast operatorCast = (OperatorCast) operator;
                      SymbolType castToType = operatorCast.getToType();
                      if(SymbolType.WORD.equals(castToType)) {
-                        addLiteralWordConstructor(Operators.WORD, SymbolType.WORD, SymbolType.BYTE, programExpression, listValues, currentStmt, stmtIt, currentBlock);
+                        addLiteralWordConstructor(Operators.WORD, SymbolType.WORD, SymbolType.WORD, SymbolType.BYTE, programExpression, listValues, currentStmt, stmtIt, currentBlock);
                         optimized.set(true);
                      } else if(SymbolType.DWORD.equals(castToType)) {
-                        addLiteralWordConstructor(Operators.DWORD, SymbolType.DWORD, SymbolType.WORD, programExpression, listValues, currentStmt, stmtIt, currentBlock);
+                        addLiteralWordConstructor(Operators.DWORD, SymbolType.DWORD, SymbolType.DWORD, SymbolType.WORD, programExpression, listValues, currentStmt, stmtIt, currentBlock);
                         optimized.set(true);
                      } else if((castToType instanceof SymbolTypePointer)) {
                         SymbolType castType = ((OperatorCastPtr) operator).getToType();
-                        addLiteralWordConstructor(Operators.WORD, castType, SymbolType.BYTE, programExpression, listValues, currentStmt, stmtIt, currentBlock);
+                        addLiteralWordConstructor(Operators.WORD, castType, SymbolType.WORD, SymbolType.BYTE, programExpression, listValues, currentStmt, stmtIt, currentBlock);
                         optimized.set(true);
                      }
                   }
@@ -79,7 +79,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
     * @param stmtIt
     * @param currentBlock
     */
-   public void addLiteralWordConstructor(OperatorBinary constructOperator, SymbolType constructType, SymbolType subType, ProgramExpression programExpression, List<RValue> listValues, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public void addLiteralWordConstructor(OperatorBinary constructOperator, SymbolType castType, SymbolType constructType, SymbolType subType, ProgramExpression programExpression, List<RValue> listValues, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Convert list to a word constructor in a new tmp variable
       Scope currentScope = Pass2FixInlineConstructors.this.getScope().getScope(currentBlock.getScope());
       Variable tmpVar = currentScope.addVariableIntermediate();
@@ -91,8 +91,11 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
       stmtIt.add(assignment);
       // Move back before the current statement
       stmtIt.next();
-      // Replace current value with the reference
-      programExpression.set(tmpVar.getRef());
+      // Replace current value with the reference (adding a cast if needed)
+      if(constructType.equals(castType))
+         programExpression.set(tmpVar.getRef());
+      else
+         programExpression.set(new CastValue(castType, tmpVar.getRef()));
       Pass2FixInlineConstructors.this.getLog().append("Fixing inline constructor with " + assignment.toString());
    }
 

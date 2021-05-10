@@ -189,7 +189,7 @@ main: {
     .label r = 7
     .label column1 = $c
     .label r1 = $b
-    // memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8)
+    // memcpy_in_vram(1, (char*)0xF000, VERA_INC_1, 0, (char*)0xF800, VERA_INC_1, 256*8)
   // Before we can load the tiles into memory we need to re-arrange a few things!
   // The amount of tiles is 256, the color depth is 256, so each tile is 256 bytes!
   // That is 65356 bytes of memory, which is 64K. Yup! One memory bank in VRAM.
@@ -300,9 +300,9 @@ main: {
     jsr memcpy_to_vram
     lda #1
     sta.z t
-    lda #<$100
+    lda #<0+$100
     sta.z tilebase
-    lda #>$100
+    lda #>0+$100
     sta.z tilebase+1
   __b1:
     ldx #0
@@ -533,7 +533,7 @@ main: {
     // *VERA_DC_VIDEO &= ~vera_layer_enable[layer]
     and VERA_DC_VIDEO
     sta VERA_DC_VIDEO
-    // memcpy_in_vram(0, 0xF800, VERA_INC_1, 1, 0xF000, VERA_INC_1, 256*8)
+    // memcpy_in_vram(0, (char*)0xF800, VERA_INC_1, 1, (char*)0xF000, VERA_INC_1, 256*8)
     lda #<$100*8
     sta.z memcpy_in_vram.num
     lda #>$100*8

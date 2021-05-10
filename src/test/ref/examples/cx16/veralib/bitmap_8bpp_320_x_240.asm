@@ -210,7 +210,7 @@ main: {
     .label __40 = $13
     .label color = 5
     .label x = 3
-    // memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8)
+    // memcpy_in_vram(1, (char*)0xF000, VERA_INC_1, 0, (char*)0xF800, VERA_INC_1, 256*8)
   // Before we configure the bitmap pane into vera  memory we need to re-arrange a few things!
   // It is better to load all in bank 0, but then there is an issue.
   // So the default CX16 character set is located in bank 0, at address 0xF800.

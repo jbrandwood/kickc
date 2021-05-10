@@ -4442,7 +4442,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testTypeMismatch() throws IOException {
-      assertError("typemismatch.c", "Type mismatch");
+      assertError("typemismatch.c", "Type mismatch (byte) cannot be assigned from (word)");
    }
 
    @Test

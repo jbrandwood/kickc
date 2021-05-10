@@ -864,7 +864,7 @@ void mode_8bppchunkybmm() {
             // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
             if(gfxb==$8000) {
                 dtvSetCpuBankSegment1(gfxbCpuBank++);
-                gfxb = $4000;
+                gfxb = (char*)$4000;
             }
             byte c = (byte)(x+y);
             *gfxb++ = c;

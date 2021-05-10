@@ -15,7 +15,7 @@ ENTRY *file;
 
 int main(void) {
     file = files;
-    file->bufEdit = 0x4000;
+    file->bufEdit = (char*)0x4000;
     file->bufEdit[3] = 0xAA; // writes address 0x0000 (wrong!)
     ((char *)file->bufEdit)[4] = 0xCC; // writes address 0x4004 (right!)
     print_cls();

@@ -207,7 +207,7 @@ void splash_run() {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_ALL;
     // Reset memory to avoid crashes
-    memset(0x4000, 0, 0xc00);
+    memset((char*)0x4000, 0, 0xc00);
     // Decrunch raster code
     byteboozer_decrunch(RASTER_CODE_CRUNCHED);
     // Decrunch logic code

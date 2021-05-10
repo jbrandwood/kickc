@@ -14,7 +14,7 @@
 main: {
     .label file = $4000
     .label uSize = 4
-    // file->bufEdit = 4
+    // file->bufEdit = (BYTE*)4
     lda #<4
     sta file
     lda #>4

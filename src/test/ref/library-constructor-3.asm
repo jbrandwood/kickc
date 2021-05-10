@@ -26,7 +26,7 @@ __start: {
     rts
 }
 init_2: {
-    // SCREEN = 0x0400
+    // SCREEN = (char*)0x0400
     lda #<$400
     sta.z SCREEN
     lda #>$400

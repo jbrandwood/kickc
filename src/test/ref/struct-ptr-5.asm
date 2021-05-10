@@ -33,7 +33,7 @@ main: {
     // entry2->value = 2
     lda #2
     sta entry2
-    // entry1->next = 0
+    // entry1->next = (struct Entry*)0
     lda #<0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT+1

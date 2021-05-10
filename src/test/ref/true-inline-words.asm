@@ -18,7 +18,7 @@ main: {
     // constant inline words inside expression
     .label sc = w2
     // *sc = bs[1]
-    // implicit cast to (byte*)
+    // cast to (byte*)
     lda bs+1
     sta sc
     // if(*pos=='m')

@@ -8,10 +8,10 @@ test: scope:[test]  from main
   test::other#1 = phi( main/test::other#0 )
   test::videoMem#1 = phi( main/test::videoMem#0 )
   test::colorMem#1 = phi( main/test::colorMem#0 )
-  test::diff#0 = (byte*) 0
+  test::diff#0 = 0
   test::dst = (byte*) 0
   test::$0 = test::colorMem#1 - test::videoMem#1
-  test::diff#1 = ((byte*)) test::$0
+  test::diff#1 = test::$0
   test::$2 = (word)test::diff#1
   test::$1 = test::other#1 + test::$2
   test::dst = test::$1
@@ -61,9 +61,9 @@ word~ test::$2
 byte* test::colorMem
 byte* test::colorMem#0
 byte* test::colorMem#1
-byte* test::diff
-byte* test::diff#0
-byte* test::diff#1
+word test::diff
+word test::diff#0
+word test::diff#1
 byte* volatile test::dst loadstore
 byte* test::other
 byte* test::other#0
@@ -75,9 +75,9 @@ byte* test::videoMem#1
 Adding number conversion cast (unumber) 1 in test::dst[0] = 1
 Adding number conversion cast (unumber) 0 in test::dst[0] = ((unumber)) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast test::diff#1 = (byte*)test::$0
 Inlining cast test::dst[(unumber)0] = (unumber)1
 Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast test::diff#1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 55296
@@ -87,23 +87,21 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)test::dst = test::$1 
+Alias test::diff#1 = test::$0 test::$2 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)test::dst = test::$1 
 Identical Phi Values test::colorMem#1 test::colorMem#0
 Identical Phi Values test::videoMem#1 test::videoMem#0
 Identical Phi Values test::other#1 test::other#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant test::diff#0 = (byte*) 0
+Constant test::diff#0 = 0
 Constant test::colorMem#0 = (byte*) 55296
 Constant test::other#0 = (byte*) 49152
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero test::dst in [8] test::dst[0] = 1
+Simplifying expression containing zero test::dst in [6] test::dst[0] = 1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant test::diff#0
 Successful SSA optimization PassNEliminateUnusedVars
-Alias candidate removed (volatile)test::dst = test::$1 
-Inlining Noop Cast [2] test::diff#1 = (byte*)test::$0 keeping test::diff#1
-Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [3] test::$2 = (word)(byte*)test::diff#1 keeping (byte*)test::diff#1
-Successful SSA optimization Pass2NopCastInlining
 Alias candidate removed (volatile)test::dst = test::$1 
 Alias candidate removed (volatile)test::dst = test::$1 
 Alias candidate removed (volatile)test::dst = test::$1 
@@ -152,7 +150,7 @@ void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
 test: scope:[test]  from main
   [8] test::dst = (byte*) 0
   [9] test::diff#1 = test::colorMem#0 - test::videoMem#0
-  [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1
+  [10] test::$1 = test::other#0 + test::diff#1
   [11] test::dst = test::$1
   [12] *test::dst = 1
   asm { ldy#0 lda#1 sta(dst),y  }
@@ -169,8 +167,8 @@ void main()
 void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
 byte*~ test::$1 202.0
 byte* test::colorMem
-byte* test::diff
-word test::diff#1 101.0
+word test::diff
+word test::diff#1 202.0
 byte* volatile test::dst loadstore 151.5
 byte* test::other
 byte* test::videoMem
@@ -198,7 +196,7 @@ Statement [1] h1 = (byte*) 0 [ h1 ] (  [ h1 ] { }  ) always clobbers reg byte a
 Statement [5] test::videoMem#0 = h1 [ test::videoMem#0 ] ( main:3 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
 Statement [8] test::dst = (byte*) 0 [ test::videoMem#0 ] ( main:3::test:6 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
 Statement [9] test::diff#1 = test::colorMem#0 - test::videoMem#0 [ test::diff#1 ] ( main:3::test:6 [ test::diff#1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 [ test::$1 ] ( main:3::test:6 [ test::$1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [10] test::$1 = test::other#0 + test::diff#1 [ test::$1 ] ( main:3::test:6 [ test::$1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
 Statement [11] test::dst = test::$1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
 Statement [12] *test::dst = 1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a reg byte y 
 Statement asm { ldy#0 lda#1 sta(dst),y  } always clobbers reg byte a reg byte y 
@@ -209,12 +207,12 @@ Potential registers zp[2]:8 [ test::diff#1 ] : zp[2]:8 ,
 Potential registers zp[2]:10 [ test::$1 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [test] 202: zp[2]:10 [ test::$1 ] 151.5: zp[2]:6 [ test::dst ] 101: zp[2]:8 [ test::diff#1 ] 56: zp[2]:4 [ test::videoMem#0 ] 
+Uplift Scope [test] 202: zp[2]:8 [ test::diff#1 ] 202: zp[2]:10 [ test::$1 ] 151.5: zp[2]:6 [ test::dst ] 56: zp[2]:4 [ test::videoMem#0 ] 
 Uplift Scope [] 6.5: zp[2]:2 [ h1 ] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [test] best 172 combination zp[2]:10 [ test::$1 ] zp[2]:6 [ test::dst ] zp[2]:8 [ test::diff#1 ] zp[2]:4 [ test::videoMem#0 ] 
+Uplifting [test] best 172 combination zp[2]:8 [ test::diff#1 ] zp[2]:10 [ test::$1 ] zp[2]:6 [ test::dst ] zp[2]:4 [ test::videoMem#0 ] 
 Uplifting [] best 172 combination zp[2]:2 [ h1 ] 
 Uplifting [main] best 172 combination 
 Uplifting [__start] best 172 combination 
@@ -297,7 +295,7 @@ test: {
     lda #>colorMem
     sbc.z diff+1
     sta.z diff+1
-    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] test::$1 = test::other#0 + test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __1
     adc #<other
@@ -355,8 +353,8 @@ void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
 byte*~ test::$1 zp[2]:4 202.0
 byte* test::colorMem
 constant byte* test::colorMem#0 colorMem = (byte*) 55296
-byte* test::diff
-word test::diff#1 diff zp[2]:4 101.0
+word test::diff
+word test::diff#1 diff zp[2]:4 202.0
 byte* volatile test::dst loadstore zp[2]:6 151.5
 byte* test::other
 constant byte* test::other#0 other = (byte*) 49152
@@ -403,7 +401,7 @@ __start: {
 }
   // main
 main: {
-    // test(h1, 0xD800, 0xC000)
+    // test(h1, (char*)0xD800, (char*)0xC000)
     // [5] test::videoMem#0 = h1 -- pbuz1=pbuz2 
     lda.z h1
     sta.z test.videoMem
@@ -441,7 +439,7 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] test::$1 = test::other#0 + test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __1
     adc #<other

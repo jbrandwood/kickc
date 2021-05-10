@@ -19,7 +19,7 @@ main: {
     // }
     rts
   __b2:
-    // levelRowOff[c] = 12345
+    // levelRowOff[c] = (char*)12345
     txa
     asl
     tay

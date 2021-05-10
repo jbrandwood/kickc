@@ -5,5 +5,5 @@ char* levelRowOff[31] = { 1, 2, 3 };
 
 void main() {
     for(char c=0;c<sizeof(levelRowOff)/sizeof(char*); c++)
-        levelRowOff[c] = 12345;
+        levelRowOff[c] = (char*)12345;
 }

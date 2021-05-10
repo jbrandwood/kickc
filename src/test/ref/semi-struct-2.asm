@@ -286,7 +286,7 @@ initEntry: {
     .label __7 = $c
     .label __17 = $e
     .label entry = 4
-    // 0x1111+n
+    // (byte*)0x1111+n
     txa
     clc
     adc #<$1111
@@ -294,14 +294,14 @@ initEntry: {
     lda #>$1111
     adc #0
     sta.z __1+1
-    // *entryBufDisk(entry) = 0x1111+n
+    // *entryBufDisk(entry) = (byte*)0x1111+n
     ldy #0
     lda.z __1
     sta (entry),y
     iny
     lda.z __1+1
     sta (entry),y
-    // 0x2222+n
+    // (byte*)0x2222+n
     txa
     clc
     adc #<$2222
@@ -309,7 +309,7 @@ initEntry: {
     lda #>$2222
     adc #0
     sta.z __3+1
-    // *entryBufEdit(entry) = 0x2222+n
+    // *entryBufEdit(entry) = (byte*)0x2222+n
     ldy #2
     lda.z __3
     sta (entry),y
@@ -331,15 +331,16 @@ initEntry: {
     iny
     lda.z __5+1
     sta (entry),y
-    // 0x4444+n
+    // (word*)0x4444+n
     txa
+    asl
     clc
     adc #<$4444
     sta.z __7
     lda #>$4444
     adc #0
     sta.z __7+1
-    // *entryTsOrder(entry) = 0x4444+n
+    // *entryTsOrder(entry) = (word*)0x4444+n
     ldy #6
     lda.z __7
     sta (entry),y

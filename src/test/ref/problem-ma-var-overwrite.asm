@@ -18,7 +18,7 @@ __start: {
     rts
 }
 main: {
-    // test(h1, 0xD800, 0xC000)
+    // test(h1, (char*)0xD800, (char*)0xC000)
     lda.z h1
     sta.z test.videoMem
     lda.z h1+1

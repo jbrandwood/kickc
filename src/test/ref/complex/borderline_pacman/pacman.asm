@@ -2049,7 +2049,7 @@ splash_run: {
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
     sta PROCPORT
-    // memset(0x4000, 0, 0xc00)
+    // memset((char*)0x4000, 0, 0xc00)
   // Reset memory to avoid crashes
     lda #<$4000
     sta.z memset.str

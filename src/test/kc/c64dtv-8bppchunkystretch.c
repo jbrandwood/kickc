@@ -69,13 +69,13 @@ void gfx_init_chunky() {
     // 320x200 8bpp pixels for Plane
     byte gfxbCpuBank = (byte)(CHUNKY/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000;
+    byte* gfxb = (byte*)$4000;
     for(byte y : 0..50) {
         for (word x : 0..319) {
             // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
             if(gfxb==$8000) {
                 dtvSetCpuBankSegment1(gfxbCpuBank++);
-                gfxb = $4000;
+                gfxb = (byte*)$4000;
             }
             byte c = (byte)(x+y);
             *gfxb++ = c;

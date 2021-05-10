@@ -12,7 +12,7 @@ struct node* root;
 
 void init(void) {
     free_ = 0;
-    root = 0;
+    root = (void*)0;
 }
 
 struct node* alloc() {

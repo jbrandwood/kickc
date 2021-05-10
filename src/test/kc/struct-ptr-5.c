@@ -5,7 +5,7 @@ struct Entry {
     struct Entry* next;
 };
 
-struct Entry* ENTRIES= 0x1000;
+struct Entry* ENTRIES = (struct Entry*)0x1000;
 
 void main() {
     // Create a few (non-linear) linked entries
@@ -17,11 +17,11 @@ void main() {
     entry0->value = 1;
     entry2->next = entry1;
     entry2->value = 2;
-    entry1->next = 0;
+    entry1->next = (struct Entry*)0;
     entry1->value = 3;
 
     // Run through the linked list
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (byte*)0x0400;
     byte idx = 0;
 
     struct Entry* entry = ENTRIES;

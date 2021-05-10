@@ -10,8 +10,8 @@ typedef struct fileentry ENTRY;
 void main(){
 	ENTRY *file;
     WORD uSize;
-    file = 0x4000;
-    file->bufEdit = 4;
+    file = (ENTRY *)0x4000;
+    file->bufEdit = (BYTE*)4;
     word* ptrw = (WORD *)(file->bufEdit + 30);
     uSize = *ptrw;
     print_uint(uSize);

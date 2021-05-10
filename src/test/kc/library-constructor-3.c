@@ -12,7 +12,7 @@ void init_1(void) {
 }
 
 void init_2(void) {
-    SCREEN = 0x0400;
+    SCREEN = (char*)0x0400;
 }
 
 void main(void) {

@@ -14,7 +14,7 @@
 .segment Code
 main: {
     .label __13 = 6
-    // file->bufEdit = 0x4000
+    // file->bufEdit = (char*)0x4000
     lda #<$4000
     sta files
     lda #>$4000

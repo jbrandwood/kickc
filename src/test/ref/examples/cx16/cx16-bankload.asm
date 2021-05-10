@@ -275,7 +275,7 @@ main: {
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
     lda #<$64
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, (char*)<VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     jsr memcpy_to_vram
     // *VERA_CTRL &= ~VERA_DCSEL
     // Enable sprites

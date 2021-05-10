@@ -75,14 +75,14 @@ void memcpy_bank_to_vram(unsigned long vdest, unsigned long src, unsigned long n
     unsigned long end = src+num;
 
     char bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3));
-    char* addr = ((<beg)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
+    char* addr = (char*)((<beg)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
     addr += 0xA000;
 
     VIA1->PORT_A = (char)bank; // select the bank
     for(unsigned long pos=beg; pos<end; pos++) {
         if(addr == 0xC000) {
             VIA1->PORT_A = (char)++bank; // select the bank
-            addr = 0xA000;
+            addr = (char*)0xA000;
         }
         *VERA_DATA0 = *addr;
         addr++;
@@ -168,7 +168,7 @@ char load_to_bank( char device, char* filename, dword address) {
     setnam(filename);
     setlfs(device);
     char bank = (byte)(((((word)<(>address)<<8)|>(<address))>>5)+((word)<(>address)<<3));
-    char* addr = ((<address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
+    char* addr = (char*)((<address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
     addr += 0xA000;
     VIA1->PORT_A = (char)bank; // select the bank
     return load(addr, 0);

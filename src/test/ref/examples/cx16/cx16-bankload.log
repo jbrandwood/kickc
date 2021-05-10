@@ -7,7 +7,7 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Setting inferred volatile on symbol affected by address-of kbhit::ch
 Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
 Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
-Setting struct to load/store in variable affected by address-of main::$8 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR <VERA_SPRITE_ATTR &main::SPRITE_ATTR main::$7 
+Setting struct to load/store in variable affected by address-of main::$8 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR (byte*)<VERA_SPRITE_ATTR &main::SPRITE_ATTR main::$7 
 Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -159,7 +159,7 @@ memcpy_bank_to_vram: scope:[memcpy_bank_to_vram]  from main::@5 main::@6
   memcpy_bank_to_vram::bank#0 = (byte)memcpy_bank_to_vram::$17
   memcpy_bank_to_vram::$18 = < memcpy_bank_to_vram::beg#0
   memcpy_bank_to_vram::$19 = memcpy_bank_to_vram::$18 & $1fff
-  memcpy_bank_to_vram::addr#0 = ((byte*)) memcpy_bank_to_vram::$19
+  memcpy_bank_to_vram::addr#0 = (byte*)memcpy_bank_to_vram::$19
   memcpy_bank_to_vram::addr#1 = memcpy_bank_to_vram::addr#0 + $a000
   *((byte*)VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A) = (byte)memcpy_bank_to_vram::bank#0
   memcpy_bank_to_vram::pos#0 = memcpy_bank_to_vram::beg#0
@@ -196,7 +196,7 @@ memcpy_bank_to_vram::@4: scope:[memcpy_bank_to_vram]  from memcpy_bank_to_vram::
   memcpy_bank_to_vram::bank#2 = phi( memcpy_bank_to_vram::@2/memcpy_bank_to_vram::bank#3 )
   memcpy_bank_to_vram::bank#1 = ++ memcpy_bank_to_vram::bank#2
   *((byte*)VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A) = (byte)memcpy_bank_to_vram::bank#1
-  memcpy_bank_to_vram::addr#3 = ((byte*)) $a000
+  memcpy_bank_to_vram::addr#3 = (byte*)$a000
   to:memcpy_bank_to_vram::@3
 memcpy_bank_to_vram::@return: scope:[memcpy_bank_to_vram]  from memcpy_bank_to_vram::@1
   return 
@@ -275,7 +275,7 @@ load_to_bank::@2: scope:[load_to_bank]  from load_to_bank::@1
   load_to_bank::bank#0 = (byte)load_to_bank::$12
   load_to_bank::$13 = < load_to_bank::address#1
   load_to_bank::$14 = load_to_bank::$13 & $1fff
-  load_to_bank::addr#0 = ((byte*)) load_to_bank::$14
+  load_to_bank::addr#0 = (byte*)load_to_bank::$14
   load_to_bank::addr#1 = load_to_bank::addr#0 + $a000
   *((byte*)VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A) = (byte)load_to_bank::bank#0
   load::address = load_to_bank::addr#1
@@ -1411,7 +1411,7 @@ screenlayer::@4: scope:[screenlayer]  from screenlayer::@3
   CONIO_SCREEN_BANK#60 = phi( screenlayer::@3/CONIO_SCREEN_BANK#2 )
   vera_layer_get_mapbase_offset::return#4 = phi( screenlayer::@3/vera_layer_get_mapbase_offset::return#2 )
   screenlayer::$1 = vera_layer_get_mapbase_offset::return#4
-  CONIO_SCREEN_TEXT#2 = ((byte*)) screenlayer::$1
+  CONIO_SCREEN_TEXT#2 = (byte*)screenlayer::$1
   screenlayer::vera_layer_get_width1_layer#0 = conio_screen_layer
   to:screenlayer::vera_layer_get_width1
 screenlayer::vera_layer_get_width1: scope:[screenlayer]  from screenlayer::@4
@@ -1553,7 +1553,7 @@ main::@7: scope:[main]  from main::@6
   *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64
   main::$7 = SIZEOF_STRUCT_VERA_SPRITE
   memcpy_to_vram::vbank#0 = (byte)>VERA_SPRITE_ATTR
-  memcpy_to_vram::vdest#0 = (void*)<VERA_SPRITE_ATTR
+  memcpy_to_vram::vdest#0 = (void*)(byte*)<VERA_SPRITE_ATTR
   memcpy_to_vram::src#0 = (void*)&main::SPRITE_ATTR
   memcpy_to_vram::num#0 = main::$7
   call memcpy_to_vram 
@@ -2923,9 +2923,6 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Adding number conversion cast (unumber) 2 in memcpy_bank_to_vram::src#1 = ((unumber)) main::BANK_SPRITE+(unumber)$20-2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#1
-Inlining cast memcpy_bank_to_vram::addr#0 = (byte*)memcpy_bank_to_vram::$19
-Inlining cast memcpy_bank_to_vram::addr#3 = (byte*)$a000
-Inlining cast load_to_bank::addr#0 = (byte*)load_to_bank::$14
 Inlining cast load::verify = (unumber)0
 Inlining cast vera_layer_rowshift[vera_layer_mode_tile::layer#1] = (unumber)6
 Inlining cast vera_layer_rowskip[vera_layer_mode_tile::$13] = (unumber)$40
@@ -2960,7 +2957,6 @@ Inlining cast conio_cursor_x[conio_screen_layer] = (unumber)0
 Inlining cast memcpy_in_vram::dest_bank#0 = (unumber)0
 Inlining cast memcpy_in_vram::src_bank#0 = (unumber)0
 Inlining cast gotoxy::x#2 = (unumber)0
-Inlining cast CONIO_SCREEN_TEXT#2 = (byte*)screenlayer::$1
 Inlining cast vera_layer_set_text_color_mode::layer#2 = (unumber)1
 Inlining cast screenlayer::layer#1 = (unumber)1
 Inlining cast load_to_bank::device#0 = (unumber)8
@@ -3559,7 +3555,7 @@ Constant memcpy_bank_to_vram::src#1 = main::BANK_SPRITE+$20-2
 Constant memcpy_bank_to_vram::num#1 = (unumber)$40*$20
 Constant memcpy_to_vram::num#0 = SIZEOF_STRUCT_VERA_SPRITE
 Constant memcpy_to_vram::vbank#0 = (byte)>VERA_SPRITE_ATTR
-Constant memcpy_to_vram::vdest#0 = (void*)<VERA_SPRITE_ATTR
+Constant memcpy_to_vram::vdest#0 = (void*)(byte*)<VERA_SPRITE_ATTR
 Constant memcpy_to_vram::src#0 = (void*)&main::SPRITE_ATTR
 Constant CONIO_SCREEN_TEXT#6 = DEFAULT_SCREEN
 Constant CONIO_SCREEN_BANK#6 = 0
@@ -9750,7 +9746,7 @@ constant void* memcpy_to_vram::src#0 src = (void*)&main::SPRITE_ATTR
 byte memcpy_to_vram::vbank
 constant byte memcpy_to_vram::vbank#0 vbank = (byte)>VERA_SPRITE_ATTR
 void* memcpy_to_vram::vdest
-constant void* memcpy_to_vram::vdest#0 vdest = (void*)<VERA_SPRITE_ATTR
+constant void* memcpy_to_vram::vdest#0 vdest = (void*)(byte*)<VERA_SPRITE_ATTR
 void screenlayer(byte screenlayer::layer)
 word~ screenlayer::$2 zp[2]:30 202.0
 byte~ screenlayer::$3 reg byte a 202.0
@@ -10432,7 +10428,7 @@ main: {
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
     lda #<$64
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, (char*)<VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     // [49] call memcpy_to_vram 
     jsr memcpy_to_vram
     // main::@8

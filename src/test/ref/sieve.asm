@@ -54,7 +54,7 @@ main: {
     .label s = 8
     .label i_1 = 4
     .label __33 = $1b
-    // *D018 = toD018(SCREEN, 0x1800)
+    // *D018 = toD018(SCREEN, (char*)0x1800)
     //Show lower case font
     lda #toD0181_return
     sta D018

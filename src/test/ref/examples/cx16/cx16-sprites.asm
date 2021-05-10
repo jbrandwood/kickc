@@ -288,7 +288,7 @@ main: {
     // Copy 8* sprite attributes to VRAM    
     .label vram_sprite_attr = $a
     .label s = 9
-    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
+    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, (char*)<SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
   // Copy sprite data to VRAM
     lda #<$40*$40
     sta.z memcpy_to_vram.num
@@ -304,7 +304,7 @@ main: {
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
-    // memcpy_to_vram((char)>VERA_PALETTE, <VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
+    // memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
   // Copy sprite palette to VRAM
     lda #<$200
     sta.z memcpy_to_vram.num

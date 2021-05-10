@@ -2845,7 +2845,7 @@ gfx_init_plane_fill: {
     lda.z __5+1
     and #>$3fff
     sta.z __5+1
-    // $4000 + (<plane_addr & $3fff)
+    // byte* gfxb = (byte*)$4000 + (<plane_addr & $3fff)
     clc
     lda.z gfxb
     adc #<$4000

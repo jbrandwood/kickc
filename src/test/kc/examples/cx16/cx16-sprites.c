@@ -53,9 +53,9 @@ struct VERA_SPRITE SPRITE_ATTR = { <(SPRITE_PIXELS_VRAM/32)|VERA_SPRITE_8BPP, 32
 
 void main() {
     // Copy sprite data to VRAM
-    memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64);
+    memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, (char*)<SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64);
     // Copy sprite palette to VRAM
-    memcpy_to_vram((char)>VERA_PALETTE, <VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200);
+    memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200);
     // Copy 8* sprite attributes to VRAM    
     char* vram_sprite_attr = <VERA_SPRITE_ATTR;
     for(char s=0;s<NUM_SPRITES;s++) {

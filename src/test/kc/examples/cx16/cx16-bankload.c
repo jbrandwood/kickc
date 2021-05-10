@@ -90,7 +90,7 @@ void main() {
     SPRITE_ATTR.ADDR = <(VRAM_SPRITE/32)|VERA_SPRITE_4BPP;
     SPRITE_ATTR.X = 100;
     SPRITE_ATTR.Y = 100;
-    memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
+    memcpy_to_vram((char)>VERA_SPRITE_ATTR, (char*)<VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
 
     // Enable sprites
     *VERA_CTRL &= ~VERA_DCSEL;

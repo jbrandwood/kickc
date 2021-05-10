@@ -95,7 +95,7 @@ void bitmap_clear() {
     word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale];
     dword count = mul16u(hdelta,vdelta);
     char vbank = <(>__bitmap_address);
-    void* vdest = <__bitmap_address;
+    void* vdest = (void*)   <__bitmap_address;
     memset_vram(vbank, vdest, 0, count);
 }
 

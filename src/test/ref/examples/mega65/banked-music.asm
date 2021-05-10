@@ -153,7 +153,7 @@ main: {
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
-    // memcpy_dma4(1, 0x0000, 0, upperCodeData, MUSIC_END-MUSIC)
+    // memcpy_dma4(1, (void*)0x0000, 0, upperCodeData, MUSIC_END-MUSIC)
     // Transfer banked code/data to upper memory ($10000)
     jsr memcpy_dma4
     // memoryRemapBlock(0x40, 0x100)

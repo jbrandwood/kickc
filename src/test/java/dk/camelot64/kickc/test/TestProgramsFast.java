@@ -11,7 +11,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testProcedureDeclare10() throws IOException {
-      compileAndCompare("procedure-declare-10.c", log());
+      compileAndCompare("procedure-declare-10.c");
    }
 
    @Test
@@ -1413,7 +1413,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException {
-      assertError("function-as-array.c", "Dereferencing a non-pointer type void(byte) ");
+      assertError("function-as-array.c", "Dereferencing a non-pointer type void(byte)");
    }
 
    //@Test

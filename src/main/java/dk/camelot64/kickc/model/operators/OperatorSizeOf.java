@@ -20,7 +20,7 @@ public class OperatorSizeOf extends OperatorUnary {
 
    @Override
    public SymbolType inferType(SymbolType operandType) {
-      return SymbolType.BYTE;
+      return SymbolType.WORD;
    }
 
 }

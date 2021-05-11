@@ -1,7 +1,7 @@
 // Test void pointer - issues when assigning returns from malloc()
 
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 
 void main() {
     byte* buf1 = malloc();
@@ -13,7 +13,7 @@ void main() {
 }
 
 
-byte* heap_head = 0xc000;
+byte* heap_head = (byte*)0xc000;
 
 void* malloc() {
     heap_head++;

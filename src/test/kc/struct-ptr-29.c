@@ -15,7 +15,7 @@ void main() {
     print_person(&persons[1]);
 }
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 char DIGIT[] = "0123456789";
 

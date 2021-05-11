@@ -4,7 +4,7 @@
 
 char MESSAGE[] = "hello\nworld\\";
 
-char* const memA = 0xff;
+char* const memA = (char*)0xff;
 
 void main() {
     byte i=0;

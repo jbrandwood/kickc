@@ -1,6 +1,6 @@
 // A Minimal test of boolean constants.
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     bool_const_if();

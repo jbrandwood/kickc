@@ -6,11 +6,11 @@
 #include <c64-print.h>
 
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 const uint16_t COUNT = 16384;           /* Up to what number? */
 const uint8_t SQRT_COUNT = 128;         /* Sqrt of COUNT */
-uint8_t* sieve = 0x1000;
+uint8_t* sieve = (uint8_t*)0x1000;
 
 void main (void) {
     //Show lower case font

@@ -2,7 +2,7 @@
 
 void main() {
 
-    byte* screen = $400;
+    byte* screen = (char*)$400;
 
     byte* text;
     for(byte i: 0..20) {

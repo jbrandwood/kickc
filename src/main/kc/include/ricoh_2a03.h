@@ -116,7 +116,7 @@ struct RICOH_2A03 {
 //  ------+-----+---------------------------------------------------------------
 // Side effects	After 3 or 4 CPU clock cycles*, the timer is reset.
 // If the mode flag is set, then both "quarter frame" and "half frame" signals are also generated.
-char * const FR_COUNTER = 0x4017;
+char * const FR_COUNTER = (char*)0x4017;
 
 
 

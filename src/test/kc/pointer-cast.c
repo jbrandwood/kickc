@@ -1,9 +1,9 @@
 // Tests casting pointer types to other pointer types
 
-byte* ub_screen = $400;
-signed byte* sb_screen = $428;
-word* uw_screen = $450;
-signed word* sw_screen = $478;
+byte* ub_screen = (byte*)$400;
+signed byte* sb_screen = (signed byte*)$428;
+word* uw_screen = (word*)$450;
+signed word* sw_screen = (signed word*)$478;
 
 byte ub = 41;
 signed byte sb = -41;

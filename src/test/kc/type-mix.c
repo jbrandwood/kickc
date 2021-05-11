@@ -3,7 +3,7 @@
 void main() {
 
     signed word w = 0;
-    byte* SCREEN = $400;
+    byte* SCREEN = (char*)$400;
 
     for (byte i: 0..10) {
         w = w - 12;

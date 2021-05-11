@@ -3,7 +3,7 @@
 #include <multiply.h>
 #include <fastmultiply.h>
 
-byte* BG_COLOR = $d021;
+byte* BG_COLOR = (char*)$d021;
 
 void main() {
     *BG_COLOR = 5;
@@ -96,7 +96,7 @@ void mulf_init_asm() {
         bne !-
     }
     // Ensure the ASM tables are not detected as unused by the optimizer
-    byte* mem = $ff;
+    byte* mem = (byte*)$ff;
     *mem = *mula_sqr1_lo;
     *mem = *mula_sqr1_hi;
     *mem = *mula_sqr2_lo;

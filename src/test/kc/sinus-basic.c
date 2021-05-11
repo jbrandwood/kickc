@@ -4,7 +4,7 @@
 void main() {
     byte f_i[] = {0, 0, 0, 0, 0};
     byte f_127[] = {0, 0, 0, 0, 0};
-    byte* const f_2pi = $e2e5;
+    byte* const f_2pi = (byte*)$e2e5;
     setFAC(1275);
     divFACby10();
     setMEMtoFAC(f_127);

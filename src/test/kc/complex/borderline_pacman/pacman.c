@@ -28,35 +28,35 @@
 
 // Graphics Bank 1
 // Address of the sprites
-char * const BANK_1 = 0x4000;
+char * const BANK_1 = (char*)0x4000;
 // Address of the sprites
-char * const SPRITES_1 = 0x6000;
+char * const SPRITES_1 = (char*)0x6000;
 // Use sprite pointers on all screens (0x43f8, 0x47f8, ...)
-char * const SCREENS_1  = 0x4000;
+char * const SCREENS_1  = (char*)0x4000;
 // Graphics Bank 2
 // Address of the sprites
-char * const BANK_2 = 0xc000;
+char * const BANK_2 = (char*)0xc000;
 // Address of the sprites
-char * const SPRITES_2 = 0xe000;
+char * const SPRITES_2 = (char*)0xe000;
 // Use sprite pointers on all screens (0x43f8, 0x47f8, ...)
-char * const SCREENS_2  = 0xc000;
+char * const SCREENS_2  = (char*)0xc000;
 
 // The location where the logic code will be located before merging
-char * const LOGIC_CODE_UNMERGED = 0xe000;
+char * const LOGIC_CODE_UNMERGED = (char*)0xe000;
 // The location where the screen raster code will be located before merging
-char * const RASTER_CODE_UNMERGED = 0x6000;
+char * const RASTER_CODE_UNMERGED = (char*)0x6000;
 // The location where the screen raster code will be located when running
-char * const RASTER_CODE = 0x8000;
+char * const RASTER_CODE = (char*)0x8000;
 
 // Address of the (decrunched) splash screen
-char * const SPLASH = 0x4000;
+char * const SPLASH = (char*)0x4000;
 // Address for the victory graphics
-char * const WIN_GFX = 0xa700;
+char * const WIN_GFX = (char*)0xa700;
 // Address for the gameover graphics
-char * const GAMEOVER_GFX = 0xa700;
+char * const GAMEOVER_GFX = (char*)0xa700;
 
 // Address used by (decrunched) tiles
-char * const LEVEL_TILES = 0x4800;
+char * const LEVEL_TILES = (char*)0x4800;
 char * const TILES_LEFT = LEVEL_TILES+0x0a00;
 char * const TILES_RIGHT = LEVEL_TILES+0x0a80;
 char * const TILES_TYPE = LEVEL_TILES+0x0b00;
@@ -72,11 +72,11 @@ enum TILE_TYPE {
 // Address used for table containing available directions for all tiles
 // TABLE LEVEL_TILES_DIRECTIONS[64*37]
 // The level data is organized as 37 rows of 64 bytes. Each row is 50 bytes containing DIRECTION bits plus 14 unused bytes to achieve 64-byte alignment.
-char * const LEVEL_TILES_DIRECTIONS = 0x3e00;
+char * const LEVEL_TILES_DIRECTIONS = (char*)0x3e00;
 
 // Address of the (decrunched) splash screen
 const char BOB_ROW_SIZE = 0x80;
-char * const BOB_MASK_LEFT = 0x5400;
+char * const BOB_MASK_LEFT = (char*)0x5400;
 char * const BOB_MASK_RIGT = BOB_MASK_LEFT+BOB_ROW_SIZE*6;
 char * const BOB_PIXEL_LEFT = BOB_MASK_LEFT+BOB_ROW_SIZE*12;
 char * const BOB_PIXEL_RIGT = BOB_MASK_LEFT+BOB_ROW_SIZE*18;
@@ -87,7 +87,7 @@ char * const BOB_PIXEL_RIGT = BOB_MASK_LEFT+BOB_ROW_SIZE*18;
 // - 0xNN00-0xNN4A : low-byte of the graphics for (X-column, Y-fine)
 // - 0xNN50-0xNN9A : high-byte of the graphics for (X-column, Y-fine)
 // - 0xNNA0-0xNNEA : index into RENDER_YPOS_INC for incrementing the y-pos.
-char * const RENDER_INDEX = 0xb600;
+char * const RENDER_INDEX = (char*)0xb600;
 
 #include "pacman-render.c"
 #include "pacman-logic-data.c"
@@ -112,12 +112,12 @@ volatile char bottom_sprites_mc;
 #pragma data_seg(Data)
 
 // Upper memory location used during decrunching
-char * const INTRO_MUSIC_CRUNCHED_UPPER = 0xa700;
+char * const INTRO_MUSIC_CRUNCHED_UPPER = (char*)0xa700;
 // Size of the crunched music
 const unsigned int INTRO_MUSIC_CRUNCHED_SIZE = 0x0600;
 
 // Address of the music during run-time
-char* const INTRO_MUSIC = 0x3000;
+char* const INTRO_MUSIC = (char*)0x3000;
 // Pointer to the music init routine
 void()* const musicInit = (void()*) INTRO_MUSIC+0x00;
 // Pointer to the music play routine

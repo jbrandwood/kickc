@@ -1,5 +1,5 @@
-byte* SCREEN = $0400;
-byte* SCROLL = $d016;
+byte* SCREEN = (byte*)$400;
+byte* SCROLL = (byte*)$d016;
 byte TEXT[] = "01234567";
 
 void main() {

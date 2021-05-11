@@ -5,7 +5,7 @@
 extern unsigned int SCREEN;
 
 // The actual declaration with another
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 char idx;
 
 // And a little code using them

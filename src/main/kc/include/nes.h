@@ -8,13 +8,13 @@
 #include <ricoh_2a03.h>
 
 // NES Picture Processing Unit (PPU)
-struct RICOH_2C02 * PPU = 0x2000;
+struct RICOH_2C02 * PPU = (struct RICOH_2C02 *)0x2000;
 
 // NES CPU and audion processing unit (APU)
-struct RICOH_2A03 * APU = 0x4000;
+struct RICOH_2A03 * APU = (struct RICOH_2A03 *)0x4000;
 
 // Pointer to the start of RAM memory
-char * const MEMORY = 0;
+char * const MEMORY = (char *)0;
 
 // Sprite Object Attribute Memory Structure
 // The memory layout of a sprite in the PPU's OAM memory

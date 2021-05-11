@@ -1,7 +1,7 @@
 // Tests that identical strings are consolidated
 byte rex1[] = "rex";
 
-byte* screen = $400;
+byte* screen = (char*)$400;
 
 void main() {
     byte rex2[] = "rex";

@@ -1,7 +1,7 @@
 // Tests creating and assigning pointers to non-args return with function value
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
 
     byte()* f;
 
@@ -18,13 +18,13 @@ void main() {
 }
 
 byte fn1() {
-    byte* const BORDER_COLOR = $d020;
+    byte* const BORDER_COLOR = (char*)$d020;
     (*BORDER_COLOR)++;
     return *BORDER_COLOR;
 }
 
 byte fn2() {
-    byte* const BG_COLOR = $d021;
+    byte* const BG_COLOR = (char*)$d021;
     (*BG_COLOR)++;
     return *BG_COLOR;
 }

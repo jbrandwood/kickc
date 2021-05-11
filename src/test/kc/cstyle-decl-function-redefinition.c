@@ -4,7 +4,7 @@
 // Declaration of a sum-function
 char sum(char a, char b);
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 // Definition of main()
 void main() {

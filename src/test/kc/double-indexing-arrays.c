@@ -4,8 +4,8 @@ byte MAPDATA[1000];
 byte COLORMAP1[256];
 byte COLORMAP2[256];
 
-byte* SCREEN = $0400;
-byte* COLS = $d800;
+byte* SCREEN = (byte*)$0400;
+byte* COLS = (byte*)$d800;
 
 void main() {
     for (byte x: 0..200) {

@@ -5,7 +5,7 @@ void main() {
     set_process_name("keyboard");
 }
 
-char* process_name = 0x0400;
+char* process_name = (char*)0x0400;
 
 void set_process_name(char* name) {
     for(signed int j = 0; j < 17; j++){

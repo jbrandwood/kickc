@@ -4,8 +4,8 @@ const byte GREEN = 5;
 
 void main() {
    byte colseq[] = { WHITE, RED, GREEN };
-   byte* screen = $0400;
-   byte* cols = $d800;
+   byte* screen = (byte*)$400;
+   byte* cols = (byte*)$d800;
    byte j = 0;
    for( byte i : 0..39) {
       screen[i] = '*';

@@ -11,7 +11,7 @@ byte* SCREEN_DIST = malloc(1000);
 // Screen containing angle to center
 byte* SCREEN_ANGLE= malloc(1000);
 // Screen containing angle to center
-byte* const SCREEN_FILL = 0x0400;
+byte* const SCREEN_FILL = (char*)0x0400;
 
 // Char to fill with
 const byte FILL_CHAR = '*';

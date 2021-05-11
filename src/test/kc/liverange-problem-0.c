@@ -3,7 +3,7 @@
 // Problem is that outside main() scope statements have zero call-paths and then isStatementAllocationOverlapping() never checks liveranges
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
 
-byte* MEM = 0x0400;
+byte* MEM = (char*)0x0400;
 byte* malloc() {
     return ++MEM;
 }

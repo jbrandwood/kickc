@@ -5,7 +5,7 @@ struct Point {
     char y;
 };
 
-struct Point * const SCREEN = 0x0400;
+struct Point * const SCREEN = (struct Point *)0x0400;
 
 void main() {
     // Initialize classic struct

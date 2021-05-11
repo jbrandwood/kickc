@@ -4,7 +4,7 @@ byte b;
 word w;
 byte* ptr;
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     SCREEN[0] = b;

@@ -1,7 +1,7 @@
 // Demonstrates a problem where wrong alive ranges result in clobbering an alive variable
 // The compiler does not realize that A is alive in the statement b=b-a - and thus can clobber it.
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     char a = 128;

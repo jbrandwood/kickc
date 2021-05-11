@@ -131,10 +131,6 @@ public class Initializers {
             }
          }
       }
-      // Add pointer cast to integers
-      if(typeSpec.getType() instanceof SymbolTypePointer && initValue instanceof ConstantValue && SymbolType.isInteger(((ConstantValue) initValue).getType(program.getScope()))) {
-         initValue = new ConstantCastValue(typeSpec.getType(), (ConstantValue) initValue);
-      }
       return initValue;
    }
 

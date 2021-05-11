@@ -6,10 +6,10 @@
 char MESSAGE[] = "hello\nworld";
 char CH = '\n';
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
-    byte* line = 0x0400;
+    byte* line = (char*)0x0400;
     byte* cursor = line;
     byte* msg = MESSAGE;
 

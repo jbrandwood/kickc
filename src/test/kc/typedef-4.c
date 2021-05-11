@@ -1,6 +1,6 @@
 // Typedef const/volatile type
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 typedef const char C;
 typedef volatile char V;

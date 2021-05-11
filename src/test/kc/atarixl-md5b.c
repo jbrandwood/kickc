@@ -1,12 +1,12 @@
 // 8 bit converted md5 calculator
 
 void main() {
-    for(char* s=0x0400;s<0x0800;s++) *s=' ';
+    for(char* s=(char*)0x0400;s<0x0800;s++) *s=' ';
 	md5();
 	for(;;) ;
 }
 
-__ma char * line = 0x0400;
+__ma char * line = (char*)0x0400;
 __ma char idx = 0;
 char HEX[] = "0123456789abcdef";
 

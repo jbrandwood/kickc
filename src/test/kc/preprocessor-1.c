@@ -1,7 +1,7 @@
 // Test the preprocessor
 // #define's with complex token bodies
 
-#define USE_SCREEN_DEFAULT char * const SCREEN = 0x0400;
+#define USE_SCREEN_DEFAULT char * const SCREEN = (char*)0x0400;
 #define START_MAIN void main() {
 #define END_MAIN }
 

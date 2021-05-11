@@ -25,7 +25,7 @@ struct List[] lists = { { 1, { 2, 3, 4 }}, { 5, { 6, 7, 8 }}, { 9, { 10, 11, 12 
 */
 
 void main() {
-    char* const SCREEN = 0x0400;
+    char* const SCREEN = (char*)0x0400;
     char idx = 0;
     for ( char i: 0..2) {
         SCREEN[idx++] = points[i].x;

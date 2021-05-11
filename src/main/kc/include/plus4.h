@@ -13,29 +13,29 @@
 #endif
 // The processor port
 // Used for serial I/O and controlling the cassette
-struct MOS7501_PORT * const PROCESSOR_PORT = 0x00;
+struct MOS7501_PORT * const PROCESSOR_PORT = (struct MOS7501_PORT *)0x00;
 
 // Default address of screen luminance/color matrix
-char * const DEFAULT_COLORRAM = 0x0800;
+char * const DEFAULT_COLORRAM = (char*)0x0800;
 
 // Default address of screen character matrix
-char * const DEFAULT_SCREEN = 0x0c00;
+char * const DEFAULT_SCREEN = (char*)0x0c00;
 
 // The ACIA used for RS232 (only on the Plus/4)
-struct MOS6551_ACIA * const ACIA = 0xfd00;
+struct MOS6551_ACIA * const ACIA = (struct MOS6551_ACIA *)0xfd00;
 
 // User Port PIO (P0-P7)
 // Bit 2 (P2) is used to detect if play on cassette is pressed (CST sense)
-struct MOS6529_PIO * const USER_PORT = 0xfd10;
+struct MOS6529_PIO * const USER_PORT = (struct MOS6529_PIO *)0xfd10;
 
 // Keyboard Port PIO (P0-P7)
 // The input latch is part of the TED.
-struct MOS6529_PIO * const KEYBOARD_PORT = 0xfd30;
+struct MOS6529_PIO * const KEYBOARD_PORT = (struct MOS6529_PIO *)0xfd30;
 
 // ROM configuration for the machine, which normally has the BASIC and kernal ROMs enabled.
 // The ROM configuration is adjusted by writing to the registers (the value is irrelevant).
 // The upper portion of the kernal ROM at $FC00-$FCFF is always enabled no matter what the memory configuration, as are the I/O registers.
-struct {
+struct PLUS4_ROM_BANKING {
     // $FDD0 enables or disables BASIC,
     char BASIC;
     // $FDD1 the low function ROM,
@@ -50,10 +50,12 @@ struct {
     char FUNCTION_HIGH;
     // $FDD6 the high cartridge ROM.
     char CARTRIDGE_HIGH;
-} * const ROM_BANKING = 0xfdd0;
+};
+
+struct PLUS4_ROM_BANKING * const ROM_BANKING = (struct PLUS4_ROM_BANKING *)0xfdd0;
 
 // The TED chip controlling video and sound on the Plus/4 and Commodore 16
-struct MOS7360_TED * const TED = 0xff00;
+struct MOS7360_TED * const TED = (struct MOS7360_TED *)0xff00;
 
 
 

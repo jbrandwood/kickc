@@ -1,9 +1,9 @@
 
-byte* BORDER_COLOR = $d020;
-byte* RASTER = $d012;
+byte* BORDER_COLOR = (byte*)$d020;
+byte* RASTER = (byte*)$d012;
 byte DARK_GREY = $b;
 byte BLACK = 0;
-void()** const  KERNEL_IRQ = $0314;
+void()** const  KERNEL_IRQ = (void()**)$0314;
 
 
 void main() {

@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testSizeOfProblem() throws IOException {
+      compileAndCompare("sizeof-problem.c");
+   }
+
+   @Test
    public void testProcedureDeclare0() throws IOException {
       compileAndCompare("procedure-declare-0.c");
    }
@@ -1982,7 +1987,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testStructPtr12() throws IOException {
-      compileAndCompare("struct-ptr-12.c", log());
+      compileAndCompare("struct-ptr-12.c");
    }
 
    @Test

@@ -1,7 +1,7 @@
 #include <c64.h>
 #include <string.h>
 
-char* SCREEN = $400;
+char* SCREEN = (char*)$400;
 __address(0x2000) char LOGO[6*40*8] = kickasm(resource "logo.png") {{
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)

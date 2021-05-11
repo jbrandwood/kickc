@@ -1,4 +1,4 @@
-byte* screen = $0400;
+byte* screen = (byte*)$400;
 
 void main() {
   byte s1=sum(1,2);

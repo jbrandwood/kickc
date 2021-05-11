@@ -1,7 +1,7 @@
 // Minimal range based for() loop
 
-char* SCREEN1 = 0x0400;
-char* SCREEN2 = 0x0500;
+char* SCREEN1 = (char*)0x0400;
+char* SCREEN2 = (char*)0x0500;
 
 void main() {
     for(char i : 0..255) {

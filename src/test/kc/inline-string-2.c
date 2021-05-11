@@ -15,7 +15,7 @@ void print_msg(byte idx) {
     print(msg);
 }
 
-byte* screen = $0400;
+byte* screen = (byte*)$400;
 void print(byte* msg) {
     while(*msg) {
         *(screen++) = *(msg++);

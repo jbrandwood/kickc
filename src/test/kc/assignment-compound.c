@@ -1,8 +1,8 @@
 // Test compound assignment operators
 byte ref[] = { 3, 4, 3, 18, 9, 1, 4, 2, 4, 5, 1 , 0};
-byte* screen1 = $400;
+byte* screen1 = (char*)$400;
 byte* screen2 = screen1+40;
-byte* cols = $d800;
+byte* cols = (char*)$d800;
 byte GREEN = 5;
 byte RED = 2;
 

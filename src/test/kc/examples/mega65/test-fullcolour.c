@@ -7,7 +7,7 @@
 #include <string.h>
 
 // The screen address (40*25=0x03e8 bytes)
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 // The charset address (45*32*8=0x2d00 bytes)
 char * const CHARSET = 0x2000;
 

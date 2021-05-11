@@ -3,7 +3,7 @@
 
 #pragma cpu(CSG65CE02)
 
-signed char* const SCREEN = 0x0400;
+signed char* const SCREEN = (signed char*)0x0400;
 
 void main() {
     signed char a = SCREEN[0];

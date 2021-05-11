@@ -3,7 +3,7 @@
 
 #pragma cpu(CSG65CE02)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     for(register(Z) char i=0;i<100;i++)

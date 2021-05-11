@@ -2,7 +2,7 @@
 // Unsupported escape sequence
 
 char MESSAGE[] = "qwe\qasd";
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     byte i=0;

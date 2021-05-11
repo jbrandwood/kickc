@@ -4,11 +4,11 @@
 #include <string.h>
 #include <multiply.h>
 
-byte* const screen = $400;
-byte* const charset = $2000;
-byte* const tileset = $2800;
-byte* const colors = $d800;
-byte* const level_address = $3000;
+byte* const screen = (byte*)$400;
+byte* const charset = (byte*)$2000;
+byte* const tileset = (byte*)$2800;
+byte* const colors = (byte*)$d800;
+byte* const level_address = (byte*)$3000;
 
 void main() {
     init();

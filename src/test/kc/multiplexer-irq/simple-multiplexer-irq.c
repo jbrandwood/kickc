@@ -2,7 +2,7 @@
 #include <c64.h>
 #include <c64-multiplexer.h>
 // Location of screen & sprites
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 char __align(0x40) SPRITE[0x40] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))

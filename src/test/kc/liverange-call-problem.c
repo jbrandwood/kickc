@@ -9,7 +9,7 @@ void main() {
     incw2();
     incw1();
     incw2();
-    word* SCREEN = $400;
+    word* SCREEN = (char*)$400;
     SCREEN[0] = w1;
     SCREEN[2] = w2;
 }

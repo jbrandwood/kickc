@@ -94,7 +94,7 @@ __address(0x4000) char MUSIC[] = kickasm(resource "Cybernoid_II_4000.sid") {{
     .fill music.size, music.getData(i)
 }};
 // Address after the end of the music
-char * const MUSIC_END = 0x5200;
+char * const MUSIC_END = (char*)0x5200;
 // Pointer to the music init routine
 void()* musicInit = (void()*) MUSIC;
 // Pointer to the music play routine

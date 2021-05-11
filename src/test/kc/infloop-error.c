@@ -1,5 +1,5 @@
 // Results in infinite compile loop as the compiler keeps trying to remove the same (empty) alias
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 void main() {
 	byte min = $ff;
 	byte max = $0;

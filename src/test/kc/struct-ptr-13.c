@@ -5,13 +5,13 @@ struct Point {
     byte y;
 };
 
-struct Point* points = 0x1000;
+struct Point* points = (struct Point*)0x1000;
 
 void main() {
     points->x += 5;
     points->y += 5;
 
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (byte*)0x0400;
     SCREEN[0] = points->x;
     SCREEN[1] = points->y;
 }

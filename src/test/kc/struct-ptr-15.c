@@ -20,7 +20,7 @@ void main() {
     circles[1].center.y = 9;
     circles[1].radius = 15;
 
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     byte idx =0;
     struct Circle* ptr = circles;
     for(byte i:0..1) {

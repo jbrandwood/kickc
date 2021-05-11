@@ -14,8 +14,8 @@ char standard[] = "abcABC0";
 
 
 void main() {
-    char* const SCREEN = 0x0400;
-    char * const D018 = 0xd018;
+    char* const SCREEN = (char*)0x0400;
+    char * const D018 = (char*)0xd018;
     *D018 = 0x16;
     for( char i: 0..7 ) {
         (SCREEN+40*0)[i] = petscii_mixed[i];

@@ -6,8 +6,8 @@
 #include <c64.h>
 #include <c64-print.h>
 
-byte* const CHARSET = 0x2000;
-byte* const SCREEN = 0x2800;
+byte* const CHARSET = (byte*)0x2000;
+byte* const SCREEN = (byte*)0x2800;
 
 const byte SCREEN_REF[1000] = kickasm {{
     .for(var y=-12;y<=12;y++)

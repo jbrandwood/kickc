@@ -152,46 +152,46 @@ const char BORDER_YPOS_BOTTOM=250;
 // The offset of the sprite pointers from the screen start address
 const unsigned int OFFSET_SPRITE_PTRS = 0x3f8;
 
-char * const SPRITES_XPOS = $d000;
-char * const SPRITES_YPOS = $d001;
-char * const SPRITES_XMSB = $d010;
-char * const SPRITES_COLOR = $d027;
-char*  const SPRITES_ENABLE = $d015;
-char*  const SPRITES_EXPAND_Y = $d017;
-char*  const SPRITES_PRIORITY = $d01b;
-char*  const SPRITES_MC = $d01c;
-char*  const SPRITES_EXPAND_X = $d01d;
+char * const SPRITES_XPOS = (char*)$d000;
+char * const SPRITES_YPOS = (char*)$d001;
+char * const SPRITES_XMSB = (char*)$d010;
+char * const SPRITES_COLOR = (char*)$d027;
+char*  const SPRITES_ENABLE = (char*)$d015;
+char*  const SPRITES_EXPAND_Y = (char*)$d017;
+char*  const SPRITES_PRIORITY = (char*)$d01b;
+char*  const SPRITES_MC = (char*)$d01c;
+char*  const SPRITES_EXPAND_X = (char*)$d01d;
 
-char*  const RASTER = $d012;
-char*  const BORDER_COLOR = $d020;
-char*  const BG_COLOR = $d021;
-char*  const BG_COLOR0 = $d021;
-char*  const BG_COLOR1 = $d022;
-char*  const BG_COLOR2 = $d023;
-char*  const BG_COLOR3 = $d024;
-char*  const SPRITES_MC1 = $d025;
-char*  const SPRITES_MC2 = $d026;
+char*  const RASTER = (char*)$d012;
+char*  const BORDER_COLOR = (char*)$d020;
+char*  const BG_COLOR = (char*)$d021;
+char*  const BG_COLOR0 = (char*)$d021;
+char*  const BG_COLOR1 = (char*)$d022;
+char*  const BG_COLOR2 = (char*)$d023;
+char*  const BG_COLOR3 = (char*)$d024;
+char*  const SPRITES_MC1 = (char*)$d025;
+char*  const SPRITES_MC2 = (char*)$d026;
 
-char*  const VICII_CONTROL1 = $d011;
-char*  const D011 = $d011;
+char*  const VICII_CONTROL1 = (char*)$d011;
+char*  const D011 = (char*)$d011;
 const char VICII_RST8 = %10000000;
 const char VICII_ECM =  %01000000;
 const char VICII_BMM =  %00100000;
 const char VICII_DEN =  %00010000;
 const char VICII_RSEL = %00001000;
 
-char*  const VICII_CONTROL2 = $d016;
-char*  const D016 = $d016;
+char*  const VICII_CONTROL2 = (char*)$d016;
+char*  const D016 = (char*)$d016;
 const char VICII_MCM =  %00010000;
 const char VICII_CSEL = %00001000;
 
-char*  const VICII_MEMORY = $d018;
-char*  const D018 = $d018;
+char*  const VICII_MEMORY = (char*)$d018;
+char*  const D018 = (char*)$d018;
 
 // VIC II IRQ Status Register
-char*  const IRQ_STATUS = $d019;
+char*  const IRQ_STATUS = (char*)$d019;
 // VIC II IRQ Enable Register
-char*  const IRQ_ENABLE = $d01a;
+char*  const IRQ_ENABLE = (char*)$d01a;
 
 // Bits for the VICII IRQ Status/Enable Registers
 const char IRQ_RASTER = %00000001;

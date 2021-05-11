@@ -7,13 +7,13 @@
 const char CYCLES_PER_SCANLINE = 76;
 
 // The TIA WSYNC register (for access from inline ASM)
-char* const TIA_WSYNC = 0x02;
+char* const TIA_WSYNC = (char*)0x02;
 // The TIA RESP0 register (for access from inline ASM)
-char* const TIA_RESP0 = 0x10;
+char* const TIA_RESP0 = (char*)0x10;
 // The TIA RESP1 register (for access from inline ASM)
-char* const TIA_RESP1 = 0x11;
+char* const TIA_RESP1 = (char*)0x11;
 // The TIA HMP0 register (for access from inline ASM)
-char* const TIA_HMP0 = 0x20;
+char* const TIA_HMP0 = (char*)0x20;
 
 struct ATARI_TIA_WRITE {
     // $00   0000 00x0   Vertical Sync Set-Clear

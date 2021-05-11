@@ -3,7 +3,7 @@
 void main() {
 
     // RValue pointer expression (constant)
-    byte* screen = $0400;
+    byte* screen = (byte*)$400;
     byte a = *(screen+80);
 
     // RValue pointer expression (variable)
@@ -28,7 +28,7 @@ void main() {
     --*(byte*)($d000+$21);
 
     // Increment on a const named pointer
-    byte* BG_COLOR = $d020;
+    byte* BG_COLOR = (char*)$d020;
     ++*BG_COLOR;
 
 

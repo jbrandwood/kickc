@@ -1,6 +1,6 @@
 // Test minimal inline function
 
-byte* screen = $0400;
+byte* screen = (byte*)$400;
 
 void main() {
     screen[0] = sum(2, 1);

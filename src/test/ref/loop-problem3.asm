@@ -16,7 +16,7 @@ main: {
     lda #>$400
     sta.z sc+1
   __b1:
-    // for(char* sc = 0x0400;sc<0x0800; sc++)
+    // for(char* sc = (char*)0x0400;sc<0x0800; sc++)
     lda.z sc+1
     cmp #>$800
     bcc __b2
@@ -33,7 +33,7 @@ main: {
     clc
     adc #1
     sta (sc),y
-    // for(char* sc = 0x0400;sc<0x0800; sc++)
+    // for(char* sc = (char*)0x0400;sc<0x0800; sc++)
     inc.z sc
     bne !+
     inc.z sc+1

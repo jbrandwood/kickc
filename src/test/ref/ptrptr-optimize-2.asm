@@ -11,7 +11,7 @@
 .segment Code
 main: {
     .label screen = 2
-    // byte* screen = 0x400
+    // byte* screen = (char*)0x400
     lda #<$400
     sta.z screen
     lda #>$400

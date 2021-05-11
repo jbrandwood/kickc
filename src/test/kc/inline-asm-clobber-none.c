@@ -1,5 +1,5 @@
 // Tests that inline ASM JSR clobbers all registers
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 void main() {
     for( byte i:0..10) {
         for( byte j:0..10) {

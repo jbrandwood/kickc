@@ -1,6 +1,6 @@
 // Test that inline interrupts not allowed
 
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 
 void main() {
     SCREEN[0]++;

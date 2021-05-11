@@ -3,9 +3,9 @@
 #include <c64.h>
 #include <string.h>
 
-byte* const CHARSET = 0x2000;
-byte* const SCREEN = 0x0400;
-byte* const SCREEN_COPY = 0x2400;
+byte* const CHARSET = (byte*)0x2000;
+byte* const SCREEN = (byte*)0x0400;
+byte* const SCREEN_COPY = (byte*)0x2400;
 
 void main() {
     *D018 = toD018(SCREEN_COPY, CHARSET);

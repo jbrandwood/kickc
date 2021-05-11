@@ -5,7 +5,7 @@ struct Point {
     byte y;
 };
 
-struct Point* POINTS = 0x1000;
+struct Point* POINTS = (struct Point*)0x1000;
 
 void main() {
     // Fill points
@@ -17,7 +17,7 @@ void main() {
     }
 
     // Print points
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     byte idx = 0;
     points = POINTS;
     for( byte i: 0..3) {

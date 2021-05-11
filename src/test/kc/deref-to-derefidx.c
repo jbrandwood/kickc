@@ -8,7 +8,7 @@ void main() {
     print(msg2);
 }
 
-byte* const SCREEN = $0400;
+byte* const SCREEN = (byte*)$0400;
 byte idx=0;
 
 void print(byte* m) {

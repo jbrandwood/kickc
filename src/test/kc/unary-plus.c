@@ -2,8 +2,8 @@
 
 void main() {
 
-    char* SCREEN = 0x0400;
-    int* SCREEN2 = 0x0428;
+    char* SCREEN = (char*)0x0400;
+    int* SCREEN2 = (int*)0x0428;
 
     char i = +3;
     SCREEN[0] = i;

@@ -1,5 +1,5 @@
 byte cnt = 0;
-byte SCREEN[256]=$0400;
+byte SCREEN[256]=(byte*)$0400;
 
 void main() {
   inccnt();

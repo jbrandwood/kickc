@@ -1,7 +1,7 @@
 /* Textbox routine with word wrap for KickC by Scan/Desire */
 #include <c64.h>
 
-byte* const screen = $0400;
+byte* const screen = (byte*)$400;
 const byte text[] = "this is a small test with word wrap, if a word is too long it moves it to the next line. isn't that supercalifragilisticexpialidocious? i think it's cool!";
 const byte text2[] = "textbox by scan of desire";
 

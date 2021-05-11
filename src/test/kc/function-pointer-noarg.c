@@ -1,7 +1,7 @@
 // Tests creating pointers to non-args no-return functions
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
 
     void()* f;
     f = &fn1;
@@ -14,11 +14,11 @@ void main() {
 }
 
 void fn1() {
-    byte* const BORDER_COLOR = $d020;
+    byte* const BORDER_COLOR = (char*)$d020;
     (*BORDER_COLOR)++;
 }
 
 void fn2() {
-    byte* const BG_COLOR = $d021;
+    byte* const BG_COLOR = (char*)$d021;
     (*BG_COLOR)++;
 }

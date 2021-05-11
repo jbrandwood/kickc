@@ -1,7 +1,7 @@
 // Test that a complex recursion results in a CompileError
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     byte f = fa(8);
     *screen = f;
 }

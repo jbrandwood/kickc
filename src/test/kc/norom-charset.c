@@ -1,7 +1,7 @@
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
-byte* VICII_MEMORY = $d018;
-byte* SCREEN = $400;
-byte* CHARSET = $3000;
+byte* VICII_MEMORY = (byte*)$d018;
+byte* SCREEN = (byte*)$400;
+byte* CHARSET = (byte*)$3000;
 
 // Stores chars as 15 bits (in 2 bytes) specifying the 3x5
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0

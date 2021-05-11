@@ -2,7 +2,7 @@
 
 byte call = 0;
 
-byte* screen = $0400;
+byte* screen = (byte*)$400;
 void main() {
     screen[0] = 'a';
     if(call!=0) {

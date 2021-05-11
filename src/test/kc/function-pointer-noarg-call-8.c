@@ -5,7 +5,7 @@ void do10(void()* fn) {
         (*fn)();
 }
 
-byte* const SCREEN = $0400;
+byte* const SCREEN = (byte*)$0400;
 
 const byte msg1[] = "hello ";
 const byte msg2[] = "world ";

@@ -1,6 +1,6 @@
 // Test access to __ma variable from inline ASM
 
-char * const SCREEN = 0x0400; 
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     __ma char value = 0;

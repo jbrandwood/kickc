@@ -1,7 +1,7 @@
 // Example of inline kickasm in a function
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
     *(SCREEN+1000) = 0;
 
     kickasm {{

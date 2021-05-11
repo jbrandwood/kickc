@@ -3,7 +3,7 @@
 byte val = 0;
 
 void main() {
-    byte* const SCREEN1 = 0x0400;
+    byte* const SCREEN1 = (char*)0x0400;
     byte* const SCREEN2 = SCREEN1+40;
     byte idx = 0;
     SCREEN1[idx] = val;

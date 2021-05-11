@@ -69,7 +69,7 @@ __ma word conio_rowskip = 0;
 // Set initial cursor position
 void conio_x16_init() {
     // Position cursor at current line
-    char * const BASIC_CURSOR_LINE = 0xD6;
+    char * const BASIC_CURSOR_LINE = (char*)0xD6;
     char line = *BASIC_CURSOR_LINE;
     vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16);
     screensize(&conio_screen_width, &conio_screen_height);
@@ -88,8 +88,8 @@ unsigned char kbhit(void) {
     char ch = 0;
     char* const chptr = &ch;
 
-    char* const IN_DEV = $028A;        // Current input device number
-    char* const GETIN  = $FFE4;        // CBM GETIN API
+    char* const IN_DEV = (char*)$028A;        // Current input device number
+    char* const GETIN  = (char*)$FFE4;        // CBM GETIN API
 
     kickasm(uses chptr, uses IN_DEV, uses GETIN) {{
 

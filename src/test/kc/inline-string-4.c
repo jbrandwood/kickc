@@ -6,7 +6,7 @@ void main() {
     output(dw);
 }
 
-unsigned long* const screen = 0x0400;
+unsigned long* const screen = (char*)0x0400;
 
 void output(unsigned long dw) {
     *screen = dw;

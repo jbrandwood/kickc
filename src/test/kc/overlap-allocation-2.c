@@ -1,5 +1,5 @@
 // Two levels of functions to test that register allocation handles live ranges and call-ranges optimally to allocate the fewest possible ZP-variables
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 
 void main() {
     for(byte i : 0..8) {

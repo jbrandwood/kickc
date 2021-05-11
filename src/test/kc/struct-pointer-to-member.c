@@ -10,7 +10,7 @@ struct SCREEN_COLORS {
 };
 
 // Commodore 64 processor port
-struct SCREEN_COLORS* const COLORS = 0xd020;
+struct SCREEN_COLORS* const COLORS = (struct SCREEN_COLORS*)0xd020;
 
 // The border color
 char * const BORDER_COLOR = &COLORS->BORDER;

@@ -1,7 +1,7 @@
 // Demonstrates a problem where constant references are not literal
 
 char A[] = "qwe";
-char * B = 0x8000;
+char * B = (char*)0x8000;
 
 void main() {
     copy(B, A);

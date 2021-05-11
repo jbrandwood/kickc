@@ -5,8 +5,8 @@
 #include <string.h>
 #include <c64-bitmap.h>
 
-char* SCREEN = $400;
-char* BITMAP = $2000;
+char* SCREEN = (char*)$400;
+char* BITMAP = (char*)$2000;
 
 const unsigned int SIN_SIZE = 512;
 

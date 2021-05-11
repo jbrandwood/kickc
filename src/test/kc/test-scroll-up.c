@@ -1,6 +1,6 @@
 // Tests different ways of scrolling up the screen
 
-byte* const screen = $400;
+byte* const screen = (char*)$400;
 
 void main() {
     scrollup1();

@@ -1,7 +1,7 @@
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
 
-byte* const SCREEN = $400;
-signed byte* const SSCREEN = $400;
+byte* const SCREEN = (byte*)$400;
+signed byte* const SSCREEN = (signed byte*)$400;
 byte idx = 0;
 
 void main() {

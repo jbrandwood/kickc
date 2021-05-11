@@ -5,8 +5,8 @@
 #include <mega65.h>
 
 void main() {
-    char * BLOCK_4000 = 0x4000;
-    char * BLOCK_8000 = 0x8000;
+    char * BLOCK_4000 = (char*)0x4000;
+    char * BLOCK_8000 = (char*)0x8000;
 
     // Remap [$4000-$5fff] to point to [$10000-$11fff]
     memoryRemapBlock(0x40, 0x100);

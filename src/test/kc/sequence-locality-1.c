@@ -2,7 +2,7 @@
 
 void main() {
 
-    byte* const screen = 0x0400;
+    byte* const screen = (char*)0x0400;
     byte idx = 0;
 
     for(byte i: 0..10) {

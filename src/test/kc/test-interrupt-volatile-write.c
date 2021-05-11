@@ -1,8 +1,8 @@
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
 
-void()** const  KERNEL_IRQ = $0314;
-byte* const BG_COLOR = $d020;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+byte* const BG_COLOR = (byte*)$d020;
 volatile byte col = 0;
 
 void main() {

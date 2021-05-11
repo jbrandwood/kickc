@@ -15,7 +15,7 @@ void menu() {
 }
 
 byte a = 0;
-byte *B = $1000;
+byte *B = (byte *)$1000;
 
 void mode() {
     while(true) {

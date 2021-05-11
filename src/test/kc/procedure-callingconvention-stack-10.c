@@ -3,7 +3,7 @@
 
 #pragma calling(__stackcall)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 
 struct Point {

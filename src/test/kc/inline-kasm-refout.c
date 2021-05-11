@@ -3,7 +3,7 @@
 byte table[] = "cml!"z;
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
 
     kickasm(uses SCREEN, uses table) {{
         ldx #0

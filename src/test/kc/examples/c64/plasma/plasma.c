@@ -7,9 +7,9 @@
 #include <c64.h>
 #include <c64-print.h>
 
-char* const SCREEN1 = 0x2800;
-char* const SCREEN2 = 0x2c00;
-char* const CHARSET = 0x2000;
+char* const SCREEN1 = (char*)0x2800;
+char* const SCREEN2 = (char*)0x2c00;
+char* const CHARSET = (char*)0x2000;
 
 const char __align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)

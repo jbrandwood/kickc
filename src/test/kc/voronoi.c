@@ -1,6 +1,6 @@
 // The screen
-byte *SCREEN = $0400;
-byte *COLORS = $D800;
+byte *SCREEN = (byte*)$400;
+byte *COLORS = (byte*)$D800;
 
 byte FILL = 230;
 

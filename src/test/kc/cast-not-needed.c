@@ -1,7 +1,7 @@
 // Tests a cast that is not needed
 
-byte* sprite = $5000;
-byte* SCREEN = $4400;
+byte* sprite = (byte*)$5000;
+byte* SCREEN = (byte*)$4400;
 
 void main() {
     byte* sprite_ptr = SCREEN+$378;

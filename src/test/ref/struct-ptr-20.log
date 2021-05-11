@@ -6,7 +6,7 @@ main: scope:[main]  from __start
   main::idx#0 = 0
   main::$0 = sizeof  settings
   main::$1 = main::$0 / SIZEOF_STRUCT_SETTING
-  main::len#0 = main::$1
+  main::len#0 = (byte)main::$1
   main::setting#0 = settings
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -65,8 +65,8 @@ constant byte* const SCREEN = (byte*)$400
 constant byte SIZEOF_STRUCT_SETTING = 2
 void __start()
 void main()
-byte~ main::$0
-byte~ main::$1
+word~ main::$0
+word~ main::$1
 byte*~ main::$10
 bool~ main::$11
 const struct Setting*~ main::$2
@@ -109,7 +109,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [14] main::$4 = 0 == *main::$7 from [13] main::$11 = 0 != *main::$7
 Inversing boolean not [15] main::$5 = 0 != *main::$7 from [14] main::$4 = 0 == *main::$7
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias main::len#0 = main::$1 
 Alias main::setting#2 = main::setting#3 main::setting#5 
 Alias main::idx#2 = main::idx#3 main::idx#4 
 Alias main::len#1 = main::len#3 main::len#4 
@@ -119,8 +118,8 @@ Alias main::len#1 = main::len#2
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values main::len#1 main::len#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition main::$3 [8] if(main::setting#2<main::$2) goto main::@2
-Simple Condition main::$5 [12] if(0!=*main::$7) goto main::@3
+Simple Condition main::$3 [9] if(main::setting#2<main::$2) goto main::@2
+Simple Condition main::$5 [13] if(0!=*main::$7) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [1] main::$0 = sizeof  settings
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -128,14 +127,14 @@ Constant main::idx#0 = 0
 Constant main::$0 = sizeof settings
 Constant main::setting#0 = settings
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [12] if(0!=*main::$7) goto main::@3  -- main::$9[OFFSET_STRUCT_SETTING_OFF]
-Converting *(pointer+n) to pointer[n] [17] SCREEN[main::idx#2] = *main::$8  -- main::$10[OFFSET_STRUCT_SETTING_ID]
+Converting *(pointer+n) to pointer[n] [13] if(0!=*main::$7) goto main::@3  -- main::$9[OFFSET_STRUCT_SETTING_OFF]
+Converting *(pointer+n) to pointer[n] [18] SCREEN[main::idx#2] = *main::$8  -- main::$10[OFFSET_STRUCT_SETTING_ID]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$9 in [10] main::$7 = main::$9 + OFFSET_STRUCT_SETTING_OFF
-Simplifying expression containing zero main::$9 in [12] if(0!=main::$9[OFFSET_STRUCT_SETTING_OFF]) goto main::@3
+Simplifying expression containing zero main::$9 in [11] main::$7 = main::$9 + OFFSET_STRUCT_SETTING_OFF
+Simplifying expression containing zero main::$9 in [13] if(0!=main::$9[OFFSET_STRUCT_SETTING_OFF]) goto main::@3
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable main::$7 and assignment [6] main::$7 = main::$9
-Eliminating unused variable main::$8 and assignment [11] main::$8 = main::$10 + OFFSET_STRUCT_SETTING_ID
+Eliminating unused variable main::$7 and assignment [7] main::$7 = main::$9
+Eliminating unused variable main::$8 and assignment [12] main::$8 = main::$10 + OFFSET_STRUCT_SETTING_ID
 Eliminating unused constant OFFSET_STRUCT_SETTING_OFF
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
@@ -145,9 +144,11 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Resolving array sizeof() sizeof settings
 Successful SSA optimization PassNSizeOfSimplification
-Constant right-side identified [0] main::len#0 = main::$0 / SIZEOF_STRUCT_SETTING
+Constant right-side identified [0] main::$1 = main::$0 / SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::len#0 = main::$0/SIZEOF_STRUCT_SETTING
+Constant main::$1 = main::$0/SIZEOF_STRUCT_SETTING
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::len#0 = (byte)main::$1
 Successful SSA optimization Pass2ConstantIdentification
 Adding number conversion cast (unumber) 3 in 
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -170,10 +171,13 @@ Inlining constant with var siblings main::idx#0
 Inlining constant with var siblings main::setting#0
 Constant inlined main::$6 = main::len#0*SIZEOF_STRUCT_SETTING
 Constant inlined main::idx#0 = 0
+Constant inlined main::$1 = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
 Constant inlined main::setting#0 = settings
 Constant inlined main::$2 = settings+main::len#0*SIZEOF_STRUCT_SETTING
 Constant inlined main::$0 = 3*SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantInlining
+Simplifying constant integer cast 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@5(between main::@2 and main::@3)
 Adding NOP phi() at start of main
 CALL GRAPH

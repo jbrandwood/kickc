@@ -13,43 +13,43 @@
 // $D70F MATH BUSY
 // Bit 7: DIVBUSY
 // Bit 6: MULBUSY
-char * const MATH_BUSY = 0xd70f;
+char * const MATH_BUSY = (char *)0xd70f;
 
 // $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
 // $D768-$D76B DIVOUT FRAC 32-bit output of MULTINA ÷ MULTINB
-signed char volatile * const MATH_DIVOUT_FRAC_CHAR0 = 0xd768;
-signed char volatile * const MATH_DIVOUT_FRAC_CHAR1 = 0xd769;
-signed char volatile * const MATH_DIVOUT_FRAC_CHAR2 = 0xd76a;
-signed char volatile * const MATH_DIVOUT_FRAC_CHAR3 = 0xd76b;
-signed int  volatile * const MATH_DIVOUT_FRAC_INT0  = 0xd768;
-signed int  volatile * const MATH_DIVOUT_FRAC_INT1  = 0xd76a;
-signed long volatile * const MATH_DIVOUT_FRAC_LONG0 = 0xd768;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR0 = (signed char*)0xd768;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR1 = (signed char*)0xd769;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR2 = (signed char*)0xd76a;
+signed char volatile * const MATH_DIVOUT_FRAC_CHAR3 = (signed char*)0xd76b;
+signed int  volatile * const MATH_DIVOUT_FRAC_INT0  = (signed int*)0xd768;
+signed int  volatile * const MATH_DIVOUT_FRAC_INT1  = (signed int*)0xd76a;
+signed long volatile * const MATH_DIVOUT_FRAC_LONG0 = (signed long*)0xd768;
 // $D768-$D76F DIVOUT 64-bit output of MULTINA ÷ MULTINB
-signed char volatile * const MATH_DIVOUT_WHOLE_CHAR0 = 0xd76c;
-signed int  volatile * const MATH_DIVOUT_WHOLE_INT0  = 0xd76c;
-signed int  volatile * const MATH_DIVOUT_WHOLE_INT1  = 0xd76e;
-signed long volatile * const MATH_DIVOUT_WHOLE_LONG  = 0xd76c;
+signed char volatile * const MATH_DIVOUT_WHOLE_CHAR0 = (signed char*)0xd76c;
+signed int  volatile * const MATH_DIVOUT_WHOLE_INT0  = (signed int*)0xd76c;
+signed int  volatile * const MATH_DIVOUT_WHOLE_INT1  = (signed int*)0xd76e;
+signed long volatile * const MATH_DIVOUT_WHOLE_LONG  = (signed long*)0xd76c;
 
 // $D770-$D773 MULTINA Multiplier input A / Divider numerator (32 bit)
-signed char * const MATH_MULTINA_CHAR0 = 0xd770;
-signed char * const MATH_MULTINA_CHAR1 = 0xd771;
-signed char * const MATH_MULTINA_CHAR2 = 0xd772;
-signed char * const MATH_MULTINA_CHAR3 = 0xd773;
-signed int  * const MATH_MULTINA_INT0  = 0xd770;
-signed int  * const MATH_MULTINA_INT1  = 0xd772;
-signed long * const MATH_MULTINA_LONG  = 0xd770;
+signed char * const MATH_MULTINA_CHAR0 = (signed char*)0xd770;
+signed char * const MATH_MULTINA_CHAR1 = (signed char*)0xd771;
+signed char * const MATH_MULTINA_CHAR2 = (signed char*)0xd772;
+signed char * const MATH_MULTINA_CHAR3 = (signed char*)0xd773;
+signed int  * const MATH_MULTINA_INT0  = (signed int*)0xd770;
+signed int  * const MATH_MULTINA_INT1  = (signed int*)0xd772;
+signed long * const MATH_MULTINA_LONG  = (signed long*)0xd770;
 
 // $D774-$D777 MULTINB Multiplier input B / Divider denominator (32 bit)
-signed char * const MATH_MULTINB_CHAR0 = 0xd774;
-signed char * const MATH_MULTINB_CHAR1 = 0xd775;
-signed char * const MATH_MULTINB_CHAR2 = 0xd776;
-signed char * const MATH_MULTINB_CHAR3 = 0xd777;
-signed int  * const MATH_MULTINB_INT0  = 0xd774;
-signed int  * const MATH_MULTINB_INT1  = 0xd776;
-signed long * const MATH_MULTINB_LONG  = 0xd774;
+signed char * const MATH_MULTINB_CHAR0 = (signed char*)0xd774;
+signed char * const MATH_MULTINB_CHAR1 = (signed char*)0xd775;
+signed char * const MATH_MULTINB_CHAR2 = (signed char*)0xd776;
+signed char * const MATH_MULTINB_CHAR3 = (signed char*)0xd777;
+signed int  * const MATH_MULTINB_INT0  = (signed int*)0xd774;
+signed int  * const MATH_MULTINB_INT1  = (signed int*)0xd776;
+signed long * const MATH_MULTINB_LONG  = (signed long*)0xd774;
 
 // $D778-$D77F MULTOUT 64-bit output of MULTINA × MULTINB
-signed char volatile * const MATH_MULTOUT_CHAR0 = 0xd778;
-signed int  volatile * const MATH_MULTOUT_INT0  = 0xd778;
-signed long volatile * const MATH_MULTOUT_LONG0 = 0xd778;
-signed long volatile * const MATH_MULTOUT_LONG1 = 0xd77c;
+signed char volatile * const MATH_MULTOUT_CHAR0 = (signed char*)0xd778;
+signed int  volatile * const MATH_MULTOUT_INT0  = (signed int*)0xd778;
+signed long volatile * const MATH_MULTOUT_LONG0 = (signed long*)0xd778;
+signed long volatile * const MATH_MULTOUT_LONG1 = (signed long*)0xd77c;

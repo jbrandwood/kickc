@@ -5,8 +5,8 @@
 #include <c64-basic-floats.h>
 
 // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
-char* const memLo = 0xfe;
-char* const memHi = 0xff;
+char* const memLo = (char*)0xfe;
+char* const memHi = (char*)0xff;
 
 // Prepare MEM pointers for operations using MEM
 inline void prepareMEM(unsigned int mem) {

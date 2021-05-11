@@ -4,11 +4,11 @@
 #include <string.h>
 
 // Keyboard latch
-char * const KEYBOARD_INPUT = 0xff08;
+char * const KEYBOARD_INPUT = (char*)0xff08;
 // Keyboard scan
-char * const KEYBOARD_SCAN = 0xfd30;
+char * const KEYBOARD_SCAN = (char*)0xfd30;
 // Default address of screen character matrix
-char * const DEFAULT_SCREEN = 0x0c00;
+char * const DEFAULT_SCREEN = (char*)0x0c00;
 
 void main() {
     asm { sei }

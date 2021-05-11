@@ -1,7 +1,7 @@
 // Test that the compiler optimizes when the same parameter value is passed into a function in all calls
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     const byte reverse = $80;
     screen[0] = sum(reverse, 'c');
     screen[1] = sum(reverse, 'm');

@@ -4,7 +4,7 @@
 
 void main() {
     // Clear screen
-    for(byte* sc = $400; sc<$400+1000;sc++) {
+    for(byte* sc = (char*)$400; sc<$400+1000;sc++) {
         *sc = ' ';
     }
     // Init keyboard
@@ -12,7 +12,7 @@ void main() {
     // Loop
     while(true) {
         do {} while (*RASTER!=$ff);
-        byte* screen = $400;
+        byte* screen = (char*)$400;
         // Read & print keyboard matrix
         for(byte row : 0..7) {
             byte row_pressed_bits = keyboard_matrix_read(row);

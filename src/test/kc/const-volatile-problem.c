@@ -9,7 +9,7 @@ char* PLEX_SCREEN_PTR1 = (char*)0x400;
 char* PLEX_SCREEN_PTR2 = (char*)0x500;
 volatile char idx = 0;
 
-void()** const IRQ = 0x314;
+void()** const IRQ = (void()**)0x314;
 
 void main() {
     PLEX_SCREEN_PTR1 = (char*)0x400;

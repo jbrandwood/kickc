@@ -2,11 +2,11 @@
 #pragma target(mega65)
 #include <mega65.h>
 
-char * const SCREEN = 0x0800;
-char * const COLORS = 0xd800;
+char * const SCREEN = (char *)0x0800;
+char * const COLORS = (char *)0xd800;
 
-char * const TBDRPOS = 0xd048;
-char * const TBDRPOS_HI = 0xd049;
+char * const TBDRPOS = (char *)0xd048;
+char * const TBDRPOS_HI = (char *)0xd049;
 
 void main() {
 

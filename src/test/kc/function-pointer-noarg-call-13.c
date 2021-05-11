@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-uint8_t const * r = 0x8000;
+uint8_t const * r = (uint8_t*)0x8000;
 
 void main() {
 	enableDLI(&fn1);

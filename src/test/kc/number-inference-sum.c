@@ -2,8 +2,8 @@
 // Currently fails - because the compiler does not handle byte+byte correctly (not truncating the result to 8 bits)
 
 void main() {
-    word* const screen = 0x0400;
-    byte* const BG_COLOR = 0xd020;
+    word* const screen = (word*)0x0400;
+    byte* const BG_COLOR = (byte*)0xd020;
     const byte RED = 2;
 
     byte b1 = 250;

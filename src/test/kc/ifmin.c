@@ -1,5 +1,5 @@
 // Minimal if() test
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 
 void main() {
   byte i=0;

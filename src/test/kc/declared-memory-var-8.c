@@ -3,7 +3,7 @@
 
 __ma __address(0x1000) char idx;
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     for( char i: 0..5 ) {

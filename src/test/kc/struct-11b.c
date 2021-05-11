@@ -11,7 +11,7 @@ void main() {
     print_person(henry_id, henry_initials);
 }
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 
 void print_person(unsigned long person_id, char* person_initials) {

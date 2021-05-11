@@ -1,7 +1,7 @@
 // Tests using integer conditions in && and || operator
 // This should produce '01010101', '00110011', '00010001', '01110111' at the top of the screen
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 
 void main() {
     byte idx = 0;

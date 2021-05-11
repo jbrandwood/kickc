@@ -3,7 +3,7 @@
 byte* TEXT = "cml ";
 
 void main() {
-    byte* SCREEN = $400;
+    byte* SCREEN = (char*)$400;
     for( byte i: 0..255) {
         SCREEN[i] = next_char();
     }

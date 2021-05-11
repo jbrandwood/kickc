@@ -17,7 +17,7 @@ void main() {
     print_person(person);
 }
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 
 void print_person(struct Person *person) {

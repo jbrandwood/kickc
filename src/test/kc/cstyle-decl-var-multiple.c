@@ -1,6 +1,6 @@
 // Test legal definition of multiple local variables with the same name
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 char idx;
 char c;
 

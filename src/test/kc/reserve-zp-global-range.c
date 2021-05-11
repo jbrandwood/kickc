@@ -3,7 +3,7 @@
 #pragma zp_reserve(0x00..0x7f)
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
     for( volatile byte i : 0..2) {
         SCREEN[i] = sub1(i);
     }

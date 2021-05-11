@@ -4,9 +4,9 @@
 
 unsigned int entities[NUM_ENTITIES];
 
-char * const VICII_RASTER = 0xd012;
-char * const VICII_BG_COLOR = 0xd020;
-char * const SCREEN = 0x0400;
+char * const VICII_RASTER = (char*)0xd012;
+char * const VICII_BG_COLOR = (char*)0xd020;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
 

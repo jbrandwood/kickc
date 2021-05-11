@@ -1,7 +1,7 @@
 // Test an empty statement ';'
 
-const char str[] = "Hello!";
-const char* SCREEN = 0x0400;
+char str[] = "Hello!";
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     char b = 0;

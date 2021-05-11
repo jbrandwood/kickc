@@ -42,8 +42,8 @@ byte MENU_TEXT[] =
 
 
 void menu() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9800; // Charset ROM
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9800; // Charset ROM
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -187,9 +187,9 @@ void mode_ctrl() {
 // - 0: 4bpp BG_COLORor0[3:0]
 // - 1: 4bpp ColorData[3:0]
 void mode_stdchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $d800;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -238,9 +238,9 @@ void mode_stdchar() {
 //    - CharData[7:6] 11: 4bpp BG_COLORor3[3:0]
 //  - 1: 4bpp ColorData[3:0]
 void mode_ecmchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $d800;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -294,9 +294,9 @@ void mode_ecmchar() {
 //  - 10: 4bpp BG_COLORor2[3:0]
 //  - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 void mode_mcchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $d800;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -344,8 +344,8 @@ void mode_mcchar() {
 //  - 0: 4bpp CharData[3:0]
 //  - 1: 4bpp CharData[7:4]
 void mode_stdbitmap() {
-    byte* const SCREEN = $4000;
-    byte* const BITMAP = $6000;
+    byte* const SCREEN = (byte*)$4000;
+    byte* const BITMAP = (byte*)$6000;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)BITMAP/$10000);
     // DTV Graphics Mode
@@ -396,9 +396,9 @@ void mode_stdbitmap() {
 //  - 0: 8bpp BG_COLORor0[7:0]
 //  - 1: 8bpp ColorData[7:0]
 void mode_hicolstdchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $8400;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$8400;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -449,9 +449,9 @@ void mode_hicolstdchar() {
 //    - CharData[7:6] 11: 8bpp BG_COLORor3[7:0]
 //  - 1: 8bpp ColorData[7:0]
 void mode_hicolecmchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $8400;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$8400;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -505,9 +505,9 @@ void mode_hicolecmchar() {
 // - 10: 8bpp BG_COLORor2[7:0]
 // - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 void mode_hicolmcchar() {
-    byte* const SCREEN = $8000;
-    byte* const CHARSET = $9000; // Charset ROM
-    byte* const COLORS = $8400;
+    byte* const SCREEN = (byte*)$8000;
+    byte* const CHARSET = (byte*)$9000; // Charset ROM
+    byte* const COLORS = (byte*)$8400;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
@@ -557,9 +557,9 @@ void mode_hicolmcchar() {
 // - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
 // - Plane A = 1 Plane B = 1: 8bpp BG_COLORor1[7:0]
 void mode_twoplanebitmap() {
-    byte* const PLANEA = $4000;
-    byte* const PLANEB = $6000;
-    byte* const COLORS = $8000;
+    byte* const PLANEA = (byte*)$4000;
+    byte* const PLANEB = (byte*)$6000;
+    byte* const COLORS = (byte*)$8000;
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
@@ -627,9 +627,9 @@ void mode_twoplanebitmap() {
 // GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
 // - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 void mode_sixsfred() {
-    byte* const PLANEA = $4000;
-    byte* const PLANEB = $6000;
-    byte* const COLORS = $8000;
+    byte* const PLANEA = (byte*)$4000;
+    byte* const PLANEB = (byte*)$6000;
+    byte* const COLORS = (byte*)$8000;
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
@@ -693,9 +693,9 @@ void mode_sixsfred() {
 // PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
 // - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 void mode_sixsfred2() {
-    byte* const PLANEA = $4000;
-    byte* const PLANEB = $6000;
-    byte* const COLORS = $8000;
+    byte* const PLANEA = (byte*)$4000;
+    byte* const PLANEB = (byte*)$6000;
+    byte* const COLORS = (byte*)$8000;
     // DTV Graphics Mode
     dtv_control = DTV_LINEAR;
     *DTV_CONTROL = DTV_LINEAR;
@@ -764,9 +764,9 @@ void mode_sixsfred2() {
 //Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 void mode_8bpppixelcell() {
     // 8BPP Pixel Cell Screen (contains 40x25=1000 chars)
-    byte* const PLANEA = $3c00;
+    byte* const PLANEA = (byte*)$3c00;
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
-    byte* const PLANEB = $4000;
+    byte* const PLANEB = (byte*)$4000;
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
@@ -802,7 +802,7 @@ void mode_8bpppixelcell() {
     }
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     *PROCPORT = PROCPORT_RAM_CHARROM;
-    byte* CHARGEN = $d000;
+    byte* CHARGEN = (byte*)$d000;
     byte* gfxb = PLANEB;
     byte* chargen = CHARGEN;
     byte col = 0;
@@ -858,13 +858,13 @@ void mode_8bppchunkybmm() {
     // 320x200 8bpp pixels for Plane B
     byte gfxbCpuBank = (byte)(PLANEB/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000;
+    byte* gfxb = (byte*)$4000;
     for(byte y : 0..199) {
         for (word x : 0..319) {
             // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
             if(gfxb==$8000) {
                 dtvSetCpuBankSegment1(gfxbCpuBank++);
-                gfxb = (char*)$4000;
+                gfxb = (byte*)$4000;
             }
             byte c = (byte)(x+y);
             *gfxb++ = c;

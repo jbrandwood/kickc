@@ -7,21 +7,21 @@
 #pragma code_seg(CodePart1)
 #pragma data_seg(DataPart1)
 
-char * const P1_COLORS  = 0xa800;   // A800-AFFF 
-char * const P1_PIXELS  = 0xc000;   // C000-DFFF
-char * const P1_SCREEN  = 0xe000;   // E000-E3FF 
-char * const P1_SPRITES = 0xfc00;   // E000-E3FF 
-char * const PIXELS_EMPTY = 0xe800; // E800-EFFF
+char * const P1_COLORS  = (char*)0xa800;   // A800-AFFF
+char * const P1_PIXELS  = (char*)0xc000;   // C000-DFFF
+char * const P1_SCREEN  = (char*)0xe000;   // E000-E3FF
+char * const P1_SPRITES = (char*)0xfc00;   // E000-E3FF
+char * const PIXELS_EMPTY = (char*)0xe800; // E800-EFFF
 // A copy of the load screen and colors
-char * const LOAD_SCREEN = 0xe400;  // E400-E7FF
-char * const LOAD_CHARSET = 0xf000; // F000-F7FF
-char * const LOAD_COLORS = 0xf800;  // F800-FBFF
+char * const LOAD_SCREEN = (char*)0xe400;  // E400-E7FF
+char * const LOAD_CHARSET = (char*)0xf000; // F000-F7FF
+char * const LOAD_COLORS = (char*)0xf800;  // F800-FBFF
 
 // Flipper cosine easing table
-unsigned int * const FLIPPER_EASING = 0xa400;
+unsigned int * const FLIPPER_EASING = (unsigned int*)0xa400;
 
 // Sprite pointers 
-char * const P1_SCREEN_SPRITE_PTRS = 0xe3f8; // P1_SCREEN+OFFSET_SPRITE_PTRS;
+char * const P1_SCREEN_SPRITE_PTRS = (char*)0xe3f8; // P1_SCREEN+OFFSET_SPRITE_PTRS;
 
 #pragma data_seg(InitPart1)
 

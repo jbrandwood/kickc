@@ -7,7 +7,7 @@ struct Point {
 
 __mem __ma struct Point point1 = { 2, { 'j', 'g' } };
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = point1.x;

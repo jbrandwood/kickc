@@ -1,7 +1,7 @@
 // Test a for-loop with an empty body
 
 const char str[] = "Hello!";
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     char b = 0;

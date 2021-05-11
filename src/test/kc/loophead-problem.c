@@ -3,7 +3,7 @@
 // The cause is that the Unroller does not handle the variable opcode correctly.
 // The Unroller gets the verwions for opcode wrong because it misses the fact that it is modified inside call to popup_selector()
 
-byte* const screen = $0400;
+byte* const screen = (byte*)$400;
 
 byte opcode = 'a'; // Offending unroll variable
 

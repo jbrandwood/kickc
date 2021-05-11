@@ -1,4 +1,4 @@
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
    byte his[] = { >SCREEN, >SCREEN+$100, >SCREEN+$200 }; // constant array

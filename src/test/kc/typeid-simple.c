@@ -1,6 +1,6 @@
 // Test typeid() of the different types
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
     byte idx = 0;
     // Simple types
     SCREEN[idx++] = typeid(void);

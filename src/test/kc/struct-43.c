@@ -8,7 +8,7 @@ struct Point {
 
 __mem __ma struct Point point1 = { 4, {1, 2}, 3 };
 
-unsigned int* const SCREEN = 0x0400;
+unsigned int* const SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = point1.id;

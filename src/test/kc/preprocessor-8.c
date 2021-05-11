@@ -4,7 +4,7 @@
 #define SEI kickasm {{ sei }}
 #define CLI kickasm {{ cli }}
 
-char * SCREEN = 0x0400;
+char * SCREEN = (char*)0x0400;
 char idx = 0;
 
 void main() {

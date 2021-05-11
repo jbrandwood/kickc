@@ -3,7 +3,7 @@
 byte* screens[] = { (byte*)$0400, (byte*)$1400 };
 
 void main() {
-    byte* DSP = $400;
+    byte* DSP = (char*)$400;
     DSP[0] = spritePtr(getScreen(0));
 }
 

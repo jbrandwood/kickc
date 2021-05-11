@@ -1,10 +1,10 @@
 // Tests pointer to pointer in a more complex setup
 
 
-byte* screen = $400;
+byte* screen = (char*)$400;
 
-byte* screen1 = $400;
-byte* screen2 = $400+40;
+byte* screen1 = (char*)$400;
+byte* screen2 = (char*)$400+40;
 
 void main() {
     setscreen(&screen, screen1);

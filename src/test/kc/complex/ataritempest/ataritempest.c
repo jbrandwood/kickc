@@ -6,7 +6,7 @@
 #pragma extension("bin")
 #pragma cpu(ROM6502X)
 
-char* const BG_COLOR = 0xc01a;
+char* const BG_COLOR = (char*)0xc01a;
 
 #pragma data_seg(RomData)
 char MESSAGE[] = "hello world";

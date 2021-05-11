@@ -30,7 +30,7 @@ volatile char logic_tile_right_idx;
 
 // Initialize bobs_restore with data to prevent crash on the first call
 void init_bobs_restore() {
-    char * CANVAS_HIDDEN = 0xea00;
+    char * CANVAS_HIDDEN = (char*)0xea00;
     char * bob_restore = bobs_restore;
     for(char bob=0;bob<NUM_BOBS*2;bob++) {
         for(char i=0;i<SIZE_BOB_RESTORE;i++)

@@ -2,7 +2,7 @@
 #include <c64.h>
 #include <c64-keyboard.h>
 
-char* SCREEN = $400;
+char* SCREEN = (char*)$400;
 
 void main() {
     // Clear screen

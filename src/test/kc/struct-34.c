@@ -7,7 +7,7 @@ struct Point {
 
 __mem __ssa struct Point point;
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     point.x = 2;

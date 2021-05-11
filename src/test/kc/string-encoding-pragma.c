@@ -14,7 +14,7 @@ char screencode_upper[] = "abcABC5"su;
 char screencode_mixed3[] = "abcABC6";
 
 void main() {
-    char* SCREEN = 0x0400;
+    char* SCREEN = (char*)0x0400;
     for( char i: 0..5 ) {
         (SCREEN+40*2)[i] = screencode_mixed1[i];
         (SCREEN+40*0)[i] = petscii_mixed1[i];

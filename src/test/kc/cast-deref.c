@@ -2,7 +2,7 @@
 
 void main() {
     signed byte sbs[] = { -1, -2, -3, -4};
-    byte* SCREEN = $0400;
+    byte* SCREEN = (byte*)$0400;
     for(byte i : 0..3) {
         SCREEN[i] = (byte) sbs[i];
     }

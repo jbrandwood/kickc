@@ -2,7 +2,7 @@
 
 void main() {
     cls();
-    unsigned char *screen = 0x0400;
+    unsigned char *screen = (char*)0x0400;
     utoa16w(00000, screen); screen += 40;
     utoa16w(01234, screen); screen += 40;
     utoa16w(05678, screen); screen += 40;
@@ -11,7 +11,7 @@ void main() {
 }
 
 void cls() {
-    unsigned char *screen = 0x0400;
+    unsigned char *screen = (char*)0x0400;
     for( unsigned char *sc: screen..screen+999) *sc=' ';
 }
 

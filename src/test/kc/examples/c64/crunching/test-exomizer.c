@@ -7,7 +7,7 @@
 #include <c64.h>
 
 // Address to decrunch the sprite to
-char * const SPRITE = 0x2000;
+char * const SPRITE = (char*)0x2000;
 
 char * const SPRITES_PTR = DEFAULT_SCREEN+OFFSET_SPRITE_PTRS;
 

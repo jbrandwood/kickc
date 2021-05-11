@@ -8,6 +8,6 @@ enum Letter {
 
 void main() {
     enum Letter letter = B;
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (byte*)0x0400;
     *SCREEN = letter;
 }

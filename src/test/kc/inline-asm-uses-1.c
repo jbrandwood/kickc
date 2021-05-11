@@ -2,14 +2,14 @@
 
 
 void main() {
-    char * const SCREEN = 0x1009;
+    char * const SCREEN = (char*)0x1009;
     char x = fgetc(7);
     *SCREEN = x;
 }
 
-char * const CHKIN = 0x1000;
-char * const GETIN = 0x1003;
-char * const CLRCHN = 0x1006;
+char * const CHKIN = (char*)0x1000;
+char * const GETIN = (char*)0x1003;
+char * const CLRCHN = (char*)0x1006;
 
 char fgetc(byte channel)
 {

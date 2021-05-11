@@ -9,9 +9,9 @@
 #include <string.h>
 
 // The screen address (45*25*2=0x08ca bytes)
-char * const SCREEN = 0x5000;
+char * const SCREEN = (char*)0x5000;
 // The charset address (45*32*8=0x2d00 bytes)
-char * const CHARSET = 0x6000;
+char * const CHARSET = (char*)0x6000;
 // A logo in column-wide linear single-color memory layout
 char LOGO[45*25*8]  = kickasm(resource "camelot.png") {{
 	.var pic = LoadPicture("camelot.png", List().add($ffffff, $000000))

@@ -1,6 +1,6 @@
 // Tests literal strings with and without zero-termination
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 byte msgz[] = "cml"z;
 byte msg[] = "cml";

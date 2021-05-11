@@ -7,7 +7,7 @@ void main() {
         words[i] += $0101;
     }
 
-    byte* const SCREEN = $0400;
+    byte* const SCREEN = (byte*)$400;
 
     SCREEN[0] = >words[0];
     SCREEN[1] = <words[0];

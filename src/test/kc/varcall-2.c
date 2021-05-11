@@ -1,7 +1,7 @@
 // Test __varcall calling convention
 // Return value
 
-char * const BGCOL = 0xd021;
+char * const BGCOL = (char*)0xd021;
 
 void main() {
     char a = 1;

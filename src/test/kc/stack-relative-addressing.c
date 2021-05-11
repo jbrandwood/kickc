@@ -1,7 +1,7 @@
 // Test stack-relative addressing (for passing parameters through the stack)
 
 /** The hardware stack. The offset 3 is to skip the return address and the fact that the pointer is to the next free position. */
-char* const STACK = 0x0103;
+char* const STACK = (char*)0x0103;
 
 
 void main() {
@@ -26,7 +26,7 @@ void main() {
 }
 
 /** The screen. */
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 // Peek values from the stack using stack-relative addressing
 void peek_stack() {

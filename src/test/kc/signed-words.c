@@ -1,8 +1,8 @@
 #include <c64.h>
 
-byte* const SCREEN = $0400;
+byte* const SCREEN = (byte*)$400;
 byte* const SPRITES_PTR = SCREEN+$3f8;
-byte* const SPRITE = $2000;
+byte* const SPRITE = (byte*)$2000;
 
 void main() {
     init();

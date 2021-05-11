@@ -13,7 +13,7 @@ const char ssm[] = "A";
 const char csu = 'A';
 const char ssu[] = "A";
 
-char* const screen = 0x0400;
+char* const screen = (char*)0x0400;
 void main() {
     char idx = 0;
     screen[idx++] = cpm;

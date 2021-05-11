@@ -1,5 +1,5 @@
 byte STAR = 81;
-byte SCREEN[40*25] = $0400;
+byte SCREEN[40*25] = (byte*)$0400;
 
 void main() {
   byte x0 = 4;

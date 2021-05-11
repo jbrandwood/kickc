@@ -8,7 +8,7 @@ void main() {
 
 void testBytes() {
     // Constant values resolvable to bytes
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (byte*)0x0400;
     byte idx = 0;
     SCREEN[idx++] = 12;
     SCREEN[idx++] = 6+6;
@@ -27,7 +27,7 @@ void testBytes() {
 
 void testSBytes() {
     // Constant values resolvable to signed bytes
-    signed byte* const SCREEN = 0x0428;
+    signed byte* const SCREEN = (signed byte*)0x0428;
     byte idx = 0;
     SCREEN[idx++] = -12;
     SCREEN[idx++] = -6-6;

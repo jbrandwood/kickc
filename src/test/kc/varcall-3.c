@@ -1,7 +1,7 @@
 // Test __varcall calling convention
 // Larger type parameter & return value
 
-int * const BGCOL = 0xd020;
+int * const BGCOL = (int *)0xd020;
 
 void main() {
     int a = 0x0102;

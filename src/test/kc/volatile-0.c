@@ -2,7 +2,7 @@
 
 volatile char i = 3;
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     while(i<7)

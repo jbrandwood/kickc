@@ -1,7 +1,7 @@
 // Minimal example program generating a long jump
 
 void main() {
-    byte* SCREEN = $0400;
+    byte* SCREEN = (byte*)$400;
     for(byte i : 0..10) {
     asm {
         nop

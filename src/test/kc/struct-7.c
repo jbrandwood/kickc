@@ -18,7 +18,7 @@ struct TwoCircles {
 
 void main() {
     struct TwoCircles t = { { { 1, 2}, 3 }, { { 4, 5}, 6 } };
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = t.c1.center.x;
     SCREEN[1] = t.c1.center.y;
     SCREEN[2] = t.c1.radius;

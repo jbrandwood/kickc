@@ -24,7 +24,7 @@ export __address(0x2040) char SPRITE[0x40] = kickasm(resource "sprite.png") {{
 // Program file
 #pragma data_seg(Data)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char* const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS;
 
 void main() {

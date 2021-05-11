@@ -1,6 +1,6 @@
 // TEst inlining a slightly complex print function (containing a loop)
 
-byte* screen = $400;
+byte* screen = (char*)$400;
 
 void main() {
     byte* hello = "hello world!";

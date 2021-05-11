@@ -21,7 +21,7 @@ void print2() {
     print(s1);
 }
 
-char* screen = 0x400;
+char* screen = (char*)0x400;
 
 void print(char* s) {
     while(*s) {

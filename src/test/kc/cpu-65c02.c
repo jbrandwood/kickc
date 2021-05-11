@@ -3,7 +3,7 @@
 
 #pragma cpu(WDC65C02)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     char a = SCREEN[0];

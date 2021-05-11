@@ -6,7 +6,7 @@ char world[] = "world war 3";
 
 char build[40];
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     strncat(build, hello, 5);

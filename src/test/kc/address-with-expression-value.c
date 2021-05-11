@@ -1,7 +1,7 @@
 // Test declaring an address as expression
 
 // The screen
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 
 word const var1 = 0x800;

@@ -5,7 +5,7 @@
 // Initialize a volatile ZP-variable (will be done in the initializer)
 volatile char c1 = 'o';
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = c1;

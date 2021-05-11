@@ -1,7 +1,7 @@
 // Tests that global variables with initializer gets their comments
 
 // The screen (should become a var-comment in ASM)
-__ma char * screen = 0x0400;
+__ma char * screen = (char*)0x0400;
 
 // The program entry point
 void main() {

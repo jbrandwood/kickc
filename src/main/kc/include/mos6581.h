@@ -50,29 +50,29 @@ struct MOS6581_SID {
 };
 
 // Channel 1 Frequency Low byte
-char * const SID_CH1_FREQ_LO = 0xd400;
+char * const SID_CH1_FREQ_LO = (char*)0xd400;
 // Channel 1 Frequency High byte
-char * const SID_CH1_FREQ_HI = 0xd401;
+char * const SID_CH1_FREQ_HI = (char*)0xd401;
 // Channel 1 Pulse Width (0-4095) Low byte
-char * const SID_CH1_PULSE_WIDTH_LO = 0xd402;
+char * const SID_CH1_PULSE_WIDTH_LO = (char*)0xd402;
 // Channel 1 Pulse Width (0-4095) High byte
-char * const SID_CH1_PULSE_WIDTH_HI = 0xd403;
+char * const SID_CH1_PULSE_WIDTH_HI = (char*)0xd403;
 // Channel 2 Frequency Low byte
-char * const SID_CH2_FREQ_LO = 0xd407;
+char * const SID_CH2_FREQ_LO = (char*)0xd407;
 // Channel 2 Frequency High byte
-char * const SID_CH2_FREQ_HI = 0xd408;
+char * const SID_CH2_FREQ_HI = (char*)0xd408;
 // Channel 2 Pulse Width (0-4095) Low byte
-char * const SID_CH2_PULSE_WIDTH_LO = 0xd409;
+char * const SID_CH2_PULSE_WIDTH_LO = (char*)0xd409;
 // Channel 2 Pulse Width (0-4095) High byte
-char * const SID_CH2_PULSE_WIDTH_HI = 0xd40a;
+char * const SID_CH2_PULSE_WIDTH_HI = (char*)0xd40a;
 // Channel 3 Frequency Low byte
-char * const SID_CH3_FREQ_LO = 0xd40e;
+char * const SID_CH3_FREQ_LO = (char*)0xd40e;
 // Channel 3 Frequency High byte
-char * const SID_CH3_FREQ_HI = 0xd40f;
+char * const SID_CH3_FREQ_HI = (char*)0xd40f;
 // Channel 3 Pulse Width (0-4095) Low byte
-char * const SID_CH3_PULSE_WIDTH_LO = 0xd410;
+char * const SID_CH3_PULSE_WIDTH_LO = (char*)0xd410;
 // Channel 3 Pulse Width (0-4095) High byte
-char * const SID_CH3_PULSE_WIDTH_HI = 0xd411;
+char * const SID_CH3_PULSE_WIDTH_HI = (char*)0xd411;
 
 // SID Channel Control Register Noise Waveform
 const char SID_CONTROL_NOISE = 0x80;

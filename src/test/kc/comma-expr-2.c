@@ -1,7 +1,7 @@
 // Tests simple comma-expressions (without parenthesis)
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
     byte b;
     byte c;
     b = 1,2,3;

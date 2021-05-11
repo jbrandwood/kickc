@@ -1,5 +1,5 @@
 void main() {
-    byte* screen = $0400;
+    byte* screen = (byte*)$400;
     screen[0] = 1;
 }
 

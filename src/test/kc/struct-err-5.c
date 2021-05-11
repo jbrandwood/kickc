@@ -5,7 +5,7 @@ struct Point {
     byte y;
 };
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 
 void main() {
     struct Point p;

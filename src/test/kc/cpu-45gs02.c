@@ -3,7 +3,7 @@
 
 #pragma cpu(MEGA45GS02)
 
-unsigned long* SCREEN = 0x0400;
+unsigned long* SCREEN = (char*)0x0400;
 
 void main() {
     unsigned long sum = 0;

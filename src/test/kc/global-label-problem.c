@@ -13,7 +13,7 @@ void print1() {
 }
 
 // Screen pointer and index
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 
 void print(char* msg) {

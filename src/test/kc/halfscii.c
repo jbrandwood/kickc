@@ -1,9 +1,9 @@
-byte* SCREEN = $0400;
-byte* CHARSET = $2000;
-byte* CHARGEN = $D000;
-byte* PROCPORT = $01;
-byte* D018 = $d018;
-byte* CHARSET4 = $2800;
+byte* SCREEN = (byte*)$400;
+byte* CHARSET = (byte*)$2000;
+byte* CHARGEN = (byte*)$D000;
+byte* PROCPORT = (byte*)$01;
+byte* D018 = (byte*)$d018;
+byte* CHARSET4 = (byte*)$2800;
 
 byte bits_count[] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 

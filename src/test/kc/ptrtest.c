@@ -10,7 +10,7 @@ void main() {
 void lvalue() {
 
   // A constant pointer
-  byte SCREEN[1024] = $0400;
+  byte SCREEN[1024] = (byte*)$0400;
 
   // LValue constant pointer dereference
   *SCREEN = 1;
@@ -28,7 +28,7 @@ void lvalue() {
 void rvalue() {
 
   // A constant pointer
-  byte SCREEN[1024] = $0400;
+  byte SCREEN[1024] = (byte*)$0400;
 
   // RValue constant pointer
   byte b = *SCREEN;
@@ -42,13 +42,13 @@ void rvalue() {
     b = SCREEN[i++];
   }
 
-  byte* screen2 = $400;
+  byte* screen2 = (char*)$400;
   *screen2 = b;
 
 }
 
 void lvaluevar() {
-  byte *screen = $0400;
+  byte *screen = (byte*)$0400;
 
   // LValue Variable pointer dereference
   byte b=4;
@@ -62,7 +62,7 @@ void lvaluevar() {
 }
 
 void rvaluevar() {
-  byte *screen = $0400;
+  byte *screen = (byte*)$0400;
 
   // RValue Variable pointer dereference
   byte b;
@@ -73,7 +73,7 @@ void rvaluevar() {
     i++;
   }
 
-  byte* screen2 = $400;
+  byte* screen2 = (char*)$400;
   *screen2 = b;
 
 }

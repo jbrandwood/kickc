@@ -2,7 +2,7 @@
 
 char[16] msg ="camelot";
 
-char* const SCREEN = 0x400;
+char* const SCREEN = (char*)0x400;
 
 void main() {
     for(char i=0;msg[i];i++)

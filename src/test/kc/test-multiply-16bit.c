@@ -3,7 +3,7 @@
 #include <multiply.h>
 #include <fastmultiply.h>
 
-byte* BG_COLOR = $d021;
+byte* BG_COLOR = (char*)$d021;
 
 void main() {
     *BG_COLOR = 5;

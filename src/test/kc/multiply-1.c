@@ -1,7 +1,7 @@
 // Test compile-time and run-time multiplication
 // Compile-time multiplication
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     char c1 = 4;

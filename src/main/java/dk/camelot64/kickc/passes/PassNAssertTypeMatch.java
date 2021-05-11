@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -30,7 +31,22 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
             // TODO: Implement checking for calls / ...
          }
       }
+      for(Variable var : getScope().getAllVars(true)) {
+         if(var.getInitValue()!=null) {
+            checkVarInit(var);
+         }
+      }
 
+   }
+
+   private void checkVarInit(Variable variable) {
+
+      SymbolType lValueType = variable.getType();
+      SymbolType rValueType = variable.getInitValue().getType(getScope());
+      if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
+      // Types do not match
+      getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In initialization of " + variable.toString(getProgram()));
+      throw new CompileError("Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In initialization of " + variable.toString(getProgram()));
    }
 
    private void checkAssignment(StatementAssignment statement) {

@@ -1,7 +1,7 @@
 byte buffer1[16*16];
 byte buffer2[16*16];
-byte *RASTER = $d012;
-byte* SCREEN = $0400;
+byte *RASTER = (byte*)$d012;
+byte* SCREEN = (byte*)$0400;
 
 void main() {
   prepare();

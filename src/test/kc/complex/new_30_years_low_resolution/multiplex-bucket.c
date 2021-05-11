@@ -41,7 +41,7 @@
 #endif
 
 // The screen sprite pointers to update
-char * const SCREEN_SPRITE_PTRS = PLEX_SPRITE_PTRS;
+char * const SCREEN_SPRITE_PTRS = (char*)PLEX_SPRITE_PTRS;
 
 // The Y-position (IRQ raster line) starting each bucket
 char BUCKET_YPOS[BUCKET_COUNT] = { 0x10, 0x48, 0x58, 0x72, 0x8e, 0xaa, 0xc0, 0xd0, 0xde };

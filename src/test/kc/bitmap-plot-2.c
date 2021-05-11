@@ -5,8 +5,8 @@
 #include <multiply.h>
 #include <c64-bitmap.h>
 
-byte* BITMAP = 0x2000;
-byte* SCREEN = 0x0400;
+byte* BITMAP = (byte*)0x2000;
+byte* SCREEN = (byte*)0x0400;
 
 byte plots_per_frame[0x100];
 

@@ -1,9 +1,9 @@
 // Illustrates problem where volatiles reuse ZP addresses of other variables
-void()** const  KERNEL_IRQ = $0314;
-byte* const IRQ_STATUS = $d019;
-byte* const CIA1_INTERRUPT = $dc0d;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+byte* const IRQ_STATUS = (byte*)$d019;
+byte* const CIA1_INTERRUPT = (byte*)$dc0d;
 
-byte* const SCREEN=$400;
+byte* const SCREEN=(byte*)$400;
 volatile byte col1 = 0;
 
 void main() {

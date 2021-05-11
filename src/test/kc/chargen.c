@@ -1,6 +1,6 @@
-byte* PROCPORT = $01;
-byte* CHARGEN = $d000;
-byte* SCREEN = $0400;
+byte* PROCPORT = (byte*)$01;
+byte* CHARGEN = (byte*)$d000;
+byte* SCREEN = (byte*)$0400;
 
 void main() {
     asm { sei }

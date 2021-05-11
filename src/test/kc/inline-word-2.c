@@ -2,6 +2,6 @@
 
 void main() {
     word w = { 0x01, 0x02ub };
-    word* screen = 0x0400;
+    word* screen = (word*)0x0400;
     screen[0] = w;
 }

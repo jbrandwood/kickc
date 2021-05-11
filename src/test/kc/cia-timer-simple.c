@@ -4,7 +4,7 @@
 #include <c64-time.h>
 #include <c64-print.h>
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 
 void main() {
 

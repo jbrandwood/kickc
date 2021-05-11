@@ -5,7 +5,7 @@
 #define DOUBLE(x) SUM(x,x)
 #define SUM(x,y) x+y
 
-char * SCREEN = 0x0400;
+char * SCREEN = (char*)0x0400;
 
 void main() {
     char idx = 0;

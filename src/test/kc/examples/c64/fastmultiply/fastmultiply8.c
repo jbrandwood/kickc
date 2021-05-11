@@ -12,7 +12,7 @@ signed char vals[] = {-95, -64, -32, -16, 0, 16, 32, 64, 95};
 
 void main() {
 	init_screen();
-	char* at_line = $400;
+	char* at_line = (char*)$400;
 	char* at = at_line+4;
 	for(char k: 0..8) {
 		print_schar_at(vals[k], at);
@@ -32,7 +32,7 @@ void main() {
 
 void init_screen() {
 	print_cls();
-	char* COLS = $d800;
+	char* COLS = (char*)$d800;
 	char WHITE = 1;
 	for(char l: 0..39) {
 		COLS[l] = WHITE;

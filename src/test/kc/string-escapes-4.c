@@ -9,8 +9,8 @@ char MSG2[] = "C\x01M\x05LOT";
 
 char CH = '\xde';
 
-char* SCREEN1 = 0x0400;
-char* SCREEN2 = 0x0428;
+char* SCREEN1 = (char*)0x0400;
+char* SCREEN2 = (char*)0x0428;
 
 void main() {
     // Show mixed chars on screen

@@ -1,0 +1,242 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::$0 = sizeof  ARR1
+  main::i#0 = main::$0
+  main::$1 = main::i#0 - 1
+  ARR1[main::$1] = 0
+  main::$2 = sizeof  ARR2
+  main::j#0 = (byte)main::$2
+  main::$3 = main::j#0 - 1
+  ARR2[main::$3] = 0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* ARR1[$130]  = { fill( $130, 0) }
+constant byte* ARR2[]  = { 1, 2, 3 }
+void __start()
+void main()
+word~ main::$0
+number~ main::$1
+word~ main::$2
+number~ main::$3
+word main::i
+word main::i#0
+byte main::j
+byte main::j#0
+
+Adding number conversion cast (unumber) 1 in main::$1 = main::i#0 - 1
+Adding number conversion cast (unumber) main::$1 in main::$1 = main::i#0 - (unumber)1
+Adding number conversion cast (unumber) 0 in ARR1[main::$1] = 0
+Adding number conversion cast (unumber) 1 in main::$3 = main::j#0 - 1
+Adding number conversion cast (unumber) main::$3 in main::$3 = main::j#0 - (unumber)1
+Adding number conversion cast (unumber) 0 in ARR2[main::$3] = 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast ARR1[main::$1] = (unumber)0
+Inlining cast ARR2[main::$3] = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to word in main::$1 = main::i#0 - 1
+Inferred type updated to byte in main::$3 = main::j#0 - 1
+Alias main::i#0 = main::$0 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [0] main::i#0 = sizeof  ARR1
+Constant right-side identified [3] main::$2 = sizeof  ARR2
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#0 = sizeof ARR1
+Constant main::$2 = sizeof ARR2
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::j#0 = (byte)main::$2
+Successful SSA optimization Pass2ConstantIdentification
+De-inlining pointer[w] to *(pointer+w)   [2] ARR1[main::$1] = 0
+Successful SSA optimization Pass2DeInlineWordDerefIdx
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Resolving array sizeof() sizeof ARR1
+Resolving array sizeof() sizeof ARR2
+Successful SSA optimization PassNSizeOfSimplification
+Constant right-side identified [0] main::$1 = main::i#0 - 1
+Constant right-side identified [3] main::$3 = main::j#0 - 1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::$1 = main::i#0-1
+Constant main::$3 = main::j#0-1
+Successful SSA optimization Pass2ConstantIdentification
+Adding number conversion cast (unumber) $130 in 
+Adding number conversion cast (unumber) 3 in 
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $130
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $130
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [0] main::$4 = ARR1 + main::$1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::$4 = ARR1+main::$1
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$3 = main::j#0-1
+Constant inlined main::$4 = ARR1+main::i#0-1
+Constant inlined main::$1 = main::i#0-1
+Constant inlined main::$2 = 3*SIZEOF_BYTE
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(ARR2+main::j#0-1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer cast 3*SIZEOF_BYTE
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $130
+Finalized unsigned number type (word) $130
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *(ARR1+main::i#0-1) = 0
+  [1] *(ARR2+main::j#0-1) = 0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+word main::i
+byte main::j
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *(ARR1+main::i#0-1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(ARR2+main::j#0-1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="sizeof-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_BYTE = 1
+.segment Code
+  // main
+main: {
+    .const i = $130*SIZEOF_BYTE
+    .const j = 3*SIZEOF_BYTE
+    // [0] *(ARR1+main::i#0-1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta ARR1+i-1
+    // [1] *(ARR2+main::j#0-1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta ARR2+j-1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  ARR1: .fill $130, 0
+  ARR2: .byte 1, 2, 3
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* ARR1[$130]  = { fill( $130, 0) }
+constant byte* ARR2[]  = { 1, 2, 3 }
+constant byte SIZEOF_BYTE = 1
+void main()
+word main::i
+constant word main::i#0 i = $130*SIZEOF_BYTE
+byte main::j
+constant byte main::j#0 j = 3*SIZEOF_BYTE
+
+
+
+FINAL ASSEMBLER
+Score: 16
+
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="sizeof-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_BYTE = 1
+.segment Code
+  // main
+main: {
+    .const i = $130*SIZEOF_BYTE
+    .const j = 3*SIZEOF_BYTE
+    // ARR1[i-1] = 0
+    // [0] *(ARR1+main::i#0-1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta ARR1+i-1
+    // ARR2[j-1] = 0
+    // [1] *(ARR2+main::j#0-1) = 0 -- _deref_pbuc1=vbuc2 
+    sta ARR2+j-1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  ARR1: .fill $130, 0
+  ARR2: .byte 1, 2, 3
+

@@ -1,6 +1,6 @@
 // Tests that constants are identified early
 
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 // Not an early constant (address-of is used)
 byte A = 'a';
 

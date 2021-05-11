@@ -14,7 +14,7 @@ void main() {
     print(p1);
 }
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 byte idx = 0;
 
 void print(struct Point p) {

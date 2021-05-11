@@ -2,7 +2,7 @@
 // The result when running is "CML!" on the screen.
 
 void main () {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     word w = $0d03;
     word* wp = &w;
     screen[0] = <*wp;

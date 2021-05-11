@@ -20,7 +20,7 @@ struct Segment letter_c[] = {
      { SPLINE_TO, {'e','f'}, {75,195} }
 };
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main() {
     char j=0;

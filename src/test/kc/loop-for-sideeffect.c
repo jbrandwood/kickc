@@ -1,7 +1,7 @@
 // Test a for()-loop where the condition has a side-effect
 // Currently not standard C compliant (since the condition is not evaluated before the body)
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main(void) {
     char i;

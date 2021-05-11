@@ -1,8 +1,8 @@
 #include <c64-print.h>
 
-byte* RASTER = $d012;
-byte* BORDER_COLOR = $d020;
-byte* SCREEN = $400;
+byte* RASTER = (byte*)$d012;
+byte* BORDER_COLOR = (byte*)$d020;
+byte* SCREEN = (byte*)$400;
 
 void main() {
 	mulf_init();
@@ -70,9 +70,9 @@ void mulf_init() {
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
 dword mulf16u(word a, word b) {
-    word* const memA = $f8;
-    word* const memB = $fa;
-    dword* const memR = $fc;
+    word* const memA = (word*)$f8;
+    word* const memB = (word*)$fa;
+    dword* const memR = (dword*)$fc;
     *memA = a;
     *memB = b;
     asm {

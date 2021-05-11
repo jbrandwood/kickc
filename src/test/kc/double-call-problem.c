@@ -5,6 +5,6 @@ void main() {
 }
 
 void clrscr(void) {
-    char * const SCREEN = 0x0400;
+    char * const SCREEN = (char*)0x0400;
     SCREEN[0] = '@';
 }

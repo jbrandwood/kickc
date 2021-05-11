@@ -19,7 +19,7 @@ struct ATARI_PIA {
 
 #define PIA1 (*(struct __pia*)0xD300)
 
-struct ATARI_PIA * const PIA2 = 0xD300;
+struct ATARI_PIA * const PIA2 = (struct ATARI_PIA *)0xD300;
 
 
 void main() {

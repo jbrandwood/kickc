@@ -1,6 +1,6 @@
 // Tests break statement in a simple loop
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     byte i=0;

@@ -2,7 +2,7 @@
 
 #include <c64dtv.h>
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 const byte SRCA[] = "camelot rules!";
 const byte SRCB[] = { $80 };
 

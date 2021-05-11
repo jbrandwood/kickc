@@ -14,18 +14,18 @@
 #include "multiplex-bucket.h"
 
 // Memory layout of the graphics bank
-char * const LOGO_DATA          = 0x5400; 
-char * const PART2_BITMAP       = 0xc000; // -0xdfff
-char * const PART2_SCREEN       = 0xe000; // -0xe400
-char * const PART2_SPRITES      = 0xe400; // -0xf400
+char * const LOGO_DATA          = (char*)0x5400;
+char * const PART2_BITMAP       = (char*)0xc000; // -0xdfff
+char * const PART2_SCREEN       = (char*)0xe000; // -0xe400
+char * const PART2_SPRITES      = (char*)0xe400; // -0xf400
 // Location PLEX ID updaters are placed when running
-char * const PLEX_ID_UPDATERS   = 0x3c00;
+char * const PLEX_ID_UPDATERS   = (char*)0x3c00;
 // Location where the crunched PLEX ID updaters are placed to be decrunched
-char * const PLEX_ID_UPDATERS_CRUNCHED2 = 0x7c00; // -0xFF72
+char * const PLEX_ID_UPDATERS_CRUNCHED2 = (char*)0x7c00; // -0xFF72
 // Size of the crunched PLEX ID updaters 
 const unsigned int PLEX_ID_UPDATERS_CRUNCHED_SIZE = 0x0b72;
 // Location where the crunched LOGO DATA is placed  to be decrunched
-char * const LOGO_DATA_CRUNCHED2 = 0x8800; // -0xAA2D
+char * const LOGO_DATA_CRUNCHED2 = (char*)0x8800; // -0xAA2D
 // Size of the crunched PLEX ID updaters 
 const unsigned int LOGO_DATA_CRUNCHED_SIZE = 0x222d;
 

@@ -3,7 +3,7 @@
  */
 
 // The C64 screen
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 // One of the bytes used for addition
 byte a = 'a';

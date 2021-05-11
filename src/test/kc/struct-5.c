@@ -9,7 +9,7 @@ void main() {
     struct Point q;
     q = point();
 
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = q.x;
     SCREEN[1] = q.y;
 }

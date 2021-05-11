@@ -1,6 +1,6 @@
 // Illustrates how inline assembler referencing variables is automatically converted to __ma
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     for(byte i: 0..10) {

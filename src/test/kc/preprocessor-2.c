@@ -1,7 +1,7 @@
 // Test the preprocessor
 // #define and #undef - expected output on screen is xa
 
-char * SCREEN = 0x0400;
+char * SCREEN = (char*)0x0400;
 
 void main() {
     char a = 'a';

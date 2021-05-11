@@ -6,6 +6,6 @@ void main() {
     for(byte i:0..2) {
         world[i]= 400;
     }
-    signed word* screen = $400;
+    signed word* screen = (signed word*)$400;
     *screen = world[0];
 }

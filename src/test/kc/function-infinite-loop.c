@@ -1,7 +1,7 @@
 // Test a function returning a value that has an infinite loop
 // https://gitlab.com/camelot/kickc/-/issues/310
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = get(7);

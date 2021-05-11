@@ -5,7 +5,7 @@ struct Point {
     char y;
 };
 
-struct Point* const SCREEN = 0x0400;
+struct Point* const SCREEN = (struct Point*)0x0400;
 char idx = 0;
 
 void main() {
@@ -15,9 +15,9 @@ void main() {
     }
 }
 
-struct Point* p0 = 0xa000;
-struct Point* p1 = 0xb000;
-struct Point* p2 = 0xe000;
+struct Point* p0 = (struct Point*)0xa000;
+struct Point* p1 = (struct Point*)0xb000;
+struct Point* p2 = (struct Point*)0xe000;
 
 struct Point get(char i) {
     if(i==0) {

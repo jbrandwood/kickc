@@ -1,8 +1,8 @@
 // Testing hex to decimal conversion
 
-unsigned char * const control = 0xd011;
-unsigned char * const raster = 0xd012;
-unsigned char * const BORDER_COLOR = 0xd020;
+unsigned char * const control = (char*)0xd011;
+unsigned char * const raster = (char*)0xd012;
+unsigned char * const BORDER_COLOR = (char*)0xd020;
 
 void main() {
     asm { sei }
@@ -11,7 +11,7 @@ void main() {
         do {
             unsigned char rst = (*control&0x80)|(*raster>>1);
         } while (rst!=0x30);
-        unsigned char *screen = 0x0400;
+        unsigned char *screen = (char*)0x0400;
         *BORDER_COLOR = 1;
         unsigned char time_start = *raster;
         utoa16w(00000, screen); (*BORDER_COLOR)++; screen += 40;
@@ -31,7 +31,7 @@ void main() {
 }
 
 void cls() {
-    unsigned char *screen = 0x0400;
+    unsigned char *screen = (char*)0x0400;
     for( unsigned char *sc: screen..screen+999) *sc=' ';
 }
 

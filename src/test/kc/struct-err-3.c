@@ -9,7 +9,7 @@ void main() {
     print(7);
 }
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 
 void print(struct Point p) {
     *SCREEN = p.x;

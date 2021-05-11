@@ -1,6 +1,6 @@
 // Tests calling into a function pointer which modifies global volatile
 
-byte* const SCREEN = $0400;
+byte* const SCREEN = (byte*)$0400;
 
 volatile byte idx = 0;
 

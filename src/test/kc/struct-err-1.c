@@ -15,7 +15,7 @@ void main() {
     struct Point2 p2;
     p1.x = 4;
     p2 = p1;
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = p2.x;
     SCREEN[0] = p2.y;
 

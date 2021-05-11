@@ -1,7 +1,7 @@
 // Check that multiplication by constants is converted to shift/add
 
 void main() {
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
 
     for(byte i: 0..17) {
         (SCREEN+0*40)[i] = i*1;

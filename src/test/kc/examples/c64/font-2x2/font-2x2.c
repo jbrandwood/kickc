@@ -3,9 +3,9 @@
 #include <c64.h>
 #include <string.h>
 
-char* const SCREEN = 0x0400;
-char* const FONT_ORIGINAL = 0x2000;
-char* const FONT_COMPRESSED = 0x2800;
+char* const SCREEN = (char*)0x0400;
+char* const FONT_ORIGINAL = (char*)0x2000;
+char* const FONT_COMPRESSED = (char*)0x2800;
 char __align(0x100) FONT_COMPRESSED_MAP[0x100];
 
 void main() {

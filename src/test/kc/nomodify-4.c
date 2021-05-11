@@ -5,7 +5,7 @@ void main() {
     print('b');
 }
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void print(const char c) {
     *SCREEN = c;

@@ -3,8 +3,8 @@
 const byte RED = 2ub;
 const byte GREEN = 5ub;
 
-byte* const SCREEN = $0400uw;
-byte* const COLS = $d800uw;
+byte* const SCREEN = (byte*)$400uw;
+byte* const COLS = (char*)$d800uw;
 byte idx = 0ub;
 
 void main() {

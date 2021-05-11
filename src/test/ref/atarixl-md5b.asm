@@ -11,7 +11,7 @@
   .label idx = $b
 .segment Code
 __start: {
-    // __ma char * line = 0x0400
+    // __ma char * line = (char*)0x0400
     lda #<$400
     sta.z line
     lda #>$400
@@ -29,7 +29,7 @@ main: {
     lda #>$400
     sta.z s+1
   __b1:
-    // for(char* s=0x0400;s<0x0800;s++)
+    // for(char* s=(char*)0x0400;s<0x0800;s++)
     lda.z s+1
     cmp #>$800
     bcc __b2
@@ -47,7 +47,7 @@ main: {
     lda #' '
     ldy #0
     sta (s),y
-    // for(char* s=0x0400;s<0x0800;s++)
+    // for(char* s=(char*)0x0400;s<0x0800;s++)
     inc.z s
     bne !+
     inc.z s+1

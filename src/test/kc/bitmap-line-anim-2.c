@@ -4,8 +4,8 @@
 #include <c64.h>
 #include <c64-bitmap.h>
 
-byte* const SCREEN = $400;
-byte* const BITMAP = $2000;
+byte* const SCREEN = (byte*)$400;
+byte* const BITMAP = (byte*)$2000;
 
 word next=0;
 

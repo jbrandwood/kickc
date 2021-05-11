@@ -1,7 +1,7 @@
 
 void main() {
   byte STAR = 81;
-  byte screen[40*25] = $0400;
+  byte screen[40*25] = (byte*)$0400;
   byte x0 = 0;
   byte y0 = 0;
   byte x1 = 39;

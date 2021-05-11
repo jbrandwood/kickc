@@ -1,7 +1,7 @@
 // Test declaring a variable as at a hard-coded address
 // Incrementing a load/store variable will result in cause two *SIZEOF's
 
-unsigned int* SCREEN = 0x0400;
+unsigned int* SCREEN = (char*)0x0400;
 
 void main() {
     __address(0x2) char i=0;

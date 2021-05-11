@@ -1,8 +1,8 @@
 // Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
 // The following places the text at the start of the main-function - and JSR's straight into the text - not the code.
 
-byte* SCREEN = $0400;
-byte* SCREEN2 = $0400+$28;
+byte* SCREEN = (byte*)$400;
+byte* SCREEN2 = (byte*)$400+$28;
 void main() {
     byte txt[] = "qwe"z;
     byte data[] = { 1, 2, 3 };

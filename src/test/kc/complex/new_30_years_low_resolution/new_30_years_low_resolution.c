@@ -18,7 +18,7 @@
 #pragma code_seg(Code)
 #pragma data_seg(Data)
 
-char* const DEMO_MUSIC = 0xAC00;
+char* const DEMO_MUSIC = (char*)0xAC00;
 // Pointer to the music init routine
 void()* const musicInit = (void()*) DEMO_MUSIC;
 // Pointer to the music play routine

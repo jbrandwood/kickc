@@ -1,6 +1,6 @@
 // Illustrates how inline assembler use internal labels and external references
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 byte table[] = "cml!"z;
 void main() {
     asm {

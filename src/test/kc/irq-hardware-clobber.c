@@ -1,30 +1,30 @@
 // A minimal working raster hardware IRQ with clobber-based register savings
 
-void()** const  KERNEL_IRQ = $0314;
-void()** const  HARDWARE_IRQ = $fffe;
-byte* const RASTER = $d012;
-byte* const VICII_CONTROL1 = $d011;
-byte* const IRQ_STATUS = $d019;
-byte* const IRQ_ENABLE = $d01a;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+void()** const  HARDWARE_IRQ = (void()**)$fffe;
+byte* const RASTER = (byte*)$d012;
+byte* const VICII_CONTROL1 = (byte*)$d011;
+byte* const IRQ_STATUS = (byte*)$d019;
+byte* const IRQ_ENABLE = (byte*)$d01a;
 const byte IRQ_RASTER = %00000001;
 const byte IRQ_COLLISION_BG = %00000010;
 const byte IRQ_COLLISION_SPRITE = %00000100;
 const byte IRQ_LIGHTPEN = %00001000;
-byte* const BG_COLOR = $d020;
-byte* const FGCOL = $d021;
+byte* const BG_COLOR = (byte*)$d020;
+byte* const FGCOL = (byte*)$d021;
 const byte WHITE = 1;
 const byte BLACK = 0;
 
-byte* const CIA1_INTERRUPT = $dc0d;
+byte* const CIA1_INTERRUPT = (byte*)$dc0d;
 const byte CIA_INTERRUPT_CLEAR = $7f;
 
 // Processor port data direction register
-byte* const PROCPORT_DDR = $00;
+byte* const PROCPORT_DDR = (byte*)$00;
 // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
 const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
 
 // Processor Port Register controlling RAM/ROM configuration and the datasette
-byte* const PROCPORT = $01;
+byte* const PROCPORT = (byte*)$01;
 // RAM in $A000, $E000 I/O in $D000
 const byte PROCPORT_RAM_IO          = %00110101;
 // RAM in $A000, $E000 CHAR ROM in $D000

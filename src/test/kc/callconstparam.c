@@ -2,7 +2,7 @@
 // Currently the same constant parameter is passed on every call.
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
 
-byte* screen = $0400;
+byte* screen = (byte*)$0400;
 
 void main() {
     line(1,2);

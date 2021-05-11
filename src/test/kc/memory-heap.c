@@ -11,7 +11,7 @@ void main() {
     }
     free(buf1);
     free(buf2);
-    unsigned char* screen = 0x0400;
+    unsigned char* screen = (char*)0x0400;
     screen[0] = *buf1;
     screen[1] = *buf2;
 }

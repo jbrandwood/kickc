@@ -1,4 +1,4 @@
-byte* const screen = $400;
+byte* const screen = (byte*)$400;
 
 void main() {
     inline for( byte j: 0..1) {

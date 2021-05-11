@@ -29,15 +29,15 @@ const char LIGHT_GREY = 0xf;
 // See https://github.com/commanderx16/x16-emulator/wiki/(VERA-0.8)-Registers-$9F23-and-$9F24-(and-$9F25)
 
 // $9F20 VRAM Address (7:0)
-char * const VERA_ADDRX_L = 0x9f20;
+char * const VERA_ADDRX_L = (char*)0x9f20;
 // $9F21 VRAM Address (15:8)
-char * const VERA_ADDRX_M = 0x9f21;
+char * const VERA_ADDRX_M = (char*)0x9f21;
 // $9F22 VRAM Address (7:0)
 // Bit 4-7: Address Increment  The following is the amount incremented per value value:increment
 //                             0:0, 1:1, 2:2, 3:4, 4:8, 5:16, 6:32, 7:64, 8:128, 9:256, 10:512, 11:40, 12:80, 13:160, 14:320, 15:640
 // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
 // Bit 0: VRAM Address (16)
-char * const VERA_ADDRX_H = 0x9f22;
+char * const VERA_ADDRX_H = (char*)0x9f22;
 const char VERA_INC_0 = 0x00;
 const char VERA_INC_1 = 0x10;
 const char VERA_INC_2 = 0x20;
@@ -71,14 +71,14 @@ const char VERA_DECR_160 = 0xd8;
 const char VERA_DECR_320 = 0xe8;
 const char VERA_DECR_640 = 0xf8;
 // $9F23	DATA0	VRAM Data port 0
-char * const VERA_DATA0 = 0x9f23;
+char * const VERA_DATA0 = (char*)0x9f23;
 // $9F24	DATA1	VRAM Data port 1
-char * const VERA_DATA1 = 0x9f24;
+char * const VERA_DATA1 = (char*)0x9f24;
 // $9F25	CTRL Control
 // Bit 7: Reset
 // Bit 1: DCSEL
 // Bit 2: ADDRSEL
-char * const VERA_CTRL = 0x9f25;
+char * const VERA_CTRL = (char*)0x9f25;
 const char VERA_DCSEL	= 2;
 const char VERA_ADDRSEL	= 1;
 // $9F26	IEN		Interrupt Enable
@@ -87,7 +87,7 @@ const char VERA_ADDRSEL	= 1;
 // Bit 2: SPRCOL
 // Bit 1: LINE
 // Bit 0: VSYNC
-char * const VERA_IEN = 0x9f26;
+char * const VERA_IEN = (char*)0x9f26;
 const char VERA_AFLOW	= 8;
 const char VERA_SPRCOL	= 4;
 const char VERA_LINE	= 2;
@@ -100,12 +100,12 @@ const char VERA_VSYNC	= 1;
 // Bit 2: SPRCOL
 // Bit 1: LINE
 // Bit 0: VSYNC
-char * const VERA_ISR = 0x9f27;
+char * const VERA_ISR = (char*)0x9f27;
 // $9F28	IRQLINE_L	IRQ line (7:0)
 // IRQ_LINE specifies at which line the LINE interrupt will be generated.
 // Note that bit 8 of this value is present in the IEN register.
 // For interlaced modes the interrupt will be generated each field and the bit 0 of IRQ_LINE is ignored.
-char * const VERA_IRQLINE_L = 0x9f28;
+char * const VERA_IRQLINE_L = (char*)0x9f28;
 
 // $9F29	DC_VIDEO (DCSEL=0)
 // Bit 7: Current Field     Read-only bit which reflects the active interlaced field in composite and RGB modes. (0: even, 1: odd)
@@ -114,7 +114,7 @@ char * const VERA_IRQLINE_L = 0x9f28;
 // Bit 4: Layer0 Enable	    Enable output from the Layer0 renderer
 // Bit 2: Chroma Disable    Setting 'Chroma Disable' disables output of chroma in NTSC composite mode and will give a better picture on a monochrome display. (Setting this bit will also disable the chroma output on the S-video output.)
 // Bit 0-1: Output Mode     0: Video disabled, 1: VGA output, 2: NTSC composite, 3: RGB interlaced, composite sync (via VGA connector)
-char * const VERA_DC_VIDEO = 0x9f29;
+char * const VERA_DC_VIDEO = (char*)0x9f29;
 const char VERA_SPRITES_ENABLE = 0x40;
 const char VERA_LAYER1_ENABLE = 0x20;
 const char VERA_LAYER0_ENABLE = 0x10;
@@ -124,19 +124,19 @@ const char VERA_OUTPUT_VGA = 0x01;
 const char VERA_OUTPUT_NTSC = 0x02;
 const char VERA_OUTPUT_RGB = 0x03;
 // $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
-char * const VERA_DC_HSCALE = 0x9f2a;
+char * const VERA_DC_HSCALE = (char*)0x9f2a;
 // $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
-char * const VERA_DC_VSCALE = 0x9f2b;
+char * const VERA_DC_VSCALE = (char*)0x9f2b;
 // $9F2C	DC_BORDER (DCSEL=0)	Border Color
-char * const VERA_DC_BORDER = 0x9f2c;
+char * const VERA_DC_BORDER = (char*)0x9f2c;
 // $9F29	DC_HSTART (DCSEL=1)	Active Display H-Start (9:2)
-char * const VERA_DC_HSTART = 0x9f29;
+char * const VERA_DC_HSTART = (char*)0x9f29;
 // $9F2A	DC_HSTOP (DCSEL=1)	Active Display H-Stop (9:2)
-char * const VERA_DC_HSTOP = 0x9f2a;
+char * const VERA_DC_HSTOP = (char*)0x9f2a;
 // $9F2B	DC_VSTART (DCSEL=1)	Active Display V-Start (8:1)
-char * const VERA_DC_VSTART = 0x9f2b;
+char * const VERA_DC_VSTART = (char*)0x9f2b;
 // $9F2C	DC_VSTOP (DCSEL=1)	Active Display V-Stop (8:1)
-char * const VERA_DC_VSTOP = 0x9f2c;
+char * const VERA_DC_VSTOP = (char*)0x9f2c;
 
 // Configuration work tables
 
@@ -165,7 +165,7 @@ byte const VERA_LAYER_COLOR_DEPTH_MASK = 0x03;
 byte const VERA_LAYER_COLOR_DEPTH[4] = {1, 2, 4, 8};
 
 // $9F2D	L0_CONFIG   Layer 0 Configuration
-char * const VERA_L0_CONFIG = 0x9f2d;
+char * const VERA_L0_CONFIG = (char*)0x9f2d;
 // Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
 char const VERA_LAYER_CONFIG_MODE_TILE = 0x00;
 char const VERA_LAYER_CONFIG_MODE_BITMAP = 0x04;
@@ -173,7 +173,7 @@ char const VERA_LAYER_CONFIG_MODE_BITMAP = 0x04;
 char const VERA_LAYER_CONFIG_16C = 0x00;
 char const VERA_LAYER_CONFIG_256C = 0x08;
 // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
-char * const VERA_L0_MAPBASE = 0x9f2e;
+char * const VERA_L0_MAPBASE = (char*)0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
 // Bit 2-7: Tile Base Address (16:11)
 // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
@@ -185,49 +185,49 @@ byte const VERA_TILEBASE_HEIGHT_16 = 0x02;
 byte const VERA_TILEBASE_HEIGHT_MASK = 0x02;
 byte const VERA_LAYER_TILEBASE_MASK = 0xfC;
 // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
-char * const VERA_L0_TILEBASE = 0x9f2f;
+char * const VERA_L0_TILEBASE = (char*)0x9f2f;
 // $9F30	L0_HSCROLL_L	Layer 0 H-Scroll (7:0)
-char * const VERA_L0_HSCROLL_L = 0x9f30;
+char * const VERA_L0_HSCROLL_L = (char*)0x9f30;
 // $9F31	L0_HSCROLL_H	Layer 0 H-Scroll (11:8)
-char * const VERA_L0_HSCROLL_H = 0x9f31;
+char * const VERA_L0_HSCROLL_H = (char*)0x9f31;
 // $9F32	L0_VSCROLL_L	Layer 0 V-Scroll (7:0)
-char * const VERA_L0_VSCROLL_L = 0x9f32;
+char * const VERA_L0_VSCROLL_L = (char*)0x9f32;
 // $9F33	L0_VSCROLL_H    Layer 0 V-Scroll (11:8)
-char * const VERA_L0_VSCROLL_H = 0x9f33;
+char * const VERA_L0_VSCROLL_H = (char*)0x9f33;
 // $9F34	L1_CONFIG   Layer 1 Configuration
-char * const VERA_L1_CONFIG = 0x9f34;
+char * const VERA_L1_CONFIG = (char*)0x9f34;
 // $9F35	L1_MAPBASE	    Layer 1 Map Base Address (16:9)
-char * const VERA_L1_MAPBASE = 0x9f35;
+char * const VERA_L1_MAPBASE = (char*)0x9f35;
 // $9F36	L1_TILEBASE	    Layer 1 Tile Base
 // Bit 2-7: Tile Base Address (16:11)
 // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
 // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
-char * const VERA_L1_TILEBASE = 0x9f36;
+char * const VERA_L1_TILEBASE = (char*)0x9f36;
 // $9F37	L1_HSCROLL_L	Layer 1 H-Scroll (7:0)
-char * const VERA_L1_HSCROLL_L = 0x9f37;
+char * const VERA_L1_HSCROLL_L = (char*)0x9f37;
 // $9F38	L1_HSCROLL_H	Layer 1 H-Scroll (11:8)
-char * const VERA_L1_HSCROLL_H = 0x9f38;
+char * const VERA_L1_HSCROLL_H = (char*)0x9f38;
 // $9F39	L1_VSCROLL_L	Layer 1 V-Scroll (7:0)
-char * const VERA_L1_VSCROLL_L = 0x9f39;
+char * const VERA_L1_VSCROLL_L = (char*)0x9f39;
 // $9F3A	L1_VSCROLL_H	Layer 1 V-Scroll (11:8)
-char * const VERA_L1_VSCROLL_H = 0x9f3a;
+char * const VERA_L1_VSCROLL_H = (char*)0x9f3a;
 // $9F3B	AUDIO_CTRL
 // Bit 7:   FIFO Full / FIFO Reset
 // Bit 5:   16-Bit
 // Bit 4:   Stereo
 // Bit 0-3: PCM Volume
-char * const VERA_AUDIO_CTRL = 0x9f3b;
+char * const VERA_AUDIO_CTRL = (char*)0x9f3b;
 // $9F3C	AUDIO_RATE	PCM Sample Rate
-char * const VERA_AUDIO_RATE = 0x9f3c;
+char * const VERA_AUDIO_RATE = (char*)0x9f3c;
 // $9F3D	AUDIO_DATA	Audio FIFO data (write-only)
-char * const VERA_AUDIO_DATA = 0x9f3d;
+char * const VERA_AUDIO_DATA = (char*)0x9f3d;
 // $9F3E	SPI_DATA	SPI Data
-char * const VERA_SPI_DATA = 0x9f3e;
+char * const VERA_SPI_DATA = (char*)0x9f3e;
 // $9F3F	SPI_CTRL	SPI Control
 // Bit 7:   Busy
 // Bit 1:   Slow clock
 // Bit 0:   Select
-char * const VERA_SPI_CTRL = 0x9f3f;
+char * const VERA_SPI_CTRL = (char*)0x9f3f;
 
 // VERA Palette address in VRAM  $1FA00 - $1FBFF
 // 256 entries of 2 bytes

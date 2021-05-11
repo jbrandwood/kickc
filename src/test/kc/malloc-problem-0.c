@@ -1,6 +1,6 @@
 // Error where the compiler is reusing the same ZP for two byte* variables.
 
-byte* MEM = 0x0400;
+byte* MEM = (char*)0x0400;
 byte* malloc() {
     return ++MEM;
 }

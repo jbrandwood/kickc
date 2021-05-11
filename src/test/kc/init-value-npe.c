@@ -1,5 +1,5 @@
 // https://gitlab.com/camelot/kickc/-/issues/650
-char * const myscreen = $7000;
+char * const myscreen = (char*)$7000;
 char * bitmap_screen;
 void main() {
     memset(myscreen);

@@ -5,7 +5,7 @@
 #include <c64-time.h>
 #include <c64-print.h>
 
-char* SCREEN = $0400;
+char* SCREEN = (byte*)$0400;
 
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI

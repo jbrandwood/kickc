@@ -4,10 +4,10 @@
 #include <c64.h>
 #include <c64-print.h>
 
-char* const BASIC_ROM = $a000;
-char* const KERNAL_ROM = $e000;
-char* const IO_RAM = $d000;
-char* const SCREEN = 0x400;
+char* const BASIC_ROM = (char*)$a000;
+char* const KERNAL_ROM = (char*)$e000;
+char* const IO_RAM = (char*)$d000;
+char* const SCREEN = (char*)0x400;
 
 void main() {
     // Avoid interrupts

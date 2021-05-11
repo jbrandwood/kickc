@@ -1,6 +1,6 @@
 
 void main() {
-    byte* SCREEN = $0400;
+    byte* SCREEN = (byte*)$0400;
     for( word w: 0..$ffff) {
         SCREEN[0] = <w;
         SCREEN[1] = >w;

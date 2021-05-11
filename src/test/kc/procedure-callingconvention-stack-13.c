@@ -1,7 +1,7 @@
 // Test a procedure with calling convention stack
 // Recursion that works (no local variables)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main(void) {
     *SCREEN = pow2(6);

@@ -5,7 +5,7 @@ void main() {
     for( byte i: 0..100) {
         dword b = a + i;
         byte c = (byte) b;
-        byte* const SCREEN = $400;
+        byte* const SCREEN = (char*)$400;
         SCREEN[i] = c;
     }
 }

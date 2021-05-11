@@ -1,6 +1,6 @@
 // Fill screen using an efficient char-based index
 
-byte *SCREEN = $0400;
+byte *SCREEN = (byte*)$0400;
 
 void main() {
     for(char i=0;i<250;i++) {

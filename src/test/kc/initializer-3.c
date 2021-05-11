@@ -13,7 +13,7 @@ struct Point points[] = {
 };
 
 void main() {
-    char* const SCREEN = 0x0400;
+    char* const SCREEN = (char*)0x0400;
     char idx = 0;
     for( char i: 0..2) {
         SCREEN[idx++] = points[i].x;

@@ -56,7 +56,7 @@ void main() {
     vera_layer_mode_tile(0, 0x14000, 0x00000, 64, 64, 16, 16, 8);
 
 
-    char* tilebase = 0x0000;
+    char* tilebase = (char*)0x0000;
     memcpy_to_vram(0, tilebase, tiles, 256);
     tilebase+=256;
     for(byte t:1..255) {

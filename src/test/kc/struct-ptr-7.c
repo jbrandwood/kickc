@@ -13,7 +13,7 @@ void main() {
     points[1].x = 5;
     points[1].y = 6;
 
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = points[0].x;
     SCREEN[1] = points[0].y;
     SCREEN[3] = points[1].x;

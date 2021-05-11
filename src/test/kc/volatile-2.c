@@ -1,6 +1,6 @@
 // Test that volatile const vars are turned into load/store
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 const volatile char ch = 3;
 

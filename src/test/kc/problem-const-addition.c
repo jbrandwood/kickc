@@ -1,8 +1,8 @@
 // Illustrates problem with constant addition not handling mixed types properly
 
-char* SCREEN = $400;
-char* CHARGEN = 0xd000;
-char* PROCPORT = 0x01;
+char* SCREEN = (char*)$400;
+char* CHARGEN = (char*)0xd000;
+char* PROCPORT = (char*)0x01;
 
 void main() {
     for(char pos: 0..3)

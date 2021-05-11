@@ -2,7 +2,7 @@
 // ASM fragment variations "cast" constants to different types
 
 void main() {
-    dword* screen = 0x400;
+    dword* screen = (dword*)0x400;
     word w = 10;
     screen[0] = mul16u(w, w);
     w = 1000;

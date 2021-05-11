@@ -1,7 +1,7 @@
-byte* const SCREEN = $0400;
+byte* const SCREEN = (byte*)$0400;
 const byte STAR = 81;
 
-byte* VIC = $d000;
+byte* VIC = (byte*)$d000;
 byte* BG_COLOR = VIC+$10*2+1;
 byte RED = 2;
 

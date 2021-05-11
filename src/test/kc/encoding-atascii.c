@@ -3,7 +3,7 @@
 #pragma encoding(atascii)
 char TEXT[] = "hello, world!\n";
 
-char * SCREEN = 0x0400;
+char * SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = TEXT[13];

@@ -4,7 +4,7 @@
 // https://gitlab.com/camelot/kickc/issues/295
 
 void main() {
-    char* const screen = 0x0400;
+    char* const screen = (char*)0x0400;
     for(char i: 0..7) {
         char b = (i&1);
         screen[i] = !b;

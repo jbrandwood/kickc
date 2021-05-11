@@ -1,5 +1,5 @@
-byte* const BORDER_COLOR = $d020;
-byte* const SCREEN = $0400;
+byte* const BORDER_COLOR = (char*)$d020;
+byte* const SCREEN = (byte*)$400;
 
 void main() {
     print_cls();

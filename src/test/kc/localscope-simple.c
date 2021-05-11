@@ -1,6 +1,6 @@
 // Tests anonymous scopes inside functions
 
-byte* const BG_COLOR = $d021;
+byte* const BG_COLOR = (char*)$d021;
 
 void main() {
     {

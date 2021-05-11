@@ -1,5 +1,5 @@
 
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 byte TXT[] = { 3, 1, 13, 5, 12, 15, 20, 32};
 
 void main() {

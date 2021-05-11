@@ -54,7 +54,7 @@
   .label framedone = $c
 .segment Code
 __start: {
-    // char* volatile PLEX_SCREEN_PTR = 0x400+0x3f8
+    // char* volatile PLEX_SCREEN_PTR = (char*)0x400+0x3f8
     lda #<$400+$3f8
     sta.z PLEX_SCREEN_PTR
     lda #>$400+$3f8

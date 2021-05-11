@@ -2,7 +2,7 @@
 
 #pragma encoding(screencode_upper)
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 char MSG[] = "CAMELOT!";
 
 void main() {

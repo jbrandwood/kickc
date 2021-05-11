@@ -17,11 +17,11 @@ byte* SCREEN_DIST = malloc(1000);
 // Screen containing angle to center
 byte* SCREEN_ANGLE = malloc(1000);
 // Plasma charset
-char* const CHARSET = 0x2000;
+char* const CHARSET = (char*)0x2000;
 // Plasma screen 1
-char* const SCREEN1 = 0x2800;
+char* const SCREEN1 = (char*)0x2800;
 // Plasma screen 2
-char* const SCREEN2 = 0x2c00;
+char* const SCREEN2 = (char*)0x2c00;
 
 void main() {
     init_dist_screen(SCREEN_DIST);

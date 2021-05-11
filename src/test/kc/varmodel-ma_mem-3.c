@@ -9,7 +9,7 @@ void main() {
 
 void model_ma_mem() {
     // A local pointer
-    char* screen = 0x0400;
+    char* screen = (char*)0x0400;
     // A local counter
     for( char i: 0..5 )
         *(screen++) = 'a';
@@ -19,7 +19,7 @@ void model_ma_mem() {
 
 void model_ssa_zp() {
     // A local pointer
-    char* screen = 0x0428;
+    char* screen = (char*)0x0428;
     // A local counter
     for( char i: 0..5 )
         *(screen++) = 'b';

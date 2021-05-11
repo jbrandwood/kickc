@@ -62,11 +62,11 @@ unsigned char __align($100) mulf127_sqr2_lo[512]  = kickasm{{ .fill 512, <round(
 unsigned char __align($100) mulf127_sqr2_hi[512]  = kickasm{{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4) }};
 
 unsigned word mulf8u127(unsigned char a, unsigned char b) {
-    byte* const memA = $fc;
-    byte* const memB = $fd;
-    word* const res = $fe;
-    byte* const resL = $fe;
-    byte* const resH = $ff;
+    byte* const memA = (byte*)$fc;
+    byte* const memB = (byte*)$fd;
+    word* const res = (word*)$fe;
+    byte* const resL = (byte*)$fe;
+    byte* const resH = (byte*)$ff;
     *memA = a;
     *memB = b;
     asm {

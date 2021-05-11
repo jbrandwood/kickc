@@ -6,7 +6,7 @@ struct Cols {
     char bg;
 };
 
-struct Cols * const COLS = 0xd020;
+struct Cols * const COLS = (struct Cols *)0xd020;
 
 void main() {
     struct Cols a = { 1, 2 };

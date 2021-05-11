@@ -1,7 +1,7 @@
 // Test that recursion results in a CompileError, as it is not supported
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     byte f = fib(8);
     *screen = f;
 }

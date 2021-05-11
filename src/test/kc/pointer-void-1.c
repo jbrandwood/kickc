@@ -12,7 +12,7 @@ void main() {
     print(vd);
 }
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (char*)0x0400;
 byte idx = 0;
 
 void print(void* ptr) {

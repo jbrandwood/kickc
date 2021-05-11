@@ -1,5 +1,5 @@
 void main() {
-    byte* zpptr = $1000;
+    byte* zpptr = (byte*)$1000;
     for(byte j : 0..10) {
         for(byte i : 0..10) {
             for(byte k : 0..10) {

@@ -1,7 +1,7 @@
 // Test a function taking boolean parameter and returning boolean result
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     for(byte i: 0..100) {
         if( isSet(i, (i&1)==0)) {
             screen[i] = '*';

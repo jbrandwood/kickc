@@ -4,8 +4,8 @@
 #include <atan2.h>
 #include <c64.h>
 
-byte* const CHARSET = 0x2000;
-byte* const SCREEN = 0x2800;
+byte* const CHARSET = (byte*)0x2000;
+byte* const SCREEN = (byte*)0x2800;
 
 void main() {
     init_font_hex(CHARSET);

@@ -11,7 +11,7 @@
 // Port A Bits 0-7 RAM bank
 // Port B Bits 0-2 ROM bank
 // Port B Bits 3-7 [TBD]
-struct MOS6522_VIA * const VIA1 = 0x9f60;
+struct MOS6522_VIA * const VIA1 = (struct MOS6522_VIA *)0x9f60;
 // The VIA#2: Keyboard/Joy/Mouse
 // Port A Bit  0   KBD PS/2 DAT
 // Port A Bit  1   KBD PS/2 CLK
@@ -25,23 +25,23 @@ struct MOS6522_VIA * const VIA1 = 0x9f60;
 // Port B Bit  1   MOUSE PS/2 CLK
 // Port B Bits 2-7 [TBD]
 // NOTE: The pin assignment of the NES/SNES controller is likely to change.
-struct MOS6522_VIA * const VIA2 = 0x9f70;
+struct MOS6522_VIA * const VIA2 = (struct MOS6522_VIA *)0x9f70;
 
 // Interrupt Vectors
 // https://github.com/commanderx16/x16-emulator/wiki/(ASM-Programming)-Interrupts-and-interrupt-handling
 
 // $FFFE	(ROM) Universal interrupt vector - The vector used when the HARDWARE serves IRQ interrupts
-void()** const HARDWARE_IRQ = 0xfffe;
+void()** const HARDWARE_IRQ = (void()**)0xfffe;
 // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
-void()** const KERNEL_IRQ = 0x0314;
+void()** const KERNEL_IRQ = (void()**)0x0314;
 // $0316	(RAM) BRK vector - The vector used when the KERNAL serves IRQ caused by a BRK
-void()** const KERNEL_BRK = 0x0316;
+void()** const KERNEL_BRK = (void()**)0x0316;
 
 
 // VRAM Address of the default screen
-char * const DEFAULT_SCREEN = 0x0000;
+char * const DEFAULT_SCREEN = (char*)0x0000;
 // VRAM Bank (0/1) of the default screen
-char * const DEFAULT_SCREEN_VBANK = 0;
+char * const DEFAULT_SCREEN_VBANK = (char*)0;
 
 // Put a single byte into VRAM.
 // Uses VERA DATA0

@@ -1,6 +1,6 @@
 // Demonstrates problem with conditions using negated struct references
 
-unsigned int* const SCREEN = 0x0400;
+unsigned int* const SCREEN = (char*)0x0400;
 
 struct Setting {
     char len;

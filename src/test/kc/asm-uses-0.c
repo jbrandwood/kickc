@@ -6,7 +6,7 @@ void main() {
     }
 }
 
-char* const BG_COLOR = 0xd020;
+char* const BG_COLOR = (char*)0xd020;
 
 // Function only used inside the inline asm
 void init() {

@@ -12,18 +12,18 @@
 #include <mega65-math.h>
 
 // I/O Personality selection
-volatile char * const IO_KEY = 0xd02f;
+volatile char * const IO_KEY = (char*)0xd02f;
 // C65 Banking Register
-volatile char * const IO_BANK = 0xd030;
+volatile char * const IO_BANK = (char*)0xd030;
 // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
 const char CRAM2K = 0b00000001;
 
 // Processor port data direction register
-char*  const PROCPORT_DDR = 0x00;
+char*  const PROCPORT_DDR = (char*)0x00;
 // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
 const char PROCPORT_DDR_MEMORY_MASK = 0b00000111;
 // Processor Port Register controlling RAM/ROM configuration and the datasette
-char*  const PROCPORT = 0x01;
+char*  const PROCPORT = (char*)0x01;
 // RAM in all three areas 0xA000, 0xD000, 0xE000
 const char PROCPORT_RAM_ALL         = 0b00000000;
 // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -36,50 +36,50 @@ const char PROCPORT_KERNEL_IO       = 0b00000110;
 const char PROCPORT_BASIC_KERNEL_IO = 0b00000111;
 
 // The VIC-II MOS 6567/6569
-struct MOS6569_VICII* const VICII = 0xd000;
+struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*)0xd000;
 // The VIC III MOS 4567/4569
-struct MOS4569_VICIII* const VICIII = 0xd000;
+struct MOS4569_VICIII* const VICIII = (struct MOS4569_VICIII*)0xd000;
 // The VIC IV
-struct MEGA65_VICIV* const VICIV = 0xd000;
+struct MEGA65_VICIV* const VICIV = (struct MEGA65_VICIV*)0xd000;
 // The address of the CHARGEN character set
-char * const CHARGEN = 0xd000;
+char * const CHARGEN = (char*)0xd000;
 // Palette RED
-char * const PALETTE_RED = 0xd100;
+char * const PALETTE_RED = (char*)0xd100;
 // Palette GREEN
-char * const PALETTE_GREEN = 0xd200;
+char * const PALETTE_GREEN = (char*)0xd200;
 // Palette BLUE
-char * const PALETTE_BLUE = 0xd300;
+char * const PALETTE_BLUE = (char*)0xd300;
 // The SID MOS 6581/8580
-struct MOS6581_SID * const SID = 0xd400;
+struct MOS6581_SID * const SID = (struct MOS6581_SID *)0xd400;
 // DMAgic F018 Controller
-struct F018_DMAGIC * const DMA = 0xd700;
+struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *)0xd700;
 // Color Ram
-char * const COLORRAM = 0xd800;
+char * const COLORRAM = (char*)0xd800;
 
 // Default address of screen character matrix
 #ifdef __MEGA65_C64__
-    char * const DEFAULT_SCREEN = 0x0400;
+    char * const DEFAULT_SCREEN = (char*)0x0400;
 #else
-    char * const DEFAULT_SCREEN = 0x0800;
+    char * const DEFAULT_SCREEN = (char*)0x0800;
 #endif
 
 // The CIA#1: keyboard matrix, joystick #1/#2
-struct MOS6526_CIA * const CIA1 = 0xdc00;
+struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)0xdc00;
 // The CIA#2: Serial bus, RS-232, VIC memory bank
-struct MOS6526_CIA * const CIA2 = 0xdd00;
+struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *)0xdd00;
 // CIA#1 Interrupt for reading in ASM
-char * const CIA1_INTERRUPT = 0xdc0d;
+char * const CIA1_INTERRUPT = (char*)0xdc0d;
 // CIA#2 timer A&B as one single 32-bit value
-unsigned long* const CIA2_TIMER_AB = 0xdd04;
+unsigned long* const CIA2_TIMER_AB = (unsigned long*)0xdd04;
 // CIA#2 Interrupt for reading in ASM
-char * const CIA2_INTERRUPT = 0xdd0d;
+char * const CIA2_INTERRUPT = (char*)0xdd0d;
 
 // The vector used when the KERNAL serves IRQ interrupts
-void()** const KERNEL_IRQ = 0x0314;
+void()** const KERNEL_IRQ = (void()**)0x0314;
 // The vector used when the KERNAL serves NMI interrupts
-void()** const KERNEL_NMI = 0x0318;
+void()** const KERNEL_NMI = (void()**)0x0318;
 // The vector used when the HARDWARE serves IRQ interrupts
-void()** const HARDWARE_IRQ = 0xfffe;
+void()** const HARDWARE_IRQ = (void()**)0xfffe;
 
 // The colors of the C64
 const char BLACK = 0x0;

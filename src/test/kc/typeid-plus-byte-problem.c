@@ -1,6 +1,6 @@
 // Test that byte+byte creates a byte - even when there is a value overflow
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     unsigned byte ubc1 = 12+13+14;

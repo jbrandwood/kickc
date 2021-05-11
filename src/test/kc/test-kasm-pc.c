@@ -5,7 +5,7 @@ __address(0x2000) byte TABLE[] = kickasm {{
 }};
 
 void main() {
-    byte* BORDER_COLOR = $d020;
+    byte* BORDER_COLOR = (char*)$d020;
     byte i=0;
     while(true) {
         *BORDER_COLOR = TABLE[i++];

@@ -5,8 +5,8 @@ __address(0x1000) char sintab[] = kickasm {{
 }};
 
 void main() {
-    byte* screen = $400;
-    byte* cols = $d800;
+    byte* screen = (char*)$400;
+    byte* cols = (char*)$d800;
     for(byte i:0..24) {
         byte sin = sintab[i];
         screen[sin] = '*';

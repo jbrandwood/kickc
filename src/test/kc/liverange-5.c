@@ -12,7 +12,7 @@ void main() {
     }
 }
 
-char* const SCREEN  = 0x0400;
+char* const SCREEN  = (char*)0x0400;
 
 void print(char b, char ca) {
     out(b, ca);

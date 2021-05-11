@@ -1,19 +1,19 @@
 // A minimal working raster IRQ
 
-void()** const  KERNEL_IRQ = $0314;
-byte* const RASTER = $d012;
-byte* const VICII_CONTROL1 = $d011;
-byte* const IRQ_STATUS = $d019;
-byte* const IRQ_ENABLE = $d01a;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+byte* const RASTER = (byte*)$d012;
+byte* const VICII_CONTROL1 = (byte*)$d011;
+byte* const IRQ_STATUS = (byte*)$d019;
+byte* const IRQ_ENABLE = (byte*)$d01a;
 const byte IRQ_RASTER = %00000001;
 const byte IRQ_COLLISION_BG = %00000010;
 const byte IRQ_COLLISION_SPRITE = %00000100;
 const byte IRQ_LIGHTPEN = %00001000;
-byte* const BG_COLOR = $d020;
+byte* const BG_COLOR = (byte*)$d020;
 const byte WHITE = 1;
 const byte BLACK = 0;
 
-byte* const CIA1_INTERRUPT = $dc0d;
+byte* const CIA1_INTERRUPT = (byte*)$dc0d;
 const byte CIA_INTERRUPT_CLEAR = $7f;
 
 void main() {

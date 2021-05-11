@@ -3,6 +3,6 @@
 #include <c64.h>
 
 void main() {
-    byte* const PLAYFIELD_CHARSET = $2800;
+    byte* const PLAYFIELD_CHARSET = (byte*)$2800;
 	vicSelectGfxBank(PLAYFIELD_CHARSET);
 }

@@ -3,7 +3,7 @@
 #include <c64-multiplexer.h>
 
 // Location of screen & sprites
-char* SCREEN = $400;
+char* SCREEN = (char*)$400;
 
 char __align(0x100) YSIN[0x100] = kickasm {{
     .var min = 50

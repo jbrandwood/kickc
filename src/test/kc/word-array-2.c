@@ -7,7 +7,7 @@ void main() {
         words[(word)i] = ((word)i)*0x100+i;
     }
 
-    word* const SCREEN = $0400;
+    word* const SCREEN = (word*)$0400;
     SCREEN[0] = words[(word)255];
 
 }

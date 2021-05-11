@@ -1,4 +1,4 @@
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 
 void main() {
     byte i=100;

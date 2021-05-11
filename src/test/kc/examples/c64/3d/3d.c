@@ -19,7 +19,7 @@ signed char yp;
 unsigned int psp1;
 unsigned int psp2;
 
-char* SCREEN = $400;
+char* SCREEN = (char*)$400;
 
 void main() {
 	asm { sei }
@@ -102,7 +102,7 @@ void debug_print_init() {
 
     char* at_line = SCREEN+16*40;
  	char c = 4;
- 	char* COLS = $d800;
+ 	char* COLS = (char*)$d800;
  	char* at_cols = COLS+16*40;
     for( char i: 0..7) {
     	print_schar_at(xs[i], at_line+40*0+c);
@@ -156,7 +156,7 @@ void debug_print() {
 
 // Initialize sprites
 void sprites_init() {
-	char* SCREEN = $400;
+	char* SCREEN = (char*)$400;
     VICII->SPRITES_ENABLE = %11111111;
     char* sprites_ptr = SCREEN+$3f8;
     for(char i: 0..7) {

@@ -1,6 +1,6 @@
-void()** const  KERNEL_IRQ = $0314;
-byte* const BG_COLOR = $d020;
-byte* const FGCOL = $d021;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+byte* const BG_COLOR = (byte*)$d020;
+byte* const FGCOL = (byte*)$d021;
 
 void main() {
     *KERNEL_IRQ = &irq;

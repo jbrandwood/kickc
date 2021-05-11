@@ -2,6 +2,6 @@
 
 void main() {
     for(;;)
-        for(char* sc = 0x0400;sc<0x0800; sc++)
+        for(char* sc = (char*)0x0400;sc<0x0800; sc++)
             (*sc)++;
 }

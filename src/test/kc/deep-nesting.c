@@ -1,7 +1,7 @@
 // Test that the compiler handles deep nesting well -- mainly a performance issue.
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     const byte reverse = $80;
     screen[0] = f1(0);
 }

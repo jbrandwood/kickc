@@ -17,7 +17,7 @@ void strip(unsigned char *p, unsigned char c) {
     } while(*p++!=0);
 }
 
-unsigned char* screen = $400;
+unsigned char* screen = (char*)$400;
 
 void print(unsigned char* msg) {
     do {

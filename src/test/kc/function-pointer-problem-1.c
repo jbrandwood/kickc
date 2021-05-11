@@ -1,7 +1,7 @@
 // The following casuses an exception in pass 2
 // https://gitlab.com/camelot/kickc/-/issues/561
 
-char const * r = 0x8000;
+char const * r = (char *)0x8000;
 
 void main() {
 	enableDLI(&fn1);

@@ -1,22 +1,22 @@
-byte* D011 = $d011;
+byte* D011 = (byte*)$d011;
   byte RST8 = %10000000;
   byte ECM =  %01000000;
   byte BMM =  %00100000;
   byte DEN =  %00010000;
   byte RSEL =  %00001000;
-byte* RASTER = $d012;
-byte* D016 = $d016;
+byte* RASTER = (byte*)$d012;
+byte* D016 = (byte*)$d016;
   byte MCM =  %00010000;
   byte CSEL = %00001000;
-byte* D018 = $d018;
-byte* BG_COLOR = $d020;
-byte* FGCOL = $d021;
+byte* D018 = (byte*)$d018;
+byte* BG_COLOR = (byte*)$d020;
+byte* FGCOL = (byte*)$d021;
 
-byte* COLS = $d800;
+byte* COLS = (byte*)$d800;
 
 
-byte* SCREEN = $400;
-byte* const BITMAP = $2000;
+byte* SCREEN = (byte*)$400;
+byte* const BITMAP = (byte*)$2000;
 
 void main() {
     *BG_COLOR = 0;
@@ -50,7 +50,7 @@ const byte plot_yhi[256];
 const byte plot_bit[256];
 
 void plot(byte x, byte y) {
-    byte* plotter_x = 0;
+    byte* plotter_x = (byte*)0;
     word plotter_y = 0;
     >plotter_x = plot_xhi[x];  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
     <plotter_x = plot_xlo[x];
@@ -71,7 +71,7 @@ void init_plot_tables() {
           bits = $80;
         }
     }
-    byte* yoffs = $0;
+    byte* yoffs = (byte*)$0;
     for(byte y : 0..255) {
         plot_ylo[y] = y&$7 | <yoffs;
         plot_yhi[y] = >yoffs;

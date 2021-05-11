@@ -11,7 +11,7 @@ void main() {
     for( word i: 0..499) {
         points[i] = { 2, (byte)i };
     }
-    struct Point* const SCREEN = 0x0400;
+    struct Point* const SCREEN = (struct Point*)0x0400;
     for( word i: 0..499) {
         SCREEN[i] = points[i];
     }

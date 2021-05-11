@@ -1,9 +1,9 @@
 #include "benchcommon.c"
 #include <c64.h>
 
-char* const SCREEN1 = 0xE000;
-char* const SCREEN2 = 0xE400;
-char* const CHARSET = 0xE800;
+char* const SCREEN1 = (char*)0xE000;
+char* const SCREEN2 = (char*)0xE400;
+char* const CHARSET = (char*)0xE800;
 const char PAGE1 = ((((unsigned int)SCREEN1) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 const char PAGE2 = ((((unsigned int)SCREEN2) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 

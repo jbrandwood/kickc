@@ -1,5 +1,5 @@
-byte* const plots = $1000;
-byte* const SCREEN = $0400;
+byte* const plots = (byte*)$1000;
+byte* const SCREEN = (byte*)$0400;
 
 void main() {
     for(byte i : 0..39) {

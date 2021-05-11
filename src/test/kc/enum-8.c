@@ -7,7 +7,7 @@ struct Button {
 
 void main() {
     struct Button button = { RED, 24 };
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = button.color;
     SCREEN[1] = button.size;
 }

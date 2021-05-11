@@ -2,7 +2,7 @@
 const dword PI_u4f28 = $3243f6a9;
 
 void main() {
-    byte* SCREEN = $400;
+    byte* SCREEN = (char*)$400;
     SCREEN[0] = > > PI_u4f28;
     SCREEN[1] = < > PI_u4f28;
     SCREEN[2] = > < PI_u4f28;

@@ -8,7 +8,7 @@ void main() {
     print("message 3 ");
 }
 
-byte* screen = $0400;
+byte* screen = (byte*)$400;
 void print(byte* msg) {
     while(*msg) {
         *(screen++) = *(msg++);

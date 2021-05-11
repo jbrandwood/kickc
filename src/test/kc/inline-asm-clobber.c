@@ -1,5 +1,5 @@
 // Tests that inline ASM clobbering is taken into account when assigning registers
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 void main() {
     // First loop with no clobber
     for(byte i : 0..100) {

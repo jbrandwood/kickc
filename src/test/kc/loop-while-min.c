@@ -1,7 +1,7 @@
 
 // Minimal classic while() loop
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     char i = 0;

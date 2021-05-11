@@ -34,7 +34,7 @@ enum KrillStatus {
 // The KERNAL ROM may be disabled and zeropage variables clobbered.
 // Returns the status of the installation
 enum KrillStatus krill_install() {
-    enum KrillStatus* const status = 0xff;
+    enum KrillStatus* const status = (enum KrillStatus*)0xff;
     asm(clobbers "AXY") {
         jsr KRILL_INSTALL
         sta status
@@ -49,8 +49,8 @@ enum KrillStatus krill_install() {
 // - filename - The name of the file to load (zero-terminated in petscii encoding)
 // Returns the status of the load
 enum KrillStatus krill_loadraw(char* filename) {
-    enum KrillStatus* const status = 0xff;
-    char** const fname = 0xfe;
+    enum KrillStatus* const status = (enum KrillStatus*)0xff;
+    char** const fname = (char**)0xfe;
     *fname = filename;
     asm(clobbers "AXY") {
         ldx fname

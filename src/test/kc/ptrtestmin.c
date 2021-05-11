@@ -3,7 +3,7 @@
 void main() {
 
   // A constant pointer
-  byte SCREEN[1024] = $0400;
+  byte SCREEN[1024] = (byte*)$400;
 
   byte b;
 

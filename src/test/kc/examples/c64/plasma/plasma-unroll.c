@@ -9,8 +9,8 @@
 #include <c64.h>
 #include <c64-print.h>
 
-unsigned char* const SCREEN1 = $2800;
-unsigned char* const CHARSET = $2000;
+unsigned char* const SCREEN1 = (char*)$2800;
+unsigned char* const CHARSET = (char*)$2000;
 
 const unsigned char __align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)

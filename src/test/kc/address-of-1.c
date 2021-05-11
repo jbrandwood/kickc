@@ -1,7 +1,7 @@
 // Test address-of - pass the pointer as parameter
 
 void main() {
-    byte* SCREEN = $400;
+    byte* SCREEN = (char*)$400;
     byte b1 = 0;
     byte b2 = 0;
     byte b3 = 0;

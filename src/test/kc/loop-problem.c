@@ -1,6 +1,6 @@
 // A simple loop results in NullPointerException during loop analysis
 
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 
 void main() {
     *SCREEN = '0';

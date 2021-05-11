@@ -8,7 +8,7 @@ int foo(unsigned char x, int *y) {
 }
 
 void main() {
-    int* SCREEN = 0x400;
+    int* SCREEN = (int*)0x400;
     int y1 = 0x1234;
     int y2 = 0x1234;
     *SCREEN++ = foo(1, &y1);

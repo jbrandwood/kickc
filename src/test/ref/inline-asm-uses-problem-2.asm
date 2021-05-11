@@ -11,7 +11,7 @@
 .segment Code
 main: {
     .label zp2 = $fc
-    // __address(0xfc) char * zp2 = 0x0400
+    // __address(0xfc) char * zp2 = (char*)0x0400
     lda #<$400
     sta.z zp2
     lda #>$400

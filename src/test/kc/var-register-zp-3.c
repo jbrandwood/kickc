@@ -1,6 +1,6 @@
 // Test declaring a variable as register on a specific ZP address
 
-char* screen = $400;
+char* screen = (char*)$400;
 
 void main() {
     print2(screen, "hello");

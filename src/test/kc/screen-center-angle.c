@@ -7,8 +7,8 @@
 #include <c64-time.h>
 #include <c64-print.h>
 
-byte* const CHARSET = 0x2000;
-byte* const SCREEN = 0x2800;
+byte* const CHARSET = (byte*)0x2000;
+byte* const SCREEN = (byte*)0x2800;
 
 void main() {
     init_font_hex(CHARSET);
@@ -17,8 +17,8 @@ void main() {
     clock_start();
     init_angle_screen(SCREEN);
     clock_t cyclecount = clock()-CLOCKS_PER_INIT;
-    byte* BASE_SCREEN = 0x0400;
-    byte* BASE_CHARSET = 0x1000;
+    byte* BASE_SCREEN = (byte*)0x0400;
+    byte* BASE_CHARSET = (byte*)0x1000;
     print_ulong_at(cyclecount, BASE_SCREEN);
     *D018 = toD018(BASE_SCREEN, BASE_CHARSET);
 }

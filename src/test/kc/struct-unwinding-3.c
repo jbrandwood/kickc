@@ -6,7 +6,7 @@ struct Point {
     char y;
 };
 
-struct Point * const SCREEN = 0x0400;
+struct Point * const SCREEN = (char*)0x0400;
 
 void main() {
     // Initialize classic struct from function returning unwound

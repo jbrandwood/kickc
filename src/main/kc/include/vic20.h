@@ -9,22 +9,22 @@
 #endif
 
 // Default address of screen color matrix
-char * const DEFAULT_COLORRAM = 0x9600;
+char * const DEFAULT_COLORRAM = (char*)0x9600;
 // Address of screen color matrix if bit 7 of $9002 is 1
-char * const ALTERNATIVE_COLORRAM = 0x9400;
+char * const ALTERNATIVE_COLORRAM = (char*)0x9400;
 // Default address of screen character matrix
-char * const DEFAULT_SCREEN = 0x1e00;
+char * const DEFAULT_SCREEN = (char*)0x1e00;
 
 // The address of the CHARGEN character set
-char * const CHARGEN = 0x8000;
+char * const CHARGEN = (char*)0x8000;
 
 // The MOS 6560/6561 VIC Video Interface Chip
-struct MOS6561_VIC * const VIC = 0x9000;
+struct MOS6561_VIC * const VIC = (struct MOS6561_VIC *)0x9000;
 
 // The VIA#1: User port, RS-232, Joystick, Lightpen, Cassette
-struct MOS6522_VIA * const VIA1 = 0x9110;
+struct MOS6522_VIA * const VIA1 = (struct MOS6522_VIA *)0x9110;
 // The VIA#2: Keyboard, Joystick, Cassette
-struct MOS6522_VIA * const VIA2 = 0x9120;
+struct MOS6522_VIA * const VIA2 = (struct MOS6522_VIA *)0x9120;
 
 // The colors of the VIC 20
 const char BLACK = 0x0;

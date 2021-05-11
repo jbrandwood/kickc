@@ -4,8 +4,8 @@
 
 #pragma link("zpcode.ld")
 
-char* RASTER = 0xd012;
-char* BG_COLOR = 0xd020;
+char* RASTER = (char*)0xd012;
+char* BG_COLOR = (char*)0xd020;
 
 void main() {
     asm { sei }

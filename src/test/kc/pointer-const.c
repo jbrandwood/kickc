@@ -4,10 +4,10 @@
 char const * MSG = "hello world!";
 
 // Const pointer
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 // Const pointer to const
-char const * const BASIC = 0xa004;
+char const * const BASIC = (char*)0xa004;
 
 void main() {
     char i=0;

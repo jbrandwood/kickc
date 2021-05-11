@@ -1,6 +1,6 @@
 // Test a while()-loop where the condition has a side-effect
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main(void) {
     char i = 7;

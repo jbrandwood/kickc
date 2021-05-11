@@ -67,8 +67,8 @@ void main() {
 const byte RED = 2ub;
 const byte GREEN = 5ub;
 
-byte* const SCREEN = $0400uw;
-byte* const COLS = $d800uw;
+byte* const SCREEN = (byte*)$0400uw;
+byte* const COLS = (byte*)$d800uw;
 byte idx = 0ub;
 
 // Check that the two passed type IDs are equal.

@@ -22,7 +22,7 @@ const char CONIO_TEXTCOLOR_DEFAULT = 0;
 // Set initial cursor position
 void conio_plus4_init() {
     // Position cursor at current line
-    char * const BASIC_CURSOR_LINE = 0xCD;
+    char * const BASIC_CURSOR_LINE = (char*)0xCD;
     char line = *BASIC_CURSOR_LINE;
     if(line>=CONIO_HEIGHT) line=CONIO_HEIGHT-1;
     gotoxy(0, line);

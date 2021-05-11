@@ -1,6 +1,6 @@
 void main()
 {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     word line;
     for (line = 0; line < 40*24; line += 40) {
         for (byte c=0; c<40; ++c)

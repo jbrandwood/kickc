@@ -10,7 +10,7 @@ void my_init(void) {
     SCREEN[0] = '*';
 }
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main(void) {
     SCREEN[2] = '*';

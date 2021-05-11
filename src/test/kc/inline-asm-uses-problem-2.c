@@ -2,7 +2,7 @@
 // zp2 should be forced to live at address $fc - but is identified to be constant by Pass1EarlyConstantIdentification
 
 void main() {
-    __address(0xfc) char * zp2 = 0x0400;
+    __address(0xfc) char * zp2 = (char*)0x0400;
     zp2[1] = '*';
     asm {
         lda #$28

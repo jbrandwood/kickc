@@ -7,9 +7,9 @@ void main() {
     volatile signed int ws = -177;
     volatile unsigned long du = 2000000;
     volatile signed long ds = -3777777;
-    char * volatile ptr = 0x0000;
+    char * volatile ptr = (char*)0x0000;
 
-    char * const SCREEN = 0x0400;
+    char * const SCREEN = (char*)0x0400;
     char i = 0;
     SCREEN[i++] = BYTE3(17);
     SCREEN[i++] = BYTE3(377);

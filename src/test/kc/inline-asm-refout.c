@@ -3,7 +3,7 @@
 byte table[] = "cml!"z;
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (char*)$400;
     *(SCREEN+40) = table[0];
 
     asm {

@@ -1,7 +1,7 @@
 // Test using some simple supported string escapes \r \f \n \' \"
 
 char MESSAGE[] = "\r\f\n\"\'\\";
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     byte i=0;

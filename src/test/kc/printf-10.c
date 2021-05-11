@@ -3,7 +3,7 @@
 
 __intrinsic void printf(char* format, ...);
 
-char * screen = 0x0400;
+char * screen = (char*)0x0400;
 char idx = 0;
 
 void cputs(char* str) {

@@ -6,10 +6,10 @@
 
 #include <c64.h>
 
-unsigned char* SCREEN1 = 0x3800;
-unsigned char* SCREEN2 = 0x3c00;
-unsigned char* BUFFER = 0x4000;
-unsigned char* CHARSET = 0x3000;
+unsigned char* SCREEN1 = (unsigned char*)0x3800;
+unsigned char* SCREEN2 = (unsigned char*)0x3c00;
+unsigned char* BUFFER = (unsigned char*)0x4000;
+unsigned char* CHARSET = (unsigned char*)0x3000;
 
 void main() {
     asm { sei }

@@ -8,7 +8,7 @@ struct A {
 struct A aa = { 1 };
 
 void main() {
-    char* const SCREEN = 0x0400;
+    char* const SCREEN = (char*)0x0400;
     struct A* a = &aa;
     // A negated struct reference!
     if(!a->b) {

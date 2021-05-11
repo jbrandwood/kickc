@@ -1,5 +1,5 @@
 
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 byte TEXT[] = "camelot "z;
 
 void main() {

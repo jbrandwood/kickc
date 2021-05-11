@@ -1,7 +1,7 @@
 // Tests that chained assignments work as intended
 
 void main() {
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     byte a;
     screen[0] = a = 'c';
     screen[40] = a;

@@ -1,7 +1,7 @@
 // Test interrupt routine using a variable between calls (irq_idx)
 #include <c64.h>
 
-byte* const SCREEN  = $0400;
+byte* const SCREEN  = (byte*)$400;
 
 void main() {
     asm { sei }
@@ -19,7 +19,7 @@ void main() {
     asm { cli }
 }
 
-byte * const VICII_BASE = $D000;
+byte * const VICII_BASE = (byte*)$D000;
 const byte VICII_SIZE = 48;
 const byte IRQ_CHANGE_NEXT = $7f;
 

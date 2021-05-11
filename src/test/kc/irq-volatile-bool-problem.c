@@ -1,15 +1,15 @@
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
 
-void()** const  KERNEL_IRQ = $0314;
-byte* const RASTER = $d012;
-byte* const VICII_CONTROL1 = $d011;
-byte* const IRQ_STATUS = $d019;
-byte* const IRQ_ENABLE = $d01a;
+void()** const  KERNEL_IRQ = (void()**)$0314;
+byte* const RASTER = (byte*)$d012;
+byte* const VICII_CONTROL1 = (byte*)$d011;
+byte* const IRQ_STATUS = (byte*)$d019;
+byte* const IRQ_ENABLE = (byte*)$d01a;
 const byte IRQ_RASTER = %00000001;
-byte* const BG_COLOR = $d020;
+byte* const BG_COLOR = (byte*)$d020;
 
-byte* const CIA1_INTERRUPT = $dc0d;
+byte* const CIA1_INTERRUPT = (byte*)$dc0d;
 const byte CIA_INTERRUPT_CLEAR = $7f;
 
 

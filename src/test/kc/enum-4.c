@@ -2,7 +2,7 @@
 
 void main() {
     enum State { OFF,  ON } state = ON;
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     *SCREEN = state;
 }
 

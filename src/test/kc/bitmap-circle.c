@@ -4,9 +4,9 @@
 
 #include <c64.h>
 
-byte* const SCREEN = $400;
-byte* const BITMAP = $2000;
-byte* const COLORS = $d800;
+byte* const SCREEN = (byte*)$400;
+byte* const BITMAP = (byte*)$2000;
+byte* const COLORS = (byte*)$d800;
 
 byte bitmask[] = { 128, 64, 32, 16, 8, 4, 2, 1 };
 

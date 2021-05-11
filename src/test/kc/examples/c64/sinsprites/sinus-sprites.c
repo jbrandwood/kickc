@@ -6,8 +6,8 @@ const char sinlen_x = 221;
 const char sintab_x[221];
 const char sinlen_y = 197;
 const char sintab_y[197];
-char* const sprites = $2000;
-char* const SCREEN = $400;
+char* const sprites = (char*)$2000;
+char* const SCREEN = (char*)$400;
 
 void main() {
     init();
@@ -184,7 +184,7 @@ void gen_sintab(char* sintab, char length, char min, char max) {
     char f_i[] = {0, 0, 0, 0, 0};   // i * 2 * PI
     char f_min[] = {0, 0, 0, 0, 0}; // amplitude/2 + min
     char f_amp[] = {0, 0, 0, 0, 0}; // amplitude/2
-    char* f_2pi = $e2e5;            // 2 * PI
+    char* f_2pi = (char*)$e2e5;            // 2 * PI
     setFAC((unsigned int)max);       // fac = max
     setARGtoFAC();           // arg = max
     setFAC((unsigned int)min);       // fac = min

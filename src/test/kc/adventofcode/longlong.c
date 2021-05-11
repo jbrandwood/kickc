@@ -52,7 +52,7 @@ struct LongLong plusLongLong(__ma struct LongLong a, __ma struct LongLong b) {
 
 
 
-struct LongLong * SCREEN = 0x0400;
+struct LongLong * SCREEN = (char*)0x0400;
 
 void main() {
     struct LongLong a = toLongLong(1000);

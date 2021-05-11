@@ -1,7 +1,7 @@
 // Test parenthesising of constants
 // See https://gitlab.com/camelot/kickc/-/issues/470#note_356486132
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     const char dy = 128;    

@@ -6,7 +6,7 @@
 
 #pragma link("linking.ld")
 
-char* BG_COLOR = 0xd021;
+char* BG_COLOR = (char*)0xd021;
 
 void main() {
     for(char i:0..255)
@@ -21,7 +21,7 @@ void main() {
 #pragma code_seg(CodeHigh)
 #pragma data_seg(DataHigh)
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void fillscreen(char c) {
     char i = 0;

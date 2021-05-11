@@ -315,7 +315,7 @@ void main() {
 
     // Copy sprite palette to VRAM
     // Copy 8* sprite attributes to VRAM    
-    char* vram_sprite_attr = <VERA_SPRITE_ATTR;
+    char* vram_sprite_attr = (char*)<VERA_SPRITE_ATTR;
     for(char s=0;s<NUM_SPRITES;s++) {
         sprites[s] = sprite_offset;
         SPRITE_ATTR.ADDR = sprite_offset;
@@ -350,7 +350,7 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
     if(a==0) {
         a=4;
         const char vram_sprite_attr_bank = (char)>VERA_SPRITE_ATTR;
-        char *vram_sprite_attr = <VERA_SPRITE_ATTR;
+        char *vram_sprite_attr = (char*)<VERA_SPRITE_ATTR;
         unsigned int i_x = 0;
         unsigned int i_y = 0;
         for(word s=0;s<NUM_SPRITES;s++) {

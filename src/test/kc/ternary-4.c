@@ -1,7 +1,7 @@
 // Tests the ternary operator - complex nested conditional operators
 
 void main() {
-    char* const SCREEN = $400;
+    char* const SCREEN = (char*)$400;
     char i=0;
     for(char b: 0..3) {
         for( char v: 0..3) {

@@ -8,7 +8,7 @@ void main() {
 }
 
 void bool_and() {
-    byte* const screen = $400;
+    byte* const screen = (byte*)$400;
     for( byte i : 0..20) {
         bool o1 = (i<10);
         bool o2 = ((i&1)==0);
@@ -22,7 +22,7 @@ void bool_and() {
 }
 
 void bool_or() {
-    byte* const screen = $428;
+    byte* const screen = (byte*)$428;
     for( byte i : 0..20) {
         bool o1 = (i<10);
         bool o2 = ((i&1)==0);
@@ -36,7 +36,7 @@ void bool_or() {
 }
 
 void bool_not() {
-    byte* const screen = $450;
+    byte* const screen = (byte*)$450;
     for( byte i : 0..20) {
         bool o1 = (i<10);
         bool o2 = (i&1)==0;
@@ -50,7 +50,7 @@ void bool_not() {
 }
 
 void bool_complex() {
-    byte* const screen = $478;
+    byte* const screen = (byte*)$478;
     for( byte i : 0..20) {
         bool o1 = (i<10);
         bool o2 = (i&1)==0;

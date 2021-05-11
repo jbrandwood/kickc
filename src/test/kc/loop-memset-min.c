@@ -3,7 +3,7 @@
 
 typedef word size_t ;
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     memset(SCREEN, 'c', 1000);

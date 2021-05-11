@@ -2,7 +2,7 @@
 // Unfinished escape at end of string
 
 char MESSAGE[] = "qwe\";
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     byte i=0;

@@ -8,7 +8,7 @@ enum State {
 
 void main() {
     enum State state = ON;
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     *SCREEN = state;
 }
 

@@ -2,7 +2,7 @@
 #include <c64dtv.h>
 
 // Plane with all pixels
-byte* const CHUNKY = $8000;
+byte* const CHUNKY = (byte*)$8000;
 
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)

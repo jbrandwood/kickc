@@ -1,5 +1,5 @@
-byte* SCREEN = $0400;
-byte* SCREEN2 = $0400+40;
+byte* SCREEN = (byte*)$400;
+byte* SCREEN2 = (byte*)$400+40;
 
 void main() {
     for(byte i : 0..10) {

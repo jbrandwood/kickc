@@ -15,7 +15,7 @@ main: {
     lda #>$400
     sta.z line+1
   __b1:
-    // for(byte* line = $400; line<$400+40*25;line+=40 )
+    // for(byte* line = (char*)$400; line<$400+40*25;line+=40 )
     lda.z line+1
     cmp #>$400+$28*$19
     bcc !+

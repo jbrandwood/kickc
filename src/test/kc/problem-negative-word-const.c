@@ -1,6 +1,6 @@
 // Problem with assigning negative word constant (vwuz1=vbuc1)
 
-word* screen = 0x0400;
+word* screen = (char*)0x0400;
 
 void main() {
     for( byte i:0..7) {

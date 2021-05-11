@@ -1,6 +1,6 @@
 // Tests a number of constant declarations
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 const char LINE_LEN = 40;
 const char MARGIN_TOP = 4;
 const char MARGIN_LEFT = 4;

@@ -2,8 +2,8 @@
 #include <c64.h>
 #include <division.h>
 
-byte* BITMAP = $a000;
-byte* SCREEN = $8800;
+byte* BITMAP = (byte*)$a000;
+byte* SCREEN = (byte*)$8800;
 
 // The number of points
 const byte SIZE = 4;

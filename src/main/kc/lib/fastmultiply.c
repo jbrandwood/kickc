@@ -50,7 +50,7 @@ void mulf_init() {
 
 // Prepare for fast multiply with an unsigned char to a unsigned int result
 void mulf8u_prepare(char a) {
-    char* const memA = $fd;
+    char* const memA = (char*)$fd;
     *memA = a;
     asm {
         lda memA
@@ -65,8 +65,8 @@ void mulf8u_prepare(char a) {
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8u_prepare(char a)
 unsigned int mulf8u_prepared(char b) {
-    char* const resL = $fe;
-    char* const memB = $ff;
+    char* const resL = (char*)$fe;
+    char* const memB = (char*)$ff;
     *memB = b;
     asm {
         ldx memB
@@ -99,7 +99,7 @@ inline void mulf8s_prepare(signed char a) {
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
 signed int mulf8s_prepared(signed char b) {
-    signed char* const memA = $fd;
+    signed char* const memA = (signed char*)$fd;
     unsigned int m = mulf8u_prepared((char) b);
     if(*memA<0) {
         >m = (>m)-(char)b;
@@ -119,9 +119,9 @@ signed int mulf8s(signed char a, signed char b) {
 // Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
 unsigned long mulf16u(unsigned int a, unsigned int b) {
-    unsigned int* const memA = $f8;
-    unsigned int* const memB = $fa;
-    unsigned long* const memR = $fc;
+    unsigned int* const memA = (unsigned int*)$f8;
+    unsigned int* const memB = (unsigned int*)$fa;
+    unsigned long* const memR = (unsigned long*)$fc;
     *memA = a;
     *memB = b;
     asm {

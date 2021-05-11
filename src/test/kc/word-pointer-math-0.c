@@ -1,7 +1,7 @@
 // Tests simple word pointer math
 void main() {
-    word* words = $0400;
-    byte* const SCREEN = $400+6*40;
+    word* words = (word*)$0400;
+    byte* const SCREEN = (byte*)$400+6*40;
     word w1 = *(words+1);
     SCREEN[0] = <w1;
     SCREEN[1] = >w1;

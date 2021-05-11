@@ -3,7 +3,7 @@
 
 #pragma var_model(ma_mem)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 // Plasma state variables
 char c1A = 0;

@@ -4,7 +4,7 @@
 
 void main() {
 
-    word* const screen = 0x0400;
+    word* const screen = (word*)0x0400;
     byte i = 0;
 
     for(byte a: 0..5)

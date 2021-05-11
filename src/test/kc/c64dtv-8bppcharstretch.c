@@ -2,9 +2,9 @@
 #include <c64dtv.h>
 
 // Plane with the screen
-byte* const SCREEN = $7c00;
+byte* const SCREEN = (byte*)$7c00;
 // Plane with all pixels
-byte* const CHARSET8 = $8000;
+byte* const CHARSET8 = (byte*)$8000;
 
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
@@ -95,7 +95,7 @@ void gfx_init_plane_charset8() {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     byte gfxbCpuBank = (byte)(CHARSET8/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxa = $4000 + (((word)CHARSET8)& $3fff);
+    byte* gfxa = (char*)$4000 + (((word)CHARSET8)& $3fff);
     byte* chargen = CHARGEN+1;
     *PROCPORT = PROCPORT_RAM_CHARROM;
     byte col = 0;

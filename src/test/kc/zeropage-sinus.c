@@ -12,7 +12,7 @@ const unsigned char __align(0x100) SINTABLE[0x100] = kickasm {{
 // Storage for saving/restoring zeropage
 const unsigned char __align(0x100) ZP_STORAGE[0x100];
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 // A single sprite to animate
 const __align(0x40) char SPRITE[0x40] = kickasm {{ .fill $40,$ff }};

@@ -1,8 +1,8 @@
 #include <c64.h>
 #include <c64-bitmap.h>
 
-char* const SCREEN = $400;
-char* const BITMAP = $2000;
+char* const SCREEN = (char*)$400;
+char* const BITMAP = (char*)$2000;
 
 const char LINES = 8;
 char lines_x[LINES+1] = { 60, 80, 110, 80, 60, 40, 10, 40, 60 };

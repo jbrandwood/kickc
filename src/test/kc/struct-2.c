@@ -12,7 +12,7 @@ void main() {
     point1.y = 3;
     point2 = point1;
     point2.x = 4;
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     SCREEN[0] = point1.x;
     SCREEN[1] = point1.y;
     SCREEN[2] = point2.x;

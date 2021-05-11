@@ -11,7 +11,7 @@ void main() {
 
 }
 
-int* const SCREEN = 0x0400;
+int* const SCREEN = (int*)0x0400;
 char idx = 0;
 
 void print(int* p) {

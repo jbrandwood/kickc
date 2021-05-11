@@ -4,7 +4,7 @@
 
 void main() {
     // A local pointer 
-    char* screen = 0x0400;
+    char* screen = (char*)0x0400;
     // A local counter
     for( char i: 0..5 )
         *(screen++) = 'a';

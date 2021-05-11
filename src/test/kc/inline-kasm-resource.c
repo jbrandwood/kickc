@@ -7,10 +7,10 @@ __address(0x0c00) byte SPRITE[] = kickasm(resource "balloon.png") {{
             .byte pic.getSinglecolorByte(x,y)
 }};
 
-char* const SCREEN= 0x400;
-char* const SPRITES_ENABLE = 0xd015;
-char* const SPRITES_XPOS = 0xd000;
-char* const SPRITES_YPOS = 0xd001;
+char* const SCREEN= (char*)0x400;
+char* const SPRITES_ENABLE = (char*)0xd015;
+char* const SPRITES_XPOS = (char*)0xd000;
+char* const SPRITES_YPOS = (char*)0xd001;
 
 void main() {
     *(SCREEN+0x3f8) = (char)((unsigned int)SPRITE/$40);

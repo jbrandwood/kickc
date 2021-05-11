@@ -9,11 +9,11 @@
 #include <mos6532.h>
 
 // Atari TIA write registers
-struct ATARI_TIA_WRITE * const TIA = 0x00;
+struct ATARI_TIA_WRITE * const TIA = (struct ATARI_TIA_WRITE *)0x00;
 
 // Atari TIA read registers
-struct ATARI_TIA_READ * const TIA_READ = 0x00;
+struct ATARI_TIA_READ * const TIA_READ = (struct ATARI_TIA_READ *)0x00;
 
 // Atari RIOT registers
-struct MOS6532_RIOT * const RIOT = 0x280;
+struct MOS6532_RIOT * const RIOT = (struct MOS6532_RIOT *)0x280;
 

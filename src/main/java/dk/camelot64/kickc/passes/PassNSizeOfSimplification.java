@@ -76,7 +76,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
             if(arraySize!=null) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), arrayType.getElementType());
-               programValue.set(new ConstantBinary((ConstantValue) arraySize, Operators.MULTIPLY, sizeOfConstantVar));
+               programValue.set(new ConstantBinary(arraySize, Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
             } else if(constant.getInitValue() instanceof ConstantArrayList) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));

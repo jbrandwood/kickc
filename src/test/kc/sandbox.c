@@ -1,10 +1,10 @@
 #include <division.h>
 
-byte * const zp1 = 0x61; // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
-byte * const zp2 = 0x62;
-byte * const TIMEHI = 0xA1;
-byte * const TIMELO = 0xA2;
-byte * const VICBANK = 0xD018;
+byte * const zp1 = (byte*)0x61; // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
+byte * const zp2 = (byte*)0x62;
+byte * const TIMEHI = (byte*)0xA1;
+byte * const TIMELO = (byte*)0xA2;
+byte * const VICBANK = (byte*)0xD018;
 byte  buf16[16]; // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
 byte strTemp[100];
 

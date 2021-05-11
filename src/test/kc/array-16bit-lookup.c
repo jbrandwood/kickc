@@ -2,7 +2,7 @@
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
 
 void main() {
-    unsigned int* SCREEN = 0x0400;
+    unsigned int* SCREEN = (unsigned int*)0x0400;
     for(unsigned char idx : 0..128)
         SCREEN[idx] = getValue(idx);
 }

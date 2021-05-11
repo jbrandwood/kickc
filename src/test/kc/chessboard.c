@@ -1,7 +1,7 @@
 // Draws a chess board in the upper left corner of the screen
 void main() {
-    byte* screen = $0400;
-    byte* colors = $d800;
+    byte* screen = (byte*)$0400;
+    byte* colors = (byte*)$d800;
     byte color = 1;
     for( byte row: 0..7) {
         for( byte column: 0..7) {

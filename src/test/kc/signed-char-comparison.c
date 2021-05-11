@@ -6,7 +6,7 @@ void main() {
         debug(dy);
 }
 
-char *SCREEN = 0x0400;
+char *SCREEN = (char*)0x0400;
 
 void debug(signed char dy) {
     char i = (char)dy;

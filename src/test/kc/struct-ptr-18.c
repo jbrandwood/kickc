@@ -1,6 +1,6 @@
 // Demonstrates problem with passing struct array element as parameter to call
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char idx = 0;
 
 struct Point {

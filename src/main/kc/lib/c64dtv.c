@@ -11,7 +11,7 @@
 // The actual memory addressed will be $4000*cpuSegmentIdx
 void dtvSetCpuBankSegment1(char cpuBankIdx) {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
-    char* cpuBank = $ff;
+    char* cpuBank = (char*)$ff;
     *cpuBank = cpuBankIdx;
     asm {
         // SAC $dd - A register points to 13 BANK 1 segment

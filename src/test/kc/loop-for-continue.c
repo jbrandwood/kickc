@@ -1,6 +1,6 @@
 // Tests continue statement in a simple for()-loop
 
-char* const SCREEN = $400;
+char* const SCREEN = (char*)$400;
 
 const char MESSAGE[] = "hello brave new world!";
 

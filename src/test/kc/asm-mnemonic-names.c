@@ -1,7 +1,7 @@
 // Test using an ASM mnemonic as a C symbol names
 // Works if the C-lexer and the ASM-lexer are separated properly
 
-char* const lda = 0x0400;
+char* const lda = (char*)0x0400;
 
 void main() {
     char jmp = 1;

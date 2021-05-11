@@ -3,8 +3,8 @@
 
 
 void main() {
-    byte* screen = $400;
-    byte* z = $450;
+    byte* screen = (byte*)$400;
+    byte* z = (byte*)$450;
     z[2] = $f0;
     z[3] = $0f;
     byte x = $aa;

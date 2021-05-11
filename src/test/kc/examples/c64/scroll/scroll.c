@@ -1,6 +1,6 @@
 #include <c64.h>
 
-char* const SCREEN = $0400;
+char* const SCREEN = (char*)$0400;
 const char TEXT[] = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     ";
 
 void main() {

@@ -43,7 +43,7 @@ main: {
     sta.z ds+2
     lda #>-$39a4f1>>$10
     sta.z ds+3
-    // char * volatile ptr = 0x0000
+    // char * volatile ptr = (char*)0x0000
     lda #<0
     sta.z ptr
     sta.z ptr+1

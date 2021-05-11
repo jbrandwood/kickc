@@ -1,6 +1,6 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char i=0;
 
 void main(void) {

@@ -1,6 +1,6 @@
 // Test a procedure with calling convention stack
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 
 void main(void) {
     SCREEN[0] = plus('0', 7);

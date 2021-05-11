@@ -4,7 +4,7 @@
 #include <string.h>
 
 // Top of the heap used by malloc()
-unsigned char* HEAP_TOP = 0xa000;
+unsigned char* HEAP_TOP = (unsigned char*)0xa000;
 
 // Head of the heap. Moved backward each malloc()
 unsigned char* heap_head = HEAP_TOP;

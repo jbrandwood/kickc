@@ -1,6 +1,6 @@
 // Tests optimization of constant pointers to pointers
 void main() {
-    byte* screen = 0x400;
+    byte* screen = (char*)0x400;
     byte** pscreen = &screen;
     sub('a',pscreen);
     sub('b',pscreen);

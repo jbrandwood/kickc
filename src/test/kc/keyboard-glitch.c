@@ -15,7 +15,7 @@ void main() {
     }
 }
 
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 
 void menu() {
     // Wait for key press

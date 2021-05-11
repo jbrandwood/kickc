@@ -7,7 +7,7 @@ struct RadixInfo {
 };
 
 void main() {
-    unsigned int* const SCREEN = 0x400;
+    unsigned int* const SCREEN = (unsigned int*)0x400;
     struct RadixInfo info = { RADIX_DECIMAL_VALUES };
     SCREEN[0] = info.values[1];
     SCREEN[1] = RADIX_DECIMAL_VALUES[1];

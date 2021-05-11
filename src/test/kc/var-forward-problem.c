@@ -4,5 +4,5 @@ void main() {
     *screen = b;
 }
 
-byte* const screen = $400;
+byte* const screen = (char*)$400;
 const byte b = 'a';

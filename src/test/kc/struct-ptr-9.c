@@ -12,7 +12,7 @@ void main() {
         points[i] = { 2, i };
     }
 
-    struct Point* const SCREEN = 0x0400;
+    struct Point* const SCREEN = (struct Point*)0x0400;
     for( byte i: 0..1) {
         SCREEN[i] = points[i];
     }

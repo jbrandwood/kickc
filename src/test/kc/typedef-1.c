@@ -10,6 +10,6 @@ typedef Point* PointPtr;
 
 void main() {
     Point p = { 4, 7 };
-    PointPtr SCREEN = 0x0400;
+    PointPtr SCREEN = (PointPtr)0x0400;
     *SCREEN = p;
 }

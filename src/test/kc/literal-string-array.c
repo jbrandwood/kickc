@@ -1,6 +1,6 @@
 // Tests literal string array
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 void* const NUL = (void*)0;
 
 // Works

@@ -3,7 +3,7 @@
 
 #pragma var_model(ma_mem, pointer_ssa_zp)
 
-char* screen = 0x0400;
+char* screen = (char*)0x0400;
 
 char a = 'a';
 

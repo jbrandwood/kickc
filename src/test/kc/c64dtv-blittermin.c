@@ -1,6 +1,6 @@
 #include <c64dtv.h>
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 const byte SRCA[] = { 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '};
 const byte SRCA_LEN = 9;
 const byte SRCB[] = { $80 };

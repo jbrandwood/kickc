@@ -2,7 +2,7 @@
 // Resulted in infinite loop in loop depth analysis
 
 
-byte* const DC00 = $DC00;
+byte* const DC00 = (byte*)$DC00;
 byte rpc;
 byte key;
 

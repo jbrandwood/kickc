@@ -1,4 +1,4 @@
-const byte *screen=$0400;
+byte *screen=(byte *)$0400;
 void main() {
   word offset=40*10;
   for (char x=0;x<254;x++)

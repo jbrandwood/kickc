@@ -1,6 +1,6 @@
 // Illustrates how inline assembler can reference data from the outside program without the data being optimized away as unused
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 byte table[] = "cml!"z;
 void main() {
     asm {

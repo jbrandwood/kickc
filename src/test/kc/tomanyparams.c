@@ -6,7 +6,7 @@ void main() {
 
 
 void plot(byte x, byte y) {
-    byte* const screen = $0400;
+    byte* const screen = (byte*)$400;
     byte* pos = screen+x+y;
     *pos = 1;
 }

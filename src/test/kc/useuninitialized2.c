@@ -3,7 +3,7 @@
 void main() {
     const byte b = a;
     const byte a = 'c';
-    byte* screen = $400;
+    byte* screen = (char*)$400;
     screen[0] = a;
     screen[1] = b;
 }

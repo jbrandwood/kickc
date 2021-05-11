@@ -7,7 +7,7 @@ void main(void) {
     print();
 }
 
-byte* const SCREEN = 0x400;
+byte* const SCREEN = (char*)0x400;
 byte idx = 0;
 
 void print(void) {

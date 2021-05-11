@@ -13,7 +13,7 @@ void main() {
         points[i].y = 3+i;
     }
 
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     byte idx = 0;
     for( byte i: 0..1) {
         SCREEN[idx++] = points[i].x;

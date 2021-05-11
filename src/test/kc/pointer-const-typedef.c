@@ -13,21 +13,21 @@ typedef const char * PC;
 typedef char * const CP;
 
 // Pointer to const
-const char * pc0 = 0x0400;
-CC *pc1 = 0x0400;
-PC pc2 = 0x0400;
+const char * pc0 = (char*)0x0400;
+CC *pc1 = (char*)0x0400;
+PC pc2 = (char*)0x0400;
 
 // Const pointer
-char * const cp0 = 0x0400;
-CP cp1 = 0x0400;
-const P cp2 = 0x0400;
+char * const cp0 = (char*)0x0400;
+CP cp1 = (char*)0x0400;
+const P cp2 = (char*)0x0400;
 
 // Const pointer to const
-const char * const cpc0 = 0x0400;
-CC * const cpc1 = 0x0400;
-const PC cpc2 = 0x0400;
+const char * const cpc0 = (char*)0x0400;
+CC * const cpc1 = (char*)0x0400;
+const PC cpc2 = (char*)0x0400;
 
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
     char idx = 0;

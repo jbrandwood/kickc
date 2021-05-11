@@ -1,4 +1,4 @@
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$0400;
 byte* SCREEN2 = SCREEN+40*3;
 byte* SCREEN3 = SCREEN+40*6;
 byte* SCREEN4 = SCREEN+40*9;

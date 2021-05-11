@@ -1,13 +1,13 @@
 // Test inline function
 // Splits screen so upper half is lower case and lower half lower case
 
-byte* RASTER = $d012;
-byte* D018 = $d018;
-byte* BG_COLOR = $d021;
+byte* RASTER = (byte*)$d012;
+byte* D018 = (byte*)$d018;
+byte* BG_COLOR = (byte*)$d021;
 
-byte* screen = $0400;
-byte* charset1 = $1000;
-byte* charset2 = $1800;
+byte* screen = (byte*)$400;
+byte* charset1 = (byte*)$1000;
+byte* charset2 = (byte*)$1800;
 
 void main() {
     asm { sei }

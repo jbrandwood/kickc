@@ -7,7 +7,7 @@ void main() {
 
 
 void long1() {
-    byte* SCREEN = $0400;
+    byte* SCREEN = (byte*)$400;
     for(byte i : 0..10) {
     asm {
         nop
@@ -272,7 +272,7 @@ void long1() {
 }
 
 void long2() {
-    byte* SCREEN = $0400;
+    byte* SCREEN = (byte*)$400;
     for(byte i : 0..10) {
     asm {
         nop

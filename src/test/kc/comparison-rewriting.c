@@ -1,7 +1,7 @@
 // Test rewriting of constant comparisons
 
 void main() {
-    byte* const SCREEN = $0400;
+    byte* const SCREEN = (byte*)$0400;
 
     for(byte* sc : SCREEN..SCREEN+1000) *sc=' ';
 

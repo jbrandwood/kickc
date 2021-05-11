@@ -1,10 +1,10 @@
 // Test using some simple supported string escape \n in both string and char
 
 char MESSAGE[] = "hello\nworld";
-char* SCREEN = 0x0400;
+char* SCREEN = (char*)0x0400;
 
 void main() {
-    byte* line = 0x0400;
+    byte* line = (char*)0x0400;
     byte* cursor = line;
     byte* msg = MESSAGE;
 

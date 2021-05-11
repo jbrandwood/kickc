@@ -1,6 +1,6 @@
 // Test promotion of signed char parameter to word
 
-unsigned int* const SCREEN = 0x0400;
+unsigned int* const SCREEN = (char*)0x0400;
 int i = 0;
 
 void main() {

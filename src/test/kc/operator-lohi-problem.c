@@ -4,7 +4,7 @@
 // A fix could be adding support for "declared" types for constant literal values
 // - enabling the lo/hi to know that their operand is a word (from the cast).
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     dword dw = $2000;

@@ -1,6 +1,6 @@
 // Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
 // Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$400;
 
 void main() {
     for(byte i : 0..10) {

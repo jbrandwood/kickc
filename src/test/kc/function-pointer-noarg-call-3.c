@@ -16,11 +16,11 @@ void()* getfn(byte b) {
 }
 
 void fn1() {
-    byte* const BORDER_COLOR = $d020;
+    byte* const BORDER_COLOR = (char*)$d020;
     (*BORDER_COLOR)++;
 }
 
 void fn2() {
-    byte* const BG_COLOR = $d021;
+    byte* const BG_COLOR = (char*)$d021;
     (*BG_COLOR)++;
 }

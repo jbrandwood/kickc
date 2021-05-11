@@ -1,6 +1,6 @@
 void main() {
     byte b = get();
-    byte* screen = $400;
+    byte* screen = (char*)$400;
 }
 
 byte get() {

@@ -3,8 +3,8 @@
 #include <string.h>
 #include "font-hex.c"
 
-byte* SCREEN = 0x0400;
-byte* CHARSET = 0x2000;
+byte* SCREEN = (byte*)0x0400;
+byte* CHARSET = (byte*)0x2000;
 
 void main() {
     *D018 = toD018(SCREEN, CHARSET);

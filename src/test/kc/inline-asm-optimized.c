@@ -1,6 +1,6 @@
 // Tests that inline assembler is optimized
 
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
 

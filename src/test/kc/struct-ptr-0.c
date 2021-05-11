@@ -12,7 +12,7 @@ void main() {
         points[i].x = i;
         points[i].y = i+1;
     }
-    byte* const SCREEN = 0x0400;
+    byte* const SCREEN = (char*)0x0400;
     for( byte i: 0..4) {
         SCREEN[i] = points[i].x;
         (SCREEN+40)[i] = points[i].y;

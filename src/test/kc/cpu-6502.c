@@ -4,7 +4,7 @@
 #pragma cpu(MOS6502)
 
 void main() {
-    char* const screen = 0x0400;
+    char* const screen = (char*)0x0400;
     char c=0;
     while(c<100) {
         screen[c] = '*';

@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-uint8_t const * OUT = 0x8000;
+uint8_t const * OUT = (uint8_t*)0x8000;
 
 __ma uint8_t l[1];
 __ma uint8_t m[1];

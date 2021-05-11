@@ -12,6 +12,6 @@ void main() {
 }
 
 void print(register(X) byte idx, byte val) {
-    byte* SCREEN  = $0400;
+    byte* SCREEN  = (byte*)$400;
     SCREEN[idx] = val;
 }

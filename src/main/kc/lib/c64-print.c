@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* print_screen = $0400;
+char* print_screen = (char*)$0400;
 char* print_line_cursor = print_screen;
 char* print_char_cursor = print_line_cursor;
 

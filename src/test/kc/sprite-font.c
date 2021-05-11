@@ -3,7 +3,7 @@
 #include <c64.h>
 #include <string.h>
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char* const SPRITE = 0x2000;
 char* const SPRITES = SCREEN+OFFSET_SPRITE_PTRS;
 

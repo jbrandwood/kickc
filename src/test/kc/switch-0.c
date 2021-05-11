@@ -2,7 +2,7 @@
 // Expected output 'd1444d'
 
 void main() {
-    char* const SCREEN = 0x0400;
+    char* const SCREEN = (char*)0x0400;
 
     for(char i:0..5) {
         // Test switching on a simple char

@@ -1,4 +1,4 @@
-byte* SCREEN= $400;
+byte* SCREEN= (char*)$400;
 byte line = $40;
 byte ch = line;
 

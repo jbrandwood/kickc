@@ -3,7 +3,7 @@
 void main() {
     byte b = 12;
     if(b) {
-        byte* screen = $400;
+        byte* screen = (char*)$400;
         *screen = 'a';
     }
 }

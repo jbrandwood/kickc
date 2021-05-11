@@ -20,9 +20,9 @@ export char SPRITE[] = kickasm(resource "sprite.png") {{
 #pragma data_seg(Data)
 
 // Address to load to
-char* const LOAD_SPRITE = 0x3000;
+char* const LOAD_SPRITE = (char*)0x3000;
 
-char* const SCREEN = 0x0400;
+char* const SCREEN = (char*)0x0400;
 char* const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS;
 
 void main() {

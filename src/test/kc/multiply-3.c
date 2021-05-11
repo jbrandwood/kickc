@@ -1,7 +1,7 @@
 // Test compile-time and run-time multiplication
 // var*var multiplication - converted to call
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main() {
     char i = 0;

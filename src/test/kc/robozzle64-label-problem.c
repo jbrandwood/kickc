@@ -1,7 +1,7 @@
 #include <multiply.h>
 
 void main() {
-    word* screen = 0x0400;
+    word* screen = (char*)0x0400;
     for( byte y: 0..5) {
 	    word z1 = mul8u(y,40);
 	    *screen++ = z1;

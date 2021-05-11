@@ -1,7 +1,7 @@
 // Check that division by factors of 2 is converted to shifts
 
 void main() {
-    byte* const SCREEN = $400;
+    byte* const SCREEN = (byte*)$400;
 
     for(byte i: 0..10) {
         (SCREEN+40*0)[i] = i/1;

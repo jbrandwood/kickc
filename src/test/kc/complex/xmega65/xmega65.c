@@ -8,11 +8,11 @@
 #pragma extension("bin")
 
 
-char* const RASTER = 0xd012;
-char* const VICII_MEMORY = 0xd018;
-char* const SCREEN = 0x0400;
-char* const BG_COLOR = 0xd021;
-char* const COLS = 0xd800;
+char* const RASTER = (char*)0xd012;
+char* const VICII_MEMORY = (char*)0xd018;
+char* const SCREEN = (char*)0x0400;
+char* const BG_COLOR = (char*)0xd021;
+char* const COLS = (char*)0xd800;
 const char BLACK = 0;
 const char WHITE = 1;
 

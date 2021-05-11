@@ -22,15 +22,15 @@ void main() {
 }
 
 // VIC Screens
-byte* const VICII_SCREEN0 = $4000;
-byte* const VICII_SCREEN1 = $4400;
-byte* const VICII_SCREEN2 = $4800;
-byte* const VICII_SCREEN3 = $4c00;
-byte* const VICII_SCREEN4 = $5000;
+byte* const VICII_SCREEN0 = (byte*)$4000;
+byte* const VICII_SCREEN1 = (byte*)$4400;
+byte* const VICII_SCREEN2 = (byte*)$4800;
+byte* const VICII_SCREEN3 = (byte*)$4c00;
+byte* const VICII_SCREEN4 = (byte*)$5000;
 // VIC Charset from ROM
-byte* const VICII_CHARSET_ROM = $5800;
+byte* const VICII_CHARSET_ROM = (byte*)$5800;
 // VIC Bitmap
-byte* const VICII_BITMAP = $6000;
+byte* const VICII_BITMAP = (byte*)$6000;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
@@ -110,9 +110,9 @@ byte* get_VICII_charset(byte idx) {
 }
 
 // Screen containing the FORM
-byte* const FORM_SCREEN = $0400;
+byte* const FORM_SCREEN = (byte*)$0400;
 // Charset used for the FORM
-byte* const FORM_CHARSET = $1800; // Charset ROM
+byte* const FORM_CHARSET = (byte*)$1800; // Charset ROM
 
 byte FORM_TEXT[] =
      " C64 DTV Graphics Mode Explorer         @"
@@ -500,7 +500,7 @@ void gfx_init_plane_8bppchunky() {
     // 320x200 8bpp pixels for Plane
     byte gfxbCpuBank = (byte)(PLANE_8BPP_CHUNKY/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000;
+    byte* gfxb = (char*)$4000;
     for(byte y : 0..199) {
         for (word x : 0..319) {
             // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
@@ -520,7 +520,7 @@ void gfx_init_plane_8bppchunky() {
 void gfx_init_plane_horisontal() {
     byte gfxbCpuBank = (byte)(PLANE_HORISONTAL/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxa = $4000 + (PLANE_HORISONTAL & $3fff);
+    byte* gfxa = (char*)$4000 + (PLANE_HORISONTAL & $3fff);
     for(byte ay : 0..199) {
         for (byte ax : 0..39) {
             if((ay&4)==0) {
@@ -538,7 +538,7 @@ void gfx_init_plane_horisontal() {
 void gfx_init_plane_horisontal2() {
     byte gfxbCpuBank = (byte)(PLANE_HORISONTAL2/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxa = $4000 + (PLANE_HORISONTAL2 & $3fff);
+    byte* gfxa = (char*)$4000 + (PLANE_HORISONTAL2 & $3fff);
     byte row_bitmask[] = { %00000000, %01010101, %10101010, %11111111 };
     for(byte ay : 0..199) {
         for (byte ax : 0..39) {
@@ -554,7 +554,7 @@ void gfx_init_plane_horisontal2() {
 void gfx_init_plane_vertical() {
     byte gfxbCpuBank = (byte)(PLANE_VERTICAL/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000 + (PLANE_VERTICAL & $3fff);
+    byte* gfxb = (char*)$4000 + (PLANE_VERTICAL & $3fff);
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
             *gfxb++ = %00001111;
@@ -569,7 +569,7 @@ void gfx_init_plane_charset8() {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     byte gfxbCpuBank = (byte)(PLANE_CHARSET8/$4000);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxa = $4000 + (PLANE_CHARSET8 & $3fff);
+    byte* gfxa = (char*)$4000 + (PLANE_CHARSET8 & $3fff);
     byte* chargen = CHARGEN;
     *PROCPORT = PROCPORT_RAM_CHARROM;
     byte col = 0;

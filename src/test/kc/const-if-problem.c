@@ -1,6 +1,6 @@
 // Constant if() contains call to (unused) function - should be optimized away
 
-byte* SCREEN = $400;
+byte* SCREEN = (char*)$400;
 
 void main() {
 	if(1==1) {

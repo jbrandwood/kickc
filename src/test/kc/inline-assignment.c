@@ -1,4 +1,4 @@
-byte* const SCREEN = $400;
+byte* const SCREEN = (char*)$400;
 
 void main() {
     byte a;

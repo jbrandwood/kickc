@@ -1,7 +1,7 @@
 // An 8x8 char letter scroller
 #include <c64.h>
 
-char* SCREEN = $0400;
+char* SCREEN = (char*)$0400;
 char* TEXT = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     ";
 
 void main() {

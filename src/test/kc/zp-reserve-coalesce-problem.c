@@ -13,7 +13,7 @@ char landscapeBase[] = kickasm {{
 		.fill 14, 0
 	}};
 
-char * const lms = 0xa000;
+char * const lms = (char*)0xa000;
 
 void benchmarkCountdownFor() {
 	__address(0x41) signed char a;

@@ -16,8 +16,8 @@
 // Pass a char parameter
 #define CALL_CHAR(name) param_char=name; asm { lda param_char pha }
 
-char * const SCREEN1 = 0x0400;
-char * const SCREEN2 = 0x0428;
+char * const SCREEN1 = (char*)0x0400;
+char * const SCREEN2 = (char*)0x0428;
 
 volatile char idx1 = 0;
 volatile char idx2 = 0;

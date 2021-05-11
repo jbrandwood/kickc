@@ -29,7 +29,7 @@ char call3(char param1, char param2) {
 // To make sure the functions are generated into the final code they must be calling them with different values for each parameter and the return value must used in some way.
 #pragma code_seg(TestRom)
 void main() {
-    char* ptr = 0xfe;
+    char* ptr = (char*)0xfe;
     *ptr = call1(1,2);
     *ptr = call1(3,4);
     *ptr = call2(1,2);

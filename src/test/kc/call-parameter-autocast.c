@@ -7,7 +7,7 @@ void main() {
     print( {0x12,0x34} );
 }
 
-word* const SCREEN = 0x0400;
+word* const SCREEN = (word*)0x0400;
 byte idx = 0;
 
 void print(word w) {

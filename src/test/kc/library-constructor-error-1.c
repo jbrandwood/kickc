@@ -3,7 +3,7 @@
 
 #pragma constructor_for(my_init, main)
 
-char * const SCREEN = 0x0400;
+char * const SCREEN = (char*)0x0400;
 
 void main(void) {
 }

@@ -57,7 +57,7 @@ void main() {
     // Copy sprite palette to VRAM
     memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200);
     // Copy 8* sprite attributes to VRAM    
-    char* vram_sprite_attr = <VERA_SPRITE_ATTR;
+    char* vram_sprite_attr = (char*)<VERA_SPRITE_ATTR;
     for(char s=0;s<NUM_SPRITES;s++) {
         SPRITE_ATTR.X += 10;
         SPRITE_ATTR.Y += 10;
@@ -97,7 +97,7 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
     if(++sin_idx_x==SINX_LEN) sin_idx_x = 0;
     if(--sin_idx_y==0xffff) sin_idx_y = SINY_LEN-1;
     const char vram_sprite_attr_bank = (char)>VERA_SPRITE_ATTR;
-    char *vram_sprite_pos = <VERA_SPRITE_ATTR+2;
+    char *vram_sprite_pos = (char*)<VERA_SPRITE_ATTR+2;
     unsigned int i_x = sin_idx_x;
     unsigned int i_y = sin_idx_y;
     for(char s=0;s<NUM_SPRITES;s++) {

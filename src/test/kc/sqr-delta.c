@@ -10,7 +10,7 @@ unsigned long ifunc(unsigned long a){
     return --x;
 }
 
-unsigned long* SCREEN = 0x0400;
+unsigned long* SCREEN = (char*)0x0400;
 
 void main() {
     SCREEN[0] = ifunc(8);

@@ -1,7 +1,7 @@
 // Tests using integer conditions in if()
 // This should produce '+ ++ ++' at the top of the screen
 
-byte* const SCREEN = 0x0400;
+byte* const SCREEN = (byte*)0x0400;
 
 void main() {
     byte idx = 0;

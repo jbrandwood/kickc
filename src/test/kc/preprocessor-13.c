@@ -10,7 +10,7 @@
 
 void main() {
     char x = 7;
-    char * const SCREEN = 0x0400;
+    char * const SCREEN = (char*)0x0400;
     // Call without spaces
     SCREEN[0] = FOO(1);
     // Call with spaces

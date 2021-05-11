@@ -7,7 +7,7 @@ byte w=2;
 void main() {
    s=b+1;
    b=3;
-   byte* screen = $0400;
+   byte* screen = (byte*)$400;
    *screen = b;
    *(screen+1) = s;
 }

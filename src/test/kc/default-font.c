@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-byte* SCREEN = 0x0400;
+byte* SCREEN = (char*)0x0400;
 
 void main() {
     memset(SCREEN, ' ', 1000);

@@ -4,7 +4,7 @@
 byte ball_active[8] = { 0, 1, 0, 1, 0, 1, 1, 1 };
 
 void main() {
-    byte* const screen = 0x0400;
+    byte* const screen = (char*)0x0400;
     byte temp;
     for( char i: 0..7) {
         // Always false

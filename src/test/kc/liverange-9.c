@@ -1,7 +1,7 @@
 // Test effective live range and register allocation
 // Here main::c, outsw::c and outw::c can all have the same allocation
 
-char* const SCREEN  = 0x0400;
+char* const SCREEN  = (char*)0x0400;
 char idx = 0;
 
 void main() {

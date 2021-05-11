@@ -8,7 +8,7 @@ void myFunc2(){
     byte* const BG_COLOR = (char*)$d021;
     (*BG_COLOR)++;
 }
-void () *funcPointer;
+void(*funcPointer)();
 void main() {
  funcPointer=&myFunc;
  (*funcPointer)();

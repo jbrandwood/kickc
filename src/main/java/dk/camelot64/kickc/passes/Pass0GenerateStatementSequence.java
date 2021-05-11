@@ -116,7 +116,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
       if(initProc == null) {
          // Create the _init() procedure
-         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
          initProc.setDeclaredInline(true);
          initProc.setParameters(new ArrayList<>());
          program.getScope().add(initProc);
@@ -173,7 +173,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Add the _start() procedure to the program
       {
          program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
-         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
          startProcedure.setParameters(new ArrayList<>());
          program.getScope().add(startProcedure);
          final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
@@ -391,120 +391,100 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
-      SymbolType type = varDecl.getEffectiveType();
-      List<Directive> directives = varDecl.getDeclDirectives();
-      String name = varDecl.getVarName();
-      Procedure procedure = new Procedure(name, type, program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
-      addDirectives(procedure, directives, StatementSource.procedureDecl(ctx));
+
+      // Declare the procedure
+      Procedure procedure = declareProcedure(ctx, StatementSource.procedureDecl(ctx));
+
+      // Make sure comments and directives are from the definition
+      addDirectives(procedure, varDecl.getDeclDirectives(), StatementSource.procedureDecl(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
 
+      // enter the procedure
       scopeStack.push(procedure);
+
+      // Add return variable
       Variable returnVar = null;
-      if(!SymbolType.VOID.equals(type)) {
-         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      if(!SymbolType.VOID.equals(procedure.getReturnType())) {
+         final VariableBuilder builder = new VariableBuilder("return", procedure, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          returnVar = builder.build();
       }
-      varDecl.exitType();
 
+      // Add parameter variables...
       List<Variable> parameterList = new ArrayList<>();
-      if(ctx.parameterListDecl() != null) {
-         parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
+      for(ParameterDecl parameter : varDecl.parameters) {
+         VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         final Variable paramVar = varBuilder.build();
+         parameterList.add(paramVar);
       }
       procedure.setParameters(parameterList);
+
+      varDecl.exitType();
+
+      // Check that the body has not already been added
+      final StatementSequence statementSequence = getCurrentProcedureCompilation().getStatementSequence();
+      if(statementSequence != null && statementSequence.getStatements().size() > 0)
+         throw new CompileError("Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
+
+      // Add the body
+      addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
+      // Add parameter assignments
+      if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+         for(Variable param : parameterList) {
+            addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         }
+      }
+      Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+      if(ctx.stmtSeq() != null) {
+         this.visit(ctx.stmtSeq());
+      }
+      addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+      if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
+         addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+      }
+      SymbolVariableRef returnVarRef = null;
+      if(returnVar != null) {
+         returnVarRef = returnVar.getRef();
+      }
+      addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+      addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       scopeStack.pop();
 
-      // Check that the declaration matches any existing declaration!
+      return null;
+   }
+
+
+   /** Declare a procedure (either as part of a forward declaration or as part of a definition.)
+    * Finds the name, type and parameters in the varDecl.
+    * If the procedure is already declared then it is checked that the current declaration matches the existing one - and the existing one is returned.
+    *
+    * @param ctx The parser context (used to find any comments.)
+    * @param statementSource The statements source (used when producing errors.
+    * @return The declared procedure.
+    */
+   private Procedure declareProcedure(ParserRuleContext ctx, StatementSource statementSource) {
+      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
+      addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
+      // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
       if(existingSymbol != null) {
          // Already declared  - check equality
          if(!(existingSymbol instanceof Procedure) || !SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Conflicting declarations for: " + procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Conflicting declarations for procedure: " + procedure.getFullName(), new StatementSource(ctx));
+         procedure = (Procedure) existingSymbol;
       } else {
-         // Not declared before - add it
          program.getScope().add(procedure);
          program.createProcedureCompilation(procedure.getRef());
       }
-
-      if(ctx.declFunctionBody() != null || VariableBuilder.hasDirective(Directive.Intrinsic.class, directives)) {
-         // Make sure directives and more are taken from the procedure with the body / intrinsic declaration!
-         if(existingSymbol != null) {
-            program.getScope().remove(existingSymbol);
-            program.getScope().add(procedure);
-         }
-      }
-
-      if(ctx.declFunctionBody() != null) {
-         scopeStack.push(procedure);
-         // Check that the body has not already been added
-         final StatementSequence statementSequence = getCurrentProcedureCompilation().getStatementSequence();
-         if(statementSequence != null && statementSequence.getStatements().size() > 0)
-            throw new CompileError("Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
-         // Add the body
-         addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
-         // Add parameter assignments
-         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-            for(Variable param : parameterList) {
-               addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-            }
-         }
-         Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         if(ctx.declFunctionBody().stmtSeq() != null) {
-            this.visit(ctx.declFunctionBody().stmtSeq());
-         }
-         addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
-            addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         }
-         SymbolVariableRef returnVarRef = null;
-         if(returnVar != null) {
-            returnVarRef = returnVar.getRef();
-         }
-         addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         scopeStack.pop();
-      }
-      return null;
+      return procedure;
    }
-
-   @Override
-   public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
-      ArrayList<Variable> parameterDecls = new ArrayList<>();
-      boolean encounteredVariableLengthParamList = false;
-      for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
-         if(encounteredVariableLengthParamList) {
-            throw new CompileError("Variable length parameter list is only legal as the last parameter.", new StatementSource(ctx));
-         }
-         Object parameterDecl = this.visit(parameterDeclCtx);
-         if(parameterDecl.equals(SymbolType.VOID)) {
-            if(ctx.parameterDecl().size() == 1) {
-               // A single void parameter decl - equals zero parameters
-               return new ArrayList<>();
-            } else {
-               throw new CompileError("Illegal void parameter.", new StatementSource(ctx));
-            }
-         } else if(parameterDecl == PARAM_LIST) {
-            // A "..." parameter list. Update the procedure.
-            final Procedure procedure = (Procedure) getCurrentScope();
-            procedure.setVariableLengthParameterList(true);
-            encounteredVariableLengthParamList = true;
-         } else if(parameterDecl instanceof Variable) {
-            parameterDecls.add((Variable) parameterDecl);
-         } else {
-            throw new CompileError("Unknown parameter " + ctx.getText(), new StatementSource(ctx));
-         }
-      }
-      return parameterDecls;
-   }
-
+   
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
-      String varName = varDecl.getVarName();
-      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
-      Variable param = varBuilder.build();
+      ParameterDecl paramDecl = new ParameterDecl(varDecl.getVarName(), varDecl.getEffectiveType());
       varDecl.exitType();
-      return param;
+      return paramDecl;
    }
 
    @Override
@@ -512,15 +492,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(!SymbolType.VOID.getTypeName().equals(ctx.SIMPLETYPE().getText())) {
          throw new CompileError("Illegal unnamed parameter " + ctx.SIMPLETYPE().getText(), new StatementSource(ctx));
       }
-      return SymbolType.VOID;
+      return new ParameterDecl(null, SymbolType.VOID);
    }
-
-   /** Singleton signalling a "..." parameter list. */
-   public static Object PARAM_LIST = new Object();
 
    @Override
    public Object visitParameterDeclList(KickCParser.ParameterDeclListContext ctx) {
-      return PARAM_LIST;
+      return new ParameterDecl(null, SymbolType.PARAM_LIST);
    }
 
    @Override
@@ -740,13 +717,26 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return new AsmDirectiveClobber(clobber);
    }
 
+
+   /** Information about a declared parameter. */
+   static class ParameterDecl {
+      final public String name;
+      final public SymbolType type;
+
+      public ParameterDecl(String name, SymbolType type) {
+         this.name = name;
+         this.type = type;
+      }
+   }
+
+
    /**
-    * Holds type, arrayness, directives, comments etc. while parsing a variable declaration.
+    * Holds type directives, comments etc. while parsing a variable or procedure declaration.
     * Has three levels of information pushed on top of each other:
     * <ol>
     *    <li>Struct Member Declaration (true while inside inside a struct declaration)</li>
     *    <li>Type information and directives (the type)</li>
-    *    <li>Variable information and declarations (arrayness, pointerness, variable level directives)</li>
+    *    <li>Information about parameters (for procedures)</li>
     * </ol>
     * <p>
     * When parsing a declaration such as <code>volatile char a, * const b, c[]</code> the type level holds <code>volatile char</code>
@@ -766,6 +756,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       private SymbolType varDeclType;
       /** The variable name (variable level) */
       private String varName;
+      /** The declared parameters (if this is a procedure). */
+      private List<ParameterDecl> parameters;
 
       /**
        * Exits the type layer (clears everything except struct information)
@@ -776,6 +768,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.declType = null;
          this.varDeclType = null;
          this.varName = null;
+         this.parameters = new ArrayList<>();
       }
 
       /**
@@ -784,6 +777,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       void exitVar() {
          this.varDeclType = null;
          this.varName = null;
+         this.parameters = new ArrayList<>();
       }
 
       SymbolType getEffectiveType() {
@@ -862,6 +856,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.structMember = structMember;
       }
 
+      public void setParameters(List<ParameterDecl> parameters) {
+         this.parameters = parameters;
+      }
+
+      public List<ParameterDecl> getParameters() {
+         return parameters;
+      }
+
    }
 
    /** The current variable declaration. This is not on the stack. */
@@ -923,48 +925,53 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = varDecl.getVarName();
       KickCParser.ExprContext initializer = ctx.expr();
       StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
-      StatementSource statementSource = declSource;
       try {
-         final boolean isStructMember = varDecl.isStructMember();
          final SymbolType effectiveType = varDecl.getEffectiveType();
-         final List<Directive> effectiveDirectives = varDecl.getDeclDirectives();
-         final List<Comment> declComments = varDecl.getDeclComments();
-         varDecl.exitVar();
-         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
-         Variable variable = varBuilder.build();
-         if(isStructMember && (initializer != null))
-            throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), statementSource);
-         if(variable.isDeclarationOnly()) {
-            if(initializer != null) {
-               throw new CompileError("Initializer not allowed for extern variables " + varName, statementSource);
-            }
-         } else {
-            // Create a proper initializer
-            if(initializer != null)
-               PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
-            RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-            initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType), program, statementSource);
-            boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
-            if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !isStructMember && variable.getRegister() == null)) {
-               // Set initial value
-               ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
-               variable.setInitValue(constInitValue);
-               // Add comments to constant
-               variable.setComments(ensureUnusedComments(declComments));
-            } else if(!variable.isKindConstant() && !isStructMember) {
-               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, Comment.NO_COMMENTS);
-               addStatement(initStmt);
-               if(variable.getScope().getRef().equals(ScopeRef.ROOT)) {
-                  // Add comments to variable for global vars
-                  variable.setComments(ensureUnusedComments(declComments));
-               } else {
-                  // Add comments to statement for local vars
-                  initStmt.setComments(ensureUnusedComments(declComments));
-               }
 
+         if(effectiveType instanceof SymbolTypeProcedure) {
+            declareProcedure(ctx, declSource);
+            varDecl.exitVar();
+         } else {
+            final boolean isStructMember = varDecl.isStructMember();
+            final List<Directive> effectiveDirectives = varDecl.getDeclDirectives();
+            final List<Comment> declComments = varDecl.getDeclComments();
+            varDecl.exitVar();
+            VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            Variable variable = varBuilder.build();
+            if(isStructMember && (initializer != null))
+               throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), declSource);
+            if(variable.isDeclarationOnly()) {
+               if(initializer != null) {
+                  throw new CompileError("Initializer not allowed for extern variables " + varName, declSource);
+               }
+            } else {
+               // Create a proper initializer
+               if(initializer != null)
+                  PrePostModifierHandler.addPreModifiers(this, initializer, declSource);
+               RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
+               initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType), program, declSource);
+               boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
+               if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !isStructMember && variable.getRegister() == null)) {
+                  // Set initial value
+                  ConstantValue constInitValue = getConstInitValue(initValue, initializer, declSource);
+                  variable.setInitValue(constInitValue);
+                  // Add comments to constant
+                  variable.setComments(ensureUnusedComments(declComments));
+               } else if(!variable.isKindConstant() && !isStructMember) {
+                  Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, declSource, Comment.NO_COMMENTS);
+                  addStatement(initStmt);
+                  if(variable.getScope().getRef().equals(ScopeRef.ROOT)) {
+                     // Add comments to variable for global vars
+                     variable.setComments(ensureUnusedComments(declComments));
+                  } else {
+                     // Add comments to statement for local vars
+                     initStmt.setComments(ensureUnusedComments(declComments));
+                  }
+
+               }
+               if(initializer != null)
+                  PrePostModifierHandler.addPostModifiers(this, initializer, declSource);
             }
-            if(initializer != null)
-               PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
          }
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), declSource);
@@ -1950,16 +1957,29 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-   /*
    @Override
    public Object visitDeclaratorProcedure(KickCParser.DeclaratorProcedureContext ctx) {
-      visit(ctx.declarator());
-      // TODO: Handle parameters!
+      List<ParameterDecl> parameters = new ArrayList<>();
+      List<SymbolType> paramTypes = new ArrayList<>();
+      if(ctx.parameterListDecl() != null)
+         for(KickCParser.ParameterDeclContext parameterDeclContext : ctx.parameterListDecl().parameterDecl()) {
+            varDeclPush();
+            ParameterDecl paramDecl = (ParameterDecl) this.visit(parameterDeclContext);
+            // Handle parameter list with "VOID"
+            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size()==1)
+               ; // Ignore the void parameter
+            else {
+               paramTypes.add(paramDecl.type);
+               parameters.add(paramDecl);
+            }
+            varDeclPop();
+         }
       SymbolType returnType = varDecl.getEffectiveType();
-      varDecl.setDeclType(new SymbolTypeProcedure(returnType));
+      varDecl.setVarDeclType(new SymbolTypeProcedure(returnType, paramTypes));
+      varDecl.setParameters(parameters);
+      visit(ctx.declarator());
       return null;
    }
-    */
 
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
@@ -2001,14 +2021,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();
-      return null;
-   }
-
-   @Override
-   public Object visitTypeProcedure(KickCParser.TypeProcedureContext ctx) {
-      visit(ctx.type());
-      SymbolType returnType = varDecl.getEffectiveType();
-      varDecl.setDeclType(new SymbolTypeProcedure(returnType));
       return null;
    }
 

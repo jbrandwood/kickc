@@ -3,8 +3,9 @@ byte* BORDER_COLOR = (byte*)$d020;
 byte* RASTER = (byte*)$d012;
 byte DARK_GREY = $b;
 byte BLACK = 0;
-void()** const  KERNEL_IRQ = (void()**)$0314;
 
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 
 void main() {
     *KERNEL_IRQ = &irq;

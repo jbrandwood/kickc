@@ -1,7 +1,9 @@
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
 
-void()** const  KERNEL_IRQ = (void()**)$0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE * const KERNEL_IRQ = (IRQ_TYPE*)$0314;
+
 byte* const BG_COLOR = (byte*)$d020;
 volatile byte col = 0;
 

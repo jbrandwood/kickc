@@ -1,4 +1,4 @@
-// Procedure Declaration
+// Procedure Declaration - a single procedure without parameters declared and defined at once
   // Commodore 64 PRG executable file
 .file [name="procedure-declare-0.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,26 +10,9 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    // f('a')
+    // SCREEN[0] = 'a'
     lda #'a'
-    jsr f
-    // f('a')
-    // SCREEN[0] = f('a')
     sta SCREEN
-    // f('b')
-    lda #'b'
-    jsr f
-    // f('b')
-    // SCREEN[1] = f('b')
-    sta SCREEN+1
-    // }
-    rts
-}
-// f(byte register(A) a)
-f: {
-    // a+1
-    clc
-    adc #1
     // }
     rts
 }

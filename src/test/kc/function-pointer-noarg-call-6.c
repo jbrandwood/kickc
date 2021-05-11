@@ -6,7 +6,7 @@ void fn1() {
 }
 
 void main() {
-   void()* cls = &fn1;
+   void(*cls)() = &fn1;
     for(byte* cols = (char*)$d800; cols<$d800+1000;cols++) {
         (*cls)();
         (*cols)++;

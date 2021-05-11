@@ -52,7 +52,7 @@ void syscall2() {
 
 struct SysCall {
     char xjmp;
-    void()* syscall;
+    void(*syscall)();
     char xnop;
 };
 

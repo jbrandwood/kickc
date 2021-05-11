@@ -39,6 +39,7 @@ main: {
   bi___0:
     jmp (__0)
 }
+// declare getfn as function (char b) returning pointer to function (void) returning void
 // getfn(byte register(A) b)
 getfn: {
     .label return = 3

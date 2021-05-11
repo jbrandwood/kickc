@@ -95,7 +95,10 @@ __address(0x4000) char MUSIC[] = kickasm(resource "Cybernoid_II_4000.sid") {{
 }};
 // Address after the end of the music
 char * const MUSIC_END = (char*)0x5200;
+
+typedef void(*PROC_PTR)();
+
 // Pointer to the music init routine
-void()* musicInit = (void()*) MUSIC;
+PROC_PTR musicInit = (PROC_PTR) MUSIC;
 // Pointer to the music play routine
-void()* musicPlay = (void()*) MUSIC+3;
+PROC_PTR musicPlay = (PROC_PTR) MUSIC+3;

@@ -6,7 +6,8 @@ void main() {
     *SCREEN = 'x';
 }
 
-void()** const HARDWARE_IRQ = (void()**)$fffe;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE * const HARDWARE_IRQ = (IRQ_TYPE*)$fffe;
 
 // Unused Interrupt Routine
 __interrupt void irq1() {

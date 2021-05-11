@@ -1,7 +1,8 @@
 // Unknown interrupt type
 
 // The vector used when the KERNAL serves IRQ interrupts
-void()** const KERNEL_IRQ = (void()**)0x0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 char*  const BG_COLOR = (char*)0xd021;
 
 // Setup the IRQ routine

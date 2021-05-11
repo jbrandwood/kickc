@@ -1,0 +1,423 @@
+
+CONTROL FLOW GRAPH SSA
+
+byte sum(byte sum::q , byte sum::w)
+sum: scope:[sum]  from main main::@1
+  sum::w#2 = phi( main/sum::w#0, main::@1/sum::w#1 )
+  sum::q#2 = phi( main/sum::q#0, main::@1/sum::q#1 )
+  sum::$0 = sum::q#2 + sum::w#2
+  sum::$1 = sum::$0 + 1
+  sum::return#0 = sum::$1
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
+  sum::return#4 = phi( sum/sum::return#0 )
+  sum::return#1 = sum::return#4
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  sum::q#0 = 'a'
+  sum::w#0 = 1
+  call sum 
+  sum::return#2 = sum::return#1
+  to:main::@1
+main::@1: scope:[main]  from main
+  sum::return#5 = phi( main/sum::return#2 )
+  main::$0 = sum::return#5
+  main::SCREEN[0] = main::$0
+  sum::q#1 = 'b'
+  sum::w#1 = 2
+  call sum 
+  sum::return#3 = sum::return#1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  sum::return#6 = phi( main::@1/sum::return#3 )
+  main::$1 = sum::return#6
+  main::SCREEN[1] = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+byte~ main::$0
+byte~ main::$1
+constant byte* const main::SCREEN = (byte*)$400
+byte sum(byte sum::q , byte sum::w)
+byte~ sum::$0
+number~ sum::$1
+byte sum::q
+byte sum::q#0
+byte sum::q#1
+byte sum::q#2
+byte sum::return
+byte sum::return#0
+byte sum::return#1
+byte sum::return#2
+byte sum::return#3
+byte sum::return#4
+byte sum::return#5
+byte sum::return#6
+byte sum::w
+byte sum::w#0
+byte sum::w#1
+byte sum::w#2
+
+Adding number conversion cast (unumber) 1 in sum::$1 = sum::$0 + 1
+Adding number conversion cast (unumber) sum::$1 in sum::$1 = sum::$0 + (unumber)1
+Adding number conversion cast (unumber) 1 in sum::w#0 = 1
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::$0
+Adding number conversion cast (unumber) 2 in sum::w#1 = 2
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::$1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast sum::w#0 = (unumber)1
+Inlining cast sum::w#1 = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in sum::$1 = sum::$0 + 1
+Alias sum::return#0 = sum::$1 sum::return#4 sum::return#1 
+Alias sum::return#2 = sum::return#5 
+Alias sum::return#3 = sum::return#6 
+Successful SSA optimization Pass2AliasElimination
+Constant sum::q#0 = 'a'
+Constant sum::w#0 = 1
+Constant sum::q#1 = 'b'
+Constant sum::w#1 = 2
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [9] main::SCREEN[0] = main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings sum::q#0
+Inlining constant with var siblings sum::w#0
+Inlining constant with var siblings sum::q#1
+Inlining constant with var siblings sum::w#1
+Constant inlined sum::q#1 = 'b'
+Constant inlined sum::w#0 = 1
+Constant inlined sum::q#0 = 'a'
+Constant inlined sum::w#1 = 2
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to sum:1 sum:5 
+
+Created 2 initial phi equivalence classes
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call sum 
+  [2] sum::return#2 = sum::return#0
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] main::$0 = sum::return#2
+  [4] *main::SCREEN = main::$0
+  [5] call sum 
+  [6] sum::return#3 = sum::return#0
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [7] main::$1 = sum::return#3
+  [8] *(main::SCREEN+1) = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return 
+  to:@return
+
+byte sum(byte sum::q , byte sum::w)
+sum: scope:[sum]  from main main::@1
+  [10] sum::w#2 = phi( main/1, main::@1/2 )
+  [10] sum::q#2 = phi( main/'a', main::@1/'b' )
+  [11] sum::$0 = sum::q#2 + sum::w#2
+  [12] sum::return#0 = sum::$0 + 1
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$0 4.0
+byte~ main::$1 4.0
+byte sum(byte sum::q , byte sum::w)
+byte~ sum::$0 22.0
+byte sum::q
+byte sum::q#2 11.0
+byte sum::return
+byte sum::return#0 3.75
+byte sum::return#2 4.0
+byte sum::return#3 4.0
+byte sum::w
+byte sum::w#2 11.0
+
+Initial phi equivalence classes
+[ sum::q#2 ]
+[ sum::w#2 ]
+Added variable sum::return#2 to live range equivalence class [ sum::return#2 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable sum::return#3 to live range equivalence class [ sum::return#3 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable sum::$0 to live range equivalence class [ sum::$0 ]
+Added variable sum::return#0 to live range equivalence class [ sum::return#0 ]
+Complete equivalence classes
+[ sum::q#2 ]
+[ sum::w#2 ]
+[ sum::return#2 ]
+[ main::$0 ]
+[ sum::return#3 ]
+[ main::$1 ]
+[ sum::$0 ]
+[ sum::return#0 ]
+Allocated zp[1]:2 [ sum::q#2 ]
+Allocated zp[1]:3 [ sum::w#2 ]
+Allocated zp[1]:4 [ sum::return#2 ]
+Allocated zp[1]:5 [ main::$0 ]
+Allocated zp[1]:6 [ sum::return#3 ]
+Allocated zp[1]:7 [ main::$1 ]
+Allocated zp[1]:8 [ sum::$0 ]
+Allocated zp[1]:9 [ sum::return#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [11] sum::$0 = sum::q#2 + sum::w#2 [ sum::$0 ] ( sum:1 [ sum::$0 ] { { sum::return#0 = sum::return#2 } }  sum:5 [ sum::$0 ] { { sum::return#0 = sum::return#3 } }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ sum::q#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ sum::w#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ sum::return#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ sum::return#3 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ sum::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ sum::return#0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [sum] 22: zp[1]:8 [ sum::$0 ] 11: zp[1]:2 [ sum::q#2 ] 11: zp[1]:3 [ sum::w#2 ] 4: zp[1]:4 [ sum::return#2 ] 4: zp[1]:6 [ sum::return#3 ] 3.75: zp[1]:9 [ sum::return#0 ] 
+Uplift Scope [main] 4: zp[1]:5 [ main::$0 ] 4: zp[1]:7 [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [sum] best 91 combination reg byte a [ sum::$0 ] reg byte x [ sum::q#2 ] reg byte a [ sum::w#2 ] reg byte a [ sum::return#2 ] zp[1]:6 [ sum::return#3 ] zp[1]:9 [ sum::return#0 ] 
+Limited combination testing to 100 combinations of 4096 possible.
+Uplifting [main] best 79 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [] best 79 combination 
+Attempting to uplift remaining variables inzp[1]:6 [ sum::return#3 ]
+Uplifting [sum] best 73 combination reg byte a [ sum::return#3 ] 
+Attempting to uplift remaining variables inzp[1]:9 [ sum::return#0 ]
+Uplifting [sum] best 64 combination reg byte a [ sum::return#0 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Procedure Declaration - a procedure with paramters&return declared multiple times & defined
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] call sum 
+    // [10] phi from main to sum [phi:main->sum]
+  sum_from_main:
+    // [10] phi sum::w#2 = 1 [phi:main->sum#0] -- vbuaa=vbuc1 
+    lda #1
+    // [10] phi sum::q#2 = 'a' [phi:main->sum#1] -- vbuxx=vbuc1 
+    ldx #'a'
+    jsr sum
+    // [2] sum::return#2 = sum::return#0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] main::$0 = sum::return#2
+    // [4] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // [5] call sum 
+    // [10] phi from main::@1 to sum [phi:main::@1->sum]
+  sum_from___b1:
+    // [10] phi sum::w#2 = 2 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
+    lda #2
+    // [10] phi sum::q#2 = 'b' [phi:main::@1->sum#1] -- vbuxx=vbuc1 
+    ldx #'b'
+    jsr sum
+    // [6] sum::return#3 = sum::return#0
+    jmp __b2
+    // main::@2
+  __b2:
+    // [7] main::$1 = sum::return#3
+    // [8] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // sum
+// Calculate sum of two integers plus 1
+// sum(byte register(X) q, byte register(A) w)
+sum: {
+    // [11] sum::$0 = sum::q#2 + sum::w#2 -- vbuaa=vbuxx_plus_vbuaa 
+    stx.z $ff
+    clc
+    adc.z $ff
+    // [12] sum::return#0 = sum::$0 + 1 -- vbuaa=vbuaa_plus_1 
+    clc
+    adc #1
+    jmp __breturn
+    // sum::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction sum_from_main:
+Removing instruction __b1:
+Removing instruction sum_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte~ main::$0 reg byte a 4.0
+byte~ main::$1 reg byte a 4.0
+constant byte* const main::SCREEN = (byte*) 1024
+byte sum(byte sum::q , byte sum::w)
+byte~ sum::$0 reg byte a 22.0
+byte sum::q
+byte sum::q#2 reg byte x 11.0
+byte sum::return
+byte sum::return#0 reg byte a 3.75
+byte sum::return#2 reg byte a 4.0
+byte sum::return#3 reg byte a 4.0
+byte sum::w
+byte sum::w#2 reg byte a 11.0
+
+reg byte x [ sum::q#2 ]
+reg byte a [ sum::w#2 ]
+reg byte a [ sum::return#2 ]
+reg byte a [ main::$0 ]
+reg byte a [ sum::return#3 ]
+reg byte a [ main::$1 ]
+reg byte a [ sum::$0 ]
+reg byte a [ sum::return#0 ]
+
+
+FINAL ASSEMBLER
+Score: 52
+
+  // File Comments
+// Procedure Declaration - a procedure with paramters&return declared multiple times & defined
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // sum('a', 1)
+    // [1] call sum 
+    // [10] phi from main to sum [phi:main->sum]
+    // [10] phi sum::w#2 = 1 [phi:main->sum#0] -- vbuaa=vbuc1 
+    lda #1
+    // [10] phi sum::q#2 = 'a' [phi:main->sum#1] -- vbuxx=vbuc1 
+    ldx #'a'
+    jsr sum
+    // sum('a', 1)
+    // [2] sum::return#2 = sum::return#0
+    // main::@1
+    // [3] main::$0 = sum::return#2
+    // SCREEN[0] = sum('a', 1)
+    // [4] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // sum('b', 2)
+    // [5] call sum 
+    // [10] phi from main::@1 to sum [phi:main::@1->sum]
+    // [10] phi sum::w#2 = 2 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
+    lda #2
+    // [10] phi sum::q#2 = 'b' [phi:main::@1->sum#1] -- vbuxx=vbuc1 
+    ldx #'b'
+    jsr sum
+    // sum('b', 2)
+    // [6] sum::return#3 = sum::return#0
+    // main::@2
+    // [7] main::$1 = sum::return#3
+    // SCREEN[1] = sum('b', 2)
+    // [8] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [9] return 
+    rts
+}
+  // sum
+// Calculate sum of two integers plus 1
+// sum(byte register(X) q, byte register(A) w)
+sum: {
+    // q+w
+    // [11] sum::$0 = sum::q#2 + sum::w#2 -- vbuaa=vbuxx_plus_vbuaa 
+    stx.z $ff
+    clc
+    adc.z $ff
+    // q+w+1
+    // [12] sum::return#0 = sum::$0 + 1 -- vbuaa=vbuaa_plus_1 
+    clc
+    adc #1
+    // sum::@return
+    // }
+    // [13] return 
+    rts
+}
+  // File Data
+

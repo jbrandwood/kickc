@@ -72,6 +72,7 @@ typeSpecifier
 
 declarator
     : NAME {if(isTypedef) { cParser.addTypedef($NAME.text); isTypedef=false; } } #declaratorName
+    | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
     | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
     | ASTERISK directive* declarator #declaratorPointer
     | PAR_BEGIN declarator PAR_END #declaratorPar
@@ -80,7 +81,6 @@ declarator
 type
     : SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | type PAR_BEGIN PAR_END #typeProcedure // TODO: Move to declarator
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef
@@ -118,11 +118,7 @@ enumMember
     ;
 
 declFunction
-    : declType declarator PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
-    ;
-
-declFunctionBody
-    : CURLY_BEGIN stmtSeq? CURLY_END
+    : declType declarator CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl

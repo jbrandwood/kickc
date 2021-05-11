@@ -2,10 +2,76 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
+void print_str(byte* print_str::str)
+print_str: scope:[print_str]  from print_uint_decimal::@1
+  print_char_cursor#28 = phi( print_uint_decimal::@1/print_char_cursor#25 )
+  print_str::str#5 = phi( print_uint_decimal::@1/print_str::str#1 )
+  to:print_str::@1
+print_str::@1: scope:[print_str]  from print_str print_str::@3
+  print_char_cursor#24 = phi( print_str/print_char_cursor#28, print_str::@3/print_char_cursor#0 )
+  print_str::str#2 = phi( print_str/print_str::str#5, print_str::@3/print_str::str#0 )
+  print_str::$1 = 0 != *print_str::str#2
+  if(print_str::$1) goto print_str::@2
+  to:print_str::@return
+print_str::@2: scope:[print_str]  from print_str::@1
+  print_char_cursor#23 = phi( print_str::@1/print_char_cursor#24 )
+  print_str::str#3 = phi( print_str::@1/print_str::str#2 )
+  print_char::ch#0 = *print_str::str#3
+  call print_char 
+  to:print_str::@3
+print_str::@3: scope:[print_str]  from print_str::@2
+  print_str::str#4 = phi( print_str::@2/print_str::str#3 )
+  print_char_cursor#12 = phi( print_str::@2/print_char_cursor#5 )
+  print_char_cursor#0 = print_char_cursor#12
+  print_str::str#0 = ++ print_str::str#4
+  to:print_str::@1
+print_str::@return: scope:[print_str]  from print_str::@1
+  print_char_cursor#13 = phi( print_str::@1/print_char_cursor#24 )
+  print_char_cursor#1 = print_char_cursor#13
+  return 
+  to:@return
+
+void print_uint_decimal(word print_uint_decimal::w)
+print_uint_decimal: scope:[print_uint_decimal]  from main::@6
+  print_char_cursor#29 = phi( main::@6/print_char_cursor#26 )
+  print_uint_decimal::w#1 = phi( main::@6/print_uint_decimal::w#0 )
+  utoa::value#0 = print_uint_decimal::w#1
+  utoa::buffer#0 = decimal_digits
+  utoa::radix#0 = DECIMAL
+  call utoa 
+  to:print_uint_decimal::@1
+print_uint_decimal::@1: scope:[print_uint_decimal]  from print_uint_decimal
+  print_char_cursor#25 = phi( print_uint_decimal/print_char_cursor#29 )
+  print_str::str#1 = decimal_digits
+  call print_str 
+  to:print_uint_decimal::@2
+print_uint_decimal::@2: scope:[print_uint_decimal]  from print_uint_decimal::@1
+  print_char_cursor#14 = phi( print_uint_decimal::@1/print_char_cursor#1 )
+  print_char_cursor#2 = print_char_cursor#14
+  to:print_uint_decimal::@return
+print_uint_decimal::@return: scope:[print_uint_decimal]  from print_uint_decimal::@2
+  print_char_cursor#15 = phi( print_uint_decimal::@2/print_char_cursor#2 )
+  print_char_cursor#3 = print_char_cursor#15
+  return 
+  to:@return
+
+void print_char(byte print_char::ch)
+print_char: scope:[print_char]  from main::@10 print_str::@2
+  print_char_cursor#16 = phi( main::@10/print_char_cursor#6, print_str::@2/print_char_cursor#23 )
+  print_char::ch#2 = phi( main::@10/print_char::ch#1, print_str::@2/print_char::ch#0 )
+  *print_char_cursor#16 = print_char::ch#2
+  print_char_cursor#4 = ++ print_char_cursor#16
+  to:print_char::@return
+print_char::@return: scope:[print_char]  from print_char
+  print_char_cursor#17 = phi( print_char/print_char_cursor#4 )
+  print_char_cursor#5 = print_char_cursor#17
+  return 
+  to:@return
+
 void utoa(word utoa::value , byte* utoa::buffer , byte utoa::radix)
 utoa: scope:[utoa]  from print_uint_decimal
-  utoa::buffer#21 = phi( print_uint_decimal/utoa::buffer#5 )
-  utoa::value#12 = phi( print_uint_decimal/utoa::value#1 )
+  utoa::buffer#21 = phi( print_uint_decimal/utoa::buffer#0 )
+  utoa::value#12 = phi( print_uint_decimal/utoa::value#0 )
   utoa::radix#1 = phi( print_uint_decimal/utoa::radix#0 )
   utoa::max_digits#0 = 0
   utoa::digit_values#0 = (word*) 0
@@ -60,12 +126,12 @@ utoa::@4: scope:[utoa]  from utoa::@8
 utoa::@9: scope:[utoa]  from utoa::@8
   utoa::buffer#6 = phi( utoa::@8/utoa::buffer#10 )
   *utoa::buffer#6 = 'e'
-  utoa::buffer#0 = ++ utoa::buffer#6
-  *utoa::buffer#0 = 'r'
-  utoa::buffer#1 = ++ utoa::buffer#0
+  utoa::buffer#1 = ++ utoa::buffer#6
   *utoa::buffer#1 = 'r'
   utoa::buffer#2 = ++ utoa::buffer#1
-  *utoa::buffer#2 = 0
+  *utoa::buffer#2 = 'r'
+  utoa::buffer#3 = ++ utoa::buffer#2
+  *utoa::buffer#3 = 0
   to:utoa::@return
 utoa::@return: scope:[utoa]  from utoa::@12 utoa::@9
   return 
@@ -108,13 +174,13 @@ utoa::@12: scope:[utoa]  from utoa::@10
   utoa::value#3 = phi( utoa::@10/utoa::value#5 )
   utoa::$11 = (byte)utoa::value#3
   *utoa::buffer#7 = DIGITS[utoa::$11]
-  utoa::buffer#3 = ++ utoa::buffer#7
-  *utoa::buffer#3 = 0
+  utoa::buffer#4 = ++ utoa::buffer#7
+  *utoa::buffer#4 = 0
   to:utoa::@return
 utoa::@13: scope:[utoa]  from utoa::@11 utoa::@15
-  utoa::buffer#14 = phi( utoa::@11/utoa::buffer#12, utoa::@15/utoa::buffer#4 )
+  utoa::buffer#14 = phi( utoa::@11/utoa::buffer#12, utoa::@15/utoa::buffer#5 )
   utoa::started#4 = phi( utoa::@11/utoa::started#2, utoa::@15/utoa::started#1 )
-  utoa::value#6 = phi( utoa::@11/utoa::value#2, utoa::@15/utoa::value#0 )
+  utoa::value#6 = phi( utoa::@11/utoa::value#2, utoa::@15/utoa::value#1 )
   utoa::digit_values#7 = phi( utoa::@11/utoa::digit_values#5, utoa::@15/utoa::digit_values#9 )
   utoa::max_digits#6 = phi( utoa::@11/utoa::max_digits#8, utoa::@15/utoa::max_digits#9 )
   utoa::digit#4 = phi( utoa::@11/utoa::digit#3, utoa::@15/utoa::digit#5 )
@@ -140,8 +206,8 @@ utoa::@15: scope:[utoa]  from utoa::@14
   utoa::buffer#9 = phi( utoa::@14/utoa::buffer#8 )
   utoa_append::return#3 = phi( utoa::@14/utoa_append::return#0 )
   utoa::$9 = utoa_append::return#3
-  utoa::value#0 = utoa::$9
-  utoa::buffer#4 = ++ utoa::buffer#9
+  utoa::value#1 = utoa::$9
+  utoa::buffer#5 = ++ utoa::buffer#9
   utoa::started#1 = 1
   to:utoa::@13
 
@@ -178,72 +244,6 @@ utoa_append::@3: scope:[utoa_append]  from utoa_append::@1
 utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
   utoa_append::return#4 = phi( utoa_append::@3/utoa_append::return#1 )
   utoa_append::return#2 = utoa_append::return#4
-  return 
-  to:@return
-
-void print_str(byte* print_str::str)
-print_str: scope:[print_str]  from print_uint_decimal::@1
-  print_char_cursor#28 = phi( print_uint_decimal::@1/print_char_cursor#25 )
-  print_str::str#5 = phi( print_uint_decimal::@1/print_str::str#1 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@3
-  print_char_cursor#24 = phi( print_str/print_char_cursor#28, print_str::@3/print_char_cursor#0 )
-  print_str::str#2 = phi( print_str/print_str::str#5, print_str::@3/print_str::str#0 )
-  print_str::$1 = 0 != *print_str::str#2
-  if(print_str::$1) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  print_char_cursor#23 = phi( print_str::@1/print_char_cursor#24 )
-  print_str::str#3 = phi( print_str::@1/print_str::str#2 )
-  print_char::ch#0 = *print_str::str#3
-  call print_char 
-  to:print_str::@3
-print_str::@3: scope:[print_str]  from print_str::@2
-  print_str::str#4 = phi( print_str::@2/print_str::str#3 )
-  print_char_cursor#12 = phi( print_str::@2/print_char_cursor#5 )
-  print_char_cursor#0 = print_char_cursor#12
-  print_str::str#0 = ++ print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  print_char_cursor#13 = phi( print_str::@1/print_char_cursor#24 )
-  print_char_cursor#1 = print_char_cursor#13
-  return 
-  to:@return
-
-void print_uint_decimal(word print_uint_decimal::w)
-print_uint_decimal: scope:[print_uint_decimal]  from main::@6
-  print_char_cursor#29 = phi( main::@6/print_char_cursor#26 )
-  print_uint_decimal::w#1 = phi( main::@6/print_uint_decimal::w#0 )
-  utoa::value#1 = print_uint_decimal::w#1
-  utoa::buffer#5 = decimal_digits
-  utoa::radix#0 = DECIMAL
-  call utoa 
-  to:print_uint_decimal::@1
-print_uint_decimal::@1: scope:[print_uint_decimal]  from print_uint_decimal
-  print_char_cursor#25 = phi( print_uint_decimal/print_char_cursor#29 )
-  print_str::str#1 = decimal_digits
-  call print_str 
-  to:print_uint_decimal::@2
-print_uint_decimal::@2: scope:[print_uint_decimal]  from print_uint_decimal::@1
-  print_char_cursor#14 = phi( print_uint_decimal::@1/print_char_cursor#1 )
-  print_char_cursor#2 = print_char_cursor#14
-  to:print_uint_decimal::@return
-print_uint_decimal::@return: scope:[print_uint_decimal]  from print_uint_decimal::@2
-  print_char_cursor#15 = phi( print_uint_decimal::@2/print_char_cursor#2 )
-  print_char_cursor#3 = print_char_cursor#15
-  return 
-  to:@return
-
-void print_char(byte print_char::ch)
-print_char: scope:[print_char]  from main::@10 print_str::@2
-  print_char_cursor#16 = phi( main::@10/print_char_cursor#6, print_str::@2/print_char_cursor#23 )
-  print_char::ch#2 = phi( main::@10/print_char::ch#1, print_str::@2/print_char::ch#0 )
-  *print_char_cursor#16 = print_char::ch#2
-  print_char_cursor#4 = ++ print_char_cursor#16
-  to:print_char::@return
-print_char::@return: scope:[print_char]  from print_char
-  print_char_cursor#17 = phi( print_char/print_char_cursor#4 )
-  print_char_cursor#5 = print_char_cursor#17
   return 
   to:@return
 
@@ -1119,16 +1119,16 @@ word utoa_append::value#5
 
 Fixing inline constructor with div16u8u::$4 = (byte)div16u8u::quotient_hi#1 w= (byte)div16u8u::quotient_lo#0
 Successful SSA optimization Pass2FixInlineConstructors
+Adding number conversion cast (unumber) 0 in print_str::$1 = 0 != *print_str::str#2
 Adding number conversion cast (unumber) 5 in utoa::max_digits#1 = 5
 Adding number conversion cast (unumber) 4 in utoa::max_digits#2 = 4
 Adding number conversion cast (unumber) 6 in utoa::max_digits#3 = 6
 Adding number conversion cast (unumber) $10 in utoa::max_digits#4 = $10
-Adding number conversion cast (unumber) 0 in *utoa::buffer#2 = 0
+Adding number conversion cast (unumber) 0 in *utoa::buffer#3 = 0
 Adding number conversion cast (unumber) 1 in utoa::$4 = utoa::max_digits#5 - 1
 Adding number conversion cast (unumber) utoa::$4 in utoa::$4 = utoa::max_digits#5 - (unumber)1
-Adding number conversion cast (unumber) 0 in *utoa::buffer#3 = 0
+Adding number conversion cast (unumber) 0 in *utoa::buffer#4 = 0
 Adding number conversion cast (unumber) 1 in utoa::started#1 = 1
-Adding number conversion cast (unumber) 0 in print_str::$1 = 0 != *print_str::str#2
 Adding number conversion cast (unumber) 0 in mul8u::$0 = mul8u::a#2 != 0
 Adding number conversion cast (unumber) 1 in mul8u::$1 = mul8u::a#3 & 1
 Adding number conversion cast (unumber) mul8u::$1 in mul8u::$1 = mul8u::a#3 & (unumber)1
@@ -1164,8 +1164,8 @@ Inlining cast utoa::max_digits#1 = (unumber)5
 Inlining cast utoa::max_digits#2 = (unumber)4
 Inlining cast utoa::max_digits#3 = (unumber)6
 Inlining cast utoa::max_digits#4 = (unumber)$10
-Inlining cast *utoa::buffer#2 = (unumber)0
 Inlining cast *utoa::buffer#3 = (unumber)0
+Inlining cast *utoa::buffer#4 = (unumber)0
 Inlining cast utoa::started#1 = (unumber)1
 Inlining cast divr8u::rem#3 = (unumber)0
 Inlining cast PRIMES[main::$10] = (unumber)2
@@ -1176,6 +1176,7 @@ Inlining cast prime_idx#0 = (unumber)2
 Inlining cast test_idx#0 = (unumber)2
 Inlining cast test_idx#2 = (unumber)2
 Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
 Simplifying constant integer cast 5
 Simplifying constant integer cast 4
 Simplifying constant integer cast 6
@@ -1184,7 +1185,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -1214,6 +1214,7 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast $3e8
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 6
@@ -1222,7 +1223,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
@@ -1261,6 +1261,12 @@ Inversing boolean not [153] divr8u::$8 = divr8u::rem#6 < divr8u::divisor#2 from 
 Inversing boolean not [219] main::$2 = potential#7 <= main::$0 from [218] main::$1 = potential#7 > main::$0
 Inversing boolean not [236] main::$5 = rem8u#5 != 0 from [235] main::$4 = rem8u#5 == 0
 Successful SSA optimization Pass2UnaryNotSimplification
+Alias print_str::str#2 = print_str::str#3 print_str::str#4 
+Alias print_char_cursor#1 = print_char_cursor#23 print_char_cursor#24 print_char_cursor#13 
+Alias print_char_cursor#0 = print_char_cursor#12 
+Alias print_char_cursor#25 = print_char_cursor#29 
+Alias print_char_cursor#14 = print_char_cursor#2 print_char_cursor#15 print_char_cursor#3 
+Alias print_char_cursor#17 = print_char_cursor#4 print_char_cursor#5 
 Alias utoa::value#10 = utoa::value#8 utoa::value#12 utoa::value#13 utoa::value#9 utoa::value#14 utoa::value#15 utoa::value#11 
 Alias utoa::buffer#10 = utoa::buffer#17 utoa::buffer#21 utoa::buffer#16 utoa::buffer#18 utoa::buffer#13 utoa::buffer#19 utoa::buffer#20 utoa::buffer#6 
 Alias utoa::radix#1 = utoa::radix#2 utoa::radix#3 utoa::radix#4 
@@ -1272,17 +1278,11 @@ Alias utoa::buffer#11 = utoa::buffer#12 utoa::buffer#7 utoa::buffer#8 utoa::buff
 Alias utoa::max_digits#10 = utoa::max_digits#8 utoa::max_digits#5 utoa::max_digits#9 
 Alias utoa::digit_value#0 = utoa::digit_value#1 
 Alias utoa_append::return#0 = utoa_append::return#3 
-Alias utoa::value#0 = utoa::$9 
+Alias utoa::value#1 = utoa::$9 
 Alias utoa_append::digit#2 = utoa_append::digit#4 utoa_append::digit#3 
 Alias utoa_append::value#2 = utoa_append::value#3 utoa_append::value#4 utoa_append::return#1 utoa_append::return#4 utoa_append::return#2 
 Alias utoa_append::sub#1 = utoa_append::sub#2 
 Alias utoa_append::buffer#1 = utoa_append::buffer#4 utoa_append::buffer#2 
-Alias print_str::str#2 = print_str::str#3 print_str::str#4 
-Alias print_char_cursor#1 = print_char_cursor#23 print_char_cursor#24 print_char_cursor#13 
-Alias print_char_cursor#0 = print_char_cursor#12 
-Alias print_char_cursor#25 = print_char_cursor#29 
-Alias print_char_cursor#14 = print_char_cursor#2 print_char_cursor#15 print_char_cursor#3 
-Alias print_char_cursor#17 = print_char_cursor#4 print_char_cursor#5 
 Alias mul8u::a#2 = mul8u::a#3 mul8u::a#6 
 Alias mul8u::mb#3 = mul8u::mb#4 mul8u::mb#5 
 Alias mul8u::res#2 = mul8u::res#5 mul8u::res#4 mul8u::return#0 mul8u::res#3 mul8u::return#3 mul8u::return#1 
@@ -1370,9 +1370,15 @@ Alias prime_idx#11 = prime_idx#14
 Alias rem8u#14 = rem8u#15 
 Alias print_char_cursor#26 = print_char_cursor#31 
 Successful SSA optimization Pass2AliasElimination
+Identical Phi Values print_str::str#5 print_str::str#1
+Identical Phi Values print_char_cursor#28 print_char_cursor#25
+Identical Phi Values print_char_cursor#0 print_char_cursor#17
+Identical Phi Values print_uint_decimal::w#1 print_uint_decimal::w#0
+Identical Phi Values print_char_cursor#25 print_char_cursor#26
+Identical Phi Values print_char_cursor#14 print_char_cursor#1
 Identical Phi Values utoa::radix#1 utoa::radix#0
-Identical Phi Values utoa::value#10 utoa::value#1
-Identical Phi Values utoa::buffer#10 utoa::buffer#5
+Identical Phi Values utoa::value#10 utoa::value#0
+Identical Phi Values utoa::buffer#10 utoa::buffer#0
 Identical Phi Values utoa::max_digits#10 utoa::max_digits#7
 Identical Phi Values utoa::digit_values#10 utoa::digit_values#8
 Identical Phi Values utoa_append::value#5 utoa_append::value#0
@@ -1380,12 +1386,6 @@ Identical Phi Values utoa_append::sub#3 utoa_append::sub#0
 Identical Phi Values utoa_append::buffer#3 utoa_append::buffer#0
 Identical Phi Values utoa_append::sub#1 utoa_append::sub#3
 Identical Phi Values utoa_append::buffer#1 utoa_append::buffer#3
-Identical Phi Values print_str::str#5 print_str::str#1
-Identical Phi Values print_char_cursor#28 print_char_cursor#25
-Identical Phi Values print_char_cursor#0 print_char_cursor#17
-Identical Phi Values print_uint_decimal::w#1 print_uint_decimal::w#0
-Identical Phi Values print_char_cursor#25 print_char_cursor#26
-Identical Phi Values print_char_cursor#14 print_char_cursor#1
 Identical Phi Values mul8u::b#1 mul8u::b#0
 Identical Phi Values mul8u::a#5 mul8u::a#1
 Identical Phi Values divr8u::divisor#2 divr8u::divisor#6
@@ -1411,13 +1411,13 @@ Identical Phi Values print_char_cursor#10 print_char_cursor#19
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values print_char_cursor#16 print_char_cursor#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition utoa::$0 [4] if(utoa::radix#0==DECIMAL) goto utoa::@1
-Simple Condition utoa::$1 [8] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
-Simple Condition utoa::$2 [12] if(utoa::radix#0==OCTAL) goto utoa::@3
-Simple Condition utoa::$3 [16] if(utoa::radix#0==BINARY) goto utoa::@4
-Simple Condition utoa::$5 [33] if(utoa::digit#2<utoa::$4) goto utoa::@11
-Simple Condition utoa_append::$0 [58] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2
-Simple Condition print_str::$1 [66] if(0!=*print_str::str#2) goto print_str::@2
+Simple Condition print_str::$1 [3] if(0!=*print_str::str#2) goto print_str::@2
+Simple Condition utoa::$0 [26] if(utoa::radix#0==DECIMAL) goto utoa::@1
+Simple Condition utoa::$1 [30] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
+Simple Condition utoa::$2 [34] if(utoa::radix#0==OCTAL) goto utoa::@3
+Simple Condition utoa::$3 [38] if(utoa::radix#0==BINARY) goto utoa::@4
+Simple Condition utoa::$5 [55] if(utoa::digit#2<utoa::$4) goto utoa::@11
+Simple Condition utoa_append::$0 [80] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2
 Simple Condition mul8u::$0 [90] if(mul8u::a#2!=0) goto mul8u::@2
 Simple Condition mul8u::$3 [93] if(mul8u::$1==0) goto mul8u::@4
 Simple Condition divr8u::$3 [106] if(divr8u::$1==0) goto divr8u::@2
@@ -1428,13 +1428,16 @@ Simple Condition main::$5 [169] if(rem8u#0!=0) goto main::@4
 Simple Condition main::$6 [172] if(test_idx#10<=test_last#19) goto main::@3
 Simple Condition main::$9 [185] if(prime_idx#1<$3e8) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [38] utoa::$8 = ! utoa::$7
-Rewriting || if()-condition to two if()s [37] utoa::$7 = utoa::started#2 || utoa::$6
+Rewriting ! if()-condition to reversed if() [60] utoa::$8 = ! utoa::$7
+Rewriting || if()-condition to two if()s [59] utoa::$7 = utoa::started#2 || utoa::$6
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition utoa::started#2
 Constant right-side identified [139] main::$10 = 1 * SIZEOF_WORD
 Constant right-side identified [141] main::$11 = 2 * SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant utoa::buffer#0 = decimal_digits
+Constant utoa::radix#0 = DECIMAL
+Constant print_str::str#1 = decimal_digits
 Constant utoa::max_digits#0 = 0
 Constant utoa::digit_values#0 = (word*) 0
 Constant utoa::max_digits#1 = 5
@@ -1449,9 +1452,6 @@ Constant utoa::started#0 = 0
 Constant utoa::digit#0 = 0
 Constant utoa::started#1 = 1
 Constant utoa_append::digit#0 = 0
-Constant utoa::buffer#5 = decimal_digits
-Constant utoa::radix#0 = DECIMAL
-Constant print_str::str#1 = decimal_digits
 Constant mul8u::res#0 = 0
 Constant divr8u::quotient#0 = 0
 Constant divr8u::i#0 = 0
@@ -1471,18 +1471,18 @@ Constant potential#20 = 0
 Constant test_idx#14 = 0
 Constant test_last#16 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [4] if(utoa::radix#0==DECIMAL) goto utoa::@1
-if() condition always false - eliminating [8] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
-if() condition always false - eliminating [12] if(utoa::radix#0==OCTAL) goto utoa::@3
-if() condition always false - eliminating [16] if(utoa::radix#0==BINARY) goto utoa::@4
+if() condition always true - replacing block destination [26] if(utoa::radix#0==DECIMAL) goto utoa::@1
+if() condition always false - eliminating [30] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
+if() condition always false - eliminating [34] if(utoa::radix#0==OCTAL) goto utoa::@3
+if() condition always false - eliminating [38] if(utoa::radix#0==BINARY) goto utoa::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [114] divr8u::i#1 = ++ divr8u::i#2 to ++
 Resolved ranged comparison value [116] if(divr8u::i#1!=rangelast(0,7)) goto divr8u::@1 to 8
 De-inlining pointer[w] to *(pointer+w)   [177] PRIMES[main::$14] = potential#11
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Eliminating variable utoa::buffer#0 from unused block utoa::@9
 Eliminating variable utoa::buffer#1 from unused block utoa::@9
 Eliminating variable utoa::buffer#2 from unused block utoa::@9
+Eliminating variable utoa::buffer#3 from unused block utoa::@9
 Removing unused block utoa::@6
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
@@ -1502,6 +1502,7 @@ Eliminating unused variable div16u8u::return#2 and assignment [102] div16u8u::re
 Eliminating unused constant BINARY
 Eliminating unused constant OCTAL
 Eliminating unused constant HEXADECIMAL
+Eliminating unused constant utoa::radix#0
 Eliminating unused constant utoa::max_digits#0
 Eliminating unused constant utoa::digit_values#0
 Eliminating unused constant utoa::max_digits#2
@@ -1510,7 +1511,6 @@ Eliminating unused constant utoa::max_digits#3
 Eliminating unused constant utoa::digit_values#3
 Eliminating unused constant utoa::max_digits#4
 Eliminating unused constant utoa::digit_values#4
-Eliminating unused constant utoa::radix#0
 Eliminating unused constant prime_idx#13
 Eliminating unused constant potential#20
 Eliminating unused constant test_idx#14
@@ -1537,7 +1537,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 0 in [8] utoa::$12 = 0 != utoa::started#2
+Adding number conversion cast (unumber) 0 in [22] utoa::$12 = 0 != utoa::started#2
 Adding number conversion cast (unumber) 8 in [65] if(divr8u::i#1!=8) goto divr8u::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
@@ -1549,25 +1549,25 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values utoa::max_digits#7 utoa::max_digits#1
 Identical Phi Values utoa::digit_values#8 utoa::digit_values#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition utoa::$12 [9] if(0!=utoa::started#2) goto utoa::@14
+Simple Condition utoa::$12 [23] if(0!=utoa::started#2) goto utoa::@14
 Simple Condition utoa::$6 [111] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@14
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [3] utoa::$4 = utoa::max_digits#1 - 1
+Constant right-side identified [17] utoa::$4 = utoa::max_digits#1 - 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant utoa::$4 = utoa::max_digits#1-1
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [3] utoa::$10 = utoa::digit#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [17] utoa::$10 = utoa::digit#2 * SIZEOF_WORD
 Rewriting multiplication to use shift [77] main::$12 = test_last#13 * SIZEOF_WORD
 Rewriting multiplication to use shift [89] main::$13 = test_idx#7 * SIZEOF_WORD
 Rewriting multiplication to use shift [99] main::$14 = prime_idx#1 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings print_str::str#1
+Inlining constant with var siblings print_char::ch#1
+Inlining constant with var siblings utoa::buffer#0
 Inlining constant with var siblings utoa::started#0
 Inlining constant with var siblings utoa::digit#0
 Inlining constant with var siblings utoa::started#1
-Inlining constant with var siblings utoa::buffer#5
 Inlining constant with var siblings utoa_append::digit#0
-Inlining constant with var siblings print_str::str#1
-Inlining constant with var siblings print_char::ch#1
 Inlining constant with var siblings mul8u::res#0
 Inlining constant with var siblings divr8u::quotient#0
 Inlining constant with var siblings divr8u::i#0
@@ -1579,6 +1579,7 @@ Inlining constant with var siblings test_idx#0
 Inlining constant with var siblings test_idx#2
 Constant inlined utoa_append::digit#0 = 0
 Constant inlined utoa::digit_values#1 = RADIX_DECIMAL_VALUES
+Constant inlined utoa::buffer#0 = decimal_digits
 Constant inlined divr8u::rem#3 = 0
 Constant inlined utoa::started#1 = 1
 Constant inlined test_idx#0 = 2
@@ -1589,7 +1590,6 @@ Constant inlined main::$11 = 2*SIZEOF_WORD
 Constant inlined divr8u::i#0 = 0
 Constant inlined divr8u::quotient#0 = 0
 Constant inlined mul8u::res#0 = 0
-Constant inlined utoa::buffer#5 = decimal_digits
 Constant inlined utoa::digit#0 = 0
 Constant inlined print_char::ch#1 = ' '
 Constant inlined prime_idx#0 = 2
@@ -1670,7 +1670,7 @@ Coalesced [113] divr8u::i#7 = divr8u::i#1
 Coalesced [114] divr8u::rem#17 = divr8u::rem#6
 Coalesced [115] divr8u::return#7 = divr8u::quotient#1
 Coalesced [116] divr8u::rem#15 = divr8u::rem#0
-Coalesced [119] utoa::value#17 = utoa::value#1
+Coalesced [119] utoa::value#17 = utoa::value#0
 Coalesced [131] utoa::value#18 = utoa::value#2
 Coalesced [132] utoa::started#6 = utoa::started#2
 Coalesced [133] utoa::buffer#23 = utoa::buffer#11
@@ -1678,8 +1678,8 @@ Coalesced [136] utoa::digit#7 = utoa::digit#1
 Coalesced (already) [137] utoa::value#16 = utoa::value#6
 Coalesced (already) [138] utoa::started#5 = utoa::started#4
 Coalesced (already) [139] utoa::buffer#22 = utoa::buffer#14
-Coalesced [147] utoa::value#19 = utoa::value#0
-Coalesced [148] utoa::buffer#24 = utoa::buffer#4
+Coalesced [147] utoa::value#19 = utoa::value#1
+Coalesced [148] utoa::buffer#24 = utoa::buffer#5
 Coalesced [149] print_char_cursor#39 = print_char_cursor#34
 Coalesced [154] print_char::ch#3 = print_char::ch#0
 Coalesced [157] print_str::str#6 = print_str::str#0
@@ -1830,7 +1830,7 @@ div16u8u::@return: scope:[div16u8u]  from div16u8u::@1
 
 void print_uint_decimal(word print_uint_decimal::w)
 print_uint_decimal: scope:[print_uint_decimal]  from main::@6
-  [52] utoa::value#1 = print_uint_decimal::w#0
+  [52] utoa::value#0 = print_uint_decimal::w#0
   [53] call utoa 
   to:print_uint_decimal::@1
 print_uint_decimal::@1: scope:[print_uint_decimal]  from print_uint_decimal
@@ -1899,15 +1899,15 @@ utoa: scope:[utoa]  from print_uint_decimal
 utoa::@1: scope:[utoa]  from utoa utoa::@4
   [79] utoa::buffer#11 = phi( utoa::@4/utoa::buffer#14, utoa/decimal_digits )
   [79] utoa::started#2 = phi( utoa::@4/utoa::started#4, utoa/0 )
-  [79] utoa::value#2 = phi( utoa::@4/utoa::value#6, utoa/utoa::value#1 )
+  [79] utoa::value#2 = phi( utoa::@4/utoa::value#6, utoa/utoa::value#0 )
   [79] utoa::digit#2 = phi( utoa::@4/utoa::digit#1, utoa/0 )
   [80] if(utoa::digit#2<utoa::max_digits#1-1) goto utoa::@2
   to:utoa::@3
 utoa::@3: scope:[utoa]  from utoa::@1
   [81] utoa::$11 = (byte)utoa::value#2
   [82] *utoa::buffer#11 = DIGITS[utoa::$11]
-  [83] utoa::buffer#3 = ++ utoa::buffer#11
-  [84] *utoa::buffer#3 = 0
+  [83] utoa::buffer#4 = ++ utoa::buffer#11
+  [84] *utoa::buffer#4 = 0
   to:utoa::@return
 utoa::@return: scope:[utoa]  from utoa::@3
   [85] return 
@@ -1921,9 +1921,9 @@ utoa::@7: scope:[utoa]  from utoa::@2
   [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5
   to:utoa::@4
 utoa::@4: scope:[utoa]  from utoa::@6 utoa::@7
-  [90] utoa::buffer#14 = phi( utoa::@7/utoa::buffer#11, utoa::@6/utoa::buffer#4 )
+  [90] utoa::buffer#14 = phi( utoa::@7/utoa::buffer#11, utoa::@6/utoa::buffer#5 )
   [90] utoa::started#4 = phi( utoa::@7/utoa::started#2, utoa::@6/1 )
-  [90] utoa::value#6 = phi( utoa::@7/utoa::value#2, utoa::@6/utoa::value#0 )
+  [90] utoa::value#6 = phi( utoa::@7/utoa::value#2, utoa::@6/utoa::value#1 )
   [91] utoa::digit#1 = ++ utoa::digit#2
   to:utoa::@1
 utoa::@5: scope:[utoa]  from utoa::@2 utoa::@7
@@ -1934,8 +1934,8 @@ utoa::@5: scope:[utoa]  from utoa::@2 utoa::@7
   [96] utoa_append::return#0 = utoa_append::value#2
   to:utoa::@6
 utoa::@6: scope:[utoa]  from utoa::@5
-  [97] utoa::value#0 = utoa_append::return#0
-  [98] utoa::buffer#4 = ++ utoa::buffer#11
+  [97] utoa::value#1 = utoa_append::return#0
+  [98] utoa::buffer#5 = ++ utoa::buffer#11
   to:utoa::@4
 
 void print_str(byte* print_str::str)
@@ -2088,8 +2088,8 @@ byte~ utoa::$11 2002.0
 byte* utoa::buffer
 byte* utoa::buffer#11 28714.714285714286
 byte* utoa::buffer#14 150001.5
-byte* utoa::buffer#3 2002.0
-byte* utoa::buffer#4 200002.0
+byte* utoa::buffer#4 2002.0
+byte* utoa::buffer#5 200002.0
 byte utoa::digit
 byte utoa::digit#1 200002.0
 byte utoa::digit#2 28571.714285714286
@@ -2102,8 +2102,8 @@ byte utoa::started
 byte utoa::started#2 50000.5
 byte utoa::started#4 100001.0
 word utoa::value
-word utoa::value#0 100001.0
-word utoa::value#1 551.0
+word utoa::value#0 551.0
+word utoa::value#1 100001.0
 word utoa::value#2 57286.42857142857
 word utoa::value#6 150001.5
 word utoa_append(byte* utoa_append::buffer , word utoa_append::value , word utoa_append::sub)
@@ -2136,9 +2136,9 @@ Initial phi equivalence classes
 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ]
 [ divr8u::i#2 divr8u::i#1 ]
 [ utoa::digit#2 utoa::digit#1 ]
-[ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
+[ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ]
 [ utoa::started#2 utoa::started#4 ]
-[ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ]
+[ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ]
 [ print_str::str#2 print_str::str#0 ]
 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ]
 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ]
@@ -2158,7 +2158,7 @@ Added variable mul8u::$1 to live range equivalence class [ mul8u::$1 ]
 Added variable divr8u::$1 to live range equivalence class [ divr8u::$1 ]
 Added variable rem8u#0 to live range equivalence class [ rem8u#0 ]
 Added variable utoa::$11 to live range equivalence class [ utoa::$11 ]
-Added variable utoa::buffer#3 to live range equivalence class [ utoa::buffer#3 ]
+Added variable utoa::buffer#4 to live range equivalence class [ utoa::buffer#4 ]
 Added variable utoa::$10 to live range equivalence class [ utoa::$10 ]
 Added variable utoa::digit_value#0 to live range equivalence class [ utoa::digit_value#0 ]
 Added variable utoa_append::buffer#0 to live range equivalence class [ utoa_append::buffer#0 ]
@@ -2179,9 +2179,9 @@ Complete equivalence classes
 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ]
 [ divr8u::i#2 divr8u::i#1 ]
 [ utoa::digit#2 utoa::digit#1 ]
-[ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
+[ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ]
 [ utoa::started#2 utoa::started#4 ]
-[ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ]
+[ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ]
 [ print_str::str#2 print_str::str#0 ]
 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ]
 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ]
@@ -2201,7 +2201,7 @@ Complete equivalence classes
 [ divr8u::$1 ]
 [ rem8u#0 ]
 [ utoa::$11 ]
-[ utoa::buffer#3 ]
+[ utoa::buffer#4 ]
 [ utoa::$10 ]
 [ utoa::digit_value#0 ]
 [ utoa_append::buffer#0 ]
@@ -2221,9 +2221,9 @@ Allocated zp[1]:16 [ divr8u::dividend#3 divr8u::dividend#5 divr8u::dividend#1 di
 Allocated zp[1]:17 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ]
 Allocated zp[1]:18 [ divr8u::i#2 divr8u::i#1 ]
 Allocated zp[1]:19 [ utoa::digit#2 utoa::digit#1 ]
-Allocated zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
+Allocated zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ]
 Allocated zp[1]:22 [ utoa::started#2 utoa::started#4 ]
-Allocated zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ]
+Allocated zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ]
 Allocated zp[2]:25 [ print_str::str#2 print_str::str#0 ]
 Allocated zp[2]:27 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ]
 Allocated zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ]
@@ -2243,7 +2243,7 @@ Allocated zp[1]:49 [ mul8u::$1 ]
 Allocated zp[1]:50 [ divr8u::$1 ]
 Allocated zp[1]:51 [ rem8u#0 ]
 Allocated zp[1]:52 [ utoa::$11 ]
-Allocated zp[2]:53 [ utoa::buffer#3 ]
+Allocated zp[2]:53 [ utoa::buffer#4 ]
 Allocated zp[1]:55 [ utoa::$10 ]
 Allocated zp[2]:56 [ utoa::digit_value#0 ]
 Allocated zp[2]:58 [ utoa_append::buffer#0 ]
@@ -2275,7 +2275,7 @@ Statement [34] mul8u::mb#0 = (word)mul8u::b#0 [ mul8u::a#1 mul8u::mb#0 ] ( mul8u
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Statement [38] mul8u::$1 = mul8u::a#2 & 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [40] mul8u::res#1 = mul8u::res#2 + mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [52] utoa::value#1 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#1 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [52] utoa::value#0 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#0 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [58] *print_char_cursor#1 = print_char::ch#2 [ print_char_cursor#1 ] ( print_char:31 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 ] { }  print_uint_decimal:29::print_str:55::print_char:104 [ test_last#19 potential#11 prime_idx#1 print_str::str#2 print_char_cursor#1 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Statement [66] divr8u::rem#1 = divr8u::rem#0 | 1 [ divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:42 [ div16u8u::divisor#0 ]
@@ -2284,27 +2284,27 @@ Removing always clobbered register reg byte a as potential for zp[1]:16 [ divr8u
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ divr8u::i#2 divr8u::i#1 ]
 Statement [72] divr8u::rem#2 = divr8u::rem#6 - divr8u::divisor#6 [ divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
-Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [83] utoa::buffer#3 = ++ utoa::buffer#11 [ utoa::buffer#3 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#3 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [84] *utoa::buffer#3 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [83] utoa::buffer#4 = ++ utoa::buffer#11 [ utoa::buffer#4 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#4 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [84] *utoa::buffer#4 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ utoa::digit#2 utoa::digit#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ utoa::started#2 utoa::started#4 ]
-Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [97] utoa::value#0 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [97] utoa::value#1 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#1 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [101] if(0!=*print_str::str#2) goto print_str::@2 [ print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [103] print_char::ch#0 = *print_str::str#2 [ print_char::ch#0 print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char::ch#0 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:31 [ utoa_append::digit#2 utoa_append::digit#1 ]
-Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:19 [ utoa::digit#2 utoa::digit#1 ]
-Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [0] *(PRIMES+1*SIZEOF_WORD) = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(PRIMES+2*SIZEOF_WORD) = 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] main::$12 = test_last#13 << 1 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 main::$12 ] (  [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 main::$12 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
@@ -2325,29 +2325,29 @@ Statement [32] if(prime_idx#1<$3e8) goto main::@1 [ test_last#19 potential#11 pr
 Statement [34] mul8u::mb#0 = (word)mul8u::b#0 [ mul8u::a#1 mul8u::mb#0 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::a#1 mul8u::mb#0 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [38] mul8u::$1 = mul8u::a#2 & 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [40] mul8u::res#1 = mul8u::res#2 + mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [52] utoa::value#1 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#1 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [52] utoa::value#0 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#0 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [58] *print_char_cursor#1 = print_char::ch#2 [ print_char_cursor#1 ] ( print_char:31 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 ] { }  print_uint_decimal:29::print_str:55::print_char:104 [ test_last#19 potential#11 prime_idx#1 print_str::str#2 print_char_cursor#1 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Statement [64] divr8u::$1 = divr8u::dividend#3 & $80 [ divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ divr8u::rem#5 divr8u::rem#10 divr8u::rem#4 divr8u::rem#11 divr8u::rem#6 divr8u::rem#0 divr8u::rem#1 divr8u::rem#2 ]
 Statement [66] divr8u::rem#1 = divr8u::rem#0 | 1 [ divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
 Statement [72] divr8u::rem#2 = divr8u::rem#6 - divr8u::divisor#6 [ divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
-Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [83] utoa::buffer#3 = ++ utoa::buffer#11 [ utoa::buffer#3 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#3 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [84] *utoa::buffer#3 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [97] utoa::value#0 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [83] utoa::buffer#4 = ++ utoa::buffer#11 [ utoa::buffer#4 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#4 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [84] *utoa::buffer#4 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [97] utoa::value#1 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#1 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [101] if(0!=*print_str::str#2) goto print_str::@2 [ print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [103] print_char::ch#0 = *print_str::str#2 [ print_char::ch#0 print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char::ch#0 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [0] *(PRIMES+1*SIZEOF_WORD) = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(PRIMES+2*SIZEOF_WORD) = 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] main::$12 = test_last#13 << 1 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 main::$12 ] (  [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 main::$12 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
@@ -2368,28 +2368,28 @@ Statement [32] if(prime_idx#1<$3e8) goto main::@1 [ test_last#19 potential#11 pr
 Statement [34] mul8u::mb#0 = (word)mul8u::b#0 [ mul8u::a#1 mul8u::mb#0 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::a#1 mul8u::mb#0 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [38] mul8u::$1 = mul8u::a#2 & 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [40] mul8u::res#1 = mul8u::res#2 + mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( mul8u:7 [ test_last#13 potential#15 prime_idx#17 print_char_cursor#34 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = main::p#0 mul8u::b#0 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [52] utoa::value#1 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#1 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [52] utoa::value#0 = print_uint_decimal::w#0 [ print_char_cursor#34 utoa::value#0 ] ( print_uint_decimal:29 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [58] *print_char_cursor#1 = print_char::ch#2 [ print_char_cursor#1 ] ( print_char:31 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 ] { }  print_uint_decimal:29::print_str:55::print_char:104 [ test_last#19 potential#11 prime_idx#1 print_str::str#2 print_char_cursor#1 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Statement [64] divr8u::$1 = divr8u::dividend#3 & $80 [ divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#0 divr8u::$1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
 Statement [66] divr8u::rem#1 = divr8u::rem#0 | 1 [ divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::dividend#3 divr8u::quotient#3 divr8u::i#2 divr8u::rem#1 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
 Statement [72] divr8u::rem#2 = divr8u::rem#6 - divr8u::divisor#6 [ divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] ( div16u8u:18::divr8u:46 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 div16u8u::dividend#0 div16u8u::divisor#0 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::dividend#1 = divr8u::dividend#5 } { divr8u::divisor#0 = divr8u::divisor#6 div16u8u::divisor#0 } }  div16u8u:18::divr8u:50 [ prime_idx#17 print_char_cursor#34 test_last#19 test_idx#7 potential#10 divr8u::divisor#6 divr8u::i#2 divr8u::dividend#0 divr8u::quotient#2 divr8u::rem#2 ] { { potential#10 = div16u8u::dividend#0 } { divr8u::rem#10 = divr8u::rem#4 rem8u#0 } { divr8u::dividend#2 = divr8u::dividend#5 } { divr8u::divisor#1 = divr8u::divisor#6 div16u8u::divisor#0 } }  ) always clobbers reg byte a 
-Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [83] utoa::buffer#3 = ++ utoa::buffer#11 [ utoa::buffer#3 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#3 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [84] *utoa::buffer#3 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
-Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [97] utoa::value#0 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } }  ) always clobbers reg byte a 
+Statement [81] utoa::$11 = (byte)utoa::value#2 [ utoa::buffer#11 utoa::$11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 utoa::$11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [82] *utoa::buffer#11 = DIGITS[utoa::$11] [ utoa::buffer#11 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#11 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [83] utoa::buffer#4 = ++ utoa::buffer#11 [ utoa::buffer#4 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::buffer#4 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [84] *utoa::buffer#4 = 0 [ ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [86] utoa::$10 = utoa::digit#2 << 1 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::$10 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [87] utoa::digit_value#0 = RADIX_DECIMAL_VALUES[utoa::$10] [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [89] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 [ utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::started#2 utoa::buffer#11 utoa::digit_value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
+Statement [92] utoa_append::buffer#0 = utoa::buffer#11 [ utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::value#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [93] utoa_append::value#0 = utoa::value#2 [ utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::digit_value#0 utoa_append::buffer#0 utoa_append::value#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [94] utoa_append::sub#0 = utoa::digit_value#0 [ utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::value#0 utoa_append::sub#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [96] utoa_append::return#0 = utoa_append::value#2 [ utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::return#0 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [97] utoa::value#1 = utoa_append::return#0 [ utoa::digit#2 utoa::buffer#11 utoa::value#1 ] ( print_uint_decimal:29::utoa:53 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa::value#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } }  ) always clobbers reg byte a 
 Statement [101] if(0!=*print_str::str#2) goto print_str::@2 [ print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [103] print_char::ch#0 = *print_str::str#2 [ print_char::ch#0 print_char_cursor#1 print_str::str#2 ] ( print_uint_decimal:29::print_str:55 [ test_last#19 potential#11 prime_idx#1 print_char::ch#0 print_char_cursor#1 print_str::str#2 ] { { potential#11 = print_uint_decimal::w#0 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [108] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
+Statement [109] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [112] utoa_append::value#1 = utoa_append::value#2 - utoa_append::sub#0 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] ( print_uint_decimal:29::utoa:53::utoa_append:95 [ test_last#19 potential#11 prime_idx#1 print_char_cursor#34 utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#1 utoa_append::digit#1 ] { { potential#11 = print_uint_decimal::w#0 utoa::value#0 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ test_last#13 test_last#19 test_last#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ prime_idx#17 prime_idx#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ test_idx#7 test_idx#10 test_idx#1 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -2404,9 +2404,9 @@ Potential registers zp[1]:16 [ divr8u::dividend#3 divr8u::dividend#5 divr8u::div
 Potential registers zp[1]:17 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ] : zp[1]:17 , reg byte x , reg byte y , 
 Potential registers zp[1]:18 [ divr8u::i#2 divr8u::i#1 ] : zp[1]:18 , reg byte x , reg byte y , 
 Potential registers zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] : zp[1]:19 , reg byte x , 
-Potential registers zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] : zp[2]:20 , 
+Potential registers zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ] : zp[2]:20 , 
 Potential registers zp[1]:22 [ utoa::started#2 utoa::started#4 ] : zp[1]:22 , reg byte x , reg byte y , 
-Potential registers zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] : zp[2]:23 , 
+Potential registers zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ] : zp[2]:23 , 
 Potential registers zp[2]:25 [ print_str::str#2 print_str::str#0 ] : zp[2]:25 , 
 Potential registers zp[2]:27 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ] : zp[2]:27 , 
 Potential registers zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] : zp[2]:29 , 
@@ -2426,7 +2426,7 @@ Potential registers zp[1]:49 [ mul8u::$1 ] : zp[1]:49 , reg byte a , reg byte x 
 Potential registers zp[1]:50 [ divr8u::$1 ] : zp[1]:50 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:51 [ rem8u#0 ] : zp[1]:51 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:52 [ utoa::$11 ] : zp[1]:52 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:53 [ utoa::buffer#3 ] : zp[2]:53 , 
+Potential registers zp[2]:53 [ utoa::buffer#4 ] : zp[2]:53 , 
 Potential registers zp[1]:55 [ utoa::$10 ] : zp[1]:55 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:56 [ utoa::digit_value#0 ] : zp[2]:56 , 
 Potential registers zp[2]:58 [ utoa_append::buffer#0 ] : zp[2]:58 , 
@@ -2436,7 +2436,7 @@ Potential registers zp[2]:62 [ utoa_append::return#0 ] : zp[2]:62 ,
 REGISTER UPLIFT SCOPES
 Uplift Scope [utoa_append] 2,500,550,003.5: zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] 2,000,500,002.5: zp[1]:31 [ utoa_append::digit#2 utoa_append::digit#1 ] 333,350,000.5: zp[2]:60 [ utoa_append::sub#0 ] 200,002: zp[2]:62 [ utoa_append::return#0 ] 137,500.25: zp[2]:58 [ utoa_append::buffer#0 ] 
 Uplift Scope [divr8u] 90,026,347.67: zp[1]:15 [ divr8u::rem#5 divr8u::rem#10 divr8u::rem#4 divr8u::rem#11 divr8u::rem#6 divr8u::rem#0 divr8u::rem#1 divr8u::rem#2 ] 37,857,146.64: zp[1]:17 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ] 20,000,002: zp[1]:50 [ divr8u::$1 ] 16,666,668.33: zp[1]:18 [ divr8u::i#2 divr8u::i#1 ] 7,515,338.92: zp[1]:16 [ divr8u::dividend#3 divr8u::dividend#5 divr8u::dividend#1 divr8u::dividend#2 divr8u::dividend#0 ] 1,336,469.93: zp[1]:14 [ divr8u::divisor#6 divr8u::divisor#0 divr8u::divisor#1 ] 
-Uplift Scope [utoa] 378,718.21: zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] 307,839.93: zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] 228,573.71: zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] 200,002: zp[1]:55 [ utoa::$10 ] 150,001.5: zp[1]:22 [ utoa::started#2 utoa::started#4 ] 60,000.6: zp[2]:56 [ utoa::digit_value#0 ] 2,002: zp[1]:52 [ utoa::$11 ] 2,002: zp[2]:53 [ utoa::buffer#3 ] 
+Uplift Scope [utoa] 378,718.21: zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ] 307,839.93: zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ] 228,573.71: zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] 200,002: zp[1]:55 [ utoa::$10 ] 150,001.5: zp[1]:22 [ utoa::started#2 utoa::started#4 ] 60,000.6: zp[2]:56 [ utoa::digit_value#0 ] 2,002: zp[1]:52 [ utoa::$11 ] 2,002: zp[2]:53 [ utoa::buffer#4 ] 
 Uplift Scope [print_char] 1,300,004: zp[1]:13 [ print_char::ch#2 print_char::ch#0 ] 
 Uplift Scope [] 393,468.55: zp[2]:27 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ] 1,233.67: zp[1]:51 [ rem8u#0 ] 316.83: zp[2]:6 [ potential#10 potential#1 potential#15 potential#11 potential#2 ] 313.1: zp[1]:5 [ test_idx#7 test_idx#10 test_idx#1 ] 33.27: zp[1]:2 [ test_last#13 test_last#19 test_last#1 ] 5.89: zp[2]:3 [ prime_idx#17 prime_idx#1 ] 
 Uplift Scope [print_str] 300,003: zp[2]:25 [ print_str::str#2 print_str::str#0 ] 
@@ -2449,7 +2449,7 @@ Uplift Scope [RADIX]
 Uplifting [utoa_append] best 201828 combination zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte x [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:60 [ utoa_append::sub#0 ] zp[2]:62 [ utoa_append::return#0 ] zp[2]:58 [ utoa_append::buffer#0 ] 
 Uplifting [divr8u] best 182819 combination reg byte y [ divr8u::rem#5 divr8u::rem#10 divr8u::rem#4 divr8u::rem#11 divr8u::rem#6 divr8u::rem#0 divr8u::rem#1 divr8u::rem#2 ] zp[1]:17 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ] reg byte a [ divr8u::$1 ] reg byte x [ divr8u::i#2 divr8u::i#1 ] zp[1]:16 [ divr8u::dividend#3 divr8u::dividend#5 divr8u::dividend#1 divr8u::dividend#2 divr8u::dividend#0 ] zp[1]:14 [ divr8u::divisor#6 divr8u::divisor#0 divr8u::divisor#1 ] 
 Limited combination testing to 100 combinations of 972 possible.
-Uplifting [utoa] best 181715 combination zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte x [ utoa::started#2 utoa::started#4 ] zp[2]:56 [ utoa::digit_value#0 ] reg byte a [ utoa::$11 ] zp[2]:53 [ utoa::buffer#3 ] 
+Uplifting [utoa] best 181715 combination zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ] zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ] zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte x [ utoa::started#2 utoa::started#4 ] zp[2]:56 [ utoa::digit_value#0 ] reg byte a [ utoa::$11 ] zp[2]:53 [ utoa::buffer#4 ] 
 Uplifting [print_char] best 181409 combination reg byte a [ print_char::ch#2 print_char::ch#0 ] 
 Uplifting [] best 181303 combination zp[2]:27 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ] reg byte y [ rem8u#0 ] zp[2]:6 [ potential#10 potential#1 potential#15 potential#11 potential#2 ] zp[1]:5 [ test_idx#7 test_idx#10 test_idx#1 ] zp[1]:2 [ test_last#13 test_last#19 test_last#1 ] zp[2]:3 [ prime_idx#17 prime_idx#1 ] 
 Uplifting [print_str] best 181303 combination zp[2]:25 [ print_str::str#2 print_str::str#0 ] 
@@ -2476,26 +2476,26 @@ Coalescing zero page register [ zp[1]:14 [ divr8u::divisor#6 divr8u::divisor#0 d
 Coalescing zero page register [ zp[2]:6 [ potential#10 potential#1 potential#15 potential#11 potential#2 ] ] with [ zp[2]:40 [ div16u8u::dividend#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ potential#10 potential#1 potential#15 potential#11 potential#2 div16u8u::dividend#0 ] ] with [ zp[2]:47 [ print_uint_decimal::w#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp[2]:35 [ mul8u::return#2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] ] with [ zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] with [ zp[2]:62 [ utoa_append::return#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] ] with [ zp[2]:53 [ utoa::buffer#3 ] ] - score: 1
-Coalescing zero page register [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 ] ] with [ zp[2]:58 [ utoa_append::buffer#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 ] ] with [ zp[2]:29 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] with [ zp[2]:62 [ utoa_append::return#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 ] ] with [ zp[2]:53 [ utoa::buffer#4 ] ] - score: 1
+Coalescing zero page register [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 utoa::buffer#4 ] ] with [ zp[2]:58 [ utoa_append::buffer#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:43 [ main::$14 ] ] with [ zp[2]:45 [ main::$15 ] ] - score: 1
 Coalescing zero page register [ zp[2]:56 [ utoa::digit_value#0 ] ] with [ zp[2]:60 [ utoa_append::sub#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp[2]:37 [ main::$0 ] ] - score: 1
 Coalescing zero page register [ zp[1]:19 [ utoa::digit#2 utoa::digit#1 ] ] with [ zp[1]:5 [ test_idx#7 test_idx#10 test_idx#1 ] ]
-Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 ] ] with [ zp[2]:11 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] ]
-Coalescing zero page register [ zp[2]:25 [ print_str::str#2 print_str::str#0 ] ] with [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ] ]
-Coalescing zero page register [ zp[2]:43 [ main::$14 main::$15 ] ] with [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] ]
+Coalescing zero page register [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 ] ] with [ zp[2]:11 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] ]
+Coalescing zero page register [ zp[2]:25 [ print_str::str#2 print_str::str#0 ] ] with [ zp[2]:23 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 utoa::buffer#4 utoa_append::buffer#0 ] ]
+Coalescing zero page register [ zp[2]:43 [ main::$14 main::$15 ] ] with [ zp[2]:20 [ utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] ]
 Allocated (was zp[2]:6) zp[2]:5 [ potential#10 potential#1 potential#15 potential#11 potential#2 div16u8u::dividend#0 print_uint_decimal::w#0 ]
 Allocated (was zp[2]:9) zp[2]:7 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 main::$0 ]
 Allocated (was zp[1]:14) zp[1]:9 [ divr8u::divisor#6 divr8u::divisor#0 divr8u::divisor#1 div16u8u::divisor#0 ]
 Allocated (was zp[1]:16) zp[1]:10 [ divr8u::dividend#3 divr8u::dividend#5 divr8u::dividend#1 divr8u::dividend#2 divr8u::dividend#0 ]
 Allocated (was zp[1]:17) zp[1]:11 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotient#2 ]
 Allocated (was zp[1]:19) zp[1]:12 [ utoa::digit#2 utoa::digit#1 test_idx#7 test_idx#10 test_idx#1 ]
-Allocated (was zp[2]:25) zp[2]:13 [ print_str::str#2 print_str::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ]
+Allocated (was zp[2]:25) zp[2]:13 [ print_str::str#2 print_str::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 utoa::buffer#4 utoa_append::buffer#0 ]
 Allocated (was zp[2]:27) zp[2]:15 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ]
-Allocated (was zp[2]:43) zp[2]:17 [ main::$14 main::$15 utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ]
+Allocated (was zp[2]:43) zp[2]:17 [ main::$14 main::$15 utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ]
 Allocated (was zp[2]:56) zp[2]:19 [ utoa::digit_value#0 utoa_append::sub#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -2854,7 +2854,7 @@ div16u8u: {
 // print_uint_decimal(word zp(5) w)
 print_uint_decimal: {
     .label w = 5
-    // [52] utoa::value#1 = print_uint_decimal::w#0 -- vwuz1=vwuz2 
+    // [52] utoa::value#0 = print_uint_decimal::w#0 -- vwuz1=vwuz2 
     lda.z w
     sta.z utoa.value
     lda.z w+1
@@ -2999,10 +2999,10 @@ divr8u: {
 // utoa(word zp($11) value, byte* zp($d) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $11
     .label digit_value = $13
     .label buffer = $d
     .label digit = $c
-    .label value = $11
     // [79] phi from utoa to utoa::@1 [phi:utoa->utoa::@1]
   __b1_from_utoa:
     // [79] phi utoa::buffer#11 = decimal_digits [phi:utoa->utoa::@1#0] -- pbuz1=pbuc1 
@@ -3012,7 +3012,7 @@ utoa: {
     sta.z buffer+1
     // [79] phi utoa::started#2 = 0 [phi:utoa->utoa::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    // [79] phi utoa::value#2 = utoa::value#1 [phi:utoa->utoa::@1#2] -- register_copy 
+    // [79] phi utoa::value#2 = utoa::value#0 [phi:utoa->utoa::@1#2] -- register_copy 
     // [79] phi utoa::digit#2 = 0 [phi:utoa->utoa::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
@@ -3033,12 +3033,12 @@ utoa: {
     lda DIGITS,y
     ldy #0
     sta (buffer),y
-    // [83] utoa::buffer#3 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
+    // [83] utoa::buffer#4 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
-    // [84] *utoa::buffer#3 = 0 -- _deref_pbuz1=vbuc1 
+    // [84] *utoa::buffer#4 = 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (buffer),y
@@ -3103,18 +3103,18 @@ utoa: {
     jmp __b6
     // utoa::@6
   __b6:
-    // [97] utoa::value#0 = utoa_append::return#0
-    // [98] utoa::buffer#4 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
+    // [97] utoa::value#1 = utoa_append::return#0
+    // [98] utoa::buffer#5 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     // [90] phi from utoa::@6 to utoa::@4 [phi:utoa::@6->utoa::@4]
   __b4_from___b6:
-    // [90] phi utoa::buffer#14 = utoa::buffer#4 [phi:utoa::@6->utoa::@4#0] -- register_copy 
+    // [90] phi utoa::buffer#14 = utoa::buffer#5 [phi:utoa::@6->utoa::@4#0] -- register_copy 
     // [90] phi utoa::started#4 = 1 [phi:utoa::@6->utoa::@4#1] -- vbuxx=vbuc1 
     ldx #1
-    // [90] phi utoa::value#6 = utoa::value#0 [phi:utoa::@6->utoa::@4#2] -- register_copy 
+    // [90] phi utoa::value#6 = utoa::value#1 [phi:utoa::@6->utoa::@4#2] -- register_copy 
     jmp __b4
 }
   // print_str
@@ -3490,8 +3490,8 @@ byte~ utoa::$11 reg byte a 2002.0
 byte* utoa::buffer
 byte* utoa::buffer#11 buffer zp[2]:13 28714.714285714286
 byte* utoa::buffer#14 buffer zp[2]:13 150001.5
-byte* utoa::buffer#3 buffer zp[2]:13 2002.0
-byte* utoa::buffer#4 buffer zp[2]:13 200002.0
+byte* utoa::buffer#4 buffer zp[2]:13 2002.0
+byte* utoa::buffer#5 buffer zp[2]:13 200002.0
 byte utoa::digit
 byte utoa::digit#1 digit zp[1]:12 200002.0
 byte utoa::digit#2 digit zp[1]:12 28571.714285714286
@@ -3505,8 +3505,8 @@ byte utoa::started
 byte utoa::started#2 reg byte x 50000.5
 byte utoa::started#4 reg byte x 100001.0
 word utoa::value
-word utoa::value#0 value zp[2]:17 100001.0
-word utoa::value#1 value zp[2]:17 551.0
+word utoa::value#0 value zp[2]:17 551.0
+word utoa::value#1 value zp[2]:17 100001.0
 word utoa::value#2 value zp[2]:17 57286.42857142857
 word utoa::value#6 value zp[2]:17 150001.5
 word utoa_append(byte* utoa_append::buffer , word utoa_append::value , word utoa_append::sub)
@@ -3537,14 +3537,14 @@ zp[1]:11 [ divr8u::quotient#3 divr8u::return#0 divr8u::quotient#1 divr8u::quotie
 reg byte x [ divr8u::i#2 divr8u::i#1 ]
 zp[1]:12 [ utoa::digit#2 utoa::digit#1 test_idx#7 test_idx#10 test_idx#1 ]
 reg byte x [ utoa::started#2 utoa::started#4 ]
-zp[2]:13 [ print_str::str#2 print_str::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ]
+zp[2]:13 [ print_str::str#2 print_str::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#5 utoa::buffer#4 utoa_append::buffer#0 ]
 zp[2]:15 [ print_char_cursor#1 print_char_cursor#34 print_char_cursor#17 ]
 reg byte x [ utoa_append::digit#2 utoa_append::digit#1 ]
 reg byte a [ main::$12 ]
 reg byte a [ main::p#0 ]
 reg byte a [ mul8u::b#0 ]
 reg byte x [ main::$13 ]
-zp[2]:17 [ main::$14 main::$15 utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ]
+zp[2]:17 [ main::$14 main::$15 utoa::value#2 utoa::value#6 utoa::value#0 utoa::value#1 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ]
 reg byte a [ mul8u::$1 ]
 reg byte a [ divr8u::$1 ]
 reg byte y [ rem8u#0 ]
@@ -3894,7 +3894,7 @@ div16u8u: {
 print_uint_decimal: {
     .label w = 5
     // utoa(w, decimal_digits, DECIMAL)
-    // [52] utoa::value#1 = print_uint_decimal::w#0 -- vwuz1=vwuz2 
+    // [52] utoa::value#0 = print_uint_decimal::w#0 -- vwuz1=vwuz2 
     lda.z w
     sta.z utoa.value
     lda.z w+1
@@ -4029,10 +4029,10 @@ divr8u: {
 // utoa(word zp($11) value, byte* zp($d) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $11
     .label digit_value = $13
     .label buffer = $d
     .label digit = $c
-    .label value = $11
     // [79] phi from utoa to utoa::@1 [phi:utoa->utoa::@1]
     // [79] phi utoa::buffer#11 = decimal_digits [phi:utoa->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<decimal_digits
@@ -4041,7 +4041,7 @@ utoa: {
     sta.z buffer+1
     // [79] phi utoa::started#2 = 0 [phi:utoa->utoa::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    // [79] phi utoa::value#2 = utoa::value#1 [phi:utoa->utoa::@1#2] -- register_copy 
+    // [79] phi utoa::value#2 = utoa::value#0 [phi:utoa->utoa::@1#2] -- register_copy 
     // [79] phi utoa::digit#2 = 0 [phi:utoa->utoa::@1#3] -- vbuz1=vbuc1 
     txa
     sta.z digit
@@ -4062,13 +4062,13 @@ utoa: {
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
-    // [83] utoa::buffer#3 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
+    // [83] utoa::buffer#4 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     // *buffer = 0
-    // [84] *utoa::buffer#3 = 0 -- _deref_pbuz1=vbuc1 
+    // [84] *utoa::buffer#4 = 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (buffer),y
@@ -4129,18 +4129,18 @@ utoa: {
     // [96] utoa_append::return#0 = utoa_append::value#2
     // utoa::@6
     // value = utoa_append(buffer++, value, digit_value)
-    // [97] utoa::value#0 = utoa_append::return#0
+    // [97] utoa::value#1 = utoa_append::return#0
     // value = utoa_append(buffer++, value, digit_value);
-    // [98] utoa::buffer#4 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
+    // [98] utoa::buffer#5 = ++ utoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     // [90] phi from utoa::@6 to utoa::@4 [phi:utoa::@6->utoa::@4]
-    // [90] phi utoa::buffer#14 = utoa::buffer#4 [phi:utoa::@6->utoa::@4#0] -- register_copy 
+    // [90] phi utoa::buffer#14 = utoa::buffer#5 [phi:utoa::@6->utoa::@4#0] -- register_copy 
     // [90] phi utoa::started#4 = 1 [phi:utoa::@6->utoa::@4#1] -- vbuxx=vbuc1 
     ldx #1
-    // [90] phi utoa::value#6 = utoa::value#0 [phi:utoa::@6->utoa::@4#2] -- register_copy 
+    // [90] phi utoa::value#6 = utoa::value#1 [phi:utoa::@6->utoa::@4#2] -- register_copy 
     jmp __b4
 }
   // print_str

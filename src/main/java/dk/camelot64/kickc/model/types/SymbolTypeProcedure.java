@@ -1,14 +1,17 @@
 package dk.camelot64.kickc.model.types;
 
+import java.util.List;
 import java.util.Objects;
 
 /** A function returning another type */
 public class SymbolTypeProcedure implements SymbolType {
 
    private SymbolType returnType;
+   private List<SymbolType> paramTypes;
 
-   public SymbolTypeProcedure(SymbolType returnType) {
+   public SymbolTypeProcedure(SymbolType returnType, List<SymbolType> paramTypes) {
       this.returnType = returnType;
+      this.paramTypes = paramTypes;
    }
 
    @Override
@@ -35,9 +38,28 @@ public class SymbolTypeProcedure implements SymbolType {
       return returnType;
    }
 
+   public List<SymbolType> getParamTypes() {
+      return paramTypes;
+   }
+
+   public void setParamTypes(List<SymbolType> paramTypes) {
+      this.paramTypes = paramTypes;
+   }
+
    @Override
    public String getTypeBaseName() {
-      return returnType.getTypeName() + "()";
+      final StringBuilder typeBaseName = new StringBuilder();
+      typeBaseName.append(returnType.getTypeBaseName());
+      typeBaseName.append("(");
+      boolean first = true;
+      for(SymbolType paramType : paramTypes) {
+         if(!first)
+            typeBaseName.append(",");
+         first = false;
+         typeBaseName.append(paramType.getTypeBaseName());
+      }
+      typeBaseName.append(")");
+      return typeBaseName.toString();
    }
 
    @Override
@@ -50,11 +72,13 @@ public class SymbolTypeProcedure implements SymbolType {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeProcedure that = (SymbolTypeProcedure) o;
-      return Objects.equals(returnType, that.returnType);
+      return Objects.equals(returnType, that.returnType) &&
+            Objects.equals(paramTypes, that.paramTypes);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(returnType);
+      return Objects.hash(returnType, paramTypes);
    }
+
 }

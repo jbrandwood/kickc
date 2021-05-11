@@ -52,7 +52,7 @@ void __start()
 volatile byte idx loadstore !zp[-1]:3
 void main()
 void print(volatile byte print::ch)
-volatile byte print::ch loadstore !reg byte a
+volatile byte print::ch loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -120,7 +120,7 @@ void __start()
 volatile byte idx loadstore !zp[-1]:3 0.2
 void main()
 void print(volatile byte print::ch)
-volatile byte print::ch loadstore !reg byte a 11.0
+volatile byte print::ch loadstore 11.0
 
 Initial phi equivalence classes
 Added variable idx to live range equivalence class [ idx ]
@@ -128,6 +128,7 @@ Added variable print::ch to live range equivalence class [ print::ch ]
 Complete equivalence classes
 [ idx ]
 [ print::ch ]
+Allocated zp[1]:2 [ print::ch ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
 Statement [5] print::ch = 'c' [ idx print::ch ] ( main:3 [ idx print::ch ] { }  ) always clobbers reg byte a 
@@ -135,20 +136,22 @@ Statement [7] print::ch = 'm' [ idx print::ch ] ( main:3 [ idx print::ch ] { }  
 Statement [9] print::ch = 'l' [ idx print::ch ] ( main:3 [ idx print::ch ] { }  ) always clobbers reg byte a 
 Statement asm { ldxidx staSCREEN,x incidx  } always clobbers reg byte x 
 Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
-Potential registers reg byte a [ print::ch ] : reg byte a , 
+Potential registers zp[1]:2 [ print::ch ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 11: reg byte a [ print::ch ] 
+Uplift Scope [print] 11: zp[1]:2 [ print::ch ] 
 Uplift Scope [] 0.2: zp[1]:3 [ idx ] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [print] best 372 combination reg byte a [ print::ch ] 
-Uplifting [] best 372 combination zp[1]:3 [ idx ] 
-Uplifting [main] best 372 combination 
-Uplifting [__start] best 372 combination 
+Uplifting [print] best 381 combination zp[1]:2 [ print::ch ] 
+Uplifting [] best 381 combination zp[1]:3 [ idx ] 
+Uplifting [main] best 381 combination 
+Uplifting [__start] best 381 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ print::ch ]
+Uplifting [print] best 381 combination zp[1]:2 [ print::ch ] 
 Attempting to uplift remaining variables inzp[1]:3 [ idx ]
-Uplifting [] best 372 combination zp[1]:3 [ idx ] 
+Uplifting [] best 381 combination zp[1]:3 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -190,22 +193,25 @@ __start: {
 }
   // main
 main: {
-    // [5] print::ch = 'c' -- vbuaa=vbuc1 
+    // [5] print::ch = 'c' -- vbuz1=vbuc1 
     lda #'c'
+    sta.z print.ch
     // [6] call print 
     jsr print
     jmp __b1
     // main::@1
   __b1:
-    // [7] print::ch = 'm' -- vbuaa=vbuc1 
+    // [7] print::ch = 'm' -- vbuz1=vbuc1 
     lda #'m'
+    sta.z print.ch
     // [8] call print 
     jsr print
     jmp __b2
     // main::@2
   __b2:
-    // [9] print::ch = 'l' -- vbuaa=vbuc1 
+    // [9] print::ch = 'l' -- vbuz1=vbuc1 
     lda #'l'
+    sta.z print.ch
     // [10] call print 
     jsr print
     jmp __breturn
@@ -215,8 +221,9 @@ main: {
     rts
 }
   // print
-// print(byte register(A) ch)
+// print(byte zp(2) ch)
 print: {
+    .label ch = 2
     // kickasm( uses print::ch) {{  }}
     // Force usage of ch
     
@@ -258,14 +265,14 @@ void __start()
 volatile byte idx loadstore !zp[-1]:3 zp[1]:3 0.2
 void main()
 void print(volatile byte print::ch)
-volatile byte print::ch loadstore !reg byte a 11.0
+volatile byte print::ch loadstore zp[1]:2 11.0
 
 zp[1]:3 [ idx ]
-reg byte a [ print::ch ]
+zp[1]:2 [ print::ch ]
 
 
 FINAL ASSEMBLER
-Score: 324
+Score: 333
 
   // File Comments
 // Test declaring a variable as at a hard-coded register
@@ -301,20 +308,23 @@ __start: {
   // main
 main: {
     // print('c')
-    // [5] print::ch = 'c' -- vbuaa=vbuc1 
+    // [5] print::ch = 'c' -- vbuz1=vbuc1 
     lda #'c'
+    sta.z print.ch
     // [6] call print 
     jsr print
     // main::@1
     // print('m')
-    // [7] print::ch = 'm' -- vbuaa=vbuc1 
+    // [7] print::ch = 'm' -- vbuz1=vbuc1 
     lda #'m'
+    sta.z print.ch
     // [8] call print 
     jsr print
     // main::@2
     // print('l')
-    // [9] print::ch = 'l' -- vbuaa=vbuc1 
+    // [9] print::ch = 'l' -- vbuz1=vbuc1 
     lda #'l'
+    sta.z print.ch
     // [10] call print 
     jsr print
     // main::@return
@@ -323,8 +333,9 @@ main: {
     rts
 }
   // print
-// print(byte register(A) ch)
+// print(byte zp(2) ch)
 print: {
+    .label ch = 2
     // kickasm
     // kickasm( uses print::ch) {{  }}
     // Force usage of ch

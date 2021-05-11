@@ -9,7 +9,6 @@
 :BasicUpstart(main)
   .const BLACK = 0
   .const WHITE = 1
-  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d021
 .segment Code

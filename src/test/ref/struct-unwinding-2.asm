@@ -30,12 +30,8 @@ main: {
     lda #0
     jsr print1
     // print2(p1, 2)
-    ldy #SIZEOF_STRUCT_POINT
-  !:
-    lda p1-1,y
-    sta print2.p-1,y
-    dey
-    bne !-
+    ldy.z p1
+    ldx p1+OFFSET_STRUCT_POINT_Y
   // Pass classic struct to function taking classic struct
     lda #2
     jsr print2
@@ -46,11 +42,9 @@ main: {
     lda #4
     jsr print1
     // print2(p2, 6)
-    lda #p2_x
-    sta.z print2.p
-    lda #p2_y
-    sta print2.p+OFFSET_STRUCT_POINT_Y
   // Pass unwound struct to function taking classic struct
+    ldx #p2_y
+    ldy #p2_x
     lda #6
     jsr print2
     // }
@@ -72,20 +66,17 @@ print1: {
     rts
 }
 // Function taking classic struct as parameter
-// print2(struct Point zp(5) p, byte register(A) idx)
+// print2(byte register(Y) p_x, byte register(X) p_y, byte register(A) idx)
 print2: {
-    .label p = 5
+    .label __0 = 2
     // SCREEN[idx] = p
     asl
-    tay
-    ldx #0
-  !:
-    lda.z p,x
+    sta.z __0
+    tya
+    ldy.z __0
     sta SCREEN,y
-    iny
-    inx
-    cpx #SIZEOF_STRUCT_POINT
-    bne !-
+    txa
+    sta SCREEN+OFFSET_STRUCT_POINT_Y,y
     // }
     rts
 }

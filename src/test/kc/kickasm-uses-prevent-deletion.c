@@ -1,7 +1,9 @@
 // Ensure that an inline kickasm uses-clause is anough to prevent a function from being deleted
 
 // The vector used when the KERNAL serves IRQ interrupts
-void()** const  KERNEL_IRQ = (void()**)$0314;
+
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 byte* const BG_COLOR = (byte*)$d021;
 const byte BLACK = $0;
 const byte WHITE = $1;

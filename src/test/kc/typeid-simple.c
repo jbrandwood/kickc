@@ -1,4 +1,7 @@
 // Test typeid() of the different types
+
+typedef byte (*PROC_PTR)();
+
 void main() {
     byte* const SCREEN = (char*)$400;
     byte idx = 0;
@@ -20,7 +23,7 @@ void main() {
     SCREEN[idx++] = typeid(signed dword*);
     SCREEN[idx++] = typeid(bool*);
     // Pointer to procedure
-    SCREEN[idx++] = typeid(byte()*);
+    SCREEN[idx++] = typeid(PROC_PTR);
     // Pointer to pointer
     SCREEN[idx++] = typeid(byte**);
 

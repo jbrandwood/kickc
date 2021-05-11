@@ -10,12 +10,13 @@ void fn2() {
     (*BG_COLOR)++;
 }
 
-void()* fns[2] = { &fn1, &fn2 };
+// declare fns as array 2 of pointer to function (void) returning void
+void (*fns[2])(void) = { &fn1, &fn2 };
 
 void main() {
     byte i = 0;
     while(true) {
-        void()* f = fns[++i&1];
+        void (*f)() = fns[++i&1];
         (*f)();
     }
 }

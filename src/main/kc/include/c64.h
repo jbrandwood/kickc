@@ -53,12 +53,15 @@ unsigned long* const CIA2_TIMER_AB = (unsigned long*)0xdd04;
 // CIA#2 Interrupt for reading in ASM
 char * const CIA2_INTERRUPT = (char*)0xdd0d;
 
+// Pointer to interrupt function
+typedef void (*IRQ_TYPE)(void);
+
 // The vector used when the KERNAL serves IRQ interrupts
-void()** const KERNEL_IRQ = (void()**)0x0314;
+IRQ_TYPE * const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 // The vector used when the KERNAL serves NMI interrupts
-void()** const KERNEL_NMI = (void()**)0x0318;
+IRQ_TYPE * const  KERNEL_NMI = (IRQ_TYPE*)0x0318;
 // The vector used when the HARDWARE serves IRQ interrupts
-void()** const HARDWARE_IRQ = (void()**)0xfffe;
+IRQ_TYPE * const  HARDWARE_IRQ = (IRQ_TYPE*)0xfffe;
 
 // The colors of the C64
 const char BLACK = 0x0;

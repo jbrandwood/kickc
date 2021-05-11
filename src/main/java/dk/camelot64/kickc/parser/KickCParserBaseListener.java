@@ -222,25 +222,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeProcedure(KickCParser.TypeProcedureContext ctx) { }
+	@Override public void enterDeclaratorProcedure(KickCParser.DeclaratorProcedureContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeProcedure(KickCParser.TypeProcedureContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeStructRef(KickCParser.TypeStructRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeStructRef(KickCParser.TypeStructRefContext ctx) { }
+	@Override public void exitDeclaratorProcedure(KickCParser.DeclaratorProcedureContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -258,6 +246,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypeStructDef(KickCParser.TypeStructDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -270,25 +270,25 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
+	@Override public void enterTypeStructRef(KickCParser.TypeStructRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
+	@Override public void exitTypeStructRef(KickCParser.TypeStructRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
+	@Override public void enterTypeEnumDef(KickCParser.TypeEnumDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
+	@Override public void exitTypeEnumDef(KickCParser.TypeEnumDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -306,13 +306,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeEnumDef(KickCParser.TypeEnumDefContext ctx) { }
+	@Override public void enterTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeEnumDef(KickCParser.TypeEnumDefContext ctx) { }
+	@Override public void exitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -409,18 +409,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeclFunction(KickCParser.DeclFunctionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDeclFunctionBody(KickCParser.DeclFunctionBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclFunctionBody(KickCParser.DeclFunctionBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

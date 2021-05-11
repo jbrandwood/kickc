@@ -21,18 +21,22 @@ __start: {
 main: {
     // print('c')
     lda #'c'
+    sta.z print.ch
     jsr print
     // print('m')
     lda #'m'
+    sta.z print.ch
     jsr print
     // print('l')
     lda #'l'
+    sta.z print.ch
     jsr print
     // }
     rts
 }
-// print(byte register(A) ch)
+// print(byte zp(2) ch)
 print: {
+    .label ch = 2
     // kickasm
     // Force usage of ch
     

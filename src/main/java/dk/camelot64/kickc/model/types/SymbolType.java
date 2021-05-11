@@ -45,6 +45,8 @@ public interface SymbolType extends Serializable {
    SymbolTypeNamed LABEL = new SymbolTypeNamed("label", 1, false, false);
    /** Void type representing no value. */
    SymbolTypeNamed VOID = new SymbolTypeNamed("void", 0, false, false);
+   /** Value List type representing a "..." parameter list. */
+   SymbolTypeNamed PARAM_LIST = new SymbolTypeNamed("param_list", 0, false, false);
    /** An unresolved type. Will be infered later. */
    SymbolTypeNamed VAR = new SymbolTypeNamed("var", -1, false, false);
 

@@ -6,10 +6,12 @@ __address(0x1000) char MUSIC[] = kickasm(resource "toiletrensdyr.sid") {{
     .const music = LoadSid("toiletrensdyr.sid")
     .fill music.size, music.getData(i)
 }};
+
+typedef void (*PROC_PTR)();
 // Pointer to the music init routine
-void()* musicInit = (void()*) MUSIC;
+PROC_PTR musicInit = (PROC_PTR) MUSIC;
 // Pointer to the music play routine
-void()* musicPlay = (void()*) MUSIC+3;
+PROC_PTR musicPlay = (PROC_PTR) MUSIC+3;
 
 // Setup Raster IRQ and initialize SID player
 void main() {

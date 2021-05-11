@@ -3,7 +3,7 @@
 void main() {
     byte* const SCREEN = (char*)$400;
 
-    void()* f;
+    void (*f)();
     f = &fn1;
     SCREEN[0] = <(word)f;
     SCREEN[1] = >(word)f;

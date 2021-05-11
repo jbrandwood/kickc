@@ -32,6 +32,7 @@ main: {
   __b2:
     // chrout(MSG1[i])
     lda MSG1,x
+    sta.z chrout.petscii
     jsr chrout
     // SCREEN1[i] = MSG2[i]
     lda MSG2,x
@@ -40,8 +41,9 @@ main: {
     inx
     jmp __b1
 }
-// chrout(byte register(A) petscii)
+// chrout(byte zp(2) petscii)
 chrout: {
+    .label petscii = 2
     // kickasm
     jsr $ffd2
     

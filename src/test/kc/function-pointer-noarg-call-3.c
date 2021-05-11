@@ -7,7 +7,8 @@ void main() {
     }
 }
 
-void()* getfn(byte b) {
+// declare getfn as function (char b) returning pointer to function (void) returning void
+void (*getfn(char b))(void) {
     if((b&1)==0) {
         return &fn1;
     } else {

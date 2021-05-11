@@ -1,6 +1,7 @@
 // Tests that long branch fixing works with interrupt exits (to $ea81)
 
-void()** const  KERNEL_IRQ = (void()**)$0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE*  KERNEL_IRQ = (IRQ_TYPE*)$0314;
 byte* const BG_COLOR = (byte*)$d020;
 volatile byte col = 0;
 

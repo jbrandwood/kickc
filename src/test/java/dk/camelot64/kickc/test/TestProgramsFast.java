@@ -10,13 +10,63 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
-   public void testSizeOfProblem() throws IOException {
-      compileAndCompare("sizeof-problem.c");
+   public void testProcedureDeclare10() throws IOException {
+      compileAndCompare("procedure-declare-10.c", log());
+   }
+
+   @Test
+   public void testProcedureDeclare9() throws IOException {
+      compileAndCompare("procedure-declare-9.c");
+   }
+
+   @Test
+   public void testProcedureDeclare8() throws IOException {
+      compileAndCompare("procedure-declare-8.c");
+   }
+
+   @Test
+   public void testProcedureDeclare7() throws IOException {
+      assertError("procedure-declare-7.c", "Conflicting declarations for procedure: f");
+   }
+
+   @Test
+   public void testProcedureDeclare6() throws IOException {
+      assertError("procedure-declare-6.c", "Conflicting declarations for procedure: f");
+   }
+
+   @Test
+   public void testProcedureDeclare5() throws IOException {
+      compileAndCompare("procedure-declare-5.c");
+   }
+
+   @Test
+   public void testProcedureDeclare4() throws IOException {
+      compileAndCompare("procedure-declare-4.c");
+   }
+
+   @Test
+   public void testProcedureDeclare3() throws IOException {
+      compileAndCompare("procedure-declare-3.c");
+   }
+
+   @Test
+   public void testProcedureDeclare2() throws IOException {
+      compileAndCompare("procedure-declare-2.c");
+   }
+
+   @Test
+   public void testProcedureDeclare1() throws IOException {
+      compileAndCompare("procedure-declare-1.c");
    }
 
    @Test
    public void testProcedureDeclare0() throws IOException {
       compileAndCompare("procedure-declare-0.c");
+   }
+
+   @Test
+   public void testSizeOfProblem() throws IOException {
+      compileAndCompare("sizeof-problem.c");
    }
 
    @Test
@@ -792,7 +842,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testCStyleDeclFunctionMismatch() throws IOException {
-      assertError("cstyle-decl-function-mismatch.c", "Conflicting declarations for: sum");
+      assertError("cstyle-decl-function-mismatch.c", "Conflicting declarations for procedure: sum");
    }
 
    @Test
@@ -1363,7 +1413,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException {
-      assertError("function-as-array.c", "Dereferencing a non-pointer type void()");
+      assertError("function-as-array.c", "Dereferencing a non-pointer type void(byte) ");
    }
 
    //@Test

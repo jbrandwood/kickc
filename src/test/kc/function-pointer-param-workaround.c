@@ -44,14 +44,14 @@ void fn2() {
 
 void main() {
 
-    void()* fns[2] = { &fn1, &fn2 };
+    void (*fns[2])() = { &fn1, &fn2 };
 
     for(char i='a';i<='p';i++)
         for(char j=0;j<2;j++) {
             CALL_BEGIN;
             CALL_CHAR(i);
             CALL_CHAR(j);
-            void()* f = fns[j];
+            void(*f)() = fns[j];
             (*f)();
         }
 

@@ -1,0 +1,292 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void proc1()
+proc1: scope:[proc1]  from
+  SCREEN[0] = 'a'
+  to:proc1::@return
+proc1::@return: scope:[proc1]  from proc1
+  return 
+  to:@return
+
+void proc2()
+proc2: scope:[proc2]  from
+  SCREEN[1] = 'b'
+  to:proc2::@return
+proc2::@return: scope:[proc2]  from proc2
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start::@1
+  proc_ptr#0 = &proc1
+  call *proc_ptr#0 
+  proc_ptr#1 = &proc2
+  call *proc_ptr#1 
+  to:main::@return
+main::@return: scope:[main]  from main
+  proc_ptr#6 = phi( main/proc_ptr#1 )
+  proc_ptr#2 = proc_ptr#6
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  proc_ptr#3 = (void()*) 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  proc_ptr#9 = phi( __start::__init1/proc_ptr#3 )
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  proc_ptr#7 = phi( __start::@1/proc_ptr#2 )
+  proc_ptr#4 = proc_ptr#7
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  proc_ptr#8 = phi( __start::@2/proc_ptr#4 )
+  proc_ptr#5 = proc_ptr#8
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* const SCREEN = (byte*)$400
+void __start()
+void main()
+void proc1()
+void proc2()
+void()* proc_ptr
+void()* proc_ptr#0
+void()* proc_ptr#1
+void()* proc_ptr#2
+void()* proc_ptr#3
+void()* proc_ptr#4
+void()* proc_ptr#5
+void()* proc_ptr#6
+void()* proc_ptr#7
+void()* proc_ptr#8
+void()* proc_ptr#9
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = 'a'
+Adding number conversion cast (unumber) 1 in SCREEN[1] = 'b'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias proc_ptr#1 = proc_ptr#6 proc_ptr#2 
+Alias proc_ptr#3 = proc_ptr#9 
+Alias proc_ptr#4 = proc_ptr#7 proc_ptr#8 proc_ptr#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values proc_ptr#4 proc_ptr#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant proc_ptr#0 = &proc1
+Constant proc_ptr#1 = &proc2
+Constant proc_ptr#3 = (void()*) 0
+Successful SSA optimization Pass2ConstantIdentification
+Replacing constant pointer function [5] call proc1 
+Replacing constant pointer function [7] call proc2 
+Successful SSA optimization Pass2ConstantCallPointerIdentification
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = 'a'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant proc_ptr#0
+Eliminating unused constant proc_ptr#1
+Eliminating unused constant proc_ptr#3
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to proc1:1 proc2:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call proc1 
+  [2] call proc2 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [3] return 
+  to:@return
+
+__stackcall void proc2()
+proc2: scope:[proc2]  from main
+  [4] *(SCREEN+1) = 'b'
+  to:proc2::@return
+proc2::@return: scope:[proc2]  from proc2
+  [5] return 
+  to:@return
+
+__stackcall void proc1()
+proc1: scope:[proc1]  from
+  [6] *SCREEN = 'a'
+  to:proc1::@return
+proc1::@return: scope:[proc1]  from proc1
+  [7] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+__stackcall void proc1()
+__stackcall void proc2()
+void()* proc_ptr
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *(SCREEN+1) = 'b' [ ] ( proc2:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *SCREEN = 'a' [ ] ( proc1:1 [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [proc1] 
+Uplift Scope [proc2] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [proc1] best 51 combination 
+Uplifting [proc2] best 51 combination 
+Uplifting [main] best 51 combination 
+Uplifting [] best 51 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Pointer to procedure
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [1] call proc1 
+    jsr proc1
+    // [2] call proc2 
+    jsr proc2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // proc2
+proc2: {
+    // [4] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
+    lda #'b'
+    sta SCREEN+1
+    jmp __breturn
+    // proc2::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // proc1
+proc1: {
+    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    jmp __breturn
+    // proc1::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+void main()
+__stackcall void proc1()
+__stackcall void proc2()
+void()* proc_ptr
+
+
+
+FINAL ASSEMBLER
+Score: 42
+
+  // File Comments
+// Pointer to procedure
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // (*proc_ptr)()
+    // [1] call proc1 
+    jsr proc1
+    // [2] call proc2 
+    jsr proc2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+}
+  // proc2
+proc2: {
+    // SCREEN[1] = 'b'
+    // [4] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
+    lda #'b'
+    sta SCREEN+1
+    // proc2::@return
+    // }
+    // [5] return 
+    rts
+}
+  // proc1
+proc1: {
+    // SCREEN[0] = 'a'
+    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    // proc1::@return
+    // }
+    // [7] return 
+    rts
+}
+  // File Data
+

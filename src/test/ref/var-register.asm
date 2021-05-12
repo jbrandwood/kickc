@@ -8,32 +8,32 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label a = 2
-    ldy #0
+    .label x = 2
+    lda #0
+    sta.z x
   __b1:
     ldx #0
   __b2:
-    lda #0
-    sta.z a
+    ldy #0
   __b3:
-    // register(A) byte val1 = a+x
+    // byte val1 = a+x
     tya
     clc
-    adc.z a
+    adc.z x
     // print(y, val1)
     jsr print
     // for( byte a: 0..100 )
-    inc.z a
-    lda #$65
-    cmp.z a
+    iny
+    cpy #$65
     bne __b3
     // for( byte y: 0..100 )
     inx
     cpx #$65
     bne __b2
-    // for( register(Y) byte x: 0..100 )
-    iny
-    cpy #$65
+    // for( byte x: 0..100 )
+    inc.z x
+    lda #$65
+    cmp.z x
     bne __b1
     // }
     rts

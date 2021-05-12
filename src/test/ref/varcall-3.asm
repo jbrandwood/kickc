@@ -12,9 +12,9 @@
 .segment Code
 // plus(signed word zp(2) a, signed word zp(4) b)
 plus: {
-    .label return = 2
     .label a = 2
     .label b = 4
+    .label return = 2
     .label __0 = 2
     // a+b
     lda.z __0

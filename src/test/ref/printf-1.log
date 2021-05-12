@@ -260,6 +260,32 @@ cputln::@return: scope:[cputln]  from cputln::@1
   return 
   to:@return
 
+void cputs(const byte* cputs::s)
+cputs: scope:[cputs]  from printf_string::@2
+  cputs::s#3 = phi( printf_string::@2/cputs::s#1 )
+  cputs::c#0 = 0
+  to:cputs::@1
+cputs::@1: scope:[cputs]  from cputs cputs::@3
+  cputs::s#2 = phi( cputs/cputs::s#3, cputs::@3/cputs::s#4 )
+  cputs::c#1 = *cputs::s#2
+  cputs::$0 = cputs::c#1
+  cputs::s#0 = ++ cputs::s#2
+  cputs::$2 = 0 != cputs::$0
+  if(cputs::$2) goto cputs::@2
+  to:cputs::@return
+cputs::@2: scope:[cputs]  from cputs::@1
+  cputs::s#5 = phi( cputs::@1/cputs::s#0 )
+  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
+  cputc::c#0 = cputs::c#2
+  call cputc 
+  to:cputs::@3
+cputs::@3: scope:[cputs]  from cputs::@2
+  cputs::s#4 = phi( cputs::@2/cputs::s#5 )
+  to:cputs::@1
+cputs::@return: scope:[cputs]  from cputs::@1
+  return 
+  to:@return
+
 void cscroll()
 cscroll: scope:[cscroll]  from cputln
   cscroll::$0 = conio_cursor_y == $19
@@ -311,32 +337,6 @@ cscroll::@2: scope:[cscroll]  from cscroll::@1
 cscroll::@8: scope:[cscroll]  from cscroll::@2
   to:cscroll::@return
 cscroll::@return: scope:[cscroll]  from cscroll cscroll::@7 cscroll::@8
-  return 
-  to:@return
-
-void cputs(const byte* cputs::s)
-cputs: scope:[cputs]  from printf_string::@2
-  cputs::s#3 = phi( printf_string::@2/cputs::s#1 )
-  cputs::c#0 = 0
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@3
-  cputs::s#2 = phi( cputs/cputs::s#3, cputs::@3/cputs::s#4 )
-  cputs::c#1 = *cputs::s#2
-  cputs::$0 = cputs::c#1
-  cputs::s#0 = ++ cputs::s#2
-  cputs::$2 = 0 != cputs::$0
-  if(cputs::$2) goto cputs::@2
-  to:cputs::@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  cputs::s#5 = phi( cputs::@1/cputs::s#0 )
-  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
-  cputc::c#0 = cputs::c#2
-  call cputc 
-  to:cputs::@3
-cputs::@3: scope:[cputs]  from cputs::@2
-  cputs::s#4 = phi( cputs::@2/cputs::s#5 )
-  to:cputs::@1
-cputs::@return: scope:[cputs]  from cputs::@1
   return 
   to:@return
 
@@ -865,6 +865,7 @@ Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color + $28
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
+Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
 Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
@@ -881,7 +882,6 @@ Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color - $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
 Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
-Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Adding number conversion cast (unumber) 0 in gotoxy::x#2 = 0
 Adding number conversion cast (unumber) $19-1 in conio_c64_init::line#1 = $19-1
@@ -944,6 +944,7 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -954,7 +955,6 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $19
@@ -989,6 +989,7 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
@@ -999,7 +1000,6 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
@@ -1022,7 +1022,7 @@ Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 
 Inversing boolean not [77] gotoxy::$1 = gotoxy::y#3 <= $19 from [76] gotoxy::$0 = gotoxy::y#3 > $19
 Inversing boolean not [81] gotoxy::$3 = gotoxy::x#3 < $28 from [80] gotoxy::$2 = gotoxy::x#3 >= $28
 Inversing boolean not [107] cputc::$2 = conio_cursor_x != $28 from [106] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [118] cscroll::$1 = conio_cursor_y != $19 from [117] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [131] cscroll::$1 = conio_cursor_y != $19 from [130] cscroll::$0 = conio_cursor_y == $19
 Inversing boolean not [164] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [163] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Inversing boolean not [186] printf_string::$0 = 0 == printf_string::format_min_length#4 from [185] printf_string::$14 = 0 != printf_string::format_min_length#4
 Inversing boolean not [190] printf_string::$1 = 0 == printf_string::format_justify_left#4 from [189] printf_string::$15 = 0 != printf_string::format_justify_left#4
@@ -1109,9 +1109,9 @@ Simple Condition gotoxy::$3 [59] if(gotoxy::x#3<$28) goto gotoxy::@2
 Simple Condition cputc::$0 [74] if(cputc::c#2=='
 ') goto cputc::@1
 Simple Condition cputc::$2 [80] if(conio_cursor_x!=$28) goto cputc::@return
-Simple Condition cscroll::$1 [90] if(conio_cursor_y!=$19) goto cscroll::@return
-Simple Condition cscroll::$7 [92] if(0!=conio_scroll_enable) goto cscroll::@3
-Simple Condition cputs::$2 [126] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cputs::$2 [95] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cscroll::$1 [100] if(conio_cursor_y!=$19) goto cscroll::@return
+Simple Condition cscroll::$7 [102] if(0!=conio_scroll_enable) goto cscroll::@3
 Simple Condition conio_c64_init::$1 [132] if(conio_c64_init::line#0<$19) goto conio_c64_init::@1
 Simple Condition printf_padding::$0 [143] if(printf_padding::i#2<printf_padding::length#3) goto printf_padding::@2
 Simple Condition printf_string::$0 [151] if(0==printf_string::format_min_length#4) goto printf_string::@1
@@ -1125,8 +1125,8 @@ Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition printf_string::format_justify_left#10
 Warning! Adding boolean cast to non-boolean condition printf_string::padding#3
 Warning! Adding boolean cast to non-boolean condition printf_string::padding#3
-Constant right-side identified [95] memcpy::num#0 = (unumber)$19*$28-$28
-Constant right-side identified [100] memcpy::num#1 = (unumber)$19*$28-$28
+Constant right-side identified [105] memcpy::num#0 = (unumber)$19*$28-$28
+Constant right-side identified [110] memcpy::num#1 = (unumber)$19*$28-$28
 Constant right-side identified [137] conio_c64_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant strlen::len#0 = 0
@@ -1136,6 +1136,7 @@ Constant clrscr::l#0 = 0
 Constant clrscr::c#0 = 0
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
+Constant cputs::c#0 = 0
 Constant memcpy::destination#0 = (void*)CONIO_SCREEN_TEXT
 Constant memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
 Constant memcpy::num#0 = (unumber)$19*$28-$28
@@ -1149,7 +1150,6 @@ Constant memset::str#1 = (void*)CONIO_SCREEN_COLORS+(word)$19*$28-$28
 Constant memset::num#1 = $28
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
-Constant cputs::c#0 = 0
 Constant gotoxy::x#2 = 0
 Constant conio_c64_init::line#1 = (unumber)$19-1
 Constant printf_padding::i#0 = 0
@@ -1174,7 +1174,7 @@ Constant conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#1 = conio_textcolor
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [92] if(0!=conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [102] if(0!=conio_scroll_enable) goto cscroll::@3
 Successful SSA optimization Pass2ConstantIfs
 Consolidated constant strings into main::str
 Consolidated constant strings into main::str1
@@ -1185,10 +1185,10 @@ Removing PHI-reference to removed block (cscroll::@2) in block gotoxy
 Removing unused block cscroll::@2
 Removing unused block cscroll::@8
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memcpy::return#2 and assignment [72] memcpy::return#2 = memcpy::destination#2
-Eliminating unused variable memcpy::return#3 and assignment [74] memcpy::return#3 = memcpy::destination#2
-Eliminating unused variable memset::return#2 and assignment [76] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [78] memset::return#3 = memset::str#3
+Eliminating unused variable memcpy::return#2 and assignment [79] memcpy::return#2 = memcpy::destination#2
+Eliminating unused variable memcpy::return#3 and assignment [81] memcpy::return#3 = memcpy::destination#2
+Eliminating unused variable memset::return#2 and assignment [83] memset::return#2 = memset::str#3
+Eliminating unused variable memset::return#3 and assignment [85] memset::return#3 = memset::str#3
 Eliminating unused constant gotoxy::x#1
 Eliminating unused constant gotoxy::y#1
 Eliminating unused constant cputs::c#0
@@ -2245,10 +2245,10 @@ Uplift Scope [gotoxy] 202: zp[2]:45 [ gotoxy::$8 ] 202: zp[2]:47 [ gotoxy::$9 ] 
 Uplift Scope [printf_string] 202: zp[1]:59 [ printf_string::len#0 ] 134.67: zp[1]:13 [ printf_string::padding#3 printf_string::padding#1 ] 101: zp[2]:57 [ printf_string::$9 ] 14.43: zp[2]:11 [ printf_string::str#10 ] 12.62: zp[1]:10 [ printf_string::format_justify_left#10 ] 
 Uplift Scope [conio_c64_init] 33: zp[1]:2 [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplift Scope [RADIX] 
+Uplift Scope [cputln] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
-Uplift Scope [cputln] 
 Uplift Scope [cscroll] 
 Uplift Scope [printf_format_number] 
 Uplift Scope [printf_buffer_number] 
@@ -2268,10 +2268,10 @@ Uplifting [gotoxy] best 17919 combination zp[2]:45 [ gotoxy::$8 ] zp[2]:47 [ got
 Uplifting [printf_string] best 17915 combination reg byte a [ printf_string::len#0 ] zp[1]:13 [ printf_string::padding#3 printf_string::padding#1 ] zp[2]:57 [ printf_string::$9 ] zp[2]:11 [ printf_string::str#10 ] zp[1]:10 [ printf_string::format_justify_left#10 ] 
 Uplifting [conio_c64_init] best 17903 combination reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplifting [RADIX] best 17903 combination 
+Uplifting [cputln] best 17903 combination 
 Uplifting [MOS6526_CIA] best 17903 combination 
 Uplifting [MOS6569_VICII] best 17903 combination 
 Uplifting [MOS6581_SID] best 17903 combination 
-Uplifting [cputln] best 17903 combination 
 Uplifting [cscroll] best 17903 combination 
 Uplifting [printf_format_number] best 17903 combination 
 Uplifting [printf_buffer_number] best 17903 combination 

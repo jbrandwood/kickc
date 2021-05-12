@@ -16,29 +16,6 @@ Unwinding list assignment { tod_read::return_TENTHS#2, tod_read::return_SEC#2, t
 
 CONTROL FLOW GRAPH SSA
 
-byte toupper(byte toupper::ch)
-toupper: scope:[toupper]  from strupr::@2
-  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
-  toupper::$0 = toupper::ch#1 >= 'a'
-  toupper::$1 = toupper::ch#1 <= 'z'
-  toupper::$2 = toupper::$0 && toupper::$1
-  if(toupper::$2) goto toupper::@1
-  to:toupper::@2
-toupper::@1: scope:[toupper]  from toupper
-  toupper::ch#2 = phi( toupper/toupper::ch#1 )
-  toupper::$3 = toupper::ch#2 + 'A'-'a'
-  toupper::return#0 = toupper::$3
-  to:toupper::@return
-toupper::@2: scope:[toupper]  from toupper
-  toupper::ch#3 = phi( toupper/toupper::ch#1 )
-  toupper::return#1 = toupper::ch#3
-  to:toupper::@return
-toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
-  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
-  toupper::return#2 = toupper::return#4
-  return 
-  to:@return
-
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::num#2 = phi( cscroll::@3/memcpy::num#0, cscroll::@4/memcpy::num#1 )
@@ -121,6 +98,56 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 
+word strlen(byte* strlen::str)
+strlen: scope:[strlen]  from printf_number_buffer::@6 printf_string::@3
+  strlen::str#5 = phi( printf_number_buffer::@6/strlen::str#1, printf_string::@3/strlen::str#2 )
+  strlen::len#0 = 0
+  to:strlen::@1
+strlen::@1: scope:[strlen]  from strlen strlen::@2
+  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
+  strlen::str#3 = phi( strlen/strlen::str#5, strlen::@2/strlen::str#0 )
+  strlen::$0 = 0 != *strlen::str#3
+  if(strlen::$0) goto strlen::@2
+  to:strlen::@3
+strlen::@2: scope:[strlen]  from strlen::@1
+  strlen::str#4 = phi( strlen::@1/strlen::str#3 )
+  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
+  strlen::len#1 = ++ strlen::len#2
+  strlen::str#0 = ++ strlen::str#4
+  to:strlen::@1
+strlen::@3: scope:[strlen]  from strlen::@1
+  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
+  strlen::return#0 = strlen::len#3
+  to:strlen::@return
+strlen::@return: scope:[strlen]  from strlen::@3
+  strlen::return#4 = phi( strlen::@3/strlen::return#0 )
+  strlen::return#1 = strlen::return#4
+  return 
+  to:@return
+
+byte toupper(byte toupper::ch)
+toupper: scope:[toupper]  from strupr::@2
+  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
+  toupper::$0 = toupper::ch#1 >= 'a'
+  toupper::$1 = toupper::ch#1 <= 'z'
+  toupper::$2 = toupper::$0 && toupper::$1
+  if(toupper::$2) goto toupper::@1
+  to:toupper::@2
+toupper::@1: scope:[toupper]  from toupper
+  toupper::ch#2 = phi( toupper/toupper::ch#1 )
+  toupper::$3 = toupper::ch#2 + 'A'-'a'
+  toupper::return#0 = toupper::$3
+  to:toupper::@return
+toupper::@2: scope:[toupper]  from toupper
+  toupper::ch#3 = phi( toupper/toupper::ch#1 )
+  toupper::return#1 = toupper::ch#3
+  to:toupper::@return
+toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
+  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
+  toupper::return#2 = toupper::return#4
+  return 
+  to:@return
+
 byte* strupr(byte* strupr::str)
 strupr: scope:[strupr]  from printf_number_buffer::@11
   strupr::str#1 = phi( printf_number_buffer::@11/strupr::str#0 )
@@ -154,33 +181,6 @@ strupr::@3: scope:[strupr]  from strupr::@1
 strupr::@return: scope:[strupr]  from strupr::@3
   strupr::return#3 = phi( strupr::@3/strupr::return#0 )
   strupr::return#1 = strupr::return#3
-  return 
-  to:@return
-
-word strlen(byte* strlen::str)
-strlen: scope:[strlen]  from printf_number_buffer::@6 printf_string::@3
-  strlen::str#5 = phi( printf_number_buffer::@6/strlen::str#1, printf_string::@3/strlen::str#2 )
-  strlen::len#0 = 0
-  to:strlen::@1
-strlen::@1: scope:[strlen]  from strlen strlen::@2
-  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
-  strlen::str#3 = phi( strlen/strlen::str#5, strlen::@2/strlen::str#0 )
-  strlen::$0 = 0 != *strlen::str#3
-  if(strlen::$0) goto strlen::@2
-  to:strlen::@3
-strlen::@2: scope:[strlen]  from strlen::@1
-  strlen::str#4 = phi( strlen::@1/strlen::str#3 )
-  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
-  strlen::len#1 = ++ strlen::len#2
-  strlen::str#0 = ++ strlen::str#4
-  to:strlen::@1
-strlen::@3: scope:[strlen]  from strlen::@1
-  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
-  strlen::return#0 = strlen::len#3
-  to:strlen::@return
-strlen::@return: scope:[strlen]  from strlen::@3
-  strlen::return#4 = phi( strlen::@3/strlen::return#0 )
-  strlen::return#1 = strlen::return#4
   return 
   to:@return
 
@@ -447,6 +447,32 @@ cputln::@return: scope:[cputln]  from cputln::@1
   return 
   to:@return
 
+void cputs(const byte* cputs::s)
+cputs: scope:[cputs]  from main::@4 main::@9 printf_number_buffer::@5 printf_string::@2
+  cputs::s#6 = phi( main::@4/cputs::s#4, main::@9/cputs::s#3, printf_number_buffer::@5/cputs::s#1, printf_string::@2/cputs::s#2 )
+  cputs::c#0 = 0
+  to:cputs::@1
+cputs::@1: scope:[cputs]  from cputs cputs::@3
+  cputs::s#5 = phi( cputs/cputs::s#6, cputs::@3/cputs::s#7 )
+  cputs::c#1 = *cputs::s#5
+  cputs::$0 = cputs::c#1
+  cputs::s#0 = ++ cputs::s#5
+  cputs::$2 = 0 != cputs::$0
+  if(cputs::$2) goto cputs::@2
+  to:cputs::@return
+cputs::@2: scope:[cputs]  from cputs::@1
+  cputs::s#8 = phi( cputs::@1/cputs::s#0 )
+  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
+  cputc::c#0 = cputs::c#2
+  call cputc 
+  to:cputs::@3
+cputs::@3: scope:[cputs]  from cputs::@2
+  cputs::s#7 = phi( cputs::@2/cputs::s#8 )
+  to:cputs::@1
+cputs::@return: scope:[cputs]  from cputs::@1
+  return 
+  to:@return
+
 void cscroll()
 cscroll: scope:[cscroll]  from cputln
   cscroll::$0 = conio_cursor_y == $19
@@ -498,32 +524,6 @@ cscroll::@2: scope:[cscroll]  from cscroll::@1
 cscroll::@8: scope:[cscroll]  from cscroll::@2
   to:cscroll::@return
 cscroll::@return: scope:[cscroll]  from cscroll cscroll::@7 cscroll::@8
-  return 
-  to:@return
-
-void cputs(const byte* cputs::s)
-cputs: scope:[cputs]  from main::@4 main::@9 printf_number_buffer::@5 printf_string::@2
-  cputs::s#6 = phi( main::@4/cputs::s#4, main::@9/cputs::s#3, printf_number_buffer::@5/cputs::s#1, printf_string::@2/cputs::s#2 )
-  cputs::c#0 = 0
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@3
-  cputs::s#5 = phi( cputs/cputs::s#6, cputs::@3/cputs::s#7 )
-  cputs::c#1 = *cputs::s#5
-  cputs::$0 = cputs::c#1
-  cputs::s#0 = ++ cputs::s#5
-  cputs::$2 = 0 != cputs::$0
-  if(cputs::$2) goto cputs::@2
-  to:cputs::@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  cputs::s#8 = phi( cputs::@1/cputs::s#0 )
-  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
-  cputc::c#0 = cputs::c#2
-  call cputc 
-  to:cputs::@3
-cputs::@3: scope:[cputs]  from cputs::@2
-  cputs::s#7 = phi( cputs::@2/cputs::s#8 )
-  to:cputs::@1
-cputs::@return: scope:[cputs]  from cputs::@1
   return 
   to:@return
 
@@ -1968,8 +1968,8 @@ word utoa_append::value#4
 word utoa_append::value#5
 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
-Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 0 in strlen::$0 = 0 != *strlen::str#3
+Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 5 in utoa::max_digits#1 = 5
 Adding number conversion cast (unumber) 4 in utoa::max_digits#2 = 4
 Adding number conversion cast (unumber) 6 in utoa::max_digits#3 = 6
@@ -1989,6 +1989,7 @@ Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color + $28
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
+Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
 Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
@@ -2005,7 +2006,6 @@ Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color - $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
 Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
-Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Adding number conversion cast (unumber) 0 in gotoxy::x#2 = 0
 Adding number conversion cast (unumber) $19-1 in conio_c64_init::line#1 = $19-1
@@ -2133,6 +2133,7 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -2143,7 +2144,6 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $19
@@ -2211,6 +2211,7 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
@@ -2221,7 +2222,6 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
@@ -2282,11 +2282,11 @@ Inferred type updated to byte in tod_str::$11 = '0' + tod_str::$10
 Inferred type updated to byte in tod_str::$14 = tod_str::tod_TENTHS#1 & $f
 Inferred type updated to byte in tod_str::$15 = '0' + tod_str::$14
 Inferred type updated to byte in main::$6 = main::i#3 & $7f
-Inversing boolean not [33] memset::$1 = memset::num#2 <= 0 from [32] memset::$0 = memset::num#2 > 0
+Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
 Inversing boolean not [165] gotoxy::$1 = gotoxy::y#6 <= $19 from [164] gotoxy::$0 = gotoxy::y#6 > $19
 Inversing boolean not [169] gotoxy::$3 = gotoxy::x#6 < $28 from [168] gotoxy::$2 = gotoxy::x#6 >= $28
 Inversing boolean not [195] cputc::$2 = conio_cursor_x != $28 from [194] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [206] cscroll::$1 = conio_cursor_y != $19 from [205] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [219] cscroll::$1 = conio_cursor_y != $19 from [218] cscroll::$0 = conio_cursor_y == $19
 Inversing boolean not [252] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [251] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Inversing boolean not [298] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#1 from [297] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#1
 Inversing boolean not [302] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#1 from [301] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#1
@@ -2303,9 +2303,6 @@ Inversing boolean not [488] main::$8 = main::$6 != 0 from [487] main::$7 = main:
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
-Alias toupper::return#0 = toupper::$3 
-Alias toupper::return#2 = toupper::return#4 
 Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
@@ -2320,12 +2317,15 @@ Alias memset::c#2 = memset::c#3
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#5 = memset::str#6 
+Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#4 strlen::return#1 
+Alias strlen::str#3 = strlen::str#4 
+Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
+Alias toupper::return#0 = toupper::$3 
+Alias toupper::return#2 = toupper::return#4 
 Alias strupr::src#0 = strupr::str#1 
 Alias strupr::src#2 = strupr::src#3 strupr::src#4 
 Alias strupr::str#2 = strupr::str#5 strupr::str#3 strupr::str#4 strupr::return#0 strupr::return#3 strupr::return#1 
 Alias toupper::return#3 = toupper::return#5 
-Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#4 strlen::return#1 
-Alias strlen::str#3 = strlen::str#4 
 Alias utoa::value#10 = utoa::value#8 utoa::value#12 utoa::value#13 utoa::value#9 utoa::value#14 utoa::value#15 utoa::value#11 
 Alias utoa::buffer#10 = utoa::buffer#17 utoa::buffer#21 utoa::buffer#16 utoa::buffer#18 utoa::buffer#13 utoa::buffer#19 utoa::buffer#20 utoa::buffer#6 
 Alias utoa::radix#1 = utoa::radix#2 utoa::radix#3 utoa::radix#4 
@@ -2473,12 +2473,12 @@ Alias printf_number_buffer::buffer_digits#1 = printf_number_buffer::buffer_digit
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values memcpy::src_end#1 memcpy::src_end#0
 Identical Phi Values memcpy::destination#3 memcpy::destination#2
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#5 memset::str#3
 Identical Phi Values memset::c#2 memset::c#4
+Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values strupr::src#0 strupr::str#0
 Identical Phi Values strupr::str#2 strupr::src#0
 Identical Phi Values utoa::radix#1 utoa::radix#0
@@ -2520,11 +2520,11 @@ Identical Phi Values tod_str::tod_TENTHS#1 tod_str::tod_TENTHS#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values memset::return#0 memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memcpy::$1 [15] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
-Simple Condition memset::$1 [22] if(memset::num#2<=0) goto memset::@1
-Simple Condition memset::$3 [29] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition strupr::$1 [36] if(0!=*strupr::src#2) goto strupr::@2
-Simple Condition strlen::$0 [48] if(0!=*strlen::str#3) goto strlen::@2
+Simple Condition memcpy::$1 [7] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
+Simple Condition memset::$1 [14] if(memset::num#2<=0) goto memset::@1
+Simple Condition memset::$3 [21] if(memset::dst#2!=memset::end#0) goto memset::@4
+Simple Condition strlen::$0 [29] if(0!=*strlen::str#3) goto strlen::@2
+Simple Condition strupr::$1 [44] if(0!=*strupr::src#2) goto strupr::@2
 Simple Condition utoa::$0 [56] if(utoa::radix#0==DECIMAL) goto utoa::@1
 Simple Condition utoa::$1 [60] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
 Simple Condition utoa::$2 [64] if(utoa::radix#0==OCTAL) goto utoa::@3
@@ -2536,9 +2536,9 @@ Simple Condition gotoxy::$3 [120] if(gotoxy::x#6<$28) goto gotoxy::@2
 Simple Condition cputc::$0 [135] if(cputc::c#3=='
 ') goto cputc::@1
 Simple Condition cputc::$2 [141] if(conio_cursor_x!=$28) goto cputc::@return
-Simple Condition cscroll::$1 [151] if(conio_cursor_y!=$19) goto cscroll::@return
-Simple Condition cscroll::$7 [153] if(0!=conio_scroll_enable) goto cscroll::@3
-Simple Condition cputs::$2 [187] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cputs::$2 [156] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cscroll::$1 [161] if(conio_cursor_y!=$19) goto cscroll::@return
+Simple Condition cscroll::$7 [163] if(0!=conio_scroll_enable) goto cscroll::@3
 Simple Condition conio_c64_init::$1 [193] if(conio_c64_init::line#0<$19) goto conio_c64_init::@1
 Simple Condition printf_padding::$0 [204] if(printf_padding::i#2<printf_padding::length#6) goto printf_padding::@2
 Simple Condition printf_uint::$5 [211] if(0!=printf_uint::format_sign_always#0) goto printf_uint::@1
@@ -2552,7 +2552,7 @@ Simple Condition printf_string::$12 [301] if(printf_string::padding#1>=0) goto p
 Simple Condition main::$5 [365] if(main::i#2<$2710) goto main::@2
 Simple Condition main::$8 [368] if(main::$6!=0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting && if()-condition to two if()s [3] toupper::$2 = toupper::$0 && toupper::$1
+Rewriting && if()-condition to two if()s [36] toupper::$2 = toupper::$0 && toupper::$1
 Rewriting ! if()-condition to reversed if() [90] utoa::$8 = ! utoa::$7
 Rewriting || if()-condition to two if()s [89] utoa::$7 = utoa::started#2 || utoa::$6
 Rewriting ! if()-condition to reversed if() [239] printf_number_buffer::$5 = ! printf_number_buffer::$4
@@ -2577,8 +2577,8 @@ Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padd
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition printf_string::padding#3
 Warning! Adding boolean cast to non-boolean condition printf_string::padding#3
-Constant right-side identified [156] memcpy::num#0 = (unumber)$19*$28-$28
-Constant right-side identified [161] memcpy::num#1 = (unumber)$19*$28-$28
+Constant right-side identified [166] memcpy::num#0 = (unumber)$19*$28-$28
+Constant right-side identified [171] memcpy::num#1 = (unumber)$19*$28-$28
 Constant right-side identified [198] conio_c64_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant strlen::len#0 = 0
@@ -2598,6 +2598,7 @@ Constant utoa::started#1 = 1
 Constant utoa_append::digit#0 = 0
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
+Constant cputs::c#0 = 0
 Constant memcpy::destination#0 = (void*)CONIO_SCREEN_TEXT
 Constant memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
 Constant memcpy::num#0 = (unumber)$19*$28-$28
@@ -2611,7 +2612,6 @@ Constant memset::str#1 = (void*)CONIO_SCREEN_COLORS+(word)$19*$28-$28
 Constant memset::num#1 = $28
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
-Constant cputs::c#0 = 0
 Constant gotoxy::x#2 = 0
 Constant conio_c64_init::line#1 = (unumber)$19-1
 Constant printf_padding::i#0 = 0
@@ -2674,7 +2674,7 @@ if() condition always true - replacing block destination [56] if(utoa::radix#0==
 if() condition always false - eliminating [60] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
 if() condition always false - eliminating [64] if(utoa::radix#0==OCTAL) goto utoa::@3
 if() condition always false - eliminating [68] if(utoa::radix#0==BINARY) goto utoa::@4
-if() condition always true - replacing block destination [153] if(0!=conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [163] if(0!=conio_scroll_enable) goto cscroll::@3
 if() condition always false - eliminating [211] if(0!=printf_uint::format_sign_always#0) goto printf_uint::@1
 if() condition always true - replacing block destination [233] if(0==printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
 if() condition always true - replacing block destination [266] if(0==printf_number_buffer::format_upper_case#0) goto printf_number_buffer::@5
@@ -2691,6 +2691,11 @@ Simplifying expression containing zero printf_string::len#0 in [299] printf_stri
 Simplifying expression containing zero tod_buffer in [333] tod_buffer[0] = tod_str::$1
 Simplifying expression containing zero (byte*)&TOD_ZERO in [357] tod_init::tod_TENTHS#0 = *((byte*)&TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating variable strlen::str#5 from unused block strlen
+Eliminating variable strlen::str#3 from unused block strlen::@1
+Eliminating variable strlen::len#2 from unused block strlen::@1
+Eliminating variable strlen::len#1 from unused block strlen::@2
+Eliminating variable strlen::str#0 from unused block strlen::@2
 Eliminating variable toupper::$0 from unused block toupper
 Eliminating variable toupper::$1 from unused block toupper
 Eliminating variable toupper::return#0 from unused block toupper::@1
@@ -2700,11 +2705,6 @@ Eliminating variable toupper::ch#0 from unused block strupr::@2
 Eliminating variable toupper::return#3 from unused block strupr::@2
 Eliminating variable strupr::$0 from unused block strupr::@4
 Eliminating variable strupr::src#1 from unused block strupr::@4
-Eliminating variable strlen::str#5 from unused block strlen
-Eliminating variable strlen::str#3 from unused block strlen::@1
-Eliminating variable strlen::len#2 from unused block strlen::@1
-Eliminating variable strlen::len#1 from unused block strlen::@2
-Eliminating variable strlen::str#0 from unused block strlen::@2
 Eliminating variable utoa::buffer#0 from unused block utoa::@9
 Eliminating variable utoa::buffer#1 from unused block utoa::@9
 Eliminating variable utoa::buffer#2 from unused block utoa::@9
@@ -2718,6 +2718,14 @@ Eliminating variable strlen::return#3 from unused block printf_string::@3
 Eliminating variable printf_string::$9 from unused block printf_string::@7
 Eliminating variable printf_string::len#0 from unused block printf_string::@7
 Eliminating variable printf_string::padding#1 from unused block printf_string::@7
+Removing unused procedure strlen
+Removing unused procedure block strlen
+Removing PHI-reference to removed block (strlen) in block strlen::@1
+Removing PHI-reference to removed block (strlen) in block strlen::@1
+Removing unused procedure block strlen::@1
+Removing unused procedure block strlen::@2
+Removing unused procedure block strlen::@3
+Removing unused procedure block strlen::@return
 Removing unused procedure toupper
 Removing unused procedure block toupper
 Removing unused procedure block toupper::@1
@@ -2734,14 +2742,6 @@ Removing unused procedure block strupr::@2
 Removing unused procedure block strupr::@4
 Removing unused procedure block strupr::@3
 Removing unused procedure block strupr::@return
-Removing unused procedure strlen
-Removing unused procedure block strlen
-Removing PHI-reference to removed block (strlen) in block strlen::@1
-Removing PHI-reference to removed block (strlen) in block strlen::@1
-Removing unused procedure block strlen::@1
-Removing unused procedure block strlen::@2
-Removing unused procedure block strlen::@3
-Removing unused procedure block strlen::@return
 Removing unused block utoa::@6
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
@@ -2777,10 +2777,10 @@ Removing unused block printf_string::@7
 Removing PHI-reference to removed block (printf_string::@4) in block printf_string::@1
 Removing unused block printf_string::@4
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memcpy::return#2 and assignment [81] memcpy::return#2 = memcpy::destination#2
-Eliminating unused variable memcpy::return#3 and assignment [83] memcpy::return#3 = memcpy::destination#2
-Eliminating unused variable memset::return#2 and assignment [85] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [87] memset::return#3 = memset::str#3
+Eliminating unused variable memcpy::return#2 and assignment [89] memcpy::return#2 = memcpy::destination#2
+Eliminating unused variable memcpy::return#3 and assignment [91] memcpy::return#3 = memcpy::destination#2
+Eliminating unused variable memset::return#2 and assignment [93] memset::return#2 = memset::str#3
+Eliminating unused variable memset::return#3 and assignment [95] memset::return#3 = memset::str#3
 Eliminating unused variable tod_read::return#0 and assignment [162] tod_read::return#0 = struct-unwound {tod_read::return_TENTHS#0, tod_read::return_SEC#0, tod_read::return_MIN#0, tod_read::return_HOURS#0}
 Eliminating unused variable tod_read::return#1 and assignment [163] tod_read::return#1 = struct-unwound {tod_read::return_TENTHS#0, tod_read::return_SEC#0, tod_read::return_MIN#0, tod_read::return_HOURS#0}
 Eliminating unused constant BINARY
@@ -4360,10 +4360,10 @@ Uplift Scope [tod_read] 37.33: zp[1]:67 [ tod_read::return_TENTHS#0 ] 22.4: zp[1
 Uplift Scope [tod_init] 37.33: zp[1]:40 [ tod_init::tod_HOURS#0 ] 22.4: zp[1]:39 [ tod_init::tod_MIN#0 ] 16: zp[1]:38 [ tod_init::tod_SEC#0 ] 12.44: zp[1]:37 [ tod_init::tod_TENTHS#0 ] 
 Uplift Scope [conio_c64_init] 33: zp[1]:2 [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplift Scope [RADIX] 
+Uplift Scope [cputln] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
-Uplift Scope [cputln] 
 Uplift Scope [cscroll] 
 Uplift Scope [printf_format_number] 
 Uplift Scope [printf_buffer_number] 
@@ -4388,10 +4388,10 @@ Limited combination testing to 100 combinations of 65536 possible.
 Uplifting [tod_init] best 189905 combination reg byte y [ tod_init::tod_HOURS#0 ] reg byte x [ tod_init::tod_MIN#0 ] zp[1]:38 [ tod_init::tod_SEC#0 ] zp[1]:37 [ tod_init::tod_TENTHS#0 ] 
 Uplifting [conio_c64_init] best 189893 combination reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplifting [RADIX] best 189893 combination 
+Uplifting [cputln] best 189893 combination 
 Uplifting [MOS6526_CIA] best 189893 combination 
 Uplifting [MOS6569_VICII] best 189893 combination 
 Uplifting [MOS6581_SID] best 189893 combination 
-Uplifting [cputln] best 189893 combination 
 Uplifting [cscroll] best 189893 combination 
 Uplifting [printf_format_number] best 189893 combination 
 Uplifting [printf_buffer_number] best 189893 combination 

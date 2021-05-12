@@ -118,10 +118,12 @@ const unsigned int INTRO_MUSIC_CRUNCHED_SIZE = 0x0600;
 
 // Address of the music during run-time
 char* const INTRO_MUSIC = (char*)0x3000;
+// Pointer to procedure
+typedef void (*PROC_PTR)(void);
 // Pointer to the music init routine
-void()* const musicInit = (void()*) INTRO_MUSIC+0x00;
+PROC_PTR const musicInit = (PROC_PTR) INTRO_MUSIC+0x00;
 // Pointer to the music play routine
-void()* const musicPlay = (void()*) INTRO_MUSIC+0x06;
+PROC_PTR const musicPlay = (PROC_PTR) INTRO_MUSIC+0x06;
 
 #pragma data_seg(Init)
 // SID tune

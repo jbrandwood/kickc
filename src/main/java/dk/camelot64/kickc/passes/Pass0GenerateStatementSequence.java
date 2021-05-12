@@ -392,44 +392,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
 
-      // Declare the procedure
-      Procedure procedure = declareProcedure(ctx, StatementSource.procedureDecl(ctx));
+      // Declare & define the procedure
+      Procedure procedure = declareProcedure(true, ctx, StatementSource.procedureDecl(ctx));
 
-      // Make sure comments and directives are from the definition
-      addDirectives(procedure, varDecl.getDeclDirectives(), StatementSource.procedureDecl(ctx));
-      procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
+      varDecl.exitType();
 
       // enter the procedure
       scopeStack.push(procedure);
 
-      // Add return variable
-      Variable returnVar = null;
-      if(!SymbolType.VOID.equals(procedure.getReturnType())) {
-         final VariableBuilder builder = new VariableBuilder("return", procedure, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
-         returnVar = builder.build();
-      }
-
-      // Add parameter variables...
-      List<Variable> parameterList = new ArrayList<>();
-      for(ParameterDecl parameter : varDecl.parameters) {
-         VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
-         final Variable paramVar = varBuilder.build();
-         parameterList.add(paramVar);
-      }
-      procedure.setParameters(parameterList);
-
-      varDecl.exitType();
-
-      // Check that the body has not already been added
-      final StatementSequence statementSequence = getCurrentProcedureCompilation().getStatementSequence();
-      if(statementSequence != null && statementSequence.getStatements().size() > 0)
-         throw new CompileError("Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
+      Variable returnVar = procedure.getLocalVar("return");
 
       // Add the body
       addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
       // Add parameter assignments
       if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-         for(Variable param : parameterList) {
+         for(Variable param : procedure.getParameters()) {
             addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
          }
       }
@@ -447,21 +424,26 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+
+      // exit the procedure
       scopeStack.pop();
 
       return null;
    }
 
 
-   /** Declare a procedure (either as part of a forward declaration or as part of a definition.)
+   /**
+    * Declare a procedure (either as part of a forward declaration or as part of a definition.)
     * Finds the name, type and parameters in the varDecl.
     * If the procedure is already declared then it is checked that the current declaration matches the existing one - and the existing one is returned.
     *
+    * @param defineProcedure If true the procedure parameter and return variables will also be defined
     * @param ctx The parser context (used to find any comments.)
     * @param statementSource The statements source (used when producing errors.
     * @return The declared procedure.
     */
-   private Procedure declareProcedure(ParserRuleContext ctx, StatementSource statementSource) {
+   private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
+
       Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
       // Check if the declaration matches any existing declaration!
@@ -469,15 +451,63 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(existingSymbol != null) {
          // Already declared  - check equality
          if(!(existingSymbol instanceof Procedure) || !SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Conflicting declarations for procedure: " + procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Conflicting declarations for procedure: " + procedure.getFullName(), statementSource);
+
+         if(defineProcedure) {
+            // Check that the procedure is not already defined
+            Procedure existingProcedure = (Procedure) existingSymbol;
+            if(existingProcedure.isDeclaredIntrinsic())
+               throw new CompileError("Redefinition of procedure: " + procedure.getFullName(), statementSource);
+            final StatementSequence statementSequence = program.getProcedureCompilation(existingProcedure.getRef()).getStatementSequence();
+            if(statementSequence != null && statementSequence.getStatements().size() > 0)
+               throw new CompileError("Redefinition of procedure " + procedure.getFullName(), statementSource);
+         }
+
          procedure = (Procedure) existingSymbol;
       } else {
          program.getScope().add(procedure);
          program.createProcedureCompilation(procedure.getRef());
       }
+
+      if(defineProcedure) {
+         // Make sure comments and directives are from the definition
+         addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
+         procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
+         // enter the procedure
+         scopeStack.push(procedure);
+         // Add parameter variables...
+         boolean variableLengthParameterList = false;
+         List<Variable> parameterList = new ArrayList<>();
+         for(ParameterDecl parameter : varDecl.parameters) {
+            // Handle variable length parameter lists
+            if(SymbolType.PARAM_LIST.equals(parameter.type)) {
+               procedure.setVariableLengthParameterList(true);
+               variableLengthParameterList = true;
+               continue;
+            } else if(variableLengthParameterList)
+               throw new CompileError("Variable length parameter list is only legal as the last parameter.", statementSource);
+
+            // Handle stray void parameters (Any single void parameter was removed by the type parser)
+            if(SymbolType.VOID.equals(parameter.type))
+               throw new CompileError("Illegal void parameter.", statementSource);
+
+            VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            final Variable paramVar = varBuilder.build();
+            parameterList.add(paramVar);
+         }
+         procedure.setParameters(parameterList);
+         // Add return variable
+         if(!SymbolType.VOID.equals(procedure.getReturnType())) {
+            final VariableBuilder builder = new VariableBuilder("return", procedure, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            builder.build();
+         }
+         // exit the procedure
+         scopeStack.pop();
+      }
+
       return procedure;
    }
-   
+
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visit(ctx.declType());
@@ -927,9 +957,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
       try {
          final SymbolType effectiveType = varDecl.getEffectiveType();
-
          if(effectiveType instanceof SymbolTypeProcedure) {
-            declareProcedure(ctx, declSource);
+            // Declare the procedure
+            boolean defineProcedure = varDecl.getDeclDirectives().stream().anyMatch(directive -> directive instanceof Directive.Intrinsic);
+            declareProcedure(defineProcedure, ctx, declSource);
             varDecl.exitVar();
          } else {
             final boolean isStructMember = varDecl.isStructMember();

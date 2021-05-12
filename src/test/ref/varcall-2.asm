@@ -12,9 +12,9 @@
 .segment Code
 // plus(byte zp(3) a, byte zp(4) b)
 plus: {
-    .label return = 2
     .label a = 3
     .label b = 4
+    .label return = 2
     // a+b
     lda.z a
     clc

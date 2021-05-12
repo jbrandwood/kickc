@@ -1,4 +1,6 @@
 Loading link script "demo.ld"
+Resolved forward reference irq_demo to __interrupt(hardware_clobber) void irq_demo()
+Resolved forward reference sparkler_active to sparkler_active
 Resolved forward reference IRQ_PART1_TOP_LINE to IRQ_PART1_TOP_LINE
 Resolved forward reference irq_part1_top to __interrupt(hardware_clobber) void irq_part1_top()
 Resolved forward reference sparkler_active to sparkler_active
@@ -24,8 +26,6 @@ Resolved forward reference p2_work_ready to p2_work_ready
 Resolved forward reference p2_plex_scroller_moving to p2_plex_scroller_moving
 Resolved forward reference irq_swing_vsp to __interrupt(hardware_clobber) void irq_swing_vsp()
 Resolved forward reference irq_swing_plex to __interrupt(hardware_clobber) void irq_swing_plex()
-Resolved forward reference sparkler_active to sparkler_active
-Resolved forward reference irq_demo to __interrupt(hardware_clobber) void irq_demo()
 Resolved forward reference sparkler_active to sparkler_active
 Setting inferred volatile on symbol affected by address-of: byteboozer_decrunch::crunched in asm { ldycrunched ldxcrunched+1 jsrb2.Decrunch  }
 Setting inferred volatile on symbol affected by address-of: raster_fine::line_offset in kickasm( uses raster_fine::line_offset uses RASTER_BADLINES) {{ jmp aligned
@@ -84,6 +84,7 @@ Setting inferred volatile on symbol affected by address-of: vsp_update_screen::x
                 }
          }}
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
+Inlined call call CLI 
 Inlined call call SEI 
 Inlined call part1_run::$1 = call toSpritePtr P1_SPRITES 
 Inlined call call CLI 
@@ -98,7 +99,6 @@ Inlined call call CLI
 Inlined call plex_scroller_move::$7 = call toSpritePtr PART2_SPRITES 
 Inlined call call vsp_perform 
 Inlined call call SEI 
-Inlined call call CLI 
 Inlined call sparkler_anim::$2 = call toSpritePtr P1_SPRITES 
 Inlined call call __init 
 
@@ -183,6 +183,40 @@ memset::@4: scope:[memset]  from memset::@3
 memset::@return: scope:[memset]  from memset::@1
   memset::return#7 = phi( memset::@1/memset::return#0 )
   memset::return#1 = memset::return#7
+  return 
+  to:@return
+
+void demo_start()
+demo_start: scope:[demo_start]  from main::@7 part1_loop::@6
+  call demo_init 
+  to:demo_start::@1
+demo_start::@1: scope:[demo_start]  from demo_start
+  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
+  *RASTER = 0
+  *HARDWARE_IRQ = &irq_demo
+  *IRQ_ENABLE = IRQ_RASTER
+  to:demo_start::CLI1
+demo_start::CLI1: scope:[demo_start]  from demo_start::@1
+  asm { cli  }
+  to:demo_start::@return
+demo_start::@return: scope:[demo_start]  from demo_start::CLI1
+  return 
+  to:@return
+
+void demo_work()
+demo_work: scope:[demo_work]  from irq_demo part1_loop::@4 part2_loop::@2
+  demo_frame_count = ++ demo_frame_count
+  call *musicPlay 
+  demo_work::$3 = 0 != sparkler_active
+  demo_work::$1 = ! demo_work::$3
+  if(demo_work::$1) goto demo_work::@return
+  to:demo_work::@1
+demo_work::@1: scope:[demo_work]  from demo_work
+  call sparkler_anim 
+  to:demo_work::@2
+demo_work::@2: scope:[demo_work]  from demo_work::@1
+  to:demo_work::@return
+demo_work::@return: scope:[demo_work]  from demo_work demo_work::@2
   return 
   to:@return
 
@@ -1723,40 +1757,6 @@ demo_init::@return: scope:[demo_init]  from demo_init::@1
   return 
   to:@return
 
-void demo_start()
-demo_start: scope:[demo_start]  from main::@7 part1_loop::@6
-  call demo_init 
-  to:demo_start::@1
-demo_start::@1: scope:[demo_start]  from demo_start
-  *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
-  *RASTER = 0
-  *HARDWARE_IRQ = &irq_demo
-  *IRQ_ENABLE = IRQ_RASTER
-  to:demo_start::CLI1
-demo_start::CLI1: scope:[demo_start]  from demo_start::@1
-  asm { cli  }
-  to:demo_start::@return
-demo_start::@return: scope:[demo_start]  from demo_start::CLI1
-  return 
-  to:@return
-
-void demo_work()
-demo_work: scope:[demo_work]  from irq_demo part1_loop::@4 part2_loop::@2
-  demo_frame_count = ++ demo_frame_count
-  call *musicPlay 
-  demo_work::$3 = 0 != sparkler_active
-  demo_work::$1 = ! demo_work::$3
-  if(demo_work::$1) goto demo_work::@return
-  to:demo_work::@1
-demo_work::@1: scope:[demo_work]  from demo_work
-  call sparkler_anim 
-  to:demo_work::@2
-demo_work::@2: scope:[demo_work]  from demo_work::@1
-  to:demo_work::@return
-demo_work::@return: scope:[demo_work]  from demo_work demo_work::@2
-  return 
-  to:@return
-
 void sparkler_anim()
 sparkler_anim: scope:[sparkler_anim]  from demo_work::@1
   sparkler_idx = ++ sparkler_idx
@@ -2836,6 +2836,9 @@ volatile byte x_movement_idx loadstore
 Adding number conversion cast (unumber) $200 in 
 Adding number conversion cast (unumber) 3 in 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#5 > 0
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
+Adding number conversion cast (unumber) 0 in *RASTER = 0
+Adding number conversion cast (unumber) 0 in demo_work::$3 = 0 != sparkler_active
 Adding number conversion cast (unumber) 0 in memset::c#0 = 0
 Adding number conversion cast (unumber) $800 in memset::num#0 = $800
 Adding number conversion cast (unumber) $800 in memcpy::num#0 = $800
@@ -3066,9 +3069,6 @@ Adding number conversion cast (unumber) 5*$32 in main::$8 = demo_frame_count < 5
 Adding number conversion cast (unumber) $10*$32 in main::$9 = demo_frame_count < $10*$32
 Adding number conversion cast (unumber) 0 in sparkler_active = 0
 Adding number conversion cast (unumber) $f in *IRQ_STATUS = $f
-Adding number conversion cast (unumber) $7f in *VICII_CONTROL1 = *VICII_CONTROL1 & $7f
-Adding number conversion cast (unumber) 0 in *RASTER = 0
-Adding number conversion cast (unumber) 0 in demo_work::$3 = 0 != sparkler_active
 Adding number conversion cast (unumber) $1e in sparkler_anim::$0 = sparkler_idx == $1e
 Adding number conversion cast (unumber) $40 in sparkler_anim::toSpritePtr1_$0 = sparkler_anim::toSpritePtr1_$1 / $40
 Adding number conversion cast (unumber) sparkler_anim::toSpritePtr1_$0 in sparkler_anim::toSpritePtr1_$0 = sparkler_anim::toSpritePtr1_$1 / (unumber)$40
@@ -3083,6 +3083,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memcpy::src#0 = (byte*)memcpy::source#6
 Inlining cast memcpy::dst#0 = (byte*)memcpy::destination#6
 Inlining cast memset::dst#0 = (byte*)memset::str#6
+Inlining cast *RASTER = (unumber)0
 Inlining cast memset::c#0 = (unumber)0
 Inlining cast memset::num#0 = (unumber)$800
 Inlining cast memcpy::num#0 = (unumber)$800
@@ -3133,7 +3134,6 @@ Inlining cast p2_work_ready = (unumber)1
 Inlining cast sprite_color_idx = (unumber)0
 Inlining cast sparkler_active = (unumber)0
 Inlining cast *IRQ_STATUS = (unumber)$f
-Inlining cast *RASTER = (unumber)0
 Inlining cast sparkler_idx = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53248
@@ -3180,6 +3180,9 @@ Simplifying constant pointer cast (byte*) 34816
 Simplifying constant integer cast $200
 Simplifying constant pointer cast (byte*) 44032
 Simplifying constant integer cast 3
+Simplifying constant integer cast 0
+Simplifying constant integer cast $7f
+Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $800
@@ -3345,9 +3348,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $f
-Simplifying constant integer cast $7f
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast $1e
 Simplifying constant integer cast $40
 Simplifying constant integer cast 2
@@ -3356,6 +3356,9 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $200
 Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $800
@@ -3519,9 +3522,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $1e
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 2
@@ -3588,30 +3588,30 @@ Inferred type updated to word in sparkler_anim::toSpritePtr1_$0 = sparkler_anim:
 Inferred type updated to byte in sparkler_anim::$3 = sparkler_idx / 2
 Inferred type updated to byte in sparkler_anim::$4 = sparkler_anim::$2 + sparkler_anim::$3
 Inversing boolean not [20] memset::$1 = memset::num#5 <= 0 from [19] memset::$0 = memset::num#5 > 0
-Inversing boolean not [115] part1_loop::$2 = 0 == sparkler_active from [114] part1_loop::$10 = 0 != sparkler_active
-Inversing boolean not [122] part1_loop::$8 = demo_frame_count <= (word)$e*$32 from [121] part1_loop::$7 = demo_frame_count > (word)$e*$32
-Inversing boolean not [232] irq_flipper_bottom::$4 = 0 == flipper_done from [231] irq_flipper_bottom::$13 = 0 != flipper_done
-Inversing boolean not [233] irq_flipper_bottom::$5 = 0 != flipper_done from [232] irq_flipper_bottom::$4 = 0 == flipper_done
-Inversing boolean not [259] irq_flipper_bottom::$11 = irq_flipper_bottom::irq_flipper_line#4 != $130 from [258] irq_flipper_bottom::$10 = irq_flipper_bottom::irq_flipper_line#4 == $130
-Inversing boolean not [274] flipper_fix_colors::$7 = flipper_fix_colors::charline#0 < flipper_charline from [273] flipper_fix_colors::$6 = flipper_fix_colors::charline#0 >= flipper_charline
-Inversing boolean not [310] plexPrepareFrame::$5 = plexPrepareFrame::nxt_y#0 >= PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#3]] from [309] plexPrepareFrame::$4 = plexPrepareFrame::nxt_y#0 < PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#3]]
-Inversing boolean not [349] plexPrepareFrame::$13 = plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2] <= plexPrepareFrame::bucket_ypos#3 from [348] plexPrepareFrame::$12 = plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2] > plexPrepareFrame::bucket_ypos#3
-Inversing boolean not [355] plexPrepareFrame::$1 = plexPrepareFrame::sprite#3 == plexPrepareFrame::bucket#1 from [354] plexPrepareFrame::$0 = plexPrepareFrame::sprite#3 != plexPrepareFrame::bucket#1
-Inversing boolean not [378] plexPrepareFrame::$15 = plexPrepareFrame::sprite#5 == plexPrepareFrame::bucket#2 from [377] plexPrepareFrame::$14 = plexPrepareFrame::sprite#5 != plexPrepareFrame::bucket#2
-Inversing boolean not [421] plexBucketShow::$5 = plexBucketShow::i#2 != 8*SIZEOF_STRUCT_BUCKETSPRITE from [420] plexBucketShow::$4 = plexBucketShow::i#2 == 8*SIZEOF_STRUCT_BUCKETSPRITE
-Inversing boolean not [579] part2_loop::$2 = 0 == p2_logo_reveal_done from [578] part2_loop::$17 = 0 != p2_logo_reveal_done
-Inversing boolean not [584] part2_loop::$6 = 0 == p2_logo_revealing from [583] part2_loop::$18 = 0 != p2_logo_revealing
-Inversing boolean not [591] part2_loop::$10 = 0 == p2_logo_swinging from [590] part2_loop::$19 = 0 != p2_logo_swinging
-Inversing boolean not [597] part2_loop::$13 = 0 == p2_plex_scroller_moving from [596] part2_loop::$20 = 0 != p2_plex_scroller_moving
-Inversing boolean not [622] plex_scroller_move::$2 = plex_scroller_move::x_idx#2 != 0 from [621] plex_scroller_move::$1 = plex_scroller_move::x_idx#2 == 0
-Inversing boolean not [630] plex_scroller_move::$4 = *scroll_text_next != 0 from [629] plex_scroller_move::$3 = *scroll_text_next == 0
-Inversing boolean not [636] plex_scroller_move::$6 = plex_scroller_move::letter#0 != $ff from [635] plex_scroller_move::$5 = plex_scroller_move::letter#0 == $ff
-Inversing boolean not [690] irq_swing_plex::$3 = plex_frame_id < 8 from [689] irq_swing_plex::$2 = plex_frame_id >= 8
-Inversing boolean not [695] irq_swing_plex::$5 = 0 == p2_logo_swinging from [694] irq_swing_plex::$29 = 0 != p2_logo_swinging
-Inversing boolean not [702] irq_swing_plex::$17 = 0 == p2_plex_scroller_moving from [701] irq_swing_plex::$30 = 0 != p2_plex_scroller_moving
-Inversing boolean not [725] irq_swing_plex::$11 = irq_swing_plex::coarse_scroll_diff#1 != $ff from [724] irq_swing_plex::$10 = irq_swing_plex::coarse_scroll_diff#1 == $ff
-Inversing boolean not [744] irq_swing_plex::$21 = sprite_color_idx != irq_swing_plex::$19 from [743] irq_swing_plex::$20 = sprite_color_idx == irq_swing_plex::$19
-Inversing boolean not [812] demo_work::$1 = 0 == sparkler_active from [811] demo_work::$3 = 0 != sparkler_active
+Inversing boolean not [48] demo_work::$1 = 0 == sparkler_active from [47] demo_work::$3 = 0 != sparkler_active
+Inversing boolean not [129] part1_loop::$2 = 0 == sparkler_active from [128] part1_loop::$10 = 0 != sparkler_active
+Inversing boolean not [136] part1_loop::$8 = demo_frame_count <= (word)$e*$32 from [135] part1_loop::$7 = demo_frame_count > (word)$e*$32
+Inversing boolean not [246] irq_flipper_bottom::$4 = 0 == flipper_done from [245] irq_flipper_bottom::$13 = 0 != flipper_done
+Inversing boolean not [247] irq_flipper_bottom::$5 = 0 != flipper_done from [246] irq_flipper_bottom::$4 = 0 == flipper_done
+Inversing boolean not [273] irq_flipper_bottom::$11 = irq_flipper_bottom::irq_flipper_line#4 != $130 from [272] irq_flipper_bottom::$10 = irq_flipper_bottom::irq_flipper_line#4 == $130
+Inversing boolean not [288] flipper_fix_colors::$7 = flipper_fix_colors::charline#0 < flipper_charline from [287] flipper_fix_colors::$6 = flipper_fix_colors::charline#0 >= flipper_charline
+Inversing boolean not [324] plexPrepareFrame::$5 = plexPrepareFrame::nxt_y#0 >= PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#3]] from [323] plexPrepareFrame::$4 = plexPrepareFrame::nxt_y#0 < PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#3]]
+Inversing boolean not [363] plexPrepareFrame::$13 = plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2] <= plexPrepareFrame::bucket_ypos#3 from [362] plexPrepareFrame::$12 = plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2] > plexPrepareFrame::bucket_ypos#3
+Inversing boolean not [369] plexPrepareFrame::$1 = plexPrepareFrame::sprite#3 == plexPrepareFrame::bucket#1 from [368] plexPrepareFrame::$0 = plexPrepareFrame::sprite#3 != plexPrepareFrame::bucket#1
+Inversing boolean not [392] plexPrepareFrame::$15 = plexPrepareFrame::sprite#5 == plexPrepareFrame::bucket#2 from [391] plexPrepareFrame::$14 = plexPrepareFrame::sprite#5 != plexPrepareFrame::bucket#2
+Inversing boolean not [435] plexBucketShow::$5 = plexBucketShow::i#2 != 8*SIZEOF_STRUCT_BUCKETSPRITE from [434] plexBucketShow::$4 = plexBucketShow::i#2 == 8*SIZEOF_STRUCT_BUCKETSPRITE
+Inversing boolean not [593] part2_loop::$2 = 0 == p2_logo_reveal_done from [592] part2_loop::$17 = 0 != p2_logo_reveal_done
+Inversing boolean not [598] part2_loop::$6 = 0 == p2_logo_revealing from [597] part2_loop::$18 = 0 != p2_logo_revealing
+Inversing boolean not [605] part2_loop::$10 = 0 == p2_logo_swinging from [604] part2_loop::$19 = 0 != p2_logo_swinging
+Inversing boolean not [611] part2_loop::$13 = 0 == p2_plex_scroller_moving from [610] part2_loop::$20 = 0 != p2_plex_scroller_moving
+Inversing boolean not [636] plex_scroller_move::$2 = plex_scroller_move::x_idx#2 != 0 from [635] plex_scroller_move::$1 = plex_scroller_move::x_idx#2 == 0
+Inversing boolean not [644] plex_scroller_move::$4 = *scroll_text_next != 0 from [643] plex_scroller_move::$3 = *scroll_text_next == 0
+Inversing boolean not [650] plex_scroller_move::$6 = plex_scroller_move::letter#0 != $ff from [649] plex_scroller_move::$5 = plex_scroller_move::letter#0 == $ff
+Inversing boolean not [704] irq_swing_plex::$3 = plex_frame_id < 8 from [703] irq_swing_plex::$2 = plex_frame_id >= 8
+Inversing boolean not [709] irq_swing_plex::$5 = 0 == p2_logo_swinging from [708] irq_swing_plex::$29 = 0 != p2_logo_swinging
+Inversing boolean not [716] irq_swing_plex::$17 = 0 == p2_plex_scroller_moving from [715] irq_swing_plex::$30 = 0 != p2_plex_scroller_moving
+Inversing boolean not [739] irq_swing_plex::$11 = irq_swing_plex::coarse_scroll_diff#1 != $ff from [738] irq_swing_plex::$10 = irq_swing_plex::coarse_scroll_diff#1 == $ff
+Inversing boolean not [758] irq_swing_plex::$21 = sprite_color_idx != irq_swing_plex::$19 from [757] irq_swing_plex::$20 = sprite_color_idx == irq_swing_plex::$19
 Inversing boolean not [818] sparkler_anim::$1 = sparkler_idx != $1e from [817] sparkler_anim::$0 = sparkler_idx == $1e
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)raster_fine::line_offset = irq_flipper_top::$1 irq_flipper_bottom::$1 
@@ -3792,81 +3792,81 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition memcpy::$1 [7] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
 Simple Condition memset::$1 [14] if(memset::num#5<=0) goto memset::@1
 Simple Condition memset::$3 [21] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition part1_loop::$0 [94] if(p1_work_ready==0) goto part1_loop::@1
-Simple Condition part1_loop::$8 [103] if(demo_frame_count<=(word)$e*$32) goto part1_loop::@5
-Simple Condition init_rasters::$1 [113] if(init_rasters::i#2<init_rasters::$0) goto init_rasters::@2
-Simple Condition init_rasters::$2 [119] if(init_rasters::b#2<$fa) goto init_rasters::@5
-Simple Condition irq_part1_top::$5 [145] if(0!=irq_part1_top::$2) goto irq_part1_top::@1
-Simple Condition irq_flipper_top::$6 [163] if(0!=irq_flipper_top::$3) goto irq_flipper_top::@1
-Simple Condition irq_flipper_bottom::$5 [192] if(0!=flipper_done) goto irq_flipper_bottom::@1
-Simple Condition irq_flipper_bottom::$6 [201] if(irq_flipper_bottom::irq_flipper_line#0<8) goto irq_flipper_bottom::@4
-Simple Condition irq_flipper_bottom::$8 [206] if(irq_flipper_bottom::irq_flipper_line#0>$128) goto irq_flipper_bottom::@6
-Simple Condition irq_flipper_bottom::$11 [211] if(irq_flipper_bottom::irq_flipper_line#0!=$130) goto irq_flipper_bottom::@1
-Simple Condition flipper_fix_colors::$7 [225] if(flipper_fix_colors::charline#0<flipper_charline) goto flipper_fix_colors::@return
-Simple Condition flipper_fix_colors::$11 [233] if(flipper_fix_colors::i#2<$28) goto flipper_fix_colors::@4
-Simple Condition plexPrepareInit::$0 [241] if(plexPrepareInit::i#2<$20) goto plexPrepareInit::@2
-Simple Condition plexPrepareFrame::$2 [249] if(plexPrepareFrame::m#2<(byte)$20-1) goto plexPrepareFrame::@2
-Simple Condition plexPrepareFrame::$5 [254] if(plexPrepareFrame::nxt_y#0>=PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#2]]) goto plexPrepareFrame::@4
-Simple Condition plexPrepareFrame::$10 [270] if(plexPrepareFrame::i#2<8) goto plexPrepareFrame::@9
-Simple Condition plexPrepareFrame::$11 [279] if(plexPrepareFrame::i1#2<$20) goto plexPrepareFrame::@12
-Simple Condition plexPrepareFrame::$13 [283] if(plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2]<=plexPrepareFrame::bucket_ypos#3) goto plexPrepareFrame::@14
-Simple Condition plexPrepareFrame::$1 [287] if(plexPrepareFrame::sprite#3==plexPrepareFrame::bucket#1) goto plexPrepareFrame::@return
-Simple Condition plexPrepareFrame::$15 [307] if(plexPrepareFrame::sprite#3==plexPrepareFrame::sprite#2) goto plexPrepareFrame::@15
-Simple Condition plexBucketShow::$6 [323] if(0!=plexBucketShow::bucket_ptr#0[plexBucketShow::i#3]) goto plexBucketShow::@2
-Simple Condition plexBucketShow::$7 [330] if(0!=PLEX_XPOS_MSB[plexBucketShow::plex_id#0]) goto plexBucketShow::@3
-Simple Condition plexBucketShow::$5 [339] if(plexBucketShow::i#2!=8*SIZEOF_STRUCT_BUCKETSPRITE) goto plexBucketShow::@1
-Simple Condition part2_init::$12 [387] if(part2_init::frame_idx#2<8) goto part2_init::@2
-Simple Condition part2_init::$13 [397] if(part2_init::s#2<$20) goto part2_init::@5
-Simple Condition part2_init::$15 [408] if(part2_init::s1#2<$20) goto part2_init::@8
-Simple Condition part2_init::$18 [423] if(part2_init::s2#2<8) goto part2_init::@11
-Simple Condition part2_loop::$0 [468] if(p2_work_ready==0) goto part2_loop::@1
-Simple Condition p2_logo_reveal::$0 [495] if(p2_logo_reveal_idx>=$28) goto p2_logo_reveal::@1
-Simple Condition plex_scroller_move::$0 [505] if(plex_scroller_move::s#10<$20) goto plex_scroller_move::@2
-Simple Condition plex_scroller_move::$2 [509] if(plex_scroller_move::x_idx#10!=0) goto plex_scroller_move::@4
-Simple Condition plex_scroller_move::$4 [514] if(*scroll_text_next!=0) goto plex_scroller_move::@5
-Simple Condition plex_scroller_move::$6 [518] if(plex_scroller_move::letter#0!=$ff) goto plex_scroller_move::@6
-Simple Condition irq_swing_plex::$1 [555] if(plex_bucket_id<9) goto irq_swing_plex::@1
-Simple Condition irq_swing_plex::$3 [564] if(plex_frame_id<8) goto irq_swing_plex::@5
-Simple Condition irq_swing_plex::$5 [568] if(0==p2_logo_swinging) goto irq_swing_plex::@6
-Simple Condition irq_swing_plex::$17 [574] if(0==p2_plex_scroller_moving) goto irq_swing_plex::@9
-Simple Condition irq_swing_plex::$9 [586] if(irq_swing_plex::coarse_scroll_diff#0==1) goto irq_swing_plex::@7
-Simple Condition irq_swing_plex::$11 [591] if(irq_swing_plex::coarse_scroll_diff#0!=$ff) goto irq_swing_plex::@8
-Simple Condition irq_swing_plex::$21 [605] if(sprite_color_idx!=irq_swing_plex::$19) goto irq_swing_plex::@10
-Simple Condition irq_swing_plex::$22 [610] if(irq_swing_plex::s#2<8) goto irq_swing_plex::@12
-Simple Condition vsp_update_screen::$2 [628] if(vsp_update_screen::$1==0) goto vsp_update_screen::@1
-Simple Condition vsp_update_screen::$4 [632] if(vsp_update_screen::$3==1) goto vsp_update_screen::@2
-Simple Condition main::$8 [646] if(demo_frame_count<(byte)5*$32) goto main::@1
-Simple Condition main::$9 [650] if(demo_frame_count<(word)$10*$32) goto main::@3
-Simple Condition demo_work::$1 [671] if(0==sparkler_active) goto demo_work::@return
+Simple Condition demo_work::$1 [35] if(0==sparkler_active) goto demo_work::@return
+Simple Condition part1_loop::$0 [107] if(p1_work_ready==0) goto part1_loop::@1
+Simple Condition part1_loop::$8 [116] if(demo_frame_count<=(word)$e*$32) goto part1_loop::@5
+Simple Condition init_rasters::$1 [126] if(init_rasters::i#2<init_rasters::$0) goto init_rasters::@2
+Simple Condition init_rasters::$2 [132] if(init_rasters::b#2<$fa) goto init_rasters::@5
+Simple Condition irq_part1_top::$5 [158] if(0!=irq_part1_top::$2) goto irq_part1_top::@1
+Simple Condition irq_flipper_top::$6 [176] if(0!=irq_flipper_top::$3) goto irq_flipper_top::@1
+Simple Condition irq_flipper_bottom::$5 [205] if(0!=flipper_done) goto irq_flipper_bottom::@1
+Simple Condition irq_flipper_bottom::$6 [214] if(irq_flipper_bottom::irq_flipper_line#0<8) goto irq_flipper_bottom::@4
+Simple Condition irq_flipper_bottom::$8 [219] if(irq_flipper_bottom::irq_flipper_line#0>$128) goto irq_flipper_bottom::@6
+Simple Condition irq_flipper_bottom::$11 [224] if(irq_flipper_bottom::irq_flipper_line#0!=$130) goto irq_flipper_bottom::@1
+Simple Condition flipper_fix_colors::$7 [238] if(flipper_fix_colors::charline#0<flipper_charline) goto flipper_fix_colors::@return
+Simple Condition flipper_fix_colors::$11 [246] if(flipper_fix_colors::i#2<$28) goto flipper_fix_colors::@4
+Simple Condition plexPrepareInit::$0 [254] if(plexPrepareInit::i#2<$20) goto plexPrepareInit::@2
+Simple Condition plexPrepareFrame::$2 [262] if(plexPrepareFrame::m#2<(byte)$20-1) goto plexPrepareFrame::@2
+Simple Condition plexPrepareFrame::$5 [267] if(plexPrepareFrame::nxt_y#0>=PLEX_YPOS[PLEX_SORTED_IDX[plexPrepareFrame::m#2]]) goto plexPrepareFrame::@4
+Simple Condition plexPrepareFrame::$10 [283] if(plexPrepareFrame::i#2<8) goto plexPrepareFrame::@9
+Simple Condition plexPrepareFrame::$11 [292] if(plexPrepareFrame::i1#2<$20) goto plexPrepareFrame::@12
+Simple Condition plexPrepareFrame::$13 [296] if(plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::real_sprite_id#2]<=plexPrepareFrame::bucket_ypos#3) goto plexPrepareFrame::@14
+Simple Condition plexPrepareFrame::$1 [300] if(plexPrepareFrame::sprite#3==plexPrepareFrame::bucket#1) goto plexPrepareFrame::@return
+Simple Condition plexPrepareFrame::$15 [320] if(plexPrepareFrame::sprite#3==plexPrepareFrame::sprite#2) goto plexPrepareFrame::@15
+Simple Condition plexBucketShow::$6 [336] if(0!=plexBucketShow::bucket_ptr#0[plexBucketShow::i#3]) goto plexBucketShow::@2
+Simple Condition plexBucketShow::$7 [343] if(0!=PLEX_XPOS_MSB[plexBucketShow::plex_id#0]) goto plexBucketShow::@3
+Simple Condition plexBucketShow::$5 [352] if(plexBucketShow::i#2!=8*SIZEOF_STRUCT_BUCKETSPRITE) goto plexBucketShow::@1
+Simple Condition part2_init::$12 [400] if(part2_init::frame_idx#2<8) goto part2_init::@2
+Simple Condition part2_init::$13 [410] if(part2_init::s#2<$20) goto part2_init::@5
+Simple Condition part2_init::$15 [421] if(part2_init::s1#2<$20) goto part2_init::@8
+Simple Condition part2_init::$18 [436] if(part2_init::s2#2<8) goto part2_init::@11
+Simple Condition part2_loop::$0 [481] if(p2_work_ready==0) goto part2_loop::@1
+Simple Condition p2_logo_reveal::$0 [508] if(p2_logo_reveal_idx>=$28) goto p2_logo_reveal::@1
+Simple Condition plex_scroller_move::$0 [518] if(plex_scroller_move::s#10<$20) goto plex_scroller_move::@2
+Simple Condition plex_scroller_move::$2 [522] if(plex_scroller_move::x_idx#10!=0) goto plex_scroller_move::@4
+Simple Condition plex_scroller_move::$4 [527] if(*scroll_text_next!=0) goto plex_scroller_move::@5
+Simple Condition plex_scroller_move::$6 [531] if(plex_scroller_move::letter#0!=$ff) goto plex_scroller_move::@6
+Simple Condition irq_swing_plex::$1 [568] if(plex_bucket_id<9) goto irq_swing_plex::@1
+Simple Condition irq_swing_plex::$3 [577] if(plex_frame_id<8) goto irq_swing_plex::@5
+Simple Condition irq_swing_plex::$5 [581] if(0==p2_logo_swinging) goto irq_swing_plex::@6
+Simple Condition irq_swing_plex::$17 [587] if(0==p2_plex_scroller_moving) goto irq_swing_plex::@9
+Simple Condition irq_swing_plex::$9 [599] if(irq_swing_plex::coarse_scroll_diff#0==1) goto irq_swing_plex::@7
+Simple Condition irq_swing_plex::$11 [604] if(irq_swing_plex::coarse_scroll_diff#0!=$ff) goto irq_swing_plex::@8
+Simple Condition irq_swing_plex::$21 [618] if(sprite_color_idx!=irq_swing_plex::$19) goto irq_swing_plex::@10
+Simple Condition irq_swing_plex::$22 [623] if(irq_swing_plex::s#2<8) goto irq_swing_plex::@12
+Simple Condition vsp_update_screen::$2 [641] if(vsp_update_screen::$1==0) goto vsp_update_screen::@1
+Simple Condition vsp_update_screen::$4 [645] if(vsp_update_screen::$3==1) goto vsp_update_screen::@2
+Simple Condition main::$8 [659] if(demo_frame_count<(byte)5*$32) goto main::@1
+Simple Condition main::$9 [663] if(demo_frame_count<(word)$10*$32) goto main::@3
 Simple Condition sparkler_anim::$1 [676] if(sparkler_idx!=$1e) goto sparkler_anim::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [99] part1_loop::$5 = ! part1_loop::$4
-Rewriting && if()-condition to two if()s [98] part1_loop::$4 = part1_loop::$2 && part1_loop::$3
-Rewriting ! if()-condition to reversed if() [219] flipper_fix_colors::$3 = ! flipper_fix_colors::$2
-Rewriting && if()-condition to two if()s [218] flipper_fix_colors::$2 = flipper_fix_colors::$0 && flipper_fix_colors::$1
-Rewriting && if()-condition to two if()s [264] plexPrepareFrame::$9 = plexPrepareFrame::$7 && plexPrepareFrame::$8
-Rewriting ! if()-condition to reversed if() [472] part2_loop::$4 = ! part2_loop::$3
-Rewriting && if()-condition to two if()s [471] part2_loop::$3 = p2_logo_revealing && part2_loop::$2
-Rewriting ! if()-condition to reversed if() [477] part2_loop::$9 = ! part2_loop::$8
-Rewriting && if()-condition to two if()s [476] part2_loop::$8 = part2_loop::$6 && part2_loop::$7
-Rewriting ! if()-condition to reversed if() [482] part2_loop::$12 = ! part2_loop::$11
-Rewriting && if()-condition to two if()s [481] part2_loop::$11 = part2_loop::$10 && p2_logo_reveal_done
-Rewriting ! if()-condition to reversed if() [488] part2_loop::$16 = ! part2_loop::$15
-Rewriting && if()-condition to two if()s [487] part2_loop::$15 = part2_loop::$13 && part2_loop::$14
+Rewriting ! if()-condition to reversed if() [112] part1_loop::$5 = ! part1_loop::$4
+Rewriting && if()-condition to two if()s [111] part1_loop::$4 = part1_loop::$2 && part1_loop::$3
+Rewriting ! if()-condition to reversed if() [232] flipper_fix_colors::$3 = ! flipper_fix_colors::$2
+Rewriting && if()-condition to two if()s [231] flipper_fix_colors::$2 = flipper_fix_colors::$0 && flipper_fix_colors::$1
+Rewriting && if()-condition to two if()s [277] plexPrepareFrame::$9 = plexPrepareFrame::$7 && plexPrepareFrame::$8
+Rewriting ! if()-condition to reversed if() [485] part2_loop::$4 = ! part2_loop::$3
+Rewriting && if()-condition to two if()s [484] part2_loop::$3 = p2_logo_revealing && part2_loop::$2
+Rewriting ! if()-condition to reversed if() [490] part2_loop::$9 = ! part2_loop::$8
+Rewriting && if()-condition to two if()s [489] part2_loop::$8 = part2_loop::$6 && part2_loop::$7
+Rewriting ! if()-condition to reversed if() [495] part2_loop::$12 = ! part2_loop::$11
+Rewriting && if()-condition to two if()s [494] part2_loop::$11 = part2_loop::$10 && p2_logo_reveal_done
+Rewriting ! if()-condition to reversed if() [501] part2_loop::$16 = ! part2_loop::$15
+Rewriting && if()-condition to two if()s [500] part2_loop::$15 = part2_loop::$13 && part2_loop::$14
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition p2_logo_revealing
 Warning! Adding boolean cast to non-boolean condition p2_logo_reveal_done
-Negating conditional jump and destination [339] if(plexBucketShow::i#2==8*SIZEOF_STRUCT_BUCKETSPRITE) goto plexBucketShow::@5
-Constant right-side identified [111] init_rasters::$0 = sizeof  RASTER_BADLINES
-Constant right-side identified [284] plexPrepareFrame::$19 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [304] plexPrepareFrame::$20 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [389] memcpy::num#5 = sizeof  BUCKET_SPRITES
-Constant right-side identified [403] part2_init::$19 = (byte)8*9 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [534] irq_swing_top::$2 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [551] irq_swing_plex::$23 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [561] irq_swing_plex::$24 = (word)irq_swing_plex::YMOVE*9*8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [569] irq_swing_plex::$25 = (word)9*8*8 * SIZEOF_STRUCT_BUCKETSPRITE
-Constant right-side identified [603] irq_swing_plex::$19 = sizeof  SPRITE_COLOR_SEQUENCE
+Negating conditional jump and destination [352] if(plexBucketShow::i#2==8*SIZEOF_STRUCT_BUCKETSPRITE) goto plexBucketShow::@5
+Constant right-side identified [124] init_rasters::$0 = sizeof  RASTER_BADLINES
+Constant right-side identified [297] plexPrepareFrame::$19 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [317] plexPrepareFrame::$20 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [402] memcpy::num#5 = sizeof  BUCKET_SPRITES
+Constant right-side identified [416] part2_init::$19 = (byte)8*9 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [547] irq_swing_top::$2 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [564] irq_swing_plex::$23 = 8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [574] irq_swing_plex::$24 = (word)irq_swing_plex::YMOVE*9*8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [582] irq_swing_plex::$25 = (word)9*8*8 * SIZEOF_STRUCT_BUCKETSPRITE
+Constant right-side identified [616] irq_swing_plex::$19 = sizeof  SPRITE_COLOR_SEQUENCE
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memset::str#0 = (void*)PIXELS_EMPTY
 Constant memset::c#0 = 0
@@ -3949,56 +3949,56 @@ Constant part2_run::toD0181_$7 = (word)part2_run::toD0181_screen#0
 Constant plex_scroller_move::toSpritePtr1_$1 = (word)plex_scroller_move::toSpritePtr1_sprite#0
 Constant sparkler_anim::toSpritePtr1_$1 = (word)sparkler_anim::toSpritePtr1_sprite#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)irq_part1_top::toDd001_gfx#0 in [128] irq_part1_top::toDd001_$0 = > (word)irq_part1_top::toDd001_gfx#0
-Constant value identified (word)irq_part1_top::toD0181_gfx#0 in [138] irq_part1_top::toD0181_$3 = > (word)irq_part1_top::toD0181_gfx#0
-Constant value identified (word)irq_flipper_bottom::toD0181_gfx#0 in [186] irq_flipper_bottom::toD0181_$3 = > (word)irq_flipper_bottom::toD0181_gfx#0
-Constant value identified (word)part2_run::toDd001_gfx#0 in [436] part2_run::toDd001_$0 = > (word)part2_run::toDd001_gfx#0
-Constant value identified (word)part2_run::toD0181_gfx#0 in [446] part2_run::toD0181_$3 = > (word)part2_run::toD0181_gfx#0
+Constant value identified (word)irq_part1_top::toDd001_gfx#0 in [141] irq_part1_top::toDd001_$0 = > (word)irq_part1_top::toDd001_gfx#0
+Constant value identified (word)irq_part1_top::toD0181_gfx#0 in [151] irq_part1_top::toD0181_$3 = > (word)irq_part1_top::toD0181_gfx#0
+Constant value identified (word)irq_flipper_bottom::toD0181_gfx#0 in [199] irq_flipper_bottom::toD0181_$3 = > (word)irq_flipper_bottom::toD0181_gfx#0
+Constant value identified (word)part2_run::toDd001_gfx#0 in [449] part2_run::toDd001_$0 = > (word)part2_run::toDd001_gfx#0
+Constant value identified (word)part2_run::toD0181_gfx#0 in [459] part2_run::toD0181_$3 = > (word)part2_run::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [291] *plexPrepareFrame::$21 = plexPrepareFrame::ypos#0  -- plexPrepareFrame::$25[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
-Converting *(pointer+n) to pointer[n] [294] *plexPrepareFrame::$22 = plexPrepareFrame::plex_id#0  -- plexPrepareFrame::$26[OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID]
-Converting *(pointer+n) to pointer[n] [310] *plexPrepareFrame::$23 = 0  -- plexPrepareFrame::$27[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
-Converting *(pointer+n) to pointer[n] [313] *plexPrepareFrame::$24 = 0  -- plexPrepareFrame::$28[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
+Converting *(pointer+n) to pointer[n] [304] *plexPrepareFrame::$21 = plexPrepareFrame::ypos#0  -- plexPrepareFrame::$25[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
+Converting *(pointer+n) to pointer[n] [307] *plexPrepareFrame::$22 = plexPrepareFrame::plex_id#0  -- plexPrepareFrame::$26[OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID]
+Converting *(pointer+n) to pointer[n] [323] *plexPrepareFrame::$23 = 0  -- plexPrepareFrame::$27[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
+Converting *(pointer+n) to pointer[n] [326] *plexPrepareFrame::$24 = 0  -- plexPrepareFrame::$28[OFFSET_STRUCT_BUCKETSPRITE_YPOS]
 Successful SSA optimization Pass2InlineDerefIdx
-De-inlining pointer[w] to *(pointer+w)   [114] RASTER_BADLINES[init_rasters::i#2] = 0
-De-inlining pointer[w] to *(pointer+w)   [198] irq_flipper_bottom::irq_flipper_line#0 = FLIPPER_EASING[irq_flipper_bottom::$12]
-De-inlining pointer[w] to *(pointer+w)   [577] irq_swing_plex::scroll#0 = VSP_SINTABLE[irq_swing_plex::$26]
+De-inlining pointer[w] to *(pointer+w)   [127] RASTER_BADLINES[init_rasters::i#2] = 0
+De-inlining pointer[w] to *(pointer+w)   [211] irq_flipper_bottom::irq_flipper_line#0 = FLIPPER_EASING[irq_flipper_bottom::$12]
+De-inlining pointer[w] to *(pointer+w)   [590] irq_swing_plex::scroll#0 = VSP_SINTABLE[irq_swing_plex::$26]
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying expression containing zero (byte*)VICII in [82] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X) = $16
-Simplifying expression containing zero P1_SCREEN_SPRITE_PTRS in [88] P1_SCREEN_SPRITE_PTRS[0] = part1_run::toSpritePtr1_return#0
-Simplifying expression containing zero (byte*)CIA2 in [131] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = irq_part1_top::toDd001_return#0
-Simplifying expression containing zero BUCKET_YPOS in [271] plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::i#2] = BUCKET_YPOS[0]
-Simplifying expression containing zero BUCKET_YPOS in [275] plexPrepareFrame::bucket_ypos#0 = BUCKET_YPOS[plexPrepareFrame::bucket_id#0]
-Simplifying expression containing zero plexPrepareFrame::$25 in [290] plexPrepareFrame::$21 = plexPrepareFrame::$25 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
-Simplifying expression containing zero plexPrepareFrame::$25 in [291] plexPrepareFrame::$25[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = plexPrepareFrame::ypos#0
-Simplifying expression containing zero plexPrepareFrame::$27 in [309] plexPrepareFrame::$23 = plexPrepareFrame::$27 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
-Simplifying expression containing zero plexPrepareFrame::$27 in [310] plexPrepareFrame::$27[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = 0
-Simplifying expression containing zero plexPrepareFrame::$28 in [312] plexPrepareFrame::$24 = plexPrepareFrame::$28 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
-Simplifying expression containing zero plexPrepareFrame::$28 in [313] plexPrepareFrame::$28[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = 0
-Simplifying expression containing zero (byte*)VICII in [417] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X) = 0
-Simplifying expression containing zero (byte*)CIA2 in [439] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = part2_run::toDd001_return#0
-Simplifying expression containing zero BUCKET_YPOS in [457] *RASTER = BUCKET_YPOS[0]
-Simplifying expression containing zero BUCKET_YPOS in [559] *RASTER = BUCKET_YPOS[0]
+Simplifying expression containing zero (byte*)VICII in [95] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X) = $16
+Simplifying expression containing zero P1_SCREEN_SPRITE_PTRS in [101] P1_SCREEN_SPRITE_PTRS[0] = part1_run::toSpritePtr1_return#0
+Simplifying expression containing zero (byte*)CIA2 in [144] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = irq_part1_top::toDd001_return#0
+Simplifying expression containing zero BUCKET_YPOS in [284] plexPrepareFrame::real_sprite_free_ypos[plexPrepareFrame::i#2] = BUCKET_YPOS[0]
+Simplifying expression containing zero BUCKET_YPOS in [288] plexPrepareFrame::bucket_ypos#0 = BUCKET_YPOS[plexPrepareFrame::bucket_id#0]
+Simplifying expression containing zero plexPrepareFrame::$25 in [303] plexPrepareFrame::$21 = plexPrepareFrame::$25 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
+Simplifying expression containing zero plexPrepareFrame::$25 in [304] plexPrepareFrame::$25[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = plexPrepareFrame::ypos#0
+Simplifying expression containing zero plexPrepareFrame::$27 in [322] plexPrepareFrame::$23 = plexPrepareFrame::$27 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
+Simplifying expression containing zero plexPrepareFrame::$27 in [323] plexPrepareFrame::$27[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = 0
+Simplifying expression containing zero plexPrepareFrame::$28 in [325] plexPrepareFrame::$24 = plexPrepareFrame::$28 + OFFSET_STRUCT_BUCKETSPRITE_YPOS
+Simplifying expression containing zero plexPrepareFrame::$28 in [326] plexPrepareFrame::$28[OFFSET_STRUCT_BUCKETSPRITE_YPOS] = 0
+Simplifying expression containing zero (byte*)VICII in [430] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X) = 0
+Simplifying expression containing zero (byte*)CIA2 in [452] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = part2_run::toDd001_return#0
+Simplifying expression containing zero BUCKET_YPOS in [470] *RASTER = BUCKET_YPOS[0]
+Simplifying expression containing zero BUCKET_YPOS in [572] *RASTER = BUCKET_YPOS[0]
 Simplifying expression containing zero P1_SCREEN_SPRITE_PTRS in [683] P1_SCREEN_SPRITE_PTRS[0] = sparkler_anim::$4
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block part2_loop::@return
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memset::return#2 and assignment [39] memset::return#2 = memset::str#6
-Eliminating unused variable memcpy::return#2 and assignment [43] memcpy::return#2 = memcpy::destination#6
-Eliminating unused variable memcpy::return#3 and assignment [47] memcpy::return#3 = memcpy::destination#6
-Eliminating unused variable memcpy::return#4 and assignment [49] memcpy::return#4 = memcpy::destination#6
-Eliminating unused variable plexPrepareFrame::$21 and assignment [230] plexPrepareFrame::$21 = plexPrepareFrame::$25
-Eliminating unused variable plexPrepareFrame::$22 and assignment [233] plexPrepareFrame::$22 = plexPrepareFrame::$26 + OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID
-Eliminating unused variable plexPrepareFrame::$23 and assignment [247] plexPrepareFrame::$23 = plexPrepareFrame::$27
-Eliminating unused variable plexPrepareFrame::$24 and assignment [250] plexPrepareFrame::$24 = plexPrepareFrame::$28
-Eliminating unused variable memcpy::return#5 and assignment [281] memcpy::return#5 = memcpy::destination#6
-Eliminating unused variable memcpy::return#6 and assignment [283] memcpy::return#6 = memcpy::destination#6
-Eliminating unused variable memset::return#3 and assignment [291] memset::return#3 = memset::str#6
-Eliminating unused variable memset::return#4 and assignment [295] memset::return#4 = memset::str#6
-Eliminating unused variable memset::return#5 and assignment [297] memset::return#5 = memset::str#6
-Eliminating unused variable memcpy::return#7 and assignment [305] memcpy::return#7 = memcpy::destination#6
-Eliminating unused variable memset::return#6 and assignment [331] memset::return#6 = memset::str#6
+Eliminating unused variable memset::return#2 and assignment [51] memset::return#2 = memset::str#6
+Eliminating unused variable memcpy::return#2 and assignment [55] memcpy::return#2 = memcpy::destination#6
+Eliminating unused variable memcpy::return#3 and assignment [59] memcpy::return#3 = memcpy::destination#6
+Eliminating unused variable memcpy::return#4 and assignment [61] memcpy::return#4 = memcpy::destination#6
+Eliminating unused variable plexPrepareFrame::$21 and assignment [242] plexPrepareFrame::$21 = plexPrepareFrame::$25
+Eliminating unused variable plexPrepareFrame::$22 and assignment [245] plexPrepareFrame::$22 = plexPrepareFrame::$26 + OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID
+Eliminating unused variable plexPrepareFrame::$23 and assignment [259] plexPrepareFrame::$23 = plexPrepareFrame::$27
+Eliminating unused variable plexPrepareFrame::$24 and assignment [262] plexPrepareFrame::$24 = plexPrepareFrame::$28
+Eliminating unused variable memcpy::return#5 and assignment [293] memcpy::return#5 = memcpy::destination#6
+Eliminating unused variable memcpy::return#6 and assignment [295] memcpy::return#6 = memcpy::destination#6
+Eliminating unused variable memset::return#3 and assignment [303] memset::return#3 = memset::str#6
+Eliminating unused variable memset::return#4 and assignment [307] memset::return#4 = memset::str#6
+Eliminating unused variable memset::return#5 and assignment [309] memset::return#5 = memset::str#6
+Eliminating unused variable memcpy::return#7 and assignment [317] memcpy::return#7 = memcpy::destination#6
+Eliminating unused variable memset::return#6 and assignment [343] memset::return#6 = memset::str#6
 Eliminating unused constant OFFSET_STRUCT_MOS6526_CIA_PORT_A
 Eliminating unused constant OFFSET_STRUCT_MOS6569_VICII_SPRITE0_X
 Eliminating unused constant OFFSET_STRUCT_BUCKETSPRITE_YPOS
@@ -4023,13 +4023,13 @@ Alias candidate removed (volatile)plex_real_sprite_idx = plexBucketShow::$1
 Alias candidate removed (volatile)vsp_fine_scroll = irq_swing_plex::$6 
 Alias candidate removed (volatile)vsp_scroll = irq_swing_plex::$16 
 Alias candidate removed (volatile)vsp_update_screen::x_offset8 = vsp_update_screen::$0 
-Simple Condition part1_loop::$2 [75] if(0==sparkler_active) goto part1_loop::@10
-Simple Condition flipper_fix_colors::$0 [176] if(irq_flipper_top_line>$2e) goto flipper_fix_colors::@6
-Simple Condition plexPrepareFrame::$7 [209] if(plexPrepareFrame::s#1!=$ff) goto plexPrepareFrame::@19
-Simple Condition part2_loop::$21 [353] if(0!=p2_logo_revealing) goto part2_loop::@13
-Simple Condition part2_loop::$6 [356] if(0==p2_logo_revealing) goto part2_loop::@14
-Simple Condition part2_loop::$10 [359] if(0==p2_logo_swinging) goto part2_loop::@15
-Simple Condition part2_loop::$13 [363] if(0==p2_plex_scroller_moving) goto part2_loop::@16
+Simple Condition part1_loop::$2 [87] if(0==sparkler_active) goto part1_loop::@10
+Simple Condition flipper_fix_colors::$0 [188] if(irq_flipper_top_line>$2e) goto flipper_fix_colors::@6
+Simple Condition plexPrepareFrame::$7 [221] if(plexPrepareFrame::s#1!=$ff) goto plexPrepareFrame::@19
+Simple Condition part2_loop::$21 [365] if(0!=p2_logo_revealing) goto part2_loop::@13
+Simple Condition part2_loop::$6 [368] if(0==p2_logo_revealing) goto part2_loop::@14
+Simple Condition part2_loop::$10 [371] if(0==p2_logo_swinging) goto part2_loop::@15
+Simple Condition part2_loop::$13 [375] if(0==p2_plex_scroller_moving) goto part2_loop::@16
 Condition not simple part1_loop::$3 [566] if(part1_loop::$3) goto part1_loop::@3
 Introduced intermediate condition variable part1_loop::$11 = demo_frame_count
 Simple Condition part1_loop::$3 [566] if(part1_loop::$11>(word)9*$32-3) goto part1_loop::@3
@@ -4044,29 +4044,29 @@ Condition not simple part2_loop::$14 [573] if(part2_loop::$14) goto part2_loop::
 Introduced intermediate condition variable part2_loop::$24 = demo_frame_count
 Simple Condition part2_loop::$14 [573] if(part2_loop::$24>(word)$1a*$32) goto part2_loop::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [75] if(0!=sparkler_active) goto part1_loop::@4
-Negating conditional jump and destination [176] if(irq_flipper_top_line<=$2e) goto flipper_fix_colors::@return
-Negating conditional jump and destination [209] if(plexPrepareFrame::s#1==$ff) goto plexPrepareFrame::@6
-Negating conditional jump and destination [353] if(0==p2_logo_revealing) goto part2_loop::@4
-Negating conditional jump and destination [356] if(0!=p2_logo_revealing) goto part2_loop::@5
-Negating conditional jump and destination [359] if(0!=p2_logo_swinging) goto part2_loop::@6
-Negating conditional jump and destination [363] if(0!=p2_plex_scroller_moving) goto part2_loop::@7
+Negating conditional jump and destination [87] if(0!=sparkler_active) goto part1_loop::@4
+Negating conditional jump and destination [188] if(irq_flipper_top_line<=$2e) goto flipper_fix_colors::@return
+Negating conditional jump and destination [221] if(plexPrepareFrame::s#1==$ff) goto plexPrepareFrame::@6
+Negating conditional jump and destination [365] if(0==p2_logo_revealing) goto part2_loop::@4
+Negating conditional jump and destination [368] if(0!=p2_logo_revealing) goto part2_loop::@5
+Negating conditional jump and destination [371] if(0!=p2_logo_swinging) goto part2_loop::@6
+Negating conditional jump and destination [375] if(0!=p2_plex_scroller_moving) goto part2_loop::@7
 Negating conditional jump and destination [566] if(part1_loop::$11<=(word)9*$32-3) goto part1_loop::@4
 Negating conditional jump and destination [570] if(part2_loop::$23<=(word)$12*$32+$19) goto part2_loop::@5
 Negating conditional jump and destination [572] if(0==p2_logo_reveal_done) goto part2_loop::@6
 Negating conditional jump and destination [573] if(part2_loop::$24<=(word)$1a*$32) goto part2_loop::@7
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [64] part1_run::toSpritePtr1_$0 = part1_run::toSpritePtr1_$1 / $40
-Constant right-side identified [97] irq_part1_top::toDd001_$0 = > (word)irq_part1_top::toDd001_gfx#0
-Constant right-side identified [101] irq_part1_top::toD0181_$0 = irq_part1_top::toD0181_$7 & $3fff
-Constant right-side identified [104] irq_part1_top::toD0181_$3 = > (word)irq_part1_top::toD0181_gfx#0
-Constant right-side identified [144] irq_flipper_bottom::toD0181_$0 = irq_flipper_bottom::toD0181_$7 & $3fff
-Constant right-side identified [147] irq_flipper_bottom::toD0181_$3 = > (word)irq_flipper_bottom::toD0181_gfx#0
-Constant right-side identified [303] part2_init::toSpritePtr1_$0 = part2_init::toSpritePtr1_$1 / $40
-Constant right-side identified [321] part2_run::toDd001_$0 = > (word)part2_run::toDd001_gfx#0
-Constant right-side identified [325] part2_run::toD0181_$0 = part2_run::toD0181_$7 & $3fff
-Constant right-side identified [328] part2_run::toD0181_$3 = > (word)part2_run::toD0181_gfx#0
-Constant right-side identified [388] plex_scroller_move::toSpritePtr1_$0 = plex_scroller_move::toSpritePtr1_$1 / $40
+Constant right-side identified [76] part1_run::toSpritePtr1_$0 = part1_run::toSpritePtr1_$1 / $40
+Constant right-side identified [109] irq_part1_top::toDd001_$0 = > (word)irq_part1_top::toDd001_gfx#0
+Constant right-side identified [113] irq_part1_top::toD0181_$0 = irq_part1_top::toD0181_$7 & $3fff
+Constant right-side identified [116] irq_part1_top::toD0181_$3 = > (word)irq_part1_top::toD0181_gfx#0
+Constant right-side identified [156] irq_flipper_bottom::toD0181_$0 = irq_flipper_bottom::toD0181_$7 & $3fff
+Constant right-side identified [159] irq_flipper_bottom::toD0181_$3 = > (word)irq_flipper_bottom::toD0181_gfx#0
+Constant right-side identified [315] part2_init::toSpritePtr1_$0 = part2_init::toSpritePtr1_$1 / $40
+Constant right-side identified [333] part2_run::toDd001_$0 = > (word)part2_run::toDd001_gfx#0
+Constant right-side identified [337] part2_run::toD0181_$0 = part2_run::toD0181_$7 & $3fff
+Constant right-side identified [340] part2_run::toD0181_$3 = > (word)part2_run::toD0181_gfx#0
+Constant right-side identified [400] plex_scroller_move::toSpritePtr1_$0 = plex_scroller_move::toSpritePtr1_$1 / $40
 Constant right-side identified [520] sparkler_anim::toSpritePtr1_$0 = sparkler_anim::toSpritePtr1_$1 / $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant part1_run::toSpritePtr1_$0 = part1_run::toSpritePtr1_$1/$40
@@ -4087,7 +4087,7 @@ Constant part2_init::toSpritePtr1_return#0 = (byte)part2_init::toSpritePtr1_$0
 Constant plex_scroller_move::toSpritePtr1_return#0 = (byte)plex_scroller_move::toSpritePtr1_$0
 Constant sparkler_anim::toSpritePtr1_return#0 = (byte)sparkler_anim::toSpritePtr1_$0
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting conditional comparison [176] if(irq_flipper_top_line<=$2e) goto flipper_fix_colors::@return
+Rewriting conditional comparison [188] if(irq_flipper_top_line<=$2e) goto flipper_fix_colors::@return
 Adding number conversion cast (unumber) 8*9*8 in 
 Adding number conversion cast (unumber) $130 in 
 Adding number conversion cast (unumber) $30 in 
@@ -4110,15 +4110,15 @@ Alias candidate removed (volatile)plex_real_sprite_idx = plexBucketShow::$1
 Alias candidate removed (volatile)vsp_fine_scroll = irq_swing_plex::$6 
 Alias candidate removed (volatile)vsp_scroll = irq_swing_plex::$16 
 Alias candidate removed (volatile)vsp_update_screen::x_offset8 = vsp_update_screen::$0 
-Constant right-side identified [94] irq_part1_top::toDd001_$1 = irq_part1_top::toDd001_$0 / $40
-Constant right-side identified [97] irq_part1_top::toD0181_$1 = irq_part1_top::toD0181_$0 * 4
-Constant right-side identified [99] irq_part1_top::toD0181_$4 = irq_part1_top::toD0181_$3 / 4
-Constant right-side identified [138] irq_flipper_bottom::toD0181_$1 = irq_flipper_bottom::toD0181_$0 * 4
-Constant right-side identified [140] irq_flipper_bottom::toD0181_$4 = irq_flipper_bottom::toD0181_$3 / 4
-Constant right-side identified [291] part2_init::$17 = part2_init::toSpritePtr1_return#0 + ' '
-Constant right-side identified [307] part2_run::toDd001_$1 = part2_run::toDd001_$0 / $40
-Constant right-side identified [310] part2_run::toD0181_$1 = part2_run::toD0181_$0 * 4
-Constant right-side identified [312] part2_run::toD0181_$4 = part2_run::toD0181_$3 / 4
+Constant right-side identified [106] irq_part1_top::toDd001_$1 = irq_part1_top::toDd001_$0 / $40
+Constant right-side identified [109] irq_part1_top::toD0181_$1 = irq_part1_top::toD0181_$0 * 4
+Constant right-side identified [111] irq_part1_top::toD0181_$4 = irq_part1_top::toD0181_$3 / 4
+Constant right-side identified [150] irq_flipper_bottom::toD0181_$1 = irq_flipper_bottom::toD0181_$0 * 4
+Constant right-side identified [152] irq_flipper_bottom::toD0181_$4 = irq_flipper_bottom::toD0181_$3 / 4
+Constant right-side identified [303] part2_init::$17 = part2_init::toSpritePtr1_return#0 + ' '
+Constant right-side identified [319] part2_run::toDd001_$1 = part2_run::toDd001_$0 / $40
+Constant right-side identified [322] part2_run::toD0181_$1 = part2_run::toD0181_$0 * 4
+Constant right-side identified [324] part2_run::toD0181_$4 = part2_run::toD0181_$3 / 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant irq_part1_top::toDd001_$1 = irq_part1_top::toDd001_$0/$40
 Constant irq_part1_top::toD0181_$1 = irq_part1_top::toD0181_$0*4
@@ -4137,14 +4137,14 @@ Alias candidate removed (volatile)plex_real_sprite_idx = plexBucketShow::$1
 Alias candidate removed (volatile)vsp_fine_scroll = irq_swing_plex::$6 
 Alias candidate removed (volatile)vsp_scroll = irq_swing_plex::$16 
 Alias candidate removed (volatile)vsp_update_screen::x_offset8 = vsp_update_screen::$0 
-Constant right-side identified [94] irq_part1_top::toDd001_return#0 = 3 ^ irq_part1_top::toDd001_$1
-Constant right-side identified [96] irq_part1_top::toD0181_$2 = > irq_part1_top::toD0181_$1
-Constant right-side identified [97] irq_part1_top::toD0181_$5 = irq_part1_top::toD0181_$4 & $f
-Constant right-side identified [135] irq_flipper_bottom::toD0181_$2 = > irq_flipper_bottom::toD0181_$1
-Constant right-side identified [136] irq_flipper_bottom::toD0181_$5 = irq_flipper_bottom::toD0181_$4 & $f
-Constant right-side identified [301] part2_run::toDd001_return#0 = 3 ^ part2_run::toDd001_$1
-Constant right-side identified [303] part2_run::toD0181_$2 = > part2_run::toD0181_$1
-Constant right-side identified [304] part2_run::toD0181_$5 = part2_run::toD0181_$4 & $f
+Constant right-side identified [106] irq_part1_top::toDd001_return#0 = 3 ^ irq_part1_top::toDd001_$1
+Constant right-side identified [108] irq_part1_top::toD0181_$2 = > irq_part1_top::toD0181_$1
+Constant right-side identified [109] irq_part1_top::toD0181_$5 = irq_part1_top::toD0181_$4 & $f
+Constant right-side identified [147] irq_flipper_bottom::toD0181_$2 = > irq_flipper_bottom::toD0181_$1
+Constant right-side identified [148] irq_flipper_bottom::toD0181_$5 = irq_flipper_bottom::toD0181_$4 & $f
+Constant right-side identified [313] part2_run::toDd001_return#0 = 3 ^ part2_run::toDd001_$1
+Constant right-side identified [315] part2_run::toD0181_$2 = > part2_run::toD0181_$1
+Constant right-side identified [316] part2_run::toD0181_$5 = part2_run::toD0181_$4 & $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant irq_part1_top::toDd001_return#0 = 3^irq_part1_top::toDd001_$1
 Constant irq_part1_top::toD0181_$2 = >irq_part1_top::toD0181_$1
@@ -4160,8 +4160,8 @@ Simplifying constant evaluating to zero irq_part1_top::toD0181_$4&$f in
 Simplifying constant evaluating to zero 3^part2_run::toDd001_$1 in 
 Simplifying constant evaluating to zero part2_run::toD0181_$4&$f in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero irq_part1_top::toD0181_$2 in [98] irq_part1_top::toD0181_return#0 = irq_part1_top::toD0181_$2 | irq_part1_top::toD0181_$5
-Simplifying expression containing zero part2_run::toD0181_$2 in [305] part2_run::toD0181_return#0 = part2_run::toD0181_$2 | part2_run::toD0181_$5
+Simplifying expression containing zero irq_part1_top::toD0181_$2 in [110] irq_part1_top::toD0181_return#0 = irq_part1_top::toD0181_$2 | irq_part1_top::toD0181_$5
+Simplifying expression containing zero part2_run::toD0181_$2 in [317] part2_run::toD0181_return#0 = part2_run::toD0181_$2 | part2_run::toD0181_$5
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant irq_part1_top::toDd001_$1
 Eliminating unused constant irq_part1_top::toD0181_$4
@@ -4187,7 +4187,7 @@ Alias candidate removed (volatile)plex_real_sprite_idx = plexBucketShow::$1
 Alias candidate removed (volatile)vsp_fine_scroll = irq_swing_plex::$6 
 Alias candidate removed (volatile)vsp_scroll = irq_swing_plex::$16 
 Alias candidate removed (volatile)vsp_update_screen::x_offset8 = vsp_update_screen::$0 
-Constant right-side identified [132] irq_flipper_bottom::toD0181_return#0 = irq_flipper_bottom::toD0181_$2 | irq_flipper_bottom::toD0181_$5
+Constant right-side identified [144] irq_flipper_bottom::toD0181_return#0 = irq_flipper_bottom::toD0181_$2 | irq_flipper_bottom::toD0181_$5
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant irq_part1_top::toD0181_return#0 = irq_part1_top::toD0181_$2
 Constant irq_flipper_bottom::toD0181_return#0 = irq_flipper_bottom::toD0181_$2|irq_flipper_bottom::toD0181_$5
@@ -4205,23 +4205,23 @@ Inlining Noop Cast [2] memcpy::dst#0 = (byte*)memcpy::destination#6 keeping memc
 Inlining Noop Cast [3] memcpy::$2 = (byte*)memcpy::source#6 keeping memcpy::source#6
 Inlining Noop Cast [13] memset::$4 = (byte*)memset::str#6 keeping memset::str#6
 Inlining Noop Cast [15] memset::dst#0 = (byte*)memset::str#6 keeping memset::str#6
-Inlining Noop Cast [201] plexPrepareFrame::$25 = (byte*)plexPrepareFrame::sprite#4 keeping plexPrepareFrame::sprite#4
-Inlining Noop Cast [203] plexPrepareFrame::$26 = (byte*)plexPrepareFrame::sprite#4 keeping plexPrepareFrame::sprite#4
-Inlining Noop Cast [216] plexPrepareFrame::$27 = (byte*)plexPrepareFrame::sprite#3 keeping plexPrepareFrame::sprite#3
-Inlining Noop Cast [218] plexPrepareFrame::$28 = (byte*)plexPrepareFrame::sprite#3 keeping plexPrepareFrame::sprite#3
-Inlining Noop Cast [224] plexBucketShow::bucket_ptr#0 = (byte*)plexBucketShow::bucket#2 keeping plexBucketShow::bucket#2
+Inlining Noop Cast [213] plexPrepareFrame::$25 = (byte*)plexPrepareFrame::sprite#4 keeping plexPrepareFrame::sprite#4
+Inlining Noop Cast [215] plexPrepareFrame::$26 = (byte*)plexPrepareFrame::sprite#4 keeping plexPrepareFrame::sprite#4
+Inlining Noop Cast [228] plexPrepareFrame::$27 = (byte*)plexPrepareFrame::sprite#3 keeping plexPrepareFrame::sprite#3
+Inlining Noop Cast [230] plexPrepareFrame::$28 = (byte*)plexPrepareFrame::sprite#3 keeping plexPrepareFrame::sprite#3
+Inlining Noop Cast [236] plexBucketShow::bucket_ptr#0 = (byte*)plexBucketShow::bucket#2 keeping plexBucketShow::bucket#2
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [137] irq_flipper_bottom::$12 = irq_flipper_idx * SIZEOF_WORD
-Rewriting division to use shift [156] flipper_fix_colors::$5 = flipper_fix_colors::$4 / 8
-Rewriting multiplication to use shift and addition[160] flipper_fix_colors::offset#0 = flipper_fix_colors::$12 * $28
-Rewriting multiplication to use shift [225] plexBucketShow::real_idx#0 = plex_real_sprite_idx * 2
-Rewriting division to use shift [232] plexBucketShow::real_idx#1 = plexBucketShow::real_idx#4 / 2
-Rewriting multiplication to use shift [239] plexBucketShow::real_idx#3 = plexBucketShow::real_idx#2 * 2
-Rewriting division to use shift [243] plexBucketShow::$1 = plexBucketShow::real_idx#8 / 2
-Rewriting multiplication to use shift [388] irq_swing_plex::$26 = irq_swing_plex::$27 * SIZEOF_WORD
-Rewriting division to use shift [395] irq_swing_plex::$7 = irq_swing_plex::scroll#0 / 8
-Rewriting multiplication to use shift [422] update_frame_plex_id_offset::$0 = update_frame_plex_id_offset::plex_frame_id#0 * SIZEOF_WORD
-Rewriting multiplication to use shift [430] vsp_update_screen::$0 = vsp_update_screen::$5 * 8
+Rewriting multiplication to use shift [149] irq_flipper_bottom::$12 = irq_flipper_idx * SIZEOF_WORD
+Rewriting division to use shift [168] flipper_fix_colors::$5 = flipper_fix_colors::$4 / 8
+Rewriting multiplication to use shift and addition[172] flipper_fix_colors::offset#0 = flipper_fix_colors::$12 * $28
+Rewriting multiplication to use shift [237] plexBucketShow::real_idx#0 = plex_real_sprite_idx * 2
+Rewriting division to use shift [244] plexBucketShow::real_idx#1 = plexBucketShow::real_idx#4 / 2
+Rewriting multiplication to use shift [251] plexBucketShow::real_idx#3 = plexBucketShow::real_idx#2 * 2
+Rewriting division to use shift [255] plexBucketShow::$1 = plexBucketShow::real_idx#8 / 2
+Rewriting multiplication to use shift [400] irq_swing_plex::$26 = irq_swing_plex::$27 * SIZEOF_WORD
+Rewriting division to use shift [407] irq_swing_plex::$7 = irq_swing_plex::scroll#0 / 8
+Rewriting multiplication to use shift [434] update_frame_plex_id_offset::$0 = update_frame_plex_id_offset::plex_frame_id#0 * SIZEOF_WORD
+Rewriting multiplication to use shift [442] vsp_update_screen::$0 = vsp_update_screen::$5 * 8
 Rewriting division to use shift [476] sparkler_anim::$3 = sparkler_idx / 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings memcpy::destination#0
@@ -4402,6 +4402,10 @@ Alias candidate removed (volatile)vsp_scroll = irq_swing_plex::$16
 Alias candidate removed (volatile)vsp_update_screen::x_offset8 = vsp_update_screen::$0 
 Finalized unsigned number type (word) $130
 Finalized unsigned number type (word) $130
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 9
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $20
@@ -4413,10 +4417,6 @@ Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
 Finalized unsigned number type (word) $100
 Finalized unsigned number type (word) $100
 Finalized unsigned number type (byte) 8
@@ -7810,6 +7810,8 @@ Uplift Scope [irq_demo] 0.67: zp[1]:85 [ irq_demo::port_value#0 ]
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
+Uplift Scope [demo_start] 
+Uplift Scope [demo_work] 
 Uplift Scope [part1_init] 
 Uplift Scope [part1_run] 
 Uplift Scope [BucketSprite] 
@@ -7819,8 +7821,6 @@ Uplift Scope [p2_logo_reveal]
 Uplift Scope [irq_swing_top] 
 Uplift Scope [main] 
 Uplift Scope [demo_init] 
-Uplift Scope [demo_start] 
-Uplift Scope [demo_work] 
 Uplift Scope [__start] 
 
 Uplifting [plexPrepareFrame] best 103254 combination reg byte x [ plexPrepareFrame::s#3 plexPrepareFrame::s#1 plexPrepareFrame::s#6 ] zp[2]:45 [ plexPrepareFrame::sprite#4 plexPrepareFrame::sprite#3 plexPrepareFrame::frame#0 plexPrepareFrame::sprite#1 plexPrepareFrame::sprite#13 ] reg byte x [ plexPrepareFrame::i#2 plexPrepareFrame::i#1 ] zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] zp[1]:47 [ plexPrepareFrame::bucket_ypos#4 plexPrepareFrame::bucket_ypos#3 plexPrepareFrame::bucket_ypos#0 plexPrepareFrame::bucket_ypos#1 plexPrepareFrame::bucket_ypos#2 ] zp[1]:40 [ plexPrepareFrame::i1#2 plexPrepareFrame::i1#1 ] zp[1]:161 [ plexPrepareFrame::$16 ] zp[1]:162 [ plexPrepareFrame::$17 ] zp[1]:165 [ plexPrepareFrame::s#2 ] zp[2]:42 [ plexPrepareFrame::bucket#3 plexPrepareFrame::bucket#10 plexPrepareFrame::bucket#9 plexPrepareFrame::sprite#2 ] zp[1]:164 [ plexPrepareFrame::nxt_y#0 ] zp[1]:44 [ plexPrepareFrame::bucket_id#2 plexPrepareFrame::bucket_id#5 plexPrepareFrame::bucket_id#1 ] zp[1]:41 [ plexPrepareFrame::real_sprite_id#2 plexPrepareFrame::real_sprite_id#1 ] zp[1]:163 [ plexPrepareFrame::nxt_idx#0 ] zp[1]:159 [ plexPrepareFrame::plex_id#0 ] zp[1]:160 [ plexPrepareFrame::ypos#0 ] zp[2]:157 [ plexPrepareFrame::bucket#1 ] 
@@ -7854,6 +7854,8 @@ Uplifting [irq_demo] best 98744 combination zp[1]:85 [ irq_demo::port_value#0 ]
 Uplifting [MOS6526_CIA] best 98744 combination 
 Uplifting [MOS6569_VICII] best 98744 combination 
 Uplifting [MOS6581_SID] best 98744 combination 
+Uplifting [demo_start] best 98744 combination 
+Uplifting [demo_work] best 98744 combination 
 Uplifting [part1_init] best 98744 combination 
 Uplifting [part1_run] best 98744 combination 
 Uplifting [BucketSprite] best 98744 combination 
@@ -7863,8 +7865,6 @@ Uplifting [p2_logo_reveal] best 98744 combination
 Uplifting [irq_swing_top] best 98744 combination 
 Uplifting [main] best 98744 combination 
 Uplifting [demo_init] best 98744 combination 
-Uplifting [demo_start] best 98744 combination 
-Uplifting [demo_work] best 98744 combination 
 Uplifting [__start] best 98744 combination 
 Attempting to uplift remaining variables inzp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ]
 Uplifting [plexPrepareFrame] best 98744 combination zp[1]:38 [ plexPrepareFrame::m#2 plexPrepareFrame::m#1 ] 

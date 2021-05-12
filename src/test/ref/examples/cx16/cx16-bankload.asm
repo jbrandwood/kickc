@@ -1451,9 +1451,9 @@ cputln: {
 // Computes the length of the string str up to but not including the terminating null character.
 // strlen(byte* zp($2b) str)
 strlen: {
-    .label len = $2d
     .label str = $2b
     .label return = $2d
+    .label len = $2d
     lda #<0
     sta.z len
     sta.z len+1

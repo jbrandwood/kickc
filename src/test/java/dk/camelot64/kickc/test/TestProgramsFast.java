@@ -837,7 +837,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testCStyleDeclFunctionRedefinition() throws IOException {
-      assertError("cstyle-decl-function-redefinition.c", "Redefinition of function: sum");
+      assertError("cstyle-decl-function-redefinition.c", "Redefinition of procedure sum");
    }
 
    @Test

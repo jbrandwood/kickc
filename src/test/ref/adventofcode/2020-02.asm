@@ -527,8 +527,8 @@ printf_uint: {
 // Modifies *endptr to point to the first unparseable character
 // strtouc(byte* zp($f) str)
 strtouc: {
-    .label str = $f
     .label val = $1c
+    .label str = $f
     // char c = *str
     ldy #0
     lda (str),y

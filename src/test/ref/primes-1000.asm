@@ -481,10 +481,10 @@ divr16s: {
 // utoa(word zp($15) value, byte* zp($19) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $15
     .label digit_value = $1d
     .label buffer = $19
     .label digit = $14
-    .label value = $15
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits

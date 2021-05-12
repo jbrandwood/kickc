@@ -101,7 +101,7 @@ export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)
-export void (*VECTORS[])( = {
+export void (*VECTORS[])() = {
     // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
     &vblank, 
     // RESET Called when the NES is reset, including when it is turned on.

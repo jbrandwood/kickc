@@ -24,9 +24,9 @@
   .const PI_HALF_u4f12 = $1922
   .const SIZEOF_SIGNED_WORD = 2
   .label print_screen = $400
+  .label print_char_cursor = $15
   // Remainder after unsigned 16-bit division
   .label rem16u = $17
-  .label print_char_cursor = $15
 .segment Code
 main: {
     .label wavelength = $78
@@ -353,9 +353,9 @@ print_sint: {
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
+    .label return = $1f
     .label quotient_hi = $27
     .label quotient_lo = $29
-    .label return = $1f
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -955,11 +955,11 @@ print_uchar: {
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($29) a, word zp($19) b)
 mul16u: {
-    .label mb = $1b
     .label a = $29
-    .label res = $23
     .label b = $19
     .label return = $23
+    .label mb = $1b
+    .label res = $23
     // unsigned long mb = b
     lda.z b
     sta.z mb

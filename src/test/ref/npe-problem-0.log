@@ -1,0 +1,215 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  bram_base#6 = phi( __start::@1/bram_base#10 )
+  SCREEN[0] = *bram_base#6
+  bram_base#0 = ++ bram_base#6
+  SCREEN[1] = *bram_base#0
+  bram_base#1 = ++ bram_base#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  bram_base#7 = phi( main/bram_base#1 )
+  bram_base#2 = bram_base#7
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  bram_base#3 = (byte*)&bram
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  bram_base#10 = phi( __start::__init1/bram_base#3 )
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  bram_base#8 = phi( __start::@1/bram_base#2 )
+  bram_base#4 = bram_base#8
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  bram_base#9 = phi( __start::@2/bram_base#4 )
+  bram_base#5 = bram_base#9
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* const SCREEN = (byte*)$400
+void __start()
+constant byte* bram[$64]  = { fill( $64, 0) }
+byte* bram_base
+byte* bram_base#0
+byte* bram_base#1
+byte* bram_base#10
+byte* bram_base#2
+byte* bram_base#3
+byte* bram_base#4
+byte* bram_base#5
+byte* bram_base#6
+byte* bram_base#7
+byte* bram_base#8
+byte* bram_base#9
+void main()
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *bram_base#6
+Adding number conversion cast (unumber) 1 in SCREEN[1] = *bram_base#0
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias bram_base#1 = bram_base#7 bram_base#2 
+Alias bram_base#10 = bram_base#3 
+Alias bram_base#4 = bram_base#8 bram_base#9 bram_base#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values bram_base#6 bram_base#10
+Identical Phi Values bram_base#4 bram_base#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant bram_base#10 = (byte*)&bram
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [1] SCREEN[0] = *bram_base#10
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable bram_base#1 and assignment [3] bram_base#1 = ++ bram_base#0
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [1] bram_base#0 = ++ bram_base#10
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant bram_base#0 = ++bram_base#10
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings bram_base#10
+Inlining constant with different constant siblings bram_base#0
+Constant inlined bram_base#10 = (byte*)&bram
+Constant inlined bram_base#0 = ++(byte*)&bram
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) $64
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SCREEN = *((byte*)&bram)
+  [1] *(SCREEN+1) = *(++(byte*)&bram)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+byte* bram_base
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SCREEN = *((byte*)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = *(++(byte*)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 25 combination 
+Uplifting [] best 25 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="npe-problem-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *SCREEN = *((byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    lda bram
+    sta SCREEN
+    // [1] *(SCREEN+1) = *(++(byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    lda bram+1
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  bram: .fill $64, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+constant byte* bram[$64]  = { fill( $64, 0) }
+byte* bram_base
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 22
+
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="npe-problem-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[0] = *bram_base++
+    // [0] *SCREEN = *((byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    lda bram
+    sta SCREEN
+    // SCREEN[1] = *bram_base++
+    // [1] *(SCREEN+1) = *(++(byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    lda bram+1
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  bram: .fill $64, 0
+

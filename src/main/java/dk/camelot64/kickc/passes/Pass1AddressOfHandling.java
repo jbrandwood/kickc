@@ -59,6 +59,9 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
    }
 
    private void updateAddressOfVariable(Variable variable, String stmtStr) {
+      if(variable.getArraySpec()!=null)
+         return;
+
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
          SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());

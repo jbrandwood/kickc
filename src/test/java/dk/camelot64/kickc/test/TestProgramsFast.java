@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testNpeProblem0() throws IOException {
+      compileAndCompare("npe-problem-0.c");
+   }
+
+   @Test
    public void testProcedureDeclare11() throws IOException {
       compileAndCompare("procedure-declare-11.c");
    }

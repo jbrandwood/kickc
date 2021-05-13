@@ -1289,19 +1289,15 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("string-pointer-problem.c");
    }
 
-
    @Test
    public void testZpCode() throws IOException {
       compileAndCompare("examples/c64/zpcode/zpcode.c");
    }
 
-   // Fix parameter type problem - https://gitlab.com/camelot/kickc/issues/299
-   /*
    @Test
    public void testParameterAutocastWrong() throws IOException {
-      compileAndCompare("parameter-autocast-wrong.c");
+      assertError("parameter-autocast-wrong.c", "Parameters type mismatch in call");
    }
-   */
 
    @Test
    public void testConstBool0() throws IOException {

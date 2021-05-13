@@ -554,9 +554,9 @@ mul16s: {
     .label __9 = $2b
     .label __11 = $2d
     .label __12 = $2b
-    .label m = $f
-    .label return = $f
     .label a = 4
+    .label return = $f
+    .label m = $f
     .label b = $d
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
@@ -656,9 +656,9 @@ bitmap_plot: {
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
+    .label return = $20
     .label quotient_hi = $2b
     .label quotient_lo = $1c
-    .label return = $20
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -957,11 +957,11 @@ memset: {
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($2d) a, word zp($25) b)
 mul16u: {
-    .label mb = $27
     .label a = $2d
-    .label res = $f
     .label b = $25
     .label return = $f
+    .label mb = $27
+    .label res = $f
     // unsigned long mb = b
     lda.z b
     sta.z mb

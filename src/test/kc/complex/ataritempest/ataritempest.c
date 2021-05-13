@@ -27,4 +27,5 @@ void main() {
 }
 
 #pragma data_seg(Vectors)
-export void()* const VECTORS[] = { &nmiHandler, &entryPoint };
+
+export void (*VECTORS[])() = { &nmiHandler, &entryPoint };

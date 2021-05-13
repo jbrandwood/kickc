@@ -7,7 +7,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d021
 .segment Code

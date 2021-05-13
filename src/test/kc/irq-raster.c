@@ -1,6 +1,8 @@
 // A minimal working raster IRQ
 
-void()** const  KERNEL_IRQ = (void()**)$0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)$0314;
+IRQ_TYPE* const HARDWARE_IRQ = (IRQ_TYPE*)$fffe;
 byte* const RASTER = (byte*)$d012;
 byte* const VICII_CONTROL1 = (byte*)$d011;
 byte* const IRQ_STATUS = (byte*)$d019;

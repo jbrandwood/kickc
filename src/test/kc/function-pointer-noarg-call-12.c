@@ -9,12 +9,12 @@ void myFunc2(){
     (*BG_COLOR)++;
 }
 
-void()* addrtable[256];
+void(*addrtable[256])();
 
 void main() {
     addrtable[0] = &myFunc;
     addrtable[1] = &myFunc2;
-    void()* fn = addrtable[0];
+    void(*fn)() = addrtable[0];
     (*fn)();
     fn = addrtable[1];
     (*fn)();

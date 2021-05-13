@@ -720,9 +720,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
+    .label return = 8
     .label mb = $10
     .label res = 8
-    .label return = 8
     // unsigned int mb = b
     sta.z mb
     lda #0

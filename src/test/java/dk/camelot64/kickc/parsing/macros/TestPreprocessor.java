@@ -273,7 +273,7 @@ public class TestPreprocessor {
       @Override
       public Object visitExprCast(KickCParser.ExprCastContext ctx) {
          out.append("cast(");
-         out.append(ctx.typeSpecifier().getText());
+         out.append(ctx.typeName().getText());
          out.append(",");
          this.visit(ctx.expr());
          out.append(")");

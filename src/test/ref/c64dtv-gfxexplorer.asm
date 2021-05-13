@@ -2886,9 +2886,9 @@ gfx_init_plane_fill: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp($1b) str, byte register(X) c, word zp($d) num)
 memset: {
+    .label str = $1b
     .label end = $d
     .label dst = $1b
-    .label str = $1b
     .label num = $d
     // if(num>0)
     lda.z num

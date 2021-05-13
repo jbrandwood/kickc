@@ -19,10 +19,12 @@
 #pragma data_seg(Data)
 
 char* const DEMO_MUSIC = (char*)0xAC00;
+// Pointer to procedure
+typedef void (*PROC_PTR)(void);
 // Pointer to the music init routine
-void()* const musicInit = (void()*) DEMO_MUSIC;
+PROC_PTR const musicInit = (PROC_PTR) DEMO_MUSIC;
 // Pointer to the music play routine
-void()* const musicPlay = (void()*) DEMO_MUSIC+3;
+PROC_PTR const musicPlay = (PROC_PTR) DEMO_MUSIC+3;
 
 #pragma data_seg(InitDemo)
 

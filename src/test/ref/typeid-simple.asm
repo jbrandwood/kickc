@@ -74,7 +74,7 @@ main: {
     // SCREEN[idx++] = typeid(bool*)
     lda #TYPEID_POINTER_BOOL
     sta SCREEN+$e
-    // SCREEN[idx++] = typeid(byte()*)
+    // SCREEN[idx++] = typeid(PROC_PTR)
     // Pointer to procedure
     lda #TYPEID_POINTER_PROCEDURE
     sta SCREEN+$f

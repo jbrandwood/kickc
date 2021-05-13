@@ -4,25 +4,6 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-word rand()
-rand: scope:[rand]  from makechar::@7
-  rand_state#11 = phi( makechar::@7/rand_state#19 )
-  rand::$0 = rand_state#11 << 7
-  rand_state#0 = rand_state#11 ^ rand::$0
-  rand::$1 = rand_state#0 >> 9
-  rand_state#1 = rand_state#0 ^ rand::$1
-  rand::$2 = rand_state#1 << 8
-  rand_state#2 = rand_state#1 ^ rand::$2
-  rand::return#0 = rand_state#2
-  to:rand::@return
-rand::@return: scope:[rand]  from rand
-  rand_state#12 = phi( rand/rand_state#2 )
-  rand::return#3 = phi( rand/rand::return#0 )
-  rand::return#1 = rand::return#3
-  rand_state#3 = rand_state#12
-  return 
-  to:@return
-
 void print_ln()
 print_ln: scope:[print_ln]  from end::@2
   print_char_cursor#35 = phi( end::@2/print_char_cursor#10 )
@@ -110,6 +91,25 @@ print_char: scope:[print_char]  from print_uchar print_uchar::@1
 print_char::@return: scope:[print_char]  from print_char
   print_char_cursor#27 = phi( print_char/print_char_cursor#8 )
   print_char_cursor#9 = print_char_cursor#27
+  return 
+  to:@return
+
+word rand()
+rand: scope:[rand]  from makechar::@7
+  rand_state#11 = phi( makechar::@7/rand_state#19 )
+  rand::$0 = rand_state#11 << 7
+  rand_state#0 = rand_state#11 ^ rand::$0
+  rand::$1 = rand_state#0 >> 9
+  rand_state#1 = rand_state#0 ^ rand::$1
+  rand::$2 = rand_state#1 << 8
+  rand_state#2 = rand_state#1 ^ rand::$2
+  rand::return#0 = rand_state#2
+  to:rand::@return
+rand::@return: scope:[rand]  from rand
+  rand_state#12 = phi( rand/rand_state#2 )
+  rand::return#3 = phi( rand/rand::return#0 )
+  rand::return#1 = rand::return#3
+  rand_state#3 = rand_state#12
   return 
   to:@return
 
@@ -988,13 +988,13 @@ Adding number conversion cast (unumber) $f0 in
 Adding number conversion cast (unumber) 6 in 
 Adding number conversion cast (unumber) $e in 
 Adding number conversion cast (unumber) $a in 
-Adding number conversion cast (unumber) 7 in rand::$0 = rand_state#11 << 7
-Adding number conversion cast (unumber) 9 in rand::$1 = rand_state#0 >> 9
-Adding number conversion cast (unumber) 8 in rand::$2 = rand_state#1 << 8
 Adding number conversion cast (unumber) $28 in print_ln::$0 = print_line_cursor#9 + $28
 Adding number conversion cast (unumber) 4 in print_uchar::$0 = print_uchar::b#2 >> 4
 Adding number conversion cast (unumber) $f in print_uchar::$2 = print_uchar::b#3 & $f
 Adding number conversion cast (unumber) print_uchar::$2 in print_uchar::$2 = print_uchar::b#3 & (unumber)$f
+Adding number conversion cast (unumber) 7 in rand::$0 = rand_state#11 << 7
+Adding number conversion cast (unumber) 9 in rand::$1 = rand_state#0 >> 9
+Adding number conversion cast (unumber) 8 in rand::$2 = rand_state#1 << 8
 Adding number conversion cast (unumber) 0 in doplasma::ii#1 = 0
 Adding number conversion cast (unumber) $19 in doplasma::$0 = doplasma::ii#3 < $19
 Adding number conversion cast (unumber) 4 in doplasma::c1a#2 = doplasma::c1a#3 + 4
@@ -1052,12 +1052,12 @@ Simplifying constant integer cast 6
 Simplifying constant integer cast $f0
 Simplifying constant integer cast $a
 Simplifying constant integer cast $e
-Simplifying constant integer cast 7
-Simplifying constant integer cast 9
-Simplifying constant integer cast 8
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
+Simplifying constant integer cast 7
+Simplifying constant integer cast 9
+Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast 4
@@ -1102,12 +1102,12 @@ Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) $f0
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) $e
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 9
-Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 9
+Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 4
@@ -1145,8 +1145,6 @@ Inferred type updated to byte in makechar::$4 = makechar::$3 & $ff
 Inferred type updated to byte in main::$2 = main::block#1 & $fc
 Inversing boolean not [172] makechar::$6 = makechar::$4 <= makechar::s#2 from [171] makechar::$5 = makechar::$4 > makechar::s#2
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias rand::return#0 = rand::return#3 rand::return#1 
-Alias rand_state#12 = rand_state#2 rand_state#3 
 Alias print_line_cursor#0 = print_ln::$0 print_line_cursor#10 print_char_cursor#0 print_line_cursor#11 print_char_cursor#19 print_line_cursor#1 print_char_cursor#1 
 Alias print_uchar::b#0 = print_uint::$0 
 Alias print_uint::w#1 = print_uint::w#2 
@@ -1157,6 +1155,8 @@ Alias print_uchar::b#2 = print_uchar::b#3
 Alias print_char_cursor#23 = print_char_cursor#5 
 Alias print_char_cursor#24 = print_char_cursor#6 print_char_cursor#25 print_char_cursor#7 
 Alias print_char_cursor#27 = print_char_cursor#8 print_char_cursor#9 
+Alias rand::return#0 = rand::return#3 rand::return#1 
+Alias rand_state#12 = rand_state#2 rand_state#3 
 Alias Ticks#0 = Ticks#8 
 Alias print_char_cursor#38 = print_char_cursor#41 
 Alias print_line_cursor#19 = print_line_cursor#22 print_line_cursor#24 
@@ -1230,7 +1230,6 @@ Alias makechar::i#10 = makechar::i#7
 Alias rand_state#13 = rand_state#30 
 Alias makechar::s#2 = makechar::s#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values rand_state#11 rand_state#19
 Identical Phi Values print_line_cursor#18 print_line_cursor#19
 Identical Phi Values print_char_cursor#35 print_char_cursor#10
 Identical Phi Values print_char_cursor#18 print_char_cursor#35
@@ -1240,6 +1239,7 @@ Identical Phi Values print_char_cursor#2 print_char_cursor#24
 Identical Phi Values print_char_cursor#21 print_char_cursor#24
 Identical Phi Values print_char_cursor#23 print_char_cursor#27
 Identical Phi Values print_char_cursor#24 print_char_cursor#27
+Identical Phi Values rand_state#11 rand_state#19
 Identical Phi Values print_char_cursor#38 print_char_cursor#39
 Identical Phi Values print_line_cursor#19 print_line_cursor#20
 Identical Phi Values print_char_cursor#10 print_char_cursor#21
@@ -1282,7 +1282,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values makechar::c#5 makechar::c#3
 Identical Phi Values makechar::s#5 makechar::s#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition print_ln::$1 [13] if(print_line_cursor#0<print_char_cursor#27) goto print_ln::@1
+Simple Condition print_ln::$1 [4] if(print_line_cursor#0<print_char_cursor#27) goto print_ln::@1
 Simple Condition doplasma::$0 [66] if(doplasma::ii#3<$19) goto doplasma::@2
 Simple Condition doplasma::$2 [77] if(doplasma::i#3<$28) goto doplasma::@5
 Simple Condition doplasma::$4 [88] if(doplasma::jj#3<$19) goto doplasma::@8
@@ -2176,8 +2176,8 @@ Uplift Scope [print_char] 160,007: zp[1]:24 [ print_char::ch#2 print_char::ch#0 
 Uplift Scope [print_uchar] 20,002: zp[1]:66 [ print_uchar::$0 ] 20,002: zp[1]:67 [ print_uchar::$2 ] 9,505: zp[1]:23 [ print_uchar::b#2 print_uchar::b#0 print_uchar::b#1 ] 
 Uplift Scope [print_uint] 701: zp[2]:49 [ print_uint::w#0 ] 
 Uplift Scope [main] 245.29: zp[2]:2 [ main::count#2 main::count#1 ] 22: zp[1]:30 [ main::tmp#1 ] 2.54: zp[1]:29 [ main::block#1 ] 2.44: zp[1]:31 [ main::v#1 ] 
-Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
+Uplift Scope [RADIX] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -2195,8 +2195,8 @@ Uplifting [print_char] best 154001 combination reg byte a [ print_char::ch#2 pri
 Uplifting [print_uchar] best 153983 combination reg byte a [ print_uchar::$0 ] reg byte x [ print_uchar::$2 ] reg byte x [ print_uchar::b#2 print_uchar::b#0 print_uchar::b#1 ] 
 Uplifting [print_uint] best 153983 combination zp[2]:49 [ print_uint::w#0 ] 
 Uplifting [main] best 153977 combination zp[2]:2 [ main::count#2 main::count#1 ] reg byte a [ main::tmp#1 ] zp[1]:29 [ main::block#1 ] zp[1]:31 [ main::v#1 ] 
-Uplifting [RADIX] best 153977 combination 
 Uplifting [print_ln] best 153977 combination 
+Uplifting [RADIX] best 153977 combination 
 Uplifting [MOS6526_CIA] best 153977 combination 
 Uplifting [MOS6569_VICII] best 153977 combination 
 Uplifting [MOS6581_SID] best 153977 combination 
@@ -2288,9 +2288,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CHARSET = $e800
   .label print_screen = $400
   .label last_time = $a
+  .label print_line_cursor = $f
   // The random state variable
   .label rand_state = 2
-  .label print_line_cursor = $f
   .label Ticks = $14
   .label Ticks_1 = $16
   .label print_char_cursor = $11
@@ -3333,9 +3333,9 @@ Score: 102109
   .label CHARSET = $e800
   .label print_screen = $400
   .label last_time = $a
+  .label print_line_cursor = $f
   // The random state variable
   .label rand_state = 2
-  .label print_line_cursor = $f
   .label Ticks = $14
   .label Ticks_1 = $16
   .label print_char_cursor = $11

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.parser;
 
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.SourceLoader;
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
@@ -97,7 +98,8 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            StatementSource source = new StatementSource(recognizer.getInputStream().getSourceName(), line, charPositionInLine, null, -1, -1);
+            final CommonToken offendingToken = (CommonToken) offendingSymbol;
+            StatementSource source = new StatementSource(offendingToken.getInputStream().getSourceName(), line, charPositionInLine, null, -1, -1);
             throw new CompileError("Error parsing file: " + msg, source);
          }
       });

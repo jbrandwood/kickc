@@ -12,10 +12,12 @@ __address(0x3000) char INTRO_MUSIC[] = kickasm(resource "pacman-2chn-simpler.prg
     .fill music.getSize(), music.get(i)
 }};
 
+// Pointer to procedure
+typedef void (*PROC_PTR)(void);
 // Pointer to the music init routine
-void()* const musicInit = (void()*) INTRO_MUSIC+0x00;
+PROC_PTR const musicInit = (PROC_PTR) INTRO_MUSIC+0x00;
 // Pointer to the music play routine
-void()* const musicPlay = (void()*) INTRO_MUSIC+0x06;
+PROC_PTR const musicPlay = (PROC_PTR) INTRO_MUSIC+0x06;
 
 
 void main() {

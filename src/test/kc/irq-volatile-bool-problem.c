@@ -1,7 +1,8 @@
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
 
-void()** const  KERNEL_IRQ = (void()**)$0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const  KERNEL_IRQ = (IRQ_TYPE*)$0314;
 byte* const RASTER = (byte*)$d012;
 byte* const VICII_CONTROL1 = (byte*)$d011;
 byte* const IRQ_STATUS = (byte*)$d019;

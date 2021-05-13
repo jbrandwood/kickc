@@ -9,7 +9,7 @@ void fn1() {
 }
 
 void main() {
-    void()* f = &fn1;
+    void(*f)() = &fn1;
     (*f)();
     SCREEN[idx] = 'a';
     (*f)();

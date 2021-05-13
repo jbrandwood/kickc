@@ -114,7 +114,7 @@ struct SpriteData __align(0x100) SPRITE_BUFFER[0x100];
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)
-export void()* const VECTORS[] = { 
+export void (*VECTORS[])() = {
     // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
     &vblank, 
     // RESET Called when the NES is reset, including when it is turned on.

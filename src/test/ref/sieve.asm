@@ -570,10 +570,10 @@ print_char: {
 // utoa(word zp($15) value, byte* zp($e) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $15
     .label digit_value = $1d
     .label buffer = $e
     .label digit = $10
-    .label value = $15
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -714,10 +714,10 @@ divr16u: {
 // ultoa(dword zp($11) value, byte* zp($15) buffer)
 ultoa: {
     .const max_digits = $a
+    .label value = $11
     .label digit_value = $1f
     .label buffer = $15
     .label digit = $10
-    .label value = $11
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long

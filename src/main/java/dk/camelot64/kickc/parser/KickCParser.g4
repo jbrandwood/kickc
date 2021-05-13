@@ -64,14 +64,21 @@ declType
     : directive* type directive*
     ;
 
-typeSpecifier
-    : type #typeSpecifierSimple
-    | typeSpecifier ASTERISK #typeSpecifierPointer
-    | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
+typeName
+    : type typeNameDeclarator
+    ;
+
+typeNameDeclarator
+    :  #typeNameDeclaratorName
+    | typeNameDeclarator PAR_BEGIN parameterListDecl? PAR_END #typeNameDeclaratorProcedure
+    | typeNameDeclarator BRACKET_BEGIN (expr)? BRACKET_END #typeNameDeclaratorArray
+    | ASTERISK directive* typeNameDeclarator #typeNameDeclaratorPointer
+    | PAR_BEGIN typeNameDeclarator PAR_END #typeNameDeclaratorPar
     ;
 
 declarator
     : NAME {if(isTypedef) { cParser.addTypedef($NAME.text); isTypedef=false; } } #declaratorName
+    | declarator PAR_BEGIN parameterListDecl? PAR_END #declaratorProcedure
     | declarator BRACKET_BEGIN (expr)? BRACKET_END #declaratorArray
     | ASTERISK directive* declarator #declaratorPointer
     | PAR_BEGIN declarator PAR_END #declaratorPar
@@ -80,7 +87,6 @@ declarator
 type
     : SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | type PAR_BEGIN PAR_END #typeProcedure // TODO: Move to declarator
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef
@@ -118,19 +124,15 @@ enumMember
     ;
 
 declFunction
-    : declType declarator PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
-    ;
-
-declFunctionBody
-    : CURLY_BEGIN stmtSeq? CURLY_END
+    : declType declarator CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl
     : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
-    : declType declarator #parameterDeclType
-    | SIMPLETYPE #parameterDeclVoid
+    : declType declarator #parameterDeclTypeDeclarator
+    | typeName #parameterDeclTypeName
     | PARAM_LIST #parameterDeclList
     ;
 
@@ -219,11 +221,11 @@ expr
     | expr DOT NAME #exprDot
     | expr '->' NAME  #exprArrow
     | expr PAR_BEGIN parameterList? PAR_END #exprCall
-    | SIZEOF PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprSizeOf
-    | TYPEID PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprTypeId
+    | SIZEOF PAR_BEGIN ( expr | typeName ) PAR_END #exprSizeOf
+    | TYPEID PAR_BEGIN ( expr | typeName ) PAR_END #exprTypeId
     | DEFINED PAR_BEGIN? NAME PAR_END? #exprDefined
     | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
-    | PAR_BEGIN typeSpecifier PAR_END expr #exprCast
+    | PAR_BEGIN typeName PAR_END expr #exprCast
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' ) #exprPostMod
     | ASTERISK expr #exprPtr

@@ -4,7 +4,7 @@
 #include <printf.h>
 #include <conio.h>
 
-void f1(void()* fn) {
+void f1(void(*fn)()) {
 	(*fn)();
 }
 

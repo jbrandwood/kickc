@@ -21,22 +21,22 @@ __start: {
 main: {
     // print('c')
     lda #'c'
-    sta print.ch
+    sta.z print.ch
     jsr print
     // print('m')
     lda #'m'
-    sta print.ch
+    sta.z print.ch
     jsr print
     // print('l')
     lda #'l'
-    sta print.ch
+    sta.z print.ch
     jsr print
     // }
     rts
 }
-// print(byte mem($3001) ch)
+// print(byte zp(2) ch)
 print: {
-    .label ch = $3001
+    .label ch = 2
     // asm
     ldx idx
     lda ch

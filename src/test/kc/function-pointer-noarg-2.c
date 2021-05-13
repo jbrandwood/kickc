@@ -3,7 +3,7 @@
 void main() {
     byte* const SCREEN = (char*)$400;
 
-    void()* f;
+    void (*f) ();
 
     for ( byte i: 0..100) {
         if((i&1)==0) {

@@ -1,5 +1,4 @@
-// Illustrates problem with wrong autocasting of parameters
-// Program wrongly reports Unknown fragment  error - while it should have reported type problem (char != char*)
+// Illustrates problem with wrong type of parameters
 
 char message[] = "CHAO0029 OPERATING SYSTEM STARTING...";
 

@@ -1,0 +1,141 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::SCREEN[0] = 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+constant byte* const main::SCREEN = (byte*)$400
+
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = 'a'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero main::SCREEN in [0] main::SCREEN[0] = 'a'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *main::SCREEN = 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 15 combination 
+Uplifting [] best 15 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Procedure Declaration - A single procedure without parameters or return declared and then defined
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [0] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+constant byte* const main::SCREEN = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+  // File Comments
+// Procedure Declaration - A single procedure without parameters or return declared and then defined
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // SCREEN[0] = 'a'
+    // [0] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

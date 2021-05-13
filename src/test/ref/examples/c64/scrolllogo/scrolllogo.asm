@@ -34,9 +34,9 @@
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
+  .label xsin_idx = 6
   // Remainder after unsigned 16-bit division
   .label rem16u = $1a
-  .label xsin_idx = 6
 .segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
@@ -289,9 +289,9 @@ loop: {
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
+    .label return = $16
     .label quotient_hi = $20
     .label quotient_lo = $14
-    .label return = $16
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -545,9 +545,9 @@ sin16s: {
 mul16s: {
     .label __6 = $22
     .label __11 = $22
-    .label m = $c
-    .label return = $c
     .label a = $1a
+    .label return = $c
+    .label m = $c
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -861,11 +861,11 @@ mulu16_sel: {
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($22) a, word zp($14) b)
 mul16u: {
-    .label mb = $1c
     .label a = $22
-    .label res = $c
-    .label return = $c
     .label b = $14
+    .label return = $c
+    .label mb = $1c
+    .label res = $c
     // unsigned long mb = b
     lda.z b
     sta.z mb

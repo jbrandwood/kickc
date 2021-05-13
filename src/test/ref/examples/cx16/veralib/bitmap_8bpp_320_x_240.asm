@@ -2516,11 +2516,11 @@ vera_display_get_vscale: {
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($15) a, word zp($41) b)
 mul16u: {
-    .label mb = $64
     .label a = $15
-    .label res = $5e
     .label b = $41
     .label return = $5e
+    .label mb = $64
+    .label res = $5e
     // unsigned long mb = b
     lda.z b
     sta.z mb

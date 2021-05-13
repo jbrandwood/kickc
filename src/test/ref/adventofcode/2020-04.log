@@ -22,29 +22,6 @@ Eliminating unused variable with no statement main::$12
 
 CONTROL FLOW GRAPH SSA
 
-byte toupper(byte toupper::ch)
-toupper: scope:[toupper]  from strupr::@2
-  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
-  toupper::$0 = toupper::ch#1 >= 'a'at
-  toupper::$1 = toupper::ch#1 <= 'z'at
-  toupper::$2 = toupper::$0 && toupper::$1
-  if(toupper::$2) goto toupper::@1
-  to:toupper::@2
-toupper::@1: scope:[toupper]  from toupper
-  toupper::ch#2 = phi( toupper/toupper::ch#1 )
-  toupper::$3 = toupper::ch#2 + 'A'at-'a'at
-  toupper::return#0 = toupper::$3
-  to:toupper::@return
-toupper::@2: scope:[toupper]  from toupper
-  toupper::ch#3 = phi( toupper/toupper::ch#1 )
-  toupper::return#1 = toupper::ch#3
-  to:toupper::@return
-toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
-  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
-  toupper::return#2 = toupper::return#4
-  return 
-  to:@return
-
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 memcpy: scope:[memcpy]  from newline::@5
   memcpy::num#1 = phi( newline::@5/memcpy::num#0 )
@@ -85,9 +62,9 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
 
 void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from clrscr newline::@9
-  memset::c#5 = phi( clrscr/memset::c#1, newline::@9/memset::c#0 )
-  memset::str#4 = phi( clrscr/memset::str#1, newline::@9/memset::str#0 )
-  memset::num#2 = phi( clrscr/memset::num#1, newline::@9/memset::num#0 )
+  memset::c#5 = phi( clrscr/memset::c#0, newline::@9/memset::c#1 )
+  memset::str#4 = phi( clrscr/memset::str#0, newline::@9/memset::str#1 )
+  memset::num#2 = phi( clrscr/memset::num#0, newline::@9/memset::num#1 )
   memset::$0 = memset::num#2 > 0
   memset::$1 = ! memset::$0
   if(memset::$1) goto memset::@1
@@ -127,6 +104,56 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 
+word strlen(byte* strlen::str)
+strlen: scope:[strlen]  from printf_number_buffer::@6
+  strlen::str#4 = phi( printf_number_buffer::@6/strlen::str#1 )
+  strlen::len#0 = 0
+  to:strlen::@1
+strlen::@1: scope:[strlen]  from strlen strlen::@2
+  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
+  strlen::str#2 = phi( strlen/strlen::str#4, strlen::@2/strlen::str#0 )
+  strlen::$0 = 0 != *strlen::str#2
+  if(strlen::$0) goto strlen::@2
+  to:strlen::@3
+strlen::@2: scope:[strlen]  from strlen::@1
+  strlen::str#3 = phi( strlen::@1/strlen::str#2 )
+  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
+  strlen::len#1 = ++ strlen::len#2
+  strlen::str#0 = ++ strlen::str#3
+  to:strlen::@1
+strlen::@3: scope:[strlen]  from strlen::@1
+  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
+  strlen::return#0 = strlen::len#3
+  to:strlen::@return
+strlen::@return: scope:[strlen]  from strlen::@3
+  strlen::return#3 = phi( strlen::@3/strlen::return#0 )
+  strlen::return#1 = strlen::return#3
+  return 
+  to:@return
+
+byte toupper(byte toupper::ch)
+toupper: scope:[toupper]  from strupr::@2
+  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
+  toupper::$0 = toupper::ch#1 >= 'a'at
+  toupper::$1 = toupper::ch#1 <= 'z'at
+  toupper::$2 = toupper::$0 && toupper::$1
+  if(toupper::$2) goto toupper::@1
+  to:toupper::@2
+toupper::@1: scope:[toupper]  from toupper
+  toupper::ch#2 = phi( toupper/toupper::ch#1 )
+  toupper::$3 = toupper::ch#2 + 'A'at-'a'at
+  toupper::return#0 = toupper::$3
+  to:toupper::@return
+toupper::@2: scope:[toupper]  from toupper
+  toupper::ch#3 = phi( toupper/toupper::ch#1 )
+  toupper::return#1 = toupper::ch#3
+  to:toupper::@return
+toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
+  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
+  toupper::return#2 = toupper::return#4
+  return 
+  to:@return
+
 byte* strupr(byte* strupr::str)
 strupr: scope:[strupr]  from printf_number_buffer::@11
   strupr::str#1 = phi( printf_number_buffer::@11/strupr::str#0 )
@@ -160,33 +187,6 @@ strupr::@3: scope:[strupr]  from strupr::@1
 strupr::@return: scope:[strupr]  from strupr::@3
   strupr::return#3 = phi( strupr::@3/strupr::return#0 )
   strupr::return#1 = strupr::return#3
-  return 
-  to:@return
-
-word strlen(byte* strlen::str)
-strlen: scope:[strlen]  from printf_number_buffer::@6
-  strlen::str#4 = phi( printf_number_buffer::@6/strlen::str#1 )
-  strlen::len#0 = 0
-  to:strlen::@1
-strlen::@1: scope:[strlen]  from strlen strlen::@2
-  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
-  strlen::str#2 = phi( strlen/strlen::str#4, strlen::@2/strlen::str#0 )
-  strlen::$0 = 0 != *strlen::str#2
-  if(strlen::$0) goto strlen::@2
-  to:strlen::@3
-strlen::@2: scope:[strlen]  from strlen::@1
-  strlen::str#3 = phi( strlen::@1/strlen::str#2 )
-  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
-  strlen::len#1 = ++ strlen::len#2
-  strlen::str#0 = ++ strlen::str#3
-  to:strlen::@1
-strlen::@3: scope:[strlen]  from strlen::@1
-  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
-  strlen::return#0 = strlen::len#3
-  to:strlen::@return
-strlen::@return: scope:[strlen]  from strlen::@3
-  strlen::return#3 = phi( strlen::@3/strlen::return#0 )
-  strlen::return#1 = strlen::return#3
   return 
   to:@return
 
@@ -369,6 +369,40 @@ utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
   return 
   to:@return
 
+void clrscr()
+clrscr: scope:[clrscr]  from main
+  memset::str#0 = (void*)*SAVMSC
+  memset::c#0 = 0
+  memset::num#0 = $28*$18
+  call memset 
+  memset::return#2 = memset::return#1
+  to:clrscr::@1
+clrscr::@1: scope:[clrscr]  from clrscr
+  *OLDCHR = 0
+  gotoxy::x#0 = 0
+  gotoxy::y#0 = 0
+  call gotoxy 
+  to:clrscr::@2
+clrscr::@2: scope:[clrscr]  from clrscr::@1
+  to:clrscr::@return
+clrscr::@return: scope:[clrscr]  from clrscr::@2
+  return 
+  to:@return
+
+void gotoxy(byte gotoxy::x , byte gotoxy::y)
+gotoxy: scope:[gotoxy]  from clrscr::@1 newline::@3
+  gotoxy::y#2 = phi( clrscr::@1/gotoxy::y#0, newline::@3/gotoxy::y#1 )
+  gotoxy::x#2 = phi( clrscr::@1/gotoxy::x#0, newline::@3/gotoxy::x#1 )
+  *COLCRS = gotoxy::x#2
+  *ROWCRS = gotoxy::y#2
+  call setcursor 
+  to:gotoxy::@1
+gotoxy::@1: scope:[gotoxy]  from gotoxy
+  to:gotoxy::@return
+gotoxy::@return: scope:[gotoxy]  from gotoxy::@1
+  return 
+  to:@return
+
 void cputc(volatile byte cputc::c)
 cputc: scope:[cputc]  from cputs::@2 printf_number_buffer::@9 printf_padding::@2
   cputc::$0 = cputc::c == ''at
@@ -430,30 +464,6 @@ cputc::@return: scope:[cputc]  from cputc::@11 cputc::@12 cputc::@8 cputc::@9
   return 
   to:@return
 
-void putchar(byte putchar::code)
-putchar: scope:[putchar]  from cputc::@7
-  putchar::code#2 = phi( cputc::@7/putchar::code#0 )
-  *(*OLDADR) = *OLDCHR
-  call cursorLocation 
-  cursorLocation::return#0 = cursorLocation::return#2
-  to:putchar::@1
-putchar::@1: scope:[putchar]  from putchar
-  putchar::code#1 = phi( putchar/putchar::code#2 )
-  cursorLocation::return#4 = phi( putchar/cursorLocation::return#0 )
-  putchar::$0 = cursorLocation::return#4
-  putchar::loc#0 = putchar::$0
-  putchar::$1 = putchar::code#1 | conio_reverse_value
-  putchar::newChar#0 = putchar::$1
-  *putchar::loc#0 = putchar::newChar#0
-  *OLDCHR = putchar::newChar#0
-  call setcursor 
-  to:putchar::@2
-putchar::@2: scope:[putchar]  from putchar::@1
-  to:putchar::@return
-putchar::@return: scope:[putchar]  from putchar::@2
-  return 
-  to:@return
-
 void cputs(const byte* cputs::s)
 cputs: scope:[cputs]  from main::@11 main::@12 main::@3 main::@32 main::@34 printf_number_buffer::@5
   cputs::s#8 = phi( main::@11/cputs::s#6, main::@12/cputs::s#5, main::@3/cputs::s#2, main::@32/cputs::s#3, main::@34/cputs::s#4, printf_number_buffer::@5/cputs::s#1 )
@@ -477,6 +487,30 @@ cputs::@3: scope:[cputs]  from cputs::@2
   cputs::s#9 = phi( cputs::@2/cputs::s#10 )
   to:cputs::@1
 cputs::@return: scope:[cputs]  from cputs::@1
+  return 
+  to:@return
+
+void putchar(byte putchar::code)
+putchar: scope:[putchar]  from cputc::@7
+  putchar::code#2 = phi( cputc::@7/putchar::code#0 )
+  *(*OLDADR) = *OLDCHR
+  call cursorLocation 
+  cursorLocation::return#0 = cursorLocation::return#2
+  to:putchar::@1
+putchar::@1: scope:[putchar]  from putchar
+  putchar::code#1 = phi( putchar/putchar::code#2 )
+  cursorLocation::return#4 = phi( putchar/cursorLocation::return#0 )
+  putchar::$0 = cursorLocation::return#4
+  putchar::loc#0 = putchar::$0
+  putchar::$1 = putchar::code#1 | conio_reverse_value
+  putchar::newChar#0 = putchar::$1
+  *putchar::loc#0 = putchar::newChar#0
+  *OLDCHR = putchar::newChar#0
+  call setcursor 
+  to:putchar::@2
+putchar::@2: scope:[putchar]  from putchar::@1
+  to:putchar::@return
+putchar::@return: scope:[putchar]  from putchar::@2
   return 
   to:@return
 
@@ -516,8 +550,8 @@ newline::@4: scope:[newline]  from newline::@2
   if(newline::$6) goto newline::@5
   to:newline::@6
 newline::@3: scope:[newline]  from newline::@2
-  gotoxy::x#0 = 0
-  gotoxy::y#0 = 0
+  gotoxy::x#1 = 0
+  gotoxy::y#1 = 0
   call gotoxy 
   to:newline::@8
 newline::@8: scope:[newline]  from newline::@3
@@ -534,11 +568,11 @@ newline::@5: scope:[newline]  from newline::@4 newline::@6
 newline::@9: scope:[newline]  from newline::@5
   newline::start#1 = phi( newline::@5/newline::start#0 )
   newline::$9 = newline::start#1 + $28*$17
-  memset::str#0 = (void*)newline::$9
-  memset::c#0 = 0
-  memset::num#0 = $28
+  memset::str#1 = (void*)newline::$9
+  memset::c#1 = 0
+  memset::num#1 = $28
   call memset 
-  memset::return#2 = memset::return#1
+  memset::return#3 = memset::return#1
   to:newline::@10
 newline::@10: scope:[newline]  from newline::@9
   *ROWCRS = $18-1
@@ -581,40 +615,6 @@ setcursor::@2: scope:[setcursor]  from setcursor::@1 setcursor::@3
   *(*OLDADR) = setcursor::c#3
   to:setcursor::@return
 setcursor::@return: scope:[setcursor]  from setcursor::@2
-  return 
-  to:@return
-
-void gotoxy(byte gotoxy::x , byte gotoxy::y)
-gotoxy: scope:[gotoxy]  from clrscr::@1 newline::@3
-  gotoxy::y#2 = phi( clrscr::@1/gotoxy::y#1, newline::@3/gotoxy::y#0 )
-  gotoxy::x#2 = phi( clrscr::@1/gotoxy::x#1, newline::@3/gotoxy::x#0 )
-  *COLCRS = gotoxy::x#2
-  *ROWCRS = gotoxy::y#2
-  call setcursor 
-  to:gotoxy::@1
-gotoxy::@1: scope:[gotoxy]  from gotoxy
-  to:gotoxy::@return
-gotoxy::@return: scope:[gotoxy]  from gotoxy::@1
-  return 
-  to:@return
-
-void clrscr()
-clrscr: scope:[clrscr]  from main
-  memset::str#1 = (void*)*SAVMSC
-  memset::c#1 = 0
-  memset::num#1 = $28*$18
-  call memset 
-  memset::return#3 = memset::return#1
-  to:clrscr::@1
-clrscr::@1: scope:[clrscr]  from clrscr
-  *OLDCHR = 0
-  gotoxy::x#1 = 0
-  gotoxy::y#1 = 0
-  call gotoxy 
-  to:clrscr::@2
-clrscr::@2: scope:[clrscr]  from clrscr::@1
-  to:clrscr::@return
-clrscr::@return: scope:[clrscr]  from clrscr::@2
   return 
   to:@return
 
@@ -3181,8 +3181,8 @@ word utoa_append::value#4
 word utoa_append::value#5
 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
-Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 0 in strlen::$0 = 0 != *strlen::str#2
+Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 5 in utoa::max_digits#1 = 5
 Adding number conversion cast (unumber) 4 in utoa::max_digits#2 = 4
 Adding number conversion cast (unumber) 6 in utoa::max_digits#3 = 6
@@ -3192,6 +3192,11 @@ Adding number conversion cast (unumber) 1 in utoa::$4 = utoa::max_digits#5 - 1
 Adding number conversion cast (unumber) utoa::$4 in utoa::$4 = utoa::max_digits#5 - (unumber)1
 Adding number conversion cast (unumber) 0 in *utoa::buffer#3 = 0
 Adding number conversion cast (unumber) 1 in utoa::started#1 = 1
+Adding number conversion cast (unumber) 0 in memset::c#0 = 0
+Adding number conversion cast (unumber) $28*$18 in memset::num#0 = $28*$18
+Adding number conversion cast (unumber) 0 in *OLDCHR = 0
+Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
+Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
 Adding number conversion cast (unumber) 0 in *COLCRS = 0
 Adding number conversion cast (unumber) $9b in cputc::$2 = cputc::c == $9b
 Adding number conversion cast (unumber) 0 in *COLCRS = 0
@@ -3203,13 +3208,13 @@ Adding number conversion cast (unumber) cursorLocation::$0 in cursorLocation::$0
 Adding number conversion cast (unumber) $18 in newline::$0 = *ROWCRS == $18
 Adding number conversion cast (unumber) 1 in newline::$3 = conio_scroll_enable == 1
 Adding number conversion cast (unumber) 1 in newline::$5 = conio_display_cursor == 1
-Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
-Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
+Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
+Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
 Adding number conversion cast (unumber) $28 in newline::$7 = newline::start#0 + $28
 Adding number conversion cast (unumber) $28*$17 in memcpy::num#0 = $28*$17
 Adding number conversion cast (unumber) $28*$17 in newline::$9 = newline::start#1 + $28*$17
-Adding number conversion cast (unumber) 0 in memset::c#0 = 0
-Adding number conversion cast (unumber) $28 in memset::num#0 = $28
+Adding number conversion cast (unumber) 0 in memset::c#1 = 0
+Adding number conversion cast (unumber) $28 in memset::num#1 = $28
 Adding number conversion cast (unumber) $18-1 in *ROWCRS = $18-1
 Adding number conversion cast (unumber) $80 in *(*OLDADR) = *(*OLDADR) ^ $80
 Adding number conversion cast (unumber) 0 in setcursor::$1 = conio_display_cursor == 0
@@ -3217,11 +3222,6 @@ Adding number conversion cast (unumber) 1 in *CRSINH = 1
 Adding number conversion cast (unumber) 0 in *CRSINH = 0
 Adding number conversion cast (unumber) $80 in setcursor::$2 = setcursor::c#2 ^ $80
 Adding number conversion cast (unumber) setcursor::$2 in setcursor::$2 = setcursor::c#2 ^ (unumber)$80
-Adding number conversion cast (unumber) 0 in memset::c#1 = 0
-Adding number conversion cast (unumber) $28*$18 in memset::num#1 = $28*$18
-Adding number conversion cast (unumber) 0 in *OLDCHR = 0
-Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
-Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
 Adding number conversion cast (unumber) 0 in printf_uint::$5 = 0 != printf_uint::format_sign_always#2
 Adding number conversion cast (unumber) printf_uint::$2 in printf_uint::format_upper_case#3 = phi( printf_uint::@1/printf_uint::format_upper_case#4, printf_uint::@2/printf_uint::format_upper_case#5 )
   printf_uint::format_zero_padding#3 = phi( printf_uint::@1/printf_uint::format_zero_padding#4, printf_uint::@2/printf_uint::format_zero_padding#5 )
@@ -3272,22 +3272,22 @@ Inlining cast utoa::max_digits#4 = (unumber)$10
 Inlining cast *utoa::buffer#2 = (unumber)0
 Inlining cast *utoa::buffer#3 = (unumber)0
 Inlining cast utoa::started#1 = (unumber)1
-Inlining cast *COLCRS = (unumber)0
-Inlining cast *COLCRS = (unumber)0
-Inlining cast *COLCRS = (unumber)0
+Inlining cast memset::c#0 = (unumber)0
+Inlining cast memset::num#0 = (unumber)$28*$18
+Inlining cast *OLDCHR = (unumber)0
 Inlining cast gotoxy::x#0 = (unumber)0
 Inlining cast gotoxy::y#0 = (unumber)0
+Inlining cast *COLCRS = (unumber)0
+Inlining cast *COLCRS = (unumber)0
+Inlining cast *COLCRS = (unumber)0
+Inlining cast gotoxy::x#1 = (unumber)0
+Inlining cast gotoxy::y#1 = (unumber)0
 Inlining cast memcpy::num#0 = (unumber)$28*$17
-Inlining cast memset::c#0 = (unumber)0
-Inlining cast memset::num#0 = (unumber)$28
+Inlining cast memset::c#1 = (unumber)0
+Inlining cast memset::num#1 = (unumber)$28
 Inlining cast *ROWCRS = (unumber)$18-1
 Inlining cast *CRSINH = (unumber)1
 Inlining cast *CRSINH = (unumber)0
-Inlining cast memset::c#1 = (unumber)0
-Inlining cast memset::num#1 = (unumber)$28*$18
-Inlining cast *OLDCHR = (unumber)0
-Inlining cast gotoxy::x#1 = (unumber)0
-Inlining cast gotoxy::y#1 = (unumber)0
 Inlining cast printf_uint::$0 = (unumber)0
 Inlining cast printf_number_buffer::padding#2 = (snumber)0
 Inlining cast main::tags_found[main::i#4] = (unumber)0
@@ -3311,6 +3311,10 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast $9b
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -3330,10 +3334,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -3369,6 +3369,10 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $9b
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
@@ -3388,10 +3392,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -3420,9 +3420,9 @@ Inferred type updated to word in cursorLocation::$0 = cursorLocation::$3 * $28
 Inferred type updated to byte in setcursor::$2 = setcursor::c#2 ^ $80
 Inferred type updated to byte in printf_uint::$0 = 0
 Inferred type updated to byte for printf_uint::$2
-Inversing boolean not [33] memset::$1 = memset::num#2 <= 0 from [32] memset::$0 = memset::num#2 > 0
-Inversing boolean not [225] newline::$1 = *ROWCRS != $18 from [223] newline::$0 = *ROWCRS == $18
-Inversing boolean not [231] newline::$6 = conio_display_cursor != 1 from [230] newline::$5 = conio_display_cursor == 1
+Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
+Inversing boolean not [240] newline::$1 = *ROWCRS != $18 from [238] newline::$0 = *ROWCRS == $18
+Inversing boolean not [246] newline::$6 = conio_display_cursor != 1 from [245] newline::$5 = conio_display_cursor == 1
 Inversing boolean not [326] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#1 from [325] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#1
 Inversing boolean not [330] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#1 from [329] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#1
 Inversing boolean not [332] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#1 from [331] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#1
@@ -3442,9 +3442,6 @@ Inversing boolean not [464] main::$9 = 0 == main::tags_found[main::i#3] from [46
 Inversing boolean not [496] main::$16 = main::required_tag#2[main::i1#3] != main::pass#12[main::i1#3] from [495] main::$15 = main::required_tag#2[main::i1#3] == main::pass#12[main::i1#3]
 Inversing boolean not [500] main::$18 = main::match#2 != 3 from [499] main::$17 = main::match#2 == 3
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
-Alias toupper::return#0 = toupper::$3 
-Alias toupper::return#2 = toupper::return#4 
 Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
@@ -3459,12 +3456,15 @@ Alias memset::c#2 = memset::c#3
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#5 = memset::str#6 
+Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
+Alias strlen::str#2 = strlen::str#3 
+Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
+Alias toupper::return#0 = toupper::$3 
+Alias toupper::return#2 = toupper::return#4 
 Alias strupr::src#0 = strupr::str#1 
 Alias strupr::src#2 = strupr::src#3 strupr::src#4 
 Alias strupr::str#2 = strupr::str#5 strupr::str#3 strupr::str#4 strupr::return#0 strupr::return#3 strupr::return#1 
 Alias toupper::return#3 = toupper::return#5 
-Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
-Alias strlen::str#2 = strlen::str#3 
 Alias utoa::value#10 = utoa::value#8 utoa::value#12 utoa::value#13 utoa::value#9 utoa::value#14 utoa::value#15 utoa::value#11 
 Alias utoa::buffer#10 = utoa::buffer#17 utoa::buffer#21 utoa::buffer#16 utoa::buffer#18 utoa::buffer#13 utoa::buffer#19 utoa::buffer#20 utoa::buffer#6 
 Alias utoa::radix#1 = utoa::radix#2 utoa::radix#3 utoa::radix#4 
@@ -3483,12 +3483,12 @@ Alias utoa_append::sub#1 = utoa_append::sub#2
 Alias utoa_append::buffer#1 = utoa_append::buffer#4 utoa_append::buffer#2 
 Alias cputc::convertToScreenCode1_v#0 = cputc::convertToScreenCode1_v#1 
 Alias cputc::convertToScreenCode1_return#0 = cputc::convertToScreenCode1_return#2 cputc::convertToScreenCode1_return#1 cputc::convertToScreenCode1_return#3 cputc::$4 putchar::code#0 
+Alias cputs::c#1 = cputs::$0 cputs::c#2 
+Alias cputs::s#0 = cputs::s#10 cputs::s#9 
 Alias cursorLocation::return#0 = cursorLocation::return#4 
 Alias putchar::code#1 = putchar::code#2 
 Alias putchar::loc#0 = putchar::$0 
 Alias putchar::newChar#0 = putchar::$1 
-Alias cputs::c#1 = cputs::$0 cputs::c#2 
-Alias cputs::s#0 = cputs::s#10 cputs::s#9 
 Alias cursorLocation::return#1 = cursorLocation::$2 cursorLocation::return#5 cursorLocation::return#2 
 Alias newline::start#0 = newline::start#1 
 Alias cursorLocation::return#3 = cursorLocation::return#6 
@@ -3616,7 +3616,6 @@ Alias printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10
 Alias printf_number_buffer::format_upper_case#1 = printf_number_buffer::format_upper_case#10 
 Alias printf_number_buffer::buffer_digits#1 = printf_number_buffer::buffer_digits#10 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values memcpy::source#1 memcpy::source#0
 Identical Phi Values memcpy::destination#1 memcpy::destination#0
 Identical Phi Values memcpy::num#1 memcpy::num#0
@@ -3625,9 +3624,10 @@ Identical Phi Values memcpy::destination#2 memcpy::destination#1
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#5 memset::str#3
 Identical Phi Values memset::c#2 memset::c#4
+Identical Phi Values strlen::str#4 strlen::str#1
+Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values strupr::src#0 strupr::str#0
 Identical Phi Values strupr::str#2 strupr::src#0
-Identical Phi Values strlen::str#4 strlen::str#1
 Identical Phi Values utoa::radix#1 utoa::radix#0
 Identical Phi Values utoa::value#10 utoa::value#1
 Identical Phi Values utoa::buffer#10 utoa::buffer#5
@@ -3666,24 +3666,24 @@ Identical Phi Values main::pass#13 main::pass#18
 Identical Phi Values main::valid#20 main::valid#23
 Identical Phi Values main::total#23 main::total#25
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memcpy::$1 [15] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
-Simple Condition memset::$1 [22] if(memset::num#2<=0) goto memset::@1
-Simple Condition memset::$3 [29] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition strupr::$1 [36] if(0!=*strupr::src#2) goto strupr::@2
-Simple Condition strlen::$0 [48] if(0!=*strlen::str#2) goto strlen::@2
+Simple Condition memcpy::$1 [7] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
+Simple Condition memset::$1 [14] if(memset::num#2<=0) goto memset::@1
+Simple Condition memset::$3 [21] if(memset::dst#2!=memset::end#0) goto memset::@4
+Simple Condition strlen::$0 [29] if(0!=*strlen::str#2) goto strlen::@2
+Simple Condition strupr::$1 [44] if(0!=*strupr::src#2) goto strupr::@2
 Simple Condition utoa::$0 [56] if(utoa::radix#0==DECIMAL) goto utoa::@1
 Simple Condition utoa::$1 [60] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
 Simple Condition utoa::$2 [64] if(utoa::radix#0==OCTAL) goto utoa::@3
 Simple Condition utoa::$3 [68] if(utoa::radix#0==BINARY) goto utoa::@4
 Simple Condition utoa::$5 [85] if(utoa::digit#2<utoa::$4) goto utoa::@11
 Simple Condition utoa_append::$0 [110] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2
-Simple Condition cputc::$0 [116] if(cputc::c==''at) goto cputc::@1
-Simple Condition cputc::$7 [130] if(*COLCRS==$28) goto cputc::@6
-Simple Condition cputs::$2 [151] if(0!=cputs::c#1) goto cputs::@2
-Simple Condition newline::$1 [162] if(*ROWCRS!=$18) goto newline::@1
-Simple Condition newline::$3 [165] if(conio_scroll_enable==1) goto newline::@4
-Simple Condition newline::$6 [167] if(conio_display_cursor!=1) goto newline::@5
-Simple Condition setcursor::$1 [195] if(conio_display_cursor==0) goto setcursor::@1
+Simple Condition cputc::$0 [131] if(cputc::c==''at) goto cputc::@1
+Simple Condition cputc::$7 [145] if(*COLCRS==$28) goto cputc::@6
+Simple Condition cputs::$2 [156] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition newline::$1 [177] if(*ROWCRS!=$18) goto newline::@1
+Simple Condition newline::$3 [180] if(conio_scroll_enable==1) goto newline::@4
+Simple Condition newline::$6 [182] if(conio_display_cursor!=1) goto newline::@5
+Simple Condition setcursor::$1 [210] if(conio_display_cursor==0) goto setcursor::@1
 Simple Condition printf_padding::$0 [221] if(printf_padding::i#2<printf_padding::length#4) goto printf_padding::@2
 Simple Condition printf_uint::$5 [228] if(0!=printf_uint::format_sign_always#2) goto printf_uint::@1
 Simple Condition printf_number_buffer::$0 [250] if(0==printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
@@ -3705,10 +3705,10 @@ Simple Condition main::$14 [368] if(main::i1#2<3) goto main::@17
 Simple Condition main::$16 [370] if(main::required_tag#6[main::i1#2]!=main::pass#10[main::i1#2]) goto main::@19
 Simple Condition main::$18 [372] if(main::match#2!=3) goto main::@22
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting && if()-condition to two if()s [3] toupper::$2 = toupper::$0 && toupper::$1
+Rewriting && if()-condition to two if()s [36] toupper::$2 = toupper::$0 && toupper::$1
 Rewriting ! if()-condition to reversed if() [90] utoa::$8 = ! utoa::$7
 Rewriting || if()-condition to two if()s [89] utoa::$7 = utoa::started#2 || utoa::$6
-Rewriting || if()-condition to two if()s [121] cputc::$3 = cputc::$1 || cputc::$2
+Rewriting || if()-condition to two if()s [136] cputc::$3 = cputc::$1 || cputc::$2
 Rewriting ! if()-condition to reversed if() [256] printf_number_buffer::$5 = ! printf_number_buffer::$4
 Rewriting && if()-condition to two if()s [255] printf_number_buffer::$4 = printf_number_buffer::$3 && printf_number_buffer::padding#10
 Rewriting && if()-condition to two if()s [254] printf_number_buffer::$3 = printf_number_buffer::$1 && printf_number_buffer::$2
@@ -3727,9 +3727,9 @@ Warning! Adding boolean cast to non-boolean condition *main::pass#14
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
-Constant right-side identified [175] memcpy::num#0 = (unumber)$28*$17
-Constant right-side identified [184] *ROWCRS = (unumber)$18-1
-Constant right-side identified [209] memset::num#1 = (unumber)$28*$18
+Constant right-side identified [117] memset::num#0 = (unumber)$28*$18
+Constant right-side identified [190] memcpy::num#0 = (unumber)$28*$17
+Constant right-side identified [199] *ROWCRS = (unumber)$18-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant strlen::len#0 = 0
 Constant utoa::max_digits#0 = 0
@@ -3746,17 +3746,17 @@ Constant utoa::started#0 = 0
 Constant utoa::digit#0 = 0
 Constant utoa::started#1 = 1
 Constant utoa_append::digit#0 = 0
-Constant cputc::convertToScreenCode1_v#0 = &cputc::c
-Constant cputs::c#0 = 0
+Constant memset::c#0 = 0
+Constant memset::num#0 = (unumber)$28*$18
 Constant gotoxy::x#0 = 0
 Constant gotoxy::y#0 = 0
-Constant memcpy::num#0 = (unumber)$28*$17
-Constant memset::c#0 = 0
-Constant memset::num#0 = $28
-Constant memset::c#1 = 0
-Constant memset::num#1 = (unumber)$28*$18
+Constant cputc::convertToScreenCode1_v#0 = &cputc::c
+Constant cputs::c#0 = 0
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
+Constant memcpy::num#0 = (unumber)$28*$17
+Constant memset::c#1 = 0
+Constant memset::num#1 = $28
 Constant printf_padding::i#0 = 0
 Constant printf_uint::$1 = '+'at
 Constant printf_uint::$0 = 0
@@ -3803,11 +3803,11 @@ Constant strupr::str#0 = printf_number_buffer::buffer_digits#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant strupr::return#2 = strupr::str#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [165] if(conio_scroll_enable==1) goto newline::@4
-if() condition always false - eliminating [167] if(conio_display_cursor!=1) goto newline::@5
-if() condition always false - eliminating [195] if(conio_display_cursor==0) goto setcursor::@1
+if() condition always true - replacing block destination [180] if(conio_scroll_enable==1) goto newline::@4
+if() condition always false - eliminating [182] if(conio_display_cursor!=1) goto newline::@5
+if() condition always false - eliminating [210] if(conio_display_cursor==0) goto setcursor::@1
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero cputc::convertToScreenCode1_return#0 in [140] putchar::newChar#0 = cputc::convertToScreenCode1_return#0 | conio_reverse_value
+Simplifying expression containing zero cputc::convertToScreenCode1_return#0 in [165] putchar::newChar#0 = cputc::convertToScreenCode1_return#0 | conio_reverse_value
 Simplifying expression containing zero (byte*)&printf_buffer in [232] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN) = printf_uint::$2
 Simplifying expression containing zero (byte*)&printf_buffer in [237] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN)
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -3819,17 +3819,17 @@ Removing PHI-reference to removed block (setcursor::@1) in block setcursor::@2
 Removing unused block setcursor::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memcpy::return#2 and assignment [126] memcpy::return#2 = memcpy::destination#0
-Eliminating unused variable memset::return#2 and assignment [130] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [153] memset::return#3 = memset::str#3
+Eliminating unused variable memset::return#2 and assignment [82] memset::return#2 = memset::str#3
+Eliminating unused variable memcpy::return#2 and assignment [137] memcpy::return#2 = memcpy::destination#0
+Eliminating unused variable memset::return#3 and assignment [141] memset::return#3 = memset::str#3
 Eliminating unused variable printf_number_buffer::format_sign_always#0 and assignment [174] printf_number_buffer::format_sign_always#0 = printf_uint::format_sign_always#2
 Eliminating unused variable printf_number_buffer::format_radix#0 and assignment [177] printf_number_buffer::format_radix#0 = printf_uint::format_radix#2
 Eliminating unused constant strupr::return#2
 Eliminating unused constant utoa::max_digits#0
 Eliminating unused constant utoa::digit_values#0
+Eliminating unused constant gotoxy::x#1
+Eliminating unused constant gotoxy::y#1
 Eliminating unused constant cputs::c#0
-Eliminating unused constant gotoxy::x#0
-Eliminating unused constant gotoxy::y#0
 Eliminating unused constant OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN
 Eliminating unused constant conio_reverse_value
 Eliminating unused constant conio_display_cursor
@@ -3868,12 +3868,12 @@ Finalized signed number type (signed byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias setcursor::c#1 = setcursor::c#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values gotoxy::x#2 gotoxy::x#1
-Identical Phi Values gotoxy::y#2 gotoxy::y#1
+Identical Phi Values gotoxy::x#2 gotoxy::x#0
+Identical Phi Values gotoxy::y#2 gotoxy::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition toupper::$0 [2] if(toupper::ch#0>='a'at) goto toupper::@3
+Simple Condition toupper::$0 [27] if(toupper::ch#0>='a'at) goto toupper::@3
 Simple Condition utoa::$12 [60] if(0!=utoa::started#2) goto utoa::@14
-Simple Condition cputc::$1 [85] if(cputc::c=='
+Simple Condition cputc::$1 [95] if(cputc::c=='
 'at) goto cputc::@2
 Simple Condition printf_number_buffer::$1 [178] if(0==printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@23
 Simple Condition printf_number_buffer::$33 [193] if(0!=printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@24
@@ -3891,7 +3891,7 @@ Simple Condition main::$21 [266] if(*main::pass#14!='
 'at) goto main::@25
 Simple Condition main::$19 [267] if(*main::pass#14!=' 'at) goto main::@38
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [2] if(toupper::ch#0<'a'at) goto toupper::@2
+Negating conditional jump and destination [27] if(toupper::ch#0<'a'at) goto toupper::@2
 Negating conditional jump and destination [178] if(0!=printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@2
 Negating conditional jump and destination [193] if(0==printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@4
 Negating conditional jump and destination [202] if(0==printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@return
@@ -3912,19 +3912,19 @@ Constant right-side identified [45] utoa::buffer#2 = ++ utoa::buffer#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant utoa::buffer#2 = ++utoa::buffer#1
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [4] memcpy::src#0 = (byte*)memcpy::source#0 keeping memcpy::source#0
-Inlining Noop Cast [5] memcpy::dst#0 = (byte*)memcpy::destination#0 keeping memcpy::destination#0
-Inlining Noop Cast [6] memcpy::$2 = (byte*)memcpy::source#0 keeping memcpy::source#0
-Inlining Noop Cast [16] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
-Inlining Noop Cast [18] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
-Inlining Noop Cast [138] memset::str#1 = (void*)*SAVMSC keeping *SAVMSC
+Inlining Noop Cast [0] memcpy::src#0 = (byte*)memcpy::source#0 keeping memcpy::source#0
+Inlining Noop Cast [1] memcpy::dst#0 = (byte*)memcpy::destination#0 keeping memcpy::destination#0
+Inlining Noop Cast [2] memcpy::$2 = (byte*)memcpy::source#0 keeping memcpy::source#0
+Inlining Noop Cast [12] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [14] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [73] memset::str#0 = (void*)*SAVMSC keeping *SAVMSC
 Inlining Noop Cast [173] printf_number_buffer::$25 = (signed byte)printf_number_buffer::format_min_length#0 keeping printf_number_buffer::format_min_length#0
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [115] memcpy::source#0 = (void*)newline::$7 keeping memcpy::source#0
-Inlining Noop Cast [118] memset::str#0 = (void*)newline::$9 keeping memset::str#0
+Inlining Noop Cast [124] memcpy::source#0 = (void*)newline::$7 keeping memcpy::source#0
+Inlining Noop Cast [127] memset::str#1 = (void*)newline::$9 keeping memset::str#1
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [51] utoa::$10 = utoa::digit#2 * SIZEOF_WORD
-Rewriting multiplication to use shift and addition[105] cursorLocation::$0 = cursorLocation::$3 * $28
+Rewriting multiplication to use shift and addition[114] cursorLocation::$0 = cursorLocation::$3 * $28
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings memset::c#0
 Inlining constant with var siblings memset::num#0
@@ -3994,8 +3994,8 @@ Constant inlined utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
 Constant inlined utoa::digit_values#3 = RADIX_OCTAL_VALUES
 Constant inlined utoa::buffer#0 = ++(byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Constant inlined utoa::buffer#1 = ++++(byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-Constant inlined memset::num#1 = (word)$28*$18
-Constant inlined memset::num#0 = $28
+Constant inlined memset::num#1 = $28
+Constant inlined memset::num#0 = (word)$28*$18
 Constant inlined strlen::len#0 = 0
 Constant inlined main::pass#0 = passports
 Constant inlined main::required_tag#0 = required_tags
@@ -4094,6 +4094,10 @@ Simplifying constant evaluating to zero (signed byte)printf_number_buffer::forma
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero printf_number_buffer::len#2 in [167] printf_number_buffer::padding#1 = 0 - printf_number_buffer::len#2
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating variable strlen::str#2 from unused block strlen::@1
+Eliminating variable strlen::len#2 from unused block strlen::@1
+Eliminating variable strlen::len#1 from unused block strlen::@2
+Eliminating variable strlen::str#0 from unused block strlen::@2
 Eliminating variable toupper::return#0 from unused block toupper::@1
 Eliminating variable toupper::return#2 from unused block toupper::@return
 Eliminating variable strupr::src#2 from unused block strupr::@1
@@ -4101,10 +4105,6 @@ Eliminating variable toupper::ch#0 from unused block strupr::@2
 Eliminating variable toupper::return#3 from unused block strupr::@2
 Eliminating variable strupr::$0 from unused block strupr::@4
 Eliminating variable strupr::src#1 from unused block strupr::@4
-Eliminating variable strlen::str#2 from unused block strlen::@1
-Eliminating variable strlen::len#2 from unused block strlen::@1
-Eliminating variable strlen::len#1 from unused block strlen::@2
-Eliminating variable strlen::str#0 from unused block strlen::@2
 Eliminating variable strlen::return#2 from unused block printf_number_buffer::@6
 Eliminating variable printf_number_buffer::$19 from unused block printf_number_buffer::@15
 Eliminating variable printf_number_buffer::len#0 from unused block printf_number_buffer::@15
@@ -4113,6 +4113,14 @@ Eliminating variable printf_number_buffer::padding#1 from unused block printf_nu
 Eliminating variable printf_number_buffer::len#1 from unused block printf_number_buffer::@7
 Eliminating variable printf_padding::length#1 from unused block printf_number_buffer::@10
 Eliminating variable printf_padding::length#2 from unused block printf_number_buffer::@12
+Removing unused procedure strlen
+Removing unused procedure block strlen
+Removing PHI-reference to removed block (strlen) in block strlen::@1
+Removing PHI-reference to removed block (strlen) in block strlen::@1
+Removing unused procedure block strlen::@1
+Removing unused procedure block strlen::@2
+Removing unused procedure block strlen::@3
+Removing unused procedure block strlen::@return
 Removing unused procedure toupper
 Removing unused procedure block toupper
 Removing unused procedure block toupper::@1
@@ -4129,14 +4137,6 @@ Removing unused procedure block strupr::@2
 Removing unused procedure block strupr::@4
 Removing unused procedure block strupr::@3
 Removing unused procedure block strupr::@return
-Removing unused procedure strlen
-Removing unused procedure block strlen
-Removing PHI-reference to removed block (strlen) in block strlen::@1
-Removing PHI-reference to removed block (strlen) in block strlen::@1
-Removing unused procedure block strlen::@1
-Removing unused procedure block strlen::@2
-Removing unused procedure block strlen::@3
-Removing unused procedure block strlen::@return
 Removing unused block utoa::@6
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
 Removing PHI-reference to removed block (utoa::@2) in block utoa::@5
@@ -4177,10 +4177,10 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Eliminating unused constant BINARY
 Eliminating unused constant OCTAL
 Eliminating unused constant HEXADECIMAL
+Eliminating unused constant utoa::radix#0
 Eliminating unused constant RADIX_BINARY_VALUES
 Eliminating unused constant RADIX_OCTAL_VALUES
 Eliminating unused constant RADIX_HEXADECIMAL_VALUES
-Eliminating unused constant utoa::radix#0
 Eliminating unused constant printf_number_buffer::format_min_length#0
 Eliminating unused constant printf_number_buffer::format_justify_left#0
 Eliminating unused constant printf_number_buffer::format_zero_padding#0
@@ -4663,8 +4663,8 @@ memset::@3: scope:[memset]  from memset::@2
 
 void gotoxy(byte gotoxy::x , byte gotoxy::y)
 gotoxy: scope:[gotoxy]  from clrscr::@1
-  [82] *COLCRS = gotoxy::x#1
-  [83] *ROWCRS = gotoxy::y#1
+  [82] *COLCRS = gotoxy::x#0
+  [83] *ROWCRS = gotoxy::y#0
   [84] call setcursor 
   to:gotoxy::@return
 gotoxy::@return: scope:[gotoxy]  from gotoxy
@@ -4833,8 +4833,8 @@ newline::@2: scope:[newline]  from newline::@3
   [157] call memcpy 
   to:newline::@4
 newline::@4: scope:[newline]  from newline::@2
-  [158] memset::str#0 = newline::start#0 + (word)$28*$17
-  [159] memset::str#8 = (void*)memset::str#0
+  [158] memset::str#1 = newline::start#0 + (word)$28*$17
+  [159] memset::str#8 = (void*)memset::str#1
   [160] call memset 
   to:newline::@5
 newline::@5: scope:[newline]  from newline::@4
@@ -4994,7 +4994,7 @@ word memset::num
 word memset::num#2 1.00000001E8
 void* memset::return
 void* memset::str
-byte* memset::str#0 1.0000001E7
+byte* memset::str#1 1.0000001E7
 void* memset::str#3 3333337.333333333
 void* memset::str#7 22.0
 void* memset::str#8 2.0000002E7
@@ -5124,7 +5124,7 @@ Added variable putchar::newChar#0 to live range equivalence class [ putchar::new
 Added variable newline::start#0 to live range equivalence class [ newline::start#0 ]
 Added variable memcpy::source#0 to live range equivalence class [ memcpy::source#0 ]
 Added variable memcpy::destination#0 to live range equivalence class [ memcpy::destination#0 ]
-Added variable memset::str#0 to live range equivalence class [ memset::str#0 ]
+Added variable memset::str#1 to live range equivalence class [ memset::str#1 ]
 Added variable cursorLocation::$3 to live range equivalence class [ cursorLocation::$3 ]
 Added variable cursorLocation::$4 to live range equivalence class [ cursorLocation::$4 ]
 Added variable cursorLocation::$5 to live range equivalence class [ cursorLocation::$5 ]
@@ -5178,7 +5178,7 @@ Complete equivalence classes
 [ newline::start#0 ]
 [ memcpy::source#0 ]
 [ memcpy::destination#0 ]
-[ memset::str#0 ]
+[ memset::str#1 ]
 [ cursorLocation::$3 ]
 [ cursorLocation::$4 ]
 [ cursorLocation::$5 ]
@@ -5231,7 +5231,7 @@ Allocated zp[1]:192 [ putchar::newChar#0 ]
 Allocated zp[2]:193 [ newline::start#0 ]
 Allocated zp[2]:195 [ memcpy::source#0 ]
 Allocated zp[2]:197 [ memcpy::destination#0 ]
-Allocated zp[2]:199 [ memset::str#0 ]
+Allocated zp[2]:199 [ memset::str#1 ]
 Allocated zp[2]:201 [ cursorLocation::$3 ]
 Allocated zp[2]:203 [ cursorLocation::$4 ]
 Allocated zp[2]:205 [ cursorLocation::$5 ]
@@ -5280,8 +5280,8 @@ Statement [75] memset::end#0 = (byte*)memset::str#3 + memset::num#2 [ memset::st
 Statement [76] memset::dst#4 = (byte*)memset::str#3 [ memset::end#0 memset::dst#4 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#4 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [78] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::end#0 memset::dst#2 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#2 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [80] *memset::dst#2 = 0 [ memset::end#0 memset::dst#2 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#2 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a reg byte y 
-Statement [82] *COLCRS = gotoxy::x#1 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [83] *ROWCRS = gotoxy::y#1 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [82] *COLCRS = gotoxy::x#0 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [83] *ROWCRS = gotoxy::y#0 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [86] if(cputc::c==''at) goto cputc::@1 [ cputc::c ] ( cputs:5::cputc:65 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65 [ cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65 [ printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127 [ main::total#10 printf_buffer cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127 [ printf_buffer cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [87] if(cputc::c=='
 'at) goto cputc::@2 [ cputc::c ] ( cputs:5::cputc:65 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65 [ cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65 [ printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127 [ main::total#10 printf_buffer cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127 [ printf_buffer cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
@@ -5326,8 +5326,8 @@ Statement [153] *(*OLDADR) = *(*OLDADR) ^ $80 [ ] ( cputs:5::cputc:65::newline:9
 Statement [154] newline::start#0 = *SAVMSC [ newline::start#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [155] memcpy::source#0 = newline::start#0 + $28 [ newline::start#0 memcpy::source#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [156] memcpy::destination#0 = (void*)newline::start#0 [ newline::start#0 memcpy::source#0 memcpy::destination#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
-Statement [158] memset::str#0 = newline::start#0 + (word)$28*$17 [ memset::str#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
-Statement [159] memset::str#8 = (void*)memset::str#0 [ memset::str#8 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
+Statement [158] memset::str#1 = newline::start#0 + (word)$28*$17 [ memset::str#1 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
+Statement [159] memset::str#8 = (void*)memset::str#1 [ memset::str#8 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [161] *ROWCRS = $18-1 [ ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [167] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( printf_uint:7::utoa:69::utoa_append:120 [ main::total#10 printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  printf_uint:11::utoa:69::utoa_append:120 [ printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:159 [ utoa_append::digit#2 utoa_append::digit#1 ]
@@ -5376,8 +5376,8 @@ Statement [75] memset::end#0 = (byte*)memset::str#3 + memset::num#2 [ memset::st
 Statement [76] memset::dst#4 = (byte*)memset::str#3 [ memset::end#0 memset::dst#4 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#4 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#4 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [78] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::end#0 memset::dst#2 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#2 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [80] *memset::dst#2 = 0 [ memset::end#0 memset::dst#2 ] ( clrscr:1::memset:54 [ printf_buffer memset::end#0 memset::dst#2 ] { { memset::str#3 = memset::str#7 } }  cputs:5::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100::memset:160 [ cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100::memset:160 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100::memset:160 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ main::total#10 printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100::memset:160 [ printf_buffer cputs::s#0 memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ main::total#10 printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100::memset:160 [ printf_buffer memset::end#0 memset::dst#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a reg byte y 
-Statement [82] *COLCRS = gotoxy::x#1 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [83] *ROWCRS = gotoxy::y#1 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [82] *COLCRS = gotoxy::x#0 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [83] *ROWCRS = gotoxy::y#0 [ ] ( clrscr:1::gotoxy:56 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [86] if(cputc::c==''at) goto cputc::@1 [ cputc::c ] ( cputs:5::cputc:65 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65 [ cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65 [ printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127 [ main::total#10 printf_buffer cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127 [ printf_buffer cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [87] if(cputc::c=='
 'at) goto cputc::@2 [ cputc::c ] ( cputs:5::cputc:65 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65 [ cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 cputc::c ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65 [ main::total#10 printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65 [ printf_buffer cputs::s#0 cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127 [ main::total#10 printf_buffer cputc::c ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127 [ printf_buffer cputc::c ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
@@ -5416,8 +5416,8 @@ Statement [153] *(*OLDADR) = *(*OLDADR) ^ $80 [ ] ( cputs:5::cputc:65::newline:9
 Statement [154] newline::start#0 = *SAVMSC [ newline::start#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [155] memcpy::source#0 = newline::start#0 + $28 [ newline::start#0 memcpy::source#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 memcpy::source#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [156] memcpy::destination#0 = (void*)newline::start#0 [ newline::start#0 memcpy::source#0 memcpy::destination#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer newline::start#0 memcpy::source#0 memcpy::destination#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
-Statement [158] memset::str#0 = newline::start#0 + (word)$28*$17 [ memset::str#0 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#0 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
-Statement [159] memset::str#8 = (void*)memset::str#0 [ memset::str#8 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
+Statement [158] memset::str#1 = newline::start#0 + (word)$28*$17 [ memset::str#1 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#1 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#1 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#1 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
+Statement [159] memset::str#8 = (void*)memset::str#1 [ memset::str#8 ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 memset::str#8 ] { { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer memset::str#8 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer memset::str#8 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } { memset::str#3 = memset::str#8 } }  ) always clobbers reg byte a 
 Statement [161] *ROWCRS = $18-1 [ ] ( cputs:5::cputc:65::newline:98 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:98 [ cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:98 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:98 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ main::total#10 printf_buffer cputs::s#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:98 [ printf_buffer cputs::s#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:98 [ main::total#10 printf_buffer ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:98 [ printf_buffer ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  cputs:5::cputc:65::newline:100 [ main::valid#10 main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:9::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:13::cputc:65::newline:100 [ cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:25::cputc:65::newline:100 [ main::valid#10 main::total#10 main::pass#3 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  cputs:29::cputc:65::newline:100 [ main::total#10 main::pass#3 main::valid#1 printf_buffer cputs::s#0 ] { { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ main::total#10 printf_buffer cputs::s#0 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { cputs::c#1 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputs:129::cputc:65::newline:100 [ printf_buffer cputs::s#0 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { cputs::c#1 = cputc::c } }  printf_uint:7::printf_number_buffer:71::cputc:127::newline:100 [ main::total#10 printf_buffer ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  printf_uint:11::printf_number_buffer:71::cputc:127::newline:100 [ printf_buffer ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 } { printf_number_buffer::buffer_sign#0 = cputc::c } }  ) always clobbers reg byte a 
 Statement [167] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 [ utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] ( printf_uint:7::utoa:69::utoa_append:120 [ main::total#10 printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  printf_uint:11::utoa:69::utoa_append:120 [ printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::buffer#0 utoa_append::sub#0 utoa_append::value#2 utoa_append::digit#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [168] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] [ utoa_append::value#2 ] ( printf_uint:7::utoa:69::utoa_append:120 [ main::total#10 printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { printf_uint::uvalue#0 = printf_uint::uvalue#2 main::valid#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  printf_uint:11::utoa:69::utoa_append:120 [ printf_buffer utoa::digit#2 utoa::buffer#11 utoa_append::value#2 ] { { printf_uint::uvalue#1 = printf_uint::uvalue#2 main::total#10 utoa::value#1 } { utoa_append::buffer#0 = utoa::buffer#11 } { utoa_append::value#0 = utoa::value#2 } { utoa_append::sub#0 = utoa::digit_value#0 } { utoa_append::return#0 = utoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
@@ -5477,7 +5477,7 @@ Potential registers zp[1]:192 [ putchar::newChar#0 ] : zp[1]:192 , reg byte a , 
 Potential registers zp[2]:193 [ newline::start#0 ] : zp[2]:193 , 
 Potential registers zp[2]:195 [ memcpy::source#0 ] : zp[2]:195 , 
 Potential registers zp[2]:197 [ memcpy::destination#0 ] : zp[2]:197 , 
-Potential registers zp[2]:199 [ memset::str#0 ] : zp[2]:199 , 
+Potential registers zp[2]:199 [ memset::str#1 ] : zp[2]:199 , 
 Potential registers zp[2]:201 [ cursorLocation::$3 ] : zp[2]:201 , 
 Potential registers zp[2]:203 [ cursorLocation::$4 ] : zp[2]:203 , 
 Potential registers zp[2]:205 [ cursorLocation::$5 ] : zp[2]:205 , 
@@ -5489,7 +5489,7 @@ Potential registers mem[12] [ printf_buffer ] : mem[12] ,
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [memcpy] 300,125,000,004.25: zp[2]:160 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 200,233,333,337.67: zp[2]:162 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 12,512,500,000.25: zp[2]:213 [ memcpy::src_end#0 ] 3,333,333.67: zp[2]:195 [ memcpy::source#0 ] 3,333,333.67: zp[2]:197 [ memcpy::destination#0 ] 
-Uplift Scope [memset] 333,566,666,672.33: zp[2]:149 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 16,683,333,333.67: zp[2]:167 [ memset::end#0 ] 100,000,001: zp[2]:145 [ memset::num#2 ] 23,333,361.33: zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 ] 10,000,001: zp[2]:199 [ memset::str#0 ] 
+Uplift Scope [memset] 333,566,666,672.33: zp[2]:149 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 16,683,333,333.67: zp[2]:167 [ memset::end#0 ] 100,000,001: zp[2]:145 [ memset::num#2 ] 23,333,361.33: zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 ] 10,000,001: zp[2]:199 [ memset::str#1 ] 
 Uplift Scope [cursorLocation] 2,000,000,002: zp[2]:203 [ cursorLocation::$4 ] 2,000,000,002: zp[2]:205 [ cursorLocation::$5 ] 2,000,000,002: zp[2]:207 [ cursorLocation::$0 ] 2,000,000,002: zp[2]:209 [ cursorLocation::$1 ] 1,500,000,001.5: zp[2]:201 [ cursorLocation::$3 ] 277,500,000.75: zp[2]:211 [ cursorLocation::return#1 ] 200,000,002: zp[2]:182 [ cursorLocation::return#3 ] 20,000,002: zp[2]:188 [ cursorLocation::return#0 ] 
 Uplift Scope [setcursor] 200,000,002: zp[1]:187 [ setcursor::c#1 ] 100,000,001: zp[2]:184 [ setcursor::loc#0 ] 75,000,000.75: zp[1]:186 [ setcursor::c#0 ] 
 Uplift Scope [putchar] 15,000,001.5: zp[1]:192 [ putchar::newChar#0 ] 10,000,001: zp[2]:190 [ putchar::loc#0 ] 
@@ -5502,20 +5502,20 @@ Uplift Scope [utoa] 3,803.93: zp[2]:155 [ utoa::buffer#11 utoa::buffer#14 utoa::
 Uplift Scope [printf_number_buffer] 71: zp[1]:166 [ printf_number_buffer::buffer_sign#0 ] 
 Uplift Scope [printf_uint] 15.5: zp[2]:143 [ printf_uint::uvalue#2 printf_uint::uvalue#0 printf_uint::uvalue#1 ] 
 Uplift Scope [RADIX] 
+Uplift Scope [clrscr] 
+Uplift Scope [gotoxy] 
 Uplift Scope [ATARI_ANTIC] 
 Uplift Scope [ATARI_GTIA_READ] 
 Uplift Scope [ATARI_GTIA_WRITE] 
 Uplift Scope [ATARI_POKEY_READ] 
 Uplift Scope [ATARI_POKEY_WRITE] 
-Uplift Scope [gotoxy] 
-Uplift Scope [clrscr] 
 Uplift Scope [printf_format_number] 
 Uplift Scope [printf_buffer_number] 
 Uplift Scope [printf_format_string] 
 Uplift Scope [] 0: mem[12] [ printf_buffer ] 
 
 Uplifting [memcpy] best 965554 combination zp[2]:160 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:162 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:213 [ memcpy::src_end#0 ] zp[2]:195 [ memcpy::source#0 ] zp[2]:197 [ memcpy::destination#0 ] 
-Uplifting [memset] best 965554 combination zp[2]:149 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:167 [ memset::end#0 ] zp[2]:145 [ memset::num#2 ] zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 ] zp[2]:199 [ memset::str#0 ] 
+Uplifting [memset] best 965554 combination zp[2]:149 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:167 [ memset::end#0 ] zp[2]:145 [ memset::num#2 ] zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 ] zp[2]:199 [ memset::str#1 ] 
 Uplifting [cursorLocation] best 965554 combination zp[2]:203 [ cursorLocation::$4 ] zp[2]:205 [ cursorLocation::$5 ] zp[2]:207 [ cursorLocation::$0 ] zp[2]:209 [ cursorLocation::$1 ] zp[2]:201 [ cursorLocation::$3 ] zp[2]:211 [ cursorLocation::return#1 ] zp[2]:182 [ cursorLocation::return#3 ] zp[2]:188 [ cursorLocation::return#0 ] 
 Uplifting [setcursor] best 965543 combination reg byte a [ setcursor::c#1 ] zp[2]:184 [ setcursor::loc#0 ] reg byte x [ setcursor::c#0 ] 
 Uplifting [putchar] best 965534 combination reg byte a [ putchar::newChar#0 ] zp[2]:190 [ putchar::loc#0 ] 
@@ -5528,13 +5528,13 @@ Uplifting [utoa] best 961983 combination zp[2]:155 [ utoa::buffer#11 utoa::buffe
 Uplifting [printf_number_buffer] best 961976 combination reg byte a [ printf_number_buffer::buffer_sign#0 ] 
 Uplifting [printf_uint] best 961976 combination zp[2]:143 [ printf_uint::uvalue#2 printf_uint::uvalue#0 printf_uint::uvalue#1 ] 
 Uplifting [RADIX] best 961976 combination 
+Uplifting [clrscr] best 961976 combination 
+Uplifting [gotoxy] best 961976 combination 
 Uplifting [ATARI_ANTIC] best 961976 combination 
 Uplifting [ATARI_GTIA_READ] best 961976 combination 
 Uplifting [ATARI_GTIA_WRITE] best 961976 combination 
 Uplifting [ATARI_POKEY_READ] best 961976 combination 
 Uplifting [ATARI_POKEY_WRITE] best 961976 combination 
-Uplifting [gotoxy] best 961976 combination 
-Uplifting [clrscr] best 961976 combination 
 Uplifting [printf_format_number] best 961976 combination 
 Uplifting [printf_buffer_number] best 961976 combination 
 Uplifting [printf_format_string] best 961976 combination 
@@ -5552,7 +5552,7 @@ Uplifting [utoa] best 961976 combination zp[1]:151 [ utoa::digit#2 utoa::digit#1
 Coalescing zero page register [ zp[2]:130 [ main::valid#10 main::valid#8 main::valid#1 ] ] with [ zp[2]:143 [ printf_uint::uvalue#2 printf_uint::uvalue#0 printf_uint::uvalue#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:145 [ memset::num#2 ] ] with [ zp[2]:167 [ memset::end#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 ] ] with [ zp[2]:149 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:199 [ memset::str#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:199 [ memset::str#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:152 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] ] with [ zp[2]:157 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:152 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] ] with [ zp[2]:180 [ utoa_append::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:155 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] ] with [ zp[2]:171 [ utoa::buffer#3 ] ] - score: 1
@@ -5566,13 +5566,13 @@ Coalescing zero page register [ zp[2]:188 [ cursorLocation::return#0 ] ] with [ 
 Coalescing zero page register [ zp[2]:201 [ cursorLocation::$3 ] ] with [ zp[2]:205 [ cursorLocation::$5 ] ] - score: 1
 Coalescing zero page register [ zp[2]:207 [ cursorLocation::$0 ] ] with [ zp[2]:209 [ cursorLocation::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:130 [ main::valid#10 main::valid#8 main::valid#1 printf_uint::uvalue#2 printf_uint::uvalue#0 printf_uint::uvalue#1 ] ] with [ zp[2]:152 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#0 ] ] with [ zp[2]:193 [ newline::start#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#1 ] ] with [ zp[2]:193 [ newline::start#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:182 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 ] ] with [ zp[2]:188 [ cursorLocation::return#0 putchar::loc#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:182 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 cursorLocation::return#0 putchar::loc#0 ] ] with [ zp[2]:207 [ cursorLocation::$0 cursorLocation::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:182 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 cursorLocation::return#0 putchar::loc#0 cursorLocation::$0 cursorLocation::$1 ] ] with [ zp[2]:201 [ cursorLocation::$3 cursorLocation::$5 ] ] - score: 1
 Coalescing zero page register [ zp[2]:155 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ] ] with [ zp[2]:141 [ cputs::s#7 cputs::s#8 cputs::s#0 ] ]
 Coalescing zero page register [ zp[2]:160 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 memcpy::source#0 ] ] with [ zp[2]:145 [ memset::num#2 memset::end#0 ] ]
-Coalescing zero page register [ zp[2]:174 [ utoa::digit_value#0 utoa_append::sub#0 ] ] with [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#0 newline::start#0 ] ]
+Coalescing zero page register [ zp[2]:174 [ utoa::digit_value#0 utoa_append::sub#0 ] ] with [ zp[2]:147 [ memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#1 newline::start#0 ] ]
 Coalescing zero page register [ zp[2]:182 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 cursorLocation::return#0 putchar::loc#0 cursorLocation::$0 cursorLocation::$1 cursorLocation::$3 cursorLocation::$5 ] ] with [ zp[2]:162 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 memcpy::destination#0 ] ]
 Coalescing zero page register [ zp[2]:213 [ memcpy::src_end#0 ] ] with [ zp[2]:203 [ cursorLocation::$4 ] ]
 Allocated (was zp[1]:136) zp[1]:134 [ main::tag_idx#2 main::tag_idx#1 ]
@@ -5583,7 +5583,7 @@ Allocated (was zp[1]:151) zp[1]:139 [ utoa::digit#2 utoa::digit#1 ]
 Allocated (was zp[2]:155) zp[2]:140 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 cputs::s#7 cputs::s#8 cputs::s#0 ]
 Allocated (was zp[2]:160) zp[2]:142 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 memcpy::source#0 memset::num#2 memset::end#0 ]
 Allocated (was zp[1]:165) zp[1]:144 [ cputc::c ]
-Allocated (was zp[2]:174) zp[2]:145 [ utoa::digit_value#0 utoa_append::sub#0 memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#0 newline::start#0 ]
+Allocated (was zp[2]:174) zp[2]:145 [ utoa::digit_value#0 utoa_append::sub#0 memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#1 newline::start#0 ]
 Allocated (was zp[2]:182) zp[2]:147 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 cursorLocation::return#0 putchar::loc#0 cursorLocation::$0 cursorLocation::$1 cursorLocation::$3 cursorLocation::$5 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 memcpy::destination#0 ]
 Allocated (was zp[2]:213) zp[2]:149 [ memcpy::src_end#0 cursorLocation::$4 ]
 
@@ -6197,12 +6197,12 @@ memset: {
 gotoxy: {
     .const x = 0
     .const y = 0
-    // [82] *COLCRS = gotoxy::x#1 -- _deref_pwuc1=vbuc2 
+    // [82] *COLCRS = gotoxy::x#0 -- _deref_pwuc1=vbuc2 
     lda #0
     sta COLCRS+1
     lda #<x
     sta COLCRS
-    // [83] *ROWCRS = gotoxy::y#1 -- _deref_pbuc1=vbuc2 
+    // [83] *ROWCRS = gotoxy::y#0 -- _deref_pbuc1=vbuc2 
     lda #y
     sta ROWCRS
     // [84] call setcursor 
@@ -6616,7 +6616,7 @@ newline: {
     jmp __b4
     // newline::@4
   __b4:
-    // [158] memset::str#0 = newline::start#0 + (word)$28*$17 -- pbuz1=pbuz1_plus_vwuc1 
+    // [158] memset::str#1 = newline::start#0 + (word)$28*$17 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z memset.str
     adc #<$28*$17
@@ -6624,7 +6624,7 @@ newline: {
     lda.z memset.str+1
     adc #>$28*$17
     sta.z memset.str+1
-    // [159] memset::str#8 = (void*)memset::str#0
+    // [159] memset::str#8 = (void*)memset::str#1
     // [160] call memset 
     // [73] phi from newline::@4 to memset [phi:newline::@4->memset]
   memset_from___b4:
@@ -7141,9 +7141,9 @@ byte* cursorLocation::return#1 return zp[2]:147 2.7750000075E8
 byte* cursorLocation::return#3 return zp[2]:147 2.00000002E8
 void gotoxy(byte gotoxy::x , byte gotoxy::y)
 byte gotoxy::x
-constant byte gotoxy::x#1 x = 0
+constant byte gotoxy::x#0 x = 0
 byte gotoxy::y
-constant byte gotoxy::y#1 y = 0
+constant byte gotoxy::y#0 y = 0
 void main()
 byte main::i
 byte main::i#1 reg byte x 202.0
@@ -7218,7 +7218,7 @@ word memset::num
 word memset::num#2 num zp[2]:142 1.00000001E8
 void* memset::return
 void* memset::str
-byte* memset::str#0 str zp[2]:145 1.0000001E7
+byte* memset::str#1 str zp[2]:145 1.0000001E7
 void* memset::str#3 str zp[2]:145 3333337.333333333
 void* memset::str#7 str zp[2]:145 22.0
 void* memset::str#8 str zp[2]:145 2.0000002E7
@@ -8434,7 +8434,7 @@ reg byte a [ printf_number_buffer::buffer_sign#0 ]
 reg byte x [ cputc::convertToScreenCode1_return#0 ]
 reg byte a [ utoa::$11 ]
 reg byte a [ utoa::$10 ]
-zp[2]:145 [ utoa::digit_value#0 utoa_append::sub#0 memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#0 newline::start#0 ]
+zp[2]:145 [ utoa::digit_value#0 utoa_append::sub#0 memset::str#3 memset::str#7 memset::str#8 memset::dst#2 memset::dst#4 memset::dst#1 memset::str#1 newline::start#0 ]
 zp[2]:147 [ cursorLocation::return#3 setcursor::loc#0 cursorLocation::return#1 cursorLocation::return#0 putchar::loc#0 cursorLocation::$0 cursorLocation::$1 cursorLocation::$3 cursorLocation::$5 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 memcpy::destination#0 ]
 reg byte x [ setcursor::c#0 ]
 reg byte a [ setcursor::c#1 ]
@@ -9006,13 +9006,13 @@ gotoxy: {
     .const x = 0
     .const y = 0
     // *COLCRS = x
-    // [82] *COLCRS = gotoxy::x#1 -- _deref_pwuc1=vbuc2 
+    // [82] *COLCRS = gotoxy::x#0 -- _deref_pwuc1=vbuc2 
     lda #0
     sta COLCRS+1
     lda #<x
     sta COLCRS
     // *ROWCRS = y
-    // [83] *ROWCRS = gotoxy::y#1 -- _deref_pbuc1=vbuc2 
+    // [83] *ROWCRS = gotoxy::y#0 -- _deref_pbuc1=vbuc2 
     lda #y
     sta ROWCRS
     // setcursor()
@@ -9417,7 +9417,7 @@ newline: {
     jsr memcpy
     // newline::@4
     // start + CONIO_WIDTH * 23
-    // [158] memset::str#0 = newline::start#0 + (word)$28*$17 -- pbuz1=pbuz1_plus_vwuc1 
+    // [158] memset::str#1 = newline::start#0 + (word)$28*$17 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z memset.str
     adc #<$28*$17
@@ -9425,7 +9425,7 @@ newline: {
     lda.z memset.str+1
     adc #>$28*$17
     sta.z memset.str+1
-    // [159] memset::str#8 = (void*)memset::str#0
+    // [159] memset::str#8 = (void*)memset::str#1
     // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
     // [160] call memset 
     // [73] phi from newline::@4 to memset [phi:newline::@4->memset]

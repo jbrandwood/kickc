@@ -210,10 +210,10 @@ print_uint: {
 // utoa(word zp($d) value, byte* zp(5) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $d
     .label digit_value = $f
     .label buffer = 5
     .label digit = 4
-    .label value = $d
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits

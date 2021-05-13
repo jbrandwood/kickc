@@ -1,6 +1,6 @@
 // Tests calling into different function pointers which call a common sub-method
 
-void do10(void()* fn) {
+void do10(void(*fn)()) {
     for( byte i: 0..9)
         (*fn)();
 }

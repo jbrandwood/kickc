@@ -259,9 +259,7 @@ public class SymbolTypeConversion {
    public static boolean procedureDeclarationMatch(Procedure first, Procedure second) {
       if(!first.getFullName().equals(second.getFullName()))
          return false;
-      if(!first.getReturnType().equals(second.getReturnType()))
-         return false;
-      if(!first.getParameters().equals(second.getParameters()))
+      if(!first.getType().equals(second.getType()))
          return false;
       return true;
    }

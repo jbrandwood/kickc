@@ -39,11 +39,11 @@ main: {
     .byte 0
 }
 .segment Code
-// print2(byte* zp($fa) at, byte* zp($fc) msg)
+// print2(byte* zp(4) at, byte* zp(2) msg)
 print2: {
-    .label at = $fa
-    .label msg = $fc
-    .label i = 2
+    .label i = 6
+    .label msg = 2
+    .label at = 4
     ldx #0
     txa
     sta.z i
@@ -67,9 +67,9 @@ print2: {
     inc.z i
     jmp __b1
 }
-// print_char(byte* zp($fa) at, byte register(X) idx, byte register(A) ch)
+// print_char(byte* zp(4) at, byte register(X) idx, byte register(A) ch)
 print_char: {
-    .label at = $fa
+    .label at = 4
     // at[idx] = ch
     stx.z $ff
     ldy.z $ff

@@ -10,6 +10,5 @@
 .segment Code
 // Definition of main()
 main: {
-    // }
     rts
 }

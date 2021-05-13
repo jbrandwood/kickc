@@ -39,10 +39,12 @@ __address(0x5000) char MUSIC[] = kickasm(resource "Thaw_5000.sid") {{
     .const music = LoadSid("Thaw_5000.sid")
     .fill music.size, music.getData(i)
 }};
+// Pointer to procedure
+typedef void (*PROC_PTR)(void);
 // Pointer to the music init routine
-void()* musicInit = (void()*) MUSIC;
+PROC_PTR const musicInit = (PROC_PTR) MUSIC;
 // Pointer to the music play routine
-void()* musicPlay = (void()*) MUSIC+3;
+PROC_PTR const = (PROC_PTR) MUSIC+3;
 
 
 __align(0x40) char SPRITES[0xc0] = kickasm(resource "camelot-sprites.png") {{

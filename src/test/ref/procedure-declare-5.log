@@ -1,0 +1,240 @@
+
+CONTROL FLOW GRAPH SSA
+
+byte f()
+f: scope:[f]  from main
+  f::return#0 = 7
+  to:f::@return
+f::@return: scope:[f]  from f
+  f::return#3 = phi( f/f::return#0 )
+  f::return#1 = f::return#3
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  call f 
+  f::return#2 = f::return#1
+  to:main::@1
+main::@1: scope:[main]  from main
+  f::return#4 = phi( main/f::return#2 )
+  main::$0 = f::return#4
+  main::SCREEN[0] = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+byte f()
+byte f::return
+byte f::return#0
+byte f::return#1
+byte f::return#2
+byte f::return#3
+byte f::return#4
+void main()
+byte~ main::$0
+constant byte* const main::SCREEN = (byte*)$400
+
+Adding number conversion cast (unumber) 7 in f::return#0 = 7
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::$0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast f::return#0 = (unumber)7
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 7
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias f::return#0 = f::return#3 f::return#1 
+Alias f::return#2 = f::return#4 
+Successful SSA optimization Pass2AliasElimination
+Constant f::return#0 = 7
+Successful SSA optimization Pass2ConstantIdentification
+Constant f::return#2 = f::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::$0 = f::return#2
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [5] main::SCREEN[0] = main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with different constant siblings f::return#2
+Constant inlined f::return#2 = f::return#0
+Constant inlined main::$0 = f::return#0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of f
+CALL GRAPH
+Calls in [main] to f:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+Adding NOP phi() at start of f
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call f 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] *main::SCREEN = f::return#0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+
+byte f()
+f: scope:[f]  from main
+  [4] phi()
+  to:f::@return
+f::@return: scope:[f]  from f
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+byte f()
+byte f::return
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] *main::SCREEN = f::return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [f] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [f] best 60 combination 
+Uplifting [main] best 60 combination 
+Uplifting [] best 60 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Procedure Declaration - a void procedure declared with empty parenthesis
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] call f 
+    // [4] phi from main to f [phi:main->f]
+  f_from_main:
+    jsr f
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] *main::SCREEN = f::return#0 -- _deref_pbuc1=vbuc2 
+    lda #f.return
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // f
+f: {
+    .label return = 7
+    jmp __breturn
+    // f::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction f_from_main:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+byte f()
+byte f::return
+constant byte f::return#0 return = 7
+void main()
+constant byte* const main::SCREEN = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Procedure Declaration - a void procedure declared with empty parenthesis
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-declare-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // f()
+    // [1] call f 
+    // [4] phi from main to f [phi:main->f]
+    jsr f
+    // main::@1
+    // SCREEN[0] = f()
+    // [2] *main::SCREEN = f::return#0 -- _deref_pbuc1=vbuc2 
+    lda #f.return
+    sta SCREEN
+    // main::@return
+    // }
+    // [3] return 
+    rts
+}
+  // f
+f: {
+    .label return = 7
+    // f::@return
+    // [5] return 
+    rts
+}
+  // File Data
+

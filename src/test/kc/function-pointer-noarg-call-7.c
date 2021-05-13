@@ -1,6 +1,6 @@
 // Tests calling into a function pointer with local variables
 
-void do10(void()* fn) {
+void do10( void (*fn)(void)) {
     for( byte i: 0..9)
         (*fn)();
 }
@@ -19,7 +19,7 @@ void hello() {
 
 
 void main() {
-    void()* f = &hello;
+    void (*f)() = &hello;
     do10(f);
 }
 

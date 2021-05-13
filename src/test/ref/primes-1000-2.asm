@@ -304,10 +304,10 @@ divr8u: {
 // utoa(word zp($11) value, byte* zp($d) buffer)
 utoa: {
     .const max_digits = 5
+    .label value = $11
     .label digit_value = $13
     .label buffer = $d
     .label digit = $c
-    .label value = $11
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits

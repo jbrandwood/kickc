@@ -8,50 +8,6 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
-memset: scope:[memset]  from print_cls
-  memset::c#4 = phi( print_cls/memset::c#0 )
-  memset::str#3 = phi( print_cls/memset::str#0 )
-  memset::num#1 = phi( print_cls/memset::num#0 )
-  memset::$0 = memset::num#1 > 0
-  memset::$1 = ! memset::$0
-  if(memset::$1) goto memset::@1
-  to:memset::@2
-memset::@1: scope:[memset]  from memset memset::@3
-  memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
-  memset::return#0 = memset::str#1
-  to:memset::@return
-memset::@2: scope:[memset]  from memset
-  memset::c#3 = phi( memset/memset::c#4 )
-  memset::num#2 = phi( memset/memset::num#1 )
-  memset::str#2 = phi( memset/memset::str#3 )
-  memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
-  memset::dst#0 = ((byte*)) memset::str#2
-  to:memset::@3
-memset::@3: scope:[memset]  from memset::@2 memset::@4
-  memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
-  memset::str#4 = phi( memset::@2/memset::str#2, memset::@4/memset::str#5 )
-  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
-  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
-  memset::$3 = memset::dst#2 != memset::end#1
-  if(memset::$3) goto memset::@4
-  to:memset::@1
-memset::@4: scope:[memset]  from memset::@3
-  memset::str#5 = phi( memset::@3/memset::str#4 )
-  memset::end#2 = phi( memset::@3/memset::end#1 )
-  memset::dst#3 = phi( memset::@3/memset::dst#2 )
-  memset::c#1 = phi( memset::@3/memset::c#2 )
-  *memset::dst#3 = memset::c#1
-  memset::dst#1 = ++ memset::dst#3
-  to:memset::@3
-memset::@return: scope:[memset]  from memset::@1
-  memset::return#3 = phi( memset::@1/memset::return#0 )
-  memset::return#1 = memset::return#3
-  return 
-  to:@return
-
 void print_str(byte* print_str::str)
 print_str: scope:[print_str]  from print_points::@6
   print_char_cursor#51 = phi( print_points::@6/print_char_cursor#14 )
@@ -152,7 +108,7 @@ print_cls: scope:[print_cls]  from print_points
   memset::c#0 = ' '
   memset::num#0 = $3e8
   call memset 
-  memset::return#2 = memset::return#1
+  memset::return#0 = memset::return#2
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls
   print_screen#3 = phi( print_cls/print_screen#2 )
@@ -164,6 +120,50 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   print_line_cursor#15 = phi( print_cls::@1/print_line_cursor#2 )
   print_line_cursor#3 = print_line_cursor#15
   print_char_cursor#10 = print_char_cursor#31
+  return 
+  to:@return
+
+void* memset(void* memset::str , byte memset::c , word memset::num)
+memset: scope:[memset]  from print_cls
+  memset::c#4 = phi( print_cls/memset::c#0 )
+  memset::str#3 = phi( print_cls/memset::str#0 )
+  memset::num#1 = phi( print_cls/memset::num#0 )
+  memset::$0 = memset::num#1 > 0
+  memset::$1 = ! memset::$0
+  if(memset::$1) goto memset::@1
+  to:memset::@2
+memset::@1: scope:[memset]  from memset memset::@3
+  memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
+  memset::return#1 = memset::str#1
+  to:memset::@return
+memset::@2: scope:[memset]  from memset
+  memset::c#3 = phi( memset/memset::c#4 )
+  memset::num#2 = phi( memset/memset::num#1 )
+  memset::str#2 = phi( memset/memset::str#3 )
+  memset::$4 = (byte*)memset::str#2
+  memset::$2 = memset::$4 + memset::num#2
+  memset::end#0 = memset::$2
+  memset::dst#0 = ((byte*)) memset::str#2
+  to:memset::@3
+memset::@3: scope:[memset]  from memset::@2 memset::@4
+  memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
+  memset::str#4 = phi( memset::@2/memset::str#2, memset::@4/memset::str#5 )
+  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
+  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
+  memset::$3 = memset::dst#2 != memset::end#1
+  if(memset::$3) goto memset::@4
+  to:memset::@1
+memset::@4: scope:[memset]  from memset::@3
+  memset::str#5 = phi( memset::@3/memset::str#4 )
+  memset::end#2 = phi( memset::@3/memset::end#1 )
+  memset::dst#3 = phi( memset::@3/memset::dst#2 )
+  memset::c#1 = phi( memset::@3/memset::c#2 )
+  *memset::dst#3 = memset::c#1
+  memset::dst#1 = ++ memset::dst#3
+  to:memset::@3
+memset::@return: scope:[memset]  from memset::@1
+  memset::return#3 = phi( memset::@1/memset::return#1 )
+  memset::return#2 = memset::return#3
   return 
   to:@return
 
@@ -762,13 +762,13 @@ byte print_uchar::b#1
 byte print_uchar::b#2
 byte print_uchar::b#3
 
-Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) 0 in print_str::$1 = 0 != *print_str::str#2
 Adding number conversion cast (unumber) $28 in print_ln::$0 = print_line_cursor#12 + $28
 Adding number conversion cast (unumber) 4 in print_uchar::$0 = print_uchar::b#2 >> 4
 Adding number conversion cast (unumber) $f in print_uchar::$2 = print_uchar::b#3 & $f
 Adding number conversion cast (unumber) print_uchar::$2 in print_uchar::$2 = print_uchar::b#3 & (unumber)$f
 Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
+Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) 0 in init_points::pointXpos1_$0 = init_points::pointXpos1_point#1 + 0
 Adding number conversion cast (unumber) $a in init_points::pos#1 = init_points::pos#3 + $a
 Adding number conversion cast (unumber) 1 in init_points::pointYpos1_$0 = init_points::pointYpos1_point#1 + 1
@@ -778,15 +778,15 @@ Adding number conversion cast (unumber) 0 in print_points::pointXpos1_$0 = print
 Adding number conversion cast (unumber) 1 in print_points::pointYpos1_$0 = print_points::pointYpos1_point#1 + 1
 Adding number conversion cast (unumber) 1 in print_points::i#1 = print_points::i#3 + rangenext(0,NUM_POINTS-1)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast memset::dst#0 = (byte*)memset::str#2
 Inlining cast memset::num#0 = (unumber)$3e8
+Inlining cast memset::dst#0 = (byte*)memset::str#2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast init_points::pointXpos1_$0
 Simplifying constant integer cast $a
@@ -802,11 +802,11 @@ Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 1
@@ -817,17 +817,8 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
-Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
+Inversing boolean not [60] memset::$1 = memset::num#1 <= 0 from [59] memset::$0 = memset::num#1 > 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
-Alias memset::str#2 = memset::str#3 
-Alias memset::num#1 = memset::num#2 
-Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
-Alias memset::c#1 = memset::c#2 
-Alias memset::dst#2 = memset::dst#3 
-Alias memset::end#1 = memset::end#2 
-Alias memset::str#4 = memset::str#5 
 Alias print_str::str#2 = print_str::str#3 print_str::str#4 
 Alias print_char_cursor#1 = print_char_cursor#42 print_char_cursor#43 print_char_cursor#23 
 Alias print_char_cursor#0 = print_char_cursor#22 
@@ -837,6 +828,15 @@ Alias print_char_cursor#26 = print_char_cursor#4
 Alias print_char_cursor#27 = print_char_cursor#5 print_char_cursor#28 print_char_cursor#6 
 Alias print_char_cursor#30 = print_char_cursor#7 print_char_cursor#8 
 Alias print_line_cursor#15 = print_screen#3 print_screen#2 print_line_cursor#2 print_char_cursor#9 print_char_cursor#31 print_line_cursor#3 print_char_cursor#10 
+Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2 
+Alias memset::str#2 = memset::str#3 
+Alias memset::num#1 = memset::num#2 
+Alias memset::c#3 = memset::c#4 
+Alias memset::end#0 = memset::$2 
+Alias memset::c#1 = memset::c#2 
+Alias memset::dst#2 = memset::dst#3 
+Alias memset::end#1 = memset::end#2 
+Alias memset::str#4 = memset::str#5 
 Alias print_line_cursor#24 = print_line_cursor#28 
 Alias print_char_cursor#46 = print_char_cursor#52 
 Alias print_screen#7 = print_screen#9 
@@ -865,12 +865,6 @@ Alias print_screen#0 = print_line_cursor#9 print_char_cursor#19 print_line_curso
 Alias print_line_cursor#10 = print_line_cursor#21 print_line_cursor#22 print_line_cursor#11 
 Alias print_char_cursor#20 = print_char_cursor#40 print_char_cursor#41 print_char_cursor#21 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values memset::num#1 memset::num#0
-Identical Phi Values memset::str#2 memset::str#0
-Identical Phi Values memset::c#3 memset::c#0
-Identical Phi Values memset::end#1 memset::end#0
-Identical Phi Values memset::str#4 memset::str#2
-Identical Phi Values memset::c#1 memset::c#3
 Identical Phi Values print_str::str#5 print_str::str#1
 Identical Phi Values print_char_cursor#51 print_char_cursor#14
 Identical Phi Values print_char_cursor#0 print_char_cursor#30
@@ -880,6 +874,12 @@ Identical Phi Values print_char_cursor#24 print_char_cursor#44
 Identical Phi Values print_char_cursor#26 print_char_cursor#30
 Identical Phi Values print_char_cursor#27 print_char_cursor#30
 Identical Phi Values print_line_cursor#15 print_screen#5
+Identical Phi Values memset::num#1 memset::num#0
+Identical Phi Values memset::str#2 memset::str#0
+Identical Phi Values memset::c#3 memset::c#0
+Identical Phi Values memset::end#1 memset::end#0
+Identical Phi Values memset::str#4 memset::str#2
+Identical Phi Values memset::c#1 memset::c#3
 Identical Phi Values print_line_cursor#24 print_screen#0
 Identical Phi Values print_char_cursor#46 print_screen#0
 Identical Phi Values print_screen#7 print_screen#0
@@ -898,13 +898,13 @@ Identical Phi Values print_char_cursor#17 print_line_cursor#0
 Identical Phi Values print_line_cursor#10 print_line_cursor#16
 Identical Phi Values print_char_cursor#20 print_char_cursor#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values memset::return#0 memset::str#0
 Identical Phi Values print_char_cursor#1 print_char_cursor#30
+Identical Phi Values memset::return#1 memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memset::$1 [2] if(memset::num#0<=0) goto memset::@1
-Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition print_str::$1 [16] if(0!=*print_str::str#2) goto print_str::@2
-Simple Condition print_ln::$1 [26] if(print_line_cursor#0<print_char_cursor#30) goto print_ln::@1
+Simple Condition print_str::$1 [3] if(0!=*print_str::str#2) goto print_str::@2
+Simple Condition print_ln::$1 [13] if(print_line_cursor#0<print_char_cursor#30) goto print_ln::@1
+Simple Condition memset::$1 [38] if(memset::num#0<=0) goto memset::@1
+Simple Condition memset::$3 [45] if(memset::dst#2!=memset::end#0) goto memset::@4
 Simple Condition init_points::$3 [67] if(init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1
 Simple Condition print_points::$8 [91] if(print_points::i#1!=rangelast(0,NUM_POINTS-1)) goto print_points::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -918,11 +918,11 @@ Constant print_screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::str#0 = (void*)print_screen#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant memset::return#0 = memset::str#0
 Constant memset::$4 = (byte*)memset::str#0
 Constant memset::dst#0 = (byte*)memset::str#0
-Constant memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [2] if(memset::num#0<=0) goto memset::@1
+if() condition always false - eliminating [38] if(memset::num#0<=0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [65] init_points::i#1 = ++ init_points::i#10 to ++
 Resolved ranged comparison value [67] if(init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1 to NUM_POINTS-1+1
@@ -942,7 +942,7 @@ Eliminating unused variable init_points::pointXpos1_return#0 and assignment [36]
 Eliminating unused variable init_points::pointYpos1_return#0 and assignment [39] init_points::pointYpos1_return#0 = init_points::getPoint1_return#0 + 1
 Eliminating unused variable print_points::pointXpos1_return#0 and assignment [49] print_points::pointXpos1_return#0 = print_points::point#0
 Eliminating unused variable print_points::pointYpos1_return#0 and assignment [53] print_points::pointYpos1_return#0 = print_points::point#0 + 1
-Eliminating unused constant memset::return#2
+Eliminating unused constant memset::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -964,7 +964,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
+Constant right-side identified [24] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -974,8 +974,8 @@ Successful SSA optimization Pass2InlineDerefIdx
 Rewriting multiplication to use shift [33] init_points::getPoint1_$0 = init_points::i#10 * SIZEOF_POINT
 Rewriting multiplication to use shift [44] print_points::getPoint1_$0 = print_points::i#10 * SIZEOF_POINT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings memset::dst#0
 Inlining constant with var siblings print_str::str#1
+Inlining constant with var siblings memset::dst#0
 Inlining constant with var siblings init_points::pos#0
 Inlining constant with var siblings init_points::i#0
 Inlining constant with var siblings print_points::i#0
@@ -1468,9 +1468,9 @@ Uplift Scope [memset] 33,336.67: zp[2]:10 [ memset::dst#2 memset::dst#1 ]
 Uplift Scope [print_uchar] 2,002: zp[1]:22 [ print_uchar::$0 ] 2,002: zp[1]:23 [ print_uchar::$2 ] 955: zp[1]:5 [ print_uchar::b#2 print_uchar::b#0 print_uchar::b#1 ] 
 Uplift Scope [init_points] 185.17: zp[1]:2 [ init_points::i#10 init_points::i#1 ] 127.93: zp[1]:3 [ init_points::pos#10 init_points::pos#2 ] 101: zp[1]:15 [ init_points::getPoint1_$0 ] 101: zp[1]:18 [ init_points::pos#1 ] 40.4: zp[2]:16 [ init_points::getPoint1_return#0 ] 
 Uplift Scope [print_points] 124.31: zp[1]:4 [ print_points::i#10 print_points::i#1 ] 101: zp[1]:19 [ print_points::getPoint1_$0 ] 28.86: zp[2]:20 [ print_points::point#0 ] 
-Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [print_cls] 
+Uplift Scope [RADIX] 
 Uplift Scope [main] 
 
 Uplifting [] best 12824 combination zp[2]:13 [ print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#66 print_char_cursor#30 ] zp[2]:8 [ print_line_cursor#12 print_line_cursor#26 print_line_cursor#0 ] 
@@ -1480,9 +1480,9 @@ Uplifting [memset] best 12515 combination zp[2]:10 [ memset::dst#2 memset::dst#1
 Uplifting [print_uchar] best 12463 combination reg byte a [ print_uchar::$0 ] reg byte x [ print_uchar::$2 ] reg byte x [ print_uchar::b#2 print_uchar::b#0 print_uchar::b#1 ] 
 Uplifting [init_points] best 12263 combination reg byte x [ init_points::i#10 init_points::i#1 ] zp[1]:3 [ init_points::pos#10 init_points::pos#2 ] reg byte y [ init_points::getPoint1_$0 ] reg byte a [ init_points::pos#1 ] zp[2]:16 [ init_points::getPoint1_return#0 ] 
 Uplifting [print_points] best 12213 combination zp[1]:4 [ print_points::i#10 print_points::i#1 ] reg byte y [ print_points::getPoint1_$0 ] zp[2]:20 [ print_points::point#0 ] 
-Uplifting [RADIX] best 12213 combination 
 Uplifting [print_ln] best 12213 combination 
 Uplifting [print_cls] best 12213 combination 
+Uplifting [RADIX] best 12213 combination 
 Uplifting [main] best 12213 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ init_points::pos#10 init_points::pos#2 ]
 Uplifting [init_points] best 12213 combination zp[1]:3 [ init_points::pos#10 init_points::pos#2 ] 

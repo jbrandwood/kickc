@@ -62,7 +62,7 @@ constant byte* SCREEN1 = (byte*)$400
 constant byte* SCREEN2 = (byte*)$428
 void __start()
 void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore !reg byte a
+volatile byte chrout::petscii loadstore
 void main()
 bool~ main::$1
 byte main::i
@@ -151,7 +151,7 @@ chrout::@return: scope:[chrout]  from chrout
 
 VARIABLE REGISTER WEIGHTS
 void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore !reg byte a 11.0
+volatile byte chrout::petscii loadstore 11.0
 void main()
 byte main::i
 byte main::i#1 22.0
@@ -164,6 +164,7 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ chrout::petscii ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ chrout::petscii ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((byte*) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(0!=MSG1[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
@@ -177,16 +178,19 @@ Statement [3] *SCREEN2 = CH [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [5] chrout::petscii = MSG1[main::i#2] [ main::i#2 chrout::petscii ] (  [ main::i#2 chrout::petscii ] { }  ) always clobbers reg byte a 
 Statement [7] SCREEN1[main::i#2] = MSG2[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
-Potential registers reg byte a [ chrout::petscii ] : reg byte a , 
+Potential registers zp[1]:3 [ chrout::petscii ] : zp[1]:3 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 35.2: zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [chrout] 11: reg byte a [ chrout::petscii ] 
+Uplift Scope [chrout] 11: zp[1]:3 [ chrout::petscii ] 
 Uplift Scope [] 
 
-Uplifting [main] best 736 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [chrout] best 736 combination reg byte a [ chrout::petscii ] 
-Uplifting [] best 736 combination 
+Uplifting [main] best 766 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [chrout] best 766 combination zp[1]:3 [ chrout::petscii ] 
+Uplifting [] best 766 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ chrout::petscii ]
+Uplifting [chrout] best 766 combination zp[1]:3 [ chrout::petscii ] 
+Allocated (was zp[1]:3) zp[1]:2 [ chrout::petscii ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -237,8 +241,9 @@ main: {
     rts
     // main::@2
   __b2:
-    // [5] chrout::petscii = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [5] chrout::petscii = MSG1[main::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda MSG1,x
+    sta.z chrout.petscii
     // [6] call chrout 
     jsr chrout
     jmp __b4
@@ -255,8 +260,9 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte register(A) petscii)
+// chrout(byte zp(2) petscii)
 chrout: {
+    .label petscii = 2
     // kickasm( uses chrout::petscii) {{ jsr $ffd2      }}
     jsr $ffd2
     
@@ -297,18 +303,18 @@ constant byte* MSG2[]  = "CAMELOT"su
 constant byte* SCREEN1 = (byte*) 1024
 constant byte* SCREEN2 = (byte*) 1064
 void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore !reg byte a 11.0
+volatile byte chrout::petscii loadstore zp[1]:2 11.0
 void main()
 byte main::i
 byte main::i#1 reg byte x 22.0
 byte main::i#2 reg byte x 13.2
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte a [ chrout::petscii ]
+zp[1]:2 [ chrout::petscii ]
 
 
 FINAL ASSEMBLER
-Score: 640
+Score: 670
 
   // File Comments
 // Test using some simple supported string escape
@@ -357,8 +363,9 @@ main: {
     // main::@2
   __b2:
     // chrout(MSG1[i])
-    // [5] chrout::petscii = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [5] chrout::petscii = MSG1[main::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda MSG1,x
+    sta.z chrout.petscii
     // [6] call chrout 
     jsr chrout
     // main::@4
@@ -374,8 +381,9 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte register(A) petscii)
+// chrout(byte zp(2) petscii)
 chrout: {
+    .label petscii = 2
     // kickasm
     // kickasm( uses chrout::petscii) {{ jsr $ffd2      }}
     jsr $ffd2

@@ -12,29 +12,6 @@ Eliminating unused variable with no statement main::$2
 
 CONTROL FLOW GRAPH SSA
 
-byte toupper(byte toupper::ch)
-toupper: scope:[toupper]  from strupr::@2
-  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
-  toupper::$0 = toupper::ch#1 >= 'a'
-  toupper::$1 = toupper::ch#1 <= 'z'
-  toupper::$2 = toupper::$0 && toupper::$1
-  if(toupper::$2) goto toupper::@1
-  to:toupper::@2
-toupper::@1: scope:[toupper]  from toupper
-  toupper::ch#2 = phi( toupper/toupper::ch#1 )
-  toupper::$3 = toupper::ch#2 + 'A'-'a'
-  toupper::return#0 = toupper::$3
-  to:toupper::@return
-toupper::@2: scope:[toupper]  from toupper
-  toupper::ch#3 = phi( toupper/toupper::ch#1 )
-  toupper::return#1 = toupper::ch#3
-  to:toupper::@return
-toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
-  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
-  toupper::return#2 = toupper::return#4
-  return 
-  to:@return
-
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::num#2 = phi( cscroll::@3/memcpy::num#0, cscroll::@4/memcpy::num#1 )
@@ -117,6 +94,56 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 
+word strlen(byte* strlen::str)
+strlen: scope:[strlen]  from printf_number_buffer::@6
+  strlen::str#4 = phi( printf_number_buffer::@6/strlen::str#1 )
+  strlen::len#0 = 0
+  to:strlen::@1
+strlen::@1: scope:[strlen]  from strlen strlen::@2
+  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
+  strlen::str#2 = phi( strlen/strlen::str#4, strlen::@2/strlen::str#0 )
+  strlen::$0 = 0 != *strlen::str#2
+  if(strlen::$0) goto strlen::@2
+  to:strlen::@3
+strlen::@2: scope:[strlen]  from strlen::@1
+  strlen::str#3 = phi( strlen::@1/strlen::str#2 )
+  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
+  strlen::len#1 = ++ strlen::len#2
+  strlen::str#0 = ++ strlen::str#3
+  to:strlen::@1
+strlen::@3: scope:[strlen]  from strlen::@1
+  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
+  strlen::return#0 = strlen::len#3
+  to:strlen::@return
+strlen::@return: scope:[strlen]  from strlen::@3
+  strlen::return#3 = phi( strlen::@3/strlen::return#0 )
+  strlen::return#1 = strlen::return#3
+  return 
+  to:@return
+
+byte toupper(byte toupper::ch)
+toupper: scope:[toupper]  from strupr::@2
+  toupper::ch#1 = phi( strupr::@2/toupper::ch#0 )
+  toupper::$0 = toupper::ch#1 >= 'a'
+  toupper::$1 = toupper::ch#1 <= 'z'
+  toupper::$2 = toupper::$0 && toupper::$1
+  if(toupper::$2) goto toupper::@1
+  to:toupper::@2
+toupper::@1: scope:[toupper]  from toupper
+  toupper::ch#2 = phi( toupper/toupper::ch#1 )
+  toupper::$3 = toupper::ch#2 + 'A'-'a'
+  toupper::return#0 = toupper::$3
+  to:toupper::@return
+toupper::@2: scope:[toupper]  from toupper
+  toupper::ch#3 = phi( toupper/toupper::ch#1 )
+  toupper::return#1 = toupper::ch#3
+  to:toupper::@return
+toupper::@return: scope:[toupper]  from toupper::@1 toupper::@2
+  toupper::return#4 = phi( toupper::@1/toupper::return#0, toupper::@2/toupper::return#1 )
+  toupper::return#2 = toupper::return#4
+  return 
+  to:@return
+
 byte* strupr(byte* strupr::str)
 strupr: scope:[strupr]  from printf_number_buffer::@11
   strupr::str#1 = phi( printf_number_buffer::@11/strupr::str#0 )
@@ -153,32 +180,148 @@ strupr::@return: scope:[strupr]  from strupr::@3
   return 
   to:@return
 
-word strlen(byte* strlen::str)
-strlen: scope:[strlen]  from printf_number_buffer::@6
-  strlen::str#4 = phi( printf_number_buffer::@6/strlen::str#1 )
-  strlen::len#0 = 0
-  to:strlen::@1
-strlen::@1: scope:[strlen]  from strlen strlen::@2
-  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
-  strlen::str#2 = phi( strlen/strlen::str#4, strlen::@2/strlen::str#0 )
-  strlen::$0 = 0 != *strlen::str#2
-  if(strlen::$0) goto strlen::@2
-  to:strlen::@3
-strlen::@2: scope:[strlen]  from strlen::@1
-  strlen::str#3 = phi( strlen::@1/strlen::str#2 )
-  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
-  strlen::len#1 = ++ strlen::len#2
-  strlen::str#0 = ++ strlen::str#3
-  to:strlen::@1
-strlen::@3: scope:[strlen]  from strlen::@1
-  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
-  strlen::return#0 = strlen::len#3
-  to:strlen::@return
-strlen::@return: scope:[strlen]  from strlen::@3
-  strlen::return#3 = phi( strlen::@3/strlen::return#0 )
-  strlen::return#1 = strlen::return#3
+void utoa(word utoa::value , byte* utoa::buffer , byte utoa::radix)
+utoa: scope:[utoa]  from printf_uint::@3
+  utoa::buffer#21 = phi( printf_uint::@3/utoa::buffer#5 )
+  utoa::value#12 = phi( printf_uint::@3/utoa::value#1 )
+  utoa::radix#1 = phi( printf_uint::@3/utoa::radix#0 )
+  utoa::max_digits#0 = 0
+  utoa::digit_values#0 = (word*) 0
+  utoa::$0 = utoa::radix#1 == DECIMAL
+  if(utoa::$0) goto utoa::@1
+  to:utoa::@6
+utoa::@1: scope:[utoa]  from utoa
+  utoa::buffer#17 = phi( utoa/utoa::buffer#21 )
+  utoa::value#8 = phi( utoa/utoa::value#12 )
+  utoa::max_digits#1 = 5
+  utoa::digit_values#1 = RADIX_DECIMAL_VALUES
+  to:utoa::@5
+utoa::@6: scope:[utoa]  from utoa
+  utoa::value#13 = phi( utoa/utoa::value#12 )
+  utoa::buffer#16 = phi( utoa/utoa::buffer#21 )
+  utoa::radix#2 = phi( utoa/utoa::radix#1 )
+  utoa::$1 = utoa::radix#2 == HEXADECIMAL
+  if(utoa::$1) goto utoa::@2
+  to:utoa::@7
+utoa::@2: scope:[utoa]  from utoa::@6
+  utoa::buffer#18 = phi( utoa::@6/utoa::buffer#16 )
+  utoa::value#9 = phi( utoa::@6/utoa::value#13 )
+  utoa::max_digits#2 = 4
+  utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
+  to:utoa::@5
+utoa::@7: scope:[utoa]  from utoa::@6
+  utoa::value#14 = phi( utoa::@6/utoa::value#13 )
+  utoa::buffer#13 = phi( utoa::@6/utoa::buffer#16 )
+  utoa::radix#3 = phi( utoa::@6/utoa::radix#2 )
+  utoa::$2 = utoa::radix#3 == OCTAL
+  if(utoa::$2) goto utoa::@3
+  to:utoa::@8
+utoa::@3: scope:[utoa]  from utoa::@7
+  utoa::buffer#19 = phi( utoa::@7/utoa::buffer#13 )
+  utoa::value#10 = phi( utoa::@7/utoa::value#14 )
+  utoa::max_digits#3 = 6
+  utoa::digit_values#3 = RADIX_OCTAL_VALUES
+  to:utoa::@5
+utoa::@8: scope:[utoa]  from utoa::@7
+  utoa::value#15 = phi( utoa::@7/utoa::value#14 )
+  utoa::buffer#10 = phi( utoa::@7/utoa::buffer#13 )
+  utoa::radix#4 = phi( utoa::@7/utoa::radix#3 )
+  utoa::$3 = utoa::radix#4 == BINARY
+  if(utoa::$3) goto utoa::@4
+  to:utoa::@9
+utoa::@4: scope:[utoa]  from utoa::@8
+  utoa::buffer#20 = phi( utoa::@8/utoa::buffer#10 )
+  utoa::value#11 = phi( utoa::@8/utoa::value#15 )
+  utoa::max_digits#4 = $10
+  utoa::digit_values#4 = RADIX_BINARY_VALUES
+  to:utoa::@5
+utoa::@9: scope:[utoa]  from utoa::@8
+  utoa::buffer#6 = phi( utoa::@8/utoa::buffer#10 )
+  *utoa::buffer#6 = 'e'
+  utoa::buffer#0 = ++ utoa::buffer#6
+  *utoa::buffer#0 = 'r'
+  utoa::buffer#1 = ++ utoa::buffer#0
+  *utoa::buffer#1 = 'r'
+  utoa::buffer#2 = ++ utoa::buffer#1
+  *utoa::buffer#2 = 0
+  to:utoa::@return
+utoa::@return: scope:[utoa]  from utoa::@12 utoa::@9
   return 
   to:@return
+utoa::@5: scope:[utoa]  from utoa::@1 utoa::@2 utoa::@3 utoa::@4
+  utoa::buffer#15 = phi( utoa::@1/utoa::buffer#17, utoa::@2/utoa::buffer#18, utoa::@3/utoa::buffer#19, utoa::@4/utoa::buffer#20 )
+  utoa::value#7 = phi( utoa::@1/utoa::value#8, utoa::@2/utoa::value#9, utoa::@3/utoa::value#10, utoa::@4/utoa::value#11 )
+  utoa::digit_values#8 = phi( utoa::@1/utoa::digit_values#1, utoa::@2/utoa::digit_values#2, utoa::@3/utoa::digit_values#3, utoa::@4/utoa::digit_values#4 )
+  utoa::max_digits#7 = phi( utoa::@1/utoa::max_digits#1, utoa::@2/utoa::max_digits#2, utoa::@3/utoa::max_digits#3, utoa::@4/utoa::max_digits#4 )
+  utoa::started#0 = 0
+  utoa::digit#0 = 0
+  to:utoa::@10
+utoa::@10: scope:[utoa]  from utoa::@13 utoa::@5
+  utoa::buffer#11 = phi( utoa::@13/utoa::buffer#14, utoa::@5/utoa::buffer#15 )
+  utoa::started#3 = phi( utoa::@13/utoa::started#4, utoa::@5/utoa::started#0 )
+  utoa::value#5 = phi( utoa::@13/utoa::value#6, utoa::@5/utoa::value#7 )
+  utoa::digit_values#6 = phi( utoa::@13/utoa::digit_values#7, utoa::@5/utoa::digit_values#8 )
+  utoa::digit#2 = phi( utoa::@13/utoa::digit#1, utoa::@5/utoa::digit#0 )
+  utoa::max_digits#5 = phi( utoa::@13/utoa::max_digits#6, utoa::@5/utoa::max_digits#7 )
+  utoa::$4 = utoa::max_digits#5 - 1
+  utoa::$5 = utoa::digit#2 < utoa::$4
+  if(utoa::$5) goto utoa::@11
+  to:utoa::@12
+utoa::@11: scope:[utoa]  from utoa::@10
+  utoa::max_digits#8 = phi( utoa::@10/utoa::max_digits#5 )
+  utoa::buffer#12 = phi( utoa::@10/utoa::buffer#11 )
+  utoa::started#2 = phi( utoa::@10/utoa::started#3 )
+  utoa::value#2 = phi( utoa::@10/utoa::value#5 )
+  utoa::digit_values#5 = phi( utoa::@10/utoa::digit_values#6 )
+  utoa::digit#3 = phi( utoa::@10/utoa::digit#2 )
+  utoa::$10 = utoa::digit#3 * SIZEOF_WORD
+  utoa::digit_value#0 = utoa::digit_values#5[utoa::$10]
+  utoa::$6 = utoa::value#2 >= utoa::digit_value#0
+  utoa::$7 = utoa::started#2 || utoa::$6
+  utoa::$8 = ! utoa::$7
+  if(utoa::$8) goto utoa::@13
+  to:utoa::@14
+utoa::@12: scope:[utoa]  from utoa::@10
+  utoa::buffer#7 = phi( utoa::@10/utoa::buffer#11 )
+  utoa::value#3 = phi( utoa::@10/utoa::value#5 )
+  utoa::$11 = (byte)utoa::value#3
+  *utoa::buffer#7 = DIGITS[utoa::$11]
+  utoa::buffer#3 = ++ utoa::buffer#7
+  *utoa::buffer#3 = 0
+  to:utoa::@return
+utoa::@13: scope:[utoa]  from utoa::@11 utoa::@15
+  utoa::buffer#14 = phi( utoa::@11/utoa::buffer#12, utoa::@15/utoa::buffer#4 )
+  utoa::started#4 = phi( utoa::@11/utoa::started#2, utoa::@15/utoa::started#1 )
+  utoa::value#6 = phi( utoa::@11/utoa::value#2, utoa::@15/utoa::value#0 )
+  utoa::digit_values#7 = phi( utoa::@11/utoa::digit_values#5, utoa::@15/utoa::digit_values#9 )
+  utoa::max_digits#6 = phi( utoa::@11/utoa::max_digits#8, utoa::@15/utoa::max_digits#9 )
+  utoa::digit#4 = phi( utoa::@11/utoa::digit#3, utoa::@15/utoa::digit#5 )
+  utoa::digit#1 = ++ utoa::digit#4
+  to:utoa::@10
+utoa::@14: scope:[utoa]  from utoa::@11
+  utoa::digit_values#10 = phi( utoa::@11/utoa::digit_values#5 )
+  utoa::max_digits#10 = phi( utoa::@11/utoa::max_digits#8 )
+  utoa::digit#6 = phi( utoa::@11/utoa::digit#3 )
+  utoa::digit_value#1 = phi( utoa::@11/utoa::digit_value#0 )
+  utoa::value#4 = phi( utoa::@11/utoa::value#2 )
+  utoa::buffer#8 = phi( utoa::@11/utoa::buffer#12 )
+  utoa_append::buffer#0 = utoa::buffer#8
+  utoa_append::value#0 = utoa::value#4
+  utoa_append::sub#0 = utoa::digit_value#1
+  call utoa_append 
+  utoa_append::return#0 = utoa_append::return#2
+  to:utoa::@15
+utoa::@15: scope:[utoa]  from utoa::@14
+  utoa::digit_values#9 = phi( utoa::@14/utoa::digit_values#10 )
+  utoa::max_digits#9 = phi( utoa::@14/utoa::max_digits#10 )
+  utoa::digit#5 = phi( utoa::@14/utoa::digit#6 )
+  utoa::buffer#9 = phi( utoa::@14/utoa::buffer#8 )
+  utoa_append::return#3 = phi( utoa::@14/utoa_append::return#0 )
+  utoa::$9 = utoa_append::return#3
+  utoa::value#0 = utoa::$9
+  utoa::buffer#4 = ++ utoa::buffer#9
+  utoa::started#1 = 1
+  to:utoa::@13
 
 void uctoa(byte uctoa::value , byte* uctoa::buffer , byte uctoa::radix)
 uctoa: scope:[uctoa]  from printf_uchar::@3
@@ -358,149 +501,6 @@ uctoa_append::@return: scope:[uctoa_append]  from uctoa_append::@3
   return 
   to:@return
 
-void utoa(word utoa::value , byte* utoa::buffer , byte utoa::radix)
-utoa: scope:[utoa]  from printf_uint::@3
-  utoa::buffer#21 = phi( printf_uint::@3/utoa::buffer#5 )
-  utoa::value#12 = phi( printf_uint::@3/utoa::value#1 )
-  utoa::radix#1 = phi( printf_uint::@3/utoa::radix#0 )
-  utoa::max_digits#0 = 0
-  utoa::digit_values#0 = (word*) 0
-  utoa::$0 = utoa::radix#1 == DECIMAL
-  if(utoa::$0) goto utoa::@1
-  to:utoa::@6
-utoa::@1: scope:[utoa]  from utoa
-  utoa::buffer#17 = phi( utoa/utoa::buffer#21 )
-  utoa::value#8 = phi( utoa/utoa::value#12 )
-  utoa::max_digits#1 = 5
-  utoa::digit_values#1 = RADIX_DECIMAL_VALUES
-  to:utoa::@5
-utoa::@6: scope:[utoa]  from utoa
-  utoa::value#13 = phi( utoa/utoa::value#12 )
-  utoa::buffer#16 = phi( utoa/utoa::buffer#21 )
-  utoa::radix#2 = phi( utoa/utoa::radix#1 )
-  utoa::$1 = utoa::radix#2 == HEXADECIMAL
-  if(utoa::$1) goto utoa::@2
-  to:utoa::@7
-utoa::@2: scope:[utoa]  from utoa::@6
-  utoa::buffer#18 = phi( utoa::@6/utoa::buffer#16 )
-  utoa::value#9 = phi( utoa::@6/utoa::value#13 )
-  utoa::max_digits#2 = 4
-  utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
-  to:utoa::@5
-utoa::@7: scope:[utoa]  from utoa::@6
-  utoa::value#14 = phi( utoa::@6/utoa::value#13 )
-  utoa::buffer#13 = phi( utoa::@6/utoa::buffer#16 )
-  utoa::radix#3 = phi( utoa::@6/utoa::radix#2 )
-  utoa::$2 = utoa::radix#3 == OCTAL
-  if(utoa::$2) goto utoa::@3
-  to:utoa::@8
-utoa::@3: scope:[utoa]  from utoa::@7
-  utoa::buffer#19 = phi( utoa::@7/utoa::buffer#13 )
-  utoa::value#10 = phi( utoa::@7/utoa::value#14 )
-  utoa::max_digits#3 = 6
-  utoa::digit_values#3 = RADIX_OCTAL_VALUES
-  to:utoa::@5
-utoa::@8: scope:[utoa]  from utoa::@7
-  utoa::value#15 = phi( utoa::@7/utoa::value#14 )
-  utoa::buffer#10 = phi( utoa::@7/utoa::buffer#13 )
-  utoa::radix#4 = phi( utoa::@7/utoa::radix#3 )
-  utoa::$3 = utoa::radix#4 == BINARY
-  if(utoa::$3) goto utoa::@4
-  to:utoa::@9
-utoa::@4: scope:[utoa]  from utoa::@8
-  utoa::buffer#20 = phi( utoa::@8/utoa::buffer#10 )
-  utoa::value#11 = phi( utoa::@8/utoa::value#15 )
-  utoa::max_digits#4 = $10
-  utoa::digit_values#4 = RADIX_BINARY_VALUES
-  to:utoa::@5
-utoa::@9: scope:[utoa]  from utoa::@8
-  utoa::buffer#6 = phi( utoa::@8/utoa::buffer#10 )
-  *utoa::buffer#6 = 'e'
-  utoa::buffer#0 = ++ utoa::buffer#6
-  *utoa::buffer#0 = 'r'
-  utoa::buffer#1 = ++ utoa::buffer#0
-  *utoa::buffer#1 = 'r'
-  utoa::buffer#2 = ++ utoa::buffer#1
-  *utoa::buffer#2 = 0
-  to:utoa::@return
-utoa::@return: scope:[utoa]  from utoa::@12 utoa::@9
-  return 
-  to:@return
-utoa::@5: scope:[utoa]  from utoa::@1 utoa::@2 utoa::@3 utoa::@4
-  utoa::buffer#15 = phi( utoa::@1/utoa::buffer#17, utoa::@2/utoa::buffer#18, utoa::@3/utoa::buffer#19, utoa::@4/utoa::buffer#20 )
-  utoa::value#7 = phi( utoa::@1/utoa::value#8, utoa::@2/utoa::value#9, utoa::@3/utoa::value#10, utoa::@4/utoa::value#11 )
-  utoa::digit_values#8 = phi( utoa::@1/utoa::digit_values#1, utoa::@2/utoa::digit_values#2, utoa::@3/utoa::digit_values#3, utoa::@4/utoa::digit_values#4 )
-  utoa::max_digits#7 = phi( utoa::@1/utoa::max_digits#1, utoa::@2/utoa::max_digits#2, utoa::@3/utoa::max_digits#3, utoa::@4/utoa::max_digits#4 )
-  utoa::started#0 = 0
-  utoa::digit#0 = 0
-  to:utoa::@10
-utoa::@10: scope:[utoa]  from utoa::@13 utoa::@5
-  utoa::buffer#11 = phi( utoa::@13/utoa::buffer#14, utoa::@5/utoa::buffer#15 )
-  utoa::started#3 = phi( utoa::@13/utoa::started#4, utoa::@5/utoa::started#0 )
-  utoa::value#5 = phi( utoa::@13/utoa::value#6, utoa::@5/utoa::value#7 )
-  utoa::digit_values#6 = phi( utoa::@13/utoa::digit_values#7, utoa::@5/utoa::digit_values#8 )
-  utoa::digit#2 = phi( utoa::@13/utoa::digit#1, utoa::@5/utoa::digit#0 )
-  utoa::max_digits#5 = phi( utoa::@13/utoa::max_digits#6, utoa::@5/utoa::max_digits#7 )
-  utoa::$4 = utoa::max_digits#5 - 1
-  utoa::$5 = utoa::digit#2 < utoa::$4
-  if(utoa::$5) goto utoa::@11
-  to:utoa::@12
-utoa::@11: scope:[utoa]  from utoa::@10
-  utoa::max_digits#8 = phi( utoa::@10/utoa::max_digits#5 )
-  utoa::buffer#12 = phi( utoa::@10/utoa::buffer#11 )
-  utoa::started#2 = phi( utoa::@10/utoa::started#3 )
-  utoa::value#2 = phi( utoa::@10/utoa::value#5 )
-  utoa::digit_values#5 = phi( utoa::@10/utoa::digit_values#6 )
-  utoa::digit#3 = phi( utoa::@10/utoa::digit#2 )
-  utoa::$10 = utoa::digit#3 * SIZEOF_WORD
-  utoa::digit_value#0 = utoa::digit_values#5[utoa::$10]
-  utoa::$6 = utoa::value#2 >= utoa::digit_value#0
-  utoa::$7 = utoa::started#2 || utoa::$6
-  utoa::$8 = ! utoa::$7
-  if(utoa::$8) goto utoa::@13
-  to:utoa::@14
-utoa::@12: scope:[utoa]  from utoa::@10
-  utoa::buffer#7 = phi( utoa::@10/utoa::buffer#11 )
-  utoa::value#3 = phi( utoa::@10/utoa::value#5 )
-  utoa::$11 = (byte)utoa::value#3
-  *utoa::buffer#7 = DIGITS[utoa::$11]
-  utoa::buffer#3 = ++ utoa::buffer#7
-  *utoa::buffer#3 = 0
-  to:utoa::@return
-utoa::@13: scope:[utoa]  from utoa::@11 utoa::@15
-  utoa::buffer#14 = phi( utoa::@11/utoa::buffer#12, utoa::@15/utoa::buffer#4 )
-  utoa::started#4 = phi( utoa::@11/utoa::started#2, utoa::@15/utoa::started#1 )
-  utoa::value#6 = phi( utoa::@11/utoa::value#2, utoa::@15/utoa::value#0 )
-  utoa::digit_values#7 = phi( utoa::@11/utoa::digit_values#5, utoa::@15/utoa::digit_values#9 )
-  utoa::max_digits#6 = phi( utoa::@11/utoa::max_digits#8, utoa::@15/utoa::max_digits#9 )
-  utoa::digit#4 = phi( utoa::@11/utoa::digit#3, utoa::@15/utoa::digit#5 )
-  utoa::digit#1 = ++ utoa::digit#4
-  to:utoa::@10
-utoa::@14: scope:[utoa]  from utoa::@11
-  utoa::digit_values#10 = phi( utoa::@11/utoa::digit_values#5 )
-  utoa::max_digits#10 = phi( utoa::@11/utoa::max_digits#8 )
-  utoa::digit#6 = phi( utoa::@11/utoa::digit#3 )
-  utoa::digit_value#1 = phi( utoa::@11/utoa::digit_value#0 )
-  utoa::value#4 = phi( utoa::@11/utoa::value#2 )
-  utoa::buffer#8 = phi( utoa::@11/utoa::buffer#12 )
-  utoa_append::buffer#0 = utoa::buffer#8
-  utoa_append::value#0 = utoa::value#4
-  utoa_append::sub#0 = utoa::digit_value#1
-  call utoa_append 
-  utoa_append::return#0 = utoa_append::return#2
-  to:utoa::@15
-utoa::@15: scope:[utoa]  from utoa::@14
-  utoa::digit_values#9 = phi( utoa::@14/utoa::digit_values#10 )
-  utoa::max_digits#9 = phi( utoa::@14/utoa::max_digits#10 )
-  utoa::digit#5 = phi( utoa::@14/utoa::digit#6 )
-  utoa::buffer#9 = phi( utoa::@14/utoa::buffer#8 )
-  utoa_append::return#3 = phi( utoa::@14/utoa_append::return#0 )
-  utoa::$9 = utoa_append::return#3
-  utoa::value#0 = utoa::$9
-  utoa::buffer#4 = ++ utoa::buffer#9
-  utoa::started#1 = 1
-  to:utoa::@13
-
 word utoa_append(byte* utoa_append::buffer , word utoa_append::value , word utoa_append::sub)
 utoa_append: scope:[utoa_append]  from utoa::@14
   utoa_append::buffer#3 = phi( utoa::@14/utoa_append::buffer#0 )
@@ -675,6 +675,32 @@ cputln::@return: scope:[cputln]  from cputln::@1
   return 
   to:@return
 
+void cputs(const byte* cputs::s)
+cputs: scope:[cputs]  from main::@4 main::@6 main::@8 printf_number_buffer::@5
+  cputs::s#6 = phi( main::@4/cputs::s#2, main::@6/cputs::s#3, main::@8/cputs::s#4, printf_number_buffer::@5/cputs::s#1 )
+  cputs::c#0 = 0
+  to:cputs::@1
+cputs::@1: scope:[cputs]  from cputs cputs::@3
+  cputs::s#5 = phi( cputs/cputs::s#6, cputs::@3/cputs::s#7 )
+  cputs::c#1 = *cputs::s#5
+  cputs::$0 = cputs::c#1
+  cputs::s#0 = ++ cputs::s#5
+  cputs::$2 = 0 != cputs::$0
+  if(cputs::$2) goto cputs::@2
+  to:cputs::@return
+cputs::@2: scope:[cputs]  from cputs::@1
+  cputs::s#8 = phi( cputs::@1/cputs::s#0 )
+  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
+  cputc::c#0 = cputs::c#2
+  call cputc 
+  to:cputs::@3
+cputs::@3: scope:[cputs]  from cputs::@2
+  cputs::s#7 = phi( cputs::@2/cputs::s#8 )
+  to:cputs::@1
+cputs::@return: scope:[cputs]  from cputs::@1
+  return 
+  to:@return
+
 void cscroll()
 cscroll: scope:[cscroll]  from cputln
   cscroll::$0 = conio_cursor_y == $19
@@ -726,32 +752,6 @@ cscroll::@2: scope:[cscroll]  from cscroll::@1
 cscroll::@8: scope:[cscroll]  from cscroll::@2
   to:cscroll::@return
 cscroll::@return: scope:[cscroll]  from cscroll cscroll::@7 cscroll::@8
-  return 
-  to:@return
-
-void cputs(const byte* cputs::s)
-cputs: scope:[cputs]  from main::@4 main::@6 main::@8 printf_number_buffer::@5
-  cputs::s#6 = phi( main::@4/cputs::s#2, main::@6/cputs::s#3, main::@8/cputs::s#4, printf_number_buffer::@5/cputs::s#1 )
-  cputs::c#0 = 0
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@3
-  cputs::s#5 = phi( cputs/cputs::s#6, cputs::@3/cputs::s#7 )
-  cputs::c#1 = *cputs::s#5
-  cputs::$0 = cputs::c#1
-  cputs::s#0 = ++ cputs::s#5
-  cputs::$2 = 0 != cputs::$0
-  if(cputs::$2) goto cputs::@2
-  to:cputs::@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  cputs::s#8 = phi( cputs::@1/cputs::s#0 )
-  cputs::c#2 = phi( cputs::@1/cputs::c#1 )
-  cputc::c#0 = cputs::c#2
-  call cputc 
-  to:cputs::@3
-cputs::@3: scope:[cputs]  from cputs::@2
-  cputs::s#7 = phi( cputs::@2/cputs::s#8 )
-  to:cputs::@1
-cputs::@return: scope:[cputs]  from cputs::@1
   return 
   to:@return
 
@@ -2150,17 +2150,8 @@ word utoa_append::value#4
 word utoa_append::value#5
 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
-Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 0 in strlen::$0 = 0 != *strlen::str#2
-Adding number conversion cast (unumber) 3 in uctoa::max_digits#1 = 3
-Adding number conversion cast (unumber) 2 in uctoa::max_digits#2 = 2
-Adding number conversion cast (unumber) 3 in uctoa::max_digits#3 = 3
-Adding number conversion cast (unumber) 8 in uctoa::max_digits#4 = 8
-Adding number conversion cast (unumber) 0 in *uctoa::buffer#2 = 0
-Adding number conversion cast (unumber) 1 in uctoa::$4 = uctoa::max_digits#5 - 1
-Adding number conversion cast (unumber) uctoa::$4 in uctoa::$4 = uctoa::max_digits#5 - (unumber)1
-Adding number conversion cast (unumber) 0 in *uctoa::buffer#3 = 0
-Adding number conversion cast (unumber) 1 in uctoa::started#1 = 1
+Adding number conversion cast (unumber) 0 in strupr::$1 = 0 != *strupr::src#2
 Adding number conversion cast (unumber) 5 in utoa::max_digits#1 = 5
 Adding number conversion cast (unumber) 4 in utoa::max_digits#2 = 4
 Adding number conversion cast (unumber) 6 in utoa::max_digits#3 = 6
@@ -2170,6 +2161,15 @@ Adding number conversion cast (unumber) 1 in utoa::$4 = utoa::max_digits#5 - 1
 Adding number conversion cast (unumber) utoa::$4 in utoa::$4 = utoa::max_digits#5 - (unumber)1
 Adding number conversion cast (unumber) 0 in *utoa::buffer#3 = 0
 Adding number conversion cast (unumber) 1 in utoa::started#1 = 1
+Adding number conversion cast (unumber) 3 in uctoa::max_digits#1 = 3
+Adding number conversion cast (unumber) 2 in uctoa::max_digits#2 = 2
+Adding number conversion cast (unumber) 3 in uctoa::max_digits#3 = 3
+Adding number conversion cast (unumber) 8 in uctoa::max_digits#4 = 8
+Adding number conversion cast (unumber) 0 in *uctoa::buffer#2 = 0
+Adding number conversion cast (unumber) 1 in uctoa::$4 = uctoa::max_digits#5 - 1
+Adding number conversion cast (unumber) uctoa::$4 in uctoa::$4 = uctoa::max_digits#5 - (unumber)1
+Adding number conversion cast (unumber) 0 in *uctoa::buffer#3 = 0
+Adding number conversion cast (unumber) 1 in uctoa::started#1 = 1
 Adding number conversion cast (unumber) $19 in clrscr::$0 = clrscr::l#2 < $19
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
 Adding number conversion cast (unumber) 0 in conio_cursor_y = 0
@@ -2186,6 +2186,7 @@ Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color + $28
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
+Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
 Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
@@ -2202,7 +2203,6 @@ Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color - $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
 Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
-Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) $19 in conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Adding number conversion cast (unumber) 0 in gotoxy::x#2 = 0
 Adding number conversion cast (unumber) $19-1 in conio_c64_init::line#1 = $19-1
@@ -2257,13 +2257,6 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memcpy::src#0 = (byte*)memcpy::source#2
 Inlining cast memcpy::dst#0 = (byte*)memcpy::destination#2
 Inlining cast memset::dst#0 = (byte*)memset::str#3
-Inlining cast uctoa::max_digits#1 = (unumber)3
-Inlining cast uctoa::max_digits#2 = (unumber)2
-Inlining cast uctoa::max_digits#3 = (unumber)3
-Inlining cast uctoa::max_digits#4 = (unumber)8
-Inlining cast *uctoa::buffer#2 = (unumber)0
-Inlining cast *uctoa::buffer#3 = (unumber)0
-Inlining cast uctoa::started#1 = (unumber)1
 Inlining cast utoa::max_digits#1 = (unumber)5
 Inlining cast utoa::max_digits#2 = (unumber)4
 Inlining cast utoa::max_digits#3 = (unumber)6
@@ -2271,6 +2264,13 @@ Inlining cast utoa::max_digits#4 = (unumber)$10
 Inlining cast *utoa::buffer#2 = (unumber)0
 Inlining cast *utoa::buffer#3 = (unumber)0
 Inlining cast utoa::started#1 = (unumber)1
+Inlining cast uctoa::max_digits#1 = (unumber)3
+Inlining cast uctoa::max_digits#2 = (unumber)2
+Inlining cast uctoa::max_digits#3 = (unumber)3
+Inlining cast uctoa::max_digits#4 = (unumber)8
+Inlining cast *uctoa::buffer#2 = (unumber)0
+Inlining cast *uctoa::buffer#3 = (unumber)0
+Inlining cast uctoa::started#1 = (unumber)1
 Inlining cast conio_cursor_x = (unumber)0
 Inlining cast conio_cursor_y = (unumber)0
 Inlining cast gotoxy::y#0 = (unumber)0
@@ -2294,6 +2294,14 @@ Simplifying constant pointer cast (byte*) 214
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
+Simplifying constant integer cast 5
+Simplifying constant integer cast 4
+Simplifying constant integer cast 6
+Simplifying constant integer cast $10
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
 Simplifying constant integer cast 3
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
@@ -2303,14 +2311,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast uctoa::value#3
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast 5
-Simplifying constant integer cast 4
-Simplifying constant integer cast 6
-Simplifying constant integer cast $10
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -2326,6 +2326,7 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -2336,7 +2337,6 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $19
@@ -2359,14 +2359,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 6
@@ -2375,6 +2367,14 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -2390,6 +2390,7 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
@@ -2400,7 +2401,6 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
@@ -2420,18 +2420,18 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in uctoa::$4 = uctoa::max_digits#5 - 1
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
+Inferred type updated to byte in uctoa::$4 = uctoa::max_digits#5 - 1
 Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $28
 Inferred type updated to byte in printf_uint::$0 = 0
 Inferred type updated to byte for printf_uint::$2
 Inferred type updated to byte in printf_uchar::$0 = 0
 Inferred type updated to byte for printf_uchar::$2
-Inversing boolean not [33] memset::$1 = memset::num#2 <= 0 from [32] memset::$0 = memset::num#2 > 0
+Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
 Inversing boolean not [269] gotoxy::$1 = gotoxy::y#3 <= $19 from [268] gotoxy::$0 = gotoxy::y#3 > $19
 Inversing boolean not [273] gotoxy::$3 = gotoxy::x#3 < $28 from [272] gotoxy::$2 = gotoxy::x#3 >= $28
 Inversing boolean not [299] cputc::$2 = conio_cursor_x != $28 from [298] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [310] cscroll::$1 = conio_cursor_y != $19 from [309] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [323] cscroll::$1 = conio_cursor_y != $19 from [322] cscroll::$0 = conio_cursor_y == $19
 Inversing boolean not [356] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [355] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
 Inversing boolean not [426] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#2 from [425] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#2
 Inversing boolean not [430] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#2 from [429] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#2
@@ -2444,9 +2444,6 @@ Inversing boolean not [489] printf_number_buffer::$14 = 0 == printf_number_buffe
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
-Alias toupper::return#0 = toupper::$3 
-Alias toupper::return#2 = toupper::return#4 
 Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
@@ -2461,12 +2458,27 @@ Alias memset::c#2 = memset::c#3
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#5 = memset::str#6 
+Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
+Alias strlen::str#2 = strlen::str#3 
+Alias toupper::ch#1 = toupper::ch#2 toupper::ch#3 toupper::return#1 
+Alias toupper::return#0 = toupper::$3 
+Alias toupper::return#2 = toupper::return#4 
 Alias strupr::src#0 = strupr::str#1 
 Alias strupr::src#2 = strupr::src#3 strupr::src#4 
 Alias strupr::str#2 = strupr::str#5 strupr::str#3 strupr::str#4 strupr::return#0 strupr::return#3 strupr::return#1 
 Alias toupper::return#3 = toupper::return#5 
-Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
-Alias strlen::str#2 = strlen::str#3 
+Alias utoa::value#10 = utoa::value#8 utoa::value#12 utoa::value#13 utoa::value#9 utoa::value#14 utoa::value#15 utoa::value#11 
+Alias utoa::buffer#10 = utoa::buffer#17 utoa::buffer#21 utoa::buffer#16 utoa::buffer#18 utoa::buffer#13 utoa::buffer#19 utoa::buffer#20 utoa::buffer#6 
+Alias utoa::radix#1 = utoa::radix#2 utoa::radix#3 utoa::radix#4 
+Alias utoa::digit#2 = utoa::digit#3 utoa::digit#6 utoa::digit#5 
+Alias utoa::digit_values#10 = utoa::digit_values#5 utoa::digit_values#6 utoa::digit_values#9 
+Alias utoa::value#2 = utoa::value#5 utoa::value#3 utoa::value#4 
+Alias utoa::started#2 = utoa::started#3 
+Alias utoa::buffer#11 = utoa::buffer#12 utoa::buffer#7 utoa::buffer#8 utoa::buffer#9 
+Alias utoa::max_digits#10 = utoa::max_digits#8 utoa::max_digits#5 utoa::max_digits#9 
+Alias utoa::digit_value#0 = utoa::digit_value#1 
+Alias utoa_append::return#0 = utoa_append::return#3 
+Alias utoa::value#0 = utoa::$9 
 Alias uctoa::value#10 = uctoa::value#8 uctoa::value#12 uctoa::value#13 uctoa::value#9 uctoa::value#14 uctoa::value#15 uctoa::value#11 
 Alias uctoa::buffer#10 = uctoa::buffer#17 uctoa::buffer#21 uctoa::buffer#16 uctoa::buffer#18 uctoa::buffer#13 uctoa::buffer#19 uctoa::buffer#20 uctoa::buffer#6 
 Alias uctoa::radix#1 = uctoa::radix#2 uctoa::radix#3 uctoa::radix#4 
@@ -2483,18 +2495,6 @@ Alias uctoa_append::digit#2 = uctoa_append::digit#4 uctoa_append::digit#3
 Alias uctoa_append::value#2 = uctoa_append::value#3 uctoa_append::value#4 uctoa_append::return#1 uctoa_append::return#4 uctoa_append::return#2 
 Alias uctoa_append::sub#1 = uctoa_append::sub#2 
 Alias uctoa_append::buffer#1 = uctoa_append::buffer#4 uctoa_append::buffer#2 
-Alias utoa::value#10 = utoa::value#8 utoa::value#12 utoa::value#13 utoa::value#9 utoa::value#14 utoa::value#15 utoa::value#11 
-Alias utoa::buffer#10 = utoa::buffer#17 utoa::buffer#21 utoa::buffer#16 utoa::buffer#18 utoa::buffer#13 utoa::buffer#19 utoa::buffer#20 utoa::buffer#6 
-Alias utoa::radix#1 = utoa::radix#2 utoa::radix#3 utoa::radix#4 
-Alias utoa::digit#2 = utoa::digit#3 utoa::digit#6 utoa::digit#5 
-Alias utoa::digit_values#10 = utoa::digit_values#5 utoa::digit_values#6 utoa::digit_values#9 
-Alias utoa::value#2 = utoa::value#5 utoa::value#3 utoa::value#4 
-Alias utoa::started#2 = utoa::started#3 
-Alias utoa::buffer#11 = utoa::buffer#12 utoa::buffer#7 utoa::buffer#8 utoa::buffer#9 
-Alias utoa::max_digits#10 = utoa::max_digits#8 utoa::max_digits#5 utoa::max_digits#9 
-Alias utoa::digit_value#0 = utoa::digit_value#1 
-Alias utoa_append::return#0 = utoa_append::return#3 
-Alias utoa::value#0 = utoa::$9 
 Alias utoa_append::digit#2 = utoa_append::digit#4 utoa_append::digit#3 
 Alias utoa_append::value#2 = utoa_append::value#3 utoa_append::value#4 utoa_append::return#1 utoa_append::return#4 utoa_append::return#2 
 Alias utoa_append::sub#1 = utoa_append::sub#2 
@@ -2584,16 +2584,16 @@ Alias main::i#2 = main::i#9 main::i#8 main::i#7 main::i#6 main::i#5 main::i#4 ma
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias uctoa::value#10 = uctoa::value#7 
-Alias uctoa::buffer#10 = uctoa::buffer#15 
-Alias uctoa::digit#2 = uctoa::digit#4 
-Alias uctoa::max_digits#10 = uctoa::max_digits#6 
-Alias uctoa::digit_values#10 = uctoa::digit_values#7 
 Alias utoa::value#10 = utoa::value#7 
 Alias utoa::buffer#10 = utoa::buffer#15 
 Alias utoa::digit#2 = utoa::digit#4 
 Alias utoa::max_digits#10 = utoa::max_digits#6 
 Alias utoa::digit_values#10 = utoa::digit_values#7 
+Alias uctoa::value#10 = uctoa::value#7 
+Alias uctoa::buffer#10 = uctoa::buffer#15 
+Alias uctoa::digit#2 = uctoa::digit#4 
+Alias uctoa::max_digits#10 = uctoa::max_digits#6 
+Alias uctoa::digit_values#10 = uctoa::digit_values#7 
 Alias gotoxy::x#3 = gotoxy::x#5 
 Alias gotoxy::y#4 = gotoxy::y#5 
 Alias printf_uint::uvalue#1 = printf_uint::uvalue#2 
@@ -2633,15 +2633,20 @@ Alias printf_number_buffer::buffer_digits#10 = printf_number_buffer::buffer_digi
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values memcpy::src_end#1 memcpy::src_end#0
 Identical Phi Values memcpy::destination#3 memcpy::destination#2
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#5 memset::str#3
 Identical Phi Values memset::c#2 memset::c#4
+Identical Phi Values strlen::str#4 strlen::str#1
+Identical Phi Values toupper::ch#1 toupper::ch#0
 Identical Phi Values strupr::src#0 strupr::str#0
 Identical Phi Values strupr::str#2 strupr::src#0
-Identical Phi Values strlen::str#4 strlen::str#1
+Identical Phi Values utoa::radix#1 utoa::radix#0
+Identical Phi Values utoa::value#10 utoa::value#1
+Identical Phi Values utoa::buffer#10 utoa::buffer#5
+Identical Phi Values utoa::max_digits#10 utoa::max_digits#7
+Identical Phi Values utoa::digit_values#10 utoa::digit_values#8
 Identical Phi Values uctoa::radix#1 uctoa::radix#0
 Identical Phi Values uctoa::value#10 uctoa::value#1
 Identical Phi Values uctoa::buffer#10 uctoa::buffer#5
@@ -2652,11 +2657,6 @@ Identical Phi Values uctoa_append::sub#3 uctoa_append::sub#0
 Identical Phi Values uctoa_append::buffer#3 uctoa_append::buffer#0
 Identical Phi Values uctoa_append::sub#1 uctoa_append::sub#3
 Identical Phi Values uctoa_append::buffer#1 uctoa_append::buffer#3
-Identical Phi Values utoa::radix#1 utoa::radix#0
-Identical Phi Values utoa::value#10 utoa::value#1
-Identical Phi Values utoa::buffer#10 utoa::buffer#5
-Identical Phi Values utoa::max_digits#10 utoa::max_digits#7
-Identical Phi Values utoa::digit_values#10 utoa::digit_values#8
 Identical Phi Values utoa_append::value#5 utoa_append::value#0
 Identical Phi Values utoa_append::sub#3 utoa_append::sub#0
 Identical Phi Values utoa_append::buffer#3 utoa_append::buffer#0
@@ -2677,22 +2677,22 @@ Identical Phi Values printf_uint::format_upper_case#1 printf_uint::format_upper_
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values memset::return#0 memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memcpy::$1 [15] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
-Simple Condition memset::$1 [22] if(memset::num#2<=0) goto memset::@1
-Simple Condition memset::$3 [29] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition strupr::$1 [36] if(0!=*strupr::src#2) goto strupr::@2
-Simple Condition strlen::$0 [48] if(0!=*strlen::str#2) goto strlen::@2
-Simple Condition uctoa::$0 [56] if(uctoa::radix#0==DECIMAL) goto uctoa::@1
-Simple Condition uctoa::$1 [60] if(uctoa::radix#0==HEXADECIMAL) goto uctoa::@2
-Simple Condition uctoa::$2 [64] if(uctoa::radix#0==OCTAL) goto uctoa::@3
-Simple Condition uctoa::$3 [68] if(uctoa::radix#0==BINARY) goto uctoa::@4
-Simple Condition uctoa::$5 [85] if(uctoa::digit#2<uctoa::$4) goto uctoa::@11
-Simple Condition uctoa_append::$0 [108] if(uctoa_append::value#2>=uctoa_append::sub#0) goto uctoa_append::@2
-Simple Condition utoa::$0 [117] if(utoa::radix#0==DECIMAL) goto utoa::@1
-Simple Condition utoa::$1 [121] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
-Simple Condition utoa::$2 [125] if(utoa::radix#0==OCTAL) goto utoa::@3
-Simple Condition utoa::$3 [129] if(utoa::radix#0==BINARY) goto utoa::@4
-Simple Condition utoa::$5 [146] if(utoa::digit#2<utoa::$4) goto utoa::@11
+Simple Condition memcpy::$1 [7] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
+Simple Condition memset::$1 [14] if(memset::num#2<=0) goto memset::@1
+Simple Condition memset::$3 [21] if(memset::dst#2!=memset::end#0) goto memset::@4
+Simple Condition strlen::$0 [29] if(0!=*strlen::str#2) goto strlen::@2
+Simple Condition strupr::$1 [44] if(0!=*strupr::src#2) goto strupr::@2
+Simple Condition utoa::$0 [56] if(utoa::radix#0==DECIMAL) goto utoa::@1
+Simple Condition utoa::$1 [60] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
+Simple Condition utoa::$2 [64] if(utoa::radix#0==OCTAL) goto utoa::@3
+Simple Condition utoa::$3 [68] if(utoa::radix#0==BINARY) goto utoa::@4
+Simple Condition utoa::$5 [85] if(utoa::digit#2<utoa::$4) goto utoa::@11
+Simple Condition uctoa::$0 [110] if(uctoa::radix#0==DECIMAL) goto uctoa::@1
+Simple Condition uctoa::$1 [114] if(uctoa::radix#0==HEXADECIMAL) goto uctoa::@2
+Simple Condition uctoa::$2 [118] if(uctoa::radix#0==OCTAL) goto uctoa::@3
+Simple Condition uctoa::$3 [122] if(uctoa::radix#0==BINARY) goto uctoa::@4
+Simple Condition uctoa::$5 [139] if(uctoa::digit#2<uctoa::$4) goto uctoa::@11
+Simple Condition uctoa_append::$0 [162] if(uctoa_append::value#2>=uctoa_append::sub#0) goto uctoa_append::@2
 Simple Condition utoa_append::$0 [171] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2
 Simple Condition clrscr::$0 [181] if(clrscr::l#2<$19) goto clrscr::@2
 Simple Condition clrscr::$1 [189] if(clrscr::c#2<$28) goto clrscr::@5
@@ -2701,9 +2701,9 @@ Simple Condition gotoxy::$3 [202] if(gotoxy::x#3<$28) goto gotoxy::@2
 Simple Condition cputc::$0 [217] if(cputc::c#3=='
 ') goto cputc::@1
 Simple Condition cputc::$2 [223] if(conio_cursor_x!=$28) goto cputc::@return
-Simple Condition cscroll::$1 [233] if(conio_cursor_y!=$19) goto cscroll::@return
-Simple Condition cscroll::$7 [235] if(0!=conio_scroll_enable) goto cscroll::@3
-Simple Condition cputs::$2 [269] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cputs::$2 [238] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition cscroll::$1 [243] if(conio_cursor_y!=$19) goto cscroll::@return
+Simple Condition cscroll::$7 [245] if(0!=conio_scroll_enable) goto cscroll::@3
 Simple Condition conio_c64_init::$1 [275] if(conio_c64_init::line#0<$19) goto conio_c64_init::@1
 Simple Condition printf_padding::$0 [286] if(printf_padding::i#2<printf_padding::length#4) goto printf_padding::@2
 Simple Condition printf_uint::$5 [293] if(0!=printf_uint::format_sign_always#0) goto printf_uint::@1
@@ -2715,11 +2715,11 @@ Simple Condition printf_number_buffer::$7 [359] if(0==printf_number_buffer::buff
 Simple Condition printf_number_buffer::$12 [369] if(0==printf_number_buffer::format_upper_case#10) goto printf_number_buffer::@5
 Simple Condition main::$1 [392] if(main::i#2<5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting && if()-condition to two if()s [3] toupper::$2 = toupper::$0 && toupper::$1
-Rewriting ! if()-condition to reversed if() [89] uctoa::$8 = ! uctoa::$7
-Rewriting || if()-condition to two if()s [88] uctoa::$7 = uctoa::started#2 || uctoa::$6
-Rewriting ! if()-condition to reversed if() [151] utoa::$8 = ! utoa::$7
-Rewriting || if()-condition to two if()s [150] utoa::$7 = utoa::started#2 || utoa::$6
+Rewriting && if()-condition to two if()s [36] toupper::$2 = toupper::$0 && toupper::$1
+Rewriting ! if()-condition to reversed if() [90] utoa::$8 = ! utoa::$7
+Rewriting || if()-condition to two if()s [89] utoa::$7 = utoa::started#2 || utoa::$6
+Rewriting ! if()-condition to reversed if() [143] uctoa::$8 = ! uctoa::$7
+Rewriting || if()-condition to two if()s [142] uctoa::$7 = uctoa::started#2 || uctoa::$6
 Rewriting ! if()-condition to reversed if() [342] printf_number_buffer::$5 = ! printf_number_buffer::$4
 Rewriting && if()-condition to two if()s [341] printf_number_buffer::$4 = printf_number_buffer::$3 && printf_number_buffer::padding#10
 Rewriting && if()-condition to two if()s [340] printf_number_buffer::$3 = printf_number_buffer::$1 && printf_number_buffer::$2
@@ -2729,18 +2729,31 @@ Rewriting ! if()-condition to reversed if() [378] printf_number_buffer::$17 = ! 
 Rewriting && if()-condition to two if()s [377] printf_number_buffer::$16 = printf_number_buffer::$15 && printf_number_buffer::padding#10
 Rewriting && if()-condition to two if()s [376] printf_number_buffer::$15 = printf_number_buffer::format_justify_left#10 && printf_number_buffer::$14
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Warning! Adding boolean cast to non-boolean condition uctoa::started#2
 Warning! Adding boolean cast to non-boolean condition utoa::started#2
+Warning! Adding boolean cast to non-boolean condition uctoa::started#2
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::format_zero_padding#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::format_justify_left#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition printf_number_buffer::padding#10
-Constant right-side identified [238] memcpy::num#0 = (unumber)$19*$28-$28
-Constant right-side identified [243] memcpy::num#1 = (unumber)$19*$28-$28
+Constant right-side identified [248] memcpy::num#0 = (unumber)$19*$28-$28
+Constant right-side identified [253] memcpy::num#1 = (unumber)$19*$28-$28
 Constant right-side identified [280] conio_c64_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant strlen::len#0 = 0
+Constant utoa::max_digits#0 = 0
+Constant utoa::digit_values#0 = (word*) 0
+Constant utoa::max_digits#1 = 5
+Constant utoa::digit_values#1 = RADIX_DECIMAL_VALUES
+Constant utoa::max_digits#2 = 4
+Constant utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
+Constant utoa::max_digits#3 = 6
+Constant utoa::digit_values#3 = RADIX_OCTAL_VALUES
+Constant utoa::max_digits#4 = $10
+Constant utoa::digit_values#4 = RADIX_BINARY_VALUES
+Constant utoa::started#0 = 0
+Constant utoa::digit#0 = 0
+Constant utoa::started#1 = 1
 Constant uctoa::max_digits#0 = 0
 Constant uctoa::digit_values#0 = (byte*) 0
 Constant uctoa::max_digits#1 = 3
@@ -2755,19 +2768,6 @@ Constant uctoa::started#0 = 0
 Constant uctoa::digit#0 = 0
 Constant uctoa::started#1 = 1
 Constant uctoa_append::digit#0 = 0
-Constant utoa::max_digits#0 = 0
-Constant utoa::digit_values#0 = (word*) 0
-Constant utoa::max_digits#1 = 5
-Constant utoa::digit_values#1 = RADIX_DECIMAL_VALUES
-Constant utoa::max_digits#2 = 4
-Constant utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
-Constant utoa::max_digits#3 = 6
-Constant utoa::digit_values#3 = RADIX_OCTAL_VALUES
-Constant utoa::max_digits#4 = $10
-Constant utoa::digit_values#4 = RADIX_BINARY_VALUES
-Constant utoa::started#0 = 0
-Constant utoa::digit#0 = 0
-Constant utoa::started#1 = 1
 Constant utoa_append::digit#0 = 0
 Constant clrscr::line_text#0 = CONIO_SCREEN_TEXT
 Constant clrscr::line_cols#0 = CONIO_SCREEN_COLORS
@@ -2775,6 +2775,7 @@ Constant clrscr::l#0 = 0
 Constant clrscr::c#0 = 0
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
+Constant cputs::c#0 = 0
 Constant memcpy::destination#0 = (void*)CONIO_SCREEN_TEXT
 Constant memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
 Constant memcpy::num#0 = (unumber)$19*$28-$28
@@ -2788,7 +2789,6 @@ Constant memset::str#1 = (void*)CONIO_SCREEN_COLORS+(word)$19*$28-$28
 Constant memset::num#1 = $28
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
-Constant cputs::c#0 = 0
 Constant gotoxy::x#2 = 0
 Constant conio_c64_init::line#1 = (unumber)$19-1
 Constant printf_padding::i#0 = 0
@@ -2840,11 +2840,11 @@ Constant printf_number_buffer::format_zero_padding#0 = printf_uint::format_zero_
 Constant printf_number_buffer::format_upper_case#0 = printf_uint::format_upper_case#0
 Constant printf_number_buffer::format_radix#0 = printf_uint::format_radix#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [117] if(utoa::radix#0==DECIMAL) goto utoa::@1
-if() condition always true - replacing block destination [121] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
-if() condition always false - eliminating [125] if(utoa::radix#0==OCTAL) goto utoa::@3
-if() condition always false - eliminating [129] if(utoa::radix#0==BINARY) goto utoa::@4
-if() condition always true - replacing block destination [235] if(0!=conio_scroll_enable) goto cscroll::@3
+if() condition always false - eliminating [56] if(utoa::radix#0==DECIMAL) goto utoa::@1
+if() condition always true - replacing block destination [60] if(utoa::radix#0==HEXADECIMAL) goto utoa::@2
+if() condition always false - eliminating [64] if(utoa::radix#0==OCTAL) goto utoa::@3
+if() condition always false - eliminating [68] if(utoa::radix#0==BINARY) goto utoa::@4
+if() condition always true - replacing block destination [245] if(0!=conio_scroll_enable) goto cscroll::@3
 if() condition always false - eliminating [293] if(0!=printf_uint::format_sign_always#0) goto printf_uint::@1
 Successful SSA optimization Pass2ConstantIfs
 Consolidated constant strings into main::s
@@ -2882,17 +2882,15 @@ Removing unused block cscroll::@8
 Removing PHI-reference to removed block (printf_uint::@1) in block printf_uint::@3
 Removing unused block printf_uint::@1
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memcpy::return#2 and assignment [154] memcpy::return#2 = memcpy::destination#2
-Eliminating unused variable memcpy::return#3 and assignment [156] memcpy::return#3 = memcpy::destination#2
-Eliminating unused variable memset::return#2 and assignment [158] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [160] memset::return#3 = memset::str#3
+Eliminating unused variable memcpy::return#2 and assignment [162] memcpy::return#2 = memcpy::destination#2
+Eliminating unused variable memcpy::return#3 and assignment [164] memcpy::return#3 = memcpy::destination#2
+Eliminating unused variable memset::return#2 and assignment [166] memset::return#2 = memset::str#3
+Eliminating unused variable memset::return#3 and assignment [168] memset::return#3 = memset::str#3
 Eliminating unused variable printf_number_buffer::format_sign_always#1 and assignment [203] printf_number_buffer::format_sign_always#1 = printf_uchar::format_sign_always#2
 Eliminating unused variable printf_number_buffer::format_radix#1 and assignment [206] printf_number_buffer::format_radix#1 = printf_uchar::format_radix#2
 Eliminating unused variable strupr::return#2 and assignment [243] strupr::return#2 = strupr::str#0
 Eliminating unused variable main::$3 and assignment [254] main::$3 = main::$5
 Eliminating unused variable main::$4 and assignment [259] main::$4 = main::$6 + OFFSET_STRUCT_$0_STAR_Y
-Eliminating unused constant uctoa::max_digits#0
-Eliminating unused constant uctoa::digit_values#0
 Eliminating unused constant utoa::max_digits#0
 Eliminating unused constant utoa::digit_values#0
 Eliminating unused constant utoa::max_digits#1
@@ -2902,6 +2900,8 @@ Eliminating unused constant utoa::digit_values#3
 Eliminating unused constant utoa::max_digits#4
 Eliminating unused constant utoa::digit_values#4
 Eliminating unused constant utoa::radix#0
+Eliminating unused constant uctoa::max_digits#0
+Eliminating unused constant uctoa::digit_values#0
 Eliminating unused constant gotoxy::x#1
 Eliminating unused constant gotoxy::y#1
 Eliminating unused constant cputs::c#0
@@ -2918,8 +2918,8 @@ Eliminating unused constant RADIX_DECIMAL_VALUES
 Eliminating unused constant printf_uint::format_sign_always#0
 Eliminating unused constant printf_uint::format_radix#0
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) 0 in uctoa::$11 = 0 != uctoa::started#2
 Adding number conversion cast (unumber) 0 in utoa::$12 = 0 != utoa::started#2
+Adding number conversion cast (unumber) 0 in uctoa::$11 = 0 != uctoa::started#2
 Adding number conversion cast (unumber) $19+1 in if(gotoxy::y#3<$19+1) goto gotoxy::@1
 Adding number conversion cast (unumber) 1 in if(gotoxy::y#3<(unumber)$19+1) goto gotoxy::@1
 Adding number conversion cast (unumber) 0 in printf_number_buffer::$33 = 0 != printf_number_buffer::format_zero_padding#10
@@ -2955,33 +2955,33 @@ Identical Phi Values gotoxy::y#3 gotoxy::y#2
 Identical Phi Values gotoxy::x#3 gotoxy::x#2
 Identical Phi Values printf_uint::$2 printf_uint::$0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition toupper::$0 [2] if(toupper::ch#0>='a') goto toupper::@3
-Simple Condition uctoa::$11 [60] if(0!=uctoa::started#2) goto uctoa::@14
-Simple Condition utoa::$12 [88] if(0!=utoa::started#2) goto utoa::@14
+Simple Condition toupper::$0 [28] if(toupper::ch#0>='a') goto toupper::@3
+Simple Condition utoa::$12 [50] if(0!=utoa::started#2) goto utoa::@14
+Simple Condition uctoa::$11 [83] if(0!=uctoa::started#2) goto uctoa::@14
 Simple Condition printf_number_buffer::$1 [208] if(0==printf_number_buffer::format_justify_left#10) goto printf_number_buffer::@23
 Simple Condition printf_number_buffer::$33 [224] if(0!=printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@24
 Simple Condition printf_number_buffer::$34 [234] if(0!=printf_number_buffer::format_justify_left#10) goto printf_number_buffer::@26
 Simple Condition toupper::$1 [264] if(toupper::ch#0<='z') goto toupper::@1
-Simple Condition uctoa::$6 [265] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@14
-Simple Condition utoa::$6 [266] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@14
+Simple Condition utoa::$6 [265] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@14
+Simple Condition uctoa::$6 [266] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@14
 Simple Condition printf_number_buffer::$35 [268] if(0!=printf_number_buffer::padding#10) goto printf_number_buffer::@8
 Simple Condition printf_number_buffer::$2 [269] if(0==printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@22
 Simple Condition printf_number_buffer::$36 [271] if(0!=printf_number_buffer::padding#10) goto printf_number_buffer::@10
 Simple Condition printf_number_buffer::$37 [273] if(0!=printf_number_buffer::padding#10) goto printf_number_buffer::@12
 Simple Condition printf_number_buffer::$14 [274] if(0==printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@25
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [2] if(toupper::ch#0<'a') goto toupper::@2
+Negating conditional jump and destination [28] if(toupper::ch#0<'a') goto toupper::@2
 Negating conditional jump and destination [208] if(0!=printf_number_buffer::format_justify_left#10) goto printf_number_buffer::@2
 Negating conditional jump and destination [224] if(0==printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@4
 Negating conditional jump and destination [234] if(0==printf_number_buffer::format_justify_left#10) goto printf_number_buffer::@return
 Negating conditional jump and destination [269] if(0!=printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@2
 Negating conditional jump and destination [274] if(0!=printf_number_buffer::format_zero_padding#10) goto printf_number_buffer::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [46] uctoa::buffer#0 = ++ uctoa::buffer#5
-Constant right-side identified [82] utoa::$4 = utoa::max_digits#2 - 1
+Constant right-side identified [44] utoa::$4 = utoa::max_digits#2 - 1
+Constant right-side identified [69] uctoa::buffer#0 = ++ uctoa::buffer#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant uctoa::buffer#0 = ++uctoa::buffer#5
 Constant utoa::$4 = utoa::max_digits#2-1
+Constant uctoa::buffer#0 = ++uctoa::buffer#5
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [126] if(gotoxy::x#2<$28) goto gotoxy::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -2994,28 +2994,28 @@ Alias candidate removed (volatile)conio_line_text = gotoxy::$5
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Identical Phi Values gotoxy::x#4 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [45] uctoa::buffer#1 = ++ uctoa::buffer#0
+Constant right-side identified [64] uctoa::buffer#1 = ++ uctoa::buffer#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant uctoa::buffer#1 = ++uctoa::buffer#0
 Successful SSA optimization Pass2ConstantIdentification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Constant right-side identified [46] uctoa::buffer#2 = ++ uctoa::buffer#1
+Constant right-side identified [65] uctoa::buffer#2 = ++ uctoa::buffer#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant uctoa::buffer#2 = ++uctoa::buffer#1
 Successful SSA optimization Pass2ConstantIdentification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Inlining Noop Cast [5] memcpy::src#0 = (byte*)memcpy::source#2 keeping memcpy::source#2
-Inlining Noop Cast [6] memcpy::dst#0 = (byte*)memcpy::destination#2 keeping memcpy::destination#2
-Inlining Noop Cast [7] memcpy::$2 = (byte*)memcpy::source#2 keeping memcpy::source#2
-Inlining Noop Cast [17] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
-Inlining Noop Cast [19] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [1] memcpy::src#0 = (byte*)memcpy::source#2 keeping memcpy::source#2
+Inlining Noop Cast [2] memcpy::dst#0 = (byte*)memcpy::destination#2 keeping memcpy::destination#2
+Inlining Noop Cast [3] memcpy::$2 = (byte*)memcpy::source#2 keeping memcpy::source#2
+Inlining Noop Cast [13] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [15] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
 Inlining Noop Cast [199] printf_number_buffer::$25 = (signed byte)printf_number_buffer::format_min_length#2 keeping printf_number_buffer::format_min_length#2
 Inlining Noop Cast [226] main::$5 = (byte*)main::pStar#2 keeping main::pStar#2
 Inlining Noop Cast [230] main::$6 = (byte*)main::pStar#2 keeping main::pStar#2
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [75] utoa::$10 = utoa::digit#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [42] utoa::$10 = utoa::digit#2 * SIZEOF_WORD
 Rewriting multiplication to use shift and addition[117] gotoxy::line_offset#0 = gotoxy::$7 * $28
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings memcpy::destination#0
@@ -3031,6 +3031,10 @@ Inlining constant with var siblings memset::str#1
 Inlining constant with var siblings memset::num#1
 Inlining constant with var siblings memset::c#1
 Inlining constant with var siblings strlen::len#0
+Inlining constant with var siblings utoa::started#0
+Inlining constant with var siblings utoa::digit#0
+Inlining constant with var siblings utoa::started#1
+Inlining constant with var siblings utoa::buffer#5
 Inlining constant with var siblings uctoa::max_digits#1
 Inlining constant with var siblings uctoa::digit_values#1
 Inlining constant with var siblings uctoa::max_digits#2
@@ -3047,10 +3051,6 @@ Inlining constant with var siblings uctoa::buffer#0
 Inlining constant with var siblings uctoa::buffer#1
 Inlining constant with var siblings uctoa::buffer#2
 Inlining constant with var siblings uctoa_append::digit#0
-Inlining constant with var siblings utoa::started#0
-Inlining constant with var siblings utoa::digit#0
-Inlining constant with var siblings utoa::started#1
-Inlining constant with var siblings utoa::buffer#5
 Inlining constant with var siblings utoa_append::digit#0
 Inlining constant with var siblings clrscr::line_text#0
 Inlining constant with var siblings clrscr::line_cols#0
@@ -3176,9 +3176,9 @@ Successful SSA optimization Pass2ConstantSimplification
 Simplifying constant integer increment ++(byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+1
 Simplifying constant integer increment ++(byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+2
 Successful SSA optimization Pass2ConstantSimplification
-Adding number conversion cast (unumber) 1 in [44] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+1) = 'r'
-Adding number conversion cast (unumber) 2 in [45] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+2) = 'r'
-Adding number conversion cast (unumber) 3 in [46] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+3) = 0
+Adding number conversion cast (unumber) 1 in [63] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+1) = 'r'
+Adding number conversion cast (unumber) 2 in [64] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+2) = 'r'
+Adding number conversion cast (unumber) 3 in [65] *((byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS+3) = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -3213,11 +3213,11 @@ Constant strlen::str#1 = (byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBE
 Constant cputs::s#1 = (byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Constant strupr::str#0 = (byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [13] if($28<=0) goto memset::@1
-if() condition always true - replacing block destination [34] if(uctoa::radix#0==DECIMAL) goto uctoa::@1
-if() condition always false - eliminating [35] if(uctoa::radix#0==HEXADECIMAL) goto uctoa::@2
-if() condition always false - eliminating [36] if(uctoa::radix#0==OCTAL) goto uctoa::@3
-if() condition always false - eliminating [37] if(uctoa::radix#0==BINARY) goto uctoa::@4
+if() condition always false - eliminating [9] if($28<=0) goto memset::@1
+if() condition always true - replacing block destination [53] if(uctoa::radix#0==DECIMAL) goto uctoa::@1
+if() condition always false - eliminating [54] if(uctoa::radix#0==HEXADECIMAL) goto uctoa::@2
+if() condition always false - eliminating [55] if(uctoa::radix#0==OCTAL) goto uctoa::@3
+if() condition always false - eliminating [56] if(uctoa::radix#0==BINARY) goto uctoa::@4
 if() condition always false - eliminating [172] if(0!=0) goto printf_uchar::@1
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block uctoa::@6
@@ -3266,7 +3266,7 @@ Identical Phi Values uctoa::max_digits#7 3
 Identical Phi Values uctoa::digit_values#8 RADIX_DECIMAL_VALUES_CHAR
 Identical Phi Values printf_uchar::$2 0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [36] uctoa::$4 = 3 - 1
+Constant right-side identified [55] uctoa::$4 = 3 - 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant uctoa::$4 = 3-1
 Successful SSA optimization Pass2ConstantIdentification
@@ -3299,8 +3299,8 @@ Alias candidate removed (volatile)conio_line_text = gotoxy::$5
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Added new block during phi lifting uctoa::@17(between uctoa::@16 and uctoa::@13)
 Added new block during phi lifting utoa::@17(between utoa::@16 and utoa::@13)
+Added new block during phi lifting uctoa::@17(between uctoa::@16 and uctoa::@13)
 Added new block during phi lifting gotoxy::@5(between gotoxy and gotoxy::@1)
 Added new block during phi lifting conio_c64_init::@4(between conio_c64_init and conio_c64_init::@1)
 Added new block during phi lifting printf_number_buffer::@27(between printf_number_buffer::@13 and printf_number_buffer::@1)
@@ -3465,18 +3465,11 @@ Culled Empty Block label toupper::@2
 Culled Empty Block label cscroll::@1
 Culled Empty Block label memcpy::@3
 Culled Empty Block label memset::@1
-Renumbering block toupper::@3 to toupper::@2
 Renumbering block memset::@2 to memset::@1
 Renumbering block memset::@3 to memset::@2
 Renumbering block memset::@4 to memset::@3
+Renumbering block toupper::@3 to toupper::@2
 Renumbering block strupr::@4 to strupr::@3
-Renumbering block uctoa::@10 to uctoa::@1
-Renumbering block uctoa::@11 to uctoa::@2
-Renumbering block uctoa::@12 to uctoa::@3
-Renumbering block uctoa::@13 to uctoa::@4
-Renumbering block uctoa::@14 to uctoa::@5
-Renumbering block uctoa::@15 to uctoa::@6
-Renumbering block uctoa::@16 to uctoa::@7
 Renumbering block utoa::@10 to utoa::@1
 Renumbering block utoa::@11 to utoa::@2
 Renumbering block utoa::@12 to utoa::@3
@@ -3484,6 +3477,13 @@ Renumbering block utoa::@13 to utoa::@4
 Renumbering block utoa::@14 to utoa::@5
 Renumbering block utoa::@15 to utoa::@6
 Renumbering block utoa::@16 to utoa::@7
+Renumbering block uctoa::@10 to uctoa::@1
+Renumbering block uctoa::@11 to uctoa::@2
+Renumbering block uctoa::@12 to uctoa::@3
+Renumbering block uctoa::@13 to uctoa::@4
+Renumbering block uctoa::@14 to uctoa::@5
+Renumbering block uctoa::@15 to uctoa::@6
+Renumbering block uctoa::@16 to uctoa::@7
 Renumbering block clrscr::@3 to clrscr::@2
 Renumbering block clrscr::@4 to clrscr::@3
 Renumbering block clrscr::@5 to clrscr::@4
@@ -4896,10 +4896,10 @@ Uplift Scope [printf_uint] 367.33: zp[2]:69 [ printf_uint::uvalue#0 ]
 Uplift Scope [main] 222.2: zp[1]:3 [ main::i#2 main::i#1 ] 115.43: zp[2]:4 [ main::pStar#2 main::pStar#1 ] 
 Uplift Scope [conio_c64_init] 33: zp[1]:2 [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplift Scope [RADIX] 
+Uplift Scope [cputln] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
-Uplift Scope [cputln] 
 Uplift Scope [cscroll] 
 Uplift Scope [printf_format_number] 
 Uplift Scope [printf_buffer_number] 
@@ -4929,10 +4929,10 @@ Uplifting [printf_uint] best 249228 combination zp[2]:69 [ printf_uint::uvalue#0
 Uplifting [main] best 249228 combination zp[1]:3 [ main::i#2 main::i#1 ] zp[2]:4 [ main::pStar#2 main::pStar#1 ] 
 Uplifting [conio_c64_init] best 249216 combination reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
 Uplifting [RADIX] best 249216 combination 
+Uplifting [cputln] best 249216 combination 
 Uplifting [MOS6526_CIA] best 249216 combination 
 Uplifting [MOS6569_VICII] best 249216 combination 
 Uplifting [MOS6581_SID] best 249216 combination 
-Uplifting [cputln] best 249216 combination 
 Uplifting [cscroll] best 249216 combination 
 Uplifting [printf_format_number] best 249216 combination 
 Uplifting [printf_buffer_number] best 249216 combination 

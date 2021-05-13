@@ -18,9 +18,9 @@
   .label CHARSET = $e800
   .label print_screen = $400
   .label last_time = $a
+  .label print_line_cursor = $f
   // The random state variable
   .label rand_state = 2
-  .label print_line_cursor = $f
   .label Ticks = $14
   .label Ticks_1 = $16
   .label print_char_cursor = $11

@@ -7,50 +7,6 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
-memset: scope:[memset]  from print_cls
-  memset::c#4 = phi( print_cls/memset::c#0 )
-  memset::str#3 = phi( print_cls/memset::str#0 )
-  memset::num#1 = phi( print_cls/memset::num#0 )
-  memset::$0 = memset::num#1 > 0
-  memset::$1 = ! memset::$0
-  if(memset::$1) goto memset::@1
-  to:memset::@2
-memset::@1: scope:[memset]  from memset memset::@3
-  memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
-  memset::return#0 = memset::str#1
-  to:memset::@return
-memset::@2: scope:[memset]  from memset
-  memset::c#3 = phi( memset/memset::c#4 )
-  memset::num#2 = phi( memset/memset::num#1 )
-  memset::str#2 = phi( memset/memset::str#3 )
-  memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
-  memset::dst#0 = ((byte*)) memset::str#2
-  to:memset::@3
-memset::@3: scope:[memset]  from memset::@2 memset::@4
-  memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
-  memset::str#4 = phi( memset::@2/memset::str#2, memset::@4/memset::str#5 )
-  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
-  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
-  memset::$3 = memset::dst#2 != memset::end#1
-  if(memset::$3) goto memset::@4
-  to:memset::@1
-memset::@4: scope:[memset]  from memset::@3
-  memset::str#5 = phi( memset::@3/memset::str#4 )
-  memset::end#2 = phi( memset::@3/memset::end#1 )
-  memset::dst#3 = phi( memset::@3/memset::dst#2 )
-  memset::c#1 = phi( memset::@3/memset::c#2 )
-  *memset::dst#3 = memset::c#1
-  memset::dst#1 = ++ memset::dst#3
-  to:memset::@3
-memset::@return: scope:[memset]  from memset::@1
-  memset::return#3 = phi( memset::@1/memset::return#0 )
-  memset::return#1 = memset::return#3
-  return 
-  to:@return
-
 void print_schar_at(signed byte print_schar_at::b , byte* print_schar_at::at)
 print_schar_at: scope:[print_schar_at]  from main::@1 main::@3 main::@9
   print_schar_at::at#6 = phi( main::@1/print_schar_at::at#0, main::@3/print_schar_at::at#1, main::@9/print_schar_at::at#2 )
@@ -137,11 +93,55 @@ print_cls: scope:[print_cls]  from init_screen
   memset::c#0 = ' '
   memset::num#0 = $3e8
   call memset 
-  memset::return#2 = memset::return#1
+  memset::return#0 = memset::return#2
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
+  return 
+  to:@return
+
+void* memset(void* memset::str , byte memset::c , word memset::num)
+memset: scope:[memset]  from print_cls
+  memset::c#4 = phi( print_cls/memset::c#0 )
+  memset::str#3 = phi( print_cls/memset::str#0 )
+  memset::num#1 = phi( print_cls/memset::num#0 )
+  memset::$0 = memset::num#1 > 0
+  memset::$1 = ! memset::$0
+  if(memset::$1) goto memset::@1
+  to:memset::@2
+memset::@1: scope:[memset]  from memset memset::@3
+  memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
+  memset::return#1 = memset::str#1
+  to:memset::@return
+memset::@2: scope:[memset]  from memset
+  memset::c#3 = phi( memset/memset::c#4 )
+  memset::num#2 = phi( memset/memset::num#1 )
+  memset::str#2 = phi( memset/memset::str#3 )
+  memset::$4 = (byte*)memset::str#2
+  memset::$2 = memset::$4 + memset::num#2
+  memset::end#0 = memset::$2
+  memset::dst#0 = ((byte*)) memset::str#2
+  to:memset::@3
+memset::@3: scope:[memset]  from memset::@2 memset::@4
+  memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
+  memset::str#4 = phi( memset::@2/memset::str#2, memset::@4/memset::str#5 )
+  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
+  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
+  memset::$3 = memset::dst#2 != memset::end#1
+  if(memset::$3) goto memset::@4
+  to:memset::@1
+memset::@4: scope:[memset]  from memset::@3
+  memset::str#5 = phi( memset::@3/memset::str#4 )
+  memset::end#2 = phi( memset::@3/memset::end#1 )
+  memset::dst#3 = phi( memset::@3/memset::dst#2 )
+  memset::c#1 = phi( memset::@3/memset::c#2 )
+  *memset::dst#3 = memset::c#1
+  memset::dst#1 = ++ memset::dst#3
+  to:memset::@3
+memset::@return: scope:[memset]  from memset::@1
+  memset::return#3 = phi( memset::@1/memset::return#1 )
+  memset::return#2 = memset::return#3
   return 
   to:@return
 
@@ -500,7 +500,6 @@ byte print_uchar_at::b#1
 byte print_uchar_at::b#2
 constant signed byte* vals[]  = { -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f }
 
-Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (snumber) 0 in print_schar_at::$0 = print_schar_at::b#4 < 0
 Adding number conversion cast (unumber) 1 in print_schar_at::$1 = print_schar_at::at#5 + 1
 Adding number conversion cast (unumber) 4 in print_uchar_at::$0 = print_uchar_at::b#1 >> 4
@@ -508,6 +507,7 @@ Adding number conversion cast (unumber) $f in print_uchar_at::$2 = print_uchar_a
 Adding number conversion cast (unumber) print_uchar_at::$2 in print_uchar_at::$2 = print_uchar_at::b#2 & (unumber)$f
 Adding number conversion cast (unumber) 1 in print_uchar_at::$3 = print_uchar_at::at#2 + 1
 Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
+Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) 4 in main::$1 = main::at_line#0 + 4
 Adding number conversion cast (unumber) 4 in main::at#1 = main::at#5 + 4
 Adding number conversion cast (unumber) $28 in main::at_line#1 = main::at_line#2 + $28
@@ -518,16 +518,16 @@ Adding number conversion cast (unumber) 2 in init_screen::COLS#3[2] = init_scree
 Adding number conversion cast (unumber) 3 in init_screen::COLS#3[3] = init_screen::WHITE
 Adding number conversion cast (unumber) $28 in init_screen::COLS#1 = init_screen::COLS#3 + $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast memset::dst#0 = (byte*)memset::str#2
 Inlining cast memset::num#0 = (unumber)$3e8
+Inlining cast memset::dst#0 = (byte*)memset::str#2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast 1
 Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
@@ -541,13 +541,13 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $28
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized signed number type (signed byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $28
@@ -559,10 +559,17 @@ Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar_at::$2 = print_uchar_at::b#2 & $f
-Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
+Inversing boolean not [45] memset::$1 = memset::num#1 <= 0 from [44] memset::$0 = memset::num#1 > 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)fmul8::return#1 = fmul8::cc fmul8::return#4 fmul8::return#2 
-Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
+Alias print_schar_at::at#3 = print_schar_at::at#6 print_schar_at::at#7 print_schar_at::at#4 print_schar_at::at#8 
+Alias print_schar_at::b#4 = print_schar_at::b#7 print_schar_at::b#5 print_schar_at::b#9 print_schar_at::b#8 
+Alias print_schar_at::b#0 = print_schar_at::$5 
+Alias print_uchar_at::at#0 = print_schar_at::$1 
+Alias print_uchar_at::b#1 = print_uchar_at::b#2 
+Alias print_uchar_at::at#1 = print_uchar_at::at#2 
+Alias print_char_at::at#3 = print_uchar_at::$3 
+Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
@@ -571,13 +578,6 @@ Alias memset::c#1 = memset::c#2
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#4 = memset::str#5 
-Alias print_schar_at::at#3 = print_schar_at::at#6 print_schar_at::at#7 print_schar_at::at#4 print_schar_at::at#8 
-Alias print_schar_at::b#4 = print_schar_at::b#7 print_schar_at::b#5 print_schar_at::b#9 print_schar_at::b#8 
-Alias print_schar_at::b#0 = print_schar_at::$5 
-Alias print_uchar_at::at#0 = print_schar_at::$1 
-Alias print_uchar_at::b#1 = print_uchar_at::b#2 
-Alias print_uchar_at::at#1 = print_uchar_at::at#2 
-Alias print_char_at::at#3 = print_uchar_at::$3 
 Alias main::at#0 = main::$1 
 Alias main::at#4 = main::at#5 
 Alias main::k#2 = main::k#3 
@@ -597,15 +597,15 @@ Alias candidate removed (volatile)fmul8::return#1 = fmul8::cc fmul8::return#4 fm
 Alias print_schar_at::at#3 = print_schar_at::at#5 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)fmul8::return#1 = fmul8::cc fmul8::return#4 fmul8::return#2 
+Identical Phi Values print_uchar_at::b#1 print_uchar_at::b#0
+Identical Phi Values print_uchar_at::at#1 print_uchar_at::at#0
+Identical Phi Values print_screen#2 print_screen#4
 Identical Phi Values memset::num#1 memset::num#0
 Identical Phi Values memset::str#2 memset::str#0
 Identical Phi Values memset::c#3 memset::c#0
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#4 memset::str#2
 Identical Phi Values memset::c#1 memset::c#3
-Identical Phi Values print_uchar_at::b#1 print_uchar_at::b#0
-Identical Phi Values print_uchar_at::at#1 print_uchar_at::at#0
-Identical Phi Values print_screen#2 print_screen#4
 Identical Phi Values print_screen#6 print_screen#0
 Identical Phi Values main::at_line#3 main::at_line#0
 Identical Phi Values main::i#3 main::i#2
@@ -614,11 +614,11 @@ Identical Phi Values print_screen#4 print_screen#6
 Identical Phi Values init_screen::COLS#2 init_screen::COLS#0
 Identical Phi Values fmul8::return#4 fmul8::return#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values memset::return#0 memset::str#0
+Identical Phi Values memset::return#1 memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memset::$1 [2] if(memset::num#0<=0) goto memset::@1
-Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition print_schar_at::$0 [15] if(print_schar_at::b#4<0) goto print_schar_at::@1
+Simple Condition print_schar_at::$0 [2] if(print_schar_at::b#4<0) goto print_schar_at::@1
+Simple Condition memset::$1 [37] if(memset::num#0<=0) goto memset::@1
+Simple Condition memset::$3 [44] if(memset::dst#2!=memset::end#0) goto memset::@4
 Simple Condition main::$3 [60] if(main::k#1!=rangelast(0,8)) goto main::@1
 Simple Condition main::$7 [80] if(main::j#1!=rangelast(0,8)) goto main::@4
 Simple Condition main::$8 [83] if(main::i#1!=rangelast(0,8)) goto main::@3
@@ -640,11 +640,11 @@ Constant print_screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::str#0 = (void*)print_screen#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant memset::return#0 = memset::str#0
 Constant memset::$4 = (byte*)memset::str#0
 Constant memset::dst#0 = (byte*)memset::str#0
-Constant memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [2] if(memset::num#0<=0) goto memset::@1
+if() condition always false - eliminating [37] if(memset::num#0<=0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [58] main::k#1 = ++ main::k#2 to ++
 Resolved ranged comparison value [60] if(main::k#1!=rangelast(0,8)) goto main::@1 to 9
@@ -658,7 +658,7 @@ Resolved ranged next value [101] init_screen::m#1 = ++ init_screen::m#2 to ++
 Resolved ranged comparison value [103] if(init_screen::m#1!=rangelast(0,$18)) goto init_screen::@3 to $19
 Simplifying expression containing zero init_screen::COLS#3 in [96] init_screen::COLS#3[0] = init_screen::WHITE
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant memset::return#2
+Eliminating unused constant memset::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -686,16 +686,16 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)fmul8::return#1 = fmul8::cc fmul8::return#2 
-Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
+Constant right-side identified [26] memset::end#0 = memset::$4 + memset::num#0
 Constant right-side identified [33] main::at#0 = main::at_line#0 + 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memset::end#0 = memset::$4+memset::num#0
 Constant main::at#0 = main::at_line#0+4
 Successful SSA optimization Pass2ConstantIdentification
 Alias candidate removed (volatile)fmul8::return#1 = fmul8::cc fmul8::return#2 
-Inlining constant with var siblings memset::dst#0
 Inlining constant with var siblings print_char_at::ch#0
 Inlining constant with var siblings print_char_at::ch#1
+Inlining constant with var siblings memset::dst#0
 Inlining constant with var siblings main::at_line#0
 Inlining constant with var siblings main::k#0
 Inlining constant with var siblings main::i#0
@@ -1255,8 +1255,8 @@ Uplift Scope [print_schar_at] 3,647: zp[1]:17 [ print_schar_at::b#6 print_schar_
 Uplift Scope [fmul8] 2,002: zp[1]:31 [ fmul8::return#1 ] 1,001: zp[1]:30 [ fmul8::cc ] 367.33: zp[1]:32 [ fmul8::return#2 ] 202: zp[1]:25 [ fmul8::return#0 ] 50.5: zp[1]:24 [ fmul8::bb ] 33.67: zp[1]:23 [ fmul8::aa ] 
 Uplift Scope [main] 262.55: zp[2]:8 [ main::at#6 main::at#3 main::at#12 ] 202: zp[1]:26 [ main::r#0 ] 181.8: zp[1]:10 [ main::j#2 main::j#1 ] 24.32: zp[2]:5 [ main::at_line#2 main::at#2 ] 23.94: zp[1]:7 [ main::i#2 main::i#1 ] 23.1: zp[1]:2 [ main::k#2 main::k#1 ] 15.58: zp[2]:3 [ main::at#4 main::at#1 ] 
 Uplift Scope [init_screen] 303: zp[1]:11 [ init_screen::l#2 init_screen::l#1 ] 188.53: zp[2]:12 [ init_screen::COLS#3 init_screen::COLS#1 ] 185.17: zp[1]:14 [ init_screen::m#2 init_screen::m#1 ] 
-Uplift Scope [RADIX] 
 Uplift Scope [print_cls] 
+Uplift Scope [RADIX] 
 Uplift Scope [] 
 
 Uplifting [print_char_at] best 14208 combination zp[2]:19 [ print_char_at::at#4 print_char_at::at#0 print_char_at::at#1 print_char_at::at#2 print_char_at::at#3 ] reg byte x [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
@@ -1266,8 +1266,8 @@ Uplifting [print_schar_at] best 14200 combination zp[1]:17 [ print_schar_at::b#6
 Uplifting [fmul8] best 13291 combination reg byte a [ fmul8::return#1 ] zp[1]:30 [ fmul8::cc ] reg byte a [ fmul8::return#2 ] reg byte a [ fmul8::return#0 ] zp[1]:24 [ fmul8::bb ] zp[1]:23 [ fmul8::aa ] 
 Uplifting [main] best 12691 combination zp[2]:8 [ main::at#6 main::at#3 main::at#12 ] reg byte a [ main::r#0 ] zp[1]:10 [ main::j#2 main::j#1 ] zp[2]:5 [ main::at_line#2 main::at#2 ] zp[1]:7 [ main::i#2 main::i#1 ] zp[1]:2 [ main::k#2 main::k#1 ] zp[2]:3 [ main::at#4 main::at#1 ] 
 Uplifting [init_screen] best 12481 combination reg byte x [ init_screen::l#2 init_screen::l#1 ] zp[2]:12 [ init_screen::COLS#3 init_screen::COLS#1 ] reg byte x [ init_screen::m#2 init_screen::m#1 ] 
-Uplifting [RADIX] best 12481 combination 
 Uplifting [print_cls] best 12481 combination 
+Uplifting [RADIX] best 12481 combination 
 Uplifting [] best 12481 combination 
 Attempting to uplift remaining variables inzp[1]:29 [ print_uchar_at::b#0 ]
 Uplifting [print_uchar_at] best 12481 combination zp[1]:29 [ print_uchar_at::b#0 ] 

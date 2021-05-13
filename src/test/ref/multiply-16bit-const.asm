@@ -268,10 +268,10 @@ memset: {
 // ultoa(dword zp($b) value, byte* zp($f) buffer)
 ultoa: {
     .const max_digits = $a
+    .label value = $b
     .label digit_value = $13
     .label buffer = $f
     .label digit = $a
-    .label value = $b
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long

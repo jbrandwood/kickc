@@ -1,5 +1,6 @@
 // Illustrates problem where volatiles reuse ZP addresses of other variables
-void()** const  KERNEL_IRQ = (void()**)$0314;
+typedef void (*IRQ_TYPE)(void);
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 byte* const IRQ_STATUS = (byte*)$d019;
 byte* const CIA1_INTERRUPT = (byte*)$dc0d;
 

@@ -7,8 +7,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
+  .label KERNEL_IRQ = $314
   .label col = 2
 .segment Code
 __start: {

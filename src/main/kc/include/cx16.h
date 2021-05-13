@@ -30,12 +30,15 @@ struct MOS6522_VIA * const VIA2 = (struct MOS6522_VIA *)0x9f70;
 // Interrupt Vectors
 // https://github.com/commanderx16/x16-emulator/wiki/(ASM-Programming)-Interrupts-and-interrupt-handling
 
+// Pointer to interrupt function
+typedef void (*IRQ_TYPE)(void);
+
 // $FFFE	(ROM) Universal interrupt vector - The vector used when the HARDWARE serves IRQ interrupts
-void()** const HARDWARE_IRQ = (void()**)0xfffe;
+IRQ_TYPE* const HARDWARE_IRQ = (IRQ_TYPE*)0xfffe;
 // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
-void()** const KERNEL_IRQ = (void()**)0x0314;
+IRQ_TYPE* const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 // $0316	(RAM) BRK vector - The vector used when the KERNAL serves IRQ caused by a BRK
-void()** const KERNEL_BRK = (void()**)0x0316;
+IRQ_TYPE* const KERNEL_BRK = (IRQ_TYPE*)0x0316;
 
 
 // VRAM Address of the default screen

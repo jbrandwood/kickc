@@ -6,6 +6,41 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
+void print_char(byte print_char::ch)
+print_char: scope:[print_char]  from makecharset::@10
+  print_char_cursor#12 = phi( makecharset::@10/print_char_cursor#22 )
+  print_char::ch#1 = phi( makecharset::@10/print_char::ch#0 )
+  *print_char_cursor#12 = print_char::ch#1
+  print_char_cursor#0 = ++ print_char_cursor#12
+  to:print_char::@return
+print_char::@return: scope:[print_char]  from print_char
+  print_char_cursor#13 = phi( print_char/print_char_cursor#0 )
+  print_char_cursor#1 = print_char_cursor#13
+  return 
+  to:@return
+
+void print_cls()
+print_cls: scope:[print_cls]  from makecharset::@12
+  print_screen#2 = phi( makecharset::@12/print_screen#5 )
+  memset::str#0 = (void*)print_screen#2
+  memset::c#0 = ' '
+  memset::num#0 = $3e8
+  call memset 
+  memset::return#0 = memset::return#2
+  to:print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls
+  print_screen#3 = phi( print_cls/print_screen#2 )
+  print_line_cursor#0 = print_screen#3
+  print_char_cursor#2 = print_line_cursor#0
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls::@1
+  print_char_cursor#14 = phi( print_cls::@1/print_char_cursor#2 )
+  print_line_cursor#9 = phi( print_cls::@1/print_line_cursor#0 )
+  print_line_cursor#1 = print_line_cursor#9
+  print_char_cursor#3 = print_char_cursor#14
+  return 
+  to:@return
+
 void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from print_cls
   memset::c#4 = phi( print_cls/memset::c#0 )
@@ -17,7 +52,7 @@ memset: scope:[memset]  from print_cls
   to:memset::@2
 memset::@1: scope:[memset]  from memset memset::@3
   memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
-  memset::return#0 = memset::str#1
+  memset::return#1 = memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
   memset::c#3 = phi( memset/memset::c#4 )
@@ -45,43 +80,8 @@ memset::@4: scope:[memset]  from memset::@3
   memset::dst#1 = ++ memset::dst#3
   to:memset::@3
 memset::@return: scope:[memset]  from memset::@1
-  memset::return#3 = phi( memset::@1/memset::return#0 )
-  memset::return#1 = memset::return#3
-  return 
-  to:@return
-
-void print_char(byte print_char::ch)
-print_char: scope:[print_char]  from makecharset::@10
-  print_char_cursor#12 = phi( makecharset::@10/print_char_cursor#22 )
-  print_char::ch#1 = phi( makecharset::@10/print_char::ch#0 )
-  *print_char_cursor#12 = print_char::ch#1
-  print_char_cursor#0 = ++ print_char_cursor#12
-  to:print_char::@return
-print_char::@return: scope:[print_char]  from print_char
-  print_char_cursor#13 = phi( print_char/print_char_cursor#0 )
-  print_char_cursor#1 = print_char_cursor#13
-  return 
-  to:@return
-
-void print_cls()
-print_cls: scope:[print_cls]  from makecharset::@12
-  print_screen#2 = phi( makecharset::@12/print_screen#5 )
-  memset::str#0 = (void*)print_screen#2
-  memset::c#0 = ' '
-  memset::num#0 = $3e8
-  call memset 
-  memset::return#2 = memset::return#1
-  to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls
-  print_screen#3 = phi( print_cls/print_screen#2 )
-  print_line_cursor#0 = print_screen#3
-  print_char_cursor#2 = print_line_cursor#0
-  to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@1
-  print_char_cursor#14 = phi( print_cls::@1/print_char_cursor#2 )
-  print_line_cursor#9 = phi( print_cls::@1/print_line_cursor#0 )
-  print_line_cursor#1 = print_line_cursor#9
-  print_char_cursor#3 = print_char_cursor#14
+  memset::return#3 = phi( memset::@1/memset::return#1 )
+  memset::return#2 = memset::return#3
   return 
   to:@return
 
@@ -1155,8 +1155,8 @@ byte* print_screen#7
 byte* print_screen#8
 byte* print_screen#9
 
-Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
+Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) $3e8 in main::col#1 = main::col#2 + rangenext(COLS,COLS+$3e8)
 Adding number conversion cast (unumber) $3fff in main::toD0181_$0 = main::toD0181_$7 & $3fff
 Adding number conversion cast (unumber) main::toD0181_$0 in main::toD0181_$0 = main::toD0181_$7 & (unumber)$3fff
@@ -1195,8 +1195,8 @@ Adding number conversion cast (unumber) 8 in makecharset::$10 = makecharset::c#5
 Adding number conversion cast (unumber) makecharset::$10 in makecharset::$10 = makecharset::c#5 * (unumber)8
 Adding number conversion cast (unumber) makecharset::$11 in makecharset::$11 = makecharset::$10 + makecharset::i#3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast memset::dst#0 = (byte*)memset::str#2
 Inlining cast memset::num#0 = (unumber)$3e8
+Inlining cast memset::dst#0 = (byte*)memset::str#2
 Inlining cast *((word*)SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) = (unumber)$ffff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
@@ -1205,8 +1205,8 @@ Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 10240
 Simplifying constant pointer cast (byte*) 8192
-Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -1235,8 +1235,8 @@ Simplifying constant integer cast $ff
 Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
@@ -1275,11 +1275,13 @@ Inferred type updated to byte in makecharset::$12 = makecharset::c#4 & 7
 Inferred type updated to byte in makecharset::$7 = makecharset::$6 & $ff
 Inferred type updated to word in makecharset::$10 = makecharset::c#5 * 8
 Inferred type updated to word in makecharset::$11 = makecharset::$10 + makecharset::i#3
-Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
+Inversing boolean not [21] memset::$1 = memset::num#1 <= 0 from [20] memset::$0 = memset::num#1 > 0
 Inversing boolean not [175] makecharset::$14 = makecharset::$12 != 0 from [174] makecharset::$13 = makecharset::$12 == 0
 Inversing boolean not [188] makecharset::$9 = makecharset::$7 <= makecharset::s#1 from [187] makecharset::$8 = makecharset::$7 > makecharset::s#1
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
+Alias print_char_cursor#0 = print_char_cursor#13 print_char_cursor#1 
+Alias print_line_cursor#0 = print_screen#3 print_screen#2 print_char_cursor#2 print_line_cursor#9 print_char_cursor#14 print_line_cursor#1 print_char_cursor#3 
+Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
@@ -1288,8 +1290,6 @@ Alias memset::c#1 = memset::c#2
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#4 = memset::str#5 
-Alias print_char_cursor#0 = print_char_cursor#13 print_char_cursor#1 
-Alias print_line_cursor#0 = print_screen#3 print_screen#2 print_char_cursor#2 print_line_cursor#9 print_char_cursor#14 print_line_cursor#1 print_char_cursor#3 
 Alias print_line_cursor#16 = print_line_cursor#21 
 Alias print_char_cursor#23 = print_char_cursor#28 
 Alias print_screen#10 = print_screen#11 
@@ -1393,15 +1393,15 @@ Alias makecharset::c#10 = makecharset::c#6
 Alias print_line_cursor#25 = print_line_cursor#30 
 Alias makecharset::charset#12 = makecharset::charset#15 
 Successful SSA optimization Pass2AliasElimination
+Identical Phi Values print_char::ch#1 print_char::ch#0
+Identical Phi Values print_char_cursor#12 print_char_cursor#22
+Identical Phi Values print_line_cursor#0 print_screen#5
 Identical Phi Values memset::num#1 memset::num#0
 Identical Phi Values memset::str#2 memset::str#0
 Identical Phi Values memset::c#3 memset::c#0
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#4 memset::str#2
 Identical Phi Values memset::c#1 memset::c#3
-Identical Phi Values print_char::ch#1 print_char::ch#0
-Identical Phi Values print_char_cursor#12 print_char_cursor#22
-Identical Phi Values print_line_cursor#0 print_screen#5
 Identical Phi Values print_line_cursor#26 print_screen#0
 Identical Phi Values print_char_cursor#34 print_screen#0
 Identical Phi Values print_screen#12 print_screen#0
@@ -1465,7 +1465,7 @@ Identical Phi Values c1B#12 c1B#1
 Identical Phi Values c2A#12 c2A#1
 Identical Phi Values c2B#12 c2B#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values memset::return#0 memset::str#0
+Identical Phi Values memset::return#1 memset::str#0
 Identical Phi Values c1A#11 c1A#2
 Identical Phi Values c1B#11 c1B#2
 Identical Phi Values c2A#11 c2A#2
@@ -1480,8 +1480,8 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values print_line_cursor#13 print_screen#0
 Identical Phi Values makecharset::charset#10 makecharset::charset#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition memset::$1 [2] if(memset::num#0<=0) goto memset::@1
-Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
+Simple Condition memset::$1 [13] if(memset::num#0<=0) goto memset::@1
+Simple Condition memset::$3 [20] if(memset::dst#2!=memset::end#0) goto memset::@4
 Simple Condition main::$2 [33] if(main::col#1!=rangelast(COLS,COLS+$3e8)) goto main::@1
 Simple Condition doplasma::$0 [61] if(doplasma::i#2<$19) goto doplasma::@2
 Simple Condition doplasma::$3 [75] if(doplasma::i1#2<$28) goto doplasma::@5
@@ -1519,13 +1519,13 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant memset::str#0 = (void*)print_screen#0
 Constant main::toD0181_$7 = (word)main::toD0181_screen#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant memset::return#0 = memset::str#0
 Constant memset::$4 = (byte*)memset::str#0
 Constant memset::dst#0 = (byte*)memset::str#0
-Constant memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word)main::toD0181_gfx#0 in [43] main::toD0181_$3 = > (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always false - eliminating [2] if(memset::num#0<=0) goto memset::@1
+if() condition always false - eliminating [13] if(memset::num#0<=0) goto memset::@1
 if() condition always true - replacing block destination [49] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [31] main::col#1 = ++ main::col#2 to ++
@@ -1534,7 +1534,7 @@ De-inlining pointer[w] to *(pointer+w)   [128] makecharset::charset#0[makecharse
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused constant memset::return#2
+Eliminating unused constant memset::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -1550,7 +1550,7 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
+Constant right-side identified [5] memset::end#0 = memset::$4 + memset::num#0
 Constant right-side identified [19] main::toD0181_$0 = main::toD0181_$7 & $3fff
 Constant right-side identified [22] main::toD0181_$3 = > (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -3234,9 +3234,9 @@ Uplift Scope [main] 33: zp[2]:2 [ main::col#2 main::col#1 ]
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
-Uplift Scope [RADIX] 
 Uplift Scope [print_char] 
 Uplift Scope [print_cls] 
+Uplift Scope [RADIX] 
 
 Uplifting [makecharset] best 154051 combination reg byte y [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] reg byte x [ makecharset::ii#2 makecharset::ii#1 ] reg byte a [ makecharset::sid_rnd1_return#0 ] zp[1]:35 [ makecharset::$7 ] zp[1]:12 [ makecharset::i#2 makecharset::i#1 ] zp[2]:28 [ makecharset::$10 ] zp[2]:30 [ makecharset::$11 ] zp[2]:32 [ makecharset::$16 ] zp[1]:26 [ makecharset::s#0 ] zp[2]:8 [ makecharset::c#2 makecharset::c#1 ] zp[1]:25 [ makecharset::$3 ] zp[1]:27 [ makecharset::$12 ] 
 Limited combination testing to 100 combinations of 9216 possible.
@@ -3246,9 +3246,9 @@ Uplifting [main] best 154051 combination zp[2]:2 [ main::col#2 main::col#1 ]
 Uplifting [MOS6526_CIA] best 154051 combination 
 Uplifting [MOS6569_VICII] best 154051 combination 
 Uplifting [MOS6581_SID] best 154051 combination 
-Uplifting [RADIX] best 154051 combination 
 Uplifting [print_char] best 154051 combination 
 Uplifting [print_cls] best 154051 combination 
+Uplifting [RADIX] best 154051 combination 
 Attempting to uplift remaining variables inzp[1]:18 [ doplasma::yprev#2 doplasma::yprev#4 ]
 Uplifting [doplasma] best 153551 combination reg byte x [ doplasma::yprev#2 doplasma::yprev#4 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ doplasma::i1#2 doplasma::i1#1 ]

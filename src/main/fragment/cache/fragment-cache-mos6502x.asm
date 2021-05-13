@@ -19787,3 +19787,56 @@ sta {z1}
 lda #>{c1}
 adc #0
 sta {z1}+1
+//FRAGMENT vbuz1=vbuz2_band_pbuz3_derefidx_vbuc1
+lda {z2}
+ldy #{c1}
+and ({z3}),y
+sta {z1}
+//FRAGMENT vbuz1=vbuaa_band_pbuz2_derefidx_vbuc1
+ldy #{c1}
+and ({z2}),y
+sta {z1}
+//FRAGMENT vbuz1=vbuyy_band_pbuz2_derefidx_vbuc1
+tya
+ldy #{c1}
+and ({z2}),y
+sta {z1}
+//FRAGMENT vbuaa=vbuz1_band_pbuz2_derefidx_vbuc1
+lda {z1}
+ldy #{c1}
+and ({z2}),y
+//FRAGMENT vbuaa=vbuaa_band_pbuz1_derefidx_vbuc1
+ldy #{c1}
+and ({z1}),y
+//FRAGMENT vbuaa=vbuyy_band_pbuz1_derefidx_vbuc1
+tya
+ldy #{c1}
+and ({z1}),y
+//FRAGMENT vbuxx=vbuz1_band_pbuz2_derefidx_vbuc1
+lda {z1}
+ldy #{c1}
+and ({z2}),y
+tax
+//FRAGMENT vbuxx=vbuaa_band_pbuz1_derefidx_vbuc1
+ldy #{c1}
+and ({z1}),y
+tax
+//FRAGMENT vbuxx=vbuyy_band_pbuz1_derefidx_vbuc1
+tya
+ldy #{c1}
+and ({z1}),y
+tax
+//FRAGMENT vbuyy=vbuz1_band_pbuz2_derefidx_vbuc1
+lda {z1}
+ldy #{c1}
+and ({z2}),y
+tay
+//FRAGMENT vbuyy=vbuaa_band_pbuz1_derefidx_vbuc1
+ldy #{c1}
+and ({z1}),y
+tay
+//FRAGMENT vbuyy=vbuyy_band_pbuz1_derefidx_vbuc1
+tya
+ldy #{c1}
+and ({z1}),y
+tay

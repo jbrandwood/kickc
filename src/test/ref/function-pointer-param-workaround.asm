@@ -142,7 +142,7 @@ main: {
     lda.z j
     sta.z param_char
     pha
-    // void()* f = fns[j]
+    // void(*f)() = fns[j]
     lda.z j
     asl
     tay

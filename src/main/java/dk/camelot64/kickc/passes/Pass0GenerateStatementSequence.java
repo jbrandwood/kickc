@@ -491,6 +491,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             if(SymbolType.VOID.equals(parameter.type))
                throw new CompileError("Illegal void parameter.", statementSource);
 
+            // Handle parameters without a name in the declaration
+            if(parameter.name==null)
+               throw new CompileError("Illegal unnamed parameter.", statementSource);
+
             VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
             final Variable paramVar = varBuilder.build();
             parameterList.add(paramVar);
@@ -509,7 +513,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
+   public Object visitParameterDeclTypeDeclarator(KickCParser.ParameterDeclTypeDeclaratorContext ctx) {
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
       ParameterDecl paramDecl = new ParameterDecl(varDecl.getVarName(), varDecl.getEffectiveType());
@@ -518,11 +522,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx) {
-      if(!SymbolType.VOID.getTypeName().equals(ctx.SIMPLETYPE().getText())) {
-         throw new CompileError("Illegal unnamed parameter " + ctx.SIMPLETYPE().getText(), new StatementSource(ctx));
-      }
-      return new ParameterDecl(null, SymbolType.VOID);
+   public Object visitParameterDeclTypeName(KickCParser.ParameterDeclTypeNameContext ctx) {
+      SymbolType paramType = (SymbolType) this.visit(ctx.typeName());
+      return new ParameterDecl(null, paramType);
    }
 
    @Override
@@ -1946,6 +1948,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitTypeName(KickCParser.TypeNameContext ctx) {
+      varDeclPush();
+      this.visit(ctx.type());
+      this.visit(ctx.typeNameDeclarator());
+      final SymbolType type = varDecl.getEffectiveType();
+      varDeclPop();
+      return type;
+   }
+
+   @Override
    public Object visitDeclaratorPointer(KickCParser.DeclaratorPointerContext ctx) {
       final SymbolType elementDeclType = varDecl.getEffectiveType();
       SymbolTypePointer pointerType = new SymbolTypePointer(elementDeclType);
@@ -1953,6 +1965,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       varDecl.setVarDeclTypeAndDirectives(pointerType, typeDirectives);
       this.visit(ctx.declarator());
       return null;
+   }
+
+   @Override
+   public Object visitTypeNameDeclaratorPointer(KickCParser.TypeNameDeclaratorPointerContext ctx) {
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolTypePointer pointerType = new SymbolTypePointer(elementDeclType);
+      final List<Directive> typeDirectives = getDirectives(ctx.directive());
+      varDecl.setVarDeclTypeAndDirectives(pointerType, typeDirectives);
+      this.visit(ctx.typeNameDeclarator());
+      return varDecl.getEffectiveType();
    }
 
    @Override
@@ -1977,14 +1999,46 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitTypeNameDeclaratorArray(KickCParser.TypeNameDeclaratorArrayContext ctx) {
+      this.visit(ctx.typeNameDeclarator());
+      // Handle array type declaration by updating the declared type and the array spec
+      ArraySpec arraySpec;
+      if(ctx.expr() != null) {
+         varDeclPush();
+         RValue sizeVal = (RValue) visit(ctx.expr());
+         if(!(sizeVal instanceof ConstantValue))
+            throw new CompileError(sizeVal.toString() + " is not constant or is not defined", new StatementSource(ctx));
+         varDeclPop();
+         arraySpec = new ArraySpec((ConstantValue) sizeVal);
+      } else {
+         arraySpec = new ArraySpec();
+      }
+      final SymbolType elementDeclType = varDecl.getEffectiveType();
+      SymbolType arrayDeclType = new SymbolTypePointer(elementDeclType, arraySpec, false, false);
+      varDecl.setVarDeclType(arrayDeclType);
+      return varDecl.getEffectiveType();
+   }
+
+   @Override
    public Object visitDeclaratorPar(KickCParser.DeclaratorParContext ctx) {
       this.visit(ctx.declarator());
       return null;
    }
 
    @Override
+   public Object visitTypeNameDeclaratorPar(KickCParser.TypeNameDeclaratorParContext ctx) {
+      this.visit(ctx.typeNameDeclarator());
+      return varDecl.getEffectiveType();
+   }
+
+   @Override
    public Object visitDeclaratorName(KickCParser.DeclaratorNameContext ctx) {
       varDecl.setVarName(ctx.getText());
+      return null;
+   }
+
+   @Override
+   public Object visitTypeNameDeclaratorName(KickCParser.TypeNameDeclaratorNameContext ctx) {
       return null;
    }
 
@@ -2010,6 +2064,30 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       varDecl.setParameters(parameters);
       visit(ctx.declarator());
       return null;
+   }
+
+   @Override
+   public Object visitTypeNameDeclaratorProcedure(KickCParser.TypeNameDeclaratorProcedureContext ctx) {
+      List<ParameterDecl> parameters = new ArrayList<>();
+      List<SymbolType> paramTypes = new ArrayList<>();
+      if(ctx.parameterListDecl() != null)
+         for(KickCParser.ParameterDeclContext parameterDeclContext : ctx.parameterListDecl().parameterDecl()) {
+            varDeclPush();
+            ParameterDecl paramDecl = (ParameterDecl) this.visit(parameterDeclContext);
+            // Handle parameter list with "VOID"
+            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size()==1)
+               ; // Ignore the void parameter
+            else {
+               paramTypes.add(paramDecl.type);
+               parameters.add(paramDecl);
+            }
+            varDeclPop();
+         }
+      SymbolType returnType = varDecl.getEffectiveType();
+      varDecl.setVarDeclType(new SymbolTypeProcedure(returnType, paramTypes));
+      varDecl.setParameters(parameters);
+      visit(ctx.typeNameDeclarator());
+      return varDecl.getEffectiveType();
    }
 
    @Override
@@ -2207,31 +2285,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public SymbolType visitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx) {
-      varDeclPush();
-      this.visit(ctx.type());
-      final SymbolType type = varDecl.getEffectiveType();
-      varDeclPop();
-      return type;
-   }
-
-   @Override
-   public SymbolType visitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx) {
-      return new SymbolTypePointer((SymbolType) this.visit(ctx.typeSpecifier()));
-   }
-
-   @Override
-   public SymbolType visitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx) {
-      SymbolType elementType = (SymbolType) visit(ctx.typeSpecifier());
-      if(ctx.expr() != null)
-         throw new InternalError("Not implemented!");
-      return new SymbolTypePointer(elementType);
-   }
-
-   @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
-      SymbolType castType = (SymbolType) this.visit(ctx.typeSpecifier());
+      SymbolType castType = (SymbolType) this.visit(ctx.typeName());
       Operator operator = Operators.getCastUnary(castType);
       if(child instanceof ConstantValue) {
          consumeExpr(child);
@@ -2243,9 +2299,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitExprSizeOf(KickCParser.ExprSizeOfContext ctx) {
-      if(ctx.typeSpecifier() != null) {
+      if(ctx.typeName() != null) {
          // sizeof(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeSpecifier());
+         SymbolType type = (SymbolType) this.visit(ctx.typeName());
          return SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
       } else {
          // sizeof(expression) - add a unary expression to be resolved later
@@ -2261,9 +2317,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitExprTypeId(KickCParser.ExprTypeIdContext ctx) {
-      if(ctx.typeSpecifier() != null) {
+      if(ctx.typeName() != null) {
          // typeid(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeSpecifier());
+         SymbolType type = (SymbolType) this.visit(ctx.typeName());
          return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
       } else {
          // typeid(expression) - add a unary expression to be resolved later

@@ -75,26 +75,46 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclType(KickCParser.DeclTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierSimple}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * Visit a parse tree produced by {@link KickCParser#typeName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx);
+	T visitTypeName(KickCParser.TypeNameContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierPointer}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * Visit a parse tree produced by the {@code typeNameDeclaratorArray}
+	 * labeled alternative in {@link KickCParser#typeNameDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx);
+	T visitTypeNameDeclaratorArray(KickCParser.TypeNameDeclaratorArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierArray}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * Visit a parse tree produced by the {@code typeNameDeclaratorPar}
+	 * labeled alternative in {@link KickCParser#typeNameDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx);
+	T visitTypeNameDeclaratorPar(KickCParser.TypeNameDeclaratorParContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeNameDeclaratorName}
+	 * labeled alternative in {@link KickCParser#typeNameDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeNameDeclaratorName(KickCParser.TypeNameDeclaratorNameContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeNameDeclaratorProcedure}
+	 * labeled alternative in {@link KickCParser#typeNameDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeNameDeclaratorProcedure(KickCParser.TypeNameDeclaratorProcedureContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeNameDeclaratorPointer}
+	 * labeled alternative in {@link KickCParser#typeNameDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeNameDeclaratorPointer(KickCParser.TypeNameDeclaratorPointerContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code declaratorPointer}
 	 * labeled alternative in {@link KickCParser#declarator}.
@@ -234,19 +254,19 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code parameterDeclType}
+	 * Visit a parse tree produced by the {@code parameterDeclTypeDeclarator}
 	 * labeled alternative in {@link KickCParser#parameterDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx);
+	T visitParameterDeclTypeDeclarator(KickCParser.ParameterDeclTypeDeclaratorContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code parameterDeclVoid}
+	 * Visit a parse tree produced by the {@code parameterDeclTypeName}
 	 * labeled alternative in {@link KickCParser#parameterDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
+	T visitParameterDeclTypeName(KickCParser.ParameterDeclTypeNameContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parameterDeclList}
 	 * labeled alternative in {@link KickCParser#parameterDecl}.

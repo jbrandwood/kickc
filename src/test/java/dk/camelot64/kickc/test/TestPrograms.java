@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.test;
 
-import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.*;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -18,10 +16,7 @@ import java.io.*;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -166,6 +161,11 @@ public class TestPrograms {
       program.setTargetPlatform(targetPlatform);
       program.addReservedZps(program.getTargetPlatform().getReservedZps());
 
+      // Update the output file manager
+      program.getOutputFileManager().setBinaryExtension(program.getTargetPlatform().getOutFileExtension());
+      program.getOutputFileManager().setCurrentDir(FileSystems.getDefault().getPath("."));
+      program.getOutputFileManager().setPrimaryCFile(filePath);
+
       final Map<String, String> defines = new HashMap<>();
       defines.put("__KICKC__", "1");
       defines.putAll(program.getTargetPlatform().getDefines());
@@ -174,7 +174,7 @@ public class TestPrograms {
       compileAsm(fileName, program);
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
-      String baseFileName = Compiler.removeFileNameExtension(fileName);
+      String baseFileName = FileNameUtils.removeExtension(fileName);
       success &= helper.testOutput(baseFileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, true, false, false), program));
       success &= helper.testOutput(baseFileName, ".sym", program.getScope().toString(program, false));
       success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
@@ -189,7 +189,7 @@ public class TestPrograms {
    }
 
    private void compileAsm(String fileName, Program program) throws IOException {
-      String baseFileName = Compiler.removeFileNameExtension(fileName);
+      String baseFileName = FileNameUtils.removeExtension(fileName);
       writeBinFile(baseFileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false), program));
       for(Path asmResourceFile : program.getAsmResourceFiles()) {
          File asmFile = getBinFile(baseFileName, ".asm");

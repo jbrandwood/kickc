@@ -90,7 +90,7 @@ public class Pass4CodeGeneration {
          asm.addLine(new AsmSetCpu(targetCpu));
 
       String linkScriptBody = targetPlatform.getLinkScriptBody();
-      String outputFileName = new File(program.getPrimaryFileName()).getName() + "." + program.getTargetPlatform().getOutFileExtension();
+      String outputFileName = program.getOutputFileManager().getBinaryOutputFile().getFileName().toString();
       linkScriptBody = linkScriptBody.replace("%O", outputFileName);
       linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());

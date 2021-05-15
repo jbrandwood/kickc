@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.OutputFileManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -21,8 +22,9 @@ public class Program {
    /** The log containing information about the compilation process. */
    private CompileLog log;
 
-   /** The name of the primary file being compiled. PASS 0-5 (STATIC) */
-   private String primaryFileName;
+   /** The manager responsible for creating output files. PASS 0-5 (STATIC) */
+   private OutputFileManager outputFileManager;
+
    /** Paths used for including files. PASS 0 (STATIC) */
    private List<String> includePaths;
    /** Paths used for library files. PASS 0 (STATIC) */
@@ -107,6 +109,7 @@ public class Program {
    private VariableRegisterWeights variableRegisterWeights;
 
    public Program() {
+      this.outputFileManager = new OutputFileManager();
       this.scope = new ProgramScope();
       this.log = new CompileLog();
       this.includePaths = new ArrayList<>();
@@ -174,6 +177,10 @@ public class Program {
       this.registerPotentials = null;
       this.registerUpliftProgram = null;
       this.asm = null;
+   }
+
+   public OutputFileManager getOutputFileManager() {
+      return outputFileManager;
    }
 
    public void setEnableLiveRangeCallPath(boolean enableLiveRangeCallPath) {
@@ -481,13 +488,7 @@ public class Program {
    }
 
 
-   public void setPrimaryFileName(String primaryFileName) {
-      this.primaryFileName = primaryFileName;
-   }
 
-   public String getPrimaryFileName() {
-      return primaryFileName;
-   }
 
    /**
     * Adds a bunch of reserved zero-page addresses that the compiler is not allowed to use.

@@ -1,8 +1,7 @@
 package dk.camelot64.kickc.parser;
 
-import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.FileNameUtils;
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
@@ -205,7 +204,7 @@ public class CParser {
       final TokenSource fileTokens = loadCFile(fileName, currentSourceFolderPath, program.getIncludePaths(), false);
       if(fileName.endsWith(".h")) {
          // The included file was a H-file - attempt to find the matching library C-file
-         String libFileName = Compiler.removeFileNameExtension(fileName) + ".c";
+         String libFileName = FileNameUtils.removeExtension(fileName) + ".c";
          final TokenSource cLibFileTokens = loadCFile(libFileName, currentSourceFolderPath, program.getLibraryPaths(), true);
          addSourceFirst(cLibFileTokens);
       }
@@ -266,6 +265,9 @@ public class CParser {
                define(macroName, program.getTargetPlatform().getDefines().get(macroName));
          // Add reserved ZP's from new platform
          program.addReservedZps(program.getTargetPlatform().getReservedZps());
+         // Set the output file extension
+         program.getOutputFileManager().setBinaryExtension(targetPlatform.getOutFileExtension());
+
       } else {
          StringBuilder supported = new StringBuilder();
          final List<File> platformFiles = SourceLoader.listFiles(currentPath, program.getTargetPlatformPaths(), CTargetPlatformParser.FILE_EXTENSION);

@@ -156,65 +156,42 @@ public class Compiler {
       if(cFiles.size() == 0)
          throw new CompileError("Error! You must supply at least one file to compile!");
 
-      final Path primaryCFile = cFiles.get(0);
-      String primaryCFileBaseName = removeFileNameExtension(primaryCFile.toString());
-      program.setPrimaryFileName(primaryCFileBaseName);
+      Path currentPath = new File(".").toPath();
+      CParser cParser = initializeParser(defines, cFiles, currentPath);
 
-      try {
-         Path currentPath = new File(".").toPath();
-         CParser cParser = initializeParser(defines, cFiles, currentPath);
+      // Parse the files
+      KickCParser.FileContext cFileContext = cParser.getParser().file();
 
-         // Parse the files
-         KickCParser.FileContext cFileContext = cParser.getParser().file();
-
-         if(callingConvention == null) {
-            callingConvention = Procedure.CallingConvention.PHI_CALL;
-         }
-
-         // Find encoding
-         StringEncoding encoding = program.getTargetPlatform().getEncoding();
-         if(encoding==null)
-            encoding = StringEncoding.SCREENCODE_MIXED;
-
-         // Find default interrupt type
-         String interruptType = program.getTargetPlatform().getInterruptType();
-
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding, interruptType);
-         pass0GenerateStatementSequence.generate();
-
-         pass1GenerateSSA();
-         pass2Optimize();
-         pass2UnrollLoops();
-         pass2InlineConstants();
-         pass2FinalizeAllNumbers();
-
-         //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
-         //getLog().append(program.getGraph().toString(program));
-
-         //getLog().append("SYMBOL TABLE PASS 2");
-         //getLog().append(program.getScope().toString(program, null));
-
-         pass3Analysis();
-         pass4RegisterAllocation();
-         pass5GenerateAndOptimizeAsm();
-      } catch(Exception e) {
-         throw e;
+      if(callingConvention == null) {
+         callingConvention = Procedure.CallingConvention.PHI_CALL;
       }
-   }
 
-   /**
-    * Remove extension from a file name if it is present.
-    *
-    * @param fileName The file name
-    * @return file name without extension
-    */
-   public static String removeFileNameExtension(String fileName) {
-      final int lastDotIdx = fileName.lastIndexOf('.');
-      final int lastSlashIdx = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-      if(lastDotIdx > 0 && lastDotIdx > (lastSlashIdx + 1)) {
-         fileName = fileName.substring(0, lastDotIdx);
-      }
-      return fileName;
+      // Find encoding
+      StringEncoding encoding = program.getTargetPlatform().getEncoding();
+      if(encoding==null)
+         encoding = StringEncoding.SCREENCODE_MIXED;
+
+      // Find default interrupt type
+      String interruptType = program.getTargetPlatform().getInterruptType();
+
+      Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding, interruptType);
+      pass0GenerateStatementSequence.generate();
+
+      pass1GenerateSSA();
+      pass2Optimize();
+      pass2UnrollLoops();
+      pass2InlineConstants();
+      pass2FinalizeAllNumbers();
+
+      //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
+      //getLog().append(program.getGraph().toString(program));
+
+      //getLog().append("SYMBOL TABLE PASS 2");
+      //getLog().append(program.getScope().toString(program, null));
+
+      pass3Analysis();
+      pass4RegisterAllocation();
+      pass5GenerateAndOptimizeAsm();
    }
 
    private void pass1GenerateSSA() {

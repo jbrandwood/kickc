@@ -227,6 +227,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_EXTENSION:
             String extension = pragmaParamString(pragmaParamSingle(ctx));
             program.getTargetPlatform().setOutFileExtension(extension);
+            program.getOutputFileManager().setBinaryExtension(extension);
             break;
          case CParser.PRAGMA_EMULATOR:
             String emuName = pragmaParamString(pragmaParamSingle(ctx));

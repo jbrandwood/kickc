@@ -10,7 +10,6 @@ import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 
 import java.io.*;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -55,11 +54,11 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       new Pass5ReindexAsmLines(getProgram()).optimize();
       Path tmpDir = TmpDirManager.MANAGER.newTmpDir();
       // Generate the ASM file
-      String outputFileName = getProgram().getPrimaryFileName();
       try {
          //getLog().append("ASM");
          //getLog().append(getProgram().getAsm().toString(false, true));
-         writeOutputFile(tmpDir, outputFileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
+         final Path asmFilePath = getProgram().getOutputFileManager().getOutputFile(tmpDir, getProgram().getOutputFileManager().getAsmExtension());
+         writeOutputFile(asmFilePath, getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
          // Copy Resource Files
          for(Path asmResourceFile : getProgram().getAsmResourceFiles()) {
             File binFile = getTmpFile(tmpDir, asmResourceFile.getFileName().toString());
@@ -70,8 +69,8 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       }
 
       // Compile using KickAssembler - catch the output in a String
-      File asmFile = getTmpFile(tmpDir, outputFileName, ".asm");
-      File binaryFile = getTmpFile(tmpDir, outputFileName, "."+getProgram().getTargetPlatform().getOutFileExtension());
+      File asmFile = getProgram().getOutputFileManager().getOutputFile(tmpDir, getProgram().getOutputFileManager().getAsmExtension()).toFile();
+      File binaryFile = getProgram().getOutputFileManager().getOutputFile(tmpDir, getProgram().getOutputFileManager().getBinaryExtension()).toFile();
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
@@ -174,9 +173,9 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       }
    }
 
-   private File writeOutputFile(Path tmpDir, String fileName, String extension, String outputString) throws IOException {
+   private File writeOutputFile(Path outputFile, String outputString) throws IOException {
       // Write output file
-      File file = getTmpFile(tmpDir, fileName, extension);
+      File file = outputFile.toFile();
       FileOutputStream outputStream = new FileOutputStream(file);
       OutputStreamWriter writer = new OutputStreamWriter(outputStream);
       writer.write(outputString);
@@ -184,11 +183,6 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       outputStream.close();
       //System.out.println("Long Branch ASM generated to " + file.getAbsolutePath());
       return file;
-   }
-
-   private static File getTmpFile(Path tmpDir, String fileName, String extension) {
-      Path kcPath = FileSystems.getDefault().getPath(fileName);
-      return new File(tmpDir.toFile(), kcPath.getFileName().toString() + extension);
    }
 
    private static File getTmpFile(Path tmpDir, String fileName) {

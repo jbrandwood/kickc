@@ -238,6 +238,7 @@ public class KickC implements Callable<Integer> {
          final File platformFile = SourceLoader.loadFile(targetPlatform + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, program.getTargetPlatformPaths());
          final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(this.targetPlatform, platformFile, currentPath, program.getTargetPlatformPaths());
          program.setTargetPlatform(targetPlatform);
+         program.getOutputFileManager().setBinaryExtension(targetPlatform.getOutFileExtension());
       } catch(CompileError e) {
          // Print the error and exit with compile error
          System.err.println(e.getMessage());
@@ -252,6 +253,7 @@ public class KickC implements Callable<Integer> {
       // Update output file extension
       if(outputExtension != null) {
          program.getTargetPlatform().setOutFileExtension(outputExtension);
+         program.getOutputFileManager().setBinaryExtension(outputExtension);
       }
 
       // Update CPU
@@ -275,59 +277,38 @@ public class KickC implements Callable<Integer> {
 
       if(cFiles != null && !cFiles.isEmpty()) {
 
+         program.getOutputFileManager().setCurrentDir(FileSystems.getDefault().getPath("."));
+
          final Path primaryCFile = cFiles.get(0);
-         String primaryFileBaseName = getFileBaseName(primaryCFile);
+         program.getOutputFileManager().setPrimaryCFile(primaryCFile);
 
-         Path CFileDir = primaryCFile.getParent();
-         if(CFileDir == null) {
-            CFileDir = FileSystems.getDefault().getPath(".");
-         }
+         if(outputDir != null)
+            program.getOutputFileManager().setOutputDir(outputDir);
 
-         if(outputDir == null) {
-            outputDir = CFileDir;
-         }
-         if(!Files.exists(outputDir)) {
-            Files.createDirectory(outputDir);
-         }
+         if(outputFileName!=null)
+            program.getOutputFileManager().setOutputFileName(outputFileName);
 
-         String outputFileNameBase;
-         if(outputFileName == null) {
-            outputFileNameBase = primaryFileBaseName;
-         } else {
-            final int extensionIdx = outputFileName.lastIndexOf('.');
-            if(extensionIdx > 0)
-               outputFileNameBase = outputFileName.substring(0, extensionIdx);
-            else
-               outputFileNameBase = outputFileName;
-         }
-
-         if(optimizeNoUplift) {
+         if(optimizeNoUplift)
             compiler.setDisableUplift(true);
-         }
 
-         if(optimizeUpliftCombinations != null) {
+         if(optimizeUpliftCombinations != null)
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
-         }
 
-         if(optimizeZeroPageCoalesce) {
+         if(optimizeZeroPageCoalesce)
             compiler.enableZeroPageCoalesce();
-         }
 
-         if(optimizeLoopHeadConstant) {
+         if(optimizeLoopHeadConstant)
             compiler.enableLoopHeadConstant();
-         } else if(optimizeNoLoopHeadConstant) {
+         else if(optimizeNoLoopHeadConstant)
             compiler.disableLoopHeadConstant();
-         }
 
          compiler.setEnableLiveRangeCallPath(optimizeLiveRangeCallPath);
 
-         if(warnFragmentMissing) {
+         if(warnFragmentMissing)
             compiler.setWarnFragmentMissing(true);
-         }
 
-         if(warnArrayType) {
+         if(warnArrayType)
             compiler.setWarnArrayType(true);
-         }
 
          if(varModel != null) {
             List<String> settings = Arrays.asList(varModel.split(","));
@@ -367,6 +348,9 @@ public class KickC implements Callable<Integer> {
             effectiveDefines.putAll(program.getTargetPlatform().getDefines());
          program.addReservedZps(program.getTargetPlatform().getReservedZps());
 
+         if(assemble || execute || debug || emulator != null)
+            program.getOutputFileManager().setAssembleOutput(true);
+
          if(preprocess) {
             System.out.println("Preprocessing " + CFileNames);
             try {
@@ -388,8 +372,7 @@ public class KickC implements Callable<Integer> {
             return COMPILE_ERROR;
          }
 
-         String asmFileName = outputFileNameBase + ".asm";
-         Path asmPath = outputDir.resolve(asmFileName);
+         Path asmPath = program.getOutputFileManager().getAsmOutputFile();
          System.out.println("Writing asm file " + asmPath);
          FileOutputStream asmOutputStream = new FileOutputStream(asmPath.toFile());
          OutputStreamWriter asmWriter = new OutputStreamWriter(asmOutputStream);
@@ -402,13 +385,13 @@ public class KickC implements Callable<Integer> {
          program.getAsmFragmentMasterSynthesizer().finalize(compiler.getLog());
 
          // Copy Resource Files (if out-dir is different from in-dir)
-         if(!CFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
+         if(program.getOutputFileManager().shouldCopyResources()) {
             for(Path resourcePath : program.getAsmResourceFiles()) {
-               Path outResourcePath = outputDir.resolve(resourcePath.getFileName().toString());
+               Path outResourcePath = program.getOutputFileManager().getOutputDirectory().resolve(resourcePath.getFileName().toString());
                if(Files.exists(outResourcePath)) {
                   FileTime resModified = Files.getLastModifiedTime(resourcePath);
                   FileTime outModified = Files.getLastModifiedTime(outResourcePath);
-                  if(outModified.toMillis()>resModified.toMillis()) {
+                  if(outModified.toMillis() > resModified.toMillis()) {
                      // Outfile is newer - move on to next file
                      System.out.println("Resource already copied " + outResourcePath);
                      continue;
@@ -422,8 +405,7 @@ public class KickC implements Callable<Integer> {
          }
 
          // Assemble the asm-file if instructed
-         String outputBinaryFileName = outputFileNameBase + "." + program.getTargetPlatform().getOutFileExtension();
-         Path outputBinaryFilePath = outputDir.resolve(outputBinaryFileName);
+         Path outputBinaryFilePath = program.getOutputFileManager().getBinaryOutputFile();
 
          // Find emulator - if set by #pragma
          if(emulator == null) {
@@ -436,7 +418,7 @@ public class KickC implements Callable<Integer> {
          }
 
          if(assemble || emulator != null) {
-            Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");
+            Path kasmLogPath = program.getOutputFileManager().getOutputFile("klog");
             System.out.println("Assembling to " + outputBinaryFilePath.toString());
             List<String> assembleCommand = new ArrayList<>();
             assembleCommand.add(asmPath.toString());
@@ -451,7 +433,7 @@ public class KickC implements Callable<Integer> {
             assembleCommand.add("-showmem");
             assembleCommand.add("-debugdump");
             // Add passed options
-            if(assemblerOptions !=null)
+            if(assemblerOptions != null)
                assembleCommand.addAll(assemblerOptions);
 
             if(verbose) {
@@ -470,7 +452,7 @@ public class KickC implements Callable<Integer> {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
                kasmResult = KickAssembler65CE02.main2(assembleCommand.toArray(new String[0]));
             } catch(Throwable e) {
-               System.err.println("KickAssembling file failed! "+e.getMessage());
+               System.err.println("KickAssembling file failed! " + e.getMessage());
                return COMPILE_ERROR;
             } finally {
                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
@@ -486,13 +468,13 @@ public class KickC implements Callable<Integer> {
             // Find commandline options for the emulator
             String emuOptions = "";
             if(emulator.equals("C64Debugger")) {
-               Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
+               Path viceSymbolsPath = program.getOutputFileManager().getOutputFile("vs");
                emuOptions = "-symbols " + viceSymbolsPath + " -autojmp -prg ";
             }
             // The program names used by VICE emulators
             List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");
             if(viceEmus.contains(emulator)) {
-               Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
+               Path viceSymbolsPath = program.getOutputFileManager().getOutputFile("vs");
                emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
             }
             System.out.println("Executing " + outputBinaryFilePath + " using " + emulator);
@@ -504,13 +486,13 @@ public class KickC implements Callable<Integer> {
                Process process = Runtime.getRuntime().exec(executeCommand);
                process.waitFor();
             } catch(Throwable e) {
-               System.err.println("Executing emulator failed! "+e.getMessage());
+               System.err.println("Executing emulator failed! " + e.getMessage());
                return COMPILE_ERROR;
             }
          }
       }
 
-      if(TmpDirManager.MANAGER!=null)
+      if(TmpDirManager.MANAGER != null)
          TmpDirManager.MANAGER.cleanup();
 
       return CommandLine.ExitCode.OK;
@@ -578,21 +560,6 @@ public class KickC implements Callable<Integer> {
     */
    private String getVersion() {
       return new CommandLine(new KickC()).getCommandSpec().version()[0];
-   }
-
-   static String getFileBaseName(Path file) {
-      String name = file.getFileName().toString();
-      int i = name.lastIndexOf('.');
-      return i > 0 ? name.substring(0, i) : name;
-   }
-
-   String getFileExtension(Path file) {
-      if(file == null) {
-         return "";
-      }
-      String name = file.getFileName().toString();
-      int i = name.lastIndexOf('.');
-      return i > 0 ? name.substring(i + 1) : "";
    }
 
    /**

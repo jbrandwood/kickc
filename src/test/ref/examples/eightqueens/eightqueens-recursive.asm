@@ -71,7 +71,6 @@ queen: {
     .label __1 = 4
     .label __4 = $1e
     .label row = $1b
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_ROW,x
     sta.z row

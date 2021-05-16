@@ -29,7 +29,6 @@ print: {
     .const OFFSET_STACK_V_P2_Y = 0
     .label v_p1_y = 4
     .label v_p2_x = 5
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_V_P1_X,x
     tay

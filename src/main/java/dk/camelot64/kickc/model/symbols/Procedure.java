@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
@@ -38,6 +39,8 @@ public class Procedure extends Scope {
    private final List<ProcedureRef> constructorRefs;
    /** Is this procedure declared as a constructor procedure. */
    private boolean isConstructor;
+   /** The source of the procedure definition. */
+   private StatementSource definitionSource;
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
@@ -91,6 +94,14 @@ public class Procedure extends Scope {
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
       this.isConstructor = false;
+   }
+
+   public StatementSource getDefinitionSource() {
+      return definitionSource;
+   }
+
+   public void setDefinitionSource(StatementSource definitionSource) {
+      this.definitionSource = definitionSource;
    }
 
    public CallingConvention getCallingConvention() {

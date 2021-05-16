@@ -15,7 +15,6 @@
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN = 0
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
     // if (n == 0)

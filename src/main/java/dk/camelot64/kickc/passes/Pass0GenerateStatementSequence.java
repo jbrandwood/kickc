@@ -405,12 +405,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       // Add the body
       addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
-      // Add parameter assignments
-      if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-         for(Variable param : procedure.getParameters()) {
-            addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         }
-      }
+
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       if(ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
@@ -471,9 +466,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
 
       if(defineProcedure) {
-         // Make sure comments and directives are from the definition
+         // Make sure comments, directives and source are from the definition
          addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
          procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
+         procedure.setDefinitionSource(statementSource);
          // enter the procedure
          scopeStack.push(procedure);
          // Add parameter variables...

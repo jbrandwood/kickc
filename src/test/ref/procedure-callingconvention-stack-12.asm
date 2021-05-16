@@ -25,7 +25,6 @@ print: {
     .const OFFSET_STACK_SPACING = 0
     .label str = 2
     .label spacing = 5
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_STR,x
     sta.z str

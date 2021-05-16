@@ -21,7 +21,6 @@ plus: {
     .label a = 4
     .label b = 2
     .label return = 4
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a

@@ -3020,6 +3020,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("function-pointer-param-workaround.c");
    }
 
+   //@Test
+   //public void testFunctionPointerParam0() throws IOException {
+   //   compileAndCompare("function-pointer-param-0.c", log().verboseParse().verboseCreateSsa());
+   //}
+
    @Test
    public void testFunctionPointerNoargCall14() throws IOException {
       compileAndCompare("function-pointer-noarg-call-14.c");

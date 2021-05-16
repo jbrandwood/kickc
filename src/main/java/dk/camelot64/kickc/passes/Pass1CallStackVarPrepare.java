@@ -1,14 +1,21 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.ParamValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
-/** Handle calling conventions {@link Procedure.CallingConvention#STACK_CALL} {@link Procedure.CallingConvention#VAR_CALL} by converting to call-prepare, call-execute, call-finalize */
+/** Handle calling conventions {@link Procedure.CallingConvention#STACK_CALL} by converting parameters, return values and modified variables to load/store and  by adding parameter assignemtn statements to procedures*/
 public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
 
    public Pass1CallStackVarPrepare(Program program) {
@@ -43,6 +50,20 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
                Variable returnVar = procedure.getLocalVariable("return");
                returnVar.setKind(Variable.Kind.LOAD_STORE);
                getLog().append("Converting return in "+procedure.getCallingConvention().getName()+" procedure to load/store "+returnVar.toString(getProgram()));
+            }
+         }
+      }
+
+      // Add parameter assignments at start of procedure in STACK_CALL procedures
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+            final ControlFlowBlock procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
+            final ArrayList<Variable> params = new ArrayList<>(procedure.getParameters());
+            Collections.reverse(params);
+            for(Variable param : params) {
+               final StatementAssignment paramAssignment = new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, null, Comment.NO_COMMENTS);
+               procedureBlock.getStatements().add(0, paramAssignment);
+               getLog().append("Adding parameter assignment in "+procedure.getCallingConvention().getName()+" procedure "+paramAssignment.toString(getProgram(), false));
             }
          }
       }

@@ -25,7 +25,6 @@ plus: {
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
     .label a = 4
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a

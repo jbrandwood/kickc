@@ -24,7 +24,6 @@ __start: {
 print: {
     .const OFFSET_STACK_P_X = 1
     .const OFFSET_STACK_P_Y = 0
-    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_P_X,x
     tay

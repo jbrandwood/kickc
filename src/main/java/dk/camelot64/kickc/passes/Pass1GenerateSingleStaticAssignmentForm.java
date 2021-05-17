@@ -247,7 +247,6 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
 
    /**
     * Get all predecessors for a control flow block.
-    * If the block is the start of an interrupt the @begin is included as a predecessor.
     *
     * @param block The block to examine
     * @return All predecessor blocks

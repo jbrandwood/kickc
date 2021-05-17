@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Call procedure prepararion in SSA form.
+ * Call procedure preparation in SSA form.
  * <br>
  * lval = call func(params) are converted to callprepare func(params) / callexecute func() / lval=callfinalize func().
  * <br>
@@ -50,10 +50,6 @@ public class StatementCallPrepare extends StatementBase {
 
    public RValue getParameter(int idx) {
       return parameters.get(idx);
-   }
-
-   public void clearParameters() {
-      this.parameters = null;
    }
 
    @Override

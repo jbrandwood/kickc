@@ -56,7 +56,6 @@ public class Pass1CallVar extends Pass2SsaOptimization {
             if(statement instanceof StatementCallFinalize) {
                final StatementCallFinalize call = (StatementCallFinalize) statement;
                Procedure procedure = getScope().getProcedure(call.getProcedure());
-               final SymbolType returnType = procedure.getReturnType();
                if(Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
                   final StatementSource source = call.getSource();
                   final List<Comment> comments = call.getComments();

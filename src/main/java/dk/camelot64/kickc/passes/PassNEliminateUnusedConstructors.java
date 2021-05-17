@@ -3,8 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCallFinalize;
-import dk.camelot64.kickc.model.statements.StatementCallPrepare;
 import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
@@ -49,40 +47,12 @@ public class PassNEliminateUnusedConstructors extends Pass2SsaOptimization {
          }
          // Remove all calls to unused constructors
          for(ProcedureRef unusedConstructor : unusedConstructors) {
-            removeAllCalls(unusedConstructor, startProcBlocks);
+            PassNEliminateEmptyProcedure.removeAllCalls(unusedConstructor, startProcBlocks, getLog());
             optimized = true;
          }
       }
 
       return optimized;
-   }
-
-   /**
-    * Remove all calls to a procedure from a number of control flow graph blocks
-    *
-    * @param removeProcRef The procedure to remove calls for
-    * @param blocks The blocks to remove the calls from
-    */
-   private void removeAllCalls(ProcedureRef removeProcRef, List<ControlFlowBlock> blocks) {
-      for(ControlFlowBlock block : blocks) {
-         final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
-         while(stmtIt.hasNext()) {
-            Statement statement = stmtIt.next();
-            if(statement instanceof StatementCalling && ((StatementCalling) statement).getProcedure().equals(removeProcRef)) {
-               getLog().append("Removing call to constructor procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            } else if(statement instanceof StatementCallPrepare && ((StatementCallPrepare) statement).getProcedure().equals(removeProcRef)) {
-               getLog().append("Removing call to constructor procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            } else if(statement instanceof StatementCallFinalize && ((StatementCallFinalize) statement).getProcedure().equals(removeProcRef)) {
-               getLog().append("Removing call to constructor procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            }
-         }
-         if(removeProcRef.getLabelRef().equals(block.getCallSuccessor())) {
-            block.setCallSuccessor(null);
-         }
-      }
    }
 
 }

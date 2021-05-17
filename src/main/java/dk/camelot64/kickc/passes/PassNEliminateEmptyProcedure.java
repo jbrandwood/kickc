@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.StatementInfos;
@@ -34,7 +35,7 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
             if(!hasExternalUsages(procedure.getRef(), getProgram()) && !SymbolRef.MAIN_PROC_NAME.equals(procedure.getLabel().getLocalName())) {
                // TODO: Entry point procedures include isAddressOfUsed!
                // Remove all calls
-               removeAllCalls(procedure.getRef());
+               removeAllCalls(procedure.getRef(), getGraph().getAllBlocks(), getLog());
                // Remove the procedure
                Pass2EliminateUnusedBlocks.removeProcedure(procedure.getRef(), new HashSet<>(), getProgram());
                optimized = true;
@@ -84,27 +85,6 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
       return false;
    }
 
-   private void removeAllCalls(ProcedureRef ref) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
-         while(stmtIt.hasNext()) {
-            Statement statement = stmtIt.next();
-            if(statement instanceof StatementCalling && ((StatementCalling) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            } else if(statement instanceof StatementCallPrepare && ((StatementCallPrepare) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            } else if(statement instanceof StatementCallFinalize && ((StatementCallFinalize) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
-               stmtIt.remove();
-            }
-         }
-         if(ref.getLabelRef().equals(block.getCallSuccessor())) {
-            block.setCallSuccessor(null);
-         }
-      }
-   }
 
    /**
     * Looks through a procedure to determine if it has an empty body.
@@ -128,5 +108,32 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
       return true;
    }
 
+   /**
+    * Remove all calls to a procedure from a number of control flow graph blocks
+    *
+    * @param removeProcRef The procedure to remove calls for
+    * @param blocks The blocks to remove the calls from
+    */
+   public static void removeAllCalls(ProcedureRef removeProcRef, List<ControlFlowBlock> blocks, CompileLog log) {
+      for(ControlFlowBlock block : blocks) {
+         final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementCalling && ((StatementCalling) statement).getProcedure().equals(removeProcRef)) {
+               log.append("Removing call to empty/unused procedure " + statement.toString());
+               stmtIt.remove();
+            } else if(statement instanceof StatementCallPrepare && ((StatementCallPrepare) statement).getProcedure().equals(removeProcRef)) {
+               log.append("Removing call to empty/unused procedure " + statement.toString());
+               stmtIt.remove();
+            } else if(statement instanceof StatementCallFinalize && ((StatementCallFinalize) statement).getProcedure().equals(removeProcRef)) {
+               log.append("Removing call to empty/unused procedure " + statement.toString());
+               stmtIt.remove();
+            }
+         }
+         if(removeProcRef.getLabelRef().equals(block.getCallSuccessor())) {
+            block.setCallSuccessor(null);
+         }
+      }
+   }
 
 }

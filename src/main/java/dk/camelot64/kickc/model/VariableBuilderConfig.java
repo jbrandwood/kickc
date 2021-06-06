@@ -93,6 +93,8 @@ public class VariableBuilderConfig {
       config.addSetting("parameter_ssa", StatementSource.NONE);
       // Pointers are always on zeropage
       config.addSetting("pointer_zp", StatementSource.NONE);
+      // Pointers are always on zeropage
+      config.addSetting("intermediate_var_zp", StatementSource.NONE);
    }
 
    /** The different scopes. */
@@ -102,7 +104,7 @@ public class VariableBuilderConfig {
 
    /** The different types. */
    public enum Type {
-      INTEGER, POINTER, STRUCT, ARRAY
+      INTEGER, POINTER, STRUCT, ARRAY, VAR
    }
 
    /** The optimizations. */
@@ -207,6 +209,9 @@ public class VariableBuilderConfig {
       } else if(paramElement.equals("parameter")) {
          paramElements.remove(0);
          return Arrays.asList(Scope.PARAMETER);
+      } else if(paramElement.equals("intermediate")) {
+         paramElements.remove(0);
+         return Arrays.asList(Scope.INTERMEDIATE);
       } else
          return Arrays.asList(Scope.values());
    }
@@ -232,6 +237,9 @@ public class VariableBuilderConfig {
       } else if(paramElement.equals("struct")) {
          paramElements.remove(0);
          return Arrays.asList(Type.STRUCT);
+      } else if(paramElement.equals("var")) {
+         paramElements.remove(0);
+         return Arrays.asList(Type.VAR);
       } else
          return Arrays.asList(Type.values());
    }
@@ -303,7 +311,7 @@ public class VariableBuilderConfig {
       throw new InternalError("Unknown scope!");
    }
 
-   public static Type getType(boolean isTypeInteger, boolean isTypeArray, boolean isTypePointer, boolean isTypeStruct) {
+   public static Type getType(boolean isTypeInteger, boolean isTypeArray, boolean isTypePointer, boolean isTypeStruct, boolean isTypeVar) {
       if(isTypeInteger)
          return Type.INTEGER;
       if(isTypeArray)
@@ -312,6 +320,8 @@ public class VariableBuilderConfig {
          return Type.POINTER;
       if(isTypeStruct)
          return Type.STRUCT;
+      if(isTypeVar)
+         return Type.VAR;
       throw new InternalError("Unknown type!");
    }
 

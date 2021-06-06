@@ -1,0 +1,511 @@
+Updating intermediate variable memory area to MAIN_MEMORY main::$1
+Updating intermediate variable memory area to MAIN_MEMORY main::$2
+Updating intermediate variable memory area to MAIN_MEMORY main::$3
+Updating intermediate variable memory area to MAIN_MEMORY main::$4
+Updating intermediate variable memory area to MAIN_MEMORY sum::$0
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  main::i#2 = phi( main/main::i#0, main::@3/main::i#1 )
+  main::$0 = main::SCREEN + main::i#2
+  sum::a#0 = main::i#2
+  sum::b#0 = main::i#2
+  call sum 
+  sum::return#0 = sum::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  sum::return#4 = phi( main::@1/sum::return#0 )
+  main::$1 = sum::return#4
+  sum::a#1 = main::i#3
+  sum::b#1 = main::i#3
+  call sum 
+  sum::return#1 = sum::return#3
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  main::i#4 = phi( main::@2/main::i#3 )
+  sum::return#5 = phi( main::@2/sum::return#1 )
+  main::$2 = sum::return#5
+  main::$3 = main::$1 + main::$2
+  *main::$0 = main::$3
+  main::i#1 = main::i#4 + rangenext(0,5)
+  main::$4 = main::i#1 != rangelast(0,5)
+  if(main::$4) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+
+byte sum(byte sum::a , byte sum::b)
+sum: scope:[sum]  from main::@1 main::@2
+  sum::b#2 = phi( main::@1/sum::b#0, main::@2/sum::b#1 )
+  sum::a#2 = phi( main::@1/sum::a#0, main::@2/sum::a#1 )
+  sum::$0 = sum::a#2 + sum::b#2
+  sum::return#2 = sum::$0
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
+  sum::return#6 = phi( sum/sum::return#2 )
+  sum::return#3 = sum::return#6
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+byte*~ main::$0
+byte~ main::$1
+byte~ main::$2
+byte~ main::$3
+bool~ main::$4
+constant byte* const main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte sum(byte sum::a , byte sum::b)
+byte~ sum::$0
+byte sum::a
+byte sum::a#0
+byte sum::a#1
+byte sum::a#2
+byte sum::b
+byte sum::b#0
+byte sum::b#1
+byte sum::b#2
+byte sum::return
+byte sum::return#0
+byte sum::return#1
+byte sum::return#2
+byte sum::return#3
+byte sum::return#4
+byte sum::return#5
+byte sum::return#6
+
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Alias sum::return#0 = sum::return#4 
+Alias main::i#2 = main::i#3 main::i#4 
+Alias sum::return#1 = sum::return#5 
+Alias sum::return#2 = sum::$0 sum::return#6 sum::return#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$4 [17] if(main::i#1!=rangelast(0,5)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [15] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [17] if(main::i#1!=rangelast(0,5)) goto main::@1 to 6
+Converting *(pointer+n) to pointer[n] [14] *main::$0 = main::$3  -- main::SCREEN[main::i#2]
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable main::$0 and assignment [1] main::$0 = main::SCREEN + main::i#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 6 in [14] if(main::i#1!=6) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 6
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 6
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to sum:6 sum:13 
+
+Created 3 initial phi equivalence classes
+Coalesced [4] sum::a#3 = sum::a#0
+Coalesced [5] sum::b#3 = sum::b#0
+Coalesced [11] sum::a#4 = sum::a#1
+Coalesced [12] sum::b#4 = sum::b#1
+Coalesced [21] main::i#5 = main::i#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block label main::@4
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [1] main::i#2 = phi( main/0, main::@3/main::i#1 )
+  [2] sum::a#0 = main::i#2
+  [3] sum::b#0 = main::i#2
+  [4] call sum 
+  [5] sum::return#0 = sum::return#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] main::$1 = sum::return#0
+  [7] sum::a#1 = main::i#2
+  [8] sum::b#1 = main::i#2
+  [9] call sum 
+  [10] sum::return#1 = sum::return#2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [11] main::$2 = sum::return#1
+  [12] main::$3 = main::$1 + main::$2
+  [13] main::SCREEN[main::i#2] = main::$3
+  [14] main::i#1 = ++ main::i#2
+  [15] if(main::i#1!=6) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [16] return 
+  to:@return
+
+byte sum(byte sum::a , byte sum::b)
+sum: scope:[sum]  from main::@1 main::@2
+  [17] sum::b#2 = phi( main::@1/sum::b#0, main::@2/sum::b#1 )
+  [17] sum::a#2 = phi( main::@1/sum::a#0, main::@2/sum::a#1 )
+  [18] sum::return#2 = sum::a#2 + sum::b#2
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
+  [19] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$1 3.6666666666666665
+byte~ main::$2 22.0
+byte~ main::$3 22.0
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 5.9230769230769225
+byte sum(byte sum::a , byte sum::b)
+byte sum::a
+byte sum::a#0 11.0
+byte sum::a#1 11.0
+byte sum::a#2 123.0
+byte sum::b
+byte sum::b#0 22.0
+byte sum::b#1 22.0
+byte sum::b#2 123.0
+byte sum::return
+byte sum::return#0 22.0
+byte sum::return#1 22.0
+byte sum::return#2 30.75
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ sum::a#2 sum::a#0 sum::a#1 ]
+[ sum::b#2 sum::b#0 sum::b#1 ]
+Added variable sum::return#0 to live range equivalence class [ sum::return#0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable sum::return#1 to live range equivalence class [ sum::return#1 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable sum::return#2 to live range equivalence class [ sum::return#2 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ sum::a#2 sum::a#0 sum::a#1 ]
+[ sum::b#2 sum::b#0 sum::b#1 ]
+[ sum::return#0 ]
+[ main::$1 ]
+[ sum::return#1 ]
+[ main::$2 ]
+[ main::$3 ]
+[ sum::return#2 ]
+Allocated mem[1] [ main::i#2 main::i#1 ]
+Allocated mem[1] [ sum::a#2 sum::a#0 sum::a#1 ]
+Allocated mem[1] [ sum::b#2 sum::b#0 sum::b#1 ]
+Allocated mem[1] [ sum::return#0 ]
+Allocated mem[1] [ main::$1 ]
+Allocated mem[1] [ sum::return#1 ]
+Allocated mem[1] [ main::$2 ]
+Allocated mem[1] [ main::$3 ]
+Allocated mem[1] [ sum::return#2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [12] main::$3 = main::$1 + main::$2 [ main::i#2 main::$3 ] (  [ main::i#2 main::$3 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for mem[1] [ main::i#2 main::i#1 ]
+Statement [18] sum::return#2 = sum::a#2 + sum::b#2 [ sum::return#2 ] ( sum:4 [ main::i#2 sum::return#2 ] { { sum::b#0 = sum::b#2 sum::a#2 sum::a#0 main::i#2 } { sum::return#0 = sum::return#2 } }  sum:9 [ main::i#2 main::$1 sum::return#2 ] { { sum::b#1 = sum::b#2 sum::a#2 sum::a#1 main::i#2 } { sum::return#1 = sum::return#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for mem[1] [ main::$1 ]
+Statement [12] main::$3 = main::$1 + main::$2 [ main::i#2 main::$3 ] (  [ main::i#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [18] sum::return#2 = sum::a#2 + sum::b#2 [ sum::return#2 ] ( sum:4 [ main::i#2 sum::return#2 ] { { sum::b#0 = sum::b#2 sum::a#2 sum::a#0 main::i#2 } { sum::return#0 = sum::return#2 } }  sum:9 [ main::i#2 main::$1 sum::return#2 ] { { sum::b#1 = sum::b#2 sum::a#2 sum::a#1 main::i#2 } { sum::return#1 = sum::return#2 } }  ) always clobbers reg byte a 
+Potential registers mem[1] [ main::i#2 main::i#1 ] : mem[1] , reg byte x , reg byte y , 
+Potential registers mem[1] [ sum::a#2 sum::a#0 sum::a#1 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ sum::b#2 sum::b#0 sum::b#1 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ sum::return#0 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ main::$1 ] : mem[1] , reg byte x , reg byte y , 
+Potential registers mem[1] [ sum::return#1 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ main::$2 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ main::$3 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ sum::return#2 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [sum] 167: mem[1] [ sum::b#2 sum::b#0 sum::b#1 ] 145: mem[1] [ sum::a#2 sum::a#0 sum::a#1 ] 30.75: mem[1] [ sum::return#2 ] 22: mem[1] [ sum::return#0 ] 22: mem[1] [ sum::return#1 ] 
+Uplift Scope [main] 22.42: mem[1] [ main::i#2 main::i#1 ] 22: mem[1] [ main::$2 ] 22: mem[1] [ main::$3 ] 3.67: mem[1] [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [sum] best 980 combination reg byte x [ sum::b#2 sum::b#0 sum::b#1 ] reg byte a [ sum::a#2 sum::a#0 sum::a#1 ] reg byte a [ sum::return#2 ] reg byte a [ sum::return#0 ] mem[1] [ sum::return#1 ] 
+Limited combination testing to 100 combinations of 1024 possible.
+Uplifting [main] best 540 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] mem[1] [ main::$1 ] 
+Limited combination testing to 100 combinations of 144 possible.
+Uplifting [] best 540 combination 
+Attempting to uplift remaining variables inmem[1] [ sum::return#1 ]
+Uplifting [sum] best 460 combination reg byte a [ sum::return#1 ] 
+Attempting to uplift remaining variables inmem[1] [ main::$1 ]
+Uplifting [main] best 460 combination mem[1] [ main::$1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test that memory model "mem" affects intermediates
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varmodel-mem-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    // A local pointer 
+    .label SCREEN = $400
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+  // A local counter
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  __b1_from___b3:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] sum::a#0 = main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [3] sum::b#0 = main::i#2
+    // [4] call sum 
+    // [17] phi from main::@1 to sum [phi:main::@1->sum]
+  sum_from___b1:
+    // [17] phi sum::b#2 = sum::b#0 [phi:main::@1->sum#0] -- register_copy 
+    // [17] phi sum::a#2 = sum::a#0 [phi:main::@1->sum#1] -- register_copy 
+    jsr sum
+    // [5] sum::return#0 = sum::return#2
+    jmp __b2
+    // main::@2
+  __b2:
+    // [6] main::$1 = sum::return#0 -- vbum1=vbuaa 
+    sta __1
+    // [7] sum::a#1 = main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [8] sum::b#1 = main::i#2
+    // [9] call sum 
+    // [17] phi from main::@2 to sum [phi:main::@2->sum]
+  sum_from___b2:
+    // [17] phi sum::b#2 = sum::b#1 [phi:main::@2->sum#0] -- register_copy 
+    // [17] phi sum::a#2 = sum::a#1 [phi:main::@2->sum#1] -- register_copy 
+    jsr sum
+    // [10] sum::return#1 = sum::return#2
+    jmp __b3
+    // main::@3
+  __b3:
+    // [11] main::$2 = sum::return#1
+    // [12] main::$3 = main::$1 + main::$2 -- vbuaa=vbum1_plus_vbuaa 
+    clc
+    adc __1
+    // [13] main::SCREEN[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // Generates an intermediate
+    sta SCREEN,x
+    // [14] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [15] if(main::i#1!=6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1_from___b3
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [16] return 
+    rts
+  .segment Data
+    __1: .byte 0
+}
+.segment Code
+  // sum
+// sum(byte register(A) a, byte register(X) b)
+sum: {
+    // [18] sum::return#2 = sum::a#2 + sum::b#2 -- vbuaa=vbuaa_plus_vbuxx 
+    stx.z $ff
+    clc
+    adc.z $ff
+    jmp __breturn
+    // sum::@return
+  __breturn:
+    // [19] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b1_from___b3 with __b1
+Removing instruction __b1_from___b3:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1_from_main:
+Removing instruction sum_from___b1:
+Removing instruction __b2:
+Removing instruction sum_from___b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp __b1
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte~ main::$1 mem[1] 3.6666666666666665
+byte~ main::$2 reg byte a 22.0
+byte~ main::$3 reg byte a 22.0
+constant byte* const main::SCREEN = (byte*) 1024
+byte main::i
+byte main::i#1 reg byte x 16.5
+byte main::i#2 reg byte x 5.9230769230769225
+byte sum(byte sum::a , byte sum::b)
+byte sum::a
+byte sum::a#0 reg byte a 11.0
+byte sum::a#1 reg byte a 11.0
+byte sum::a#2 reg byte a 123.0
+byte sum::b
+byte sum::b#0 reg byte x 22.0
+byte sum::b#1 reg byte x 22.0
+byte sum::b#2 reg byte x 123.0
+byte sum::return
+byte sum::return#0 reg byte a 22.0
+byte sum::return#1 reg byte a 22.0
+byte sum::return#2 reg byte a 30.75
+
+reg byte x [ main::i#2 main::i#1 ]
+reg byte a [ sum::a#2 sum::a#0 sum::a#1 ]
+reg byte x [ sum::b#2 sum::b#0 sum::b#1 ]
+reg byte a [ sum::return#0 ]
+mem[1] [ main::$1 ]
+reg byte a [ sum::return#1 ]
+reg byte a [ main::$2 ]
+reg byte a [ main::$3 ]
+reg byte a [ sum::return#2 ]
+
+
+FINAL ASSEMBLER
+Score: 307
+
+  // File Comments
+// Test that memory model "mem" affects intermediates
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varmodel-mem-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    // A local pointer 
+    .label SCREEN = $400
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  // A local counter
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // main::@1
+  __b1:
+    // sum(i,i)
+    // [2] sum::a#0 = main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [3] sum::b#0 = main::i#2
+    // [4] call sum 
+    // [17] phi from main::@1 to sum [phi:main::@1->sum]
+    // [17] phi sum::b#2 = sum::b#0 [phi:main::@1->sum#0] -- register_copy 
+    // [17] phi sum::a#2 = sum::a#0 [phi:main::@1->sum#1] -- register_copy 
+    jsr sum
+    // sum(i,i)
+    // [5] sum::return#0 = sum::return#2
+    // main::@2
+    // [6] main::$1 = sum::return#0 -- vbum1=vbuaa 
+    sta __1
+    // [7] sum::a#1 = main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [8] sum::b#1 = main::i#2
+    // [9] call sum 
+    // [17] phi from main::@2 to sum [phi:main::@2->sum]
+    // [17] phi sum::b#2 = sum::b#1 [phi:main::@2->sum#0] -- register_copy 
+    // [17] phi sum::a#2 = sum::a#1 [phi:main::@2->sum#1] -- register_copy 
+    jsr sum
+    // sum(i,i)
+    // [10] sum::return#1 = sum::return#2
+    // main::@3
+    // [11] main::$2 = sum::return#1
+    // sum(i,i)+sum(i,i)
+    // [12] main::$3 = main::$1 + main::$2 -- vbuaa=vbum1_plus_vbuaa 
+    clc
+    adc __1
+    // *(SCREEN+i) = sum(i,i)+sum(i,i)
+    // [13] main::SCREEN[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // Generates an intermediate
+    sta SCREEN,x
+    // for( char i: 0..5 )
+    // [14] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [15] if(main::i#1!=6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1
+    // main::@return
+    // }
+    // [16] return 
+    rts
+  .segment Data
+    __1: .byte 0
+}
+.segment Code
+  // sum
+// sum(byte register(A) a, byte register(X) b)
+sum: {
+    // a+b
+    // [18] sum::return#2 = sum::a#2 + sum::b#2 -- vbuaa=vbuaa_plus_vbuxx 
+    stx.z $ff
+    clc
+    adc.z $ff
+    // sum::@return
+    // }
+    // [19] return 
+    rts
+}
+  // File Data
+

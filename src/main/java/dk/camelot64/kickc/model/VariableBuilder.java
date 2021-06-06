@@ -54,12 +54,14 @@ public class VariableBuilder {
 
    /**
     * Create a variable builder for an intermediate variable
+    *
+    *
     * @param scope The scope to create the intermediate variable in
     * @param type The variable type
     * @param program The global program
     * @return The new intermediate variable
     */
-   public static Variable createIntermediate(Scope scope,  SymbolType type, Program program) {
+   public static Variable createIntermediate(Scope scope, SymbolType type, Program program) {
       VariableBuilder builder = new VariableBuilder(scope.allocateIntermediateVariableName(), scope, false, true, type, null, scope.getSegmentData(), program.getTargetPlatform().getVariableBuilderConfig());
       return builder.build();
    }
@@ -140,6 +142,15 @@ public class VariableBuilder {
    }
 
    /**
+    * Is the type is a var (currently unknown).
+    *
+    * @return True if the type is currently unknown
+    */
+   public boolean isTypeVar() {
+      return SymbolType.VAR.equals(type) || SymbolType.VOID.equals(type);
+   }
+
+   /**
     * Is the variable a global variable
     *
     * @return true if the variable is in the global scope
@@ -209,7 +220,7 @@ public class VariableBuilder {
     * @return true if the variable is an array declaration
     */
    public boolean isArray() {
-      return isTypePointer() && ((SymbolTypePointer)type).getArraySpec()!=null;
+      return isTypePointer() && ((SymbolTypePointer) type).getArraySpec() != null;
    }
 
    /**
@@ -303,7 +314,7 @@ public class VariableBuilder {
          return false;
       else {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());
-         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
+         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct(), isTypeVar());
          VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
          if(setting != null && VariableBuilderConfig.Optimization.MA.equals(setting.optimization))
             return false;
@@ -351,16 +362,12 @@ public class VariableBuilder {
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
       else {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());
-         if(scope.equals(VariableBuilderConfig.Scope.INTERMEDIATE)) {
+         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct(), isTypeVar());
+         VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
+         if(setting != null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
+            return Variable.MemoryArea.MAIN_MEMORY;
+         else
             return Variable.MemoryArea.ZEROPAGE_MEMORY;
-         }  else {
-            VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
-            VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
-            if(setting != null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
-               return Variable.MemoryArea.MAIN_MEMORY;
-            else
-               return Variable.MemoryArea.ZEROPAGE_MEMORY;
-         }
       }
    }
 

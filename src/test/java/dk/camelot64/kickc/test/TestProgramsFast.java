@@ -971,6 +971,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testVarModelMem1() throws IOException {
+      compileAndCompare("varmodel-mem-1.c");
+   }
+
+   @Test
    public void testVarModelUnknown() throws IOException {
       assertError("varmodel-unknown.c", "Malformed var_model parameter");
    }

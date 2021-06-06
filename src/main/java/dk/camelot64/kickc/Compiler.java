@@ -215,6 +215,7 @@ public class Compiler {
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1Procedures(program).execute();
       new PassNTypeInference(program).execute();
+      new PassNFixIntermediateMemoryArea(program).execute();
       new PassNTypeIdSimplification(program).execute();
       new Pass1StructTypeSizeFix(program).execute();
       new Pass1PrintfIntrinsicRewrite(program).execute();
@@ -549,7 +550,6 @@ public class Compiler {
       if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
-
       new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
       new Pass3AssertNoNumbers(program).check();

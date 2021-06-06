@@ -23,6 +23,9 @@ public class VariableBuilder {
    /** The scope of the variable. */
    private Scope scope;
 
+   /** The variable is an intermediate variable. */
+   private boolean isIntermediate;
+
    /** The variable is a function parameter declaration. */
    private boolean isParameter;
 
@@ -38,14 +41,27 @@ public class VariableBuilder {
    /** Configuration of how to setup optimization/memory area for variables. */
    private VariableBuilderConfig config;
 
-   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
+   public VariableBuilder(String varName, Scope scope, boolean isParameter, boolean isIntermediate, SymbolType type, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
       this.varName = varName;
       this.scope = scope;
+      this.isIntermediate = isIntermediate;
       this.isParameter = isParameter;
       this.type = type;
       this.directives = directives;
       this.dataSegment = dataSegment;
       this.config = config;
+   }
+
+   /**
+    * Create a variable builder for an intermediate variable
+    * @param scope The scope to create the intermediate variable in
+    * @param type The variable type
+    * @param program The global program
+    * @return The new intermediate variable
+    */
+   public static Variable createIntermediate(Scope scope,  SymbolType type, Program program) {
+      VariableBuilder builder = new VariableBuilder(scope.allocateIntermediateVariableName(), scope, false, true, type, null, scope.getSegmentData(), program.getTargetPlatform().getVariableBuilderConfig());
+      return builder.build();
    }
 
    /**
@@ -157,6 +173,19 @@ public class VariableBuilder {
    }
 
    /**
+    * Is the variable a (local) intermediate variable in a function
+    *
+    * @return true if the variable is an intermediate variable in a function scope
+    */
+   public boolean isScopeIntermediate() {
+      if(isIntermediate) {
+         if(isScopeGlobal()) throw new RuntimeException("Globa intermediate not supported");
+         return true;
+      } else
+         return false;
+   }
+
+   /**
     * Is the variable a member of a struct definition
     *
     * @return true if the variable is a struct definition member
@@ -166,7 +195,16 @@ public class VariableBuilder {
    }
 
    /**
-    * Is the  variable an array declaration
+    * Is the variable an intermediate variable
+    *
+    * @return true if the variable is intermediate
+    */
+   public boolean isIntermediate() {
+      return isIntermediate;
+   }
+
+   /**
+    * Is the variable an array declaration
     *
     * @return true if the variable is an array declaration
     */
@@ -264,7 +302,7 @@ public class VariableBuilder {
          // volatile variables must be load/store
          return false;
       else {
-         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
+         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());
          VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
          VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
          if(setting != null && VariableBuilderConfig.Optimization.MA.equals(setting.optimization))
@@ -280,7 +318,9 @@ public class VariableBuilder {
     * @return The variable kind
     */
    public Variable.Kind getKind() {
-      if(isConstant())
+      if(isIntermediate()) {
+         return Variable.Kind.INTERMEDIATE;
+      } else if(isConstant())
          return Variable.Kind.CONSTANT;
       else if(isSingleStaticAssignment())
          return Variable.Kind.PHI_MASTER;
@@ -310,13 +350,17 @@ public class VariableBuilder {
       else if(!isConstant() && isOptimize())
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
       else {
-         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
-         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
-         VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
-         if(setting != null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
-            return Variable.MemoryArea.MAIN_MEMORY;
-         else
+         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());
+         if(scope.equals(VariableBuilderConfig.Scope.INTERMEDIATE)) {
             return Variable.MemoryArea.ZEROPAGE_MEMORY;
+         }  else {
+            VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
+            VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
+            if(setting != null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
+               return Variable.MemoryArea.MAIN_MEMORY;
+            else
+               return Variable.MemoryArea.ZEROPAGE_MEMORY;
+         }
       }
    }
 

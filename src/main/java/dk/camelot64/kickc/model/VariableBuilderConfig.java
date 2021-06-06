@@ -9,7 +9,7 @@ import java.util.*;
  * Holds settings specified using <code>#pragma var_model(...)</code>
  * The parameters to the pragma has the form <i>scope</i>_<i>type</i>_<i>optimization</i>_<i>memoryarea</i>.
  * <ul>
- *    <li><i>scope</i> is one of <i>global</i>, <i>local</i> or <i>parameter</i></li>
+ *    <li><i>scope</i> is one of <i>global</i>, <i>local</i>, <i>intermediate</i>, <i>parameter</i> or <i>member</i></li>
  *    <li><i>type</i> is one of <i>struct</i>, <i>array</i>, <i>integer</i>, <i>pointer</i></li>
  *    <li><i>optimization</i> is one of <i>ma</i> (meaning multiple-assignment or load/store), <i>ssa</i> (meaning single-static-assignment)</li>
  *    <li><i>memoryarea</i> is one of <i>zp</i> (meaning zeropage), <i>mem</i> (meaning main memory)</li>
@@ -97,7 +97,7 @@ public class VariableBuilderConfig {
 
    /** The different scopes. */
    public enum Scope {
-      LOCAL, GLOBAL, PARAMETER, MEMBER
+      INTERMEDIATE, LOCAL, GLOBAL, PARAMETER, MEMBER
    }
 
    /** The different types. */
@@ -289,9 +289,11 @@ public class VariableBuilderConfig {
       return settings.get(new ScopeType(scope, type));
    }
 
-   public static Scope getScope(boolean isScopeGlobal, boolean isScopeLocal, boolean isScopeParameter, boolean isScopeMember) {
+   public static Scope getScope(boolean isScopeGlobal, boolean isScopeLocal, boolean isScopeIntermediate, boolean isScopeParameter, boolean isScopeMember) {
       if(isScopeGlobal)
          return Scope.GLOBAL;
+      if(isScopeIntermediate)
+         return Scope.INTERMEDIATE;
       if(isScopeLocal)
          return Scope.LOCAL;
       if(isScopeParameter)

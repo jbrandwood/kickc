@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.iterator.ProgramExpression;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionUnary;
@@ -82,8 +83,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    public void addLiteralWordConstructor(OperatorBinary constructOperator, SymbolType castType, SymbolType constructType, SymbolType subType, ProgramExpression programExpression, List<RValue> listValues, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Convert list to a word constructor in a new tmp variable
       Scope currentScope = Pass2FixInlineConstructors.this.getScope().getScope(currentBlock.getScope());
-      Variable tmpVar = currentScope.addVariableIntermediate();
-      tmpVar.setType(constructType);
+      Variable tmpVar = VariableBuilder.createIntermediate(currentScope, constructType, getProgram());
       // Move backward - to insert before the current statement
       stmtIt.previous();
       // Add assignment of the new tmpVar

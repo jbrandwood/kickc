@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -92,8 +93,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
             SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
             SymbolTypePointer pointerToElementType = new SymbolTypePointer(elementType);
             Scope scope = programScope.getScope(currentBlock.getScope());
-            Variable memberAddress = scope.addVariableIntermediate();
-            memberAddress.setType(pointerToElementType);
+            Variable memberAddress = VariableBuilder.createIntermediate(scope, pointerToElementType, program);
             CastValue elementTypedPointer = new CastValue(pointerToElementType, structPointer);
             // Add statement $1 = (elmType*)ptr_struct + OFFSET_MEMBER
             stmtIt.previous();
@@ -103,8 +103,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
             return new ValueSourceVariable(memberAddress);
          }  else {
             Scope scope = programScope.getScope(currentBlock.getScope());
-            Variable memberAddress = scope.addVariableIntermediate();
-            memberAddress.setType(new SymbolTypePointer(memberType));
+            Variable memberAddress = VariableBuilder.createIntermediate(scope, new SymbolTypePointer(memberType), program);
             CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
             // Add statement $1 = (memberType*)ptr_struct + OFFSET_MEMBER
             stmtIt.previous();

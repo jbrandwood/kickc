@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -75,6 +76,34 @@ public class AsmFragmentTemplate {
    }
 
    /**
+    * Create a load/store variable
+    *
+    * @param name The name
+    * @param type The type
+    * @param scope The scope
+    * @param memoryArea The memory area (zeropage/main memory)
+    * @param dataSegment The data segment (in main memory)
+    * @return The new PHI-master variable
+    */
+   public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
+      return new Variable(name, Variable.Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null);
+   }
+
+   /**
+    * Create a PHI master variable
+    *
+    * @param name The name
+    * @param type The type
+    * @param scope The scope
+    * @param memoryArea The memory area (zeropage/main memory)
+    * @param dataSegment The data segment (in main memory)
+    * @return The new PHI-master variable
+    */
+   public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
+      return new Variable(name, Variable.Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null);
+   }
+
+   /**
     * Initialize the fields that require parsing the ASM (bodyAsm, clobber, cycles).
     */
    private void initAsm() {
@@ -84,7 +113,7 @@ public class AsmFragmentTemplate {
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable master = Variable.createPhiMaster("z", SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable master = createPhiMaster("z", SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
          Variable v1 = Variable.createPhiVersion(master, 1); v1.setName("z1");
          Variable v2 = Variable.createPhiVersion(master, 2); v2.setName("z2");
          Variable v3 = Variable.createPhiVersion(master, 3); v3.setName("z3");
@@ -105,12 +134,12 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = Variable.createLoadStore("m1", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v2 = Variable.createLoadStore("m2", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v3 = Variable.createLoadStore("m3", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v4 = Variable.createLoadStore("m4", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v5 = Variable.createLoadStore("m5", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v6 = Variable.createLoadStore("m6", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v1 = createLoadStore("m1", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v2 = createLoadStore("m2", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v3 = createLoadStore("m3", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v4 = createLoadStore("m4", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v5 = createLoadStore("m5", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v6 = createLoadStore("m6", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
          v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(), 1, null));
          v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
          v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));

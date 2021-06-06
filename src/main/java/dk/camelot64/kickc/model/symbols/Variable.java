@@ -129,46 +129,6 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Create an intermediate variable. The type will initially be set to {@link SymbolType#VAR}.
-    *
-    * @param name The name
-    * @param scope The scope
-    * @param dataSegment The data segment (in main memory)
-    * @return The new intermediate variable
-    */
-   public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
-      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null);
-   }
-
-   /**
-    * Create a load/store variable
-    *
-    * @param name The name
-    * @param type The type
-    * @param scope The scope
-    * @param memoryArea The memory area (zeropage/main memory)
-    * @param dataSegment The data segment (in main memory)
-    * @return The new PHI-master variable
-    */
-   public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null);
-   }
-
-   /**
-    * Create a PHI master variable
-    *
-    * @param name The name
-    * @param type The type
-    * @param scope The scope
-    * @param memoryArea The memory area (zeropage/main memory)
-    * @param dataSegment The data segment (in main memory)
-    * @return The new PHI-master variable
-    */
-   public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null);
-   }
-
-   /**
     * Create a version of a PHI master variable
     *
     * @param phiMaster The PHI master variable.
@@ -517,10 +477,6 @@ public class Variable implements Symbol {
 
    public void setMemoryArea(MemoryArea memoryArea) {
       this.memoryArea = memoryArea;
-   }
-
-   public boolean isMemoryAreaZp() {
-      return MemoryArea.ZEROPAGE_MEMORY.equals(getMemoryArea());
    }
 
    public boolean isMemoryAreaMain() {

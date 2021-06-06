@@ -2,7 +2,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.operators.OperatorPlus;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -33,14 +35,13 @@ public class Pass2DeInlineWordDerefIdx extends Pass2SsaOptimization {
                // Index is multiple bytes - de-inline it
                getLog().append("De-inlining pointer[w] to *(pointer+w)   "+currentStmt.toString(getProgram(), false));
                Scope currentScope = getScope().getScope(currentBlock.getScope());
-               Variable tmpVar = currentScope.addVariableIntermediate();
+               SymbolType pointerType = Operators.PLUS.inferType(SymbolTypeInference.inferType(getScope(), dereferenceIndexed.getPointer()), SymbolTypeInference.inferType(getScope(), dereferenceIndexed.getIndex()));
+               Variable tmpVar = VariableBuilder.createIntermediate(currentScope, pointerType, getProgram());
                stmtIt.previous();
                StatementAssignment tmpVarAssignment = new StatementAssignment((LValue) tmpVar.getRef(), dereferenceIndexed.getPointer(), Operators.PLUS, indexValue, true, currentStmt.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(tmpVarAssignment);
                stmtIt.next();
                programValue.set(new PointerDereferenceSimple(tmpVar.getRef()));
-               SymbolType pointerType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(tmpVarAssignment));
-               tmpVar.setType(pointerType);
                optimized.set(true);
             }
          }

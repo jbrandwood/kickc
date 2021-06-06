@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -48,14 +50,14 @@ public interface ProgramExpressionBinary extends ProgramExpression {
     *
     * @param toType The toType to cast to
     */
-   void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols);
+   void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program);
 
    /**
     * Adds a cast to the right operand
     *
     * @param toType The toType to cast to
     */
-   void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols);
+   void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program);
 
    /**
     * Get the left operand as a replaceable program value
@@ -124,13 +126,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(assignment.getrValue1() instanceof ConstantValue) {
             assignment.setrValue1(new ConstantCastValue(toType, (ConstantValue) assignment.getrValue1()));
          } else {
-            Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
-            tmpVar.setType(toType);
+            Scope blockScope = program.getScope().getScope(currentScope);
+            Variable tmpVar = VariableBuilder.createIntermediate(blockScope, toType, program);
             StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), true, assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue1(tmpVar.getRef());
             stmtIt.previous();
@@ -140,13 +141,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(assignment.getrValue2() instanceof ConstantValue) {
             assignment.setrValue2(new ConstantCastValue(toType, (ConstantValue) assignment.getrValue2()));
          } else {
-            Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
-            tmpVar.setType(toType);
+            Scope blockScope = program.getScope().getScope(currentScope);
+            Variable tmpVar = VariableBuilder.createIntermediate(blockScope, toType, program);
             StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), true, assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue2(tmpVar.getRef());
             stmtIt.previous();
@@ -202,12 +202,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          throw new InternalError("Casting parameter variable not allowed. " + parameterDef.toString());
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          Value value = parameterValue.get();
          if(value instanceof ConstantValue) {
             parameterValue.set(new ConstantCastValue(toType, (ConstantValue) value));
@@ -270,18 +270,17 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(assignment.getlValue() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) assignment.getlValue());
+            Variable variable = program.getScope().getVariable((VariableRef) assignment.getlValue());
             if(variable.isKindIntermediate())
                variable.setType(toType);
             else
                throw new InternalError("Cannot cast declared type!" + variable.toString());
          } else {
-            Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
-            SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
-            tmpVar.setType(rightType);
+            Scope blockScope = program.getScope().getScope(currentScope);
+            SymbolType rightType = SymbolTypeInference.inferType(program.getScope(), getRight());
+            Variable tmpVar = VariableBuilder.createIntermediate(blockScope, rightType, program);
             StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
@@ -289,14 +288,13 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(assignment.getrValue1() == null && assignment.getOperator() == null) {
             assignment.setOperator(Operators.getCastUnary(toType));
          } else {
-            Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
-            SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
-            tmpVar.setType(rightType);
+            Scope blockScope = program.getScope().getScope(currentScope);
+            SymbolType rightType = SymbolTypeInference.inferType(program.getScope(), getRight());
+            Variable tmpVar = VariableBuilder.createIntermediate(blockScope, rightType, program);
             StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
@@ -351,7 +349,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(conditionalJump.getrValue1() instanceof ConstantValue) {
             conditionalJump.setrValue1(new ConstantCastValue(toType, (ConstantValue) conditionalJump.getrValue1()));
          } else {
@@ -360,7 +358,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(conditionalJump.getrValue2() instanceof ConstantValue) {
             conditionalJump.setrValue2(new ConstantCastValue(toType, (ConstantValue) conditionalJump.getrValue2()));
          } else {
@@ -420,12 +418,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          getConstantBinary().setLeft(new ConstantCastValue(toType, getConstantBinary().getLeft()));
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          getConstantBinary().setRight(new ConstantCastValue(toType, getConstantBinary().getRight()));
       }
    }
@@ -479,7 +477,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(getPointerDereferenceIndexed().getPointer() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setPointer(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getPointer()));
          } else {
@@ -489,11 +487,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(getPointerDereferenceIndexed().getIndex() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setIndex(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getIndex()));
          } else if(getPointerDereferenceIndexed().getIndex() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
+            Variable variable = program.getScope().getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
             if(variable.isKindIntermediate())
                variable.setType(toType);
             else
@@ -554,8 +552,8 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         Variable variable = symbols.getVariable(phiVariable.getVariable());
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
+         Variable variable = program.getScope().getVariable(phiVariable.getVariable());
          if(variable.isKindIntermediate())
             variable.setType(toType);
          else
@@ -563,9 +561,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
-      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, Program program) {
          if(getRight() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) getRight());
+            Variable variable = program.getScope().getVariable((VariableRef) getRight());
             if(variable.isKindIntermediate())
                variable.setType(toType);
          } else if(getRight() instanceof ConstantValue) {

@@ -1,13 +1,11 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -71,8 +69,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
                   SymbolVariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef == null) {
-                     Variable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
-                     idx2Var.setType(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
+                     SymbolType type = SymbolTypeInference.inferType(getScope(), deref.getIndex());
+                     Scope scope = getScope().getScope(currentBlock.getScope());
+                     Variable idx2Var = VariableBuilder.createIntermediate(scope, type, getProgram());
                      ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, true, currentStmt.getSource(), Comment.NO_COMMENTS);
                      stmtIt.previous();
@@ -115,8 +114,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      if(getLog().isVerboseParse())
                         getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                      LValue lValue = assignment.getlValue();
-                     Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
-                     tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
+                     Scope scope = getScope().getScope(block.getScope());
+                     SymbolType type = SymbolTypeInference.inferType(getScope(), assignment.getlValue());
+                     Variable tmpVar = VariableBuilder.createIntermediate(scope, type, getProgram());
                      assignment.setlValue((LValue) tmpVar.getRef());
                      ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      stmtIt.add(new StatementAssignment(lValue, tmpVar.getRef(), Operators.DIVIDE, sizeOfTargetType, assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS));
@@ -128,8 +128,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   // Adding to a pointer - multiply by sizeof()
                   if(getLog().isVerboseParse())
                      getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
-                  Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
-                  tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
+                  Scope scope = getScope().getScope(block.getScope());
+                  SymbolType type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+                  Variable tmpVar = VariableBuilder.createIntermediate(scope, type, getProgram());
                   stmtIt.remove();
                   ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                   stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, true, assignment.getSource(), Comment.NO_COMMENTS));

@@ -95,7 +95,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(currentScope == null || ScopeRef.ROOT.equals(currentScope.getRef())) {
          currentScope = getInitProc();
       }
-      return currentScope.addVariableIntermediate();
+      return VariableBuilder.createIntermediate(currentScope, SymbolType.VAR, program);
    }
 
    /**
@@ -492,14 +492,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             if(parameter.name==null)
                throw new CompileError("Illegal unnamed parameter.", statementSource);
 
-            VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, false, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
             final Variable paramVar = varBuilder.build();
             parameterList.add(paramVar);
          }
          procedure.setParameters(parameterList);
          // Add return variable
          if(!SymbolType.VOID.equals(procedure.getReturnType())) {
-            final VariableBuilder builder = new VariableBuilder("return", procedure, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            final VariableBuilder builder = new VariableBuilder("return", procedure, false, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
             builder.build();
          }
          // exit the procedure
@@ -966,7 +966,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             final List<Directive> effectiveDirectives = varDecl.getDeclDirectives();
             final List<Comment> declComments = varDecl.getDeclComments();
             varDecl.exitVar();
-            VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
             Variable variable = varBuilder.build();
             if(isStructMember && (initializer != null))
                throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), declSource);
@@ -1052,7 +1052,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.kickAsmCode, kasm.uses, ((SymbolTypePointer) effectiveType).getArraySpec().getArraySize());
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1591,7 +1591,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = varDecl.getVarName();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, false, varType, varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().findVariable(varName);
@@ -2123,7 +2123,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
       String typedefName = varDecl.getVarName();
-      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
       varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();

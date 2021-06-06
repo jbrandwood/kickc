@@ -49,33 +49,33 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                   if((leftType instanceof SymbolTypePointer) && rightType instanceof SymbolTypePointer && SymbolType.VOID.equals(((SymbolTypePointer) leftType).getElementType())) {
                      if(!pass1 || getLog().isVerbosePass1CreateSsa())
                         getLog().append("Adding void pointer type conversion cast (" + leftType + ") " + binary.getRight().toString() + " in " + currentStmt.toString(getProgram(), false));
-                     binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
+                     binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getProgram());
                      modified.set(true);
                   } else if((leftType instanceof SymbolTypePointer) && rightType instanceof SymbolTypePointer && SymbolType.VOID.equals(((SymbolTypePointer) rightType).getElementType())) {
                      if(!pass1 || getLog().isVerbosePass1CreateSsa())
                         getLog().append("Adding pointer type conversion cast to void pointer (" + leftType + ") " + binary.getRight().toString() + " in " + currentStmt.toString(getProgram(), false));
-                     binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
+                     binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getProgram());
                      modified.set(true);
                   } else if(SymbolType.WORD.equals(leftType) && isLiteralWordCandidate(right)) {
                      // Detect word literal constructor
                      SymbolType conversionType = SymbolType.WORD;
                      if(!pass1 || getLog().isVerbosePass1CreateSsa())
                         getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
-                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getProgram());
                      modified.set(true);
                   } else if(leftType instanceof SymbolTypePointer && isLiteralWordCandidate(right)) {
                      // Detect word literal constructor
                      SymbolType conversionType = SymbolType.WORD;
                      if(!pass1 || getLog().isVerbosePass1CreateSsa())
                         getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
-                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getProgram());
                      modified.set(true);
                   } else if(SymbolType.DWORD.equals(leftType) && isLiteralWordCandidate(right)) {
                      // Detect dword literal constructor
                      SymbolType conversionType = SymbolType.DWORD;
                      if(!pass1 || getLog().isVerbosePass1CreateSsa())
                         getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
-                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getProgram());
                      modified.set(true);
                   }
                }

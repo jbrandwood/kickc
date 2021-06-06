@@ -174,7 +174,7 @@ public class Unroller {
       Scope scope = origVar.getScope();
       SymbolVariableRef newVarRef;
       if(origVarRef.isIntermediate()) {
-         newVarRef = scope.addVariableIntermediate().getRef();
+         newVarRef = VariableBuilder.createIntermediate(scope, origVar.getType(), program).getRef();
       } else {
          newVarRef = (origVar).getPhiMaster().createVersion().getRef();
       }

@@ -23,6 +23,9 @@ public class VariableBuilder {
    /** The scope of the variable. */
    private Scope scope;
 
+   /** The variable is an intermediate variable. */
+   private boolean isIntermediate;
+
    /** The variable is a function parameter declaration. */
    private boolean isParameter;
 
@@ -38,14 +41,27 @@ public class VariableBuilder {
    /** Configuration of how to setup optimization/memory area for variables. */
    private VariableBuilderConfig config;
 
-   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
+   public VariableBuilder(String varName, Scope scope, boolean isParameter, boolean isIntermediate, SymbolType type, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
       this.varName = varName;
       this.scope = scope;
+      this.isIntermediate = isIntermediate;
       this.isParameter = isParameter;
       this.type = type;
       this.directives = directives;
       this.dataSegment = dataSegment;
       this.config = config;
+   }
+
+   /**
+    * Create a variable builder for an intermediate variable
+    * @param scope The scope to create the intermediate variable in
+    * @param type The variable type
+    * @param config The variable builder config
+    * @return The new intermediate variable
+    */
+   public static Variable createIntermediate(Scope scope,  SymbolType type, Program program) {
+      VariableBuilder builder = new VariableBuilder(scope.allocateIntermediateVariableName(), scope, false, true, type, null, scope.getSegmentData(), program.getTargetPlatform().getVariableBuilderConfig());
+      return builder.build();
    }
 
    /**
@@ -166,7 +182,16 @@ public class VariableBuilder {
    }
 
    /**
-    * Is the  variable an array declaration
+    * Is the variable an intermediate variable
+    *
+    * @return true if the variable is intermediate
+    */
+   public boolean isIntermediate() {
+      return isIntermediate;
+   }
+
+   /**
+    * Is the variable an array declaration
     *
     * @return true if the variable is an array declaration
     */
@@ -280,7 +305,9 @@ public class VariableBuilder {
     * @return The variable kind
     */
    public Variable.Kind getKind() {
-      if(isConstant())
+      if(isIntermediate()) {
+         return Variable.Kind.INTERMEDIATE;
+      } else if(isConstant())
          return Variable.Kind.CONSTANT;
       else if(isSingleStaticAssignment())
          return Variable.Kind.PHI_MASTER;

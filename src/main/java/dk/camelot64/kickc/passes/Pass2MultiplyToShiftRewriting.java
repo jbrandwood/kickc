@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -71,13 +68,11 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                            long powVal = 1L <<pow2;
                            if(remains>=powVal) {
                               // First add shifts
-                              Variable varShift = scope.addVariableIntermediate();
-                              varShift.setType(resultType);
+                              Variable varShift = VariableBuilder.createIntermediate(scope, resultType, getProgram());
                               stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), true, assignment.getSource(), Comment.NO_COMMENTS));
                               shiftCount = 0;
                               // Then add rvalue1
-                              Variable varAdd = scope.addVariableIntermediate();
-                              varAdd.setType(resultType);
+                              Variable varAdd = VariableBuilder.createIntermediate(scope, resultType, getProgram());
                               stmtIt.add(new StatementAssignment((LValue) varAdd.getRef(), varShift.getRef(), Operators.PLUS, assignment.getrValue1(), true, assignment.getSource(), Comment.NO_COMMENTS));
                               building = varAdd.getRef();
                               remains -= powVal;
@@ -90,8 +85,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                         }
                         // add remaining shifts
                         if(shiftCount>0) {
-                           Variable varShift = scope.addVariableIntermediate();
-                           varShift.setType(resultType);
+                           Variable varShift = VariableBuilder.createIntermediate(scope, resultType, getProgram());
                            stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), true, assignment.getSource(), Comment.NO_COMMENTS));
                            building = varShift.getRef();
                         }

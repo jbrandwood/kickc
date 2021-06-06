@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionUnary;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -76,8 +77,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
    private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       Scope currentScope = getScope().getScope(currentBlock.getScope());
       stmtIt.previous();
-      Variable tmpVar = currentScope.addVariableIntermediate();
-      tmpVar.setType(SymbolType.BOOLEAN);
+      Variable tmpVar = VariableBuilder.createIntermediate(currentScope, SymbolType.BOOLEAN, getProgram());
       // Go straight to xxx!=0 instead of casting to bool
       ConstantValue nullValue;
       if(rValueType instanceof SymbolTypePointer) {

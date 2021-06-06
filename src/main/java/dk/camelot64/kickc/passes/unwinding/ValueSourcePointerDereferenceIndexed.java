@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes.unwinding;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -85,9 +86,7 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
                return new ValueSourceConstant(new SymbolTypePointer(elementType), elmPointer);
             } else {
                // Unwind to (elmType*)&struct + OFFSET_MEMBER + idx
-               Scope scope = programScope.getScope(currentBlock.getScope());
-               Variable elementAddress = scope.addVariableIntermediate();
-               elementAddress.setType(new SymbolTypePointer(elementType));
+               Variable elementAddress = VariableBuilder.createIntermediate(programScope.getScope(currentBlock.getScope()), new SymbolTypePointer(elementType), program);
                stmtIt.previous();
                stmtIt.add(new StatementAssignment((LValue) elementAddress.getRef(), memberPointer, Operators.PLUS, pointerDereferenceIndexed.getIndex(), true, currentStmt.getSource(), currentStmt.getComments()));
                stmtIt.next();
@@ -111,9 +110,7 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
                   return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
                } else {
                   // Unwind to ((type*)&struct + idx)[OFFSET_MEMBER]
-                  Scope scope = programScope.getScope(currentBlock.getScope());
-                  Variable idxAddress = scope.addVariableIntermediate();
-                  idxAddress.setType(new SymbolTypePointer(memberType));
+                  Variable idxAddress = VariableBuilder.createIntermediate(programScope.getScope(currentBlock.getScope()), new SymbolTypePointer(memberType), program);
                   stmtIt.previous();
                   stmtIt.add(new StatementAssignment((LValue) idxAddress.getRef(), structTypedPointer, Operators.PLUS, pointerDereferenceIndexed.getIndex(), true, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
@@ -125,8 +122,8 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
          if(memberArraySpec != null)
             throw new InternalError("Not implemented!");
          Scope scope = programScope.getScope(currentBlock.getScope());
-         Variable memberAddress = scope.addVariableIntermediate();
-         memberAddress.setType(new SymbolTypePointer(memberType));
+         SymbolTypePointer type = new SymbolTypePointer(memberType);
+         Variable memberAddress = VariableBuilder.createIntermediate(scope, type, program);
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
          // Add statement $1 = (memberType*)ptr_struct + OFFSET_MEMBER
          stmtIt.previous();

@@ -111,11 +111,6 @@ public abstract class Scope implements Symbol, Serializable {
       return symbol;
    }
 
-   public Variable addVariableIntermediate() {
-      String name = allocateIntermediateVariableName();
-      return add(Variable.createIntermediate(name, this, getSegmentData()));
-   }
-
    public Label addLabel(String name) {
       return add(new Label(name, this, false));
    }

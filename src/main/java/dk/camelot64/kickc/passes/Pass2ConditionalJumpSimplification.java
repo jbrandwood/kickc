@@ -1,16 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.StatementInfos;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -134,9 +130,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                   final ControlFlowBlock conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
                   final ScopeRef conditionDefineScopeRef = conditionDefineBlock.getScope();
                   final Scope conditionDefineScope = getScope().getScope(conditionDefineScopeRef);
-                  final Variable intermediateLoadStoreVar = conditionDefineScope.addVariableIntermediate();
                   SymbolType typeQualified = referencedLoadStoreVariable.getType().getQualified(false, referencedLoadStoreVariable.getType().isNomodify());
-                  intermediateLoadStoreVar.setType(typeQualified);
+                  final Variable intermediateLoadStoreVar = VariableBuilder.createIntermediate(conditionDefineScope, typeQualified, getProgram());
                   final StatementAssignment intermediateLoadStoreAssignment = new StatementAssignment(intermediateLoadStoreVar.getVariableRef(), referencedLoadStoreVariable.getRef(), true, simpleCondition.conditionAssignment.getSource(), Comment.NO_COMMENTS);
                   conditionDefineBlock.addStatementAfter(intermediateLoadStoreAssignment, simpleCondition.conditionAssignment);
                   // Replace all references to the load/store variable in the expressions with the new intermediate

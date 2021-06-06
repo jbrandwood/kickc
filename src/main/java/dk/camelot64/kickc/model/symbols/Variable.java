@@ -129,18 +129,6 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Create an intermediate variable. The type will initially be set to {@link SymbolType#VAR}.
-    *
-    * @param name The name
-    * @param scope The scope
-    * @param dataSegment The data segment (in main memory)
-    * @return The new intermediate variable
-    */
-   public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
-      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null);
-   }
-
-   /**
     * Create a version of a PHI master variable
     *
     * @param phiMaster The PHI master variable.

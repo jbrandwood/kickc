@@ -49,14 +49,15 @@ public class Pass3PhiLifting {
                      //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
+                        Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getPhiMaster().createVersion();
+                        newVar.setType(phiLValue.getType());
                      } else {
+                        Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
-                        newVar = lValVar.getScope().addVariableIntermediate();
+                        newVar = VariableBuilder.createIntermediate(lValVar.getScope(), lValVar.getType(), program);
                      }
-                     Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
-                     newVar.setType(phiLValue.getType());
                      List<Statement> predecessorStatements = predecessorBlock.getStatements();
                      Statement lastPredecessorStatement = null;
                      if(predecessorStatements.size() > 0) {

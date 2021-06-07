@@ -588,7 +588,7 @@ public class Pass4CodeGeneration {
                   // Add any comments
                   generateComments(asm, variable.getComments());
                   final String mainAsmName = AsmFormat.getAsmConstant(program, new ConstantSymbolPointer(mainVar.getRef()), 99, scopeRef);
-                  final String asmSymbolName = AsmFormat.getAsmSymbolName(program, mainVar, scopeRef);
+                  final String asmSymbolName = AsmFormat.getAsmSymbolName(program, variable, scopeRef);
                   if(!mainAsmName.equals(asmSymbolName)) {
                      asm.addLabelDecl(asmSymbolName, mainAsmName);
                   } else {

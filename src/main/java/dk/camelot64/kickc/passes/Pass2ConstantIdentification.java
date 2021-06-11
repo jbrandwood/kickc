@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -254,6 +257,18 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(256L)), Operators.PLUS, c2);
          case "dw=":
             return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(65536L)), Operators.PLUS, c2);
+         case "byte0=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffffff00L)), Operators.BOOL_OR, c2);
+         case "byte1=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff00ffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x100L)));
+         case "byte2=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xff00ffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
+         case "byte3=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x00ffffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x1000000L)));
+         case "word0=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff0000L)), Operators.BOOL_OR, c2);
+         case "word1=":
+            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x0000ffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
          case "*idx":
             // Pointer dereference - not constant
             return null;

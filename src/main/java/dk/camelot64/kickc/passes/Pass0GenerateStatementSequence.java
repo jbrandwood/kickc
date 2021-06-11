@@ -2233,7 +2233,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return lValue;
    }
 
-   private static LValue copyLValue(LValue lValue) {
+   public static LValue copyLValue(LValue lValue) {
       if(lValue instanceof VariableRef) {
          return new VariableRef(((VariableRef) lValue).getFullName());
       } else if(lValue instanceof LvalueIntermediate) {

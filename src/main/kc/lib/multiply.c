@@ -21,10 +21,10 @@ unsigned int mul8u(char a, char b) {
 signed int mul8s(signed char a, signed char b) {
     unsigned int m = mul8u((char)a, (char) b);
     if(a<0) {
-        >m = (>m)-(char)b;
+        BYTE1(m) = BYTE1(m)-(char)b;
     }
     if(b<0) {
-        >m = (>m)-(char)a;
+        BYTE1(m) = BYTE1(m)-(char)a;
     }
     return (signed int)m;
 }
@@ -34,7 +34,7 @@ signed int mul8s(signed char a, signed char b) {
 signed int mul8su(signed char a, char b) {
     unsigned int m = mul8u((char)a, (char) b);
     if(a<0) {
-        >m = (>m)-(char)b;
+        BYTE1(m) = BYTE1(m)-(char)b;
     }
     return (signed int)m;
 }
@@ -58,10 +58,10 @@ unsigned long mul16u(unsigned int a, unsigned int b) {
 signed long mul16s(signed int a, signed int b) {
     unsigned long m = mul16u((unsigned int)a, (unsigned int) b);
     if(a<0) {
-        >m = (>m)-(unsigned int)b;
+        WORD1(m) = WORD1(m)-(unsigned int)b;
     }
     if(b<0) {
-        >m = (>m)-(unsigned int)a;
+        WORD1(m) = WORD1(m)-(unsigned int)a;
     }
     return (signed long)m;
 }

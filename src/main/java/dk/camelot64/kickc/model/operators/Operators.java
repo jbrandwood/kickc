@@ -18,8 +18,12 @@ public class Operators {
    public static final OperatorBinary WORD = new OperatorWord(2);
    public static final OperatorBinary DWORD = new OperatorDWord(2);
    public static final OperatorBinary DEREF_IDX = new OperatorDerefIdx(2);
-   public static final OperatorBinary SET_LOWBYTE = new OperatorSetLow(2);
-   public static final OperatorBinary SET_HIBYTE = new OperatorSetHigh(2);
+   public static final OperatorBinary SET_BYTE0 = new OperatorSetByte0(2);
+   public static final OperatorBinary SET_BYTE1 = new OperatorSetByte1(2);
+   public static final OperatorBinary SET_BYTE2 = new OperatorSetByte2(2);
+   public static final OperatorBinary SET_BYTE3 = new OperatorSetByte3(2);
+   public static final OperatorBinary SET_WORD0 = new OperatorSetWord0(2);
+   public static final OperatorBinary SET_WORD1 = new OperatorSetWord1(2);
    public static final OperatorUnary CAST_BYTE = new OperatorCastByte(2);
    public static final OperatorUnary CAST_SBYTE = new OperatorCastSByte(2);
    public static final OperatorUnary CAST_WORD = new OperatorCastWord(2);
@@ -50,7 +54,9 @@ public class Operators {
    public static final OperatorBinary LOGIC_AND = new OperatorLogicAnd(12);
    public static final OperatorBinary LOGIC_OR = new OperatorLogicOr(13);
    public static final OperatorBinary ASSIGNMENT = new OperatorAssignment(14);
+   @Deprecated
    public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
+   @Deprecated
    public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
    public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
    public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
@@ -99,10 +105,6 @@ public class Operators {
             return SHIFT_LEFT;
          case ">>":
             return SHIFT_RIGHT;
-         case "lo=":
-            return SET_LOWBYTE;
-         case "hi=":
-            return SET_HIBYTE;
          default:
             throw new RuntimeException("Unknown operator " + op);
       }

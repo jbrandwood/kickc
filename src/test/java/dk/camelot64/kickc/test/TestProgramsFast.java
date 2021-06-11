@@ -90,6 +90,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testOperatorByte0LValue1() throws IOException {
+      compileAndCompare("operator-byte0-lvalue-1.c");
+   }
+
+   @Test
    public void testOperatorByte0Iintializer() throws IOException {
       compileAndCompare("operator-byte0-initializer.c");
    }

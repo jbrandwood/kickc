@@ -9,21 +9,17 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_line_cursor = $10
-  .label print_char_cursor = $e
-  .label print_char_cursor_1 = $10
+  .label print_line_cursor = 8
+  .label print_char_cursor = $10
+  .label print_char_cursor_1 = 8
   .label print_line_cursor_1 = 6
 .segment Code
 main: {
-    .label __3 = 8
-    .label __6 = $e
-    .label __16 = $10
-    .label __20 = $12
-    .label __24 = $14
-    .label __28 = $16
-    .label __32 = 8
-    .label __33 = $e
-    .label dw2 = $a
+    .label __3 = $a
+    .label __6 = $10
+    .label __28 = $a
+    .label __29 = $10
+    .label dw2 = $c
     .label dw = 2
     // print_cls()
     jsr print_cls
@@ -60,43 +56,43 @@ main: {
     // }
     rts
   __b2:
-    // >dw
+    // WORD1(dw)
     lda.z dw+2
     sta.z __3
     lda.z dw+3
     sta.z __3+1
-    // >dw2 = (>dw) + $1111
+    // WORD1(dw2) = WORD1(dw) + $1111
     clc
-    lda.z __32
+    lda.z __28
     adc #<$1111
-    sta.z __32
-    lda.z __32+1
+    sta.z __28
+    lda.z __28+1
     adc #>$1111
-    sta.z __32+1
+    sta.z __28+1
     lda.z dw
     sta.z dw2
     lda.z dw+1
     sta.z dw2+1
-    lda.z __32
+    lda.z __28
     sta.z dw2+2
-    lda.z __32+1
+    lda.z __28+1
     sta.z dw2+3
-    // <dw
+    // WORD0(dw)
     lda.z dw
     sta.z __6
     lda.z dw+1
     sta.z __6+1
-    // <dw2 = (<dw) + $1111
+    // WORD0(dw2) = WORD0(dw) + $1111
     clc
-    lda.z __33
+    lda.z __29
     adc #<$1111
-    sta.z __33
-    lda.z __33+1
+    sta.z __29
+    lda.z __29+1
     adc #>$1111
-    sta.z __33+1
-    lda.z __33
+    sta.z __29+1
+    lda.z __29
     sta.z dw2
-    lda.z __33+1
+    lda.z __29+1
     sta.z dw2+1
     // print_ulong(dw2)
     // Test set/get low word of dword
@@ -104,7 +100,7 @@ main: {
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_uint(>dw2)
+    // print_uint(WORD1(dw2))
     lda.z dw2+2
     sta.z print_uint.w
     lda.z dw2+3
@@ -114,7 +110,7 @@ main: {
   // Test get high word of dword
     lda #' '
     jsr print_char
-    // print_uint(<dw2)
+    // print_uint(WORD0(dw2))
     lda.z dw2
     sta.z print_uint.w
     lda.z dw2+1
@@ -124,49 +120,29 @@ main: {
   // Test get low word of dword
     lda #' '
     jsr print_char
-    // >dw2
-    lda.z dw2+2
-    sta.z __16
-    lda.z dw2+3
-    sta.z __16+1
-    // print_uchar(> >dw2)
-    tax
+    // print_uchar(BYTE3(dw2))
+    ldx.z dw2+3
     jsr print_uchar
     // print_char(' ')
   // Test get high high byte of dword
     lda #' '
     jsr print_char
-    // >dw2
-    lda.z dw2+2
-    sta.z __20
-    lda.z dw2+3
-    sta.z __20+1
-    // print_uchar(< >dw2)
-    ldx.z __20
+    // print_uchar(BYTE2(dw2))
+    ldx.z dw2+2
     jsr print_uchar
     // print_char(' ')
   // Test get low high byte of dword
     lda #' '
     jsr print_char
-    // <dw2
-    lda.z dw2
-    sta.z __24
-    lda.z dw2+1
-    sta.z __24+1
-    // print_uchar(> <dw2)
-    tax
+    // print_uchar(BYTE1(dw2))
+    ldx.z dw2+1
     jsr print_uchar
     // print_char(' ')
   // Test get high low byte of dword
     lda #' '
     jsr print_char
-    // <dw2
-    lda.z dw2
-    sta.z __28
-    lda.z dw2+1
-    sta.z __28+1
-    // print_uchar(< <dw2)
-    ldx.z __28
+    // print_uchar(BYTE0(dw2))
+    ldx.z dw2
     jsr print_uchar
     // print_ln()
   // Test get low low byte of dword
@@ -194,9 +170,9 @@ print_cls: {
     rts
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp($a) dw)
+// print_ulong(dword zp($c) dw)
 print_ulong: {
-    .label dw = $a
+    .label dw = $c
     // print_uint(>dw)
     lda.z dw+2
     sta.z print_uint.w
@@ -232,9 +208,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(8) w)
+// print_uint(word zp($a) w)
 print_uint: {
-    .label w = 8
+    .label w = $a
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -301,7 +277,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $10
+    .label dst = 8
     lda #<str
     sta.z dst
     lda #>str

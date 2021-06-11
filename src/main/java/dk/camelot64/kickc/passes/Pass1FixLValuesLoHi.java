@@ -45,17 +45,34 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
                final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(intermediate.getVariable(), getGraph(), programScope);
+               final Scope currentScope = programScope.getScope(block.getScope());
                if(varAssignments.size() == 1) {
                   final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
                   if(varAssignment.type.equals(VarAssignments.VarAssignment.Type.STATEMENT_LVALUE) && varAssignment.statementLValue instanceof StatementAssignment) {
                      StatementAssignment intermediateAssignment = (StatementAssignment) varAssignment.statementLValue;
-                     if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
-                        // Found assignment to an intermediate low byte lValue <x = ...
-                        fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
+                     if(Operators.BYTE0.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_BYTE0);
                         intermediates.add(intermediate.getVariable());
-                     } else if(Operators.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
-                        // Found assignment to an intermediate low byte lValue >x = ...
-                        fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_HIBYTE);
+                     } else if(Operators.BYTE1.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_BYTE1);
+                        intermediates.add(intermediate.getVariable());
+                     } else if(Operators.BYTE2.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_BYTE2);
+                        intermediates.add(intermediate.getVariable());
+                     } else if(Operators.BYTE3.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_BYTE3);
+                        intermediates.add(intermediate.getVariable());
+                     } else if(Operators.WORD0.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_WORD0);
+                        intermediates.add(intermediate.getVariable());
+                     } else if(Operators.WORD1.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue byte0(x) = ...
+                        fixLoHiLValue(programScope, currentScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_WORD1);
                         intermediates.add(intermediate.getVariable());
                      }
                   }
@@ -73,21 +90,22 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
 
    private void fixLoHiLValue(
          ProgramScope programScope,
+         Scope currentScope,
          ListIterator<Statement> statementsIt,
          StatementLValue statementLValue,
          LvalueIntermediate intermediate,
          StatementAssignment intermediateAssignment,
          Operator loHiOperator) {
-      VariableRef loHiVar = (VariableRef) intermediateAssignment.getrValue2();
-      Variable intermediateVar = programScope.getVariable(intermediate.getVariable());
-      Scope currentScope = intermediateVar.getScope();
+      final RValue intermediateValue = intermediateAssignment.getrValue2();
       // Let assignment put value into a tmp Var
       SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(intermediateAssignment));
       Variable tmpVar = VariableBuilder.createIntermediate(currentScope, type, getProgram());
       SymbolVariableRef tmpVarRef = tmpVar.getRef();
       statementLValue.setlValue((LValue) tmpVarRef);
       // Insert an extra "set low" assignment statement
-      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, true, statementLValue.getSource(), new ArrayList<>());
+      // TODO: Copy intermediateValue
+      final LValue lValue = Pass0GenerateStatementSequence.copyLValue((LValue) intermediateValue);
+      Statement setLoHiAssignment = new StatementAssignment(lValue, intermediateValue, loHiOperator, tmpVarRef, true, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());

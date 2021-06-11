@@ -52,10 +52,10 @@ const byte plot_bit[256];
 void plot(byte x, byte y) {
     byte* plotter_x = (byte*)0;
     word plotter_y = 0;
-    >plotter_x = plot_xhi[x];  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
-    <plotter_x = plot_xlo[x];
-    >plotter_y = plot_yhi[y];
-    <plotter_y = plot_ylo[y];
+    BYTE1(plotter_x) = plot_xhi[x];  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
+    BYTE0(plotter_x) = plot_xlo[x];
+    BYTE1(plotter_y) = plot_yhi[y];
+    BYTE0(plotter_y) = plot_ylo[y];
     byte* plotter = plotter_x+plotter_y;
     *plotter = *plotter | plot_bit[x];
 }

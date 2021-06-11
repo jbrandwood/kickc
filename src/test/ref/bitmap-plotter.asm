@@ -48,8 +48,8 @@ main: {
     jmp __b1
 }
 init_screen: {
-    .label b = 6
-    .label c = 4
+    .label b = 7
+    .label c = 5
     lda #<BITMAP
     sta.z b
     lda #>BITMAP
@@ -101,7 +101,7 @@ init_screen: {
 }
 init_plot_tables: {
     .label __9 = 2
-    .label yoffs = 6
+    .label yoffs = 7
     ldy #$80
     ldx #0
   __b1:
@@ -168,47 +168,51 @@ init_plot_tables: {
     rts
 }
 plots: {
-    ldx #0
+    .label i = 2
+    lda #0
+    sta.z i
   __b1:
     // for(byte i=0; i<plots_cnt;i++)
-    cpx #plots_cnt
+    lda.z i
+    cmp #plots_cnt
     bcc __b2
     // }
     rts
   __b2:
     // plot(plots_x[i], plots_y[i])
-    lda plots_x,x
+    ldy.z i
+    lda plots_x,y
     sta.z plot.x
-    lda plots_y,x
+    lda plots_y,y
     sta.z plot.y
     jsr plot
     // for(byte i=0; i<plots_cnt;i++)
-    inx
+    inc.z i
     jmp __b1
 }
-// plot(byte zp(2) x, byte zp(3) y)
+// plot(byte zp(3) x, byte zp(4) y)
 plot: {
-    .label x = 2
-    .label y = 3
-    .label plotter_x = 4
-    .label plotter_y = 6
-    .label plotter = 4
-    // >plotter_x = plot_xhi[x]
+    .label x = 3
+    .label y = 4
+    .label plotter_x = 5
+    .label plotter_y = 7
+    .label plotter = 5
+    // BYTE1(plotter_x) = plot_xhi[x]
     ldy.z x
     lda plot_xhi,y
     sta.z plotter_x+1
     lda #<0
     sta.z plotter_x
-    // <plotter_x = plot_xlo[x]
+    // BYTE0(plotter_x) = plot_xlo[x]
     lda plot_xlo,y
     sta.z plotter_x
-    // >plotter_y = plot_yhi[y]
+    // BYTE1(plotter_y) = plot_yhi[y]
     ldy.z y
     lda plot_yhi,y
     sta.z plotter_y+1
     lda #<0
     sta.z plotter_y
-    // <plotter_y = plot_ylo[y]
+    // BYTE0(plotter_y) = plot_ylo[y]
     lda plot_ylo,y
     sta.z plotter_y
     // byte* plotter = plotter_x+plotter_y

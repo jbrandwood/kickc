@@ -827,7 +827,7 @@ byte main::i#3
 byte main::i#4
 number~ main::toD0181_$0
 number~ main::toD0181_$1
-number~ main::toD0181_$2
+byte~ main::toD0181_$2
 byte~ main::toD0181_$3
 number~ main::toD0181_$4
 number~ main::toD0181_$5
@@ -1023,7 +1023,6 @@ Adding number conversion cast (unumber) $3fff in main::toD0181_$0 = main::toD018
 Adding number conversion cast (unumber) main::toD0181_$0 in main::toD0181_$0 = main::toD0181_$7 & (unumber)$3fff
 Adding number conversion cast (unumber) 4 in main::toD0181_$1 = main::toD0181_$0 * 4
 Adding number conversion cast (unumber) main::toD0181_$1 in main::toD0181_$1 = main::toD0181_$0 * (unumber)4
-Adding number conversion cast (unumber) main::toD0181_$2 in main::toD0181_$2 = > main::toD0181_$1
 Adding number conversion cast (unumber) 4 in main::toD0181_$4 = main::toD0181_$3 / 4
 Adding number conversion cast (unumber) main::toD0181_$4 in main::toD0181_$4 = main::toD0181_$3 / (unumber)4
 Adding number conversion cast (unumber) $f in main::toD0181_$5 = main::toD0181_$4 & $f
@@ -1177,7 +1176,6 @@ Inferred type updated to byte in main::vicSelectGfxBank1_toDd001_$1 = main::vicS
 Inferred type updated to byte in main::vicSelectGfxBank1_toDd001_$2 = 3 ^ main::vicSelectGfxBank1_toDd001_$1
 Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
 Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
-Inferred type updated to byte in main::toD0181_$2 = > main::toD0181_$1
 Inferred type updated to byte in main::toD0181_$4 = main::toD0181_$3 / 4
 Inferred type updated to byte in main::toD0181_$5 = main::toD0181_$4 & $f
 Inferred type updated to byte in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
@@ -2814,13 +2812,13 @@ bitmap_init: {
     // [35] bitmap_init::$7 = bitmap_init::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __7
-    // [36] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
+    // [36] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
     lda.z yoffs
     // [37] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
     // [38] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
-    // [39] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
+    // [39] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
     lda.z yoffs+1
     // [40] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
@@ -3175,7 +3173,7 @@ point_init: {
     // point_init::@7
   __b7:
     // [93] point_init::x_stepf#0 = divr16s::return#3
-    // [94] point_init::$9 = > point_init::x_stepf#0 -- vbuaa=_hi_vwsz1 
+    // [94] point_init::$9 = > point_init::x_stepf#0 -- vbuaa=_byte1_vwsz1 
     lda.z x_stepf+1
     // [95] point_init::$10 = point_init::$9 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
@@ -3246,7 +3244,7 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // [105] bitmap_plot::$1 = < bitmap_plot::x#0 -- vbuxx=_lo_vwuz1 
+    // [105] bitmap_plot::$1 = < bitmap_plot::x#0 -- vbuxx=_byte0_vwuz1 
     ldx.z x
     // [106] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
@@ -3419,7 +3417,7 @@ divr16u: {
     // [132] divr16u::rem#0 = divr16u::rem#4 << 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
-    // [133] divr16u::$1 = > divr16u::dividend#2 -- vbuaa=_hi_vwuz1 
+    // [133] divr16u::$1 = > divr16u::dividend#2 -- vbuaa=_byte1_vwuz1 
     lda.z dividend+1
     // [134] divr16u::$2 = divr16u::$1 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -4110,19 +4108,19 @@ bitmap_init: {
     // [35] bitmap_init::$7 = bitmap_init::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __7
-    // <yoffs
-    // [36] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
+    // BYTE0(yoffs)
+    // [36] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     // [37] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     // [38] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
-    // >yoffs
-    // [39] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
+    // BYTE1(yoffs)
+    // [39] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     // [40] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
@@ -4454,16 +4452,16 @@ point_init: {
     // point_init::@7
     // signed word x_stepf = divr16s(0, x_diff, y_diff)
     // [93] point_init::x_stepf#0 = divr16s::return#3
-    // >x_stepf
-    // [94] point_init::$9 = > point_init::x_stepf#0 -- vbuaa=_hi_vwsz1 
+    // BYTE1(x_stepf)
+    // [94] point_init::$9 = > point_init::x_stepf#0 -- vbuaa=_byte1_vwsz1 
     lda.z x_stepf+1
-    // (>x_stepf)/$10
+    // BYTE1(x_stepf)/$10
     // [95] point_init::$10 = point_init::$9 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
     lsr
     lsr
-    // y_add[point_idx] = (signed byte)((>x_stepf)/$10)
+    // y_add[point_idx] = (signed byte)(BYTE1(x_stepf)/$10)
     // [96] y_add[point_init::point_idx#0] = (signed byte)point_init::$10 -- pbsc1_derefidx_vbuz1=vbsaa 
     ldy.z point_idx
     sta y_add,y
@@ -4534,10 +4532,10 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
-    // [105] bitmap_plot::$1 = < bitmap_plot::x#0 -- vbuxx=_lo_vwuz1 
+    // BYTE0(x)
+    // [105] bitmap_plot::$1 = < bitmap_plot::x#0 -- vbuxx=_byte0_vwuz1 
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
+    // *plotter |= bitmap_plot_bit[BYTE0(x)]
     // [106] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
@@ -4690,13 +4688,13 @@ divr16u: {
     // [132] divr16u::rem#0 = divr16u::rem#4 << 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
-    // >dividend
-    // [133] divr16u::$1 = > divr16u::dividend#2 -- vbuaa=_hi_vwuz1 
+    // BYTE1(dividend)
+    // [133] divr16u::$1 = > divr16u::dividend#2 -- vbuaa=_byte1_vwuz1 
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     // [134] divr16u::$2 = divr16u::$1 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     // [135] if(divr16u::$2==0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b2

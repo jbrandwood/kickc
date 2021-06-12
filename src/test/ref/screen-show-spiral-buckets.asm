@@ -515,7 +515,7 @@ init_angle_screen: {
     bcc !+
     inc.z __7+1
   !:
-    // byte ang_w = >(angle_w+0x0080)
+    // byte ang_w = BYTE1(angle_w+0x0080)
     lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w

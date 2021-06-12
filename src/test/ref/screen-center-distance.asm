@@ -356,7 +356,7 @@ clock: {
 // print_ulong_at(dword zp($c) dw)
 print_ulong_at: {
     .label dw = $c
-    // print_uint_at(>dw, at)
+    // print_uint_at(WORD1(dw), at)
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
@@ -366,7 +366,7 @@ print_ulong_at: {
     lda #>main.BASE_SCREEN
     sta.z print_uint_at.at+1
     jsr print_uint_at
-    // print_uint_at(<dw, at+4)
+    // print_uint_at(WORD0(dw), at+4)
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
@@ -482,11 +482,11 @@ sqrt: {
 print_uint_at: {
     .label w = $13
     .label at = $a
-    // print_uchar_at(>w, at)
+    // print_uchar_at(BYTE1(w), at)
     lda.z w+1
     sta.z print_uchar_at.b
     jsr print_uchar_at
-    // print_uchar_at(<w, at+2)
+    // print_uchar_at(BYTE0(w), at+2)
     lda.z w
     sta.z print_uchar_at.b
     lda #2

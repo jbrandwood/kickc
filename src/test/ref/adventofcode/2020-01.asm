@@ -411,7 +411,7 @@ main: {
     jsr mul16u
     // mul16u(entries[i],entries[k])
     // unsigned long mul1 = mul16u(entries[i],entries[k])
-    // mul16u( <mul1 ,entries[j] )
+    // mul16u( WORD0(mul1) ,entries[j] )
     lda.z mul1
     sta.z mul16u.a
     lda.z mul1+1
@@ -432,8 +432,8 @@ main: {
     pla
     sta.z mul16u.b
     jsr mul16u
-    // mul16u( <mul1 ,entries[j] )
-    // unsigned long mul2 = mul16u( <mul1 ,entries[j] )
+    // mul16u( WORD0(mul1) ,entries[j] )
+    // unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] )
     // printf("multiplied %lu\n", mul2)
     lda #<s11
     sta.z cputs.s
@@ -989,9 +989,8 @@ utoa: {
     cmp #5-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];

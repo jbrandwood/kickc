@@ -6098,7 +6098,7 @@ div16u: {
 // print_uint(word zp(6) w)
 print_uint: {
     .label w = 6
-    // [172] print_uchar::b#1 = > print_uint::w#5 -- vbuz1=_hi_vwuz2 
+    // [172] print_uchar::b#1 = > print_uint::w#5 -- vbuz1=_byte1_vwuz2 
     lda.z w+1
     sta.z print_uchar.b
     // [173] call print_uchar 
@@ -6110,7 +6110,7 @@ print_uint: {
     jmp __b1
     // print_uint::@1
   __b1:
-    // [174] print_uchar::b#2 = < print_uint::w#5 -- vbuz1=_lo_vwuz2 
+    // [174] print_uchar::b#2 = < print_uint::w#5 -- vbuz1=_byte0_vwuz2 
     lda.z w
     sta.z print_uchar.b
     // [175] call print_uchar 
@@ -6562,7 +6562,7 @@ divr16u: {
     // [251] divr16u::rem#0 = divr16u::rem#5 << 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
-    // [252] divr16u::$1 = > divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
+    // [252] divr16u::$1 = > divr16u::dividend#3 -- vbuaa=_byte1_vwuz1 
     lda.z dividend+1
     // [253] divr16u::$2 = divr16u::$1 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -8340,8 +8340,8 @@ div16u: {
 // print_uint(word zp(6) w)
 print_uint: {
     .label w = 6
-    // print_uchar(>w)
-    // [172] print_uchar::b#1 = > print_uint::w#5 -- vbuz1=_hi_vwuz2 
+    // print_uchar(BYTE1(w))
+    // [172] print_uchar::b#1 = > print_uint::w#5 -- vbuz1=_byte1_vwuz2 
     lda.z w+1
     sta.z print_uchar.b
     // [173] call print_uchar 
@@ -8350,8 +8350,8 @@ print_uint: {
     // [145] phi print_uchar::b#7 = print_uchar::b#1 [phi:print_uint->print_uchar#1] -- register_copy 
     jsr print_uchar
     // print_uint::@1
-    // print_uchar(<w)
-    // [174] print_uchar::b#2 = < print_uint::w#5 -- vbuz1=_lo_vwuz2 
+    // print_uchar(BYTE0(w))
+    // [174] print_uchar::b#2 = < print_uint::w#5 -- vbuz1=_byte0_vwuz2 
     lda.z w
     sta.z print_uchar.b
     // [175] call print_uchar 
@@ -8763,13 +8763,13 @@ divr16u: {
     // [251] divr16u::rem#0 = divr16u::rem#5 << 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
-    // >dividend
-    // [252] divr16u::$1 = > divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
+    // BYTE1(dividend)
+    // [252] divr16u::$1 = > divr16u::dividend#3 -- vbuaa=_byte1_vwuz1 
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     // [253] divr16u::$2 = divr16u::$1 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     // [254] if(divr16u::$2==0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b2

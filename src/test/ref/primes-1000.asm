@@ -243,12 +243,12 @@ mul16s: {
     // if(a<0)
     lda.z a+1
     bpl __b1
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __6
     lda.z m+3
     sta.z __6+1
-    // >m = (>m)-(unsigned int)b
+    // WORD1(m) = WORD1(m)-(unsigned int)b
     lda.z __11
     sec
     sbc.z b
@@ -264,12 +264,12 @@ mul16s: {
     // if(b<0)
     lda.z b+1
     bpl __b2
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(unsigned int)a
+    // WORD1(m) = WORD1(m)-(unsigned int)a
     lda.z __12
     sec
     sbc.z a
@@ -498,9 +498,8 @@ utoa: {
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
@@ -599,11 +598,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

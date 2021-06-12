@@ -138,9 +138,9 @@ makecharset: {
     // }
     rts
   __b2:
-    // <c
+    // BYTE0(c)
     ldx.z c
-    // char s = SINTABLE[<c]
+    // char s = SINTABLE[BYTE0(c)]
     lda SINTABLE,x
     sta.z s
     lda #0

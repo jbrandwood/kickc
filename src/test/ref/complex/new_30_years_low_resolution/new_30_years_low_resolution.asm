@@ -110,13 +110,13 @@
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label P1_COLORS = $a800
-  // A800-AFFF 
+  // A800-AFFF
   .label P1_PIXELS = $c000
   // C000-DFFF
   .label P1_SCREEN = $e000
-  // E000-E3FF 
+  // E000-E3FF
   .label P1_SPRITES = $fc00
-  // E000-E3FF 
+  // E000-E3FF
   .label PIXELS_EMPTY = $e800
   // E800-EFFF
   // A copy of the load screen and colors
@@ -757,11 +757,11 @@ irq_flipper_bottom: {
     nop
     nop
     nop
-    // <irq_flipper_bottom_line
+    // BYTE0(irq_flipper_bottom_line)
     lda.z irq_flipper_bottom_line
-    // (<irq_flipper_bottom_line)&7
+    // BYTE0(irq_flipper_bottom_line)&7
     and #7
-    // raster_fine((<irq_flipper_bottom_line)&7)
+    // raster_fine(BYTE0(irq_flipper_bottom_line)&7)
     sta.z raster_fine.line_offset
     jsr raster_fine
     // asm
@@ -935,11 +935,11 @@ irq_flipper_top: {
     nop
     nop
     nop
-    // <irq_flipper_top_line
+    // BYTE0(irq_flipper_top_line)
     lda.z irq_flipper_top_line
-    // (<irq_flipper_top_line)&7
+    // BYTE0(irq_flipper_top_line)&7
     and #7
-    // raster_fine((<irq_flipper_top_line)&7)
+    // raster_fine(BYTE0(irq_flipper_top_line)&7)
     sta.z raster_fine.line_offset
     jsr raster_fine
     // asm
@@ -952,9 +952,9 @@ irq_flipper_top: {
     stx BG_COLOR
     lda #$c8
     sta VICII_CONTROL2
-    // >irq_flipper_bottom_line
+    // BYTE1(irq_flipper_bottom_line)
     lda.z irq_flipper_bottom_line+1
-    // if(>irq_flipper_bottom_line)
+    // if(BYTE1(irq_flipper_bottom_line))
     // Set up the flipper IRQ
     cmp #0
     bne __b1
@@ -963,11 +963,11 @@ irq_flipper_top: {
     and VICII_CONTROL1
     sta VICII_CONTROL1
   __b2:
-    // <irq_flipper_bottom_line
+    // BYTE0(irq_flipper_bottom_line)
     lda.z irq_flipper_bottom_line
-    // (<irq_flipper_bottom_line)&0xf8
+    // BYTE0(irq_flipper_bottom_line)&0xf8
     and #$f8
-    // *RASTER = (<irq_flipper_bottom_line)&0xf8
+    // *RASTER = BYTE0(irq_flipper_bottom_line)&0xf8
     sta RASTER
     // *HARDWARE_IRQ = &irq_flipper_bottom
     lda #<irq_flipper_bottom
@@ -1022,9 +1022,9 @@ irq_part1_top: {
     // Show screen
     lda #toD0181_return
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-    // >irq_flipper_top_line
+    // BYTE1(irq_flipper_top_line)
     lda.z irq_flipper_top_line+1
-    // if(>irq_flipper_top_line)
+    // if(BYTE1(irq_flipper_top_line))
     // Set up the flipper IRQ
     cmp #0
     bne __b1
@@ -1033,11 +1033,11 @@ irq_part1_top: {
     and VICII_CONTROL1
     sta VICII_CONTROL1
   __b2:
-    // <irq_flipper_top_line
+    // BYTE0(irq_flipper_top_line)
     lda.z irq_flipper_top_line
-    // (<irq_flipper_top_line)&0xf8
+    // BYTE0(irq_flipper_top_line)&0xf8
     and #$f8
-    // *RASTER = (<irq_flipper_top_line)&0xf8
+    // *RASTER = BYTE0(irq_flipper_top_line)&0xf8
     sta RASTER
     // *HARDWARE_IRQ = &irq_flipper_top
     lda #<irq_flipper_top
@@ -1287,14 +1287,14 @@ vsp_update_screen: {
     sta.z x_offset8
     lda.z __0+1
     sta.z x_offset8+1
-    // >x_offset8
-    // if(>x_offset8 == 0)
+    // BYTE1(x_offset8)
+    // if(BYTE1(x_offset8) == 0)
     cmp #0
     bne !__b1+
     jmp __b1
   !__b1:
-    // >x_offset8
-    // if(>x_offset8 == 1)
+    // BYTE1(x_offset8)
+    // if(BYTE1(x_offset8) == 1)
     cmp #1
     bne !__b2+
     jmp __b2

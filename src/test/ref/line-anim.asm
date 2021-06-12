@@ -125,15 +125,15 @@ bitmap_init: {
     // y&$7
     lda #7
     sax.z __7
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
@@ -361,14 +361,14 @@ point_init: {
     jsr divr16s
     // divr16s(0, x_diff, y_diff)
     // signed word x_stepf = divr16s(0, x_diff, y_diff)
-    // >x_stepf
+    // BYTE1(x_stepf)
     lda.z x_stepf+1
-    // (>x_stepf)/$10
+    // BYTE1(x_stepf)/$10
     lsr
     lsr
     lsr
     lsr
-    // y_add[point_idx] = (signed byte)((>x_stepf)/$10)
+    // y_add[point_idx] = (signed byte)(BYTE1(x_stepf)/$10)
     ldy.z point_idx
     sta y_add,y
     jmp __b2
@@ -426,9 +426,9 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
+    // BYTE0(x)
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
+    // *plotter |= bitmap_plot_bit[BYTE0(x)]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -523,11 +523,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

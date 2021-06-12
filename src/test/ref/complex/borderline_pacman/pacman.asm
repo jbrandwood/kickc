@@ -521,7 +521,7 @@ irq_screen_top: {
     // Change graphics bank
     lda #toDd002_return
     sta CIA2
-    // canvas_base_hi = >SPRITES_2
+    // canvas_base_hi = BYTE1(SPRITES_2)
     // Set the next canvas base address
     lda #>SPRITES_2
     sta.z canvas_base_hi
@@ -573,7 +573,7 @@ irq_screen_top: {
     // Change graphics bank
     lda #toDd001_return
     sta CIA2
-    // canvas_base_hi = >SPRITES_1
+    // canvas_base_hi = BYTE1(SPRITES_1)
     // Set the next canvas base address
     lda #>SPRITES_1
     sta.z canvas_base_hi
@@ -2179,7 +2179,7 @@ splash_run: {
     // Set initial graphics bank
     lda #toDd001_return
     sta CIA2
-    // canvas_base_hi = >SPRITES_2
+    // canvas_base_hi = BYTE1(SPRITES_2)
     // Set initial render/restore buffer
     lda #>SPRITES_2
     sta.z canvas_base_hi
@@ -2366,9 +2366,9 @@ splash_run: {
     txa
     lsr
     tax
-    // >xpos
+    // BYTE1(xpos)
     lda.z xpos+1
-    // if((>xpos))
+    // if(BYTE1(xpos))
     cmp #0
     beq __b3
     // msb |=0x80
@@ -3341,13 +3341,13 @@ init_render_index: {
     sta.z canvas+1
     pla
     sta.z canvas
-    // <canvas
-    // render_index_xcol[RENDER_OFFSET_CANVAS_LO] = <canvas
+    // BYTE0(canvas)
+    // render_index_xcol[RENDER_OFFSET_CANVAS_LO] = BYTE0(canvas)
     ldy #0
     sta (render_index_xcol_1),y
-    // >canvas
+    // BYTE1(canvas)
     lda.z canvas+1
-    // render_index_xcol[RENDER_OFFSET_CANVAS_HI] = >canvas
+    // render_index_xcol[RENDER_OFFSET_CANVAS_HI] = BYTE1(canvas)
     ldy #RENDER_OFFSET_CANVAS_HI
     sta (render_index_xcol_1),y
     // render_index_xcol[RENDER_OFFSET_YPOS_INC] = ypos_inc_offset
@@ -3456,19 +3456,19 @@ init_bobs_restore: {
     // for(char i=0;i<SIZE_BOB_RESTORE;i++)
     cpy #SIZE_BOB_RESTORE
     bcc __b4
-    // bob_restore[0] = <CANVAS_HIDDEN
+    // bob_restore[0] = BYTE0(CANVAS_HIDDEN)
     lda #0
     tay
     sta (bob_restore),y
-    // bob_restore[1] = >CANVAS_HIDDEN
+    // bob_restore[1] = BYTE1(CANVAS_HIDDEN)
     lda #>CANVAS_HIDDEN
     ldy #1
     sta (bob_restore),y
-    // bob_restore[3] = <CANVAS_HIDDEN
+    // bob_restore[3] = BYTE0(CANVAS_HIDDEN)
     lda #0
     ldy #3
     sta (bob_restore),y
-    // bob_restore[4] = >CANVAS_HIDDEN
+    // bob_restore[4] = BYTE1(CANVAS_HIDDEN)
     lda #>CANVAS_HIDDEN
     ldy #4
     sta (bob_restore),y
@@ -3863,13 +3863,13 @@ render: {
     lsr
     lsr
     tay
-    // (>RENDER_INDEX) + xcol
+    // BYTE1(RENDER_INDEX) + xcol
     lax.z xcol
     axs #-[>RENDER_INDEX]
     // ytile*2
     tya
     asl
-    // char * render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
+    // char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 }
     stx.z render_index_xcol+1
     sta.z render_index_xcol
     // unsigned int canvas_offset = { render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
@@ -4010,13 +4010,13 @@ render_tiles: {
     lda #>TILES_RIGHT
     adc #0
     sta.z tile_right_pixels+1
-    // (>RENDER_INDEX) + xcol
+    // BYTE1(RENDER_INDEX) + xcol
     lax.z xcol
     axs #-[>RENDER_INDEX]
     // ytile*2
     lda.z ytile
     asl
-    // char * render_index_xcol = (char*){ (>RENDER_INDEX) + xcol, ytile*2 }
+    // char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 }
     stx.z render_index_xcol+1
     sta.z render_index_xcol
     // unsigned int canvas_offset = {render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }

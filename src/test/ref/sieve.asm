@@ -495,7 +495,7 @@ div32u16u: {
     .label quotient_lo = $1b
     .label return = $17
     .label dividend = $11
-    // divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
     lda.z dividend+2
     sta.z divr16u.dividend
     lda.z dividend+3
@@ -504,20 +504,20 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
+    // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
     lda.z dividend
     sta.z divr16u.dividend
     lda.z dividend+1
     sta.z divr16u.dividend+1
     jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
+    // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
@@ -587,9 +587,8 @@ utoa: {
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
@@ -657,11 +656,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

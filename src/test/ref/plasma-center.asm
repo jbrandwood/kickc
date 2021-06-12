@@ -365,7 +365,7 @@ init_angle_screen: {
     bcc !+
     inc.z __7+1
   !:
-    // byte ang_w = >(angle_w+0x0080)
+    // byte ang_w = BYTE1(angle_w+0x0080)
     lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
@@ -434,9 +434,9 @@ make_plasma_charset: {
     // }
     rts
   __b2:
-    // <c
+    // BYTE0(c)
     ldx.z c
-    // char s = SINTABLE[<c]
+    // char s = SINTABLE[BYTE0(c)]
     lda SINTABLE,x
     sta.z s
     lda #0

@@ -159,7 +159,7 @@ vblank: {
     // PPU->OAMADDR = 0
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // APU->OAMDMA = >spriteBuffer
+    // APU->OAMDMA = BYTE1(spriteBuffer)
     lda #>SPRITE_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // PPU->PPUSCROLL = 0
@@ -360,10 +360,10 @@ ppuDataTransfer: {
     // Transfer to PPU
     .label cpuSrc = 6
     .label i = 4
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     lda #>ppuData
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<cpuData
@@ -411,13 +411,13 @@ ppuDataFill: {
     .label ppuDataPrepare1_ppuData = 4
     .label i = 2
     .label size = 6
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<0
     sta.z i
@@ -453,13 +453,13 @@ ppuDataPutTile: {
     .label ppuDataPrepare2_ppuData = 2
     .label ppuData = 2
     .label tile = 4
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     // ppuDataPut(tile[0])
     ldy #0
@@ -479,13 +479,13 @@ ppuDataPutTile: {
     bcc !+
     inc.z ppuDataPrepare2_ppuData+1
   !:
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuDataPrepare2_ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuDataPrepare2_ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     // ppuDataPut(tile[2])
     ldy #2

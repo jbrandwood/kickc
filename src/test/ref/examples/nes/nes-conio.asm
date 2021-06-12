@@ -419,13 +419,13 @@ ppuDataTransfer: {
     .label ppuData = $b
     .label cpuData = $d
     .label size = $1b
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<0
     sta.z i
@@ -468,13 +468,13 @@ ppuDataFill: {
     .label ppuDataPrepare1_ppuData = $b
     .label i = $1b
     .label size = $d
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<0
     sta.z i
@@ -768,13 +768,13 @@ cputc: {
 // ppuDataSet(byte* zp($19) ppuData, byte register(A) val)
 ppuDataSet: {
     .label ppuData = $19
-    // >ppuData
+    // BYTE1(ppuData)
     ldx.z ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     ldx.z ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     // PPU->PPUDATA = val
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
@@ -901,13 +901,13 @@ ppuDataFetch: {
     .label cpuDst = $d
     .label i = $b
     .label ppuData = $1b
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     // asm
     // Perform a dummy-read to discard the current value in the data read buffer and update it with the first byte from the PPU address

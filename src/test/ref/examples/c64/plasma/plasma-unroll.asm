@@ -125,9 +125,9 @@ makecharset: {
     // }
     rts
   __b2:
-    // <c
+    // BYTE0(c)
     ldx.z c
-    // unsigned char s = SINTABLE[<c]
+    // unsigned char s = SINTABLE[BYTE0(c)]
     lda SINTABLE,x
     sta.z s
     lda #0

@@ -147,13 +147,13 @@ anim: {
     sta.z x+1
     // x_msb*2
     asl.z __7
-    // >x
-    // x_msb = x_msb*2 | >x
+    // BYTE1(x)
+    // x_msb = x_msb*2 | BYTE1(x)
     ora.z x_msb
     sta.z x_msb
-    // <x
+    // BYTE0(x)
     lda.z x
-    // SPRITES_XPOS[j2] = <x
+    // SPRITES_XPOS[j2] = BYTE0(x)
     ldy.z j2
     sta SPRITES_XPOS,y
     // SPRITES_YPOS[j2] = sintab_y[yidx]
@@ -651,13 +651,13 @@ gen_chargen_sprite: {
 setFAC: {
     .label prepareMEM1_mem = $f
     .label w = $f
-    // <mem
+    // BYTE0(mem)
     lda.z prepareMEM1_mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z prepareMEM1_mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     // Load unsigned int register Y,A into FAC (floating point accumulator)
@@ -680,13 +680,13 @@ setARGtoFAC: {
 // setMEMtoFAC(byte* zp($f) mem)
 setMEMtoFAC: {
     .label mem = $f
-    // <mem
+    // BYTE0(mem)
     lda.z mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     ldx memLo
@@ -709,13 +709,13 @@ subFACfromARG: {
 // divMEMbyFAC(byte* zp($15) mem)
 divMEMbyFAC: {
     .label mem = $15
-    // <mem
+    // BYTE0(mem)
     lda.z mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     lda memLo
@@ -728,10 +728,10 @@ divMEMbyFAC: {
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 chars from memory
 addMEMtoFAC: {
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     lda #<gen_sintab.f_min
     sta memLo
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     lda #>gen_sintab.f_min
     sta memHi
     // asm
@@ -747,13 +747,13 @@ addMEMtoFAC: {
 // mulFACbyMEM(byte* zp($15) mem)
 mulFACbyMEM: {
     .label mem = $15
-    // <mem
+    // BYTE0(mem)
     lda.z mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     lda memLo

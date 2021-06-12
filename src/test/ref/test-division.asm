@@ -494,11 +494,11 @@ div16u: {
 // print_uint(word zp(6) w)
 print_uint: {
     .label w = 6
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     lda.z w+1
     sta.z print_uchar.b
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     lda.z w
     sta.z print_uchar.b
     jsr print_uchar
@@ -743,11 +743,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

@@ -19,7 +19,7 @@ __start: {
     rts
 }
 main: {
-    // SCREEN[0] = <w
+    // SCREEN[0] = BYTE0(w)
     lda #<ptr+$32
     sta SCREEN
     // }

@@ -80,7 +80,7 @@ signed int sin16s(unsigned long x) {
         x = PI_u4f28 - x;
     }
     // sinx = x - x^3/6 + x5/128;
-    unsigned int x1 = WORD1(x)<<3; // u[1.15]
+    unsigned int x1 = WORD1(x<<3); // u[1.15]
     unsigned int x2 = mulu16_sel(x1, x1, 0); // u[2.14] x^2
     unsigned int x3 = mulu16_sel(x2, x1, 1); // u[2.14] x^3
     unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;

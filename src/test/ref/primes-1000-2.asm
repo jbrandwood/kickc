@@ -203,12 +203,12 @@ mul8u: {
 div16u8u: {
     .label dividend = 5
     .label divisor = 9
-    // divr8u(>dividend, divisor, 0)
+    // divr8u(BYTE1(dividend), divisor, 0)
     lda.z dividend+1
     sta.z divr8u.dividend
     ldy #0
     jsr divr8u
-    // divr8u(<dividend, divisor, rem8u)
+    // divr8u(BYTE0(dividend), divisor, rem8u)
     lda.z dividend
     sta.z divr8u.dividend
     jsr divr8u
@@ -321,9 +321,8 @@ utoa: {
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];

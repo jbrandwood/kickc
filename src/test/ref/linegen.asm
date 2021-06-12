@@ -298,12 +298,12 @@ lin16u_gen: {
     // }
     rts
   __b2:
-    // >val
+    // WORD1(val)
     lda.z val+2
     sta.z __6
     lda.z val+3
     sta.z __6+1
-    // *lintab = >val
+    // *lintab = WORD1(val)
     ldy #0
     lda.z __6
     sta (lintab),y
@@ -374,10 +374,10 @@ print_str: {
 // print_uint(word zp(9) w)
 print_uint: {
     .label w = 9
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -447,11 +447,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

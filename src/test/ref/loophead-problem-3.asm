@@ -18,18 +18,18 @@ main: {
     jsr mul16u
     // mul16u(4,123)
     // dword result = mul16u(4,123)
-    // word kaputt = <result
+    // word kaputt = WORD0(result)
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
-    // <kaputt
+    // BYTE0(kaputt)
     lda.z kaputt
-    // *BORDER_COLOR = <kaputt
+    // *BORDER_COLOR = BYTE0(kaputt)
     sta BORDER_COLOR
-    // >kaputt
+    // BYTE1(kaputt)
     lda.z kaputt+1
-    // *BG_COLOR = >kaputt
+    // *BG_COLOR = BYTE1(kaputt)
     sta BG_COLOR
     // }
     rts

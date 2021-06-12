@@ -62,7 +62,7 @@ main::@1: scope:[main]  from main
   mul16u::return#4 = phi( main/mul16u::return#2 )
   main::$0 = mul16u::return#4
   main::result#0 = main::$0
-  main::$1 = < main::result#0
+  main::$1 = _word0_ main::result#0
   main::kaputt#0 = main::$1
   main::$2 = < main::kaputt#0
   *BORDER_COLOR = main::$2
@@ -238,7 +238,7 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main
   [3] main::result#0 = mul16u::return#2
-  [4] main::kaputt#0 = < main::result#0
+  [4] main::kaputt#0 = _word0_ main::result#0
   [5] main::$2 = < main::kaputt#0
   [6] *BORDER_COLOR = main::$2
   [7] main::$3 = > main::kaputt#0
@@ -331,7 +331,7 @@ Allocated zp[1]:24 [ mul16u::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] mul16u::return#2 = mul16u::res#2 [ mul16u::return#2 ] (  [ mul16u::return#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [3] main::result#0 = mul16u::return#2 [ main::result#0 ] (  [ main::result#0 ] { }  ) always clobbers reg byte a 
-Statement [4] main::kaputt#0 = < main::result#0 [ main::kaputt#0 ] (  [ main::kaputt#0 ] { }  ) always clobbers reg byte a 
+Statement [4] main::kaputt#0 = _word0_ main::result#0 [ main::kaputt#0 ] (  [ main::kaputt#0 ] { }  ) always clobbers reg byte a 
 Statement [12] if(mul16u::a#2!=0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] ( mul16u:1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [14] mul16u::$1 = mul16u::a#2 & 1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] ( mul16u:1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [16] mul16u::res#1 = mul16u::res#2 + mul16u::mb#2 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] ( mul16u:1 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
@@ -396,16 +396,16 @@ main: {
     // main::@1
   __b1:
     // [3] main::result#0 = mul16u::return#2
-    // [4] main::kaputt#0 = < main::result#0 -- vwuz1=_lo_vduz2 
+    // [4] main::kaputt#0 = _word0_ main::result#0 -- vwuz1=_word0_vduz2 
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
-    // [5] main::$2 = < main::kaputt#0 -- vbuaa=_lo_vwuz1 
+    // [5] main::$2 = < main::kaputt#0 -- vbuaa=_byte0_vwuz1 
     lda.z kaputt
     // [6] *BORDER_COLOR = main::$2 -- _deref_pbuc1=vbuaa 
     sta BORDER_COLOR
-    // [7] main::$3 = > main::kaputt#0 -- vbuaa=_hi_vwuz1 
+    // [7] main::$3 = > main::kaputt#0 -- vbuaa=_byte1_vwuz1 
     lda.z kaputt+1
     // [8] *BG_COLOR = main::$3 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
@@ -600,22 +600,22 @@ main: {
     // main::@1
     // dword result = mul16u(4,123)
     // [3] main::result#0 = mul16u::return#2
-    // word kaputt = <result
-    // [4] main::kaputt#0 = < main::result#0 -- vwuz1=_lo_vduz2 
+    // word kaputt = WORD0(result)
+    // [4] main::kaputt#0 = _word0_ main::result#0 -- vwuz1=_word0_vduz2 
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
-    // <kaputt
-    // [5] main::$2 = < main::kaputt#0 -- vbuaa=_lo_vwuz1 
+    // BYTE0(kaputt)
+    // [5] main::$2 = < main::kaputt#0 -- vbuaa=_byte0_vwuz1 
     lda.z kaputt
-    // *BORDER_COLOR = <kaputt
+    // *BORDER_COLOR = BYTE0(kaputt)
     // [6] *BORDER_COLOR = main::$2 -- _deref_pbuc1=vbuaa 
     sta BORDER_COLOR
-    // >kaputt
-    // [7] main::$3 = > main::kaputt#0 -- vbuaa=_hi_vwuz1 
+    // BYTE1(kaputt)
+    // [7] main::$3 = > main::kaputt#0 -- vbuaa=_byte1_vwuz1 
     lda.z kaputt+1
-    // *BG_COLOR = >kaputt
+    // *BG_COLOR = BYTE1(kaputt)
     // [8] *BG_COLOR = main::$3 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
     // main::@return

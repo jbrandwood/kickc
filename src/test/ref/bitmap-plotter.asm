@@ -110,7 +110,7 @@ init_plot_tables: {
     and #$f8
     // plot_xlo[x] = x&$f8
     sta plot_xlo,x
-    // plot_xhi[x] = >BITMAP
+    // plot_xhi[x] = BYTE1(BITMAP)
     lda #>BITMAP
     sta plot_xhi,x
     // plot_bit[x] = bits
@@ -137,15 +137,15 @@ init_plot_tables: {
     // y&$7
     lda #7
     sax.z __9
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __9
-    // plot_ylo[y] = y&$7 | <yoffs
+    // plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // plot_yhi[y] = >yoffs
+    // plot_yhi[y] = BYTE1(yoffs)
     sta plot_yhi,x
     // if((y&$7)==7)
     lda #7

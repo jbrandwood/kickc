@@ -81,7 +81,7 @@ inline void ppuSpriteBufferDmaTransfer(struct SpriteData* spriteBuffer) {
     // Set OAM start address to sprite#0
     PPU->OAMADDR = 0;
     // Set the high byte (02) of the RAM address and start the DMA transfer to OAM memory
-    APU->OAMDMA = >spriteBuffer;
+    APU->OAMDMA = BYTE1(spriteBuffer);
 }
 
 // Read Standard Controller #1
@@ -108,9 +108,9 @@ char readJoy1() {
 // - ppuData : Pointer in the PPU memory
 inline void ppuDataPrepare(void* const ppuData) {
     // Write the high byte of PPU address
-    PPU->PPUADDR = >ppuData;
+    PPU->PPUADDR = BYTE1(ppuData);
     // Write the low byte of PPU  address
-    PPU->PPUADDR = <ppuData;
+    PPU->PPUADDR = BYTE0(ppuData);
 }
 
 // Put one byte into PPU memory

@@ -45,8 +45,8 @@ void mulf_init() {
         x_2++; // increase i/2 on even numbers
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
     }
-    *sqr1_lo = <sqr;
-    *sqr1_hi++ = >sqr;
+    *sqr1_lo = BYTE0(sqr);
+    *sqr1_hi++ = BYTE1(sqr);
     sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here - see above)
   }
   // Fill mulf_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)

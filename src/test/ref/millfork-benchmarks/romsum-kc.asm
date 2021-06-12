@@ -193,10 +193,10 @@ print_ln: {
 // print_uint(word zp($d) w)
 print_uint: {
     .label w = $d
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -227,9 +227,8 @@ utoa: {
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];

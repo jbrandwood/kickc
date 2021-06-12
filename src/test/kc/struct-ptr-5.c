@@ -27,8 +27,8 @@ void main() {
     struct Entry* entry = ENTRIES;
     while(entry) {
         SCREEN[idx++] = '0'+entry->value;
-        SCREEN[idx++] = <entry->next;
-        SCREEN[idx++] = >entry->next;
+        SCREEN[idx++] = BYTE0(entry->next);
+        SCREEN[idx++] = BYTE1(entry->next);
         SCREEN[idx++] = ' ';
         entry = entry->next;
     }

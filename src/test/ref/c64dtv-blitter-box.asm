@@ -85,10 +85,10 @@ main: {
     // Instruct blitter not to continue previous blit
     lda #DTV_BLIT_CLEAR_IRQ
     sta DTV_BLITTER_CONTROL2
-    // *DTV_BLITTER_SRCA_LO = <SRCA
+    // *DTV_BLITTER_SRCA_LO = BYTE0(SRCA)
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
-    // *DTV_BLITTER_SRCA_MI = >SRCA
+    // *DTV_BLITTER_SRCA_MI = BYTE1(SRCA)
     lda #>SRCA
     sta DTV_BLITTER_SRCA_MI
     // *DTV_BLITTER_SRCA_HI = 0
@@ -98,19 +98,19 @@ main: {
     sta DTV_BLITTER_SRCA_MOD_LO
     // *DTV_BLITTER_SRCA_MOD_HI = 0
     sta DTV_BLITTER_SRCA_MOD_HI
-    // *DTV_BLITTER_SRCA_LIN_LO = <$100uw
+    // *DTV_BLITTER_SRCA_LIN_LO = BYTE0($100uw)
     sta DTV_BLITTER_SRCA_LIN_LO
-    // *DTV_BLITTER_SRCA_LIN_HI = >$100uw
+    // *DTV_BLITTER_SRCA_LIN_HI = BYTE1($100uw)
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
     // *DTV_BLITTER_SRCA_STEP = 01
     lda #1
     sta DTV_BLITTER_SRCA_STEP
-    // *DTV_BLITTER_SRCB_LO = <SRCB
+    // *DTV_BLITTER_SRCB_LO = BYTE0(SRCB)
     // Step 0.0
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
-    // *DTV_BLITTER_SRCB_MI = >SRCB
+    // *DTV_BLITTER_SRCB_MI = BYTE1(SRCB)
     lda #>SRCB
     sta DTV_BLITTER_SRCB_MI
     // *DTV_BLITTER_SRCB_HI = 0
@@ -120,44 +120,44 @@ main: {
     sta DTV_BLITTER_SRCB_MOD_LO
     // *DTV_BLITTER_SRCB_MOD_HI = 0
     sta DTV_BLITTER_SRCB_MOD_HI
-    // *DTV_BLITTER_SRCB_LIN_LO = <$100uw
+    // *DTV_BLITTER_SRCB_LIN_LO = BYTE0($100uw)
     sta DTV_BLITTER_SRCB_LIN_LO
-    // *DTV_BLITTER_SRCB_LIN_HI = >$100uw
+    // *DTV_BLITTER_SRCB_LIN_HI = BYTE1($100uw)
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
     // *DTV_BLITTER_SRCB_STEP = $00
     lda #0
     sta DTV_BLITTER_SRCB_STEP
-    // *DTV_BLITTER_DEST_LO = <SCREEN+40+5
+    // *DTV_BLITTER_DEST_LO = BYTE0(SCREEN+40+5)
     // Step 0.0
     lda #<SCREEN+$28+5
     sta DTV_BLITTER_DEST_LO
-    // *DTV_BLITTER_DEST_MI = >SCREEN+40+5
+    // *DTV_BLITTER_DEST_MI = BYTE1(SCREEN+40+5)
     lda #>SCREEN+$28+5
     sta DTV_BLITTER_DEST_MI
     // *DTV_BLITTER_DEST_HI = 0
     lda #0
     sta DTV_BLITTER_DEST_HI
-    // *DTV_BLITTER_DEST_MOD_LO = <21uw
+    // *DTV_BLITTER_DEST_MOD_LO = BYTE0(21uw)
     lda #<$15
     sta DTV_BLITTER_DEST_MOD_LO
-    // *DTV_BLITTER_DEST_MOD_HI = >21uw
+    // *DTV_BLITTER_DEST_MOD_HI = BYTE1(21uw)
     lda #0
     sta DTV_BLITTER_DEST_MOD_HI
-    // *DTV_BLITTER_DEST_LIN_LO = <19uw
+    // *DTV_BLITTER_DEST_LIN_LO = BYTE0(19uw)
     lda #<$13
     sta DTV_BLITTER_DEST_LIN_LO
-    // *DTV_BLITTER_DEST_LIN_HI = >19uw
+    // *DTV_BLITTER_DEST_LIN_HI = BYTE1(19uw)
     lda #0
     sta DTV_BLITTER_DEST_LIN_HI
     // *DTV_BLITTER_DEST_STEP = $10
     lda #$10
     sta DTV_BLITTER_DEST_STEP
-    // *DTV_BLITTER_LEN_LO = <20*10uw
+    // *DTV_BLITTER_LEN_LO = BYTE0(20*10uw)
     // Step 1.0
     lda #<$14*$a
     sta DTV_BLITTER_LEN_LO
-    // *DTV_BLITTER_LEN_HI = >20*10uw
+    // *DTV_BLITTER_LEN_HI = BYTE1(20*10uw)
     lda #0
     sta DTV_BLITTER_LEN_HI
     // *DTV_BLITTER_ALU = DTV_BLIT_ADD

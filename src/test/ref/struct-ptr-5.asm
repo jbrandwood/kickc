@@ -65,19 +65,19 @@ main: {
     sta SCREEN,x
     // SCREEN[idx++] = '0'+entry->value;
     inx
-    // <entry->next
+    // BYTE0(entry->next)
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
-    // SCREEN[idx++] = <entry->next
+    // SCREEN[idx++] = BYTE0(entry->next)
     sta SCREEN,x
-    // SCREEN[idx++] = <entry->next;
+    // SCREEN[idx++] = BYTE0(entry->next);
     inx
-    // >entry->next
+    // BYTE1(entry->next)
     ldy #OFFSET_STRUCT_ENTRY_NEXT+1
     lda (entry),y
-    // SCREEN[idx++] = >entry->next
+    // SCREEN[idx++] = BYTE1(entry->next)
     sta SCREEN,x
-    // SCREEN[idx++] = >entry->next;
+    // SCREEN[idx++] = BYTE1(entry->next);
     inx
     // SCREEN[idx++] = ' '
     lda #' '

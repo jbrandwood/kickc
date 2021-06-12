@@ -7,8 +7,8 @@ void main() {
     word* wp = words;
     for( byte i: 0..3) {
         word w = *(wp++);
-        SCREEN[idx++] = <w;
-        SCREEN[idx++] = >w;
+        SCREEN[idx++] = BYTE0(w);
+        SCREEN[idx++] = BYTE1(w);
         idx++;
     }
 

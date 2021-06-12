@@ -47,7 +47,7 @@ void sin16s_gen2(signed int* sintab, unsigned int wavelength, signed int min, si
     // Iterate over the table
     unsigned long x = 0; // u[4.28]
     for( unsigned int i=0; i<wavelength; i++) {
-        *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl); // The signed sin() has values [-7fff;7fff] = [-1/2 ; 1/2], so ampl*sin has the right amplitude
+        *sintab++ = offs + (signed int)WORD1(mul16s(sin16s(x), ampl)); // The signed sin() has values [-7fff;7fff] = [-1/2 ; 1/2], so ampl*sin has the right amplitude
         x = x + step;
     }
 }
@@ -80,7 +80,7 @@ signed int sin16s(unsigned long x) {
         x = PI_u4f28 - x;
     }
     // sinx = x - x^3/6 + x5/128;
-    unsigned int x1 = >x<<3; // u[1.15]
+    unsigned int x1 = WORD1(x)<<3; // u[1.15]
     unsigned int x2 = mulu16_sel(x1, x1, 0); // u[2.14] x^2
     unsigned int x3 = mulu16_sel(x2, x1, 1); // u[2.14] x^3
     unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;
@@ -110,7 +110,7 @@ signed char sin8s(unsigned int x) {
         x = PI_u4f12 - x;
     }
     // sinx = x - x^3/6 + x5/128;
-    char x1 = >x<<3; // u[1.7]
+    char x1 = BYTE1(x)<<3; // u[1.7]
     char x2 = mulu8_sel(x1, x1, 0); // u[2.6] x^2
     char x3 = mulu8_sel(x2, x1, 1); // u[2.6] x^3
     const char DIV_6 = $2b; // u[0.7] - $2a.aa rounded to $2b
@@ -131,11 +131,11 @@ signed char sin8s(unsigned int x) {
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 unsigned int mulu16_sel(unsigned int v1, unsigned int v2, char select) {
-    return >mul16u(v1, v2)<<select;
+    return WORD1(mul16u(v1, v2)<<select);
 }
 
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 char mulu8_sel(char v1, char v2, char select) {
-    return >mul8u(v1, v2)<<select;
+    return BYTE1(mul8u(v1, v2)<<select);
 }

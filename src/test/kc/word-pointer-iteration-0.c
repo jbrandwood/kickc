@@ -3,13 +3,13 @@ void main() {
     byte* const SCREEN = (char*)$400+40*6;
     word* wp = (word*)$0400;
     wp++;
-    SCREEN[0] = <*wp;
-    SCREEN[1] = >*wp;
+    SCREEN[0] = BYTE0(*wp);
+    SCREEN[1] = BYTE1(*wp);
     wp++;
-    SCREEN[2] = <*wp;
-    SCREEN[3] = >*wp;
+    SCREEN[2] = BYTE0(*wp);
+    SCREEN[3] = BYTE1(*wp);
     wp--;
-    SCREEN[4] = <*wp;
-    SCREEN[5] = >*wp;
+    SCREEN[4] = BYTE0(*wp);
+    SCREEN[5] = BYTE1(*wp);
 
 }

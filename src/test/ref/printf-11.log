@@ -779,45 +779,45 @@ cputs: {
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
 printf_uint: {
-    // *screen++ = printf_hextab[(>uvalue)>>4]
+    // *screen++ = printf_hextab[BYTE1(uvalue)>>4]
     // [14] *screen#1 = *printf_hextab -- _deref_pbuz1=_deref_pbuc1 
     lda printf_hextab
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(>uvalue)>>4];
+    // *screen++ = printf_hextab[BYTE1(uvalue)>>4];
     // [15] screen#2 = ++ screen#1 -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(>uvalue)&0xf]
+    // *screen++ = printf_hextab[BYTE1(uvalue)&0xf]
     // [16] *screen#2 = *(printf_hextab+>main::pct&$f) -- _deref_pbuz1=_deref_pbuc1 
     lda printf_hextab+((>main.pct)&$f)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(>uvalue)&0xf];
+    // *screen++ = printf_hextab[BYTE1(uvalue)&0xf];
     // [17] screen#3 = ++ screen#2 -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(<uvalue)>>4]
+    // *screen++ = printf_hextab[BYTE0(uvalue)>>4]
     // [18] *screen#3 = *(printf_hextab+<main::pct>>4) -- _deref_pbuz1=_deref_pbuc1 
     lda printf_hextab+((<main.pct)>>4)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(<uvalue)>>4];
+    // *screen++ = printf_hextab[BYTE0(uvalue)>>4];
     // [19] screen#4 = ++ screen#3 -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(<uvalue)&0xf]
+    // *screen++ = printf_hextab[BYTE0(uvalue)&0xf]
     // [20] *screen#4 = *(printf_hextab+<main::pct&$f) -- _deref_pbuz1=_deref_pbuc1 
     lda printf_hextab+((<main.pct)&$f)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(<uvalue)&0xf];
+    // *screen++ = printf_hextab[BYTE0(uvalue)&0xf];
     // [21] screen#17 = ++ screen#4 -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+

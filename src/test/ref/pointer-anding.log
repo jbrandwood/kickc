@@ -264,7 +264,7 @@ main: {
     lda (pos_ptr),y
     and #>$aa55
     sta.z __0+1
-    // [4] main::$1 = < main::$0 -- vbuaa=_lo_vwsz1 
+    // [4] main::$1 = < main::$0 -- vbuaa=_byte0_vwsz1 
     lda.z __0
     // [5] *main::vram_ptr#3 = main::$1 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -274,7 +274,7 @@ main: {
     bne !+
     inc.z vram_ptr+1
   !:
-    // [7] main::$2 = > *main::pos_ptr#2 -- vbuaa=_hi__deref_pwsz1 
+    // [7] main::$2 = > *main::pos_ptr#2 -- vbuaa=_byte1__deref_pwsz1 
     ldy #1
     lda (pos_ptr),y
     // [8] *main::vram_ptr#1 = main::$2 -- _deref_pbuz1=vbuaa 
@@ -404,29 +404,29 @@ main: {
     lda (pos_ptr),y
     and #>$aa55
     sta.z __0+1
-    // <(*pos_ptr&(int)0xAA55)
-    // [4] main::$1 = < main::$0 -- vbuaa=_lo_vwsz1 
+    // BYTE0(*pos_ptr&(int)0xAA55)
+    // [4] main::$1 = < main::$0 -- vbuaa=_byte0_vwsz1 
     lda.z __0
-    // *vram_ptr++=<(*pos_ptr&(int)0xAA55)
+    // *vram_ptr++=BYTE0(*pos_ptr&(int)0xAA55)
     // [5] *main::vram_ptr#3 = main::$1 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (vram_ptr),y
-    // *vram_ptr++=<(*pos_ptr&(int)0xAA55);
+    // *vram_ptr++=BYTE0(*pos_ptr&(int)0xAA55);
     // [6] main::vram_ptr#1 = ++ main::vram_ptr#3 -- pbuz1=_inc_pbuz1 
     inc.z vram_ptr
     bne !+
     inc.z vram_ptr+1
   !:
-    // >*pos_ptr
-    // [7] main::$2 = > *main::pos_ptr#2 -- vbuaa=_hi__deref_pwsz1 
+    // BYTE1(*pos_ptr)
+    // [7] main::$2 = > *main::pos_ptr#2 -- vbuaa=_byte1__deref_pwsz1 
     ldy #1
     lda (pos_ptr),y
-    // *vram_ptr++=>*pos_ptr
+    // *vram_ptr++=BYTE1(*pos_ptr)
     // [8] *main::vram_ptr#1 = main::$2 -- _deref_pbuz1=vbuaa 
     // stores 0x00
     ldy #0
     sta (vram_ptr),y
-    // *vram_ptr++=>*pos_ptr;
+    // *vram_ptr++=BYTE1(*pos_ptr);
     // [9] main::vram_ptr#2 = ++ main::vram_ptr#1 -- pbuz1=_inc_pbuz1 
     inc.z vram_ptr
     bne !+

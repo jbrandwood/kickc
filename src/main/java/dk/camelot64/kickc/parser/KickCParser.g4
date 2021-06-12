@@ -233,7 +233,6 @@ expr
     | expr (SHIFT_LEFT | SHIFT_RIGHT ) expr #exprBinary
     | expr (ASTERISK | DIVIDE | '%' ) expr #exprBinary
     | expr ( PLUS | MINUS )  expr #exprBinary
-    | (LESS_THAN | GREATER_THAN) expr #exprUnary
     | expr ( '==' | '!=' | LESS_THAN | '<=' | '>=' | GREATER_THAN ) expr #exprBinary
     | expr ( '&' ) expr #exprBinary
     | expr ( '^' ) expr #exprBinary

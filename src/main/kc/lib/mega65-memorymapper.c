@@ -33,13 +33,13 @@
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 void memoryRemap(unsigned char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset) {
     // lower blocks offset page low
-    char aVal = <lowerPageOffset;
+    char aVal = BYTE0(lowerPageOffset);
     // lower blocks to map + lower blocks offset high nibble
-    char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf);
+    char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf);
     // upper blocks offset page
-    char yVal = <upperPageOffset;
+    char yVal = BYTE0(upperPageOffset);
     // upper blocks to map + upper blocks offset page high nibble
-    char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf);
+    char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf);
     asm {
         lda aVal    // lower blocks offset page low
         ldx xVal    // lower blocks to map + lower blocks offset high nibble
@@ -91,17 +91,17 @@ void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage) {
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 void memoryRemap256M(unsigned char remapBlocks, unsigned long lowerPageOffset, unsigned long upperPageOffset) {
     // lower blocks offset megabytes
-    char lMb = >((unsigned int)(lowerPageOffset>>4));
+    char lMb = BYTE1((unsigned int)(lowerPageOffset>>4));
     // upper blocks offset megabytes
-    char uMb = >((unsigned int)(upperPageOffset>>4));
+    char uMb = BYTE1((unsigned int)(upperPageOffset>>4));
     // lower blocks offset page low
-    char aVal = < <lowerPageOffset;
+    char aVal = BYTE0(lowerPageOffset);
     // lower blocks to map + lower blocks offset high nibble
-    char xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf);
+    char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf);
     // upper blocks offset page
-    char yVal = < <upperPageOffset;
+    char yVal = BYTE0(upperPageOffset);
     // upper blocks to map + upper blocks offset page high nibble
-    char zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf);
+    char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf);
     asm {
         lda lMb     // lower blocks offset megabytes
         ldx #$0f    // lower signal for MB offset

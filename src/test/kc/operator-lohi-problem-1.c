@@ -8,6 +8,6 @@ const dword DVAL = $20000;
 byte* const SCREEN = (char*)$400;
 
 void main() {
-     SCREEN[0] = <(word)(DVAL/$400);
-     SCREEN[1] = >(word)(DVAL/$400);
+     SCREEN[0] = BYTE0((word)(DVAL/$400));
+     SCREEN[1] = BYTE1((word)(DVAL/$400));
 }

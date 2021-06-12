@@ -75,15 +75,15 @@ bitmap_init: {
     // y&$7
     lda #7
     sax.z __7
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
@@ -337,7 +337,7 @@ bitmap_line: {
     sta.z e
   __b6:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // y += sy
     lda.z y
@@ -389,7 +389,7 @@ bitmap_line: {
     bne __b6
   __b3:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // }
     rts
@@ -403,7 +403,7 @@ bitmap_line: {
     sta.z e1
   __b9:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // x += sx
     lda.z x
@@ -456,7 +456,7 @@ bitmap_line: {
     jmp __b3
   __b4:
     // bitmap_plot(x,(char)y)
-    lda.z y1
+    ldx.z y1
     jsr bitmap_plot
     rts
 }
@@ -465,11 +465,11 @@ bitmap_line: {
 abs_u16: {
     .label w = $a
     .label return = $a
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     rts
@@ -491,11 +491,11 @@ abs_u16: {
 sgn_u16: {
     .label w = $17
     .label return = $c
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     lda #<1
@@ -511,16 +511,15 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(4) x, byte register(A) y)
+// bitmap_plot(word zp(4) x, byte register(X) y)
 bitmap_plot: {
     .label __0 = $19
     .label plotter = $17
     .label x = 4
     // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    tay
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta.z plotter+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta.z plotter
     // x & $fff8
     lda.z x
@@ -537,9 +536,8 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
+    // *plotter |= bitmap_plot_bit[(char)x]
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y

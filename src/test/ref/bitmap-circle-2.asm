@@ -425,11 +425,11 @@ plot: {
     lda.z location+1
     adc #>BITMAP
     sta.z location+1
-    // <y
+    // BYTE0(y)
     lda.z y
-    // <y & 7
+    // BYTE0(y) & 7
     and #7
-    // location += <y & 7
+    // location += BYTE0(y) & 7
     clc
     adc.z location
     sta.z location

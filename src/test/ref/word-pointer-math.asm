@@ -25,18 +25,18 @@ main: {
     sta.z w
     lda words+1,y
     sta.z w+1
-    // <w
+    // BYTE0(w)
     lda.z w
-    // SCREEN[idx++] = <w
+    // SCREEN[idx++] = BYTE0(w)
     ldy.z idx
     sta SCREEN,y
-    // SCREEN[idx++] = <w;
+    // SCREEN[idx++] = BYTE0(w);
     iny
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // SCREEN[idx++] = >w
+    // SCREEN[idx++] = BYTE1(w)
     sta SCREEN,y
-    // SCREEN[idx++] = >w;
+    // SCREEN[idx++] = BYTE1(w);
     iny
     tya
     // idx++;

@@ -39,24 +39,24 @@ main: {
     lda (pos_ptr),y
     and #>$aa55
     sta.z __0+1
-    // <(*pos_ptr&(int)0xAA55)
+    // BYTE0(*pos_ptr&(int)0xAA55)
     lda.z __0
-    // *vram_ptr++=<(*pos_ptr&(int)0xAA55)
+    // *vram_ptr++=BYTE0(*pos_ptr&(int)0xAA55)
     ldy #0
     sta (vram_ptr),y
-    // *vram_ptr++=<(*pos_ptr&(int)0xAA55);
+    // *vram_ptr++=BYTE0(*pos_ptr&(int)0xAA55);
     inc.z vram_ptr
     bne !+
     inc.z vram_ptr+1
   !:
-    // >*pos_ptr
+    // BYTE1(*pos_ptr)
     ldy #1
     lda (pos_ptr),y
-    // *vram_ptr++=>*pos_ptr
+    // *vram_ptr++=BYTE1(*pos_ptr)
     // stores 0x00
     ldy #0
     sta (vram_ptr),y
-    // *vram_ptr++=>*pos_ptr;
+    // *vram_ptr++=BYTE1(*pos_ptr);
     inc.z vram_ptr
     bne !+
     inc.z vram_ptr+1

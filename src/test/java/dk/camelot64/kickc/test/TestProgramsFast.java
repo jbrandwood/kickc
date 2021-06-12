@@ -493,6 +493,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testPrecedence1() throws IOException {
+      compileAndCompare("precedence-1.c");
+   }
+
+   @Test
    public void testMinusPrecedenceProblem() throws IOException {
       compileAndCompare("minus-precedence-problem.c");
    }

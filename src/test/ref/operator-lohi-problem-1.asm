@@ -15,10 +15,10 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    // SCREEN[0] = <(word)(DVAL/$400)
+    // SCREEN[0] = BYTE0((word)(DVAL/$400))
     lda #<DVAL/$400
     sta SCREEN
-    // SCREEN[1] = >(word)(DVAL/$400)
+    // SCREEN[1] = BYTE1((word)(DVAL/$400))
     lda #0
     sta SCREEN+1
     // }

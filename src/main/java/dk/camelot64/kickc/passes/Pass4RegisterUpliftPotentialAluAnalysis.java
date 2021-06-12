@@ -69,10 +69,16 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                if(assignment.getOperator() != null && "*idx".equals(assignment.getOperator().getOperator())) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if(assignment.getOperator() != null && Operators.LOWBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+               if(assignment.getOperator() != null && Operators.BYTE0.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if(assignment.getOperator() != null && Operators.HIBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+               if(assignment.getOperator() != null && Operators.BYTE1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+                  potentialAluVar = findAluPotential(assignment);
+               }
+               if(assignment.getOperator() != null && Operators.BYTE2.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+                  potentialAluVar = findAluPotential(assignment);
+               }
+               if(assignment.getOperator() != null && Operators.BYTE3.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
             }

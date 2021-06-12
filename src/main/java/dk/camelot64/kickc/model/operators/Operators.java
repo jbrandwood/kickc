@@ -54,10 +54,6 @@ public class Operators {
    public static final OperatorBinary LOGIC_AND = new OperatorLogicAnd(12);
    public static final OperatorBinary LOGIC_OR = new OperatorLogicOr(13);
    public static final OperatorBinary ASSIGNMENT = new OperatorAssignment(14);
-   @Deprecated
-   public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
-   @Deprecated
-   public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
    public static final OperatorUnary BYTE0 = new OperatorGetByte0(14);
    public static final OperatorUnary BYTE1 = new OperatorGetByte1(14);
    public static final OperatorUnary BYTE2 = new OperatorGetByte2(14);
@@ -136,10 +132,6 @@ public class Operators {
             return BOOL_NOT;
          case "*":
             return DEREF;
-         case "<":
-            return LOWBYTE;
-         case ">":
-            return HIBYTE;
          case "byte0":
             return BYTE0;
          case "byte1":
@@ -150,6 +142,8 @@ public class Operators {
             return BYTE3;
          case "word0":
             return WORD0;
+         case "word1":
+            return WORD1;
          case "&":
             return ADDRESS_OF;
          default:

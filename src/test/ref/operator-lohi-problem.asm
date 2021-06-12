@@ -17,16 +17,16 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // SCREEN[0] = <w1
+    // SCREEN[0] = BYTE0(w1)
     lda #0
     sta SCREEN
-    // SCREEN[1] = >w1
+    // SCREEN[1] = BYTE1(w1)
     lda #>w1
     sta SCREEN+1
-    // SCREEN[3] = <w2
+    // SCREEN[3] = BYTE0(w2)
     lda #<w2
     sta SCREEN+3
-    // SCREEN[4] = >w2
+    // SCREEN[4] = BYTE1(w2)
     lda #>w2
     sta SCREEN+4
     // }

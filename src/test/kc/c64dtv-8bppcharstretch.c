@@ -19,15 +19,15 @@ void main() {
     *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
     *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Plane A: SCREEN
-    *DTV_PLANEA_START_LO = < SCREEN;
-    *DTV_PLANEA_START_MI = > SCREEN;
+    *DTV_PLANEA_START_LO = BYTE0(SCREEN);
+    *DTV_PLANEA_START_MI = BYTE1(SCREEN);
     *DTV_PLANEA_START_HI = 0;
     *DTV_PLANEA_STEP = 1;
     *DTV_PLANEA_MODULO_LO = 0;
     *DTV_PLANEA_MODULO_HI = 0;
     // Plane B: CHARSET8
-    *DTV_PLANEB_START_LO = < CHARSET8;
-    *DTV_PLANEB_START_MI = > CHARSET8;
+    *DTV_PLANEB_START_LO = BYTE0(CHARSET8);
+    *DTV_PLANEB_START_MI = BYTE1(CHARSET8);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 0;
     *DTV_PLANEB_MODULO_LO = 0;
@@ -36,7 +36,7 @@ void main() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)SCREEN/$4000); // Set VIC Bank
     // VIC memory
-    *VICII_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4);
+    *VICII_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((BYTE1(((word)SCREEN)&$3fff))/4);
 
     // DTV Palette - Grey Tones
     for(byte j : 0..$f) {

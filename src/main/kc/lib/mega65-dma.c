@@ -18,9 +18,9 @@ void memcpy_dma(void* dest, void* src, unsigned int num) {
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >&memcpy_dma_command;
+    DMA-> ADDRMSB = BYTE1(&memcpy_dma_command);
     // Trigger the DMA (without option lists)
-    DMA-> ADDRLSBTRIG = <&memcpy_dma_command;
+    DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command);
     // Re-enable F018A mode
     DMA->EN018B = dmaMode;
 }
@@ -58,9 +58,9 @@ void memcpy_dma4(char dest_bank, void* dest, char src_bank, void* src, unsigned 
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >&memcpy_dma_command4;
+    DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4);
     // Trigger the DMA (without option lists)
-    DMA-> ADDRLSBTRIG = <&memcpy_dma_command4;
+    DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4);
     // Re-enable F018A mode
     DMA->EN018B = dmaMode;
 }
@@ -103,9 +103,9 @@ void memcpy_dma256(char dest_mb, char dest_bank, void* dest, char src_mb, char s
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >memcpy_dma_command256;
+    DMA-> ADDRMSB = BYTE1(memcpy_dma_command256);
     // Trigger the DMA (with option lists)
-    DMA-> ETRIG = <memcpy_dma_command256;
+    DMA-> ETRIG = BYTE0(memcpy_dma_command256);
     // Re-enable F018A mode
     DMA->EN018B = dmaMode;
 }
@@ -146,9 +146,9 @@ void memset_dma(void* dest, char fill, unsigned int num) {
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >&memset_dma_command;
+    DMA-> ADDRMSB = BYTE1(&memset_dma_command);
     // Trigger the DMA (without option lists)
-    DMA-> ADDRLSBTRIG = <&memset_dma_command;
+    DMA-> ADDRLSBTRIG = BYTE0(&memset_dma_command);
     // Re-enable F018A mode
     DMA->EN018B = dmaMode;
 }
@@ -188,9 +188,9 @@ void memset_dma256(char dest_mb, char dest_bank, void* dest, char fill, unsigned
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >memset_dma_command256;
+    DMA-> ADDRMSB = BYTE1(memset_dma_command256);
     // Trigger the DMA (with option lists)
-    DMA-> ETRIG = <memset_dma_command256;
+    DMA-> ETRIG = BYTE0(memset_dma_command256);
     // Re-enable F018A mode
     DMA->EN018B = dmaMode;
 }

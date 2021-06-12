@@ -43,8 +43,7 @@ main::@4: scope:[main]  from main::@3 main::@5
   to:main::@6
 main::@5: scope:[main]  from main::@4
   main::col#3 = phi( main::@4/main::col#2 )
-  main::$2 = < main::col#3
-  *main::col#3 = main::$2
+  *main::col#3 = (byte)main::col#3
   main::col#1 = ++ main::col#3
   to:main::@4
 main::@6: scope:[main]  from main::@4 main::@6
@@ -77,7 +76,6 @@ void __start()
 void main()
 bool~ main::$0
 bool~ main::$1
-byte~ main::$2
 byte* main::col
 byte* main::col#0
 byte* main::col#1
@@ -140,8 +138,8 @@ Adding NOP phi() at start of main::@3
 CALL GRAPH
 
 Created 2 initial phi equivalence classes
-Coalesced [13] main::col#4 = main::col#1
-Coalesced [16] main::sc#4 = main::sc#1
+Coalesced [12] main::col#4 = main::col#1
+Coalesced [15] main::sc#4 = main::sc#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block label main::@3
 Renumbering block main::@4 to main::@3
@@ -169,22 +167,20 @@ main::@5: scope:[main]  from main::@3 main::@5
   [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:main::@5
 main::@4: scope:[main]  from main::@3
-  [9] main::$2 = < main::col#2
-  [10] *main::col#2 = main::$2
-  [11] main::col#1 = ++ main::col#2
+  [9] *main::col#2 = (byte)main::col#2
+  [10] main::col#1 = ++ main::col#2
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  [12] *main::sc#2 = '*'
-  [13] main::sc#1 = ++ main::sc#2
+  [11] *main::sc#2 = '*'
+  [12] main::sc#1 = ++ main::sc#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$2 22.0
 byte* main::col
 byte* main::col#1 22.0
-byte* main::col#2 13.75
+byte* main::col#2 14.666666666666666
 byte* main::sc
 byte* main::sc#1 22.0
 byte* main::sc#2 14.666666666666666
@@ -192,14 +188,11 @@ byte* main::sc#2 14.666666666666666
 Initial phi equivalence classes
 [ main::sc#2 main::sc#1 ]
 [ main::col#2 main::col#1 ]
-Added variable main::$2 to live range equivalence class [ main::$2 ]
 Complete equivalence classes
 [ main::sc#2 main::sc#1 ]
 [ main::col#2 main::col#1 ]
-[ main::$2 ]
 Allocated zp[2]:2 [ main::sc#2 main::sc#1 ]
 Allocated zp[2]:4 [ main::col#2 main::col#1 ]
-Allocated zp[1]:6 [ main::$2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { sei lda#0 tax tay taz map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [1] *IO_KEY = $47 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -208,14 +201,13 @@ Statement [3] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  ) always clobbers reg
 Statement [5] if(main::sc#2<SCREEN+$7d0) goto main::@2 [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a 
 Statement [7] if(main::col#2<COLORS+$7d0) goto main::@4 [ main::col#2 ] (  [ main::col#2 ] { }  ) always clobbers reg byte a 
 Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] *main::col#2 = main::$2 [ main::col#2 ] (  [ main::col#2 ] { }  ) always clobbers reg byte y 
-Statement [12] *main::sc#2 = '*' [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *main::col#2 = (byte)main::col#2 [ main::col#2 ] (  [ main::col#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] *main::sc#2 = '*' [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::col#2 main::col#1 ] : zp[2]:4 , 
-Potential registers zp[1]:6 [ main::$2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , reg byte z , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 36.67: zp[2]:2 [ main::sc#2 main::sc#1 ] 35.75: zp[2]:4 [ main::col#2 main::col#1 ] 22: zp[1]:6 [ main::$2 ] 
+Uplift Scope [main] 36.67: zp[2]:2 [ main::sc#2 main::sc#1 ] 36.67: zp[2]:4 [ main::col#2 main::col#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -226,7 +218,7 @@ Uplift Scope [DMA_LIST_F018A]
 Uplift Scope [DMA_LIST_F018B] 
 Uplift Scope [] 
 
-Uplifting [main] best 1154 combination zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:4 [ main::col#2 main::col#1 ] reg byte a [ main::$2 ] 
+Uplifting [main] best 1154 combination zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:4 [ main::col#2 main::col#1 ] 
 Uplifting [MOS6526_CIA] best 1154 combination 
 Uplifting [MOS6569_VICII] best 1154 combination 
 Uplifting [MOS6581_SID] best 1154 combination 
@@ -344,12 +336,11 @@ main: {
     jmp __b5
     // main::@4
   __b4:
-    // [9] main::$2 = < main::col#2 -- vbuaa=_lo_pbuz1 
+    // [9] *main::col#2 = (byte)main::col#2 -- _deref_pbuz1=_byte_pbuz1 
     lda.z col
-    // [10] *main::col#2 = main::$2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (col),y
-    // [11] main::col#1 = ++ main::col#2 -- pbuz1=_inc_pbuz1 
+    // [10] main::col#1 = ++ main::col#2 -- pbuz1=_inc_pbuz1 
     inw.z col
     // [6] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   __b3_from___b4:
@@ -357,11 +348,11 @@ main: {
     jmp __b3
     // main::@2
   __b2:
-    // [12] *main::sc#2 = '*' -- _deref_pbuz1=vbuc1 
+    // [11] *main::sc#2 = '*' -- _deref_pbuz1=vbuc1 
     lda #'*'
     ldy #0
     sta (sc),y
-    // [13] main::sc#1 = ++ main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [12] main::sc#1 = ++ main::sc#2 -- pbuz1=_inc_pbuz1 
     inw.z sc
     // [4] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
@@ -391,17 +382,15 @@ constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
 constant byte* const SCREEN = (byte*) 2048
 constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*) 53248
 void main()
-byte~ main::$2 reg byte a 22.0
 byte* main::col
 byte* main::col#1 col zp[2]:4 22.0
-byte* main::col#2 col zp[2]:4 13.75
+byte* main::col#2 col zp[2]:4 14.666666666666666
 byte* main::sc
 byte* main::sc#1 sc zp[2]:2 22.0
 byte* main::sc#2 sc zp[2]:2 14.666666666666666
 
 zp[2]:2 [ main::sc#2 main::sc#1 ]
 zp[2]:4 [ main::col#2 main::col#1 ]
-reg byte a [ main::$2 ]
 
 
 FINAL ASSEMBLER
@@ -515,15 +504,13 @@ main: {
     jmp __b5
     // main::@4
   __b4:
-    // <col
-    // [9] main::$2 = < main::col#2 -- vbuaa=_lo_pbuz1 
+    // *col = (char)col
+    // [9] *main::col#2 = (byte)main::col#2 -- _deref_pbuz1=_byte_pbuz1 
     lda.z col
-    // *col = <col
-    // [10] *main::col#2 = main::$2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (col),y
     // for( char *col = COLORS; col<COLORS+2000; col++)
-    // [11] main::col#1 = ++ main::col#2 -- pbuz1=_inc_pbuz1 
+    // [10] main::col#1 = ++ main::col#2 -- pbuz1=_inc_pbuz1 
     inw.z col
     // [6] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
     // [6] phi main::col#2 = main::col#1 [phi:main::@4->main::@3#0] -- register_copy 
@@ -531,12 +518,12 @@ main: {
     // main::@2
   __b2:
     // *sc = '*'
-    // [12] *main::sc#2 = '*' -- _deref_pbuz1=vbuc1 
+    // [11] *main::sc#2 = '*' -- _deref_pbuz1=vbuc1 
     lda #'*'
     ldy #0
     sta (sc),y
     // for( char *sc = SCREEN; sc<SCREEN+2000; sc++)
-    // [13] main::sc#1 = ++ main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [12] main::sc#1 = ++ main::sc#2 -- pbuz1=_inc_pbuz1 
     inw.z sc
     // [4] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [4] phi main::sc#2 = main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 

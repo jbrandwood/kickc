@@ -2337,12 +2337,12 @@ main: {
     // Set number of characters to display per row
     lda #$2d
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRCOUNT
-    // VICIV->SCRNPTR_LOLO = <SCREEN
+    // VICIV->SCRNPTR_LOLO = BYTE0(SCREEN)
     // [21] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOLO) = 0 -- _deref_pbuc1=vbuc2 
     // Set exact screen address
     lda #0
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOLO
-    // VICIV->SCRNPTR_LOHI = >SCREEN
+    // VICIV->SCRNPTR_LOHI = BYTE1(SCREEN)
     // [22] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOHI) = >SCREEN -- _deref_pbuc1=vbuc2 
     lda #>SCREEN
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOHI
@@ -2353,11 +2353,11 @@ main: {
     // VICIV->SCRNPTR_HIHI = 0
     // [24] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HIHI) = 0 -- _deref_pbuc1=vbuc2 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HIHI
-    // VICIV->CHARPTR_LOLO = <CHARSET
+    // VICIV->CHARPTR_LOLO = BYTE0(CHARSET)
     // [25] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOLO) = 0 -- _deref_pbuc1=vbuc2 
     // Set exact charset address
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOLO
-    // VICIV->CHARPTR_LOHI = >CHARSET
+    // VICIV->CHARPTR_LOHI = BYTE1(CHARSET)
     // [26] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOHI) = >CHARSET -- _deref_pbuc1=vbuc2 
     lda #>CHARSET
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOHI
@@ -2591,20 +2591,20 @@ memoryRemap: {
     .label xVal = $f
     .label yVal = $10
     .label zVal = $11
-    // char aVal = <lowerPageOffset
+    // char aVal = BYTE0(lowerPageOffset)
     // [54] memoryRemap::aVal = 0 -- vbuz1=vbuc1 
     // lower blocks offset page low
     lda #0
     sta.z aVal
-    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // [55] memoryRemap::xVal = 0 -- vbuz1=vbuc1 
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // char yVal = <upperPageOffset
+    // char yVal = BYTE0(upperPageOffset)
     // [56] memoryRemap::yVal = 0 -- vbuz1=vbuc1 
     // upper blocks offset page
     sta.z yVal
-    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // [57] memoryRemap::zVal = 0 -- vbuz1=vbuc1 
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
@@ -2667,11 +2667,11 @@ memset_dma: {
     // DMA->ADDRBANK = 0
     // [67] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >&memset_dma_command
+    // DMA-> ADDRMSB = BYTE1(&memset_dma_command)
     // [68] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = >&memset_dma_command -- _deref_pbuc1=vbuc2 
     lda #>memset_dma_command
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ADDRLSBTRIG = <&memset_dma_command
+    // DMA-> ADDRLSBTRIG = BYTE0(&memset_dma_command)
     // [69] *((byte*)DMA) = <&memset_dma_command -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memset_dma_command
@@ -2743,11 +2743,11 @@ memset_dma256: {
     // DMA->ADDRBANK = 0
     // [80] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >memset_dma_command256
+    // DMA-> ADDRMSB = BYTE1(memset_dma_command256)
     // [81] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = >memset_dma_command256 -- _deref_pbuc1=vbuc2 
     lda #>memset_dma_command256
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ETRIG = <memset_dma_command256
+    // DMA-> ETRIG = BYTE0(memset_dma_command256)
     // [82] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG) = <memset_dma_command256 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (with option lists)
     lda #<memset_dma_command256

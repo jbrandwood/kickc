@@ -119,7 +119,7 @@ vblank: {
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
     // PPU->OAMADDR = 0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // APU->OAMDMA = >spriteBuffer
+    // APU->OAMDMA = BYTE1(spriteBuffer)
     lda #>SPRITE_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // readJoy1()
@@ -401,10 +401,10 @@ ppuDataTransfer: {
     // Transfer to PPU
     .label cpuSrc = 8
     .label i = 6
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     lda #>ppuData
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<cpuData
@@ -452,13 +452,13 @@ ppuDataFill: {
     .label ppuDataPrepare1_ppuData = 6
     .label i = $a
     .label size = 8
-    // >ppuData
+    // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
+    // PPU->PPUADDR = BYTE1(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
+    // BYTE0(ppuData)
     lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
+    // PPU->PPUADDR = BYTE0(ppuData)
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
     lda #<0
     sta.z i

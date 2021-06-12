@@ -14,10 +14,10 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
-    // *PTR = <STRING
+    // *PTR = BYTE0(STRING)
     lda #<STRING
     sta PTR
-    // *(PTR+1)= >STRING
+    // *(PTR+1)= BYTE1(STRING)
     lda #>STRING
     sta PTR+1
     // byte* ptr = (byte*) { *(PTR+1), *PTR }

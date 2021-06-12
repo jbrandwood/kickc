@@ -65,7 +65,7 @@ main: {
     // }
     rts
   line2___b2:
-    // plot(>pos, ch)
+    // plot(BYTE1(pos), ch)
     ldy.z line2_pos+1
     // *(cur_line+xpos) = ch
     lda #line2_ch
@@ -90,7 +90,7 @@ main: {
     inx
     jmp line2___b1
   line1___b2:
-    // plot(>pos, ch)
+    // plot(BYTE1(pos), ch)
     lda.z line1_pos+1
     // *(cur_line+xpos) = ch
     tay

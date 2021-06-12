@@ -63,10 +63,10 @@ void font_2x2(char* font_original, char* font_2x2) {
                 glyph_bits <<= 1;
             }
             // Put the generated 2x2-line into the 2x2-font twice
-            next_2x2_left[l2] = >glyph_bits_2x2;
-            next_2x2_left[l2+1] = >glyph_bits_2x2;
-            next_2x2_right[l2] = <glyph_bits_2x2;
-            next_2x2_right[l2+1] = <glyph_bits_2x2;
+            next_2x2_left[l2] = BYTE1(glyph_bits_2x2);
+            next_2x2_left[l2+1] = BYTE1(glyph_bits_2x2);
+            next_2x2_right[l2] = BYTE0(glyph_bits_2x2);
+            next_2x2_right[l2+1] = BYTE0(glyph_bits_2x2);
             l2 += 2;
             if(l2==8) {
                 // Move to bottom chars

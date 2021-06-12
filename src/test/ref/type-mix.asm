@@ -24,9 +24,9 @@ main: {
     lda.z w+1
     sbc #>$c
     sta.z w+1
-    // <w
+    // BYTE0(w)
     lda.z w
-    // SCREEN[i] = <w
+    // SCREEN[i] = BYTE0(w)
     sta SCREEN,x
     // for (byte i: 0..10)
     inx

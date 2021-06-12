@@ -17,13 +17,13 @@ main: {
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    // <*q
+    // BYTE0(*q)
     lda.z q
-    // SCREEN[0] = <*q
+    // SCREEN[0] = BYTE0(*q)
     sta SCREEN
-    // >*q
+    // BYTE1(*q)
     lda.z q+1
-    // SCREEN[1] = >*q
+    // SCREEN[1] = BYTE1(*q)
     sta SCREEN+1
     // }
     rts

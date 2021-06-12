@@ -19,26 +19,26 @@ main: {
     sta.z w1
     lda words+1*SIZEOF_WORD+1
     sta.z w1+1
-    // <w1
+    // BYTE0(w1)
     lda.z w1
-    // SCREEN[0] = <w1
+    // SCREEN[0] = BYTE0(w1)
     sta SCREEN
-    // >w1
+    // BYTE1(w1)
     lda.z w1+1
-    // SCREEN[1] = >w1
+    // SCREEN[1] = BYTE1(w1)
     sta SCREEN+1
     // word w2 = *(words+2)
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
     sta.z w2+1
-    // <w2
+    // BYTE0(w2)
     lda.z w2
-    // SCREEN[2] = <w2
+    // SCREEN[2] = BYTE0(w2)
     sta SCREEN+2
-    // >w2
+    // BYTE1(w2)
     lda.z w2+1
-    // SCREEN[3] = >w2
+    // SCREEN[3] = BYTE1(w2)
     sta SCREEN+3
     // }
     rts

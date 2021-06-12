@@ -139,7 +139,7 @@ main: {
     sta (__8),y
     // rand()
     jsr rand
-    // char rnd = >rand()
+    // char rnd = BYTE1(rand())
     ldy.z __10+1
     // rnd & 0x80
     tya

@@ -12,7 +12,7 @@ inline void line(byte xpos, byte xadd, byte ysize, byte ch) {
     cur_line = (byte*)$400;
     word pos = {xpos, 0};
     for( byte i=0;i<ysize; i++) {
-        plot(>pos, ch);
+        plot(BYTE1(pos), ch);
         pos += xadd;
         cur_line += 40;
     }

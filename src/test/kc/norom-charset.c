@@ -22,7 +22,7 @@ void gen_char3(byte* dst, word spec) {
     for(byte r : 0..4 ) {
         byte b = 0;
         for(byte c: 0..2 ) {
-            if((>spec&$80)!=0) {
+            if((BYTE1(spec)&$80)!=0) {
                 b = b|1;
             }
             b = b*2;

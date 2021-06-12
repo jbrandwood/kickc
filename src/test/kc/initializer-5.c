@@ -16,7 +16,7 @@ void main() {
     char idx = 0;
     for( char i: 0..2) {
         SCREEN[idx++] = points[i].x;
-        SCREEN[idx++] = <points[i].y;
-        SCREEN[idx++] = >points[i].y;
+        SCREEN[idx++] = BYTE0(points[i].y);
+        SCREEN[idx++] = BYTE1(points[i].y);
     }
 }

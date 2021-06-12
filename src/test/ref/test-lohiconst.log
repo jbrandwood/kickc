@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::SCREEN[0] = >>PI_u4f28
-  main::SCREEN[1] = <>PI_u4f28
-  main::SCREEN[2] = ><PI_u4f28
-  main::SCREEN[3] = <<PI_u4f28
+  main::SCREEN[0] = _byte3_PI_u4f28
+  main::SCREEN[1] = _byte2_PI_u4f28
+  main::SCREEN[2] = >PI_u4f28
+  main::SCREEN[3] = <PI_u4f28
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,10 +28,10 @@ void __start()
 void main()
 constant byte* main::SCREEN = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in main::SCREEN[0] = >>PI_u4f28
-Adding number conversion cast (unumber) 1 in main::SCREEN[1] = <>PI_u4f28
-Adding number conversion cast (unumber) 2 in main::SCREEN[2] = ><PI_u4f28
-Adding number conversion cast (unumber) 3 in main::SCREEN[3] = <<PI_u4f28
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = _byte3_PI_u4f28
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = _byte2_PI_u4f28
+Adding number conversion cast (unumber) 2 in main::SCREEN[2] = >PI_u4f28
+Adding number conversion cast (unumber) 3 in main::SCREEN[3] = <PI_u4f28
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -44,7 +44,7 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::SCREEN in [0] main::SCREEN[0] = >>PI_u4f28
+Simplifying expression containing zero main::SCREEN in [0] main::SCREEN[0] = _byte3_PI_u4f28
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -64,10 +64,10 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *main::SCREEN = >>PI_u4f28
-  [1] *(main::SCREEN+1) = <>PI_u4f28
-  [2] *(main::SCREEN+2) = ><PI_u4f28
-  [3] *(main::SCREEN+3) = <<PI_u4f28
+  [0] *main::SCREEN = _byte3_PI_u4f28
+  [1] *(main::SCREEN+1) = _byte2_PI_u4f28
+  [2] *(main::SCREEN+2) = >PI_u4f28
+  [3] *(main::SCREEN+3) = <PI_u4f28
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -80,10 +80,10 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *main::SCREEN = >>PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *(main::SCREEN+1) = <>PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *(main::SCREEN+2) = ><PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *(main::SCREEN+3) = <<PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = _byte3_PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = _byte2_PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::SCREEN+2) = >PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *(main::SCREEN+3) = <PI_u4f28 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -110,17 +110,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *main::SCREEN = >>PI_u4f28 -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = _byte3_PI_u4f28 -- _deref_pbuc1=vbuc2 
     lda #>PI_u4f28>>$10
     sta SCREEN
-    // [1] *(main::SCREEN+1) = <>PI_u4f28 -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = _byte2_PI_u4f28 -- _deref_pbuc1=vbuc2 
     lda #<PI_u4f28>>$10
     sta SCREEN+1
-    // [2] *(main::SCREEN+2) = ><PI_u4f28 -- _deref_pbuc1=vbuc2 
-    lda #>PI_u4f28&$ffff
+    // [2] *(main::SCREEN+2) = >PI_u4f28 -- _deref_pbuc1=vbuc2 
+    lda #>PI_u4f28
     sta SCREEN+2
-    // [3] *(main::SCREEN+3) = <<PI_u4f28 -- _deref_pbuc1=vbuc2 
-    lda #<PI_u4f28&$ffff
+    // [3] *(main::SCREEN+3) = <PI_u4f28 -- _deref_pbuc1=vbuc2 
+    lda #<PI_u4f28
     sta SCREEN+3
     jmp __breturn
     // main::@return
@@ -163,21 +163,21 @@ Score: 30
   // main
 main: {
     .label SCREEN = $400
-    // SCREEN[0] = > > PI_u4f28
-    // [0] *main::SCREEN = >>PI_u4f28 -- _deref_pbuc1=vbuc2 
+    // SCREEN[0] = BYTE3(PI_u4f28)
+    // [0] *main::SCREEN = _byte3_PI_u4f28 -- _deref_pbuc1=vbuc2 
     lda #>PI_u4f28>>$10
     sta SCREEN
-    // SCREEN[1] = < > PI_u4f28
-    // [1] *(main::SCREEN+1) = <>PI_u4f28 -- _deref_pbuc1=vbuc2 
+    // SCREEN[1] = BYTE2(PI_u4f28)
+    // [1] *(main::SCREEN+1) = _byte2_PI_u4f28 -- _deref_pbuc1=vbuc2 
     lda #<PI_u4f28>>$10
     sta SCREEN+1
-    // SCREEN[2] = > < PI_u4f28
-    // [2] *(main::SCREEN+2) = ><PI_u4f28 -- _deref_pbuc1=vbuc2 
-    lda #>PI_u4f28&$ffff
+    // SCREEN[2] = BYTE1(PI_u4f28)
+    // [2] *(main::SCREEN+2) = >PI_u4f28 -- _deref_pbuc1=vbuc2 
+    lda #>PI_u4f28
     sta SCREEN+2
-    // SCREEN[3] = < < PI_u4f28
-    // [3] *(main::SCREEN+3) = <<PI_u4f28 -- _deref_pbuc1=vbuc2 
-    lda #<PI_u4f28&$ffff
+    // SCREEN[3] = BYTE0(PI_u4f28)
+    // [3] *(main::SCREEN+3) = <PI_u4f28 -- _deref_pbuc1=vbuc2 
+    lda #<PI_u4f28
     sta SCREEN+3
     // main::@return
     // }

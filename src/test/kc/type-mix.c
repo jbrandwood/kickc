@@ -7,7 +7,7 @@ void main() {
 
     for (byte i: 0..10) {
         w = w - 12;
-        SCREEN[i] = <w;
+        SCREEN[i] = BYTE0(w);
     }
 
 }

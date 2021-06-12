@@ -45,7 +45,7 @@ __interrupt(hardware_clobber) void nmi2() {
     asm { lda CIA2_INTERRUPT }
     SID->VOLUME_FILTER_MODE = *sample >> 4;
     sample++;
-    if (>sample == >(SAMPLE+$6100)) {
+    if (BYTE1(sample) == BYTE1(SAMPLE+$6100)) {
         sample = SAMPLE;
     }
     *KERNEL_NMI = &nmi;

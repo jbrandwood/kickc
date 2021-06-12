@@ -106,7 +106,7 @@ void mulf_init() {
 	signed int sqr = 0;	
 	signed int add = 1;
 	for( char i:0..128) {
-		char val = >sqr;
+		char val = BYTE1(sqr);
 		mulf_sqr1[i] = val;
 		(mulf_sqr1+$100)[i] = val;
 		mulf_sqr1[-i] = val;

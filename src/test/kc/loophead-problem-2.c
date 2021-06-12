@@ -9,8 +9,8 @@ void main() {
     char* const screen = (char*)0x0400;
     char hit_check=scan_for_lowest();
     screen[0] = hit_check;
-    screen[2] = <ball_y[hit_check];
-    screen[3] = >ball_y[hit_check];
+    screen[2] = BYTE0(ball_y[hit_check]);
+    screen[3] = BYTE1(ball_y[hit_check]);
 }
 
 byte scan_for_lowest() {

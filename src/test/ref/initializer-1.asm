@@ -16,20 +16,20 @@ main: {
     txa
     sta.z i
   __b1:
-    // <words[i]
+    // BYTE0(words[i])
     lda.z i
     asl
     tay
     lda words,y
-    // SCREEN[idx++] = <words[i]
+    // SCREEN[idx++] = BYTE0(words[i])
     sta SCREEN,x
-    // SCREEN[idx++] = <words[i];
+    // SCREEN[idx++] = BYTE0(words[i]);
     inx
-    // >words[i]
+    // BYTE1(words[i])
     lda words+1,y
-    // SCREEN[idx++] = >words[i]
+    // SCREEN[idx++] = BYTE1(words[i])
     sta SCREEN,x
-    // SCREEN[idx++] = >words[i];
+    // SCREEN[idx++] = BYTE1(words[i]);
     inx
     // for( char i: 0..2)
     inc.z i

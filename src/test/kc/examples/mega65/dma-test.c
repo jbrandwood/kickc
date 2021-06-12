@@ -11,9 +11,9 @@ void main() {
     // Set address of DMA list
     DMA->ADDRMB = 0;
     DMA->ADDRBANK = 0;
-    DMA-> ADDRMSB = >&DMA_SCREEN_UP;
+    DMA-> ADDRMSB = BYTE1(&DMA_SCREEN_UP);
     // Trigger the DMA (without option lists)
-    DMA-> ADDRLSBTRIG = <&DMA_SCREEN_UP;
+    DMA-> ADDRLSBTRIG = BYTE0(&DMA_SCREEN_UP);
     // Re-enable F018A mode
     DMA->EN018B = 0;
 }

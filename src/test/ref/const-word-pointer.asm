@@ -18,26 +18,26 @@ main: {
     sta.z w
     lda #>$d03
     sta.z w+1
-    // <*wp
+    // BYTE0(*wp)
     lda.z wp
-    // screen[0] = <*wp
+    // screen[0] = BYTE0(*wp)
     sta screen
-    // >*wp
+    // BYTE1(*wp)
     lda.z wp+1
-    // screen[1] = >*wp
+    // screen[1] = BYTE1(*wp)
     sta screen+1
     // *wp = $210c
     lda #<$210c
     sta.z wp
     lda #>$210c
     sta.z wp+1
-    // <*wp
+    // BYTE0(*wp)
     lda.z wp
-    // screen[2] = <*wp
+    // screen[2] = BYTE0(*wp)
     sta screen+2
-    // >*wp
+    // BYTE1(*wp)
     lda.z wp+1
-    // screen[3] = >*wp
+    // screen[3] = BYTE1(*wp)
     sta screen+3
     // }
     rts

@@ -14,8 +14,8 @@ void vpoke(char vbank, char* vaddr, char data) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <vaddr;
-    *VERA_ADDRX_M = >vaddr;
+    *VERA_ADDRX_L = BYTE0(vaddr);
+    *VERA_ADDRX_M = BYTE1(vaddr);
     *VERA_ADDRX_H = VERA_INC_0 | vbank;
     // Set data
     *VERA_DATA0 = data;
@@ -30,8 +30,8 @@ char vpeek(char vbank, char* vaddr) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <vaddr;
-    *VERA_ADDRX_M = >vaddr;
+    *VERA_ADDRX_L = BYTE0(vaddr);
+    *VERA_ADDRX_M = BYTE1(vaddr);
     *VERA_ADDRX_H = VERA_INC_0 | vbank;
     // Get data
     return *VERA_DATA0;
@@ -47,8 +47,8 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <vdest;
-    *VERA_ADDRX_M = >vdest;
+    *VERA_ADDRX_L = BYTE0(vdest);
+    *VERA_ADDRX_M = BYTE1(vdest);
     *VERA_ADDRX_H = VERA_INC_1 | vbank;
     // Transfer the data
     char *end = (char*)src+num;
@@ -66,16 +66,16 @@ void memcpy_bank_to_vram(unsigned long vdest, unsigned long src, unsigned long n
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(<vdest);
-    *VERA_ADDRX_M = >(<vdest);
-    *VERA_ADDRX_H = <(>vdest);
+    *VERA_ADDRX_L = BYTE0(vdest);
+    *VERA_ADDRX_M = BYTE1(vdest);
+    *VERA_ADDRX_H = BYTE2(vdest);
     *VERA_ADDRX_H |= VERA_INC_1;
 
     unsigned long beg = src;
     unsigned long end = src+num;
 
-    char bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3));
-    char* addr = (char*)((<beg)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
+    char bank = BYTE2(beg)<<3 | BYTE1(beg)>>5 ; // (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3));
+    char* addr = (char*)(WORD0(beg)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
     addr += 0xA000;
 
     VIA1->PORT_A = (char)bank; // select the bank
@@ -99,8 +99,8 @@ void memset_vram(char vbank, void* vdest, char data, unsigned long num ) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <vdest;
-    *VERA_ADDRX_M = >vdest;
+    *VERA_ADDRX_L = BYTE0(vdest);
+    *VERA_ADDRX_M = BYTE1(vdest);
     *VERA_ADDRX_H = VERA_INC_1 | vbank;
     // Transfer the data
     for(unsigned long i = 0; i<num; i++)
@@ -117,13 +117,13 @@ void memset_vram_word(char vbank, void* vdest, unsigned int data, unsigned long 
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <vdest;
-    *VERA_ADDRX_M = >vdest;
+    *VERA_ADDRX_L = BYTE0(vdest);
+    *VERA_ADDRX_M = BYTE1(vdest);
     *VERA_ADDRX_H = VERA_INC_1 | vbank;
     // Transfer the data
     for(unsigned long i = 0; i<num; i++) {
-        *VERA_DATA0 = <data;
-        *VERA_DATA0 = >data;
+        *VERA_DATA0 = BYTE0(data);
+        *VERA_DATA0 = BYTE1(data);
     }
 }
 
@@ -141,15 +141,15 @@ void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_ba
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <src;
-    *VERA_ADDRX_M = >src;
+    *VERA_ADDRX_L = BYTE0(src);
+    *VERA_ADDRX_M = BYTE1(src);
     *VERA_ADDRX_H = src_increment | src_bank;
 
     // Select DATA1
     *VERA_CTRL |= VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <dest;
-    *VERA_ADDRX_M = >dest;
+    *VERA_ADDRX_L = BYTE0(dest);
+    *VERA_ADDRX_M = BYTE1(dest);
     *VERA_ADDRX_H = dest_increment | dest_bank;
 
     // Transfer the data
@@ -167,8 +167,8 @@ void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_ba
 char load_to_bank( char device, char* filename, dword address) {
     setnam(filename);
     setlfs(device);
-    char bank = (byte)(((((word)<(>address)<<8)|>(<address))>>5)+((word)<(>address)<<3));
-    char* addr = (char*)((<address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
+    char bank = BYTE2(address)<<3 | BYTE1(address)>>5; //(byte)(((((word)<(>address)<<8)|>(<address))>>5)+((word)<(>address)<<3));
+    char* addr = (char*)(WORD0(address)&0x1FFF); // stip off the top 3 bits, which are representing the bank of the word!
     addr += 0xA000;
     VIA1->PORT_A = (char)bank; // select the bank
     return load(addr, 0);

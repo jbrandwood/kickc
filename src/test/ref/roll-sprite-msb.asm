@@ -49,9 +49,9 @@ position_sprite: {
     // SPRITES_YPOS[spriteno * 2] = y
     lda #y
     sta SPRITES_YPOS,y
-    // <x
+    // BYTE0(x)
     lda.z x
-    // SPRITES_XPOS[spriteno * 2] = <x
+    // SPRITES_XPOS[spriteno * 2] = BYTE0(x)
     sta SPRITES_XPOS,y
     // if (x > 255)
     lda.z x+1

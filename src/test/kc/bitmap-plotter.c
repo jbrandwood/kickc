@@ -64,7 +64,7 @@ void init_plot_tables() {
     byte bits = $80;
     for(byte x : 0..255) {
         plot_xlo[x] = x&$f8;
-        plot_xhi[x] = >BITMAP;
+        plot_xhi[x] = BYTE1(BITMAP);
         plot_bit[x] = bits;
         bits = bits/2;
         if(bits==0) {
@@ -73,8 +73,8 @@ void init_plot_tables() {
     }
     byte* yoffs = (byte*)$0;
     for(byte y : 0..255) {
-        plot_ylo[y] = y&$7 | <yoffs;
-        plot_yhi[y] = >yoffs;
+        plot_ylo[y] = y&$7 | BYTE0(yoffs);
+        plot_yhi[y] = BYTE1(yoffs);
         if((y&$7)==7) {
             yoffs = yoffs + 40*8; // Needs better constant type inference for yoffs = yoffs + 40*8;
         }

@@ -169,7 +169,12 @@ public class TestPrograms {
       final Map<String, String> defines = new HashMap<>();
       defines.put("__KICKC__", "1");
       defines.putAll(program.getTargetPlatform().getDefines());
-      compiler.compile(files, defines);
+      try {
+         compiler.compile(files, defines);
+      } catch(CompileError e) {
+         System.out.println(e.format());
+         throw e;
+      }
 
       compileAsm(fileName, program);
       boolean success = true;

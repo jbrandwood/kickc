@@ -22,10 +22,10 @@ void outsw(signed int sw) {
 char HEXTAB[] = "0123456789abcdef";
 
 void outw(unsigned int w) {
-    out(HEXTAB[(>w)<<4]);
-    out(HEXTAB[(>w)&0x0f]);
-    out(HEXTAB[(<w)<<4]);
-    out(HEXTAB[(<w)&0x0f]);
+    out(HEXTAB[BYTE1(w)<<4]);
+    out(HEXTAB[BYTE1(w)&0x0f]);
+    out(HEXTAB[BYTE0(w)<<4]);
+    out(HEXTAB[BYTE0(w)&0x0f]);
 }
 
 void out(char c) {

@@ -8,13 +8,13 @@ byte* const SCREEN = (char*)$400;
 
 void main() {
     dword dw = $2000;
-    word w1 = < dw;
-    word w2 = < (dw+1);
+    word w1 = WORD0(dw);
+    word w2 = WORD0(dw+1);
 
-    SCREEN[0] = <w1;
-    SCREEN[1] = >w1;
+    SCREEN[0] = BYTE0(w1);
+    SCREEN[1] = BYTE1(w1);
 
-    SCREEN[3] = <w2;
-    SCREEN[4] = >w2;
+    SCREEN[3] = BYTE0(w2);
+    SCREEN[4] = BYTE1(w2);
 
 }

@@ -80,17 +80,17 @@ memoryRemap: {
     .label xVal = 3
     .label yVal = 4
     .label zVal = 5
-    // char aVal = <lowerPageOffset
+    // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda #0
     sta.z aVal
-    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // char yVal = <upperPageOffset
+    // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
     sta.z yVal
-    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm
@@ -162,10 +162,10 @@ memcpy_dma256: {
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >memcpy_dma_command256
+    // DMA-> ADDRMSB = BYTE1(memcpy_dma_command256)
     lda #>memcpy_dma_command256
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ETRIG = <memcpy_dma_command256
+    // DMA-> ETRIG = BYTE0(memcpy_dma_command256)
     // Trigger the DMA (with option lists)
     lda #<memcpy_dma_command256
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG

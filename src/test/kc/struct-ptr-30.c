@@ -18,7 +18,7 @@ char idx = 0;
 
 void print(struct Point p) {
     SCREEN[idx++] = p.x;
-    SCREEN[idx++] = <p.y;
-    SCREEN[idx++] = >p.y;
+    SCREEN[idx++] = BYTE0(p.y);
+    SCREEN[idx++] = BYTE1(p.y);
     SCREEN[idx++] = ' ';
 }

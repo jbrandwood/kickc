@@ -76,7 +76,7 @@ mulf_init: {
     sta.z sqr
     sta.z sqr+1
   __b1:
-    // char val = >sqr
+    // char val = BYTE1(sqr)
     lda.z sqr+1
     sta.z val
     // mulf_sqr1[i] = val

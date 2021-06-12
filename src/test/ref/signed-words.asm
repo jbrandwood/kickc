@@ -243,9 +243,9 @@ anim: {
     // SPRITES_YPOS[0] = (byte)sprite_y
     lda.z sprite_y
     sta SPRITES_YPOS
-    // >sprite_x
+    // BYTE1(sprite_x)
     lda.z sprite_x+1
-    // *SPRITES_XMSB = >sprite_x
+    // *SPRITES_XMSB = BYTE1(sprite_x)
     sta SPRITES_XMSB
     // }
     rts

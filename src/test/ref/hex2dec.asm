@@ -158,35 +158,35 @@ cls: {
 utoa16w: {
     .label dst = 8
     .label value = 2
-    // >value
+    // BYTE1(value)
     lda.z value+1
-    // utoa16n((>value)>>4, &dst, started)
+    // utoa16n(BYTE1(value)>>4, &dst, started)
     lsr
     lsr
     lsr
     lsr
     ldx #0
     jsr utoa16n
-    // utoa16n((>value)>>4, &dst, started)
-    // started = utoa16n((>value)>>4, &dst, started)
-    // >value
+    // utoa16n(BYTE1(value)>>4, &dst, started)
+    // started = utoa16n(BYTE1(value)>>4, &dst, started)
+    // BYTE1(value)
     lda.z value+1
-    // utoa16n((>value)&0x0f, &dst, started)
+    // utoa16n(BYTE1(value)&0x0f, &dst, started)
     and #$f
     jsr utoa16n
-    // utoa16n((>value)&0x0f, &dst, started)
-    // started = utoa16n((>value)&0x0f, &dst, started)
-    // <value
+    // utoa16n(BYTE1(value)&0x0f, &dst, started)
+    // started = utoa16n(BYTE1(value)&0x0f, &dst, started)
+    // BYTE0(value)
     lda.z value
-    // utoa16n((<value)>>4, &dst, started)
+    // utoa16n(BYTE0(value)>>4, &dst, started)
     lsr
     lsr
     lsr
     lsr
     jsr utoa16n
-    // <value
+    // BYTE0(value)
     lda.z value
-    // utoa16n((<value)&0x0f, &dst, 1)
+    // utoa16n(BYTE0(value)&0x0f, &dst, 1)
     and #$f
     ldx #1
     jsr utoa16n
@@ -254,9 +254,8 @@ utoa10w: {
     cpx #8
     bne __b1
     // *dst++ = DIGITS[(unsigned char) value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (dst),y
     // *dst++ = DIGITS[(unsigned char) value];

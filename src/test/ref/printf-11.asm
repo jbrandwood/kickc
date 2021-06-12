@@ -69,38 +69,38 @@ cputs: {
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
 printf_uint: {
-    // *screen++ = printf_hextab[(>uvalue)>>4]
+    // *screen++ = printf_hextab[BYTE1(uvalue)>>4]
     lda printf_hextab
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(>uvalue)>>4];
+    // *screen++ = printf_hextab[BYTE1(uvalue)>>4];
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(>uvalue)&0xf]
+    // *screen++ = printf_hextab[BYTE1(uvalue)&0xf]
     lda printf_hextab+((>main.pct)&$f)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(>uvalue)&0xf];
+    // *screen++ = printf_hextab[BYTE1(uvalue)&0xf];
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(<uvalue)>>4]
+    // *screen++ = printf_hextab[BYTE0(uvalue)>>4]
     lda printf_hextab+((<main.pct)>>4)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(<uvalue)>>4];
+    // *screen++ = printf_hextab[BYTE0(uvalue)>>4];
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // *screen++ = printf_hextab[(<uvalue)&0xf]
+    // *screen++ = printf_hextab[BYTE0(uvalue)&0xf]
     lda printf_hextab+((<main.pct)&$f)
     ldy #0
     sta (screen),y
-    // *screen++ = printf_hextab[(<uvalue)&0xf];
+    // *screen++ = printf_hextab[BYTE0(uvalue)&0xf];
     inc.z screen
     bne !+
     inc.z screen+1

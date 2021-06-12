@@ -5,11 +5,11 @@ void main() {
 
     void (*f)();
     f = &fn1;
-    SCREEN[0] = <(word)f;
-    SCREEN[1] = >(word)f;
+    SCREEN[0] = BYTE0((word)f);
+    SCREEN[1] = BYTE1((word)f);
     f = &fn2;
-    SCREEN[2] = <(word)f;
-    SCREEN[3] = >(word)f;
+    SCREEN[2] = BYTE0((word)f);
+    SCREEN[3] = BYTE1((word)f);
 
 }
 

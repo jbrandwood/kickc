@@ -28,29 +28,29 @@ main: {
     inx
     cpx #3
     bne __b1
-    // >words[0]
+    // BYTE1(words[0])
     lda words+1
-    // SCREEN[0] = >words[0]
+    // SCREEN[0] = BYTE1(words[0])
     sta SCREEN
-    // <words[0]
+    // BYTE0(words[0])
     lda words
-    // SCREEN[1] = <words[0]
+    // SCREEN[1] = BYTE0(words[0])
     sta SCREEN+1
-    // >words[1]
+    // BYTE1(words[1])
     lda words+1*SIZEOF_WORD+1
-    // SCREEN[2] = >words[1]
+    // SCREEN[2] = BYTE1(words[1])
     sta SCREEN+2
-    // <words[1]
+    // BYTE0(words[1])
     lda words+1*SIZEOF_WORD
-    // SCREEN[3] = <words[1]
+    // SCREEN[3] = BYTE0(words[1])
     sta SCREEN+3
-    // >words[2]
+    // BYTE1(words[2])
     lda words+2*SIZEOF_WORD+1
-    // SCREEN[4] = >words[2]
+    // SCREEN[4] = BYTE1(words[2])
     sta SCREEN+4
-    // <words[2]
+    // BYTE0(words[2])
     lda words+2*SIZEOF_WORD
-    // SCREEN[5] = <words[2]
+    // SCREEN[5] = BYTE0(words[2])
     sta SCREEN+5
     // }
     rts

@@ -40,10 +40,10 @@ main: {
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >&DMA_SCREEN_UP
+    // DMA-> ADDRMSB = BYTE1(&DMA_SCREEN_UP)
     lda #>DMA_SCREEN_UP
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ADDRLSBTRIG = <&DMA_SCREEN_UP
+    // DMA-> ADDRLSBTRIG = BYTE0(&DMA_SCREEN_UP)
     // Trigger the DMA (without option lists)
     lda #<DMA_SCREEN_UP
     sta DMA
@@ -83,17 +83,17 @@ memoryRemap: {
     .label xVal = 3
     .label yVal = 4
     .label zVal = 5
-    // char aVal = <lowerPageOffset
+    // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda #0
     sta.z aVal
-    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // char yVal = <upperPageOffset
+    // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
     sta.z yVal
-    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm

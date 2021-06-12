@@ -89,15 +89,15 @@ bitmap_init: {
     // y&$7
     lda #7
     sax.z __7
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
@@ -240,8 +240,7 @@ bitmap_line: {
     sta.z x+1
   __b6:
     // bitmap_plot(x,(char)y)
-    lda.z y
-    tax
+    ldx.z y
     jsr bitmap_plot
     // y += sy
     lda.z y
@@ -293,8 +292,7 @@ bitmap_line: {
     bne __b6
   __b3:
     // bitmap_plot(x,(char)y)
-    lda.z y
-    tax
+    ldx.z y
     jsr bitmap_plot
     // }
     rts
@@ -316,8 +314,7 @@ bitmap_line: {
     sta.z x+1
   __b9:
     // bitmap_plot(x,(char)y)
-    lda.z y
-    tax
+    ldx.z y
     jsr bitmap_plot
     // x += sx
     lda.z x
@@ -427,11 +424,11 @@ memset: {
 abs_u16: {
     .label w = $c
     .label return = $c
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     rts
@@ -453,11 +450,11 @@ abs_u16: {
 sgn_u16: {
     .label w = $15
     .label return = $e
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     lda #<1
@@ -498,9 +495,8 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
+    // *plotter |= bitmap_plot_bit[(char)x]
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y

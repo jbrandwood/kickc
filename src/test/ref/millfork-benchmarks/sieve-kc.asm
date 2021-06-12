@@ -173,14 +173,14 @@ end: {
 // print_uint(word zp($a) w)
 print_uint: {
     .label w = $a
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

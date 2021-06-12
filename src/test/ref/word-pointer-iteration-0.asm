@@ -11,29 +11,29 @@
 .segment Code
 main: {
     .label SCREEN = $400+$28*6
-    // <*wp
+    // BYTE0(*wp)
     lda $400+SIZEOF_WORD
-    // SCREEN[0] = <*wp
+    // SCREEN[0] = BYTE0(*wp)
     sta SCREEN
-    // >*wp
+    // BYTE1(*wp)
     lda $400+SIZEOF_WORD+1
-    // SCREEN[1] = >*wp
+    // SCREEN[1] = BYTE1(*wp)
     sta SCREEN+1
-    // <*wp
+    // BYTE0(*wp)
     lda $400+SIZEOF_WORD+SIZEOF_WORD
-    // SCREEN[2] = <*wp
+    // SCREEN[2] = BYTE0(*wp)
     sta SCREEN+2
-    // >*wp
+    // BYTE1(*wp)
     lda $400+SIZEOF_WORD+SIZEOF_WORD+1
-    // SCREEN[3] = >*wp
+    // SCREEN[3] = BYTE1(*wp)
     sta SCREEN+3
-    // <*wp
+    // BYTE0(*wp)
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD
-    // SCREEN[4] = <*wp
+    // SCREEN[4] = BYTE0(*wp)
     sta SCREEN+4
-    // >*wp
+    // BYTE1(*wp)
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD+1
-    // SCREEN[5] = >*wp
+    // SCREEN[5] = BYTE1(*wp)
     sta SCREEN+5
     // }
     rts

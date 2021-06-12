@@ -87,8 +87,8 @@ void print_schar_at(signed char b, char* at) {
 
 // Print a unsigned int as HEX
 void print_uint(unsigned int w) {
-    print_uchar(>w);
-    print_uchar(<w);
+    print_uchar(BYTE1(w));
+    print_uchar(BYTE0(w));
 }
 
 // Digits used for storing the decimal unsigned int
@@ -121,14 +121,14 @@ void print_sint_decimal(signed int w) {
 
 // Print a unsigned int as HEX at a specific position
 void print_uint_at(unsigned int w, char* at) {
-    print_uchar_at(>w, at);
-    print_uchar_at(<w, at+2);
+    print_uchar_at(BYTE1(w), at);
+    print_uchar_at(BYTE0(w), at+2);
 }
 
 // Print a unsigned long as HEX
 void print_ulong(unsigned long dw) {
-    print_uint(>dw);
-    print_uint(<dw);
+    print_uint(WORD1(dw));
+    print_uint(WORD0(dw));
 }
 
 // Digits used for storing the decimal unsigned int
@@ -142,8 +142,8 @@ void print_ulong_decimal(unsigned long w) {
 
 // Print a unsigned long as HEX at a specific position
 void print_ulong_at(unsigned long dw, char* at) {
-    print_uint_at(>dw, at);
-    print_uint_at(<dw, at+4);
+    print_uint_at(WORD1(dw), at);
+    print_uint_at(WORD0(dw), at+4);
 }
 
 // Print a signed long as HEX

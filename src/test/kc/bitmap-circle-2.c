@@ -52,7 +52,7 @@ void plot(int x, int y) {
 
     byte* location = BITMAP;
     location += x & $fff8;
-    location += <y & 7;
+    location += BYTE0(y) & 7;
     location += ((y >> 3) * 320);
     (*location) = (*location) | bitmask[x & 7];
 }

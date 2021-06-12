@@ -19,15 +19,15 @@ main: {
     // char hit_check=scan_for_lowest()
     // screen[0] = hit_check
     sta screen
-    // <ball_y[hit_check]
+    // BYTE0(ball_y[hit_check])
     asl
     tax
     lda ball_y,x
-    // screen[2] = <ball_y[hit_check]
+    // screen[2] = BYTE0(ball_y[hit_check])
     sta screen+2
-    // >ball_y[hit_check]
+    // BYTE1(ball_y[hit_check])
     lda ball_y+1,x
-    // screen[3] = >ball_y[hit_check]
+    // screen[3] = BYTE1(ball_y[hit_check])
     sta screen+3
     // }
     rts

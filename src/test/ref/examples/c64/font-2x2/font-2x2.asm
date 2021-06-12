@@ -158,26 +158,26 @@ font_2x2: {
     iny
     cpy #8
     bne __b3
-    // >glyph_bits_2x2
+    // BYTE1(glyph_bits_2x2)
     lda.z glyph_bits_2x2+1
-    // next_2x2_left[l2] = >glyph_bits_2x2
+    // next_2x2_left[l2] = BYTE1(glyph_bits_2x2)
     // Put the generated 2x2-line into the 2x2-font twice
     ldy.z l2
     sta (next_2x2_left_1),y
     // l2+1
     iny
-    // >glyph_bits_2x2
-    // next_2x2_left[l2+1] = >glyph_bits_2x2
+    // BYTE1(glyph_bits_2x2)
+    // next_2x2_left[l2+1] = BYTE1(glyph_bits_2x2)
     sta (next_2x2_left_1),y
-    // <glyph_bits_2x2
+    // BYTE0(glyph_bits_2x2)
     lda.z glyph_bits_2x2
-    // next_2x2_right[l2] = <glyph_bits_2x2
+    // next_2x2_right[l2] = BYTE0(glyph_bits_2x2)
     ldy.z l2
     sta (next_2x2_right),y
     // l2+1
     iny
-    // <glyph_bits_2x2
-    // next_2x2_right[l2+1] = <glyph_bits_2x2
+    // BYTE0(glyph_bits_2x2)
+    // next_2x2_right[l2+1] = BYTE0(glyph_bits_2x2)
     sta (next_2x2_right),y
     // l2 += 2
     lda.z l2

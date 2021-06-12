@@ -15,13 +15,13 @@ main: {
     sta.z w
     sta.z w+1
   __b1:
-    // <w
+    // BYTE0(w)
     lda.z w
-    // SCREEN[0] = <w
+    // SCREEN[0] = BYTE0(w)
     sta SCREEN
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // SCREEN[1] = >w
+    // SCREEN[1] = BYTE1(w)
     sta SCREEN+1
     // for( word w: 0..$ffff)
     inc.z w
@@ -36,13 +36,13 @@ main: {
     lda #>-$7fff
     sta.z sw+1
   __b2:
-    // <sw
+    // BYTE0(sw)
     lda.z sw
-    // SCREEN[3] = <sw
+    // SCREEN[3] = BYTE0(sw)
     sta SCREEN+3
-    // >sw
+    // BYTE1(sw)
     lda.z sw+1
-    // SCREEN[4] = >sw
+    // SCREEN[4] = BYTE1(sw)
     sta SCREEN+4
     // for( signed word sw: -$7fff..$7ffe)
     inc.z sw

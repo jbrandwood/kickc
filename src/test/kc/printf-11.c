@@ -36,10 +36,10 @@ const char printf_hextab[] = "0123456789abcdef"z;
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
 void printf_uint(unsigned int uvalue, struct printf_format_number format) {
-    *screen++ = printf_hextab[(>uvalue)>>4];
-    *screen++ = printf_hextab[(>uvalue)&0xf];
-    *screen++ = printf_hextab[(<uvalue)>>4];
-    *screen++ = printf_hextab[(<uvalue)&0xf];
+    *screen++ = printf_hextab[BYTE1(uvalue)>>4];
+    *screen++ = printf_hextab[BYTE1(uvalue)&0xf];
+    *screen++ = printf_hextab[BYTE0(uvalue)>>4];
+    *screen++ = printf_hextab[BYTE0(uvalue)&0xf];
 }
 
 void main() {

@@ -24,16 +24,16 @@ fn1: {
 }
 main: {
     .label SCREEN = $400
-    // SCREEN[0] = <(word)f
+    // SCREEN[0] = BYTE0((word)f)
     lda #<fn1
     sta SCREEN
-    // SCREEN[1] = >(word)f
+    // SCREEN[1] = BYTE1((word)f)
     lda #>fn1
     sta SCREEN+1
-    // SCREEN[2] = <(word)f
+    // SCREEN[2] = BYTE0((word)f)
     lda #<fn2
     sta SCREEN+2
-    // SCREEN[3] = >(word)f
+    // SCREEN[3] = BYTE1((word)f)
     lda #>fn2
     sta SCREEN+3
     // }

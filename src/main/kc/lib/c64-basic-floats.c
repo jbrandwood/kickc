@@ -10,8 +10,8 @@ char* const memHi = (char*)0xff;
 
 // Prepare MEM pointers for operations using MEM
 inline void prepareMEM(unsigned int mem) {
-    *memLo = <mem;
-    *memHi = >mem;
+    *memLo = BYTE0(mem);
+    *memHi = BYTE1(mem);
 }
 
 // FAC = unsigned int

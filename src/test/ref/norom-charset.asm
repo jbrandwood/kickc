@@ -65,11 +65,11 @@ gen_char3: {
     ldx #0
     ldy #0
   __b2:
-    // >spec
+    // BYTE1(spec)
     lda.z spec+1
-    // >spec&$80
+    // BYTE1(spec)&$80
     and #$80
-    // if((>spec&$80)!=0)
+    // if((BYTE1(spec)&$80)!=0)
     cmp #0
     beq __b3
     // b = b|1

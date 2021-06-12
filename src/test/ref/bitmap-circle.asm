@@ -336,8 +336,8 @@ circle: {
 // plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $c
-    .label __3 = $a
-    .label __4 = $e
+    .label __2 = $a
+    .label __3 = $e
     .label x = 8
     .label y = $a
     .label location = $c
@@ -358,11 +358,10 @@ plot: {
     lda.z location+1
     adc #>BITMAP
     sta.z location+1
-    // <y
+    // (char)y & 7
     lda.z y
-    // <y & 7
     and #7
-    // location += <y & 7
+    // location += (char)y & 7
     clc
     adc.z location
     sta.z location
@@ -370,53 +369,53 @@ plot: {
     inc.z location+1
   !:
     // y >> 3
-    lda.z __3+1
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
+    ror.z __2+1
+    ror.z __2
     // (y >> 3) * 320
-    lda.z __3
+    lda.z __2
     asl
     sta.z __7
-    lda.z __3+1
+    lda.z __2+1
     rol
     sta.z __7+1
     asl.z __7
     rol.z __7+1
     lda.z __8
     clc
-    adc.z __3
+    adc.z __2
     sta.z __8
     lda.z __8+1
-    adc.z __3+1
+    adc.z __2+1
     sta.z __8+1
-    lda.z __4+1
+    lda.z __3+1
     sta.z $ff
-    lda.z __4
-    sta.z __4+1
+    lda.z __3
+    sta.z __3+1
     lda #0
-    sta.z __4
+    sta.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
+    ror.z __3+1
+    ror.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
+    ror.z __3+1
+    ror.z __3
     // location += ((y >> 3) * 320)
     lda.z location
     clc
-    adc.z __4
+    adc.z __3
     sta.z location
     lda.z location+1
-    adc.z __4+1
+    adc.z __3+1
     sta.z location+1
     // x & 7
     lda #7

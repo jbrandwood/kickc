@@ -174,6 +174,12 @@ Allocated zp[1]:5 [ main::$3 ]
 Allocated zp[1]:6 [ main::$4 ]
 Allocated zp[1]:7 [ main::$5 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] main::$0 = < *((word*) 1024+SIZEOF_WORD) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::$1 = > *((word*) 1024+SIZEOF_WORD) [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$3 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) [ main::$3 ] (  [ main::$3 ] { }  ) always clobbers reg byte a 
+Statement [8] main::$4 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) [ main::$4 ] (  [ main::$4 ] { }  ) always clobbers reg byte a 
+Statement [10] main::$5 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) [ main::$5 ] (  [ main::$5 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -211,27 +217,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400+$28*6
-    // [0] main::$0 = < *((word*) 1024+SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // [0] main::$0 = < *((word*) 1024+SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD
     // [1] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [2] main::$1 = > *((word*) 1024+SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // [2] main::$1 = > *((word*) 1024+SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+1
     // [3] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-    // [4] main::$2 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // [4] main::$2 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD
     // [5] *(main::SCREEN+2) = main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
-    // [6] main::$3 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // [6] main::$3 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD+1
     // [7] *(main::SCREEN+3) = main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
-    // [8] main::$4 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // [8] main::$4 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD
     // [9] *(main::SCREEN+4) = main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
-    // [10] main::$5 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // [10] main::$5 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD+1
     // [11] *(main::SCREEN+5) = main::$5 -- _deref_pbuc1=vbuaa 
     sta SCREEN+5
@@ -289,40 +295,40 @@ Score: 54
   // main
 main: {
     .label SCREEN = $400+$28*6
-    // <*wp
-    // [0] main::$0 = < *((word*) 1024+SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // BYTE0(*wp)
+    // [0] main::$0 = < *((word*) 1024+SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD
-    // SCREEN[0] = <*wp
+    // SCREEN[0] = BYTE0(*wp)
     // [1] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // >*wp
-    // [2] main::$1 = > *((word*) 1024+SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // BYTE1(*wp)
+    // [2] main::$1 = > *((word*) 1024+SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+1
-    // SCREEN[1] = >*wp
+    // SCREEN[1] = BYTE1(*wp)
     // [3] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-    // <*wp
-    // [4] main::$2 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // BYTE0(*wp)
+    // [4] main::$2 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD
-    // SCREEN[2] = <*wp
+    // SCREEN[2] = BYTE0(*wp)
     // [5] *(main::SCREEN+2) = main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
-    // >*wp
-    // [6] main::$3 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // BYTE1(*wp)
+    // [6] main::$3 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD+1
-    // SCREEN[3] = >*wp
+    // SCREEN[3] = BYTE1(*wp)
     // [7] *(main::SCREEN+3) = main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
-    // <*wp
-    // [8] main::$4 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_lo__deref_pwuc1 
+    // BYTE0(*wp)
+    // [8] main::$4 = < *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_byte0__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD
-    // SCREEN[4] = <*wp
+    // SCREEN[4] = BYTE0(*wp)
     // [9] *(main::SCREEN+4) = main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
-    // >*wp
-    // [10] main::$5 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_hi__deref_pwuc1 
+    // BYTE1(*wp)
+    // [10] main::$5 = > *((word*) 1024+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD) -- vbuaa=_byte1__deref_pwuc1 
     lda $400+SIZEOF_WORD+SIZEOF_WORD-SIZEOF_WORD+1
-    // SCREEN[5] = >*wp
+    // SCREEN[5] = BYTE1(*wp)
     // [11] *(main::SCREEN+5) = main::$5 -- _deref_pbuc1=vbuaa 
     sta SCREEN+5
     // main::@return

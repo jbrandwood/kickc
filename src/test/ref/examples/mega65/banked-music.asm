@@ -276,9 +276,9 @@ memoryRemap: {
     .label __6 = $a
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
-    // <lowerPageOffset
+    // BYTE0(lowerPageOffset)
     lda.z lowerPageOffset
-    // char aVal = <lowerPageOffset
+    // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     sta.z aVal
     // remapBlocks << 4
@@ -288,31 +288,31 @@ memoryRemap: {
     asl
     asl
     sta.z __1
-    // >lowerPageOffset
+    // BYTE1(lowerPageOffset)
     lda.z lowerPageOffset+1
-    // >lowerPageOffset & 0xf
+    // BYTE1(lowerPageOffset) & 0xf
     and #$f
-    // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     ora.z __1
-    // char xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
     sta.z xVal
-    // <upperPageOffset
+    // BYTE0(upperPageOffset)
     lda.z upperPageOffset
-    // char yVal = <upperPageOffset
+    // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
     sta.z yVal
     // remapBlocks & 0xf0
     tza
     and #$f0
     sta.z __6
-    // >upperPageOffset
+    // BYTE1(upperPageOffset)
     lda.z upperPageOffset+1
-    // >upperPageOffset & 0xf
+    // BYTE1(upperPageOffset) & 0xf
     and #$f
-    // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     ora.z __6
-    // char zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
     sta.z zVal
     // asm
@@ -373,10 +373,10 @@ memcpy_dma4: {
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >&memcpy_dma_command4
+    // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4)
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ADDRLSBTRIG = <&memcpy_dma_command4
+    // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4)
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA

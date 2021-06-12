@@ -10,9 +10,9 @@ main: scope:[main]  from __start::@1
   main::$1 = > w
   SCREEN[3] = main::$1
   main::$2 = < ptr
-  SCREEN[5] = (byte)main::$2
+  SCREEN[5] = main::$2
   main::$3 = > ptr
-  SCREEN[5] = (byte)main::$3
+  SCREEN[5] = main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -47,16 +47,14 @@ constant word w = 0
 Adding number conversion cast (unumber) 0 in SCREEN[0] = b
 Adding number conversion cast (unumber) 2 in SCREEN[2] = main::$0
 Adding number conversion cast (unumber) 3 in SCREEN[3] = main::$1
-Adding number conversion cast (unumber) 5 in SCREEN[5] = (byte)main::$2
-Adding number conversion cast (unumber) 5 in SCREEN[5] = (byte)main::$3
+Adding number conversion cast (unumber) 5 in SCREEN[5] = main::$2
+Adding number conversion cast (unumber) 5 in SCREEN[5] = main::$3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
-Simplifying constant integer cast main::$2
 Simplifying constant integer cast 5
-Simplifying constant integer cast main::$3
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -223,17 +221,17 @@ main: {
     // [0] *SCREEN = b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-    // SCREEN[2] = <w
+    // SCREEN[2] = BYTE0(w)
     // [1] *(SCREEN+2) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+2
-    // SCREEN[3] = >w
+    // SCREEN[3] = BYTE1(w)
     // [2] *(SCREEN+3) = 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+3
-    // SCREEN[5] = (byte)<ptr
+    // SCREEN[5] = BYTE0(ptr)
     // [3] *(SCREEN+5) = 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+5
-    // SCREEN[5] = (byte)>ptr
+    // SCREEN[5] = BYTE1(ptr)
     // [4] *(SCREEN+5) = 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+5
     // main::@return

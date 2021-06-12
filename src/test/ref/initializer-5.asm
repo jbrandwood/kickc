@@ -30,21 +30,21 @@ main: {
     sta SCREEN,y
     // SCREEN[idx++] = points[i].x;
     inc.z idx
-    // <points[i].y
+    // BYTE0(points[i].y)
     ldy.z __4
     lda points+OFFSET_STRUCT_POINT_Y,y
-    // SCREEN[idx++] = <points[i].y
+    // SCREEN[idx++] = BYTE0(points[i].y)
     ldy.z idx
     sta SCREEN,y
-    // SCREEN[idx++] = <points[i].y;
+    // SCREEN[idx++] = BYTE0(points[i].y);
     inc.z idx
-    // >points[i].y
+    // BYTE1(points[i].y)
     ldy.z __4
     lda points+OFFSET_STRUCT_POINT_Y+1,y
-    // SCREEN[idx++] = >points[i].y
+    // SCREEN[idx++] = BYTE1(points[i].y)
     ldy.z idx
     sta SCREEN,y
-    // SCREEN[idx++] = >points[i].y;
+    // SCREEN[idx++] = BYTE1(points[i].y);
     inc.z idx
     // for( char i: 0..2)
     inx

@@ -109,13 +109,13 @@ main: {
 setFAC: {
     .label prepareMEM1_mem = 7
     .label w = 7
-    // <mem
+    // BYTE0(mem)
     lda.z prepareMEM1_mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z prepareMEM1_mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     // Load unsigned int register Y,A into FAC (floating point accumulator)
@@ -138,13 +138,13 @@ divFACby10: {
 // setMEMtoFAC(byte* zp(7) mem)
 setMEMtoFAC: {
     .label mem = 7
-    // <mem
+    // BYTE0(mem)
     lda.z mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     ldx memLo
@@ -159,13 +159,13 @@ setMEMtoFAC: {
 // mulFACbyMEM(byte* zp(7) mem)
 mulFACbyMEM: {
     .label mem = 7
-    // <mem
+    // BYTE0(mem)
     lda.z mem
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     sta memLo
-    // >mem
+    // BYTE1(mem)
     lda.z mem+1
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     sta memHi
     // asm
     lda memLo
@@ -179,10 +179,10 @@ mulFACbyMEM: {
 // Reads 5 chars from memory
 divMEMbyFAC: {
     .const prepareMEM1_mem = main.f_i
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     lda #<prepareMEM1_mem
     sta memLo
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     lda #>prepareMEM1_mem
     sta memHi
     // asm
@@ -206,10 +206,10 @@ sinFAC: {
 // Reads 5 chars from memory
 addMEMtoFAC: {
     .const prepareMEM1_mem = main.f_127
-    // *memLo = <mem
+    // *memLo = BYTE0(mem)
     lda #<prepareMEM1_mem
     sta memLo
-    // *memHi = >mem
+    // *memHi = BYTE1(mem)
     lda #>prepareMEM1_mem
     sta memHi
     // asm
@@ -241,10 +241,10 @@ getFAC: {
 // print_uint(word zp(7) w)
 print_uint: {
     .label w = 7
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

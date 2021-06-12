@@ -5,7 +5,7 @@ void main() {
     char* screen = (char*)0x0400;
     int lasti = -1;
     for(int i=0;i<10;i++) {
-        screen[i] = <lasti;
+        screen[i] = (char)lasti;
         lasti = i;
     }
 }

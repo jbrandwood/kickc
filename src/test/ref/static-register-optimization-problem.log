@@ -15,8 +15,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   main::lasti#2 = phi( main::@1/main::lasti#3 )
-  main::$1 = < main::lasti#2
-  main::screen[main::i#3] = main::$1
+  main::screen[main::i#3] = (byte)main::lasti#2
   main::lasti#1 = main::i#3
   main::i#1 = ++ main::i#3
   to:main::@1
@@ -38,7 +37,6 @@ SYMBOL TABLE SSA
 void __start()
 void main()
 bool~ main::$0
-byte~ main::$1
 signed word main::i
 signed word main::i#0
 signed word main::i#1
@@ -69,7 +67,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::lasti#0 = -1
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [7] main::screen[main::i#2] = main::$1
+De-inlining pointer[w] to *(pointer+w)   [6] main::screen[main::i#2] = (byte)main::lasti#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -89,8 +87,8 @@ Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 2 initial phi equivalence classes
-Coalesced [9] main::i#4 = main::i#1
-Coalesced [10] main::lasti#4 = main::lasti#1
+Coalesced [8] main::i#4 = main::i#1
+Coalesced [9] main::lasti#4 = main::lasti#1
 Coalesced down to 2 phi equivalence classes
 Adding NOP phi() at start of main
 
@@ -109,61 +107,49 @@ main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] main::$1 = < main::lasti#2
-  [5] main::$2 = main::screen + main::i#2
-  [6] *main::$2 = main::$1
-  [7] main::lasti#1 = main::i#2
-  [8] main::i#1 = ++ main::i#2
+  [4] main::$1 = main::screen + main::i#2
+  [5] *main::$1 = (byte)main::lasti#2
+  [6] main::lasti#1 = main::i#2
+  [7] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$1 11.0
-byte*~ main::$2 22.0
+byte*~ main::$1 22.0
 signed word main::i
 signed word main::i#1 22.0
-signed word main::i#2 9.166666666666666
+signed word main::i#2 11.0
 signed word main::lasti
 signed word main::lasti#1 11.0
-signed word main::lasti#2 11.0
+signed word main::lasti#2 3.6666666666666665
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::lasti#2 main::lasti#1 ]
 Added variable main::$1 to live range equivalence class [ main::$1 ]
-Added variable main::$2 to live range equivalence class [ main::$2 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::lasti#2 main::lasti#1 ]
 [ main::$1 ]
-[ main::$2 ]
 Allocated zp[2]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:4 [ main::lasti#2 main::lasti#1 ]
-Allocated zp[1]:6 [ main::$1 ]
-Allocated zp[2]:7 [ main::$2 ]
+Allocated zp[2]:6 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if(main::i#2<$a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
-Statement [5] main::$2 = main::screen + main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::$1 ]
-Statement [6] *main::$2 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
-Statement [2] if(main::i#2<$a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
-Statement [5] main::$2 = main::screen + main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [6] *main::$2 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$1 = main::screen + main::i#2 [ main::i#2 main::lasti#2 main::$1 ] (  [ main::i#2 main::lasti#2 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [5] *main::$1 = (byte)main::lasti#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::lasti#2 main::lasti#1 ] : zp[2]:4 , 
-Potential registers zp[1]:6 [ main::$1 ] : zp[1]:6 , reg byte x , reg byte y , 
-Potential registers zp[2]:7 [ main::$2 ] : zp[2]:7 , 
+Potential registers zp[2]:6 [ main::$1 ] : zp[2]:6 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::lasti#2 main::lasti#1 ] 22: zp[2]:7 [ main::$2 ] 11: zp[1]:6 [ main::$1 ] 
+Uplift Scope [main] 33: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:6 [ main::$1 ] 14.67: zp[2]:4 [ main::lasti#2 main::lasti#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1051 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::lasti#2 main::lasti#1 ] zp[2]:7 [ main::$2 ] reg byte x [ main::$1 ] 
-Uplifting [] best 1051 combination 
-Allocated (was zp[2]:7) zp[2]:6 [ main::$2 ]
+Uplifting [main] best 1031 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:6 [ main::$1 ] zp[2]:4 [ main::lasti#2 main::lasti#1 ] 
+Uplifting [] best 1031 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -185,7 +171,7 @@ main: {
     .label screen = $400
     .label lasti = 4
     .label i = 2
-    .label __2 = 6
+    .label __1 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::lasti#2 = -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
@@ -218,26 +204,24 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] main::$1 = < main::lasti#2 -- vbuxx=_lo_vwsz1 
-    ldx.z lasti
-    // [5] main::$2 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [4] main::$1 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     clc
     lda.z i
     adc #<screen
-    sta.z __2
+    sta.z __1
     lda.z i+1
     adc #>screen
-    sta.z __2+1
-    // [6] *main::$2 = main::$1 -- _deref_pbuz1=vbuxx 
-    txa
+    sta.z __1+1
+    // [5] *main::$1 = (byte)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
+    lda.z lasti
     ldy #0
-    sta (__2),y
-    // [7] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
+    sta (__1),y
+    // [6] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z lasti
     lda.z i+1
     sta.z lasti+1
-    // [8] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
+    // [7] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
@@ -264,24 +248,22 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$1 reg byte x 11.0
-byte*~ main::$2 zp[2]:6 22.0
+byte*~ main::$1 zp[2]:6 22.0
 signed word main::i
 signed word main::i#1 i zp[2]:2 22.0
-signed word main::i#2 i zp[2]:2 9.166666666666666
+signed word main::i#2 i zp[2]:2 11.0
 signed word main::lasti
 signed word main::lasti#1 lasti zp[2]:4 11.0
-signed word main::lasti#2 lasti zp[2]:4 11.0
+signed word main::lasti#2 lasti zp[2]:4 3.6666666666666665
 constant byte* main::screen = (byte*) 1024
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::lasti#2 main::lasti#1 ]
-reg byte x [ main::$1 ]
-zp[2]:6 [ main::$2 ]
+zp[2]:6 [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 951
+Score: 931
 
   // File Comments
 // https://gitlab.com/camelot/kickc/issues/336
@@ -302,7 +284,7 @@ main: {
     .label screen = $400
     .label lasti = 4
     .label i = 2
-    .label __2 = 6
+    .label __1 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::lasti#2 = -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
@@ -331,30 +313,27 @@ main: {
     rts
     // main::@2
   __b2:
-    // <lasti
-    // [4] main::$1 = < main::lasti#2 -- vbuxx=_lo_vwsz1 
-    ldx.z lasti
-    // screen[i] = <lasti
-    // [5] main::$2 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // screen[i] = (char)lasti
+    // [4] main::$1 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     clc
     lda.z i
     adc #<screen
-    sta.z __2
+    sta.z __1
     lda.z i+1
     adc #>screen
-    sta.z __2+1
-    // [6] *main::$2 = main::$1 -- _deref_pbuz1=vbuxx 
-    txa
+    sta.z __1+1
+    // [5] *main::$1 = (byte)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
+    lda.z lasti
     ldy #0
-    sta (__2),y
+    sta (__1),y
     // lasti = i
-    // [7] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
+    // [6] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z lasti
     lda.z i+1
     sta.z lasti+1
     // for(int i=0;i<10;i++)
-    // [8] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
+    // [7] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1

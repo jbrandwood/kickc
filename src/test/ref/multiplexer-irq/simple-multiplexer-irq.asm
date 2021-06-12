@@ -175,16 +175,15 @@ plexShowSprite: {
     // char xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
-    // <PLEX_XPOS[xpos_idx]
+    // SPRITES_XPOS[plex_sprite_idx2] = (char)PLEX_XPOS[xpos_idx]
     asl
     tax
-    lda PLEX_XPOS,x
-    // SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx]
     ldy.z plex_sprite_idx2
+    lda PLEX_XPOS,x
     sta SPRITES_XPOS,y
-    // >PLEX_XPOS[xpos_idx]
+    // BYTE1(PLEX_XPOS[xpos_idx])
     lda PLEX_XPOS+1,x
-    // if(>PLEX_XPOS[xpos_idx]!=0)
+    // if(BYTE1(PLEX_XPOS[xpos_idx])!=0)
     cmp #0
     bne __b1
     // 0xff^plex_sprite_msb

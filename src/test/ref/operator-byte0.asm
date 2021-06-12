@@ -55,10 +55,10 @@ main: {
     sta.z ptr
     sta.z ptr+1
     // SCREEN[i++] = BYTE0(17)
-    lda #<($11)
+    lda #<$11
     sta SCREEN
     // SCREEN[i++] = BYTE0(377)
-    lda #<($179)
+    lda #<$179
     sta SCREEN+1
     // BYTE0(bu)
     lda.z bu

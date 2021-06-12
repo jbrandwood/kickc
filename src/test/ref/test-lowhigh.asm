@@ -173,7 +173,7 @@ print_cls: {
 // print_ulong(dword zp($c) dw)
 print_ulong: {
     .label dw = $c
-    // print_uint(>dw)
+    // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
     lda.z dw+3
@@ -182,9 +182,9 @@ print_ulong: {
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
-    // print_uint(>dw)
+    // print_uint(WORD1(dw))
     jsr print_uint
-    // print_uint(<dw)
+    // print_uint(WORD0(dw))
     lda.z dw
     sta.z print_uint.w
     lda.z dw+1
@@ -211,10 +211,10 @@ print_char: {
 // print_uint(word zp($a) w)
 print_uint: {
     .label w = $a
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

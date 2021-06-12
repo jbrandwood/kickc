@@ -131,9 +131,8 @@ makechar: {
     rts
   __b2:
     // s = sinetable[(char)c]
-    lda.z c
-    tay
-    lda sinetable,y
+    ldx.z c
+    lda sinetable,x
     sta.z s
     lda #0
     sta.z i
@@ -414,14 +413,14 @@ rand: {
 // print_uint(word zp($16) w)
 print_uint: {
     .label w = $16
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

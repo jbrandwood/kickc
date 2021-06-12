@@ -67,6 +67,6 @@ void anim() {
 
    SPRITES_XPOS[0] = (byte)sprite_x;
    SPRITES_YPOS[0] = (byte)sprite_y;
-   *SPRITES_XMSB = >sprite_x;
+   *SPRITES_XMSB = BYTE1(sprite_x);
 
 }

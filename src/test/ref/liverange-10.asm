@@ -82,41 +82,41 @@ outsw: {
 // outw(word zp(4) w)
 outw: {
     .label w = 4
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // (>w)<<4
+    // BYTE1(w)<<4
     asl
     asl
     asl
     asl
-    // out(HEXTAB[(>w)<<4])
+    // out(HEXTAB[BYTE1(w)<<4])
     tay
     lda HEXTAB,y
     jsr out
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // (>w)&0x0f
+    // BYTE1(w)&0x0f
     and #$f
-    // out(HEXTAB[(>w)&0x0f])
+    // out(HEXTAB[BYTE1(w)&0x0f])
     tay
     lda HEXTAB,y
     jsr out
-    // <w
+    // BYTE0(w)
     lda.z w
-    // (<w)<<4
+    // BYTE0(w)<<4
     asl
     asl
     asl
     asl
-    // out(HEXTAB[(<w)<<4])
+    // out(HEXTAB[BYTE0(w)<<4])
     tay
     lda HEXTAB,y
     jsr out
-    // <w
+    // BYTE0(w)
     lda.z w
-    // (<w)&0x0f
+    // BYTE0(w)&0x0f
     and #$f
-    // out(HEXTAB[(<w)&0x0f])
+    // out(HEXTAB[BYTE0(w)&0x0f])
     tay
     lda HEXTAB,y
     jsr out

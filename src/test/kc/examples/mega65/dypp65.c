@@ -51,13 +51,13 @@ void main() {
     // Set number of characters to display per row
     VICIV->CHRCOUNT = 45;
     // Set exact screen address
-    VICIV->SCRNPTR_LOLO = <SCREEN;
-    VICIV->SCRNPTR_LOHI = >SCREEN;
+    VICIV->SCRNPTR_LOLO = BYTE0(SCREEN);
+    VICIV->SCRNPTR_LOHI = BYTE1(SCREEN);
     VICIV->SCRNPTR_HILO = 0;
     VICIV->SCRNPTR_HIHI = 0;
     // Set exact charset address
-    VICIV->CHARPTR_LOLO = <CHARSET;
-    VICIV->CHARPTR_LOHI = >CHARSET;
+    VICIV->CHARPTR_LOLO = BYTE0(CHARSET);
+    VICIV->CHARPTR_LOHI = BYTE1(CHARSET);
     VICIV->CHARPTR_HILO = 0;
     
     // Enable Full-Colour Mode

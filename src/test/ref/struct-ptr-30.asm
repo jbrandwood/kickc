@@ -48,17 +48,17 @@ print: {
     // SCREEN[idx++] = p.x;
     ldx.z idx
     inx
-    // <p.y
+    // BYTE0(p.y)
     lda.z p_y
-    // SCREEN[idx++] = <p.y
+    // SCREEN[idx++] = BYTE0(p.y)
     sta SCREEN,x
-    // SCREEN[idx++] = <p.y;
+    // SCREEN[idx++] = BYTE0(p.y);
     inx
-    // >p.y
+    // BYTE1(p.y)
     lda.z p_y+1
-    // SCREEN[idx++] = >p.y
+    // SCREEN[idx++] = BYTE1(p.y)
     sta SCREEN,x
-    // SCREEN[idx++] = >p.y;
+    // SCREEN[idx++] = BYTE1(p.y);
     inx
     // SCREEN[idx++] = ' '
     lda #' '

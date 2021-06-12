@@ -26,8 +26,8 @@ void bitmap_init(char* gfx, char* screen) {
     }
     char* yoffs = gfx;
     for(char y : 0..255) {
-        bitmap_plot_ylo[y] = y&$7 | <yoffs;
-        bitmap_plot_yhi[y] = >yoffs;
+        bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs);
+        bitmap_plot_yhi[y] = BYTE1(yoffs);
         if((y&$7)==7) {
             yoffs = yoffs + 40*8;
         }
@@ -47,7 +47,7 @@ void bitmap_clear(char bgcol, char fgcol) {
 void bitmap_plot(unsigned int x, char y) {
     char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
     plotter += ( x & $fff8 );
-    *plotter |= bitmap_plot_bit[<x];
+    *plotter |= bitmap_plot_bit[(char)x];
 }
 
 // Draw a line on the bitmap using bresenhams algorithm
@@ -92,7 +92,7 @@ void bitmap_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int
 
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
 unsigned int abs_u16(unsigned int w) {
-    if(>w&0x80) {
+    if(BYTE1(w)&0x80) {
         return -w;
     } else {
         return w;
@@ -102,7 +102,7 @@ unsigned int abs_u16(unsigned int w) {
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
 unsigned int sgn_u16(unsigned int w) {
-    if(>w&0x80) {
+    if(BYTE1(w)&0x80) {
         return -1;
     } else {
         return 1;

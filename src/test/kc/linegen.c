@@ -47,7 +47,7 @@ void lin16u_gen(word min, word max, word* lintab, word length) {
     dword step = { stepi, stepf };
     dword val = { min, 0 };
     for(word i=0; i<length; i++) {
-        *lintab = >val;
+        *lintab = WORD1(val);
         val = val + step;
         lintab++;
     }

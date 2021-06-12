@@ -12,7 +12,7 @@ void main() {
 
 void position_sprite(byte spriteno, word x, byte y) {
     SPRITES_YPOS[spriteno * 2] = y;
-    SPRITES_XPOS[spriteno * 2] = <x;
+    SPRITES_XPOS[spriteno * 2] = BYTE0(x);
     if (x > 255) {
         *SPRITES_XMSB |= 1 << spriteno;
     } else {

@@ -215,8 +215,12 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.LOGIC_NOT)) return true;
          if(operator.equals(Operators.LOGIC_AND)) return true;
          if(operator.equals(Operators.LOGIC_OR)) return true;
-         if(operator.equals(Operators.HIBYTE)) return true;
-         if(operator.equals(Operators.LOWBYTE)) return true;
+         if(operator.equals(Operators.BYTE0)) return true;
+         if(operator.equals(Operators.BYTE1)) return true;
+         if(operator.equals(Operators.BYTE2)) return true;
+         if(operator.equals(Operators.BYTE3)) return true;
+         if(operator.equals(Operators.WORD0)) return true;
+         if(operator.equals(Operators.WORD1)) return true;
          if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) {
             final SymbolType type1 = SymbolTypeInference.inferType(getScope(), rValue1);
             return type1.getSizeBytes() == 1;

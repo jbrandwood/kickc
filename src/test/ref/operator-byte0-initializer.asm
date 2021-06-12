@@ -26,4 +26,4 @@ main: {
     rts
 }
 .segment Data
-  VALS: .byte <($756b5b3), >($756b5b3), <($756b5b3>>$10), >($756b5b3>>$10)
+  VALS: .byte <$756b5b3, >$756b5b3, <$756b5b3>>$10, >$756b5b3>>$10

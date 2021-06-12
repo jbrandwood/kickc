@@ -22,7 +22,7 @@ void main() {
         unsigned int offset = (unsigned int)y*40+x;
         char cnt = ++*(VISITS+offset);
         *(DEFAULT_COLORRAM+offset) = FADE[cnt&0xf];
-        char rnd = >rand();
+        char rnd = BYTE1(rand());
         if(rnd & 0x80) {
             if(rnd& 0x40) {
                 x++;

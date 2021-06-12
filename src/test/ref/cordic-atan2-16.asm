@@ -61,7 +61,7 @@ main: {
     bcc !+
     inc.z __3+1
   !:
-    // byte ang_w = >(angle_w+0x0080)
+    // byte ang_w = BYTE1(angle_w+0x0080)
     lda.z __3+1
     // *screen++ = ang_w
     ldy #0

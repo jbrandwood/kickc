@@ -59,9 +59,9 @@ nmi2: {
     bne !+
     inc.z sample+1
   !:
-    // >sample
+    // BYTE1(sample)
     lda.z sample+1
-    // if (>sample == >(SAMPLE+$6100))
+    // if (BYTE1(sample) == BYTE1(SAMPLE+$6100))
     cmp #>SAMPLE+$6100
     bne __b1
     // sample = SAMPLE

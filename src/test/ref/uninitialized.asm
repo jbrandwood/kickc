@@ -14,14 +14,14 @@ main: {
     // SCREEN[0] = b
     lda #b
     sta SCREEN
-    // SCREEN[2] = <w
+    // SCREEN[2] = BYTE0(w)
     lda #0
     sta SCREEN+2
-    // SCREEN[3] = >w
+    // SCREEN[3] = BYTE1(w)
     sta SCREEN+3
-    // SCREEN[5] = (byte)<ptr
+    // SCREEN[5] = BYTE0(ptr)
     sta SCREEN+5
-    // SCREEN[5] = (byte)>ptr
+    // SCREEN[5] = BYTE1(ptr)
     sta SCREEN+5
     // }
     rts

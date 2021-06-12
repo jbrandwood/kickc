@@ -96,8 +96,8 @@ void plexShowSprite() {
     plexFreeAdd(ypos);
     PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]];
     char xpos_idx = PLEX_SORTED_IDX[plex_show_idx];
-    SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx];
-    if(>PLEX_XPOS[xpos_idx]!=0) {
+    SPRITES_XPOS[plex_sprite_idx2] = (char)PLEX_XPOS[xpos_idx];
+    if(BYTE1(PLEX_XPOS[xpos_idx])!=0) {
         *SPRITES_XMSB |= plex_sprite_msb;
     } else {
         *SPRITES_XMSB &= (0xff^plex_sprite_msb);

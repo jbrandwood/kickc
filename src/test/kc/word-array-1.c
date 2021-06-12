@@ -6,8 +6,8 @@ void main() {
     byte idx = 0;
     for( byte i: 0..3) {
         word w = words[i];
-        SCREEN[idx++] = >w;
-        SCREEN[idx++] = <w;
+        SCREEN[idx++] = BYTE1(w);
+        SCREEN[idx++] = BYTE0(w);
         idx++;
     }
 

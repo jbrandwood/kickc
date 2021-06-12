@@ -17,8 +17,8 @@ void main() {
     *VICII_CONTROL1 = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
     *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Plane B: CHUNKY
-    *DTV_PLANEB_START_LO = < CHUNKY;
-    *DTV_PLANEB_START_MI = > CHUNKY;
+    *DTV_PLANEB_START_LO = BYTE0(CHUNKY);
+    *DTV_PLANEB_START_MI = BYTE1(CHUNKY);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 8;
     *DTV_PLANEB_MODULO_LO = 0;
@@ -27,7 +27,7 @@ void main() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000); // Set VIC Bank
     // VIC memory
-    *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4);
+    *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((BYTE1(((word)CHUNKY)&$3fff))/4);
 
     // DTV Palette - Grey Tones
     for(byte j : 0..$f) {

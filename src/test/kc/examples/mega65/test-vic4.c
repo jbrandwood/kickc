@@ -33,7 +33,7 @@ void main() {
         *sc = '*';
     // Fill the color memory
     for( char *col = COLORS; col<COLORS+2000; col++)
-        *col = <col;
+        *col = (char)col;
 
     // Loop forever
     for(;;)

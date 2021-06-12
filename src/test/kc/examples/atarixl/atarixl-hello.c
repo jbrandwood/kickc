@@ -24,9 +24,9 @@ char TEXT[] = "HELLO atari 8BIT"
 // ANTIC Display List Program
 // https://en.wikipedia.org/wiki/ANTIC
 char DISPLAY_LIST[] = {
-   BLANK8, BLANK8, BLANK8,              // 3* 8 blank lines
-   LMS|MODE7, <TEXT, >TEXT,             // Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
-   BLANK4,                              // 4 blank lines
-   MODE2,                               // Charmode 2 (32/40/48 chars wide, 8 lines per char)
-   JVB, <DISPLAY_LIST, >DISPLAY_LIST    // Wait for VBLANK snd jump
+   BLANK8, BLANK8, BLANK8,                          // 3* 8 blank lines
+   LMS|MODE7, BYTE0(TEXT), BYTE1(TEXT),             // Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
+   BLANK4,                                          // 4 blank lines
+   MODE2,                                           // Charmode 2 (32/40/48 chars wide, 8 lines per char)
+   JVB, BYTE0(DISPLAY_LIST), BYTE1(DISPLAY_LIST)    // Wait for VBLANK snd jump
 };

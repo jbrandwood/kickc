@@ -13,7 +13,7 @@ main: {
     .label screen = $400
     .label lasti = 4
     .label i = 2
-    .label __2 = 6
+    .label __1 = 6
     lda #<-1
     sta.z lasti
     sta.z lasti+1
@@ -34,19 +34,17 @@ main: {
     // }
     rts
   __b2:
-    // <lasti
-    ldx.z lasti
-    // screen[i] = <lasti
+    // screen[i] = (char)lasti
     clc
     lda.z i
     adc #<screen
-    sta.z __2
+    sta.z __1
     lda.z i+1
     adc #>screen
-    sta.z __2+1
-    txa
+    sta.z __1+1
+    lda.z lasti
     ldy #0
-    sta (__2),y
+    sta (__1),y
     // lasti = i
     lda.z i
     sta.z lasti

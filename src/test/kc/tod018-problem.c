@@ -3,7 +3,7 @@
 void main() {
     byte* const D018 = (byte*)0xd018;
     byte* const screen = (byte*)0x0400;
-    byte d018val = >(screen&$3fff);
+    byte d018val = BYTE1(screen&$3fff);
     *D018 = d018val;
 }
 

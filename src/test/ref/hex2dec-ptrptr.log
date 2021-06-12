@@ -897,7 +897,7 @@ cls: {
 utoa16w: {
     .label dst = 4
     .label value = 2
-    // [20] utoa16w::$0 = > utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [20] utoa16w::$0 = > utoa16w::value#5 -- vbuaa=_byte1_vwuz1 
     lda.z value+1
     // [21] utoa16n::nybble#0 = utoa16w::$0 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
@@ -916,7 +916,7 @@ utoa16w: {
     // utoa16w::@1
   __b1:
     // [24] utoa16w::started#1 = utoa16n::return#0
-    // [25] utoa16w::$3 = > utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [25] utoa16w::$3 = > utoa16w::value#5 -- vbuaa=_byte1_vwuz1 
     lda.z value+1
     // [26] utoa16n::nybble#1 = utoa16w::$3 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
@@ -932,7 +932,7 @@ utoa16w: {
     // utoa16w::@2
   __b2:
     // [30] utoa16w::started#2 = utoa16n::return#1
-    // [31] utoa16w::$6 = < utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [31] utoa16w::$6 = < utoa16w::value#5 -- vbuaa=_byte0_vwuz1 
     lda.z value
     // [32] utoa16n::nybble#2 = utoa16w::$6 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
@@ -949,7 +949,7 @@ utoa16w: {
     jmp __b3
     // utoa16w::@3
   __b3:
-    // [35] utoa16w::$9 = < utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [35] utoa16w::$9 = < utoa16w::value#5 -- vbuaa=_byte0_vwuz1 
     lda.z value
     // [36] utoa16n::nybble#3 = utoa16w::$9 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
@@ -1283,10 +1283,10 @@ cls: {
 utoa16w: {
     .label dst = 4
     .label value = 2
-    // >value
-    // [20] utoa16w::$0 = > utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // BYTE1(value)
+    // [20] utoa16w::$0 = > utoa16w::value#5 -- vbuaa=_byte1_vwuz1 
     lda.z value+1
-    // utoa16n((>value)>>4, &dst, started)
+    // utoa16n(BYTE1(value)>>4, &dst, started)
     // [21] utoa16n::nybble#0 = utoa16w::$0 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
@@ -1298,15 +1298,15 @@ utoa16w: {
     ldx #0
     // [40] phi utoa16n::nybble#4 = utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // utoa16n((>value)>>4, &dst, started)
+    // utoa16n(BYTE1(value)>>4, &dst, started)
     // [23] utoa16n::return#0 = utoa16n::return#4
     // utoa16w::@1
-    // started = utoa16n((>value)>>4, &dst, started)
+    // started = utoa16n(BYTE1(value)>>4, &dst, started)
     // [24] utoa16w::started#1 = utoa16n::return#0
-    // >value
-    // [25] utoa16w::$3 = > utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // BYTE1(value)
+    // [25] utoa16w::$3 = > utoa16w::value#5 -- vbuaa=_byte1_vwuz1 
     lda.z value+1
-    // utoa16n((>value)&0x0f, &dst, started)
+    // utoa16n(BYTE1(value)&0x0f, &dst, started)
     // [26] utoa16n::nybble#1 = utoa16w::$3 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
     // [27] utoa16n::started#1 = utoa16w::started#1
@@ -1315,15 +1315,15 @@ utoa16w: {
     // [40] phi utoa16n::started#7 = utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
     // [40] phi utoa16n::nybble#4 = utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // utoa16n((>value)&0x0f, &dst, started)
+    // utoa16n(BYTE1(value)&0x0f, &dst, started)
     // [29] utoa16n::return#1 = utoa16n::return#4
     // utoa16w::@2
-    // started = utoa16n((>value)&0x0f, &dst, started)
+    // started = utoa16n(BYTE1(value)&0x0f, &dst, started)
     // [30] utoa16w::started#2 = utoa16n::return#1
-    // <value
-    // [31] utoa16w::$6 = < utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // BYTE0(value)
+    // [31] utoa16w::$6 = < utoa16w::value#5 -- vbuaa=_byte0_vwuz1 
     lda.z value
-    // utoa16n((<value)>>4, &dst, started)
+    // utoa16n(BYTE0(value)>>4, &dst, started)
     // [32] utoa16n::nybble#2 = utoa16w::$6 >> 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
@@ -1336,10 +1336,10 @@ utoa16w: {
     // [40] phi utoa16n::nybble#4 = utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
     jsr utoa16n
     // utoa16w::@3
-    // <value
-    // [35] utoa16w::$9 = < utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // BYTE0(value)
+    // [35] utoa16w::$9 = < utoa16w::value#5 -- vbuaa=_byte0_vwuz1 
     lda.z value
-    // utoa16n((<value)&0x0f, &dst, 1)
+    // utoa16n(BYTE0(value)&0x0f, &dst, 1)
     // [36] utoa16n::nybble#3 = utoa16w::$9 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
     // [37] call utoa16n 

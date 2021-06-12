@@ -155,16 +155,16 @@ mulf_init: {
     inc.z sqr+1
   !:
   __b3:
-    // <sqr
+    // BYTE0(sqr)
     lda.z sqr
-    // *sqr1_lo = <sqr
+    // *sqr1_lo = BYTE0(sqr)
     ldy #0
     sta (sqr1_lo),y
-    // >sqr
+    // BYTE1(sqr)
     lda.z sqr+1
-    // *sqr1_hi++ = >sqr
+    // *sqr1_hi++ = BYTE1(sqr)
     sta (sqr1_hi),y
-    // *sqr1_hi++ = >sqr;
+    // *sqr1_hi++ = BYTE1(sqr);
     inc.z sqr1_hi
     bne !+
     inc.z sqr1_hi+1
@@ -310,13 +310,13 @@ mulf16u: {
 // print_ulong(dword zp($e) dw)
 print_ulong: {
     .label dw = $e
-    // print_uint(>dw)
+    // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
     lda.z dw+3
     sta.z print_uint.w+1
     jsr print_uint
-    // print_uint(<dw)
+    // print_uint(WORD0(dw))
     lda.z dw
     sta.z print_uint.w
     lda.z dw+1
@@ -329,10 +329,10 @@ print_ulong: {
 // print_uint(word zp($a) w)
 print_uint: {
     .label w = $a
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

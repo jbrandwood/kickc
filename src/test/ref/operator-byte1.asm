@@ -50,7 +50,7 @@ main: {
     // SCREEN[i++] = BYTE1(17)
     sta SCREEN
     // SCREEN[i++] = BYTE1(377)
-    lda #>($179)
+    lda #>$179
     sta SCREEN+1
     // SCREEN[i++] = BYTE1(bu)
     lda #0

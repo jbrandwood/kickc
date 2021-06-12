@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::$0 = < main::dw
+  main::$0 = _word0_ main::dw
   main::w1#0 = main::$0
   main::$1 = main::dw + 1
-  main::$2 = < main::$1
+  main::$2 = _word0_ main::$1
   main::w2#0 = main::$2
   main::$3 = < main::w1#0
   SCREEN[0] = main::$3
@@ -37,7 +37,7 @@ void __start()
 void main()
 word~ main::$0
 number~ main::$1
-number~ main::$2
+word~ main::$2
 byte~ main::$3
 byte~ main::$4
 byte~ main::$5
@@ -50,7 +50,6 @@ word main::w2#0
 
 Adding number conversion cast (unumber) 1 in main::$1 = main::dw + 1
 Adding number conversion cast (unumber) main::$1 in main::$1 = main::dw + (unumber)1
-Adding number conversion cast (unumber) main::$2 in main::$2 = < main::$1
 Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$3
 Adding number conversion cast (unumber) 1 in SCREEN[1] = main::$4
 Adding number conversion cast (unumber) 3 in SCREEN[3] = main::$5
@@ -70,14 +69,13 @@ Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to dword in main::$1 = main::dw + 1
-Inferred type updated to word in main::$2 = < main::$1
 Alias main::w1#0 = main::$0 
 Alias main::w2#0 = main::$2 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] main::w1#0 = < main::dw
+Constant right-side identified [0] main::w1#0 = _word0_ main::dw
 Constant right-side identified [1] main::$1 = main::dw + 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::w1#0 = <main::dw
+Constant main::w1#0 = _word0_main::dw
 Constant main::$1 = main::dw+1
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SCREEN in [4] SCREEN[0] = main::$3
@@ -87,11 +85,11 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] main::w2#0 = < main::$1
+Constant right-side identified [0] main::w2#0 = _word0_ main::$1
 Constant right-side identified [1] main::$3 = < main::w1#0
 Constant right-side identified [3] main::$4 = > main::w1#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::w2#0 = <main::$1
+Constant main::w2#0 = _word0_main::$1
 Constant main::$3 = <main::w1#0
 Constant main::$4 = >main::w1#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -207,9 +205,9 @@ constant byte* const SCREEN = (byte*) 1024
 void main()
 constant dword main::dw = $2000
 word main::w1
-constant word main::w1#0 w1 = <main::dw
+constant word main::w1#0 w1 = _word0_main::dw
 word main::w2
-constant word main::w2#0 w2 = <main::dw+1
+constant word main::w2#0 w2 = _word0_main::dw+1
 
 
 
@@ -239,19 +237,19 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // SCREEN[0] = <w1
+    // SCREEN[0] = BYTE0(w1)
     // [0] *SCREEN = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
-    // SCREEN[1] = >w1
+    // SCREEN[1] = BYTE1(w1)
     // [1] *(SCREEN+1) = >main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
-    // SCREEN[3] = <w2
+    // SCREEN[3] = BYTE0(w2)
     // [2] *(SCREEN+3) = <main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
-    // SCREEN[4] = >w2
+    // SCREEN[4] = BYTE1(w2)
     // [3] *(SCREEN+4) = >main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4

@@ -94,11 +94,11 @@ main: {
     // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEA_START_LO = < SCREEN
+    // *DTV_PLANEA_START_LO = BYTE0(SCREEN)
     // Plane A: SCREEN
     lda #0
     sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = > SCREEN
+    // *DTV_PLANEA_START_MI = BYTE1(SCREEN)
     lda #>SCREEN
     sta DTV_PLANEA_START_MI
     // *DTV_PLANEA_START_HI = 0
@@ -112,10 +112,10 @@ main: {
     sta DTV_PLANEA_MODULO_LO
     // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
-    // *DTV_PLANEB_START_LO = < CHARSET8
+    // *DTV_PLANEB_START_LO = BYTE0(CHARSET8)
     // Plane B: CHARSET8
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = > CHARSET8
+    // *DTV_PLANEB_START_MI = BYTE1(CHARSET8)
     lda #>CHARSET8
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -135,10 +135,10 @@ main: {
     // Set VIC Bank bits to output - all others to input
     lda #3^SCREEN/$4000
     sta CIA2
-    // *VICII_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4)
+    // *VICII_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((BYTE1(((word)SCREEN)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
-    lda #(SCREEN&$3fff)/$40|(>(SCREEN&$3fff))/4
+    lda #(SCREEN&$3fff)/$40|(>SCREEN&$3fff)/4
     sta VICII_MEMORY
     ldx #0
   // DTV Palette - Grey Tones

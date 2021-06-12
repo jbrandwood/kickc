@@ -36,7 +36,7 @@ main: {
     // SCREEN[i++] = BYTE2(377)
     sta SCREEN+1
     // SCREEN[i++] = BYTE2(377777)
-    lda #<($5c3b1>>$10)
+    lda #<$5c3b1>>$10
     sta SCREEN+2
     // SCREEN[i++] = BYTE2(bu)
     lda #0

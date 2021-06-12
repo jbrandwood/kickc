@@ -359,10 +359,10 @@ print_ln: {
 // print_uint(word zp(6) w)
 print_uint: {
     .label w = 6
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -401,13 +401,13 @@ print_sint: {
 // print_ulong(dword zp(8) dw)
 print_ulong: {
     .label dw = 8
-    // print_uint(>dw)
+    // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
     lda.z dw+3
     sta.z print_uint.w+1
     jsr print_uint
-    // print_uint(<dw)
+    // print_uint(WORD0(dw))
     lda.z dw
     sta.z print_uint.w
     lda.z dw+1

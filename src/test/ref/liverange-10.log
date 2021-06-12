@@ -790,7 +790,7 @@ outsw: {
 // outw(word zp(4) w)
 outw: {
     .label w = 4
-    // [21] outw::$0 = > outw::w#2 -- vbuaa=_hi_vwuz1 
+    // [21] outw::$0 = > outw::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // [22] outw::$1 = outw::$0 << 4 -- vbuaa=vbuaa_rol_4 
     asl
@@ -809,7 +809,7 @@ outw: {
     jmp __b1
     // outw::@1
   __b1:
-    // [25] outw::$3 = > outw::w#2 -- vbuaa=_hi_vwuz1 
+    // [25] outw::$3 = > outw::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // [26] outw::$4 = outw::$3 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
@@ -825,7 +825,7 @@ outw: {
     jmp __b2
     // outw::@2
   __b2:
-    // [29] outw::$6 = < outw::w#2 -- vbuaa=_lo_vwuz1 
+    // [29] outw::$6 = < outw::w#2 -- vbuaa=_byte0_vwuz1 
     lda.z w
     // [30] outw::$7 = outw::$6 << 4 -- vbuaa=vbuaa_rol_4 
     asl
@@ -844,7 +844,7 @@ outw: {
     jmp __b3
     // outw::@3
   __b3:
-    // [33] outw::$9 = < outw::w#2 -- vbuaa=_lo_vwuz1 
+    // [33] outw::$9 = < outw::w#2 -- vbuaa=_byte0_vwuz1 
     lda.z w
     // [34] outw::$10 = outw::$9 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
@@ -1131,16 +1131,16 @@ outsw: {
 // outw(word zp(4) w)
 outw: {
     .label w = 4
-    // >w
-    // [21] outw::$0 = > outw::w#2 -- vbuaa=_hi_vwuz1 
+    // BYTE1(w)
+    // [21] outw::$0 = > outw::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
-    // (>w)<<4
+    // BYTE1(w)<<4
     // [22] outw::$1 = outw::$0 << 4 -- vbuaa=vbuaa_rol_4 
     asl
     asl
     asl
     asl
-    // out(HEXTAB[(>w)<<4])
+    // out(HEXTAB[BYTE1(w)<<4])
     // [23] out::c#1 = HEXTAB[outw::$1] -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda HEXTAB,y
@@ -1150,13 +1150,13 @@ outw: {
     // [38] phi idx#27 = idx#35 [phi:outw->out#1] -- register_copy 
     jsr out
     // outw::@1
-    // >w
-    // [25] outw::$3 = > outw::w#2 -- vbuaa=_hi_vwuz1 
+    // BYTE1(w)
+    // [25] outw::$3 = > outw::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
-    // (>w)&0x0f
+    // BYTE1(w)&0x0f
     // [26] outw::$4 = outw::$3 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // out(HEXTAB[(>w)&0x0f])
+    // out(HEXTAB[BYTE1(w)&0x0f])
     // [27] out::c#2 = HEXTAB[outw::$4] -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda HEXTAB,y
@@ -1166,16 +1166,16 @@ outw: {
     // [38] phi idx#27 = idx#11 [phi:outw::@1->out#1] -- register_copy 
     jsr out
     // outw::@2
-    // <w
-    // [29] outw::$6 = < outw::w#2 -- vbuaa=_lo_vwuz1 
+    // BYTE0(w)
+    // [29] outw::$6 = < outw::w#2 -- vbuaa=_byte0_vwuz1 
     lda.z w
-    // (<w)<<4
+    // BYTE0(w)<<4
     // [30] outw::$7 = outw::$6 << 4 -- vbuaa=vbuaa_rol_4 
     asl
     asl
     asl
     asl
-    // out(HEXTAB[(<w)<<4])
+    // out(HEXTAB[BYTE0(w)<<4])
     // [31] out::c#3 = HEXTAB[outw::$7] -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda HEXTAB,y
@@ -1185,13 +1185,13 @@ outw: {
     // [38] phi idx#27 = idx#11 [phi:outw::@2->out#1] -- register_copy 
     jsr out
     // outw::@3
-    // <w
-    // [33] outw::$9 = < outw::w#2 -- vbuaa=_lo_vwuz1 
+    // BYTE0(w)
+    // [33] outw::$9 = < outw::w#2 -- vbuaa=_byte0_vwuz1 
     lda.z w
-    // (<w)&0x0f
+    // BYTE0(w)&0x0f
     // [34] outw::$10 = outw::$9 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // out(HEXTAB[(<w)&0x0f])
+    // out(HEXTAB[BYTE0(w)&0x0f])
     // [35] out::c#4 = HEXTAB[outw::$10] -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda HEXTAB,y

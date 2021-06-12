@@ -202,15 +202,15 @@ plot: scope:[plot]  from circle::@10 circle::@11 circle::@12 circle::@4 circle::
   plot::location#0 = BITMAP
   plot::$0 = plot::x#8 & $fff8
   plot::location#1 = plot::location#0 + plot::$0
-  plot::$1 = < plot::y#8
-  plot::$2 = plot::$1 & 7
-  plot::location#2 = plot::location#1 + plot::$2
-  plot::$3 = plot::y#8 >> 3
-  plot::$4 = plot::$3 * $140
-  plot::location#3 = plot::location#2 + plot::$4
-  plot::$5 = plot::x#8 & 7
-  plot::$6 = *plot::location#3 | bitmask[plot::$5]
-  *plot::location#3 = plot::$6
+  plot::$6 = (byte)plot::y#8
+  plot::$1 = plot::$6 & 7
+  plot::location#2 = plot::location#1 + plot::$1
+  plot::$2 = plot::y#8 >> 3
+  plot::$3 = plot::$2 * $140
+  plot::location#3 = plot::location#2 + plot::$3
+  plot::$4 = plot::x#8 & 7
+  plot::$5 = *plot::location#3 | bitmask[plot::$4]
+  *plot::location#3 = plot::$5
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   return 
@@ -407,11 +407,11 @@ byte fill::val#4
 void main()
 void plot(signed word plot::x , signed word plot::y)
 number~ plot::$0
-byte~ plot::$1
-number~ plot::$2
-signed word~ plot::$3
+number~ plot::$1
+signed word~ plot::$2
+number~ plot::$3
 number~ plot::$4
-number~ plot::$5
+byte~ plot::$5
 byte~ plot::$6
 byte* plot::location
 byte* plot::location#0
@@ -464,13 +464,13 @@ Adding number conversion cast (snumber) $a in circle::$8 = circle::$7 + $a
 Adding number conversion cast (snumber) circle::$8 in circle::$8 = circle::$7 + (snumber)$a
 Adding number conversion cast (snumber) $fff8 in plot::$0 = plot::x#8 & $fff8
 Adding number conversion cast (snumber) plot::$0 in plot::$0 = plot::x#8 & (snumber)$fff8
-Adding number conversion cast (unumber) 7 in plot::$2 = plot::$1 & 7
-Adding number conversion cast (unumber) plot::$2 in plot::$2 = plot::$1 & (unumber)7
-Adding number conversion cast (snumber) 3 in plot::$3 = plot::y#8 >> 3
-Adding number conversion cast (snumber) $140 in plot::$4 = plot::$3 * $140
-Adding number conversion cast (snumber) plot::$4 in plot::$4 = plot::$3 * (snumber)$140
-Adding number conversion cast (snumber) 7 in plot::$5 = plot::x#8 & 7
-Adding number conversion cast (snumber) plot::$5 in plot::$5 = plot::x#8 & (snumber)7
+Adding number conversion cast (unumber) 7 in plot::$1 = plot::$6 & 7
+Adding number conversion cast (unumber) plot::$1 in plot::$1 = plot::$6 & (unumber)7
+Adding number conversion cast (snumber) 3 in plot::$2 = plot::y#8 >> 3
+Adding number conversion cast (snumber) $140 in plot::$3 = plot::$2 * $140
+Adding number conversion cast (snumber) plot::$3 in plot::$3 = plot::$2 * (snumber)$140
+Adding number conversion cast (snumber) 7 in plot::$4 = plot::x#8 & 7
+Adding number conversion cast (snumber) plot::$4 in plot::$4 = plot::x#8 & (snumber)7
 Successful SSA optimization PassNAddNumberTypeConversions
 Adding number conversion cast (unumber) $40 in *VICII_MEMORY = (byte)(word)SCREEN&(unumber)$3fff/$40|(word)BITMAP&(unumber)$3fff/$400
 Adding number conversion cast (unumber) $400 in *VICII_MEMORY = (byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(word)BITMAP&(unumber)$3fff/$400
@@ -543,9 +543,9 @@ Inferred type updated to signed word in circle::$11 = circle::$10 + 6
 Inferred type updated to signed word in circle::$4 = circle::y#3 - 1
 Inferred type updated to signed word in circle::$8 = circle::$7 + $a
 Inferred type updated to signed word in plot::$0 = plot::x#8 & $fff8
-Inferred type updated to byte in plot::$2 = plot::$1 & 7
-Inferred type updated to signed word in plot::$4 = plot::$3 * $140
-Inferred type updated to signed byte in plot::$5 = plot::x#8 & 7
+Inferred type updated to byte in plot::$1 = plot::$6 & 7
+Inferred type updated to signed word in plot::$3 = plot::$2 * $140
+Inferred type updated to signed byte in plot::$4 = plot::x#8 & 7
 Alias circle::y#0 = circle::r#1 
 Alias circle::p#0 = circle::$1 
 Alias circle::p#3 = circle::p#6 circle::p#4 circle::p#5 
@@ -631,7 +631,7 @@ Constant right-side identified [6] circle::p#0 = 3 - circle::$0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant circle::p#0 = 3-circle::$0
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift and addition[51] plot::$4 = plot::$3 * $140
+Rewriting multiplication to use shift and addition[51] plot::$3 = plot::$2 * $140
 Inlining constant with var siblings circle::x1#0
 Inlining constant with var siblings circle::p#0
 Inlining constant with var siblings plot::location#0
@@ -650,7 +650,7 @@ Constant inlined fill::size#1 = (signed word)$28*$19
 Constant inlined fill::size#0 = (signed word)$28*$19*8
 Constant inlined circle::p#0 = 3-circle::r#0<<1
 Successful SSA optimization Pass2ConstantInlining
-Alias plot::$4 = plot::$9 
+Alias plot::$3 = plot::$9 
 Successful SSA optimization Pass2AliasElimination
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $19
@@ -820,17 +820,17 @@ plot: scope:[plot]  from circle::@10 circle::@11 circle::@12 circle::@4 circle::
   [55] plot::x#8 = phi( circle::@10/plot::x#5, circle::@11/plot::x#6, circle::@12/plot::x#7, circle::@4/plot::x#0, circle::@6/plot::x#1, circle::@7/plot::x#2, circle::@8/plot::x#3, circle::@9/plot::x#4 )
   [56] plot::$0 = plot::x#8 & $fff8
   [57] plot::location#1 = BITMAP + plot::$0
-  [58] plot::$1 = < plot::y#8
-  [59] plot::$2 = plot::$1 & 7
-  [60] plot::location#2 = plot::location#1 + plot::$2
-  [61] plot::$3 = plot::y#8 >> 3
-  [62] plot::$7 = plot::$3 << 2
-  [63] plot::$8 = plot::$7 + plot::$3
-  [64] plot::$4 = plot::$8 << 6
-  [65] plot::location#3 = plot::location#2 + plot::$4
-  [66] plot::$5 = plot::x#8 & 7
-  [67] plot::$6 = *plot::location#3 | bitmask[plot::$5]
-  [68] *plot::location#3 = plot::$6
+  [58] plot::$6 = (byte)plot::y#8
+  [59] plot::$1 = plot::$6 & 7
+  [60] plot::location#2 = plot::location#1 + plot::$1
+  [61] plot::$2 = plot::y#8 >> 3
+  [62] plot::$7 = plot::$2 << 2
+  [63] plot::$8 = plot::$7 + plot::$2
+  [64] plot::$3 = plot::$8 << 6
+  [65] plot::location#3 = plot::location#2 + plot::$3
+  [66] plot::$4 = plot::x#8 & 7
+  [67] plot::$5 = *plot::location#3 | bitmask[plot::$4]
+  [68] *plot::location#3 = plot::$5
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   [69] return 
@@ -875,10 +875,10 @@ void main()
 void plot(signed word plot::x , signed word plot::y)
 signed word~ plot::$0 2002.0
 byte~ plot::$1 2002.0
-byte~ plot::$2 2002.0
-signed word~ plot::$3 1501.5
-signed word~ plot::$4 2002.0
-signed byte~ plot::$5 2002.0
+signed word~ plot::$2 1501.5
+signed word~ plot::$3 2002.0
+signed byte~ plot::$4 2002.0
+byte~ plot::$5 2002.0
 byte~ plot::$6 2002.0
 signed word~ plot::$7 2002.0
 signed word~ plot::$8 2002.0
@@ -905,7 +905,7 @@ signed word plot::y#4 202.0
 signed word plot::y#5 202.0
 signed word plot::y#6 202.0
 signed word plot::y#7 202.0
-signed word plot::y#8 468.33333333333337
+signed word plot::y#8 301.5
 
 Initial phi equivalence classes
 [ fill::size#2 ]
@@ -924,16 +924,16 @@ Added variable circle::$9 to live range equivalence class [ circle::$9 ]
 Added variable circle::$10 to live range equivalence class [ circle::$10 ]
 Added variable plot::$0 to live range equivalence class [ plot::$0 ]
 Added variable plot::location#1 to live range equivalence class [ plot::location#1 ]
+Added variable plot::$6 to live range equivalence class [ plot::$6 ]
 Added variable plot::$1 to live range equivalence class [ plot::$1 ]
-Added variable plot::$2 to live range equivalence class [ plot::$2 ]
 Added variable plot::location#2 to live range equivalence class [ plot::location#2 ]
-Added variable plot::$3 to live range equivalence class [ plot::$3 ]
+Added variable plot::$2 to live range equivalence class [ plot::$2 ]
 Added variable plot::$7 to live range equivalence class [ plot::$7 ]
 Added variable plot::$8 to live range equivalence class [ plot::$8 ]
-Added variable plot::$4 to live range equivalence class [ plot::$4 ]
+Added variable plot::$3 to live range equivalence class [ plot::$3 ]
 Added variable plot::location#3 to live range equivalence class [ plot::location#3 ]
+Added variable plot::$4 to live range equivalence class [ plot::$4 ]
 Added variable plot::$5 to live range equivalence class [ plot::$5 ]
-Added variable plot::$6 to live range equivalence class [ plot::$6 ]
 Complete equivalence classes
 [ fill::size#2 ]
 [ fill::val#4 ]
@@ -951,16 +951,16 @@ Complete equivalence classes
 [ circle::$10 ]
 [ plot::$0 ]
 [ plot::location#1 ]
+[ plot::$6 ]
 [ plot::$1 ]
-[ plot::$2 ]
 [ plot::location#2 ]
-[ plot::$3 ]
+[ plot::$2 ]
 [ plot::$7 ]
 [ plot::$8 ]
-[ plot::$4 ]
+[ plot::$3 ]
 [ plot::location#3 ]
+[ plot::$4 ]
 [ plot::$5 ]
-[ plot::$6 ]
 Allocated zp[2]:2 [ fill::size#2 ]
 Allocated zp[1]:4 [ fill::val#4 ]
 Allocated zp[2]:5 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
@@ -977,16 +977,16 @@ Allocated zp[2]:25 [ circle::$9 ]
 Allocated zp[2]:27 [ circle::$10 ]
 Allocated zp[2]:29 [ plot::$0 ]
 Allocated zp[2]:31 [ plot::location#1 ]
-Allocated zp[1]:33 [ plot::$1 ]
-Allocated zp[1]:34 [ plot::$2 ]
+Allocated zp[1]:33 [ plot::$6 ]
+Allocated zp[1]:34 [ plot::$1 ]
 Allocated zp[2]:35 [ plot::location#2 ]
-Allocated zp[2]:37 [ plot::$3 ]
+Allocated zp[2]:37 [ plot::$2 ]
 Allocated zp[2]:39 [ plot::$7 ]
 Allocated zp[2]:41 [ plot::$8 ]
-Allocated zp[2]:43 [ plot::$4 ]
+Allocated zp[2]:43 [ plot::$3 ]
 Allocated zp[2]:45 [ plot::location#3 ]
-Allocated zp[1]:47 [ plot::$5 ]
-Allocated zp[1]:48 [ plot::$6 ]
+Allocated zp[1]:47 [ plot::$4 ]
+Allocated zp[1]:48 [ plot::$5 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *BORDER_COLOR = BLUE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1024,15 +1024,16 @@ Statement [53] circle::$10 = circle::p#3 + circle::$9 [ circle::x1#10 circle::y#
 Statement [54] circle::p#1 = circle::$10 + 6 [ circle::x1#10 circle::y#13 circle::p#1 ] ( circle:7 [ circle::x1#10 circle::y#13 circle::p#1 ] { }  ) always clobbers reg byte a 
 Statement [56] plot::$0 = plot::x#8 & $fff8 [ plot::x#8 plot::y#8 plot::$0 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [57] plot::location#1 = BITMAP + plot::$0 [ plot::x#8 plot::y#8 plot::location#1 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [60] plot::location#2 = plot::location#1 + plot::$2 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [61] plot::$3 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [62] plot::$7 = plot::$3 << 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [63] plot::$8 = plot::$7 + plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [64] plot::$4 = plot::$8 << 6 [ plot::x#8 plot::location#2 plot::$4 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [65] plot::location#3 = plot::location#2 + plot::$4 [ plot::x#8 plot::location#3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [66] plot::$5 = plot::x#8 & 7 [ plot::location#3 plot::$5 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [67] plot::$6 = *plot::location#3 | bitmask[plot::$5] [ plot::location#3 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a reg byte y 
-Statement [68] *plot::location#3 = plot::$6 [ ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte y 
+Statement [58] plot::$6 = (byte)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [60] plot::location#2 = plot::location#1 + plot::$1 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [61] plot::$2 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [62] plot::$7 = plot::$2 << 2 [ plot::x#8 plot::location#2 plot::$2 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [63] plot::$8 = plot::$7 + plot::$2 [ plot::x#8 plot::location#2 plot::$8 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [64] plot::$3 = plot::$8 << 6 [ plot::x#8 plot::location#2 plot::$3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [65] plot::location#3 = plot::location#2 + plot::$3 [ plot::x#8 plot::location#3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [66] plot::$4 = plot::x#8 & 7 [ plot::location#3 plot::$4 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [67] plot::$5 = *plot::location#3 | bitmask[plot::$4] [ plot::location#3 plot::$5 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a reg byte y 
+Statement [68] *plot::location#3 = plot::$5 [ ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte y 
 Statement [4] *BORDER_COLOR = BLUE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1067,15 +1068,16 @@ Statement [53] circle::$10 = circle::p#3 + circle::$9 [ circle::x1#10 circle::y#
 Statement [54] circle::p#1 = circle::$10 + 6 [ circle::x1#10 circle::y#13 circle::p#1 ] ( circle:7 [ circle::x1#10 circle::y#13 circle::p#1 ] { }  ) always clobbers reg byte a 
 Statement [56] plot::$0 = plot::x#8 & $fff8 [ plot::x#8 plot::y#8 plot::$0 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [57] plot::location#1 = BITMAP + plot::$0 [ plot::x#8 plot::y#8 plot::location#1 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [60] plot::location#2 = plot::location#1 + plot::$2 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [61] plot::$3 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [62] plot::$7 = plot::$3 << 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [63] plot::$8 = plot::$7 + plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [64] plot::$4 = plot::$8 << 6 [ plot::x#8 plot::location#2 plot::$4 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [65] plot::location#3 = plot::location#2 + plot::$4 [ plot::x#8 plot::location#3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [66] plot::$5 = plot::x#8 & 7 [ plot::location#3 plot::$5 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [67] plot::$6 = *plot::location#3 | bitmask[plot::$5] [ plot::location#3 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a reg byte y 
-Statement [68] *plot::location#3 = plot::$6 [ ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte y 
+Statement [58] plot::$6 = (byte)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [60] plot::location#2 = plot::location#1 + plot::$1 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [61] plot::$2 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [62] plot::$7 = plot::$2 << 2 [ plot::x#8 plot::location#2 plot::$2 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [63] plot::$8 = plot::$7 + plot::$2 [ plot::x#8 plot::location#2 plot::$8 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [64] plot::$3 = plot::$8 << 6 [ plot::x#8 plot::location#2 plot::$3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [65] plot::location#3 = plot::location#2 + plot::$3 [ plot::x#8 plot::location#3 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [66] plot::$4 = plot::x#8 & 7 [ plot::location#3 plot::$4 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$4 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [67] plot::$5 = *plot::location#3 | bitmask[plot::$4] [ plot::location#3 plot::$5 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a reg byte y 
+Statement [68] *plot::location#3 = plot::$5 [ ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte y 
 Potential registers zp[2]:2 [ fill::size#2 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ fill::val#4 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[2]:5 [ fill::addr#2 fill::addr#0 fill::addr#1 ] : zp[2]:5 , 
@@ -1092,19 +1094,19 @@ Potential registers zp[2]:25 [ circle::$9 ] : zp[2]:25 ,
 Potential registers zp[2]:27 [ circle::$10 ] : zp[2]:27 , 
 Potential registers zp[2]:29 [ plot::$0 ] : zp[2]:29 , 
 Potential registers zp[2]:31 [ plot::location#1 ] : zp[2]:31 , 
-Potential registers zp[1]:33 [ plot::$1 ] : zp[1]:33 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:34 [ plot::$2 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:33 [ plot::$6 ] : zp[1]:33 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:34 [ plot::$1 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:35 [ plot::location#2 ] : zp[2]:35 , 
-Potential registers zp[2]:37 [ plot::$3 ] : zp[2]:37 , 
+Potential registers zp[2]:37 [ plot::$2 ] : zp[2]:37 , 
 Potential registers zp[2]:39 [ plot::$7 ] : zp[2]:39 , 
 Potential registers zp[2]:41 [ plot::$8 ] : zp[2]:41 , 
-Potential registers zp[2]:43 [ plot::$4 ] : zp[2]:43 , 
+Potential registers zp[2]:43 [ plot::$3 ] : zp[2]:43 , 
 Potential registers zp[2]:45 [ plot::location#3 ] : zp[2]:45 , 
-Potential registers zp[1]:47 [ plot::$5 ] : zp[1]:47 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:48 [ plot::$6 ] : zp[1]:48 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:47 [ plot::$4 ] : zp[1]:47 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:48 [ plot::$5 ] : zp[1]:48 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [plot] 2,084.33: zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] 2,002: zp[2]:29 [ plot::$0 ] 2,002: zp[1]:33 [ plot::$1 ] 2,002: zp[1]:34 [ plot::$2 ] 2,002: zp[2]:39 [ plot::$7 ] 2,002: zp[2]:41 [ plot::$8 ] 2,002: zp[2]:43 [ plot::$4 ] 2,002: zp[1]:47 [ plot::$5 ] 2,002: zp[1]:48 [ plot::$6 ] 1,501.5: zp[2]:37 [ plot::$3 ] 1,063.45: zp[2]:13 [ plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ] 1,001: zp[2]:45 [ plot::location#3 ] 667.33: zp[2]:31 [ plot::location#1 ] 400.4: zp[2]:35 [ plot::location#2 ] 
+Uplift Scope [plot] 2,002: zp[2]:29 [ plot::$0 ] 2,002: zp[1]:33 [ plot::$6 ] 2,002: zp[1]:34 [ plot::$1 ] 2,002: zp[2]:39 [ plot::$7 ] 2,002: zp[2]:41 [ plot::$8 ] 2,002: zp[2]:43 [ plot::$3 ] 2,002: zp[1]:47 [ plot::$4 ] 2,002: zp[1]:48 [ plot::$5 ] 1,917.5: zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] 1,501.5: zp[2]:37 [ plot::$2 ] 1,063.45: zp[2]:13 [ plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ] 1,001: zp[2]:45 [ plot::location#3 ] 667.33: zp[2]:31 [ plot::location#1 ] 400.4: zp[2]:35 [ plot::location#2 ] 
 Uplift Scope [circle] 473.37: zp[2]:11 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] 238.47: zp[2]:7 [ circle::x1#10 circle::x1#1 ] 202: zp[2]:19 [ circle::$5 ] 202: zp[2]:21 [ circle::$6 ] 202: zp[2]:23 [ circle::$7 ] 202: zp[2]:25 [ circle::$9 ] 202: zp[2]:27 [ circle::$10 ] 170.66: zp[2]:9 [ circle::y#13 circle::y#10 circle::y#1 ] 
 Uplift Scope [fill] 351.33: zp[2]:5 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 22.4: zp[2]:17 [ fill::end#0 ] 16.83: zp[1]:4 [ fill::val#4 ] 11: zp[2]:2 [ fill::size#2 ] 
 Uplift Scope [MOS6526_CIA] 
@@ -1113,7 +1115,7 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [plot] best 6407 combination zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] zp[2]:29 [ plot::$0 ] reg byte a [ plot::$1 ] reg byte a [ plot::$2 ] zp[2]:39 [ plot::$7 ] zp[2]:41 [ plot::$8 ] zp[2]:43 [ plot::$4 ] reg byte a [ plot::$5 ] reg byte a [ plot::$6 ] zp[2]:37 [ plot::$3 ] zp[2]:13 [ plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ] zp[2]:45 [ plot::location#3 ] zp[2]:31 [ plot::location#1 ] zp[2]:35 [ plot::location#2 ] 
+Uplifting [plot] best 6407 combination zp[2]:29 [ plot::$0 ] reg byte a [ plot::$6 ] reg byte a [ plot::$1 ] zp[2]:39 [ plot::$7 ] zp[2]:41 [ plot::$8 ] zp[2]:43 [ plot::$3 ] reg byte a [ plot::$4 ] reg byte a [ plot::$5 ] zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] zp[2]:37 [ plot::$2 ] zp[2]:13 [ plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ] zp[2]:45 [ plot::location#3 ] zp[2]:31 [ plot::location#1 ] zp[2]:35 [ plot::location#2 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [circle] best 6407 combination zp[2]:11 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] zp[2]:7 [ circle::x1#10 circle::x1#1 ] zp[2]:19 [ circle::$5 ] zp[2]:21 [ circle::$6 ] zp[2]:23 [ circle::$7 ] zp[2]:25 [ circle::$9 ] zp[2]:27 [ circle::$10 ] zp[2]:9 [ circle::y#13 circle::y#10 circle::y#1 ] 
 Uplifting [fill] best 6391 combination zp[2]:5 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp[2]:17 [ fill::end#0 ] reg byte x [ fill::val#4 ] zp[2]:2 [ fill::size#2 ] 
@@ -1125,24 +1127,24 @@ Uplifting [] best 6391 combination
 Coalescing zero page register [ zp[2]:11 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] ] with [ zp[2]:23 [ circle::$7 ] ] - score: 2
 Coalescing zero page register [ zp[2]:11 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 ] ] with [ zp[2]:27 [ circle::$10 ] ] - score: 2
 Coalescing zero page register [ zp[2]:2 [ fill::size#2 ] ] with [ zp[2]:17 [ fill::end#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] ] with [ zp[2]:37 [ plot::$3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 ] ] with [ zp[2]:37 [ plot::$2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:19 [ circle::$5 ] ] with [ zp[2]:21 [ circle::$6 ] ] - score: 1
 Coalescing zero page register [ zp[2]:29 [ plot::$0 ] ] with [ zp[2]:31 [ plot::location#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:35 [ plot::location#2 ] ] with [ zp[2]:45 [ plot::location#3 ] ] - score: 1
 Coalescing zero page register [ zp[2]:39 [ plot::$7 ] ] with [ zp[2]:41 [ plot::$8 ] ] - score: 1
 Coalescing zero page register [ zp[2]:29 [ plot::$0 plot::location#1 ] ] with [ zp[2]:35 [ plot::location#2 plot::location#3 ] ] - score: 1
-Coalescing zero page register [ zp[2]:39 [ plot::$7 plot::$8 ] ] with [ zp[2]:43 [ plot::$4 ] ] - score: 1
+Coalescing zero page register [ zp[2]:39 [ plot::$7 plot::$8 ] ] with [ zp[2]:43 [ plot::$3 ] ] - score: 1
 Coalescing zero page register [ zp[2]:7 [ circle::x1#10 circle::x1#1 ] ] with [ zp[2]:2 [ fill::size#2 fill::end#0 ] ]
 Coalescing zero page register [ zp[2]:9 [ circle::y#13 circle::y#10 circle::y#1 ] ] with [ zp[2]:5 [ fill::addr#2 fill::addr#0 fill::addr#1 ] ]
 Coalescing zero page register [ zp[2]:19 [ circle::$5 circle::$6 ] ] with [ zp[2]:13 [ plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ] ]
-Coalescing zero page register [ zp[2]:25 [ circle::$9 ] ] with [ zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$3 ] ]
+Coalescing zero page register [ zp[2]:25 [ circle::$9 ] ] with [ zp[2]:15 [ plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$2 ] ]
 Allocated (was zp[2]:7) zp[2]:2 [ circle::x1#10 circle::x1#1 fill::size#2 fill::end#0 ]
 Allocated (was zp[2]:9) zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 fill::addr#2 fill::addr#0 fill::addr#1 ]
 Allocated (was zp[2]:11) zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
 Allocated (was zp[2]:19) zp[2]:8 [ circle::$5 circle::$6 plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ]
-Allocated (was zp[2]:25) zp[2]:10 [ circle::$9 plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$3 ]
+Allocated (was zp[2]:25) zp[2]:10 [ circle::$9 plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$2 ]
 Allocated (was zp[2]:29) zp[2]:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
-Allocated (was zp[2]:39) zp[2]:14 [ plot::$7 plot::$8 plot::$4 ]
+Allocated (was zp[2]:39) zp[2]:14 [ plot::$7 plot::$8 plot::$3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1623,8 +1625,8 @@ circle: {
 // plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $c
-    .label __3 = $a
-    .label __4 = $e
+    .label __2 = $a
+    .label __3 = $e
     .label x = 8
     .label y = $a
     .label location = $c
@@ -1645,77 +1647,77 @@ plot: {
     lda.z location+1
     adc #>BITMAP
     sta.z location+1
-    // [58] plot::$1 = < plot::y#8 -- vbuaa=_lo_vwsz1 
+    // [58] plot::$6 = (byte)plot::y#8 -- vbuaa=_byte_vwsz1 
     lda.z y
-    // [59] plot::$2 = plot::$1 & 7 -- vbuaa=vbuaa_band_vbuc1 
+    // [59] plot::$1 = plot::$6 & 7 -- vbuaa=vbuaa_band_vbuc1 
     and #7
-    // [60] plot::location#2 = plot::location#1 + plot::$2 -- pbuz1=pbuz1_plus_vbuaa 
+    // [60] plot::location#2 = plot::location#1 + plot::$1 -- pbuz1=pbuz1_plus_vbuaa 
     clc
     adc.z location
     sta.z location
     bcc !+
     inc.z location+1
   !:
-    // [61] plot::$3 = plot::y#8 >> 3 -- vwsz1=vwsz1_ror_3 
-    lda.z __3+1
+    // [61] plot::$2 = plot::y#8 >> 3 -- vwsz1=vwsz1_ror_3 
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    // [62] plot::$7 = plot::$3 << 2 -- vwsz1=vwsz2_rol_2 
-    lda.z __3
+    ror.z __2+1
+    ror.z __2
+    // [62] plot::$7 = plot::$2 << 2 -- vwsz1=vwsz2_rol_2 
+    lda.z __2
     asl
     sta.z __7
-    lda.z __3+1
+    lda.z __2+1
     rol
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    // [63] plot::$8 = plot::$7 + plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
+    // [63] plot::$8 = plot::$7 + plot::$2 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z __8
     clc
-    adc.z __3
+    adc.z __2
     sta.z __8
     lda.z __8+1
-    adc.z __3+1
+    adc.z __2+1
     sta.z __8+1
-    // [64] plot::$4 = plot::$8 << 6 -- vwsz1=vwsz1_rol_6 
-    lda.z __4+1
+    // [64] plot::$3 = plot::$8 << 6 -- vwsz1=vwsz1_rol_6 
+    lda.z __3+1
     sta.z $ff
-    lda.z __4
-    sta.z __4+1
+    lda.z __3
+    sta.z __3+1
     lda #0
-    sta.z __4
+    sta.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
+    ror.z __3+1
+    ror.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
-    // [65] plot::location#3 = plot::location#2 + plot::$4 -- pbuz1=pbuz1_plus_vwsz2 
+    ror.z __3+1
+    ror.z __3
+    // [65] plot::location#3 = plot::location#2 + plot::$3 -- pbuz1=pbuz1_plus_vwsz2 
     lda.z location
     clc
-    adc.z __4
+    adc.z __3
     sta.z location
     lda.z location+1
-    adc.z __4+1
+    adc.z __3+1
     sta.z location+1
-    // [66] plot::$5 = plot::x#8 & 7 -- vbsaa=vwsz1_band_vbsc1 
+    // [66] plot::$4 = plot::x#8 & 7 -- vbsaa=vwsz1_band_vbsc1 
     lda #7
     and.z x
-    // [67] plot::$6 = *plot::location#3 | bitmask[plot::$5] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
+    // [67] plot::$5 = *plot::location#3 | bitmask[plot::$4] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
     tay
     lda bitmask,y
     ldy #0
     ora (location),y
-    // [68] *plot::location#3 = plot::$6 -- _deref_pbuz1=vbuaa 
+    // [68] *plot::location#3 = plot::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (location),y
     jmp __breturn
@@ -1843,10 +1845,10 @@ void main()
 void plot(signed word plot::x , signed word plot::y)
 signed word~ plot::$0 zp[2]:12 2002.0
 byte~ plot::$1 reg byte a 2002.0
-byte~ plot::$2 reg byte a 2002.0
-signed word~ plot::$3 zp[2]:10 1501.5
-signed word~ plot::$4 zp[2]:14 2002.0
-signed byte~ plot::$5 reg byte a 2002.0
+signed word~ plot::$2 zp[2]:10 1501.5
+signed word~ plot::$3 zp[2]:14 2002.0
+signed byte~ plot::$4 reg byte a 2002.0
+byte~ plot::$5 reg byte a 2002.0
 byte~ plot::$6 reg byte a 2002.0
 signed word~ plot::$7 zp[2]:14 2002.0
 signed word~ plot::$8 zp[2]:14 2002.0
@@ -1873,20 +1875,20 @@ signed word plot::y#4 y zp[2]:10 202.0
 signed word plot::y#5 y zp[2]:10 202.0
 signed word plot::y#6 y zp[2]:10 202.0
 signed word plot::y#7 y zp[2]:10 202.0
-signed word plot::y#8 y zp[2]:10 468.33333333333337
+signed word plot::y#8 y zp[2]:10 301.5
 
 reg byte x [ fill::val#4 ]
 zp[2]:2 [ circle::x1#10 circle::x1#1 fill::size#2 fill::end#0 ]
 zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 fill::addr#2 fill::addr#0 fill::addr#1 ]
 zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
 zp[2]:8 [ circle::$5 circle::$6 plot::x#8 plot::x#5 plot::x#6 plot::x#7 plot::x#0 plot::x#1 plot::x#2 plot::x#3 plot::x#4 ]
-zp[2]:10 [ circle::$9 plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$3 ]
+zp[2]:10 [ circle::$9 plot::y#8 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::$2 ]
 zp[2]:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
-reg byte a [ plot::$1 ]
-reg byte a [ plot::$2 ]
-zp[2]:14 [ plot::$7 plot::$8 plot::$4 ]
-reg byte a [ plot::$5 ]
 reg byte a [ plot::$6 ]
+reg byte a [ plot::$1 ]
+zp[2]:14 [ plot::$7 plot::$8 plot::$3 ]
+reg byte a [ plot::$4 ]
+reg byte a [ plot::$5 ]
 
 
 FINAL ASSEMBLER
@@ -2352,8 +2354,8 @@ circle: {
 // plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $c
-    .label __3 = $a
-    .label __4 = $e
+    .label __2 = $a
+    .label __3 = $e
     .label x = 8
     .label y = $a
     .label location = $c
@@ -2376,14 +2378,13 @@ plot: {
     lda.z location+1
     adc #>BITMAP
     sta.z location+1
-    // <y
-    // [58] plot::$1 = < plot::y#8 -- vbuaa=_lo_vwsz1 
+    // (char)y & 7
+    // [58] plot::$6 = (byte)plot::y#8 -- vbuaa=_byte_vwsz1 
     lda.z y
-    // <y & 7
-    // [59] plot::$2 = plot::$1 & 7 -- vbuaa=vbuaa_band_vbuc1 
+    // [59] plot::$1 = plot::$6 & 7 -- vbuaa=vbuaa_band_vbuc1 
     and #7
-    // location += <y & 7
-    // [60] plot::location#2 = plot::location#1 + plot::$2 -- pbuz1=pbuz1_plus_vbuaa 
+    // location += (char)y & 7
+    // [60] plot::location#2 = plot::location#1 + plot::$1 -- pbuz1=pbuz1_plus_vbuaa 
     clc
     adc.z location
     sta.z location
@@ -2391,71 +2392,71 @@ plot: {
     inc.z location+1
   !:
     // y >> 3
-    // [61] plot::$3 = plot::y#8 >> 3 -- vwsz1=vwsz1_ror_3 
-    lda.z __3+1
+    // [61] plot::$2 = plot::y#8 >> 3 -- vwsz1=vwsz1_ror_3 
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
+    ror.z __2+1
+    ror.z __2
     // (y >> 3) * 320
-    // [62] plot::$7 = plot::$3 << 2 -- vwsz1=vwsz2_rol_2 
-    lda.z __3
+    // [62] plot::$7 = plot::$2 << 2 -- vwsz1=vwsz2_rol_2 
+    lda.z __2
     asl
     sta.z __7
-    lda.z __3+1
+    lda.z __2+1
     rol
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    // [63] plot::$8 = plot::$7 + plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
+    // [63] plot::$8 = plot::$7 + plot::$2 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z __8
     clc
-    adc.z __3
+    adc.z __2
     sta.z __8
     lda.z __8+1
-    adc.z __3+1
+    adc.z __2+1
     sta.z __8+1
-    // [64] plot::$4 = plot::$8 << 6 -- vwsz1=vwsz1_rol_6 
-    lda.z __4+1
+    // [64] plot::$3 = plot::$8 << 6 -- vwsz1=vwsz1_rol_6 
+    lda.z __3+1
     sta.z $ff
-    lda.z __4
-    sta.z __4+1
+    lda.z __3
+    sta.z __3+1
     lda #0
-    sta.z __4
+    sta.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
+    ror.z __3+1
+    ror.z __3
     lsr.z $ff
-    ror.z __4+1
-    ror.z __4
+    ror.z __3+1
+    ror.z __3
     // location += ((y >> 3) * 320)
-    // [65] plot::location#3 = plot::location#2 + plot::$4 -- pbuz1=pbuz1_plus_vwsz2 
+    // [65] plot::location#3 = plot::location#2 + plot::$3 -- pbuz1=pbuz1_plus_vwsz2 
     lda.z location
     clc
-    adc.z __4
+    adc.z __3
     sta.z location
     lda.z location+1
-    adc.z __4+1
+    adc.z __3+1
     sta.z location+1
     // x & 7
-    // [66] plot::$5 = plot::x#8 & 7 -- vbsaa=vwsz1_band_vbsc1 
+    // [66] plot::$4 = plot::x#8 & 7 -- vbsaa=vwsz1_band_vbsc1 
     lda #7
     and.z x
     // (*location) | bitmask[x & 7]
-    // [67] plot::$6 = *plot::location#3 | bitmask[plot::$5] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
+    // [67] plot::$5 = *plot::location#3 | bitmask[plot::$4] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
     tay
     lda bitmask,y
     ldy #0
     ora (location),y
     // (*location) = (*location) | bitmask[x & 7]
-    // [68] *plot::location#3 = plot::$6 -- _deref_pbuz1=vbuaa 
+    // [68] *plot::location#3 = plot::$5 -- _deref_pbuz1=vbuaa 
     sta (location),y
     // plot::@return
     // }

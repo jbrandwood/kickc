@@ -190,40 +190,22 @@ public class AsmFormat {
          }
          // Cast is needed
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xffffffffL), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
-      } else if(Operators.LOWBYTE.equals(operator)) {
-         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
-            return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
-            return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
-            return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
-         } else {
-            throw new CompileError("Operator _lo_ cannot handle " + operand.toString(program));
-         }
-      } else if(Operators.HIBYTE.equals(operator)) {
-         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
-            return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
-            return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
-            return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
-         } else {
-            throw new CompileError("Operator _hi_ cannot handle " + operand.toString(program));
-         }
       } else if(Operators.BYTE0.equals(operator)) {
-         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
+         // Parenthesis is never needed since operator "<" has the lowest precedence
+         return operator.getOperator() + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
       } else if(Operators.BYTE1.equals(operator)) {
-         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
+         // Parenthesis is never needed since operator ">" has the lowest precedence
+         return operator.getOperator() + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
       } else if(Operators.BYTE2.equals(operator)) {
-         return "<" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope) + ")";
+         // Parenthesis is never needed since operator "<" has the lowest precedence
+         return "<" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
       } else if(Operators.BYTE3.equals(operator)) {
-         return ">" + "(" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope) + ")";
+         // Parenthesis is never needed since operator ">" has the lowest precedence
+         return ">" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
       } else if(Operators.WORD0.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
       } else if(Operators.WORD1.equals(operator)) {
-         return getAsmConstant(program, new ConstantBinary(new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
+         return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
       } else if(Operators.INCREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
       } else if(Operators.DECREMENT.equals(operator)) {

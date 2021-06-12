@@ -21,10 +21,10 @@ unsigned char DIGITS[] = "0123456789abcdef";
 // Hexadecimal utoa() for an unsigned int (16bits)
 void utoa16w(unsigned int value, unsigned char* dst) {
     unsigned char started = 0;
-    started = utoa16n((>value)>>4, &dst, started);
-    started = utoa16n((>value)&0x0f, &dst, started);
-    started = utoa16n((<value)>>4, &dst, started);
-    utoa16n((<value)&0x0f, &dst, 1);
+    started = utoa16n(BYTE1(value)>>4, &dst, started);
+    started = utoa16n(BYTE1(value)&0x0f, &dst, started);
+    started = utoa16n(BYTE0(value)>>4, &dst, started);
+    utoa16n(BYTE0(value)&0x0f, &dst, 1);
     *dst = 0;
 }
 

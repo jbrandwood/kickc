@@ -82,11 +82,11 @@ main: {
     // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEB_START_LO = < CHUNKY
+    // *DTV_PLANEB_START_LO = BYTE0(CHUNKY)
     // Plane B: CHUNKY
     lda #0
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = > CHUNKY
+    // *DTV_PLANEB_START_MI = BYTE1(CHUNKY)
     lda #>CHUNKY
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -108,7 +108,7 @@ main: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2
-    // *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4)
+    // *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((BYTE1(((word)CHUNKY)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
     lda #0

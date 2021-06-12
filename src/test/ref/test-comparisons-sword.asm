@@ -434,10 +434,10 @@ print_char: {
 // print_uint(word zp($b) w)
 print_uint: {
     .label w = $b
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

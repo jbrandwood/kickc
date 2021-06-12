@@ -87,9 +87,8 @@ main: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b5
   __b4:
-    // <col
+    // *col = (char)col
     lda.z col
-    // *col = <col
     ldy #0
     sta (col),y
     // for( char *col = COLORS; col<COLORS+2000; col++)

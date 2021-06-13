@@ -461,9 +461,8 @@ utoa: {
     cpx #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];

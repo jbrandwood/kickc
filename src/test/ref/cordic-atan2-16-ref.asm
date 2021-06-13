@@ -72,7 +72,7 @@ main: {
     bcc !+
     inc.z __4+1
   !:
-    // byte ang_w = >(angle_w+0x0080)
+    // byte ang_w = BYTE1(angle_w+0x0080)
     ldx.z __4+1
     // diff(ang_w, *screen_ref)
     ldy #0
@@ -464,14 +464,14 @@ diff: {
 // print_uint(word zp(4) w)
 print_uint: {
     .label w = 4
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }

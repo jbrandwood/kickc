@@ -40,8 +40,8 @@ nmi2: scope:[nmi2]  from
   nmi2::$1 = *sample >> 4
   *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1
   sample = ++ sample
-  nmi2::$2 = > sample
-  nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
+  nmi2::$2 = byte1  sample
+  nmi2::$3 = nmi2::$2 == byte1 SAMPLE+$6100
   nmi2::$4 = ! nmi2::$3
   if(nmi2::$4) goto nmi2::@1
   to:nmi2::@2
@@ -102,7 +102,7 @@ Adding number conversion cast (unumber) 1 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526
 Adding number conversion cast (unumber) $f in nmi::$1 = *sample & $f
 Adding number conversion cast (unumber) nmi::$1 in nmi::$1 = *sample & (unumber)$f
 Adding number conversion cast (unumber) 4 in nmi2::$1 = *sample >> 4
-Adding number conversion cast (unumber) $6100 in nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
+Adding number conversion cast (unumber) $6100 in nmi2::$3 = nmi2::$2 == byte1 SAMPLE+$6100
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = (unumber)$88
 Inlining cast *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = (unumber)$81
@@ -128,9 +128,9 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in nmi::$1 = *sample & $f
-Inversing boolean not [23] nmi2::$4 = nmi2::$2 != >SAMPLE+$6100 from [22] nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
+Inversing boolean not [23] nmi2::$4 = nmi2::$2 != byte1 SAMPLE+$6100 from [22] nmi2::$3 = nmi2::$2 == byte1 SAMPLE+$6100
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition nmi2::$4 [23] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1
+Simple Condition nmi2::$4 [23] if(nmi2::$2!=byte1 SAMPLE+$6100) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -168,8 +168,8 @@ nmi2: scope:[nmi2]  from
   [7] nmi2::$1 = *sample >> 4
   [8] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1
   [9] sample = ++ sample
-  [10] nmi2::$2 = > sample
-  [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1
+  [10] nmi2::$2 = byte1  sample
+  [11] if(nmi2::$2!=byte1 SAMPLE+$6100) goto nmi2::@1
   to:nmi2::@2
 nmi2::@2: scope:[nmi2]  from nmi2
   [12] sample = SAMPLE
@@ -359,9 +359,9 @@ nmi2: {
     bne !+
     inc.z sample+1
   !:
-    // [10] nmi2::$2 = > sample -- vbuaa=_byte1_pbuz1 
+    // [10] nmi2::$2 = byte1  sample -- vbuaa=_byte1_pbuz1 
     lda.z sample+1
-    // [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [11] if(nmi2::$2!=byte1 SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
     bne __b1
     jmp __b2
@@ -607,10 +607,10 @@ nmi2: {
     inc.z sample+1
   !:
     // BYTE1(sample)
-    // [10] nmi2::$2 = > sample -- vbuaa=_byte1_pbuz1 
+    // [10] nmi2::$2 = byte1  sample -- vbuaa=_byte1_pbuz1 
     lda.z sample+1
     // if (BYTE1(sample) == BYTE1(SAMPLE+$6100))
-    // [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [11] if(nmi2::$2!=byte1 SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
     bne __b1
     // nmi2::@2

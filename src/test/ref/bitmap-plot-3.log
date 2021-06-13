@@ -55,10 +55,10 @@ bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@4 bitmap_init::@6
   bitmap_init::yoffs#2 = phi( bitmap_init::@4/bitmap_init::yoffs#0, bitmap_init::@6/bitmap_init::yoffs#4 )
   bitmap_init::y#2 = phi( bitmap_init::@4/bitmap_init::y#0, bitmap_init::@6/bitmap_init::y#1 )
   bitmap_init::$3 = bitmap_init::y#2 & 7
-  bitmap_init::$4 = < bitmap_init::yoffs#2
+  bitmap_init::$4 = byte0  bitmap_init::yoffs#2
   bitmap_init::$5 = bitmap_init::$3 | bitmap_init::$4
   bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5
-  bitmap_init::$6 = > bitmap_init::yoffs#2
+  bitmap_init::$6 = byte1  bitmap_init::yoffs#2
   bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6
   bitmap_init::$7 = bitmap_init::y#2 & 7
   bitmap_init::$8 = bitmap_init::$7 == 7
@@ -126,7 +126,7 @@ bitmap_plot: scope:[bitmap_plot]  from bitmap_line::@3 bitmap_line::@4 bitmap_li
   bitmap_plot::plotter#0 = (byte*){ bitmap_plot_yhi[bitmap_plot::y#4], bitmap_plot_ylo[bitmap_plot::y#4] }
   bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
   bitmap_plot::plotter#1 = bitmap_plot::plotter#0 + bitmap_plot::$0
-  bitmap_plot::$1 = < bitmap_plot::x#4
+  bitmap_plot::$1 = byte0  bitmap_plot::x#4
   *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1]
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
@@ -417,7 +417,7 @@ memset::@return: scope:[memset]  from memset::@1
 word abs_u16(word abs_u16::w)
 abs_u16: scope:[abs_u16]  from bitmap_line bitmap_line::@12
   abs_u16::w#2 = phi( bitmap_line/abs_u16::w#0, bitmap_line::@12/abs_u16::w#1 )
-  abs_u16::$0 = > abs_u16::w#2
+  abs_u16::$0 = byte1  abs_u16::w#2
   abs_u16::$1 = abs_u16::$0 & $80
   abs_u16::$3 = 0 != abs_u16::$1
   if(abs_u16::$3) goto abs_u16::@1
@@ -440,7 +440,7 @@ abs_u16::@return: scope:[abs_u16]  from abs_u16::@1 abs_u16::@2
 word sgn_u16(word sgn_u16::w)
 sgn_u16: scope:[sgn_u16]  from bitmap_line::@1 bitmap_line::@14
   sgn_u16::w#2 = phi( bitmap_line::@1/sgn_u16::w#0, bitmap_line::@14/sgn_u16::w#1 )
-  sgn_u16::$0 = > sgn_u16::w#2
+  sgn_u16::$0 = byte1  sgn_u16::w#2
   sgn_u16::$1 = sgn_u16::$0 & $80
   sgn_u16::$2 = 0 != sgn_u16::$1
   if(sgn_u16::$2) goto sgn_u16::@1
@@ -489,8 +489,8 @@ main::toD0181: scope:[main]  from main::@7
   main::toD0181_$7 = (word)main::toD0181_screen#1
   main::toD0181_$0 = main::toD0181_$7 & $3fff
   main::toD0181_$1 = main::toD0181_$0 * 4
-  main::toD0181_$2 = > main::toD0181_$1
-  main::toD0181_$3 = > (word)main::toD0181_gfx#1
+  main::toD0181_$2 = byte1  main::toD0181_$1
+  main::toD0181_$3 = byte1  (word)main::toD0181_gfx#1
   main::toD0181_$4 = main::toD0181_$3 / 4
   main::toD0181_$5 = main::toD0181_$4 & $f
   main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
@@ -1405,7 +1405,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant memset::str#0 = (void*)bitmap_screen#0
 Constant memset::str#1 = (void*)bitmap_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_gfx#0 in [159] main::toD0181_$3 = > (word)main::toD0181_gfx#0
+Constant value identified (word)main::toD0181_gfx#0 in [159] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [181] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
@@ -1451,11 +1451,11 @@ Negating conditional jump and destination [43] if(bitmap_line::dx#0!=0) goto bit
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [20] bitmap_clear::col#0 = bitmap_clear::fgcol#0 * $10
 Constant right-side identified [111] main::toD0181_$0 = main::toD0181_$7 & $3fff
-Constant right-side identified [114] main::toD0181_$3 = > (word)main::toD0181_gfx#0
+Constant right-side identified [114] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant bitmap_clear::col#0 = bitmap_clear::fgcol#0*$10
 Constant main::toD0181_$0 = main::toD0181_$7&$3fff
-Constant main::toD0181_$3 = >(word)main::toD0181_gfx#0
+Constant main::toD0181_$3 = byte1 (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1465,10 +1465,10 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::toD0181_$1 = main::toD0181_$0*4
 Constant main::toD0181_$4 = main::toD0181_$3/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [107] main::toD0181_$2 = > main::toD0181_$1
+Constant right-side identified [107] main::toD0181_$2 = byte1  main::toD0181_$1
 Constant right-side identified [108] main::toD0181_$5 = main::toD0181_$4 & $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::toD0181_$2 = >main::toD0181_$1
+Constant main::toD0181_$2 = byte1 main::toD0181_$1
 Constant main::toD0181_$5 = main::toD0181_$4&$f
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [107] main::toD0181_return#0 = main::toD0181_$2 | main::toD0181_$5
@@ -1513,14 +1513,14 @@ Constant inlined sgn_u16::return#2 = -1
 Constant inlined memset::str#1 = (void*)BITMAP
 Constant inlined memset::str#0 = (void*)SCREEN
 Constant inlined main::toD0181_$7 = (word)SCREEN
-Constant inlined main::toD0181_$2 = >(word)SCREEN&$3fff*4
+Constant inlined main::toD0181_$2 = byte1 (word)SCREEN&$3fff*4
 Constant inlined main::toD0181_$1 = (word)SCREEN&$3fff*4
 Constant inlined main::toD0181_$0 = (word)SCREEN&$3fff
 Constant inlined bitmap_clear::fgcol#0 = WHITE
 Constant inlined bitmap_gfx#0 = BITMAP
-Constant inlined main::toD0181_$5 = >(word)BITMAP/4&$f
-Constant inlined main::toD0181_$4 = >(word)BITMAP/4
-Constant inlined main::toD0181_$3 = >(word)BITMAP
+Constant inlined main::toD0181_$5 = byte1 (word)BITMAP/4&$f
+Constant inlined main::toD0181_$4 = byte1 (word)BITMAP/4
+Constant inlined main::toD0181_$3 = byte1 (word)BITMAP
 Constant inlined bitmap_screen#0 = SCREEN
 Constant inlined bitmap_init::y#0 = 0
 Constant inlined memset::c#0 = bitmap_clear::col#0
@@ -1735,10 +1735,10 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [28] bitmap_init::yoffs#2 = phi( bitmap_init::@2/BITMAP, bitmap_init::@4/bitmap_init::yoffs#4 )
   [28] bitmap_init::y#2 = phi( bitmap_init::@2/0, bitmap_init::@4/bitmap_init::y#1 )
   [29] bitmap_init::$7 = bitmap_init::y#2 & 7
-  [30] bitmap_init::$4 = < bitmap_init::yoffs#2
+  [30] bitmap_init::$4 = byte0  bitmap_init::yoffs#2
   [31] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4
   [32] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5
-  [33] bitmap_init::$6 = > bitmap_init::yoffs#2
+  [33] bitmap_init::$6 = byte1  bitmap_init::yoffs#2
   [34] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6
   [35] if(bitmap_init::$7!=7) goto bitmap_init::@4
   to:bitmap_init::@5
@@ -1893,7 +1893,7 @@ memset::@3: scope:[memset]  from memset::@2
 word abs_u16(word abs_u16::w)
 abs_u16: scope:[abs_u16]  from bitmap_line bitmap_line::@12
   [106] abs_u16::w#2 = phi( bitmap_line/abs_u16::w#0, bitmap_line::@12/abs_u16::w#1 )
-  [107] abs_u16::$0 = > abs_u16::w#2
+  [107] abs_u16::$0 = byte1  abs_u16::w#2
   [108] abs_u16::$1 = abs_u16::$0 & $80
   [109] if(0!=abs_u16::$1) goto abs_u16::@1
   to:abs_u16::@return
@@ -1908,7 +1908,7 @@ abs_u16::@return: scope:[abs_u16]  from abs_u16 abs_u16::@1
 word sgn_u16(word sgn_u16::w)
 sgn_u16: scope:[sgn_u16]  from bitmap_line::@1 bitmap_line::@14
   [113] sgn_u16::w#2 = phi( bitmap_line::@1/sgn_u16::w#0, bitmap_line::@14/sgn_u16::w#1 )
-  [114] sgn_u16::$0 = > sgn_u16::w#2
+  [114] sgn_u16::$0 = byte1  sgn_u16::w#2
   [115] sgn_u16::$1 = sgn_u16::$0 & $80
   [116] if(0!=sgn_u16::$1) goto sgn_u16::@1
   to:sgn_u16::@return
@@ -1927,7 +1927,7 @@ bitmap_plot: scope:[bitmap_plot]  from bitmap_line::@3 bitmap_line::@4 bitmap_li
   [121] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4]
   [122] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
   [123] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0
-  [124] bitmap_plot::$1 = < bitmap_plot::x#4
+  [124] bitmap_plot::$1 = byte0  bitmap_plot::x#4
   [125] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1]
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
@@ -2440,30 +2440,30 @@ Uplift Scope [bitmap_clear]
 Uplift Scope [RADIX] 
 Uplift Scope [] 
 
-Uplifting [bitmap_plot] best 32984 combination reg byte x [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#0 bitmap_plot::y#1 bitmap_plot::y#3 ] zp[2]:69 [ bitmap_plot::$0 ] reg byte x [ bitmap_plot::$1 ] zp[2]:71 [ bitmap_plot::plotter#1 ] zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 bitmap_plot::x#3 ] zp[2]:67 [ bitmap_plot::plotter#0 ] 
-Uplifting [bitmap_line] best 32984 combination zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x1#0 bitmap_line::x#12 bitmap_line::x#1 ] zp[2]:13 [ bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y1#0 bitmap_line::y#1 bitmap_line::y#2 ] zp[2]:9 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] zp[2]:15 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ] zp[2]:51 [ bitmap_line::dy#0 ] zp[2]:59 [ bitmap_line::sy#0 ] zp[2]:47 [ bitmap_line::dx#0 ] zp[2]:55 [ bitmap_line::sx#0 ] zp[2]:39 [ bitmap_line::y2#0 ] zp[2]:37 [ bitmap_line::x2#0 ] 
-Uplifting [abs_u16] best 32974 combination zp[2]:24 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 abs_u16::w#1 ] reg byte a [ abs_u16::$0 ] reg byte a [ abs_u16::$1 ] zp[2]:45 [ abs_u16::return#0 ] zp[2]:49 [ abs_u16::return#1 ] 
-Uplifting [sgn_u16] best 32964 combination reg byte a [ sgn_u16::$0 ] reg byte a [ sgn_u16::$1 ] zp[2]:26 [ sgn_u16::w#2 sgn_u16::w#0 sgn_u16::w#1 ] zp[2]:53 [ sgn_u16::return#0 ] zp[2]:57 [ sgn_u16::return#1 ] zp[2]:28 [ sgn_u16::return#4 ] 
-Uplifting [memset] best 32948 combination zp[2]:22 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:61 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:17 [ memset::num#2 ] zp[2]:19 [ memset::str#3 ] 
-Uplifting [bitmap_init] best 32498 combination zp[2]:7 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte a [ bitmap_init::$4 ] zp[1]:43 [ bitmap_init::$5 ] zp[1]:44 [ bitmap_init::$6 ] zp[1]:41 [ bitmap_init::$7 ] 
+Uplifting [bitmap_plot] best 32982 combination reg byte x [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#0 bitmap_plot::y#1 bitmap_plot::y#3 ] zp[2]:69 [ bitmap_plot::$0 ] reg byte x [ bitmap_plot::$1 ] zp[2]:71 [ bitmap_plot::plotter#1 ] zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 bitmap_plot::x#3 ] zp[2]:67 [ bitmap_plot::plotter#0 ] 
+Uplifting [bitmap_line] best 32982 combination zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x1#0 bitmap_line::x#12 bitmap_line::x#1 ] zp[2]:13 [ bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y1#0 bitmap_line::y#1 bitmap_line::y#2 ] zp[2]:9 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] zp[2]:15 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ] zp[2]:51 [ bitmap_line::dy#0 ] zp[2]:59 [ bitmap_line::sy#0 ] zp[2]:47 [ bitmap_line::dx#0 ] zp[2]:55 [ bitmap_line::sx#0 ] zp[2]:39 [ bitmap_line::y2#0 ] zp[2]:37 [ bitmap_line::x2#0 ] 
+Uplifting [abs_u16] best 32972 combination zp[2]:24 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 abs_u16::w#1 ] reg byte a [ abs_u16::$0 ] reg byte a [ abs_u16::$1 ] zp[2]:45 [ abs_u16::return#0 ] zp[2]:49 [ abs_u16::return#1 ] 
+Uplifting [sgn_u16] best 32962 combination reg byte a [ sgn_u16::$0 ] reg byte a [ sgn_u16::$1 ] zp[2]:26 [ sgn_u16::w#2 sgn_u16::w#0 sgn_u16::w#1 ] zp[2]:53 [ sgn_u16::return#0 ] zp[2]:57 [ sgn_u16::return#1 ] zp[2]:28 [ sgn_u16::return#4 ] 
+Uplifting [memset] best 32946 combination zp[2]:22 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:61 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:17 [ memset::num#2 ] zp[2]:19 [ memset::str#3 ] 
+Uplifting [bitmap_init] best 32496 combination zp[2]:7 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte a [ bitmap_init::$4 ] zp[1]:43 [ bitmap_init::$5 ] zp[1]:44 [ bitmap_init::$6 ] zp[1]:41 [ bitmap_init::$7 ] 
 Limited combination testing to 100 combinations of 15360 possible.
-Uplifting [main] best 32498 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[2]:33 [ main::$13 ] zp[2]:35 [ main::$14 ] zp[1]:3 [ main::a#2 main::a#1 ] 
-Uplifting [MOS6526_CIA] best 32498 combination 
-Uplifting [MOS6569_VICII] best 32498 combination 
-Uplifting [MOS6581_SID] best 32498 combination 
-Uplifting [bitmap_clear] best 32498 combination 
-Uplifting [RADIX] best 32498 combination 
-Uplifting [] best 32498 combination 
+Uplifting [main] best 32496 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[2]:33 [ main::$13 ] zp[2]:35 [ main::$14 ] zp[1]:3 [ main::a#2 main::a#1 ] 
+Uplifting [MOS6526_CIA] best 32496 combination 
+Uplifting [MOS6569_VICII] best 32496 combination 
+Uplifting [MOS6581_SID] best 32496 combination 
+Uplifting [bitmap_clear] best 32496 combination 
+Uplifting [RADIX] best 32496 combination 
+Uplifting [] best 32496 combination 
 Attempting to uplift remaining variables inzp[1]:43 [ bitmap_init::$5 ]
-Uplifting [bitmap_init] best 32438 combination reg byte a [ bitmap_init::$5 ] 
+Uplifting [bitmap_init] best 32436 combination reg byte a [ bitmap_init::$5 ] 
 Attempting to uplift remaining variables inzp[1]:44 [ bitmap_init::$6 ]
-Uplifting [bitmap_init] best 32378 combination reg byte a [ bitmap_init::$6 ] 
+Uplifting [bitmap_init] best 32376 combination reg byte a [ bitmap_init::$6 ] 
 Attempting to uplift remaining variables inzp[1]:41 [ bitmap_init::$7 ]
-Uplifting [bitmap_init] best 32378 combination zp[1]:41 [ bitmap_init::$7 ] 
+Uplifting [bitmap_init] best 32376 combination zp[1]:41 [ bitmap_init::$7 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 32378 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 32376 combination zp[1]:2 [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ main::a#2 main::a#1 ]
-Uplifting [main] best 32378 combination zp[1]:3 [ main::a#2 main::a#1 ] 
+Uplifting [main] best 32376 combination zp[1]:3 [ main::a#2 main::a#1 ] 
 Coalescing zero page register [ zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x1#0 bitmap_line::x#12 bitmap_line::x#1 ] ] with [ zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 bitmap_plot::x#3 ] ] - score: 4
 Coalescing zero page register [ zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x1#0 bitmap_line::x#12 bitmap_line::x#1 bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 bitmap_plot::x#3 ] ] with [ zp[2]:33 [ main::$13 ] ] - score: 1
 Coalescing zero page register [ zp[2]:17 [ memset::num#2 ] ] with [ zp[2]:61 [ memset::end#0 ] ] - score: 1
@@ -2705,13 +2705,13 @@ bitmap_init: {
     // [29] bitmap_init::$7 = bitmap_init::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __7
-    // [30] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
+    // [30] bitmap_init::$4 = byte0  bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
     lda.z yoffs
     // [31] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
     // [32] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
-    // [33] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
+    // [33] bitmap_init::$6 = byte1  bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
     lda.z yoffs+1
     // [34] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
@@ -3195,7 +3195,7 @@ memset: {
 abs_u16: {
     .label w = $c
     .label return = $c
-    // [107] abs_u16::$0 = > abs_u16::w#2 -- vbuaa=_byte1_vwuz1 
+    // [107] abs_u16::$0 = byte1  abs_u16::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // [108] abs_u16::$1 = abs_u16::$0 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -3230,7 +3230,7 @@ abs_u16: {
 sgn_u16: {
     .label w = $19
     .label return = $e
-    // [114] sgn_u16::$0 = > sgn_u16::w#2 -- vbuaa=_byte1_vwuz1 
+    // [114] sgn_u16::$0 = byte1  sgn_u16::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // [115] sgn_u16::$1 = sgn_u16::$0 & $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -3290,13 +3290,12 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // [124] bitmap_plot::$1 = < bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
+    // [124] bitmap_plot::$1 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
     ldx.z x
     // [125] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
-    ldy #0
     sta (plotter),y
     jmp __breturn
     // bitmap_plot::@return
@@ -3360,7 +3359,6 @@ Removing instruction ldy.z a
 Removing instruction lda.z e+1
 Removing instruction lda.z e1+1
 Removing instruction lda #>-1
-Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b6_from___b1 with __b2
 Replacing label __b1_from___b2 with __b1
@@ -3592,7 +3590,7 @@ byte main::i#1 i zp[1]:2 22.0
 byte main::i#2 i zp[1]:2 3.3000000000000003
 byte* main::toD0181_gfx
 byte main::toD0181_return
-constant byte main::toD0181_return#0 toD0181_return = >(word)SCREEN&$3fff*4|>(word)BITMAP/4&$f
+constant byte main::toD0181_return#0 toD0181_return = byte1 (word)SCREEN&$3fff*4|byte1 (word)BITMAP/4&$f
 byte* main::toD0181_screen
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
@@ -3846,7 +3844,7 @@ bitmap_init: {
     lda #7
     sax.z __7
     // BYTE0(yoffs)
-    // [30] bitmap_init::$4 = < bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
+    // [30] bitmap_init::$4 = byte0  bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
     lda.z yoffs
     // y&$7 | BYTE0(yoffs)
     // [31] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
@@ -3855,7 +3853,7 @@ bitmap_init: {
     // [32] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // BYTE1(yoffs)
-    // [33] bitmap_init::$6 = > bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
+    // [33] bitmap_init::$6 = byte1  bitmap_init::yoffs#2 -- vbuaa=_byte1_pbuz1 
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = BYTE1(yoffs)
     // [34] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -4321,7 +4319,7 @@ abs_u16: {
     .label w = $c
     .label return = $c
     // BYTE1(w)
-    // [107] abs_u16::$0 = > abs_u16::w#2 -- vbuaa=_byte1_vwuz1 
+    // [107] abs_u16::$0 = byte1  abs_u16::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // BYTE1(w)&0x80
     // [108] abs_u16::$1 = abs_u16::$0 & $80 -- vbuaa=vbuaa_band_vbuc1 
@@ -4357,7 +4355,7 @@ sgn_u16: {
     .label w = $19
     .label return = $e
     // BYTE1(w)
-    // [114] sgn_u16::$0 = > sgn_u16::w#2 -- vbuaa=_byte1_vwuz1 
+    // [114] sgn_u16::$0 = byte1  sgn_u16::w#2 -- vbuaa=_byte1_vwuz1 
     lda.z w+1
     // BYTE1(w)&0x80
     // [115] sgn_u16::$1 = sgn_u16::$0 & $80 -- vbuaa=vbuaa_band_vbuc1 
@@ -4417,7 +4415,7 @@ bitmap_plot: {
     adc.z __0+1
     sta.z plotter+1
     // BYTE0(x)
-    // [124] bitmap_plot::$1 = < bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
+    // [124] bitmap_plot::$1 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
     ldx.z x
     // *plotter |= bitmap_plot_bit[BYTE0(x)]
     // [125] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 

@@ -3,8 +3,8 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  SCREEN[0] = <(word)DVAL/$400
-  SCREEN[1] = >(word)DVAL/$400
+  SCREEN[0] = byte0 (word)DVAL/$400
+  SCREEN[1] = byte1 (word)DVAL/$400
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -26,10 +26,10 @@ constant byte* const SCREEN = (byte*)$400
 void __start()
 void main()
 
-Adding number conversion cast (unumber) $400 in SCREEN[0] = <(word)DVAL/$400
-Adding number conversion cast (unumber) 0 in SCREEN[0] = <(word)DVAL/(unumber)$400
-Adding number conversion cast (unumber) $400 in SCREEN[1] = >(word)DVAL/$400
-Adding number conversion cast (unumber) 1 in SCREEN[1] = >(word)DVAL/(unumber)$400
+Adding number conversion cast (unumber) $400 in SCREEN[0] = byte0 (word)DVAL/$400
+Adding number conversion cast (unumber) 0 in SCREEN[0] = byte0 (word)DVAL/(unumber)$400
+Adding number conversion cast (unumber) $400 in SCREEN[1] = byte1 (word)DVAL/$400
+Adding number conversion cast (unumber) 1 in SCREEN[1] = byte1 (word)DVAL/(unumber)$400
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $400
@@ -42,9 +42,9 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $400
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying constant evaluating to zero >(word)DVAL/$400 in [1] SCREEN[1] = >(word)DVAL/$400
+Simplifying constant evaluating to zero byte1 (word)DVAL/$400 in [1] SCREEN[1] = byte1 (word)DVAL/$400
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [0] SCREEN[0] = <(word)DVAL/$400
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = byte0 (word)DVAL/$400
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -62,7 +62,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *SCREEN = <(word)DVAL/$400
+  [0] *SCREEN = byte0 (word)DVAL/$400
   [1] *(SCREEN+1) = 0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -76,7 +76,7 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *SCREEN = <(word)DVAL/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = byte0 (word)DVAL/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(SCREEN+1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -108,7 +108,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *SCREEN = <(word)DVAL/$400 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = byte0 (word)DVAL/$400 -- _deref_pbuc1=vbuc2 
     lda #<DVAL/$400
     sta SCREEN
     // [1] *(SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
@@ -160,7 +160,7 @@ Score: 18
   // main
 main: {
     // SCREEN[0] = BYTE0((word)(DVAL/$400))
-    // [0] *SCREEN = <(word)DVAL/$400 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = byte0 (word)DVAL/$400 -- _deref_pbuc1=vbuc2 
     lda #<DVAL/$400
     sta SCREEN
     // SCREEN[1] = BYTE1((word)(DVAL/$400))

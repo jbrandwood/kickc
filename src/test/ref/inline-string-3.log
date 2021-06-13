@@ -3,8 +3,8 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *main::PTR = <main::STRING
-  *(main::PTR+1) = >main::STRING
+  *main::PTR = byte0 main::STRING
+  *(main::PTR+1) = byte1 main::STRING
   main::ptr#0 = (byte*){ *(main::PTR+1), *main::PTR }
   *main::SCREEN = *main::ptr#0
   to:main::@return
@@ -33,7 +33,7 @@ byte* main::ptr#0
 
 Fixing inline constructor with main::$0 = (byte)*(main::PTR+1) w= (byte)*main::PTR
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 1 in *(main::PTR+1) = >main::STRING
+Adding number conversion cast (unumber) 1 in *(main::PTR+1) = byte1 main::STRING
 Adding number conversion cast (unumber) 1 in main::$0 = (byte)*(main::PTR+1) w= (byte)*main::PTR
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 40958
@@ -62,8 +62,8 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *main::PTR = <main::STRING
-  [1] *(main::PTR+1) = >main::STRING
+  [0] *main::PTR = byte0 main::STRING
+  [1] *(main::PTR+1) = byte1 main::STRING
   [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR
   [3] *main::SCREEN = *((byte*)main::ptr#0)
   to:main::@return
@@ -83,8 +83,8 @@ Complete equivalence classes
 [ main::ptr#0 ]
 Allocated zp[2]:2 [ main::ptr#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *main::PTR = <main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *(main::PTR+1) = >main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::PTR = byte0 main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::PTR+1) = byte1 main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR [ main::ptr#0 ] (  [ main::ptr#0 ] { }  ) always clobbers reg byte a 
 Statement [3] *main::SCREEN = *((byte*)main::ptr#0) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::ptr#0 ] : zp[2]:2 , 
@@ -117,10 +117,10 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
-    // [0] *main::PTR = <main::STRING -- _deref_pbuc1=vbuc2 
+    // [0] *main::PTR = byte0 main::STRING -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-    // [1] *(main::PTR+1) = >main::STRING -- _deref_pbuc1=vbuc2 
+    // [1] *(main::PTR+1) = byte1 main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
     // [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
@@ -183,11 +183,11 @@ main: {
     .label SCREEN = $400
     .label ptr = 2
     // *PTR = BYTE0(STRING)
-    // [0] *main::PTR = <main::STRING -- _deref_pbuc1=vbuc2 
+    // [0] *main::PTR = byte0 main::STRING -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
     // *(PTR+1)= BYTE1(STRING)
-    // [1] *(main::PTR+1) = >main::STRING -- _deref_pbuc1=vbuc2 
+    // [1] *(main::PTR+1) = byte1 main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
     // byte* ptr = (byte*) { *(PTR+1), *PTR }

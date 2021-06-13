@@ -5,9 +5,9 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   main::p = 2*$100+3
-  main::$0 = < *main::q
+  main::$0 = byte0  *main::q
   main::SCREEN[0] = main::$0
-  main::$1 = > *main::q
+  main::$1 = byte1  *main::q
   main::SCREEN[1] = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -62,9 +62,9 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] main::p = 2*$100+3
-  [1] main::$0 = < *main::q
+  [1] main::$0 = byte0  *main::q
   [2] *main::SCREEN = main::$0
-  [3] main::$1 = > *main::q
+  [3] main::$1 = byte1  *main::q
   [4] *(main::SCREEN+1) = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -91,8 +91,8 @@ Allocated zp[1]:4 [ main::$0 ]
 Allocated zp[1]:5 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] main::p = 2*$100+3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] main::$0 = < *main::q [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [3] main::$1 = > *main::q [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [1] main::$0 = byte0  *main::q [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$1 = byte1  *main::q [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -128,11 +128,11 @@ main: {
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    // [1] main::$0 = < *main::q -- vbuaa=_byte0__deref_pwuc1 
+    // [1] main::$0 = byte0  *main::q -- vbuaa=_byte0__deref_pwuc1 
     lda.z q
     // [2] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [3] main::$1 = > *main::q -- vbuaa=_byte1__deref_pwuc1 
+    // [3] main::$1 = byte1  *main::q -- vbuaa=_byte1__deref_pwuc1 
     lda.z q+1
     // [4] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
@@ -191,13 +191,13 @@ main: {
     lda #>2*$100+3
     sta.z p+1
     // BYTE0(*q)
-    // [1] main::$0 = < *main::q -- vbuaa=_byte0__deref_pwuc1 
+    // [1] main::$0 = byte0  *main::q -- vbuaa=_byte0__deref_pwuc1 
     lda.z q
     // SCREEN[0] = BYTE0(*q)
     // [2] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // BYTE1(*q)
-    // [3] main::$1 = > *main::q -- vbuaa=_byte1__deref_pwuc1 
+    // [3] main::$1 = byte1  *main::q -- vbuaa=_byte1__deref_pwuc1 
     lda.z q+1
     // SCREEN[1] = BYTE1(*q)
     // [4] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 

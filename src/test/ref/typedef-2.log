@@ -7,7 +7,7 @@ void main()
 main: scope:[main]  from __start::@1
   main::w#0 = (word)&ptr
   main::w#1 = main::w#0 + $32
-  main::$0 = < main::w#1
+  main::$0 = byte0  main::w#1
   SCREEN[0] = main::$0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -58,15 +58,15 @@ Constant right-side identified [0] main::w#1 = main::w#0 + $32
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::w#1 = main::w#0+$32
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] main::$0 = < main::w#1
+Constant right-side identified [0] main::$0 = byte0  main::w#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$0 = <main::w#1
+Constant main::$0 = byte0 main::w#1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings main::w#0
 Inlining constant with different constant siblings main::w#1
 Constant inlined main::w#0 = (word)&ptr
 Constant inlined main::w#1 = (word)&ptr+$32
-Constant inlined main::$0 = <(word)&ptr+$32
+Constant inlined main::$0 = byte0 (word)&ptr+$32
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -99,7 +99,7 @@ __start::@return: scope:[__start]  from __start::@1
 
 void main()
 main: scope:[main]  from __start::@1
-  [5] *SCREEN = <(word)&ptr+$32
+  [5] *SCREEN = byte0 (word)&ptr+$32
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -119,7 +119,7 @@ Complete equivalence classes
 Allocated zp[2]:2 [ ptr ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] ptr = (byte*) 4096 [ ptr ] (  [ ptr ] { }  ) always clobbers reg byte a 
-Statement [5] *SCREEN = <(word)&ptr+$32 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *SCREEN = byte0 (word)&ptr+$32 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ ptr ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -171,7 +171,7 @@ __start: {
 }
   // main
 main: {
-    // [5] *SCREEN = <(word)&ptr+$32 -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = byte0 (word)&ptr+$32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     jmp __breturn
@@ -243,7 +243,7 @@ __start: {
   // main
 main: {
     // SCREEN[0] = BYTE0(w)
-    // [5] *SCREEN = <(word)&ptr+$32 -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = byte0 (word)&ptr+$32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     // main::@return

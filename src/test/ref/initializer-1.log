@@ -10,11 +10,11 @@ main::@1: scope:[main]  from main main::@1
   main::idx#3 = phi( main/main::idx#0, main::@1/main::idx#2 )
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   main::$3 = main::i#2 * SIZEOF_WORD
-  main::$0 = < words[main::$3]
+  main::$0 = byte0  words[main::$3]
   main::SCREEN[main::idx#3] = main::$0
   main::idx#1 = ++ main::idx#3
   main::$4 = main::i#2 * SIZEOF_WORD
-  main::$1 = > words[main::$4]
+  main::$1 = byte1  words[main::$4]
   main::SCREEN[main::idx#1] = main::$1
   main::idx#2 = ++ main::idx#1
   main::i#1 = main::i#2 + rangenext(0,2)
@@ -110,10 +110,10 @@ main::@1: scope:[main]  from main main::@1
   [1] main::idx#3 = phi( main/0, main::@1/main::idx#2 )
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
   [2] main::$4 = main::i#2 << 1
-  [3] main::$0 = < words[main::$4]
+  [3] main::$0 = byte0  words[main::$4]
   [4] main::SCREEN[main::idx#3] = main::$0
   [5] main::idx#1 = ++ main::idx#3
-  [6] main::$1 = > words[main::$4]
+  [6] main::$1 = byte1  words[main::$4]
   [7] main::SCREEN[main::idx#1] = main::$1
   [8] main::idx#2 = ++ main::idx#1
   [9] main::i#1 = ++ main::i#2
@@ -161,13 +161,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] main::$4 = main::i#2 << 1 [ main::i#2 main::idx#3 main::$4 ] (  [ main::i#2 main::idx#3 main::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::idx#3 main::idx#2 ]
-Statement [3] main::$0 = < words[main::$4] [ main::i#2 main::idx#3 main::$4 main::$0 ] (  [ main::i#2 main::idx#3 main::$4 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$0 = byte0  words[main::$4] [ main::i#2 main::idx#3 main::$4 main::$0 ] (  [ main::i#2 main::idx#3 main::$4 main::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$4 ]
-Statement [6] main::$1 = > words[main::$4] [ main::i#2 main::idx#1 main::$1 ] (  [ main::i#2 main::idx#1 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$1 = byte1  words[main::$4] [ main::i#2 main::idx#1 main::$1 ] (  [ main::i#2 main::idx#1 main::$1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::idx#1 ]
 Statement [2] main::$4 = main::i#2 << 1 [ main::i#2 main::idx#3 main::$4 ] (  [ main::i#2 main::idx#3 main::$4 ] { }  ) always clobbers reg byte a 
-Statement [3] main::$0 = < words[main::$4] [ main::i#2 main::idx#3 main::$4 main::$0 ] (  [ main::i#2 main::idx#3 main::$4 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [6] main::$1 = > words[main::$4] [ main::i#2 main::idx#1 main::$1 ] (  [ main::i#2 main::idx#1 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$0 = byte0  words[main::$4] [ main::i#2 main::idx#3 main::$4 main::$0 ] (  [ main::i#2 main::idx#3 main::$4 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$1 = byte1  words[main::$4] [ main::i#2 main::idx#1 main::$1 ] (  [ main::i#2 main::idx#1 main::$1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::idx#3 main::idx#2 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$4 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -227,13 +227,13 @@ main: {
     lda.z i
     asl
     tay
-    // [3] main::$0 = < words[main::$4] -- vbuaa=_byte0_pwuc1_derefidx_vbuyy 
+    // [3] main::$0 = byte0  words[main::$4] -- vbuaa=_byte0_pwuc1_derefidx_vbuyy 
     lda words,y
     // [4] main::SCREEN[main::idx#3] = main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [5] main::idx#1 = ++ main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [6] main::$1 = > words[main::$4] -- vbuaa=_byte1_pwuc1_derefidx_vbuyy 
+    // [6] main::$1 = byte1  words[main::$4] -- vbuaa=_byte1_pwuc1_derefidx_vbuyy 
     lda words+1,y
     // [7] main::SCREEN[main::idx#1] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -329,7 +329,7 @@ main: {
     lda.z i
     asl
     tay
-    // [3] main::$0 = < words[main::$4] -- vbuaa=_byte0_pwuc1_derefidx_vbuyy 
+    // [3] main::$0 = byte0  words[main::$4] -- vbuaa=_byte0_pwuc1_derefidx_vbuyy 
     lda words,y
     // SCREEN[idx++] = BYTE0(words[i])
     // [4] main::SCREEN[main::idx#3] = main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -338,7 +338,7 @@ main: {
     // [5] main::idx#1 = ++ main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
     // BYTE1(words[i])
-    // [6] main::$1 = > words[main::$4] -- vbuaa=_byte1_pwuc1_derefidx_vbuyy 
+    // [6] main::$1 = byte1  words[main::$4] -- vbuaa=_byte1_pwuc1_derefidx_vbuyy 
     lda words+1,y
     // SCREEN[idx++] = BYTE1(words[i])
     // [7] main::SCREEN[main::idx#1] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 

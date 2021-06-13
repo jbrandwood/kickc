@@ -5,14 +5,14 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   main::w = $d03
-  main::$0 = < *main::wp
+  main::$0 = byte0  *main::wp
   main::screen[0] = main::$0
-  main::$1 = > *main::wp
+  main::$1 = byte1  *main::wp
   main::screen[1] = main::$1
   *main::wp = $210c
-  main::$2 = < *main::wp
+  main::$2 = byte0  *main::wp
   main::screen[2] = main::$2
-  main::$3 = > *main::wp
+  main::$3 = byte1  *main::wp
   main::screen[3] = main::$3
   to:main::@return
 main::@return: scope:[main]  from main
@@ -82,14 +82,14 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] main::w = $d03
-  [1] main::$0 = < *main::wp
+  [1] main::$0 = byte0  *main::wp
   [2] *main::screen = main::$0
-  [3] main::$1 = > *main::wp
+  [3] main::$1 = byte1  *main::wp
   [4] *(main::screen+1) = main::$1
   [5] *main::wp = $210c
-  [6] main::$2 = < *main::wp
+  [6] main::$2 = byte0  *main::wp
   [7] *(main::screen+2) = main::$2
-  [8] main::$3 = > *main::wp
+  [8] main::$3 = byte1  *main::wp
   [9] *(main::screen+3) = main::$3
   to:main::@return
 main::@return: scope:[main]  from main
@@ -124,11 +124,11 @@ Allocated zp[1]:6 [ main::$2 ]
 Allocated zp[1]:7 [ main::$3 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] main::w = $d03 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] main::$0 = < *main::wp [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [3] main::$1 = > *main::wp [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [1] main::$0 = byte0  *main::wp [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$1 = byte1  *main::wp [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
 Statement [5] *main::wp = $210c [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] main::$2 = < *main::wp [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] main::$3 = > *main::wp [ main::$3 ] (  [ main::$3 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$2 = byte0  *main::wp [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] main::$3 = byte1  *main::wp [ main::$3 ] (  [ main::$3 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -168,11 +168,11 @@ main: {
     sta.z w
     lda #>$d03
     sta.z w+1
-    // [1] main::$0 = < *main::wp -- vbuaa=_byte0__deref_pwuc1 
+    // [1] main::$0 = byte0  *main::wp -- vbuaa=_byte0__deref_pwuc1 
     lda.z wp
     // [2] *main::screen = main::$0 -- _deref_pbuc1=vbuaa 
     sta screen
-    // [3] main::$1 = > *main::wp -- vbuaa=_byte1__deref_pwuc1 
+    // [3] main::$1 = byte1  *main::wp -- vbuaa=_byte1__deref_pwuc1 
     lda.z wp+1
     // [4] *(main::screen+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
@@ -181,11 +181,11 @@ main: {
     sta.z wp
     lda #>$210c
     sta.z wp+1
-    // [6] main::$2 = < *main::wp -- vbuaa=_byte0__deref_pwuc1 
+    // [6] main::$2 = byte0  *main::wp -- vbuaa=_byte0__deref_pwuc1 
     lda.z wp
     // [7] *(main::screen+2) = main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
-    // [8] main::$3 = > *main::wp -- vbuaa=_byte1__deref_pwuc1 
+    // [8] main::$3 = byte1  *main::wp -- vbuaa=_byte1__deref_pwuc1 
     lda.z wp+1
     // [9] *(main::screen+3) = main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+3
@@ -249,13 +249,13 @@ main: {
     lda #>$d03
     sta.z w+1
     // BYTE0(*wp)
-    // [1] main::$0 = < *main::wp -- vbuaa=_byte0__deref_pwuc1 
+    // [1] main::$0 = byte0  *main::wp -- vbuaa=_byte0__deref_pwuc1 
     lda.z wp
     // screen[0] = BYTE0(*wp)
     // [2] *main::screen = main::$0 -- _deref_pbuc1=vbuaa 
     sta screen
     // BYTE1(*wp)
-    // [3] main::$1 = > *main::wp -- vbuaa=_byte1__deref_pwuc1 
+    // [3] main::$1 = byte1  *main::wp -- vbuaa=_byte1__deref_pwuc1 
     lda.z wp+1
     // screen[1] = BYTE1(*wp)
     // [4] *(main::screen+1) = main::$1 -- _deref_pbuc1=vbuaa 
@@ -267,13 +267,13 @@ main: {
     lda #>$210c
     sta.z wp+1
     // BYTE0(*wp)
-    // [6] main::$2 = < *main::wp -- vbuaa=_byte0__deref_pwuc1 
+    // [6] main::$2 = byte0  *main::wp -- vbuaa=_byte0__deref_pwuc1 
     lda.z wp
     // screen[2] = BYTE0(*wp)
     // [7] *(main::screen+2) = main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
     // BYTE1(*wp)
-    // [8] main::$3 = > *main::wp -- vbuaa=_byte1__deref_pwuc1 
+    // [8] main::$3 = byte1  *main::wp -- vbuaa=_byte1__deref_pwuc1 
     lda.z wp+1
     // screen[3] = BYTE1(*wp)
     // [9] *(main::screen+3) = main::$3 -- _deref_pbuc1=vbuaa 

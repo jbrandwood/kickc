@@ -191,7 +191,7 @@ main: {
     .label BANK_SPRITE = $12000
     // VRAM address of sprite
     .label VRAM_SPRITE = $10000
-    .label SPRITE_ATTR = $43
+    .label SPRITE_ATTR = $3f
     // vera_layer_set_text_color_mode( 1, VERA_LAYER_CONFIG_16C )
     lda #1
     jsr vera_layer_set_text_color_mode
@@ -201,7 +201,7 @@ main: {
     jsr clrscr
     // printf("\n\nsprite banked file load and display demo.\n")
     jsr cputs
-    // struct VERA_SPRITE SPRITE_ATTR = { <(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 }
+    // struct VERA_SPRITE SPRITE_ATTR = { WORD0(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 }
     ldy #SIZEOF_STRUCT_VERA_SPRITE
   !:
     lda __0-1,y
@@ -260,7 +260,7 @@ main: {
     lda #>VRAM_SPRITE>>$10
     sta.z memcpy_bank_to_vram.vdest+3
     jsr memcpy_bank_to_vram
-    // SPRITE_ATTR.ADDR = <(VRAM_SPRITE/32)|VERA_SPRITE_4BPP
+    // SPRITE_ATTR.ADDR = WORD0(VRAM_SPRITE/32)|VERA_SPRITE_4BPP
     lda #<VRAM_SPRITE/$20&$ffff
     sta.z SPRITE_ATTR
     lda #>VRAM_SPRITE/$20&$ffff
@@ -275,7 +275,7 @@ main: {
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
     lda #<$64
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, (char*)<VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    // memcpy_to_vram(BYTE2(VERA_SPRITE_ATTR), (char*)WORD0(VERA_SPRITE_ATTR), &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     jsr memcpy_to_vram
     // *VERA_CTRL &= ~VERA_DCSEL
     // Enable sprites
@@ -640,14 +640,14 @@ clrscr: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <ch
+    // BYTE0(ch)
     lda.z line_text
-    // *VERA_ADDRX_L = <ch
+    // *VERA_ADDRX_L = BYTE0(ch)
     // Set address
     sta VERA_ADDRX_L
-    // >ch
+    // BYTE1(ch)
     lda.z line_text+1
-    // *VERA_ADDRX_M = >ch
+    // *VERA_ADDRX_M = BYTE1(ch)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -717,7 +717,7 @@ cputs: {
 // Note: This function only works if the entire file fits within the selected bank. The function cannot load to multiple banks.
 load_to_bank: {
     .const device = 8
-    .const bank = ((>((main.BANK_SPRITE&$ffff)))>>5)+(<((main.BANK_SPRITE>>$10)<<3))
+    .const bank = (<main.BANK_SPRITE>>$10)<<3|(>main.BANK_SPRITE)>>5
     // setnam(filename)
     lda #<main.filename
     sta.z setnam.filename
@@ -750,20 +750,8 @@ load_to_bank: {
 // Note: This function can switch RAM bank during copying to copy data from multiple RAM banks.
 // memcpy_bank_to_vram(dword zp(3) vdest, dword zp(7) num)
 memcpy_bank_to_vram: {
-    .label __0 = $2b
-    .label __2 = $2d
-    .label __4 = $35
-    .label __7 = $37
-    .label __8 = $37
-    .label __10 = $3b
-    .label __12 = $3d
-    .label __13 = $3d
-    .label __14 = $3f
-    .label __15 = $3f
-    .label __17 = $3d
-    .label __18 = $f
-    .label __23 = $3d
-    .label __24 = $41
+    .label __5 = $37
+    .label __9 = $f
     .label beg = $b
     .label end = 7
     // select the bank
@@ -776,32 +764,18 @@ memcpy_bank_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <vdest
+    // BYTE0(vdest)
     lda.z vdest
-    sta.z __0
-    lda.z vdest+1
-    sta.z __0+1
-    // <(<vdest)
-    lda.z __0
-    // *VERA_ADDRX_L = <(<vdest)
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // Set address
     sta VERA_ADDRX_L
-    // <vdest
-    lda.z vdest
-    sta.z __2
+    // BYTE1(vdest)
     lda.z vdest+1
-    sta.z __2+1
-    // >(<vdest)
-    // *VERA_ADDRX_M = >(<vdest)
+    // *VERA_ADDRX_M = BYTE1(vdest)
     sta VERA_ADDRX_M
-    // >vdest
+    // BYTE2(vdest)
     lda.z vdest+2
-    sta.z __4
-    lda.z vdest+3
-    sta.z __4+1
-    // <(>vdest)
-    lda.z __4
-    // *VERA_ADDRX_H = <(>vdest)
+    // *VERA_ADDRX_H = BYTE2(vdest)
     sta VERA_ADDRX_H
     // *VERA_ADDRX_H |= VERA_INC_1
     lda #VERA_INC_1
@@ -821,77 +795,30 @@ memcpy_bank_to_vram: {
     lda.z end+3
     adc.z beg+3
     sta.z end+3
-    // >beg
+    // BYTE2(beg)
     lda.z beg+2
-    sta.z __7
-    lda.z beg+3
-    sta.z __7+1
-    // (>beg)<<8
-    lda.z __8
-    sta.z __8+1
-    lda #0
-    sta.z __8
-    // <(>beg)<<8
-    tay
-    // <beg
-    lda.z beg
-    sta.z __10
+    // BYTE2(beg)<<3
+    asl
+    asl
+    asl
+    sta.z __5
+    // BYTE1(beg)
     lda.z beg+1
-    sta.z __10+1
-    // >(<beg)
+    // BYTE1(beg)>>5
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    // char bank = BYTE2(beg)<<3 | BYTE1(beg)>>5
+    ora.z __5
     tax
-    // ((word)<(>beg)<<8)|>(<beg)
-    tya
-    sta.z __23
-    sta.z __23+1
-    txa
-    ora.z __12
-    sta.z __12
-    // (((word)<(>beg)<<8)|>(<beg))>>5
-    lsr.z __13+1
-    ror.z __13
-    lsr.z __13+1
-    ror.z __13
-    lsr.z __13+1
-    ror.z __13
-    lsr.z __13+1
-    ror.z __13
-    lsr.z __13+1
-    ror.z __13
-    // >beg
-    lda.z beg+2
-    sta.z __14
-    lda.z beg+3
-    sta.z __14+1
-    // (>beg)<<3
-    asl.z __15
-    rol.z __15+1
-    asl.z __15
-    rol.z __15+1
-    asl.z __15
-    rol.z __15+1
-    // <(>beg)<<3
-    lda.z __15
-    // ((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3)
-    sta.z __24
-    tya
-    sta.z __24+1
-    lda.z __17
-    clc
-    adc.z __24
-    sta.z __17
-    lda.z __17+1
-    adc.z __24+1
-    sta.z __17+1
-    // char bank = (byte)(((((word)<(>beg)<<8)|>(<beg))>>5)+((word)<(>beg)<<3))
-    lda.z __17
-    tax
-    // <beg
+    // WORD0(beg)
     lda.z beg
-    sta.z __18
+    sta.z __9
     lda.z beg+1
-    sta.z __18+1
-    // (<beg)&0x1FFF
+    sta.z __9+1
+    // WORD0(beg)&0x1FFF
     lda.z addr
     and #<$1fff
     sta.z addr
@@ -974,7 +901,7 @@ memcpy_bank_to_vram: {
 // - src: The source address in RAM
 // - num: The number of bytes to copy
 memcpy_to_vram: {
-    .const vbank = VERA_SPRITE_ATTR>>$10
+    .const vbank = <VERA_SPRITE_ATTR>>$10
     .label vdest = VERA_SPRITE_ATTR&$ffff
     .label src = main.SPRITE_ATTR
     .label end = src+SIZEOF_STRUCT_VERA_SPRITE
@@ -984,11 +911,11 @@ memcpy_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // *VERA_ADDRX_L = <vdest
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // Set address
     lda #0
     sta VERA_ADDRX_L
-    // *VERA_ADDRX_M = >vdest
+    // *VERA_ADDRX_M = BYTE1(vdest)
     lda #>vdest
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
@@ -1052,12 +979,12 @@ vera_layer_mode_tile: {
     sta vera_layer_rowskip+vera_layer_mode_text.layer*SIZEOF_WORD+1
     // vera_layer_set_config(layer, config)
     jsr vera_layer_set_config
-    // vera_mapbase_offset[layer] = <mapbase_address
+    // vera_mapbase_offset[layer] = WORD0(mapbase_address)
     // mapbase
     lda #<0
     sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
     sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
-    // vera_mapbase_bank[layer] = (byte)(>mapbase_address)
+    // vera_mapbase_bank[layer] = BYTE2(mapbase_address)
     sta vera_mapbase_bank+vera_layer_mode_text.layer
     // vera_mapbase_address[layer] = mapbase_address
     lda #<vera_layer_mode_text.mapbase_address
@@ -1072,13 +999,13 @@ vera_layer_mode_tile: {
     ldx #mapbase
     lda #vera_layer_mode_text.layer
     jsr vera_layer_set_mapbase
-    // vera_tilebase_offset[layer] = <tilebase_address
+    // vera_tilebase_offset[layer] = WORD0(tilebase_address)
     // tilebase
     lda #<vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
     lda #>vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
-    // vera_tilebase_bank[layer] = (byte)>tilebase_address
+    // vera_tilebase_bank[layer] = BYTE2(tilebase_address)
     lda #0
     sta vera_tilebase_bank+vera_layer_mode_text.layer
     // vera_tilebase_address[layer] = tilebase_address
@@ -1216,14 +1143,14 @@ cputc: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <conio_addr
+    // BYTE0(conio_addr)
     lda.z conio_addr
-    // *VERA_ADDRX_L = <conio_addr
+    // *VERA_ADDRX_L = BYTE0(conio_addr)
     // Set address
     sta VERA_ADDRX_L
-    // >conio_addr
+    // BYTE1(conio_addr)
     lda.z conio_addr+1
-    // *VERA_ADDRX_M = >conio_addr
+    // *VERA_ADDRX_M = BYTE1(conio_addr)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -1364,7 +1291,7 @@ vera_layer_set_tilebase: {
     lda vera_layer_tilebase+vera_layer_mode_text.layer*SIZEOF_POINTER+1
     sta.z addr+1
     // *addr = tilebase
-    lda #(>(vera_layer_mode_tile.tilebase_address&$ffff))&VERA_LAYER_TILEBASE_MASK
+    lda #(>vera_layer_mode_tile.tilebase_address)&VERA_LAYER_TILEBASE_MASK
     ldy #0
     sta (addr),y
     // }
@@ -1410,7 +1337,7 @@ vera_layer_get_color: {
 }
 // Print a newline
 cputln: {
-    .label temp = $37
+    .label temp = $35
     // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
@@ -1508,10 +1435,10 @@ cscroll: {
 }
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $39
-    .label width = $3a
-    .label line = $3b
-    .label start = $3b
+    .label cy = $37
+    .label width = $38
+    .label line = $39
+    .label start = $39
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
@@ -1576,7 +1503,7 @@ insertup: {
     jmp __b1
 }
 clearline: {
-    .label addr = $41
+    .label addr = $3d
     .label c = $2b
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
@@ -1595,13 +1522,13 @@ clearline: {
     lda.z CONIO_SCREEN_TEXT+1
     adc conio_line_text+1,y
     sta.z addr+1
-    // <addr
+    // BYTE0(addr)
     lda.z addr
-    // *VERA_ADDRX_L = <addr
+    // *VERA_ADDRX_L = BYTE0(addr)
     sta VERA_ADDRX_L
-    // >addr
+    // BYTE1(addr)
     lda.z addr+1
-    // *VERA_ADDRX_M = >addr
+    // *VERA_ADDRX_M = BYTE1(addr)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1
     lda #VERA_INC_1
@@ -1653,25 +1580,25 @@ clearline: {
 // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
 // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 // - num: The number of bytes to copy
-// memcpy_in_vram(void* zp($3b) dest, byte* zp($3d) src, word zp($3f) num)
+// memcpy_in_vram(void* zp($39) dest, byte* zp($3d) src, word zp($3b) num)
 memcpy_in_vram: {
     .label i = $2d
-    .label dest = $3b
+    .label dest = $39
     .label src = $3d
-    .label num = $3f
+    .label num = $3b
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <src
+    // BYTE0(src)
     lda.z src
-    // *VERA_ADDRX_L = <src
+    // *VERA_ADDRX_L = BYTE0(src)
     // Set address
     sta VERA_ADDRX_L
-    // >src
+    // BYTE1(src)
     lda.z src+1
-    // *VERA_ADDRX_M = >src
+    // *VERA_ADDRX_M = BYTE1(src)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = src_increment | src_bank
     lda #VERA_INC_1
@@ -1681,14 +1608,14 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL
     ora VERA_CTRL
     sta VERA_CTRL
-    // <dest
+    // BYTE0(dest)
     lda.z dest
-    // *VERA_ADDRX_L = <dest
+    // *VERA_ADDRX_L = BYTE0(dest)
     // Set address
     sta VERA_ADDRX_L
-    // >dest
+    // BYTE1(dest)
     lda.z dest+1
-    // *VERA_ADDRX_M = >dest
+    // *VERA_ADDRX_M = BYTE1(dest)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = dest_increment | dest_bank
     lda #VERA_INC_1

@@ -315,8 +315,9 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // *plotter |= bitmap_plot_bit[(char)x]
+    // BYTE0(x)
     ldx.z x
+    // *plotter |= bitmap_plot_bit[BYTE0(x)]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y

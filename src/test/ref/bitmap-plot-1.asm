@@ -173,8 +173,8 @@ main: {
     rol.z __6+1
     rol.z __6+2
     rol.z __6+3
-    // >(xpos<<4)
-    // word x = (word)(160 + >(xpos<<4))
+    // WORD1(xpos<<4)
+    // word x = (word)(160 + WORD1(xpos<<4))
     clc
     lda #<$a0
     adc.z __6+2
@@ -229,8 +229,8 @@ main: {
     rol.z __10+1
     rol.z __10+2
     rol.z __10+3
-    // >(ypos<<4)
-    // word y = (word)(100 + >(ypos<<4))
+    // WORD1(ypos<<4)
+    // word y = (word)(100 + WORD1(ypos<<4))
     clc
     lda #<$64
     adc.z __10+2
@@ -239,7 +239,7 @@ main: {
     adc.z __10+3
     sta.z y+1
     // bitmap_plot(x, (byte)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // if(++idx_x==512)
     inc.z idx_x
@@ -342,19 +342,19 @@ sin16s_gen2: {
     sta.z mul16s.b+1
     jsr mul16s
     // mul16s(sin16s(x), ampl)
-    // >mul16s(sin16s(x), ampl)
+    // WORD1(mul16s(sin16s(x), ampl))
     lda.z __6+2
     sta.z __8
     lda.z __6+3
     sta.z __8+1
-    // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl)
+    // *sintab++ = offs + (signed int)WORD1(mul16s(sin16s(x), ampl))
     ldy #0
     lda.z __8
     sta (sintab),y
     iny
     lda.z __8+1
     sta (sintab),y
-    // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl);
+    // *sintab++ = offs + (signed int)WORD1(mul16s(sin16s(x), ampl));
     lda #SIZEOF_SIGNED_WORD
     clc
     adc.z sintab
@@ -412,15 +412,15 @@ bitmap_init: {
     // y&$7
     lda #7
     sax.z __7
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
@@ -537,12 +537,12 @@ mul16s: {
     // if(a<0)
     lda.z a+1
     bpl __b1
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __6
     lda.z m+3
     sta.z __6+1
-    // >m = (>m)-(unsigned int)b
+    // WORD1(m) = WORD1(m)-(unsigned int)b
     lda.z __11
     sec
     sbc.z b
@@ -558,12 +558,12 @@ mul16s: {
     // if(b<0)
     lda.z b+1
     bpl __b2
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(unsigned int)a
+    // WORD1(m) = WORD1(m)-(unsigned int)a
     lda.z __9
     sec
     sbc.z __12
@@ -581,16 +581,15 @@ mul16s: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($17) x, byte register(A) y)
+// bitmap_plot(word zp($17) x, byte register(X) y)
 bitmap_plot: {
     .label __0 = $22
     .label plotter = $20
     .label x = $17
     // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    tay
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta.z plotter+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta.z plotter
     // x & $fff8
     lda.z x
@@ -607,9 +606,9 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
+    // BYTE0(x)
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
+    // *plotter |= bitmap_plot_bit[BYTE0(x)]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -623,7 +622,7 @@ div32u16u: {
     .label return = $1b
     .label quotient_hi = $28
     .label quotient_lo = $14
-    // divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -632,13 +631,13 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
+    // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
     lda.z rem16u
     sta.z divr16u.rem
     lda.z rem16u+1
@@ -648,8 +647,8 @@ div32u16u: {
     lda #>PI2_u4f28&$ffff
     sta.z divr16u.dividend+1
     jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
+    // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
@@ -768,7 +767,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // unsigned int x1 = >x<<3
+    // unsigned int x1 = WORD1(x<<3)
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -997,11 +996,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -1078,7 +1077,7 @@ mulu16_sel: {
     dex
     bne !-
   !e:
-    // >mul16u(v1, v2)<<select
+    // WORD1(mul16u(v1, v2)<<select)
     lda.z __1+2
     sta.z return
     lda.z __1+3

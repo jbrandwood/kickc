@@ -712,12 +712,12 @@ vpoke: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [25] vpoke::$0 = < vpoke::vaddr#2 -- vbuaa=_lo_pbuz1 
+    // [25] vpoke::$0 = < vpoke::vaddr#2 -- vbuaa=_byte0_pbuz1 
     lda.z vaddr
     // [26] *VERA_ADDRX_L = vpoke::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [27] vpoke::$1 = > vpoke::vaddr#2 -- vbuaa=_hi_pbuz1 
+    // [27] vpoke::$1 = > vpoke::vaddr#2 -- vbuaa=_byte1_pbuz1 
     lda.z vaddr+1
     // [28] *VERA_ADDRX_M = vpoke::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -951,12 +951,12 @@ memcpy_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // *VERA_ADDRX_L = <vdest
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // [15] *VERA_ADDRX_L = 0 -- _deref_pbuc1=vbuc2 
     // Set address
     lda #0
     sta VERA_ADDRX_L
-    // *VERA_ADDRX_M = >vdest
+    // *VERA_ADDRX_M = BYTE1(vdest)
     // [16] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0 -- _deref_pbuc1=vbuc2 
     lda #>vdest
     sta VERA_ADDRX_M
@@ -1016,17 +1016,17 @@ vpoke: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <vaddr
-    // [25] vpoke::$0 = < vpoke::vaddr#2 -- vbuaa=_lo_pbuz1 
+    // BYTE0(vaddr)
+    // [25] vpoke::$0 = < vpoke::vaddr#2 -- vbuaa=_byte0_pbuz1 
     lda.z vaddr
-    // *VERA_ADDRX_L = <vaddr
+    // *VERA_ADDRX_L = BYTE0(vaddr)
     // [26] *VERA_ADDRX_L = vpoke::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // >vaddr
-    // [27] vpoke::$1 = > vpoke::vaddr#2 -- vbuaa=_hi_pbuz1 
+    // BYTE1(vaddr)
+    // [27] vpoke::$1 = > vpoke::vaddr#2 -- vbuaa=_byte1_pbuz1 
     lda.z vaddr+1
-    // *VERA_ADDRX_M = >vaddr
+    // *VERA_ADDRX_M = BYTE1(vaddr)
     // [28] *VERA_ADDRX_M = vpoke::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_0 | vbank

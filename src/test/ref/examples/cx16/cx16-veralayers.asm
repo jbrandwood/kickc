@@ -1092,14 +1092,14 @@ clrscr: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <ch
+    // BYTE0(ch)
     lda.z line_text
-    // *VERA_ADDRX_L = <ch
+    // *VERA_ADDRX_L = BYTE0(ch)
     // Set address
     sta VERA_ADDRX_L
-    // >ch
+    // BYTE1(ch)
     lda.z line_text+1
-    // *VERA_ADDRX_M = >ch
+    // *VERA_ADDRX_M = BYTE1(ch)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -1222,13 +1222,13 @@ clearline: {
     lda.z CONIO_SCREEN_TEXT+1
     adc conio_line_text+1,y
     sta.z addr+1
-    // <addr
+    // BYTE0(addr)
     lda.z addr
-    // *VERA_ADDRX_L = <addr
+    // *VERA_ADDRX_L = BYTE0(addr)
     sta VERA_ADDRX_L
-    // >addr
+    // BYTE1(addr)
     lda.z addr+1
-    // *VERA_ADDRX_M = >addr
+    // *VERA_ADDRX_M = BYTE1(addr)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1
     lda #VERA_INC_1
@@ -1353,14 +1353,14 @@ cputc: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <conio_addr
+    // BYTE0(conio_addr)
     lda.z conio_addr
-    // *VERA_ADDRX_L = <conio_addr
+    // *VERA_ADDRX_L = BYTE0(conio_addr)
     // Set address
     sta VERA_ADDRX_L
-    // >conio_addr
+    // BYTE1(conio_addr)
     lda.z conio_addr+1
-    // *VERA_ADDRX_M = >conio_addr
+    // *VERA_ADDRX_M = BYTE1(conio_addr)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -1514,9 +1514,9 @@ vera_layer_set_tilebase: {
 // - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
 vera_layer_mode_tile: {
     .const tilebase_address = vera_layer_mode_text.tilebase_address>>1
+    .const mapbase = 0
     // config
     .const config = VERA_LAYER_WIDTH_128|VERA_LAYER_HEIGHT_64
-    .const mapbase = 0
     // vera_layer_rowshift[layer] = 8
     lda #8
     sta vera_layer_rowshift+vera_layer_mode_text.layer
@@ -1529,12 +1529,12 @@ vera_layer_mode_tile: {
     ldx #config
     lda #vera_layer_mode_text.layer
     jsr vera_layer_set_config
-    // vera_mapbase_offset[layer] = <mapbase_address
+    // vera_mapbase_offset[layer] = WORD0(mapbase_address)
     // mapbase
     lda #<0
     sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
     sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
-    // vera_mapbase_bank[layer] = (byte)(>mapbase_address)
+    // vera_mapbase_bank[layer] = BYTE2(mapbase_address)
     sta vera_mapbase_bank+vera_layer_mode_text.layer
     // vera_mapbase_address[layer] = mapbase_address
     lda #<vera_layer_mode_text.mapbase_address
@@ -1549,13 +1549,13 @@ vera_layer_mode_tile: {
     ldx #mapbase
     lda #vera_layer_mode_text.layer
     jsr vera_layer_set_mapbase
-    // vera_tilebase_offset[layer] = <tilebase_address
+    // vera_tilebase_offset[layer] = WORD0(tilebase_address)
     // tilebase
     lda #<vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
     lda #>vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
-    // vera_tilebase_bank[layer] = (byte)>tilebase_address
+    // vera_tilebase_bank[layer] = BYTE2(tilebase_address)
     lda #0
     sta vera_tilebase_bank+vera_layer_mode_text.layer
     // vera_tilebase_address[layer] = tilebase_address
@@ -1568,7 +1568,7 @@ vera_layer_mode_tile: {
     lda #>vera_layer_mode_text.tilebase_address>>$10
     sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+3
     // vera_layer_set_tilebase(layer,tilebase)
-    ldx #(>(tilebase_address&$ffff))&VERA_LAYER_TILEBASE_MASK
+    ldx #(>tilebase_address)&VERA_LAYER_TILEBASE_MASK
     lda #vera_layer_mode_text.layer
     jsr vera_layer_set_tilebase
     // }
@@ -2052,14 +2052,14 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <src
+    // BYTE0(src)
     lda.z src
-    // *VERA_ADDRX_L = <src
+    // *VERA_ADDRX_L = BYTE0(src)
     // Set address
     sta VERA_ADDRX_L
-    // >src
+    // BYTE1(src)
     lda.z src+1
-    // *VERA_ADDRX_M = >src
+    // *VERA_ADDRX_M = BYTE1(src)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = src_increment | src_bank
     lda #VERA_INC_1
@@ -2069,14 +2069,14 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL
     ora VERA_CTRL
     sta VERA_CTRL
-    // <dest
+    // BYTE0(dest)
     lda.z dest
-    // *VERA_ADDRX_L = <dest
+    // *VERA_ADDRX_L = BYTE0(dest)
     // Set address
     sta VERA_ADDRX_L
-    // >dest
+    // BYTE1(dest)
     lda.z dest+1
-    // *VERA_ADDRX_M = >dest
+    // *VERA_ADDRX_M = BYTE1(dest)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = dest_increment | dest_bank
     lda #VERA_INC_1

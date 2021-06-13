@@ -96,11 +96,11 @@ memcpy_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // *VERA_ADDRX_L = <vdest
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // Set address
     lda #0
     sta VERA_ADDRX_L
-    // *VERA_ADDRX_M = >vdest
+    // *VERA_ADDRX_M = BYTE1(vdest)
     lda #>vdest
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
@@ -145,14 +145,14 @@ vpoke: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <vaddr
+    // BYTE0(vaddr)
     lda.z vaddr
-    // *VERA_ADDRX_L = <vaddr
+    // *VERA_ADDRX_L = BYTE0(vaddr)
     // Set address
     sta VERA_ADDRX_L
-    // >vaddr
+    // BYTE1(vaddr)
     lda.z vaddr+1
-    // *VERA_ADDRX_M = >vaddr
+    // *VERA_ADDRX_M = BYTE1(vaddr)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_0 | vbank
     lda #0

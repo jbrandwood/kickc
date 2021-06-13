@@ -97,7 +97,7 @@ __start: {
 }
 // VSYNC Interrupt Routine
 irq_vsync: {
-    .const vram_sprite_attr_bank = VERA_SPRITE_ATTR>>$10
+    .const vram_sprite_attr_bank = <VERA_SPRITE_ATTR>>$10
     .label __11 = $16
     .label __12 = $18
     .label i_x = 3
@@ -288,7 +288,7 @@ main: {
     // Copy 8* sprite attributes to VRAM    
     .label vram_sprite_attr = $a
     .label s = 9
-    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, (char*)<SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
+    // memcpy_to_vram(BYTE2(SPRITE_PIXELS_VRAM), (char*)WORD0(SPRITE_PIXELS_VRAM), SPRITE_PIXELS, 64*64)
   // Copy sprite data to VRAM
     lda #<$40*$40
     sta.z memcpy_to_vram.num
@@ -304,7 +304,7 @@ main: {
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
-    // memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
+    // memcpy_to_vram(BYTE2(VERA_PALETTE), (char*)WORD0(VERA_PALETTE), SPRITE_PIXELS+64*64, 0x200)
   // Copy sprite palette to VRAM
     lda #<$200
     sta.z memcpy_to_vram.num
@@ -314,7 +314,7 @@ main: {
     sta.z memcpy_to_vram.src
     lda #>SPRITE_PIXELS+$40*$40
     sta.z memcpy_to_vram.src+1
-    ldx #VERA_PALETTE>>$10
+    ldx #<VERA_PALETTE>>$10
     lda #<VERA_PALETTE&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>VERA_PALETTE&$ffff
@@ -371,7 +371,7 @@ main: {
     lda #>$a
     adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    // memcpy_to_vram((char)WORD1(VERA_SPRITE_ATTR), vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     lda.z vram_sprite_attr
     sta.z memcpy_to_vram.vdest
     lda.z vram_sprite_attr+1
@@ -416,14 +416,14 @@ memcpy_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <vdest
+    // BYTE0(vdest)
     lda.z vdest
-    // *VERA_ADDRX_L = <vdest
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // Set address
     sta VERA_ADDRX_L
-    // >vdest
+    // BYTE1(vdest)
     lda.z vdest+1
-    // *VERA_ADDRX_M = >vdest
+    // *VERA_ADDRX_M = BYTE1(vdest)
     sta VERA_ADDRX_M
     // VERA_INC_1 | vbank
     txa

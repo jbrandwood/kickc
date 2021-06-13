@@ -259,7 +259,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // char x1 = >x<<3
+    // char x1 = BYTE1(x<<3)
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -432,11 +432,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -499,7 +499,7 @@ mulu8_sel: {
     dey
     bne !-
   !e:
-    // >mul8u(v1, v2)<<select
+    // BYTE1(mul8u(v1, v2)<<select)
     lda.z __1+1
     // }
     rts

@@ -77,9 +77,9 @@ main: {
     sta.z sw+1
     pla
     sta.z sw
-    // >sw
+    // BYTE1(sw)
     lda.z sw+1
-    // signed byte sd = sb-(signed byte)>sw
+    // signed byte sd = sb-(signed byte)BYTE1(sw)
     eor #$ff
     sec
     adc.z sb
@@ -402,7 +402,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // char x1 = >x<<3
+    // char x1 = BYTE1(x<<3)
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -486,7 +486,7 @@ div32u16u: {
     .label return = $1b
     .label quotient_hi = $22
     .label quotient_lo = $2a
-    // divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -495,20 +495,20 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // unsigned int quotient_hi = divr16u(>dividend, divisor, 0)
+    // divr16u(WORD1(dividend), divisor, 0)
+    // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
     lda #<PI2_u4f28&$ffff
     sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
     sta.z divr16u.dividend+1
     jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // divr16u(WORD0(dividend), divisor, rem16u)
+    // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned long quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
@@ -627,7 +627,7 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    // unsigned int x1 = >x<<3
+    // unsigned int x1 = WORD1(x<<3)
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -821,11 +821,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -889,7 +889,7 @@ mulu8_sel: {
     dey
     bne !-
   !e:
-    // >mul8u(v1, v2)<<select
+    // BYTE1(mul8u(v1, v2)<<select)
     lda.z __1+1
     // }
     rts
@@ -921,7 +921,7 @@ mulu16_sel: {
     dex
     bne !-
   !e:
-    // >mul16u(v1, v2)<<select
+    // WORD1(mul16u(v1, v2)<<select)
     lda.z __1+2
     sta.z return
     lda.z __1+3

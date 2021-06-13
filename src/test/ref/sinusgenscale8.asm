@@ -158,9 +158,9 @@ sin8u_table: {
     tay
     jsr mul8su
     // signed word sinx_sc = mul8su(sinx, amplitude+1)
-    // >sinx_sc
+    // BYTE1(sinx_sc)
     lda.z sinx_sc+1
-    // byte sinx_tr = mid+>sinx_sc
+    // byte sinx_tr = mid+BYTE1(sinx_sc)
     clc
     adc #mid
     sta.z sinx_tr
@@ -328,10 +328,10 @@ print_str: {
 // print_uint(word zp($c) w)
 print_uint: {
     .label w = $c
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -446,7 +446,7 @@ sin8s: {
     rol.z __4+1
     asl.z __4
     rol.z __4+1
-    // char x1 = >x<<3
+    // char x1 = BYTE1(x<<3)
     lda.z __4+1
     sta.z x1
     // mulu8_sel(x1, x1, 0)
@@ -540,9 +540,9 @@ mul8su: {
     // if(a<0)
     cpy #0
     bpl __b1
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)b
+    // BYTE1(m) = BYTE1(m)-(char)b
     sec
     sbc #b
     sta.z m+1
@@ -630,11 +630,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -712,7 +712,7 @@ mulu8_sel: {
     dey
     bne !-
   !e:
-    // >mul8u(v1, v2)<<select
+    // BYTE1(mul8u(v1, v2)<<select)
     lda.z __1+1
     // }
     rts

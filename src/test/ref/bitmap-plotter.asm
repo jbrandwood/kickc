@@ -48,8 +48,8 @@ main: {
     jmp __b1
 }
 init_screen: {
-    .label b = 7
-    .label c = 5
+    .label b = 6
+    .label c = 4
     lda #<BITMAP
     sta.z b
     lda #>BITMAP
@@ -101,7 +101,7 @@ init_screen: {
 }
 init_plot_tables: {
     .label __9 = 2
-    .label yoffs = 7
+    .label yoffs = 6
     ldy #$80
     ldx #0
   __b1:
@@ -168,35 +168,31 @@ init_plot_tables: {
     rts
 }
 plots: {
-    .label i = 2
-    lda #0
-    sta.z i
+    ldx #0
   __b1:
     // for(byte i=0; i<plots_cnt;i++)
-    lda.z i
-    cmp #plots_cnt
+    cpx #plots_cnt
     bcc __b2
     // }
     rts
   __b2:
     // plot(plots_x[i], plots_y[i])
-    ldy.z i
-    lda plots_x,y
+    lda plots_x,x
     sta.z plot.x
-    lda plots_y,y
+    lda plots_y,x
     sta.z plot.y
     jsr plot
     // for(byte i=0; i<plots_cnt;i++)
-    inc.z i
+    inx
     jmp __b1
 }
-// plot(byte zp(3) x, byte zp(4) y)
+// plot(byte zp(2) x, byte zp(3) y)
 plot: {
-    .label x = 3
-    .label y = 4
-    .label plotter_x = 5
-    .label plotter_y = 7
-    .label plotter = 5
+    .label x = 2
+    .label y = 3
+    .label plotter_x = 4
+    .label plotter_y = 6
+    .label plotter = 4
     // BYTE1(plotter_x) = plot_xhi[x]
     ldy.z x
     lda plot_xhi,y

@@ -101,7 +101,7 @@
   // The random state variable
   .label rand_state = $11
   // Remainder after unsigned 16-bit division
-  .label rem16u = $58
+  .label rem16u = $52
   .label CONIO_SCREEN_BANK = $2b
   // The screen width
   // The screen height
@@ -617,13 +617,13 @@ screensize: {
 // Set the layer with which the conio will interact.
 // - layer: value of 0 or 1.
 screenlayer: {
-    .label __2 = $38
+    .label __2 = $44
     .label __4 = $30
-    .label __5 = $35
+    .label __5 = $36
     .label vera_layer_get_width1_config = $2e
-    .label vera_layer_get_width1_return = $38
+    .label vera_layer_get_width1_return = $44
     .label vera_layer_get_height1_config = $32
-    .label vera_layer_get_height1_return = $35
+    .label vera_layer_get_height1_return = $36
     // conio_screen_layer = layer
     lda #1
     sta.z conio_screen_layer
@@ -749,7 +749,7 @@ vera_layer_set_backcolor: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
 // vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
 vera_layer_set_mapbase: {
-    .label addr = $38
+    .label addr = $44
     // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
@@ -822,7 +822,7 @@ gotoxy: {
 // - num: The number of bytes to copy
 // memcpy_in_vram(byte register(Y) dest_bank, void* zp($15) dest, byte* zp($13) src, word zp($17) num)
 memcpy_in_vram: {
-    .label i = $41
+    .label i = $39
     .label dest = $15
     .label src = $13
     .label num = $17
@@ -831,14 +831,14 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <src
+    // BYTE0(src)
     lda.z src
-    // *VERA_ADDRX_L = <src
+    // *VERA_ADDRX_L = BYTE0(src)
     // Set address
     sta VERA_ADDRX_L
-    // >src
+    // BYTE1(src)
     lda.z src+1
-    // *VERA_ADDRX_M = >src
+    // *VERA_ADDRX_M = BYTE1(src)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = src_increment | src_bank
     lda #VERA_INC_1
@@ -848,14 +848,14 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL
     ora VERA_CTRL
     sta VERA_CTRL
-    // <dest
+    // BYTE0(dest)
     lda.z dest
-    // *VERA_ADDRX_L = <dest
+    // *VERA_ADDRX_L = BYTE0(dest)
     // Set address
     sta VERA_ADDRX_L
-    // >dest
+    // BYTE1(dest)
     lda.z dest+1
-    // *VERA_ADDRX_M = >dest
+    // *VERA_ADDRX_M = BYTE1(dest)
     sta VERA_ADDRX_M
     // dest_increment | dest_bank
     tya
@@ -909,13 +909,9 @@ memcpy_in_vram: {
 // vera_layer_mode_tile(byte zp(6) layer, dword zp(7) mapbase_address, dword zp($b) tilebase_address, word zp($30) mapwidth, word zp($2e) mapheight, byte zp($f) tilewidth, byte zp($10) tileheight)
 vera_layer_mode_tile: {
     .label __1 = $32
-    .label __2 = $35
-    .label __4 = $4c
-    .label __7 = $38
-    .label __8 = $3a
-    .label __10 = $3c
-    .label __19 = $34
-    .label __20 = $37
+    .label __6 = $36
+    .label __17 = $34
+    .label __18 = $35
     .label mapbase_address = 7
     .label tilebase_address = $b
     .label mapwidth = $30
@@ -1034,35 +1030,31 @@ vera_layer_mode_tile: {
     // vera_layer_set_config(layer, config)
     lda.z layer
     jsr vera_layer_set_config
-    // <mapbase_address
+    // WORD0(mapbase_address)
     lda.z mapbase_address
     sta.z __1
     lda.z mapbase_address+1
     sta.z __1+1
-    // vera_mapbase_offset[layer] = <mapbase_address
+    // vera_mapbase_offset[layer] = WORD0(mapbase_address)
     lda.z layer
     asl
-    sta.z __19
+    sta.z __17
     // mapbase
     tay
     lda.z __1
     sta vera_mapbase_offset,y
     lda.z __1+1
     sta vera_mapbase_offset+1,y
-    // >mapbase_address
+    // BYTE2(mapbase_address)
     lda.z mapbase_address+2
-    sta.z __2
-    lda.z mapbase_address+3
-    sta.z __2+1
-    // vera_mapbase_bank[layer] = (byte)(>mapbase_address)
+    // vera_mapbase_bank[layer] = BYTE2(mapbase_address)
     ldy.z layer
-    lda.z __2
     sta vera_mapbase_bank,y
     // vera_mapbase_address[layer] = mapbase_address
     tya
     asl
     asl
-    sta.z __20
+    sta.z __18
     tay
     lda.z mapbase_address
     sta vera_mapbase_address,y
@@ -1077,39 +1069,30 @@ vera_layer_mode_tile: {
     ror.z mapbase_address+2
     ror.z mapbase_address+1
     ror.z mapbase_address
-    // <mapbase_address
-    lda.z mapbase_address
-    sta.z __4
-    lda.z mapbase_address+1
-    sta.z __4+1
-    // byte mapbase = >(<mapbase_address)
-    tax
+    // byte mapbase = BYTE1(mapbase_address)
+    ldx.z mapbase_address+1
     // vera_layer_set_mapbase(layer,mapbase)
     lda.z layer
     jsr vera_layer_set_mapbase
-    // <tilebase_address
+    // WORD0(tilebase_address)
     lda.z tilebase_address
-    sta.z __7
+    sta.z __6
     lda.z tilebase_address+1
-    sta.z __7+1
-    // vera_tilebase_offset[layer] = <tilebase_address
+    sta.z __6+1
+    // vera_tilebase_offset[layer] = WORD0(tilebase_address)
     // tilebase
-    ldy.z __19
-    lda.z __7
+    ldy.z __17
+    lda.z __6
     sta vera_tilebase_offset,y
-    lda.z __7+1
+    lda.z __6+1
     sta vera_tilebase_offset+1,y
-    // >tilebase_address
+    // BYTE2(tilebase_address)
     lda.z tilebase_address+2
-    sta.z __8
-    lda.z tilebase_address+3
-    sta.z __8+1
-    // vera_tilebase_bank[layer] = (byte)>tilebase_address
+    // vera_tilebase_bank[layer] = BYTE2(tilebase_address)
     ldy.z layer
-    lda.z __8
     sta vera_tilebase_bank,y
     // vera_tilebase_address[layer] = tilebase_address
-    ldy.z __20
+    ldy.z __18
     lda.z tilebase_address
     sta vera_tilebase_address,y
     lda.z tilebase_address+1
@@ -1123,12 +1106,8 @@ vera_layer_mode_tile: {
     ror.z tilebase_address+2
     ror.z tilebase_address+1
     ror.z tilebase_address
-    // <tilebase_address
-    lda.z tilebase_address
-    sta.z __10
+    // byte tilebase = BYTE1(tilebase_address)
     lda.z tilebase_address+1
-    sta.z __10+1
-    // byte tilebase = >(<tilebase_address)
     // tilebase &= VERA_LAYER_TILEBASE_MASK
     and #VERA_LAYER_TILEBASE_MASK
     tax
@@ -1251,12 +1230,12 @@ vera_layer_mode_bitmap: {
     // config
     .const config = VERA_LAYER_COLOR_DEPTH_8BPP|VERA_LAYER_CONFIG_MODE_BITMAP
     .const tilebase = 0
-    // vera_tilebase_offset[layer] = <bitmap_address
+    // vera_tilebase_offset[layer] = WORD0(bitmap_address)
     // tilebase
     lda #<0
     sta vera_tilebase_offset
     sta vera_tilebase_offset+1
-    // vera_tilebase_bank[layer] = (byte)>bitmap_address
+    // vera_tilebase_bank[layer] = BYTE2(bitmap_address)
     sta vera_tilebase_bank
     // vera_tilebase_address[layer] = bitmap_address
     lda #<bitmap_address
@@ -1285,9 +1264,9 @@ vera_layer_mode_bitmap: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label __1 = $3e
+    .label __1 = $38
     .label line_text = $13
-    .label color = $3e
+    .label color = $38
     // char* line_text = CONIO_SCREEN_TEXT
     lda.z CONIO_SCREEN_TEXT
     sta.z line_text
@@ -1336,14 +1315,14 @@ clrscr: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <ch
+    // BYTE0(ch)
     lda.z line_text
-    // *VERA_ADDRX_L = <ch
+    // *VERA_ADDRX_L = BYTE0(ch)
     // Set address
     sta VERA_ADDRX_L
-    // >ch
+    // BYTE1(ch)
     lda.z line_text+1
-    // *VERA_ADDRX_M = >ch
+    // *VERA_ADDRX_M = BYTE1(ch)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -1380,9 +1359,9 @@ clrscr: {
     jmp __b4
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($43) s)
+// cputs(const byte* zp($3b) s)
 cputs: {
-    .label s = $43
+    .label s = $3b
   __b1:
     // while(c=*s++)
     ldy #0
@@ -1405,33 +1384,33 @@ cputs: {
 bitmap_init: {
     .const layer = 0
     .const address = 0
-    .label __7 = $41
-    .label __10 = $4a
-    .label __13 = $50
-    .label __23 = $43
-    .label __24 = $6a
-    .label __25 = $52
-    .label __26 = $72
-    .label __28 = $68
-    .label vera_layer_get_color_depth1_config = $3f
-    .label bitmask = $3e
+    .label __7 = $39
+    .label __10 = $42
+    .label __13 = $4c
+    .label __23 = $3b
+    .label __24 = $46
+    .label __25 = $4e
+    .label __26 = $56
+    .label __28 = $66
+    .label vera_layer_get_color_depth1_config = $6a
+    .label bitmask = $38
     .label x = $15
-    .label hdelta = $62
-    .label yoffs = $5e
+    .label hdelta = $64
+    .label yoffs = $5a
     .label y = $17
-    .label __29 = $43
-    .label __30 = $45
-    .label __31 = $48
-    .label __32 = $6a
-    .label __33 = $6c
-    .label __34 = $6e
-    .label __35 = $52
-    .label __36 = $54
-    .label __37 = $56
-    .label __38 = $72
-    .label __39 = $5a
-    .label __40 = $5c
-    .label __41 = $68
+    .label __29 = $3b
+    .label __30 = $3e
+    .label __31 = $40
+    .label __32 = $46
+    .label __33 = $48
+    .label __34 = $4a
+    .label __35 = $4e
+    .label __36 = $50
+    .label __37 = $54
+    .label __38 = $56
+    .label __39 = $58
+    .label __40 = $5e
+    .label __41 = $66
     // __bitmap_address = address
     lda #<address
     sta.z __bitmap_address
@@ -1834,11 +1813,10 @@ bitmap_init: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label __3 = $43
-    .label vdelta = $41
+    .label vdelta = $39
     .label hdelta = $15
-    .label count = $5e
-    .label vdest = $45
+    .label count = $5a
+    .label vdest = $3b
     // word vdelta = vdeltas[__bitmap_vscale]
     lda.z __bitmap_vscale
     asl
@@ -1864,14 +1842,9 @@ bitmap_clear: {
     // mul16u(hdelta,vdelta)
     jsr mul16u
     // dword count = mul16u(hdelta,vdelta)
-    // >__bitmap_address
-    lda.z __bitmap_address+2
-    sta.z __3
-    lda.z __bitmap_address+3
-    sta.z __3+1
-    // char vbank = <(>__bitmap_address)
-    ldx.z __3
-    // <__bitmap_address
+    // char vbank = BYTE2(__bitmap_address)
+    ldx.z __bitmap_address+2
+    // WORD0(__bitmap_address)
     lda.z __bitmap_address
     sta.z vdest
     lda.z __bitmap_address+1
@@ -1887,7 +1860,7 @@ kbhit: {
     .label IN_DEV = $28a
     // Current input device number
     .label GETIN = $ffe4
-    .label ch = $47
+    .label ch = $3d
     // char ch = 0
     lda #0
     sta.z ch
@@ -1927,14 +1900,14 @@ kbhit: {
     rts
 }
 // Draw a line on the bitmap
-// bitmap_line(word zp(3) x0, word zp($41) x1, word zp($43) y0, word zp($15) y1, byte register(X) c)
+// bitmap_line(word zp(3) x0, word zp($39) x1, word zp($3b) y0, word zp($15) y1, byte register(X) c)
 bitmap_line: {
     .label xd = $17
-    .label yd = $3f
-    .label yd_1 = $45
+    .label yd = $6a
+    .label yd_1 = $3e
     .label x0 = 3
-    .label x1 = $41
-    .label y0 = $43
+    .label x1 = $39
+    .label y0 = $3b
     .label y1 = $15
     // if(x0<x1)
     lda.z x0+1
@@ -2157,9 +2130,9 @@ bitmap_line: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $48
-    .label __1 = $4a
-    .label __2 = $6a
+    .label __0 = $3e
+    .label __1 = $40
+    .label __2 = $42
     .label return = $13
     // rand_state << 7
     lda.z rand_state+1
@@ -2216,8 +2189,8 @@ rand: {
 modr16u: {
     .label return = $15
     .label dividend = $13
-    .label return_1 = $41
-    .label return_2 = $43
+    .label return_1 = $39
+    .label return_2 = $3b
     .label divisor = $17
     // divr16u(dividend, divisor, rem)
     jsr divr16u
@@ -2233,7 +2206,7 @@ modr16u: {
 // - layer: Value of 0 or 1.
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 vera_layer_set_text_color_mode: {
-    .label addr = $4c
+    .label addr = $44
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -2307,7 +2280,7 @@ vera_layer_get_rowskip: {
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 // vera_layer_set_config(byte register(A) layer, byte register(X) config)
 vera_layer_set_config: {
-    .label addr = $4e
+    .label addr = $44
     // byte* addr = vera_layer_config[layer]
     asl
     tay
@@ -2329,7 +2302,7 @@ vera_layer_set_config: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
 // vera_layer_set_tilebase(byte register(A) layer, byte register(X) tilebase)
 vera_layer_set_tilebase: {
-    .label addr = $4e
+    .label addr = $44
     // byte* addr = vera_layer_tilebase[layer]
     asl
     tay
@@ -2370,11 +2343,11 @@ vera_layer_get_textcolor: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($3e) c)
+// cputc(byte zp($38) c)
 cputc: {
-    .label __16 = $6e
-    .label conio_addr = $6c
-    .label c = $3e
+    .label __16 = $48
+    .label conio_addr = $46
+    .label c = $38
     // vera_layer_get_color( conio_screen_layer)
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
@@ -2413,14 +2386,14 @@ cputc: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <conio_addr
+    // BYTE0(conio_addr)
     lda.z conio_addr
-    // *VERA_ADDRX_L = <conio_addr
+    // *VERA_ADDRX_L = BYTE0(conio_addr)
     // Set address
     sta VERA_ADDRX_L
-    // >conio_addr
+    // BYTE1(conio_addr)
     lda.z conio_addr+1
-    // *VERA_ADDRX_M = >conio_addr
+    // *VERA_ADDRX_M = BYTE1(conio_addr)
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
@@ -2514,13 +2487,13 @@ vera_display_get_vscale: {
 }
 .segment Code
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($15) a, word zp($41) b)
+// mul16u(word zp($15) a, word zp($39) b)
 mul16u: {
     .label a = $15
-    .label b = $41
-    .label return = $5e
-    .label mb = $64
-    .label res = $5e
+    .label b = $39
+    .label return = $5a
+    .label mb = $60
+    .label res = $5a
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -2580,25 +2553,25 @@ mul16u: {
 // - vdest: The destination address in VRAM
 // - data: The value to set the vram with.
 // - num: The number of bytes to set
-// memset_vram(byte register(X) vbank, void* zp($45) vdest, dword zp($5e) num)
+// memset_vram(byte register(X) vbank, void* zp($3b) vdest, dword zp($5a) num)
 memset_vram: {
     .const data = 0
-    .label i = $64
-    .label vdest = $45
-    .label num = $5e
+    .label i = $60
+    .label vdest = $3b
+    .label num = $5a
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <vdest
+    // BYTE0(vdest)
     lda.z vdest
-    // *VERA_ADDRX_L = <vdest
+    // *VERA_ADDRX_L = BYTE0(vdest)
     // Set address
     sta VERA_ADDRX_L
-    // >vdest
+    // BYTE1(vdest)
     lda.z vdest+1
-    // *VERA_ADDRX_M = >vdest
+    // *VERA_ADDRX_M = BYTE1(vdest)
     sta VERA_ADDRX_M
     // VERA_INC_1 | vbank
     txa
@@ -2648,16 +2621,16 @@ memset_vram: {
   !:
     jmp __b1
 }
-// bitmap_line_ydxi(word zp($48) y, word zp($41) x, word zp($43) y1, word zp($45) yd, word zp($17) xd, byte zp($3e) c)
+// bitmap_line_ydxi(word zp($40) y, word zp($39) x, word zp($3b) y1, word zp($3e) yd, word zp($17) xd, byte zp($38) c)
 bitmap_line_ydxi: {
-    .label __6 = $50
-    .label y = $48
-    .label x = $41
-    .label y1 = $43
-    .label yd = $45
+    .label __6 = $4a
+    .label y = $40
+    .label x = $39
+    .label y1 = $3b
+    .label yd = $3e
     .label xd = $17
-    .label c = $3e
-    .label e = $5a
+    .label c = $38
+    .label e = $46
     // word e = xd>>1
     lda.z xd+1
     lsr
@@ -2726,16 +2699,16 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyi(word zp($4a) x, word zp($43) y, word zp($41) x1, word zp($17) xd, word zp($45) yd, byte zp($3e) c)
+// bitmap_line_xdyi(word zp($42) x, word zp($3b) y, word zp($39) x1, word zp($17) xd, word zp($3e) yd, byte zp($38) c)
 bitmap_line_xdyi: {
-    .label __6 = $52
-    .label x = $4a
-    .label y = $43
-    .label x1 = $41
+    .label __6 = $4c
+    .label x = $42
+    .label y = $3b
+    .label x1 = $39
     .label xd = $17
-    .label yd = $45
-    .label c = $3e
-    .label e = $5a
+    .label yd = $3e
+    .label c = $38
+    .label e = $46
     // word e = yd>>1
     lda.z yd+1
     lsr
@@ -2804,16 +2777,16 @@ bitmap_line_xdyi: {
     // }
     rts
 }
-// bitmap_line_ydxd(word zp($48) y, word zp($41) x, word zp($43) y1, word zp($3f) yd, word zp($17) xd, byte zp($3e) c)
+// bitmap_line_ydxd(word zp($40) y, word zp($39) x, word zp($3b) y1, word zp($6a) yd, word zp($17) xd, byte zp($38) c)
 bitmap_line_ydxd: {
-    .label __6 = $54
-    .label y = $48
-    .label x = $41
-    .label y1 = $43
-    .label yd = $3f
+    .label __6 = $4e
+    .label y = $40
+    .label x = $39
+    .label y1 = $3b
+    .label yd = $6a
     .label xd = $17
-    .label c = $3e
-    .label e = $5a
+    .label c = $38
+    .label e = $46
     // word e = xd>>1
     lda.z xd+1
     lsr
@@ -2883,16 +2856,16 @@ bitmap_line_ydxd: {
     // }
     rts
 }
-// bitmap_line_xdyd(word zp($4a) x, word zp($43) y, word zp($41) x1, word zp($17) xd, word zp($3f) yd, byte zp($3e) c)
+// bitmap_line_xdyd(word zp($42) x, word zp($3b) y, word zp($39) x1, word zp($17) xd, word zp($6a) yd, byte zp($38) c)
 bitmap_line_xdyd: {
-    .label __6 = $56
-    .label x = $4a
-    .label y = $43
-    .label x1 = $41
+    .label __6 = $50
+    .label x = $42
+    .label y = $3b
+    .label x1 = $39
     .label xd = $17
-    .label yd = $3f
-    .label c = $3e
-    .label e = $5a
+    .label yd = $6a
+    .label c = $38
+    .label e = $46
     // word e = yd>>1
     lda.z yd+1
     lsr
@@ -2966,12 +2939,12 @@ bitmap_line_xdyd: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($13) dividend, word zp($17) divisor, word zp($45) rem)
+// divr16u(word zp($13) dividend, word zp($17) divisor, word zp($3e) rem)
 divr16u: {
-    .label rem = $45
+    .label rem = $3e
     .label dividend = $13
-    .label quotient = $48
-    .label return = $48
+    .label quotient = $40
+    .label return = $40
     .label divisor = $17
     ldx #0
     txa
@@ -2983,11 +2956,11 @@ divr16u: {
     // rem = rem << 1
     asl.z rem
     rol.z rem+1
-    // >dividend
+    // BYTE1(dividend)
     lda.z dividend+1
-    // >dividend & $80
+    // BYTE1(dividend) & $80
     and #$80
-    // if( (>dividend & $80) != 0 )
+    // if( (BYTE1(dividend) & $80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -3043,7 +3016,7 @@ divr16u: {
 //   Note that on the VERA, the transparent color has value 0.
 // vera_layer_get_color(byte register(X) layer)
 vera_layer_get_color: {
-    .label addr = $72
+    .label addr = $54
     // byte* addr = vera_layer_config[layer]
     txa
     asl
@@ -3076,7 +3049,7 @@ vera_layer_get_color: {
 }
 // Print a newline
 cputln: {
-    .label temp = $5a
+    .label temp = $56
     // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
@@ -3114,22 +3087,19 @@ cputln: {
     // }
     rts
 }
-// bitmap_plot(word zp($4a) x, word zp($48) y, byte register(X) c)
+// bitmap_plot(word zp($42) x, word zp($40) y, byte register(X) c)
 bitmap_plot: {
-    .label __9 = $5c
-    .label __10 = $62
-    .label vera_vram_address01___0 = $72
-    .label vera_vram_address01___2 = $6a
-    .label vera_vram_address01___4 = $6c
-    .label plot_x = $5e
-    .label plot_y = $64
-    .label vera_vram_address01_bankaddr = $5e
-    .label x = $4a
-    .label y = $48
-    .label __12 = $5c
-    .label __13 = $62
-    .label __14 = $68
-    .label __15 = $6e
+    .label __9 = $58
+    .label __10 = $5e
+    .label plot_x = $5a
+    .label plot_y = $60
+    .label vera_vram_address01_bankaddr = $5a
+    .label x = $42
+    .label y = $40
+    .label __12 = $58
+    .label __13 = $5e
+    .label __14 = $64
+    .label __15 = $66
     // dword plot_x = __bitmap_plot_x[x]
     lda.z x
     asl
@@ -3225,31 +3195,17 @@ bitmap_plot: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // <bankaddr
+    // BYTE0(bankaddr)
     lda.z vera_vram_address01_bankaddr
-    sta.z vera_vram_address01___0
-    lda.z vera_vram_address01_bankaddr+1
-    sta.z vera_vram_address01___0+1
-    // <(<bankaddr)
-    lda.z vera_vram_address01___0
-    // *VERA_ADDRX_L = <(<bankaddr)
+    // *VERA_ADDRX_L = BYTE0(bankaddr)
     sta VERA_ADDRX_L
-    // <bankaddr
-    lda.z vera_vram_address01_bankaddr
-    sta.z vera_vram_address01___2
+    // BYTE1(bankaddr)
     lda.z vera_vram_address01_bankaddr+1
-    sta.z vera_vram_address01___2+1
-    // >(<bankaddr)
-    // *VERA_ADDRX_M = >(<bankaddr)
+    // *VERA_ADDRX_M = BYTE1(bankaddr)
     sta VERA_ADDRX_M
-    // >bankaddr
+    // BYTE2(bankaddr) | incr
     lda.z vera_vram_address01_bankaddr+2
-    sta.z vera_vram_address01___4
-    lda.z vera_vram_address01_bankaddr+3
-    sta.z vera_vram_address01___4+1
-    // <(>bankaddr) | incr
-    lda.z vera_vram_address01___4
-    // *VERA_ADDRX_H = <(>bankaddr) | incr
+    // *VERA_ADDRX_H = BYTE2(bankaddr) | incr
     sta VERA_ADDRX_H
     // ~__bitmap_plot_bitmask[x]
     clc
@@ -3302,8 +3258,8 @@ cscroll: {
 }
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $70
-    .label width = $71
+    .label cy = $68
+    .label width = $69
     .label line = $15
     .label start = $15
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
@@ -3372,8 +3328,8 @@ insertup: {
     jmp __b1
 }
 clearline: {
-    .label addr = $72
-    .label c = $4a
+    .label addr = $6a
+    .label c = $42
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -3391,13 +3347,13 @@ clearline: {
     lda.z CONIO_SCREEN_TEXT+1
     adc conio_line_text+1,y
     sta.z addr+1
-    // <addr
+    // BYTE0(addr)
     lda.z addr
-    // *VERA_ADDRX_L = <addr
+    // *VERA_ADDRX_L = BYTE0(addr)
     sta VERA_ADDRX_L
-    // >addr
+    // BYTE1(addr)
     lda.z addr+1
-    // *VERA_ADDRX_M = >addr
+    // *VERA_ADDRX_M = BYTE1(addr)
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1
     lda #VERA_INC_1

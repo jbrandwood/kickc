@@ -372,9 +372,9 @@ mul8s: {
     lda.z a
     cmp #0
     bpl __b1
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)b
+    // BYTE1(m) = BYTE1(m)-(char)b
     sty.z $ff
     sec
     sbc.z $ff
@@ -383,9 +383,9 @@ mul8s: {
     // if(b<0)
     cpy #0
     bpl __b2
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)a
+    // BYTE1(m) = BYTE1(m)-(char)a
     sec
     sbc.z a
     sta.z m+1
@@ -418,9 +418,8 @@ utoa: {
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
-    lda.z value
-    tay
-    lda DIGITS,y
+    ldx.z value
+    lda DIGITS,x
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];

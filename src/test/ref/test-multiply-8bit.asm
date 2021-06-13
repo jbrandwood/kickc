@@ -150,16 +150,16 @@ mulf_init: {
     inc.z sqr+1
   !:
   __b3:
-    // <sqr
+    // BYTE0(sqr)
     lda.z sqr
-    // *sqr1_lo = <sqr
+    // *sqr1_lo = BYTE0(sqr)
     ldy #0
     sta (sqr1_lo),y
-    // >sqr
+    // BYTE1(sqr)
     lda.z sqr+1
-    // *sqr1_hi++ = >sqr
+    // *sqr1_hi++ = BYTE1(sqr)
     sta (sqr1_hi),y
-    // *sqr1_hi++ = >sqr;
+    // *sqr1_hi++ = BYTE1(sqr);
     inc.z sqr1_hi
     bne !+
     inc.z sqr1_hi+1
@@ -607,10 +607,10 @@ print_ln: {
 // print_uint(word zp(2) w)
 print_uint: {
     .label w = 2
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -877,9 +877,9 @@ mul8s: {
     lda.z a
     cmp #0
     bpl __b1
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)b
+    // BYTE1(m) = BYTE1(m)-(char)b
     sty.z $ff
     sec
     sbc.z $ff
@@ -888,9 +888,9 @@ mul8s: {
     // if(b<0)
     cpy #0
     bpl __b2
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)a
+    // BYTE1(m) = BYTE1(m)-(char)a
     sec
     sbc.z a
     sta.z m+1
@@ -1064,9 +1064,9 @@ mulf8s_prepared: {
     lda memA
     cmp #0
     bpl __b1
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)b
+    // BYTE1(m) = BYTE1(m)-(char)b
     sec
     sbc.z b
     sta.z m+1
@@ -1075,9 +1075,9 @@ mulf8s_prepared: {
     lda.z b
     cmp #0
     bpl __b2
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)*memA
+    // BYTE1(m) = BYTE1(m)-(char)*memA
     sec
     sbc memA
     sta.z m+1

@@ -146,16 +146,16 @@ mulf_init: {
     inc.z sqr+1
   !:
   __b3:
-    // <sqr
+    // BYTE0(sqr)
     lda.z sqr
-    // *sqr1_lo = <sqr
+    // *sqr1_lo = BYTE0(sqr)
     ldy #0
     sta (sqr1_lo),y
-    // >sqr
+    // BYTE1(sqr)
     lda.z sqr+1
-    // *sqr1_hi++ = >sqr
+    // *sqr1_hi++ = BYTE1(sqr)
     sta (sqr1_hi),y
-    // *sqr1_hi++ = >sqr;
+    // *sqr1_hi++ = BYTE1(sqr);
     inc.z sqr1_hi
     bne !+
     inc.z sqr1_hi+1
@@ -1008,12 +1008,12 @@ mul16s: {
     // if(a<0)
     lda.z a+1
     bpl __b1
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __6
     lda.z m+3
     sta.z __6+1
-    // >m = (>m)-(unsigned int)b
+    // WORD1(m) = WORD1(m)-(unsigned int)b
     lda.z __11
     sec
     sbc.z b
@@ -1029,12 +1029,12 @@ mul16s: {
     // if(b<0)
     lda.z b+1
     bpl __b2
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(unsigned int)a
+    // WORD1(m) = WORD1(m)-(unsigned int)a
     lda.z __12
     sec
     sbc.z a
@@ -1078,12 +1078,12 @@ mulf16s: {
     // if(a<0)
     lda.z a+1
     bpl __b1
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __6
     lda.z m+3
     sta.z __6+1
-    // >m = (>m)-(unsigned int)b
+    // WORD1(m) = WORD1(m)-(unsigned int)b
     lda.z __11
     sec
     sbc.z b
@@ -1099,12 +1099,12 @@ mulf16s: {
     // if(b<0)
     lda.z b+1
     bpl __b2
-    // >m
+    // WORD1(m)
     lda.z m+2
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(unsigned int)a
+    // WORD1(m) = WORD1(m)-(unsigned int)a
     lda.z __12
     sec
     sbc.z a
@@ -1219,10 +1219,10 @@ print_char: {
 // print_uint(word zp($18) w)
 print_uint: {
     .label w = $18
-    // print_uchar(>w)
+    // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
-    // print_uchar(<w)
+    // print_uchar(BYTE0(w))
     ldx.z w
     jsr print_uchar
     // }
@@ -1232,13 +1232,13 @@ print_uint: {
 // print_ulong(dword zp(8) dw)
 print_ulong: {
     .label dw = 8
-    // print_uint(>dw)
+    // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
     lda.z dw+3
     sta.z print_uint.w+1
     jsr print_uint
-    // print_uint(<dw)
+    // print_uint(WORD0(dw))
     lda.z dw
     sta.z print_uint.w
     lda.z dw+1

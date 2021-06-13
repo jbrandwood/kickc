@@ -169,9 +169,9 @@ anim: {
     lda.z yr+1
     adc.z __12+1
     sta.z yr+1
-    // >xr
+    // BYTE1(xr)
     lda.z xr+1
-    // signed int xpos = ((signed char) >xr) + 24 /*border*/ + 149
+    // signed int xpos = ((signed char) BYTE1(xr)) + 24 /*border*/ + 149
     tax
     clc
     adc #<$18+$95
@@ -185,8 +185,8 @@ anim: {
     sta.z xpos+1
     // sprite_msb = sprite_msb/2
     lsr.z sprite_msb
-    // >xpos
-    // if(>xpos!=0)
+    // BYTE1(xpos)
+    // if(BYTE1(xpos)!=0)
     cmp #0
     beq __b5
     // sprite_msb |= $80
@@ -194,9 +194,9 @@ anim: {
     ora.z sprite_msb
     sta.z sprite_msb
   __b5:
-    // (>yr) + 89
+    // BYTE1(yr) + 89
     lda.z yr+1
-    // char ypos = (>yr) + 89 /*center*/+ 51
+    // char ypos = BYTE1(yr) + 89 /*center*/+ 51
     clc
     adc #$59+$33
     tay
@@ -204,9 +204,9 @@ anim: {
     lda.z i
     asl
     tax
-    // <xpos
+    // BYTE0(xpos)
     lda.z xpos
-    // SPRITES_XPOS[i2] = <xpos
+    // SPRITES_XPOS[i2] = BYTE0(xpos)
     sta SPRITES_XPOS,x
     // SPRITES_YPOS[i2] = ypos
     tya
@@ -357,16 +357,16 @@ mulf_init: {
     inc.z sqr+1
   !:
   __b3:
-    // <sqr
+    // BYTE0(sqr)
     lda.z sqr
-    // *sqr1_lo = <sqr
+    // *sqr1_lo = BYTE0(sqr)
     ldy #0
     sta (sqr1_lo),y
-    // >sqr
+    // BYTE1(sqr)
     lda.z sqr+1
-    // *sqr1_hi++ = >sqr
+    // *sqr1_hi++ = BYTE1(sqr)
     sta (sqr1_hi),y
-    // *sqr1_hi++ = >sqr;
+    // *sqr1_hi++ = BYTE1(sqr);
     inc.z sqr1_hi
     bne !+
     inc.z sqr1_hi+1
@@ -443,9 +443,9 @@ mulf8s_prepared: {
     lda memA
     cmp #0
     bpl __b1
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)b
+    // BYTE1(m) = BYTE1(m)-(char)b
     sty.z $ff
     sec
     sbc.z $ff
@@ -454,9 +454,9 @@ mulf8s_prepared: {
     // if(b<0)
     cpy #0
     bpl __b2
-    // >m
+    // BYTE1(m)
     lda.z m+1
-    // >m = (>m)-(char)*memA
+    // BYTE1(m) = BYTE1(m)-(char)*memA
     sec
     sbc memA
     sta.z m+1
@@ -489,7 +489,7 @@ clock: {
 // print_ulong_at(dword zp($11) dw)
 print_ulong_at: {
     .label dw = $11
-    // print_uint_at(>dw, at)
+    // print_uint_at(WORD1(dw), at)
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
@@ -499,7 +499,7 @@ print_ulong_at: {
     lda #>SCREEN
     sta.z print_uint_at.at+1
     jsr print_uint_at
-    // print_uint_at(<dw, at+4)
+    // print_uint_at(WORD0(dw), at+4)
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
@@ -547,11 +547,11 @@ mulf8u_prepared: {
 print_uint_at: {
     .label w = $d
     .label at = $f
-    // print_uchar_at(>w, at)
+    // print_uchar_at(BYTE1(w), at)
     lda.z w+1
     sta.z print_uchar_at.b
     jsr print_uchar_at
-    // print_uchar_at(<w, at+2)
+    // print_uchar_at(BYTE0(w), at+2)
     lda.z w
     sta.z print_uchar_at.b
     lda #2

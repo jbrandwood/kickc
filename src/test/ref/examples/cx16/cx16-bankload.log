@@ -7,7 +7,7 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Setting inferred volatile on symbol affected by address-of kbhit::ch
 Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
 Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
-Setting struct to load/store in variable affected by address-of main::$8 = call memcpy_to_vram _byte2_VERA_SPRITE_ATTR (byte*)_word0_VERA_SPRITE_ATTR &main::SPRITE_ATTR main::$7 
+Setting struct to load/store in variable affected by address-of main::$8 = call memcpy_to_vram byte2 VERA_SPRITE_ATTR (byte*)word0 VERA_SPRITE_ATTR &main::SPRITE_ATTR main::$7 
 Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -34,9 +34,9 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from main::@7
   memcpy_to_vram::vbank#1 = phi( main::@7/memcpy_to_vram::vbank#0 )
   memcpy_to_vram::vdest#1 = phi( main::@7/memcpy_to_vram::vdest#0 )
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  memcpy_to_vram::$0 = < memcpy_to_vram::vdest#1
+  memcpy_to_vram::$0 = byte0  memcpy_to_vram::vdest#1
   *VERA_ADDRX_L = memcpy_to_vram::$0
-  memcpy_to_vram::$1 = > memcpy_to_vram::vdest#1
+  memcpy_to_vram::$1 = byte1  memcpy_to_vram::vdest#1
   *VERA_ADDRX_M = memcpy_to_vram::$1
   memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#1
   *VERA_ADDRX_H = memcpy_to_vram::$2
@@ -67,23 +67,23 @@ memcpy_bank_to_vram: scope:[memcpy_bank_to_vram]  from main::@5 main::@6
   memcpy_bank_to_vram::src#2 = phi( main::@5/memcpy_bank_to_vram::src#0, main::@6/memcpy_bank_to_vram::src#1 )
   memcpy_bank_to_vram::vdest#2 = phi( main::@5/memcpy_bank_to_vram::vdest#0, main::@6/memcpy_bank_to_vram::vdest#1 )
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  memcpy_bank_to_vram::$0 = < memcpy_bank_to_vram::vdest#2
+  memcpy_bank_to_vram::$0 = byte0  memcpy_bank_to_vram::vdest#2
   *VERA_ADDRX_L = memcpy_bank_to_vram::$0
-  memcpy_bank_to_vram::$1 = > memcpy_bank_to_vram::vdest#2
+  memcpy_bank_to_vram::$1 = byte1  memcpy_bank_to_vram::vdest#2
   *VERA_ADDRX_M = memcpy_bank_to_vram::$1
-  memcpy_bank_to_vram::$2 = _byte2_ memcpy_bank_to_vram::vdest#2
+  memcpy_bank_to_vram::$2 = byte2  memcpy_bank_to_vram::vdest#2
   *VERA_ADDRX_H = memcpy_bank_to_vram::$2
   *VERA_ADDRX_H = *VERA_ADDRX_H | VERA_INC_1
   memcpy_bank_to_vram::beg#0 = memcpy_bank_to_vram::src#2
   memcpy_bank_to_vram::$3 = memcpy_bank_to_vram::src#2 + memcpy_bank_to_vram::num#2
   memcpy_bank_to_vram::end#0 = memcpy_bank_to_vram::$3
-  memcpy_bank_to_vram::$4 = _byte2_ memcpy_bank_to_vram::beg#0
+  memcpy_bank_to_vram::$4 = byte2  memcpy_bank_to_vram::beg#0
   memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3
-  memcpy_bank_to_vram::$6 = > memcpy_bank_to_vram::beg#0
+  memcpy_bank_to_vram::$6 = byte1  memcpy_bank_to_vram::beg#0
   memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5
   memcpy_bank_to_vram::$8 = memcpy_bank_to_vram::$5 | memcpy_bank_to_vram::$7
   memcpy_bank_to_vram::bank#0 = memcpy_bank_to_vram::$8
-  memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0
+  memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0
   memcpy_bank_to_vram::$10 = memcpy_bank_to_vram::$9 & $1fff
   memcpy_bank_to_vram::addr#0 = (byte*)memcpy_bank_to_vram::$10
   memcpy_bank_to_vram::addr#1 = memcpy_bank_to_vram::addr#0 + $a000
@@ -138,16 +138,16 @@ memcpy_in_vram: scope:[memcpy_in_vram]  from insertup::@2
   memcpy_in_vram::src_increment#1 = phi( insertup::@2/memcpy_in_vram::src_increment#0 )
   memcpy_in_vram::src#1 = phi( insertup::@2/memcpy_in_vram::src#0 )
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  memcpy_in_vram::$0 = < memcpy_in_vram::src#1
+  memcpy_in_vram::$0 = byte0  memcpy_in_vram::src#1
   *VERA_ADDRX_L = memcpy_in_vram::$0
-  memcpy_in_vram::$1 = > memcpy_in_vram::src#1
+  memcpy_in_vram::$1 = byte1  memcpy_in_vram::src#1
   *VERA_ADDRX_M = memcpy_in_vram::$1
   memcpy_in_vram::$2 = memcpy_in_vram::src_increment#1 | memcpy_in_vram::src_bank#1
   *VERA_ADDRX_H = memcpy_in_vram::$2
   *VERA_CTRL = *VERA_CTRL | VERA_ADDRSEL
-  memcpy_in_vram::$3 = < memcpy_in_vram::dest#1
+  memcpy_in_vram::$3 = byte0  memcpy_in_vram::dest#1
   *VERA_ADDRX_L = memcpy_in_vram::$3
-  memcpy_in_vram::$4 = > memcpy_in_vram::dest#1
+  memcpy_in_vram::$4 = byte1  memcpy_in_vram::dest#1
   *VERA_ADDRX_M = memcpy_in_vram::$4
   memcpy_in_vram::$5 = memcpy_in_vram::dest_increment#1 | memcpy_in_vram::dest_bank#1
   *VERA_ADDRX_H = memcpy_in_vram::$5
@@ -185,13 +185,13 @@ load_to_bank::@1: scope:[load_to_bank]  from load_to_bank
   to:load_to_bank::@2
 load_to_bank::@2: scope:[load_to_bank]  from load_to_bank::@1
   load_to_bank::address#1 = phi( load_to_bank::@1/load_to_bank::address#2 )
-  load_to_bank::$2 = _byte2_ load_to_bank::address#1
+  load_to_bank::$2 = byte2  load_to_bank::address#1
   load_to_bank::$3 = load_to_bank::$2 << 3
-  load_to_bank::$4 = > load_to_bank::address#1
+  load_to_bank::$4 = byte1  load_to_bank::address#1
   load_to_bank::$5 = load_to_bank::$4 >> 5
   load_to_bank::$6 = load_to_bank::$3 | load_to_bank::$5
   load_to_bank::bank#0 = load_to_bank::$6
-  load_to_bank::$7 = _word0_ load_to_bank::address#1
+  load_to_bank::$7 = word0  load_to_bank::address#1
   load_to_bank::$8 = load_to_bank::$7 & $1fff
   load_to_bank::addr#0 = (byte*)load_to_bank::$8
   load_to_bank::addr#1 = load_to_bank::addr#0 + $a000
@@ -727,16 +727,16 @@ vera_layer_mode_tile::@33: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   vera_layer_mode_tile::tilebase_address#3 = phi( vera_layer_mode_tile::@24/vera_layer_mode_tile::tilebase_address#4 )
   vera_layer_mode_tile::layer#6 = phi( vera_layer_mode_tile::@24/vera_layer_mode_tile::layer#5 )
   vera_layer_mode_tile::mapbase_address#2 = phi( vera_layer_mode_tile::@24/vera_layer_mode_tile::mapbase_address#3 )
-  vera_layer_mode_tile::$1 = _word0_ vera_layer_mode_tile::mapbase_address#2
+  vera_layer_mode_tile::$1 = word0  vera_layer_mode_tile::mapbase_address#2
   vera_layer_mode_tile::$15 = vera_layer_mode_tile::layer#6 * SIZEOF_WORD
   vera_mapbase_offset[vera_layer_mode_tile::$15] = vera_layer_mode_tile::$1
-  vera_layer_mode_tile::$2 = _byte2_ vera_layer_mode_tile::mapbase_address#2
+  vera_layer_mode_tile::$2 = byte2  vera_layer_mode_tile::mapbase_address#2
   vera_mapbase_bank[vera_layer_mode_tile::layer#6] = vera_layer_mode_tile::$2
   vera_layer_mode_tile::$16 = vera_layer_mode_tile::layer#6 * SIZEOF_DWORD
   vera_mapbase_address[vera_layer_mode_tile::$16] = vera_layer_mode_tile::mapbase_address#2
   vera_layer_mode_tile::$3 = vera_layer_mode_tile::mapbase_address#2 >> 1
   vera_layer_mode_tile::mapbase_address#0 = vera_layer_mode_tile::$3
-  vera_layer_mode_tile::$4 = > vera_layer_mode_tile::mapbase_address#0
+  vera_layer_mode_tile::$4 = byte1  vera_layer_mode_tile::mapbase_address#0
   vera_layer_mode_tile::mapbase#0 = vera_layer_mode_tile::$4
   vera_layer_set_mapbase::layer#0 = vera_layer_mode_tile::layer#6
   vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
@@ -747,16 +747,16 @@ vera_layer_mode_tile::@34: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   vera_layer_mode_tile::tilewidth#1 = phi( vera_layer_mode_tile::@33/vera_layer_mode_tile::tilewidth#3 )
   vera_layer_mode_tile::layer#7 = phi( vera_layer_mode_tile::@33/vera_layer_mode_tile::layer#6 )
   vera_layer_mode_tile::tilebase_address#2 = phi( vera_layer_mode_tile::@33/vera_layer_mode_tile::tilebase_address#3 )
-  vera_layer_mode_tile::$6 = _word0_ vera_layer_mode_tile::tilebase_address#2
+  vera_layer_mode_tile::$6 = word0  vera_layer_mode_tile::tilebase_address#2
   vera_layer_mode_tile::$17 = vera_layer_mode_tile::layer#7 * SIZEOF_WORD
   vera_tilebase_offset[vera_layer_mode_tile::$17] = vera_layer_mode_tile::$6
-  vera_layer_mode_tile::$7 = _byte2_ vera_layer_mode_tile::tilebase_address#2
+  vera_layer_mode_tile::$7 = byte2  vera_layer_mode_tile::tilebase_address#2
   vera_tilebase_bank[vera_layer_mode_tile::layer#7] = vera_layer_mode_tile::$7
   vera_layer_mode_tile::$18 = vera_layer_mode_tile::layer#7 * SIZEOF_DWORD
   vera_tilebase_address[vera_layer_mode_tile::$18] = vera_layer_mode_tile::tilebase_address#2
   vera_layer_mode_tile::$8 = vera_layer_mode_tile::tilebase_address#2 >> 1
   vera_layer_mode_tile::tilebase_address#0 = vera_layer_mode_tile::$8
-  vera_layer_mode_tile::$9 = > vera_layer_mode_tile::tilebase_address#0
+  vera_layer_mode_tile::$9 = byte1  vera_layer_mode_tile::tilebase_address#0
   vera_layer_mode_tile::tilebase#0 = vera_layer_mode_tile::$9
   vera_layer_mode_tile::tilebase#1 = vera_layer_mode_tile::tilebase#0 & VERA_LAYER_TILEBASE_MASK
   if(vera_layer_mode_tile::tilewidth#1==8) goto vera_layer_mode_tile::@26
@@ -908,9 +908,9 @@ clrscr::@2: scope:[clrscr]  from clrscr::@1
   clrscr::line_text#2 = phi( clrscr::@1/clrscr::line_text#4 )
   clrscr::ch#0 = clrscr::line_text#2
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  clrscr::$5 = < clrscr::ch#0
+  clrscr::$5 = byte0  clrscr::ch#0
   *VERA_ADDRX_L = clrscr::$5
-  clrscr::$6 = > clrscr::ch#0
+  clrscr::$6 = byte1  clrscr::ch#0
   *VERA_ADDRX_M = clrscr::$6
   clrscr::$7 = CONIO_SCREEN_BANK#10 | VERA_INC_1
   *VERA_ADDRX_H = clrscr::$7
@@ -1046,9 +1046,9 @@ cputc::@2: scope:[cputc]  from cputc::@7
   CONIO_SCREEN_BANK#11 = phi( cputc::@7/CONIO_SCREEN_BANK#21 )
   cputc::conio_addr#2 = phi( cputc::@7/cputc::conio_addr#1 )
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  cputc::$4 = < cputc::conio_addr#2
+  cputc::$4 = byte0  cputc::conio_addr#2
   *VERA_ADDRX_L = cputc::$4
-  cputc::$5 = > cputc::conio_addr#2
+  cputc::$5 = byte1  cputc::conio_addr#2
   *VERA_ADDRX_M = cputc::$5
   cputc::$6 = CONIO_SCREEN_BANK#11 | VERA_INC_1
   *VERA_ADDRX_H = cputc::$6
@@ -1247,9 +1247,9 @@ clearline: scope:[clearline]  from insertup::@3
   clearline::$5 = conio_screen_layer * SIZEOF_WORD
   clearline::$0 = CONIO_SCREEN_TEXT#14 + conio_line_text[clearline::$5]
   clearline::addr#0 = clearline::$0
-  clearline::$1 = < clearline::addr#0
+  clearline::$1 = byte0  clearline::addr#0
   *VERA_ADDRX_L = clearline::$1
-  clearline::$2 = > clearline::addr#0
+  clearline::$2 = byte1  clearline::addr#0
   *VERA_ADDRX_M = clearline::$2
   *VERA_ADDRX_H = VERA_INC_1
   vera_layer_get_color::layer#1 = conio_screen_layer
@@ -1527,12 +1527,12 @@ main::@6: scope:[main]  from main::@5
 main::@7: scope:[main]  from main::@6
   CONIO_SCREEN_TEXT#38 = phi( main::@6/CONIO_SCREEN_TEXT#45 )
   CONIO_SCREEN_BANK#35 = phi( main::@6/CONIO_SCREEN_BANK#43 )
-  *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = _word0_main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
+  *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = word0 main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
   *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = $64
   *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64
   main::$7 = SIZEOF_STRUCT_VERA_SPRITE
-  memcpy_to_vram::vbank#0 = _byte2_VERA_SPRITE_ATTR
-  memcpy_to_vram::vdest#0 = (void*)(byte*)_word0_VERA_SPRITE_ATTR
+  memcpy_to_vram::vbank#0 = byte2 VERA_SPRITE_ATTR
+  memcpy_to_vram::vdest#0 = (void*)(byte*)word0 VERA_SPRITE_ATTR
   memcpy_to_vram::src#0 = (void*)&main::SPRITE_ATTR
   memcpy_to_vram::num#0 = main::$7
   call memcpy_to_vram 
@@ -1592,7 +1592,7 @@ __start::@return: scope:[__start]  from __start::@3
   to:@return
 
 SYMBOL TABLE SSA
-constant struct VERA_SPRITE $0 = { ADDR: _word0_main::VRAM_SPRITE/$20|VERA_SPRITE_8BPP, X: (word)$140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f1 }
+constant struct VERA_SPRITE $0 = { ADDR: word0 main::VRAM_SPRITE/$20|VERA_SPRITE_8BPP, X: (word)$140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f1 }
 constant const byte BLUE = 6
 byte CONIO_SCREEN_BANK
 byte CONIO_SCREEN_BANK#0
@@ -2869,7 +2869,7 @@ Adding number conversion cast (unumber) $20 in memcpy_bank_to_vram::num#0 = $20
 Adding number conversion cast (unumber) main::BANK_SPRITE+$20-2 in memcpy_bank_to_vram::src#1 = main::BANK_SPRITE+$20-2
 Adding number conversion cast (unumber) $20 in memcpy_bank_to_vram::src#1 = ((unumber)) main::BANK_SPRITE+$20-2
 Adding number conversion cast (unumber) $40*$20 in memcpy_bank_to_vram::num#1 = $40*$20
-Adding number conversion cast (unumber) $20 in *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = _word0_main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
+Adding number conversion cast (unumber) $20 in *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = word0 main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
 Adding number conversion cast (unumber) $64 in *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = $64
 Adding number conversion cast (unumber) $64 in *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -3501,8 +3501,8 @@ Constant memcpy_bank_to_vram::vdest#1 = main::VRAM_SPRITE
 Constant memcpy_bank_to_vram::src#1 = main::BANK_SPRITE+$20-2
 Constant memcpy_bank_to_vram::num#1 = (unumber)$40*$20
 Constant memcpy_to_vram::num#0 = SIZEOF_STRUCT_VERA_SPRITE
-Constant memcpy_to_vram::vbank#0 = _byte2_VERA_SPRITE_ATTR
-Constant memcpy_to_vram::vdest#0 = (void*)(byte*)_word0_VERA_SPRITE_ATTR
+Constant memcpy_to_vram::vbank#0 = byte2 VERA_SPRITE_ATTR
+Constant memcpy_to_vram::vdest#0 = (void*)(byte*)word0 VERA_SPRITE_ATTR
 Constant memcpy_to_vram::src#0 = (void*)&main::SPRITE_ATTR
 Constant CONIO_SCREEN_TEXT#6 = DEFAULT_SCREEN
 Constant CONIO_SCREEN_BANK#6 = 0
@@ -3552,8 +3552,8 @@ Simplifying expression containing zero vera_layer_mode_tile::config#17 in [188] 
 Simplifying expression containing zero vera_layer_mode_tile::config#21 in [209] vera_layer_mode_tile::config#9 = vera_layer_mode_tile::config#21 | VERA_LAYER_HEIGHT_32
 Simplifying expression containing zero vera_layer_mode_tile::tilebase#1 in [243] vera_layer_mode_tile::tilebase#2 = vera_layer_mode_tile::tilebase#1 | VERA_TILEBASE_WIDTH_8
 Simplifying expression containing zero vera_layer_mode_tile::tilebase#12 in [248] vera_layer_mode_tile::tilebase#4 = vera_layer_mode_tile::tilebase#12 | VERA_TILEBASE_HEIGHT_8
-Simplifying expression containing zero _word0_main::VRAM_SPRITE/$20 in [555] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = _word0_main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
-Simplifying expression containing zero (word*)&main::SPRITE_ATTR in [555] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = _word0_main::VRAM_SPRITE/$20
+Simplifying expression containing zero word0 main::VRAM_SPRITE/$20 in [555] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = word0 main::VRAM_SPRITE/$20|VERA_SPRITE_4BPP
+Simplifying expression containing zero (word*)&main::SPRITE_ATTR in [555] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_ADDR) = word0 main::VRAM_SPRITE/$20
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating variable vera_layer_mode_tile::config#2 from unused block vera_layer_mode_tile::@5
 Eliminating variable vera_layer_mode_tile::config#3 from unused block vera_layer_mode_tile::@6
@@ -3671,56 +3671,56 @@ Alias candidate removed (volatile)screenlayer::vera_layer_get_width1_return#0 = 
 Alias candidate removed (volatile)conio_rowshift = screenlayer::$3 
 Alias candidate removed (volatile)conio_rowskip = screenlayer::$4 
 Alias candidate removed (volatile)screenlayer::vera_layer_get_height1_return#0 = screenlayer::vera_layer_get_height1_return#1 screenlayer::$5 conio_height 
-Constant right-side identified [1] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#0
-Constant right-side identified [3] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#0
+Constant right-side identified [1] memcpy_to_vram::$0 = byte0  memcpy_to_vram::vdest#0
+Constant right-side identified [3] memcpy_to_vram::$1 = byte1  memcpy_to_vram::vdest#0
 Constant right-side identified [5] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#0
 Constant right-side identified [7] memcpy_to_vram::end#0 = memcpy_to_vram::$5 + memcpy_to_vram::num#0
-Constant right-side identified [66] load_to_bank::$2 = _byte2_ load_to_bank::address#0
-Constant right-side identified [68] load_to_bank::$4 = > load_to_bank::address#0
-Constant right-side identified [71] load_to_bank::$7 = _word0_ load_to_bank::address#0
+Constant right-side identified [66] load_to_bank::$2 = byte2  load_to_bank::address#0
+Constant right-side identified [68] load_to_bank::$4 = byte1  load_to_bank::address#0
+Constant right-side identified [71] load_to_bank::$7 = word0  load_to_bank::address#0
 Constant right-side identified [97] vera_layer_set_config::$0 = vera_layer_set_config::layer#0 * SIZEOF_POINTER
 Constant right-side identified [117] vera_layer_set_tilebase::$0 = vera_layer_set_tilebase::layer#0 * SIZEOF_POINTER
 Constant right-side identified [147] vera_layer_mode_tile::$13 = vera_layer_mode_tile::layer#0 * SIZEOF_WORD
-Constant right-side identified [152] vera_layer_mode_tile::$1 = _word0_ vera_layer_mode_tile::mapbase_address#1
+Constant right-side identified [152] vera_layer_mode_tile::$1 = word0  vera_layer_mode_tile::mapbase_address#1
 Constant right-side identified [153] vera_layer_mode_tile::$15 = vera_layer_mode_tile::layer#0 * SIZEOF_WORD
-Constant right-side identified [155] vera_layer_mode_tile::$2 = _byte2_ vera_layer_mode_tile::mapbase_address#1
+Constant right-side identified [155] vera_layer_mode_tile::$2 = byte2  vera_layer_mode_tile::mapbase_address#1
 Constant right-side identified [157] vera_layer_mode_tile::$16 = vera_layer_mode_tile::layer#0 * SIZEOF_DWORD
 Constant right-side identified [159] vera_layer_mode_tile::mapbase_address#0 = vera_layer_mode_tile::mapbase_address#1 >> 1
-Constant right-side identified [163] vera_layer_mode_tile::$6 = _word0_ vera_layer_mode_tile::tilebase_address#1
+Constant right-side identified [163] vera_layer_mode_tile::$6 = word0  vera_layer_mode_tile::tilebase_address#1
 Constant right-side identified [164] vera_layer_mode_tile::$17 = vera_layer_mode_tile::layer#0 * SIZEOF_WORD
-Constant right-side identified [166] vera_layer_mode_tile::$7 = _byte2_ vera_layer_mode_tile::tilebase_address#1
+Constant right-side identified [166] vera_layer_mode_tile::$7 = byte2  vera_layer_mode_tile::tilebase_address#1
 Constant right-side identified [168] vera_layer_mode_tile::$18 = vera_layer_mode_tile::layer#0 * SIZEOF_DWORD
 Constant right-side identified [170] vera_layer_mode_tile::tilebase_address#0 = vera_layer_mode_tile::tilebase_address#1 >> 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant memcpy_to_vram::$0 = <memcpy_to_vram::vdest#0
-Constant memcpy_to_vram::$1 = >memcpy_to_vram::vdest#0
+Constant memcpy_to_vram::$0 = byte0 memcpy_to_vram::vdest#0
+Constant memcpy_to_vram::$1 = byte1 memcpy_to_vram::vdest#0
 Constant memcpy_to_vram::$2 = VERA_INC_1|memcpy_to_vram::vbank#0
 Constant memcpy_to_vram::end#0 = memcpy_to_vram::$5+memcpy_to_vram::num#0
 Constant memcpy_in_vram::$2 = memcpy_in_vram::src_increment#0
 Constant memcpy_in_vram::$5 = memcpy_in_vram::dest_increment#0
-Constant load_to_bank::$2 = _byte2_load_to_bank::address#0
-Constant load_to_bank::$4 = >load_to_bank::address#0
-Constant load_to_bank::$7 = _word0_load_to_bank::address#0
+Constant load_to_bank::$2 = byte2 load_to_bank::address#0
+Constant load_to_bank::$4 = byte1 load_to_bank::address#0
+Constant load_to_bank::$7 = word0 load_to_bank::address#0
 Constant vera_layer_set_config::$0 = vera_layer_set_config::layer#0*SIZEOF_POINTER
 Constant vera_layer_set_tilebase::$0 = vera_layer_set_tilebase::layer#0*SIZEOF_POINTER
 Constant vera_layer_mode_tile::config#1 = VERA_LAYER_COLOR_DEPTH_1BPP
 Constant vera_layer_mode_tile::$13 = vera_layer_mode_tile::layer#0*SIZEOF_WORD
-Constant vera_layer_mode_tile::$1 = _word0_vera_layer_mode_tile::mapbase_address#1
+Constant vera_layer_mode_tile::$1 = word0 vera_layer_mode_tile::mapbase_address#1
 Constant vera_layer_mode_tile::$15 = vera_layer_mode_tile::layer#0*SIZEOF_WORD
-Constant vera_layer_mode_tile::$2 = _byte2_vera_layer_mode_tile::mapbase_address#1
+Constant vera_layer_mode_tile::$2 = byte2 vera_layer_mode_tile::mapbase_address#1
 Constant vera_layer_mode_tile::$16 = vera_layer_mode_tile::layer#0*SIZEOF_DWORD
 Constant vera_layer_mode_tile::mapbase_address#0 = vera_layer_mode_tile::mapbase_address#1>>1
-Constant vera_layer_mode_tile::$6 = _word0_vera_layer_mode_tile::tilebase_address#1
+Constant vera_layer_mode_tile::$6 = word0 vera_layer_mode_tile::tilebase_address#1
 Constant vera_layer_mode_tile::$17 = vera_layer_mode_tile::layer#0*SIZEOF_WORD
-Constant vera_layer_mode_tile::$7 = _byte2_vera_layer_mode_tile::tilebase_address#1
+Constant vera_layer_mode_tile::$7 = byte2 vera_layer_mode_tile::tilebase_address#1
 Constant vera_layer_mode_tile::$18 = vera_layer_mode_tile::layer#0*SIZEOF_DWORD
 Constant vera_layer_mode_tile::tilebase_address#0 = vera_layer_mode_tile::tilebase_address#1>>1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero <memcpy_to_vram::vdest#0 in 
-Simplifying constant evaluating to zero _word0_vera_layer_mode_tile::mapbase_address#1 in 
-Simplifying constant evaluating to zero _byte2_vera_layer_mode_tile::mapbase_address#1 in 
+Simplifying constant evaluating to zero byte0 memcpy_to_vram::vdest#0 in 
+Simplifying constant evaluating to zero word0 vera_layer_mode_tile::mapbase_address#1 in 
+Simplifying constant evaluating to zero byte2 vera_layer_mode_tile::mapbase_address#1 in 
 Simplifying constant evaluating to zero vera_layer_mode_tile::mapbase_address#1>>1 in 
-Simplifying constant evaluating to zero _byte2_vera_layer_mode_tile::tilebase_address#1 in 
+Simplifying constant evaluating to zero byte2 vera_layer_mode_tile::tilebase_address#1 in 
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero VERA_LAYER_WIDTH_128 in [145] vera_layer_mode_tile::config#21 = vera_layer_mode_tile::config#1 | VERA_LAYER_WIDTH_128
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -3735,21 +3735,21 @@ Alias candidate removed (volatile)screenlayer::vera_layer_get_height1_return#0 =
 Constant right-side identified [60] load_to_bank::$3 = load_to_bank::$2 << 3
 Constant right-side identified [61] load_to_bank::$5 = load_to_bank::$4 >> 5
 Constant right-side identified [63] load_to_bank::$8 = load_to_bank::$7 & $1fff
-Constant right-side identified [142] vera_layer_mode_tile::mapbase#0 = > vera_layer_mode_tile::mapbase_address#0
-Constant right-side identified [148] vera_layer_mode_tile::tilebase#0 = > vera_layer_mode_tile::tilebase_address#0
+Constant right-side identified [142] vera_layer_mode_tile::mapbase#0 = byte1  vera_layer_mode_tile::mapbase_address#0
+Constant right-side identified [148] vera_layer_mode_tile::tilebase#0 = byte1  vera_layer_mode_tile::tilebase_address#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant load_to_bank::$3 = load_to_bank::$2<<3
 Constant load_to_bank::$5 = load_to_bank::$4>>5
 Constant load_to_bank::$8 = load_to_bank::$7&$1fff
 Constant vera_layer_mode_tile::config#21 = VERA_LAYER_WIDTH_128
-Constant vera_layer_mode_tile::mapbase#0 = >vera_layer_mode_tile::mapbase_address#0
-Constant vera_layer_mode_tile::tilebase#0 = >vera_layer_mode_tile::tilebase_address#0
+Constant vera_layer_mode_tile::mapbase#0 = byte1 vera_layer_mode_tile::mapbase_address#0
+Constant vera_layer_mode_tile::tilebase#0 = byte1 vera_layer_mode_tile::tilebase_address#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant load_to_bank::addr#0 = (byte*)load_to_bank::$8
 Constant vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero load_to_bank::$7&$1fff in 
-Simplifying constant evaluating to zero >vera_layer_mode_tile::mapbase_address#0 in 
+Simplifying constant evaluating to zero byte1 vera_layer_mode_tile::mapbase_address#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
 Eliminating unused constant load_to_bank::$7
 Eliminating unused constant vera_layer_mode_tile::mapbase_address#0
@@ -3840,19 +3840,19 @@ Constant inlined clrscr::l#0 = 0
 Constant inlined strlen::len#0 = 0
 Constant inlined vera_layer_set_tilebase::layer#0 = vera_layer_mode_text::layer#0
 Constant inlined memcpy_in_vram::dest_increment#0 = VERA_INC_1
-Constant inlined vera_layer_set_tilebase::tilebase#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
+Constant inlined vera_layer_set_tilebase::tilebase#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
 Constant inlined memcpy_to_vram::num#0 = SIZEOF_STRUCT_VERA_SPRITE
-Constant inlined load_to_bank::$3 = _byte2_main::BANK_SPRITE<<3
+Constant inlined load_to_bank::$3 = byte2 main::BANK_SPRITE<<3
 Constant inlined memcpy_bank_to_vram::addr#3 = (byte*) 40960
 Constant inlined memcpy_bank_to_vram::vdest#0 = VERA_PALETTE+$20
 Constant inlined memcpy_bank_to_vram::vdest#1 = main::VRAM_SPRITE
 Constant inlined memcpy_in_vram::$2 = VERA_INC_1
-Constant inlined load_to_bank::$4 = >main::BANK_SPRITE
+Constant inlined load_to_bank::$4 = byte1 main::BANK_SPRITE
 Constant inlined memcpy_in_vram::$5 = VERA_INC_1
-Constant inlined load_to_bank::$2 = _byte2_main::BANK_SPRITE
+Constant inlined load_to_bank::$2 = byte2 main::BANK_SPRITE
 Constant inlined vera_layer_mode_tile::layer#0 = vera_layer_mode_text::layer#0
 Constant inlined load_to_bank::$8 = 0
-Constant inlined load_to_bank::$5 = >main::BANK_SPRITE>>5
+Constant inlined load_to_bank::$5 = byte1 main::BANK_SPRITE>>5
 Constant inlined memcpy_in_vram::src_increment#0 = VERA_INC_1
 Constant inlined vera_layer_set_config::config#0 = vera_layer_mode_tile::config#10
 Constant inlined insertup::i#0 = 1
@@ -3866,12 +3866,12 @@ Constant inlined gotoxy::x#2 = 0
 Constant inlined memcpy_to_vram::$2 = VERA_INC_1|memcpy_to_vram::vbank#0
 Constant inlined vera_layer_mode_tile::tilebase_address#1 = vera_layer_mode_text::tilebase_address#0
 Constant inlined memcpy_to_vram::$0 = 0
-Constant inlined memcpy_to_vram::$1 = >memcpy_to_vram::vdest#0
+Constant inlined memcpy_to_vram::$1 = byte1 memcpy_to_vram::vdest#0
 Constant inlined vera_layer_set_text_color_mode::color_mode#0 = VERA_LAYER_CONFIG_16C
 Constant inlined load_to_bank::filename#0 = main::filename
 Constant inlined vera_layer_set_text_color_mode::color_mode#2 = VERA_LAYER_CONFIG_16C
 Constant inlined memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#0
-Constant inlined vera_layer_mode_tile::$6 = _word0_vera_layer_mode_text::tilebase_address#0
+Constant inlined vera_layer_mode_tile::$6 = word0 vera_layer_mode_text::tilebase_address#0
 Constant inlined memcpy_bank_to_vram::src#1 = main::BANK_SPRITE+$20-2
 Constant inlined memcpy_bank_to_vram::src#0 = main::BANK_SPRITE-2
 Constant inlined vera_layer_mode_tile::$7 = 0
@@ -3895,14 +3895,14 @@ Constant inlined screenlayer::layer#0 = 1
 Constant inlined vera_layer_set_config::$0 = vera_layer_mode_text::layer#0*SIZEOF_POINTER
 Constant inlined screenlayer::layer#1 = 1
 Constant inlined vera_layer_mode_tile::$13 = vera_layer_mode_text::layer#0*SIZEOF_WORD
-Constant inlined vera_layer_mode_tile::tilebase#0 = >vera_layer_mode_tile::tilebase_address#0
+Constant inlined vera_layer_mode_tile::tilebase#0 = byte1 vera_layer_mode_tile::tilebase_address#0
 Constant inlined vera_layer_set_text_color_mode::layer#2 = 1
 Constant inlined vera_layer_mode_tile::$15 = vera_layer_mode_text::layer#0*SIZEOF_WORD
 Constant inlined vera_layer_set_text_color_mode::layer#0 = vera_layer_mode_text::layer#0
 Constant inlined vera_layer_mode_tile::$16 = vera_layer_mode_text::layer#0*SIZEOF_DWORD
 Constant inlined gotoxy::y#0 = 0
 Constant inlined vera_layer_mode_tile::$17 = vera_layer_mode_text::layer#0*SIZEOF_WORD
-Constant inlined vera_layer_mode_tile::tilebase#1 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
+Constant inlined vera_layer_mode_tile::tilebase#1 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
 Constant inlined clrscr::c#0 = 0
 Constant inlined vera_layer_set_tilebase::$0 = vera_layer_mode_text::layer#0*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantInlining
@@ -4247,7 +4247,7 @@ main::@6: scope:[main]  from main::@5
   [45] call memcpy_bank_to_vram 
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  [46] *((word*)&main::SPRITE_ATTR) = _word0_main::VRAM_SPRITE/$20
+  [46] *((word*)&main::SPRITE_ATTR) = word0 main::VRAM_SPRITE/$20
   [47] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = $64
   [48] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64
   [49] call memcpy_to_vram 
@@ -4453,9 +4453,9 @@ clrscr::@return: scope:[clrscr]  from clrscr::@3
   to:@return
 clrscr::@2: scope:[clrscr]  from clrscr::@1
   [151] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  [152] clrscr::$5 = < clrscr::line_text#2
+  [152] clrscr::$5 = byte0  clrscr::line_text#2
   [153] *VERA_ADDRX_L = clrscr::$5
-  [154] clrscr::$6 = > clrscr::line_text#2
+  [154] clrscr::$6 = byte1  clrscr::line_text#2
   [155] *VERA_ADDRX_M = clrscr::$6
   [156] clrscr::$7 = CONIO_SCREEN_BANK#14 | VERA_INC_1
   [157] *VERA_ADDRX_H = clrscr::$7
@@ -4517,20 +4517,20 @@ memcpy_bank_to_vram: scope:[memcpy_bank_to_vram]  from main::@5 main::@6
   [182] memcpy_bank_to_vram::beg#0 = phi( main::@5/main::BANK_SPRITE-2, main::@6/main::BANK_SPRITE+$20-2 )
   [182] memcpy_bank_to_vram::vdest#2 = phi( main::@5/VERA_PALETTE+$20, main::@6/main::VRAM_SPRITE )
   [183] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  [184] memcpy_bank_to_vram::$0 = < memcpy_bank_to_vram::vdest#2
+  [184] memcpy_bank_to_vram::$0 = byte0  memcpy_bank_to_vram::vdest#2
   [185] *VERA_ADDRX_L = memcpy_bank_to_vram::$0
-  [186] memcpy_bank_to_vram::$1 = > memcpy_bank_to_vram::vdest#2
+  [186] memcpy_bank_to_vram::$1 = byte1  memcpy_bank_to_vram::vdest#2
   [187] *VERA_ADDRX_M = memcpy_bank_to_vram::$1
-  [188] memcpy_bank_to_vram::$2 = _byte2_ memcpy_bank_to_vram::vdest#2
+  [188] memcpy_bank_to_vram::$2 = byte2  memcpy_bank_to_vram::vdest#2
   [189] *VERA_ADDRX_H = memcpy_bank_to_vram::$2
   [190] *VERA_ADDRX_H = *VERA_ADDRX_H | VERA_INC_1
   [191] memcpy_bank_to_vram::end#0 = memcpy_bank_to_vram::beg#0 + memcpy_bank_to_vram::num#2
-  [192] memcpy_bank_to_vram::$4 = _byte2_ memcpy_bank_to_vram::beg#0
+  [192] memcpy_bank_to_vram::$4 = byte2  memcpy_bank_to_vram::beg#0
   [193] memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3
-  [194] memcpy_bank_to_vram::$6 = > memcpy_bank_to_vram::beg#0
+  [194] memcpy_bank_to_vram::$6 = byte1  memcpy_bank_to_vram::beg#0
   [195] memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5
   [196] memcpy_bank_to_vram::bank#0 = memcpy_bank_to_vram::$5 | memcpy_bank_to_vram::$7
-  [197] memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0
+  [197] memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0
   [198] memcpy_bank_to_vram::addr#0 = memcpy_bank_to_vram::$9 & $1fff
   [199] memcpy_bank_to_vram::addr#1 = (byte*)memcpy_bank_to_vram::addr#0 + $a000
   [200] *((byte*)VIA1+OFFSET_STRUCT_MOS6522_VIA_PORT_A) = memcpy_bank_to_vram::bank#0
@@ -4563,7 +4563,7 @@ void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , v
 memcpy_to_vram: scope:[memcpy_to_vram]  from main::@7
   [211] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
   [212] *VERA_ADDRX_L = 0
-  [213] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0
+  [213] *VERA_ADDRX_M = byte1 memcpy_to_vram::vdest#0
   [214] *VERA_ADDRX_H = VERA_INC_1|memcpy_to_vram::vbank#0
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
@@ -4597,7 +4597,7 @@ vera_layer_mode_tile::@4: scope:[vera_layer_mode_tile]  from vera_layer_mode_til
   [228] call vera_layer_set_mapbase 
   to:vera_layer_mode_tile::@5
 vera_layer_mode_tile::@5: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@4
-  [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = _word0_vera_layer_mode_text::tilebase_address#0
+  [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = word0 vera_layer_mode_text::tilebase_address#0
   [230] *(vera_tilebase_bank+vera_layer_mode_text::layer#0) = 0
   [231] *(vera_tilebase_address+vera_layer_mode_text::layer#0*SIZEOF_DWORD) = vera_layer_mode_text::tilebase_address#0
   to:vera_layer_mode_tile::@3
@@ -4676,9 +4676,9 @@ cputc::@7: scope:[cputc]  from cputc
   to:cputc::@2
 cputc::@2: scope:[cputc]  from cputc::@7
   [258] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  [259] cputc::$4 = < cputc::conio_addr#1
+  [259] cputc::$4 = byte0  cputc::conio_addr#1
   [260] *VERA_ADDRX_L = cputc::$4
-  [261] cputc::$5 = > cputc::conio_addr#1
+  [261] cputc::$5 = byte1  cputc::conio_addr#1
   [262] *VERA_ADDRX_M = cputc::$5
   [263] cputc::$6 = CONIO_SCREEN_BANK#14 | VERA_INC_1
   [264] *VERA_ADDRX_H = cputc::$6
@@ -4755,7 +4755,7 @@ vera_layer_set_config::@return: scope:[vera_layer_set_config]  from vera_layer_s
 void vera_layer_set_tilebase(byte vera_layer_set_tilebase::layer , byte vera_layer_set_tilebase::tilebase)
 vera_layer_set_tilebase: scope:[vera_layer_set_tilebase]  from vera_layer_mode_tile::@3
   [295] vera_layer_set_tilebase::addr#0 = *(vera_layer_tilebase+vera_layer_mode_text::layer#0*SIZEOF_POINTER)
-  [296] *vera_layer_set_tilebase::addr#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
+  [296] *vera_layer_set_tilebase::addr#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK
   to:vera_layer_set_tilebase::@return
 vera_layer_set_tilebase::@return: scope:[vera_layer_set_tilebase]  from vera_layer_set_tilebase
   [297] return 
@@ -4872,9 +4872,9 @@ clearline: scope:[clearline]  from insertup::@3
   [347] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
   [348] clearline::$5 = conio_screen_layer << 1
   [349] clearline::addr#0 = (byte*)CONIO_SCREEN_TEXT#16 + conio_line_text[clearline::$5]
-  [350] clearline::$1 = < clearline::addr#0
+  [350] clearline::$1 = byte0  clearline::addr#0
   [351] *VERA_ADDRX_L = clearline::$1
-  [352] clearline::$2 = > clearline::addr#0
+  [352] clearline::$2 = byte1  clearline::addr#0
   [353] *VERA_ADDRX_M = clearline::$2
   [354] *VERA_ADDRX_H = VERA_INC_1
   [355] vera_layer_get_color::layer#1 = conio_screen_layer
@@ -4903,15 +4903,15 @@ clearline::@2: scope:[clearline]  from clearline::@1
 void memcpy_in_vram(byte memcpy_in_vram::dest_bank , void* memcpy_in_vram::dest , byte memcpy_in_vram::dest_increment , byte memcpy_in_vram::src_bank , void* memcpy_in_vram::src , byte memcpy_in_vram::src_increment , word memcpy_in_vram::num)
 memcpy_in_vram: scope:[memcpy_in_vram]  from insertup::@2
   [366] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  [367] memcpy_in_vram::$0 = < (void*)memcpy_in_vram::src#0
+  [367] memcpy_in_vram::$0 = byte0  (void*)memcpy_in_vram::src#0
   [368] *VERA_ADDRX_L = memcpy_in_vram::$0
-  [369] memcpy_in_vram::$1 = > (void*)memcpy_in_vram::src#0
+  [369] memcpy_in_vram::$1 = byte1  (void*)memcpy_in_vram::src#0
   [370] *VERA_ADDRX_M = memcpy_in_vram::$1
   [371] *VERA_ADDRX_H = VERA_INC_1
   [372] *VERA_CTRL = *VERA_CTRL | VERA_ADDRSEL
-  [373] memcpy_in_vram::$3 = < memcpy_in_vram::dest#0
+  [373] memcpy_in_vram::$3 = byte0  memcpy_in_vram::dest#0
   [374] *VERA_ADDRX_L = memcpy_in_vram::$3
-  [375] memcpy_in_vram::$4 = > memcpy_in_vram::dest#0
+  [375] memcpy_in_vram::$4 = byte1  memcpy_in_vram::dest#0
   [376] *VERA_ADDRX_M = memcpy_in_vram::$4
   [377] *VERA_ADDRX_H = VERA_INC_1
   to:memcpy_in_vram::@1
@@ -5732,7 +5732,7 @@ Statement [5] conio_height = 0 [ conio_screen_width conio_screen_height main::SP
 Statement [6] conio_rowshift = 0 [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] (  [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [7] conio_rowskip = 0 [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] (  [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [40] *(&main::SPRITE_ATTR) = memcpy(*(&$0), struct VERA_SPRITE, SIZEOF_STRUCT_VERA_SPRITE) [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a reg byte y 
-Statement [46] *((word*)&main::SPRITE_ATTR) = _word0_main::VRAM_SPRITE/$20 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [46] *((word*)&main::SPRITE_ATTR) = word0 main::VRAM_SPRITE/$20 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [47] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = $64 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [48] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64 [ ] ( main:10 [ ] { }  ) always clobbers reg byte a 
 Statement [50] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:10 [ ] { }  ) always clobbers reg byte a 
@@ -5813,7 +5813,7 @@ Statement [191] memcpy_bank_to_vram::end#0 = memcpy_bank_to_vram::beg#0 + memcpy
 Statement [193] memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] { }  ) always clobbers reg byte a 
 Statement [195] memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:136 [ memcpy_bank_to_vram::$5 ]
-Statement [197] memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  ) always clobbers reg byte a 
+Statement [197] memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:25 [ memcpy_bank_to_vram::bank#2 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::bank#1 ]
 Statement [198] memcpy_bank_to_vram::addr#0 = memcpy_bank_to_vram::$9 & $1fff [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] { }  ) always clobbers reg byte a 
 Statement [199] memcpy_bank_to_vram::addr#1 = (byte*)memcpy_bank_to_vram::addr#0 + $a000 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] { }  ) always clobbers reg byte a 
@@ -5823,7 +5823,7 @@ Statement [208] *VERA_DATA0 = *memcpy_bank_to_vram::addr#5 [ memcpy_bank_to_vram
 Removing always clobbered register reg byte y as potential for zp[1]:25 [ memcpy_bank_to_vram::bank#2 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::bank#1 ]
 Statement [211] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [212] *VERA_ADDRX_L = 0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
-Statement [213] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
+Statement [213] *VERA_ADDRX_M = byte1 memcpy_to_vram::vdest#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [214] *VERA_ADDRX_H = VERA_INC_1|memcpy_to_vram::vbank#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [216] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ memcpy_to_vram::s#2 ] ( main:10::memcpy_to_vram:49 [ memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a 
 Statement [218] *VERA_DATA0 = *memcpy_to_vram::s#2 [ memcpy_to_vram::s#2 ] ( main:10::memcpy_to_vram:49 [ memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -5832,7 +5832,7 @@ Statement [222] *(vera_layer_rowskip+vera_layer_mode_text::layer#0*SIZEOF_WORD) 
 Statement [225] *(vera_mapbase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [226] *(vera_mapbase_bank+vera_layer_mode_text::layer#0) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [227] *(vera_mapbase_address+vera_layer_mode_text::layer#0*SIZEOF_DWORD) = vera_layer_mode_text::mapbase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
-Statement [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = _word0_vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
+Statement [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = word0 vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [230] *(vera_tilebase_bank+vera_layer_mode_text::layer#0) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [231] *(vera_tilebase_address+vera_layer_mode_text::layer#0*SIZEOF_DWORD) = vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [237] vera_layer_get_mapbase_offset::$0 = vera_layer_get_mapbase_offset::layer#0 << 1 [ vera_layer_get_mapbase_offset::$0 ] ( screenlayer:17::vera_layer_get_mapbase_offset:71 [ conio_screen_width conio_screen_height conio_x16_init::line#0 conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  conio_x16_init:8::screenlayer:17::vera_layer_get_mapbase_offset:71 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  main:10::screenlayer:35::vera_layer_get_mapbase_offset:71 [ conio_screen_width conio_screen_height main::SPRITE_ATTR conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  ) always clobbers reg byte a 
@@ -5864,7 +5864,7 @@ Statement asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff erro
 Statement [292] vera_layer_set_config::addr#0 = *(vera_layer_config+vera_layer_mode_text::layer#0*SIZEOF_POINTER) [ vera_layer_set_config::addr#0 ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_config::addr#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_config::addr#0 ] { }  ) always clobbers reg byte a 
 Statement [293] *vera_layer_set_config::addr#0 = vera_layer_mode_tile::config#10 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [295] vera_layer_set_tilebase::addr#0 = *(vera_layer_tilebase+vera_layer_mode_text::layer#0*SIZEOF_POINTER) [ vera_layer_set_tilebase::addr#0 ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_tilebase::addr#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_tilebase::addr#0 ] { }  ) always clobbers reg byte a 
-Statement [296] *vera_layer_set_tilebase::addr#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [296] *vera_layer_set_tilebase::addr#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [299] vera_layer_get_color::$3 = vera_layer_get_color::layer#2 << 1 [ vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] ( main:10::cputs:39::cputc:172::vera_layer_get_color:250 [ main::SPRITE_ATTR cputs::s#0 conio_screen_width conio_screen_height conio_screen_layer conio_width conio_height conio_rowshift conio_rowskip CONIO_SCREEN_BANK#14 CONIO_SCREEN_TEXT#16 cputc::c#0 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#0 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#3 } }  main:10::cputs:39::cputc:172::cputln:273::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:277::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:279::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:30 [ vera_layer_get_color::layer#2 vera_layer_get_color::layer#1 vera_layer_get_color::layer#0 ]
 Statement [300] vera_layer_get_color::addr#0 = vera_layer_config[vera_layer_get_color::$3] [ vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] ( main:10::cputs:39::cputc:172::vera_layer_get_color:250 [ main::SPRITE_ATTR cputs::s#0 conio_screen_width conio_screen_height conio_screen_layer conio_width conio_height conio_rowshift conio_rowskip CONIO_SCREEN_BANK#14 CONIO_SCREEN_TEXT#16 cputc::c#0 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#0 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#3 } }  main:10::cputs:39::cputc:172::cputln:273::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:277::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:279::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  ) always clobbers reg byte a 
@@ -5921,7 +5921,7 @@ Statement [6] conio_rowshift = 0 [ conio_screen_width conio_screen_height main::
 Statement [7] conio_rowskip = 0 [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] (  [ conio_screen_width conio_screen_height main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [27] conio_x16_init::line#1 = conio_screen_height - 1 [ conio_screen_width conio_screen_height conio_screen_layer conio_rowshift conio_x16_init::line#1 ] (  [ conio_screen_width conio_screen_height conio_screen_layer conio_rowshift conio_x16_init::line#1 ] { }  conio_x16_init:8 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_screen_layer conio_rowshift conio_x16_init::line#1 ] { }  ) always clobbers reg byte x 
 Statement [40] *(&main::SPRITE_ATTR) = memcpy(*(&$0), struct VERA_SPRITE, SIZEOF_STRUCT_VERA_SPRITE) [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a reg byte y 
-Statement [46] *((word*)&main::SPRITE_ATTR) = _word0_main::VRAM_SPRITE/$20 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [46] *((word*)&main::SPRITE_ATTR) = word0 main::VRAM_SPRITE/$20 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [47] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = $64 [ main::SPRITE_ATTR ] ( main:10 [ main::SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [48] *((word*)&main::SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = $64 [ ] ( main:10 [ ] { }  ) always clobbers reg byte a 
 Statement [50] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:10 [ ] { }  ) always clobbers reg byte a 
@@ -5994,7 +5994,7 @@ Statement [190] *VERA_ADDRX_H = *VERA_ADDRX_H | VERA_INC_1 [ memcpy_bank_to_vram
 Statement [191] memcpy_bank_to_vram::end#0 = memcpy_bank_to_vram::beg#0 + memcpy_bank_to_vram::num#2 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 ] { }  ) always clobbers reg byte a 
 Statement [193] memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 ] { }  ) always clobbers reg byte a 
 Statement [195] memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::$5 memcpy_bank_to_vram::$7 ] { }  ) always clobbers reg byte a 
-Statement [197] memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  ) always clobbers reg byte a 
+Statement [197] memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::$9 ] { }  ) always clobbers reg byte a 
 Statement [198] memcpy_bank_to_vram::addr#0 = memcpy_bank_to_vram::$9 & $1fff [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#0 ] { }  ) always clobbers reg byte a 
 Statement [199] memcpy_bank_to_vram::addr#1 = (byte*)memcpy_bank_to_vram::addr#0 + $a000 [ memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::beg#0 memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::bank#0 memcpy_bank_to_vram::addr#1 ] { }  ) always clobbers reg byte a 
 Statement [202] if(memcpy_bank_to_vram::pos#2<memcpy_bank_to_vram::end#0) goto memcpy_bank_to_vram::@2 [ memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::addr#4 memcpy_bank_to_vram::bank#2 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::addr#4 memcpy_bank_to_vram::bank#2 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::addr#4 memcpy_bank_to_vram::bank#2 ] { }  ) always clobbers reg byte a 
@@ -6002,7 +6002,7 @@ Statement [204] if(memcpy_bank_to_vram::addr#4!=$c000) goto memcpy_bank_to_vram:
 Statement [208] *VERA_DATA0 = *memcpy_bank_to_vram::addr#5 [ memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::addr#5 ] ( main:10::memcpy_bank_to_vram:43 [ main::SPRITE_ATTR memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::addr#5 ] { }  main:10::memcpy_bank_to_vram:45 [ main::SPRITE_ATTR memcpy_bank_to_vram::end#0 memcpy_bank_to_vram::pos#2 memcpy_bank_to_vram::bank#5 memcpy_bank_to_vram::addr#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [211] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [212] *VERA_ADDRX_L = 0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
-Statement [213] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
+Statement [213] *VERA_ADDRX_M = byte1 memcpy_to_vram::vdest#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [214] *VERA_ADDRX_H = VERA_INC_1|memcpy_to_vram::vbank#0 [ ] ( main:10::memcpy_to_vram:49 [ ] { }  ) always clobbers reg byte a 
 Statement [216] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ memcpy_to_vram::s#2 ] ( main:10::memcpy_to_vram:49 [ memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a 
 Statement [218] *VERA_DATA0 = *memcpy_to_vram::s#2 [ memcpy_to_vram::s#2 ] ( main:10::memcpy_to_vram:49 [ memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -6011,7 +6011,7 @@ Statement [222] *(vera_layer_rowskip+vera_layer_mode_text::layer#0*SIZEOF_WORD) 
 Statement [225] *(vera_mapbase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [226] *(vera_mapbase_bank+vera_layer_mode_text::layer#0) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [227] *(vera_mapbase_address+vera_layer_mode_text::layer#0*SIZEOF_DWORD) = vera_layer_mode_text::mapbase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
-Statement [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = _word0_vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
+Statement [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = word0 vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [230] *(vera_tilebase_bank+vera_layer_mode_text::layer#0) = 0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [231] *(vera_tilebase_address+vera_layer_mode_text::layer#0*SIZEOF_DWORD) = vera_layer_mode_text::tilebase_address#0 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a 
 Statement [237] vera_layer_get_mapbase_offset::$0 = vera_layer_get_mapbase_offset::layer#0 << 1 [ vera_layer_get_mapbase_offset::$0 ] ( screenlayer:17::vera_layer_get_mapbase_offset:71 [ conio_screen_width conio_screen_height conio_x16_init::line#0 conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  conio_x16_init:8::screenlayer:17::vera_layer_get_mapbase_offset:71 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  main:10::screenlayer:35::vera_layer_get_mapbase_offset:71 [ conio_screen_width conio_screen_height main::SPRITE_ATTR conio_screen_layer CONIO_SCREEN_BANK#14 vera_layer_get_mapbase_offset::$0 ] { { vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer } { vera_layer_get_mapbase_offset::return#0 = vera_layer_get_mapbase_offset::return#2 } }  ) always clobbers reg byte a 
@@ -6040,7 +6040,7 @@ Statement asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff erro
 Statement [292] vera_layer_set_config::addr#0 = *(vera_layer_config+vera_layer_mode_text::layer#0*SIZEOF_POINTER) [ vera_layer_set_config::addr#0 ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_config::addr#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_config::addr#0 ] { }  ) always clobbers reg byte a 
 Statement [293] *vera_layer_set_config::addr#0 = vera_layer_mode_tile::config#10 [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_config:224 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [295] vera_layer_set_tilebase::addr#0 = *(vera_layer_tilebase+vera_layer_mode_text::layer#0*SIZEOF_POINTER) [ vera_layer_set_tilebase::addr#0 ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_tilebase::addr#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 vera_layer_set_tilebase::addr#0 ] { }  ) always clobbers reg byte a 
-Statement [296] *vera_layer_set_tilebase::addr#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [296] *vera_layer_set_tilebase::addr#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK [ ] ( vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  conio_x16_init:8::vera_layer_mode_text:13::vera_layer_mode_tile:54::vera_layer_set_tilebase:233 [ main::SPRITE_ATTR conio_screen_width conio_screen_height conio_x16_init::line#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [299] vera_layer_get_color::$3 = vera_layer_get_color::layer#2 << 1 [ vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] ( main:10::cputs:39::cputc:172::vera_layer_get_color:250 [ main::SPRITE_ATTR cputs::s#0 conio_screen_width conio_screen_height conio_screen_layer conio_width conio_height conio_rowshift conio_rowskip CONIO_SCREEN_BANK#14 CONIO_SCREEN_TEXT#16 cputc::c#0 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#0 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#3 } }  main:10::cputs:39::cputc:172::cputln:273::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:277::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:279::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$3 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  ) always clobbers reg byte a 
 Statement [300] vera_layer_get_color::addr#0 = vera_layer_config[vera_layer_get_color::$3] [ vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] ( main:10::cputs:39::cputc:172::vera_layer_get_color:250 [ main::SPRITE_ATTR cputs::s#0 conio_screen_width conio_screen_height conio_screen_layer conio_width conio_height conio_rowshift conio_rowskip CONIO_SCREEN_BANK#14 CONIO_SCREEN_TEXT#16 cputc::c#0 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#0 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#3 } }  main:10::cputs:39::cputc:172::cputln:273::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:277::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:279::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::addr#0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  ) always clobbers reg byte a 
 Statement [301] vera_layer_get_color::$0 = *vera_layer_get_color::addr#0 & VERA_LAYER_CONFIG_256C [ vera_layer_get_color::layer#2 vera_layer_get_color::$0 ] ( main:10::cputs:39::cputc:172::vera_layer_get_color:250 [ main::SPRITE_ATTR cputs::s#0 conio_screen_width conio_screen_height conio_screen_layer conio_width conio_height conio_rowshift conio_rowskip CONIO_SCREEN_BANK#14 CONIO_SCREEN_TEXT#16 cputc::c#0 vera_layer_get_color::layer#2 vera_layer_get_color::$0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#0 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#3 } }  main:10::cputs:39::cputc:172::cputln:273::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:277::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  main:10::cputs:39::cputc:172::cputln:279::cscroll:315::insertup:329::clearline:337::vera_layer_get_color:356 [ main::SPRITE_ATTR cputs::s#0 conio_width CONIO_SCREEN_BANK#14 conio_screen_height conio_height conio_rowshift conio_rowskip conio_screen_width conio_screen_layer CONIO_SCREEN_TEXT#16 vera_layer_get_color::layer#2 vera_layer_get_color::$0 ] { { cputc::c#0 = cputs::c#1 } { vera_layer_get_color::layer#1 = vera_layer_get_color::layer#2 conio_screen_layer } { vera_layer_get_color::return#2 = vera_layer_get_color::return#4 } }  ) always clobbers reg byte a reg byte y 
@@ -6863,7 +6863,7 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [46] *((word*)&main::SPRITE_ATTR) = _word0_main::VRAM_SPRITE/$20 -- _deref_pwuc1=vwuc2 
+    // [46] *((word*)&main::SPRITE_ATTR) = word0 main::VRAM_SPRITE/$20 -- _deref_pwuc1=vwuc2 
     lda #<VRAM_SPRITE/$20&$ffff
     sta.z SPRITE_ATTR
     lda #>VRAM_SPRITE/$20&$ffff
@@ -7397,12 +7397,12 @@ clrscr: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [152] clrscr::$5 = < clrscr::line_text#2 -- vbuaa=_byte0_pbuz1 
+    // [152] clrscr::$5 = byte0  clrscr::line_text#2 -- vbuaa=_byte0_pbuz1 
     lda.z line_text
     // [153] *VERA_ADDRX_L = clrscr::$5 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [154] clrscr::$6 = > clrscr::line_text#2 -- vbuaa=_byte1_pbuz1 
+    // [154] clrscr::$6 = byte1  clrscr::line_text#2 -- vbuaa=_byte1_pbuz1 
     lda.z line_text+1
     // [155] *VERA_ADDRX_M = clrscr::$6 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -7568,16 +7568,16 @@ memcpy_bank_to_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [184] memcpy_bank_to_vram::$0 = < memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte0_vduz1 
+    // [184] memcpy_bank_to_vram::$0 = byte0  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte0_vduz1 
     lda.z vdest
     // [185] *VERA_ADDRX_L = memcpy_bank_to_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [186] memcpy_bank_to_vram::$1 = > memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte1_vduz1 
+    // [186] memcpy_bank_to_vram::$1 = byte1  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte1_vduz1 
     lda.z vdest+1
     // [187] *VERA_ADDRX_M = memcpy_bank_to_vram::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
-    // [188] memcpy_bank_to_vram::$2 = _byte2_ memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte2_vduz1 
+    // [188] memcpy_bank_to_vram::$2 = byte2  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte2_vduz1 
     lda.z vdest+2
     // [189] *VERA_ADDRX_H = memcpy_bank_to_vram::$2 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_H
@@ -7599,14 +7599,14 @@ memcpy_bank_to_vram: {
     lda.z end+3
     adc.z beg+3
     sta.z end+3
-    // [192] memcpy_bank_to_vram::$4 = _byte2_ memcpy_bank_to_vram::beg#0 -- vbuaa=_byte2_vduz1 
+    // [192] memcpy_bank_to_vram::$4 = byte2  memcpy_bank_to_vram::beg#0 -- vbuaa=_byte2_vduz1 
     lda.z beg+2
     // [193] memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3 -- vbuz1=vbuaa_rol_3 
     asl
     asl
     asl
     sta.z __5
-    // [194] memcpy_bank_to_vram::$6 = > memcpy_bank_to_vram::beg#0 -- vbuaa=_byte1_vduz1 
+    // [194] memcpy_bank_to_vram::$6 = byte1  memcpy_bank_to_vram::beg#0 -- vbuaa=_byte1_vduz1 
     lda.z beg+1
     // [195] memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5 -- vbuaa=vbuaa_ror_5 
     lsr
@@ -7617,7 +7617,7 @@ memcpy_bank_to_vram: {
     // [196] memcpy_bank_to_vram::bank#0 = memcpy_bank_to_vram::$5 | memcpy_bank_to_vram::$7 -- vbuxx=vbuz1_bor_vbuaa 
     ora.z __5
     tax
-    // [197] memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0 -- vwuz1=_word0_vduz2 
+    // [197] memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0 -- vwuz1=_word0_vduz2 
     lda.z beg
     sta.z __9
     lda.z beg+1
@@ -7746,7 +7746,7 @@ memcpy_to_vram: {
     // Set address
     lda #0
     sta VERA_ADDRX_L
-    // [213] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0 -- _deref_pbuc1=vbuc2 
+    // [213] *VERA_ADDRX_M = byte1 memcpy_to_vram::vdest#0 -- _deref_pbuc1=vbuc2 
     lda #>vdest
     sta VERA_ADDRX_M
     // [214] *VERA_ADDRX_H = VERA_INC_1|memcpy_to_vram::vbank#0 -- _deref_pbuc1=vbuc2 
@@ -7863,7 +7863,7 @@ vera_layer_mode_tile: {
     jmp __b5
     // vera_layer_mode_tile::@5
   __b5:
-    // [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = _word0_vera_layer_mode_text::tilebase_address#0 -- _deref_pwuc1=vwuc2 
+    // [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = word0 vera_layer_mode_text::tilebase_address#0 -- _deref_pwuc1=vwuc2 
     // tilebase
     lda #<vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
@@ -8052,12 +8052,12 @@ cputc: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [259] cputc::$4 = < cputc::conio_addr#1 -- vbuaa=_byte0_pbuz1 
+    // [259] cputc::$4 = byte0  cputc::conio_addr#1 -- vbuaa=_byte0_pbuz1 
     lda.z conio_addr
     // [260] *VERA_ADDRX_L = cputc::$4 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [261] cputc::$5 = > cputc::conio_addr#1 -- vbuaa=_byte1_pbuz1 
+    // [261] cputc::$5 = byte1  cputc::conio_addr#1 -- vbuaa=_byte1_pbuz1 
     lda.z conio_addr+1
     // [262] *VERA_ADDRX_M = cputc::$5 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -8246,7 +8246,7 @@ vera_layer_set_tilebase: {
     sta.z addr
     lda vera_layer_tilebase+vera_layer_mode_text.layer*SIZEOF_POINTER+1
     sta.z addr+1
-    // [296] *vera_layer_set_tilebase::addr#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK -- _deref_pbuz1=vbuc1 
+    // [296] *vera_layer_set_tilebase::addr#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK -- _deref_pbuz1=vbuc1 
     lda #(>vera_layer_mode_tile.tilebase_address)&VERA_LAYER_TILEBASE_MASK
     ldy #0
     sta (addr),y
@@ -8568,11 +8568,11 @@ clearline: {
     lda.z CONIO_SCREEN_TEXT+1
     adc conio_line_text+1,y
     sta.z addr+1
-    // [350] clearline::$1 = < clearline::addr#0 -- vbuaa=_byte0_pbuz1 
+    // [350] clearline::$1 = byte0  clearline::addr#0 -- vbuaa=_byte0_pbuz1 
     lda.z addr
     // [351] *VERA_ADDRX_L = clearline::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_L
-    // [352] clearline::$2 = > clearline::addr#0 -- vbuaa=_byte1_pbuz1 
+    // [352] clearline::$2 = byte1  clearline::addr#0 -- vbuaa=_byte1_pbuz1 
     lda.z addr+1
     // [353] *VERA_ADDRX_M = clearline::$2 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -8661,12 +8661,12 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [367] memcpy_in_vram::$0 = < (void*)memcpy_in_vram::src#0 -- vbuaa=_byte0_pvoz1 
+    // [367] memcpy_in_vram::$0 = byte0  (void*)memcpy_in_vram::src#0 -- vbuaa=_byte0_pvoz1 
     lda.z src
     // [368] *VERA_ADDRX_L = memcpy_in_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [369] memcpy_in_vram::$1 = > (void*)memcpy_in_vram::src#0 -- vbuaa=_byte1_pvoz1 
+    // [369] memcpy_in_vram::$1 = byte1  (void*)memcpy_in_vram::src#0 -- vbuaa=_byte1_pvoz1 
     lda.z src+1
     // [370] *VERA_ADDRX_M = memcpy_in_vram::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -8678,12 +8678,12 @@ memcpy_in_vram: {
     lda #VERA_ADDRSEL
     ora VERA_CTRL
     sta VERA_CTRL
-    // [373] memcpy_in_vram::$3 = < memcpy_in_vram::dest#0 -- vbuaa=_byte0_pvoz1 
+    // [373] memcpy_in_vram::$3 = byte0  memcpy_in_vram::dest#0 -- vbuaa=_byte0_pvoz1 
     lda.z dest
     // [374] *VERA_ADDRX_L = memcpy_in_vram::$3 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [375] memcpy_in_vram::$4 = > memcpy_in_vram::dest#0 -- vbuaa=_byte1_pvoz1 
+    // [375] memcpy_in_vram::$4 = byte1  memcpy_in_vram::dest#0 -- vbuaa=_byte1_pvoz1 
     lda.z dest+1
     // [376] *VERA_ADDRX_M = memcpy_in_vram::$4 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
@@ -9140,7 +9140,7 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct VERA_SPRITE $0 = { ADDR: _word0_main::VRAM_SPRITE/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f1 }
+constant struct VERA_SPRITE $0 = { ADDR: word0 main::VRAM_SPRITE/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f1 }
 constant const byte BLUE = 6
 byte CONIO_SCREEN_BANK
 byte CONIO_SCREEN_BANK#14 CONIO_SCREEN_BANK zp[1]:27 100.93636363636364
@@ -9352,7 +9352,7 @@ byte load_to_bank(byte load_to_bank::device , byte* load_to_bank::filename , dwo
 byte* load_to_bank::addr
 dword load_to_bank::address
 byte load_to_bank::bank
-constant byte load_to_bank::bank#0 bank = _byte2_main::BANK_SPRITE<<3|>main::BANK_SPRITE>>5
+constant byte load_to_bank::bank#0 bank = byte2 main::BANK_SPRITE<<3|byte1 main::BANK_SPRITE>>5
 byte load_to_bank::device
 constant byte load_to_bank::device#0 device = 8
 byte* load_to_bank::filename
@@ -9426,9 +9426,9 @@ byte* memcpy_to_vram::s#2 s zp[2]:15 1334.6666666666667
 void* memcpy_to_vram::src
 constant void* memcpy_to_vram::src#0 src = (void*)&main::SPRITE_ATTR
 byte memcpy_to_vram::vbank
-constant byte memcpy_to_vram::vbank#0 vbank = _byte2_VERA_SPRITE_ATTR
+constant byte memcpy_to_vram::vbank#0 vbank = byte2 VERA_SPRITE_ATTR
 void* memcpy_to_vram::vdest
-constant void* memcpy_to_vram::vdest#0 vdest = (void*)(byte*)_word0_VERA_SPRITE_ATTR
+constant void* memcpy_to_vram::vdest#0 vdest = (void*)(byte*)word0 VERA_SPRITE_ATTR
 void screenlayer(byte screenlayer::layer)
 word~ screenlayer::$2 zp[2]:30 202.0
 byte~ screenlayer::$3 reg byte a 202.0
@@ -10091,7 +10091,7 @@ main: {
     jsr memcpy_bank_to_vram
     // main::@7
     // SPRITE_ATTR.ADDR = WORD0(VRAM_SPRITE/32)|VERA_SPRITE_4BPP
-    // [46] *((word*)&main::SPRITE_ATTR) = _word0_main::VRAM_SPRITE/$20 -- _deref_pwuc1=vwuc2 
+    // [46] *((word*)&main::SPRITE_ATTR) = word0 main::VRAM_SPRITE/$20 -- _deref_pwuc1=vwuc2 
     lda #<VRAM_SPRITE/$20&$ffff
     sta.z SPRITE_ATTR
     lda #>VRAM_SPRITE/$20&$ffff
@@ -10621,14 +10621,14 @@ clrscr: {
     and VERA_CTRL
     sta VERA_CTRL
     // BYTE0(ch)
-    // [152] clrscr::$5 = < clrscr::line_text#2 -- vbuaa=_byte0_pbuz1 
+    // [152] clrscr::$5 = byte0  clrscr::line_text#2 -- vbuaa=_byte0_pbuz1 
     lda.z line_text
     // *VERA_ADDRX_L = BYTE0(ch)
     // [153] *VERA_ADDRX_L = clrscr::$5 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // BYTE1(ch)
-    // [154] clrscr::$6 = > clrscr::line_text#2 -- vbuaa=_byte1_pbuz1 
+    // [154] clrscr::$6 = byte1  clrscr::line_text#2 -- vbuaa=_byte1_pbuz1 
     lda.z line_text+1
     // *VERA_ADDRX_M = BYTE1(ch)
     // [155] *VERA_ADDRX_M = clrscr::$6 -- _deref_pbuc1=vbuaa 
@@ -10796,20 +10796,20 @@ memcpy_bank_to_vram: {
     and VERA_CTRL
     sta VERA_CTRL
     // BYTE0(vdest)
-    // [184] memcpy_bank_to_vram::$0 = < memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte0_vduz1 
+    // [184] memcpy_bank_to_vram::$0 = byte0  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte0_vduz1 
     lda.z vdest
     // *VERA_ADDRX_L = BYTE0(vdest)
     // [185] *VERA_ADDRX_L = memcpy_bank_to_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // BYTE1(vdest)
-    // [186] memcpy_bank_to_vram::$1 = > memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte1_vduz1 
+    // [186] memcpy_bank_to_vram::$1 = byte1  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte1_vduz1 
     lda.z vdest+1
     // *VERA_ADDRX_M = BYTE1(vdest)
     // [187] *VERA_ADDRX_M = memcpy_bank_to_vram::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
     // BYTE2(vdest)
-    // [188] memcpy_bank_to_vram::$2 = _byte2_ memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte2_vduz1 
+    // [188] memcpy_bank_to_vram::$2 = byte2  memcpy_bank_to_vram::vdest#2 -- vbuaa=_byte2_vduz1 
     lda.z vdest+2
     // *VERA_ADDRX_H = BYTE2(vdest)
     // [189] *VERA_ADDRX_H = memcpy_bank_to_vram::$2 -- _deref_pbuc1=vbuaa 
@@ -10835,7 +10835,7 @@ memcpy_bank_to_vram: {
     adc.z beg+3
     sta.z end+3
     // BYTE2(beg)
-    // [192] memcpy_bank_to_vram::$4 = _byte2_ memcpy_bank_to_vram::beg#0 -- vbuaa=_byte2_vduz1 
+    // [192] memcpy_bank_to_vram::$4 = byte2  memcpy_bank_to_vram::beg#0 -- vbuaa=_byte2_vduz1 
     lda.z beg+2
     // BYTE2(beg)<<3
     // [193] memcpy_bank_to_vram::$5 = memcpy_bank_to_vram::$4 << 3 -- vbuz1=vbuaa_rol_3 
@@ -10844,7 +10844,7 @@ memcpy_bank_to_vram: {
     asl
     sta.z __5
     // BYTE1(beg)
-    // [194] memcpy_bank_to_vram::$6 = > memcpy_bank_to_vram::beg#0 -- vbuaa=_byte1_vduz1 
+    // [194] memcpy_bank_to_vram::$6 = byte1  memcpy_bank_to_vram::beg#0 -- vbuaa=_byte1_vduz1 
     lda.z beg+1
     // BYTE1(beg)>>5
     // [195] memcpy_bank_to_vram::$7 = memcpy_bank_to_vram::$6 >> 5 -- vbuaa=vbuaa_ror_5 
@@ -10858,7 +10858,7 @@ memcpy_bank_to_vram: {
     ora.z __5
     tax
     // WORD0(beg)
-    // [197] memcpy_bank_to_vram::$9 = _word0_ memcpy_bank_to_vram::beg#0 -- vwuz1=_word0_vduz2 
+    // [197] memcpy_bank_to_vram::$9 = word0  memcpy_bank_to_vram::beg#0 -- vwuz1=_word0_vduz2 
     lda.z beg
     sta.z __9
     lda.z beg+1
@@ -10990,7 +10990,7 @@ memcpy_to_vram: {
     lda #0
     sta VERA_ADDRX_L
     // *VERA_ADDRX_M = BYTE1(vdest)
-    // [213] *VERA_ADDRX_M = >memcpy_to_vram::vdest#0 -- _deref_pbuc1=vbuc2 
+    // [213] *VERA_ADDRX_M = byte1 memcpy_to_vram::vdest#0 -- _deref_pbuc1=vbuc2 
     lda #>vdest
     sta VERA_ADDRX_M
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
@@ -11103,7 +11103,7 @@ vera_layer_mode_tile: {
     jsr vera_layer_set_mapbase
     // vera_layer_mode_tile::@5
     // vera_tilebase_offset[layer] = WORD0(tilebase_address)
-    // [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = _word0_vera_layer_mode_text::tilebase_address#0 -- _deref_pwuc1=vwuc2 
+    // [229] *(vera_tilebase_offset+vera_layer_mode_text::layer#0*SIZEOF_WORD) = word0 vera_layer_mode_text::tilebase_address#0 -- _deref_pwuc1=vwuc2 
     // tilebase
     lda #<vera_layer_mode_text.tilebase_address&$ffff
     sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
@@ -11296,14 +11296,14 @@ cputc: {
     and VERA_CTRL
     sta VERA_CTRL
     // BYTE0(conio_addr)
-    // [259] cputc::$4 = < cputc::conio_addr#1 -- vbuaa=_byte0_pbuz1 
+    // [259] cputc::$4 = byte0  cputc::conio_addr#1 -- vbuaa=_byte0_pbuz1 
     lda.z conio_addr
     // *VERA_ADDRX_L = BYTE0(conio_addr)
     // [260] *VERA_ADDRX_L = cputc::$4 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // BYTE1(conio_addr)
-    // [261] cputc::$5 = > cputc::conio_addr#1 -- vbuaa=_byte1_pbuz1 
+    // [261] cputc::$5 = byte1  cputc::conio_addr#1 -- vbuaa=_byte1_pbuz1 
     lda.z conio_addr+1
     // *VERA_ADDRX_M = BYTE1(conio_addr)
     // [262] *VERA_ADDRX_M = cputc::$5 -- _deref_pbuc1=vbuaa 
@@ -11497,7 +11497,7 @@ vera_layer_set_tilebase: {
     lda vera_layer_tilebase+vera_layer_mode_text.layer*SIZEOF_POINTER+1
     sta.z addr+1
     // *addr = tilebase
-    // [296] *vera_layer_set_tilebase::addr#0 = >vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK -- _deref_pbuz1=vbuc1 
+    // [296] *vera_layer_set_tilebase::addr#0 = byte1 vera_layer_mode_tile::tilebase_address#0&VERA_LAYER_TILEBASE_MASK -- _deref_pbuz1=vbuc1 
     lda #(>vera_layer_mode_tile.tilebase_address)&VERA_LAYER_TILEBASE_MASK
     ldy #0
     sta (addr),y
@@ -11817,13 +11817,13 @@ clearline: {
     adc conio_line_text+1,y
     sta.z addr+1
     // BYTE0(addr)
-    // [350] clearline::$1 = < clearline::addr#0 -- vbuaa=_byte0_pbuz1 
+    // [350] clearline::$1 = byte0  clearline::addr#0 -- vbuaa=_byte0_pbuz1 
     lda.z addr
     // *VERA_ADDRX_L = BYTE0(addr)
     // [351] *VERA_ADDRX_L = clearline::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_L
     // BYTE1(addr)
-    // [352] clearline::$2 = > clearline::addr#0 -- vbuaa=_byte1_pbuz1 
+    // [352] clearline::$2 = byte1  clearline::addr#0 -- vbuaa=_byte1_pbuz1 
     lda.z addr+1
     // *VERA_ADDRX_M = BYTE1(addr)
     // [353] *VERA_ADDRX_M = clearline::$2 -- _deref_pbuc1=vbuaa 
@@ -11914,14 +11914,14 @@ memcpy_in_vram: {
     and VERA_CTRL
     sta VERA_CTRL
     // BYTE0(src)
-    // [367] memcpy_in_vram::$0 = < (void*)memcpy_in_vram::src#0 -- vbuaa=_byte0_pvoz1 
+    // [367] memcpy_in_vram::$0 = byte0  (void*)memcpy_in_vram::src#0 -- vbuaa=_byte0_pvoz1 
     lda.z src
     // *VERA_ADDRX_L = BYTE0(src)
     // [368] *VERA_ADDRX_L = memcpy_in_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // BYTE1(src)
-    // [369] memcpy_in_vram::$1 = > (void*)memcpy_in_vram::src#0 -- vbuaa=_byte1_pvoz1 
+    // [369] memcpy_in_vram::$1 = byte1  (void*)memcpy_in_vram::src#0 -- vbuaa=_byte1_pvoz1 
     lda.z src+1
     // *VERA_ADDRX_M = BYTE1(src)
     // [370] *VERA_ADDRX_M = memcpy_in_vram::$1 -- _deref_pbuc1=vbuaa 
@@ -11937,14 +11937,14 @@ memcpy_in_vram: {
     ora VERA_CTRL
     sta VERA_CTRL
     // BYTE0(dest)
-    // [373] memcpy_in_vram::$3 = < memcpy_in_vram::dest#0 -- vbuaa=_byte0_pvoz1 
+    // [373] memcpy_in_vram::$3 = byte0  memcpy_in_vram::dest#0 -- vbuaa=_byte0_pvoz1 
     lda.z dest
     // *VERA_ADDRX_L = BYTE0(dest)
     // [374] *VERA_ADDRX_L = memcpy_in_vram::$3 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // BYTE1(dest)
-    // [375] memcpy_in_vram::$4 = > memcpy_in_vram::dest#0 -- vbuaa=_byte1_pvoz1 
+    // [375] memcpy_in_vram::$4 = byte1  memcpy_in_vram::dest#0 -- vbuaa=_byte1_pvoz1 
     lda.z dest+1
     // *VERA_ADDRX_M = BYTE1(dest)
     // [376] *VERA_ADDRX_M = memcpy_in_vram::$4 -- _deref_pbuc1=vbuaa 

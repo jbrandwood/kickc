@@ -110,7 +110,7 @@ signed char sin8s(unsigned int x) {
         x = PI_u4f12 - x;
     }
     // sinx = x - x^3/6 + x5/128;
-    char x1 = BYTE1(x)<<3; // u[1.7]
+    char x1 = BYTE1(x<<3); // u[1.7]
     char x2 = mulu8_sel(x1, x1, 0); // u[2.6] x^2
     char x3 = mulu8_sel(x2, x1, 1); // u[2.6] x^3
     const char DIV_6 = $2b; // u[0.7] - $2a.aa rounded to $2b

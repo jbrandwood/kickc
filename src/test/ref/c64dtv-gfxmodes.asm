@@ -146,11 +146,11 @@ menu: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400))
     // DTV Color Bank
     lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
@@ -480,11 +480,11 @@ mode_stdchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400))
     // DTV Color Bank
     lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
@@ -615,11 +615,11 @@ mode_ecmchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400))
     // DTV Color Bank
     lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
@@ -760,11 +760,11 @@ mode_mcchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400))
     // DTV Color Bank
     lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
@@ -1049,11 +1049,11 @@ mode_hicolstdchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400))
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = DTV_HIGHCOLOR
@@ -1179,11 +1179,11 @@ mode_hicolecmchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400))
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = DTV_HIGHCOLOR
@@ -1320,11 +1320,11 @@ mode_hicolmcchar: {
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400))
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(COLORS/$400))
+    // *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = DTV_HIGHCOLOR
@@ -1462,11 +1462,11 @@ mode_sixsfred2: {
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEA_START_LO = <PLANEA
+    // *DTV_PLANEA_START_LO = BYTE0(PLANEA)
     // Linear Graphics Plane A Counter
     lda #0
     sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = >PLANEA
+    // *DTV_PLANEA_START_MI = BYTE1(PLANEA)
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
     // *DTV_PLANEA_START_HI = 0
@@ -1480,10 +1480,10 @@ mode_sixsfred2: {
     sta DTV_PLANEA_MODULO_LO
     // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
-    // *DTV_PLANEB_START_LO = <PLANEB
+    // *DTV_PLANEB_START_LO = BYTE0(PLANEB)
     // Linear Graphics Plane B Counter
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = >PLANEB
+    // *DTV_PLANEB_START_MI = BYTE1(PLANEB)
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -1497,11 +1497,11 @@ mode_sixsfred2: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *DTV_COLOR_BANK_LO = <(COLORS/$400)
+    // *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400)
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >(COLORS/$400)
+    // *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400)
     lda #0
     sta DTV_COLOR_BANK_HI
     tax
@@ -1662,11 +1662,11 @@ mode_twoplanebitmap: {
     // *VICII_CONTROL2 = VICII_CSEL
     lda #VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEA_START_LO = <PLANEA
+    // *DTV_PLANEA_START_LO = BYTE0(PLANEA)
     // Linear Graphics Plane A Counter
     lda #0
     sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = >PLANEA
+    // *DTV_PLANEA_START_MI = BYTE1(PLANEA)
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
     // *DTV_PLANEA_START_HI = 0
@@ -1680,10 +1680,10 @@ mode_twoplanebitmap: {
     sta DTV_PLANEA_MODULO_LO
     // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
-    // *DTV_PLANEB_START_LO = <PLANEB
+    // *DTV_PLANEB_START_LO = BYTE0(PLANEB)
     // Linear Graphics Plane B Counter
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = >PLANEB
+    // *DTV_PLANEB_START_MI = BYTE1(PLANEB)
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -1697,11 +1697,11 @@ mode_twoplanebitmap: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *DTV_COLOR_BANK_LO = <(COLORS/$400)
+    // *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400)
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >(COLORS/$400)
+    // *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400)
     lda #0
     sta DTV_COLOR_BANK_HI
     tax
@@ -1873,11 +1873,11 @@ mode_sixsfred: {
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEA_START_LO = <PLANEA
+    // *DTV_PLANEA_START_LO = BYTE0(PLANEA)
     // Linear Graphics Plane A Counter
     lda #0
     sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = >PLANEA
+    // *DTV_PLANEA_START_MI = BYTE1(PLANEA)
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
     // *DTV_PLANEA_START_HI = 0
@@ -1891,10 +1891,10 @@ mode_sixsfred: {
     sta DTV_PLANEA_MODULO_LO
     // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
-    // *DTV_PLANEB_START_LO = <PLANEB
+    // *DTV_PLANEB_START_LO = BYTE0(PLANEB)
     // Linear Graphics Plane B Counter
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = >PLANEB
+    // *DTV_PLANEB_START_MI = BYTE1(PLANEB)
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -1908,11 +1908,11 @@ mode_sixsfred: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *DTV_COLOR_BANK_LO = <(COLORS/$400)
+    // *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400)
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >(COLORS/$400)
+    // *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400)
     lda #0
     sta DTV_COLOR_BANK_HI
     tax
@@ -2066,11 +2066,11 @@ mode_8bpppixelcell: {
     // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEA_START_LO = <PLANEA
+    // *DTV_PLANEA_START_LO = BYTE0(PLANEA)
     // Linear Graphics Plane A Counter
     lda #0
     sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = >PLANEA
+    // *DTV_PLANEA_START_MI = BYTE1(PLANEA)
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
     // *DTV_PLANEA_START_HI = 0
@@ -2084,10 +2084,10 @@ mode_8bpppixelcell: {
     sta DTV_PLANEA_MODULO_LO
     // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
-    // *DTV_PLANEB_START_LO = <PLANEB
+    // *DTV_PLANEB_START_LO = BYTE0(PLANEB)
     // Linear Graphics Plane B Counter
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = >PLANEB
+    // *DTV_PLANEB_START_MI = BYTE1(PLANEB)
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
     // *DTV_PLANEB_START_HI = 0
@@ -2250,13 +2250,13 @@ mode_8bppchunkybmm: {
     // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
     lda #VICII_MCM|VICII_CSEL
     sta VICII_CONTROL2
-    // *DTV_PLANEB_START_LO = < < PLANEB
+    // *DTV_PLANEB_START_LO = BYTE0(PLANEB)
     // Linear Graphics Plane B Counter
     lda #0
     sta DTV_PLANEB_START_LO
-    // *DTV_PLANEB_START_MI = > < PLANEB
+    // *DTV_PLANEB_START_MI = BYTE1(PLANEB)
     sta DTV_PLANEB_START_MI
-    // *DTV_PLANEB_START_HI = < > PLANEB
+    // *DTV_PLANEB_START_HI = BYTE2(PLANEB)
     lda #<PLANEB>>$10
     sta DTV_PLANEB_START_HI
     // *DTV_PLANEB_STEP = 8
@@ -2602,15 +2602,15 @@ bitmap_init: {
     // y&$7
     lda #7
     sax.z __7
-    // <yoffs
+    // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | <yoffs
+    // y&$7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
-    // >yoffs
+    // BYTE1(yoffs)
     lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
+    // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     lda #7
@@ -2757,7 +2757,7 @@ bitmap_line: {
     sta.z e
   __b6:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // y += sy
     lda.z y
@@ -2809,7 +2809,7 @@ bitmap_line: {
     bne __b6
   __b3:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // }
     rts
@@ -2823,7 +2823,7 @@ bitmap_line: {
     sta.z e1
   __b9:
     // bitmap_plot(x,(char)y)
-    lda.z y
+    ldx.z y
     jsr bitmap_plot
     // x += sx
     lda.z x
@@ -2876,7 +2876,7 @@ bitmap_line: {
     jmp __b3
   __b4:
     // bitmap_plot(x,(char)y)
-    lda.z y1
+    ldx.z y1
     jsr bitmap_plot
     rts
 }
@@ -2901,11 +2901,11 @@ dtvSetCpuBankSegment1: {
 abs_u16: {
     .label w = $f
     .label return = $f
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     rts
@@ -2927,11 +2927,11 @@ abs_u16: {
 sgn_u16: {
     .label w = $21
     .label return = $11
-    // >w
+    // BYTE1(w)
     lda.z w+1
-    // >w&0x80
+    // BYTE1(w)&0x80
     and #$80
-    // if(>w&0x80)
+    // if(BYTE1(w)&0x80)
     cmp #0
     bne __b1
     lda #<1
@@ -2947,16 +2947,15 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(9) x, byte register(A) y)
+// bitmap_plot(word zp(9) x, byte register(X) y)
 bitmap_plot: {
     .label __0 = $23
     .label plotter = $21
     .label x = 9
     // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    tay
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta.z plotter+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta.z plotter
     // x & $fff8
     lda.z x
@@ -2973,9 +2972,9 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z __0+1
     sta.z plotter+1
-    // <x
+    // BYTE0(x)
     ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
+    // *plotter |= bitmap_plot_bit[BYTE0(x)]
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y

@@ -74,8 +74,8 @@ void anim() {
     char x_msb = 0;
     for( char j : 0..6) {
         unsigned int x = (unsigned int)$1e + sintab_x[xidx];
-        x_msb = x_msb*2 | >x;
-        SPRITES_XPOS[j2] = <x;
+        x_msb = x_msb*2 | BYTE1(x);
+        SPRITES_XPOS[j2] = BYTE0(x);
         SPRITES_YPOS[j2] = sintab_y[yidx];
         xidx = xidx+10;
         if(xidx>=sinlen_x) {

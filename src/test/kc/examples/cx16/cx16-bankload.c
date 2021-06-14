@@ -80,17 +80,17 @@ void main() {
     // VRAM address of sprite
     const dword VRAM_SPRITE = 0x10000;
     // Sprite attributes: 8bpp, in front, 64x64, address SPRITE_PIXELS_VRAM
-    struct VERA_SPRITE SPRITE_ATTR = { <(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 };
+    struct VERA_SPRITE SPRITE_ATTR = { WORD0(VRAM_SPRITE/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf1 };
 
     char status = load_to_bank(8, "SPRITE", BANK_SPRITE );
 
     memcpy_bank_to_vram(VERA_PALETTE+32, BANK_SPRITE-2, 32);
     memcpy_bank_to_vram(VRAM_SPRITE, BANK_SPRITE+32-2, 64*32);
 
-    SPRITE_ATTR.ADDR = <(VRAM_SPRITE/32)|VERA_SPRITE_4BPP;
+    SPRITE_ATTR.ADDR = WORD0(VRAM_SPRITE/32)|VERA_SPRITE_4BPP;
     SPRITE_ATTR.X = 100;
     SPRITE_ATTR.Y = 100;
-    memcpy_to_vram((char)>VERA_SPRITE_ATTR, (char*)<VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
+    memcpy_to_vram(BYTE2(VERA_SPRITE_ATTR), (char*)WORD0(VERA_SPRITE_ATTR), &SPRITE_ATTR, sizeof(SPRITE_ATTR));
 
     // Enable sprites
     *VERA_CTRL &= ~VERA_DCSEL;

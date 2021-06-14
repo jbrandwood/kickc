@@ -55,14 +55,14 @@ void anim() {
             mulf8s_prepare(sin_a);
 	        xr -= mulf8s_prepared(y)*2; // signed fixed[8.8]
 		    yr += mulf8s_prepared(x)*2; // signed fixed[8.8]
-		    signed int xpos = ((signed char) >xr) + 24 /*border*/ + 149 /*center*/;
+		    signed int xpos = ((signed char) BYTE1(xr)) + 24 /*border*/ + 149 /*center*/;
             sprite_msb = sprite_msb/2;
-            if(>xpos!=0) {
+            if(BYTE1(xpos)!=0) {
                 sprite_msb |= $80;
             }
-            char ypos = (>yr) + 89 /*center*/+ 51 /*border*/;
+            char ypos = BYTE1(yr) + 89 /*center*/+ 51 /*border*/;
             char i2 = i*2;
-       	    SPRITES_XPOS[i2] = <xpos;
+       	    SPRITES_XPOS[i2] = BYTE0(xpos);
        	    SPRITES_YPOS[i2] = ypos;
         }
         VICII->SPRITES_XMSB = sprite_msb;

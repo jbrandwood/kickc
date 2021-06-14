@@ -11,7 +11,7 @@ void main() {
     for(byte i: 0..191) {
         signed byte sb = sintabb[i];
         signed word sw = *(sintabw+(word)i);
-        signed byte sd = sb-(signed byte)>sw;
+        signed byte sd = sb-(signed byte)BYTE1(sw);
         print_schar(sd);
         print_str("  ");
     }

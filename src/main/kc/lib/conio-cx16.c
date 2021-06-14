@@ -135,8 +135,8 @@ void clrscr(void) {
         // Select DATA0
         *VERA_CTRL &= ~VERA_ADDRSEL;
         // Set address
-        *VERA_ADDRX_L = <ch;
-        *VERA_ADDRX_M = >ch;
+        *VERA_ADDRX_L = BYTE0(ch);
+        *VERA_ADDRX_M = BYTE1(ch);
         *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1;
         for( char c=0;c<conio_width; c++ ) {
             *VERA_DATA0 = ' ';
@@ -206,8 +206,8 @@ void cputc(char c) {
         // Select DATA0
         *VERA_CTRL &= ~VERA_ADDRSEL;
         // Set address
-        *VERA_ADDRX_L = <conio_addr;
-        *VERA_ADDRX_M = >conio_addr;
+        *VERA_ADDRX_L = BYTE0(conio_addr);
+        *VERA_ADDRX_M = BYTE1(conio_addr);
         *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1;
         *VERA_DATA0 = c;
         *VERA_DATA0 = color;
@@ -240,8 +240,8 @@ void clearline() {
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
     byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer];
-    *VERA_ADDRX_L = <addr;
-    *VERA_ADDRX_M = >addr;
+    *VERA_ADDRX_L = BYTE0(addr);
+    *VERA_ADDRX_M = BYTE1(addr);
     *VERA_ADDRX_H = VERA_INC_1;
     char color = vera_layer_get_color( conio_screen_layer);
     for( unsigned int c=0;c<CONIO_WIDTH; c++ ) {

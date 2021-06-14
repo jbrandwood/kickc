@@ -3,14 +3,19 @@ package dk.camelot64.kickc.test;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
  */
 public class TestProgramsThorough extends TestPrograms {
+
    @Test
-   public void testCx16VeralibTilemap8bpp() throws IOException {
+   public void testCx16VeralibTilemap8bpp8() throws IOException {
+      compileAndCompare("examples/cx16/veralib/tilemap_8bpp_8_x_8.c");
+   }
+
+   @Test
+   public void testCx16VeralibTilemap8bpp16() throws IOException {
       compileAndCompare("examples/cx16/veralib/tilemap_8bpp_16_x_16.c");
    }
 
@@ -71,12 +76,12 @@ public class TestProgramsThorough extends TestPrograms {
 
    @Test
    public void testC64DtvGfxExplorer() throws IOException {
-      compileAndCompare("c64dtv-gfxexplorer.c", 10);
+      compileAndCompare("c64dtv-gfxexplorer.c",  20);
    }
 
    @Test
    public void testC64DtvGfxModes() throws IOException {
-      compileAndCompare("c64dtv-gfxmodes.c", 10);
+      compileAndCompare("c64dtv-gfxmodes.c", 20);
    }
 
    @Test

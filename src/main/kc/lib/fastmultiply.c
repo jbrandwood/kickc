@@ -26,8 +26,8 @@ void mulf_init() {
         x_2++; // increase i/2 on even numbers
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
     }
-    *sqr1_lo = <sqr;
-    *sqr1_hi++ = >sqr;
+    *sqr1_lo = BYTE0(sqr);
+    *sqr1_hi++ = BYTE1(sqr);
     sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here - see above)
   }
   // Fill mulf_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)
@@ -102,10 +102,10 @@ signed int mulf8s_prepared(signed char b) {
     signed char* const memA = (signed char*)$fd;
     unsigned int m = mulf8u_prepared((char) b);
     if(*memA<0) {
-        >m = (>m)-(char)b;
+        BYTE1(m) = BYTE1(m)-(char)b;
     }
     if(b<0) {
-        >m = (>m)-(char)*memA;
+        BYTE1(m) = BYTE1(m)-(char)*memA;
     }
     return (signed int)m;
 }
@@ -204,10 +204,10 @@ _dd:    lda #0
 signed long mulf16s(signed int a, signed int b) {
     unsigned long m = mulf16u((unsigned int)a, (unsigned int)b);
     if(a<0) {
-        >m = (>m)-(unsigned int)b;
+        WORD1(m) = WORD1(m)-(unsigned int)b;
     }
     if(b<0) {
-        >m = (>m)-(unsigned int)a;
+        WORD1(m) = WORD1(m)-(unsigned int)a;
     }
     return (signed long)m;
 }

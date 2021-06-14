@@ -595,7 +595,7 @@ void vsp_update_screen(__ma char x_offset) {
     *PROCPORT = PROCPORT_RAM_ALL;
     // Update bitmap (using 3 routines to handle all bitmap columns)
     unsigned int x_offset8 = (unsigned int)x_offset*8;
-    if(>x_offset8 == 0) {
+    if(BYTE1(x_offset8) == 0) {
         kickasm(uses x_offset, uses x_offset8, uses PART2_BITMAP, uses LOGO_DATA_BITMAP, clobbers "AXY") {{
             ldx x_offset
             ldy x_offset8
@@ -605,7 +605,7 @@ void vsp_update_screen(__ma char x_offset) {
                     sta PART2_BITMAP+row*40*8+pix,y
                 }
         }}
-    } else if(>x_offset8 == 1) {
+    } else if(BYTE1(x_offset8) == 1) {
         kickasm(uses x_offset, uses x_offset8, uses PART2_BITMAP, uses LOGO_DATA_BITMAP, clobbers "AXY") {{
             ldx x_offset
             ldy x_offset8

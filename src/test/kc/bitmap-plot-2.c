@@ -26,10 +26,10 @@ void main() {
     while(true) {
         signed word cos_x = SINE[idx_x];
         signed dword xpos = mul16s(r, cos_x);
-        word x = (word)(160 + ((signed word)>xpos)>>2);
+        word x = (word)(160 + ((signed word)WORD1(xpos))>>2);
         signed word sin_y = SINE[idx_y];
         signed dword ypos = mul16s(r, sin_y);
-        word y = (word)(100 + ((signed word)>ypos)>>2);
+        word y = (word)(100 + ((signed word)WORD1(ypos))>>2);
         bitmap_plot(x, (byte)y);
         plots_per_frame[frame_cnt]++;
         idx_x += r_add;

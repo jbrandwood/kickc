@@ -30,7 +30,7 @@ void main() {
             signed word xw = (signed word)(word){ (byte)x, 0 };
             signed word yw = (signed word)(word){ (byte)y, 0 };
             word angle_w = atan2_16(xw, yw);
-            byte ang_w = >(angle_w+0x0080);
+            byte ang_w = BYTE1(angle_w+0x0080);
             //*screen = (>angle_w)-angle_b;
             //*screen = >angle_w;
             diff_sum += diff(ang_w, *screen_ref);

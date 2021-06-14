@@ -70,7 +70,7 @@ void init_angle_screen(byte* screen) {
             signed word xw = (signed word)(word){ 39-x*2, 0 };
             signed word yw = (signed word)(word){ y*2, 0 };
             word angle_w = atan2_16(xw, yw);
-            byte ang_w = >(angle_w+0x0080);
+            byte ang_w = BYTE1(angle_w+0x0080);
             screen_bottomline[xb] = ang_w;
             screen_topline[xb] = -ang_w;
             screen_topline[x] = 0x80+ang_w;
@@ -114,7 +114,7 @@ void make_plasma_charset(char* charset) {
     sid_rnd_init();
     print_cls();
     for (unsigned int c = 0; c < 0x100; ++c) {
-        char s = SINTABLE[<c];
+        char s = SINTABLE[BYTE0(c)];
         for ( char i = 0; i < 8; ++i){
             char b = 0;
             for (char ii = 0; ii < 8; ++ii) {

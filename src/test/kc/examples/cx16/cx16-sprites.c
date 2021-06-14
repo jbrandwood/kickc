@@ -49,19 +49,19 @@ __align(0x0400) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
 const unsigned long SPRITE_PIXELS_VRAM = 0x08000; 
 
 // Sprite attributes: 8bpp, in front, 64x64, address SPRITE_PIXELS_VRAM
-struct VERA_SPRITE SPRITE_ATTR = { <(SPRITE_PIXELS_VRAM/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf0 };
+struct VERA_SPRITE SPRITE_ATTR = { WORD0(SPRITE_PIXELS_VRAM/32)|VERA_SPRITE_8BPP, 320-32, 240-32, 0x0c, 0xf0 };
 
 void main() {
     // Copy sprite data to VRAM
-    memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, (char*)<SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64);
+    memcpy_to_vram(BYTE2(SPRITE_PIXELS_VRAM), (char*)WORD0(SPRITE_PIXELS_VRAM), SPRITE_PIXELS, 64*64);
     // Copy sprite palette to VRAM
-    memcpy_to_vram((char)>VERA_PALETTE, (char*)<VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200);
+    memcpy_to_vram(BYTE2(VERA_PALETTE), (char*)WORD0(VERA_PALETTE), SPRITE_PIXELS+64*64, 0x200);
     // Copy 8* sprite attributes to VRAM    
-    char* vram_sprite_attr = (char*)<VERA_SPRITE_ATTR;
+    char* vram_sprite_attr = (char*)WORD0(VERA_SPRITE_ATTR);
     for(char s=0;s<NUM_SPRITES;s++) {
         SPRITE_ATTR.X += 10;
         SPRITE_ATTR.Y += 10;
-        memcpy_to_vram((char)>VERA_SPRITE_ATTR, vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
+        memcpy_to_vram((char)WORD1(VERA_SPRITE_ATTR), vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
         vram_sprite_attr += sizeof(SPRITE_ATTR);
     }    
     // Enable sprites
@@ -96,8 +96,8 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
     // Move the sprite around
     if(++sin_idx_x==SINX_LEN) sin_idx_x = 0;
     if(--sin_idx_y==0xffff) sin_idx_y = SINY_LEN-1;
-    const char vram_sprite_attr_bank = (char)>VERA_SPRITE_ATTR;
-    char *vram_sprite_pos = (char*)<VERA_SPRITE_ATTR+2;
+    const char vram_sprite_attr_bank = BYTE2(VERA_SPRITE_ATTR);
+    char *vram_sprite_pos = (char*)WORD0(VERA_SPRITE_ATTR+2);
     unsigned int i_x = sin_idx_x;
     unsigned int i_y = sin_idx_y;
     for(char s=0;s<NUM_SPRITES;s++) {

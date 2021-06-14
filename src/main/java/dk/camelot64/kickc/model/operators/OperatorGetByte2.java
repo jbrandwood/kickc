@@ -12,7 +12,7 @@ import dk.camelot64.kickc.model.values.ConstantString;
 public class OperatorGetByte2 extends OperatorUnary {
 
    public OperatorGetByte2(int precedence) {
-      super("_byte2_", "_byte2_", precedence);
+      super("byte2 ", "_byte2_", precedence);
    }
 
    @Override

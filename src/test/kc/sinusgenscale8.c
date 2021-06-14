@@ -48,7 +48,7 @@ void sin8u_table(byte* sintab, word tabsize, byte min, byte max) {
     for( word i=0; i<tabsize; i++) {
         signed byte sinx = sin8s(x);
         signed word sinx_sc = mul8su(sinx, amplitude+1);
-        byte sinx_tr = mid+>sinx_sc;
+        byte sinx_tr = mid+BYTE1(sinx_sc);
         *sintab++ = sinx_tr;
         print_str("x: ");
         print_uint(x);

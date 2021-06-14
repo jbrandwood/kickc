@@ -47,8 +47,8 @@ void menu() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -193,8 +193,8 @@ void mode_stdchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     dtv_control = 0;
     *DTV_CONTROL = 0;
@@ -244,8 +244,8 @@ void mode_ecmchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     dtv_control = 0;
     *DTV_CONTROL = 0;
@@ -300,8 +300,8 @@ void mode_mcchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     dtv_control = 0;
     *DTV_CONTROL = 0;
@@ -402,8 +402,8 @@ void mode_hicolstdchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400));
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
@@ -455,8 +455,8 @@ void mode_hicolecmchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400));
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
@@ -511,8 +511,8 @@ void mode_hicolmcchar() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = BYTE0((word)(COLORS/$400));
+     *DTV_COLOR_BANK_HI = BYTE1((word)(COLORS/$400));
     // DTV Graphics Mode
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
@@ -567,22 +567,22 @@ void mode_twoplanebitmap() {
     *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_CSEL;
     // Linear Graphics Plane A Counter
-    *DTV_PLANEA_START_LO = <PLANEA;
-    *DTV_PLANEA_START_MI = >PLANEA;
+    *DTV_PLANEA_START_LO = BYTE0(PLANEA);
+    *DTV_PLANEA_START_MI = BYTE1(PLANEA);
     *DTV_PLANEA_START_HI = 0;
     *DTV_PLANEA_STEP = 1;
     *DTV_PLANEA_MODULO_LO = 0;
     *DTV_PLANEA_MODULO_HI = 0;
     // Linear Graphics Plane B Counter
-    *DTV_PLANEB_START_LO = <PLANEB;
-    *DTV_PLANEB_START_MI = >PLANEB;
+    *DTV_PLANEB_START_LO = BYTE0(PLANEB);
+    *DTV_PLANEB_START_MI = BYTE1(PLANEB);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 1;
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <(COLORS/$400);
-     *DTV_COLOR_BANK_HI = >(COLORS/$400);
+     *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400);
+     *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400);
     // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
@@ -637,22 +637,22 @@ void mode_sixsfred() {
     *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
-    *DTV_PLANEA_START_LO = <PLANEA;
-    *DTV_PLANEA_START_MI = >PLANEA;
+    *DTV_PLANEA_START_LO = BYTE0(PLANEA);
+    *DTV_PLANEA_START_MI = BYTE1(PLANEA);
     *DTV_PLANEA_START_HI = 0;
     *DTV_PLANEA_STEP = 1;
     *DTV_PLANEA_MODULO_LO = 0;
     *DTV_PLANEA_MODULO_HI = 0;
     // Linear Graphics Plane B Counter
-    *DTV_PLANEB_START_LO = <PLANEB;
-    *DTV_PLANEB_START_MI = >PLANEB;
+    *DTV_PLANEB_START_LO = BYTE0(PLANEB);
+    *DTV_PLANEB_START_MI = BYTE1(PLANEB);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 1;
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <(COLORS/$400);
-     *DTV_COLOR_BANK_HI = >(COLORS/$400);
+     *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400);
+     *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400);
     // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
@@ -703,22 +703,22 @@ void mode_sixsfred2() {
     *VICII_CONTROL1 = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
-    *DTV_PLANEA_START_LO = <PLANEA;
-    *DTV_PLANEA_START_MI = >PLANEA;
+    *DTV_PLANEA_START_LO = BYTE0(PLANEA);
+    *DTV_PLANEA_START_MI = BYTE1(PLANEA);
     *DTV_PLANEA_START_HI = 0;
     *DTV_PLANEA_STEP = 1;
     *DTV_PLANEA_MODULO_LO = 0;
     *DTV_PLANEA_MODULO_HI = 0;
     // Linear Graphics Plane B Counter
-    *DTV_PLANEB_START_LO = <PLANEB;
-    *DTV_PLANEB_START_MI = >PLANEB;
+    *DTV_PLANEB_START_LO = BYTE0(PLANEB);
+    *DTV_PLANEB_START_MI = BYTE1(PLANEB);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 1;
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <(COLORS/$400);
-     *DTV_COLOR_BANK_HI = >(COLORS/$400);
+     *DTV_COLOR_BANK_LO = BYTE0(COLORS/$400);
+     *DTV_COLOR_BANK_HI = BYTE1(COLORS/$400);
     // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
@@ -774,15 +774,15 @@ void mode_8bpppixelcell() {
     *VICII_CONTROL1 = VICII_ECM|VICII_DEN|VICII_RSEL|3;
     *VICII_CONTROL2 = VICII_MCM|VICII_CSEL;
     // Linear Graphics Plane A Counter
-    *DTV_PLANEA_START_LO = <PLANEA;
-    *DTV_PLANEA_START_MI = >PLANEA;
+    *DTV_PLANEA_START_LO = BYTE0(PLANEA);
+    *DTV_PLANEA_START_MI = BYTE1(PLANEA);
     *DTV_PLANEA_START_HI = 0;
     *DTV_PLANEA_STEP = 1;
     *DTV_PLANEA_MODULO_LO = 0;
     *DTV_PLANEA_MODULO_HI = 0;
     // Linear Graphics Plane B Counter
-    *DTV_PLANEB_START_LO = <PLANEB;
-    *DTV_PLANEB_START_MI = >PLANEB;
+    *DTV_PLANEB_START_LO = BYTE0(PLANEB);
+    *DTV_PLANEB_START_MI = BYTE1(PLANEB);
     *DTV_PLANEB_START_HI = 0;
     *DTV_PLANEB_STEP = 0;
     *DTV_PLANEB_MODULO_LO = 0;
@@ -842,9 +842,9 @@ void mode_8bppchunkybmm() {
     *VICII_CONTROL1 = VICII_ECM | VICII_DEN | VICII_RSEL | 3;
     *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Linear Graphics Plane B Counter
-    *DTV_PLANEB_START_LO = < < PLANEB;
-    *DTV_PLANEB_START_MI = > < PLANEB;
-    *DTV_PLANEB_START_HI = < > PLANEB;
+    *DTV_PLANEB_START_LO = BYTE0(PLANEB);
+    *DTV_PLANEB_START_MI = BYTE1(PLANEB);
+    *DTV_PLANEB_START_HI = BYTE2(PLANEB);
     *DTV_PLANEB_STEP = 8;
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;

@@ -254,13 +254,13 @@ void splash_run() {
         unsigned int xpos = sprites_xpos[i];
         SPRITES_XPOS[i*2] = (char)xpos;
         msb /= 2;
-        if((>xpos)) msb |=0x80; 
+        if(BYTE1(xpos)) msb |=0x80;
     }
 
     // Set initial graphics bank
     CIA2->PORT_A = toDd00(SCREENS_1);
     // Set initial render/restore buffer
-    canvas_base_hi = >SPRITES_2;
+    canvas_base_hi = BYTE1(SPRITES_2);
     bobs_restore_base = NUM_BOBS*SIZE_BOB_RESTORE;
 
     // Select first screen
@@ -642,13 +642,13 @@ __interrupt void irq_screen_top() {
         // Change graphics bank
         CIA2->PORT_A = toDd00(SCREENS_2);
         // Set the next canvas base address
-        canvas_base_hi = >SPRITES_1;
+        canvas_base_hi = BYTE1(SPRITES_1);
         bobs_restore_base = 0;
     } else {
         // Change graphics bank
         CIA2->PORT_A = toDd00(SCREENS_1);
         // Set the next canvas base address
-        canvas_base_hi = >SPRITES_2;
+        canvas_base_hi = BYTE1(SPRITES_2);
         bobs_restore_base = NUM_BOBS*SIZE_BOB_RESTORE;
     }
 

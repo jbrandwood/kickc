@@ -66,7 +66,7 @@ void point_init(byte point_idx) {
             x_add[point_idx] = $10;
         }
         signed word x_stepf = divr16s(0, x_diff, y_diff);
-        y_add[point_idx] = (signed byte)((>x_stepf)/$10);
+        y_add[point_idx] = (signed byte)(BYTE1(x_stepf)/$10);
     } else {
         // X is driver - abs(x/y) is < 1
     }
@@ -109,8 +109,8 @@ void bitmap_init(byte* bitmap) {
     }
     byte* yoffs = bitmap;
     for(byte y : 0..255) {
-        bitmap_plot_ylo[y] = y&$7 | <yoffs;
-        bitmap_plot_yhi[y] = >yoffs;
+        bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs);
+        bitmap_plot_yhi[y] = BYTE1(yoffs);
         if((y&$7)==7) {
             yoffs = yoffs + 40*8;
         }
@@ -131,5 +131,5 @@ void bitmap_clear() {
 void bitmap_plot(word x, byte y) {
     byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
     plotter += ( x & $fff8 );
-    *plotter |= bitmap_plot_bit[<x];
+    *plotter |= bitmap_plot_bit[BYTE0(x)];
 }

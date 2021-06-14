@@ -47,7 +47,7 @@ void bitmap_clear(char bgcol, char fgcol) {
 void bitmap_plot(unsigned int x, char y) {
     char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
     plotter += ( x & $fff8 );
-    *plotter |= bitmap_plot_bit[(char)x];
+    *plotter |= bitmap_plot_bit[BYTE0(x)];
 }
 
 // Draw a line on the bitmap using bresenhams algorithm

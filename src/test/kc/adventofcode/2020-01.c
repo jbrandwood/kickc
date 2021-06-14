@@ -33,7 +33,7 @@ void main() {
                     printf("\n");                
                     printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k]);
                     unsigned long mul1 = mul16u(entries[i],entries[k]);  // I am cheating a bit here multiplying entry i&k first
-                    unsigned long mul2 = mul16u( <mul1 ,entries[j] );    // Because I knwo the product of those fit in an unsigned int
+                    unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] );    // Because I knwo the product of those fit in an unsigned int
                     printf("multiplied %lu\n", mul2);
                 }
             }

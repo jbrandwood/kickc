@@ -24,10 +24,10 @@ void main() {
     while(true) {
         signed word cos_x = SINE[idx_x];
         signed dword xpos = mul16s(160, cos_x);
-        word x = (word)(160 + >(xpos<<4));
+        word x = (word)(160 + WORD1(xpos<<4));
         signed word sin_y = SINE[idx_y];
         signed dword ypos = mul16s(100, sin_y);
-        word y = (word)(100 + >(ypos<<4));
+        word y = (word)(100 + WORD1(ypos<<4));
         bitmap_plot(x, (byte)y);
         if(++idx_x==512) idx_x = 0;
         if(++idx_y==512) idx_y = 0;

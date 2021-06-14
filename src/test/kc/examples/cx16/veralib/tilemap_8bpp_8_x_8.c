@@ -27,7 +27,7 @@ void main() {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
     };
 
-    word tilebase = 0x4000;
+    char* tilebase = (char*)0x4000;
     memcpy_to_vram(1, tilebase, tiles, 64);
     tilebase+=64;
     for(byte t:1..255) {

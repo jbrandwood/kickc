@@ -192,10 +192,10 @@ public class AsmFormat {
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xffffffffL), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
       } else if(Operators.BYTE0.equals(operator)) {
          // Parenthesis is never needed since operator "<" has the lowest precedence
-         return operator.getOperator() + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
+         return "<" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
       } else if(Operators.BYTE1.equals(operator)) {
          // Parenthesis is never needed since operator ">" has the lowest precedence
-         return operator.getOperator() + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
+         return ">" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
       } else if(Operators.BYTE2.equals(operator)) {
          // Parenthesis is never needed since operator "<" has the lowest precedence
          return "<" + getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);

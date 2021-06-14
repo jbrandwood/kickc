@@ -15,7 +15,7 @@ void sin16s_genb(signed word* sintab, word wavelength) {
     // Iterate over the table
     dword x = 0; // u[4.28]
     for( word i=0; i<wavelength; i++) {
-        *sintab++ = sin16sb(>x);
+        *sintab++ = sin16sb(WORD1(x));
         x = x + step;
     }
 }

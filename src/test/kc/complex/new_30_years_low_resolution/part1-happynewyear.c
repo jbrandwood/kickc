@@ -213,11 +213,11 @@ __interrupt void irq_part1_top() {
     VICII->MEMORY = toD018(P1_SCREEN, P1_PIXELS);
 
     // Set up the flipper IRQ
-    if(>irq_flipper_top_line)
+    if(BYTE1(irq_flipper_top_line))
         *VICII_CONTROL1 |= 0x80;
     else
         *VICII_CONTROL1 &= 0x7f;
-    *RASTER = (<irq_flipper_top_line)&0xf8;
+    *RASTER = BYTE0(irq_flipper_top_line)&0xf8;
     *HARDWARE_IRQ = &irq_flipper_top;
     // Signal main routine to play music    
     p1_work_ready = 1;
@@ -229,7 +229,7 @@ __interrupt void irq_part1_top() {
 // Flips from start screen to bitmap (stops the bitmap)
 __interrupt void irq_flipper_top() {
     asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-    raster_fine((<irq_flipper_top_line)&7);
+    raster_fine(BYTE0(irq_flipper_top_line)&7);
     asm {
         lda #$9a            // VICII->MEMORY = toD018(LOAD_SCREEN, PIXELS_EMPTY);
         ldx #LIGHT_GREEN    // VICII->BORDER_COLOR = LIGHT_GREEN;
@@ -242,11 +242,11 @@ __interrupt void irq_flipper_top() {
         sta VICII_CONTROL2
     }
     // Set up the flipper IRQ
-    if(>irq_flipper_bottom_line)
+    if(BYTE1(irq_flipper_bottom_line))
         *VICII_CONTROL1 |= 0x80;
     else
         *VICII_CONTROL1 &= 0x7f;
-    *RASTER = (<irq_flipper_bottom_line)&0xf8;
+    *RASTER = BYTE0(irq_flipper_bottom_line)&0xf8;
     *HARDWARE_IRQ = &irq_flipper_bottom;
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;    
@@ -259,7 +259,7 @@ volatile unsigned int irq_flipper_idx = 0x00;
 // Flips from start screen to bitmap (starts the start-up screen)
 __interrupt void irq_flipper_bottom() {
     asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-    raster_fine((<irq_flipper_bottom_line)&7);
+    raster_fine(BYTE0(irq_flipper_bottom_line)&7);
     // Colors
     asm { nop nop nop nop }
     VICII->BORDER_COLOR = LIGHT_BLUE;

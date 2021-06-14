@@ -118,7 +118,7 @@ void init_angle_screen(byte* screen) {
             signed word xw = (signed word)(word){ 39-x*2, 0 };
             signed word yw = (signed word)(word){ y*2, 0 };
             word angle_w = atan2_16(xw, yw);
-            byte ang_w = >(angle_w+0x0080);
+            byte ang_w = BYTE1(angle_w+0x0080);
             screen_bottomline[xb] = ang_w;
             screen_topline[xb] = -ang_w;
             screen_topline[x] = 0x80+ang_w;

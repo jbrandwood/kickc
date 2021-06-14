@@ -12,7 +12,7 @@ import dk.camelot64.kickc.model.values.ConstantString;
 public class OperatorGetWord1 extends OperatorUnary {
 
    public OperatorGetWord1(int precedence) {
-      super("_word1_", "_word1_", precedence);
+      super("word1 ", "_word1_", precedence);
    }
 
    @Override

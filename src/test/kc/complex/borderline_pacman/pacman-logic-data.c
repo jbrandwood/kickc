@@ -35,10 +35,10 @@ void init_bobs_restore() {
     for(char bob=0;bob<NUM_BOBS*2;bob++) {
         for(char i=0;i<SIZE_BOB_RESTORE;i++)
             bob_restore[i] = 0;
-        bob_restore[0] = <CANVAS_HIDDEN;
-        bob_restore[1] = >CANVAS_HIDDEN;
-        bob_restore[3] = <CANVAS_HIDDEN;
-        bob_restore[4] = >CANVAS_HIDDEN;
+        bob_restore[0] = BYTE0(CANVAS_HIDDEN);
+        bob_restore[1] = BYTE1(CANVAS_HIDDEN);
+        bob_restore[3] = BYTE0(CANVAS_HIDDEN);
+        bob_restore[4] = BYTE1(CANVAS_HIDDEN);
         bob_restore += SIZE_BOB_RESTORE;
     }
 

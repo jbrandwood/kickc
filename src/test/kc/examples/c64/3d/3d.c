@@ -242,7 +242,7 @@ void calculate_matrix_16(signed char sx, signed char sy, signed char sz) {
 // Returns the rounded high char of the passed signed int.
 // Examines the lower char to determine whether to round up or down
 signed char round_hi(signed int val) {
-	return (signed char)>(val+$80);
+	return (signed char)BYTE1(val+$80);
 }
 
 

@@ -17,8 +17,8 @@ inline void vera_vram_bank_offset(byte bank, word offset, byte incr) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(offset);
-    *VERA_ADDRX_M = >(offset);
+    *VERA_ADDRX_L = BYTE0(offset);
+    *VERA_ADDRX_M = BYTE1(offset);
     *VERA_ADDRX_H = bank | incr;
 }
 
@@ -26,18 +26,18 @@ inline void vera_vram_address0(dword bankaddr, byte incr) {
     // Select DATA0
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(<bankaddr);
-    *VERA_ADDRX_M = >(<bankaddr);
-    *VERA_ADDRX_H = <(>bankaddr) | incr;
+    *VERA_ADDRX_L = BYTE0(bankaddr);
+    *VERA_ADDRX_M = BYTE1(bankaddr);
+    *VERA_ADDRX_H = BYTE2(bankaddr) | incr;
 }
 
 inline void vera_vram_address1(dword bankaddr, byte incr) {
     // Select DATA1
     *VERA_CTRL |= VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <(<bankaddr);
-    *VERA_ADDRX_M = >(<bankaddr);
-    *VERA_ADDRX_H = <(>bankaddr) | incr;
+    *VERA_ADDRX_L = BYTE0(bankaddr);
+    *VERA_ADDRX_M = BYTE1(bankaddr);
+    *VERA_ADDRX_H = BYTE2(bankaddr) | incr;
 }
 
 // --- VERA active display management ---
@@ -292,14 +292,14 @@ void vera_layer_set_mapbase(byte layer, byte mapbase) {
 void vera_layer_set_mapbase_address(byte layer, dword mapbase_address) {
 
     mapbase_address = mapbase_address & 0x1FF00; // Aligned to 2048 bit zones.
-    byte bank_mapbase = (byte)>mapbase_address;
-    word offset_mapbase = <mapbase_address;
+    byte bank_mapbase = BYTE2(mapbase_address);
+    word offset_mapbase = WORD0(mapbase_address);
 
     vera_mapbase_address[layer] = mapbase_address;
     vera_mapbase_offset[layer] = offset_mapbase;
     vera_mapbase_bank[layer] = bank_mapbase;
 
-    byte mapbase = >(<(mapbase_address>>1));
+    byte mapbase = BYTE1(mapbase_address>>1);
     vera_layer_set_mapbase(layer,mapbase);
 }
 
@@ -366,15 +366,15 @@ byte vera_layer_get_tilebase(byte layer) {
 void vera_layer_set_tilebase_address(byte layer, dword tilebase_address) {
 
     tilebase_address = tilebase_address & 0x1FC00; // Aligned to 2048 bit zones.
-    byte bank_tilebase = (byte)>tilebase_address;
-    word word_tilebase = <tilebase_address;
+    byte bank_tilebase = BYTE2(tilebase_address);
+    word word_tilebase = WORD0(tilebase_address);
 
     vera_tilebase_address[layer] = tilebase_address;
     vera_tilebase_offset[layer] = word_tilebase;
     vera_tilebase_bank[layer] = bank_tilebase;
 
     byte* vera_tilebase = vera_layer_tilebase[layer];
-    byte tilebase = >(<(tilebase_address>>1));
+    byte tilebase = BYTE1(tilebase_address>>1);
     tilebase &= VERA_LAYER_TILEBASE_MASK; // Ensure that only tilebase is blanked, but keep the rest!
     //printf("tilebase = %x\n",tilebase);
     //while(!kbhit());
@@ -457,16 +457,16 @@ byte vera_layer_get_color(byte layer) {
 // - layer: Value of 0 or 1.
 // - scroll: A value between 0 and 4096.
 inline void vera_layer_set_horizontal_scroll(byte layer, word scroll) {
-    *vera_layer_hscroll_l[layer] = <scroll;
-    *vera_layer_hscroll_h[layer] = >scroll;
+    *vera_layer_hscroll_l[layer] = BYTE0(scroll);
+    *vera_layer_hscroll_h[layer] = BYTE1(scroll);
 }
 
 // Scroll the vertical (Y) axis of the layer visible area over the layer tile map area.
 // - layer: Value of 0 or 1.
 // - scroll: A value between 0 and 4096.
 inline void vera_layer_set_vertical_scroll(byte layer, word scroll) {
-    *vera_layer_vscroll_l[layer] = <scroll;
-    *vera_layer_vscroll_h[layer] = >scroll;
+    *vera_layer_vscroll_l[layer] = BYTE0(scroll);
+    *vera_layer_vscroll_h[layer] = BYTE1(scroll);
 }
 
 // Get the bit shift value required to skip a whole line fast.
@@ -559,21 +559,21 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword tilebase_addr
     vera_layer_set_config(layer, config);
 
     // mapbase
-    vera_mapbase_offset[layer] = <mapbase_address;
-    vera_mapbase_bank[layer] = (byte)(>mapbase_address);
+    vera_mapbase_offset[layer] = WORD0(mapbase_address);
+    vera_mapbase_bank[layer] = BYTE2(mapbase_address);
     vera_mapbase_address[layer] = mapbase_address;
 
     mapbase_address = mapbase_address >> 1;
-    byte mapbase = >(<mapbase_address);
+    byte mapbase = BYTE1(mapbase_address);
     vera_layer_set_mapbase(layer,mapbase);
 
     // tilebase
-    vera_tilebase_offset[layer] = <tilebase_address;
-    vera_tilebase_bank[layer] = (byte)>tilebase_address;
+    vera_tilebase_offset[layer] = WORD0(tilebase_address);
+    vera_tilebase_bank[layer] = BYTE2(tilebase_address);
     vera_tilebase_address[layer] = tilebase_address;
 
     tilebase_address = tilebase_address >> 1;
-    byte tilebase = >(<tilebase_address);
+    byte tilebase = BYTE1(tilebase_address);
     tilebase &= VERA_LAYER_TILEBASE_MASK;
     switch(tilewidth) {
         case 8:
@@ -663,12 +663,12 @@ void vera_layer_mode_bitmap(byte layer, dword bitmap_address, word mapwidth, wor
     config = config | VERA_LAYER_CONFIG_MODE_BITMAP;
 
     // tilebase
-    vera_tilebase_offset[layer] = <bitmap_address;
-    vera_tilebase_bank[layer] = (byte)>bitmap_address;
+    vera_tilebase_offset[layer] = WORD0(bitmap_address);
+    vera_tilebase_bank[layer] = BYTE2(bitmap_address);
     vera_tilebase_address[layer] = bitmap_address;
 
     bitmap_address = bitmap_address >> 1;
-    byte tilebase = >(<bitmap_address);
+    byte tilebase = BYTE1(bitmap_address);
     tilebase &= VERA_LAYER_TILEBASE_MASK;
 
     // mapwidth
@@ -697,8 +697,8 @@ void vera_tile_area(byte layer, word tileindex, byte x, byte y, byte w, byte h, 
     hflip = vera_layer_hflip[hflip];
     vflip = vera_layer_vflip[vflip];
     offset = offset << 4;
-    byte index_l = <tileindex;
-    byte index_h = >tileindex;
+    byte index_l = BYTE0(tileindex);
+    byte index_h = BYTE1(tileindex);
     index_h |= hflip;
     index_h |= vflip;
     index_h |= offset;

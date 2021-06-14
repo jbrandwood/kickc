@@ -334,9 +334,9 @@ void gfx_mode() {
     // Linear Graphics Plane A Counter
     byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo;
     dword plane_a = get_plane(*form_a_pattern) + plane_a_offs;
-    *DTV_PLANEA_START_LO = < < plane_a;
-    *DTV_PLANEA_START_MI = > < plane_a;
-    *DTV_PLANEA_START_HI = < > plane_a;
+    *DTV_PLANEA_START_LO = BYTE0(plane_a);
+    *DTV_PLANEA_START_MI = BYTE1(plane_a);
+    *DTV_PLANEA_START_HI = BYTE2(plane_a);
     *DTV_PLANEA_STEP = *form_a_step_hi*$10|*form_a_step_lo;
     *DTV_PLANEA_MODULO_LO = *form_a_mod_hi*$10|*form_a_mod_lo;
     *DTV_PLANEA_MODULO_HI = 0;
@@ -344,9 +344,9 @@ void gfx_mode() {
     // Linear Graphics Plane B Counter
     byte plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo;
     dword plane_b = get_plane(*form_b_pattern) + plane_b_offs;
-    *DTV_PLANEB_START_LO = < < plane_b;
-    *DTV_PLANEB_START_MI = > < plane_b;
-    *DTV_PLANEB_START_HI = < > plane_b;
+    *DTV_PLANEB_START_LO = BYTE0(plane_b);
+    *DTV_PLANEB_START_MI = BYTE1(plane_b);
+    *DTV_PLANEB_START_HI = BYTE2(plane_b);
     *DTV_PLANEB_STEP = *form_b_step_hi*$10|*form_b_step_lo;
     *DTV_PLANEB_MODULO_LO = *form_b_mod_hi*$10|*form_b_mod_lo;
     *DTV_PLANEB_MODULO_HI = 0;
@@ -355,7 +355,7 @@ void gfx_mode() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)VICII_SCREEN0/$4000); // Set VIC Bank
     // VIC memory
-    *VICII_MEMORY = (byte)(((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40)  |   ((>((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4);
+    *VICII_MEMORY = (byte)(((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40)  |   ((BYTE1((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4);
 
     // VIC Colors
     byte* VICII_colors = get_VICII_screen(*form_VICII_cols);
@@ -609,9 +609,9 @@ void gfx_init_plane_full() {
 
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 void gfx_init_plane_fill(dword plane_addr, byte fill) {
-    byte gfxbCpuBank = < >(plane_addr*4);
+    byte gfxbCpuBank = BYTE2(plane_addr*4);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = (byte*)$4000 + (<plane_addr & $3fff);
+    byte* gfxb = (byte*)$4000 + (WORD0(plane_addr) & $3fff);
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
                 *gfxb++ = fill;
@@ -641,8 +641,8 @@ void form_mode() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000);
     // DTV Color Bank
-    *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-    *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    *DTV_COLOR_BANK_LO = BYTE0((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    *DTV_COLOR_BANK_HI = BYTE1((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // VIC Graphics Bank
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000); // Set VIC Bank
@@ -654,8 +654,8 @@ void form_mode() {
     // VIC Memory Pointers
     VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
     // DTV Plane A to FORM_SCREEN also
-    *DTV_PLANEA_START_LO = < FORM_SCREEN;
-    *DTV_PLANEA_START_MI = > FORM_SCREEN;
+    *DTV_PLANEA_START_LO = BYTE0(FORM_SCREEN);
+    *DTV_PLANEA_START_MI = BYTE1(FORM_SCREEN);
     *DTV_PLANEA_START_HI = 0;
     // DTV Palette - default
     for(byte i : 0..$f) {
@@ -702,8 +702,8 @@ void form_set_screen(byte* screen) {
     // Calculate the field line table
     byte* line = screen;
     for(byte y: 0..24) {
-        form_line_lo[y] = <line;
-        form_line_hi[y] = >line;
+        form_line_lo[y] = BYTE0(line);
+        form_line_hi[y] = BYTE1(line);
         line = line + 40;
     }
 }

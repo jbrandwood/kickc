@@ -81,6 +81,13 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                if(assignment.getOperator() != null && Operators.BYTE3.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
+               // TODO: Remove these and find a better way generate ASM for additions and other operations in 16bit
+               if(assignment.getOperator() != null && Operators.WORD0.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+                  potentialAluVar = findAluPotential(assignment);
+               }
+               if(assignment.getOperator() != null && Operators.WORD1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+                  potentialAluVar = findAluPotential(assignment);
+               }
             }
          }
       }

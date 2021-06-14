@@ -75,7 +75,7 @@ void makecharset(char* charset) {
     sid_rnd_init();
     print_cls();
     for (unsigned int c = 0; c < 0x100; ++c) {
-        char s = SINTABLE[<c];
+        char s = SINTABLE[BYTE0(c)];
         for ( char i = 0; i < 8; ++i){
             char b = 0;
             for (char ii = 0; ii < 8; ++ii) {

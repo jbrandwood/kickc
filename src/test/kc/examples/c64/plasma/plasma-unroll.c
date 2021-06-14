@@ -82,7 +82,7 @@ void makecharset(unsigned char* charset) {
     sid_rnd_init();
     print_cls();
     for (unsigned int c = 0; c < 0x100; ++c) {
-        unsigned char s = SINTABLE[<c];
+        unsigned char s = SINTABLE[BYTE0(c)];
         for ( unsigned char i = 0; i < 8; ++i){
             unsigned char b = 0;
             for (unsigned char ii = 0; ii < 8; ++ii) {

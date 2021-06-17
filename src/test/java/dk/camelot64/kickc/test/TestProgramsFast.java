@@ -3486,6 +3486,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testConsolidateConstantProblem2() throws IOException {
+      compileAndCompare("consolidate-constant-problem-2.c");
+   }
+
+   @Test
    public void testConsolidateArrayIndexProblem() throws IOException {
       compileAndCompare("consolidate-array-index-problem.c");
    }

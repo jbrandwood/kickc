@@ -1,0 +1,431 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::COLS#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  main::COLS#2 = phi( main/main::COLS#0, main::@5/main::COLS#1 )
+  main::$0 = main::COLS#2 < 2
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::COLS#3 = phi( main::@1/main::COLS#2 )
+  main::$1 = main::COLS#3 * 4
+  main::$2 = SCREEN + main::$1
+  main::$3 = main::$2 + 2
+  main::sc#0 = main::$3
+  main::i#0 = 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  main::sc#2 = phi( main::@2/main::sc#0, main::@4/main::sc#1 )
+  main::COLS#6 = phi( main::@2/main::COLS#3, main::@4/main::COLS#4 )
+  main::i#2 = phi( main::@2/main::i#0, main::@4/main::i#1 )
+  main::$4 = main::i#2 < 4
+  if(main::$4) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3
+  main::i#3 = phi( main::@3/main::i#2 )
+  main::sc#1 = phi( main::@3/main::sc#2 )
+  main::COLS#4 = phi( main::@3/main::COLS#6 )
+  main::sc#1[main::i#3] = main::COLS#4
+  main::i#1 = ++ main::i#3
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  main::COLS#5 = phi( main::@3/main::COLS#6 )
+  main::COLS#1 = ++ main::COLS#5
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* const SCREEN = (byte*)$400
+void __start()
+void main()
+bool~ main::$0
+number~ main::$1
+byte*~ main::$2
+byte*~ main::$3
+bool~ main::$4
+byte main::COLS
+byte main::COLS#0
+byte main::COLS#1
+byte main::COLS#2
+byte main::COLS#3
+byte main::COLS#4
+byte main::COLS#5
+byte main::COLS#6
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte* main::sc
+byte* main::sc#0
+byte* main::sc#1
+byte* main::sc#2
+
+Adding number conversion cast (unumber) 2 in main::$0 = main::COLS#2 < 2
+Adding number conversion cast (unumber) 4 in main::$1 = main::COLS#3 * 4
+Adding number conversion cast (unumber) main::$1 in main::$1 = main::COLS#3 * (unumber)4
+Adding number conversion cast (unumber) 2 in main::$3 = main::$2 + 2
+Adding number conversion cast (unumber) 4 in main::$4 = main::i#2 < 4
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 2
+Simplifying constant integer cast 4
+Simplifying constant integer cast 2
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in main::$1 = main::COLS#3 * 4
+Alias main::COLS#2 = main::COLS#3 
+Alias main::sc#0 = main::$3 
+Alias main::COLS#4 = main::COLS#6 main::COLS#5 
+Alias main::sc#1 = main::sc#2 
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::COLS#4 main::COLS#2
+Identical Phi Values main::sc#1 main::sc#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [3] if(main::COLS#2<2) goto main::@2
+Simple Condition main::$4 [10] if(main::i#2<4) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::COLS#0 = 0
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting multiplication to use shift [2] main::$1 = main::COLS#2 * 4
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings main::COLS#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::COLS#0 = 0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 2 initial phi equivalence classes
+Coalesced [10] main::COLS#7 = main::COLS#1
+Coalesced [13] main::i#4 = main::i#1
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [1] main::COLS#2 = phi( main/0, main::@5/main::COLS#1 )
+  [2] if(main::COLS#2<2) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::$1 = main::COLS#2 << 2
+  [5] main::$2 = SCREEN + main::$1
+  [6] main::sc#0 = main::$2 + 2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [7] main::i#2 = phi( main::@2/0, main::@4/main::i#1 )
+  [8] if(main::i#2<4) goto main::@4
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [9] main::COLS#1 = ++ main::COLS#2
+  to:main::@1
+main::@4: scope:[main]  from main::@3
+  [10] main::sc#0[main::i#2] = main::COLS#2
+  [11] main::i#1 = ++ main::i#2
+  to:main::@3
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$1 22.0
+byte*~ main::$2 22.0
+byte main::COLS
+byte main::COLS#1 22.0
+byte main::COLS#2 16.11111111111111
+byte main::i
+byte main::i#1 202.0
+byte main::i#2 134.66666666666666
+byte* main::sc
+byte* main::sc#0 22.4
+
+Initial phi equivalence classes
+[ main::COLS#2 main::COLS#1 ]
+[ main::i#2 main::i#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::sc#0 to live range equivalence class [ main::sc#0 ]
+Complete equivalence classes
+[ main::COLS#2 main::COLS#1 ]
+[ main::i#2 main::i#1 ]
+[ main::$1 ]
+[ main::$2 ]
+[ main::sc#0 ]
+Allocated zp[1]:2 [ main::COLS#2 main::COLS#1 ]
+Allocated zp[1]:3 [ main::i#2 main::i#1 ]
+Allocated zp[1]:4 [ main::$1 ]
+Allocated zp[2]:5 [ main::$2 ]
+Allocated zp[2]:7 [ main::sc#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] main::$1 = main::COLS#2 << 2 [ main::COLS#2 main::$1 ] (  [ main::COLS#2 main::$1 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::COLS#2 main::COLS#1 ]
+Statement [5] main::$2 = SCREEN + main::$1 [ main::COLS#2 main::$2 ] (  [ main::COLS#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] main::sc#0 = main::$2 + 2 [ main::COLS#2 main::sc#0 ] (  [ main::COLS#2 main::sc#0 ] { }  ) always clobbers reg byte a 
+Statement [10] main::sc#0[main::i#2] = main::COLS#2 [ main::COLS#2 main::sc#0 main::i#2 ] (  [ main::COLS#2 main::sc#0 main::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
+Statement [4] main::$1 = main::COLS#2 << 2 [ main::COLS#2 main::$1 ] (  [ main::COLS#2 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$2 = SCREEN + main::$1 [ main::COLS#2 main::$2 ] (  [ main::COLS#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] main::sc#0 = main::$2 + 2 [ main::COLS#2 main::sc#0 ] (  [ main::COLS#2 main::sc#0 ] { }  ) always clobbers reg byte a 
+Statement [10] main::sc#0[main::i#2] = main::COLS#2 [ main::COLS#2 main::sc#0 main::i#2 ] (  [ main::COLS#2 main::sc#0 main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::COLS#2 main::COLS#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:5 [ main::$2 ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ main::sc#0 ] : zp[2]:7 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 336.67: zp[1]:3 [ main::i#2 main::i#1 ] 38.11: zp[1]:2 [ main::COLS#2 main::COLS#1 ] 22.4: zp[2]:7 [ main::sc#0 ] 22: zp[1]:4 [ main::$1 ] 22: zp[2]:5 [ main::$2 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 3111 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::COLS#2 main::COLS#1 ] zp[2]:7 [ main::sc#0 ] reg byte a [ main::$1 ] zp[2]:5 [ main::$2 ] 
+Uplifting [] best 3111 combination 
+Coalescing zero page register [ zp[2]:5 [ main::$2 ] ] with [ zp[2]:7 [ main::sc#0 ] ] - score: 1
+Allocated (was zp[2]:5) zp[2]:2 [ main::$2 main::sc#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Constant consolidation produces a byte* + byte* error
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="consolidate-constant-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label __2 = 2
+    .label sc = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::COLS#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::COLS#2<2) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #2
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::$1 = main::COLS#2 << 2 -- vbuaa=vbuxx_rol_2 
+    txa
+    asl
+    asl
+    // [5] main::$2 = SCREEN + main::$1 -- pbuz1=pbuc1_plus_vbuaa 
+    clc
+    adc #<SCREEN
+    sta.z __2
+    lda #>SCREEN
+    adc #0
+    sta.z __2+1
+    // [6] main::sc#0 = main::$2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
+    lda #2
+    clc
+    adc.z sc
+    sta.z sc
+    bcc !+
+    inc.z sc+1
+  !:
+    // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  __b3_from___b2:
+    // [7] phi main::i#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b3
+    // main::@3
+  __b3:
+    // [8] if(main::i#2<4) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #4
+    bcc __b4
+    jmp __b5
+    // main::@5
+  __b5:
+    // [9] main::COLS#1 = ++ main::COLS#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  __b1_from___b5:
+    // [1] phi main::COLS#2 = main::COLS#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // [10] main::sc#0[main::i#2] = main::COLS#2 -- pbuz1_derefidx_vbuyy=vbuxx 
+    txa
+    sta (sc),y
+    // [11] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [7] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  __b3_from___b4:
+    // [7] phi main::i#2 = main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    jmp __b3
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3_from___b2:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __b3_from___b4:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+void main()
+byte~ main::$1 reg byte a 22.0
+byte*~ main::$2 zp[2]:2 22.0
+byte main::COLS
+byte main::COLS#1 reg byte x 22.0
+byte main::COLS#2 reg byte x 16.11111111111111
+byte main::i
+byte main::i#1 reg byte y 202.0
+byte main::i#2 reg byte y 134.66666666666666
+byte* main::sc
+byte* main::sc#0 sc zp[2]:2 22.4
+
+reg byte x [ main::COLS#2 main::COLS#1 ]
+reg byte y [ main::i#2 main::i#1 ]
+reg byte a [ main::$1 ]
+zp[2]:2 [ main::$2 main::sc#0 ]
+
+
+FINAL ASSEMBLER
+Score: 2446
+
+  // File Comments
+// Constant consolidation produces a byte* + byte* error
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="consolidate-constant-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label __2 = 2
+    .label sc = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::COLS#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char COLS=0;COLS<2;COLS++)
+    // [2] if(main::COLS#2<2) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #2
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // COLS*4
+    // [4] main::$1 = main::COLS#2 << 2 -- vbuaa=vbuxx_rol_2 
+    txa
+    asl
+    asl
+    // SCREEN + COLS*4
+    // [5] main::$2 = SCREEN + main::$1 -- pbuz1=pbuc1_plus_vbuaa 
+    clc
+    adc #<SCREEN
+    sta.z __2
+    lda #>SCREEN
+    adc #0
+    sta.z __2+1
+    // char* sc = SCREEN + COLS*4 + 2
+    // [6] main::sc#0 = main::$2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
+    lda #2
+    clc
+    adc.z sc
+    sta.z sc
+    bcc !+
+    inc.z sc+1
+  !:
+    // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [7] phi main::i#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    ldy #0
+    // main::@3
+  __b3:
+    // for(char i=0;i<4;i++)
+    // [8] if(main::i#2<4) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #4
+    bcc __b4
+    // main::@5
+    // for(char COLS=0;COLS<2;COLS++)
+    // [9] main::COLS#1 = ++ main::COLS#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi main::COLS#2 = main::COLS#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // sc[i] = COLS
+    // [10] main::sc#0[main::i#2] = main::COLS#2 -- pbuz1_derefidx_vbuyy=vbuxx 
+    txa
+    sta (sc),y
+    // for(char i=0;i<4;i++)
+    // [11] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [7] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [7] phi main::i#2 = main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    jmp __b3
+}
+  // File Data
+

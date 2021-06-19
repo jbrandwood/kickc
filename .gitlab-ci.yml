@@ -3,14 +3,14 @@ release:
   image: maven:3-jdk-13
   stage: build
   script:
-  - "mvn -e package"
-  - "mkdir target/release"
-  - "ls target"
-  - "tar -C target/release -xzvf target/kickc-release.tgz"
-  - "mv target/release/kickc/jar/kickc-release.jar target/release/kickc/jar/kickc-${CI_COMMIT_REF_NAME}.jar"
-  - "mkdir ./kickc"
-  - "mv target/release/kickc/* ./kickc/"
-  - "cat target/site/jacoco/index.html"
+  - mvn -e package
+  - mkdir target/release
+  - ls target
+  - tar -C target/release -xzvf target/kickc-release.tgz
+  - mv target/release/kickc/jar/kickc-release.jar target/release/kickc/jar/kickc-${CI_COMMIT_REF_NAME}.jar
+  - mkdir ./kickc
+  - mv target/release/kickc/* ./kickc/
+  - cat target/site/jacoco/index.html
   artifacts:
     name: kickc_${CI_COMMIT_REF_NAME}
     paths:
@@ -30,6 +30,10 @@ pages:
   stage: build
   script:
     - apk update && apk add doxygen graphviz ttf-freefont
+    - pwd
+    - ls -l
+    - mkdir target
+    - mkdir target/doxygen
     - doxygen src/main/doxygen/doxygen.conf
     - mv target/doxygen/html/ public/
   artifacts:

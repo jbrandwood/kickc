@@ -1,3 +1,4 @@
+/// @file
 /// MEGA65 Memory Mapper allows the 6502 CPU to access up to 256MB of memory by remapping where the eight 8K blocks point in real memory.
 /// The memory mapping is configured through the new MAP instruction of the MOS 4510.
 /// https://mega65.org/

@@ -1,39 +1,37 @@
 /// @file
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 struct MOS6526_CIA {
-    // Port A
+    /// Port A
     char PORT_A;
-    // Port B
+    /// Port B
     char PORT_B;
-    // Port A data direction register.
+    /// Port A data direction register.
     char PORT_A_DDR;
-    // Port B data direction register.
+    /// Port B data direction register.
     char PORT_B_DDR;
-    // Timer A Value
+    /// Timer A Value
     unsigned int TIMER_A;
-    // Timer B Value
+    /// Timer B Value
     unsigned int TIMER_B;
-    // Time-of-day real-time-clock tenth seconds (BCD)
+    /// Time-of-day real-time-clock tenth seconds (BCD)
     char TOD_10THS;
-    // Time-of-day real-time-clock seconds (BCD)
+    /// Time-of-day real-time-clock seconds (BCD)
     char TOD_SEC;
-    // Time-of-day real-time-clock minutes (BCD)
+    /// Time-of-day real-time-clock minutes (BCD)
     char TOD_MIN;
-    // Time-of-day real-time-clock hours (BCD)
+    /// Time-of-day real-time-clock hours (BCD)
     char TOD_HOURS;
-    // Serial Shift Register
+    /// Serial Shift Register
     char SERIAL_DATA;
-    // Interrupt Status & Control Register
+    /// Interrupt Status & Control Register
     char INTERRUPT;
-    // Timer A Control Register
+    /// Timer A Control Register
     char TIMER_A_CONTROL;
-    // Timer B Control Register
+    /// Timer B Control Register
     char TIMER_B_CONTROL;
 };
 

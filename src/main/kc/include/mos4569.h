@@ -1,7 +1,6 @@
 /// @file
 /// @brief MOS 4567 / 4569 Video Interface Chip (VIC III)
 
-
 /// MOS 4567 / 4569 Video Interface Chip (VIC III)
 struct MOS4569_VICIII {
   char SPRITE0_X;
@@ -36,108 +35,108 @@ struct MOS4569_VICIII {
   char SPRITES_EXPAND_X;
   char SPRITES_COLLISION;
   char SPRITES_BG_COLLISION;
-  // $D020 Border Color
+  /// $D020 Border Color
   char BORDER_COLOR;
-  // $D021 Background Color 0
+  /// $D021 Background Color 0
   char BG_COLOR;
-  // $D022 Background Color 1
+  /// $D022 Background Color 1
   char BG_COLOR1;
-  // $D023 Background Color 2
+  /// $D023 Background Color 2
   char BG_COLOR2;
-  // $D024 Background Color 3
+  /// $D024 Background Color 3
   char BG_COLOR3;
-  // $D025 Sprite multicolor 0
+  /// $D025 Sprite multicolor 0
   char SPRITES_MCOLOR1;
-  // $D026 Sprite multicolor 1
+  /// $D026 Sprite multicolor 1
   char SPRITES_MCOLOR2;
-  // $D027 Color Sprite 0
+  /// $D027 Color Sprite 0
   char SPRITE0_COLOR;
-  // $D028 Color Sprite 1
+  /// $D028 Color Sprite 1
   char SPRITE1_COLOR;
-  // $D029 Color Sprite 2
+  /// $D029 Color Sprite 2
   char SPRITE2_COLOR;
-  // $D02a Color Sprite 3
+  /// $D02a Color Sprite 3
   char SPRITE3_COLOR;
-  // $D02b Color Sprite 4
+  /// $D02b Color Sprite 4
   char SPRITE4_COLOR;
-  // $D02c Color Sprite 5
+  /// $D02c Color Sprite 5
   char SPRITE5_COLOR;
-  // $D02d Color Sprite 6
+  /// $D02d Color Sprite 6
   char SPRITE6_COLOR;
-  // $D02e Color Sprite 7
+  /// $D02e Color Sprite 7
   char SPRITE7_COLOR;
-  // $D02f KEY register is used for choosing between the different I/O personalities.
-  // This disables/enables different registers in $D000-$DFFF
-  // $00: C64 personality
-  // $A5, $96: C65 personality
-  // $45, $54: MEGA65 ETHERNET  personality
-  // $47, $53: MEGA65  personality
+  /// $D02f KEY register is used for choosing between the different I/O personalities.
+  /// This disables/enables different registers in $D000-$DFFF
+  /// $00: C64 personality
+  /// $A5, $96: C65 personality
+  /// $45, $54: MEGA65 ETHERNET  personality
+  /// $47, $53: MEGA65  personality
   char KEY;
-  // $D030 VIC-III Control Register A (ROM banks)
-  // Bit        20-bit Address       16-bit Address  Read-Write
-  // 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
-  //            $FF80000 – $FF807FF
-  // 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
-  // 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
-  // 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
-  // 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
-  // 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
+  /// $D030 VIC-III Control Register A (ROM banks)
+  /// Bit        20-bit Address       16-bit Address  Read-Write
+  /// 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
+  ///            $FF80000 – $FF807FF
+  /// 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
+  /// 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
+  /// 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
+  /// 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
+  /// 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
   char CONTROLA;
-  // $D031 VIC-III Control Register B
-  // BIT
-  // 0    INT   Enable VIC-III interlaced mode
-  // 1    MONO  Enable VIC-III MONO video output (not implemented)
-  // 2    H1280 Enable 1280 horizontal pixels (not implemented)
-  // 3    V400  Enable 400 vertical pixels
-  // 4    BPM   Bit-Plane Mode
-  // 5    ATTR  Enable extended attributes and 8 bit colour entries
-  // 6    FAST  Enable C65 FAST mode (3 .5MHz)
-  // 7    H640  Enable C64 640 horizontal pixels / 80 column mode
+  /// $D031 VIC-III Control Register B
+  /// BIT
+  /// 0    INT   Enable VIC-III interlaced mode
+  /// 1    MONO  Enable VIC-III MONO video output (not implemented)
+  /// 2    H1280 Enable 1280 horizontal pixels (not implemented)
+  /// 3    V400  Enable 400 vertical pixels
+  /// 4    BPM   Bit-Plane Mode
+  /// 5    ATTR  Enable extended attributes and 8 bit colour entries
+  /// 6    FAST  Enable C65 FAST mode (3 .5MHz)
+  /// 7    H640  Enable C64 640 horizontal pixels / 80 column mode
   char CONTROLB;
   char UNUSED;
-  // $D033  Bitplane 0 Address
-  // 1-3    B0ADEVN    Bitplane 0 address, even lines
-  // 5-7    B0ADODD    Bitplane 0 address, odd lines
+  /// $D033  Bitplane 0 Address
+  /// 1-3    B0ADEVN    Bitplane 0 address, even lines
+  /// 5-7    B0ADODD    Bitplane 0 address, odd lines
   char B0_ADDR;
-  // $D034  Bitplane 1 Address
+  /// $D034  Bitplane 1 Address
   char B1_ADDR;
-  // $D035  Bitplane 2 Address
+  /// $D035  Bitplane 2 Address
   char B2_ADDR;
-  // $D036  Bitplane 3 Address
+  /// $D036  Bitplane 3 Address
   char B3_ADDR;
-  // $D037  Bitplane 4 Address
+  /// $D037  Bitplane 4 Address
   char B4_ADDR;
-  // $D038  Bitplane 5 Address
+  /// $D038  Bitplane 5 Address
   char B5_ADDR;
-  // $D039  Bitplane 6 Address
+  /// $D039  Bitplane 6 Address
   char B6_ADDR;
-  // $D03A  Bitplane 7 Address
+  /// $D03A  Bitplane 7 Address
   char B7_ADDR;
-  // $D03B  Complement bitplane flags
+  /// $D03B  Complement bitplane flags
   char BPCOMP;
-  // $D03C  Bitplane X
+  /// $D03C  Bitplane X
   char BPX;
-  // $D03D  Bitplane Y
+  /// $D03D  Bitplane Y
   char BPY;
-  // $D03E  Bitplane X Offset
+  /// $D03E  Bitplane X Offset
   char HPOS;
-  // $D03F  Bitplane Y Offset
+  /// $D03F  Bitplane Y Offset
   char VPOS;
-  // $D040  Display Address Translater (DAT) Bitplane 0 port
+  /// $D040  Display Address Translater (DAT) Bitplane 0 port
   char B0PIX;
-  // $D041  Display Address Translater (DAT) Bitplane 1 port
+  /// $D041  Display Address Translater (DAT) Bitplane 1 port
   char B1PIX;
-  // $D042  Display Address Translater (DAT) Bitplane 2 port
+  /// $D042  Display Address Translater (DAT) Bitplane 2 port
   char B2PIX;
-  // $D043  Display Address Translater (DAT) Bitplane 3 port
+  /// $D043  Display Address Translater (DAT) Bitplane 3 port
   char B3PIX;
-  // $D044  Display Address Translater (DAT) Bitplane 4 port
+  /// $D044  Display Address Translater (DAT) Bitplane 4 port
   char B4PIX;
-  // $D045  Display Address Translater (DAT) Bitplane 5 port
+  /// $D045  Display Address Translater (DAT) Bitplane 5 port
   char B5PIX;
-  // $D046  Display Address Translater (DAT) Bitplane 6 port
+  /// $D046  Display Address Translater (DAT) Bitplane 6 port
   char B6PIX;
-  // $D047  Display Address Translater (DAT) Bitplane 7 port
+  /// $D047  Display Address Translater (DAT) Bitplane 7 port
   char B7PIX;
 };
 

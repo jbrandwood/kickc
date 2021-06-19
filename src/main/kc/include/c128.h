@@ -1,3 +1,4 @@
+/// @file
 /// Commodore 128 Registers and Memory
 /// https://archive.org/details/C128_Programmers_Reference_Guide_1986_Bamtam_Books/page/n299/mode/2up
 #ifndef __C128__

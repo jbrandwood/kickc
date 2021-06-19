@@ -1,3 +1,4 @@
+/// @file
 /// Commander X16 VERA (Versatile Embedded Retro Adapter) Video and Audio Processor
 /// https://github.com/commanderx16/x16-docs/blob/master/VERA%20Programmer's%20Reference.md
 
@@ -242,24 +243,24 @@ const unsigned long VERA_SPRITE_ATTR = 0x1fc00;
 /// The VERA structure of a sprite (8 bytes)
 /// 128*8 bytes located at $1FC00-$1FFFF
 struct VERA_SPRITE {
-    // 0-1 ADDRESS Address and mode
-    // - bits 0-11: Address (16:5)
-    // - bits 15: Mode (0:4 bpp 1:8 bpp)
+    /// 0-1 ADDRESS Address and mode
+    /// - bits 0-11: Address (16:5)
+    /// - bits 15: Mode (0:4 bpp 1:8 bpp)
     unsigned int ADDR;
-    // 2-3	X (9:0)
+    /// 2-3	X (9:0)
     unsigned int X;
-    // 4-5	Y (9:0)
+    /// 4-5	Y (9:0)
     unsigned int Y;
-    // 6 CTRL1 Control 1
-    // - bits 4-7 Collision mask
-    // - bits 2-3 Z-depth ( 0:Sprite disabled, 1:Sprite between background and layer 0, 2:Sprite between layer 0 and layer 1, 3:Sprite in front of layer 1 )
-    // - bits   1 V-flip
-    // - bits   0 H-flip
+    /// 6 CTRL1 Control 1
+    /// - bits 4-7 Collision mask
+    /// - bits 2-3 Z-depth ( 0:Sprite disabled, 1:Sprite between background and layer 0, 2:Sprite between layer 0 and layer 1, 3:Sprite in front of layer 1 )
+    /// - bits   1 V-flip
+    /// - bits   0 H-flip
     char CTRL1;
-    // 7 CTRL2 Control 2
-    // - bits 6-7 Sprite height ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
-    // - bits 4-5 Sprite width ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
-    // - bits 0-3 Palette offset (if 4bpp Color index 1-15 is modified by adding 16 x palette offset)
+    /// 7 CTRL2 Control 2
+    /// - bits 6-7 Sprite height ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
+    /// - bits 4-5 Sprite width ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
+    /// - bits 0-3 Palette offset (if 4bpp Color index 1-15 is modified by adding 16 x palette offset)
     char CTRL2;
 };
 

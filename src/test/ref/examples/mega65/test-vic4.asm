@@ -1,8 +1,8 @@
 // Test a few VIC 3/4 features
+/// @file
 /// MEGA65 Registers and Constants
 /// @file
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.

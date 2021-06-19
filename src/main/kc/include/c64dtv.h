@@ -1,3 +1,4 @@
+/// @file
 /// C64 DTV version 2 Registers and Constants
 //
 /// Sources

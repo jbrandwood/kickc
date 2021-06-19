@@ -1,3 +1,4 @@
+/// @file
 /// Functions for printing formatted strings
 #include <stdlib.h>
 #include <conio.h>
@@ -12,25 +13,25 @@ void printf_padding(char pad, char length);
 
 /// Format specifying how to format a printed number
 struct printf_format_number {
-    // The minimal number of chars to output (used for padding with spaces or 0)
+    /// The minimal number of chars to output (used for padding with spaces or 0)
     char min_length;
-    // Justify left instead of right, which is the default.
+    /// Justify left instead of right, which is the default.
     char justify_left;
-    // Always show a sign for a number, even if is is positive. (Default is to only show sign for negative numbers)
+    /// Always show a sign for a number, even if is is positive. (Default is to only show sign for negative numbers)
     char sign_always;
-    // Pad the number with zeros to get the min width
+    /// Pad the number with zeros to get the min width
     char zero_padding;
-    // Upper-case the letters in the number
+    /// Upper-case the letters in the number
     char upper_case;
-    // The number radix to use for formatting
+    /// The number radix to use for formatting
     enum RADIX radix;
 };
 
 /// Buffer used for stringified number being printed
 struct printf_buffer_number {
-    // Sign used for printing numbers (0 if no sign, '-' if a minus-sign, '+' if a plus-sign)
+    /// Sign used for printing numbers (0 if no sign, '-' if a minus-sign, '+' if a plus-sign)
     char sign;
-    // The buffer used for the digits. Size is chosen because it fits LONG_MAX in octal.
+    /// The buffer used for the digits. Size is chosen because it fits LONG_MAX in octal.
     char digits[11];
 };
 
@@ -58,9 +59,9 @@ void printf_number_buffer(struct printf_buffer_number buffer, struct printf_form
 
 /// Format specifying how to format a printed string
 struct printf_format_string {
-    // The minimal number of chars to output (used for padding with spaces or 0).
+    /// The minimal number of chars to output (used for padding with spaces or 0).
     char min_length;
-    // Justify left instead of right, which is the default.
+    /// Justify left instead of right, which is the default.
     char justify_left;
 };
 

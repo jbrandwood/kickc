@@ -1,3 +1,4 @@
+/// @file
 /// Table-based implementation of integer square sqr() and square root sqrt()
 
 /// Initialize squares table

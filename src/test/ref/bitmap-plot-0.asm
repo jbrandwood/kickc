@@ -1,10 +1,9 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots simple plots
 /// @file
-/// @brief Commodore 64 Registers and Constants
+/// Commodore 64 Registers and Constants
 /// @file
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="bitmap-plot-0.prg", type="prg", segments="Program"]

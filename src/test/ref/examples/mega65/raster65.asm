@@ -2,10 +2,10 @@
 // Based on RASTER65 assembler demo made in 2015 and updated in 2020 by DEFT 
 // https://mega.scryptos.com/sharefolder/MEGA/MEGA65+filehost
 // https://www.forum64.de/index.php?thread/104591-xemu-vic-iv-implementation-update/&postID=1560511#post1560511
+/// @file
 /// MEGA65 Registers and Constants
 /// @file
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform executable starting in C64 mode.

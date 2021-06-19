@@ -1,3 +1,4 @@
+/// @file
 /// A flexible sprite multiplexer routine for 32 sprites.
 /// Usage:
 /// - Once:

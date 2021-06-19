@@ -1,3 +1,4 @@
+/// @file
 /// MEGA65 Registers and Constants
 #ifndef __MEGA65__
 #error "Target platform must be MEGA65"

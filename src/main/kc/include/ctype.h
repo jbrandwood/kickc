@@ -1,3 +1,4 @@
+/// @file
 /// Functions that are useful for testing and mapping characters.
 
 /// Convert lowercase alphabet to uppercase

@@ -1,8 +1,7 @@
 /// @file
-/// @brief Commodore 64 Registers and Constants
+/// Commodore 64 Registers and Constants
 /// @file
-/// @brief The MOS 6526 Complex Interface Adapter (CIA)
-///
+/// The MOS 6526 Complex Interface Adapter (CIA)
 /// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="scroll.prg", type="prg", segments="Program"]

@@ -1,3 +1,4 @@
+/// @file
 /// Nintendo Entertainment System (NES
 /// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
 /// https://github.com/gregkrsak/first_nes

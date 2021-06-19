@@ -1,3 +1,4 @@
+/// @file
 /// Atari 8-bit 400/800/XL/XE Registers and Constants
 /// https://en.wikipedia.org/wiki/Atari_8-bit_family
 
@@ -23,7 +24,6 @@ struct ATARI_POKEY_READ * const POKEY_READ = (struct ATARI_POKEY_READ *)0xd200;
 
 /// Atari ANTIC registers
 struct ATARI_ANTIC * const ANTIC = (struct ATARI_ANTIC *)0xd400;
-
 
 /// Atari ZP registers
 /// 1-byte cursor row

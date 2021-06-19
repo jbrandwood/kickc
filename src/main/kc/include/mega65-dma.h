@@ -1,3 +1,4 @@
+/// @file
 /// Functions for using the F018 DMA for very fast copying or filling of memory
 #include <mega65.h>
 

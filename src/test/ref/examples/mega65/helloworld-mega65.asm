@@ -1,4 +1,5 @@
 // Hello World for MEGA 65 - using stdio.h and conio.h
+/// @file
 /// Functions for performing input and output.
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.

@@ -1,3 +1,4 @@
+/// @file
 /// C standard library time.h
 ///  Functions to get and manipulate date and time information.
 

@@ -1,3 +1,4 @@
+/// @file
 /// Simple single-color (320x200) bitmap routines
 /// Initialize bitmap plotting tables
 void bitmap_init(char* gfx, char* screen);

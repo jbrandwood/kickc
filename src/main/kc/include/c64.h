@@ -1,5 +1,5 @@
 /// @file
-/// @brief Commodore 64 Registers and Constants
+/// Commodore 64 Registers and Constants
 #ifndef __C64__
 #error "Target platform must be C64"
 #endif
@@ -82,18 +82,15 @@ const char LIGHT_GREEN = 0xd;
 const char LIGHT_BLUE = 0xe;
 const char LIGHT_GREY = 0xf;
 
-/// @brief Get the value to store into D018 to display a specific screen and charset/bitmap
-///
+/// Get the value to store into D018 to display a specific screen and charset/bitmap
 /// Optimized for ASM from (char)((((unsigned int)screen&0x3fff)/0x40)|(((unsigned int)charset&0x3fff)/0x400));
 char toD018(char*  screen, char*  gfx);
 
-/// @brief Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
-///
+/// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
 /// Optimized for ASM from %00000011 ^ (char)((unsigned int)gfx/0x4000)
 char toDd00(char*  gfx);
 
-/// @brief Get the sprite pointer for a sprite.
-///
+/// Get the sprite pointer for a sprite.
 /// The sprite pointer is the index of the sprite within the graphics bank and equal to the sprite (char)(sprite_addr/64)
 /// The sprite pointers are stored SCREEN+0x3f8+sprite_id to set the pointer of each sprite
 char toSpritePtr(char*  sprite);
@@ -104,7 +101,6 @@ void vicSelectGfxBank(char*  gfx);
 /// Initialize SID voice 3 for random number generation
 void sid_rnd_init();
 
-/// @brief Get a random number from the SID voice 3,
-/// 
+/// Get a random number from the SID voice 3,
 /// Must be initialized with sid_rnd_init()
 char sid_rnd();

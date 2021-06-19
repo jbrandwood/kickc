@@ -1,3 +1,4 @@
+/// @file
 /// C standard library stdint.h
 /// Defines a set of integral type aliases with specific width requirements, along with macros specifying their limits and macro functions to create values of these types.
 

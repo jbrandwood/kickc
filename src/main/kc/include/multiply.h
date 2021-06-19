@@ -1,3 +1,4 @@
+/// @file
 /// Simple binary multiplication implementation
 
 /// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int

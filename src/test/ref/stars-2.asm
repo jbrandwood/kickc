@@ -1,4 +1,5 @@
 // Stars struct of array
+/// @file
 /// Functions for performing input and output.
   // Commodore 64 PRG executable file
 .file [name="stars-2.prg", type="prg", segments="Program"]

@@ -1,3 +1,4 @@
+/// @file
 /// Plus/4 / Commodore 16 registers and memory layout
 /// http://zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/264_Hardware_Spec.pdf
 /// http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/Plus_4_Technical_Docs.pdf
@@ -36,19 +37,19 @@ struct MOS6529_PIO * const KEYBOARD_PORT = (struct MOS6529_PIO *)0xfd30;
 /// The ROM configuration is adjusted by writing to the registers (the value is irrelevant).
 /// The upper portion of the kernal ROM at $FC00-$FCFF is always enabled no matter what the memory configuration, as are the I/O registers.
 struct PLUS4_ROM_BANKING {
-    // $FDD0 enables or disables BASIC,
+    /// $FDD0 enables or disables BASIC,
     char BASIC;
-    // $FDD1 the low function ROM,
+    /// $FDD1 the low function ROM,
     char FUNCTION_LOW;
-    // $FDD2 the low cartridge ROM,
+    /// $FDD2 the low cartridge ROM,
     char CARTRIDGE_LOW;
-    // $FDD3 is unused,
+    /// $FDD3 is unused,
     char UNUSED;
-    // $FDD4 the kernal,
+    /// $FDD4 the kernal,
     char KERNAL;
-    // $FDD5 the high function ROM
+    /// $FDD5 the high function ROM
     char FUNCTION_HIGH;
-    // $FDD6 the high cartridge ROM.
+    /// $FDD6 the high cartridge ROM.
     char CARTRIDGE_HIGH;
 };
 

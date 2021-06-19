@@ -1,4 +1,5 @@
 // Generates a 16-bit signed sine
+/// @file
 /// Sine Generator functions using only multiplication, addition and bit shifting
 /// Uses a single division for converting the wavelength to a reciprocal.
 /// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...

@@ -1,5 +1,5 @@
-// The MOS 6581/8580 SID (Sound Interface Device)
-// http://archive.6502.org/datasheets/mos_6581_sid.pdf
+/// The MOS 6581/8580 SID (Sound Interface Device)
+/// http://archive.6502.org/datasheets/mos_6581_sid.pdf
 struct MOS6581_SID {
     // Channel 1 Frequency
     unsigned int CH1_FREQ;
@@ -49,45 +49,45 @@ struct MOS6581_SID {
     char CH3_ENV;
 };
 
-// Channel 1 Frequency Low byte
+/// Channel 1 Frequency Low byte
 char * const SID_CH1_FREQ_LO = (char*)0xd400;
-// Channel 1 Frequency High byte
+/// Channel 1 Frequency High byte
 char * const SID_CH1_FREQ_HI = (char*)0xd401;
-// Channel 1 Pulse Width (0-4095) Low byte
+/// Channel 1 Pulse Width (0-4095) Low byte
 char * const SID_CH1_PULSE_WIDTH_LO = (char*)0xd402;
-// Channel 1 Pulse Width (0-4095) High byte
+/// Channel 1 Pulse Width (0-4095) High byte
 char * const SID_CH1_PULSE_WIDTH_HI = (char*)0xd403;
-// Channel 2 Frequency Low byte
+/// Channel 2 Frequency Low byte
 char * const SID_CH2_FREQ_LO = (char*)0xd407;
-// Channel 2 Frequency High byte
+/// Channel 2 Frequency High byte
 char * const SID_CH2_FREQ_HI = (char*)0xd408;
-// Channel 2 Pulse Width (0-4095) Low byte
+/// Channel 2 Pulse Width (0-4095) Low byte
 char * const SID_CH2_PULSE_WIDTH_LO = (char*)0xd409;
-// Channel 2 Pulse Width (0-4095) High byte
+/// Channel 2 Pulse Width (0-4095) High byte
 char * const SID_CH2_PULSE_WIDTH_HI = (char*)0xd40a;
-// Channel 3 Frequency Low byte
+/// Channel 3 Frequency Low byte
 char * const SID_CH3_FREQ_LO = (char*)0xd40e;
-// Channel 3 Frequency High byte
+/// Channel 3 Frequency High byte
 char * const SID_CH3_FREQ_HI = (char*)0xd40f;
-// Channel 3 Pulse Width (0-4095) Low byte
+/// Channel 3 Pulse Width (0-4095) Low byte
 char * const SID_CH3_PULSE_WIDTH_LO = (char*)0xd410;
-// Channel 3 Pulse Width (0-4095) High byte
+/// Channel 3 Pulse Width (0-4095) High byte
 char * const SID_CH3_PULSE_WIDTH_HI = (char*)0xd411;
 
-// SID Channel Control Register Noise Waveform
+/// SID Channel Control Register Noise Waveform
 const char SID_CONTROL_NOISE = 0x80;
-// SID Channel Control Register Pulse Waveform / Square Wave
+/// SID Channel Control Register Pulse Waveform / Square Wave
 const char SID_CONTROL_PULSE = 0x40;
-// SID Channel Control Register Sawtooth Waveform
+/// SID Channel Control Register Sawtooth Waveform
 const char SID_CONTROL_SAWTOOTH = 0x20;
-// SID Channel Control Register Triangle Waveform
+/// SID Channel Control Register Triangle Waveform
 const char SID_CONTROL_TRIANGLE = 0x10;
-// SID Channel Control Register Test bit
+/// SID Channel Control Register Test bit
 const char SID_CONTROL_TEST = 0x08;
-// SID Channel Control Register Ring Modulation
+/// SID Channel Control Register Ring Modulation
 const char SID_CONTROL_RING = 0x04;
-// SID Channel Control Register Synchronization
+/// SID Channel Control Register Synchronization
 const char SID_CONTROL_SYNC = 0x02;
-// SID Channel Control Register Gate
+/// SID Channel Control Register Gate
 const char SID_CONTROL_GATE = 0x01;
 

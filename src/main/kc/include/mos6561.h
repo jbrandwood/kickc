@@ -1,6 +1,6 @@
-// MOS 6560/6561 VIDEO INTERFACE CHIP
-// Used in VIC 20
-// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
+/// MOS 6560/6561 VIDEO INTERFACE CHIP
+/// Used in VIC 20
+/// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
 
 struct MOS6561_VIC {
     // Screen Origin X-coordinate

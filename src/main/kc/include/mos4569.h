@@ -1,4 +1,8 @@
-// MOS 4567 / 4569 Video Interface Chip (VIC III)
+/// @file
+/// @brief MOS 4567 / 4569 Video Interface Chip (VIC III)
+
+
+/// MOS 4567 / 4569 Video Interface Chip (VIC III)
 struct MOS4569_VICIII {
   char SPRITE0_X;
   char SPRITE0_Y;

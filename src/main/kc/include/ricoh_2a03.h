@@ -1,13 +1,13 @@
-// Ricoh 2A03 Nintendo Entertainment System CPU and audio processing unit (APU)
-// Ricoh 2A03 or RP2A03 (NTSC version) / Ricoh 2A07 or RP2A07 (PAL version)
-// https://en.wikipedia.org/wiki/Ricoh_2A03
-// https://www.nesdev.com/2A03%20technical%20reference.txt
-// https://wiki.nesdev.com/w/index.php/2A03
-// https://wiki.nesdev.com/w/index.php/APU
-// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+/// Ricoh 2A03 Nintendo Entertainment System CPU and audio processing unit (APU)
+/// Ricoh 2A03 or RP2A03 (NTSC version) / Ricoh 2A07 or RP2A07 (PAL version)
+/// https://en.wikipedia.org/wiki/Ricoh_2A03
+/// https://www.nesdev.com/2A03%20technical%20reference.txt
+/// https://wiki.nesdev.com/w/index.php/2A03
+/// https://wiki.nesdev.com/w/index.php/APU
+/// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018.
 
 
-// The APU (Audio Processing Unit) is the sound hardware the NES console which generates sound.
+/// The APU (Audio Processing Unit) is the sound hardware the NES console which generates sound.
 struct RICOH_2A03 {
     // APU Square wave channels 1 and 2
     // Reference: https://wiki.nesdev.com/w/index.php/APU_Pulse
@@ -105,17 +105,17 @@ struct RICOH_2A03 {
     char JOY2;
 };
 
-// APU Frame Counter
-// generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
-// https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
-// ------+-----+---------------------------------------------------------------
-//  $4017 |	 W  | FR_COUNTER Frame Counter	Set mode and interrupt
-//  ------+-----+---------------------------------------------------------------
-//        |   7	| Sequencer mode: 0 selects 4-step sequence, 1 selects 5-step sequence
-//        |   6	| Interrupt inhibit flag. If set, the frame interrupt flag is cleared, otherwise it is unaffected.
-//  ------+-----+---------------------------------------------------------------
-// Side effects	After 3 or 4 CPU clock cycles*, the timer is reset.
-// If the mode flag is set, then both "quarter frame" and "half frame" signals are also generated.
+/// APU Frame Counter
+/// generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
+/// https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
+/// ------+-----+---------------------------------------------------------------
+///  $4017 |	 W  | FR_COUNTER Frame Counter	Set mode and interrupt
+///  ------+-----+---------------------------------------------------------------
+///        |   7	| Sequencer mode: 0 selects 4-step sequence, 1 selects 5-step sequence
+///        |   6	| Interrupt inhibit flag. If set, the frame interrupt flag is cleared, otherwise it is unaffected.
+///  ------+-----+---------------------------------------------------------------
+/// Side effects	After 3 or 4 CPU clock cycles*, the timer is reset.
+/// If the mode flag is set, then both "quarter frame" and "half frame" signals are also generated.
 char * const FR_COUNTER = (char*)0x4017;
 
 

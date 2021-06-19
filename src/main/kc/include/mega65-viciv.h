@@ -1,6 +1,6 @@
-// MEGA65 Video Interface Chip (VIC IV)
-// https://mega65.org/
-// https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/viciv.vhdl
+/// MEGA65 Video Interface Chip (VIC IV)
+/// https://mega65.org/
+/// https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/viciv.vhdl
 struct MEGA65_VICIV {
   char SPRITE0_X;
   char SPRITE0_Y;
@@ -306,72 +306,72 @@ struct MEGA65_VICIV {
   char DEBUGXY;
 };
 
-// $D02f KEY register is used for choosing between the different I/O personalities.
-// This disables/enables different registers in $D000-$DFFF
-// $00: C64 personality
+/// $D02f KEY register is used for choosing between the different I/O personalities.
+/// This disables/enables different registers in $D000-$DFFF
+/// $00: C64 personality
 const char VICIV_KEY_C64 = 0x00;
-// $A5, $96: C65 personality
+/// $A5, $96: C65 personality
 const char VICIV_KEY_C65_A = 0xa5;
 const char VICIV_KEY_C65_B = 0x96;
-// $45, $54: MEGA65 ETHERNET personality
+/// $45, $54: MEGA65 ETHERNET personality
 const char VICIV_KEY_ETHERNET_A = 0x45;
 const char VICIV_KEY_ETHERNET_B = 0x54;
-// $47, $53: MEGA65 personality
+/// $47, $53: MEGA65 personality
 const char VICIV_KEY_M65_A = 0x47;
 const char VICIV_KEY_M65_B = 0x53;
 
-// $D030 VIC-III Control Register A (ROM banks)
-// Bit        20-bit Address       16-bit Address  Read-Write
-// 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
-//            $FF80000 – $FF807FF
+/// $D030 VIC-III Control Register A (ROM banks)
+/// Bit        20-bit Address       16-bit Address  Read-Write
+/// 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
+///            $FF80000 – $FF807FF
 const char VICIV_CRAM2K = 0x01;
-// 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
+/// 3 ROM8     $38000 – $39FFF      $8000 – $9FFF   N
 const char VICIV_ROM8 = 0x08;
-// 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
+/// 4 ROMA     $3A000 – $3BFFF      $A000 – $BFFF   N
 const char VICIV_ROMA = 0x10;
-// 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
+/// 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
 const char VICIV_ROMC = 0x20;
-// 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
+/// 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
 const char VICIV_CROM9 = 0x40;
-// 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
+/// 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
 const char VICIV_ROME = 0x80;
 
-// $D031 VIC-III Control Register B
-// 0    INT   Enable VIC-III interlaced mode
+/// $D031 VIC-III Control Register B
+/// 0    INT   Enable VIC-III interlaced mode
 const char VICIV_INT = 0x01;
-// 1    MONO  Enable VIC-III MONO video output (not implemented)
+/// 1    MONO  Enable VIC-III MONO video output (not implemented)
 const char VICIV_MONO = 0x02;
-// 2    H1280 Enable 1280 horizontal pixels (not implemented)
+/// 2    H1280 Enable 1280 horizontal pixels (not implemented)
 const char VICIV_H1280 = 0x04;
-// 3    V400  Enable 400 vertical pixels
+/// 3    V400  Enable 400 vertical pixels
 const char VICIV_V400 = 0x08;
-// 4    BPM   Bit-Plane Mode
+/// 4    BPM   Bit-Plane Mode
 const char VICIV_BPM = 0x10;
-// 5    ATTR  Enable extended attributes and 8 bit colour entries
+/// 5    ATTR  Enable extended attributes and 8 bit colour entries
 const char VICIV_ATTR = 0x20;
-// 6    FAST  Enable C65 FAST mode (3 .5MHz)
+/// 6    FAST  Enable C65 FAST mode (3 .5MHz)
 const char VICIV_FAST = 0x40;
-// 7    H640  Enable C64 640 horizontal pixels / 80 column mode
+/// 7    H640  Enable C64 640 horizontal pixels / 80 column mode
 const char VICIV_H640 = 0x80;
 
-// $D054 VIC-IV Control register C
-// 0 CHR16 enable 16-bit character numbers (two screen bytes per character)
+/// $D054 VIC-IV Control register C
+/// 0 CHR16 enable 16-bit character numbers (two screen bytes per character)
 const char VICIV_CHR16 = 0x01;
-// 1 FCLRLO enable full-colour mode for character numbers <=\$FF
+/// 1 FCLRLO enable full-colour mode for character numbers <=\$FF
 const char VICIV_FCLRLO = 0x02;
-// 2 FCLRHI enable full-colour mode for character numbers >\$FF
+/// 2 FCLRHI enable full-colour mode for character numbers >\$FF
 const char VICIV_FCLRHI = 0x04;
-// 3 SMTH video output horizontal smoothing enable
+/// 3 SMTH video output horizontal smoothing enable
 const char VICIV_CSMTH = 0x08;
-// 4 VIC-IV:SPR640 Sprite H640 enable;
+/// 4 VIC-IV:SPR640 Sprite H640 enable;
 const char VICIV_SPR640 = 0x10;
-// 5 VIC-IV:PALEMU video output pal simulation
+/// 5 VIC-IV:PALEMU video output pal simulation
 const char VICIV_PALEMU = 0x20;
-// 6 VIC-IV:VFAST C65GS FAST mode (48MHz)
+/// 6 VIC-IV:VFAST C65GS FAST mode (48MHz)
 const char VICIV_VFAST = 0x40;
-// 7 VIC-IV:ALPHEN Alpha compositor enable
+/// 7 VIC-IV:ALPHEN Alpha compositor enable
 const char VICIV_ALPHEN = 0x80;
 
-// $D06E.0-6 SPRPTRADR sprite pointer address (bits 22 - 16)
-//   7 SPRPTR16 16-bit sprite pointer mode (allows sprites to be located on any 64 byte boundary in chip RAM)
+/// $D06E.0-6 SPRPTRADR sprite pointer address (bits 22 - 16)
+///   7 SPRPTR16 16-bit sprite pointer mode (allows sprites to be located on any 64 byte boundary in chip RAM)
 const char VICIV_SPRPTR16 = 0x80;

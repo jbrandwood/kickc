@@ -1,6 +1,6 @@
-// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
-// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
-// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
+/// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
+/// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
+/// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
 
 struct MOS7360_TED {
     // Counter #01. It always starts to decrement from the last written value into it.

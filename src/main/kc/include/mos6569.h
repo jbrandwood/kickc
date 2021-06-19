@@ -1,7 +1,7 @@
-// MOS 6567 / 6569 Video Interface Chip (VIC II)
-//  http://archive.6502.org/datasheets/mos_6567_vic_ii_preliminary.pdf
-//  https://dustlayer.com/vic-ii/2013/4/22/when-visibility-matters
-//  http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt
+/// MOS 6567 / 6569 Video Interface Chip (VIC II)
+///  http://archive.6502.org/datasheets/mos_6567_vic_ii_preliminary.pdf
+///  https://dustlayer.com/vic-ii/2013/4/22/when-visibility-matters
+///  http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt
 struct MOS6569_VICII {
     // $D000 X-Coordinate Sprite#0
     char SPRITE0_X;
@@ -143,13 +143,13 @@ struct MOS6569_VICII {
     char SPRITE7_COLOR;
 };
 
-// Positions of the border (in sprite positions)
+/// Positions of the border (in sprite positions)
 const char BORDER_XPOS_LEFT=24;
 const unsigned int BORDER_XPOS_RIGHT=344;
 const char BORDER_YPOS_TOP=50;
 const char BORDER_YPOS_BOTTOM=250;
 
-// The offset of the sprite pointers from the screen start address
+/// The offset of the sprite pointers from the screen start address
 const unsigned int OFFSET_SPRITE_PTRS = 0x3f8;
 
 char * const SPRITES_XPOS = (char*)$d000;
@@ -188,12 +188,12 @@ const char VICII_CSEL = %00001000;
 char*  const VICII_MEMORY = (char*)$d018;
 char*  const D018 = (char*)$d018;
 
-// VIC II IRQ Status Register
+/// VIC II IRQ Status Register
 char*  const IRQ_STATUS = (char*)$d019;
-// VIC II IRQ Enable Register
+/// VIC II IRQ Enable Register
 char*  const IRQ_ENABLE = (char*)$d01a;
 
-// Bits for the VICII IRQ Status/Enable Registers
+/// Bits for the VICII IRQ Status/Enable Registers
 const char IRQ_RASTER = %00000001;
 const char IRQ_COLLISION_BG = %00000010;
 const char IRQ_COLLISION_SPRITE = %00000100;

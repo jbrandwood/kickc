@@ -1,5 +1,11 @@
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 struct MOS6526_CIA {
     // Port A
     char PORT_A;
@@ -31,38 +37,38 @@ struct MOS6526_CIA {
     char TIMER_B_CONTROL;
 };
 
-// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+/// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
 const char CIA_INTERRUPT_CLEAR = $7f;
 
-// Timer Control - Start/stop timer (0:stop, 1: start)
+/// Timer Control - Start/stop timer (0:stop, 1: start)
 const char CIA_TIMER_CONTROL_STOP = 0b00000000;
-// Timer Control - Start/stop timer (0:stop, 1: start)
+/// Timer Control - Start/stop timer (0:stop, 1: start)
 const char CIA_TIMER_CONTROL_START = 0b00000001;
-// Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
+/// Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
 const char CIA_TIMER_CONTROL_CONTINUOUS = 0b00000000;
-// Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
+/// Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
 const char CIA_TIMER_CONTROL_ONESHOT = 0b00001000;
-// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)
+/// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)
 const char CIA_TIMER_CONTROL_A_COUNT_CYCLES = 0b00000000;
-// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)
+/// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)
 const char CIA_TIMER_CONTROL_A_COUNT_CNT = 0b00100000;
-// Timer A Control - Serial Port Mode (0: Serial Port Input, 1: Serial Port Output)
+/// Timer A Control - Serial Port Mode (0: Serial Port Input, 1: Serial Port Output)
 const char CIA_TIMER_CONTROL_A_SERIAL_IN = 0b00000000;
-// Timer A Control - Serial Port Mode (0: Serial Port Input, 1: Serial Port Output)
+/// Timer A Control - Serial Port Mode (0: Serial Port Input, 1: Serial Port Output)
 const char CIA_TIMER_CONTROL_A_SERIAL_OUT = 0b01000000;
-// Timer A Control - time-of-day clock Mode (0: 60Hz, 1: 50Hz)
+/// Timer A Control - time-of-day clock Mode (0: 60Hz, 1: 50Hz)
 const char CIA_TIMER_CONTROL_A_TOD_60HZ = 0b00000000;
-// Timer A Control - time-of-day clock Mode (0: 60Hz, 1: 50Hz)
+/// Timer A Control - time-of-day clock Mode (0: 60Hz, 1: 50Hz)
 const char CIA_TIMER_CONTROL_A_TOD_50HZ = 0b10000000;
-// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+/// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
 const char CIA_TIMER_CONTROL_B_COUNT_CYCLES = 0b00000000;
-// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+/// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
 const char CIA_TIMER_CONTROL_B_COUNT_CNT = 0b00100000;
-// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+/// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
 const char CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = 0b01000000;
-// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+/// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
 const char CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A_CNT = 0b01100000;
-// Timer B Control - time-of-day write mode (0: TOD clock, 1: TOD alarm)
+/// Timer B Control - time-of-day write mode (0: TOD clock, 1: TOD alarm)
 const char CIA_TIMER_CONTROL_B_TOD_CLOCK_SET = 0b00000000;
-// Timer B Control - time-of-day write mode (0: TOD clock, 1: TOD alarm)
+/// Timer B Control - time-of-day write mode (0: TOD clock, 1: TOD alarm)
 const char CIA_TIMER_CONTROL_B_TOD_ALARM_SET = 0b10000000;

@@ -1,13 +1,13 @@
-// MEGA65 DMA
-// Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
-// C65 Manual http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt
-// DMA lists https://raw.githubusercontent.com/MEGA65/c65-specifications/master/c65manualupdated.txt
-// DMA lists https://c65gs.blogspot.com/2019/03/auto-detecting-required-revision-of.html
-// DMA list options https://c65gs.blogspot.com/2018/01/improving-dmagic-controller-interface.html
-// DMAgic VHDL source https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/gs4510.vhdl#L4364
-// Xemu emulator source https://github.com/lgblgblgb/xemu/blob/master/xemu/f018_core.c
+/// MEGA65 DMA
+/// Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
+/// C65 Manual http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt
+/// DMA lists https://raw.githubusercontent.com/MEGA65/c65-specifications/master/c65manualupdated.txt
+/// DMA lists https://c65gs.blogspot.com/2019/03/auto-detecting-required-revision-of.html
+/// DMA list options https://c65gs.blogspot.com/2018/01/improving-dmagic-controller-interface.html
+/// DMAgic VHDL source https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/gs4510.vhdl#L4364
+/// Xemu emulator source https://github.com/lgblgblgb/xemu/blob/master/xemu/f018_core.c
 
-// Registers of the MEGA65 enchanced F018 DMAgic Controller
+/// Registers of the MEGA65 enchanced F018 DMAgic Controller
 struct F018_DMAGIC {
     // $D700 ADDRLSBTRIG DMAgic DMA list address LSB, and trigger DMA (when written).
     // We also clear out the upper address bits in case an enhanced job had set them.
@@ -38,7 +38,7 @@ struct F018_DMAGIC {
     char MISC;
 };
 
-// F018A DMA list entry
+/// F018A DMA list entry
 struct DMA_LIST_F018A {
         // DMA command
         // 0-1 command (00: copy, 01: mix (unsupported) 10: swap (unsupported) 11: fill )
@@ -71,7 +71,7 @@ struct DMA_LIST_F018A {
         unsigned int modulo;
 };
 
-// F018B DMA list entry
+/// F018B DMA list entry
 struct DMA_LIST_F018B {
         // DMA command (format F018B)
         // bits
@@ -108,73 +108,73 @@ struct DMA_LIST_F018B {
         unsigned int modulo;
 };
 
-// DMA command copy
+/// DMA command copy
 const char DMA_COMMAND_COPY = 0x00;
-// DMA command fill
+/// DMA command fill
 const char DMA_COMMAND_FILL = 0x03;
-// DMA command fill
+/// DMA command fill
 const char DMA_COMMAND_CHAIN = 0x04;
-// DMA command source direction
+/// DMA command source direction
 const char DMA_COMMAND_SRC_DIR = 0x10;
-// DMA command destination direction
+/// DMA command destination direction
 const char DMA_COMMAND_DEST_DIR = 0x20;
 
-// Extended DMA Option Prefixes
+/// Extended DMA Option Prefixes
 
-// $00 = End of options
+/// $00 = End of options
 const char DMA_OPTION_END = 0x00;
-// $06 = Use $86 $xx transparency value (don't write source bytes to destination, if byte value matches $xx)
+/// $06 = Use $86 $xx transparency value (don't write source bytes to destination, if byte value matches $xx)
 const char DMA_OPTION_TRANSPARENCY_ENABLE = 0x06;
-// $07 = Disable $86 $xx transparency value.
+/// $07 = Disable $86 $xx transparency value.
 const char DMA_OPTION_TRANSPARENCY_DISABLE = 0x07;
-// $0A = Use F018A list format
+/// $0A = Use F018A list format
 const char DMA_OPTION_FORMAT_F018A = 0x0a;
-// $0B = Use F018B list format
+/// $0B = Use F018B list format
 const char DMA_OPTION_FORMAT_F018B = 0x0a;
-// $53 Enable ‘Shallan Spiral’ Mode
+/// $53 Enable ‘Shallan Spiral’ Mode
 const char DMA_OPTION_SPIRAL = 0x53;
-// $80 $xx = Set MB of source address
+/// $80 $xx = Set MB of source address
 const char DMA_OPTION_SRC_MB = 0x80;
-// $81 $xx = Set MB of destination address
+/// $81 $xx = Set MB of destination address
 const char DMA_OPTION_DEST_MB = 0x81;
-// $82 $xx = Set source skip rate (/256ths of bytes)
+/// $82 $xx = Set source skip rate (/256ths of bytes)
 const char DMA_OPTION_SRC_SKIPRATE_256TH = 0x82;
-// $83 $xx = Set source skip rate (whole bytes)
+/// $83 $xx = Set source skip rate (whole bytes)
 const char DMA_OPTION_SRC_SKIPRATE = 0x83;
-// $84 $xx = Set destination skip rate (/256ths of bytes)
+/// $84 $xx = Set destination skip rate (/256ths of bytes)
 const char DMA_OPTION_DEST_SKIPRATE_256TH = 0x84;
-// $85 $xx = Set destination skip rate (whole bytes)
+/// $85 $xx = Set destination skip rate (whole bytes)
 const char DMA_OPTION_DEST_SKIPRATE = 0x85;
-// $86 $xx = Don't write to destination if byte value = $xx, and option $06 enabled
+/// $86 $xx = Don't write to destination if byte value = $xx, and option $06 enabled
 const char DMA_OPTION_TRANSPARENCY_VALUE = 0x86;
-// $87 Set X column bytes (LSB) for line drawing
-// The number of bytes needed to move to the next X column (8 pixels to the right)
+/// $87 Set X column bytes (LSB) for line drawing
+/// The number of bytes needed to move to the next X column (8 pixels to the right)
 const char DMA_OPTION_LINE_XSTEP_LO = 0x87;
-// $88 Set X column bytes (MSB) for line drawing
-// The number of bytes needed to move to the next X column (8 pixels to the right)
+/// $88 Set X column bytes (MSB) for line drawing
+/// The number of bytes needed to move to the next X column (8 pixels to the right)
 const char DMA_OPTION_LINE_XSTEP_HI = 0x88;
-// $89 Set Y row bytes (LSB) for line drawing
-// The number of bytes needed to move to the next Y row (1 pixel below)
+/// $89 Set Y row bytes (LSB) for line drawing
+/// The number of bytes needed to move to the next Y row (1 pixel below)
 const char DMA_OPTION_LINE_YSTEP_LO = 0x89;
-// $8A Set Y row bytes (MSB) for line drawing
-// The number of bytes needed to move to the next Y row (1 pixel below)
+/// $8A Set Y row bytes (MSB) for line drawing
+/// The number of bytes needed to move to the next Y row (1 pixel below)
 const char DMA_OPTION_LINE_YSTEP_HI = 0x8a;
-// $8B Slope (LSB) for line drawing
+/// $8B Slope (LSB) for line drawing
 const char DMA_OPTION_LINE_SLOPE_LO = 0x8b;
-// $8C Slope (MSB) for line drawing
+/// $8C Slope (MSB) for line drawing
 const char DMA_OPTION_LINE_SLOPE_HI = 0x8c;
-// $8D Slope accumulator initial fraction (LSB) for line drawing
+/// $8D Slope accumulator initial fraction (LSB) for line drawing
 const char DMA_OPTION_LINE_SLOPE_INIT_LO = 0x8d;
-// $8E Slope accumulator initial fraction (MSB) for line drawing
+/// $8E Slope accumulator initial fraction (MSB) for line drawing
 const char DMA_OPTION_LINE_SLOPE_INIT_HI = 0x8e;
-// $8F Line Drawing Mode enable and options (set in argument byte):
-// Bit 7 = enable line mode,
-// Bit 6 = select X or Y direction,
-// Bit 5 = slope is negative.
+/// $8F Line Drawing Mode enable and options (set in argument byte):
+/// Bit 7 = enable line mode,
+/// Bit 6 = select X or Y direction,
+/// Bit 5 = slope is negative.
 const char DMA_OPTION_LINE_MODE = 0x8f;
-// Line Drawing Mode Bit 7 = enable line mode,
+/// Line Drawing Mode Bit 7 = enable line mode,
 const char DMA_OPTION_LINE_MODE_ENABLE = 0x80;
-// Line Drawing Mode Bit 6 = select X or Y direction,
+/// Line Drawing Mode Bit 6 = select X or Y direction,
 const char DMA_OPTION_LINE_MODE_DIRECTION_Y = 0x40;
-// Line Drawing Mode Bit 5 = slope is negative.
+/// Line Drawing Mode Bit 5 = slope is negative.
 const char DMA_OPTION_LINE_MODE_SLOPE_NEGATIVE = 0x20;

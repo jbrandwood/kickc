@@ -1,18 +1,18 @@
-// Atari Television Interface Adaptor (TIA)
-// https://en.wikipedia.org/wiki/Television_Interface_Adaptor
-// http://www.qotile.net/minidig/docs/stella.pdf
-// Based on https://github.com/munsie/dasm/blob/master/machines/atari2600/vcs.h
+/// Atari Television Interface Adaptor (TIA)
+/// https://en.wikipedia.org/wiki/Television_Interface_Adaptor
+/// http://www.qotile.net/minidig/docs/stella.pdf
+/// Based on https://github.com/munsie/dasm/blob/master/machines/atari2600/vcs.h
 
-// The number of CPU cycles per scanline
+/// The number of CPU cycles per scanline
 const char CYCLES_PER_SCANLINE = 76;
 
-// The TIA WSYNC register (for access from inline ASM)
+/// The TIA WSYNC register (for access from inline ASM)
 char* const TIA_WSYNC = (char*)0x02;
-// The TIA RESP0 register (for access from inline ASM)
+/// The TIA RESP0 register (for access from inline ASM)
 char* const TIA_RESP0 = (char*)0x10;
-// The TIA RESP1 register (for access from inline ASM)
+/// The TIA RESP1 register (for access from inline ASM)
 char* const TIA_RESP1 = (char*)0x11;
-// The TIA HMP0 register (for access from inline ASM)
+/// The TIA HMP0 register (for access from inline ASM)
 char* const TIA_HMP0 = (char*)0x20;
 
 struct ATARI_TIA_WRITE {

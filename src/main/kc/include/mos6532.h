@@ -1,7 +1,7 @@
-// MOS 6532 RAM-I/O-Timer (RIOT)
-// http://www.ionpool.net/arcade/gottlieb/technical/datasheets/R6532_datasheet.pdf
-// http://www.qotile.net/minidig/docs/stella.pdf
-// https://en.wikipedia.org/wiki/MOS_Technology_6532
+/// MOS 6532 RAM-I/O-Timer (RIOT)
+/// http://www.ionpool.net/arcade/gottlieb/technical/datasheets/R6532_datasheet.pdf
+/// http://www.qotile.net/minidig/docs/stella.pdf
+/// https://en.wikipedia.org/wiki/MOS_Technology_6532
 
 struct MOS6532_RIOT {
     // $280 Port A data register for joysticks: Bits 4-7 for player 1.  Bits 0-3 for player 2.

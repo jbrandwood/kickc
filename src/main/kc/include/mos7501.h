@@ -1,8 +1,8 @@
-// MOS 7501/8501 MICROPROCESSOR
-// https://en.wikipedia.org/wiki/MOS_Technology_6510
+/// MOS 7501/8501 MICROPROCESSOR
+/// https://en.wikipedia.org/wiki/MOS_Technology_6510
 
-// The processor port of the MOS 7501 CPU
-// http://hackjunk.com/2017/06/23/commodore-16-plus-4-8501-to-6510-cpu-conversion/
+/// The processor port of the MOS 7501 CPU
+/// http://hackjunk.com/2017/06/23/commodore-16-plus-4-8501-to-6510-cpu-conversion/
 struct MOS7501_PORT {
     // The data direction of the port
     char DDR;

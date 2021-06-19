@@ -1,35 +1,35 @@
-// Ricoh 2C02 - NES Picture Processing Unit (PPU)
-// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
-// https://en.wikipedia.org/wiki/Picture_Processing_Unit
-// https://wiki.nesdev.com/w/index.php/PPU_registers
-// http://nesdev.com/2C02%20technical%20reference.TXT
-// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+/// Ricoh 2C02 - NES Picture Processing Unit (PPU)
+/// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
+/// https://en.wikipedia.org/wiki/Picture_Processing_Unit
+/// https://wiki.nesdev.com/w/index.php/PPU_registers
+/// http://nesdev.com/2C02%20technical%20reference.TXT
+/// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018.
 
-// PPU Memory Map
-// $0000-$0fff	$1000	Pattern table 0
+/// PPU Memory Map
+/// $0000-$0fff	$1000	Pattern table 0
 char * const PPU_PATTERN_TABLE_0 = (char*)0x0000;
-// $1000-$1fff	$1000	Pattern table 1
+/// $1000-$1fff	$1000	Pattern table 1
 char * const PPU_PATTERN_TABLE_1 = (char*)0x1000;
-// $2000-$23bf	$03c0	Name table 0
+/// $2000-$23bf	$03c0	Name table 0
 char * const PPU_NAME_TABLE_0 = (char*)0x2000;
-// $23c0-$23ff	$0040	Attribute table 0
+/// $23c0-$23ff	$0040	Attribute table 0
 char * const PPU_ATTRIBUTE_TABLE_0 = (char*)0x23c0;
-// $2400-$27bf	$03c0	Name table 1
+/// $2400-$27bf	$03c0	Name table 1
 char * const PPU_NAME_TABLE_1 = (char*)0x2400;
-// $27c0-$27ff	$0040	Attribute table 1
+/// $27c0-$27ff	$0040	Attribute table 1
 char * const PPU_ATTRIBUTE_TABLE_1 = (char*)0x27c0;
-// $2800-$2bbf	$03c0	Name table 2
+/// $2800-$2bbf	$03c0	Name table 2
 char * const PPU_NAME_TABLE_2 = (char*)0x2800;
-// $2bc0-$2bff	$0040	Attribute table 2
+/// $2bc0-$2bff	$0040	Attribute table 2
 char * const PPU_ATTRIBUTE_TABLE_2 = (char*)0x2bc0;
-// $2c00-$2fbf	$03c0	Name table 3
+/// $2c00-$2fbf	$03c0	Name table 3
 char * const PPU_NAME_TABLE_3 = (char*)0x2c00;
-// $2fc0-$2fff	$0040	Attribute table 3
+/// $2fc0-$2fff	$0040	Attribute table 3
 char * const PPU_ATTRIBUTE_TABLE_3 = (char*)0x2fc0;
-// $3000-$3eff	$0f00	Mirrors of $2000-$2eff
-// $3f00-$3f1f	$0020	Palette RAM indexes
+/// $3000-$3eff	$0f00	Mirrors of $2000-$2eff
+/// $3f00-$3f1f	$0020	Palette RAM indexes
 char * const PPU_PALETTE = (char*)0x3f00;
-// $3f20-$3fff	$00e0	Mirrors of $3f00-$3f1f
+/// $3f20-$3fff	$00e0	Mirrors of $3f00-$3f1f
 
 struct RICOH_2C02 { 
     // ------+-----+---------------------------------------------------------------
@@ -135,8 +135,8 @@ struct RICOH_2C02 {
     char PPUDATA;           // Reference: https://wiki.nesdev.com/w/index.php/PPU_registers#PPUDATA
 };
 
-// PPU Status Register for reading in ASM
+/// PPU Status Register for reading in ASM
 volatile char * const PPU_PPUSTATUS = (char*)0x2002;
-// PPU Data Register for reading in ASM
+/// PPU Data Register for reading in ASM
 volatile char * const PPU_PPUDATA = (char*)0x2007;
 

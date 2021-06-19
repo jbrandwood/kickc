@@ -1,5 +1,5 @@
-// Atari 8-bit 400/800/XL/XE Registers and Constants
-// https://en.wikipedia.org/wiki/Atari_8-bit_family
+/// Atari 8-bit 400/800/XL/XE Registers and Constants
+/// https://en.wikipedia.org/wiki/Atari_8-bit_family
 
 #ifndef __ATARIXL__
 #error "Target platform must be atarixl"
@@ -9,64 +9,64 @@
 #include <atari-gtia.h>
 #include <atari-pokey.h>
 
-// Atari GTIA write registers
+/// Atari GTIA write registers
 struct ATARI_GTIA_WRITE * const GTIA = (struct ATARI_GTIA_WRITE *)0xd000;
 
-// Atari GTIA read registers
+/// Atari GTIA read registers
 struct ATARI_GTIA_READ * const GTIA_READ = (struct ATARI_GTIA_READ *)0xd000;
 
-// Atari POKEY write registers
+/// Atari POKEY write registers
 struct ATARI_POKEY_WRITE * const POKEY = (struct ATARI_POKEY_WRITE *)0xd200;
 
-// Atari POKEY read registers
+/// Atari POKEY read registers
 struct ATARI_POKEY_READ * const POKEY_READ = (struct ATARI_POKEY_READ *)0xd200;
 
-// Atari ANTIC registers
+/// Atari ANTIC registers
 struct ATARI_ANTIC * const ANTIC = (struct ATARI_ANTIC *)0xd400;
 
 
-// Atari ZP registers
-// 1-byte cursor row
+/// Atari ZP registers
+/// 1-byte cursor row
 char * ROWCRS = (char*)0x54;
-// 2-byte cursor column
+/// 2-byte cursor column
 word * COLCRS = (word*)0x55;
-// 2-byte saved memory scan counter
+/// 2-byte saved memory scan counter
 char ** const SAVMSC = (char**)0x58;
-// data under cursor
+/// data under cursor
 char * const OLDCHR = (char*)0x5D;
-// 2-byte saved cursor memory address
+/// 2-byte saved cursor memory address
 char ** const OLDADR = (char**)0x5E;
 
-// Atari OS Shadow registers
-// OS Shadow ANTIC Direct Memory Access Control ($D400)
+/// Atari OS Shadow registers
+/// OS Shadow ANTIC Direct Memory Access Control ($D400)
 char * const SDMCTL = (char*)0x022f;
-// OS Shadow ANTIC Character Control ($D401)
+/// OS Shadow ANTIC Character Control ($D401)
 char * const CHART = (char*)0x02f3;
-// OS Shadow ANTIC Display List Pointer ($D402)
+/// OS Shadow ANTIC Display List Pointer ($D402)
 char ** const SDLST = (char**)0x0230;
-// OS Shadow ANTIC Character Set Base Address (D409)
+/// OS Shadow ANTIC Character Set Base Address (D409)
 char * CHBAS = (char*)0x02f4;
-// OS Shadow ANTIC Light Pen Horizontal Position ($D40C)
+/// OS Shadow ANTIC Light Pen Horizontal Position ($D40C)
 char * LPENH = (char*)0x234;
-// OS Shadow ANTIC Light Pen Vertical Position ($D40D)
+/// OS Shadow ANTIC Light Pen Vertical Position ($D40D)
 char * LPENV = (char*)0x235;
-// Color register zero, color of playfield zero. Shadow for 53270 ($D016)
+/// Color register zero, color of playfield zero. Shadow for 53270 ($D016)
 char * const COLOR0 = (char*)0x2C4;
-// Shadow for 53271 ($D017). Text color in Gr.0
+/// Shadow for 53271 ($D017). Text color in Gr.0
 char * const COLOR1 = (char*)0x2C5;
-// Shadow for 53272 ($D018). Background color in GR.0
+/// Shadow for 53272 ($D018). Background color in GR.0
 char * const COLOR2 = (char*)0x2C6;
-// Shadow for 53273 ($D019)
+/// Shadow for 53273 ($D019)
 char * const COLOR3 = (char*)0x2C7;
-// Shadow for 53274 ($D01A). Border color in GR.0
+/// Shadow for 53274 ($D01A). Border color in GR.0
 char * const COLOR4 = (char*)0x2C8;
-// Cursor inhibit flag, 0 turns on, any other number turns off. Cursor doesn't change until it moves next.
+/// Cursor inhibit flag, 0 turns on, any other number turns off. Cursor doesn't change until it moves next.
 char * const CRSINH = (char*)0x2F0;
-// Internal hardware value for the last key pressed. Set to 0xFF to clear.
+/// Internal hardware value for the last key pressed. Set to 0xFF to clear.
 char * const CH = (char*)0x2FC;
 
-// Atari colours - names from Mapping the Atari.
-// Add luminance values 0-14 (even only) to increase brightness
+/// Atari colours - names from Mapping the Atari.
+/// Add luminance values 0-14 (even only) to increase brightness
 const char BLACK		= 0x00;
 const char RUST			= 0x10;
 const char RED_ORANGE	= 0x20;

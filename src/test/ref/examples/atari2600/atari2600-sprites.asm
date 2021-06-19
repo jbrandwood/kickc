@@ -1,6 +1,8 @@
 // Minimal Atari 2600 VCS Program using Sprites
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
-/// Atari 2600 Registers and Constants
+/// @file
+///
+/// @brief Atari 2600 Registers and Constants
 /// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
   // Atari 2600 VCS 2K ROM in A26 executable file
 .file [name="atari2600-sprites.a26", type="bin", segments="Code, Data, Vectors"]

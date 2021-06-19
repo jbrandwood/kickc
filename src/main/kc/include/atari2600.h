@@ -1,4 +1,6 @@
-/// Atari 2600 Registers and Constants
+/// @file
+///
+/// @brief Atari 2600 Registers and Constants
 /// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
 
 #ifndef __ATARI2600__

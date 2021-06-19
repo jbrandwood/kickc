@@ -22,13 +22,15 @@ KickC uses the very versatile [Kick Assembler](http://theweb.dk/KickAssembler). 
 
 * [Read](https://docs.google.com/document/d/1JE-Lt5apM-g4tZN3LS4TDbPKYgXuBz294enS9Oc4HXM/edit?usp=sharing) the Reference Manual
 
-* [Look](https://gitlab.com/camelot/kickc/tree/master) through the Source Code
+* [See](https://camelot.gitlab.io/kickc/files.html) the included C standard library
 
 * [Follow](https://gitlab.com/camelot/kickc/issues) the features being developed
 
 * [Discuss](https://www.facebook.com/groups/302286200587943/) the compiler and receive news on facebook
 
 * [Chat](https://discord.gg/q6TFMZvfg5) on discord
+
+* [Examine](https://gitlab.com/camelot/kickc/tree/master) the Compiler Source Code
 
 * [Contribute](https://gitlab.com/camelot/kickc/blob/master/CONTRIBUTING.md) to the development of KickC 
 

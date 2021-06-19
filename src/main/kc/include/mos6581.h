@@ -1,5 +1,6 @@
 /// @file
 /// The MOS 6581/8580 SID (Sound Interface Device)
+///
 /// MOS 6567 / 6569 Video Interface Chip (VIC II)
 /// http://archive.6502.org/datasheets/mos_6581_sid.pdf
 

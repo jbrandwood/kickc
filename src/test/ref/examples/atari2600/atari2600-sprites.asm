@@ -1,7 +1,7 @@
 // Minimal Atari 2600 VCS Program using Sprites
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
-// Atari 2600 Registers and Constants
-// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
+/// Atari 2600 Registers and Constants
+/// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
   // Atari 2600 VCS 2K ROM in A26 executable file
 .file [name="atari2600-sprites.a26", type="bin", segments="Code, Data, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
@@ -11,7 +11,7 @@
 .word __start // NMI
 .word __start // RESET
 .word __start // IRQ
-  // The number of CPU cycles per scanline
+  /// The number of CPU cycles per scanline
   .const CYCLES_PER_SCANLINE = $4c
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0 = 6
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0 = $1b
@@ -22,15 +22,15 @@
   .const OFFSET_STRUCT_MOS6532_RIOT_INTIM = 4
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK = 1
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK = 9
-  // The TIA WSYNC register (for access from inline ASM)
+  /// The TIA WSYNC register (for access from inline ASM)
   .label TIA_WSYNC = 2
-  // The TIA RESP0 register (for access from inline ASM)
+  /// The TIA RESP0 register (for access from inline ASM)
   .label TIA_RESP0 = $10
-  // The TIA HMP0 register (for access from inline ASM)
+  /// The TIA HMP0 register (for access from inline ASM)
   .label TIA_HMP0 = $20
-  // Atari TIA write registers
+  /// Atari TIA write registers
   .label TIA = 0
-  // Atari RIOT registers
+  /// Atari RIOT registers
   .label RIOT = $280
   // Player 0 X position
   .label p0_xpos = $82

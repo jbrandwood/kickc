@@ -1,9 +1,11 @@
 // Test the MAP instruction for remapping memory
 // See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // See Appendix G in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf for a description of the CPU memory remapper of the MEGA65.
-// MEGA65 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// MEGA65 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
 .file [name="memorymap-test.prg", type="prg", segments="Program"]
@@ -16,11 +18,11 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
-  // Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
+  /// Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
   .const MEMORYBLOCK_4000 = 4
-  // Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
+  /// Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
   .const MEMORYBLOCK_8000 = $10
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $800
 .segment Code
 main: {

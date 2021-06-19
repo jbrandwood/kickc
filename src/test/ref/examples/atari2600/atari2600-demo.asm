@@ -1,7 +1,7 @@
 // Minimal Atari 2600 VCS Program
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
-// Atari 2600 Registers and Constants
-// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
+/// Atari 2600 Registers and Constants
+/// https://web.archive.org/web/20170215054248/http://www.atariguide.com/pdfs/Atari_2600_VCS_Domestic_Field_Service_Manual.pdf
   // Atari 2600 VCS 2K ROM in A26 executable file
 .file [name="atari2600-demo.a26", type="bin", segments="Code, Data, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
@@ -21,9 +21,9 @@
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK = 1
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK = 9
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE = $2a
-  // Atari TIA write registers
+  /// Atari TIA write registers
   .label TIA = 0
-  // Atari RIOT registers
+  /// Atari RIOT registers
   .label RIOT = $280
   // Counts frames
   .label idx = $80

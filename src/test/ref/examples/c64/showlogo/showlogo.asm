@@ -1,6 +1,9 @@
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="showlogo.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -11,7 +14,7 @@
 :BasicUpstart(main)
   .const VICII_MCM = $10
   .const VICII_CSEL = 8
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b
@@ -21,9 +24,9 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
   .label D016 = $d016
   .label D018 = $d018
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   .label SCREEN = $400
 .segment Code

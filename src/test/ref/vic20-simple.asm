@@ -1,10 +1,10 @@
 // Trivial VIC 20 program
-// Commodore VIC 20 registers and memory layout
-// http://sleepingelephant.com/denial/wiki/index.php?title=Memory_Map
-// http://www.zimmers.net/anonftp/pub/cbm/vic20/manuals/VIC-20_Programmers_Reference_Guide_1st_Edition_6th_Printing.pdf
-// MOS 6560/6561 VIDEO INTERFACE CHIP
-// Used in VIC 20
-// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
+/// Commodore VIC 20 registers and memory layout
+/// http://sleepingelephant.com/denial/wiki/index.php?title=Memory_Map
+/// http://www.zimmers.net/anonftp/pub/cbm/vic20/manuals/VIC-20_Programmers_Reference_Guide_1st_Edition_6th_Printing.pdf
+/// MOS 6560/6561 VIDEO INTERFACE CHIP
+/// Used in VIC 20
+/// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
   // Commodore VIC 20 executable PRG file
 .file [name="vic20-simple.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -14,9 +14,9 @@
 .segment Basic
 :BasicUpstart(main)
   .const RED = 2
-  // Default address of screen color matrix
+  /// Default address of screen color matrix
   .label DEFAULT_COLORRAM = $9600
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $1e00
 .segment Code
 main: {

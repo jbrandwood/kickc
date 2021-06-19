@@ -7,11 +7,11 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .label BG_COLOR = $d021
-  // The vector used when the KERNAL serves IRQ interrupts
+  /// The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
 .segment Code
 // The Interrupt Handler

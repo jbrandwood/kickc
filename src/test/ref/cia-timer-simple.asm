@@ -7,15 +7,15 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Timer Control - Start/stop timer (0:stop, 1: start)
+  /// Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  /// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#2 timer A&B as one single 32-bit value
+  /// CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
 .segment Code

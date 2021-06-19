@@ -1,7 +1,10 @@
 // A simple usage of the flexible sprite multiplexer routine
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="simple-multiplexer-irq.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,11 +13,11 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const VICII_DEN = $10
   .const VICII_RSEL = 8
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const RED = 2
@@ -31,13 +34,13 @@
   .label BORDER_COLOR = $d020
   .label VICII_CONTROL1 = $d011
   .label D011 = $d011
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
+  /// VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the KERNAL serves IRQ interrupts
+  /// The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // Location of screen & sprites
   .label SCREEN = $400

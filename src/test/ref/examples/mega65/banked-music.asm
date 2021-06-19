@@ -16,15 +16,15 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // DMA command copy
+  /// DMA command copy
   .const DMA_COMMAND_COPY = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   .const OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
   .const OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
@@ -45,23 +45,23 @@
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The VIC III MOS 4567/4569
+  /// The VIC III MOS 4567/4569
   .label VICIII = $d000
-  // The VIC IV
+  /// The VIC IV
   .label VICIV = $d000
-  // DMAgic F018 Controller
+  /// DMAgic F018 Controller
   .label DMA = $d700
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $800
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // Address after the end of the music
   .label MUSIC_END = $5200

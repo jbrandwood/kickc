@@ -13,11 +13,11 @@
   .const DTV_BADLINE_OFF = $20
   .label RASTER = $d012
   .label BG_COLOR = $d021
-  // Feature enables or disables the extra C64 DTV features
+  /// Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  // Controls the graphics modes of the C64 DTV
+  /// Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
-  // Defines colors for the 16 first colors ($00-$0f)
+  /// Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
 .segment Code
 main: {

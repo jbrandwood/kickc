@@ -11,7 +11,7 @@
   // The number of iterations performed during 8-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_8 = 8
   .label D018 = $d018
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   .label CHARSET = $2000
   .label SCREEN = $2800

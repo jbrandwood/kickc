@@ -11,9 +11,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // SID Channel Control Register Noise Waveform
+  /// SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const YELLOW = 7
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
@@ -22,11 +22,11 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label D018 = $d018
-  // The SID MOS 6581/8580
+  /// The SID MOS 6581/8580
   .label SID = $d400
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   .label SCREEN1 = $3800
   .label SCREEN2 = $3c00

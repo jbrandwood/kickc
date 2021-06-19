@@ -2,9 +2,12 @@
 // Based on: 
 // - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="perspective.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

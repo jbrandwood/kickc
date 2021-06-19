@@ -1,5 +1,5 @@
-// A lightweight library for printing on the C64.
-// Printing with this library is done by calling print_ function for each element
+/// A lightweight library for printing on the C64.
+/// Printing with this library is done by calling print_ function for each element
   // Commodore 64 PRG executable file
 .file [name="plasma-kc.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -11,7 +11,7 @@
   .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
   .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label VICII_MEMORY = $d018
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN1 = $e000
   .label SCREEN2 = $e400

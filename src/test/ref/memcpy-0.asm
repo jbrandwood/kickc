@@ -7,14 +7,14 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  /// RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
+  /// BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
   .label D018 = $d018
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The address of the CHARGEN character set
+  /// The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label CHARSET = $2000
   .label SCREEN = $400

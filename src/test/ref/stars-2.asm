@@ -1,5 +1,5 @@
 // Stars struct of array
-// Functions for performing input and output.
+/// Functions for performing input and output.
   // Commodore 64 PRG executable file
 .file [name="stars-2.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -11,9 +11,9 @@
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position

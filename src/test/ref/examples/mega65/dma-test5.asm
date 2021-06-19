@@ -1,9 +1,11 @@
 // MEGA65 DMA test using memset
 // Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
-// Functions for using the F018 DMA for very fast copying or filling of memory
-// MEGA65 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// Functions for using the F018 DMA for very fast copying or filling of memory
+/// MEGA65 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
 .file [name="dma-test5.prg", type="prg", segments="Program"]
@@ -16,7 +18,7 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
-  // DMA command fill
+  /// DMA command fill
   .const DMA_COMMAND_FILL = 3
   .const OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
   .const OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
@@ -25,9 +27,9 @@
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
-  // DMAgic F018 Controller
+  /// DMAgic F018 Controller
   .label DMA = $d700
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $800
 .segment Code
 main: {

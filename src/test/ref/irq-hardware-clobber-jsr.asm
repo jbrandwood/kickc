@@ -1,7 +1,10 @@
 // A minimal working raster hardware IRQ with clobber-based register savings
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="irq-hardware-clobber-jsr.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,15 +13,15 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
@@ -26,17 +29,17 @@
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
   .label VICII_CONTROL1 = $d011
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
+  /// VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
 .segment Code
 // Interrupt Routine

@@ -14,7 +14,7 @@
 .segment Basic
 :BasicUpstart(main)
 .segment Code
-  // The offset of the sprite pointers from the screen start address
+  /// The offset of the sprite pointers from the screen start address
   .const OFFSET_SPRITE_PTRS = $3f8
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
@@ -22,7 +22,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_COLOR = $d027
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Address to load to
   .label LOAD_SPRITE = $3000

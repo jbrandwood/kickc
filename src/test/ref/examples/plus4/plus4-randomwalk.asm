@@ -1,12 +1,12 @@
 // Random walk with color fading for Commodore Plus/4 / C16
-// Plus/4 / Commodore 16 registers and memory layout
-// http://zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/264_Hardware_Spec.pdf
-// http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/Plus_4_Technical_Docs.pdf
-// http://personalpages.tds.net/~rcarlsen/cbm/c16/C16_Service_Manual_314001-03_(1984_Oct).pdf
-// https://www.floodgap.com/retrobits/ckb/secret/264memory.txt
-// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
-// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
-// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
+/// Plus/4 / Commodore 16 registers and memory layout
+/// http://zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/264_Hardware_Spec.pdf
+/// http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/Plus_4_Technical_Docs.pdf
+/// http://personalpages.tds.net/~rcarlsen/cbm/c16/C16_Service_Manual_314001-03_(1984_Oct).pdf
+/// https://www.floodgap.com/retrobits/ckb/secret/264memory.txt
+/// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
+/// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
+/// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
   // Commodore 16 / Plus/4 executable PRG file
 .file [name="plus4-randomwalk.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -18,11 +18,11 @@
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
-  // Default address of screen luminance/color matrix
+  /// Default address of screen luminance/color matrix
   .label DEFAULT_COLORRAM = $800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  /// The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
   // The random state variable
   .label rand_state = 3

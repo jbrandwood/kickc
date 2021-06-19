@@ -1,7 +1,9 @@
 // Test a few VIC 3/4 features
-// MEGA65 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// MEGA65 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
 .file [name="test-vic4.prg", type="prg", segments="Program"]
@@ -14,15 +16,15 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
-  // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
+  /// Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  // I/O Personality selection
+  /// I/O Personality selection
   .label IO_KEY = $d02f
-  // C65 Banking Register
+  /// C65 Banking Register
   .label IO_BANK = $d030
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $800
   .label COLORS = $d800

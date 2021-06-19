@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
@@ -17,15 +17,15 @@
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
-  // The SID MOS 6581/8580
+  /// The SID MOS 6581/8580
   .label SID = $d400
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#2 Interrupt for reading in ASM
+  /// CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // The vector used when the KERNAL serves NMI interrupts
+  /// The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
 .segment Code

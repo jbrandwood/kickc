@@ -1,7 +1,10 @@
 // A simple SID music player playing music in the main loop.
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="music.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,7 +15,7 @@
 :BasicUpstart(main)
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Pointer to the music init routine
   .label musicInit = MUSIC

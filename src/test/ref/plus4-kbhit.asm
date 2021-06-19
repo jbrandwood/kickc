@@ -1,12 +1,12 @@
 // Test implementation of kbhit() for Plus/4
-// Plus/4 / Commodore 16 registers and memory layout
-// http://zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/264_Hardware_Spec.pdf
-// http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/Plus_4_Technical_Docs.pdf
-// http://personalpages.tds.net/~rcarlsen/cbm/c16/C16_Service_Manual_314001-03_(1984_Oct).pdf
-// https://www.floodgap.com/retrobits/ckb/secret/264memory.txt
-// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
-// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
-// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
+/// Plus/4 / Commodore 16 registers and memory layout
+/// http://zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/264_Hardware_Spec.pdf
+/// http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/plus4/Plus_4_Technical_Docs.pdf
+/// http://personalpages.tds.net/~rcarlsen/cbm/c16/C16_Service_Manual_314001-03_(1984_Oct).pdf
+/// https://www.floodgap.com/retrobits/ckb/secret/264memory.txt
+/// The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
+/// https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
+/// http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
   // Commodore 16 / Plus/4 executable PRG file
 .file [name="plus4-kbhit.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -16,10 +16,10 @@
 .segment Basic
 :BasicUpstart(main)
   .const OFFSET_STRUCT_MOS7360_TED_KEYBOARD_INPUT = 8
-  // Keyboard Port PIO (P0-P7)
-  // The input latch is part of the TED.
+  /// Keyboard Port PIO (P0-P7)
+  /// The input latch is part of the TED.
   .label KEYBOARD_PORT = $fd30
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  /// The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
 .segment Code
 main: {

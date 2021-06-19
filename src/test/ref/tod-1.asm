@@ -1,9 +1,9 @@
 // Time of Day / RTOS test using the 6526 CIA on C64
-// Provides provide console input/output
-// Implements similar functions as conio.h from CC65 for compatibility
-// See https://github.com/cc65/cc65/blob/master/include/conio.h
+/// Provides provide console input/output
+/// Implements similar functions as conio.h from CC65 for compatibility
+/// See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
-// Currently C64/PLUS4/VIC20 platforms are supported
+/// Currently C64/PLUS4/VIC20 platforms are supported
   // Commodore 64 PRG executable file
 .file [name="tod-1.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -22,11 +22,11 @@
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_MIN = $a
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The number of bytes on the screen
   // The current cursor x-position
@@ -535,5 +535,5 @@ memset: {
   // The buffer used by tod_str()
   tod_buffer: .text "00:00:00:00"
   .byte 0
-  // Time of Day 00:00:00:00
+  /// Time of Day 00:00:00:00
   TOD_ZERO: .byte 0, 0, 0, 0

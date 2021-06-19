@@ -1,9 +1,9 @@
 // Generates a 16-bit signed sine
-// Sine Generator functions using only multiplication, addition and bit shifting
-// Uses a single division for converting the wavelength to a reciprocal.
-// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
-// Uses the approximation sin(x) = x - x^/6 + x^/128
-// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
+/// Sine Generator functions using only multiplication, addition and bit shifting
+/// Uses a single division for converting the wavelength to a reciprocal.
+/// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+/// Uses the approximation sin(x) = x - x^/6 + x^/128
+/// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Commodore 64 PRG executable file
 .file [name="sinusgen16.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

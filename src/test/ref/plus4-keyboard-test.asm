@@ -1,6 +1,6 @@
 // Test reading keyboard port on the TED of the Plus/4
-// C standard library string.h
-// Functions to manipulate C strings and arrays.
+/// C standard library string.h
+/// Functions to manipulate C strings and arrays.
   // Commodore 16 / Plus/4 executable PRG file
 .file [name="plus4-keyboard-test.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

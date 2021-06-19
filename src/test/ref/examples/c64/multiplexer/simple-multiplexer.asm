@@ -1,7 +1,10 @@
 // A simple usage of the flexible sprite multiplexer routine
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="simple-multiplexer.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -13,7 +16,7 @@
   .const VICII_RST8 = $80
   .const VICII_DEN = $10
   .const VICII_RSEL = 8
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
   // The number of sprites in the multiplexer
@@ -26,7 +29,7 @@
   .label SPRITES_XMSB = $d010
   .label SPRITES_COLOR = $d027
   .label D011 = $d011
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Location of screen & sprites
   .label SCREEN = $400

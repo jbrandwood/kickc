@@ -1,8 +1,8 @@
-// C64 DTV version 2 Registers and Constants
+/// C64 DTV version 2 Registers and Constants
 //
-// Sources
-// (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
-// (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
+/// Sources
+/// (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
+/// (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
   // Commodore 64 PRG executable file
 .file [name="c64dtv-blittermin.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,74 +12,74 @@
 .segment Basic
 :BasicUpstart(main)
   .const DTV_FEATURE_ENABLE = 1
-  // Bit[0] Force Start Strobe when set
+  /// Bit[0] Force Start Strobe when set
   .const DTV_BLIT_FORCE_START = 1
-  // Bit[1] Source A Direction Positive when set
+  /// Bit[1] Source A Direction Positive when set
   .const DTV_BLIT_SRCA_FWD = 2
-  // Bit[2] Source B Direction Positive when set
+  /// Bit[2] Source B Direction Positive when set
   .const DTV_BLIT_SRCB_FWD = 4
-  // Bit[3] Destination Direction Positive when set
+  /// Bit[3] Destination Direction Positive when set
   .const DTV_BLIT_DEST_FWD = 8
-  // No transparancy
-  // Bit[2]==Bit[1]==0: write in any case
+  /// No transparancy
+  /// Bit[2]==Bit[1]==0: write in any case
   .const DTV_BLIT_TRANSPARANCY_NONE = 0
   .const DTV_BLIT_ADD = $30
-  // Bit[0] Clear Blitter IRQ
+  /// Bit[0] Clear Blitter IRQ
   .const DTV_BLIT_CLEAR_IRQ = 1
-  // Bit[3] Destination Continue
+  /// Bit[3] Destination Continue
   .const DTV_BLIT_DEST_CONT = 8
-  // Bit[0] Busy when set (When reading)
+  /// Bit[0] Busy when set (When reading)
   .const DTV_BLIT_STATUS_BUSY = 1
   .const SRCA_LEN = 9
-  // Feature enables or disables the extra C64 DTV features
+  /// Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  // Blitter Source A Start
+  /// Blitter Source A Start
   .label DTV_BLITTER_SRCA_LO = $d320
   .label DTV_BLITTER_SRCA_MI = $d321
   .label DTV_BLITTER_SRCA_HI = $d322
-  // Blitter Source A Modulo
+  /// Blitter Source A Modulo
   .label DTV_BLITTER_SRCA_MOD_LO = $d323
   .label DTV_BLITTER_SRCA_MOD_HI = $d324
-  // Blitter Source A Line Length
+  /// Blitter Source A Line Length
   .label DTV_BLITTER_SRCA_LIN_LO = $d325
   .label DTV_BLITTER_SRCA_LIN_HI = $d326
-  // Blitter Source A Step ([7:4] integral part, [3:0] fractional part)
+  /// Blitter Source A Step ([7:4] integral part, [3:0] fractional part)
   .label DTV_BLITTER_SRCA_STEP = $d327
-  // Blitter Source B Start
+  /// Blitter Source B Start
   .label DTV_BLITTER_SRCB_LO = $d328
   .label DTV_BLITTER_SRCB_MI = $d329
   .label DTV_BLITTER_SRCB_HI = $d32a
-  // Blitter Source B Modulo
+  /// Blitter Source B Modulo
   .label DTV_BLITTER_SRCB_MOD_LO = $d32b
   .label DTV_BLITTER_SRCB_MOD_HI = $d32c
-  // Blitter Source B Line Length
+  /// Blitter Source B Line Length
   .label DTV_BLITTER_SRCB_LIN_LO = $d32d
   .label DTV_BLITTER_SRCB_LIN_HI = $d32e
-  // Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+  /// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
   .label DTV_BLITTER_SRCB_STEP = $d32f
-  // Blitter Destination Start
+  /// Blitter Destination Start
   .label DTV_BLITTER_DEST_LO = $d330
   .label DTV_BLITTER_DEST_MI = $d331
   .label DTV_BLITTER_DEST_HI = $d332
-  // Blitter Source B Modulo
+  /// Blitter Source B Modulo
   .label DTV_BLITTER_DEST_MOD_LO = $d333
   .label DTV_BLITTER_DEST_MOD_HI = $d334
-  // Blitter Source B Line Length
+  /// Blitter Source B Line Length
   .label DTV_BLITTER_DEST_LIN_LO = $d335
   .label DTV_BLITTER_DEST_LIN_HI = $d336
-  // Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+  /// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
   .label DTV_BLITTER_DEST_STEP = $d337
-  // Blitter Blit Length
+  /// Blitter Blit Length
   .label DTV_BLITTER_LEN_LO = $d338
   .label DTV_BLITTER_LEN_HI = $d339
-  // Blitter Control
+  /// Blitter Control
   .label DTV_BLITTER_CONTROL = $d33a
-  // Blitter Transparency
+  /// Blitter Transparency
   .label DTV_BLITTER_TRANSPARANCY = $d33b
-  // Blitter Control 2
+  /// Blitter Control 2
   .label DTV_BLITTER_CONTROL2 = $d33f
   .label SCREEN = $400
-  // Controls the ALU operation
+  /// Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
 .segment Code
 main: {

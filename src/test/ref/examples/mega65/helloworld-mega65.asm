@@ -1,5 +1,5 @@
 // Hello World for MEGA 65 - using stdio.h and conio.h
-// Functions for performing input and output.
+/// Functions for performing input and output.
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
 .file [name="helloworld-mega65.prg", type="prg", segments="Program"]
@@ -12,16 +12,16 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
-  // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
+  /// Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
   .const LIGHT_BLUE = $e
-  // I/O Personality selection
+  /// I/O Personality selection
   .label IO_KEY = $d02f
-  // C65 Banking Register
+  /// C65 Banking Register
   .label IO_BANK = $d030
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $800
   // The number of bytes on the screen
   // The current cursor x-position

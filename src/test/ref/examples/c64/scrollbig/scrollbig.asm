@@ -1,7 +1,10 @@
 // An 8x8 char letter scroller
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="scrollbig.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -13,11 +16,11 @@
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The address of the CHARGEN character set
+  /// The address of the CHARGEN character set
   .label CHARGEN = $d000
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
   .label current_bit = 2

@@ -8,7 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // The offset of the sprite pointers from the screen start address
+  /// The offset of the sprite pointers from the screen start address
   .const OFFSET_SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001

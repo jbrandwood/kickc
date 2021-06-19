@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(main)
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
 .segment Code
 main: {

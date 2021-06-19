@@ -1,4 +1,4 @@
-// Simple binary multiplication implementation
+/// Simple binary multiplication implementation
   // Commodore 64 PRG executable file
 .file [name="robozzle64-label-problem.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

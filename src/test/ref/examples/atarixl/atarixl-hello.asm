@@ -10,22 +10,22 @@
 .segmentdef Program [segments="Code, Data"]
 .segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
-  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  /// 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
   .const MODE2 = 2
-  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  /// 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
   .const MODE7 = 7
-  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  /// Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
   .const LMS = $40
-  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  /// Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
   .const JVB = $41
-  // Blank 4 lines
+  /// Blank 4 lines
   .const BLANK4 = $30
-  // Blank 8 lines
+  /// Blank 8 lines
   .const BLANK8 = $70
-  // Atari OS Shadow registers
-  // OS Shadow ANTIC Direct Memory Access Control ($D400)
+  /// Atari OS Shadow registers
+  /// OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
-  // OS Shadow ANTIC Display List Pointer ($D402)
+  /// OS Shadow ANTIC Display List Pointer ($D402)
   .label SDLST = $230
 .segment Code
 main: {

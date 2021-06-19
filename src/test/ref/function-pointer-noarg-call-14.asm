@@ -8,9 +8,9 @@
 .segment Basic
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position

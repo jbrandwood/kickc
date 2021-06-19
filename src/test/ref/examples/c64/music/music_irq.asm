@@ -1,7 +1,10 @@
 // A simple SID music player using RASTER IRQ
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// @brief Commodore 64 Registers and Constants
+/// @file
+/// @brief The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="music_irq.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,9 +13,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
@@ -20,11 +23,11 @@
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the KERNAL serves IRQ interrupts
+  /// The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // Pointer to the music init routine
   .label musicInit = MUSIC

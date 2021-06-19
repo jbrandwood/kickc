@@ -1,5 +1,6 @@
 /// @file
 /// Find atan2(x, y) using the CORDIC method
+///
 /// See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 
 /// Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)

@@ -1,5 +1,6 @@
 /// @file
 /// C standard library string.h
+///
 /// Functions to manipulate C strings and arrays.
 
 typedef unsigned int size_t ;
@@ -22,8 +23,8 @@ char* strcpy( char* destination, char*  source );
 size_t strlen(char *str);
 
 /// Searches for the first occurrence of the character c (an unsigned char) in the first n bytes of the string pointed to, by the argument str.
-/// - str: The memory to search
-/// - c: A character to search for
-/// - n: The number of bytes to look through
-/// Return: A pointer to the matching byte or NULL if the character does not occur in the given memory area.
+/// @param str The memory to search
+/// @param c A character to search for
+/// @param n  The number of bytes to look through
+/// @return A pointer to the matching byte or NULL if the character does not occur in the given memory area.
 void *memchr(const void *str, char c, size_t n);

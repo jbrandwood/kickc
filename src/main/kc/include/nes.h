@@ -1,5 +1,6 @@
 /// @file
 /// Nintendo Entertainment System (NES
+///
 /// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
 /// https://github.com/gregkrsak/first_nes
 #ifndef __NES__
@@ -80,7 +81,7 @@ const char JOY_B =      0b01000000;
 const char JOY_A =      0b10000000;
 
 /// Prepare for transferring data from the CPU to the PPU
-/// - ppuData : Pointer in the PPU memory
+/// @param ppuData Pointer in the PPU memory
 void ppuDataPrepare(void* const ppuData);
 
 /// Put one byte into PPU memory
@@ -92,32 +93,32 @@ void ppuDataPut(char val);
 char ppuDataRead();
 
 /// Fill a number of bytes in the PPU memory
-/// - ppuData : Pointer in the PPU memory
-/// - size : The number of bytes to transfer
+/// @param ppuData Pointer in the PPU memory
+/// @param size The number of bytes to transfer
 void ppuDataFill(void* const ppuData, char val, unsigned int size);
 
 /// Transfer a number of bytes from the CPU memory to the PPU memory
-/// - ppuData : Pointer in the PPU memory
-/// - cpuData : Pointer to the CPU memory (RAM of ROM)
-/// - size : The number of bytes to transfer
+/// @param ppuData Pointer in the PPU memory
+/// @param cpuData Pointer to the CPU memory (RAM of ROM)
+/// @param size The number of bytes to transfer
 void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size);
 
 /// Transfer a number of bytes from the PPU memory to the CPU memory
-/// - cpuData : Pointer to the CPU memory (RAM of ROM)
-/// - ppuData : Pointer in the PPU memory
-/// - size : The number of bytes to transfer
+/// @param cpuData Pointer to the CPU memory (RAM of ROM)
+/// @param ppuData Pointer in the PPU memory
+/// @param size The number of bytes to transfer
 void ppuDataFetch(void* const cpuData, void* const ppuData, unsigned int size);
 
 /// Transfer a 2x2 tile into the PPU memory
-/// - ppuData : Pointer in the PPU memory
-/// - tile : The tile to transfer
+/// @param ppuData Pointer in the PPU memory
+/// @param tile The tile to transfer
 void ppuDataPutTile(void* const ppuData, char* tile);
 
 /// Set one byte in PPU memory
-/// - ppuData : Pointer in the PPU memory
-/// - val : The value to set
+/// @param ppuData Pointer in the PPU memory
+/// @param val The value to set
 void ppuDataSet(void* const ppuData, char val);
 
 /// Get one byte from PPU memory
-/// - ppuData : Pointer in the PPU memory
+/// @param ppuData Pointer in the PPU memory
 char ppuDataGet(void* const ppuData);

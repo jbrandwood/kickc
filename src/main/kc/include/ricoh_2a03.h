@@ -1,5 +1,6 @@
 /// @file
 /// Ricoh 2A03 Nintendo Entertainment System CPU and audio processing unit (APU)
+///
 /// Ricoh 2A03 or RP2A03 (NTSC version) / Ricoh 2A07 or RP2A07 (PAL version)
 /// https://en.wikipedia.org/wiki/Ricoh_2A03
 /// https://www.nesdev.com/2A03%20technical%20reference.txt

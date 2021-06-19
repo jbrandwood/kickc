@@ -1,5 +1,6 @@
 /// @file
 /// Library Implementation of the Seriously Fast Multiplication
+///
 /// See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 /// Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
 

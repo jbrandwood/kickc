@@ -1,8 +1,11 @@
 /// @file
 /// MOS 6567 / 6569 Video Interface Chip (VIC II)
+///
 ///  http://archive.6502.org/datasheets/mos_6567_vic_ii_preliminary.pdf
 ///  https://dustlayer.com/vic-ii/2013/4/22/when-visibility-matters
 ///  http://www.zimmers.net/cbmpics/cbm/c64/vic-ii.txt
+
+/// MOS 6567 / 6569 Video Interface Chip (VIC II)
 struct MOS6569_VICII {
     /// $D000 X-Coordinate Sprite#0
     char SPRITE0_X;

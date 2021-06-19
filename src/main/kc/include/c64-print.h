@@ -1,5 +1,6 @@
 /// @file
 /// A lightweight library for printing on the C64.
+///
 /// Printing with this library is done by calling print_ function for each element
 
 /// Print a number of zero-terminated strings, each followed by a newline.

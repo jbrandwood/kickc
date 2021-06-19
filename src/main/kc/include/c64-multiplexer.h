@@ -1,5 +1,6 @@
 /// @file
 /// A flexible sprite multiplexer routine for 32 sprites.
+///
 /// Usage:
 /// - Once:
 /// - plexInit(screen): Initialize the data structures and set the screen address

@@ -1,6 +1,7 @@
 /// @file
 /// Provides provide simple horisontal/vertical lines routines on top of conio.h
-///  For compatibility with CC65 https://github.com/cc65/cc65/blob/master/include/conio.h
+///
+/// For compatibility with CC65 https://github.com/cc65/cc65/blob/master/include/conio.h
 
 #include <conio.h>
 

@@ -1,6 +1,7 @@
 /// @file
 /// C standard library time.h
-///  Functions to get and manipulate date and time information.
+///
+/// Functions to get and manipulate date and time information.
 
 /// Type suitable for storing the processor time.
 typedef unsigned long clock_t;

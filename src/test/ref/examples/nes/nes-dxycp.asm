@@ -1,10 +1,12 @@
 // NES DXYCP using sprites
 /// @file
 /// Nintendo Entertainment System (NES
+///
 /// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
 /// https://github.com/gregkrsak/first_nes
 /// @file
 /// Ricoh 2C02 - NES Picture Processing Unit (PPU)
+///
 /// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
 /// https://en.wikipedia.org/wiki/Picture_Processing_Unit
 /// https://wiki.nesdev.com/w/index.php/PPU_registers

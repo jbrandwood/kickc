@@ -1,5 +1,6 @@
 /// @file
 /// MEGA65 CPU MATHS ACCELERATION REGISTERS
+///
 /// Every MEGA65 contains a combined 32-bit hardware multiplier and divider. This device
 /// takes two 32-bit inputs, MULTINA and MULTINB, and simultaneously calculates:
 /// • the 64-bit product of MULTINA and MULTINB

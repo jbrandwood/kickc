@@ -1,7 +1,7 @@
 /// @file
 /// Commander X16 VERA (Versatile Embedded Retro Adapter) Video and Audio Processor
+///
 /// https://github.com/commanderx16/x16-docs/blob/master/VERA%20Programmer's%20Reference.md
-
 /// Author: Sven Van de Velde
 
 #include <cx16-vera.h>

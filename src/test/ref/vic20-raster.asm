@@ -1,10 +1,12 @@
 // VIC 20 Raster bars
 /// @file
 /// Commodore VIC 20 registers and memory layout
+///
 /// http://sleepingelephant.com/denial/wiki/index.php?title=Memory_Map
 /// http://www.zimmers.net/anonftp/pub/cbm/vic20/manuals/VIC-20_Programmers_Reference_Guide_1st_Edition_6th_Printing.pdf
 /// @file
 /// MOS 6560/6561 VIDEO INTERFACE CHIP
+///
 /// Used in VIC 20
 /// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
   // Commodore VIC 20 executable PRG file

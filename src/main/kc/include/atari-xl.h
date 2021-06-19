@@ -1,5 +1,6 @@
 /// @file
 /// Atari 8-bit 400/800/XL/XE Registers and Constants
+///
 /// https://en.wikipedia.org/wiki/Atari_8-bit_family
 
 #ifndef __ATARIXL__

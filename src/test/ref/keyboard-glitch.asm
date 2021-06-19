@@ -7,6 +7,7 @@
 // but never when they are disabled (red border)
 /// @file
 /// Simple Keyboard Input Library
+///
 /// C64 Keyboard Matrix Reference - from http://codebase64.org/doku.php?id=base:reading_the_keyboard
 /// Keyboard Codes are %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 /// +----+----------------------+-------------------------------------------------------------------------------------------------------+

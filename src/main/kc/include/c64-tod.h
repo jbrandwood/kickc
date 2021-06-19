@@ -1,5 +1,6 @@
 /// @file
 /// Time-of-day helper
+///
 /// Uses the MOS6526 CIA#1 on Commodore 64
 
 /// Time-of-day 24 hour format

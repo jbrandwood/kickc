@@ -1,5 +1,6 @@
 /// @file
 /// MOS 6560/6561 VIDEO INTERFACE CHIP
+///
 /// Used in VIC 20
 /// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
 

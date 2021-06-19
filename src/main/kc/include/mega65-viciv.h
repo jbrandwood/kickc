@@ -1,5 +1,6 @@
 /// @file
 /// MEGA65 Video Interface Chip (VIC IV)
+///
 /// https://mega65.org/
 /// https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/viciv.vhdl
 struct MEGA65_VICIV {

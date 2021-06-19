@@ -1,5 +1,6 @@
 /// @file
 /// ATARI Graphic Television Interface Adaptor (GTIA)
+///
 /// Used in Atari 5200 and the 8-bit series (400, 800, XL, XE)
 /// https://en.wikipedia.org/wiki/CTIA_and_GTIA
 

@@ -1,5 +1,6 @@
 /// @file
 /// MOS 6522 Versatile Interface Adapter (VIA)
+///
 /// Used in VIC 20 and 1541
 /// https://en.wikipedia.org/wiki/MOS_Technology_6522
 /// http://archive.6502.org/datasheets/mos_6522_preliminary_nov_1977.pdf

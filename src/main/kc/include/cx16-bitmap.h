@@ -1,5 +1,6 @@
 /// @file
 /// Plot and line drawing routines for HIRES bitmaps
+///
 /// Currently it can only plot on the first 256 x-positions.
 
 /// Initialize the bitmap plotter tables for a specific bitmap

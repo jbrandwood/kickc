@@ -1,5 +1,6 @@
 /// @file
 /// Ricoh 2C02 - NES Picture Processing Unit (PPU)
+///
 /// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
 /// https://en.wikipedia.org/wiki/Picture_Processing_Unit
 /// https://wiki.nesdev.com/w/index.php/PPU_registers

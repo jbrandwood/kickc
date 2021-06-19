@@ -1,5 +1,5 @@
 /// @file 
-/// @brief Simple functions wrapping 6502 instructions
+/// Simple functions wrapping 6502 instructions
 
 /// Set the processor interrupt flag - disabling IRQ's.
 /// Uses the SEI instruction

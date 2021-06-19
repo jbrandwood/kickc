@@ -1,5 +1,6 @@
 /// @file
 /// Atari Television Interface Adaptor (TIA)
+///
 /// https://en.wikipedia.org/wiki/Television_Interface_Adaptor
 /// http://www.qotile.net/minidig/docs/stella.pdf
 /// Based on https://github.com/munsie/dasm/blob/master/machines/atari2600/vcs.h

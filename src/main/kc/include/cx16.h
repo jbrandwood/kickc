@@ -1,5 +1,6 @@
 /// @file
 /// Commander X16
+///
 /// https://www.commanderx16.com/forum/index.php?/about-faq/
 /// https://github.com/commanderx16/x16-docs/blob/master/Commander%20X16%20Programmer's%20Reference%20Guide.md
 #ifndef __CX16__
@@ -49,66 +50,66 @@ char * const DEFAULT_SCREEN_VBANK = (char*)0;
 
 /// Put a single byte into VRAM.
 /// Uses VERA DATA0
-/// - vbank: Which 64K VRAM bank to put data into (0/1)
-/// - vaddr: The address in VRAM
-/// - data: The data to put into VRAM
+/// @param vbank Which 64K VRAM bank to put data into (0/1)
+/// @param vaddr The address in VRAM
+/// @param data The data to put into VRAM
 void vpoke(char vbank, char* vaddr, char data);
 
 /// Read a single byte from VRAM.
 /// Uses VERA DATA0
-/// - bank: Which 64K VRAM bank to put data into (0/1)
-/// - addr: The address in VRAM
-/// - returns: The data to put into VRAM
+/// @param bank Which 64K VRAM bank to put data into (0/1)
+/// @param addr The address in VRAM
+/// @param returns The data to put into VRAM
 char vpeek(char vbank, char* vaddr);
 
 /// Copy block of memory (from RAM to VRAM)
 /// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
-/// - vbank: Which 64K VRAM bank to put data into (0/1)
-/// - vdest: The destination address in VRAM
-/// - src: The source address in RAM
-/// - num: The number of bytes to copy
+/// @param vbank Which 64K VRAM bank to put data into (0/1)
+/// @param vdest The destination address in VRAM
+/// @param src The source address in RAM
+/// @param num The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 
 /// Copy block of memory (from banked RAM to VRAM)
 /// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
-/// - vdest: absolute address in VRAM
-/// - src: absolute address in the banked RAM  of the CX16.
-/// - num: dword of the number of bytes to copy
+/// @param vdest absolute address in VRAM
+/// @param src absolute address in the banked RAM  of the CX16.
+/// @param num dword of the number of bytes to copy
 /// Note: This function can switch RAM bank during copying to copy data from multiple RAM banks.
 void memcpy_bank_to_vram(unsigned long vdest, unsigned long src, unsigned long num );
 
 /// Copy block of memory (from VRAM to VRAM)
 /// Copies the values from the location pointed by src to the location pointed by dest.
 /// The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.
-/// - src_bank:  64K VRAM bank number to copy from (0/1).
-/// - src: pointer to the location to copy from. Note that the address is a 16 bit value!
-/// - src_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
-/// - dest_bank:  64K VRAM bank number to copy to (0/1).
-/// - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
-/// - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
-/// - num: The number of bytes to copy
+/// @param src_bank  64K VRAM bank number to copy from (0/1).
+/// @param src pointer to the location to copy from. Note that the address is a 16 bit value!
+/// @param src_increment the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
+/// @param dest_bank  64K VRAM bank number to copy to (0/1).
+/// @param dest pointer to the location to copy to. Note that the address is a 16 bit value!
+/// @param dest_increment the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
+/// @param num The number of bytes to copy
 void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_bank, void *src, char src_increment, unsigned int num );
 
 /// Set block of memory in VRAM to a value .
 /// Sets num bytes to a value to the memory block pointed to by destination in VRAM.
-/// - vbank: Which 64K VRAM bank to put data into (0/1)
-/// - vdest: The destination address in VRAM
-/// - data: The value to set the vram with.
-/// - num: The number of bytes to set
+/// @param vbank Which 64K VRAM bank to put data into (0/1)
+/// @param vdest The destination address in VRAM
+/// @param data The value to set the vram with.
+/// @param num The number of bytes to set
 void memset_vram(char vbank, void* vdest, char data, unsigned long num );
 
 /// Set block of memory in VRAM to a word value .
 /// Sets num words  to a value to the memory block pointed to by destination in VRAM.
-/// - vbank: Which 64K VRAM bank to put data into (0/1)
-/// - vdest: The destination address in VRAM
-/// - data: The value to set the vram with.
-/// - num: The number of bytes to set
+/// @param vbank Which 64K VRAM bank to put data into (0/1)
+/// @param vdest The destination address in VRAM
+/// @param data The value to set the vram with.
+/// @param num The number of bytes to set
 void memset_vram_word(char vbank, void* vdest, unsigned int data, unsigned long num );
 
 /// Load a file into one of the 256 8KB RAM banks.
-/// - device: The device to load from
-/// - filename: The file name
-/// - address: The absolute address in banked memory to load the file too
-/// - returns: 0xff: Success, other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+/// @param device The device to load from
+/// @param filename The file name
+/// @param address: The absolute address in banked memory to load the file too
+/// @return 0xff: Success, other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
 /// Note: This function only works if the entire file fits within the selected bank. The function cannot load to multiple banks.
 char load_to_bank( char device, char* filename, unsigned long address);

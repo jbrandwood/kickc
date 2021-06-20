@@ -13,6 +13,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   .label SCREEN = $400
   .label CHARSET = $2000

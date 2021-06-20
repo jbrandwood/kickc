@@ -11,6 +11,8 @@
   .const PROCPORT_RAM_CHARROM = 1
   /// BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1

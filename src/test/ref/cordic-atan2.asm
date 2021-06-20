@@ -10,6 +10,8 @@
 :BasicUpstart(main)
   // The number of iterations performed during 8-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_8 = 8
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   /// Color Ram
   .label COLS = $d800

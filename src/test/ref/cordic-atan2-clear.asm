@@ -11,7 +11,10 @@
 :BasicUpstart(main)
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $2800

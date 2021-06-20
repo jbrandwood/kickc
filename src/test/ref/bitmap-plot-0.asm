@@ -16,10 +16,23 @@
 :BasicUpstart(__start)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  /// Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
   /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
@@ -29,10 +42,28 @@
   .const BLACK = 0
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D011 Control Register #1
+  /// @see #VICII_CONTROL1
   .label D011 = $d011
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019

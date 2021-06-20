@@ -8,7 +8,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
 .segment Code
 main: {

@@ -12,7 +12,13 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
   .const VICII_MCM = $10
+  /// $D016 Control register #2 Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
   .const VICII_CSEL = 8
   /// The colors of the C64
   .const BLACK = 0
@@ -22,7 +28,11 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  /// $D016 Control register 2
+  /// @see #VICII_CONTROL2
   .label D016 = $d016
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   /// The VIC-II MOS 6567/6569
   .label VICII = $d000

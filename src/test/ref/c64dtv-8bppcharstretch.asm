@@ -13,10 +13,23 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
   .const VICII_ECM = $40
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
+  /// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
   .const VICII_MCM = $10
+  /// $D016 Control register #2 Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
   .const VICII_CSEL = 8
   /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
@@ -30,10 +43,39 @@
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D016 Control register 2
+  /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+  /// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+  /// -  Bit#4: MCM Turn Multicolor Mode on/off
+  /// -  Bit#5-#7: not used
+  /// Initial Value: %00001000
   .label VICII_CONTROL2 = $d016
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
   /// Processor port data direction register
   .label PROCPORT_DDR = 0

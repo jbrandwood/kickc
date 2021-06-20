@@ -20,17 +20,30 @@
   .const GREEN = 5
   .const BLUE = 6
   .const YELLOW = 7
+  /// Sprite X position MSB register
   .label SPRITES_XMSB = $d010
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
+  /// Sprite enable register
   .label SPRITES_ENABLE = $d015
+  /// Sprite expand Y register
   .label SPRITES_EXPAND_Y = $d017
+  /// Sprite multicolor enable register
   .label SPRITES_MC = $d01c
+  /// Sprite expand X register
   .label SPRITES_EXPAND_X = $d01d
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D022 Background Color 1
   .label BG_COLOR1 = $d022
+  /// $D023 Background Color 2
   .label BG_COLOR2 = $d023
+  /// $D024 Background Color 3
   .label BG_COLOR3 = $d024
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   .label screen = $400
   .label charset = $2000

@@ -14,8 +14,11 @@
   .const OFFSET_SPRITE_PTRS = $3f8
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
   /// The VIC-II MOS 6567/6569
   .label VICII = $d000

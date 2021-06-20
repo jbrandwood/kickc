@@ -39,7 +39,9 @@
   .const RED = 2
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
   /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00

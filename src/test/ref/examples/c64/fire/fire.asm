@@ -21,6 +21,8 @@
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
   /// The SID MOS 6581/8580
   .label SID = $d400

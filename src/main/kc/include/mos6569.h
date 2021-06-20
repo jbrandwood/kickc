@@ -147,58 +147,148 @@ struct MOS6569_VICII {
     char SPRITE7_COLOR;
 };
 
-/// Positions of the border (in sprite positions)
+/// Position of the left border (in sprite X positions)
 const char BORDER_XPOS_LEFT=24;
+/// Position of the right border (in sprite X positions)
 const unsigned int BORDER_XPOS_RIGHT=344;
+/// Positions of the top border (in sprite Y positions)
 const char BORDER_YPOS_TOP=50;
+/// Positions of the lower border (in sprite Y positions)
 const char BORDER_YPOS_BOTTOM=250;
 
 /// The offset of the sprite pointers from the screen start address
 const unsigned int OFFSET_SPRITE_PTRS = 0x3f8;
 
-char * const SPRITES_XPOS = (char*)$d000;
-char * const SPRITES_YPOS = (char*)$d001;
-char * const SPRITES_XMSB = (char*)$d010;
-char * const SPRITES_COLOR = (char*)$d027;
-char*  const SPRITES_ENABLE = (char*)$d015;
-char*  const SPRITES_EXPAND_Y = (char*)$d017;
-char*  const SPRITES_PRIORITY = (char*)$d01b;
-char*  const SPRITES_MC = (char*)$d01c;
-char*  const SPRITES_EXPAND_X = (char*)$d01d;
+/// Sprite X position register for sprite #0
+char * const SPRITES_XPOS = (char*)0xd000;
+/// Sprite Y position register for sprite #0
+char * const SPRITES_YPOS = (char*)0xd001;
+/// Sprite X position MSB register
+char * const SPRITES_XMSB = (char*)0xd010;
+/// Sprite colors register for sprite #0
+char * const SPRITES_COLOR = (char*)0xd027;
+/// Sprite enable register
+char *  const SPRITES_ENABLE = (char*)0xd015;
+/// Sprite expand Y register
+char *  const SPRITES_EXPAND_Y = (char*)0xd017;
+/// Sprite priority register
+char *  const SPRITES_PRIORITY = (char*)0xd01b;
+/// Sprite multicolor enable register
+char *  const SPRITES_MC = (char*)0xd01c;
+/// Sprite expand X register
+char *  const SPRITES_EXPAND_X = (char*)0xd01d;
 
-char*  const RASTER = (char*)$d012;
-char*  const BORDER_COLOR = (char*)$d020;
-char*  const BG_COLOR = (char*)$d021;
-char*  const BG_COLOR0 = (char*)$d021;
-char*  const BG_COLOR1 = (char*)$d022;
-char*  const BG_COLOR2 = (char*)$d023;
-char*  const BG_COLOR3 = (char*)$d024;
-char*  const SPRITES_MC1 = (char*)$d025;
-char*  const SPRITES_MC2 = (char*)$d026;
+/// $D012 RASTER Raster counter
+char*  const RASTER = (char*)0xd012;
 
-char*  const VICII_CONTROL1 = (char*)$d011;
-char*  const D011 = (char*)$d011;
+/// $D020 Border Color
+char*  const BORDER_COLOR = (char*)0xd020;
+/// $D021 Background Color 0
+char*  const BG_COLOR = (char*)0xd021;
+/// $D021 Background Color 0
+char*  const BG_COLOR0 = (char*)0xd021;
+/// $D022 Background Color 1
+char*  const BG_COLOR1 = (char*)0xd022;
+/// $D023 Background Color 2
+char*  const BG_COLOR2 = (char*)0xd023;
+/// $D024 Background Color 3
+char*  const BG_COLOR3 = (char*)0xd024;
+
+/// $D025 Sprite multicolor 0
+char*  const SPRITES_MC1 = (char*)0xd025;
+/// $D026 Sprite multicolor 1
+char*  const SPRITES_MC2 = (char*)0xd026;
+
+/// $D011 Control Register #1
+/// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+/// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+///          RSEL|  Display window height   | First line  | Last line
+///          ----+--------------------------+-------------+----------
+///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+/// - Bit#4: DEN Switch VIC-II output on/off
+/// - Bit#5: BMM Turn Bitmap Mode on/off
+/// - Bit#6: ECM Turn Extended Color Mode on/off
+/// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+/// Initial Value: %10011011
+char*  const VICII_CONTROL1 = (char*)0xd011;
+/// $D011 Control Register #1
+/// @see #VICII_CONTROL1
+char*  const D011 = (char*)0xd011;
+/// $D011 Control Register #1 Bit#7: RST8 9th Bit for $D012 Rasterline counter
 const char VICII_RST8 = %10000000;
+/// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
 const char VICII_ECM =  %01000000;
+/// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
 const char VICII_BMM =  %00100000;
+/// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
 const char VICII_DEN =  %00010000;
+/// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+///          RSEL|  Display window height   | First line  | Last line
+///          ----+--------------------------+-------------+----------
+///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
 const char VICII_RSEL = %00001000;
 
-char*  const VICII_CONTROL2 = (char*)$d016;
-char*  const D016 = (char*)$d016;
+/// $D016 Control register 2
+/// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+/// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+///           CSEL|   Display window width   | First X coo. | Last X coo.
+///           ----+--------------------------+--------------+------------
+///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+/// -  Bit#4: MCM Turn Multicolor Mode on/off
+/// -  Bit#5-#7: not used
+/// Initial Value: %00001000
+char*  const VICII_CONTROL2 = (char*)0xd016;
+/// $D016 Control register 2
+/// @see #VICII_CONTROL2
+char*  const D016 = (char*)0xd016;
+/// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
 const char VICII_MCM =  %00010000;
+/// $D016 Control register #2 Bit#3: CSEL Switch betweem 40 or 38 visible columns
+///           CSEL|   Display window width   | First X coo. | Last X coo.
+///           ----+--------------------------+--------------+------------
+///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
 const char VICII_CSEL = %00001000;
 
-char*  const VICII_MEMORY = (char*)$d018;
-char*  const D018 = (char*)$d018;
+/// $D018 VIC-II base addresses
+/// - Bit#0: not used
+/// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+/// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+/// Initial Value: %00010100
+char*  const VICII_MEMORY = (char*)0xd018;
+/// $D018 VIC-II base addresses
+// @see #VICII_MEMORY
+char*  const D018 = (char*)0xd018;
 
 /// VIC II IRQ Status Register
-char*  const IRQ_STATUS = (char*)$d019;
+char*  const IRQ_STATUS = (char*)0xd019;
 /// VIC II IRQ Enable Register
-char*  const IRQ_ENABLE = (char*)$d01a;
+char*  const IRQ_ENABLE = (char*)0xd01a;
 
-/// Bits for the VICII IRQ Status/Enable Registers
+/// VICII IRQ Status/Enable Raster
+// @see #IRQ_ENABLE #IRQ_STATUS
+///  0 | RST| Reaching a certain raster line. The line is specified by writing
+///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+///    |    | the VIC for the raster compare. The test for reaching the
+///    |    | interrupt raster line is done in cycle 0 of every line (for line
+///    |    | 0, in cycle 1).
 const char IRQ_RASTER = %00000001;
+/// VICII IRQ Status/Enable Background Collision
+// @see #IRQ_ENABLE #IRQ_STATUS
+///  1 | MBC| Collision of at least one sprite with the text/bitmap graphics
+///    |    | (one sprite data sequencer outputs non-transparent pixel at the
+///    |    | same time at which the graphics data sequencer outputs a
+///    |    | foreground pixel)
 const char IRQ_COLLISION_BG = %00000010;
+/// VICII IRQ Status/Enable Sprite Collision
+// @see #IRQ_ENABLE #IRQ_STATUS
+///  2 | MMC| Collision of two or more sprites (two sprite data sequencers
+///    |    | output a non-transparent pixel at the same time)
 const char IRQ_COLLISION_SPRITE = %00000100;
+/// VICII IRQ Status/Enable Lightpen
+// @see #IRQ_ENABLE #IRQ_STATUS
+///  3 | LP | Negative edge on the LP input (lightpen)const char IRQ_RASTER = %00000001;
 const char IRQ_LIGHTPEN = %00001000;

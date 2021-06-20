@@ -13,8 +13,15 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
+  /// $D011 Control Register #1 Bit#7: RST8 9th Bit for $D012 Rasterline counter
   .const VICII_RST8 = $80
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
   /// The colors of the C64
   .const BLACK = 0
@@ -24,10 +31,16 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite X position MSB register
   .label SPRITES_XMSB = $d010
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
+  /// $D011 Control Register #1
+  /// @see #VICII_CONTROL1
   .label D011 = $d011
   /// The VIC-II MOS 6567/6569
   .label VICII = $d000

@@ -10,6 +10,7 @@
   /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
   /// The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314

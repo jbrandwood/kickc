@@ -32,7 +32,9 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
   /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00

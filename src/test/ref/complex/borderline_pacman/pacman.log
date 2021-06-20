@@ -15761,24 +15761,39 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segmentdef Data [startAfter="Code"]
 .segmentdef Init [startAfter="Data"]
   // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // The offset of the sprite pointers from the screen start address
+  /// The offset of the sprite pointers from the screen start address
   .const OFFSET_SPRITE_PTRS = $3f8
+  /// $D011 Control Register #1 Bit#7: RST8 9th Bit for $D012 Rasterline counter
   .const VICII_RST8 = $80
+  /// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
   .const VICII_ECM = $40
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in all three areas 0xA000, 0xD000, 0xE000
+  /// RAM in all three areas 0xA000, 0xD000, 0xE000
   .const PROCPORT_RAM_ALL = 0
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const BLUE = 6
@@ -15840,33 +15855,65 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITE1_COLOR = $28
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   .const SIZEOF_BYTE = 1
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D016 Control register 2
+  /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+  /// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+  /// -  Bit#4: MCM Turn Multicolor Mode on/off
+  /// -  Bit#5-#7: not used
+  /// Initial Value: %00001000
   .label VICII_CONTROL2 = $d016
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // Channel 1 Frequency High byte
+  /// Channel 1 Frequency High byte
   .label SID_CH1_FREQ_HI = $d401
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The SID MOS 6581/8580
+  /// The SID MOS 6581/8580
   .label SID = $d400
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#1 Interrupt for reading in ASM
+  /// CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // Graphics Bank 1
   // Address of the sprites
@@ -23152,50 +23199,50 @@ Removing instruction __b8:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [802] bcs __breturn to bcc
-Fixing long branch [916] bne __b50 to beq
-Fixing long branch [925] bcc __b9 to bcs
-Fixing long branch [936] bcc __b9 to bcs
-Fixing long branch [1032] bne __breturn to beq
-Fixing long branch [1054] bne __breturn to beq
-Fixing long branch [1154] bne __breturn to beq
-Fixing long branch [1176] bne __breturn to beq
-Fixing long branch [1277] bne __breturn to beq
-Fixing long branch [1299] bne __breturn to beq
-Fixing long branch [1401] bne __breturn to beq
-Fixing long branch [1423] bne __breturn to beq
-Fixing long branch [1499] bne __breturn to beq
-Fixing long branch [533] beq __b2 to bne
-Fixing long branch [538] beq __b3 to bne
-Fixing long branch [543] beq __b4 to bne
-Fixing long branch [548] beq __b5 to bne
-Fixing long branch [553] beq __b6 to bne
-Fixing long branch [558] beq __b7 to bne
-Fixing long branch [679] beq __b45 to bne
-Fixing long branch [684] beq __b46 to bne
-Fixing long branch [731] beq __b49 to bne
-Fixing long branch [778] bcc __b51 to bcs
-Fixing long branch [967] bne __b72 to beq
-Fixing long branch [973] beq __b73 to bne
-Fixing long branch [978] beq __b74 to bne
-Fixing long branch [983] beq __b75 to bne
-Fixing long branch [1097] bne __b89 to beq
-Fixing long branch [1103] beq __b90 to bne
-Fixing long branch [1108] beq __b91 to bne
-Fixing long branch [1113] beq __b92 to bne
-Fixing long branch [1228] bne __b106 to beq
-Fixing long branch [1234] beq __b107 to bne
-Fixing long branch [1239] beq __b108 to bne
-Fixing long branch [1244] beq __b109 to bne
-Fixing long branch [1359] bne __b123 to beq
-Fixing long branch [1366] beq __b124 to bne
-Fixing long branch [1371] beq __b125 to bne
-Fixing long branch [1376] beq __b126 to bne
-Fixing long branch [1710] bcc __b2 to bcs
-Fixing long branch [1875] bcc __b2 to bcs
-Fixing long branch [1891] bcc __b5 to bcs
-Fixing long branch [2017] bcc __b3 to bcs
-Fixing long branch [2384] bne __b2 to beq
+Fixing long branch [849] bcs __breturn to bcc
+Fixing long branch [963] bne __b50 to beq
+Fixing long branch [972] bcc __b9 to bcs
+Fixing long branch [983] bcc __b9 to bcs
+Fixing long branch [1079] bne __breturn to beq
+Fixing long branch [1101] bne __breturn to beq
+Fixing long branch [1201] bne __breturn to beq
+Fixing long branch [1223] bne __breturn to beq
+Fixing long branch [1324] bne __breturn to beq
+Fixing long branch [1346] bne __breturn to beq
+Fixing long branch [1448] bne __breturn to beq
+Fixing long branch [1470] bne __breturn to beq
+Fixing long branch [1546] bne __breturn to beq
+Fixing long branch [580] beq __b2 to bne
+Fixing long branch [585] beq __b3 to bne
+Fixing long branch [590] beq __b4 to bne
+Fixing long branch [595] beq __b5 to bne
+Fixing long branch [600] beq __b6 to bne
+Fixing long branch [605] beq __b7 to bne
+Fixing long branch [726] beq __b45 to bne
+Fixing long branch [731] beq __b46 to bne
+Fixing long branch [778] beq __b49 to bne
+Fixing long branch [825] bcc __b51 to bcs
+Fixing long branch [1014] bne __b72 to beq
+Fixing long branch [1020] beq __b73 to bne
+Fixing long branch [1025] beq __b74 to bne
+Fixing long branch [1030] beq __b75 to bne
+Fixing long branch [1144] bne __b89 to beq
+Fixing long branch [1150] beq __b90 to bne
+Fixing long branch [1155] beq __b91 to bne
+Fixing long branch [1160] beq __b92 to bne
+Fixing long branch [1275] bne __b106 to beq
+Fixing long branch [1281] beq __b107 to bne
+Fixing long branch [1286] beq __b108 to bne
+Fixing long branch [1291] beq __b109 to bne
+Fixing long branch [1406] bne __b123 to beq
+Fixing long branch [1413] beq __b124 to bne
+Fixing long branch [1418] beq __b125 to bne
+Fixing long branch [1423] beq __b126 to bne
+Fixing long branch [1757] bcc __b2 to bcs
+Fixing long branch [1922] bcc __b2 to bcs
+Fixing long branch [1938] bcc __b5 to bcs
+Fixing long branch [2064] bcc __b3 to bcs
+Fixing long branch [2431] bne __b2 to beq
 
 FINAL SYMBOL TABLE
 constant byte* ABS[$100]  = kickasm {{ .for(var i=0;i<$100;i++) {
@@ -24956,24 +25003,39 @@ Score: 1949466
 .segmentdef Data [startAfter="Code"]
 .segmentdef Init [startAfter="Data"]
   // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // The offset of the sprite pointers from the screen start address
+  /// The offset of the sprite pointers from the screen start address
   .const OFFSET_SPRITE_PTRS = $3f8
+  /// $D011 Control Register #1 Bit#7: RST8 9th Bit for $D012 Rasterline counter
   .const VICII_RST8 = $80
+  /// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
   .const VICII_ECM = $40
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in all three areas 0xA000, 0xD000, 0xE000
+  /// RAM in all three areas 0xA000, 0xD000, 0xE000
   .const PROCPORT_RAM_ALL = 0
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const BLUE = 6
@@ -25035,33 +25097,65 @@ Score: 1949466
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITE1_COLOR = $28
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   .const SIZEOF_BYTE = 1
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D016 Control register 2
+  /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+  /// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+  /// -  Bit#4: MCM Turn Multicolor Mode on/off
+  /// -  Bit#5-#7: not used
+  /// Initial Value: %00001000
   .label VICII_CONTROL2 = $d016
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // Channel 1 Frequency High byte
+  /// Channel 1 Frequency High byte
   .label SID_CH1_FREQ_HI = $d401
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The SID MOS 6581/8580
+  /// The SID MOS 6581/8580
   .label SID = $d400
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#1 Interrupt for reading in ASM
+  /// CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // Graphics Bank 1
   // Address of the sprites

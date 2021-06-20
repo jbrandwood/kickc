@@ -1,7 +1,10 @@
 // Animated lines drawn on a single color bitmap
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="line-anim.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -10,27 +13,40 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D011 Control Register #1
+  /// @see #VICII_CONTROL1
   .label D011 = $d011
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label BITMAP = $a000
   .label SCREEN = $8800

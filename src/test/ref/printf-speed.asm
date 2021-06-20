@@ -1,5 +1,6 @@
 // Tests the speed of printf()
-// Functions for performing input and output.
+/// @file
+/// Functions for performing input and output.
   // Commodore 64 PRG executable file
 .file [name="printf-speed.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -20,11 +21,11 @@
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The number of bytes on the screen
   // The current cursor x-position
@@ -763,5 +764,5 @@ memset: {
   .byte 0
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0
-  // Time of Day 00:00:00:00
+  /// Time of Day 00:00:00:00
   TOD_ZERO: .byte 0, 0, 0, 0

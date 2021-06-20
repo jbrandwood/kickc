@@ -18,21 +18,29 @@
 .segmentdef InitDemo [startAfter="InitPart1"]
 .segment Basic
 :BasicUpstart(__start)
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
   .const VICII_MCM = $10
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in all three areas 0xA000, 0xD000, 0xE000
+  /// RAM in all three areas 0xA000, 0xD000, 0xE000
   .const PROCPORT_RAM_ALL = 0
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  /// RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const RED = 2
@@ -74,40 +82,75 @@
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   .const OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID = 1
   .const SIZEOF_BYTE = 1
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite X position MSB register
   .label SPRITES_XMSB = $d010
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
+  /// Sprite enable register
   .label SPRITES_ENABLE = $d015
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D016 Control register 2
+  /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+  /// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+  /// -  Bit#4: MCM Turn Multicolor Mode on/off
+  /// -  Bit#5-#7: not used
+  /// Initial Value: %00001000
   .label VICII_CONTROL2 = $d016
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
+  /// VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The address of the CHARGEN character set
+  /// The address of the CHARGEN character set
   .label CHARGEN = $d000
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#1 Interrupt for reading in ASM
+  /// CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label P1_COLORS = $a800
   // A800-AFFF

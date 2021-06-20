@@ -4280,9 +4280,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots a spiral
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
   // Commodore 64 PRG executable file
 .file [name="bitmap-plot-2.prg", type="prg", segments="Program"]
@@ -4293,18 +4296,31 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   // PI*2 in u[4.28] format
@@ -4315,23 +4331,42 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PI_HALF_u4f28 = $1921fb54
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D011 Control Register #1
+  /// @see #VICII_CONTROL1
   .label D011 = $d011
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
+  /// VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label BITMAP = $2000
   .label SCREEN = $400
@@ -6521,9 +6556,12 @@ Score: 20650
   // File Comments
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots a spiral
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
   // Commodore 64 PRG executable file
 .file [name="bitmap-plot-2.prg", type="prg", segments="Program"]
@@ -6534,18 +6572,31 @@ Score: 20650
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
-  // Bits for the VICII IRQ Status/Enable Registers
+  /// VICII IRQ Status/Enable Raster
+  // @see #IRQ_ENABLE #IRQ_STATUS
+  ///  0 | RST| Reaching a certain raster line. The line is specified by writing
+  ///    |    | to register 0xd012 and bit 7 of $d011 and internally stored by
+  ///    |    | the VIC for the raster compare. The test for reaching the
+  ///    |    | interrupt raster line is done in cycle 0 of every line (for line
+  ///    |    | 0, in cycle 1).
   .const IRQ_RASTER = 1
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   // PI*2 in u[4.28] format
@@ -6556,23 +6607,42 @@ Score: 20650
   .const PI_HALF_u4f28 = $1921fb54
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D011 Control Register #1
+  /// @see #VICII_CONTROL1
   .label D011 = $d011
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
-  // VIC II IRQ Status Register
+  /// VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
+  /// VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the HARDWARE serves IRQ interrupts
+  /// The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label BITMAP = $2000
   .label SCREEN = $400

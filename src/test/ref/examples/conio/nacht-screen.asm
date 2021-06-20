@@ -10,28 +10,33 @@
 .segment Basic
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
-  // The horizontal line character
+  /// The horizontal line character
   .const CH_HLINE = $40
-  // The vertical line character
+  /// The vertical line character
   .const CH_VLINE = $5d
-  // The upper left corner character
+  /// The upper left corner character
   .const CH_ULCORNER = $70
-  // The upper right corner character
+  /// The upper right corner character
   .const CH_URCORNER = $6e
-  // The lower left corner character
+  /// The lower left corner character
   .const CH_LLCORNER = $6d
-  // The lower right corner character
+  /// The lower right corner character
   .const CH_LRCORNER = $7d
-  // The left T character
+  /// The left T character
   .const CH_LTEE = $6b
-  // The right T character
+  /// The right T character
   .const CH_RTEE = $73
   .const COLOR_GRAY3 = $f
   .const COLOR_BLACK = 0
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position

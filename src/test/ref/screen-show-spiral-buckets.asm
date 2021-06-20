@@ -19,9 +19,11 @@
   .const SIZEOF_POINTER = 2
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   // Screen containing angle to center
   .label SCREEN_FILL = $400

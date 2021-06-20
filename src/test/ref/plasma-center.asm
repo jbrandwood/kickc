@@ -7,9 +7,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  // SID Channel Control Register Noise Waveform
+  /// SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -19,10 +19,12 @@
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
-  // The SID MOS 6581/8580
+  /// The SID MOS 6581/8580
   .label SID = $d400
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   // Plasma charset
   .label CHARSET = $2000

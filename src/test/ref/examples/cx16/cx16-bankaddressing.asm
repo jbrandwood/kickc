@@ -24,43 +24,43 @@
   .const SIZEOF_DWORD = 4
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // $9F20 VRAM Address (7:0)
+  /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
-  // $9F21 VRAM Address (15:8)
+  /// $9F21 VRAM Address (15:8)
   .label VERA_ADDRX_M = $9f21
-  // $9F22 VRAM Address (7:0)
-  // Bit 4-7: Address Increment  The following is the amount incremented per value value:increment
-  //                             0:0, 1:1, 2:2, 3:4, 4:8, 5:16, 6:32, 7:64, 8:128, 9:256, 10:512, 11:40, 12:80, 13:160, 14:320, 15:640
-  // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
-  // Bit 0: VRAM Address (16)
+  /// $9F22 VRAM Address (7:0)
+  /// Bit 4-7: Address Increment  The following is the amount incremented per value value:increment
+  ///                             0:0, 1:1, 2:2, 3:4, 4:8, 5:16, 6:32, 7:64, 8:128, 9:256, 10:512, 11:40, 12:80, 13:160, 14:320, 15:640
+  /// Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
+  /// Bit 0: VRAM Address (16)
   .label VERA_ADDRX_H = $9f22
-  // $9F23	DATA0	VRAM Data port 0
+  /// $9F23	DATA0	VRAM Data port 0
   .label VERA_DATA0 = $9f23
-  // $9F24	DATA1	VRAM Data port 1
+  /// $9F24	DATA1	VRAM Data port 1
   .label VERA_DATA1 = $9f24
-  // $9F25	CTRL Control
-  // Bit 7: Reset
-  // Bit 1: DCSEL
-  // Bit 2: ADDRSEL
+  /// $9F25	CTRL Control
+  /// Bit 7: Reset
+  /// Bit 1: DCSEL
+  /// Bit 2: ADDRSEL
   .label VERA_CTRL = $9f25
-  // $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
+  /// $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
   .label VERA_DC_HSCALE = $9f2a
-  // $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
+  /// $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
   .label VERA_DC_VSCALE = $9f2b
-  // $9F2D	L0_CONFIG   Layer 0 Configuration
+  /// $9F2D	L0_CONFIG   Layer 0 Configuration
   .label VERA_L0_CONFIG = $9f2d
-  // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
+  /// $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
   .label VERA_L0_MAPBASE = $9f2e
-  // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
+  /// Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
   .label VERA_L0_TILEBASE = $9f2f
-  // $9F34	L1_CONFIG   Layer 1 Configuration
+  /// $9F34	L1_CONFIG   Layer 1 Configuration
   .label VERA_L1_CONFIG = $9f34
-  // $9F35	L1_MAPBASE	    Layer 1 Map Base Address (16:9)
+  /// $9F35	L1_MAPBASE	    Layer 1 Map Base Address (16:9)
   .label VERA_L1_MAPBASE = $9f35
-  // $9F36	L1_TILEBASE	    Layer 1 Tile Base
-  // Bit 2-7: Tile Base Address (16:11)
-  // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
-  // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
+  /// $9F36	L1_TILEBASE	    Layer 1 Tile Base
+  /// Bit 2-7: Tile Base Address (16:11)
+  /// Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
+  /// Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
   .label VERA_L1_TILEBASE = $9f36
   // Variable holding the screen width;
   .label conio_screen_width = $14
@@ -157,7 +157,8 @@ conio_x16_init: {
     // }
     rts
 }
-// Functions for performing input and output.
+/// @file
+/// Functions for performing input and output.
 main: {
     //(byte)(((((word)<(>calcend)<<8)|>(<calcend))>>5)+((word)<(>calcend)<<3));
     .const borderbeg = $a000
@@ -1792,7 +1793,7 @@ memcpy_in_vram: {
 .segment Data
   VERA_LAYER_WIDTH: .word $20, $40, $80, $100
   VERA_LAYER_HEIGHT: .word $20, $40, $80, $100
-  // --- VERA function encapsulation ---
+  /// --- VERA function encapsulation ---
   vera_mapbase_offset: .word 0, 0
   vera_mapbase_bank: .byte 0, 0
   vera_mapbase_address: .dword 0, 0

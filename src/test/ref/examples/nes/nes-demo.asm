@@ -1,14 +1,18 @@
 // A minimal NES demo
 // Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
-// Nintendo Entertainment System (NES
-// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
-// https://github.com/gregkrsak/first_nes
-// Ricoh 2C02 - NES Picture Processing Unit (PPU)
-// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
-// https://en.wikipedia.org/wiki/Picture_Processing_Unit
-// https://wiki.nesdev.com/w/index.php/PPU_registers
-// http://nesdev.com/2C02%20technical%20reference.TXT
-// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+/// @file
+/// Nintendo Entertainment System (NES
+///
+/// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
+/// https://github.com/gregkrsak/first_nes
+/// @file
+/// Ricoh 2C02 - NES Picture Processing Unit (PPU)
+///
+/// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
+/// https://en.wikipedia.org/wiki/Picture_Processing_Unit
+/// https://wiki.nesdev.com/w/index.php/PPU_registers
+/// http://nesdev.com/2C02%20technical%20reference.TXT
+/// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018.
 .cpu _6502
   // Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
@@ -37,13 +41,13 @@
 .byte   $01           // 1x 8KB VROM (CHR)
 .byte   %00000001     // Mapper nibble 0000 == No mapping (a simple 16KB PRG + 8KB CHR game)
                       // Mirroring nibble 0001 == Vertical mirroring only
-  // Standard Controller Right Button
+  /// Standard Controller Right Button
   .const JOY_RIGHT = 1
-  // Standard Controller Left Button
+  /// Standard Controller Left Button
   .const JOY_LEFT = 2
-  // Standard Controller Down Button
+  /// Standard Controller Down Button
   .const JOY_DOWN = 4
-  // Standard Controller Up Button
+  /// Standard Controller Up Button
   .const JOY_UP = 8
   .const SIZEOF_STRUCT_SPRITEDATA = 4
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
@@ -57,32 +61,32 @@
   .const OFFSET_STRUCT_SPRITEDATA_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
   .const SIZEOF_BYTE = 1
-  // $2000-$23bf	$03c0	Name table 0
+  /// $2000-$23bf	$03c0	Name table 0
   .label PPU_NAME_TABLE_0 = $2000
-  // $23c0-$23ff	$0040	Attribute table 0
+  /// $23c0-$23ff	$0040	Attribute table 0
   .label PPU_ATTRIBUTE_TABLE_0 = $23c0
-  // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
-  // $3f00-$3f1f	$0020	Palette RAM indexes
+  /// $3000-$3eff	$0f00	Mirrors of $2000-$2eff
+  /// $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
-  // PPU Status Register for reading in ASM
+  /// PPU Status Register for reading in ASM
   .label PPU_PPUSTATUS = $2002
-  // APU Frame Counter
-  // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
-  // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
-  // ------+-----+---------------------------------------------------------------
-  //  $4017 |	 W  | FR_COUNTER Frame Counter	Set mode and interrupt
-  //  ------+-----+---------------------------------------------------------------
-  //        |   7	| Sequencer mode: 0 selects 4-step sequence, 1 selects 5-step sequence
-  //        |   6	| Interrupt inhibit flag. If set, the frame interrupt flag is cleared, otherwise it is unaffected.
-  //  ------+-----+---------------------------------------------------------------
-  // Side effects	After 3 or 4 CPU clock cycles*, the timer is reset.
-  // If the mode flag is set, then both "quarter frame" and "half frame" signals are also generated.
+  /// APU Frame Counter
+  /// generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
+  /// https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
+  /// ------+-----+---------------------------------------------------------------
+  ///  $4017 |	 W  | FR_COUNTER Frame Counter	Set mode and interrupt
+  ///  ------+-----+---------------------------------------------------------------
+  ///        |   7	| Sequencer mode: 0 selects 4-step sequence, 1 selects 5-step sequence
+  ///        |   6	| Interrupt inhibit flag. If set, the frame interrupt flag is cleared, otherwise it is unaffected.
+  ///  ------+-----+---------------------------------------------------------------
+  /// Side effects	After 3 or 4 CPU clock cycles*, the timer is reset.
+  /// If the mode flag is set, then both "quarter frame" and "half frame" signals are also generated.
   .label FR_COUNTER = $4017
-  // Pointer to the start of RAM memory
+  /// Pointer to the start of RAM memory
   .label MEMORY = 0
-  // NES Picture Processing Unit (PPU)
+  /// NES Picture Processing Unit (PPU)
   .label PPU = $2000
-  // NES CPU and audion processing unit (APU)
+  /// NES CPU and audion processing unit (APU)
   .label APU = $4000
 .segment Code
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)

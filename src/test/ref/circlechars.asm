@@ -1,6 +1,8 @@
 // Plot a r=9 circle on the screen using chars - count how many chars are used
-// C standard library string.h
-// Functions to manipulate C strings and arrays.
+/// @file
+/// C standard library string.h
+///
+/// Functions to manipulate C strings and arrays.
   // Commodore 64 PRG executable file
 .file [name="circlechars.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,9 +14,9 @@
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   .label SCREEN = $400
   // The number of bytes on the screen

@@ -1,7 +1,10 @@
 /* Textbox routine with word wrap for KickC by Scan/Desire */
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="textbox.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

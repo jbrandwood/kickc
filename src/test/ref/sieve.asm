@@ -1,5 +1,7 @@
-// C standard library string.h
-// Functions to manipulate C strings and arrays.
+/// @file
+/// C standard library string.h
+///
+/// Functions to manipulate C strings and arrays.
   // Commodore 64 PRG executable file
 .file [name="sieve.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -8,28 +10,30 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Clock cycles per frame (on a C64 PAL)
+  /// Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
-  // Frames per second (on a C64 PAL)
+  /// Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
-  // Clock cycles per second (on a C64 PAL)
+  /// Clock cycles per second (on a C64 PAL)
   .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
-  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
-  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  /// Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  /// To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
-  // Timer Control - Start/stop timer (0:stop, 1: start)
+  /// Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  /// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const COUNT = $4000
   /* Up to what number? */
   .const SQRT_COUNT = $80
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  /// $D018 VIC-II base addresses
+  // @see #VICII_MEMORY
   .label D018 = $d018
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#2 timer A&B as one single 32-bit value
+  /// CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   /* Sqrt of COUNT */

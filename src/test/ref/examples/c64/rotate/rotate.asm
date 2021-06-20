@@ -7,14 +7,14 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Timer Control - Start/stop timer (0:stop, 1: start)
+  /// Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  /// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const GREEN = 5
   .const LIGHT_BLUE = $e
-  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
-  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  /// Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  /// To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
@@ -22,14 +22,17 @@
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // CIA#2 timer A&B as one single 32-bit value
+  /// CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   .label COS = SIN+$40

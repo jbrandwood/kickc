@@ -12,18 +12,18 @@
   .const SIZEOF_WORD = 2
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // 2-byte saved memory scan counter
+  /// 2-byte saved memory scan counter
   .label SAVMSC = $58
-  // data under cursor
+  /// data under cursor
   .label OLDCHR = $5d
-  // 2-byte saved cursor memory address
+  /// 2-byte saved cursor memory address
   .label OLDADR = $5e
-  // Cursor inhibit flag, 0 turns on, any other number turns off. Cursor doesn't change until it moves next.
+  /// Cursor inhibit flag, 0 turns on, any other number turns off. Cursor doesn't change until it moves next.
   .label CRSINH = $2f0
-  // Atari ZP registers
-  // 1-byte cursor row
+  /// Atari ZP registers
+  /// 1-byte cursor row
   .label ROWCRS = $54
-  // 2-byte cursor column
+  /// 2-byte cursor column
   .label COLCRS = $55
 .segment Code
 main: {

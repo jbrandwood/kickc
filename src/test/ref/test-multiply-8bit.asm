@@ -1,6 +1,8 @@
 // Test the fast multiplication library
-// A lightweight library for printing on the C64.
-// Printing with this library is done by calling print_ function for each element
+/// @file
+/// A lightweight library for printing on the C64.
+///
+/// Printing with this library is done by calling print_ function for each element
   // Commodore 64 PRG executable file
 .file [name="test-multiply-8bit.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

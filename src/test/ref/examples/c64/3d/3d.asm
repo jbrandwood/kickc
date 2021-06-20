@@ -2,9 +2,12 @@
 // Based on: 
 // - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="3d.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -20,10 +23,13 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
   .const sz = 0
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
   .label COSH = SINH+$40

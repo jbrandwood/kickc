@@ -1,7 +1,10 @@
 // Allows analysis of the CHARGEN ROM font
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="chargen-analysis.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -66,11 +69,11 @@
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The address of the CHARGEN character set
+  /// The address of the CHARGEN character set
   .label CHARGEN = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
 .segment Code

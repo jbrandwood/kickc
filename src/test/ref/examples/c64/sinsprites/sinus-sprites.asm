@@ -1,6 +1,9 @@
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+/// @file
+/// Commodore 64 Registers and Constants
+/// @file
+/// The MOS 6526 Complex Interface Adapter (CIA)
+///
+/// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Commodore 64 PRG executable file
 .file [name="sinus-sprites.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -17,16 +20,19 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X = $1d
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y = $17
+  /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
+  /// Sprite Y position register for sprite #0
   .label SPRITES_YPOS = $d001
+  /// Sprite colors register for sprite #0
   .label SPRITES_COLOR = $d027
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // The address of the CHARGEN character set
+  /// The address of the CHARGEN character set
   .label CHARGEN = $d000
-  // The VIC-II MOS 6567/6569
+  /// The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe

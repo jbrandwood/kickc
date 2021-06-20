@@ -1,5 +1,6 @@
 // Tests different rotate left commands
-// Functions for performing input and output.
+/// @file
+/// Functions for performing input and output.
   // Commodore 64 PRG executable file
 .file [name="32bit-rols.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,9 +13,9 @@
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_BYTE = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // Color Ram
+  /// Color Ram
   .label COLORRAM = $d800
-  // Default address of screen character matrix
+  /// Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position

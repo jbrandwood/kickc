@@ -1,9 +1,10 @@
 // Exploring C64DTV Screen Modes
-// C64 DTV version 2 Registers and Constants
-//
-// Sources
-// (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
-// (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
+/// @file
+/// C64 DTV version 2 Registers and Constants
+///
+/// Sources
+/// (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
+/// (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
   // Commodore 64 PRG executable file
 .file [name="c64dtv-gfxmodes.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,19 +13,33 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  /// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
   .const VICII_ECM = $40
+  /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
+  /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
+  /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
   .const VICII_RSEL = 8
+  /// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
   .const VICII_MCM = $10
+  /// $D016 Control register #2 Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
   .const VICII_CSEL = 8
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  /// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  /// RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  /// RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // The colors of the C64
+  /// The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const GREEN = 5
@@ -58,51 +73,84 @@
   .const KEY_SPACE = $3c
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  /// $D012 RASTER Raster counter
   .label RASTER = $d012
+  /// $D020 Border Color
   .label BORDER_COLOR = $d020
+  /// $D021 Background Color 0
   .label BG_COLOR = $d021
+  /// $D022 Background Color 1
   .label BG_COLOR1 = $d022
+  /// $D023 Background Color 2
   .label BG_COLOR2 = $d023
+  /// $D024 Background Color 3
   .label BG_COLOR3 = $d024
+  /// $D011 Control Register #1
+  /// - Bit#0-#2: YSCROLL Screen Soft Scroll Vertical
+  /// - Bit#3: RSEL Switch betweem 25 or 24 visible rows
+  ///          RSEL|  Display window height   | First line  | Last line
+  ///          ----+--------------------------+-------------+----------
+  ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
+  ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
+  /// - Bit#4: DEN Switch VIC-II output on/off
+  /// - Bit#5: BMM Turn Bitmap Mode on/off
+  /// - Bit#6: ECM Turn Extended Color Mode on/off
+  /// - Bit#7: RST8 9th Bit for $D012 Rasterline counter
+  /// Initial Value: %10011011
   .label VICII_CONTROL1 = $d011
+  /// $D016 Control register 2
+  /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
+  /// -  Bit#3: CSEL Switch betweem 40 or 38 visible columns
+  ///           CSEL|   Display window width   | First X coo. | Last X coo.
+  ///           ----+--------------------------+--------------+------------
+  ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
+  ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
+  /// -  Bit#4: MCM Turn Multicolor Mode on/off
+  /// -  Bit#5-#7: not used
+  /// Initial Value: %00001000
   .label VICII_CONTROL2 = $d016
+  /// $D018 VIC-II base addresses
+  /// - Bit#0: not used
+  /// - Bit#1-#3: CB Address Bits 11-13 of the Character Set (*2048)
+  /// - Bit#4-#7: VM Address Bits 10-13 of the Screen RAM (*1024)
+  /// Initial Value: %00010100
   .label VICII_MEMORY = $d018
-  // Processor port data direction register
+  /// Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  /// Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // Color Ram
+  /// Color Ram
   .label COLS = $d800
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  /// The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // Feature enables or disables the extra C64 DTV features
+  /// Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  // Controls the graphics modes of the C64 DTV
+  /// Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
-  // Defines colors for the 16 first colors ($00-$0f)
+  /// Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  // Linear Graphics Plane A Counter Control
+  /// Linear Graphics Plane A Counter Control
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
   .label DTV_PLANEA_START_HI = $d045
   .label DTV_PLANEA_STEP = $d046
   .label DTV_PLANEA_MODULO_LO = $d038
   .label DTV_PLANEA_MODULO_HI = $d039
-  // Linear Graphics Plane B Counter Control
+  /// Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  // Select memory bank where color data is fetched from (bits 11:0)
-  // Memory address of Color RAM is ColorBank*$400
+  /// Select memory bank where color data is fetched from (bits 11:0)
+  /// Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
-  // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
-  // Memory address of VIC Graphics is GraphicsBank*$10000
+  /// Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
+  /// Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .label print_char_cursor = 2
   .label print_line_cursor = 9
@@ -2983,7 +3031,7 @@ bitmap_plot: {
     rts
 }
 .segment Data
-  // Default vallues for the palette
+  /// Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

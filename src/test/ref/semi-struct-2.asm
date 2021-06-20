@@ -33,7 +33,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  // The CIA#1: keyboard matrix, joystick #1/#2
+  /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label print_screen = $400
   .label print_char_cursor = $a

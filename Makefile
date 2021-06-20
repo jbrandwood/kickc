@@ -5,6 +5,6 @@ test:
 clean:
 	mvn clean
 doxygen:
-	mkdir target
+	mkdir -p target
 	doxygen src/main/doxygen/doxygen.conf
 

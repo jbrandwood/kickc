@@ -807,11 +807,11 @@ muls8s: {
   __b4:
     // m = m + b
     txa
-    pha
+    sta.z $ff
     clc
     adc.z m
     sta.z m
-    pla
+    lda.z $ff
     ora #$7f
     bmi !+
     lda #0

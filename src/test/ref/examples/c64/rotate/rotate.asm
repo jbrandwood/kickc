@@ -175,11 +175,11 @@ anim: {
     // BYTE1(xr)
     lda.z xr+1
     // signed int xpos = ((signed char) BYTE1(xr)) + 24 /*border*/ + 149
-    tax
+    sta.z $ff
     clc
     adc #<$18+$95
     sta.z xpos
-    txa
+    lda.z $ff
     ora #$7f
     bmi !+
     lda #0

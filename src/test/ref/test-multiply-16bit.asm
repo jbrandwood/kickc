@@ -909,24 +909,23 @@ muls16s: {
     rts
   __b4:
     // m = m + b
+    clc
+    lda.z b
+    adc.z m
+    sta.z m
+    lda.z b+1
+    adc.z m+1
+    sta.z m+1
     lda.z b+1
     ora #$7f
     bmi !+
     lda #0
   !:
     sta.z $ff
-    lda.z m
-    clc
-    adc.z b
-    sta.z m
-    lda.z m+1
-    adc.z b+1
-    sta.z m+1
-    lda.z m+2
-    adc.z $ff
+    adc.z m+2
     sta.z m+2
-    lda.z m+3
-    adc.z $ff
+    lda.z $ff
+    adc.z m+3
     sta.z m+3
     // for(signed word j = 0; j!=a; j++)
     inc.z j

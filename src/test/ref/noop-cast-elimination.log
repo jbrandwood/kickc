@@ -147,8 +147,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 28.6: zp[2]:3 [ main::sw#2 main::sw#1 ] 24.75: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 796 combination zp[2]:3 [ main::sw#2 main::sw#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
-Uplifting [] best 796 combination 
+Uplifting [main] best 786 combination zp[2]:3 [ main::sw#2 main::sw#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
+Uplifting [] best 786 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::sw#2 main::sw#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -188,11 +188,11 @@ main: {
   __b1:
     // [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
-    pha
+    sta.z $ff
     clc
     adc.z sw
     sta.z sw
-    pla
+    lda.z $ff
     ora #$7f
     bmi !+
     lda #0
@@ -251,7 +251,7 @@ reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 706
+Score: 696
 
   // File Comments
 // Test elimination of noop-casts (signed byte to byte)
@@ -286,11 +286,11 @@ main: {
     // sw += (signed byte)i
     // [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
-    pha
+    sta.z $ff
     clc
     adc.z sw
     sta.z sw
-    pla
+    lda.z $ff
     ora #$7f
     bmi !+
     lda #0

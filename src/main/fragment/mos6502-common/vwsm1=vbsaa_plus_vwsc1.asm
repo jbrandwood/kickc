@@ -1,8 +1,8 @@
-tax
+sta $ff
 clc
 adc #<{c1}
 sta {m1}
-txa
+lda $ff
 ora #$7f
 bmi !+
 lda #0

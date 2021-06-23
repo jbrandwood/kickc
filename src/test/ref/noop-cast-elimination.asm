@@ -19,11 +19,11 @@ main: {
   __b1:
     // sw += (signed byte)i
     txa
-    pha
+    sta.z $ff
     clc
     adc.z sw
     sta.z sw
-    pla
+    lda.z $ff
     ora #$7f
     bmi !+
     lda #0

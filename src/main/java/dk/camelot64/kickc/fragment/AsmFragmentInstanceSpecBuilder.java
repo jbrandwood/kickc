@@ -551,7 +551,7 @@ public class AsmFragmentInstanceSpecBuilder {
       } else if(baseType instanceof SymbolTypeProcedure) {
          return "pr";
       } else {
-         throw new InternalError("Not implemented " + baseType);
+         throw new CompileError("Type not supported in fragments " + baseType);
       }
    }
 

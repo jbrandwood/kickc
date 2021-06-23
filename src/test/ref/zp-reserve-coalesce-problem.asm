@@ -88,8 +88,8 @@ benchmarkLandscape: {
     rts
   __b4:
     // char *screenAddress = lms + x
-    lda.z x
     clc
+    lda.z x
     adc #<lms
     sta.z screenAddress
     lda.z x

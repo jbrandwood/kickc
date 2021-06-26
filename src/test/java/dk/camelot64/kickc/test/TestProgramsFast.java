@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testMissingInstruction() throws IOException {
+      compileAndCompare("missing-instruction.c", log());
+   }
+
+   @Test
    public void testNpeProblem0() throws IOException {
       compileAndCompare("npe-problem-0.c");
    }

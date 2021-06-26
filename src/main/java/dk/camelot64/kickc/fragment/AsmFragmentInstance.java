@@ -4,10 +4,8 @@ import dk.camelot64.cpufamily6502.CpuAddressingMode;
 import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -345,10 +343,14 @@ public class AsmFragmentInstance {
          // Convert to ZP-addressing mode if possible
          boolean isZp = param1 != null && param1.isZp();
          CpuOpcode cpuOpcode = this.getAsmProgram().getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, isZp);
+         if(!isZp && cpuOpcode==null) {
+            // Fallback to ZP-addressing
+            cpuOpcode = this.getAsmProgram().getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, true);
+         }
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
          if(cpuOpcode == null) {
-            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) + " by CPU " + this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
+            throw new CompileError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) + " by CPU " + this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
          }
          return new AsmInstruction(cpuOpcode, operand1, operand2);
       }

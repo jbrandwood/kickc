@@ -1,0 +1,145 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::test = 0
+  asm { stytest,x  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+volatile byte main::test loadstore
+
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] main::test = 0
+  asm { stytest,x  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+volatile byte main::test loadstore 2.0
+
+Initial phi equivalence classes
+Added variable main::test to live range equivalence class [ main::test ]
+Complete equivalence classes
+[ main::test ]
+Allocated zp[1]:2 [ main::test ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] main::test = 0 [ main::test ] (  [ main::test ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::test ] : zp[1]:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 2: zp[1]:2 [ main::test ] 
+Uplift Scope [] 
+
+Uplifting [main] best 18 combination zp[1]:2 [ main::test ] 
+Uplifting [] best 18 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ main::test ]
+Uplifting [main] best 18 combination zp[1]:2 [ main::test ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="missing-instruction.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label test = 2
+    // [0] main::test = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z test
+    // asm { stytest,x  }
+    sty.z test,x
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+volatile byte main::test loadstore zp[1]:2 2.0
+
+zp[1]:2 [ main::test ]
+
+
+FINAL ASSEMBLER
+Score: 15
+
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="missing-instruction.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label test = 2
+    // volatile unsigned char test
+    // [0] main::test = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z test
+    // asm
+    // asm { stytest,x  }
+    sty.z test,x
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

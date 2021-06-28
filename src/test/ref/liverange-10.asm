@@ -48,10 +48,9 @@ main: {
     inc.z w+1
   !:
     lda.z w+1
-    cmp #>$28
     bne __b2
     lda.z w
-    cmp #<$28
+    cmp #$28
     bne __b2
     // }
     rts

@@ -273,6 +273,10 @@ public class KickC implements Callable<Integer> {
          for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
             AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
          }
+         if(fragmentTemplates.size()==0) {
+            compiler.getLog().append("Cannot create "+fragment);
+            return COMPILE_ERROR;
+         }
       }
 
       if(cFiles != null && !cFiles.isEmpty()) {

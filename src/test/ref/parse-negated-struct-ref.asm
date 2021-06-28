@@ -14,7 +14,6 @@ main: {
     .label a = aa
     // if(!a->b)
     lda a
-    cmp #0
     bne !a+
     // *SCREEN = 'a'
     lda #'a'

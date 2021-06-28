@@ -12,8 +12,8 @@ main: {
     .label __1 = 4
     .label u = 2
     // u = *(word *)0xA0 - u
-    sec
     lda $a0
+    sec
     sbc #<$22b
     sta.z u
     lda $a0+1

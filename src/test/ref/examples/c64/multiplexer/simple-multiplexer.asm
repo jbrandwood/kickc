@@ -146,7 +146,6 @@ init: {
 loop: {
     // The current index into the y-sine
     .label sin_idx = 4
-    .label plexFreeNextYpos1_return = $c
     .label ss = 5
     lda #0
     sta.z sin_idx
@@ -196,12 +195,12 @@ loop: {
     // return PLEX_FREE_YPOS[plex_free_next];
     ldy.z plex_free_next
     lda PLEX_FREE_YPOS,y
-    sta.z plexFreeNextYpos1_return
   __b8:
     // while(VICII->RASTER<rasterY)
-    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    cmp.z plexFreeNextYpos1_return
-    bcc __b8
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq !+
+    bcs __b8
+  !:
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // plexShowSprite()
@@ -245,9 +244,9 @@ plexInit: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $e
+    .label nxt_idx = $c
     .label nxt_y = $d
-    .label m = $c
+    .label m = $e
     lda #0
     sta.z m
   __b1:

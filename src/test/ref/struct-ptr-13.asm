@@ -13,20 +13,18 @@
 main: {
     .label SCREEN = $400
     // points->x += 5
-    lda #5
-    clc
-    adc points
-    sta points
+    lax points
+    axs #-[5]
+    stx points
     // points->y += 5
-    lda #5
-    clc
-    adc points+OFFSET_STRUCT_POINT_Y
-    sta points+OFFSET_STRUCT_POINT_Y
+    lax points+OFFSET_STRUCT_POINT_Y
+    axs #-[5]
+    stx points+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = points->x
     lda points
     sta SCREEN
     // SCREEN[1] = points->y
-    lda points+OFFSET_STRUCT_POINT_Y
+    txa
     sta SCREEN+1
     // }
     rts

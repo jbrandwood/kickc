@@ -34,6 +34,12 @@ public class TestFragments {
       AsmFragmentTemplateUsages.logUsages(asmFragmentTemplateSynthesizer, log, false, false, false, false, false, false);
    }
 
+//   @Test
+//   public void testSynthesis() throws IOException {
+//      List<String> signatures = Arrays.asList("_deref_pwsc1_ge_vwsm1_then_la1");
+//      testFragments("fragment-synthesis", signatures);
+//   }
+
    @Test
    public void testAssignmentsBu() throws IOException {
       testFragments("fragments-assignment-copy", assignmentsBu());
@@ -140,11 +146,6 @@ public class TestFragments {
       testFragments("fragments-complex", signaturesComplex);
    }
 
-  // @Test
-  // public void testPointers() throws IOException {
-  //    List<String> signatures = Arrays.asList("vbuz1=pbuz2_derefidx_vbuc1");
-  //    testFragments("fragments-complex", signatures);
-  // }
 
 
    @Test

@@ -21,10 +21,9 @@ main: {
     lda #>STRING
     sta PTR+1
     // byte* ptr = (byte*) { *(PTR+1), *PTR }
+    sta.z ptr+1
     lda PTR
     sta.z ptr
-    lda PTR+1
-    sta.z ptr+1
     // *SCREEN = *ptr
     ldy #0
     lda (ptr),y

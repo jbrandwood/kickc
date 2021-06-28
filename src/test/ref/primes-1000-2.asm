@@ -26,15 +26,15 @@ main: {
     .label __14 = $11
     .label __15 = $11
     // PRIMES[1] = 2
-    lda #0
-    sta PRIMES+1*SIZEOF_WORD+1
     lda #<2
     sta PRIMES+1*SIZEOF_WORD
+    lda #>2
+    sta PRIMES+1*SIZEOF_WORD+1
     // PRIMES[2] = 3
-    lda #0
-    sta PRIMES+2*SIZEOF_WORD+1
     lda #<3
     sta PRIMES+2*SIZEOF_WORD
+    lda #>3
+    sta PRIMES+2*SIZEOF_WORD+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen

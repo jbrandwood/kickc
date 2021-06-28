@@ -124,10 +124,10 @@ main: {
     lda #>STRING
     sta PTR+1
     // [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda PTR
-    sta.z ptr
     lda PTR+1
     sta.z ptr+1
+    lda PTR
+    sta.z ptr
     // [3] *main::SCREEN = *((byte*)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
@@ -145,6 +145,8 @@ main: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda PTR+1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -160,7 +162,7 @@ zp[2]:2 [ main::ptr#0 ]
 
 
 FINAL ASSEMBLER
-Score: 43
+Score: 39
 
   // File Comments
 // Test assigning address of inline string to pointer
@@ -192,10 +194,9 @@ main: {
     sta PTR+1
     // byte* ptr = (byte*) { *(PTR+1), *PTR }
     // [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    sta.z ptr+1
     lda PTR
     sta.z ptr
-    lda PTR+1
-    sta.z ptr+1
     // *SCREEN = *ptr
     // [3] *main::SCREEN = *((byte*)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0

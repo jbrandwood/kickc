@@ -61,10 +61,9 @@ main: {
     inc.z i1+1
   !:
     lda.z i1+1
-    cmp #>3
     bne __b7
     lda.z i1
-    cmp #<3
+    cmp #3
     bne __b7
     // }
     rts

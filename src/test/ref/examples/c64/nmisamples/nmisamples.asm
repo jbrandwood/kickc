@@ -133,10 +133,10 @@ main: {
     lda #>nmi
     sta KERNEL_NMI+1
     // CIA2->TIMER_A = 0x88
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
     lda #<$88
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
+    lda #>$88
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
     // CIA2->INTERRUPT = 0x81
     // speed
     lda #$81

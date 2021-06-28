@@ -81,9 +81,7 @@ table_driven_irq: {
     // *RASTER = val
     stx RASTER
     // if (val < *RASTER)
-    ldy RASTER
-    sty.z $ff
-    cpx.z $ff
+    cpx RASTER
     bcc !__ea81+
     jmp $ea81
   !__ea81:

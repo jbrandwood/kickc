@@ -324,15 +324,15 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [table_driven_irq] best 795 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
-Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
-Uplifting [MOS6526_CIA] best 795 combination 
-Uplifting [MOS6569_VICII] best 795 combination 
-Uplifting [MOS6581_SID] best 795 combination 
-Uplifting [main] best 795 combination 
-Uplifting [__start] best 795 combination 
+Uplifting [table_driven_irq] best 789 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 789 combination zp[1]:2 [ irq_idx ] 
+Uplifting [MOS6526_CIA] best 789 combination 
+Uplifting [MOS6569_VICII] best 789 combination 
+Uplifting [MOS6581_SID] best 789 combination 
+Uplifting [main] best 789 combination 
+Uplifting [__start] best 789 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
-Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
+Uplifting [] best 789 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -446,9 +446,7 @@ table_driven_irq: {
     // [12] *RASTER = table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
     stx RASTER
     // [13] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
-    ldy RASTER
-    sty.z $ff
-    cpx.z $ff
+    cpx RASTER
     bcs __breturn
     jmp __b6
     // table_driven_irq::@6
@@ -548,7 +546,7 @@ Skipping double jump to $ea81 in bcs __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [77] bcs $ea81 to bcc
+Fixing long branch [75] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
 constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
@@ -581,7 +579,7 @@ reg byte x [ table_driven_irq::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 631
+Score: 625
 
   // File Comments
 // Test interrupt routine using a variable between calls (irq_idx)
@@ -690,9 +688,7 @@ table_driven_irq: {
     stx RASTER
     // if (val < *RASTER)
     // [13] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
-    ldy RASTER
-    sty.z $ff
-    cpx.z $ff
+    cpx RASTER
     bcc !__ea81+
     jmp $ea81
   !__ea81:

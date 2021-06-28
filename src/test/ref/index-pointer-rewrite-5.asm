@@ -16,14 +16,14 @@ main: {
     .label __3 = 4
     .label i = 2
     // fibs[0] = 0
-    lda #0
-    sta fibs+1
+    lda #<0
     sta fibs
+    sta fibs+1
     // fibs[1] = 1
-    sta fibs+1*SIZEOF_WORD+1
     lda #<1
     sta fibs+1*SIZEOF_WORD
-    lda #0
+    lda #>1
+    sta fibs+1*SIZEOF_WORD+1
     sta.z i
   __b1:
     // for(char i=0;i<NUM_FIBS-2;i++)

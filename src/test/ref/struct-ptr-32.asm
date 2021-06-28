@@ -32,10 +32,10 @@ main: {
     lda #>$141
     sta persons+OFFSET_STRUCT_PERSON_AGE+1
     // persons[1].age = 123
-    lda #0
-    sta persons+1*SIZEOF_STRUCT_PERSON+OFFSET_STRUCT_PERSON_AGE+1
     lda #<$7b
     sta persons+1*SIZEOF_STRUCT_PERSON+OFFSET_STRUCT_PERSON_AGE
+    lda #>$7b
+    sta persons+1*SIZEOF_STRUCT_PERSON+OFFSET_STRUCT_PERSON_AGE+1
     // SCREEN[0] = person->name[8]
     lda persons+OFFSET_STRUCT_PERSON_NAME+8
     sta SCREEN

@@ -28,12 +28,12 @@ update: {
     .const size = $3e8
     .label s = main.s
     // s->a += size
-    lda #<size
     clc
-    adc.z s
+    lda.z s
+    adc #<size
     sta.z s
-    lda #>size
-    adc.z s+1
+    lda.z s+1
+    adc #>size
     sta.z s+1
     // }
     rts

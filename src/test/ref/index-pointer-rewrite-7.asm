@@ -23,14 +23,14 @@ main: {
     .label __10 = 6
     .label __11 = 4
     // fibs[0] = 0
-    lda #0
-    sta fibs+1
+    lda #<0
     sta fibs
+    sta fibs+1
     // fibs[1] = 1
-    sta fibs+1*SIZEOF_WORD+1
     lda #<1
     sta fibs+1*SIZEOF_WORD
-    lda #<0
+    lda #>1
+    sta fibs+1*SIZEOF_WORD+1
     sta.z i
     sta.z i+1
   __b1:

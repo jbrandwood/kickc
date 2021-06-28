@@ -289,15 +289,15 @@ main: {
     .label __10 = 6
     .label __11 = 4
     // [0] *fibs = 0 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta fibs+1
     lda #<0
     sta fibs
+    lda #>0
+    sta fibs+1
     // [1] *(fibs+1*SIZEOF_WORD) = 1 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta fibs+1*SIZEOF_WORD+1
     lda #<1
     sta fibs+1*SIZEOF_WORD
+    lda #>1
+    sta fibs+1*SIZEOF_WORD+1
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [2] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
@@ -412,14 +412,15 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #<0
-Removing instruction lda #0
+Removing instruction lda #>0
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction lda #<0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
 constant byte SIZEOF_WORD = 2
@@ -445,7 +446,7 @@ zp[2]:8 [ main::$6 main::$9 ]
 
 
 FINAL ASSEMBLER
-Score: 2281
+Score: 2263
 
   // File Comments
 // Test array index pointer rewriting
@@ -477,17 +478,17 @@ main: {
     .label __11 = 4
     // fibs[0] = 0
     // [0] *fibs = 0 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta fibs+1
+    lda #<0
     sta fibs
+    sta fibs+1
     // fibs[1] = 1
     // [1] *(fibs+1*SIZEOF_WORD) = 1 -- _deref_pwuc1=vbuc2 
-    sta fibs+1*SIZEOF_WORD+1
     lda #<1
     sta fibs+1*SIZEOF_WORD
+    lda #>1
+    sta fibs+1*SIZEOF_WORD+1
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // [2] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
-    lda #<0
     sta.z i
     sta.z i+1
     // main::@1

@@ -1,7 +1,7 @@
 lda #<{c1}
-cmp {c2}
+cmp {m2}
 bne !+
 lda #>{c1}
-cmp {c2}+1
+cmp {m2}+1
 beq {la1}
 !:

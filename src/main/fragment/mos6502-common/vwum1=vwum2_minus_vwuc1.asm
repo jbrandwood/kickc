@@ -1,5 +1,5 @@
-lda {m2}
 sec
+lda {m2}
 sbc #<{c1}
 sta {m1}
 lda {m2}+1

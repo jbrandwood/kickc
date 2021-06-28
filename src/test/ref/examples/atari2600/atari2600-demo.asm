@@ -72,7 +72,6 @@ main: {
   __b3:
     // while(RIOT->INTIM)
     lda RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
-    cmp #0
     bne __b4
     // TIA->VBLANK = 0
     // Screen - display logic
@@ -110,7 +109,6 @@ main: {
   __b9:
     // while(RIOT->INTIM)
     lda RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
-    cmp #0
     bne __b10
     jmp __b2
   __b10:

@@ -11,7 +11,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testMissingInstruction() throws IOException {
-      compileAndCompare("missing-instruction.c", log());
+      compileAndCompare("missing-instruction.c");
    }
 
    @Test

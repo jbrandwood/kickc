@@ -163,19 +163,19 @@ animate: {
     lda #$19
     sta YPOS+3
     // XPOS[3]+7
-    lda #7
-    clc
-    adc XPOS+3
+    lax XPOS+3
+    axs #-[7]
     // XPOS[3] = XPOS[3]+7
-    sta XPOS+3
+    stx XPOS+3
     // if(XPOS[3]>=40)
+    txa
     cmp #$28
     bcc __breturn
     // XPOS[3]-40
-    sec
-    sbc #$28
+    lax XPOS+3
+    axs #$28
     // XPOS[3] = XPOS[3]-40
-    sta XPOS+3
+    stx XPOS+3
   __breturn:
     // }
     rts

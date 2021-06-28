@@ -25,7 +25,6 @@ mode: {
   __b1:
     // if(*B == 0)
     lda B
-    cmp #0
     bne __b1
     jmp __b1
 }

@@ -232,10 +232,9 @@ getFAC: {
     sty memLo
     sta memHi
     // unsigned int w = { *memHi, *memLo }
+    sta.z return+1
     tya
     sta.z return
-    lda memHi
-    sta.z return+1
     // }
     rts
 }

@@ -719,15 +719,31 @@ class AsmFragmentTemplateSynthesisRule {
 
       // Replace _deref_P..C.  with V..M.
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)", anyZM1+"|"+twoC1, null, "$1v$2m1$3", null, mapC1M1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)", anyZM2+"|"+twoC1, null, "$1v$2m2$3", null, mapC1M2));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)", anyZM3+"|"+twoC1, null, "$1v$2m3$3", null, mapC1M3));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]1.*)_deref_p(..)c1(.*)", anyZM2+"|"+twoC1, null, "$1v$2m2$3", null, mapC1M2));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*[zm]1.*)", anyZM2+"|"+twoC1, null, "$1v$2m2$3", null, mapC1M2));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]2.*)_deref_p(..)c1(.*)", anyZM3+"|"+twoC1, null, "$1v$2m3$3", null, mapC1M3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*[zm]2.*)", anyZM3+"|"+twoC1, null, "$1v$2m3$3", null, mapC1M3));
+
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c2(.*)", anyZM1+"|"+twoC2, null, "$1v$2m1$3", null, mapC2M1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c2(.*)", anyZM2+"|"+twoC2, null, "$1v$2m2$3", null, mapC2M2));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c2(.*)", anyZM3+"|"+twoC2, null, "$1v$2m3$3", null, mapC2M3));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]1.*)_deref_p(..)c2(.*)", anyZM2+"|"+twoC2, null, "$1v$2m2$3", null, mapC2M2));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c2(.*[zm]1.*)", anyZM2+"|"+twoC2, null, "$1v$2m2$3", null, mapC2M2));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]2.*)_deref_p(..)c2(.*)", anyZM3+"|"+twoC2, null, "$1v$2m3$3", null, mapC2M3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c2(.*[zm]2.*)", anyZM3+"|"+twoC2, null, "$1v$2m3$3", null, mapC2M3));
+      
       // Replace two _deref_P..C. with V..M.
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*)", anyZM1+"|"+threeC1, null, "$1v$2m1$3v$4m1$5", null, mapC1M1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*)", anyZM2+"|"+threeC1, null, "$1v$2m2$3v$4m2$5", null, mapC1M2));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*)", anyZM3+"|"+threeC1, null, "$1v$2m3$3v$4m3$5", null, mapC1M3));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]1.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*)", anyZM2+"|"+threeC1, null, "$1v$2m2$3v$4m2$5", null, mapC1M2));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*[zm]1.*)_deref_p(..)c1(.*)", anyZM2+"|"+threeC1, null, "$1v$2m2$3v$4m2$5", null, mapC1M2));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*[zm]1.*)", anyZM2+"|"+threeC1, null, "$1v$2m2$3v$4m2$5", null, mapC1M2));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*[zm]2.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*)", anyZM3+"|"+threeC1, null, "$1v$2m3$3v$4m3$5", null, mapC1M3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*[zm]2.*)_deref_p(..)c1(.*)", anyZM3+"|"+threeC1, null, "$1v$2m3$3v$4m3$5", null, mapC1M3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_p(..)c1(.*)_deref_p(..)c1(.*[zm]2.*)", anyZM3+"|"+threeC1, null, "$1v$2m3$3v$4m3$5", null, mapC1M3));
 
       // Correct wrong ordered Z2/Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZM1+"|"+twoZM2, null, "$1z1$2z2$3", null, mapZM2Swap, false));

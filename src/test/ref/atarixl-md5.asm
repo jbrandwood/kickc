@@ -215,8 +215,8 @@ md5: {
     sta.z memcpy.source+1
     jsr memcpy
     // msg[initial_len] = 128
-    lda.z msg
     clc
+    lda.z msg
     adc.z initial_len
     sta.z __74
     lda.z msg+1
@@ -241,8 +241,8 @@ md5: {
     sta.z bits_len+2
     sta.z bits_len+3
     // msg + new_len
-    lda.z msg
     clc
+    lda.z msg
     adc.z new_len
     sta.z memcpy.destination
     lda.z msg+1
@@ -308,8 +308,8 @@ md5: {
     rts
   __b2:
     // msg + offset
-    lda.z msg
     clc
+    lda.z msg
     adc.z offset
     sta.z w
     lda.z msg+1
@@ -359,8 +359,8 @@ md5: {
     cmp #$40
     bcc __b4
     // h0 += a
-    lda.z h0
     clc
+    lda.z h0
     adc.z a
     sta.z h0
     lda.z h0+1
@@ -373,8 +373,8 @@ md5: {
     adc.z a+3
     sta.z h0+3
     // h1 += b
-    lda.z h1
     clc
+    lda.z h1
     adc.z b
     sta.z h1
     lda.z h1+1
@@ -387,8 +387,8 @@ md5: {
     adc.z b+3
     sta.z h1+3
     // h2 += c
-    lda.z h2
     clc
+    lda.z h2
     adc.z c
     sta.z h2
     lda.z h2+1
@@ -401,8 +401,8 @@ md5: {
     adc.z c+3
     sta.z h2+3
     // h3 += d
-    lda.z h3
     clc
+    lda.z h3
     adc.z temp
     sta.z h3
     lda.z h3+1
@@ -691,8 +691,8 @@ md5: {
     // kickasm
     .break 
     // a + f
-    lda.z __65
     clc
+    lda.z __65
     adc.z f
     sta.z __65
     lda.z __65+1
@@ -706,8 +706,8 @@ md5: {
     sta.z __65+3
     // a + f + k[i]
     ldy.z __72
-    lda.z __66
     clc
+    lda.z __66
     adc k,y
     sta.z __66
     lda.z __66+1
@@ -752,8 +752,8 @@ md5: {
     jsr leftRotate
     // uint32_t lr = leftRotate((a + f + k[i] + w[g]), r[i])
     // b += lr
-    lda.z b_1
     clc
+    lda.z b_1
     adc.z b
     sta.z b_1
     lda.z b_1+1
@@ -1073,27 +1073,27 @@ cputc: {
     rts
   __b5:
     // *COLCRS = 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     jsr newline
     rts
   __b2:
     // *COLCRS = 0
     // 0x0a LF, or atascii EOL
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     jsr newline
     rts
   __b1:
     // *COLCRS = 0
     // 0x0d, CR = just set the cursor x value to 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // setcursor()
     jsr setcursor
     rts
@@ -1131,8 +1131,8 @@ memcpy: {
     .label source = $aa
     .label num = $80
     // char* src_end = (char*)source+num
-    lda.z source
     clc
+    lda.z source
     adc.z num
     sta.z src_end
     lda.z source+1
@@ -1213,9 +1213,9 @@ print32: {
 // Print a newline
 cputln: {
     // *COLCRS = 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     jsr newline
     // }
@@ -1319,8 +1319,8 @@ mul7: {
     lda.z __1+1
     rol
     sta.z __2+1
-    lda.z __3
     clc
+    lda.z __3
     adc.z __1
     sta.z __3
     lda.z __3+1
@@ -1328,8 +1328,8 @@ mul7: {
     sta.z __3+1
     asl.z __4
     rol.z __4+1
-    lda.z return
     clc
+    lda.z return
     adc.z __4
     sta.z return
     lda.z return+1
@@ -1369,8 +1369,8 @@ mul3: {
     lda.z __1+1
     rol
     sta.z __2+1
-    lda.z return
     clc
+    lda.z return
     adc.z __2
     sta.z return
     lda.z return+1
@@ -1396,8 +1396,8 @@ mul5: {
     sta.z __2+1
     asl.z __2
     rol.z __2+1
-    lda.z return
     clc
+    lda.z return
     adc.z __2
     sta.z return
     lda.z return+1
@@ -1570,8 +1570,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -1827,8 +1827,8 @@ cursorLocation: {
     sta.z __4+1
     asl.z __4
     rol.z __4+1
-    lda.z __5
     clc
+    lda.z __5
     adc.z __4
     sta.z __5
     lda.z __5+1
@@ -1850,11 +1850,11 @@ cursorLocation: {
     sta.z __1+1
     // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
     clc
-    lda COLCRS
-    adc.z return
+    lda.z return
+    adc COLCRS
     sta.z return
-    lda COLCRS+1
-    adc.z return+1
+    lda.z return+1
+    adc COLCRS+1
     sta.z return+1
     // }
     rts

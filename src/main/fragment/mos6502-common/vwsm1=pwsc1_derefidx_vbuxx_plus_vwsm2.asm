@@ -1,5 +1,5 @@
-lda {m2}
 clc
+lda {m2}
 adc {c1},x
 sta {m1}
 lda {m2}+1

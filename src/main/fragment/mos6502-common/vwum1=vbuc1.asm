@@ -1,4 +1,4 @@
-lda #{c1}
+lda #<{c1}
 sta {m1}
-lda #0
+lda #>{c1}
 sta {m1}+1

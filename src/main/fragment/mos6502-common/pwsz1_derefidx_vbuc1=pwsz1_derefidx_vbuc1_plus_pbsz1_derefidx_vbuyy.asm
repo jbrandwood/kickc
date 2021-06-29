@@ -1,7 +1,7 @@
 lda ({z1}),y
 sta $ff
-ldy #{c1}
 clc
+ldy #{c1}
 adc ({z1}),y
 sta ({z1}),y
 iny

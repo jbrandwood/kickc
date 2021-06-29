@@ -1043,10 +1043,9 @@ mulf8u_prepared: {
     sbc mulf_sqr2_hi,x
     sta memB
     // return { *memB, *resL };
+    sta.z return+1
     lda resL
     sta.z return
-    lda memB
-    sta.z return+1
     // }
     rts
 }

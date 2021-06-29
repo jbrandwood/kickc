@@ -4999,10 +4999,10 @@ getFAC: {
     sty memLo
     sta memHi
     // [217] getFAC::return#0 = *memHi w= *memLo -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda memLo
-    sta.z return
     lda memHi
     sta.z return+1
+    lda memLo
+    sta.z return
     jmp __breturn
     // getFAC::@return
   __breturn:
@@ -5163,6 +5163,7 @@ Removing instruction lda #0
 Removing instruction lda.z s_gen
 Removing instruction lda.z s_gen
 Replacing instruction lda #0 with TYA
+Removing instruction lda memHi
 Replacing instruction lda memLo with TYA
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b1 with __b1
@@ -5596,7 +5597,7 @@ reg byte a [ mulFACbyMEM::prepareMEM1_$1 ]
 
 
 FINAL ASSEMBLER
-Score: 769690
+Score: 769686
 
   // File Comments
 /// @file
@@ -6835,10 +6836,9 @@ getFAC: {
     sta memHi
     // unsigned int w = { *memHi, *memLo }
     // [217] getFAC::return#0 = *memHi w= *memLo -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    sta.z return+1
     tya
     sta.z return
-    lda memHi
-    sta.z return+1
     // getFAC::@return
     // }
     // [218] return 

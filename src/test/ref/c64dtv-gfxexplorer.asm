@@ -463,7 +463,6 @@ gfx_mode: {
     .label cy = 2
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
-    cmp #0
     beq __b10
     ldx #DTV_LINEAR
     jmp __b1
@@ -472,7 +471,6 @@ gfx_mode: {
   __b1:
     // if(*form_ctrl_borof!=0)
     lda form_ctrl_borof
-    cmp #0
     beq __b2
     // dtv_control = dtv_control | DTV_BORDER_OFF
     txa
@@ -481,7 +479,6 @@ gfx_mode: {
   __b2:
     // if(*form_ctrl_hicol!=0)
     lda form_ctrl_hicol
-    cmp #0
     beq __b3
     // dtv_control = dtv_control | DTV_HIGHCOLOR
     txa
@@ -490,7 +487,6 @@ gfx_mode: {
   __b3:
     // if(*form_ctrl_overs!=0)
     lda form_ctrl_overs
-    cmp #0
     beq __b4
     // dtv_control = dtv_control | DTV_OVERSCAN
     txa
@@ -499,7 +495,6 @@ gfx_mode: {
   __b4:
     // if(*form_ctrl_colof!=0)
     lda form_ctrl_colof
-    cmp #0
     beq __b5
     // dtv_control = dtv_control | DTV_COLORRAM_OFF
     txa
@@ -508,7 +503,6 @@ gfx_mode: {
   __b5:
     // if(*form_ctrl_chunk!=0)
     lda form_ctrl_chunk
-    cmp #0
     beq __b6
     // dtv_control = dtv_control | DTV_CHUNKY
     txa
@@ -519,7 +513,6 @@ gfx_mode: {
     stx DTV_CONTROL
     // if(*form_ctrl_ecm!=0)
     lda form_ctrl_ecm
-    cmp #0
     beq __b11
     ldx #VICII_DEN|VICII_RSEL|3|VICII_ECM
     jmp __b7
@@ -528,7 +521,6 @@ gfx_mode: {
   __b7:
     // if(*form_ctrl_bmm!=0)
     lda form_ctrl_bmm
-    cmp #0
     beq __b8
     // VICII_control = VICII_control | VICII_BMM
     txa
@@ -539,7 +531,6 @@ gfx_mode: {
     stx VICII_CONTROL1
     // if(*form_ctrl_mcm!=0)
     lda form_ctrl_mcm
-    cmp #0
     beq __b12
     lda #VICII_CSEL|VICII_MCM
     jmp __b9
@@ -809,7 +800,6 @@ gfx_mode: {
     // if(*form_dtv_palet==0)
     // DTV Palette
     lda form_dtv_palet
-    cmp #0
     beq __b13
     ldx #0
   // DTV Palette - Grey Tones

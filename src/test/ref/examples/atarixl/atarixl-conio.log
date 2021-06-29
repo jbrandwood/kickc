@@ -5720,10 +5720,10 @@ cputc: {
     // cputc::@5
   __b5:
     // [142] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta COLCRS+1
     lda #<0
     sta COLCRS
+    lda #>0
+    sta COLCRS+1
     // [143] call newline 
     jsr newline
     jmp __breturn
@@ -5731,10 +5731,10 @@ cputc: {
   __b2:
     // [144] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
     // 0x0a LF, or atascii EOL
-    lda #0
-    sta COLCRS+1
     lda #<0
     sta COLCRS
+    lda #>0
+    sta COLCRS+1
     // [145] call newline 
     jsr newline
     jmp __breturn
@@ -5742,10 +5742,10 @@ cputc: {
   __b1:
     // [146] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
     // 0x0d, CR = just set the cursor x value to 0
-    lda #0
-    sta COLCRS+1
     lda #<0
     sta COLCRS
+    lda #>0
+    sta COLCRS+1
     // [147] call setcursor 
     jsr setcursor
     jmp __breturn
@@ -5795,8 +5795,8 @@ memset: {
     // memset::@1
   __b1:
     // [154] memset::end#0 = (byte*)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -6024,8 +6024,8 @@ cursorLocation: {
     asl.z __4
     rol.z __4+1
     // [191] cursorLocation::$5 = cursorLocation::$4 + cursorLocation::$3 -- vwuz1=vwuz2_plus_vwuz1 
-    lda.z __5
     clc
+    lda.z __5
     adc.z __4
     sta.z __5
     lda.z __5+1
@@ -6048,11 +6048,11 @@ cursorLocation: {
     sta.z __1+1
     // [194] cursorLocation::return#1 = cursorLocation::$1 + *COLCRS -- pbuz1=pbuz1_plus__deref_pwuc1 
     clc
-    lda COLCRS
-    adc.z return
+    lda.z return
+    adc COLCRS
     sta.z return
-    lda COLCRS+1
-    adc.z return+1
+    lda.z return+1
+    adc COLCRS+1
     sta.z return+1
     jmp __breturn
     // cursorLocation::@return
@@ -6447,9 +6447,9 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #1
 Removing instruction lda #>0
 Replacing instruction lda #0 with TXA
-Removing instruction lda #<0
-Removing instruction lda #<0
-Removing instruction lda #<0
+Removing instruction lda #>0
+Removing instruction lda #>0
+Removing instruction lda #>0
 Replacing instruction ldy #0 with TAY
 Replacing instruction lda #0 with TXA
 Replacing instruction ldy #0 with TAY
@@ -7692,9 +7692,9 @@ cputc: {
   __b5:
     // *COLCRS = 0
     // [142] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     // [143] call newline 
     jsr newline
@@ -7704,9 +7704,9 @@ cputc: {
     // *COLCRS = 0
     // [144] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
     // 0x0a LF, or atascii EOL
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     // [145] call newline 
     jsr newline
@@ -7716,9 +7716,9 @@ cputc: {
     // *COLCRS = 0
     // [146] *COLCRS = 0 -- _deref_pwuc1=vbuc2 
     // 0x0d, CR = just set the cursor x value to 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // setcursor()
     // [147] call setcursor 
     jsr setcursor
@@ -7765,8 +7765,8 @@ memset: {
     // memset::@1
     // char* end = (char*)str + num
     // [154] memset::end#0 = (byte*)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -7985,8 +7985,8 @@ cursorLocation: {
     asl.z __4
     rol.z __4+1
     // [191] cursorLocation::$5 = cursorLocation::$4 + cursorLocation::$3 -- vwuz1=vwuz2_plus_vwuz1 
-    lda.z __5
     clc
+    lda.z __5
     adc.z __4
     sta.z __5
     lda.z __5+1
@@ -8011,11 +8011,11 @@ cursorLocation: {
     // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
     // [194] cursorLocation::return#1 = cursorLocation::$1 + *COLCRS -- pbuz1=pbuz1_plus__deref_pwuc1 
     clc
-    lda COLCRS
-    adc.z return
+    lda.z return
+    adc COLCRS
     sta.z return
-    lda COLCRS+1
-    adc.z return+1
+    lda.z return+1
+    adc COLCRS+1
     sta.z return+1
     // cursorLocation::@return
     // }

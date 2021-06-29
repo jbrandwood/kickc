@@ -656,10 +656,9 @@ init_buckets: {
     inc.z i2+1
   !:
     lda.z i2+1
-    cmp #>NUM_BUCKETS-1+1
     bne __b4
     lda.z i2
-    cmp #<NUM_BUCKETS-1+1
+    cmp #NUM_BUCKETS-1+1
     bne __b4
     ldy #0
   // Iterate all distances and fill the buckets with indices into the screens

@@ -112,10 +112,9 @@ irq_vsync: {
     inc.z sin_idx_x+1
   !:
     lda.z sin_idx_x+1
-    cmp #>SINX_LEN
     bne __b1
     lda.z sin_idx_x
-    cmp #<SINX_LEN
+    cmp #SINX_LEN
     bne __b1
     // sin_idx_x = 0
     lda #<0
@@ -356,21 +355,21 @@ main: {
     rts
   __b2:
     // SPRITE_ATTR.X += 10
-    lda #<$a
+    lda #$a
     clc
     adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
-    lda #>$a
-    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    bcc !+
+    inc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+  !:
     // SPRITE_ATTR.Y += 10
-    lda #<$a
+    lda #$a
     clc
     adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    lda #>$a
-    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    bcc !+
+    inc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+  !:
     // memcpy_to_vram((char)WORD1(VERA_SPRITE_ATTR), vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     lda.z vram_sprite_attr
     sta.z memcpy_to_vram.vdest

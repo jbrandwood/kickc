@@ -1,5 +1,5 @@
-sta $ff
 clc
+sta $ff
 adc {m1}
 sta {m1}
 lda $ff

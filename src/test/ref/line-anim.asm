@@ -176,10 +176,10 @@ bitmap_clear: {
     .label bitmap = 3
     .label y = 9
     // byte* bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
-    lda bitmap_plot_ylo
-    sta.z bitmap
     lda bitmap_plot_yhi
     sta.z bitmap+1
+    lda bitmap_plot_ylo
+    sta.z bitmap
     lda #0
     sta.z y
   __b1:

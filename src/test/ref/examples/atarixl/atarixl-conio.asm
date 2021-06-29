@@ -492,27 +492,27 @@ cputc: {
     rts
   __b5:
     // *COLCRS = 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     jsr newline
     rts
   __b2:
     // *COLCRS = 0
     // 0x0a LF, or atascii EOL
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // newline()
     jsr newline
     rts
   __b1:
     // *COLCRS = 0
     // 0x0d, CR = just set the cursor x value to 0
-    lda #0
-    sta COLCRS+1
+    lda #<0
     sta COLCRS
+    sta COLCRS+1
     // setcursor()
     jsr setcursor
     rts
@@ -544,8 +544,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -691,8 +691,8 @@ cursorLocation: {
     sta.z __4+1
     asl.z __4
     rol.z __4+1
-    lda.z __5
     clc
+    lda.z __5
     adc.z __4
     sta.z __5
     lda.z __5+1
@@ -714,11 +714,11 @@ cursorLocation: {
     sta.z __1+1
     // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
     clc
-    lda COLCRS
-    adc.z return
+    lda.z return
+    adc COLCRS
     sta.z return
-    lda COLCRS+1
-    adc.z return+1
+    lda.z return+1
+    adc COLCRS+1
     sta.z return+1
     // }
     rts

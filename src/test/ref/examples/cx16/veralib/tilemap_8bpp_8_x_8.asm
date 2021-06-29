@@ -837,8 +837,8 @@ clrscr: {
     cpy.z conio_width
     bcc __b5
     // line_text += conio_rowskip
-    lda.z line_text
     clc
+    lda.z line_text
     adc.z conio_rowskip
     sta.z line_text
     lda.z line_text+1
@@ -927,36 +927,39 @@ vera_layer_mode_tile: {
     //             vera_layer_rowshift[layer] = 6;
     //             vera_layer_rowskip[layer] = 64;
     //             break;
-    lda #$20
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$20
+    bne !__b9+
     jmp __b9
+  !__b9:
   !:
     // case 64:
     //             config |= VERA_LAYER_WIDTH_64;
     //             vera_layer_rowshift[layer] = 7;
     //             vera_layer_rowskip[layer] = 128;
     //             break;
-    lda #$40
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$40
+    bne !__b10+
     jmp __b10
+  !__b10:
   !:
     // case 128:
     //             config |= VERA_LAYER_WIDTH_128;
     //             vera_layer_rowshift[layer] = 8;
     //             vera_layer_rowskip[layer] = 256;
     //             break;
-    lda #$80
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$80
+    bne !__b11+
     jmp __b11
+  !__b11:
   !:
     // case 256:
     //             config |= VERA_LAYER_WIDTH_256;
@@ -989,32 +992,33 @@ vera_layer_mode_tile: {
     // case 32:
     //             config |= VERA_LAYER_HEIGHT_32;
     //             break;
-    lda #$20
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
-    jmp __b20
+    lda.z mapheight
+    cmp #$20
+    beq __b20
   !:
     // case 64:
     //             config |= VERA_LAYER_HEIGHT_64;
     //             break;
-    lda #$40
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$40
+    bne !__b17+
     jmp __b17
+  !__b17:
   !:
     // case 128:
     //             config |= VERA_LAYER_HEIGHT_128;
     //             break;
-    lda #$80
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$80
+    bne !__b18+
     jmp __b18
+  !__b18:
   !:
     // case 256:
     //             config |= VERA_LAYER_HEIGHT_256;
@@ -1794,8 +1798,8 @@ cputln: {
     lda conio_line_text+1,y
     sta.z temp+1
     // temp += conio_rowskip
-    lda.z temp
     clc
+    lda.z temp
     adc.z conio_rowskip
     sta.z temp
     lda.z temp+1
@@ -1893,16 +1897,16 @@ insertup: {
     bne !-
   !e:
     // unsigned char* start = CONIO_SCREEN_TEXT + line
-    lda.z start
     clc
+    lda.z start
     adc.z CONIO_SCREEN_TEXT
     sta.z start
     lda.z start+1
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    lda.z start
     clc
+    lda.z start
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

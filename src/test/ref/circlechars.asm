@@ -162,8 +162,8 @@ main: {
     jsr mul8s
     // mul8s(yd,yd)
     // signed int dist_sq = mul8s(xd,xd) + mul8s(yd,yd)
-    lda.z dist_sq
     clc
+    lda.z dist_sq
     adc.z __10
     sta.z dist_sq
     lda.z dist_sq+1
@@ -234,8 +234,8 @@ gotoxy: {
     sta.z __8+1
     asl.z __8
     rol.z __8+1
-    lda.z __9
     clc
+    lda.z __9
     adc.z __8
     sta.z __9
     lda.z __9+1
@@ -290,8 +290,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -545,8 +545,8 @@ mul8u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1

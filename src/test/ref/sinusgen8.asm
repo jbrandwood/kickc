@@ -111,8 +111,8 @@ sin8s_gen: {
     inc.z sintab+1
   !:
     // x = x + step
-    lda.z x
     clc
+    lda.z x
     adc.z step
     sta.z x
     lda.z x+1
@@ -532,8 +532,8 @@ mul8u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1

@@ -282,16 +282,16 @@ main: {
     ldy #0
     sta (s),y
     // s += i
-    lda.z s
     clc
+    lda.z s
     adc.z i
     sta.z s
     lda.z s+1
     adc.z i+1
     sta.z s+1
     // j += i
-    lda.z j
     clc
+    lda.z j
     adc.z i
     sta.z j
     lda.z j+1
@@ -411,8 +411,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1

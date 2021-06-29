@@ -159,8 +159,8 @@ gotoxy: {
     sta.z __8+1
     asl.z __8
     rol.z __8+1
-    lda.z __9
     clc
+    lda.z __9
     adc.z __8
     sta.z __9
     lda.z __9+1

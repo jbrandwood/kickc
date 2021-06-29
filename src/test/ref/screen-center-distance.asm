@@ -298,8 +298,8 @@ init_dist_screen: {
     // sqr(xd)
     // word xds = sqr(xd)
     // word ds = xds+yds
-    lda.z ds
     clc
+    lda.z ds
     adc.z yds
     sta.z ds
     lda.z ds+1

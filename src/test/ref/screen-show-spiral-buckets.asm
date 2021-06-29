@@ -260,8 +260,8 @@ main: {
     cmp (fill),y
     beq __b18
     // byte* angle = SCREEN_ANGLE+offset
-    lda.z SCREEN_ANGLE
     clc
+    lda.z SCREEN_ANGLE
     adc.z offset
     sta.z angle
     lda.z SCREEN_ANGLE+1
@@ -391,8 +391,8 @@ init_dist_screen: {
     // sqr(xd)
     // word xds = sqr(xd)
     // word ds = xds+yds
-    lda.z ds
     clc
+    lda.z ds
     adc.z yds
     sta.z ds
     lda.z ds+1
@@ -588,8 +588,8 @@ init_buckets: {
     ldy #0
     lda (dist),y
     tay
-    lda (BUCKET_SIZES),y
     clc
+    lda (BUCKET_SIZES),y
     adc #1
     sta (BUCKET_SIZES),y
     // dist++;
@@ -614,8 +614,8 @@ init_buckets: {
   // Allocate the buckets
   __b4:
     // malloc(BUCKET_SIZES[i]*sizeof(byte*))
-    lda.z BUCKET_SIZES
     clc
+    lda.z BUCKET_SIZES
     adc.z i2
     sta.z __15
     lda.z BUCKET_SIZES+1
@@ -722,8 +722,8 @@ init_buckets: {
     sta (bucket),y
     // BUCKET_IDX[distance]++;
     ldy.z distance
-    lda (BUCKET_IDX),y
     clc
+    lda (BUCKET_IDX),y
     adc #1
     sta (BUCKET_IDX),y
     // *dist++;
@@ -975,8 +975,8 @@ atan2_16: {
     sbc.z yd+1
     sta.z xi+1
     // yi += xd
-    lda.z yi
     clc
+    lda.z yi
     adc.z xd
     sta.z yi
     lda.z yi+1
@@ -1003,8 +1003,8 @@ atan2_16: {
     jmp __b10
   __b18:
     // xi += yd
-    lda.z xi
     clc
+    lda.z xi
     adc.z yd
     sta.z xi
     lda.z xi+1

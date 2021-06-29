@@ -88,8 +88,8 @@ main: {
     lda #0
     sta.z __17+1
     // myprintf(strTemp, "200 DIV10 : %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
-    lda.z myprintf.w3
     clc
+    lda.z myprintf.w3
     adc.z __17
     sta.z myprintf.w3
     lda.z myprintf.w3+1
@@ -148,8 +148,8 @@ main: {
     lda #0
     sta.z __15+1
     // myprintf(strTemp, "200 DIV16U: %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
-    lda.z myprintf.w3
     clc
+    lda.z myprintf.w3
     adc.z __15
     sta.z myprintf.w3
     lda.z myprintf.w3+1
@@ -545,8 +545,8 @@ div10: {
     rol
     sta.z __2+1
     // val += val << 1
-    lda.z val_1
     clc
+    lda.z val_1
     adc.z val
     sta.z val_1
     lda.z val_1+1
@@ -565,8 +565,8 @@ div10: {
     lsr.z __3+1
     ror.z __3
     // val += val >> 4
-    lda.z val_2
     clc
+    lda.z val_2
     adc.z val_1
     sta.z val_2
     lda.z val_2+1
@@ -577,8 +577,8 @@ div10: {
     lda #0
     sta.z __4+1
     // val += val >> 8
-    lda.z val_3
     clc
+    lda.z val_3
     adc.z val_2
     sta.z val_3
     lda.z val_3+1

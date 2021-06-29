@@ -2981,8 +2981,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -3370,8 +3370,8 @@ init_render_index: {
     asl.z __10
     rol.z __10+1
     // char * canvas = canvas_xcol + render_ypos_table[(unsigned int)y_pos]
-    lda.z __12
     clc
+    lda.z __12
     adc.z render_ypos_table
     sta.z __12
     lda.z __12+1

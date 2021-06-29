@@ -435,8 +435,8 @@ bitmap_plot: {
     and #>$fff8
     sta.z __0+1
     // plotter += ( x & $fff8 )
-    lda.z plotter
     clc
+    lda.z plotter
     adc.z __0
     sta.z plotter
     lda.z plotter+1

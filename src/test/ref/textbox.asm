@@ -152,8 +152,8 @@ textbox: {
     sta.z __33+1
     asl.z __33
     rol.z __33+1
-    lda.z __34
     clc
+    lda.z __34
     adc.z __33
     sta.z __34
     lda.z __34+1

@@ -299,8 +299,8 @@ init_dist_screen: {
     // sqr(xd)
     // word xds = sqr(xd)
     // word ds = xds+yds
-    lda.z ds
     clc
+    lda.z ds
     adc.z yds
     sta.z ds
     lda.z ds+1
@@ -685,8 +685,8 @@ atan2_16: {
     sbc.z yd+1
     sta.z xi+1
     // yi += xd
-    lda.z yi
     clc
+    lda.z yi
     adc.z xd
     sta.z yi
     lda.z yi+1
@@ -713,8 +713,8 @@ atan2_16: {
     jmp __b10
   __b18:
     // xi += yd
-    lda.z xi
     clc
+    lda.z xi
     adc.z yd
     sta.z xi
     lda.z xi+1

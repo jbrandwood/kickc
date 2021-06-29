@@ -924,36 +924,39 @@ vera_layer_mode_tile: {
     //             vera_layer_rowshift[layer] = 6;
     //             vera_layer_rowskip[layer] = 64;
     //             break;
-    lda #$20
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$20
+    bne !__b5+
     jmp __b5
+  !__b5:
   !:
     // case 64:
     //             config |= VERA_LAYER_WIDTH_64;
     //             vera_layer_rowshift[layer] = 7;
     //             vera_layer_rowskip[layer] = 128;
     //             break;
-    lda #$40
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$40
+    bne !__b6+
     jmp __b6
+  !__b6:
   !:
     // case 128:
     //             config |= VERA_LAYER_WIDTH_128;
     //             vera_layer_rowshift[layer] = 8;
     //             vera_layer_rowskip[layer] = 256;
     //             break;
-    lda #$80
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$80
+    bne !__b7+
     jmp __b7
+  !__b7:
   !:
     // case 256:
     //             config |= VERA_LAYER_WIDTH_256;
@@ -986,32 +989,33 @@ vera_layer_mode_tile: {
     // case 32:
     //             config |= VERA_LAYER_HEIGHT_32;
     //             break;
-    lda #$20
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
-    jmp __b16
+    lda.z mapheight
+    cmp #$20
+    beq __b16
   !:
     // case 64:
     //             config |= VERA_LAYER_HEIGHT_64;
     //             break;
-    lda #$40
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$40
+    bne !__b13+
     jmp __b13
+  !__b13:
   !:
     // case 128:
     //             config |= VERA_LAYER_HEIGHT_128;
     //             break;
-    lda #$80
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$80
+    bne !__b14+
     jmp __b14
+  !__b14:
   !:
     // case 256:
     //             config |= VERA_LAYER_HEIGHT_256;
@@ -1337,8 +1341,8 @@ clrscr: {
     cpy.z conio_width
     bcc __b5
     // line_text += conio_rowskip
-    lda.z line_text
     clc
+    lda.z line_text
     adc.z conio_rowskip
     sta.z line_text
     lda.z line_text+1
@@ -2523,8 +2527,8 @@ mul16u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1
@@ -2652,8 +2656,8 @@ bitmap_line_ydxi: {
     inc.z y+1
   !:
     // e = e+xd
-    lda.z e
     clc
+    lda.z e
     adc.z xd
     sta.z e
     lda.z e+1
@@ -2730,8 +2734,8 @@ bitmap_line_xdyi: {
     inc.z x+1
   !:
     // e = e+yd
-    lda.z e
     clc
+    lda.z e
     adc.z yd
     sta.z e
     lda.z e+1
@@ -2808,8 +2812,8 @@ bitmap_line_ydxd: {
     inc.z y+1
   !:
     // e = e+xd
-    lda.z e
     clc
+    lda.z e
     adc.z xd
     sta.z e
     lda.z e+1
@@ -2887,8 +2891,8 @@ bitmap_line_xdyd: {
     inc.z x+1
   !:
     // e = e+yd
-    lda.z e
     clc
+    lda.z e
     adc.z yd
     sta.z e
     lda.z e+1
@@ -3060,8 +3064,8 @@ cputln: {
     lda conio_line_text+1,y
     sta.z temp+1
     // temp += conio_rowskip
-    lda.z temp
     clc
+    lda.z temp
     adc.z conio_rowskip
     sta.z temp
     lda.z temp+1
@@ -3152,8 +3156,8 @@ bitmap_plot: {
     lda (__13),y
     sta.z plot_y+3
     // dword plotter = plot_x+plot_y
-    lda.z vera_vram_address01_bankaddr
     clc
+    lda.z vera_vram_address01_bankaddr
     adc.z plot_y
     sta.z vera_vram_address01_bankaddr
     lda.z vera_vram_address01_bankaddr+1
@@ -3300,16 +3304,16 @@ insertup: {
     bne !-
   !e:
     // unsigned char* start = CONIO_SCREEN_TEXT + line
-    lda.z start
     clc
+    lda.z start
     adc.z CONIO_SCREEN_TEXT
     sta.z start
     lda.z start+1
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    lda.z start
     clc
+    lda.z start
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

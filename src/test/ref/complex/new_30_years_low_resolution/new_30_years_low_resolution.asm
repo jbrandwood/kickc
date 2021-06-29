@@ -2173,8 +2173,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -2214,8 +2214,8 @@ memcpy: {
     .label destination = $48
     .label num = $4a
     // char* src_end = (char*)source+num
-    lda.z src_end
     clc
+    lda.z src_end
     adc.z source
     sta.z src_end
     lda.z src_end+1
@@ -2683,8 +2683,8 @@ flipper_fix_colors: {
     sta.z __13+1
     asl.z __13
     rol.z __13+1
-    lda.z __14
     clc
+    lda.z __14
     adc.z __13
     sta.z __14
     lda.z __14+1

@@ -165,8 +165,8 @@ anim: {
     rol.z __12+1
     // yr += mulf8s_prepared(x)*2
     // signed fixed[8.8]
-    lda.z yr
     clc
+    lda.z yr
     adc.z __12
     sta.z yr
     lda.z yr+1

@@ -203,16 +203,16 @@ irq_vsync: {
     .label vera_layer_set_horizontal_scroll1_scroll = $38
     .label vera_layer_set_vertical_scroll1_scroll = $3a
     // scroll_x += delta_x
-    lda.z scroll_x
     clc
+    lda.z scroll_x
     adc.z delta_x
     sta.z scroll_x
     lda.z scroll_x+1
     adc.z delta_x+1
     sta.z scroll_x+1
     // scroll_y += delta_y
-    lda.z scroll_y
     clc
+    lda.z scroll_y
     adc.z delta_y
     sta.z scroll_y
     lda.z scroll_y+1
@@ -1041,8 +1041,8 @@ clrscr: {
     cpy.z conio_width
     bcc __b5
     // line_text += conio_rowskip
-    lda.z line_text
     clc
+    lda.z line_text
     adc.z conio_rowskip
     sta.z line_text
     lda.z line_text+1
@@ -1149,36 +1149,39 @@ vera_layer_mode_tile: {
     //             vera_layer_rowshift[layer] = 6;
     //             vera_layer_rowskip[layer] = 64;
     //             break;
-    lda #$20
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$20
+    bne !__b5+
     jmp __b5
+  !__b5:
   !:
     // case 64:
     //             config |= VERA_LAYER_WIDTH_64;
     //             vera_layer_rowshift[layer] = 7;
     //             vera_layer_rowskip[layer] = 128;
     //             break;
-    lda #$40
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$40
+    bne !__b6+
     jmp __b6
+  !__b6:
   !:
     // case 128:
     //             config |= VERA_LAYER_WIDTH_128;
     //             vera_layer_rowshift[layer] = 8;
     //             vera_layer_rowskip[layer] = 256;
     //             break;
-    lda #$80
-    cmp.z mapwidth
-    bne !+
     lda.z mapwidth+1
     bne !+
+    lda.z mapwidth
+    cmp #$80
+    bne !__b7+
     jmp __b7
+  !__b7:
   !:
     // case 256:
     //             config |= VERA_LAYER_WIDTH_256;
@@ -1211,32 +1214,33 @@ vera_layer_mode_tile: {
     // case 32:
     //             config |= VERA_LAYER_HEIGHT_32;
     //             break;
-    lda #$20
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
-    jmp __b16
+    lda.z mapheight
+    cmp #$20
+    beq __b16
   !:
     // case 64:
     //             config |= VERA_LAYER_HEIGHT_64;
     //             break;
-    lda #$40
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$40
+    bne !__b13+
     jmp __b13
+  !__b13:
   !:
     // case 128:
     //             config |= VERA_LAYER_HEIGHT_128;
     //             break;
-    lda #$80
-    cmp.z mapheight
-    bne !+
     lda.z mapheight+1
     bne !+
+    lda.z mapheight
+    cmp #$80
+    bne !__b14+
     jmp __b14
+  !__b14:
   !:
     // case 256:
     //             config |= VERA_LAYER_HEIGHT_256;
@@ -1537,8 +1541,8 @@ draw_characters: {
     lda.z b
     bne __b4
     // tilecolumn += 8
-    lda.z tilecolumn_1
     clc
+    lda.z tilecolumn_1
     adc #8
     sta.z tilecolumn_1
     bcc !+
@@ -1576,8 +1580,8 @@ draw_characters: {
     jmp __b2
   !__b2:
     // tilebase += 8*16
-    lda.z tilebase
     clc
+    lda.z tilebase
     adc #8*$10
     sta.z tilebase
     bcc !+
@@ -1957,8 +1961,8 @@ cputln: {
     lda conio_line_text+1,y
     sta.z temp+1
     // temp += conio_rowskip
-    lda.z temp
     clc
+    lda.z temp
     adc.z conio_rowskip
     sta.z temp
     lda.z temp+1
@@ -2056,16 +2060,16 @@ insertup: {
     bne !-
   !e:
     // unsigned char* start = CONIO_SCREEN_TEXT + line
-    lda.z start
     clc
+    lda.z start
     adc.z CONIO_SCREEN_TEXT
     sta.z start
     lda.z start+1
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    lda.z start
     clc
+    lda.z start
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

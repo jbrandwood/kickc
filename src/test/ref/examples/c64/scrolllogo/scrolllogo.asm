@@ -214,8 +214,8 @@ sin16s_gen2: {
     inc.z sintab+1
   !:
     // x = x + step
-    lda.z x
     clc
+    lda.z x
     adc.z step
     sta.z x
     lda.z x+1
@@ -525,8 +525,8 @@ sin16s: {
     lsr.z x5_128+1
     ror.z x5_128
     // usinx = usinx + x5_128
-    lda.z usinx
     clc
+    lda.z usinx
     adc.z x5_128
     sta.z usinx
     lda.z usinx+1
@@ -903,8 +903,8 @@ mul16u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1

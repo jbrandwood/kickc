@@ -662,8 +662,8 @@ clrscr: {
     cpy.z conio_width
     bcc __b5
     // line_text += conio_rowskip
-    lda.z line_text
     clc
+    lda.z line_text
     adc.z conio_rowskip
     sta.z line_text
     lda.z line_text+1
@@ -782,8 +782,8 @@ memcpy_bank_to_vram: {
     ora VERA_ADDRX_H
     sta VERA_ADDRX_H
     // unsigned long end = src+num
-    lda.z end
     clc
+    lda.z end
     adc.z beg
     sta.z end
     lda.z end+1
@@ -1348,8 +1348,8 @@ cputln: {
     lda conio_line_text+1,y
     sta.z temp+1
     // temp += conio_rowskip
-    lda.z temp
     clc
+    lda.z temp
     adc.z conio_rowskip
     sta.z temp
     lda.z temp+1
@@ -1477,16 +1477,16 @@ insertup: {
     bne !-
   !e:
     // unsigned char* start = CONIO_SCREEN_TEXT + line
-    lda.z start
     clc
+    lda.z start
     adc.z CONIO_SCREEN_TEXT
     sta.z start
     lda.z start+1
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    lda.z start
     clc
+    lda.z start
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

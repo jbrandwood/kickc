@@ -37,8 +37,8 @@ main: {
     lda.z i+1
     rol
     sta.z __10+1
-    lda.z __2
     clc
+    lda.z __2
     adc.z i
     sta.z __2
     lda.z __2+1

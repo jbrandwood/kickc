@@ -88,8 +88,8 @@ main: {
     rol.z __5+1
     rol.z __5+2
     rol.z __5+3
-    lda.z __6
     clc
+    lda.z __6
     adc.z i
     sta.z __6
     lda.z __6+1
@@ -109,8 +109,8 @@ main: {
     rol.z __7+1
     rol.z __7+2
     rol.z __7+3
-    lda.z __8
     clc
+    lda.z __8
     adc.z i
     sta.z __8
     lda.z __8+1
@@ -130,8 +130,8 @@ main: {
     rol.z __9+1
     rol.z __9+2
     rol.z __9+3
-    lda.z __10
     clc
+    lda.z __10
     adc.z i
     sta.z __10
     lda.z __10+1
@@ -147,8 +147,8 @@ main: {
     rol.z __11+1
     rol.z __11+2
     rol.z __11+3
-    lda.z print_ulong_decimal.w
     clc
+    lda.z print_ulong_decimal.w
     adc.z i
     sta.z print_ulong_decimal.w
     lda.z print_ulong_decimal.w+1
@@ -164,8 +164,8 @@ main: {
     // print_ln()
     jsr print_ln
     // i+=333
-    lda.z i
     clc
+    lda.z i
     adc #<$14d
     sta.z i
     lda.z i+1

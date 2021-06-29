@@ -88,8 +88,8 @@ main: {
     sta.z __29+1
     asl.z __29
     rol.z __29+1
-    lda.z __30
     clc
+    lda.z __30
     adc.z __29
     sta.z __30
     lda.z __30+1

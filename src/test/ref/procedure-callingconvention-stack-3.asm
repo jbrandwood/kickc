@@ -32,8 +32,8 @@ plus: {
     lda STACK_BASE+OFFSET_STACK_B+1,x
     sta.z b+1
     // return a+b;
-    lda.z return
     clc
+    lda.z return
     adc.z b
     sta.z return
     lda.z return+1

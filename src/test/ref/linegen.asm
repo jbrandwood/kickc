@@ -313,8 +313,8 @@ lin16u_gen: {
     lda.z __6+1
     sta (lintab),y
     // val = val + step
-    lda.z val
     clc
+    lda.z val
     adc.z step
     sta.z val
     lda.z val+1

@@ -259,16 +259,16 @@ bitmap_line: {
     ldx.z y
     jsr bitmap_plot
     // y += sy
-    lda.z y
     clc
+    lda.z y
     adc.z sy
     sta.z y
     lda.z y+1
     adc.z sy+1
     sta.z y+1
     // e += dx
-    lda.z e
     clc
+    lda.z e
     adc.z dx
     sta.z e
     lda.z e+1
@@ -283,8 +283,8 @@ bitmap_line: {
   !:
     bcc __b7
     // x += sx
-    lda.z x
     clc
+    lda.z x
     adc.z sx
     sta.z x
     lda.z x+1
@@ -333,16 +333,16 @@ bitmap_line: {
     ldx.z y
     jsr bitmap_plot
     // x += sx
-    lda.z x
     clc
+    lda.z x
     adc.z sx
     sta.z x
     lda.z x+1
     adc.z sx+1
     sta.z x+1
     // e += dy
-    lda.z e1
     clc
+    lda.z e1
     adc.z dy
     sta.z e1
     lda.z e1+1
@@ -357,8 +357,8 @@ bitmap_line: {
   !:
     bcc __b10
     // y += sy
-    lda.z y
     clc
+    lda.z y
     adc.z sy
     sta.z y
     lda.z y+1
@@ -405,8 +405,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1
@@ -504,8 +504,8 @@ bitmap_plot: {
     and #>$fff8
     sta.z __0+1
     // plotter += ( x & $fff8 )
-    lda.z plotter
     clc
+    lda.z plotter
     adc.z __0
     sta.z plotter
     lda.z plotter+1

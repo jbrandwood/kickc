@@ -111,8 +111,8 @@ mulf_init: {
     // (mulf_sqr2+$100)[1-i] = val
     sta mulf_sqr2+$100,x
     // sqr += add
-    lda.z sqr
     clc
+    lda.z sqr
     adc.z add
     sta.z sqr
     lda.z sqr+1

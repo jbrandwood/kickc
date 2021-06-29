@@ -78,8 +78,8 @@ fill: {
     .label addr = 4
     .label size = 2
     // byte* end = start + size
-    lda.z end
     clc
+    lda.z end
     adc.z addr
     sta.z end
     lda.z end+1
@@ -170,8 +170,8 @@ circle: {
     asl.z __6
     rol.z __6+1
     // p + ((x-y) << 2)
-    lda.z __7
     clc
+    lda.z __7
     adc.z __6
     sta.z __7
     lda.z __7+1
@@ -331,8 +331,8 @@ circle: {
     asl.z __9
     rol.z __9+1
     // p + (x << 2)
-    lda.z __10
     clc
+    lda.z __10
     adc.z __9
     sta.z __10
     lda.z __10+1
@@ -405,8 +405,8 @@ plot: {
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    lda.z __8
     clc
+    lda.z __8
     adc.z __2
     sta.z __8
     lda.z __8+1
@@ -425,8 +425,8 @@ plot: {
     ror.z __3+1
     ror.z __3
     // location += ((y >> 3) * 320)
-    lda.z location
     clc
+    lda.z location
     adc.z __3
     sta.z location
     lda.z location+1

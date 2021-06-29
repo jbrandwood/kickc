@@ -17,8 +17,8 @@ plus: {
     .label return = 2
     .label __0 = 2
     // a+b
-    lda.z __0
     clc
+    lda.z __0
     adc.z b
     sta.z __0
     lda.z __0+1

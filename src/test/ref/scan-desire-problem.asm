@@ -170,8 +170,8 @@ draw_block: {
     // mul8u(y,40)
     // word z = mul8u(y,40)
     // z = z + x1
-    lda.z z_1
     clc
+    lda.z z_1
     adc.z z
     sta.z z_1
     lda.z z_1+1
@@ -373,8 +373,8 @@ mul8u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1

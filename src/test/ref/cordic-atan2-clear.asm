@@ -403,8 +403,8 @@ atan2_16: {
     sbc.z yd+1
     sta.z xi+1
     // yi += xd
-    lda.z yi
     clc
+    lda.z yi
     adc.z xd
     sta.z yi
     lda.z yi+1
@@ -431,8 +431,8 @@ atan2_16: {
     jmp __b10
   __b18:
     // xi += yd
-    lda.z xi
     clc
+    lda.z xi
     adc.z yd
     sta.z xi
     lda.z xi+1

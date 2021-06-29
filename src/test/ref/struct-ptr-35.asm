@@ -26,8 +26,8 @@ main: {
     lda.z i+1
     rol
     sta.z __1+1
-    lda #<TileDB
     clc
+    lda #<TileDB
     adc.z __4
     sta.z __4
     lda #>TileDB

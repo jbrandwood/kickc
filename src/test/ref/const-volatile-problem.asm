@@ -28,8 +28,8 @@ __start: {
 irq: {
     // PLEX_SCREEN_PTR1[idx]++;
     ldy.z idx
-    lda (PLEX_SCREEN_PTR1),y
     clc
+    lda (PLEX_SCREEN_PTR1),y
     adc #1
     sta (PLEX_SCREEN_PTR1),y
     // PLEX_SCREEN_PTR2[idx]++;

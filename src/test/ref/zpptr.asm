@@ -35,8 +35,8 @@ main: {
     lda #0
     sta.z w+1
     // zpptr2 = zpptr2 + w
-    lda.z zpptr2
     clc
+    lda.z zpptr2
     adc.z w
     sta.z zpptr2
     lda.z zpptr2+1

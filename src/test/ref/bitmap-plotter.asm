@@ -212,8 +212,8 @@ plot: {
     lda plot_ylo,y
     sta.z plotter_y
     // byte* plotter = plotter_x+plotter_y
-    lda.z plotter
     clc
+    lda.z plotter
     adc.z plotter_y
     sta.z plotter
     lda.z plotter+1

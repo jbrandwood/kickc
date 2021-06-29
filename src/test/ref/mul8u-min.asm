@@ -71,8 +71,8 @@ mul8u: {
     cmp #0
     beq __b3
     // res = res + mb
-    lda.z res
     clc
+    lda.z res
     adc.z mb
     sta.z res
     lda.z res+1

@@ -100,8 +100,8 @@ ifunc: {
     inc.z x+3
   !:
     // xsqr += delta
-    lda.z xsqr
     clc
+    lda.z xsqr
     adc.z delta
     sta.z xsqr
     lda.z xsqr+1
@@ -114,8 +114,8 @@ ifunc: {
     adc.z delta+3
     sta.z xsqr+3
     // delta += 2
-    lda.z delta
     clc
+    lda.z delta
     adc #2
     sta.z delta
     bcc !+

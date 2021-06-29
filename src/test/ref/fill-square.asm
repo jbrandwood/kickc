@@ -32,8 +32,8 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    lda.z __7
     clc
+    lda.z __7
     adc.z __6
     sta.z __7
     lda.z __7+1

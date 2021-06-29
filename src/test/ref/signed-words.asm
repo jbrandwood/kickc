@@ -185,16 +185,16 @@ anim: {
     adc #>g
     sta.z yvel_1+1
     // xpos + xvel
-    lda.z xpos
     clc
+    lda.z xpos
     adc.z xvel
     sta.z xpos
     lda.z xpos+1
     adc.z xvel+1
     sta.z xpos+1
     // ypos + yvel
-    lda.z ypos
     clc
+    lda.z ypos
     adc.z yvel_1
     sta.z ypos
     lda.z ypos+1

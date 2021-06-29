@@ -144,8 +144,8 @@ main: {
     ldx.z y
     jsr bitmap_plot
     // x += vx
-    lda.z x
     clc
+    lda.z x
     adc.z vx
     sta.z x
     lda.z x+1
@@ -342,8 +342,8 @@ bitmap_plot: {
     and #>$fff8
     sta.z __0+1
     // plotter += ( x & $fff8 )
-    lda.z plotter
     clc
+    lda.z plotter
     adc.z __0
     sta.z plotter
     lda.z plotter+1
@@ -373,8 +373,8 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
-    lda.z end
     clc
+    lda.z end
     adc.z str
     sta.z end
     lda.z end+1

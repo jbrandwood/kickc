@@ -19,12 +19,12 @@ main: {
     sta.z i+1
   __b1:
     // char* sc = SCREEN + i
+    lda #<SCREEN
     clc
-    lda.z i
-    adc #<SCREEN
+    adc.z i
     sta.z sc
-    lda.z i+1
-    adc #>SCREEN
+    lda #>SCREEN
+    adc.z i+1
     sta.z sc+1
     // *sc = (char)i
     lda.z i

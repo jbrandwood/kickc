@@ -205,16 +205,16 @@ mul16u_compare: {
     ldy #0
   __b2:
     // a=a+3371
-    clc
     lda.z a
+    clc
     adc #<$d2b
     sta.z a
     lda.z a+1
     adc #>$d2b
     sta.z a+1
     // b=b+4093
-    clc
     lda.z b
+    clc
     adc #<$ffd
     sta.z b
     lda.z b+1
@@ -909,8 +909,8 @@ muls16s: {
     rts
   __b4:
     // m = m + b
-    clc
     lda.z b
+    clc
     adc.z m
     sta.z m
     lda.z b+1
@@ -1268,8 +1268,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

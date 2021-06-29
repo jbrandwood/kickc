@@ -323,8 +323,8 @@ plot_chargen: {
     asl.z __0
     rol.z __0+1
     // char* chargen = CHARGEN+(unsigned int)ch*8
-    clc
     lda.z chargen
+    clc
     adc #<CHARGEN
     sta.z chargen
     lda.z chargen+1
@@ -334,8 +334,8 @@ plot_chargen: {
     cpx #0
     beq __b1
     // chargen = chargen + $0800
-    clc
     lda.z chargen
+    clc
     adc #<$800
     sta.z chargen
     lda.z chargen+1

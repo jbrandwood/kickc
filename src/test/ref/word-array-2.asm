@@ -43,8 +43,8 @@ main: {
     sta.z __7+1
     asl.z __3
     rol.z __3+1
-    clc
     lda.z __8
+    clc
     adc #<words
     sta.z __8
     lda.z __8+1

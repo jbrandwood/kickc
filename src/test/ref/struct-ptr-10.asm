@@ -30,8 +30,8 @@ main: {
     lda.z i+1
     rol
     sta.z __2+1
-    clc
     lda.z __5
+    clc
     adc #<points
     sta.z __5
     lda.z __5+1
@@ -65,15 +65,15 @@ main: {
     lda.z i1+1
     rol
     sta.z __3+1
-    clc
     lda.z __3
+    clc
     adc #<points
     sta.z __6
     lda.z __3+1
     adc #>points
     sta.z __6+1
-    clc
     lda.z __7
+    clc
     adc #<SCREEN
     sta.z __7
     lda.z __7+1

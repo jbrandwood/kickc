@@ -230,8 +230,8 @@ makecharset: {
     inc.z __16+1
   !:
     // (charset + (1 * 8)) [(((unsigned short)c) << 3) + i] = b
-    clc
     lda.z __18
+    clc
     adc #<CHARSET+1*8
     sta.z __18
     lda.z __18+1
@@ -323,8 +323,8 @@ fire: {
     cmp #<BUFFER+$18*$28
     bne __b2
     // screen = (screenbase + (24 * 40))
-    clc
     lda.z screen
+    clc
     adc #<$18*$28
     sta.z screen
     lda.z screen+1

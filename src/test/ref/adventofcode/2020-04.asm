@@ -657,8 +657,8 @@ newline: {
     sta.z memcpy.destination+1
     jsr memcpy
     // start + CONIO_WIDTH * 23
-    clc
     lda.z memset.str
+    clc
     adc #<$28*$17
     sta.z memset.str
     lda.z memset.str+1
@@ -787,8 +787,8 @@ memcpy: {
     .label destination = $93
     .label source = $8e
     // char* src_end = (char*)source+num
-    clc
     lda.z source
+    clc
     adc #<num
     sta.z src_end
     lda.z source+1

@@ -1,6 +1,6 @@
 ldy {m1}
-clc
 lda {c1},y
+clc
 adc {c2},y
 sta {c1},y
 lda {c1}+1,y

@@ -646,8 +646,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0
@@ -824,16 +824,16 @@ divr16s: {
     cpy #0
     beq __breturn
     // rem16s = -(signed int)rem16u
-    sec
     lda #0
+    sec
     sbc.z rem16s
     sta.z rem16s
     lda #0
     sbc.z rem16s+1
     sta.z rem16s+1
     // return -(signed int)resultu;
-    sec
     lda #0
+    sec
     sbc.z return
     sta.z return
     lda #0
@@ -844,8 +844,8 @@ divr16s: {
     rts
   __b3:
     // -divisor
-    sec
     lda #0
+    sec
     sbc.z divisoru
     sta.z divisoru
     lda #0
@@ -858,8 +858,8 @@ divr16s: {
     jmp __b4
   __b1:
     // -dividend
-    sec
     lda #0
+    sec
     sbc.z dividendu
     sta.z dividendu
     lda #0

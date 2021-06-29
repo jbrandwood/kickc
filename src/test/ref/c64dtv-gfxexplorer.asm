@@ -2515,8 +2515,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1
@@ -2838,8 +2838,8 @@ gfx_init_plane_fill: {
     and #>$3fff
     sta.z __4+1
     // byte* gfxb = (byte*)$4000 + (WORD0(plane_addr) & $3fff)
-    clc
     lda.z gfxb
+    clc
     adc #<$4000
     sta.z gfxb
     lda.z gfxb+1

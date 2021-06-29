@@ -44,8 +44,8 @@ main: {
     lda.z __2+1
     adc.z i+1
     sta.z __2+1
-    clc
     lda.z __8
+    clc
     adc #<balls
     sta.z __8
     lda.z __8+1

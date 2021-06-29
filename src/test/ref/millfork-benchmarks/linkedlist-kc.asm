@@ -206,8 +206,8 @@ alloc: {
     sta.z __1+1
     asl.z __1
     rol.z __1+1
-    clc
     lda.z return
+    clc
     adc #<heap
     sta.z return
     lda.z return+1

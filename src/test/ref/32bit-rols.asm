@@ -209,8 +209,8 @@ gotoxy: {
     asl.z line_offset
     rol.z line_offset+1
     // CONIO_SCREEN_TEXT + line_offset
-    clc
     lda.z line_offset
+    clc
     adc #<DEFAULT_SCREEN
     sta.z __5
     lda.z line_offset+1
@@ -222,8 +222,8 @@ gotoxy: {
     lda.z __5+1
     sta.z conio_line_text+1
     // CONIO_SCREEN_COLORS + line_offset
-    clc
     lda.z __6
+    clc
     adc #<COLORRAM
     sta.z __6
     lda.z __6+1
@@ -2021,8 +2021,8 @@ printf_sint: {
     jmp __b2
   __b1:
     // value = -value
-    sec
     lda #0
+    sec
     sbc.z value
     sta.z value
     lda #0
@@ -2720,8 +2720,8 @@ memcpy: {
     .label source = $11
     .label destination = $2d
     // char* src_end = (char*)source+num
-    clc
     lda.z source
+    clc
     adc #<$19*$28-$28
     sta.z src_end
     lda.z source+1

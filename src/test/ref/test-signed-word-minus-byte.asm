@@ -106,8 +106,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

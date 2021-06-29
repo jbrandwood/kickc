@@ -549,8 +549,8 @@ gen_chargen_sprite: {
     asl.z __0
     rol.z __0+1
     // char* chargen = CHARGEN+((unsigned int)ch)*8
-    clc
     lda.z chargen
+    clc
     adc #<CHARGEN
     sta.z chargen
     lda.z chargen+1

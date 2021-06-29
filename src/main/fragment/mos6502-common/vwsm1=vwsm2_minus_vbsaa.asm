@@ -4,8 +4,8 @@ bmi !+
 lda #0
 !:
 sta $ff
-sec
 lda {m2}
+sec
 sbc $fe
 sta {m1}
 lda {m2}+1

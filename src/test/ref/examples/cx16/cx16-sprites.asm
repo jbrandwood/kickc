@@ -174,8 +174,8 @@ irq_vsync: {
     lda.z i_x+1
     rol
     sta.z __11+1
-    clc
     lda.z __13
+    clc
     adc #<SINX
     sta.z __13
     lda.z __13+1
@@ -194,8 +194,8 @@ irq_vsync: {
     lda.z i_y+1
     rol
     sta.z __12+1
-    clc
     lda.z __14
+    clc
     adc #<SINY
     sta.z __14
     lda.z __14+1

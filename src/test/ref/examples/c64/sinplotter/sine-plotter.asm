@@ -145,8 +145,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1
@@ -324,8 +324,8 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __11+1
-    clc
     lda.z __11
+    clc
     adc #<sin
     sta.z __1
     lda.z __11+1
@@ -348,8 +348,8 @@ render_sine: {
     // bitmap_plot(xpos,ypos)
     jsr bitmap_plot
     // sin2+sin_idx
-    clc
     lda.z __4
+    clc
     adc #<sin2
     sta.z __4
     lda.z __4+1
@@ -363,8 +363,8 @@ render_sine: {
     lda (__4),y
     sta.z sin2_val+1
     // wrap_y(sin2_val+10)
-    clc
     lda.z wrap_y.y
+    clc
     adc #<$a
     sta.z wrap_y.y
     lda.z wrap_y.y+1
@@ -685,8 +685,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

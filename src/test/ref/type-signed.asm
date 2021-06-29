@@ -35,16 +35,16 @@ main: {
     sta.z a+1
   __b1:
     // a += -7
-    clc
     lda.z a
+    clc
     adc #<-7
     sta.z a
     lda.z a+1
     adc #>-7
     sta.z a+1
     // b += 321
-    clc
     lda.z b
+    clc
     adc #<$141
     sta.z b
     lda.z b+1
@@ -101,8 +101,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

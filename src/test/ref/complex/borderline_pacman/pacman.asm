@@ -3351,8 +3351,8 @@ init_render_index: {
     cmp #$94
     bcc __b6
     // render_index += 0x100
-    clc
     lda.z render_index
+    clc
     adc #<$100
     sta.z render_index
     lda.z render_index+1
@@ -3565,16 +3565,16 @@ init_sprite_pointers: {
     cpy #8
     bcc __b3
     // sprites_ptr_1 += 0x400
-    clc
     lda.z sprites_ptr_1
+    clc
     adc #<$400
     sta.z sprites_ptr_1
     lda.z sprites_ptr_1+1
     adc #>$400
     sta.z sprites_ptr_1+1
     // sprites_ptr_2 += 0x400
-    clc
     lda.z sprites_ptr_2
+    clc
     adc #<$400
     sta.z sprites_ptr_2
     lda.z sprites_ptr_2+1
@@ -3934,8 +3934,8 @@ render: {
     adc #>SPRITES_1
     sta.z canvas1+1
     // char * canvas2 = SPRITES_2 + canvas_offset
-    clc
     lda.z canvas2
+    clc
     adc #<SPRITES_2
     sta.z canvas2
     lda.z canvas2+1
@@ -4081,8 +4081,8 @@ render_tiles: {
     adc #>SPRITES_1
     sta.z canvas1+1
     // char * canvas2 = SPRITES_2 + canvas_offset
-    clc
     lda.z canvas2
+    clc
     adc #<SPRITES_2
     sta.z canvas2
     lda.z canvas2+1

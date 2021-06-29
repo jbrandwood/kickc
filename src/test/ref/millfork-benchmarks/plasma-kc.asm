@@ -181,8 +181,8 @@ makechar: {
     inc.z __8+1
   !:
     // ((char*)CHARSET) [(c<<3) + i] = b
-    clc
     lda.z __10
+    clc
     adc #<CHARSET
     sta.z __10
     lda.z __10+1

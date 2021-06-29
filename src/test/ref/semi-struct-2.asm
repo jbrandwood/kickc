@@ -55,8 +55,8 @@ main: {
     jsr mul8u
     // mul8u(idx, SIZEOF_ENTRY)
     // files+mul8u(idx, SIZEOF_ENTRY)
-    clc
     lda.z fileEntry1___0
+    clc
     adc #<files
     sta.z entry1
     lda.z fileEntry1___0+1
@@ -67,8 +67,8 @@ main: {
     jsr mul8u
     // mul8u(idx, SIZEOF_ENTRY)
     // files+mul8u(idx, SIZEOF_ENTRY)
-    clc
     lda.z entry2
+    clc
     adc #<files
     sta.z entry2
     lda.z entry2+1

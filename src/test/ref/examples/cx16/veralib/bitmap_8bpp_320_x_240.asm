@@ -1487,8 +1487,8 @@ bitmap_init: {
     lda.z x+1
     rol
     sta.z __23+1
-    clc
     lda.z __29
+    clc
     adc #<__bitmap_plot_x
     sta.z __29
     lda.z __29+1
@@ -1501,8 +1501,8 @@ bitmap_init: {
     lda.z __7+1
     sta (__29),y
     // __bitmap_plot_bitmask[x] = bitmask
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitmask
     sta.z __30
     lda.z x+1
@@ -1512,8 +1512,8 @@ bitmap_init: {
     ldy #0
     sta (__30),y
     // __bitmap_plot_bitshift[x] = (byte)bitshift
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitshift
     sta.z __31
     lda.z x+1
@@ -1546,8 +1546,8 @@ bitmap_init: {
     lda.z x+1
     rol
     sta.z __24+1
-    clc
     lda.z __32
+    clc
     adc #<__bitmap_plot_x
     sta.z __32
     lda.z __32+1
@@ -1560,8 +1560,8 @@ bitmap_init: {
     lda.z __10+1
     sta (__32),y
     // __bitmap_plot_bitmask[x] = bitmask
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitmask
     sta.z __33
     lda.z x+1
@@ -1571,8 +1571,8 @@ bitmap_init: {
     ldy #0
     sta (__33),y
     // __bitmap_plot_bitshift[x] = (byte)bitshift
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitshift
     sta.z __34
     lda.z x+1
@@ -1607,8 +1607,8 @@ bitmap_init: {
     lda.z x+1
     rol
     sta.z __25+1
-    clc
     lda.z __35
+    clc
     adc #<__bitmap_plot_x
     sta.z __35
     lda.z __35+1
@@ -1621,8 +1621,8 @@ bitmap_init: {
     lda.z __13+1
     sta (__35),y
     // __bitmap_plot_bitmask[x] = bitmask
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitmask
     sta.z __36
     lda.z x+1
@@ -1632,8 +1632,8 @@ bitmap_init: {
     ldy #0
     sta (__36),y
     // __bitmap_plot_bitshift[x] = (byte)bitshift
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitshift
     sta.z __37
     lda.z x+1
@@ -1665,8 +1665,8 @@ bitmap_init: {
     lda.z x+1
     rol
     sta.z __26+1
-    clc
     lda.z __38
+    clc
     adc #<__bitmap_plot_x
     sta.z __38
     lda.z __38+1
@@ -1679,8 +1679,8 @@ bitmap_init: {
     lda.z x+1
     sta (__38),y
     // __bitmap_plot_bitmask[x] = bitmask
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitmask
     sta.z __39
     lda.z x+1
@@ -1690,8 +1690,8 @@ bitmap_init: {
     ldy #0
     sta (__39),y
     // __bitmap_plot_bitshift[x] = (byte)bitshift
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitshift
     sta.z __40
     lda.z x+1
@@ -1768,8 +1768,8 @@ bitmap_init: {
     sta.z __28+1
     asl.z __28
     rol.z __28+1
-    clc
     lda.z __41
+    clc
     adc #<__bitmap_plot_y
     sta.z __41
     lda.z __41+1
@@ -3111,8 +3111,8 @@ bitmap_plot: {
     lda.z x+1
     rol
     sta.z __9+1
-    clc
     lda.z __12
+    clc
     adc #<__bitmap_plot_x
     sta.z __12
     lda.z __12+1
@@ -3136,8 +3136,8 @@ bitmap_plot: {
     sta.z __10+1
     asl.z __10
     rol.z __10+1
-    clc
     lda.z __13
+    clc
     adc #<__bitmap_plot_y
     sta.z __13
     lda.z __13+1
@@ -3170,8 +3170,8 @@ bitmap_plot: {
     adc.z plot_y+3
     sta.z vera_vram_address01_bankaddr+3
     // byte bitshift = __bitmap_plot_bitshift[x]
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitshift
     sta.z __14
     lda.z x+1
@@ -3212,8 +3212,8 @@ bitmap_plot: {
     // *VERA_ADDRX_H = BYTE2(bankaddr) | incr
     sta VERA_ADDRX_H
     // ~__bitmap_plot_bitmask[x]
-    clc
     lda.z x
+    clc
     adc #<__bitmap_plot_bitmask
     sta.z __15
     lda.z x+1
@@ -3312,8 +3312,8 @@ insertup: {
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    clc
     lda.z start
+    clc
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

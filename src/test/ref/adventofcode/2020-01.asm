@@ -199,15 +199,15 @@ main: {
     lda.z j1+1
     rol
     sta.z __42+1
-    clc
     lda.z __41
+    clc
     adc #<entries
     sta.z __53
     lda.z __41+1
     adc #>entries
     sta.z __53+1
-    clc
     lda.z __42
+    clc
     adc #<entries
     sta.z __54
     lda.z __42+1
@@ -231,8 +231,8 @@ main: {
     lda.z k+1
     rol
     sta.z __43+1
-    clc
     lda.z __43
+    clc
     adc #<entries
     sta.z __55
     lda.z __43+1
@@ -285,8 +285,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
-    clc
     lda.z __41
+    clc
     adc #<entries
     sta.z __56
     lda.z __41+1
@@ -320,8 +320,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
-    clc
     lda.z __42
+    clc
     adc #<entries
     sta.z __57
     lda.z __42+1
@@ -355,8 +355,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
-    clc
     lda.z __43
+    clc
     adc #<entries
     sta.z __58
     lda.z __43+1
@@ -378,8 +378,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // mul16u(entries[i],entries[k])
-    clc
     lda.z __59
+    clc
     adc #<entries
     sta.z __59
     lda.z __59+1
@@ -393,8 +393,8 @@ main: {
     sta.z mul16u.a+1
     pla
     sta.z mul16u.a
-    clc
     lda.z __60
+    clc
     adc #<entries
     sta.z __60
     lda.z __60+1
@@ -416,8 +416,8 @@ main: {
     sta.z mul16u.a
     lda.z mul1+1
     sta.z mul16u.a+1
-    clc
     lda.z __42
+    clc
     adc #<entries
     sta.z __61
     lda.z __42+1
@@ -500,15 +500,15 @@ main: {
     lda.z j+1
     rol
     sta.z __35+1
-    clc
     lda.z __34
+    clc
     adc #<entries
     sta.z __47
     lda.z __34+1
     adc #>entries
     sta.z __47+1
-    clc
     lda.z __35
+    clc
     adc #<entries
     sta.z __48
     lda.z __35+1
@@ -561,8 +561,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // printf("match found [%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j])
-    clc
     lda.z __34
+    clc
     adc #<entries
     sta.z __49
     lda.z __34+1
@@ -596,8 +596,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // printf("match found [%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j])
-    clc
     lda.z __35
+    clc
     adc #<entries
     sta.z __50
     lda.z __35+1
@@ -619,8 +619,8 @@ main: {
     sta.z cputs.s+1
     jsr cputs
     // mul16u(entries[i],entries[j])
-    clc
     lda.z __51
+    clc
     adc #<entries
     sta.z __51
     lda.z __51+1
@@ -634,8 +634,8 @@ main: {
     sta.z mul16u.a+1
     pla
     sta.z mul16u.a
-    clc
     lda.z __52
+    clc
     adc #<entries
     sta.z __52
     lda.z __52+1
@@ -1256,8 +1256,8 @@ newline: {
     sta.z memcpy.destination+1
     jsr memcpy
     // start + CONIO_WIDTH * 23
-    clc
     lda.z memset.str
+    clc
     adc #<$28*$17
     sta.z memset.str
     lda.z memset.str+1
@@ -1444,8 +1444,8 @@ memcpy: {
     .label destination = $99
     .label source = $97
     // char* src_end = (char*)source+num
-    clc
     lda.z source
+    clc
     adc #<num
     sta.z src_end
     lda.z source+1

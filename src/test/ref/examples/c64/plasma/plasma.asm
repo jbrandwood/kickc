@@ -194,8 +194,8 @@ makecharset: {
     inc.z __11+1
   !:
     // charset[(c*8) + i] = b
-    clc
     lda.z __16
+    clc
     adc #<CHARSET
     sta.z __16
     lda.z __16+1

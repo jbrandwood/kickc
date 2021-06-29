@@ -104,8 +104,8 @@ memset: {
     .label dst = $24
     .label str = $24
     // char* end = (char*)str + num
-    clc
     lda.z str
+    clc
     adc #<$3e8
     sta.z end
     lda.z str+1
@@ -257,8 +257,8 @@ loop: {
     lda.z xsin_idx+1
     rol
     sta.z __7+1
-    clc
     lda.z __2
+    clc
     adc #<xsin
     sta.z __2
     lda.z __2+1
@@ -536,8 +536,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

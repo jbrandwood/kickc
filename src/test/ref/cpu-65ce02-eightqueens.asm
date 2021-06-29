@@ -164,8 +164,8 @@ gotoxy: {
     asw line_offset
     asw line_offset
     // CONIO_SCREEN_TEXT + line_offset
-    clc
     lda.z line_offset
+    clc
     adc #<DEFAULT_SCREEN
     sta.z __5
     lda.z line_offset+1
@@ -177,8 +177,8 @@ gotoxy: {
     lda.z __5+1
     sta.z conio_line_text+1
     // CONIO_SCREEN_COLORS + line_offset
-    clc
     lda.z __6
+    clc
     adc #<COLORRAM
     sta.z __6
     lda.z __6+1
@@ -1255,8 +1255,8 @@ memcpy: {
     .label source = $14
     .label destination = $23
     // char* src_end = (char*)source+num
-    clc
     lda.z source
+    clc
     adc #<$19*$28-$28
     sta.z src_end
     lda.z source+1

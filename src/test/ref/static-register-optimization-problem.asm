@@ -35,12 +35,12 @@ main: {
     rts
   __b2:
     // screen[i] = (char)lasti
+    lda #<screen
     clc
-    lda.z i
-    adc #<screen
+    adc.z i
     sta.z __1
-    lda.z i+1
-    adc #>screen
+    lda #>screen
+    adc.z i+1
     sta.z __1+1
     lda.z lasti
     ldy #0

@@ -69,15 +69,15 @@ main: {
     sta.z __6+1
     asl.z __7
     rol.z __7+1
-    clc
     lda.z __9
+    clc
     adc #<fibs
     sta.z __9
     lda.z __9+1
     adc #>fibs
     sta.z __9+1
-    clc
     lda.z __10
+    clc
     adc #<fibs
     sta.z __10
     lda.z __10+1
@@ -97,8 +97,8 @@ main: {
     // fibs[i+2] = fibs[i]+fibs[i+1]
     asl.z __8
     rol.z __8+1
-    clc
     lda.z __11
+    clc
     adc #<fibs
     sta.z __11
     lda.z __11+1

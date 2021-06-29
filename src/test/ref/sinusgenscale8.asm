@@ -433,8 +433,8 @@ sin8s: {
     bcc __b2
   !:
     // x = PI_u4f12 - x
-    sec
     lda #<PI_u4f12
+    sec
     sbc.z x
     sta.z x
     lda #>PI_u4f12
@@ -598,8 +598,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

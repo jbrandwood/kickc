@@ -1541,8 +1541,8 @@ draw_characters: {
     lda.z b
     bne __b4
     // tilecolumn += 8
-    clc
     lda.z tilecolumn_1
+    clc
     adc #8
     sta.z tilecolumn_1
     bcc !+
@@ -1580,8 +1580,8 @@ draw_characters: {
     jmp __b2
   !__b2:
     // tilebase += 8*16
-    clc
     lda.z tilebase
+    clc
     adc #8*$10
     sta.z tilebase
     bcc !+
@@ -2068,8 +2068,8 @@ insertup: {
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    clc
     lda.z start
+    clc
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

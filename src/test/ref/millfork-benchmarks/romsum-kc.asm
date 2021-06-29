@@ -146,8 +146,8 @@ sum: {
     cpy #0
     bne __b2
     // p += 0x100
-    clc
     lda.z p
+    clc
     adc #<$100
     sta.z p
     lda.z p+1

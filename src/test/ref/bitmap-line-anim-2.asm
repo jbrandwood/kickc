@@ -120,8 +120,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1

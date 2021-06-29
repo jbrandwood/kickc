@@ -1,6 +1,6 @@
 ldy #0
-clc
 lda ({z2}),y
+clc
 adc {m3}
 sta {m1}
 iny

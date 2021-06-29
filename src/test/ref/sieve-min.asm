@@ -69,8 +69,8 @@ main: {
     jmp __b11
   __b8:
     // if (!sieve[i])
-    clc
     lda.z i_1
+    clc
     adc #<sieve
     sta.z __16
     lda.z i_1+1
@@ -106,8 +106,8 @@ main: {
     rol
     sta.z j+1
     // unsigned char* s = &sieve[j]
-    clc
     lda.z j
+    clc
     adc #<sieve
     sta.z s
     lda.z j+1

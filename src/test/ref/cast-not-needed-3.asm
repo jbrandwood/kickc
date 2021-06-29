@@ -18,8 +18,8 @@ main: {
     lda screens+1
     sta.z getScreen1_return+1
     // screen+$378
-    clc
     lda.z spritePtr1___0
+    clc
     adc #<$378
     sta.z spritePtr1___0
     lda.z spritePtr1___0+1

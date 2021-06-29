@@ -1,5 +1,5 @@
-sec
 lda ({z1}),y
+sec
 sbc {m2}
 pha
 iny

@@ -226,8 +226,8 @@ main: {
     adc.z num+3
     sta.z __1+3
     // dword calcend = src+num+(-1)
-    clc
     lda.z calcend
+    clc
     adc #-1
     sta.z calcend
     bcc !+
@@ -299,16 +299,16 @@ main: {
     sta.z end+1
     // beg += borderbeg
     // same for the end;
-    clc
     lda.z beg
+    clc
     adc #<borderbeg
     sta.z beg
     lda.z beg+1
     adc #>borderbeg
     sta.z beg+1
     // end += borderbeg
-    clc
     lda.z end
+    clc
     adc #<borderbeg
     sta.z end
     lda.z end+1
@@ -1628,8 +1628,8 @@ insertup: {
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    clc
     lda.z start
+    clc
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

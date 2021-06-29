@@ -1,5 +1,5 @@
-sec
 lda {m2}
+sec
 sbc {m3}
 sta {m1}
 lda {m2}+1

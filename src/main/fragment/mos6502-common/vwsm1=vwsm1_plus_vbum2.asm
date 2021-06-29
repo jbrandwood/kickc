@@ -1,5 +1,5 @@
-clc
 lda {m1}
+clc
 adc {m2}
 sta {m1}
 lda {m1}+1

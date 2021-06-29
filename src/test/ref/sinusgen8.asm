@@ -246,8 +246,8 @@ sin8s: {
     bcc __b2
   !:
     // x = PI_u4f12 - x
-    sec
     lda #<PI_u4f12
+    sec
     sbc.z x
     sta.z x
     lda #>PI_u4f12

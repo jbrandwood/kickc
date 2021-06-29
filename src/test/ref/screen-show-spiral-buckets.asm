@@ -205,8 +205,8 @@ main: {
     beq __b4
   !:
     // byte* fill = SCREEN_FILL+min_offset
-    clc
     lda.z fill1
+    clc
     adc #<SCREEN_FILL
     sta.z fill1
     lda.z fill1+1
@@ -247,8 +247,8 @@ main: {
     lda (bucket),y
     sta.z offset+1
     // byte* fill = SCREEN_FILL+offset
-    clc
     lda.z offset
+    clc
     adc #<SCREEN_FILL
     sta.z fill
     lda.z offset+1
@@ -260,8 +260,8 @@ main: {
     cmp (fill),y
     beq __b18
     // byte* angle = SCREEN_ANGLE+offset
-    clc
     lda.z SCREEN_ANGLE
+    clc
     adc.z offset
     sta.z angle
     lda.z SCREEN_ANGLE+1
@@ -315,8 +315,8 @@ init_dist_screen: {
     // init_squares()
     jsr init_squares
     // byte *screen_bottomline = screen+40*24
-    clc
     lda.z screen
+    clc
     adc #<$28*$18
     sta.z screen_bottomline
     lda.z screen+1
@@ -442,8 +442,8 @@ init_angle_screen: {
     .label screen_topline = $26
     .label y = $1c
     // byte* screen_topline = screen+40*12
-    clc
     lda.z screen_bottomline
+    clc
     adc #<$28*$c
     sta.z screen_bottomline
     lda.z screen_bottomline+1
@@ -614,8 +614,8 @@ init_buckets: {
   // Allocate the buckets
   __b4:
     // malloc(BUCKET_SIZES[i]*sizeof(byte*))
-    clc
     lda.z BUCKET_SIZES
+    clc
     adc.z i2
     sta.z __15
     lda.z BUCKET_SIZES+1
@@ -912,8 +912,8 @@ atan2_16: {
     lda.z x+1
     bpl __b7
     // angle = 0x8000-angle
-    sec
     lda #<$8000
+    sec
     sbc.z angle
     sta.z angle
     lda #>$8000
@@ -986,8 +986,8 @@ atan2_16: {
     txa
     asl
     tay
-    sec
     lda.z angle
+    sec
     sbc CORDIC_ATAN2_ANGLES_16,y
     sta.z angle
     lda.z angle+1

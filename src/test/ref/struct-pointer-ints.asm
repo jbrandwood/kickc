@@ -28,8 +28,8 @@ update: {
     .const size = $3e8
     .label s = main.s
     // s->a += size
-    clc
     lda.z s
+    clc
     adc #<size
     sta.z s
     lda.z s+1

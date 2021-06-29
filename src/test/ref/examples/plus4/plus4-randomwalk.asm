@@ -110,8 +110,8 @@ main: {
     inc.z offset+1
   !:
     // VISITS+offset
-    clc
     lda.z offset
+    clc
     adc #<VISITS
     sta.z __6
     lda.z offset+1
@@ -126,8 +126,8 @@ main: {
     lda (__6),y
     tay
     // DEFAULT_COLORRAM+offset
-    clc
     lda.z __8
+    clc
     adc #<DEFAULT_COLORRAM
     sta.z __8
     lda.z __8+1
@@ -211,8 +211,8 @@ memset: {
     .label dst = 3
     .label str = 3
     // char* end = (char*)str + num
-    clc
     lda.z str
+    clc
     adc #<$3e8
     sta.z end
     lda.z str+1

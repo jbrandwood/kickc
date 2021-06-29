@@ -63,8 +63,8 @@ main: {
     sta.z __10+1
     asl.z __9
     rol.z __9+1
-    clc
     lda.z __3
+    clc
     adc #<sintabw
     sta.z __3
     lda.z __3+1
@@ -389,8 +389,8 @@ sin8s: {
     bcc __b2
   !:
     // x = PI_u4f12 - x
-    sec
     lda #<PI_u4f12
+    sec
     sbc.z x
     sta.z x
     lda #>PI_u4f12
@@ -724,8 +724,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

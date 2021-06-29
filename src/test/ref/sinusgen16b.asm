@@ -59,8 +59,8 @@ main: {
   __b1:
     // signed word sw = *st1 - *st2
     ldy #0
-    sec
     lda (st1),y
+    sec
     sbc (st2),y
     sta.z sw
     iny
@@ -343,8 +343,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0
@@ -594,8 +594,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0
@@ -653,8 +653,8 @@ sin16sb: {
     bcc __b2
   !:
     // x = PI_u4f12 - x
-    sec
     lda #<PI_u4f12
+    sec
     sbc.z x
     sta.z x
     lda #>PI_u4f12
@@ -758,8 +758,8 @@ sin16sb: {
     cpy #0
     beq __b3
     // sinx = -(signed word)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

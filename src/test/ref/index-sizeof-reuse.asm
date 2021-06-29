@@ -65,8 +65,8 @@ main: {
     sta (line),y
     // entities[i].x_pos += entities[i].x_vel
     // Move by velocity
-    clc
     lda entities,x
+    clc
     adc entities+OFFSET_STRUCT_ENTITY_X_VEL,x
     sta entities,x
     // if(entities[i].x_pos<0 || entities[i].x_pos>39)
@@ -89,8 +89,8 @@ main: {
     // entities[i].x_vel = -entities[i].x_vel
     sta entities+OFFSET_STRUCT_ENTITY_X_VEL,x
     // entities[i].x_pos += entities[i].x_vel
-    clc
     lda entities,x
+    clc
     adc entities+OFFSET_STRUCT_ENTITY_X_VEL,x
     sta entities,x
   __b8:

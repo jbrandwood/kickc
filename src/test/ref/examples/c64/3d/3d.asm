@@ -688,8 +688,8 @@ calculate_matrix: {
     sta rotation_matrix+1
     // SINH[sy]+SINH[sy]
     ldy.z sy
-    clc
     lda SINH,y
+    clc
     adc SINH,y
     // rotation_matrix[2] = SINH[sy]+SINH[sy]
     sta rotation_matrix+2

@@ -64,8 +64,8 @@ main: {
     lda.z dw+3
     sta.z __3+1
     // WORD1(dw2) = WORD1(dw) + $1111
-    clc
     lda.z __28
+    clc
     adc #<$1111
     sta.z __28
     lda.z __28+1
@@ -85,8 +85,8 @@ main: {
     lda.z dw+1
     sta.z __6+1
     // WORD0(dw2) = WORD0(dw) + $1111
-    clc
     lda.z __29
+    clc
     adc #<$1111
     sta.z __29
     lda.z __29+1

@@ -223,8 +223,8 @@ init_dist_screen: {
     // init_squares()
     jsr init_squares
     // byte *screen_bottomline = screen+40*24
-    clc
     lda.z screen
+    clc
     adc #<$28*$18
     sta.z screen_bottomline
     lda.z screen+1
@@ -350,8 +350,8 @@ init_angle_screen: {
     .label screen_topline = $f
     .label y = $e
     // byte* screen_topline = screen+40*12
-    clc
     lda.z screen_bottomline
+    clc
     adc #<$28*$c
     sta.z screen_bottomline
     lda.z screen_bottomline+1
@@ -622,8 +622,8 @@ atan2_16: {
     lda.z x+1
     bpl __b7
     // angle = 0x8000-angle
-    sec
     lda #<$8000
+    sec
     sbc.z angle
     sta.z angle
     lda #>$8000
@@ -696,8 +696,8 @@ atan2_16: {
     txa
     asl
     tay
-    sec
     lda.z angle
+    sec
     sbc CORDIC_ATAN2_ANGLES_16,y
     sta.z angle
     lda.z angle+1

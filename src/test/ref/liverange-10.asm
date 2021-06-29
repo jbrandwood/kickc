@@ -65,8 +65,8 @@ outsw: {
     lda #'-'
     jsr out
     // sw = -sw
-    sec
     lda #0
+    sec
     sbc.z sw
     sta.z sw
     lda #0

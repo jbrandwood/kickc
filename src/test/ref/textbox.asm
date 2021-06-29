@@ -184,8 +184,8 @@ textbox: {
     adc.z z+1
     sta.z __8+1
     // screen[z+x] = text[i]
-    clc
     lda.z __32
+    clc
     adc #<screen
     sta.z __32
     lda.z __32+1
@@ -386,8 +386,8 @@ draw_window: {
     adc.z z+1
     sta.z __2+1
     // screen[z+x1] = $55
-    clc
     lda.z __29
+    clc
     adc #<screen
     sta.z __29
     lda.z __29+1
@@ -406,8 +406,8 @@ draw_window: {
     inc.z __3+1
   !:
     // screen[z+x2] = $49
-    clc
     lda.z __30
+    clc
     adc #<screen
     sta.z __30
     lda.z __30+1
@@ -435,8 +435,8 @@ draw_window: {
     adc.z q+1
     sta.z __4+1
     // screen[q+x1] = $4a
-    clc
     lda.z __33
+    clc
     adc #<screen
     sta.z __33
     lda.z __33+1
@@ -455,8 +455,8 @@ draw_window: {
     inc.z __5+1
   !:
     // screen[q+x2] = $4b
-    clc
     lda.z __34
+    clc
     adc #<screen
     sta.z __34
     lda.z __34+1
@@ -530,8 +530,8 @@ draw_window: {
     adc.z z_2+1
     sta.z __26+1
     // screen[z+x] = $20
-    clc
     lda.z __35
+    clc
     adc #<screen
     sta.z __35
     lda.z __35+1
@@ -569,8 +569,8 @@ draw_window: {
     adc.z z_1+1
     sta.z __19+1
     // screen[z+x1] = $42
-    clc
     lda.z __31
+    clc
     adc #<screen
     sta.z __31
     lda.z __31+1
@@ -588,8 +588,8 @@ draw_window: {
     inc.z __20+1
   !:
     // screen[z+x2] = $42
-    clc
     lda.z __32
+    clc
     adc #<screen
     sta.z __32
     lda.z __32+1
@@ -611,8 +611,8 @@ draw_window: {
     adc.z z+1
     sta.z __14+1
     // screen[z+x] = $43
-    clc
     lda.z __27
+    clc
     adc #<screen
     sta.z __27
     lda.z __27+1
@@ -630,8 +630,8 @@ draw_window: {
     adc.z q+1
     sta.z __15+1
     // screen[q+x] = $43
-    clc
     lda.z __28
+    clc
     adc #<screen
     sta.z __28
     lda.z __28+1

@@ -322,8 +322,8 @@ main: {
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
     // tilebase+=256
-    clc
     lda.z tilebase
+    clc
     adc #<$100
     sta.z tilebase
     lda.z tilebase+1
@@ -2167,8 +2167,8 @@ insertup: {
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    clc
     lda.z start
+    clc
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

@@ -177,8 +177,8 @@ main: {
     lda.z idx_x+1
     rol
     sta.z __26+1
-    clc
     lda.z __30
+    clc
     adc #<SINE
     sta.z __30
     lda.z __30+1
@@ -225,8 +225,8 @@ main: {
     lda.z idx_y+1
     rol
     sta.z __27+1
-    clc
     lda.z __31
+    clc
     adc #<SINE
     sta.z __31
     lda.z __31+1
@@ -259,8 +259,8 @@ main: {
     ror.z __11+1
     ror.z __11
     // 100 + ((signed word)WORD1(ypos))>>2
-    clc
     lda.z y
+    clc
     adc #<$64
     sta.z y
     lda.z y+1
@@ -315,8 +315,8 @@ main: {
     sta.z idx_y+1
   __b4:
     // r += r_add
-    clc
     lda.z r
+    clc
     adc.z r_add
     sta.z r
     lda.z r+1
@@ -498,8 +498,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1
@@ -933,8 +933,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

@@ -1,6 +1,6 @@
-sec
 ldy #0
 lda ({z2}),y
+sec
 sbc {m3}
 sta {m1}
 iny

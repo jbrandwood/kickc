@@ -46,8 +46,8 @@ main: {
     asl.z __0
     rol.z __0+1
     // byte* line = SCREEN+(word)y*40
-    clc
     lda.z line
+    clc
     adc #<SCREEN
     sta.z line
     lda.z line+1

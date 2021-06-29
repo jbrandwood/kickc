@@ -41,16 +41,16 @@ test: {
     sta.z dst
     sta.z dst+1
     // colorMem - videoMem
-    sec
     lda #<colorMem
+    sec
     sbc.z diff
     sta.z diff
     lda #>colorMem
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    clc
     lda.z __1
+    clc
     adc #<other
     sta.z __1
     lda.z __1+1

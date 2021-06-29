@@ -340,8 +340,8 @@ atan2_16: {
     lda.z x+1
     bpl __b7
     // angle = 0x8000-angle
-    sec
     lda #<$8000
+    sec
     sbc.z angle
     sta.z angle
     lda #>$8000
@@ -414,8 +414,8 @@ atan2_16: {
     txa
     asl
     tay
-    sec
     lda.z angle
+    sec
     sbc CORDIC_ATAN2_ANGLES_16,y
     sta.z angle
     lda.z angle+1

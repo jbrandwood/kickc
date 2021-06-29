@@ -1,5 +1,5 @@
-clc
 lda ({z1}),y
+clc
 adc {c1},x
 sta ({z1}),y
 iny

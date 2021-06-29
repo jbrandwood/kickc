@@ -65,12 +65,12 @@ main: {
     lda.z lasttest+1
     rol
     sta.z __12+1
+    lda #<primenum
     clc
-    lda.z __16
-    adc #<primenum
+    adc.z __16
     sta.z __16
-    lda.z __16+1
-    adc #>primenum
+    lda #>primenum
+    adc.z __16+1
     sta.z __16+1
     ldy #0
     lda (p),y
@@ -103,8 +103,8 @@ main: {
   !:
   __b2:
     // testnum +=2
-    clc
     lda.z testnum
+    clc
     adc #<2
     sta.z testnum
     lda.z testnum+1
@@ -122,12 +122,12 @@ main: {
     lda.z primeptr+1
     rol
     sta.z __13+1
+    lda #<primenum
     clc
-    lda.z __17
-    adc #<primenum
+    adc.z __17
     sta.z __17
-    lda.z __17+1
-    adc #>primenum
+    lda #>primenum
+    adc.z __17+1
     sta.z __17+1
     ldy #0
     lda (div16s.divisor),y
@@ -148,8 +148,8 @@ main: {
     ora.z rem16s
     bne __b4
     // testnum +=2
-    clc
     lda.z testnum
+    clc
     adc #<2
     sta.z testnum
     lda.z testnum+1
@@ -181,12 +181,12 @@ main: {
     lda.z lastprime+1
     rol
     sta.z __14+1
+    lda #<primenum
     clc
-    lda.z __18
-    adc #<primenum
+    adc.z __18
     sta.z __18
-    lda.z __18+1
-    adc #>primenum
+    lda #>primenum
+    adc.z __18+1
     sta.z __18+1
     ldy #0
     lda.z testnum
@@ -327,8 +327,8 @@ print_sint_decimal: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0
@@ -437,8 +437,8 @@ divr16s: {
     cpy #0
     beq __breturn
     // rem16s = -(signed int)rem16u
-    sec
     lda #0
+    sec
     sbc.z rem16s
     sta.z rem16s
     lda #0
@@ -449,8 +449,8 @@ divr16s: {
     rts
   __b3:
     // -divisor
-    sec
     lda #0
+    sec
     sbc.z divisoru
     sta.z divisoru
     lda #0
@@ -463,8 +463,8 @@ divr16s: {
     jmp __b4
   __b1:
     // -dividend
-    sec
     lda #0
+    sec
     sbc.z dividendu
     sta.z dividendu
     lda #0

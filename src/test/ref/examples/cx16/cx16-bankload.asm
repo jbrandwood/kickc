@@ -827,8 +827,8 @@ memcpy_bank_to_vram: {
     sta.z addr+1
     // addr += 0xA000
     // stip off the top 3 bits, which are representing the bank of the word!
-    clc
     lda.z addr
+    clc
     adc #<$a000
     sta.z addr
     lda.z addr+1
@@ -1485,8 +1485,8 @@ insertup: {
     adc.z CONIO_SCREEN_TEXT+1
     sta.z start+1
     // start+conio_rowskip
-    clc
     lda.z start
+    clc
     adc.z conio_rowskip
     sta.z memcpy_in_vram.src
     lda.z start+1

@@ -34,8 +34,8 @@ main: {
     lda.z i+1
     rol
     sta.z __1+1
-    clc
     lda.z __2
+    clc
     adc #<entities
     sta.z __2
     lda.z __2+1

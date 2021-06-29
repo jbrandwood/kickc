@@ -215,8 +215,8 @@ md5: {
     sta.z memcpy.source+1
     jsr memcpy
     // msg[initial_len] = 128
-    clc
     lda.z msg
+    clc
     adc.z initial_len
     sta.z __74
     lda.z msg+1
@@ -241,8 +241,8 @@ md5: {
     sta.z bits_len+2
     sta.z bits_len+3
     // msg + new_len
-    clc
     lda.z msg
+    clc
     adc.z new_len
     sta.z memcpy.destination
     lda.z msg+1
@@ -308,8 +308,8 @@ md5: {
     rts
   __b2:
     // msg + offset
-    clc
     lda.z msg
+    clc
     adc.z offset
     sta.z w
     lda.z msg+1
@@ -415,8 +415,8 @@ md5: {
     adc.z temp+3
     sta.z h3+3
     // offset += (512/8)
-    clc
     lda.z offset
+    clc
     adc #<$200/8
     sta.z offset
     lda.z offset+1
@@ -1131,8 +1131,8 @@ memcpy: {
     .label source = $aa
     .label num = $80
     // char* src_end = (char*)source+num
-    clc
     lda.z source
+    clc
     adc.z num
     sta.z src_end
     lda.z source+1
@@ -1517,8 +1517,8 @@ newline: {
     sta.z memcpy.num+1
     jsr memcpy
     // start + CONIO_WIDTH * 23
-    clc
     lda.z memset.str
+    clc
     adc #<$28*$17
     sta.z memset.str
     lda.z memset.str+1
@@ -1546,8 +1546,8 @@ malloc: {
     .label mem = $b4
     .label size = $b4
     // unsigned char* mem = heap_head-size
-    sec
     lda #<HEAP_TOP
+    sec
     sbc.z mem
     sta.z mem
     lda #>HEAP_TOP

@@ -131,8 +131,8 @@ scroll_bit: {
     asl.z __7
     rol.z __7+1
     // current_chargen = CHARGEN+c*8
-    clc
     lda.z current_chargen
+    clc
     adc #<CHARGEN
     sta.z current_chargen
     lda.z current_chargen+1

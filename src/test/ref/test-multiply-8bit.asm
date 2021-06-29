@@ -840,8 +840,8 @@ muls8s: {
     lda #0
   !:
     sta.z $ff
-    sec
     lda.z m
+    sec
     sbc.z $fe
     sta.z m
     lda.z m+1
@@ -1132,8 +1132,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

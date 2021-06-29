@@ -167,8 +167,8 @@ main: {
     lda.z idx_x+1
     rol
     sta.z __19+1
-    clc
     lda.z __21
+    clc
     adc #<SINE
     sta.z __21
     lda.z __21+1
@@ -209,8 +209,8 @@ main: {
     rol.z __6+3
     // WORD1(xpos<<4)
     // word x = (word)(160 + WORD1(xpos<<4))
-    clc
     lda #<$a0
+    clc
     adc.z __6+2
     sta.z x
     lda #>$a0
@@ -223,8 +223,8 @@ main: {
     lda.z idx_y+1
     rol
     sta.z __20+1
-    clc
     lda.z __22
+    clc
     adc #<SINE
     sta.z __22
     lda.z __22+1
@@ -265,8 +265,8 @@ main: {
     rol.z __10+3
     // WORD1(ypos<<4)
     // word y = (word)(100 + WORD1(ypos<<4))
-    clc
     lda #<$64
+    clc
     adc.z __10+2
     sta.z y
     lda #>$64
@@ -461,8 +461,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1
@@ -896,8 +896,8 @@ sin16s: {
     cpy #0
     beq __b3
     // sinx = -(signed int)usinx
-    sec
     lda #0
+    sec
     sbc.z sinx
     sta.z sinx
     lda #0

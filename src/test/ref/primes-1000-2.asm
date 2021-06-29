@@ -120,8 +120,8 @@ main: {
     lda.z prime_idx+1
     rol
     sta.z __14+1
-    clc
     lda.z __15
+    clc
     adc #<PRIMES
     sta.z __15
     lda.z __15+1

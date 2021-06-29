@@ -178,8 +178,8 @@ circle: {
     adc.z __6+1
     sta.z __7+1
     // p = p + ((x-y) << 2) + 10
-    clc
     lda.z p
+    clc
     adc #<$a
     sta.z p
     lda.z p+1
@@ -339,8 +339,8 @@ circle: {
     adc.z __9+1
     sta.z __10+1
     // p = p + (x << 2) + 6
-    clc
     lda.z p
+    clc
     adc #<6
     sta.z p
     lda.z p+1
@@ -366,12 +366,12 @@ plot: {
     and #>$fff8
     sta.z __0+1
     // location += x & $fff8
+    lda #<BITMAP
     clc
-    lda.z location
-    adc #<BITMAP
+    adc.z location
     sta.z location
-    lda.z location+1
-    adc #>BITMAP
+    lda #>BITMAP
+    adc.z location+1
     sta.z location+1
     // (char)y & 7
     lda.z y

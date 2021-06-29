@@ -16,8 +16,8 @@ main: {
     sta.z b+1
   __b1:
     // b = b + 40*8
-    clc
     lda.z b
+    clc
     adc #<$28*8
     sta.z b
     lda.z b+1

@@ -1,4 +1,3 @@
-clc
 lda {c1},x
 asl
 sta {m1}

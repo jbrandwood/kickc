@@ -42,12 +42,12 @@ main: {
     pla
     sta.z tile
     // SCREEN[i] =  tile->Count
+    lda #<SCREEN
     clc
-    lda.z i
-    adc #<SCREEN
+    adc.z i
     sta.z __5
-    lda.z i+1
-    adc #>SCREEN
+    lda #>SCREEN
+    adc.z i+1
     sta.z __5+1
     ldy #OFFSET_STRUCT_TILE_COUNT
     lda (tile),y

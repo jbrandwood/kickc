@@ -692,8 +692,8 @@ gotoxy: {
     asl.z line_offset
     rol.z line_offset+1
     // CONIO_SCREEN_TEXT + line_offset
-    clc
     lda.z __5
+    clc
     adc #<PPU_NAME_TABLE_0
     sta.z __5
     lda.z __5+1

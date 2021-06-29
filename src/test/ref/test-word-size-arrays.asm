@@ -46,8 +46,8 @@ main: {
     adc.z line+1
     sta.z __6+1
     // screen[line+c] = ' '
-    clc
     lda.z __9
+    clc
     adc #<screen
     sta.z __9
     lda.z __9+1
@@ -84,15 +84,15 @@ main: {
     adc.z line+1
     sta.z __4+1
     // screen[line+c] = screen[line+c+40]
-    clc
     lda.z __4
+    clc
     adc #<screen+$28
     sta.z __7
     lda.z __4+1
     adc #>screen+$28
     sta.z __7+1
-    clc
     lda.z __8
+    clc
     adc #<screen
     sta.z __8
     lda.z __8+1

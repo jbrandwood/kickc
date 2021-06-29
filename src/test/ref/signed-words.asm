@@ -137,8 +137,8 @@ anim: {
     lda.z ypos+1
     bpl __b1
     // xvel = -xvel
-    sec
     lda #0
+    sec
     sbc.z xvel
     sta.z xvel
     lda #0

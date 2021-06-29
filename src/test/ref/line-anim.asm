@@ -156,8 +156,8 @@ bitmap_init: {
     cmp.z __7
     bne __b4
     // yoffs = yoffs + 40*8
-    clc
     lda.z yoffs
+    clc
     adc #<$28*8
     sta.z yoffs
     lda.z yoffs+1
@@ -482,8 +482,8 @@ divr16s: {
     cpy #0
     beq __breturn
     // return -(signed int)resultu;
-    sec
     lda #0
+    sec
     sbc.z return
     sta.z return
     lda #0
@@ -494,8 +494,8 @@ divr16s: {
     rts
   __b3:
     // -divisor
-    sec
     lda #0
+    sec
     sbc.z divisoru
     sta.z divisoru
     lda #0
@@ -508,8 +508,8 @@ divr16s: {
     jmp __b4
   __b1:
     // -rem
-    sec
     lda #0
+    sec
     sbc.z remu
     sta.z remu
     lda #0

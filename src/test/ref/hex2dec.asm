@@ -276,8 +276,8 @@ utoa10w: {
     adc.z digit
     sta.z digit
     // value -= UTOA10_SUB[i]
-    sec
     lda.z value
+    sec
     sbc UTOA10_SUB,y
     sta.z value
     lda.z value+1

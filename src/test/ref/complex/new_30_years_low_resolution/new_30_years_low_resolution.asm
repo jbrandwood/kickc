@@ -439,8 +439,8 @@ irq_swing_plex: {
     axs #-[YMOVE]
     stx.z plex_frame_id
     // plex_frame += (unsigned int)YMOVE*BUCKET_COUNT*BUCKET_SIZE
-    clc
     lda.z plex_frame
+    clc
     adc #<YMOVE*9*8*SIZEOF_STRUCT_BUCKETSPRITE
     sta.z plex_frame
     lda.z plex_frame+1
@@ -481,8 +481,8 @@ irq_swing_plex: {
     sta.z __27+1
     asl.z __26
     rol.z __26+1
-    clc
     lda.z __31
+    clc
     adc #<VSP_SINTABLE
     sta.z __31
     lda.z __31+1
@@ -833,8 +833,8 @@ irq_flipper_bottom: {
     lda.z irq_flipper_idx+1
     rol
     sta.z __12+1
-    clc
     lda.z __14
+    clc
     adc #<FLIPPER_EASING
     sta.z __14
     lda.z __14+1
@@ -2141,8 +2141,8 @@ init_rasters: {
     jmp __b3
   __b2:
     // RASTER_BADLINES[i] = 0
-    clc
     lda.z i
+    clc
     adc #<RASTER_BADLINES
     sta.z __3
     lda.z i+1
@@ -2697,16 +2697,16 @@ flipper_fix_colors: {
     asl.z offset
     rol.z offset+1
     // char* colors = COLS+offset
-    clc
     lda.z offset
+    clc
     adc #<COLS
     sta.z colors
     lda.z offset+1
     adc #>COLS
     sta.z colors+1
     // char* happy_cols = P1_COLORS+offset
-    clc
     lda.z happy_cols
+    clc
     adc #<P1_COLORS
     sta.z happy_cols
     lda.z happy_cols+1

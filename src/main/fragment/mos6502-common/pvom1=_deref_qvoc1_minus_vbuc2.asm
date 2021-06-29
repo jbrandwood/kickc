@@ -1,5 +1,5 @@
-sec
 lda {c1}
+sec
 sbc #{c2}
 sta {m1}
 lda {c1}+1

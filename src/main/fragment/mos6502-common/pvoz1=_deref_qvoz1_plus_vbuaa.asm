@@ -1,5 +1,5 @@
-clc
 ldy #0
+clc
 adc ({z1}),y
 pha
 tya

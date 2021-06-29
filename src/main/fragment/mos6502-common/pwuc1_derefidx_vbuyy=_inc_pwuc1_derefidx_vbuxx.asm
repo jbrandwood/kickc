@@ -1,5 +1,5 @@
-clc
 lda {c1},x
+clc
 adc #1
 sta {c1},y
 bne !+

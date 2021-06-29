@@ -219,8 +219,8 @@ main: {
     cpy #$19*8
     bcc __b8
     // logo_dest += 32*8
-    clc
     lda.z logo_dest
+    clc
     adc #<$20*8
     sta.z logo_dest
     lda.z logo_dest+1

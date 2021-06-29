@@ -1,7 +1,7 @@
 sty $ff
-clc
 lda ({z1}),y
 ldy #0
+clc
 adc ({z1}),y
 sta ({z1}),y
 ldy $ff

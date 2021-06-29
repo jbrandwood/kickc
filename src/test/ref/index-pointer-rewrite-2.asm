@@ -27,8 +27,8 @@ main: {
     rts
   __b2:
     // entities[i] = 7
-    clc
     lda.z i
+    clc
     adc #<entities
     sta.z __1
     lda.z i+1

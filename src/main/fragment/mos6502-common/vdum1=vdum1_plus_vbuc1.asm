@@ -1,5 +1,5 @@
-clc
 lda {m1}
+clc
 adc #{c1}
 sta {m1}
 bcc !+

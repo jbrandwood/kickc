@@ -17,8 +17,8 @@ main: {
     txa
     asl
     tay
-    clc
     lda words,y
+    clc
     adc #<$101
     sta words,y
     lda words+1,y

@@ -73,10 +73,10 @@ main: {
 sub: {
     // words[idx] -= s
     asl
-    sec
     stx.z $ff
     tax
     lda words,x
+    sec
     sbc.z $ff
     sta words,x
     bcs !+
@@ -112,8 +112,8 @@ print_sint: {
     lda #'-'
     jsr print_char
     // w = -w
-    sec
     lda #0
+    sec
     sbc.z w
     sta.z w
     lda #0

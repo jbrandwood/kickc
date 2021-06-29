@@ -1,6 +1,6 @@
 sty $ff
-sec
 lda {m2}
+sec
 sbc $ff
 sta {m1}
 lda {m2}+1

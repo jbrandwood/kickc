@@ -28,8 +28,8 @@ main: {
     sta.z idx+1
   __b1:
     // screen[idx] = STAR
-    clc
     lda.z idx
+    clc
     adc #<screen
     sta.z __15
     lda.z idx+1

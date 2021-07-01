@@ -683,7 +683,7 @@ div32u16u: {
     jsr divr16u
     // divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
-    // MAKEDWORD( quotient_hi, quotient_lo )
+    // MAKELONG( quotient_hi, quotient_lo )
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1

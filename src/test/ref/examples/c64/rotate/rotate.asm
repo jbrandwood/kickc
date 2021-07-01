@@ -537,7 +537,7 @@ mulf8u_prepared: {
   sm4:
     sbc mulf_sqr2_hi,x
     sta memB
-    // return { *memB, *resL };
+    // MAKEWORD( *memB, *resL )
     sta.z return+1
     lda resL
     sta.z return

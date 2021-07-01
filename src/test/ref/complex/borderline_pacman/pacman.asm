@@ -3916,10 +3916,10 @@ render: {
     // ytile*2
     tya
     asl
-    // char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 }
+    // MAKEWORD( BYTE1(RENDER_INDEX) + xcol, ytile*2 )
     stx.z render_index_xcol+1
     sta.z render_index_xcol
-    // unsigned int canvas_offset = { render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
+    // unsigned int canvas_offset = MAKEWORD( render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] )
     ldy #RENDER_OFFSET_CANVAS_HI
     lda (render_index_xcol),y
     sta.z canvas_offset+1
@@ -4063,10 +4063,10 @@ render_tiles: {
     // ytile*2
     lda.z ytile
     asl
-    // char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 }
+    // MAKEWORD( BYTE1(RENDER_INDEX) + xcol, ytile*2 )
     stx.z render_index_xcol+1
     sta.z render_index_xcol
-    // unsigned int canvas_offset = {render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] }
+    // unsigned int canvas_offset = MAKEWORD( render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] )
     ldy #RENDER_OFFSET_CANVAS_HI
     lda (render_index_xcol),y
     sta.z canvas_offset+1

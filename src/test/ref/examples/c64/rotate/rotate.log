@@ -124,7 +124,8 @@ mulf8u_prepared: scope:[mulf8u_prepared]  from mulf8s_prepared
   mulf8u_prepared::b#1 = phi( mulf8s_prepared/mulf8u_prepared::b#0 )
   *mulf8u_prepared::memB = mulf8u_prepared::b#1
   asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
-  mulf8u_prepared::return#0 = ((word)) { *mulf8u_prepared::memB, *mulf8u_prepared::resL }
+  mulf8u_prepared::$0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL
+  mulf8u_prepared::return#0 = mulf8u_prepared::$0
   to:mulf8u_prepared::@return
 mulf8u_prepared::@return: scope:[mulf8u_prepared]  from mulf8u_prepared
   mulf8u_prepared::return#3 = phi( mulf8u_prepared/mulf8u_prepared::return#0 )
@@ -852,6 +853,7 @@ byte mulf8u_prepare::a#1
 byte mulf8u_prepare::a#2
 constant byte* const mulf8u_prepare::memA = (byte*)$fd
 word mulf8u_prepared(byte mulf8u_prepared::b)
+word~ mulf8u_prepared::$0
 byte mulf8u_prepared::b
 byte mulf8u_prepared::b#0
 byte mulf8u_prepared::b#1
@@ -995,8 +997,6 @@ dword print_ulong_at::dw#2
 constant signed byte* xs[8]  = { -$46, -$46, -$46, 0, 0, $46, $46, $46 }
 constant signed byte* ys[8]  = { -$46, 0, $46, -$46, $46, -$46, 0, $46 }
 
-Fixing inline constructor with mulf8u_prepared::$0 = (byte)*mulf8u_prepared::memB w= (byte)*mulf8u_prepared::resL
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $40 in 
 Adding number conversion cast (unumber) 1 in mulf_init::sqr1_hi#0 = mulf_sqr1_hi+1
 Adding number conversion cast (unumber) 1 in mulf_init::sqr1_lo#0 = mulf_sqr1_lo+1
@@ -1078,8 +1078,6 @@ Simplifying constant integer cast $1ff
 Simplifying constant integer cast $100
 Simplifying constant integer cast $1ff
 Simplifying constant integer cast 1
-Simplifying constant integer cast *mulf8u_prepared::memB
-Simplifying constant integer cast *mulf8u_prepared::resL
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $ffffffff
@@ -4660,7 +4658,7 @@ mulf8u_prepared: {
   sm4:
     sbc mulf_sqr2_hi,x
     sta memB
-    // return { *memB, *resL };
+    // MAKEWORD( *memB, *resL )
     // [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z return+1
     lda resL

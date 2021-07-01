@@ -280,7 +280,7 @@ init_dist_screen: {
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp(4) screen)
 init_angle_screen: {
-    .label __7 = $11
+    .label __9 = $11
     .label screen = 4
     .label screen_bottomline = 4
     .label xw = $16
@@ -346,14 +346,14 @@ init_angle_screen: {
     eor #$ff
     sec
     adc #$27
-    // signed word xw = (signed word)(word){ 39-x*2, 0 }
+    // MAKEWORD( 39-x*2, 0 )
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // signed word yw = (signed word)(word){ y*2, 0 }
+    // MAKEWORD( y*2, 0 )
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -362,13 +362,13 @@ init_angle_screen: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __7
-    sta.z __7
+    adc.z __9
+    sta.z __9
     bcc !+
-    inc.z __7+1
+    inc.z __9+1
   !:
     // byte ang_w = BYTE1(angle_w+0x0080)
-    lda.z __7+1
+    lda.z __9+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     ldy.z xb

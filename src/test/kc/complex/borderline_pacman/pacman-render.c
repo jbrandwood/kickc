@@ -108,7 +108,7 @@ void init_render_index() {
 // - pixels: The pixel data to set 
 void render(char xcol, char ypos, char pixels) {
     char ytile = ypos/4;
-    char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 };
+    char * render_index_xcol = (char*)MAKEWORD( BYTE1(RENDER_INDEX) + xcol, ytile*2 );
     unsigned int canvas_offset = MAKEWORD( render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] );
     char * canvas1 = SPRITES_1 + canvas_offset;
     char * canvas2 = SPRITES_2 + canvas_offset;
@@ -134,7 +134,7 @@ void render(char xcol, char ypos, char pixels) {
 void render_tiles(char xcol, char ytile, char tile_left, char tile_right) {
     char * tile_left_pixels = TILES_LEFT + tile_left*4;
     char * tile_right_pixels = TILES_RIGHT + tile_right*4;
-    char * render_index_xcol = (char*){ BYTE1(RENDER_INDEX) + xcol, ytile*2 };
+    char * render_index_xcol = (char*)MAKEWORD( BYTE1(RENDER_INDEX) + xcol, ytile*2 );
     unsigned int canvas_offset = MAKEWORD( render_index_xcol[RENDER_OFFSET_CANVAS_HI], render_index_xcol[RENDER_OFFSET_CANVAS_LO] );
     char * canvas1 = SPRITES_1 + canvas_offset;
     char * canvas2 = SPRITES_2 + canvas_offset;

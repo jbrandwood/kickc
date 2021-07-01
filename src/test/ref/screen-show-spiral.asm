@@ -129,7 +129,7 @@ main: {
     ldy #0
     cmp (fill),y
     beq __b10
-    // word dist_angle = { *dist, *angle }
+    // MAKEWORD( *dist, *angle )
     lda (angle),y
     sta.z dist_angle
     lda (dist),y
@@ -338,7 +338,7 @@ init_dist_screen: {
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($11) screen)
 init_angle_screen: {
-    .label __7 = $19
+    .label __9 = $19
     .label screen = $11
     .label screen_bottomline = $11
     .label xw = $24
@@ -404,14 +404,14 @@ init_angle_screen: {
     eor #$ff
     sec
     adc #$27
-    // signed word xw = (signed word)(word){ 39-x*2, 0 }
+    // MAKEWORD( 39-x*2, 0 )
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // signed word yw = (signed word)(word){ y*2, 0 }
+    // MAKEWORD( y*2, 0 )
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -420,13 +420,13 @@ init_angle_screen: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __7
-    sta.z __7
+    adc.z __9
+    sta.z __9
     bcc !+
-    inc.z __7+1
+    inc.z __9+1
   !:
     // byte ang_w = BYTE1(angle_w+0x0080)
-    lda.z __7+1
+    lda.z __9+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     ldy.z xb

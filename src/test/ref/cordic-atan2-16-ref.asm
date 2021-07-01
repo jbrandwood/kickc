@@ -23,7 +23,7 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label __4 = $f
+    .label __6 = $f
     .label xw = $17
     .label yw = $19
     .label angle_w = $f
@@ -54,12 +54,12 @@ main: {
     lda #-$13
     sta.z x
   __b2:
-    // signed word xw = (signed word)(word){ (byte)x, 0 }
+    // MAKEWORD( (byte)x, 0 )
     lda #0
     ldy.z x
     sty.z xw+1
     sta.z xw
-    // signed word yw = (signed word)(word){ (byte)y, 0 }
+    // MAKEWORD( (byte)y, 0 )
     ldy.z y
     sty.z yw+1
     sta.z yw
@@ -69,13 +69,13 @@ main: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __4
-    sta.z __4
+    adc.z __6
+    sta.z __6
     bcc !+
-    inc.z __4+1
+    inc.z __6+1
   !:
     // byte ang_w = BYTE1(angle_w+0x0080)
-    ldx.z __4+1
+    ldx.z __6+1
     // diff(ang_w, *screen_ref)
     ldy #0
     lda (screen_ref),y

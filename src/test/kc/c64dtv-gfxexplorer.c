@@ -712,7 +712,7 @@ void form_set_screen(byte* screen) {
 // field_idx is the index of the field to get the screen address for
 byte* form_field_ptr(byte field_idx) {
     byte y = form_fields_y[field_idx];
-    byte* line = (byte*) { form_line_hi[y], form_line_lo[y] };
+    byte* line = (byte*) MAKEWORD( form_line_hi[y], form_line_lo[y] );
     byte x = form_fields_x[field_idx];
     byte* field = line+x;
     return field;

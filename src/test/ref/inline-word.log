@@ -12,18 +12,19 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1 main::@2
   main::l#2 = phi( main::@1/main::l#0, main::@2/main::l#1 )
   main::h#2 = phi( main::@1/main::h#4, main::@2/main::h#2 )
-  main::w#0 = (word){ main::his[main::h#2], main::l#2 }
+  main::$0 = main::his[main::h#2] w= main::l#2
+  main::w#0 = main::$0
   main::sc#0 = (byte*)main::w#0
   *main::sc#0 = '*'
   main::l#1 = main::l#2 + rangenext(4,7)
-  main::$0 = main::l#1 != rangelast(4,7)
-  if(main::$0) goto main::@2
+  main::$1 = main::l#1 != rangelast(4,7)
+  if(main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   main::h#3 = phi( main::@2/main::h#2 )
   main::h#1 = main::h#3 + rangenext(0,2)
-  main::$1 = main::h#1 != rangelast(0,2)
-  if(main::$1) goto main::@1
+  main::$2 = main::h#1 != rangelast(0,2)
+  if(main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -43,8 +44,9 @@ SYMBOL TABLE SSA
 constant byte* const SCREEN = (byte*)$400
 void __start()
 void main()
-bool~ main::$0
+word~ main::$0
 bool~ main::$1
+bool~ main::$2
 byte main::h
 byte main::h#0
 byte main::h#1
@@ -61,27 +63,23 @@ byte* main::sc#0
 word main::w
 word main::w#0
 
-Fixing inline constructor with main::$2 = (byte)main::his[main::h#2] w= (byte)main::l#2
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $100 in 
 Adding number conversion cast (unumber) $200 in 
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $100
 Simplifying constant integer cast $200
-Simplifying constant integer cast main::his[main::h#2]
-Simplifying constant integer cast main::l#2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $100
 Finalized unsigned number type (word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias main::w#0 = main::$2 
+Alias main::w#0 = main::$0 
 Alias main::h#2 = main::h#3 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values main::h#2 main::h#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition main::$0 [9] if(main::l#1!=rangelast(4,7)) goto main::@2
-Simple Condition main::$1 [12] if(main::h#1!=rangelast(0,2)) goto main::@1
+Simple Condition main::$1 [9] if(main::l#1!=rangelast(4,7)) goto main::@2
+Simple Condition main::$2 [12] if(main::h#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::h#0 = 0
 Constant main::l#0 = 4
@@ -344,7 +342,7 @@ main: {
     // [2] phi main::l#2 = main::l#1 [phi:main::@2->main::@2#0] -- register_copy 
     // main::@2
   __b2:
-    // word w = { his[h], l }
+    // word w = MAKEWORD( his[h], l )
     // [3] main::w#0 = main::his[main::h#4] w= main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuxx 
     ldy.z h
     lda his,y

@@ -34,7 +34,8 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
 word getFAC()
 getFAC: scope:[getFAC]  from gen_sintab::@21
   asm { jsr$b1aa stymemLo stamemHi  }
-  getFAC::w#0 = (word){ *memHi, *memLo }
+  getFAC::$0 = *memHi w= *memLo
+  getFAC::w#0 = getFAC::$0
   getFAC::return#0 = getFAC::w#0
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
@@ -1239,6 +1240,7 @@ byte* gen_sprites::spr#1
 byte* gen_sprites::spr#2
 byte* gen_sprites::spr#3
 word getFAC()
+word~ getFAC::$0
 word getFAC::return
 word getFAC::return#0
 word getFAC::return#1
@@ -1532,8 +1534,6 @@ constant const byte* sintab_y[$c5]  = { fill( $c5, 0) }
 constant byte* const sprites = (byte*)$2000
 void subFACfromARG()
 
-Fixing inline constructor with getFAC::$0 = (byte)*memHi w= (byte)*memLo
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $3f8 in 
 Adding number conversion cast (unumber) $ff in main::$1 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $ff
 Adding number conversion cast (unumber) 0 in COLS[init::i#2] = 0
@@ -1627,8 +1627,6 @@ Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3f8
 Simplifying constant pointer cast (byte*) 58085
-Simplifying constant integer cast *memHi
-Simplifying constant integer cast *memLo
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -6834,7 +6832,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // unsigned int w = { *memHi, *memLo }
+    // MAKEWORD( *memHi, *memLo )
     // [217] getFAC::return#0 = *memHi w= *memLo -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z return+1
     tya

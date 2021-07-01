@@ -2344,7 +2344,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue result;
       if(ctx.expr() instanceof KickCParser.ExprIdContext) {
          procedureName = ctx.expr().getText();
-         // Handle the special BYTE0/1/2/3 calls
+         // Handle the special BYTE0/1/2/3/WORD0/1/MAKEWORD/MAKEDWORD calls
          if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size() == 1) {
             result = addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
          } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size() == 1) {
@@ -2357,6 +2357,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             result = addExprUnary(ctx, Operators.WORD0, parameters.get(0));
          } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size() == 1) {
             result = addExprUnary(ctx, Operators.WORD1, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKEWORD.equals(procedureName) && parameters.size() == 2) {
+            result = addExprBinary(ctx, parameters.get(0), Operators.WORD, parameters.get(1));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG.equals(procedureName) && parameters.size() == 2) {
+            result = addExprBinary(ctx, parameters.get(0), Operators.DWORD, parameters.get(1));
          } else {
             // A normal named call
             result = addIntermediateVar().getRef();
@@ -2458,6 +2462,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue right = (RValue) this.visit(ctx.expr(1));
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinary(op);
+      return addExprBinary(ctx, left, operator, right);
+   }
+
+   private RValue addExprBinary(ParserRuleContext ctx, RValue left, Operator operator, RValue right) {
       if(left instanceof ConstantValue && right instanceof ConstantValue) {
          return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
       } else {

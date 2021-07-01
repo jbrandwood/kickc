@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::p = 2*$100+3
+  main::p = 2w=3
   main::$0 = byte0  *main::q
   main::SCREEN[0] = main::$0
   main::$1 = byte1  *main::q
@@ -52,6 +52,9 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -61,7 +64,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] main::p = 2*$100+3
+  [0] main::p = 2w=3
   [1] main::$0 = byte0  *main::q
   [2] *main::SCREEN = main::$0
   [3] main::$1 = byte1  *main::q
@@ -90,7 +93,7 @@ Allocated zp[2]:2 [ main::p ]
 Allocated zp[1]:4 [ main::$0 ]
 Allocated zp[1]:5 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] main::p = 2*$100+3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::p = 2w=3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -121,7 +124,7 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [0] main::p = 2*$100+3 -- vwuz1=vwuc1 
+    // [0] main::p = 2w=3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
@@ -182,8 +185,8 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // word p = { 2, 3 }
-    // [0] main::p = 2*$100+3 -- vwuz1=vwuc1 
+    // word p = MAKEWORD( 2, 3 )
+    // [0] main::p = 2w=3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3

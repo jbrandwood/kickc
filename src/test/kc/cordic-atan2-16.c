@@ -14,8 +14,8 @@ void main() {
     byte* screen = SCREEN;
     for(signed byte y: -12..12) {
         for(signed byte x: -19..20) {
-            signed word xw = (signed word)(word){ (byte)x, 0 };
-            signed word yw = (signed word)(word){ (byte)y, 0 };
+            signed word xw = (signed word)MAKEWORD( (byte)x, 0 );
+            signed word yw = (signed word)MAKEWORD( (byte)y, 0 );
             word angle_w = atan2_16(xw, yw);
             byte ang_w = BYTE1(angle_w+0x0080);
             *screen++ = ang_w;

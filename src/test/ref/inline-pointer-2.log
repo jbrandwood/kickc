@@ -3,11 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::$1 = (byte*){ 4, 0 }
-  main::$2 = (word){ 0, $28 }
-  main::$0 = main::$1 + main::$2
-  main::screen#0 = main::$0
-  *main::screen#0 = 'a'
+  *main::screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -26,59 +22,20 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-byte*~ main::$0
-byte*~ main::$1
-word~ main::$2
-byte* main::screen
-byte* main::screen#0
+constant byte* main::screen = (byte*)4w=0+(word)0w=$28
 
-Fixing inline constructor with main::$3 = (byte)4 w= (byte)0
-Fixing inline constructor with main::$4 = (byte)0 w= (byte)$28
-Successful SSA optimization Pass2FixInlineConstructors
-Simplifying constant integer cast 4
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast $28
+Simplifying constant integer cast 0w=$28
 Successful SSA optimization PassNCastSimplification
-Alias main::$2 = main::$4 
-Alias main::screen#0 = main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] main::$3 = 4 w= 0
-Constant right-side identified [2] main::$2 = 0 w= $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Simplifying constant evaluating to zero 0*$100 in [2] main::$2 = 0*$100+$28
-Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero 4*$100 in [0] main::$3 = 4*$100+0
-Simplifying expression containing zero $28 in [2] main::$2 = 0+$28
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 4*$100 in [0] main::$3 = 4*$100
-Adding number conversion cast (unumber) $100 in [0] main::$3 = ((unumber)) 4*$100
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast [0] main::$3 = (unumber)4*(unumber)$100
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 4*(unumber)$100
-Simplifying constant integer cast $100
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant main::$3 = 4*$100
-Constant main::$2 = $28
-Successful SSA optimization Pass2ConstantIdentification
-Constant main::$1 = (byte*)main::$3
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] main::screen#0 = main::$1 + main::$2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::screen#0 = main::$1+main::$2
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$3 = 4*$100
-Constant inlined main::$1 = (byte*)4*$100
-Constant inlined main::$2 = $28
-Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -88,7 +45,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *main::screen#0 = 'a'
+  [0] *main::screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -97,12 +54,11 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *main::screen#0 = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::screen = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -127,8 +83,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label screen = 4*$100+$28
-    // [0] *main::screen#0 = 'a' -- _deref_pbuc1=vbuc2 
+    .label screen = 4*$100+0+0*$100+$28
+    // [0] *main::screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp __breturn
@@ -147,8 +103,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte* main::screen
-constant byte* main::screen#0 screen = (byte*)4*$100+$28
+constant byte* main::screen = (byte*)4w=0+0w=$28
 
 
 
@@ -170,9 +125,9 @@ Score: 12
 .segment Code
   // main
 main: {
-    .label screen = 4*$100+$28
+    .label screen = 4*$100+0+0*$100+$28
     // *screen = 'a'
-    // [0] *main::screen#0 = 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

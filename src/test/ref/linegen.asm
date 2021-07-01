@@ -233,7 +233,7 @@ main: {
 // length - the number of points in a total sine wavelength (the size of the table)
 // lin16u_gen(word zp(9) min, word zp(7) max, word* zp($d) lintab)
 lin16u_gen: {
-    .label __6 = $18
+    .label __8 = $18
     .label ampl = 7
     .label stepi = $12
     .label stepf = $f
@@ -269,7 +269,7 @@ lin16u_gen: {
     jsr divr16u
     // divr16u(0, length-1, rem16u)
     // word stepf = divr16u(0, length-1, rem16u)
-    // dword step = { stepi, stepf }
+    // dword step = MAKELONG( stepi, stepf )
     lda.z stepi
     sta.z step+2
     lda.z stepi+1
@@ -278,15 +278,14 @@ lin16u_gen: {
     sta.z step
     lda.z stepf+1
     sta.z step+1
-    // dword val = { min, 0 }
-    lda #<0
-    sta.z val
-    sta.z val+1
+    // dword val = MAKELONG( min, 0 )
     lda.z min
     sta.z val+2
     lda.z min+1
     sta.z val+3
-    lda #<0
+    lda #0
+    sta.z val
+    sta.z val+1
     sta.z i
     sta.z i+1
   __b1:
@@ -302,15 +301,15 @@ lin16u_gen: {
   __b2:
     // WORD1(val)
     lda.z val+2
-    sta.z __6
+    sta.z __8
     lda.z val+3
-    sta.z __6+1
+    sta.z __8+1
     // *lintab = WORD1(val)
     ldy #0
-    lda.z __6
+    lda.z __8
     sta (lintab),y
     iny
-    lda.z __6+1
+    lda.z __8+1
     sta (lintab),y
     // val = val + step
     clc

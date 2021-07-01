@@ -45,7 +45,7 @@ void bitmap_clear(char bgcol, char fgcol) {
 
 // Plot a single dot in the bitmap
 void bitmap_plot(unsigned int x, char y) {
-    char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    char* plotter = (char*) MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] );
     plotter += ( x & $fff8 );
     *plotter |= bitmap_plot_bit[BYTE0(x)];
 }

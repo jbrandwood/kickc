@@ -324,7 +324,7 @@ public class Compiler {
 
    private void pass2AssertSSA() {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
-      //assertions.add(new Pass2AssertNoLValueObjectEquality(program));
+      assertions.add(new Pass2AssertNoValueLists(program));
       assertions.add(new PassNAssertTypeDeref(program));
       assertions.add(new PassNAssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
@@ -344,7 +344,6 @@ public class Compiler {
 
    private List<PassStep> getPass2Optimizations() {
       List<PassStep> optimizations = new ArrayList<>();
-      optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));

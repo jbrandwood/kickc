@@ -99,6 +99,22 @@ public class AsmFormat {
                ")";
       }
 
+      if(Operators.WORD.equals(operator)) {
+         return
+               getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
+                     "*$100+" +
+                     getAsmConstant(program, right, operator.getPrecedence(), codeScope)
+               ;
+      }
+
+      if(Operators.DWORD.equals(operator)) {
+         return
+               getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
+                     "*$10000+" +
+                     getAsmConstant(program, right, operator.getPrecedence(), codeScope)
+               ;
+      }
+
       // Handle non-associative operators - only handle right side since parser is left-associative A-B-C = (A-B)-C
       boolean rightParenthesis = false;
       if(!operator.isAssociative()) {

@@ -184,7 +184,8 @@ div32u16u::@2: scope:[div32u16u]  from div32u16u::@1
   div32u16u::$3 = divr16u::return#6
   rem16u#3 = rem16u#12
   div32u16u::quotient_lo#0 = div32u16u::$3
-  div32u16u::quotient#0 = (dword){ div32u16u::quotient_hi#1, div32u16u::quotient_lo#0 }
+  div32u16u::$4 = div32u16u::quotient_hi#1 dw= div32u16u::quotient_lo#0
+  div32u16u::quotient#0 = div32u16u::$4
   div32u16u::return#0 = div32u16u::quotient#0
   to:div32u16u::@return
 div32u16u::@return: scope:[div32u16u]  from div32u16u::@2
@@ -1113,6 +1114,7 @@ word~ div32u16u::$0
 word~ div32u16u::$1
 word~ div32u16u::$2
 word~ div32u16u::$3
+dword~ div32u16u::$4
 dword div32u16u::dividend
 dword div32u16u::dividend#0
 dword div32u16u::dividend#1
@@ -1848,8 +1850,6 @@ word utoa_append::value#3
 word utoa_append::value#4
 word utoa_append::value#5
 
-Fixing inline constructor with div32u16u::$4 = (word)div32u16u::quotient_hi#1 dw= (word)div32u16u::quotient_lo#0
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
 Adding number conversion cast (unumber) $ffffffff in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Adding number conversion cast (unumber) clock::$0 in clock::$0 = (unumber)$ffffffff - *CIA2_TIMER_AB
@@ -1941,8 +1941,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
-Simplifying constant integer cast div32u16u::quotient_hi#1
-Simplifying constant integer cast div32u16u::quotient_lo#0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast $3e8
@@ -6665,7 +6663,7 @@ div32u16u: {
     // div32u16u::@2
     // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
     // [111] div32u16u::quotient_lo#0 = divr16u::return#3
-    // unsigned long quotient = { quotient_hi, quotient_lo}
+    // MAKEDWORD( quotient_hi, quotient_lo )
     // [112] div32u16u::return#0 = div32u16u::quotient_hi#0 dw= div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
     lda.z quotient_hi
     sta.z return+2

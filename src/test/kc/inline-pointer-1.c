@@ -6,6 +6,6 @@ void main() {
 }
 
 void puta(byte ph, byte pl) {
-    byte* screen = (byte*) { ph, pl };
+    byte* screen = (byte*) MAKEWORD( ph, pl );
     *screen = 'a';
 }

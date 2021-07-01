@@ -30,6 +30,10 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String INTRINSIC_WORD0_NAME = "WORD0";
    /** The word1 procedure name. */
    public static final String INTRINSIC_WORD1_NAME = "WORD1";
+   /** The makeword procedure name. */
+   public static final String INTRINSIC_MAKEWORD = "MAKEWORD";
+   /** The makelong procedure name. */
+   public static final String INTRINSIC_MAKELONG = "MAKELONG";
 
    public Pass1ByteXIntrinsicRewrite(Program program) {
       super(program);

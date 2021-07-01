@@ -329,8 +329,12 @@ main::@2: scope:[main]  from main::@1 main::@8
   main::screen#3 = phi( main::@1/main::screen#4, main::@8/main::screen#1 )
   main::y#2 = phi( main::@1/main::y#4, main::@8/main::y#5 )
   main::x#2 = phi( main::@1/main::x#0, main::@8/main::x#1 )
-  main::xw#0 = (signed word)(word){ (byte)main::x#2, 0 }
-  main::yw#0 = (signed word)(word){ (byte)main::y#2, 0 }
+  main::$10 = (byte)main::x#2
+  main::$2 = main::$10 w= 0
+  main::xw#0 = (signed word)main::$2
+  main::$11 = (byte)main::y#2
+  main::$3 = main::$11 w= 0
+  main::yw#0 = (signed word)main::$3
   atan2_16::x#0 = main::xw#0
   atan2_16::y#0 = main::yw#0
   call atan2_16 
@@ -341,23 +345,23 @@ main::@8: scope:[main]  from main::@2
   main::x#3 = phi( main::@2/main::x#2 )
   main::screen#2 = phi( main::@2/main::screen#3 )
   atan2_16::return#4 = phi( main::@2/atan2_16::return#2 )
-  main::$2 = atan2_16::return#4
-  main::angle_w#0 = main::$2
-  main::$3 = main::angle_w#0 + $80
-  main::$4 = byte1  main::$3
-  main::ang_w#0 = main::$4
+  main::$4 = atan2_16::return#4
+  main::angle_w#0 = main::$4
+  main::$5 = main::angle_w#0 + $80
+  main::$6 = byte1  main::$5
+  main::ang_w#0 = main::$6
   *main::screen#2 = main::ang_w#0
   main::screen#1 = ++ main::screen#2
   main::x#1 = main::x#3 + rangenext(-$13,$14)
-  main::$5 = main::x#1 != rangelast(-$13,$14)
-  if(main::$5) goto main::@2
+  main::$7 = main::x#1 != rangelast(-$13,$14)
+  if(main::$7) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@8
   main::screen#5 = phi( main::@8/main::screen#1 )
   main::y#3 = phi( main::@8/main::y#5 )
   main::y#1 = main::y#3 + rangenext(-$c,$c)
-  main::$6 = main::y#1 != rangelast(-$c,$c)
-  if(main::$6) goto main::@1
+  main::$8 = main::y#1 != rangelast(-$c,$c)
+  if(main::$8) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@5
   if(true) goto main::@5
@@ -617,11 +621,15 @@ byte* init_font_hex::proto_lo#3
 byte* init_font_hex::proto_lo#4
 void main()
 byte~ main::$1
+byte~ main::$10
+byte~ main::$11
 word~ main::$2
-number~ main::$3
-byte~ main::$4
-bool~ main::$5
-bool~ main::$6
+word~ main::$3
+word~ main::$4
+number~ main::$5
+byte~ main::$6
+bool~ main::$7
+bool~ main::$8
 byte main::ang_w
 byte main::ang_w#0
 word main::angle_w
@@ -670,9 +678,6 @@ signed byte main::y#5
 signed word main::yw
 signed word main::yw#0
 
-Fixing inline constructor with main::$8 = (byte)(byte)main::x#2 w= (byte)0
-Fixing inline constructor with main::$9 = (byte)(byte)main::y#2 w= (byte)0
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $13 in 
 Adding number conversion cast (unumber) $c*$28 in 
 Adding number conversion cast (unumber) 0 in init_font_hex::charset#2[init_font_hex::idx#0] = 0
@@ -709,8 +714,10 @@ Adding number conversion cast (unumber) main::toD0181_$4 in main::toD0181_$4 = m
 Adding number conversion cast (unumber) $f in main::toD0181_$5 = main::toD0181_$4 & $f
 Adding number conversion cast (unumber) main::toD0181_$5 in main::toD0181_$5 = main::toD0181_$4 & (unumber)$f
 Adding number conversion cast (unumber) main::toD0181_$6 in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
-Adding number conversion cast (unumber) $80 in main::$3 = main::angle_w#0 + $80
-Adding number conversion cast (unumber) main::$3 in main::$3 = main::angle_w#0 + (unumber)$80
+Adding number conversion cast (unumber) 0 in main::$2 = main::$10 w= 0
+Adding number conversion cast (unumber) 0 in main::$3 = main::$11 w= 0
+Adding number conversion cast (unumber) $80 in main::$5 = main::angle_w#0 + $80
+Adding number conversion cast (unumber) main::$5 in main::$5 = main::angle_w#0 + (unumber)$80
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast init_font_hex::charset#2[init_font_hex::idx#0] = (unumber)0
 Inlining cast init_font_hex::charset#4[init_font_hex::idx#6] = (unumber)0
@@ -749,9 +756,7 @@ Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
-Simplifying constant integer cast (byte)main::x#2
 Simplifying constant integer cast 0
-Simplifying constant integer cast (byte)main::y#2
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
 Successful SSA optimization PassNCastSimplification
@@ -784,6 +789,8 @@ Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in atan2_16::$12 = $8000 - atan2_16::angle#9
@@ -792,7 +799,7 @@ Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
 Inferred type updated to byte in main::toD0181_$4 = main::toD0181_$3 / 4
 Inferred type updated to byte in main::toD0181_$5 = main::toD0181_$4 & $f
 Inferred type updated to byte in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
-Inferred type updated to word in main::$3 = main::angle_w#0 + $80
+Inferred type updated to word in main::$5 = main::angle_w#0 + $80
 Inversing boolean not [59] atan2_16::$17 = atan2_16::yi#3 != 0 from [58] atan2_16::$16 = atan2_16::yi#3 == 0
 Inversing boolean not [68] atan2_16::$11 = atan2_16::x#4 >= 0 from [67] atan2_16::$10 = atan2_16::x#4 < 0
 Inversing boolean not [79] atan2_16::$19 = 0 == atan2_16::shift#4 from [78] atan2_16::$24 = 0 != atan2_16::shift#4
@@ -849,8 +856,8 @@ Alias atan2_16::return#2 = atan2_16::return#4
 Alias main::screen#2 = main::screen#3 
 Alias main::x#2 = main::x#3 
 Alias main::y#2 = main::y#5 main::y#3 
-Alias main::angle_w#0 = main::$2 
-Alias main::ang_w#0 = main::$4 
+Alias main::angle_w#0 = main::$4 
+Alias main::ang_w#0 = main::$6 
 Alias main::screen#1 = main::screen#5 
 Successful SSA optimization Pass2AliasElimination
 Alias atan2_16::x#1 = atan2_16::x#5 atan2_16::x#10 
@@ -899,8 +906,8 @@ Simple Condition atan2_16::$19 [59] if(0==atan2_16::shift#2) goto atan2_16::@17
 Simple Condition atan2_16::$20 [62] if(atan2_16::yi#3>=0) goto atan2_16::@18
 Simple Condition atan2_16::$21 [76] if(atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@10
 Simple Condition atan2_16::$14 [79] if(atan2_16::y#0>=0) goto atan2_16::@8
-Simple Condition main::$5 [117] if(main::x#1!=rangelast(-$13,$14)) goto main::@2
-Simple Condition main::$6 [120] if(main::y#1!=rangelast(-$c,$c)) goto main::@1
+Simple Condition main::$7 [119] if(main::x#1!=rangelast(-$13,$14)) goto main::@2
+Simple Condition main::$8 [122] if(main::y#1!=rangelast(-$c,$c)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [76] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
@@ -923,7 +930,7 @@ Constant main::toD0181_$7 = (word)main::toD0181_screen#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word)main::toD0181_gfx#0 in [92] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [121] if(true) goto main::@5
+if() condition always true - replacing block destination [123] if(true) goto main::@5
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [17] init_font_hex::i#1 = ++ init_font_hex::i#2 to ++
 Resolved ranged comparison value [19] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to 5
@@ -933,10 +940,10 @@ Resolved ranged next value [30] init_font_hex::c#1 = ++ init_font_hex::c#6 to ++
 Resolved ranged comparison value [32] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to $10
 Resolved ranged next value [74] atan2_16::i#1 = ++ atan2_16::i#2 to ++
 Resolved ranged comparison value [76] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12 to CORDIC_ITERATIONS_16-1+1
-Resolved ranged next value [115] main::x#1 = ++ main::x#2 to ++
-Resolved ranged comparison value [117] if(main::x#1!=rangelast(-$13,$14)) goto main::@2 to $15
-Resolved ranged next value [118] main::y#1 = ++ main::y#4 to ++
-Resolved ranged comparison value [120] if(main::y#1!=rangelast(-$c,$c)) goto main::@1 to $d
+Resolved ranged next value [117] main::x#1 = ++ main::x#2 to ++
+Resolved ranged comparison value [119] if(main::x#1!=rangelast(-$13,$14)) goto main::@2 to $15
+Resolved ranged next value [120] main::y#1 = ++ main::y#4 to ++
+Resolved ranged comparison value [122] if(main::y#1!=rangelast(-$c,$c)) goto main::@1 to $d
 Simplifying expression containing zero init_font_hex::charset#2 in [8] init_font_hex::charset#2[init_font_hex::idx#0] = 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
@@ -953,8 +960,8 @@ Adding number conversion cast (unumber) $10 in [18] if(init_font_hex::c1#1!=$10)
 Adding number conversion cast (unumber) $10 in [21] if(init_font_hex::c#1!=$10) goto init_font_hex::@1
 Adding number conversion cast (unumber) CORDIC_ITERATIONS_16-1+1 in [54] if(atan2_16::i#1==CORDIC_ITERATIONS_16-1+1) goto atan2_16::@12
 Adding number conversion cast (unumber) 1 in [54] if(atan2_16::i#1==(unumber)CORDIC_ITERATIONS_16-1+1) goto atan2_16::@12
-Adding number conversion cast (snumber) $15 in [86] if(main::x#1!=$15) goto main::@2
-Adding number conversion cast (snumber) $d in [88] if(main::y#1!=$d) goto main::@1
+Adding number conversion cast (snumber) $15 in [88] if(main::x#1!=$15) goto main::@2
+Adding number conversion cast (snumber) $d in [90] if(main::y#1!=$d) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 5
 Simplifying constant integer cast $10
@@ -995,8 +1002,11 @@ Constant right-side identified [61] main::toD0181_return#0 = main::toD0181_$2 | 
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::toD0181_return#0 = main::toD0181_$2|main::toD0181_$5
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [65] main::xw#0 = (signed word)main::$8 keeping main::xw#0
-Inlining Noop Cast [67] main::yw#0 = (signed word)main::$9 keeping main::yw#0
+Inlining Noop Cast [64] main::$10 = (byte)main::x#2 keeping main::x#2
+Inlining Noop Cast [67] main::$11 = (byte)main::y#4 keeping main::y#4
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [66] main::xw#0 = (signed word)main::$2 keeping main::xw#0
+Inlining Noop Cast [69] main::yw#0 = (signed word)main::$3 keeping main::yw#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting division to use shift [31] atan2_16::angle#1 = atan2_16::angle#6 / 2
 Rewriting multiplication to use shift [45] atan2_16::$22 = atan2_16::i#2 * SIZEOF_WORD
@@ -1163,8 +1173,8 @@ main::@2: scope:[main]  from main::@1 main::@6
   to:main::@6
 main::@6: scope:[main]  from main::@2
   [12] main::angle_w#0 = atan2_16::return#2
-  [13] main::$3 = main::angle_w#0 + $80
-  [14] main::ang_w#0 = byte1  main::$3
+  [13] main::$5 = main::angle_w#0 + $80
+  [14] main::ang_w#0 = byte1  main::$5
   [15] *main::screen#2 = main::ang_w#0
   [16] main::screen#1 = ++ main::screen#2
   [17] main::x#1 = ++ main::x#2
@@ -1406,7 +1416,7 @@ byte* init_font_hex::proto_lo
 byte* init_font_hex::proto_lo#1 500.5
 byte* init_font_hex::proto_lo#4 923.3076923076923
 void main()
-word~ main::$3 202.0
+word~ main::$5 202.0
 byte main::ang_w
 byte main::ang_w#0 202.0
 word main::angle_w
@@ -1454,7 +1464,7 @@ Added variable atan2_16::x#0 to live range equivalence class [ atan2_16::x#0 ]
 Added variable atan2_16::y#0 to live range equivalence class [ atan2_16::y#0 ]
 Added variable atan2_16::return#2 to live range equivalence class [ atan2_16::return#2 ]
 Added variable main::angle_w#0 to live range equivalence class [ main::angle_w#0 ]
-Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
 Added variable main::ang_w#0 to live range equivalence class [ main::ang_w#0 ]
 Added variable init_font_hex::$0 to live range equivalence class [ init_font_hex::$0 ]
 Added variable init_font_hex::$1 to live range equivalence class [ init_font_hex::$1 ]
@@ -1487,7 +1497,7 @@ Complete equivalence classes
 [ atan2_16::y#0 ]
 [ atan2_16::return#2 ]
 [ main::angle_w#0 ]
-[ main::$3 ]
+[ main::$5 ]
 [ main::ang_w#0 ]
 [ init_font_hex::$0 ]
 [ init_font_hex::$1 ]
@@ -1519,7 +1529,7 @@ Allocated zp[2]:34 [ atan2_16::x#0 ]
 Allocated zp[2]:36 [ atan2_16::y#0 ]
 Allocated zp[2]:38 [ atan2_16::return#2 ]
 Allocated zp[2]:40 [ main::angle_w#0 ]
-Allocated zp[2]:42 [ main::$3 ]
+Allocated zp[2]:42 [ main::$5 ]
 Allocated zp[1]:44 [ main::ang_w#0 ]
 Allocated zp[1]:45 [ init_font_hex::$0 ]
 Allocated zp[1]:46 [ init_font_hex::$1 ]
@@ -1535,7 +1545,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::x
 Statement [9] atan2_16::y#0 = (signed word)main::yw#0 [ main::y#4 main::x#2 main::screen#2 atan2_16::x#0 atan2_16::y#0 ] (  [ main::y#4 main::x#2 main::screen#2 atan2_16::x#0 atan2_16::y#0 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [11] atan2_16::return#2 = atan2_16::return#0 [ main::y#4 main::x#2 main::screen#2 atan2_16::return#2 ] (  [ main::y#4 main::x#2 main::screen#2 atan2_16::return#2 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [12] main::angle_w#0 = atan2_16::return#2 [ main::y#4 main::x#2 main::screen#2 main::angle_w#0 ] (  [ main::y#4 main::x#2 main::screen#2 main::angle_w#0 ] { }  ) always clobbers reg byte a 
-Statement [13] main::$3 = main::angle_w#0 + $80 [ main::y#4 main::x#2 main::screen#2 main::$3 ] (  [ main::y#4 main::x#2 main::screen#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [13] main::$5 = main::angle_w#0 + $80 [ main::y#4 main::x#2 main::screen#2 main::$5 ] (  [ main::y#4 main::x#2 main::screen#2 main::$5 ] { }  ) always clobbers reg byte a 
 Statement [15] *main::screen#2 = main::ang_w#0 [ main::y#4 main::x#2 main::screen#2 ] (  [ main::y#4 main::x#2 main::screen#2 ] { }  ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::x#2 main::x#1 ]
@@ -1590,7 +1600,7 @@ Statement [8] atan2_16::x#0 = (signed word)main::xw#0 [ main::y#4 main::x#2 main
 Statement [9] atan2_16::y#0 = (signed word)main::yw#0 [ main::y#4 main::x#2 main::screen#2 atan2_16::x#0 atan2_16::y#0 ] (  [ main::y#4 main::x#2 main::screen#2 atan2_16::x#0 atan2_16::y#0 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [11] atan2_16::return#2 = atan2_16::return#0 [ main::y#4 main::x#2 main::screen#2 atan2_16::return#2 ] (  [ main::y#4 main::x#2 main::screen#2 atan2_16::return#2 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [12] main::angle_w#0 = atan2_16::return#2 [ main::y#4 main::x#2 main::screen#2 main::angle_w#0 ] (  [ main::y#4 main::x#2 main::screen#2 main::angle_w#0 ] { }  ) always clobbers reg byte a 
-Statement [13] main::$3 = main::angle_w#0 + $80 [ main::y#4 main::x#2 main::screen#2 main::$3 ] (  [ main::y#4 main::x#2 main::screen#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [13] main::$5 = main::angle_w#0 + $80 [ main::y#4 main::x#2 main::screen#2 main::$5 ] (  [ main::y#4 main::x#2 main::screen#2 main::$5 ] { }  ) always clobbers reg byte a 
 Statement [15] *main::screen#2 = main::ang_w#0 [ main::y#4 main::x#2 main::screen#2 ] (  [ main::y#4 main::x#2 main::screen#2 ] { }  ) always clobbers reg byte y 
 Statement [25] *init_font_hex::charset#2 = 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( init_font_hex:1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [27] init_font_hex::$0 = init_font_hex::proto_hi#6[init_font_hex::i#2] << 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( init_font_hex:1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
@@ -1651,7 +1661,7 @@ Potential registers zp[2]:34 [ atan2_16::x#0 ] : zp[2]:34 ,
 Potential registers zp[2]:36 [ atan2_16::y#0 ] : zp[2]:36 , 
 Potential registers zp[2]:38 [ atan2_16::return#2 ] : zp[2]:38 , 
 Potential registers zp[2]:40 [ main::angle_w#0 ] : zp[2]:40 , 
-Potential registers zp[2]:42 [ main::$3 ] : zp[2]:42 , 
+Potential registers zp[2]:42 [ main::$5 ] : zp[2]:42 , 
 Potential registers zp[1]:44 [ main::ang_w#0 ] : zp[1]:44 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:45 [ init_font_hex::$0 ] : zp[1]:45 , reg byte x , reg byte y , 
 Potential registers zp[1]:46 [ init_font_hex::$1 ] : zp[1]:46 , reg byte a , reg byte x , reg byte y , 
@@ -1663,7 +1673,7 @@ Potential registers zp[1]:50 [ atan2_16::$22 ] : zp[1]:50 , reg byte a , reg byt
 REGISTER UPLIFT SCOPES
 Uplift Scope [atan2_16] 28,666,670.58: zp[1]:25 [ atan2_16::shift#2 atan2_16::shift#5 atan2_16::shift#1 ] 20,600,008: zp[2]:26 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ] 17,333,338.67: zp[2]:28 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ] 7,524,818.05: zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 ] 2,690,940.68: zp[2]:16 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 ] 2,273,742.67: zp[2]:18 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 ] 2,000,002: zp[1]:49 [ atan2_16::$23 ] 2,000,002: zp[1]:50 [ atan2_16::$22 ] 1,708,335.04: zp[1]:20 [ atan2_16::i#2 atan2_16::i#1 ] 8,208.5: zp[2]:23 [ atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 ] 202: zp[2]:38 [ atan2_16::return#2 ] 108.03: zp[2]:34 [ atan2_16::x#0 ] 102.62: zp[2]:36 [ atan2_16::y#0 ] 
 Uplift Scope [init_font_hex] 21,668.83: zp[1]:14 [ init_font_hex::i#2 init_font_hex::i#1 ] 20,002: zp[1]:46 [ init_font_hex::$1 ] 20,002: zp[1]:47 [ init_font_hex::$2 ] 11,501.6: zp[1]:15 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 10,001: zp[1]:45 [ init_font_hex::$0 ] 2,002: zp[1]:48 [ init_font_hex::idx#3 ] 1,634.97: zp[1]:13 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 1,631.57: zp[2]:9 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] 1,423.81: zp[2]:11 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] 634.17: zp[2]:6 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] 162.13: zp[1]:8 [ init_font_hex::c#6 init_font_hex::c#1 ] 
-Uplift Scope [main] 202: zp[2]:40 [ main::angle_w#0 ] 202: zp[2]:42 [ main::$3 ] 202: zp[1]:44 [ main::ang_w#0 ] 168.33: zp[1]:3 [ main::x#2 main::x#1 ] 93.15: zp[2]:4 [ main::screen#2 main::screen#4 main::screen#1 ] 50.5: zp[2]:30 [ main::xw#0 ] 50.5: zp[2]:32 [ main::yw#0 ] 17.97: zp[1]:2 [ main::y#4 main::y#1 ] 
+Uplift Scope [main] 202: zp[2]:40 [ main::angle_w#0 ] 202: zp[2]:42 [ main::$5 ] 202: zp[1]:44 [ main::ang_w#0 ] 168.33: zp[1]:3 [ main::x#2 main::x#1 ] 93.15: zp[2]:4 [ main::screen#2 main::screen#4 main::screen#1 ] 50.5: zp[2]:30 [ main::xw#0 ] 50.5: zp[2]:32 [ main::yw#0 ] 17.97: zp[1]:2 [ main::y#4 main::y#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -1673,7 +1683,7 @@ Uplifting [atan2_16] best 1147297 combination reg byte y [ atan2_16::shift#2 ata
 Limited combination testing to 100 combinations of 144 possible.
 Uplifting [init_font_hex] best 1128297 combination reg byte x [ init_font_hex::i#2 init_font_hex::i#1 ] reg byte a [ init_font_hex::$1 ] reg byte a [ init_font_hex::$2 ] zp[1]:15 [ init_font_hex::idx#5 init_font_hex::idx#2 ] zp[1]:45 [ init_font_hex::$0 ] zp[1]:48 [ init_font_hex::idx#3 ] zp[1]:13 [ init_font_hex::c1#4 init_font_hex::c1#1 ] zp[2]:9 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] zp[2]:11 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] zp[2]:6 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] zp[1]:8 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Limited combination testing to 100 combinations of 6912 possible.
-Uplifting [main] best 1127697 combination zp[2]:40 [ main::angle_w#0 ] zp[2]:42 [ main::$3 ] reg byte a [ main::ang_w#0 ] zp[1]:3 [ main::x#2 main::x#1 ] zp[2]:4 [ main::screen#2 main::screen#4 main::screen#1 ] zp[2]:30 [ main::xw#0 ] zp[2]:32 [ main::yw#0 ] zp[1]:2 [ main::y#4 main::y#1 ] 
+Uplifting [main] best 1127697 combination zp[2]:40 [ main::angle_w#0 ] zp[2]:42 [ main::$5 ] reg byte a [ main::ang_w#0 ] zp[1]:3 [ main::x#2 main::x#1 ] zp[2]:4 [ main::screen#2 main::screen#4 main::screen#1 ] zp[2]:30 [ main::xw#0 ] zp[2]:32 [ main::yw#0 ] zp[1]:2 [ main::y#4 main::y#1 ] 
 Uplifting [MOS6526_CIA] best 1127697 combination 
 Uplifting [MOS6569_VICII] best 1127697 combination 
 Uplifting [MOS6581_SID] best 1127697 combination 
@@ -1697,16 +1707,16 @@ Coalescing zero page register [ zp[2]:30 [ main::xw#0 ] ] with [ zp[2]:34 [ atan
 Coalescing zero page register [ zp[2]:32 [ main::yw#0 ] ] with [ zp[2]:36 [ atan2_16::y#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:38 [ atan2_16::return#2 ] ] with [ zp[2]:40 [ main::angle_w#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 ] ] with [ zp[2]:38 [ atan2_16::return#2 main::angle_w#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 ] ] with [ zp[2]:42 [ main::$3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 ] ] with [ zp[2]:42 [ main::$5 ] ] - score: 1
 Coalescing zero page register [ zp[2]:16 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 ] ] with [ zp[2]:6 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] ]
 Coalescing zero page register [ zp[2]:18 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 ] ] with [ zp[2]:9 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] ]
-Coalescing zero page register [ zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$3 ] ] with [ zp[2]:11 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] ]
+Coalescing zero page register [ zp[2]:21 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$5 ] ] with [ zp[2]:11 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] ]
 Allocated (was zp[1]:8) zp[1]:6 [ init_font_hex::c#6 init_font_hex::c#1 ]
 Allocated (was zp[1]:13) zp[1]:7 [ init_font_hex::c1#4 init_font_hex::c1#1 ]
 Allocated (was zp[1]:15) zp[1]:8 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
 Allocated (was zp[2]:16) zp[2]:9 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ]
 Allocated (was zp[2]:18) zp[2]:11 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ]
-Allocated (was zp[2]:21) zp[2]:13 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$3 init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ]
+Allocated (was zp[2]:21) zp[2]:13 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$5 init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ]
 Allocated (was zp[2]:26) zp[2]:15 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ]
 Allocated (was zp[2]:28) zp[2]:17 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ]
 Allocated (was zp[2]:30) zp[2]:19 [ main::xw#0 atan2_16::x#0 ]
@@ -1741,7 +1751,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label __3 = $d
+    .label __5 = $d
     .label xw = $13
     .label yw = $15
     .label angle_w = $d
@@ -1814,16 +1824,16 @@ main: {
     // main::@6
   __b6:
     // [12] main::angle_w#0 = atan2_16::return#2
-    // [13] main::$3 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 
+    // [13] main::$5 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc.z __3
-    sta.z __3
+    adc.z __5
+    sta.z __5
     bcc !+
-    inc.z __3+1
+    inc.z __5+1
   !:
-    // [14] main::ang_w#0 = byte1  main::$3 -- vbuaa=_byte1_vwuz1 
-    lda.z __3+1
+    // [14] main::ang_w#0 = byte1  main::$5 -- vbuaa=_byte1_vwuz1 
+    lda.z __5+1
     // [15] *main::screen#2 = main::ang_w#0 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (screen),y
@@ -2538,7 +2548,7 @@ byte* init_font_hex::proto_lo
 byte* init_font_hex::proto_lo#1 proto_lo zp[2]:13 500.5
 byte* init_font_hex::proto_lo#4 proto_lo zp[2]:13 923.3076923076923
 void main()
-word~ main::$3 zp[2]:13 202.0
+word~ main::$5 zp[2]:13 202.0
 byte main::ang_w
 byte main::ang_w#0 reg byte a 202.0
 word main::angle_w
@@ -2573,7 +2583,7 @@ zp[1]:8 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
 zp[2]:9 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ]
 zp[2]:11 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ]
 reg byte x [ atan2_16::i#2 atan2_16::i#1 ]
-zp[2]:13 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$3 init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ]
+zp[2]:13 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::angle#5 atan2_16::return#2 main::angle_w#0 main::$5 init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ]
 reg byte y [ atan2_16::shift#2 atan2_16::shift#5 atan2_16::shift#1 ]
 zp[2]:15 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ]
 zp[2]:17 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ]
@@ -2618,7 +2628,7 @@ Score: 1036177
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label __3 = $d
+    .label __5 = $d
     .label xw = $13
     .label yw = $15
     .label angle_w = $d
@@ -2660,13 +2670,13 @@ main: {
     // [5] phi main::x#2 = main::x#1 [phi:main::@6->main::@2#1] -- register_copy 
     // main::@2
   __b2:
-    // signed word xw = (signed word)(word){ (byte)x, 0 }
+    // MAKEWORD( (byte)x, 0 )
     // [6] main::xw#0 = (byte)main::x#2 w= 0 -- vwuz1=vbuz2_word_vbuc1 
     lda #0
     ldy.z x
     sty.z xw+1
     sta.z xw
-    // signed word yw = (signed word)(word){ (byte)y, 0 }
+    // MAKEWORD( (byte)y, 0 )
     // [7] main::yw#0 = (byte)main::y#4 w= 0 -- vwuz1=vbuz2_word_vbuc1 
     ldy.z y
     sty.z yw+1
@@ -2681,17 +2691,17 @@ main: {
     // word angle_w = atan2_16(xw, yw)
     // [12] main::angle_w#0 = atan2_16::return#2
     // angle_w+0x0080
-    // [13] main::$3 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 
+    // [13] main::$5 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc.z __3
-    sta.z __3
+    adc.z __5
+    sta.z __5
     bcc !+
-    inc.z __3+1
+    inc.z __5+1
   !:
     // byte ang_w = BYTE1(angle_w+0x0080)
-    // [14] main::ang_w#0 = byte1  main::$3 -- vbuaa=_byte1_vwuz1 
-    lda.z __3+1
+    // [14] main::ang_w#0 = byte1  main::$5 -- vbuaa=_byte1_vwuz1 
+    lda.z __5+1
     // *screen++ = ang_w
     // [15] *main::screen#2 = main::ang_w#0 -- _deref_pbuz1=vbuaa 
     ldy #0

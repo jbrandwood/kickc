@@ -36,7 +36,7 @@ unsigned int getFAC() {
         sty memLo
         sta memHi
     }
-    unsigned int w = { *memHi, *memLo };
+    unsigned int w = MAKEWORD( *memHi, *memLo );
     return w;
 }
 

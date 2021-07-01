@@ -122,11 +122,12 @@ void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
 bitmap_plot: scope:[bitmap_plot]  from bitmap_line::@3 bitmap_line::@4 bitmap_line::@6 bitmap_line::@9
   bitmap_plot::x#4 = phi( bitmap_line::@3/bitmap_plot::x#2, bitmap_line::@4/bitmap_plot::x#0, bitmap_line::@6/bitmap_plot::x#1, bitmap_line::@9/bitmap_plot::x#3 )
   bitmap_plot::y#4 = phi( bitmap_line::@3/bitmap_plot::y#2, bitmap_line::@4/bitmap_plot::y#0, bitmap_line::@6/bitmap_plot::y#1, bitmap_line::@9/bitmap_plot::y#3 )
-  bitmap_plot::plotter#0 = (byte*){ bitmap_plot_yhi[bitmap_plot::y#4], bitmap_plot_ylo[bitmap_plot::y#4] }
-  bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
-  bitmap_plot::plotter#1 = bitmap_plot::plotter#0 + bitmap_plot::$0
-  bitmap_plot::$1 = byte0  bitmap_plot::x#4
-  *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1]
+  bitmap_plot::$0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4]
+  bitmap_plot::plotter#0 = (byte*)bitmap_plot::$0
+  bitmap_plot::$1 = bitmap_plot::x#4 & $fff8
+  bitmap_plot::plotter#1 = bitmap_plot::plotter#0 + bitmap_plot::$1
+  bitmap_plot::$2 = byte0  bitmap_plot::x#4
+  *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2]
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
@@ -852,8 +853,9 @@ word bitmap_line::y2#7
 word bitmap_line::y2#8
 word bitmap_line::y2#9
 void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-number~ bitmap_plot::$0
-byte~ bitmap_plot::$1
+word~ bitmap_plot::$0
+number~ bitmap_plot::$1
+byte~ bitmap_plot::$2
 byte* bitmap_plot::plotter
 byte* bitmap_plot::plotter#0
 byte* bitmap_plot::plotter#1
@@ -979,8 +981,6 @@ word sgn_u16::w#0
 word sgn_u16::w#1
 word sgn_u16::w#2
 
-Fixing inline constructor with bitmap_plot::$2 = (byte)bitmap_plot_yhi[bitmap_plot::y#4] w= (byte)bitmap_plot_ylo[bitmap_plot::y#4]
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 1 in bitmap_init::bits#1 = bitmap_init::bits#3 >> 1
 Adding number conversion cast (unumber) 0 in bitmap_init::$0 = bitmap_init::bits#1 == 0
 Adding number conversion cast (unumber) $80 in bitmap_init::bits#2 = $80
@@ -995,8 +995,8 @@ Adding number conversion cast (unumber) $10 in bitmap_clear::$0 = bitmap_clear::
 Adding number conversion cast (unumber) bitmap_clear::$0 in bitmap_clear::$0 = bitmap_clear::fgcol#1 * (unumber)$10
 Adding number conversion cast (unumber) bitmap_clear::$1 in bitmap_clear::$1 = bitmap_clear::$0 + bitmap_clear::bgcol#1
 Adding number conversion cast (unumber) 0 in memset::c#1 = 0
-Adding number conversion cast (unumber) $fff8 in bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
-Adding number conversion cast (unumber) bitmap_plot::$0 in bitmap_plot::$0 = bitmap_plot::x#4 & (unumber)$fff8
+Adding number conversion cast (unumber) $fff8 in bitmap_plot::$1 = bitmap_plot::x#4 & $fff8
+Adding number conversion cast (unumber) bitmap_plot::$1 in bitmap_plot::$1 = bitmap_plot::x#4 & (unumber)$fff8
 Adding number conversion cast (unumber) 0 in bitmap_line::$4 = bitmap_line::dx#1 == 0
 Adding number conversion cast (unumber) 0 in bitmap_line::$5 = bitmap_line::dy#0 == 0
 Adding number conversion cast (unumber) 2 in bitmap_line::$20 = bitmap_line::dy#2 / 2
@@ -1054,8 +1054,6 @@ Simplifying constant integer cast 7
 Simplifying constant integer cast 7
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
-Simplifying constant integer cast bitmap_plot_yhi[bitmap_plot::y#4]
-Simplifying constant integer cast bitmap_plot_ylo[bitmap_plot::y#4]
 Simplifying constant integer cast $fff8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -1120,7 +1118,7 @@ Inferred type updated to byte in bitmap_init::$5 = bitmap_init::$3 | bitmap_init
 Inferred type updated to byte in bitmap_init::$7 = bitmap_init::y#2 & 7
 Inferred type updated to byte in bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
 Inferred type updated to byte in bitmap_clear::$1 = bitmap_clear::$0 + bitmap_clear::bgcol#1
-Inferred type updated to word in bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
+Inferred type updated to word in bitmap_plot::$1 = bitmap_plot::x#4 & $fff8
 Inferred type updated to word in bitmap_line::$20 = bitmap_line::dy#2 / 2
 Inferred type updated to word in bitmap_line::$15 = bitmap_line::dx#3 / 2
 Inferred type updated to byte in abs_u16::$1 = abs_u16::$0 & $80
@@ -1382,7 +1380,7 @@ Constant bitmap_clear::col#0 = bitmap_clear::$0+bitmap_clear::bgcol#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [25] bitmap_plot::plotter#0 = (byte*)bitmap_plot::$2 keeping bitmap_plot::plotter#0
+Inlining Noop Cast [25] bitmap_plot::plotter#0 = (byte*)bitmap_plot::$0 keeping bitmap_plot::plotter#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining Noop Cast [79] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
 Inlining Noop Cast [81] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
@@ -1797,10 +1795,10 @@ bitmap_plot: scope:[bitmap_plot]  from bitmap_line::@3 bitmap_line::@4 bitmap_li
   [112] bitmap_plot::x#4 = phi( bitmap_line::@3/bitmap_plot::x#2, bitmap_line::@4/bitmap_line::x1#0, bitmap_line::@6/bitmap_plot::x#1, bitmap_line::@9/bitmap_plot::x#3 )
   [112] bitmap_plot::y#4 = phi( bitmap_line::@3/bitmap_plot::y#2, bitmap_line::@4/0, bitmap_line::@6/bitmap_plot::y#1, bitmap_line::@9/bitmap_plot::y#3 )
   [113] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4]
-  [114] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8
-  [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0
-  [116] bitmap_plot::$1 = byte0  bitmap_plot::x#4
-  [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1]
+  [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8
+  [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1
+  [116] bitmap_plot::$2 = byte0  bitmap_plot::x#4
+  [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2]
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [118] return 
@@ -1886,8 +1884,8 @@ word bitmap_line::y#7 10001.0
 word bitmap_line::y1
 word bitmap_line::y2
 void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-word~ bitmap_plot::$0 200002.0
-byte~ bitmap_plot::$1 200002.0
+word~ bitmap_plot::$1 200002.0
+byte~ bitmap_plot::$2 200002.0
 byte* bitmap_plot::plotter
 word bitmap_plot::plotter#0 50000.5
 byte* bitmap_plot::plotter#1 150001.5
@@ -1970,9 +1968,9 @@ Added variable abs_u16::$1 to live range equivalence class [ abs_u16::$1 ]
 Added variable sgn_u16::$0 to live range equivalence class [ sgn_u16::$0 ]
 Added variable sgn_u16::$1 to live range equivalence class [ sgn_u16::$1 ]
 Added variable bitmap_plot::plotter#0 to live range equivalence class [ bitmap_plot::plotter#0 ]
-Added variable bitmap_plot::$0 to live range equivalence class [ bitmap_plot::$0 ]
-Added variable bitmap_plot::plotter#1 to live range equivalence class [ bitmap_plot::plotter#1 ]
 Added variable bitmap_plot::$1 to live range equivalence class [ bitmap_plot::$1 ]
+Added variable bitmap_plot::plotter#1 to live range equivalence class [ bitmap_plot::plotter#1 ]
+Added variable bitmap_plot::$2 to live range equivalence class [ bitmap_plot::$2 ]
 Complete equivalence classes
 [ next#6 next#11 next#0 ]
 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
@@ -2011,9 +2009,9 @@ Complete equivalence classes
 [ sgn_u16::$0 ]
 [ sgn_u16::$1 ]
 [ bitmap_plot::plotter#0 ]
-[ bitmap_plot::$0 ]
-[ bitmap_plot::plotter#1 ]
 [ bitmap_plot::$1 ]
+[ bitmap_plot::plotter#1 ]
+[ bitmap_plot::$2 ]
 Allocated zp[2]:2 [ next#6 next#11 next#0 ]
 Allocated zp[1]:4 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 Allocated zp[1]:5 [ bitmap_init::x#2 bitmap_init::x#1 ]
@@ -2051,9 +2049,9 @@ Allocated zp[1]:58 [ abs_u16::$1 ]
 Allocated zp[1]:59 [ sgn_u16::$0 ]
 Allocated zp[1]:60 [ sgn_u16::$1 ]
 Allocated zp[2]:61 [ bitmap_plot::plotter#0 ]
-Allocated zp[2]:63 [ bitmap_plot::$0 ]
+Allocated zp[2]:63 [ bitmap_plot::$1 ]
 Allocated zp[2]:65 [ bitmap_plot::plotter#1 ]
-Allocated zp[1]:67 [ bitmap_plot::$1 ]
+Allocated zp[1]:67 [ bitmap_plot::$2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:36 [ bitmap_init::$4 ] has ALU potential.
 Statement [0] *BORDER_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -2103,9 +2101,9 @@ Statement [96] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::
 Removing always clobbered register reg byte y as potential for zp[1]:21 [ memset::c#4 ]
 Statement [102] abs_u16::return#2 = - abs_u16::w#2 [ abs_u16::return#2 ] ( bitmap_line:9::abs_u16:42 [ next#6 bitmap_line::x2#0 abs_u16::return#2 ] { { abs_u16::w#0 = abs_u16::w#2 bitmap_line::x2#0 next#6 } { abs_u16::return#0 = abs_u16::return#4 } }  bitmap_line:9::abs_u16:45 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 abs_u16::return#2 ] { { next#6 = bitmap_line::x2#0 } { abs_u16::return#1 = abs_u16::return#4 } }  ) always clobbers reg byte a 
 Statement [113] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] [ bitmap_plot::x#4 bitmap_plot::plotter#0 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [114] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8 [ bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0 [ bitmap_plot::x#4 bitmap_plot::plotter#1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] [ ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8 [ bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
+Statement [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#4 bitmap_plot::plotter#1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
+Statement [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] [ ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [0] *BORDER_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -2151,9 +2149,9 @@ Statement [94] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 me
 Statement [96] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( bitmap_clear:6::memset:37 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  bitmap_clear:6::memset:39 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [102] abs_u16::return#2 = - abs_u16::w#2 [ abs_u16::return#2 ] ( bitmap_line:9::abs_u16:42 [ next#6 bitmap_line::x2#0 abs_u16::return#2 ] { { abs_u16::w#0 = abs_u16::w#2 bitmap_line::x2#0 next#6 } { abs_u16::return#0 = abs_u16::return#4 } }  bitmap_line:9::abs_u16:45 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 abs_u16::return#2 ] { { next#6 = bitmap_line::x2#0 } { abs_u16::return#1 = abs_u16::return#4 } }  ) always clobbers reg byte a 
 Statement [113] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] [ bitmap_plot::x#4 bitmap_plot::plotter#0 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [114] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8 [ bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$0 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0 [ bitmap_plot::x#4 bitmap_plot::plotter#1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
-Statement [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] [ ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8 [ bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
+Statement [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#4 bitmap_plot::plotter#1 ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 bitmap_plot::x#4 bitmap_plot::plotter#1 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a 
+Statement [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] [ ] ( bitmap_line:9::bitmap_plot:62 [ next#6 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#13 bitmap_line::y#4 bitmap_line::e#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#1 = bitmap_plot::y#4 } { bitmap_plot::x#1 = bitmap_plot::x#4 bitmap_line::x#13 } }  bitmap_line:9::bitmap_plot:73 [ next#6 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#2 = bitmap_plot::y#4 } { bitmap_plot::x#2 = bitmap_plot::x#4 bitmap_line::x#6 } }  bitmap_line:9::bitmap_plot:79 [ next#6 bitmap_line::x2#0 bitmap_line::dx#0 bitmap_line::dy#0 bitmap_line::sx#0 bitmap_line::sy#0 bitmap_line::x#7 bitmap_line::y#15 bitmap_line::e1#3 ] { { next#6 = bitmap_line::x2#0 } { bitmap_plot::y#3 = bitmap_plot::y#4 } { bitmap_plot::x#3 = bitmap_plot::x#4 bitmap_line::x#7 } }  bitmap_line:9::bitmap_plot:88 [ next#6 ] { { next#6 = bitmap_line::x2#0 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ next#6 next#11 next#0 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ bitmap_init::x#2 bitmap_init::x#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -2191,12 +2189,12 @@ Potential registers zp[1]:58 [ abs_u16::$1 ] : zp[1]:58 , reg byte a , reg byte 
 Potential registers zp[1]:59 [ sgn_u16::$0 ] : zp[1]:59 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:60 [ sgn_u16::$1 ] : zp[1]:60 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:61 [ bitmap_plot::plotter#0 ] : zp[2]:61 , 
-Potential registers zp[2]:63 [ bitmap_plot::$0 ] : zp[2]:63 , 
+Potential registers zp[2]:63 [ bitmap_plot::$1 ] : zp[2]:63 , 
 Potential registers zp[2]:65 [ bitmap_plot::plotter#1 ] : zp[2]:65 , 
-Potential registers zp[1]:67 [ bitmap_plot::$1 ] : zp[1]:67 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:67 [ bitmap_plot::$2 ] : zp[1]:67 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [bitmap_plot] 260,311: zp[1]:30 [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#1 bitmap_plot::y#3 ] 200,002: zp[2]:63 [ bitmap_plot::$0 ] 200,002: zp[1]:67 [ bitmap_plot::$1 ] 150,001.5: zp[2]:65 [ bitmap_plot::plotter#1 ] 75,129.25: zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#1 bitmap_plot::x#3 ] 50,000.5: zp[2]:61 [ bitmap_plot::plotter#0 ] 
+Uplift Scope [bitmap_plot] 260,311: zp[1]:30 [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#1 bitmap_plot::y#3 ] 200,002: zp[2]:63 [ bitmap_plot::$1 ] 200,002: zp[1]:67 [ bitmap_plot::$2 ] 150,001.5: zp[2]:65 [ bitmap_plot::plotter#1 ] 75,129.25: zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#1 bitmap_plot::x#3 ] 50,000.5: zp[2]:61 [ bitmap_plot::plotter#0 ] 
 Uplift Scope [bitmap_line] 69,036.46: zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x#12 bitmap_line::x#1 ] 55,005.5: zp[2]:13 [ bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y#1 bitmap_line::y#2 ] 52,560.77: zp[2]:9 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] 52,560.77: zp[2]:15 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ] 868.77: zp[2]:45 [ bitmap_line::dy#0 ] 800.18: zp[2]:41 [ bitmap_line::dx#0 ] 773.19: zp[2]:53 [ bitmap_line::sy#0 ] 693.21: zp[2]:49 [ bitmap_line::sx#0 ] 340.47: zp[2]:33 [ bitmap_line::x2#0 ] 
 Uplift Scope [abs_u16] 3,531: zp[2]:24 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 ] 2,002: zp[1]:57 [ abs_u16::$0 ] 2,002: zp[1]:58 [ abs_u16::$1 ] 202: zp[2]:39 [ abs_u16::return#0 ] 202: zp[2]:43 [ abs_u16::return#1 ] 
 Uplift Scope [sgn_u16] 2,002: zp[1]:59 [ sgn_u16::$0 ] 2,002: zp[1]:60 [ sgn_u16::$1 ] 1,304: zp[2]:26 [ sgn_u16::w#2 sgn_u16::w#0 ] 202: zp[2]:47 [ sgn_u16::return#0 ] 202: zp[2]:51 [ sgn_u16::return#1 ] 50.5: zp[2]:28 [ sgn_u16::return#4 ] 
@@ -2209,7 +2207,7 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [bitmap_clear] 
 Uplift Scope [main] 
 
-Uplifting [bitmap_plot] best 36602 combination reg byte x [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#1 bitmap_plot::y#3 ] zp[2]:63 [ bitmap_plot::$0 ] reg byte x [ bitmap_plot::$1 ] zp[2]:65 [ bitmap_plot::plotter#1 ] zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#1 bitmap_plot::x#3 ] zp[2]:61 [ bitmap_plot::plotter#0 ] 
+Uplifting [bitmap_plot] best 36602 combination reg byte x [ bitmap_plot::y#4 bitmap_plot::y#2 bitmap_plot::y#1 bitmap_plot::y#3 ] zp[2]:63 [ bitmap_plot::$1 ] reg byte x [ bitmap_plot::$2 ] zp[2]:65 [ bitmap_plot::plotter#1 ] zp[2]:31 [ bitmap_plot::x#4 bitmap_plot::x#2 bitmap_plot::x#1 bitmap_plot::x#3 ] zp[2]:61 [ bitmap_plot::plotter#0 ] 
 Uplifting [bitmap_line] best 36602 combination zp[2]:11 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x#12 bitmap_line::x#1 ] zp[2]:13 [ bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y#1 bitmap_line::y#2 ] zp[2]:9 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] zp[2]:15 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ] zp[2]:45 [ bitmap_line::dy#0 ] zp[2]:41 [ bitmap_line::dx#0 ] zp[2]:53 [ bitmap_line::sy#0 ] zp[2]:49 [ bitmap_line::sx#0 ] zp[2]:33 [ bitmap_line::x2#0 ] 
 Uplifting [abs_u16] best 36592 combination zp[2]:24 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 ] reg byte a [ abs_u16::$0 ] reg byte a [ abs_u16::$1 ] zp[2]:39 [ abs_u16::return#0 ] zp[2]:43 [ abs_u16::return#1 ] 
 Uplifting [sgn_u16] best 36582 combination reg byte a [ sgn_u16::$0 ] reg byte a [ sgn_u16::$1 ] zp[2]:26 [ sgn_u16::w#2 sgn_u16::w#0 ] zp[2]:47 [ sgn_u16::return#0 ] zp[2]:51 [ sgn_u16::return#1 ] zp[2]:28 [ sgn_u16::return#4 ] 
@@ -2254,7 +2252,7 @@ Allocated (was zp[1]:35) zp[1]:16 [ bitmap_init::$7 ]
 Allocated (was zp[2]:41) zp[2]:17 [ bitmap_line::dx#0 ]
 Allocated (was zp[2]:49) zp[2]:19 [ bitmap_line::sx#0 ]
 Allocated (was zp[2]:61) zp[2]:21 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 sgn_u16::w#2 sgn_u16::w#0 ]
-Allocated (was zp[2]:63) zp[2]:23 [ bitmap_plot::$0 ]
+Allocated (was zp[2]:63) zp[2]:23 [ bitmap_plot::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -3024,7 +3022,7 @@ sgn_u16: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp($a) x, byte register(X) y)
 bitmap_plot: {
-    .label __0 = $17
+    .label __1 = $17
     .label plotter = $15
     .label x = $a
     // [113] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
@@ -3032,24 +3030,24 @@ bitmap_plot: {
     sta.z plotter+1
     lda bitmap_plot_ylo,x
     sta.z plotter
-    // [114] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8 -- vwuz1=vwuz2_band_vwuc1 
+    // [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z __0
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z __0+1
-    // [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0 -- pbuz1=pbuz1_plus_vwuz2 
+    sta.z __1+1
+    // [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     clc
     lda.z plotter
-    adc.z __0
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z __0+1
+    adc.z __1+1
     sta.z plotter+1
-    // [116] bitmap_plot::$1 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
+    // [116] bitmap_plot::$2 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
     ldx.z x
-    // [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
+    // [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -3320,8 +3318,8 @@ constant word bitmap_line::y1#0 y1 = 0
 word bitmap_line::y2
 constant word bitmap_line::y2#0 y2 = $64
 void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-word~ bitmap_plot::$0 zp[2]:23 200002.0
-byte~ bitmap_plot::$1 reg byte x 200002.0
+word~ bitmap_plot::$1 zp[2]:23 200002.0
+byte~ bitmap_plot::$2 reg byte x 200002.0
 byte* bitmap_plot::plotter
 word bitmap_plot::plotter#0 plotter zp[2]:21 50000.5
 byte* bitmap_plot::plotter#1 plotter zp[2]:21 150001.5
@@ -3392,8 +3390,8 @@ reg byte a [ abs_u16::$1 ]
 reg byte a [ sgn_u16::$0 ]
 reg byte a [ sgn_u16::$1 ]
 zp[2]:21 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 sgn_u16::w#2 sgn_u16::w#0 ]
-zp[2]:23 [ bitmap_plot::$0 ]
-reg byte x [ bitmap_plot::$1 ]
+zp[2]:23 [ bitmap_plot::$1 ]
+reg byte x [ bitmap_plot::$2 ]
 
 
 FINAL ASSEMBLER
@@ -4123,37 +4121,37 @@ sgn_u16: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp($a) x, byte register(X) y)
 bitmap_plot: {
-    .label __0 = $17
+    .label __1 = $17
     .label plotter = $15
     .label x = $a
-    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     // [113] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#4] w= bitmap_plot_ylo[bitmap_plot::y#4] -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
     sta.z plotter
     // x & $fff8
-    // [114] bitmap_plot::$0 = bitmap_plot::x#4 & $fff8 -- vwuz1=vwuz2_band_vwuc1 
+    // [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z __0
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z __0+1
+    sta.z __1+1
     // plotter += ( x & $fff8 )
-    // [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$0 -- pbuz1=pbuz1_plus_vwuz2 
+    // [115] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     clc
     lda.z plotter
-    adc.z __0
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z __0+1
+    adc.z __1+1
     sta.z plotter+1
     // BYTE0(x)
-    // [116] bitmap_plot::$1 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
+    // [116] bitmap_plot::$2 = byte0  bitmap_plot::x#4 -- vbuxx=_byte0_vwuz1 
     ldx.z x
     // *plotter |= bitmap_plot_bit[BYTE0(x)]
-    // [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$1] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
+    // [117] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y

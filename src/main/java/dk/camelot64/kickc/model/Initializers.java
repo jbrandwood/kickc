@@ -98,12 +98,6 @@ public class Initializers {
          } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
             // Type is a struct
             initValue = constantifyStruct(initList, (SymbolTypeStruct) typeSpec.getType(), program, source);
-         } else if(typeSpec.getType().equals(SymbolType.WORD) && initList.getList().size() == 2) {
-            // Type is an inline word
-            initValue = constantifyWord(initList, program, source);
-         } else if(typeSpec.getType().equals(SymbolType.DWORD) && initList.getList().size() == 2) {
-            // Type is an inline dword
-            initValue = constantifyDWord(initList, program, source);
          } else {
             throw new CompileError("Value list cannot initialize type " + typeSpec.getType(), source);
          }
@@ -132,42 +126,6 @@ public class Initializers {
          }
       }
       return initValue;
-   }
-
-   private static RValue constantifyWord(ValueList valueList, Program program, StatementSource source) {
-      boolean allConst = true;
-      List<RValue> constantifiedList = new ArrayList<>();
-      for(RValue elementValue : valueList.getList()) {
-         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.BYTE), program, source);
-         constantifiedList.add(constantifiedElement);
-         if(!(constantifiedElement instanceof ConstantValue))
-            allConst = false;
-      }
-      if(allConst) {
-         ConstantValue hiByte = (ConstantValue) constantifiedList.get(0);
-         ConstantValue loByte = (ConstantValue) constantifiedList.get(1);
-         return new ConstantBinary(new ConstantBinary(hiByte, Operators.MULTIPLY, new ConstantInteger(0x100L, SymbolType.WORD)), Operators.PLUS, loByte);
-      } else {
-         return new CastValue(SymbolType.WORD, new ValueList(constantifiedList));
-      }
-   }
-
-   private static RValue constantifyDWord(ValueList valueList, Program program, StatementSource source) {
-      boolean allConst = true;
-      List<RValue> constantifiedList = new ArrayList<>();
-      for(RValue elementValue : valueList.getList()) {
-         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.WORD), program, source);
-         constantifiedList.add(constantifiedElement);
-         if(!(constantifiedElement instanceof ConstantValue))
-            allConst = false;
-      }
-      if(allConst) {
-         ConstantValue hiWord = (ConstantValue) constantifiedList.get(0);
-         ConstantValue loWord = (ConstantValue) constantifiedList.get(1);
-         return new ConstantBinary(new ConstantBinary(hiWord, Operators.MULTIPLY, new ConstantInteger(0x10000L, SymbolType.DWORD)), Operators.PLUS, loWord);
-      } else {
-         return new CastValue(SymbolType.DWORD, new ValueList(constantifiedList));
-      }
    }
 
    /**

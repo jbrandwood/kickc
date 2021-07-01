@@ -42,7 +42,7 @@ char divr8u(char dividend, char divisor, char rem) {
 unsigned int div16u8u(unsigned int dividend, unsigned char divisor) {
   unsigned char quotient_hi = divr8u(BYTE1(dividend), divisor, 0);
   unsigned char quotient_lo = divr8u(BYTE0(dividend), divisor, rem8u);
-  unsigned int quotient = { quotient_hi, quotient_lo};
+  unsigned int quotient = MAKEWORD( quotient_hi, quotient_lo );
   return quotient;
 }
 
@@ -92,7 +92,7 @@ unsigned int div16u(unsigned int dividend, unsigned int divisor) {
 unsigned long div32u16u(unsigned long dividend, unsigned int divisor) {
   unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0);
   unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u);
-  unsigned long quotient = { quotient_hi, quotient_lo};
+  unsigned long quotient = MAKELONG( quotient_hi, quotient_lo );
   return quotient;
 }
 

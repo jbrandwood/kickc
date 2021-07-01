@@ -23,7 +23,7 @@ public class OperatorWord extends OperatorBinary {
 
    @Override
    public SymbolType inferType(SymbolType left, SymbolType right) {
-      if(SymbolType.BYTE.equals(left) && SymbolType.BYTE.equals(right)) {
+      if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
          return SymbolType.WORD;
       }
       throw new NoMatchingType("Word constructor cannot use " + left + " " + getOperator() + " " + right);

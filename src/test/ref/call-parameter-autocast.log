@@ -17,7 +17,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   idx#10 = phi( main::@1/idx#5 )
   idx#1 = idx#10
-  print::w#2 = (word){ $12, $34 }
+  print::w#2 = $12w=$34
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -98,22 +98,17 @@ word print::w#1
 word print::w#2
 word print::w#3
 
-Fixing inline constructor with main::$3 = (byte)$12 w= (byte)$34
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $1234 in print::w#0 = $1234
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast print::w#0 = (unumber)$1234
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast $1234
-Simplifying constant integer cast $12
-Simplifying constant integer cast $34
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $1234
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#9 
 Alias idx#1 = idx#10 
-Alias print::w#2 = main::$3 
 Alias idx#11 = idx#2 idx#12 idx#3 
 Alias idx#14 = idx#4 idx#5 
 Alias idx#18 = idx#6 
@@ -125,10 +120,9 @@ Identical Phi Values idx#1 idx#14
 Identical Phi Values idx#11 idx#14
 Identical Phi Values idx#15 idx#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [7] print::w#2 = $12 w= $34
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant print::w#0 = $1234
 Constant print::w#1 = main::w
+Constant print::w#2 = $12w=$34
 Constant idx#18 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
@@ -138,20 +132,6 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $12*$100+$34 in [2] print::w#2 = $12*$100+$34
-Adding number conversion cast (unumber) $12*$100 in [2] print::w#2 = ((unumber)) $12*$100+$34
-Adding number conversion cast (unumber) $100 in [2] print::w#2 = ((unumber)) (unumber)$12*$100+$34
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast [2] print::w#2 = (unumber)(unumber)$12*(unumber)$100+$34
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast (unumber)$12*(unumber)$100+$34
-Simplifying constant integer cast $12*(unumber)$100
-Simplifying constant integer cast $100
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $100
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant print::w#2 = $12*$100+$34
-Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [5] print::$0 = idx#13 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings print::w#0
@@ -159,12 +139,15 @@ Inlining constant with var siblings print::w#1
 Inlining constant with var siblings print::w#2
 Inlining constant with var siblings idx#18
 Constant inlined idx#18 = 0
-Constant inlined print::w#2 = $12*$100+$34
+Constant inlined print::w#2 = $12w=$34
 Constant inlined print::w#1 = main::w
 Constant inlined print::w#0 = $1234
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) $12
+Finalized unsigned number type (byte) $34
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 CALL GRAPH
@@ -200,7 +183,7 @@ main::@return: scope:[main]  from main::@2
 
 void print(word print::w)
 print: scope:[print]  from main main::@1 main::@2
-  [7] print::w#3 = phi( main/$1234, main::@1/main::w, main::@2/$12*$100+$34 )
+  [7] print::w#3 = phi( main/$1234, main::@1/main::w, main::@2/$12w=$34 )
   [7] idx#13 = phi( main/0, main::@1/idx#14, main::@2/idx#14 )
   [8] print::$0 = idx#13 << 1
   [9] SCREEN[print::$0] = print::w#3
@@ -304,7 +287,7 @@ main: {
     // [5] call print 
     // [7] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [7] phi print::w#3 = $12*$100+$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
+    // [7] phi print::w#3 = $12w=$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
     sta.z print.w
     lda #>$12*$100+$34
@@ -420,10 +403,10 @@ main: {
     jsr print
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
-    // print( {0x12,0x34} )
+    // print( MAKEWORD(0x12,0x34) )
     // [5] call print 
     // [7] phi from main::@2 to print [phi:main::@2->print]
-    // [7] phi print::w#3 = $12*$100+$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
+    // [7] phi print::w#3 = $12w=$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
     sta.z print.w
     lda #>$12*$100+$34

@@ -123,7 +123,8 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
 word getFAC()
 getFAC: scope:[getFAC]  from main::@12
   asm { jsr$b1aa stymemLo stamemHi  }
-  getFAC::w#0 = (word){ *memHi, *memLo }
+  getFAC::$0 = *memHi w= *memLo
+  getFAC::w#0 = getFAC::$0
   getFAC::return#0 = getFAC::w#0
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
@@ -400,6 +401,7 @@ word divMEMbyFAC::prepareMEM1_mem
 word divMEMbyFAC::prepareMEM1_mem#0
 word divMEMbyFAC::prepareMEM1_mem#1
 word getFAC()
+word~ getFAC::$0
 word getFAC::return
 word getFAC::return#0
 word getFAC::return#1
@@ -576,8 +578,6 @@ word setMEMtoFAC::prepareMEM1_mem#0
 word setMEMtoFAC::prepareMEM1_mem#1
 void sinFAC()
 
-Fixing inline constructor with getFAC::$0 = (byte)*memHi w= (byte)*memLo
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) $28 in print_ln::$0 = print_line_cursor#7 + $28
 Adding number conversion cast (unumber) 4 in print_uchar::$0 = print_uchar::b#2 >> 4
 Adding number conversion cast (unumber) $f in print_uchar::$2 = print_uchar::b#3 & $f
@@ -594,8 +594,6 @@ Simplifying constant pointer cast (byte*) 58085
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
-Simplifying constant integer cast *memHi
-Simplifying constant integer cast *memLo
 Simplifying constant integer cast $4fb
 Simplifying constant integer cast $19
 Simplifying constant pointer cast (byte*) 1024
@@ -2400,7 +2398,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // unsigned int w = { *memHi, *memLo }
+    // MAKEWORD( *memHi, *memLo )
     // [70] getFAC::return#0 = *memHi w= *memLo -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z return+1
     tya

@@ -15,8 +15,6 @@ public class Operators {
    public static final OperatorUnary LOGIC_NOT = new OperatorLogicNot(2);
    public static final OperatorUnary DEREF = new OperatorDeref(2);
    public static final OperatorUnary ADDRESS_OF = new OperatorAddressOf(2);
-   public static final OperatorBinary WORD = new OperatorWord(2);
-   public static final OperatorBinary DWORD = new OperatorDWord(2);
    public static final OperatorBinary DEREF_IDX = new OperatorDerefIdx(2);
    public static final OperatorBinary SET_BYTE0 = new OperatorSetByte0(2);
    public static final OperatorBinary SET_BYTE1 = new OperatorSetByte1(2);
@@ -40,6 +38,8 @@ public class Operators {
    public static final OperatorBinary MODULO = new OperatorModulo(3);
    public static final OperatorBinary PLUS = new OperatorPlus(4);
    public static final OperatorBinary MINUS = new OperatorMinus(4);
+   public static final OperatorBinary WORD = new OperatorWord(4);
+   public static final OperatorBinary DWORD = new OperatorDWord(4);
    public static final OperatorBinary SHIFT_LEFT = new OperatorShiftLeft(5);
    public static final OperatorBinary SHIFT_RIGHT = new OperatorShiftRight(5);
    public static final OperatorBinary LT = new OperatorLessThan(7);

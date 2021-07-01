@@ -507,10 +507,10 @@ sgn_u16: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp(8) x, byte register(X) y)
 bitmap_plot: {
-    .label __0 = $17
+    .label __1 = $17
     .label plotter = $15
     .label x = 8
-    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -518,17 +518,17 @@ bitmap_plot: {
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __0
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z __0+1
+    sta.z __1+1
     // plotter += ( x & $fff8 )
     clc
     lda.z plotter
-    adc.z __0
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z __0+1
+    adc.z __1+1
     sta.z plotter+1
     // BYTE0(x)
     ldx.z x

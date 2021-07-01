@@ -10,6 +10,21 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testMakeDWord0() throws IOException {
+      compileAndCompare("makelong-0.c");
+   }
+
+   @Test
+   public void testMakeWord1() throws IOException {
+      compileAndCompare("makeword-1.c");
+   }
+
+   @Test
+   public void testMakeWord0() throws IOException {
+      compileAndCompare("makeword-0.c");
+   }
+
+   @Test
    public void testMissingInstruction() throws IOException {
       compileAndCompare("missing-instruction.c");
    }
@@ -1906,6 +1921,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testNumberTernaryFail3() throws IOException {
       compileAndCompare("number-ternary-fail-3.c");
+   }
+
+   @Test
+   public void testInitializerUnsupported0() throws IOException {
+      assertError("initializer-unsupported-0.c", "Initializer list not supported.");
    }
 
    @Test

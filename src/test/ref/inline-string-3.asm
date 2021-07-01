@@ -20,7 +20,7 @@ main: {
     // *(PTR+1)= BYTE1(STRING)
     lda #>STRING
     sta PTR+1
-    // byte* ptr = (byte*) { *(PTR+1), *PTR }
+    // MAKEWORD( *(PTR+1), *PTR )
     sta.z ptr+1
     lda PTR
     sta.z ptr

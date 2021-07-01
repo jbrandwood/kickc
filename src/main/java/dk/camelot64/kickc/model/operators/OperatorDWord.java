@@ -31,13 +31,7 @@ public class OperatorDWord extends OperatorBinary {
       if(right instanceof SymbolTypePointer) {
          right = SymbolType.WORD;
       }
-      if(SymbolType.BYTE.equals(left)) {
-         left = SymbolType.WORD;
-      }
-      if(SymbolType.BYTE.equals(right)) {
-         right = SymbolType.WORD;
-      }
-      if(SymbolType.WORD.equals(left) && SymbolType.WORD.equals(right)) {
+      if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
          return SymbolType.DWORD;
       }
       throw new NoMatchingType("DWord constructor cannot use " + left + " " + getOperator() + " " + right);

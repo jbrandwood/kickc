@@ -10,7 +10,7 @@ byte* cur_line = (byte*)$400;
 
 inline void line(byte xpos, byte xadd, byte ysize, byte ch) {
     cur_line = (byte*)$400;
-    word pos = {xpos, 0};
+    word pos = MAKEWORD(xpos, 0);
     for( byte i=0;i<ysize; i++) {
         plot(BYTE1(pos), ch);
         pos += xadd;

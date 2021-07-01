@@ -82,7 +82,7 @@ unsigned int mulf8u_prepared(char b) {
         sbc mulf_sqr2_hi,x
         sta memB
     }
-    return { *memB, *resL };
+    return MAKEWORD( *memB, *resL );
 }
 
 // Fast multiply two unsigned chars to a unsigned int result

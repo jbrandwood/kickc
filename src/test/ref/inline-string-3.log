@@ -5,7 +5,8 @@ void main()
 main: scope:[main]  from __start
   *main::PTR = byte0 main::STRING
   *(main::PTR+1) = byte1 main::STRING
-  main::ptr#0 = (byte*){ *(main::PTR+1), *main::PTR }
+  main::$0 = *(main::PTR+1) w= *main::PTR
+  main::ptr#0 = (byte*)main::$0
   *main::SCREEN = *main::ptr#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -25,23 +26,20 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
+word~ main::$0
 constant byte* const main::PTR = (byte*)$9ffe
 constant byte* const main::SCREEN = (byte*)$400
 constant const byte* main::STRING[]  = "camelot"z
 byte* main::ptr
 byte* main::ptr#0
 
-Fixing inline constructor with main::$0 = (byte)*(main::PTR+1) w= (byte)*main::PTR
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 1 in *(main::PTR+1) = byte1 main::STRING
-Adding number conversion cast (unumber) 1 in main::$0 = (byte)*(main::PTR+1) w= (byte)*main::PTR
+Adding number conversion cast (unumber) 1 in main::$0 = *(main::PTR+1) w= *main::PTR
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 40958
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
-Simplifying constant integer cast *(main::PTR+(unumber)1)
 Simplifying constant integer cast 1
-Simplifying constant integer cast *main::PTR
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
@@ -192,7 +190,7 @@ main: {
     // [1] *(main::PTR+1) = byte1 main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-    // byte* ptr = (byte*) { *(PTR+1), *PTR }
+    // MAKEWORD( *(PTR+1), *PTR )
     // [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z ptr+1
     lda PTR

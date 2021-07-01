@@ -9,7 +9,7 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label screen = 4*$100+$28
+    .label screen = 4*$100+0+0*$100+$28
     // *screen = 'a'
     lda #'a'
     sta screen

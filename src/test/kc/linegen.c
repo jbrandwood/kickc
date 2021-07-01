@@ -44,8 +44,8 @@ void lin16u_gen(word min, word max, word* lintab, word length) {
     word ampl = max-min;
     word stepi = divr16u(ampl, length-1, 0);
     word stepf = divr16u(0, length-1, rem16u);
-    dword step = { stepi, stepf };
-    dword val = { min, 0 };
+    dword step = MAKELONG( stepi, stepf );
+    dword val = MAKELONG( min, 0 );
     for(word i=0; i<length; i++) {
         *lintab = WORD1(val);
         val = val + step;

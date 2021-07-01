@@ -6,7 +6,7 @@ void main() {
     byte* const PTR = (byte*)$9ffe;
     *PTR = BYTE0(STRING);
     *(PTR+1)= BYTE1(STRING);
-    byte* ptr = (byte*) { *(PTR+1), *PTR };
+    byte* ptr = (byte*) MAKEWORD( *(PTR+1), *PTR );
     byte* const SCREEN = (byte*)$400;
     *SCREEN = *ptr;
 }

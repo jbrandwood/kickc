@@ -23,7 +23,7 @@ main: {
 // puta(byte register(X) ph, byte register(A) pl)
 puta: {
     .label screen = 2
-    // byte* screen = (byte*) { ph, pl }
+    // MAKEWORD( ph, pl )
     stx.z screen+1
     sta.z screen
     // *screen = 'a'

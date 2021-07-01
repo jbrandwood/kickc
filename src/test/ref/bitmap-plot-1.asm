@@ -617,10 +617,10 @@ mul16s: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp($17) x, byte register(X) y)
 bitmap_plot: {
-    .label __0 = $22
+    .label __1 = $22
     .label plotter = $20
     .label x = $17
-    // char* plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -628,17 +628,17 @@ bitmap_plot: {
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __0
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z __0+1
+    sta.z __1+1
     // plotter += ( x & $fff8 )
     clc
     lda.z plotter
-    adc.z __0
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z __0+1
+    adc.z __1+1
     sta.z plotter+1
     // BYTE0(x)
     ldx.z x
@@ -683,7 +683,7 @@ div32u16u: {
     jsr divr16u
     // divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
-    // unsigned long quotient = { quotient_hi, quotient_lo}
+    // MAKEDWORD( quotient_hi, quotient_lo )
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1

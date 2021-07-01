@@ -17,7 +17,7 @@ main: {
   __b1:
     ldx #4
   __b2:
-    // word w = { his[h], l }
+    // word w = MAKEWORD( his[h], l )
     ldy.z h
     lda his,y
     sta.z w+1

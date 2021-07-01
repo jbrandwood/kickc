@@ -24,7 +24,7 @@ main: {
     lda #>w
     sta.z print.w+1
     jsr print
-    // print( {0x12,0x34} )
+    // print( MAKEWORD(0x12,0x34) )
     lda #<$12*$100+$34
     sta.z print.w
     lda #>$12*$100+$34

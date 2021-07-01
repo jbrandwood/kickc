@@ -119,7 +119,7 @@ void bitmap_init(byte* bitmap) {
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    byte* bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] };
+    byte* bitmap = (byte*) MAKEWORD( bitmap_plot_yhi[0], bitmap_plot_ylo[0] );
     for( byte y: 0..39 ) {
         for( byte x: 0..199 ) {
             *bitmap++ = 0;
@@ -129,7 +129,7 @@ void bitmap_clear() {
 
 // Plot a single dot in the bitmap
 void bitmap_plot(word x, byte y) {
-    byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    byte* plotter = (byte*) MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] );
     plotter += ( x & $fff8 );
     *plotter |= bitmap_plot_bit[BYTE0(x)];
 }

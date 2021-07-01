@@ -22,7 +22,8 @@ void puta(byte puta::ph , byte puta::pl)
 puta: scope:[puta]  from main main::@1
   puta::pl#2 = phi( main/puta::pl#0, main::@1/puta::pl#1 )
   puta::ph#2 = phi( main/puta::ph#0, main::@1/puta::ph#1 )
-  puta::screen#0 = (byte*){ puta::ph#2, puta::pl#2 }
+  puta::$0 = puta::ph#2 w= puta::pl#2
+  puta::screen#0 = (byte*)puta::$0
   *puta::screen#0 = 'a'
   to:puta::@return
 puta::@return: scope:[puta]  from puta
@@ -43,6 +44,7 @@ SYMBOL TABLE SSA
 void __start()
 void main()
 void puta(byte puta::ph , byte puta::pl)
+word~ puta::$0
 byte puta::ph
 byte puta::ph#0
 byte puta::ph#1
@@ -54,8 +56,6 @@ byte puta::pl#2
 byte* puta::screen
 byte* puta::screen#0
 
-Fixing inline constructor with puta::$0 = (byte)puta::ph#2 w= (byte)puta::pl#2
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 4 in puta::ph#0 = 4
 Adding number conversion cast (unumber) 0 in puta::pl#0 = 0
 Adding number conversion cast (unumber) 5 in puta::ph#1 = 5
@@ -70,8 +70,6 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast 0
 Simplifying constant integer cast 5
 Simplifying constant integer cast $18
-Simplifying constant integer cast puta::ph#2
-Simplifying constant integer cast puta::pl#2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 0
@@ -311,7 +309,7 @@ main: {
 // puta(byte register(X) ph, byte register(A) pl)
 puta: {
     .label screen = 2
-    // byte* screen = (byte*) { ph, pl }
+    // MAKEWORD( ph, pl )
     // [6] puta::screen#0 = puta::ph#2 w= puta::pl#2 -- vwuz1=vbuxx_word_vbuaa 
     stx.z screen+1
     sta.z screen

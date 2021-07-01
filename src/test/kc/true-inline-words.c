@@ -2,8 +2,8 @@
 void main() {
     byte bs[] = { 'c', 'm' };           // constant byte array
     byte b = 4;                         // constant byte
-    word w = { b, 0 };                  // constant inline word
-    word w2 = (word){ 1, 1 } + w + (word){ 0, 0 };  // constant inline words inside expression
+    word w = MAKEWORD(b, 0);                  // constant inline word
+    word w2 = MAKEWORD(1, 1) + w + MAKEWORD(0, 0);  // constant inline words inside expression
     byte* sc = (byte*)w2;               // cast to (byte*)
     *sc = bs[1];                        // In the end $501 is set to 'c'
 

@@ -34,6 +34,8 @@ public class Pass1ByteXIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String INTRINSIC_MAKEWORD = "MAKEWORD";
    /** The makelong procedure name. */
    public static final String INTRINSIC_MAKELONG = "MAKELONG";
+   /** The makelong4 procedure name. */
+   public static final String INTRINSIC_MAKELONG4 = "MAKELONG4";
 
    public Pass1ByteXIntrinsicRewrite(Program program) {
       super(program);

@@ -44,7 +44,8 @@ public class Procedure extends Scope {
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
-         Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME
+         Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME,
+         Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 
    /** The method for passing parameters and return value to the procedure. */
@@ -54,7 +55,9 @@ public class Procedure extends Scope {
       /** Parameters and return value over the stack. */
       STACK_CALL("__stackcall"),
       /** Parameters and return value handled through variables. */
-      VAR_CALL("__varcall");
+      VAR_CALL("__varcall"),
+      /** Intrinsic calling. */
+      INTRINSIC_CALL("__intrinsiccall");
 
       private final String name;
 

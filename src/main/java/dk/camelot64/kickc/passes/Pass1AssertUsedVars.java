@@ -86,6 +86,8 @@ public class Pass1AssertUsedVars extends Pass1Base {
          if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
+            if(procedure.isDeclaredIntrinsic())
+               continue;
             for(String paramName : procedure.getParameterNames()) {
                defined.add(procedure.getLocalVariable(paramName).getRef());
             }

@@ -871,7 +871,15 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
+            if(procedure.isDeclaredIntrinsic()) {
+               if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedure.getFullName())) {
+                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.makelong4(call, program);
+                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+               } else  {
+                  throw new CompileError("Intrinsic procedure not supported "+procedure.toString(program));
+               }
+            } else if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                // Generate PHI transition
                if(genCallPhiEntry) {
                   ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
@@ -883,8 +891,10 @@ public class Pass4CodeGeneration {
                      genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                   }
                }
+               asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            } else if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+               asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
             }
-            asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             asm.getCurrentChunk().setFragment("jsr");

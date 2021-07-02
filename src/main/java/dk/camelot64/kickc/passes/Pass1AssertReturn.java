@@ -26,6 +26,7 @@ public class Pass1AssertReturn extends Pass1Base {
    public boolean step() {
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
+         if(procedure.isDeclaredIntrinsic()) continue;
          if(procedure.getReturnType() != null && !SymbolType.VOID.equals(procedure.getReturnType())) {
             LabelRef entryLabel = procedure.getRef().getLabelRef();
             ControlFlowBlock entryBlock = getProgram().getGraph().getBlock(entryLabel);

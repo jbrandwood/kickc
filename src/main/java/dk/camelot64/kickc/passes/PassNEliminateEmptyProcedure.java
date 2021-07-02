@@ -31,6 +31,7 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
       final Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
       boolean optimized = false;
       for(Procedure procedure : allProcedures) {
+         if(procedure.isDeclaredIntrinsic()) continue;
          if(hasEmptyBody(procedure.getRef())) {
             if(!hasExternalUsages(procedure.getRef(), getProgram()) && !SymbolRef.MAIN_PROC_NAME.equals(procedure.getLabel().getLocalName())) {
                // TODO: Entry point procedures include isAddressOfUsed!

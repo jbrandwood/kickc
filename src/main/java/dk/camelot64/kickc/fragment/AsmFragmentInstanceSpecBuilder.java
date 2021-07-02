@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.statements.StatementExprSideEffect;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -128,6 +125,37 @@ public class AsmFragmentInstanceSpecBuilder {
       return new AsmFragmentInstanceSpecBuilder(assignment, program);
    }
 
+   /**
+    * MAKELONG4() creates a long form 4 bytes
+    * @param call The intrinsic call
+    * @param program The program
+    * @return The ASM fragment instance
+    */
+   public static AsmFragmentInstanceSpecBuilder makelong4(StatementCall call, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(call, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(StatementCall make4long, Program program) {
+      this.program = program;
+      this.bindings = new LinkedHashMap<>();
+      StringBuilder signature = new StringBuilder();
+      signature.append(bind(make4long.getlValue()));
+      signature.append("=");
+      signature.append("_makelong4_(");
+      if(make4long.getParameters().size()!=4)
+         throw new CompileError("MAKELONG4() needs 4 parameters.", make4long);
+      signature.append(bind(make4long.getParameter(3)));
+      signature.append(")_(");
+      signature.append(bind(make4long.getParameter(2)));
+      signature.append(")_(");
+      signature.append(bind(make4long.getParameter(1)));
+      signature.append(")_(");
+      signature.append(bind(make4long.getParameter(0)));
+      signature.append(")");
+      ScopeRef codeScope = program.getScope().getRef();
+      this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature.toString(), bindings, codeScope);
+   }
+
    private AsmFragmentInstanceSpecBuilder(StatementAssignment assignment, Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
@@ -218,7 +246,6 @@ public class AsmFragmentInstanceSpecBuilder {
    private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
 
       final SymbolType rValue1Type = rValue1 == null ? null : SymbolTypeInference.inferType(program.getScope(), rValue1);
-      final SymbolType rValue2Type = rValue2 == null ? null : SymbolTypeInference.inferType(program.getScope(), rValue2);
 
       StringBuilder signature = new StringBuilder();
       if(rValue1 != null) {

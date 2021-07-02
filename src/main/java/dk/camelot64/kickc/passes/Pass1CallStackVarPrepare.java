@@ -56,6 +56,7 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
 
       // Add parameter assignments at start of procedure in STACK_CALL procedures
       for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(procedure.isDeclaredIntrinsic()) continue;
          if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
             final ControlFlowBlock procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
             final ArrayList<Variable> params = new ArrayList<>(procedure.getParameters());

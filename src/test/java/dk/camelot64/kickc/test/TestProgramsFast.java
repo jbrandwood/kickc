@@ -10,7 +10,12 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
-   public void testMakeDWord0() throws IOException {
+   public void testMakeLong40() throws IOException {
+      compileAndCompare("makelong4-0.c");
+   }
+
+   @Test
+   public void testMakeLong0() throws IOException {
       compileAndCompare("makelong-0.c");
    }
 

@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testMakeLong41() throws IOException {
+      compileAndCompare("makelong4-1.c");
+   }
+
+   @Test
    public void testMakeLong40() throws IOException {
       compileAndCompare("makelong4-0.c");
    }

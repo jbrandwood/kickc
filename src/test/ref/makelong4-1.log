@@ -1,0 +1,184 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::$0 = call MAKELONG4 1 2 3 4 
+  *main::SCREEN = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__intrinsic __intrinsiccall dword MAKELONG4(byte MAKELONG4::hihi , byte MAKELONG4::hilo , byte MAKELONG4::lohi , byte MAKELONG4::lolo)
+byte MAKELONG4::hihi
+byte MAKELONG4::hilo
+byte MAKELONG4::lohi
+byte MAKELONG4::lolo
+void __start()
+void main()
+dword~ main::$0
+constant dword* const main::SCREEN = (word*)$400
+
+Adding number conversion cast (unumber) 1 in main::$0 = call MAKELONG4 1 2 3 4 
+Adding number conversion cast (unumber) 2 in main::$0 = call MAKELONG4 (unumber)1 2 3 4 
+Adding number conversion cast (unumber) 3 in main::$0 = call MAKELONG4 (unumber)1 (unumber)2 3 4 
+Adding number conversion cast (unumber) 4 in main::$0 = call MAKELONG4 (unumber)1 (unumber)2 (unumber)3 4 
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (word*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Identified constant dword [0] main::$0 = call MAKELONG4 1 2 3 4 
+Constant main::$0 = 1*$1000000+2*$10000+3*$100+4
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant inlined main::$0 = 1*$1000000+2*$10000+3*$100+4
+Successful SSA optimization Pass2ConstantInlining
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *main::SCREEN = 1*$1000000+2*$10000+3*$100+4
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__intrinsic __intrinsiccall dword MAKELONG4(byte MAKELONG4::hihi , byte MAKELONG4::hilo , byte MAKELONG4::lohi , byte MAKELONG4::lolo)
+byte MAKELONG4::hihi
+byte MAKELONG4::hilo
+byte MAKELONG4::lohi
+byte MAKELONG4::lolo
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::SCREEN = 1*$1000000+2*$10000+3*$100+4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [MAKELONG4] 
+Uplift Scope [] 
+
+Uplifting [main] best 33 combination 
+Uplifting [MAKELONG4] best 33 combination 
+Uplifting [] best 33 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test MAKELONG4() with constants
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="makelong4-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [0] *main::SCREEN = 1*$1000000+2*$10000+3*$100+4 -- _deref_pduc1=vduc2 
+    lda #<1*$1000000+2*$10000+3*$100+4
+    sta SCREEN
+    lda #>1*$1000000+2*$10000+3*$100+4
+    sta SCREEN+1
+    lda #<1*$1000000+2*$10000+3*$100+4>>$10
+    sta SCREEN+2
+    lda #>1*$1000000+2*$10000+3*$100+4>>$10
+    sta SCREEN+3
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__intrinsic __intrinsiccall dword MAKELONG4(byte MAKELONG4::hihi , byte MAKELONG4::hilo , byte MAKELONG4::lohi , byte MAKELONG4::lolo)
+byte MAKELONG4::hihi
+byte MAKELONG4::hilo
+byte MAKELONG4::lohi
+byte MAKELONG4::lolo
+void main()
+constant dword* const main::SCREEN = (word*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+  // File Comments
+// Test MAKELONG4() with constants
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="makelong4-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // *SCREEN = MAKELONG4(1, 2, 3, 4)
+    // [0] *main::SCREEN = 1*$1000000+2*$10000+3*$100+4 -- _deref_pduc1=vduc2 
+    lda #<1*$1000000+2*$10000+3*$100+4
+    sta SCREEN
+    lda #>1*$1000000+2*$10000+3*$100+4
+    sta SCREEN+1
+    lda #<1*$1000000+2*$10000+3*$100+4>>$10
+    sta SCREEN+2
+    lda #>1*$1000000+2*$10000+3*$100+4>>$10
+    sta SCREEN+3
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

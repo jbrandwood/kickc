@@ -1,8 +1,5 @@
 // Test MAKELONG4()
 
-
-__intrinsic __intrinsiccall unsigned long MAKELONG4(char hihi,char hilo,char lohi,char lolo);
-
 void main() {
     unsigned long* const SCREEN = (unsigned int*)0x0400;
     for(char lolo=0;lolo<100;lolo++)

@@ -378,6 +378,7 @@ public class Compiler {
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
+      optimizations.add(new Pass2ConstantIntrinsics(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));

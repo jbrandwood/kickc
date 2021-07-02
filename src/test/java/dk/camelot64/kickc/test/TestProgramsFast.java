@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testMakeLong42() throws IOException {
+      assertError("makelong4-2.c", "Wrong number of parameters in call. Expected 4.");
+   }
+
+   @Test
    public void testMakeLong41() throws IOException {
       compileAndCompare("makelong4-1.c");
    }

@@ -1,0 +1,389 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@6
+  main::i#2 = phi( main/main::i#0, main::@6/main::i#1 )
+  main::$0 = main::i#2 != 8
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#7 = phi( main::@1/main::i#2 )
+  main::pos#0 = 1
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  main::i#5 = phi( main::@2/main::i#7, main::@4/main::i#4 )
+  main::pos#2 = phi( main::@2/main::pos#0, main::@4/main::pos#3 )
+  main::pos#1 = main::pos#2 + main::move
+  main::$3 = 0 != main::pos#1
+  main::$1 = ! main::$3
+  if(main::$1) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3 main::@5
+  main::i#4 = phi( main::@3/main::i#5, main::@5/main::i#6 )
+  main::pos#3 = phi( main::@3/main::pos#1, main::@5/main::pos#4 )
+  main::$2 = main::pos#3 && main::vacant
+  if(main::$2) goto main::@3
+  to:main::@6
+main::@5: scope:[main]  from main::@3
+  main::i#6 = phi( main::@3/main::i#5 )
+  main::pos#4 = phi( main::@3/main::pos#1 )
+  to:main::@4
+main::@6: scope:[main]  from main::@4
+  main::i#3 = phi( main::@4/main::i#4 )
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+bool~ main::$0
+bool~ main::$1
+bool~ main::$2
+bool~ main::$3
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte main::i#6
+byte main::i#7
+constant byte main::move = 1
+byte main::pos
+byte main::pos#0
+byte main::pos#1
+byte main::pos#2
+byte main::pos#3
+byte main::pos#4
+constant byte main::vacant = 1
+
+Adding number conversion cast (unumber) 8 in main::$0 = main::i#2 != 8
+Adding number conversion cast (unumber) 0 in main::$3 = 0 != main::pos#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 8
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [9] main::$1 = 0 == main::pos#1 from [8] main::$3 = 0 != main::pos#1
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias main::i#2 = main::i#7 
+Alias main::pos#1 = main::pos#4 
+Alias main::i#5 = main::i#6 
+Alias main::i#3 = main::i#4 
+Successful SSA optimization Pass2AliasElimination
+Alias main::pos#1 = main::pos#3 
+Alias main::i#3 = main::i#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::i#3 main::i#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [3] if(main::i#2!=8) goto main::@2
+Simple Condition main::$1 [8] if(0==main::pos#1) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Rewriting && if()-condition to two if()s [9] main::$2 = main::pos#1 && main::vacant
+Successful SSA optimization Pass2ConditionalAndOrRewriting
+Warning! Adding boolean cast to non-boolean condition main::pos#1
+Warning! Adding boolean cast to non-boolean condition main::vacant
+Constant right-side identified main::$5 = 0 != main::vacant
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#0 = 0
+Constant main::pos#0 = 1
+Constant main::$5 = 0!=main::vacant
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(main::$5) goto main::@3
+Successful SSA optimization Pass2ConstantIfs
+Eliminating unused constant main::$5
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant main::vacant
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 0 in [5] main::$4 = 0 != main::pos#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition main::$4 [6] if(0!=main::pos#1) goto main::@7
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Inlining constant with var siblings main::i#0
+Inlining constant with var siblings main::pos#0
+Constant inlined main::i#0 = 0
+Constant inlined main::pos#0 = 1
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@5
+CALL GRAPH
+
+Created 2 initial phi equivalence classes
+Coalesced [11] main::i#8 = main::i#1
+Coalesced [12] main::pos#5 = main::pos#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block label main::@2
+Culled Empty Block label main::@7
+Renumbering block main::@3 to main::@2
+Renumbering block main::@4 to main::@3
+Renumbering block main::@5 to main::@4
+Renumbering block main::@6 to main::@5
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@4
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [1] main::i#2 = phi( main/0, main::@5/main::i#1 )
+  [2] if(main::i#2!=8) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1 main::@3
+  [4] main::pos#2 = phi( main::@1/1, main::@3/main::pos#1 )
+  [5] main::pos#1 = main::pos#2 + main::move
+  [6] if(0==main::pos#1) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  [7] phi()
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [8] if(0!=main::pos#1) goto main::@2
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [9] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 4.714285714285714
+byte main::pos
+byte main::pos#1 101.0
+byte main::pos#2 202.0
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::pos#2 main::pos#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::pos#2 main::pos#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::pos#2 main::pos#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] main::pos#1 = main::pos#2 + main::move [ main::i#2 main::pos#1 ] (  [ main::i#2 main::pos#1 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [5] main::pos#1 = main::pos#2 + main::move [ main::i#2 main::pos#1 ] (  [ main::i#2 main::pos#1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::pos#2 main::pos#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 303: zp[1]:3 [ main::pos#2 main::pos#1 ] 26.71: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 2911 combination reg byte a [ main::pos#2 main::pos#1 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 2911 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates error "Block referenced, but not found in program."
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="block-error-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .const move = 1
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2!=8) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #8
+    bne __b2_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b2_from___b1:
+    // [4] phi main::pos#2 = 1 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    lda #1
+    jmp __b2
+    // [4] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  __b2_from___b3:
+    // [4] phi main::pos#2 = main::pos#1 [phi:main::@3->main::@2#0] -- register_copy 
+    jmp __b2
+    // main::@2
+  __b2:
+    // [5] main::pos#1 = main::pos#2 + main::move -- vbuaa=vbuaa_plus_vbuc1 
+    clc
+    adc #move
+    // [6] if(0==main::pos#1) goto main::@3 -- 0_eq_vbuaa_then_la1 
+    cmp #0
+    beq __b3
+    // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  __b4_from___b2:
+    jmp __b4
+    // main::@4
+  __b4:
+    jmp __b3
+    // main::@3
+  __b3:
+    // [8] if(0!=main::pos#1) goto main::@2 -- 0_neq_vbuaa_then_la1 
+    cmp #0
+    bne __b2_from___b3
+    jmp __b5
+    // main::@5
+  __b5:
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  __b1_from___b5:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b2_from___b3 with __b2
+Removing instruction __b2_from___b3:
+Removing instruction __b4_from___b2:
+Removing instruction __b4:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Relabelling long label __b2_from___b1 to __b4
+Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction jmp __b2
+Removing instruction beq __b3
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b3:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 4.714285714285714
+constant byte main::move = 1
+byte main::pos
+byte main::pos#1 reg byte a 101.0
+byte main::pos#2 reg byte a 202.0
+
+reg byte x [ main::i#2 main::i#1 ]
+reg byte a [ main::pos#2 main::pos#1 ]
+
+
+FINAL ASSEMBLER
+Score: 1371
+
+  // File Comments
+// Demonstrates error "Block referenced, but not found in program."
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="block-error-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .const move = 1
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char i=0;i!=8;i++)
+    // [2] if(main::i#2!=8) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #8
+    bne __b4
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b4:
+    // [4] phi main::pos#2 = 1 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    lda #1
+    // [4] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [4] phi main::pos#2 = main::pos#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // main::@2
+  __b2:
+    // pos += move
+    // [5] main::pos#1 = main::pos#2 + main::move -- vbuaa=vbuaa_plus_vbuc1 
+    clc
+    adc #move
+    // if(pos)
+    // [6] if(0==main::pos#1) goto main::@3 -- 0_eq_vbuaa_then_la1 
+    cmp #0
+    // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // main::@4
+    // main::@3
+    // while(pos && vacant)
+    // [8] if(0!=main::pos#1) goto main::@2 -- 0_neq_vbuaa_then_la1 
+    cmp #0
+    bne __b2
+    // main::@5
+    // for(char i=0;i!=8;i++)
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

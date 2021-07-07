@@ -126,7 +126,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       ControlFlowBlock destBlock = getGraph().getBlock(destLabel);
       LinkedHashMap<LabelRef, LabelRef> replacements = new LinkedHashMap<>();
       replacements.put(block.getLabel(), newBlockLabel.getRef());
-      replaceLabels(destBlock, replacements);
+      replaceLabels(destBlock.getPhiBlock(), replacements);
 
    }
 

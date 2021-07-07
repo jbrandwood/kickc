@@ -61,6 +61,16 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
       visitor.visitBlock(block);
    }
 
+   /**
+    * Replace all usages of a label in a statement with another label.
+    *
+    * @param replacements Variables that have alias values.
+    */
+   public void replaceLabels(Statement statement, final Map<LabelRef, LabelRef> replacements) {
+      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+      visitor.visitStatement(statement);
+   }
+
    /** Creates a visitor that can replace labels. */
    private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
       return new ControlFlowGraphBaseVisitor<Void>() {

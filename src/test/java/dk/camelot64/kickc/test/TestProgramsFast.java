@@ -9,6 +9,21 @@ import java.io.IOException;
  */
 public class TestProgramsFast extends TestPrograms {
 
+   //@Test
+   //public void testShadowVariableError1() throws IOException {
+   //   compileAndCompare("shadow-variable-error-1.c");
+   //}
+
+   @Test
+   public void testBlockError2() throws IOException {
+      compileAndCompare("block-error-2.c");
+   }
+
+   @Test
+   public void testBlockError1() throws IOException {
+      compileAndCompare("block-error-1.c");
+   }
+
    @Test
    public void testMakeLong42() throws IOException {
       assertError("makelong4-2.c", "Wrong number of parameters in call. Expected 4.");

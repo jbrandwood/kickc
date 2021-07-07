@@ -54,9 +54,9 @@ public class Procedure extends Scope {
       PHI_CALL("__phicall"),
       /** Parameters and return value over the stack. */
       STACK_CALL("__stackcall"),
-      /** Parameters and return value handled through variables. */
+      /** Parameters and return value handled through shared variables. */
       VAR_CALL("__varcall"),
-      /** Intrinsic calling. */
+      /** Intrinsic calling. Will be converted to intrinsic ASM late in the compile. */
       INTRINSIC_CALL("__intrinsiccall");
 
       private final String name;

@@ -257,34 +257,29 @@ public class AsmFragmentInstanceSpecBuilder {
       if(
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 1 &&
-                  operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+                  (Operators.MINUS.equals(operator) || Operators.PLUS.equals(operator))) {
          signature.append("1");
       } else if(
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 2 &&
-                  operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+")) &&
+                  (Operators.MINUS.equals(operator) || Operators.PLUS.equals(operator)) &&
                   (SymbolType.BYTE.equals(rValue1Type) || SymbolType.SBYTE.equals(rValue1Type))
       ) {
          signature.append("2");
       } else if(
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() <= 9 &&
-                  operator != null &&
-                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
+                  (Operators.SHIFT_RIGHT.equals(operator) || Operators.SHIFT_LEFT.equals(operator))) {
          signature.append(((ConstantInteger) rValue2).getValue());
       } else if(
             rValue2 instanceof ConstantInteger &&
                   ((((ConstantInteger) rValue2).getValue()) % 8 == 0) &&
-                  operator != null &&
-                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
+                  (Operators.SHIFT_RIGHT.equals(operator) || Operators.SHIFT_LEFT.equals(operator))) {
          signature.append(((ConstantInteger) rValue2).getValue());
       } else if(
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 0 &&
-                  operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+                  (Operators.MINUS.equals(operator) || Operators.PLUS.equals(operator)) ) {
          signature.append("0");
       } else {
          signature.append(bind(rValue2));

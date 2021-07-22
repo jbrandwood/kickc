@@ -15206,3 +15206,31 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT vduz1=vduc1_minus__deref_pduc2
+lda #<{c1}
+sec
+sbc {c2}
+sta {z1}
+lda #>{c1}
+sbc {c2}+1
+sta {z1}+1
+lda #<{c1}>>$10
+sbc {c2}+2
+sta {z1}+2
+lda #>{c1}>>$10
+sbc {c2}+3
+sta {z1}+3
+//FRAGMENT vduz1=vduz2_minus_vduc1
+lda {z2}
+sec
+sbc #<{c1}
+sta {z1}
+lda {z2}+1
+sbc #>{c1}
+sta {z1}+1
+lda {z2}+2
+sbc #<{c1}>>$10
+sta {z1}+2
+lda {z2}+3
+sbc #>{c1}>>$10
+sta {z1}+3

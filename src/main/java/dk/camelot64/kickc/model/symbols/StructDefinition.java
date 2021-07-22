@@ -6,11 +6,15 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 
 /**
  * A struct definition containing a set of variables.
+ * The struct definition can either represent a struct (linear consecutive memory layout) or a union (same memory address)
  */
 public class StructDefinition extends Scope {
 
-   public StructDefinition(String name, Scope parentScope) {
+   private boolean isUnion;
+
+   public StructDefinition(String name, boolean isUnion, Scope parentScope) {
       super(name, parentScope, SEGMENT_DATA_DEFAULT);
+      this.isUnion = isUnion;
    }
 
    @Override
@@ -18,8 +22,13 @@ public class StructDefinition extends Scope {
       return new SymbolTypeStruct(this, false, false);
    }
 
+   public boolean isUnion() {
+      return isUnion;
+   }
+
    /**
     * Get a struct member variable
+    *
     * @param name The name of the member
     * @return The member variable
     */
@@ -34,11 +43,14 @@ public class StructDefinition extends Scope {
 
    /**
     * Get the number of bytes that the member data is offset from the start of the struct
+    *
     * @param member The member to find offset for
     * @return The byte offset of the start of the member data
     */
    public long getMemberByteOffset(Variable member, ProgramScope programScope) {
-      long byteOffset=0;
+      if(isUnion)
+         return 0;
+      long byteOffset = 0;
       for(Variable structMember : getAllVars(false)) {
          if(structMember.equals(member)) {
             break;
@@ -51,6 +63,10 @@ public class StructDefinition extends Scope {
 
    @Override
    public String toString(Program program) {
-      return "struct-"+getFullName();
+      if(isUnion) {
+         return "union-" + getFullName();
+      } else {
+         return "struct-" + getFullName();
+      }
    }
 }

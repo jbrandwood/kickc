@@ -92,6 +92,7 @@ ASM: 'asm' { asmEnter=true; };
 DEFAULT : 'default' ;
 CASE : 'case' ;
 STRUCT : 'struct' ;
+UNION : 'union' ;
 ENUM : 'enum' ;
 SIZEOF : 'sizeof' ;
 TYPEID : 'typeid' ;

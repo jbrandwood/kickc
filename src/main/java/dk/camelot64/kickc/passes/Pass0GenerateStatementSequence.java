@@ -1829,13 +1829,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitStructDef(KickCParser.StructDefContext ctx) {
+
+      boolean isUnion = ctx.UNION()!=null;
+
       String structDefName;
       if(ctx.NAME() != null) {
          structDefName = ctx.NAME().getText();
       } else {
          structDefName = program.getScope().allocateIntermediateVariableName();
       }
-      StructDefinition structDefinition = program.getScope().addStructDefinition(structDefName);
+      StructDefinition structDefinition = program.getScope().addStructDefinition(structDefName, isUnion);
       scopeStack.push(structDefinition);
       for(KickCParser.StructMembersContext memberCtx : ctx.structMembers()) {
          varDeclPush();

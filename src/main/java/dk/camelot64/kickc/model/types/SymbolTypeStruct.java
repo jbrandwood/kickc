@@ -9,20 +9,26 @@ import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.Objects;
 
-/** A struct */
+/** A struct/union */
 public class SymbolTypeStruct implements SymbolType {
 
-   /** Name of the struct type. */
+   /** Name of the struct/union type. */
    private String structName;
 
-   /** Size of the struct in bytes. */
+   /** Size of the struct/union in bytes. */
    private int sizeBytes;
 
+   /** Is this a union */
+   private final boolean isUnion;
+
+   /** Volatile type qualifier. */
    private final boolean isVolatile;
+   /** Const type qualifier. */
    private final boolean isNomodify;
 
-   public SymbolTypeStruct(String structName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
+   public SymbolTypeStruct(String structName, boolean isUnion, int sizeBytes, boolean isVolatile, boolean isNomodify) {
       this.structName = structName;
+      this.isUnion = isUnion;
       this.sizeBytes = sizeBytes;
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
@@ -30,6 +36,7 @@ public class SymbolTypeStruct implements SymbolType {
 
    public SymbolTypeStruct(StructDefinition structDefinition, boolean isVolatile, boolean isNomodify) {
       this.structName = structDefinition.getLocalName();
+      this.isUnion = structDefinition.isUnion();
       this.sizeBytes = calculateSizeBytes(structDefinition, null);
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
@@ -37,7 +44,11 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
-      return new SymbolTypeStruct(this.structName, this.sizeBytes, isVolatile, isNomodify);
+      return new SymbolTypeStruct(this.structName, isUnion, this.sizeBytes, isVolatile, isNomodify);
+   }
+
+   public boolean isUnion() {
+      return isUnion;
    }
 
    @Override
@@ -52,7 +63,11 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public String getTypeBaseName() {
-      return "struct " + this.structName;
+      if(isUnion) {
+         return "union " + this.structName;
+      }  else {
+         return "struct " + this.structName;
+      }
    }
 
    public String getStructTypeName() {
@@ -80,10 +95,18 @@ public class SymbolTypeStruct implements SymbolType {
     */
    public int calculateSizeBytes(StructDefinition structDefinition, ProgramScope programScope) {
       int sizeBytes = 0;
-      for(Variable member : structDefinition.getAllVars(false)) {
-         SymbolType memberType = member.getType();
-         int memberSize = getMemberSizeBytes(memberType, member.getArraySize(), programScope);
-         sizeBytes += memberSize;
+      if(isUnion) {
+         for(Variable member : structDefinition.getAllVars(false)) {
+            SymbolType memberType = member.getType();
+            int memberSize = getMemberSizeBytes(memberType, member.getArraySize(), programScope);
+            sizeBytes = Math.max(sizeBytes, memberSize);
+         }
+      }  else {
+         for(Variable member : structDefinition.getAllVars(false)) {
+            SymbolType memberType = member.getType();
+            int memberSize = getMemberSizeBytes(memberType, member.getArraySize(), programScope);
+            sizeBytes += memberSize;
+         }
       }
       return sizeBytes;
    }
@@ -110,12 +133,13 @@ public class SymbolTypeStruct implements SymbolType {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeStruct that = (SymbolTypeStruct) o;
-      return Objects.equals(structName, that.structName);
+      return isUnion == that.isUnion &&
+            structName.equals(that.structName);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(structName, sizeBytes);
+      return Objects.hash(structName, isUnion);
    }
 
    @Override

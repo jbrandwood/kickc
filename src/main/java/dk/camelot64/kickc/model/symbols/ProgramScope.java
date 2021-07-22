@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
@@ -55,7 +54,7 @@ public class ProgramScope extends Scope {
    }
 
    public Symbol getSymbol(SymbolRef symbolRef) {
-      return getProgramScope().getGlobalSymbol(symbolRef.getFullName());
+      return this.getGlobalSymbol(symbolRef.getFullName());
    }
 
    public Variable getVar(SymbolVariableRef variableRef) {
@@ -90,6 +89,16 @@ public class ProgramScope extends Scope {
       final Symbol symbol = getSymbol(procedureRef);
       if(symbol!=null && !(symbol instanceof Procedure)) return null;
       return (Procedure) symbol;
+   }
+
+   /**
+    * Add a struct definition.
+    * The name can be either defined in the program or an intermediate name.
+    *
+    * @param name The name of the struct definition
+    */
+   public StructDefinition addStructDefinition(String name, boolean isUnion) {
+      return add(new StructDefinition(name, isUnion, this));
    }
 
    public Scope getScope(ScopeRef scopeRef) {

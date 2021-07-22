@@ -95,11 +95,11 @@ type
     ;
 
 structRef
-    : STRUCT NAME
+    : (STRUCT|UNION) NAME
     ;
 
 structDef
-    : STRUCT NAME? CURLY_BEGIN structMembers+ CURLY_END
+    : (STRUCT|UNION) NAME? CURLY_BEGIN structMembers+ CURLY_END
     ;
 
 structMembers

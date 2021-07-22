@@ -1,0 +1,184 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *((word*)&data+OFFSET_UNION_DATA_W) = $4d2
+  SCREEN[0] = *((byte*)&data+OFFSET_UNION_DATA_B)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_UNION_DATA_B = 0
+constant byte OFFSET_UNION_DATA_W = 0
+constant byte* const SCREEN = (byte*)$400
+void __start()
+union Data data loadstore = {}
+void main()
+
+Adding number conversion cast (unumber) $4d2 in *((word*)&data+OFFSET_UNION_DATA_W) = $4d2
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)&data+OFFSET_UNION_DATA_B)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((word*)&data+OFFSET_UNION_DATA_W) = (unumber)$4d2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $4d2
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $4d2
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (word*)&data in [0] *((word*)&data+OFFSET_UNION_DATA_W) = $4d2
+Simplifying expression containing zero (byte*)&data in [1] SCREEN[0] = *((byte*)&data+OFFSET_UNION_DATA_B)
+Simplifying expression containing zero SCREEN in [1] SCREEN[0] = *((byte*)&data)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_UNION_DATA_W
+Eliminating unused constant OFFSET_UNION_DATA_B
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *((word*)&data) = $4d2
+  [1] *SCREEN = *((byte*)&data)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+union Data data loadstore = {}
+void main()
+
+Initial phi equivalence classes
+Added variable data to live range equivalence class [ data ]
+Complete equivalence classes
+[ data ]
+Allocated mem[2] [ data ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((word*)&data) = $4d2 [ data ] (  [ data ] { }  ) always clobbers reg byte a 
+Statement [1] *SCREEN = *((byte*)&data) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers mem[2] [ data ] : mem[2] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [Data] 
+Uplift Scope [main] 
+Uplift Scope [] 0: mem[2] [ data ] 
+
+Uplifting [Data] best 29 combination 
+Uplifting [main] best 29 combination 
+Uplifting [] best 29 combination mem[2] [ data ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Minimal union with C-Standard behavior
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_DATA = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *((word*)&data) = $4d2 -- _deref_pwuc1=vwuc2 
+    lda #<$4d2
+    sta data
+    lda #>$4d2
+    sta data+1
+    // [1] *SCREEN = *((byte*)&data) -- _deref_pbuc1=_deref_pbuc2 
+    lda data
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .fill SIZEOF_UNION_DATA, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_UNION_DATA = 2
+union Data data loadstore mem[2] = {}
+void main()
+
+mem[2] [ data ]
+
+
+FINAL ASSEMBLER
+Score: 26
+
+  // File Comments
+// Minimal union with C-Standard behavior
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_DATA = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // data.w = 1234
+    // [0] *((word*)&data) = $4d2 -- _deref_pwuc1=vwuc2 
+    lda #<$4d2
+    sta data
+    lda #>$4d2
+    sta data+1
+    // SCREEN[0] = data.b
+    // [1] *SCREEN = *((byte*)&data) -- _deref_pbuc1=_deref_pbuc2 
+    lda data
+    sta SCREEN
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .fill SIZEOF_UNION_DATA, 0
+

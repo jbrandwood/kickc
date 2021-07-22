@@ -126,16 +126,6 @@ public abstract class Scope implements Symbol, Serializable {
       return add(new BlockScope(name, this));
    }
 
-   /**
-    * Add a struct definition.
-    * The name can be either defined in the program or an intermediate name.
-    *
-    * @param name The name of the struct definition
-    */
-   public StructDefinition addStructDefinition(String name) {
-      return add(new StructDefinition(name, this));
-   }
-
    public String allocateIntermediateVariableName() {
       return "$" + intermediateVarCount++;
    }

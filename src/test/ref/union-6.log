@@ -1,0 +1,222 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *((word*)&data+OFFSET_UNION_DATA_W) = $1234
+  main::$0 = byte1  *((word*)&data+OFFSET_UNION_DATA_W)
+  SCREEN[0] = main::$0
+  main::$1 = byte0  *((word*)&data+OFFSET_UNION_DATA_W)
+  SCREEN[1] = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_UNION_DATA_W = 0
+constant byte* const SCREEN = (byte*)$400
+void __start()
+union Data data loadstore = { b: $c }
+void main()
+byte~ main::$0
+byte~ main::$1
+
+Adding number conversion cast (unumber) $1234 in *((word*)&data+OFFSET_UNION_DATA_W) = $1234
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
+Adding number conversion cast (unumber) 1 in SCREEN[1] = main::$1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((word*)&data+OFFSET_UNION_DATA_W) = (unumber)$1234
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $1234
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $1234
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (word*)&data in [0] *((word*)&data+OFFSET_UNION_DATA_W) = $1234
+Simplifying expression containing zero (word*)&data in [1] main::$0 = byte1  *((word*)&data+OFFSET_UNION_DATA_W)
+Simplifying expression containing zero SCREEN in [2] SCREEN[0] = main::$0
+Simplifying expression containing zero (word*)&data in [3] main::$1 = byte0  *((word*)&data+OFFSET_UNION_DATA_W)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_UNION_DATA_W
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *((word*)&data) = $1234
+  [1] main::$0 = byte1  *((word*)&data)
+  [2] *SCREEN = main::$0
+  [3] main::$1 = byte0  *((word*)&data)
+  [4] *(SCREEN+1) = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+union Data data loadstore = { b: $c }
+void main()
+byte~ main::$0 4.0
+byte~ main::$1 4.0
+
+Initial phi equivalence classes
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable data to live range equivalence class [ data ]
+Complete equivalence classes
+[ main::$0 ]
+[ main::$1 ]
+[ data ]
+Allocated zp[1]:2 [ main::$0 ]
+Allocated zp[1]:3 [ main::$1 ]
+Allocated mem[2] [ data ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((word*)&data) = $1234 [ data ] (  [ data ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[2] [ data ] : mem[2] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 4: zp[1]:2 [ main::$0 ] 4: zp[1]:3 [ main::$1 ] 
+Uplift Scope [Data] 
+Uplift Scope [] 0: mem[2] [ data ] 
+
+Uplifting [main] best 37 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [Data] best 37 combination 
+Uplifting [] best 37 combination mem[2] [ data ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Minimal union with C-Standard behavior - union initializer with first element smaller than second
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *((word*)&data) = $1234 -- _deref_pwuc1=vwuc2 
+    lda #<$1234
+    sta data
+    lda #>$1234
+    sta data+1
+    // [1] main::$0 = byte1  *((word*)&data) -- vbuaa=_byte1__deref_pwuc1 
+    lda data+1
+    // [2] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // [3] main::$1 = byte0  *((word*)&data) -- vbuaa=_byte0__deref_pwuc1 
+    lda data
+    // [4] *(SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .byte $c
+  .fill 1, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda data+1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+union Data data loadstore mem[2] = { b: $c }
+void main()
+byte~ main::$0 reg byte a 4.0
+byte~ main::$1 reg byte a 4.0
+
+reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
+mem[2] [ data ]
+
+
+FINAL ASSEMBLER
+Score: 30
+
+  // File Comments
+// Minimal union with C-Standard behavior - union initializer with first element smaller than second
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // data.w = 0x1234
+    // [0] *((word*)&data) = $1234 -- _deref_pwuc1=vwuc2 
+    lda #<$1234
+    sta data
+    lda #>$1234
+    sta data+1
+    // BYTE1(data.w)
+    // [1] main::$0 = byte1  *((word*)&data) -- vbuaa=_byte1__deref_pwuc1 
+    // SCREEN[0] = BYTE1(data.w)
+    // [2] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // BYTE0(data.w)
+    // [3] main::$1 = byte0  *((word*)&data) -- vbuaa=_byte0__deref_pwuc1 
+    lda data
+    // SCREEN[1] = BYTE0(data.w)
+    // [4] *(SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .byte $c
+  .fill 1, 0
+

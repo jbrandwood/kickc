@@ -141,11 +141,11 @@ public class Initializers {
       // Recursively cast all sub-elements
       StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
       Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
-      int size = memberDefinitions.size();
-      if(size != valueList.getList().size()) {
+      int structInitNeedSize = structDefinition.isUnion()? 1 : memberDefinitions.size() ;
+      if(structInitNeedSize != valueList.getList().size()) {
          throw new CompileError(
                "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
-                     "which does not match the number of members in " + structType.getTypeName() + " (" + size + " members).\n" +
+                     "which does not match the number of members in " + structType.getTypeName() + " (" + structInitNeedSize + " members).\n" +
                      " Struct initializer: " + valueList.toString(program),
                source);
       }
@@ -157,7 +157,7 @@ public class Initializers {
       LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
       Iterator<Variable> memberDefIt = memberDefinitions.iterator();
       Iterator<RValue> valueIt = valueList.getList().iterator();
-      for(int i = 0; i < size; i++) {
+      for(int i = 0; i < structInitNeedSize; i++) {
          Variable memberDef = memberDefIt.next();
          RValue memberValue = valueIt.next();
          RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType()), program, source);

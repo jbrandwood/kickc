@@ -1,0 +1,257 @@
+Fixing struct type size union IPV4 to 4
+Fixing struct type size union IPV4 to 4
+Fixing struct type SIZE_OF union IPV4 to 4
+Fixing struct type SIZE_OF union IPV4 to 4
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *((dword*)&ipv4+OFFSET_UNION_IPV4_D) = $12345678
+  SCREEN[0] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[3]
+  SCREEN[1] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[2]
+  SCREEN[2] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[1]
+  SCREEN[3] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[0]
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_UNION_IPV4_B = 0
+constant byte OFFSET_UNION_IPV4_D = 0
+constant byte* const SCREEN = (byte*)$400
+void __start()
+union IPV4 ipv4 loadstore = {}
+void main()
+
+Adding number conversion cast (unumber) 3 in SCREEN[0] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[3]
+Adding number conversion cast (unumber) 0 in SCREEN[0] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[(unumber)3]
+Adding number conversion cast (unumber) 2 in SCREEN[1] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[2]
+Adding number conversion cast (unumber) 1 in SCREEN[1] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[(unumber)2]
+Adding number conversion cast (unumber) 1 in SCREEN[2] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[1]
+Adding number conversion cast (unumber) 2 in SCREEN[2] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[(unumber)1]
+Adding number conversion cast (unumber) 0 in SCREEN[3] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[0]
+Adding number conversion cast (unumber) 3 in SCREEN[3] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[(unumber)0]
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 3
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 0
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (dword*)&ipv4 in [0] *((dword*)&ipv4+OFFSET_UNION_IPV4_D) = $12345678
+Simplifying expression containing zero (byte*)&ipv4 in [1] SCREEN[0] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[3]
+Simplifying expression containing zero SCREEN in [1] SCREEN[0] = ((byte*)&ipv4)[3]
+Simplifying expression containing zero (byte*)&ipv4 in [2] SCREEN[1] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[2]
+Simplifying expression containing zero (byte*)&ipv4 in [3] SCREEN[2] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[1]
+Simplifying expression containing zero (byte*)&ipv4+OFFSET_UNION_IPV4_B in [4] SCREEN[3] = ((byte*)&ipv4+OFFSET_UNION_IPV4_B)[0]
+Simplifying expression containing zero (byte*)&ipv4 in [4] SCREEN[3] = *((byte*)&ipv4+OFFSET_UNION_IPV4_B)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_UNION_IPV4_D
+Eliminating unused constant OFFSET_UNION_IPV4_B
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *((byte*)&ipv4+3)
+Consolidated array index constant in *((byte*)&ipv4+2)
+Consolidated array index constant in *(SCREEN+1)
+Consolidated array index constant in *((byte*)&ipv4+1)
+Consolidated array index constant in *(SCREEN+2)
+Consolidated array index constant in *(SCREEN+3)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *((dword*)&ipv4) = $12345678
+  [1] *SCREEN = *((byte*)&ipv4+3)
+  [2] *(SCREEN+1) = *((byte*)&ipv4+2)
+  [3] *(SCREEN+2) = *((byte*)&ipv4+1)
+  [4] *(SCREEN+3) = *((byte*)&ipv4)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+union IPV4 ipv4 loadstore = {}
+void main()
+
+Initial phi equivalence classes
+Added variable ipv4 to live range equivalence class [ ipv4 ]
+Complete equivalence classes
+[ ipv4 ]
+Allocated mem[4] [ ipv4 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((dword*)&ipv4) = $12345678 [ ipv4 ] (  [ ipv4 ] { }  ) always clobbers reg byte a 
+Statement [1] *SCREEN = *((byte*)&ipv4+3) [ ipv4 ] (  [ ipv4 ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+1) = *((byte*)&ipv4+2) [ ipv4 ] (  [ ipv4 ] { }  ) always clobbers reg byte a 
+Statement [3] *(SCREEN+2) = *((byte*)&ipv4+1) [ ipv4 ] (  [ ipv4 ] { }  ) always clobbers reg byte a 
+Statement [4] *(SCREEN+3) = *((byte*)&ipv4) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers mem[4] [ ipv4 ] : mem[4] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [IPV4] 
+Uplift Scope [main] 
+Uplift Scope [] 0: mem[4] [ ipv4 ] 
+
+Uplifting [IPV4] best 65 combination 
+Uplifting [main] best 65 combination 
+Uplifting [] best 65 combination mem[4] [ ipv4 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Minimal union with C-Standard behavior - union with array member
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_IPV4 = 4
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *((dword*)&ipv4) = $12345678 -- _deref_pduc1=vduc2 
+    lda #<$12345678
+    sta ipv4
+    lda #>$12345678
+    sta ipv4+1
+    lda #<$12345678>>$10
+    sta ipv4+2
+    lda #>$12345678>>$10
+    sta ipv4+3
+    // [1] *SCREEN = *((byte*)&ipv4+3) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4+3
+    sta SCREEN
+    // [2] *(SCREEN+1) = *((byte*)&ipv4+2) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4+2
+    sta SCREEN+1
+    // [3] *(SCREEN+2) = *((byte*)&ipv4+1) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4+1
+    sta SCREEN+2
+    // [4] *(SCREEN+3) = *((byte*)&ipv4) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4
+    sta SCREEN+3
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+.segment Data
+  ipv4: .fill SIZEOF_UNION_IPV4, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda ipv4+3
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_UNION_IPV4 = 4
+union IPV4 ipv4 loadstore mem[4] = {}
+void main()
+
+mem[4] [ ipv4 ]
+
+
+FINAL ASSEMBLER
+Score: 58
+
+  // File Comments
+// Minimal union with C-Standard behavior - union with array member
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_IPV4 = 4
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // ipv4.d = 0x12345678ul
+    // [0] *((dword*)&ipv4) = $12345678 -- _deref_pduc1=vduc2 
+    lda #<$12345678
+    sta ipv4
+    lda #>$12345678
+    sta ipv4+1
+    lda #<$12345678>>$10
+    sta ipv4+2
+    lda #>$12345678>>$10
+    sta ipv4+3
+    // SCREEN[0] = ipv4.b[3]
+    // [1] *SCREEN = *((byte*)&ipv4+3) -- _deref_pbuc1=_deref_pbuc2 
+    sta SCREEN
+    // SCREEN[1] = ipv4.b[2]
+    // [2] *(SCREEN+1) = *((byte*)&ipv4+2) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4+2
+    sta SCREEN+1
+    // SCREEN[2] = ipv4.b[1]
+    // [3] *(SCREEN+2) = *((byte*)&ipv4+1) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4+1
+    sta SCREEN+2
+    // SCREEN[3] = ipv4.b[0]
+    // [4] *(SCREEN+3) = *((byte*)&ipv4) -- _deref_pbuc1=_deref_pbuc2 
+    lda ipv4
+    sta SCREEN+3
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+.segment Data
+  ipv4: .fill SIZEOF_UNION_IPV4, 0
+

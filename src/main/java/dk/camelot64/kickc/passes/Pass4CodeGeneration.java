@@ -653,10 +653,22 @@ public class Pass4CodeGeneration {
          if(value instanceof ConstantStructValue) {
             // Add each struct member recursively
             ConstantStructValue structValue = (ConstantStructValue) value;
+            int size = 0;
             for(SymbolVariableRef memberRef : structValue.getMembers()) {
                ConstantValue memberValue = structValue.getValue(memberRef);
                Variable memberVariable = getScope().getVar(memberRef);
                addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
+               size += SymbolTypeStruct.getMemberSizeBytes(memberVariable.getType(),  memberVariable.getArraySize(), getScope());
+            }
+            // Add padding if this is a union and the first member does not use all bytes
+            final int declaredSize = structValue.getStructType().getSizeBytes();
+            if(size<declaredSize) {
+               long paddingSize = declaredSize - size;
+               // TODO: Use SIZEOF constant
+               ConstantValue paddingSizeVal = new ConstantInteger(paddingSize);
+               String paddingBytesAsm  = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
+               ConstantValue zeroValue = new ConstantInteger(0l, SymbolType.BYTE);
+               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, paddingBytesAsm, (int)paddingSize, getEncoding(zeroValue));
             }
          } else if(value instanceof StructZero) {
             final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();

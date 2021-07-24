@@ -98,7 +98,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       Variable procReturnVar = procedure.getLocalVariable("return");
       // TODO: Return-variable has been unwound - detect that instead - use getProgram().getStructVariableMemberUnwinding().getUnwindingMaster() like for parameters
       if(procReturnVar != null && procReturnVar.isStructUnwind()) {
-         if(!(call.getlValue() instanceof ValueList)) {
+         if(call.getlValue()!=null && !(call.getlValue() instanceof ValueList)) {
             // Return value already unwound - move on
             final ValueSource valueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
             RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
@@ -118,30 +118,32 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean anyParameterUnwound = false;
       final List<Variable> procParameters = procedure.getParameters();
       final List<RValue> callParameters = call.getParameters();
-      for(int idx_call = 0, idx_proc = 0; idx_call < callParameters.size(); idx_call++) {
-         final RValue callParameter = callParameters.get(idx_call);
-         final Variable procParameter = procParameters.get(idx_proc);
-         boolean unwound = false;
-         final SymbolVariableRef unwindingMaster = getProgram().getStructVariableMemberUnwinding().getUnwindingMaster(procParameter.getRef());
-         if(unwindingMaster != null) {
-            // The procedure parameter is unwound
-            final ValueSource parameterSource = ValueSourceFactory.getValueSource(callParameter, getProgram(), getScope(), call, stmtIt, currentBlock);
-            if(parameterSource != null && parameterSource.isUnwindable())
-               // Passing an unwinding struct value
-               for(String memberName : parameterSource.getMemberNames(getScope())) {
-                  ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
-                  unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
-                  unwound = true;
-                  anyParameterUnwound = true;
+      if(callParameters!=null && callParameters.size()>0 ){
+         for(int idx_call = 0, idx_proc = 0; idx_call < callParameters.size(); idx_call++) {
+            final RValue callParameter = callParameters.get(idx_call);
+            final Variable procParameter = procParameters.get(idx_proc);
+            boolean unwound = false;
+            final SymbolVariableRef unwindingMaster = getProgram().getStructVariableMemberUnwinding().getUnwindingMaster(procParameter.getRef());
+            if(unwindingMaster != null) {
+               // The procedure parameter is unwound
+               final ValueSource parameterSource = ValueSourceFactory.getValueSource(callParameter, getProgram(), getScope(), call, stmtIt, currentBlock);
+               if(parameterSource != null && parameterSource.isUnwindable())
+                  // Passing an unwinding struct value
+                  for(String memberName : parameterSource.getMemberNames(getScope())) {
+                     ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
+                     unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
+                     unwound = true;
+                     anyParameterUnwound = true;
+                     idx_proc++;
+                  }
+               else
                   idx_proc++;
-               }
-            else
+            } else {
                idx_proc++;
-         } else {
-            idx_proc++;
-         }
-         if(!unwound) {
-            unwoundParameters.add(callParameter);
+            }
+            if(!unwound) {
+               unwoundParameters.add(callParameter);
+            }
          }
       }
 

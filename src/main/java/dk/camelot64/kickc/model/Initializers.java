@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
@@ -92,7 +91,7 @@ public class Initializers {
          }
       } else if(initValue instanceof ValueList) {
          ValueList initList = (ValueList) initValue;
-         if(typeSpec.getType() instanceof SymbolTypePointer && ((SymbolTypePointer)typeSpec.getType()).getArraySpec() != null) {
+         if(typeSpec.getType() instanceof SymbolTypePointer && ((SymbolTypePointer) typeSpec.getType()).getArraySpec() != null) {
             // Type is an array
             initValue = constantifyArray(initList, (SymbolTypePointer) typeSpec.getType(), program, source);
          } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
@@ -107,7 +106,7 @@ public class Initializers {
             if(typeSpec.getType() instanceof SymbolTypeIntegerFixed) {
                SymbolTypeIntegerFixed typeIntegerFixed = (SymbolTypeIntegerFixed) typeSpec.getType();
                if(!typeIntegerFixed.contains(integer)) {
-                  throw new CompileError( "Constant init-value has a non-matching type \n type: " + typeSpec.getType().toString() +"\n value: " + initValue.toString(), source);
+                  throw new CompileError("Constant init-value has a non-matching type \n type: " + typeSpec.getType().toString() + "\n value: " + initValue.toString(), source);
                }
             }
             initValue = new ConstantInteger(integer, typeSpec.getType());
@@ -141,13 +140,21 @@ public class Initializers {
       // Recursively cast all sub-elements
       StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
       Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
-      int structInitNeedSize = structDefinition.isUnion()? 1 : memberDefinitions.size() ;
+      int structInitNeedSize = structDefinition.isUnion() ? 1 : memberDefinitions.size();
       if(structInitNeedSize != valueList.getList().size()) {
-         throw new CompileError(
-               "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
-                     "which does not match the number of members in " + structType.getTypeName() + " (" + structInitNeedSize + " members).\n" +
-                     " Struct initializer: " + valueList.toString(program),
-               source);
+         if(structDefinition.isUnion()) {
+            throw new CompileError(
+                  "Union initializer has too many values, since only one is allowed.\n" +
+                        " Union initializer: " + valueList.toString(program),
+                  source);
+         } else {
+            throw new CompileError(
+                  "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
+                        "which does not match the number of members in " + structType.getTypeName() + " (" + structInitNeedSize + " members).\n" +
+                        " Struct initializer: " + valueList.toString(program),
+                  source);
+
+         }
       }
 
       boolean allConst = true;

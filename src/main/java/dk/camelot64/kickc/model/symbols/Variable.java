@@ -505,10 +505,12 @@ public class Variable implements Symbol {
     * @return true if an unwinding struct
     */
    public boolean isStructUnwind() {
-      if(getType() instanceof SymbolTypeStruct)
-         return isKindPhiMaster() || isKindIntermediate() || isKindPhiVersion();
-      else
-         return false;
+      if(getType() instanceof SymbolTypeStruct) {
+         final SymbolTypeStruct typeStruct = (SymbolTypeStruct) getType();
+         if(!typeStruct.isUnion())
+            return isKindPhiMaster() || isKindIntermediate() || isKindPhiVersion();
+      }
+      return false;
    }
 
    /**
@@ -517,7 +519,15 @@ public class Variable implements Symbol {
     * @return true if an classic struct
     */
    public boolean isStructClassic() {
-      return getType() instanceof SymbolTypeStruct && isKindLoadStore();
+
+      if(getType() instanceof SymbolTypeStruct) {
+         final SymbolTypeStruct typeStruct = (SymbolTypeStruct) getType();
+         if(typeStruct.isUnion())
+            return true;
+         if(isKindLoadStore())
+            return true;
+      }
+      return false;
    }
 
    public boolean isDeclarationOnly() {

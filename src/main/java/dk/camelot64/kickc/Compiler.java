@@ -312,6 +312,9 @@ public class Compiler {
       new Pass1CallPhiReturn(program).execute();
       new PassNUnwindLValueLists(program).execute();
 
+      new Pass1UnwindStructValues(program).execute();
+
+
       getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
 

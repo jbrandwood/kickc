@@ -1,0 +1,458 @@
+Converting parameter in __varcall procedure to load/store fg_sum::a
+Converting parameter in __varcall procedure to load/store fg_sum::b
+Converting return in __varcall procedure to load/store fg_sum::return
+Calling convention __varcall adding prepare/execute/finalize for main::$0 = call fg_sum a b 
+Calling convention __varcall adding prepare/execute/finalize for main::$1 = call fg_sum c d 
+Calling convention VAR_CALL adding return value assignment main::$0 = fg_sum::return
+Calling convention VAR_CALL adding return value assignment main::$1 = fg_sum::return
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *(&fg_sum::a) = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  fg_sum::a = struct-unwound {*(&fg_sum::a)}
+  *(&fg_sum::b) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
+  fg_sum::b = struct-unwound {*(&fg_sum::b)}
+  callexecute fg_sum 
+  main::$0 = fg_sum::return
+  main::sum1#0 = main::$0
+  *COLS = main::sum1#0
+  *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
+  d = struct-unwound {*(&d)}
+  *(&fg_sum::a) = memcpy(*(&c), struct Cols, SIZEOF_STRUCT_COLS)
+  fg_sum::a = struct-unwound {*(&fg_sum::a)}
+  *(&fg_sum::b) = memcpy(*(&d), struct Cols, SIZEOF_STRUCT_COLS)
+  fg_sum::b = struct-unwound {*(&fg_sum::b)}
+  callexecute fg_sum 
+  main::$1 = fg_sum::return
+  main::sum2#0 = main::$1
+  *COLS = main::sum2#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+fg_sum: scope:[fg_sum]  from
+  fg_sum::$0 = *((byte*)&fg_sum::a+OFFSET_STRUCT_COLS_FG) + *((byte*)&fg_sum::b+OFFSET_STRUCT_COLS_FG)
+  fg_sum::return = fg_sum::$0
+  to:fg_sum::@return
+fg_sum::@return: scope:[fg_sum]  from fg_sum
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* const COLS = (byte*)$d020
+constant byte OFFSET_STRUCT_COLS_FG = 2
+constant byte SIZEOF_STRUCT_COLS = 3
+void __start()
+struct Cols a loadstore = { border: 1, bg: 2, fg: 3 }
+struct Cols b loadstore = { border: 3, bg: 4, fg: 6 }
+struct Cols c loadstore = { border: 5, bg: 6, fg: 7 }
+struct Cols d loadstore = {}
+__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+byte~ fg_sum::$0
+struct Cols fg_sum::a loadstore
+struct Cols fg_sum::b loadstore
+byte fg_sum::return loadstore
+void main()
+byte~ main::$0
+byte~ main::$1
+byte main::sum1
+byte main::sum1#0
+byte main::sum2
+byte main::sum2#0
+
+Simplifying constant pointer cast (byte*) 53280
+Successful SSA optimization PassNCastSimplification
+Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
+Alias main::sum1#0 = main::$0 
+Alias main::sum2#0 = main::$1 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
+Removing C-classic struct-unwound assignment [1] fg_sum::a = struct-unwound {*(&fg_sum::a)}
+Removing C-classic struct-unwound assignment [3] fg_sum::b = struct-unwound {*(&fg_sum::b)}
+Removing C-classic struct-unwound assignment [8] d = struct-unwound {*(&d)}
+Removing C-classic struct-unwound assignment [10] fg_sum::a = struct-unwound {*(&fg_sum::a)}
+Removing C-classic struct-unwound assignment [12] fg_sum::b = struct-unwound {*(&fg_sum::b)}
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
+Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
+Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
+CALL GRAPH
+Calls in [main] to fg_sum:5 fg_sum:11 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+fg_sum: scope:[fg_sum]  from
+  [0] fg_sum::$0 = *((byte*)&fg_sum::a+OFFSET_STRUCT_COLS_FG) + *((byte*)&fg_sum::b+OFFSET_STRUCT_COLS_FG)
+  [1] fg_sum::return = fg_sum::$0
+  to:fg_sum::@return
+fg_sum::@return: scope:[fg_sum]  from fg_sum
+  [2] return 
+  to:@return
+
+void main()
+main: scope:[main]  from
+  [3] *(&fg_sum::a) = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  [4] *(&fg_sum::b) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
+  [5] callexecute fg_sum 
+  [6] main::sum1#0 = fg_sum::return
+  [7] *COLS = main::sum1#0
+  [8] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
+  [9] *(&fg_sum::a) = memcpy(*(&c), struct Cols, SIZEOF_STRUCT_COLS)
+  [10] *(&fg_sum::b) = memcpy(*(&d), struct Cols, SIZEOF_STRUCT_COLS)
+  [11] callexecute fg_sum 
+  [12] main::sum2#0 = fg_sum::return
+  [13] *COLS = main::sum2#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [14] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+struct Cols a loadstore = { border: 1, bg: 2, fg: 3 }
+struct Cols b loadstore = { border: 3, bg: 4, fg: 6 }
+struct Cols c loadstore = { border: 5, bg: 6, fg: 7 }
+struct Cols d loadstore = {}
+__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+byte~ fg_sum::$0 22.0
+struct Cols fg_sum::a loadstore
+struct Cols fg_sum::b loadstore
+byte fg_sum::return loadstore 3.75
+void main()
+byte main::sum1
+byte main::sum1#0 4.0
+byte main::sum2
+byte main::sum2#0 4.0
+
+Initial phi equivalence classes
+Added variable fg_sum::$0 to live range equivalence class [ fg_sum::$0 ]
+Added variable fg_sum::return to live range equivalence class [ fg_sum::return ]
+Added variable main::sum1#0 to live range equivalence class [ main::sum1#0 ]
+Added variable main::sum2#0 to live range equivalence class [ main::sum2#0 ]
+Added variable a to live range equivalence class [ a ]
+Added variable b to live range equivalence class [ b ]
+Added variable c to live range equivalence class [ c ]
+Added variable d to live range equivalence class [ d ]
+Added variable fg_sum::a to live range equivalence class [ fg_sum::a ]
+Added variable fg_sum::b to live range equivalence class [ fg_sum::b ]
+Complete equivalence classes
+[ fg_sum::$0 ]
+[ fg_sum::return ]
+[ main::sum1#0 ]
+[ main::sum2#0 ]
+[ a ]
+[ b ]
+[ c ]
+[ d ]
+[ fg_sum::a ]
+[ fg_sum::b ]
+Allocated zp[1]:2 [ fg_sum::$0 ]
+Allocated zp[1]:3 [ fg_sum::return ]
+Allocated zp[1]:4 [ main::sum1#0 ]
+Allocated zp[1]:5 [ main::sum2#0 ]
+Allocated mem[3] [ a ]
+Allocated mem[3] [ b ]
+Allocated mem[3] [ c ]
+Allocated mem[3] [ d ]
+Allocated zp[3]:6 [ fg_sum::a ]
+Allocated zp[3]:9 [ fg_sum::b ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] fg_sum::$0 = *((byte*)&fg_sum::a+OFFSET_STRUCT_COLS_FG) + *((byte*)&fg_sum::b+OFFSET_STRUCT_COLS_FG) [ fg_sum::$0 fg_sum::a fg_sum::b ] ( fg_sum:5 [ b d c fg_sum::$0 fg_sum::a fg_sum::b ] { }  fg_sum:11 [ fg_sum::$0 fg_sum::a fg_sum::b ] { }  ) always clobbers reg byte a 
+Statement [3] *(&fg_sum::a) = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) [ fg_sum::a fg_sum::b b d c ] (  [ fg_sum::a fg_sum::b b d c ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] *(&fg_sum::b) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) [ fg_sum::a fg_sum::b b d c ] (  [ fg_sum::a fg_sum::b b d c ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) [ fg_sum::a fg_sum::b d c ] (  [ fg_sum::a fg_sum::b d c ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *(&fg_sum::a) = memcpy(*(&c), struct Cols, SIZEOF_STRUCT_COLS) [ fg_sum::a fg_sum::b d ] (  [ fg_sum::a fg_sum::b d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] *(&fg_sum::b) = memcpy(*(&d), struct Cols, SIZEOF_STRUCT_COLS) [ fg_sum::a fg_sum::b ] (  [ fg_sum::a fg_sum::b ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ fg_sum::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ fg_sum::return ] : zp[1]:3 , 
+Potential registers zp[1]:4 [ main::sum1#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::sum2#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[3] [ a ] : mem[3] , 
+Potential registers mem[3] [ b ] : mem[3] , 
+Potential registers mem[3] [ c ] : mem[3] , 
+Potential registers mem[3] [ d ] : mem[3] , 
+Potential registers zp[3]:6 [ fg_sum::a ] : zp[3]:6 , 
+Potential registers zp[3]:9 [ fg_sum::b ] : zp[3]:9 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [fg_sum] 22: zp[1]:2 [ fg_sum::$0 ] 3.75: zp[1]:3 [ fg_sum::return ] 0: zp[3]:6 [ fg_sum::a ] 0: zp[3]:9 [ fg_sum::b ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::sum1#0 ] 4: zp[1]:5 [ main::sum2#0 ] 
+Uplift Scope [Cols] 
+Uplift Scope [] 0: mem[3] [ a ] 0: mem[3] [ b ] 0: mem[3] [ c ] 0: mem[3] [ d ] 
+
+Uplifting [fg_sum] best 149 combination reg byte a [ fg_sum::$0 ] zp[1]:3 [ fg_sum::return ] zp[3]:6 [ fg_sum::a ] zp[3]:9 [ fg_sum::b ] 
+Uplifting [main] best 137 combination reg byte a [ main::sum1#0 ] reg byte a [ main::sum2#0 ] 
+Uplifting [Cols] best 137 combination 
+Uplifting [] best 137 combination mem[3] [ a ] mem[3] [ b ] mem[3] [ c ] mem[3] [ d ] 
+Attempting to uplift remaining variables inzp[1]:3 [ fg_sum::return ]
+Uplifting [fg_sum] best 137 combination zp[1]:3 [ fg_sum::return ] 
+Allocated (was zp[1]:3) zp[1]:2 [ fg_sum::return ]
+Allocated (was zp[3]:6) zp[3]:3 [ fg_sum::a ]
+Allocated (was zp[3]:9) zp[3]:6 [ fg_sum::b ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_COLS = 3
+  .const OFFSET_STRUCT_COLS_FG = 2
+  .label COLS = $d020
+.segment Code
+  // fg_sum
+// fg_sum(struct Cols zp(3) a, struct Cols zp(6) b)
+fg_sum: {
+    .label a = 3
+    .label b = 6
+    .label return = 2
+    // [0] fg_sum::$0 = *((byte*)&fg_sum::a+OFFSET_STRUCT_COLS_FG) + *((byte*)&fg_sum::b+OFFSET_STRUCT_COLS_FG) -- vbuaa=_deref_pbuc1_plus__deref_pbuc2 
+    lda a+OFFSET_STRUCT_COLS_FG
+    clc
+    adc b+OFFSET_STRUCT_COLS_FG
+    // [1] fg_sum::return = fg_sum::$0 -- vbuz1=vbuaa 
+    sta.z return
+    jmp __breturn
+    // fg_sum::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // main
+main: {
+    // [3] *(&fg_sum::a) = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta fg_sum.a-1,y
+    dey
+    bne !-
+    // [4] *(&fg_sum::b) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda b-1,y
+    sta fg_sum.b-1,y
+    dey
+    bne !-
+    // [5] callexecute fg_sum  -- jsr 
+    jsr fg_sum
+    // [6] main::sum1#0 = fg_sum::return -- vbuaa=vbuz1 
+    lda.z fg_sum.return
+    // [7] *COLS = main::sum1#0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // [8] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda b-1,y
+    sta d-1,y
+    dey
+    bne !-
+    // [9] *(&fg_sum::a) = memcpy(*(&c), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda c-1,y
+    sta fg_sum.a-1,y
+    dey
+    bne !-
+    // [10] *(&fg_sum::b) = memcpy(*(&d), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda d-1,y
+    sta fg_sum.b-1,y
+    dey
+    bne !-
+    // [11] callexecute fg_sum  -- jsr 
+    jsr fg_sum
+    // [12] main::sum2#0 = fg_sum::return -- vbuaa=vbuz1 
+    lda.z fg_sum.return
+    // [13] *COLS = main::sum2#0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // File Data
+.segment Data
+  a: .byte 1, 2, 3
+  b: .byte 3, 4, 6
+  c: .byte 5, 6, 7
+  d: .fill SIZEOF_STRUCT_COLS, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const COLS = (byte*) 53280
+constant byte OFFSET_STRUCT_COLS_FG = 2
+constant byte SIZEOF_STRUCT_COLS = 3
+struct Cols a loadstore mem[3] = { border: 1, bg: 2, fg: 3 }
+struct Cols b loadstore mem[3] = { border: 3, bg: 4, fg: 6 }
+struct Cols c loadstore mem[3] = { border: 5, bg: 6, fg: 7 }
+struct Cols d loadstore mem[3] = {}
+__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+byte~ fg_sum::$0 reg byte a 22.0
+struct Cols fg_sum::a loadstore zp[3]:3
+struct Cols fg_sum::b loadstore zp[3]:6
+byte fg_sum::return loadstore zp[1]:2 3.75
+void main()
+byte main::sum1
+byte main::sum1#0 reg byte a 4.0
+byte main::sum2
+byte main::sum2#0 reg byte a 4.0
+
+reg byte a [ fg_sum::$0 ]
+zp[1]:2 [ fg_sum::return ]
+reg byte a [ main::sum1#0 ]
+reg byte a [ main::sum2#0 ]
+mem[3] [ a ]
+mem[3] [ b ]
+mem[3] [ c ]
+mem[3] [ d ]
+zp[3]:3 [ fg_sum::a ]
+zp[3]:6 [ fg_sum::b ]
+
+
+FINAL ASSEMBLER
+Score: 131
+
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_COLS = 3
+  .const OFFSET_STRUCT_COLS_FG = 2
+  .label COLS = $d020
+.segment Code
+  // fg_sum
+// fg_sum(struct Cols zp(3) a, struct Cols zp(6) b)
+fg_sum: {
+    .label a = 3
+    .label b = 6
+    .label return = 2
+    // a.fg+b.fg
+    // [0] fg_sum::$0 = *((byte*)&fg_sum::a+OFFSET_STRUCT_COLS_FG) + *((byte*)&fg_sum::b+OFFSET_STRUCT_COLS_FG) -- vbuaa=_deref_pbuc1_plus__deref_pbuc2 
+    lda a+OFFSET_STRUCT_COLS_FG
+    clc
+    adc b+OFFSET_STRUCT_COLS_FG
+    // return a.fg+b.fg;
+    // [1] fg_sum::return = fg_sum::$0 -- vbuz1=vbuaa 
+    sta.z return
+    // fg_sum::@return
+    // }
+    // [2] return 
+    rts
+}
+  // main
+main: {
+    // fg_sum(a, b)
+    // [3] *(&fg_sum::a) = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta fg_sum.a-1,y
+    dey
+    bne !-
+    // [4] *(&fg_sum::b) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda b-1,y
+    sta fg_sum.b-1,y
+    dey
+    bne !-
+    // [5] callexecute fg_sum  -- jsr 
+    jsr fg_sum
+    // char sum1 = fg_sum(a, b)
+    // [6] main::sum1#0 = fg_sum::return -- vbuaa=vbuz1 
+    lda.z fg_sum.return
+    // *COLS = sum1
+    // [7] *COLS = main::sum1#0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // d = b
+    // [8] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda b-1,y
+    sta d-1,y
+    dey
+    bne !-
+    // fg_sum(c, d)
+    // [9] *(&fg_sum::a) = memcpy(*(&c), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda c-1,y
+    sta fg_sum.a-1,y
+    dey
+    bne !-
+    // [10] *(&fg_sum::b) = memcpy(*(&d), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda d-1,y
+    sta fg_sum.b-1,y
+    dey
+    bne !-
+    // [11] callexecute fg_sum  -- jsr 
+    jsr fg_sum
+    // char sum2 = fg_sum(c, d)
+    // [12] main::sum2#0 = fg_sum::return -- vbuaa=vbuz1 
+    lda.z fg_sum.return
+    // *COLS = sum2
+    // [13] *COLS = main::sum2#0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // File Data
+.segment Data
+  a: .byte 1, 2, 3
+  b: .byte 3, 4, 6
+  c: .byte 5, 6, 7
+  d: .fill SIZEOF_STRUCT_COLS, 0
+

@@ -1,22 +1,27 @@
 // Test __varcall calling convention
-// Struct parameter & return value
+// Struct parameter
 
 struct Cols {
     char border;
     char bg;
+    char fg;
 };
 
-struct Cols * const COLS = (struct Cols *)0xd020;
+char * const COLS = (char *)0xd020;
+
+struct Cols a = { 1, 2, 3 };
+struct Cols b = { 3, 4, 6 };
+struct Cols c = { 5, 6, 7 };
+struct Cols d;
 
 void main() {
-    struct Cols a = { 1, 2 };
-    //*COLS = a;
-    a = plus(a, { 2, 3 } );
-    *COLS = a;
-    //a = plus(a, a);
-    //*COLS = a;
+    char sum1 = fg_sum(a, b);
+    *COLS = sum1;
+    d = b;
+    char sum2 = fg_sum(c, d);
+    *COLS = sum2;
 }
 
-__varcall struct Cols plus(struct Cols a, struct Cols b) {
-    return { a.border+b.border,  a.bg+b.bg };
+__varcall char fg_sum(struct Cols a, struct Cols b) {
+    return a.fg+b.fg;
 }

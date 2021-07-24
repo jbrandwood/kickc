@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallFinalize;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.ValueList;
@@ -59,6 +60,8 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
       // Add any load/store variables with an initializer - and load/store struct  variables
       for(Variable variable : getSymbols().getAllVariables(true)) {
+         if(variable.getScope() instanceof StructDefinition)
+            continue;
          if(variable.isKindLoadStore() && variable.getInitValue()!=null)
             addToEquivalenceClassSet(variable.getVariableRef(), new ArrayList<>(), liveRangeEquivalenceClassSet);
          else if(variable.isStructClassic())

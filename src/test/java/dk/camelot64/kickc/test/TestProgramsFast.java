@@ -221,11 +221,15 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("struct-unwinding-1.c");
    }
 
-   // TODO: Fix __varcall returning structs
    //@Test
-   //public void testVarCall4() throws IOException {
-   //   compileAndCompare("varcall-4.c", log().verboseStructUnwind().verboseCreateSsa());
+   //public void testVarCall5() throws IOException {
+   //   compileAndCompare("varcall-5.c", log().verboseCreateSsa().verboseStructUnwind());
    //}
+
+   @Test
+   public void testVarCall4() throws IOException {
+      compileAndCompare("varcall-4.c");
+   }
 
    @Test
    public void testVarCall3() throws IOException {
@@ -2223,6 +2227,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("struct-directives.c");
    }
 
+   //@Test
+   //public void testUnion7() throws IOException {
+   //   compileAndCompare("union-7.c", log().verboseStructUnwind());
+   //}
+
    @Test
    public void testUnion6() throws IOException {
       compileAndCompare("union-6.c");
@@ -2814,7 +2823,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testTypeIdPlusBytes() throws IOException {
-      compileAndCompare("typeid-plus-bytes.c", log());
+      compileAndCompare("typeid-plus-bytes.c");
    }
 
    @Test

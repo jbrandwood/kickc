@@ -15265,3 +15265,22 @@ sta {z1}
 lda #>{c1}
 adc #0
 sta {z1}+1
+//FRAGMENT vbuz1=_deref_pbuc1_plus__deref_pbuc2
+lda {c1}
+clc
+adc {c2}
+sta {z1}
+//FRAGMENT vbuaa=_deref_pbuc1_plus__deref_pbuc2
+lda {c1}
+clc
+adc {c2}
+//FRAGMENT vbuxx=_deref_pbuc1_plus__deref_pbuc2
+lda {c1}
+clc
+adc {c2}
+tax
+//FRAGMENT vbuyy=_deref_pbuc1_plus__deref_pbuc2
+lda {c1}
+clc
+adc {c2}
+tay

@@ -167,6 +167,9 @@ public class VariableBuilderConfig {
     */
    private Map<ScopeType, Setting> settings;
 
+   /** Should structs use a classic pointer-friendly model. Defaults to false, but can be changed using #pragma struct_model */
+   private boolean structModelClassic = false;
+
    public VariableBuilderConfig() {
       this.settings = new HashMap<>();
    }
@@ -325,5 +328,11 @@ public class VariableBuilderConfig {
       throw new InternalError("Unknown type!");
    }
 
+   public boolean isStructModelClassic() {
+      return structModelClassic;
+   }
 
+   public void setStructModelClassic(boolean structModelClassic) {
+      this.structModelClassic = structModelClassic;
+   }
 }

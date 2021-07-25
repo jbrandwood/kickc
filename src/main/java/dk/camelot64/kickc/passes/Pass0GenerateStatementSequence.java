@@ -214,8 +214,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_VAR_MODEL:
             final List<KickCParser.PragmaParamContext> pragmaParams = ctx.pragmaParam();
             List<String> settings = pragmaParams.stream().map(Pass0GenerateStatementSequence::pragmaParamName).collect(Collectors.toList());
-            final VariableBuilderConfig variableBuilderConfig = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx));
-            program.getTargetPlatform().setVariableBuilderConfig(variableBuilderConfig);
+            final VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx));
+            config.setStructModelClassic(program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic());
+            program.getTargetPlatform().setVariableBuilderConfig(config);
+            break;
+         case CParser.PRAGMA_STRUCT_MODEL:
+            final String modelName = pragmaParamName(pragmaParamSingle(ctx));
+            if(modelName.equalsIgnoreCase("classic"))
+               program.getTargetPlatform().getVariableBuilderConfig().setStructModelClassic(true);
+            else if(modelName.equalsIgnoreCase("unwind"))
+               program.getTargetPlatform().getVariableBuilderConfig().setStructModelClassic(true);
+            else
+               throw new CompileError("Unknown struct model " + modelName, new StatementSource(ctx));
             break;
          case CParser.PRAGMA_LINKSCRIPT:
             final String linkScriptName = pragmaParamString(pragmaParamSingle(ctx));

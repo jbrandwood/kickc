@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.unwinding.ValueSource;
 import dk.camelot64.kickc.passes.unwinding.ValueSourceFactory;
+import dk.camelot64.kickc.passes.unwinding.ValueSourceVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +99,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       Variable procReturnVar = procedure.getLocalVariable("return");
       // TODO: Return-variable has been unwound - detect that instead - use getProgram().getStructVariableMemberUnwinding().getUnwindingMaster() like for parameters
       if(procReturnVar != null && procReturnVar.isStructUnwind()) {
-         if(call.getlValue()!=null && !(call.getlValue() instanceof ValueList)) {
+         if(call.getlValue() != null && !(call.getlValue() instanceof ValueList)) {
             // Return value already unwound - move on
             final ValueSource valueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
             RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
@@ -118,7 +119,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean anyParameterUnwound = false;
       final List<Variable> procParameters = procedure.getParameters();
       final List<RValue> callParameters = call.getParameters();
-      if(callParameters!=null && callParameters.size()>0 ){
+      if(callParameters != null && callParameters.size() > 0) {
          for(int idx_call = 0, idx_proc = 0; idx_call < callParameters.size(); idx_call++) {
             final RValue callParameter = callParameters.get(idx_call);
             final Variable procParameter = procParameters.get(idx_proc);
@@ -188,10 +189,16 @@ public class Pass1UnwindStructValues extends Pass1Base {
     */
 
    private boolean unwindReturn(StatementReturn statementReturn, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      final RValue returnValue = statementReturn.getValue();
+      if(returnValue == null)
+         return false;
+      if(returnValue instanceof SymbolVariableRef)
+         if(getScope().getVar((SymbolVariableRef) returnValue).isStructClassic())
+            return false;
       boolean unwound = false;
-      final ValueSource valueSource = ValueSourceFactory.getValueSource(statementReturn.getValue(), getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
+      final ValueSource valueSource = ValueSourceFactory.getValueSource(returnValue, getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
       RValue unwoundValue = unwindValue(valueSource, statementReturn, stmtIt, currentBlock);
-      if(unwoundValue != null && !statementReturn.getValue().equals(unwoundValue)) {
+      if(unwoundValue != null && !returnValue.equals(unwoundValue)) {
          statementReturn.setValue(unwoundValue);
          if(getLog().isVerboseStructUnwind())
             getLog().append("Converted procedure struct return value to member unwinding " + statementReturn.toString(getProgram(), false));
@@ -305,6 +312,16 @@ public class Pass1UnwindStructValues extends Pass1Base {
       } else if(lValueSource.isUnwindable() && rValueSource.isUnwindable()) {
          if(program.getLog().isVerboseStructUnwind())
             program.getLog().append("Unwinding value copy " + currentStmt.toString(program, false));
+
+         /*
+         if(lValueSource instanceof ValueSourceVariable) {
+            final ValueSourceVariable sourceVariable = (ValueSourceVariable) lValueSource;
+            Statement assignStmt = new StatementAssignment(new PointerDereferenceSimple(new ConstantSymbolPointer(sourceVariable.getVariable().getVariableRef())), new MemsetValue(sourceVariable.getByteSize(program.getScope()), sourceVariable.getSymbolType()), initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
+            stmtIt.add(assignStmt);
+            stmtIt.next();
+         }
+          */
+
          for(String memberName : lValueSource.getMemberNames(program.getScope())) {
             ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);
             ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);

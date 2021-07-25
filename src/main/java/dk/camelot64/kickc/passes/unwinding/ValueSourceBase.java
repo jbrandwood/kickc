@@ -37,7 +37,7 @@ public abstract class ValueSourceBase implements ValueSource {
       return getSymbolType() instanceof SymbolTypeStruct;
    }
 
-   protected ConstantValue getByteSize(ProgramScope scope) {
+   public ConstantValue getByteSize(ProgramScope scope) {
       return getArraySpec() != null ? getArraySpec().getArraySize() : SizeOfConstants.getSizeOfConstantVar(scope, getSymbolType());
    }
 

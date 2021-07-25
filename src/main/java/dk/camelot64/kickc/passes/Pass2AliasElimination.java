@@ -130,7 +130,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      VariableRef alias = (VariableRef) assignment.getrValue2();
                      List<VarAssignments.VarAssignment> assignments = VarAssignments.get(alias, program.getGraph(), program.getScope());
                      if(assignments.size() == 0)
-                        throw new InternalError("Error! Var is never assigned! " + variable);
+                        throw new InternalError("Error! Var is never assigned! " + alias);
                      else if(assignments.size() > 1)
                         // Multiple assignments exist
                         continue;

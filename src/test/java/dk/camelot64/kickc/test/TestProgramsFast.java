@@ -2227,6 +2227,17 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("struct-directives.c");
    }
 
+   @Test
+   public void testIntermediatesStruct() throws IOException {
+      compileAndCompare("intermediates-struct.c");
+   }
+
+   @Test
+   public void testIntermediatesSimple() throws IOException {
+      compileAndCompare("intermediates-simple.c");
+   }
+
+
    //@Test
    //public void testUnion7() throws IOException {
    //   compileAndCompare("union-7.c", log().verboseStructUnwind());

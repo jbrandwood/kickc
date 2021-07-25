@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -141,6 +139,11 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          program.getLog().append("Inferred type updated to " + type + " in " + statement.toString(program, false));
       }
       symbol.setType(type);
+      // Update struct unwind/classic
+      if(type instanceof SymbolTypeStruct) {
+         final VariableBuilderConfig variableBuilderConfig = program.getTargetPlatform().getVariableBuilderConfig();
+         symbol.setStructUnwind(VariableBuilder.isStructUnwind(type, symbol.getKind(), variableBuilderConfig));
+      }
    }
 
 

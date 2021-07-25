@@ -1,14 +1,19 @@
 constant byte* const COLS = (byte*) 53280
+constant byte OFFSET_STRUCT_COLS_BG = 1
 constant byte OFFSET_STRUCT_COLS_FG = 2
 constant byte SIZEOF_STRUCT_COLS = 3
 struct Cols a loadstore mem[3] = { border: 1, bg: 2, fg: 3 }
 struct Cols b loadstore mem[3] = { border: 3, bg: 4, fg: 6 }
 struct Cols c loadstore mem[3] = { border: 5, bg: 6, fg: 7 }
 struct Cols d loadstore mem[3] = {}
-__varcall byte fg_sum(struct Cols fg_sum::a , struct Cols fg_sum::b)
+__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
 byte~ fg_sum::$0 reg byte a 22.0
-struct Cols fg_sum::a loadstore zp[3]:3
-struct Cols fg_sum::b loadstore zp[3]:6
+byte fg_sum::a_bg loadstore zp[1]:4 40.0
+byte fg_sum::a_border loadstore zp[1]:3 40.0
+byte fg_sum::a_fg loadstore zp[1]:5 1.875
+byte fg_sum::b_bg loadstore zp[1]:7 40.0
+byte fg_sum::b_border loadstore zp[1]:6 40.0
+byte fg_sum::b_fg loadstore zp[1]:8 7.5
 byte fg_sum::return loadstore zp[1]:2 3.75
 void main()
 byte main::sum1
@@ -18,11 +23,15 @@ byte main::sum2#0 reg byte a 4.0
 
 reg byte a [ fg_sum::$0 ]
 zp[1]:2 [ fg_sum::return ]
+zp[1]:3 [ fg_sum::a_border ]
+zp[1]:4 [ fg_sum::a_bg ]
+zp[1]:5 [ fg_sum::a_fg ]
+zp[1]:6 [ fg_sum::b_border ]
+zp[1]:7 [ fg_sum::b_bg ]
+zp[1]:8 [ fg_sum::b_fg ]
 reg byte a [ main::sum1#0 ]
 reg byte a [ main::sum2#0 ]
 mem[3] [ a ]
 mem[3] [ b ]
 mem[3] [ c ]
 mem[3] [ d ]
-zp[3]:3 [ fg_sum::a ]
-zp[3]:6 [ fg_sum::b ]

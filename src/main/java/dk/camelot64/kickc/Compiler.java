@@ -313,6 +313,8 @@ public class Compiler {
       new PassNUnwindLValueLists(program).execute();
 
       new Pass1UnwindStructValues(program).execute();
+      new PassNStructUnwoundPlaceholderRemoval(program).execute();
+
 
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");

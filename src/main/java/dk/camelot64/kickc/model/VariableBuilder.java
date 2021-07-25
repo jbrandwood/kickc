@@ -85,6 +85,7 @@ public class VariableBuilder {
       variable.setMemoryAlignment(this.getAlignment());
       variable.setMemoryAddress(this.getAddress());
       variable.setDeclarationOnly(this.isDeclarationOnly());
+      variable.setStructUnwind(this.getStructUnwind());
 
       // Check if the symbol has already been declared
       Symbol declaredSymbol = this.scope.getLocalSymbol(this.varName);
@@ -113,6 +114,26 @@ public class VariableBuilder {
 
       return variable;
    }
+
+   private boolean getStructUnwind() {
+      return isStructUnwind(this.type, getKind(), config);
+   }
+
+   public static boolean isStructUnwind(SymbolType type, Variable.Kind kind, VariableBuilderConfig config) {
+      if(config.isStructModelClassic())
+         return false;
+      if(type instanceof SymbolTypeStruct) {
+         final SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+         if(typeStruct.isUnion())
+            return false;
+         if(Variable.Kind.LOAD_STORE.equals(kind))
+            return false;
+         // Unwind non-union, SSA and intermediate struct variables
+         return true;
+      }
+      return false;
+   }
+
 
    /**
     * Is the type is a simple integer type.
@@ -311,6 +332,8 @@ public class VariableBuilder {
          return false;
       else if(isVolatile())
          // volatile variables must be load/store
+         return false;
+      else if(isTypeStruct() && config.isStructModelClassic())
          return false;
       else {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());

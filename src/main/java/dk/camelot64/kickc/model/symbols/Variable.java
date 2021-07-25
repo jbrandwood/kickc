@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -101,7 +99,10 @@ public class Variable implements Symbol {
    private Registers.Register allocation;
 
    /** If the variable is only declared and not defined (using the "extern" keyword). */
-   private boolean isDeclarationOnly;
+   private boolean declarationOnly;
+
+   /** If the variable is a struct that is/should be unwound to variables for each member. */
+   private boolean structUnwind;
 
    /**
     * Create a variable (or constant)
@@ -145,6 +146,7 @@ public class Variable implements Symbol {
       version.setPermanent(phiMaster.isPermanent());
       version.setExport(phiMaster.isExport());
       version.setComments(phiMaster.getComments());
+      version.setStructUnwind(phiMaster.isStructUnwind());
       return version;
    }
 
@@ -187,6 +189,7 @@ public class Variable implements Symbol {
       constVar.setPermanent(variable.isPermanent());
       constVar.setExport(variable.isExport());
       constVar.setComments(variable.getComments());
+      constVar.setStructUnwind(variable.isStructUnwind());
       return constVar;
    }
 
@@ -206,6 +209,7 @@ public class Variable implements Symbol {
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
       copy.setComments(original.getComments());
+      copy.setStructUnwind(original.isStructUnwind());
       return copy;
    }
 
@@ -237,6 +241,7 @@ public class Variable implements Symbol {
       }
       memberVariable.setExport(structVar.isExport());
       memberVariable.setPermanent(structVar.isPermanent());
+      memberVariable.setStructUnwind(memberDefinition.isStructUnwind());
       return memberVariable;
    }
 
@@ -253,7 +258,7 @@ public class Variable implements Symbol {
       return getScope().getLocalVariable(versionOfName);
    }
 
-   private Kind getKind() {
+   public Kind getKind() {
       return kind;
    }
 
@@ -499,18 +504,19 @@ public class Variable implements Symbol {
       this.memoryAddress = memoryAddress;
    }
 
+   public void setStructUnwind(boolean structUnwind) {
+      this.structUnwind = structUnwind;
+   }
+
+
+
    /**
     * Is the variable a struct that should be unwound to member variables
     *
     * @return true if an unwinding struct
     */
    public boolean isStructUnwind() {
-      if(getType() instanceof SymbolTypeStruct) {
-         final SymbolTypeStruct typeStruct = (SymbolTypeStruct) getType();
-         if(!typeStruct.isUnion())
-            return isKindPhiMaster() || isKindIntermediate() || isKindPhiVersion();
-      }
-      return false;
+         return structUnwind;
    }
 
    /**
@@ -519,23 +525,18 @@ public class Variable implements Symbol {
     * @return true if an classic struct
     */
    public boolean isStructClassic() {
-
       if(getType() instanceof SymbolTypeStruct) {
-         final SymbolTypeStruct typeStruct = (SymbolTypeStruct) getType();
-         if(typeStruct.isUnion())
-            return true;
-         if(isKindLoadStore())
-            return true;
+         return !structUnwind;
       }
       return false;
    }
 
    public boolean isDeclarationOnly() {
-      return isDeclarationOnly;
+      return declarationOnly;
    }
 
    public void setDeclarationOnly(boolean declarationOnly) {
-      isDeclarationOnly = declarationOnly;
+      this.declarationOnly = declarationOnly;
    }
 
    public List<Comment> getComments() {

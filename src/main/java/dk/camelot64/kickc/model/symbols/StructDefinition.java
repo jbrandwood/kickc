@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 
 /**
  * A struct definition containing a set of variables.
- * The struct definition can either represent a struct (linear consecutive memory layout) or a union (same memory address)
+ * The struct definition can either represent a struct (member memory-layout is linearly consecutive ) or a union (member start at the same memory address)
  */
 public class StructDefinition extends Scope {
 

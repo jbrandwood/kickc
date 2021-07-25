@@ -1,11 +1,11 @@
 Setting struct to load/store in variable affected by address-of main::ptr = &main::point1
+Removing C-classic struct-unwound assignment main::point1 = struct-unwound {*(&main::point1)}
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
   *(&main::point1) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT)
-  main::point1 = struct-unwound {*(&main::point1)}
   main::$2 = (byte*)main::ptr
   main::$0 = main::$2 + OFFSET_STRUCT_POINT_X
   SCREEN[0] = *main::$0
@@ -52,19 +52,18 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Removing C-classic struct-unwound assignment [1] main::point1 = struct-unwound {*(&main::point1)}
-Constant right-side identified [2] main::$2 = (byte*)main::ptr
-Constant right-side identified [5] main::$3 = (byte*)main::ptr
+Constant right-side identified [1] main::$2 = (byte*)main::ptr
+Constant right-side identified [4] main::$3 = (byte*)main::ptr
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::$2 = (byte*)main::ptr
 Constant main::$3 = (byte*)main::ptr
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [4] SCREEN[0] = *main::$0  -- main::$2[OFFSET_STRUCT_POINT_X]
-Converting *(pointer+n) to pointer[n] [7] SCREEN[1] = *main::$1  -- main::$3[OFFSET_STRUCT_POINT_Y]
+Converting *(pointer+n) to pointer[n] [3] SCREEN[0] = *main::$0  -- main::$2[OFFSET_STRUCT_POINT_X]
+Converting *(pointer+n) to pointer[n] [6] SCREEN[1] = *main::$1  -- main::$3[OFFSET_STRUCT_POINT_Y]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$2 in [3] main::$0 = main::$2 + OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero main::$2 in [4] SCREEN[0] = main::$2[OFFSET_STRUCT_POINT_X]
-Simplifying expression containing zero SCREEN in [4] SCREEN[0] = *main::$2
+Simplifying expression containing zero main::$2 in [2] main::$0 = main::$2 + OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero main::$2 in [3] SCREEN[0] = main::$2[OFFSET_STRUCT_POINT_X]
+Simplifying expression containing zero SCREEN in [3] SCREEN[0] = *main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable main::$0 and assignment [1] main::$0 = main::$2
 Eliminating unused variable main::$1 and assignment [3] main::$1 = main::$3 + OFFSET_STRUCT_POINT_Y

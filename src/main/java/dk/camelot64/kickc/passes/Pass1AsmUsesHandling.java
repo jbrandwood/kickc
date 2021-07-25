@@ -42,6 +42,7 @@ public class Pass1AsmUsesHandling extends Pass2SsaOptimization {
          variable.setKind(Variable.Kind.LOAD_STORE);
          SymbolType typeQualified = variable.getType().getQualified(true, variable.getType().isNomodify());
          variable.setType(typeQualified);
+         variable.setStructUnwind(false);
          getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);

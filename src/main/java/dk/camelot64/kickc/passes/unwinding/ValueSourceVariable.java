@@ -43,10 +43,12 @@ public class ValueSourceVariable extends ValueSourceBase {
       return variable.isStructClassic();
    }
 
+   public Variable getVariable() {
+      return variable;
+   }
+
    @Override
    public RValue getSimpleValue(ProgramScope programScope) {
-      // Historically this returned a pointer - why?
-      //return new ConstantSymbolPointer(variable.getRef());
       return variable.getRef();
    }
 

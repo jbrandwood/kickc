@@ -8,6 +8,8 @@ Fixing struct type SIZE_OF struct Person to 17
 Setting struct to load/store in variable affected by address-of main::$0 = call print_person &main::jesper 
 Setting struct to load/store in variable affected by address-of main::$1 = call print_person &main::henriette 
 Inlined call call __init 
+Removing C-classic struct-unwound assignment main::jesper = struct-unwound {*(&main::jesper)}
+Removing C-classic struct-unwound assignment main::henriette = struct-unwound {*(&main::henriette)}
 
 CONTROL FLOW GRAPH SSA
 
@@ -15,7 +17,6 @@ void main()
 main: scope:[main]  from __start::@1
   idx#20 = phi( __start::@1/idx#22 )
   *(&main::jesper) = memcpy(*(&$0), struct Person, SIZEOF_STRUCT_PERSON)
-  main::jesper = struct-unwound {*(&main::jesper)}
   print_person::person#0 = &main::jesper
   call print_person 
   to:main::@1
@@ -23,7 +24,6 @@ main::@1: scope:[main]  from main
   idx#11 = phi( main/idx#7 )
   idx#0 = idx#11
   *(&main::henriette) = memcpy(*(&$1), struct Person, SIZEOF_STRUCT_PERSON)
-  main::henriette = struct-unwound {*(&main::henriette)}
   print_person::person#1 = &main::henriette
   call print_person 
   to:main::@2
@@ -177,19 +177,17 @@ Identical Phi Values idx#1 idx#17
 Identical Phi Values print_person::person#3 print_person::person#2
 Identical Phi Values idx#10 idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition print_person::$6 [24] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2
+Simple Condition print_person::$6 [22] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Removing C-classic struct-unwound assignment [2] main::jesper = struct-unwound {*(&main::jesper)}
-Removing C-classic struct-unwound assignment [7] main::henriette = struct-unwound {*(&main::henriette)}
 Constant print_person::person#0 = &main::jesper
 Constant print_person::person#1 = &main::henriette
 Constant print_person::i#0 = 0
 Constant idx#22 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [15] SCREEN[idx#14] = DIGIT[*print_person::$0]  -- print_person::$3[OFFSET_STRUCT_PERSON_ID]
+Converting *(pointer+n) to pointer[n] [13] SCREEN[idx#14] = DIGIT[*print_person::$0]  -- print_person::$3[OFFSET_STRUCT_PERSON_ID]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero print_person::$3 in [14] print_person::$0 = print_person::$3 + OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero print_person::$3 in [15] SCREEN[idx#14] = DIGIT[print_person::$3[OFFSET_STRUCT_PERSON_ID]]
+Simplifying expression containing zero print_person::$3 in [12] print_person::$0 = print_person::$3 + OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero print_person::$3 in [13] SCREEN[idx#14] = DIGIT[print_person::$3[OFFSET_STRUCT_PERSON_ID]]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable print_person::$0 and assignment [7] print_person::$0 = print_person::$3
 Eliminating unused constant OFFSET_STRUCT_PERSON_ID

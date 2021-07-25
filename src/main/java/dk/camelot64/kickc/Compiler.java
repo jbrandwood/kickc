@@ -248,9 +248,11 @@ public class Compiler {
 
       new PassNAssertTypeMatch(program).check();
 
-      new Pass1UnwindStructPrepare(program).execute();
-      new Pass1UnwindStructVariables(program).execute();
-      new Pass1UnwindStructValues(program).execute();
+      if(!program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic()) {
+         new Pass1UnwindStructPrepare(program).execute();
+         new Pass1UnwindStructVariables(program).execute();
+         new Pass1UnwindStructValues(program).execute();
+      }
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH AFTER UNWIND");
@@ -312,10 +314,9 @@ public class Compiler {
       new Pass1CallPhiReturn(program).execute();
       new PassNUnwindLValueLists(program).execute();
 
-      new Pass1UnwindStructValues(program).execute();
-      new PassNStructUnwoundPlaceholderRemoval(program).execute();
-
-
+      if(!program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic()) {
+         new PassNStructUnwoundPlaceholderRemoval(program).execute();
+      }
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
@@ -379,7 +380,6 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program, false));
-      optimizations.add(new PassNStructUnwoundPlaceholderRemoval(program));
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
@@ -551,6 +551,10 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+
+      if(program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic()) {
+         new PassNStructUnwoundPlaceholderRemoval(program).execute();
+      }
 
       if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());

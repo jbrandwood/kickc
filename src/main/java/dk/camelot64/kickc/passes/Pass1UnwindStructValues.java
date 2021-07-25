@@ -294,6 +294,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
             program.getLog().append("Adding value simple copy " + copyStmt.toString(program, false));
          return true;
       } else if(lValueSource.isBulkCopyable() && rValueSource.isBulkCopyable()) {
+
+         /* TODO: Attempt to mix struct mode classic with unwinding
+         if(lValueSource instanceof ValueSourceVariable && rValueSource instanceof ValueSourceVariable)
+            if(((ValueSourceVariable) lValueSource).getVariable().isStructClassic() && ((ValueSourceVariable) rValueSource).getVariable().isStructClassic())
+               return false;
+          */
+
          // Use bulk unwinding for a struct member that is an array
          stmtIt.previous();
          if(lValueSource.getArraySpec() != null)

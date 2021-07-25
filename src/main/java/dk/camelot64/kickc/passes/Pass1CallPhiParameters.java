@@ -2,7 +2,10 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
@@ -117,18 +120,21 @@ public class Pass1CallPhiParameters {
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
          procReturnVarRef = (LValue) procReturnVar.getRef();
+
+
          // Special handing of struct value returns
-         if(procReturnVar.getType() instanceof SymbolTypeStruct) {
-            StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = program.getStructVariableMemberUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
-            if(returnVarUnwinding != null) {
-               ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
-               for(String memberName : returnVarUnwinding.getMemberNames()) {
-                  final SymbolVariableRef memberUnwound = returnVarUnwinding.getMemberUnwound(memberName);
-                  unwoundReturnVars.add(memberUnwound);
+         if(!program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic())
+            if(procReturnVar.getType() instanceof SymbolTypeStruct) {
+               StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = program.getStructVariableMemberUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
+               if(returnVarUnwinding != null) {
+                  ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
+                  for(String memberName : returnVarUnwinding.getMemberNames()) {
+                     final SymbolVariableRef memberUnwound = returnVarUnwinding.getMemberUnwound(memberName);
+                     unwoundReturnVars.add(memberUnwound);
+                  }
+                  procReturnVarRef = new ValueList(unwoundReturnVars);
                }
-               procReturnVarRef = new ValueList(unwoundReturnVars);
             }
-         }
       }
       // Save original LValue and update the LValue
       final LValue origCallLValue = call.getlValue();

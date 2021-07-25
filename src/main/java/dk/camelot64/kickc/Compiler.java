@@ -553,6 +553,7 @@ public class Compiler {
    private void pass3Analysis() {
 
       if(program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic()) {
+         new Pass1UnwindStructValues(program).execute();
          new PassNStructUnwoundPlaceholderRemoval(program).execute();
       }
 

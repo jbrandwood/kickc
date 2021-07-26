@@ -281,6 +281,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
    public static boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt, Program program) {
       if(lValueSource == null || rValueSource == null)
          return false;
+      if(lValueSource.equals(rValueSource))
+         return true;
       if(lValueSource.isSimple() && rValueSource.isSimple()) {
          stmtIt.previous();
          LValue lValueRef = (LValue) lValueSource.getSimpleValue(program.getScope());

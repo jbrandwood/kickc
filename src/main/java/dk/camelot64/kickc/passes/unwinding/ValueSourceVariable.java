@@ -17,6 +17,7 @@ import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.util.ListIterator;
+import java.util.Objects;
 
 /** Value Source for a variable */
 public class ValueSourceVariable extends ValueSourceBase {
@@ -107,4 +108,16 @@ public class ValueSourceVariable extends ValueSourceBase {
       }
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      ValueSourceVariable that = (ValueSourceVariable) o;
+      return variable.equals(that.variable);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(variable);
+   }
 }

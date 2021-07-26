@@ -1,11 +1,9 @@
 Inlined call call __init 
-Eliminating unused variable with no statement main::$0
-Eliminating unused variable with no statement main::$1
-Unwinding list assignment { main::$0_c, main::$0_d } = { sum::return_c, sum::return_d }
-Unwinding list assignment { main::$1_c, main::$1_d } = { sum::return_c, sum::return_d }
-Unwinding list assignment { sum::return_c#0, sum::return_d#0 } = { sum::return_c#3, sum::return_d#3 }
-Unwinding list assignment { sum::return_c#1, sum::return_d#1 } = { sum::return_c#3, sum::return_d#3 }
+Removing C-classic struct-unwound assignment main::x = struct-unwound {*(&main::x)}
+Removing C-classic struct-unwound assignment main::y = struct-unwound {*(&main::y)}
 Removing C-classic struct-unwound assignment sum::d = struct-unwound {*((byte*)&sum::d+OFFSET_STRUCT_DATA_C), *((byte*)&sum::d+OFFSET_STRUCT_DATA_D)}
+Removing C-classic struct-unwound assignment sum::return = struct-unwound {*(&sum::return)}
+Removing C-classic struct-unwound assignment sum::return = struct-unwound {}
 
 CONTROL FLOW GRAPH SSA
 
@@ -15,32 +13,24 @@ main: scope:[main]  from __start::@1
   sum::a#0 = 1
   sum::b#0 = 2
   call sum 
-  sum::return_c#0 = sum::return_c#3
-  sum::return_d#0 = sum::return_d#3
+  sum::return = sum::return
   to:main::@1
 main::@1: scope:[main]  from main
   idx#6 = phi( main/idx#11 )
-  sum::return_d#4 = phi( main/sum::return_d#0 )
-  sum::return_c#4 = phi( main/sum::return_c#0 )
-  main::$0_c = sum::return_c#4
-  main::$0_d = sum::return_d#4
-  main::x_c#0 = main::$0_c
-  SCREEN[idx#6] = main::x_c#0
+  main::$0 = sum::return
+  *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA)
+  SCREEN[idx#6] = *((byte*)&main::x+OFFSET_STRUCT_DATA_C)
   idx#0 = ++ idx#6
   sum::a#1 = 3
   sum::b#1 = 4
   call sum 
-  sum::return_c#1 = sum::return_c#3
-  sum::return_d#1 = sum::return_d#3
+  sum::return = sum::return
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#7 = phi( main::@1/idx#0 )
-  sum::return_d#5 = phi( main::@1/sum::return_d#1 )
-  sum::return_c#5 = phi( main::@1/sum::return_c#1 )
-  main::$1_c = sum::return_c#5
-  main::$1_d = sum::return_d#5
-  main::y_d#0 = main::$1_d
-  SCREEN[idx#7] = main::y_d#0
+  main::$1 = sum::return
+  *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA)
+  SCREEN[idx#7] = *((byte*)&main::y+OFFSET_STRUCT_DATA_D)
   idx#1 = ++ idx#7
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -56,16 +46,9 @@ sum: scope:[sum]  from main main::@1
   sum::$0 = sum::a#2 + sum::b#2
   *((byte*)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
   *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
-  sum::return_c#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_C)
-  sum::return_d#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_D)
-  sum::return#0 = struct-unwound {sum::return_c#2, sum::return_d#2}
+  *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA)
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  sum::return_d#6 = phi( sum/sum::return_d#2 )
-  sum::return_c#6 = phi( sum/sum::return_c#2 )
-  sum::return_c#3 = sum::return_c#6
-  sum::return_d#3 = sum::return_d#6
-  sum::return#1 = struct-unwound {sum::return_c#3, sum::return_d#3}
   return 
   to:@return
 
@@ -93,6 +76,7 @@ SYMBOL TABLE SSA
 constant byte OFFSET_STRUCT_DATA_C = 0
 constant byte OFFSET_STRUCT_DATA_D = 1
 constant byte* const SCREEN = (byte*)$400
+constant byte SIZEOF_STRUCT_DATA = 2
 void __start()
 byte idx
 byte idx#0
@@ -109,14 +93,10 @@ byte idx#7
 byte idx#8
 byte idx#9
 void main()
-byte~ main::$0_c
-byte~ main::$0_d
-byte~ main::$1_c
-byte~ main::$1_d
-byte main::x_c
-byte main::x_c#0
-byte main::y_d
-byte main::y_d#0
+struct Data~ main::$0
+struct Data~ main::$1
+struct Data main::x loadstore
+struct Data main::y loadstore
 struct Data sum(byte sum::a , byte sum::b)
 byte~ sum::$0
 byte sum::a
@@ -128,25 +108,7 @@ byte sum::b#0
 byte sum::b#1
 byte sum::b#2
 struct Data sum::d loadstore
-struct Data sum::return
-struct Data sum::return#0
-struct Data sum::return#1
-byte sum::return_c
-byte sum::return_c#0
-byte sum::return_c#1
-byte sum::return_c#2
-byte sum::return_c#3
-byte sum::return_c#4
-byte sum::return_c#5
-byte sum::return_c#6
-byte sum::return_d
-byte sum::return_d#0
-byte sum::return_d#1
-byte sum::return_d#2
-byte sum::return_d#3
-byte sum::return_d#4
-byte sum::return_d#5
-byte sum::return_d#6
+struct Data sum::return loadstore
 
 Adding number conversion cast (unumber) 1 in sum::a#0 = 1
 Adding number conversion cast (unumber) 2 in sum::b#0 = 2
@@ -169,17 +131,9 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias sum::return_c#0 = sum::return_c#4 
-Alias sum::return_d#0 = sum::return_d#4 
 Alias idx#11 = idx#6 
-Alias main::x_c#0 = main::$0_c 
-Alias sum::return_c#1 = sum::return_c#5 
-Alias sum::return_d#1 = sum::return_d#5 
 Alias idx#0 = idx#7 
-Alias main::y_d#0 = main::$1_d 
 Alias idx#1 = idx#8 idx#2 
-Alias sum::return_c#2 = sum::return_c#6 sum::return_c#3 
-Alias sum::return_d#2 = sum::return_d#6 sum::return_d#3 
 Alias idx#12 = idx#3 
 Alias idx#10 = idx#4 idx#9 idx#5 
 Successful SSA optimization Pass2AliasElimination
@@ -192,19 +146,12 @@ Constant sum::a#1 = 3
 Constant sum::b#1 = 4
 Constant idx#12 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [8] SCREEN[idx#12] = main::x_c#0
-Simplifying expression containing zero (byte*)&sum::d in [22] *((byte*)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
-Simplifying expression containing zero (byte*)&sum::d in [24] sum::return_c#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_C)
+Simplifying expression containing zero (byte*)&main::x in [7] SCREEN[idx#12] = *((byte*)&main::x+OFFSET_STRUCT_DATA_C)
+Simplifying expression containing zero SCREEN in [7] SCREEN[idx#12] = *((byte*)&main::x)
+Simplifying expression containing zero (byte*)&sum::d in [20] *((byte*)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable main::$0_d and assignment [4] main::$0_d = sum::return_d#0
-Eliminating unused variable main::$1_c and assignment [10] main::$1_c = sum::return_c#1
-Eliminating unused variable idx#1 and assignment [13] idx#1 = ++ idx#0
-Eliminating unused variable sum::return#0 and assignment [21] sum::return#0 = struct-unwound {sum::return_c#2, sum::return_d#2}
-Eliminating unused variable sum::return#1 and assignment [22] sum::return#1 = struct-unwound {sum::return_c#2, sum::return_d#2}
+Eliminating unused variable idx#1 and assignment [11] idx#1 = ++ idx#0
 Eliminating unused constant OFFSET_STRUCT_DATA_C
-Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable sum::return_d#0 and assignment [2] sum::return_d#0 = sum::return_d#2
-Eliminating unused variable sum::return_c#1 and assignment [7] sum::return_c#1 = sum::return_c#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -213,7 +160,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [4] idx#0 = ++ idx#12
+Constant right-side identified [5] idx#0 = ++ idx#12
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant idx#0 = ++idx#12
 Successful SSA optimization Pass2ConstantIdentification
@@ -234,6 +181,10 @@ Consolidated array index constant in *(SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Simplifying constant integer increment ++0
 Successful SSA optimization Pass2ConstantSimplification
+Removing C-classic struct-unwound assignment sum::return = struct-unwound {}
+Removing C-classic struct-unwound assignment main::$0 = struct-unwound {*(&main::$0)}
+Removing C-classic struct-unwound assignment sum::return = struct-unwound {}
+Removing C-classic struct-unwound assignment main::$1 = struct-unwound {*(&main::$1)}
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [main] to sum:1 sum:5 
@@ -248,17 +199,17 @@ void main()
 main: scope:[main]  from
   [0] phi()
   [1] call sum 
-  [2] sum::return_c#0 = sum::return_c#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] main::x_c#0 = sum::return_c#0
-  [4] *SCREEN = main::x_c#0
+  [2] *(&main::$0) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA)
+  [3] *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA)
+  [4] *SCREEN = *((byte*)&main::x)
   [5] call sum 
-  [6] sum::return_d#1 = sum::return_d#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] main::y_d#0 = sum::return_d#1
-  [8] *(SCREEN+1) = main::y_d#0
+  [6] *(&main::$1) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA)
+  [7] *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA)
+  [8] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return 
@@ -271,21 +222,20 @@ sum: scope:[sum]  from main main::@1
   [11] sum::$0 = sum::a#2 + sum::b#2
   [12] *((byte*)&sum::d) = sum::$0
   [13] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
-  [14] sum::return_c#2 = *((byte*)&sum::d)
-  [15] sum::return_d#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_D)
+  [14] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA)
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  [16] return 
+  [15] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 byte idx
 void main()
-byte main::x_c
-byte main::x_c#0 4.0
-byte main::y_d
-byte main::y_d#0 4.0
+struct Data~ main::$0
+struct Data~ main::$1
+struct Data main::x loadstore
+struct Data main::y loadstore
 struct Data sum(byte sum::a , byte sum::b)
 byte~ sum::$0 22.0
 byte sum::a
@@ -293,79 +243,81 @@ byte sum::a#2 11.0
 byte sum::b
 byte sum::b#2 7.333333333333333
 struct Data sum::d loadstore
-struct Data sum::return
-byte sum::return_c
-byte sum::return_c#0 4.0
-byte sum::return_c#2 3.25
-byte sum::return_d
-byte sum::return_d#1 4.0
-byte sum::return_d#2 4.333333333333333
+struct Data sum::return loadstore
 
 Initial phi equivalence classes
 [ sum::a#2 ]
 [ sum::b#2 ]
-Added variable sum::return_c#0 to live range equivalence class [ sum::return_c#0 ]
-Added variable main::x_c#0 to live range equivalence class [ main::x_c#0 ]
-Added variable sum::return_d#1 to live range equivalence class [ sum::return_d#1 ]
-Added variable main::y_d#0 to live range equivalence class [ main::y_d#0 ]
 Added variable sum::$0 to live range equivalence class [ sum::$0 ]
-Added variable sum::return_c#2 to live range equivalence class [ sum::return_c#2 ]
-Added variable sum::return_d#2 to live range equivalence class [ sum::return_d#2 ]
+Added variable main::x to live range equivalence class [ main::x ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::y to live range equivalence class [ main::y ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable sum::return to live range equivalence class [ sum::return ]
 Added variable sum::d to live range equivalence class [ sum::d ]
 Complete equivalence classes
 [ sum::a#2 ]
 [ sum::b#2 ]
-[ sum::return_c#0 ]
-[ main::x_c#0 ]
-[ sum::return_d#1 ]
-[ main::y_d#0 ]
 [ sum::$0 ]
-[ sum::return_c#2 ]
-[ sum::return_d#2 ]
+[ main::x ]
+[ main::$0 ]
+[ main::y ]
+[ main::$1 ]
+[ sum::return ]
 [ sum::d ]
 Allocated zp[1]:2 [ sum::a#2 ]
 Allocated zp[1]:3 [ sum::b#2 ]
-Allocated zp[1]:4 [ sum::return_c#0 ]
-Allocated zp[1]:5 [ main::x_c#0 ]
-Allocated zp[1]:6 [ sum::return_d#1 ]
-Allocated zp[1]:7 [ main::y_d#0 ]
-Allocated zp[1]:8 [ sum::$0 ]
-Allocated zp[1]:9 [ sum::return_c#2 ]
-Allocated zp[1]:10 [ sum::return_d#2 ]
-Allocated zp[2]:11 [ sum::d ]
+Allocated zp[1]:4 [ sum::$0 ]
+Allocated zp[2]:5 [ main::x ]
+Allocated zp[2]:7 [ main::$0 ]
+Allocated zp[2]:9 [ main::y ]
+Allocated zp[2]:11 [ main::$1 ]
+Allocated zp[2]:13 [ sum::return ]
+Allocated zp[2]:15 [ sum::d ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] sum::$0 = sum::a#2 + sum::b#2 [ sum::b#2 sum::$0 sum::d ] ( sum:1 [ sum::b#2 sum::$0 sum::d ] { { sum::return_c#0 = sum::return_c#2 } }  sum:5 [ sum::b#2 sum::$0 sum::d ] { { sum::return_d#1 = sum::return_d#2 } }  ) always clobbers reg byte a 
+Statement [2] *(&main::$0) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::$0 sum::return main::x main::$1 main::y sum::d ] (  [ main::$0 sum::return main::x main::$1 main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA) [ sum::return main::x main::$1 main::y sum::d ] (  [ sum::return main::x main::$1 main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] *SCREEN = *((byte*)&main::x) [ sum::return main::$1 main::y sum::d ] (  [ sum::return main::$1 main::y sum::d ] { }  ) always clobbers reg byte a 
+Statement [6] *(&main::$1) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::$1 main::y ] (  [ main::$1 main::y ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA) [ main::y ] (  [ main::y ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] sum::$0 = sum::a#2 + sum::b#2 [ sum::return sum::b#2 sum::$0 sum::d ] ( sum:1 [ main::$0 main::x main::$1 main::y sum::return sum::b#2 sum::$0 sum::d ] { }  sum:5 [ main::$1 main::y sum::return sum::b#2 sum::$0 sum::d ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ sum::b#2 ]
-Statement [11] sum::$0 = sum::a#2 + sum::b#2 [ sum::b#2 sum::$0 sum::d ] ( sum:1 [ sum::b#2 sum::$0 sum::d ] { { sum::return_c#0 = sum::return_c#2 } }  sum:5 [ sum::b#2 sum::$0 sum::d ] { { sum::return_d#1 = sum::return_d#2 } }  ) always clobbers reg byte a 
+Statement [14] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) [ sum::return sum::d ] ( sum:1 [ main::$0 main::x main::$1 main::y sum::return sum::d ] { }  sum:5 [ main::$1 main::y sum::return sum::d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] *(&main::$0) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::$0 sum::return main::x main::$1 main::y sum::d ] (  [ main::$0 sum::return main::x main::$1 main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA) [ sum::return main::x main::$1 main::y sum::d ] (  [ sum::return main::x main::$1 main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] *SCREEN = *((byte*)&main::x) [ sum::return main::$1 main::y sum::d ] (  [ sum::return main::$1 main::y sum::d ] { }  ) always clobbers reg byte a 
+Statement [6] *(&main::$1) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::$1 main::y ] (  [ main::$1 main::y ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA) [ main::y ] (  [ main::y ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] sum::$0 = sum::a#2 + sum::b#2 [ sum::return sum::b#2 sum::$0 sum::d ] ( sum:1 [ main::$0 main::x main::$1 main::y sum::return sum::b#2 sum::$0 sum::d ] { }  sum:5 [ main::$1 main::y sum::return sum::b#2 sum::$0 sum::d ] { }  ) always clobbers reg byte a 
+Statement [14] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) [ sum::return sum::d ] ( sum:1 [ main::$0 main::x main::$1 main::y sum::return sum::d ] { }  sum:5 [ main::$1 main::y sum::return sum::d ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ sum::a#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ sum::b#2 ] : zp[1]:3 , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ sum::return_c#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ main::x_c#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ sum::return_d#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ main::y_d#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:8 [ sum::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ sum::return_c#2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:10 [ sum::return_d#2 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:11 [ sum::d ] : zp[2]:11 , 
+Potential registers zp[1]:4 [ sum::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:5 [ main::x ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ main::$0 ] : zp[2]:7 , 
+Potential registers zp[2]:9 [ main::y ] : zp[2]:9 , 
+Potential registers zp[2]:11 [ main::$1 ] : zp[2]:11 , 
+Potential registers zp[2]:13 [ sum::return ] : zp[2]:13 , 
+Potential registers zp[2]:15 [ sum::d ] : zp[2]:15 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [sum] 22: zp[1]:8 [ sum::$0 ] 11: zp[1]:2 [ sum::a#2 ] 7.33: zp[1]:3 [ sum::b#2 ] 4.33: zp[1]:10 [ sum::return_d#2 ] 4: zp[1]:4 [ sum::return_c#0 ] 4: zp[1]:6 [ sum::return_d#1 ] 3.25: zp[1]:9 [ sum::return_c#2 ] 0: zp[2]:11 [ sum::d ] 
-Uplift Scope [main] 4: zp[1]:5 [ main::x_c#0 ] 4: zp[1]:7 [ main::y_d#0 ] 
+Uplift Scope [sum] 22: zp[1]:4 [ sum::$0 ] 11: zp[1]:2 [ sum::a#2 ] 7.33: zp[1]:3 [ sum::b#2 ] 0: zp[2]:13 [ sum::return ] 0: zp[2]:15 [ sum::d ] 
 Uplift Scope [Data] 
+Uplift Scope [main] 0: zp[2]:5 [ main::x ] 0: zp[2]:7 [ main::$0 ] 0: zp[2]:9 [ main::y ] 0: zp[2]:11 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [sum] best 104 combination reg byte a [ sum::$0 ] reg byte a [ sum::a#2 ] reg byte x [ sum::b#2 ] reg byte a [ sum::return_d#2 ] zp[1]:4 [ sum::return_c#0 ] zp[1]:6 [ sum::return_d#1 ] zp[1]:9 [ sum::return_c#2 ] zp[2]:11 [ sum::d ] 
-Limited combination testing to 100 combinations of 12288 possible.
-Uplifting [main] best 92 combination reg byte a [ main::x_c#0 ] reg byte a [ main::y_d#0 ] 
-Uplifting [Data] best 92 combination 
-Uplifting [] best 92 combination 
-Attempting to uplift remaining variables inzp[1]:4 [ sum::return_c#0 ]
-Uplifting [sum] best 86 combination reg byte a [ sum::return_c#0 ] 
-Attempting to uplift remaining variables inzp[1]:6 [ sum::return_d#1 ]
-Uplifting [sum] best 80 combination reg byte a [ sum::return_d#1 ] 
-Attempting to uplift remaining variables inzp[1]:9 [ sum::return_c#2 ]
-Uplifting [sum] best 76 combination reg byte x [ sum::return_c#2 ] 
-Allocated (was zp[2]:11) zp[2]:2 [ sum::d ]
+Uplifting [sum] best 154 combination reg byte a [ sum::$0 ] reg byte a [ sum::a#2 ] reg byte x [ sum::b#2 ] zp[2]:13 [ sum::return ] zp[2]:15 [ sum::d ] 
+Uplifting [Data] best 154 combination 
+Uplifting [main] best 154 combination zp[2]:5 [ main::x ] zp[2]:7 [ main::$0 ] zp[2]:9 [ main::y ] zp[2]:11 [ main::$1 ] 
+Uplifting [] best 154 combination 
+Allocated (was zp[2]:5) zp[2]:2 [ main::x ]
+Allocated (was zp[2]:7) zp[2]:4 [ main::$0 ]
+Allocated (was zp[2]:9) zp[2]:6 [ main::y ]
+Allocated (was zp[2]:11) zp[2]:8 [ main::$1 ]
+Allocated (was zp[2]:13) zp[2]:10 [ sum::return ]
+Allocated (was zp[2]:15) zp[2]:12 [ sum::d ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -380,12 +332,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_STRUCT_DATA = 2
   .const OFFSET_STRUCT_DATA_D = 1
-  // #pragma struct_model(classic)
   .label SCREEN = $400
 .segment Code
   // main
 main: {
+    .label x = 2
+    .label __0 = 4
+    .label y = 6
+    .label __1 = 8
     // [1] call sum 
     // [10] phi from main to sum [phi:main->sum]
   sum_from_main:
@@ -394,13 +350,25 @@ main: {
     // [10] phi sum::a#2 = 1 [phi:main->sum#1] -- vbuaa=vbuc1 
     lda #1
     jsr sum
-    // [2] sum::return_c#0 = sum::return_c#2 -- vbuaa=vbuxx 
-    txa
     jmp __b1
     // main::@1
   __b1:
-    // [3] main::x_c#0 = sum::return_c#0
-    // [4] *SCREEN = main::x_c#0 -- _deref_pbuc1=vbuaa 
+    // [2] *(&main::$0) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda sum.return-1,y
+    sta __0-1,y
+    dey
+    bne !-
+    // [3] *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda __0-1,y
+    sta x-1,y
+    dey
+    bne !-
+    // [4] *SCREEN = *((byte*)&main::x) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z x
     sta SCREEN
     // [5] call sum 
     // [10] phi from main::@1 to sum [phi:main::@1->sum]
@@ -410,12 +378,25 @@ main: {
     // [10] phi sum::a#2 = 3 [phi:main::@1->sum#1] -- vbuaa=vbuc1 
     lda #3
     jsr sum
-    // [6] sum::return_d#1 = sum::return_d#2
     jmp __b2
     // main::@2
   __b2:
-    // [7] main::y_d#0 = sum::return_d#1
-    // [8] *(SCREEN+1) = main::y_d#0 -- _deref_pbuc1=vbuaa 
+    // [6] *(&main::$1) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda sum.return-1,y
+    sta __1-1,y
+    dey
+    bne !-
+    // [7] *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda __1-1,y
+    sta y-1,y
+    dey
+    bne !-
+    // [8] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
+    lda y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -426,7 +407,8 @@ main: {
   // sum
 // sum(byte register(A) a, byte register(X) b)
 sum: {
-    .label d = 2
+    .label return = $a
+    .label d = $c
     // [11] sum::$0 = sum::a#2 + sum::b#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
@@ -435,14 +417,17 @@ sum: {
     sta.z d
     // [13] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
     stx d+OFFSET_STRUCT_DATA_D
-    // [14] sum::return_c#2 = *((byte*)&sum::d) -- vbuxx=_deref_pbuc1 
-    ldx.z d
-    // [15] sum::return_d#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) -- vbuaa=_deref_pbuc1 
-    lda d+OFFSET_STRUCT_DATA_D
+    // [14] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda d-1,y
+    sta return-1,y
+    dey
+    bne !-
     jmp __breturn
     // sum::@return
   __breturn:
-    // [16] return 
+    // [15] return 
     rts
 }
   // File Data
@@ -453,7 +438,6 @@ Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx.z d with TAX
 Removing instruction sum_from_main:
 Removing instruction __b1:
 Removing instruction sum_from___b1:
@@ -465,41 +449,35 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 constant byte OFFSET_STRUCT_DATA_D = 1
 constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_STRUCT_DATA = 2
 byte idx
 void main()
-byte main::x_c
-byte main::x_c#0 reg byte a 4.0
-byte main::y_d
-byte main::y_d#0 reg byte a 4.0
+struct Data~ main::$0 zp[2]:4
+struct Data~ main::$1 zp[2]:8
+struct Data main::x loadstore zp[2]:2
+struct Data main::y loadstore zp[2]:6
 struct Data sum(byte sum::a , byte sum::b)
 byte~ sum::$0 reg byte a 22.0
 byte sum::a
 byte sum::a#2 reg byte a 11.0
 byte sum::b
 byte sum::b#2 reg byte x 7.333333333333333
-struct Data sum::d loadstore zp[2]:2
-struct Data sum::return
-byte sum::return_c
-byte sum::return_c#0 reg byte a 4.0
-byte sum::return_c#2 reg byte x 3.25
-byte sum::return_d
-byte sum::return_d#1 reg byte a 4.0
-byte sum::return_d#2 reg byte a 4.333333333333333
+struct Data sum::d loadstore zp[2]:12
+struct Data sum::return loadstore zp[2]:10
 
 reg byte a [ sum::a#2 ]
 reg byte x [ sum::b#2 ]
-reg byte a [ sum::return_c#0 ]
-reg byte a [ main::x_c#0 ]
-reg byte a [ sum::return_d#1 ]
-reg byte a [ main::y_d#0 ]
 reg byte a [ sum::$0 ]
-reg byte x [ sum::return_c#2 ]
-reg byte a [ sum::return_d#2 ]
-zp[2]:2 [ sum::d ]
+zp[2]:2 [ main::x ]
+zp[2]:4 [ main::$0 ]
+zp[2]:6 [ main::y ]
+zp[2]:8 [ main::$1 ]
+zp[2]:10 [ sum::return ]
+zp[2]:12 [ sum::d ]
 
 
 FINAL ASSEMBLER
-Score: 63
+Score: 142
 
   // File Comments
 // Test intermediate vars
@@ -513,12 +491,16 @@ Score: 63
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_STRUCT_DATA = 2
   .const OFFSET_STRUCT_DATA_D = 1
-  // #pragma struct_model(classic)
   .label SCREEN = $400
 .segment Code
   // main
 main: {
+    .label x = 2
+    .label __0 = 4
+    .label y = 6
+    .label __1 = 8
     // sum(1,2)
     // [1] call sum 
     // [10] phi from main to sum [phi:main->sum]
@@ -527,14 +509,26 @@ main: {
     // [10] phi sum::a#2 = 1 [phi:main->sum#1] -- vbuaa=vbuc1 
     lda #1
     jsr sum
-    // sum(1,2)
-    // [2] sum::return_c#0 = sum::return_c#2 -- vbuaa=vbuxx 
-    txa
     // main::@1
+    // sum(1,2)
+    // [2] *(&main::$0) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda sum.return-1,y
+    sta __0-1,y
+    dey
+    bne !-
     // struct Data x = sum(1,2)
-    // [3] main::x_c#0 = sum::return_c#0
+    // [3] *(&main::x) = memcpy(*(&main::$0), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda __0-1,y
+    sta x-1,y
+    dey
+    bne !-
     // SCREEN[idx++] = x.c
-    // [4] *SCREEN = main::x_c#0 -- _deref_pbuc1=vbuaa 
+    // [4] *SCREEN = *((byte*)&main::x) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z x
     sta SCREEN
     // sum(3, 4)
     // [5] call sum 
@@ -544,13 +538,26 @@ main: {
     // [10] phi sum::a#2 = 3 [phi:main::@1->sum#1] -- vbuaa=vbuc1 
     lda #3
     jsr sum
-    // sum(3, 4)
-    // [6] sum::return_d#1 = sum::return_d#2
     // main::@2
+    // sum(3, 4)
+    // [6] *(&main::$1) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda sum.return-1,y
+    sta __1-1,y
+    dey
+    bne !-
     // struct Data y = sum(3, 4)
-    // [7] main::y_d#0 = sum::return_d#1
+    // [7] *(&main::y) = memcpy(*(&main::$1), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda __1-1,y
+    sta y-1,y
+    dey
+    bne !-
     // SCREEN[idx++] = y.d
-    // [8] *(SCREEN+1) = main::y_d#0 -- _deref_pbuc1=vbuaa 
+    // [8] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
+    lda y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     // main::@return
     // }
@@ -560,7 +567,8 @@ main: {
   // sum
 // sum(byte register(A) a, byte register(X) b)
 sum: {
-    .label d = 2
+    .label return = $a
+    .label d = $c
     // a+b
     // [11] sum::$0 = sum::a#2 + sum::b#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
@@ -572,13 +580,16 @@ sum: {
     // [13] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
     stx d+OFFSET_STRUCT_DATA_D
     // return d;
-    // [14] sum::return_c#2 = *((byte*)&sum::d) -- vbuxx=_deref_pbuc1 
-    tax
-    // [15] sum::return_d#2 = *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) -- vbuaa=_deref_pbuc1 
-    lda d+OFFSET_STRUCT_DATA_D
+    // [14] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_DATA
+  !:
+    lda d-1,y
+    sta return-1,y
+    dey
+    bne !-
     // sum::@return
     // }
-    // [16] return 
+    // [15] return 
     rts
 }
   // File Data

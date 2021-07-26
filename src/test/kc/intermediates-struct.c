@@ -1,6 +1,6 @@
 // Test intermediate vars
 
-// #pragma struct_model(classic)
+#pragma struct_model(classic)
 
 char * const SCREEN = (char*)0x0400;
 char idx = 0;

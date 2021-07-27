@@ -2239,6 +2239,16 @@ public class TestProgramsFast extends TestPrograms {
 
 
    @Test
+   public void testWeeipIpV4() throws IOException {
+      compileAndCompare("weeip-ipv4.c");
+   }
+
+   @Test
+   public void testWeeipChecksum() throws IOException {
+      compileAndCompare("weeip-checksum.c");
+   }
+
+   @Test
    public void testUnion8() throws IOException {
       compileAndCompare("union-8.c");
    }

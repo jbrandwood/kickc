@@ -2229,7 +2229,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testIntermediatesStruct() throws IOException {
-      compileAndCompare("intermediates-struct.c");
+      compileAndCompare("intermediates-struct.c", log().verboseStructUnwind());
    }
 
    @Test
@@ -2666,7 +2666,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testMemoryHeap() throws IOException {
-      compileAndCompare("memory-heap.c");
+      compileAndCompare("memory-heap.c", log().verboseSSAOptimize());
    }
 
    @Test

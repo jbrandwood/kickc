@@ -2563,3 +2563,6 @@ sta {z1}+3
 NO_SYNTHESIS
 //FRAGMENT vduz1=vwsc1
 NO_SYNTHESIS
+//FRAGMENT vbuzz=_byte1_vduz1
+lda {z1}+1
+taz

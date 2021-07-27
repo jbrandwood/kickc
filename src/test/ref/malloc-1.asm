@@ -13,7 +13,7 @@
   .label WORDS = malloc.return
 .segment Code
 __start: {
-    // malloc(0x200)
+    // word* WORDS = malloc(0x200)
     jsr malloc
     jsr main
     rts

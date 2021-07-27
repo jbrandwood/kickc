@@ -1,4 +1,6 @@
 Inlined call call __init 
+Eliminating unused variable with no statement malloc::$0
+Eliminating unused variable with no statement __start::__init1_$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,8 +8,7 @@ void* malloc(word malloc::size)
 malloc: scope:[malloc]  from __start::__init1
   malloc::size#1 = phi( __start::__init1/malloc::size#0 )
   heap_head#5 = phi( __start::__init1/heap_head#2 )
-  malloc::$0 = heap_head#5 - malloc::size#1
-  malloc::mem#0 = malloc::$0
+  malloc::mem#0 = heap_head#5 - malloc::size#1
   heap_head#0 = malloc::mem#0
   malloc::return#0 = ((void*)) malloc::mem#0
   to:malloc::@return
@@ -48,9 +49,8 @@ __start::__init1: scope:[__start]  from __start
 __start::@2: scope:[__start]  from __start::__init1
   heap_head#7 = phi( __start::__init1/heap_head#1 )
   malloc::return#4 = phi( __start::__init1/malloc::return#2 )
-  __start::__init1_$0 = malloc::return#4
+  BYTES#0 = ((byte*)) malloc::return#4
   heap_head#3 = heap_head#7
-  BYTES#0 = ((byte*)) __start::__init1_$0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::@2
   heap_head#10 = phi( __start::@2/heap_head#3 )
@@ -84,7 +84,6 @@ constant byte RADIX::DECIMAL = $a
 constant byte RADIX::HEXADECIMAL = $10
 constant byte RADIX::OCTAL = 8
 void __start()
-void*~ __start::__init1_$0
 byte* heap_head
 byte* heap_head#0
 byte* heap_head#1
@@ -104,7 +103,6 @@ byte main::i#0
 byte main::i#1
 byte main::i#2
 void* malloc(word malloc::size)
-byte*~ malloc::$0
 byte* malloc::mem
 byte* malloc::mem#0
 void* malloc::return
@@ -121,14 +119,13 @@ Adding number conversion cast (unumber) $100 in malloc::size#0 = $100
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast malloc::return#0 = (void*)malloc::mem#0
 Inlining cast malloc::size#0 = (unumber)$100
-Inlining cast BYTES#0 = (byte*)__start::__init1_$0
+Inlining cast BYTES#0 = (byte*)malloc::return#4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast $100
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias malloc::mem#0 = malloc::$0 
 Alias malloc::return#0 = malloc::return#3 malloc::return#1 
 Alias heap_head#0 = heap_head#6 heap_head#1 
 Alias malloc::return#2 = malloc::return#4 
@@ -165,16 +162,13 @@ Constant malloc::return#0 = (void*)malloc::mem#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant malloc::return#2 = malloc::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant __start::__init1_$0 = malloc::return#2
-Successful SSA optimization Pass2ConstantIdentification
-Constant BYTES#0 = (byte*)__start::__init1_$0
+Constant BYTES#0 = (byte*)malloc::return#2
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings malloc::return#2
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Constant inlined malloc::return#2 = malloc::return#0
 Constant inlined heap_head#2 = HEAP_TOP
-Constant inlined __start::__init1_$0 = malloc::return#0
 Successful SSA optimization Pass2ConstantInlining
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 8
@@ -437,7 +431,7 @@ Score: 185
 __start: {
     // [1] phi from __start to __start::__init1 [phi:__start->__start::__init1]
     // __start::__init1
-    // malloc(0x100)
+    // byte* BYTES = malloc(0x100)
     // [2] call malloc 
     // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
     jsr malloc

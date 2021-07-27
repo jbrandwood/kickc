@@ -13,19 +13,20 @@
 main: {
     .label buf1 = 4
     .label buf2 = 6
-    // malloc()
+    // byte* buf1 = malloc()
     lda #<$c000
     sta.z heap_head
     lda #>$c000
     sta.z heap_head+1
     jsr malloc
-    // malloc()
+    // byte* buf1 = malloc()
     lda.z malloc.return_1
     sta.z malloc.return
     lda.z malloc.return_1+1
     sta.z malloc.return+1
+    // byte* buf2 = malloc()
     jsr malloc
-    // malloc()
+    // byte* buf2 = malloc()
     // *buf1 = 'a'
     lda #'a'
     ldy #0

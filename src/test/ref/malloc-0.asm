@@ -12,7 +12,7 @@
   .label BYTES = malloc.return
 .segment Code
 __start: {
-    // malloc(0x100)
+    // byte* BYTES = malloc(0x100)
     jsr malloc
     jsr main
     rts

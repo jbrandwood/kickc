@@ -314,6 +314,9 @@ public class Compiler {
 
       new PassNStructUnwoundPlaceholderRemoval(program).execute();
 
+      new PassNAddTypeConversionAssignment(program, true).execute();
+
+
       getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
 

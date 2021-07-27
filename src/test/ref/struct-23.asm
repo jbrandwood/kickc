@@ -13,11 +13,10 @@
 main: {
     .label point1 = 2
     .label point2 = 4
-    // getPoint(2, 3)
+    // __ma struct Point point1 = getPoint(2, 3)
     lda #3
     ldx #2
     jsr getPoint
-    // getPoint(2, 3)
     // __ma struct Point point1 = getPoint(2, 3)
     stx.z point1
     sta point1+OFFSET_STRUCT_POINT_Y
@@ -27,11 +26,10 @@ main: {
     // SCREEN[1] = point1.y
     lda point1+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
-    // getPoint(4, 5)
+    // __ma struct Point point2 = getPoint(4, 5)
     lda #5
     ldx #4
     jsr getPoint
-    // getPoint(4, 5)
     // __ma struct Point point2 = getPoint(4, 5)
     stx.z point2
     sta point2+OFFSET_STRUCT_POINT_Y

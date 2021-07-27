@@ -9,6 +9,8 @@ Setting inferred volatile on symbol affected by address-of: getin::ch in asm { j
 Inlined call call SEI 
 Inlined call call CLI 
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement irq_line::$10
 
 CONTROL FLOW GRAPH SSA
 
@@ -30,8 +32,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -168,8 +169,7 @@ irq_line::@13: scope:[irq_line]  from irq_line::@18 irq_line::@19
 irq_line::@14: scope:[irq_line]  from irq_line::@13
   irq_line::b#5 = phi( irq_line::@13/irq_line::b#2 )
   irq_line::idx#2 = phi( irq_line::@13/irq_line::idx#4 )
-  irq_line::$10 = BARS + SIN[irq_line::idx#2]
-  irq_line::bar#0 = irq_line::$10
+  irq_line::bar#0 = BARS + SIN[irq_line::idx#2]
   irq_line::i2#0 = 0
   to:irq_line::@16
 irq_line::@15: scope:[irq_line]  from irq_line::@13
@@ -246,7 +246,6 @@ volatile byte hstop loadstore
 __interrupt(rom_min_cx16) void irq_line()
 bool~ irq_line::$0
 bool~ irq_line::$1
-byte*~ irq_line::$10
 word~ irq_line::$11
 bool~ irq_line::$12
 word~ irq_line::$2
@@ -306,7 +305,6 @@ void main()
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -398,14 +396,13 @@ Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) $d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
-Inversing boolean not [41] irq_line::$1 = cnt != 0 from [40] irq_line::$0 = cnt == 0
-Inversing boolean not [70] irq_line::$8 = hstart > (byte)$140/4 from [69] irq_line::$7 = hstart <= (byte)$140/4
+Inversing boolean not [40] irq_line::$1 = cnt != 0 from [39] irq_line::$0 = cnt == 0
+Inversing boolean not [69] irq_line::$8 = hstart > (byte)$140/4 from [68] irq_line::$7 = hstart <= (byte)$140/4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -418,7 +415,6 @@ Alias irq_line::l#4 = irq_line::l#7 irq_line::l#5
 Alias memset::num#0 = irq_line::$2 
 Alias irq_line::idx#2 = irq_line::idx#4 
 Alias irq_line::b#2 = irq_line::b#5 
-Alias irq_line::bar#0 = irq_line::$10 
 Alias irq_line::i2#2 = irq_line::i2#3 
 Alias irq_line::bar#1 = irq_line::bar#2 
 Alias irq_line::idx#3 = irq_line::idx#6 irq_line::idx#5 

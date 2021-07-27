@@ -1,4 +1,5 @@
 Inlined call call __init 
+Eliminating unused variable with no statement main::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -17,8 +18,7 @@ main::@2: scope:[main]  from main::@1
   main::i = ++ main::i
   main::j = ++ main::j
   main::$4 = (signed word)main::i
-  main::$1 = main::$4 * 2
-  main::k#0 = main::$1
+  main::k#0 = main::$4 * 2
   main::$3 = main::i * SIZEOF_SIGNED_WORD
   SCREEN[main::$3] = main::k#0
   main::i = ++ main::i
@@ -47,7 +47,6 @@ constant byte SIZEOF_SIGNED_WORD = 2
 void __start()
 void main()
 bool~ main::$0
-number~ main::$1
 byte~ main::$2
 byte~ main::$3
 signed word~ main::$4
@@ -57,8 +56,7 @@ signed word main::k
 signed word main::k#0
 
 Adding number conversion cast (unumber) 4 in main::$0 = main::i < 4
-Adding number conversion cast (snumber) 2 in main::$1 = main::$4 * 2
-Adding number conversion cast (snumber) main::$1 in main::$1 = main::$4 * (snumber)2
+Adding number conversion cast (snumber) 2 in main::k#0 = main::$4 * 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 4
@@ -67,9 +65,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Finalized signed number type (signed byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to signed word in main::$1 = main::$4 * 2
-Alias main::k#0 = main::$1 
-Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$0 [3] if(main::i<4) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Removing unused procedure __start
@@ -343,13 +338,12 @@ main: {
     bne !+
     inc.z j+1
   !:
-    // (int)i*2
+    // int k = (int)i*2
     // [8] main::$4 = (signed word)main::i -- vwsz1=_sword_vbuz2 
     lda.z i
     sta.z __4
     lda #0
     sta.z __4+1
-    // int k = (int)i*2
     // [9] main::k#0 = main::$4 << 1 -- vwsz1=vwsz1_rol_1 
     asl.z k
     rol.z k+1

@@ -42,7 +42,8 @@ main: {
  */
 // sum(byte register(A) b)
 sum: {
-    // a+b
+    // byte r = a+b
+    // calculate the sum
     clc
     adc #@a
     // }

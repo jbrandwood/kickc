@@ -10,6 +10,7 @@
 main: {
     // constant byte array
     .const b = 4
+    // constant byte
     .const w = b*$100
     .const w2 = 1*$100+1+w
     // Test the result

@@ -8,6 +8,7 @@ Setting inferred volatile on symbol affected by address-of: load::verify in asm 
 Setting inferred volatile on symbol affected by address-of: load::status in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$3 = call toSpritePtr LOAD_SPRITE 
+Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -48,8 +49,7 @@ main: scope:[main]  from __start
   to:main::@4
 main::@4: scope:[main]  from main
   loadFileToMemory::return#3 = phi( main/loadFileToMemory::return#0 )
-  main::$0 = loadFileToMemory::return#3
-  main::status#0 = main::$0
+  main::status#0 = loadFileToMemory::return#3
   main::$1 = main::status#0 != $ff
   main::$2 = ! main::$1
   if(main::$2) goto main::@1
@@ -225,7 +225,6 @@ byte loadFileToMemory::return#2
 byte loadFileToMemory::return#3
 byte loadFileToMemory::return#4
 void main()
-byte~ main::$0
 bool~ main::$1
 bool~ main::$2
 byte~ main::$3
@@ -327,15 +326,15 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
-Inversing boolean not [22] main::$2 = main::status#0 == $ff from [21] main::$1 = main::status#0 != $ff
+Inversing boolean not [21] main::$2 = main::status#0 == $ff from [20] main::$1 = main::status#0 != $ff
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)load::return#1 = load::status load::return#4 load::return#2 
 Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
 Alias strlen::str#2 = strlen::str#3 
 Alias loadFileToMemory::return#0 = loadFileToMemory::return#3 
-Alias main::status#0 = main::$0 main::status#1 
 Alias main::toSpritePtr1_sprite#0 = main::toSpritePtr1_sprite#1 
 Alias main::toSpritePtr1_return#0 = main::toSpritePtr1_return#2 main::toSpritePtr1_return#1 main::toSpritePtr1_return#3 main::$3 
+Alias main::status#0 = main::status#1 
 Alias loadFileToMemory::device#1 = loadFileToMemory::device#2 
 Alias loadFileToMemory::address#1 = loadFileToMemory::address#2 loadFileToMemory::address#3 
 Alias load::return#0 = load::return#3 
@@ -765,6 +764,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // [1] call loadFileToMemory 
+    // Load sprite file into memory
     jsr loadFileToMemory
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
     jmp __b4
@@ -1185,12 +1185,12 @@ Score: 720
   // main
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
-    // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
+    // char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     // [1] call loadFileToMemory 
+    // Load sprite file into memory
     jsr loadFileToMemory
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
     // main::@4
-    // char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     // [3] main::status#0 = loadFileToMemory::return#0 -- vbuxx=vbuaa 
     tax
     // if(status!=0xff)

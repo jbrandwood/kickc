@@ -34,6 +34,7 @@ main: {
     // (SCREEN+40*3)[i] = i/8
     sta SCREEN+$28*3,x
     // signed byte sb = -(signed byte)i
+    // And a single signed byte
     txa
     eor #$ff
     clc

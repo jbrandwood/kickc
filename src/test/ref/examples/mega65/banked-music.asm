@@ -231,7 +231,9 @@ main: {
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 memoryRemapBlock: {
+    // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
+    // Which block is being remapped? (0-7)
     .const block = $40>>5
     .const blockBits = 1<<block
     // memoryRemap(blockBits, pageOffset, pageOffset)
@@ -282,10 +284,9 @@ memoryRemap: {
     .label __6 = $a
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
-    // BYTE0(lowerPageOffset)
-    lda.z lowerPageOffset
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
+    lda.z lowerPageOffset
     sta.z aVal
     // remapBlocks << 4
     tza
@@ -298,15 +299,13 @@ memoryRemap: {
     lda.z lowerPageOffset+1
     // BYTE1(lowerPageOffset) & 0xf
     and #$f
-    // (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
-    ora.z __1
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
+    ora.z __1
     sta.z xVal
-    // BYTE0(upperPageOffset)
-    lda.z upperPageOffset
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
+    lda.z upperPageOffset
     sta.z yVal
     // remapBlocks & 0xf0
     tza
@@ -316,10 +315,9 @@ memoryRemap: {
     lda.z upperPageOffset+1
     // BYTE1(upperPageOffset) & 0xf
     and #$f
-    // (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
-    ora.z __6
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
+    ora.z __6
     sta.z zVal
     // asm
     lda aVal

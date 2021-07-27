@@ -5,6 +5,8 @@ Resolved forward reference irq to __interrupt(hardware_clobber) void irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$2 = call toD018 SCREEN BITMAP 
 Inlined call call __init 
+Eliminating unused variable with no statement bitmap_clear::$1
+Eliminating unused variable with no statement memset::$2
 
 CONTROL FLOW GRAPH SSA
 
@@ -101,8 +103,7 @@ bitmap_clear: scope:[bitmap_clear]  from main::@8
   bitmap_clear::bgcol#1 = phi( main::@8/bitmap_clear::bgcol#0 )
   bitmap_clear::fgcol#1 = phi( main::@8/bitmap_clear::fgcol#0 )
   bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
-  bitmap_clear::$1 = bitmap_clear::$0 + bitmap_clear::bgcol#1
-  bitmap_clear::col#0 = bitmap_clear::$1
+  bitmap_clear::col#0 = bitmap_clear::$0 + bitmap_clear::bgcol#1
   memset::str#0 = (void*)bitmap_screen#8
   memset::c#0 = bitmap_clear::col#0
   memset::num#0 = $3e8
@@ -156,8 +157,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -416,7 +416,6 @@ constant const byte WHITE = 1
 void __start()
 void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
 number~ bitmap_clear::$0
-number~ bitmap_clear::$1
 byte bitmap_clear::bgcol
 byte bitmap_clear::bgcol#0
 byte bitmap_clear::bgcol#1
@@ -638,7 +637,6 @@ byte main::y#8
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -690,7 +688,6 @@ Adding number conversion cast (unumber) 7 in bitmap_init::$8 = bitmap_init::$7 =
 Adding number conversion cast (unumber) $28*8 in bitmap_init::$10 = bitmap_init::yoffs#3 + $28*8
 Adding number conversion cast (unumber) $10 in bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
 Adding number conversion cast (unumber) bitmap_clear::$0 in bitmap_clear::$0 = bitmap_clear::fgcol#1 * (unumber)$10
-Adding number conversion cast (unumber) bitmap_clear::$1 in bitmap_clear::$1 = bitmap_clear::$0 + bitmap_clear::bgcol#1
 Adding number conversion cast (unumber) 0 in memset::c#1 = 0
 Adding number conversion cast (unumber) $fff8 in bitmap_plot::$1 = bitmap_plot::x#1 & $fff8
 Adding number conversion cast (unumber) bitmap_plot::$1 in bitmap_plot::$1 = bitmap_plot::x#1 & (unumber)$fff8
@@ -784,7 +781,6 @@ Inferred type updated to byte in bitmap_init::$3 = bitmap_init::y#2 & 7
 Inferred type updated to byte in bitmap_init::$5 = bitmap_init::$3 | bitmap_init::$4
 Inferred type updated to byte in bitmap_init::$7 = bitmap_init::y#2 & 7
 Inferred type updated to byte in bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
-Inferred type updated to byte in bitmap_clear::$1 = bitmap_clear::$0 + bitmap_clear::bgcol#1
 Inferred type updated to word in bitmap_plot::$1 = bitmap_plot::x#1 & $fff8
 Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
 Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
@@ -793,8 +789,8 @@ Inferred type updated to byte in main::toD0181_$5 = main::toD0181_$4 & $f
 Inferred type updated to byte in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
 Inversing boolean not [9] bitmap_init::$1 = bitmap_init::bits#1 != 0 from [8] bitmap_init::$0 = bitmap_init::bits#1 == 0
 Inversing boolean not [29] bitmap_init::$9 = bitmap_init::$7 != 7 from [28] bitmap_init::$8 = bitmap_init::$7 == 7
-Inversing boolean not [68] memset::$1 = memset::num#2 <= 0 from [67] memset::$0 = memset::num#2 > 0
-Inversing boolean not [165] irq::$0 = 0 == frame_cnt from [164] irq::$1 = 0 != frame_cnt
+Inversing boolean not [67] memset::$1 = memset::num#2 <= 0 from [66] memset::$0 = memset::num#2 > 0
+Inversing boolean not [163] irq::$0 = 0 == frame_cnt from [162] irq::$1 = 0 != frame_cnt
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias bitmap_init::x#2 = bitmap_init::x#4 
 Alias bitmap_init::gfx#4 = bitmap_init::gfx#5 
@@ -810,13 +806,11 @@ Alias bitmap_screen#17 = bitmap_screen#18
 Alias bitmap_init::yoffs#1 = bitmap_init::$10 
 Alias bitmap_gfx#1 = bitmap_gfx#7 bitmap_gfx#13 
 Alias bitmap_screen#1 = bitmap_screen#7 bitmap_screen#13 
-Alias bitmap_clear::col#0 = bitmap_clear::$1 
 Alias bitmap_gfx#14 = bitmap_gfx#8 
 Alias memset::return#2 = memset::str#2 memset::return#4 memset::return#3 
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 

@@ -52,6 +52,11 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
    }
 
    @Override
+   public void setInitialAssignment(boolean initialAssignment) {
+      this.initialAssignment = initialAssignment;
+   }
+
+   @Override
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());

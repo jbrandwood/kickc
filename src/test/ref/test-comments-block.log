@@ -1,4 +1,5 @@
 Inlined call call __init 
+Eliminating unused variable with no statement sum::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -34,8 +35,7 @@ byte sum(byte sum::a , byte sum::b)
 sum: scope:[sum]  from main::@1
   sum::b#1 = phi( main::@1/sum::b#0 )
   sum::a#1 = phi( main::@1/sum::a#0 )
-  sum::$0 = sum::a#1 + sum::b#1
-  sum::r#0 = sum::$0
+  sum::r#0 = sum::a#1 + sum::b#1
   sum::return#1 = sum::r#0
   to:sum::@return
 sum::@return: scope:[sum]  from sum
@@ -76,7 +76,6 @@ byte main::i#1
 byte main::i#2
 byte main::i#3
 byte sum(byte sum::a , byte sum::b)
-byte~ sum::$0
 byte sum::a
 byte sum::a#0
 byte sum::a#1
@@ -97,7 +96,7 @@ Successful SSA optimization PassNCastSimplification
 Alias sum::return#0 = sum::return#3 
 Alias main::i#2 = main::i#3 
 Alias main::b#2 = main::b#3 
-Alias sum::return#1 = sum::r#0 sum::$0 sum::return#4 sum::return#2 
+Alias sum::return#1 = sum::r#0 sum::return#4 sum::return#2 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values sum::a#1 sum::a#0
 Identical Phi Values sum::b#1 sum::b#0
@@ -301,6 +300,7 @@ main: {
 // sum(byte register(A) b)
 sum: {
     // [11] sum::return#1 = a + sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
+    // calculate the sum
     clc
     adc #@a
     jmp __breturn
@@ -426,8 +426,9 @@ main: {
  */
 // sum(byte register(A) b)
 sum: {
-    // a+b
+    // byte r = a+b
     // [11] sum::return#1 = a + sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
+    // calculate the sum
     clc
     adc #@a
     // sum::@return

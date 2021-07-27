@@ -13,11 +13,10 @@
 .segment Code
 main: {
     .label SCREEN = $1009
-    // fgetc(7)
+    // char x = fgetc(7)
     lda #7
     sta.z fgetc.channel
     jsr fgetc
-    // char x = fgetc(7)
     // *SCREEN = x
     sta SCREEN
     // }

@@ -34,9 +34,9 @@
 .segment Code
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
-    // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
-    jsr loadFileToMemory
     // char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
+    // Load sprite file into memory
+    jsr loadFileToMemory
     tax
     // if(status!=0xff)
     cpx #$ff

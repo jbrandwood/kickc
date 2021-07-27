@@ -164,10 +164,9 @@ draw_block: {
     // y = y << 1
     lda.z y
     asl
-    // mul8u(y,40)
+    // word z = mul8u(y,40)
     tax
     jsr mul8u
-    // mul8u(y,40)
     // word z = mul8u(y,40)
     // z = z + x1
     clc

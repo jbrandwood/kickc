@@ -1,3 +1,6 @@
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
+Eliminating unused variable with no statement fct::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -15,8 +18,7 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main
   main::z#2 = phi( main/main::z#0 )
   fct::return#4 = phi( main/fct::return#0 )
-  main::$0 = fct::return#4
-  main::a1#0 = main::$0
+  main::a1#0 = fct::return#4
   main::screen[0] = main::a1#0
   main::z#1 = ++ main::z#2
   main::x#1 = $55
@@ -27,8 +29,7 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   fct::return#5 = phi( main::@1/fct::return#1 )
-  main::$1 = fct::return#5
-  main::a2#0 = main::$1
+  main::a2#0 = fct::return#5
   main::screen[1] = main::a2#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -39,8 +40,7 @@ byte fct(byte fct::x , byte* fct::z)
 fct: scope:[fct]  from main main::@1
   fct::z#2 = phi( main/fct::z#0, main::@1/fct::z#1 )
   fct::x#2 = phi( main/fct::x#0, main::@1/fct::x#1 )
-  fct::$0 = fct::x#2 & fct::z#2[2]
-  fct::a#0 = fct::$0
+  fct::a#0 = fct::x#2 & fct::z#2[2]
   fct::return#2 = fct::a#0
   to:fct::@return
 fct::@return: scope:[fct]  from fct
@@ -62,7 +62,6 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 byte fct(byte fct::x , byte* fct::z)
-byte~ fct::$0
 byte fct::a !reg byte a
 byte fct::a#0 !reg byte a
 byte fct::return
@@ -82,8 +81,6 @@ byte* fct::z#0
 byte* fct::z#1
 byte* fct::z#2
 void main()
-byte~ main::$0
-byte~ main::$1
 byte main::a1
 byte main::a1#0
 byte main::a2
@@ -104,7 +101,7 @@ Adding number conversion cast (unumber) 3 in main::z#0[3] = ((unumber)) $f
 Adding number conversion cast (unumber) 0 in main::screen[0] = main::a1#0
 Adding number conversion cast (unumber) $55 in main::x#1 = $55
 Adding number conversion cast (unumber) 1 in main::screen[1] = main::a2#0
-Adding number conversion cast (unumber) 2 in fct::$0 = fct::x#2 & fct::z#2[2]
+Adding number conversion cast (unumber) 2 in fct::a#0 = fct::x#2 & fct::z#2[2]
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast main::z#0[(unumber)2] = (unumber)$f0
 Inlining cast main::z#0[(unumber)3] = (unumber)$f
@@ -132,10 +129,8 @@ Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias fct::return#0 = fct::return#4 
 Alias main::z#0 = main::z#2 
-Alias main::a1#0 = main::$0 
 Alias fct::return#1 = fct::return#5 
-Alias main::a2#0 = main::$1 
-Alias fct::return#2 = fct::a#0 fct::$0 fct::return#6 fct::return#3 
+Alias fct::return#2 = fct::a#0 fct::return#6 fct::return#3 
 Successful SSA optimization Pass2AliasElimination
 Constant main::z#0 = (byte*) 1104
 Constant main::x#0 = $aa
@@ -437,7 +432,7 @@ main: {
     // [1] *((byte*) 1104+3) = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta $450+3
-    // fct(x, z)
+    // byte a1 = fct(x, z)
     // [2] call fct 
     // [11] phi from main to fct [phi:main->fct]
     // [11] phi fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
@@ -448,15 +443,14 @@ main: {
     // [11] phi fct::x#2 = $aa [phi:main->fct#1] -- vbuxx=vbuc1 
     ldx #$aa
     jsr fct
-    // fct(x, z)
+    // byte a1 = fct(x, z)
     // [3] fct::return#0 = fct::return#2
     // main::@1
-    // byte a1 = fct(x, z)
     // [4] main::a1#0 = fct::return#0
     // screen[0] = a1
     // [5] *main::screen = main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
-    // fct(x, z)
+    // byte a2 = fct(x, z)
     // [6] call fct 
     // [11] phi from main::@1 to fct [phi:main::@1->fct]
     // [11] phi fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
@@ -467,10 +461,9 @@ main: {
     // [11] phi fct::x#2 = $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
     ldx #$55
     jsr fct
-    // fct(x, z)
+    // byte a2 = fct(x, z)
     // [7] fct::return#1 = fct::return#2
     // main::@2
-    // byte a2 = fct(x, z)
     // [8] main::a2#0 = fct::return#1
     // screen[1] = a2
     // [9] *(main::screen+1) = main::a2#0 -- _deref_pbuc1=vbuaa 
@@ -484,7 +477,7 @@ main: {
 // fct(byte register(X) x, byte* zp(2) z)
 fct: {
     .label z = 2
-    // x & z[2]
+    // byte register(A) a = x & z[2]
     // [12] fct::return#2 = fct::x#2 & fct::z#2[2] -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
     ldy #2
     txa

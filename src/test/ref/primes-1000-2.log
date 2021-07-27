@@ -1,4 +1,7 @@
 Inlined call call __init 
+Eliminating unused variable with no statement div16u8u::$1
+Eliminating unused variable with no statement div16u8u::$3
+Eliminating unused variable with no statement div16u8u::$4
 
 CONTROL FLOW GRAPH SSA
 
@@ -391,9 +394,8 @@ div16u8u::@1: scope:[div16u8u]  from div16u8u
   div16u8u::dividend#2 = phi( div16u8u/div16u8u::dividend#1 )
   rem8u#11 = phi( div16u8u/rem8u#1 )
   divr8u::return#5 = phi( div16u8u/divr8u::return#2 )
-  div16u8u::$1 = divr8u::return#5
+  div16u8u::quotient_hi#0 = divr8u::return#5
   rem8u#2 = rem8u#11
-  div16u8u::quotient_hi#0 = div16u8u::$1
   div16u8u::$2 = byte0  div16u8u::dividend#2
   divr8u::dividend#2 = div16u8u::$2
   divr8u::divisor#1 = div16u8u::divisor#2
@@ -405,11 +407,9 @@ div16u8u::@2: scope:[div16u8u]  from div16u8u::@1
   div16u8u::quotient_hi#1 = phi( div16u8u::@1/div16u8u::quotient_hi#0 )
   rem8u#12 = phi( div16u8u::@1/rem8u#1 )
   divr8u::return#6 = phi( div16u8u::@1/divr8u::return#3 )
-  div16u8u::$3 = divr8u::return#6
+  div16u8u::quotient_lo#0 = divr8u::return#6
   rem8u#3 = rem8u#12
-  div16u8u::quotient_lo#0 = div16u8u::$3
-  div16u8u::$4 = div16u8u::quotient_hi#1 w= div16u8u::quotient_lo#0
-  div16u8u::quotient#0 = div16u8u::$4
+  div16u8u::quotient#0 = div16u8u::quotient_hi#1 w= div16u8u::quotient_lo#0
   div16u8u::return#0 = div16u8u::quotient#0
   to:div16u8u::@return
 div16u8u::@return: scope:[div16u8u]  from div16u8u::@2
@@ -650,10 +650,7 @@ void __start()
 constant byte* decimal_digits[6]  = { fill( 6, 0) }
 word div16u8u(word div16u8u::dividend , byte div16u8u::divisor)
 byte~ div16u8u::$0
-byte~ div16u8u::$1
 byte~ div16u8u::$2
-byte~ div16u8u::$3
-word~ div16u8u::$4
 word div16u8u::dividend
 word div16u8u::dividend#0
 word div16u8u::dividend#1
@@ -1256,8 +1253,8 @@ Inferred type updated to byte in main::$11 = 2 * SIZEOF_WORD
 Inversing boolean not [122] mul8u::$3 = mul8u::$1 == 0 from [121] mul8u::$2 = mul8u::$1 != 0
 Inversing boolean not [145] divr8u::$3 = divr8u::$1 == 0 from [144] divr8u::$2 = divr8u::$1 != 0
 Inversing boolean not [153] divr8u::$8 = divr8u::rem#6 < divr8u::divisor#2 from [152] divr8u::$7 = divr8u::rem#6 >= divr8u::divisor#2
-Inversing boolean not [219] main::$2 = potential#7 <= main::$0 from [218] main::$1 = potential#7 > main::$0
-Inversing boolean not [236] main::$5 = rem8u#5 != 0 from [235] main::$4 = rem8u#5 == 0
+Inversing boolean not [216] main::$2 = potential#7 <= main::$0 from [215] main::$1 = potential#7 > main::$0
+Inversing boolean not [233] main::$5 = rem8u#5 != 0 from [232] main::$4 = rem8u#5 == 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias print_str::str#2 = print_str::str#3 print_str::str#4 
 Alias print_char_cursor#1 = print_char_cursor#23 print_char_cursor#24 print_char_cursor#13 
@@ -1307,12 +1304,11 @@ Alias divr8u::return#2 = divr8u::return#5
 Alias div16u8u::dividend#1 = div16u8u::dividend#2 
 Alias div16u8u::divisor#1 = div16u8u::divisor#2 
 Alias rem8u#11 = rem8u#2 
-Alias div16u8u::quotient_hi#0 = div16u8u::$1 div16u8u::quotient_hi#1 
 Alias divr8u::dividend#2 = div16u8u::$2 
 Alias divr8u::return#3 = divr8u::return#6 
+Alias div16u8u::quotient_hi#0 = div16u8u::quotient_hi#1 
 Alias rem8u#12 = rem8u#3 rem8u#13 rem8u#4 
-Alias div16u8u::quotient_lo#0 = div16u8u::$3 
-Alias div16u8u::return#0 = div16u8u::quotient#0 div16u8u::$4 div16u8u::return#3 div16u8u::return#1 
+Alias div16u8u::return#0 = div16u8u::quotient#0 div16u8u::return#3 div16u8u::return#1 
 Alias mul8u::return#2 = mul8u::return#4 
 Alias potential#15 = potential#7 potential#16 
 Alias test_last#13 = test_last#6 test_last#7 
@@ -3852,7 +3848,7 @@ mul8u: {
 div16u8u: {
     .label dividend = 5
     .label divisor = 9
-    // divr8u(BYTE1(dividend), divisor, 0)
+    // unsigned char quotient_hi = divr8u(BYTE1(dividend), divisor, 0)
     // [44] divr8u::dividend#1 = byte1  div16u8u::dividend#0 -- vbuz1=_byte1_vwuz2 
     lda.z dividend+1
     sta.z divr8u.dividend
@@ -3865,7 +3861,7 @@ div16u8u: {
     ldy #0
     jsr divr8u
     // div16u8u::@1
-    // divr8u(BYTE0(dividend), divisor, rem8u)
+    // unsigned char quotient_lo = divr8u(BYTE0(dividend), divisor, rem8u)
     // [47] divr8u::dividend#2 = byte0  div16u8u::dividend#0 -- vbuz1=_byte0_vwuz2 
     lda.z dividend
     sta.z divr8u.dividend

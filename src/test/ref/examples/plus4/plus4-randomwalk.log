@@ -2,6 +2,9 @@ Fixing struct type size struct MOS7360_TED to 63
 Fixing struct type SIZE_OF struct MOS7360_TED to 63
 Fixing struct type SIZE_OF struct MOS7360_TED to 63
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement main::$4
+Eliminating unused variable with no statement main::$11
 
 CONTROL FLOW GRAPH SSA
 
@@ -23,8 +26,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#4 = phi( memset/memset::num#3 )
   memset::str#4 = phi( memset/memset::str#5 )
   memset::$4 = (byte*)memset::str#4
-  memset::$2 = memset::$4 + memset::num#4
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#4
   memset::dst#0 = ((byte*)) memset::str#4
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -113,8 +115,7 @@ main::@2: scope:[main]  from main::@1
   main::y#5 = phi( main::@1/main::y#8 )
   main::$24 = (word)main::y#5
   main::$3 = main::$24 * $28
-  main::$4 = main::$3 + main::x#5
-  main::offset#0 = main::$4
+  main::offset#0 = main::$3 + main::x#5
   main::$5 = VISITS + main::offset#0
   *main::$5 = ++ *main::$5
   main::$6 = VISITS + main::offset#0
@@ -132,8 +133,7 @@ main::@17: scope:[main]  from main::@2
   rand::return#4 = phi( main::@2/rand::return#2 )
   main::$10 = rand::return#4
   rand_state#4 = rand_state#11
-  main::$11 = byte1  main::$10
-  main::rnd#0 = main::$11
+  main::rnd#0 = byte1  main::$10
   main::$12 = main::rnd#0 & $80
   main::$26 = 0 != main::$12
   if(main::$26) goto main::@3
@@ -261,7 +261,6 @@ constant byte* VISITS[$3e8]  = { fill( $3e8, 0) }
 void __start()
 void main()
 word~ main::$10
-byte~ main::$11
 number~ main::$12
 number~ main::$13
 bool~ main::$14
@@ -280,7 +279,6 @@ bool~ main::$26
 bool~ main::$27
 bool~ main::$28
 number~ main::$3
-number~ main::$4
 byte*~ main::$5
 byte*~ main::$6
 byte*~ main::$8
@@ -332,7 +330,6 @@ byte main::y#9
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -433,7 +430,6 @@ Adding number conversion cast (unumber) 0 in *((byte*)TED+OFFSET_STRUCT_MOS7360_
 Adding number conversion cast (unumber) 0 in *((byte*)TED+OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR) = 0
 Adding number conversion cast (unumber) $28 in main::$3 = main::$24 * $28
 Adding number conversion cast (unumber) main::$3 in main::$3 = main::$24 * (unumber)$28
-Adding number conversion cast (unumber) main::$4 in main::$4 = main::$3 + main::x#5
 Adding number conversion cast (unumber) $f in main::$9 = main::cnt#0 & $f
 Adding number conversion cast (unumber) main::$9 in main::$9 = main::cnt#0 & (unumber)$f
 Adding number conversion cast (unumber) $80 in main::$12 = main::rnd#0 & $80
@@ -533,22 +529,20 @@ Finalized unsigned number type (byte) $27
 Finalized unsigned number type (byte) $ff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::$3 = main::$24 * $28
-Inferred type updated to word in main::$4 = main::$3 + main::x#5
 Inferred type updated to byte in main::$9 = main::cnt#0 & $f
 Inferred type updated to byte in main::$12 = main::rnd#0 & $80
 Inferred type updated to byte in main::$18 = main::rnd#1 & $40
 Inferred type updated to byte in main::$13 = main::rnd#2 & $40
 Inversing boolean not [2] memset::$1 = memset::num#3 <= 0 from [1] memset::$0 = memset::num#3 > 0
-Inversing boolean not [91] main::$17 = main::y#1 != $19 from [90] main::$16 = main::y#1 == $19
-Inversing boolean not [96] main::$15 = main::y#2 != $ff from [95] main::$14 = main::y#2 == $ff
-Inversing boolean not [105] main::$22 = main::x#1 != $28 from [104] main::$21 = main::x#1 == $28
-Inversing boolean not [110] main::$20 = main::x#2 != $ff from [109] main::$19 = main::x#2 == $ff
+Inversing boolean not [88] main::$17 = main::y#1 != $19 from [87] main::$16 = main::y#1 == $19
+Inversing boolean not [93] main::$15 = main::y#2 != $ff from [92] main::$14 = main::y#2 == $ff
+Inversing boolean not [102] main::$22 = main::x#1 != $28 from [101] main::$21 = main::x#1 == $28
+Inversing boolean not [107] main::$20 = main::x#2 != $ff from [106] main::$19 = main::x#2 == $ff
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#3 memset::return#5 memset::return#1 
 Alias memset::str#4 = memset::str#5 
 Alias memset::num#3 = memset::num#4 
 Alias memset::c#5 = memset::c#6 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#3 = memset::c#4 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -559,10 +553,9 @@ Alias rand_state#18 = rand_state#29 rand_state#32 rand_state#20
 Alias main::y#11 = main::y#5 main::y#8 main::y#16 main::y#9 main::y#6 main::y#7 main::y#14 main::y#12 main::y#13 main::y#15 
 Alias main::x#11 = main::x#5 main::x#8 main::x#9 main::x#16 main::x#14 main::x#12 main::x#13 main::x#15 main::x#6 main::x#7 
 Alias rand_state#12 = rand_state#15 rand_state#16 rand_state#5 
-Alias main::offset#0 = main::$4 
 Alias rand::return#2 = rand::return#4 
 Alias rand_state#11 = rand_state#4 rand_state#31 rand_state#30 rand_state#25 rand_state#21 rand_state#22 rand_state#26 rand_state#27 rand_state#23 rand_state#24 rand_state#28 
-Alias main::rnd#0 = main::$11 main::rnd#1 main::rnd#2 
+Alias main::rnd#0 = main::rnd#1 main::rnd#2 
 Alias rand_state#17 = rand_state#6 
 Alias rand_state#13 = rand_state#7 rand_state#14 rand_state#8 
 Successful SSA optimization Pass2AliasElimination
@@ -577,7 +570,7 @@ Identical Phi Values rand_state#13 rand_state#12
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values memset::return#0 memset::str#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [65] main::$6 = VISITS + main::offset#0
+Identified duplicate assignment right side [63] main::$6 = VISITS + main::offset#0
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition memset::$1 [2] if(memset::num#3<=0) goto memset::@1
 Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4

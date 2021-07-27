@@ -19,6 +19,14 @@ Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVa
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call SEI 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy::$0
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement gotoxy::$4
+Eliminating unused variable with no statement memoryRemap::$0
+Eliminating unused variable with no statement memoryRemap::$4
+Eliminating unused variable with no statement memoryRemap::$5
+Eliminating unused variable with no statement memoryRemap::$9
+Eliminating unused variable with no statement conio_mega65_init::$2
 Eliminating unused variable with no statement printf_buffer
 Eliminating unused variable with no statement main::$0
 
@@ -32,8 +40,7 @@ memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::src#0 = ((byte*)) memcpy::source#2
   memcpy::dst#0 = ((byte*)) memcpy::destination#2
   memcpy::$2 = (byte*)memcpy::source#2
-  memcpy::$0 = memcpy::$2 + memcpy::num#2
-  memcpy::src_end#0 = memcpy::$0
+  memcpy::src_end#0 = memcpy::$2 + memcpy::num#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   memcpy::destination#4 = phi( memcpy/memcpy::destination#2, memcpy::@2/memcpy::destination#5 )
@@ -80,8 +87,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -131,8 +137,7 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_x = gotoxy::x#4
   conio_cursor_y = gotoxy::y#4
   gotoxy::$7 = (word)gotoxy::y#4
-  gotoxy::$4 = gotoxy::$7 * $50
-  gotoxy::line_offset#0 = gotoxy::$4
+  gotoxy::line_offset#0 = gotoxy::$7 * $50
   gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
   gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
@@ -221,20 +226,16 @@ memoryRemap: scope:[memoryRemap]  from conio_mega65_init::@3
   memoryRemap::upperPageOffset#1 = phi( conio_mega65_init::@3/memoryRemap::upperPageOffset#0 )
   memoryRemap::remapBlocks#1 = phi( conio_mega65_init::@3/memoryRemap::remapBlocks#0 )
   memoryRemap::lowerPageOffset#1 = phi( conio_mega65_init::@3/memoryRemap::lowerPageOffset#0 )
-  memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#1
-  memoryRemap::aVal = memoryRemap::$0
+  memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#1
   memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
   memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#1
   memoryRemap::$3 = memoryRemap::$2 & $f
-  memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-  memoryRemap::xVal = memoryRemap::$4
-  memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#1
-  memoryRemap::yVal = memoryRemap::$5
+  memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+  memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#1
   memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
   memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#1
   memoryRemap::$8 = memoryRemap::$7 & $f
-  memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-  memoryRemap::zVal = memoryRemap::$9
+  memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
@@ -311,8 +312,7 @@ conio_mega65_init::@4: scope:[conio_mega65_init]  from conio_mega65_init::@3
   *IO_KEY = $47
   *IO_KEY = $53
   *IO_BANK = *IO_BANK | CRAM2K
-  conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-  conio_mega65_init::line#0 = conio_mega65_init::$2
+  conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
   conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
   conio_mega65_init::$4 = ! conio_mega65_init::$3
   if(conio_mega65_init::$4) goto conio_mega65_init::@1
@@ -386,7 +386,6 @@ byte conio_cursor_y loadstore
 byte* conio_line_color loadstore
 byte* conio_line_text loadstore
 void conio_mega65_init()
-number~ conio_mega65_init::$2
 bool~ conio_mega65_init::$3
 bool~ conio_mega65_init::$4
 constant byte* const conio_mega65_init::BASIC_CURSOR_LINE = (byte*)$eb
@@ -428,7 +427,6 @@ bool~ gotoxy::$0
 bool~ gotoxy::$1
 bool~ gotoxy::$2
 bool~ gotoxy::$3
-number~ gotoxy::$4
 byte*~ gotoxy::$5
 byte*~ gotoxy::$6
 word~ gotoxy::$7
@@ -453,7 +451,6 @@ byte gotoxy::y#6
 void main()
 constant byte* main::s[$d]  = "hello world!"
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
-byte*~ memcpy::$0
 bool~ memcpy::$1
 byte*~ memcpy::$2
 void* memcpy::destination
@@ -492,16 +489,12 @@ byte* memcpy::src_end#0
 byte* memcpy::src_end#1
 byte* memcpy::src_end#2
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$0
 byte~ memoryRemap::$1
 byte~ memoryRemap::$2
 number~ memoryRemap::$3
-number~ memoryRemap::$4
-byte~ memoryRemap::$5
 number~ memoryRemap::$6
 byte~ memoryRemap::$7
 number~ memoryRemap::$8
-number~ memoryRemap::$9
 volatile byte memoryRemap::aVal loadstore
 word memoryRemap::lowerPageOffset
 word memoryRemap::lowerPageOffset#0
@@ -518,7 +511,6 @@ volatile byte memoryRemap::zVal loadstore
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -561,8 +553,7 @@ Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
 Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#3 > $19
 Adding number conversion cast (unumber) $50 in gotoxy::$2 = gotoxy::x#3 >= $50
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
-Adding number conversion cast (unumber) $50 in gotoxy::$4 = gotoxy::$7 * $50
-Adding number conversion cast (unumber) gotoxy::$4 in gotoxy::$4 = gotoxy::$7 * (unumber)$50
+Adding number conversion cast (unumber) $50 in gotoxy::line_offset#0 = gotoxy::$7 * $50
 Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
 Adding number conversion cast (unumber) $50 in cputc::$1 = conio_cursor_x == $50
 Adding number conversion cast (unumber) $50 in conio_line_text = conio_line_text + $50
@@ -572,12 +563,10 @@ Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
 Adding number conversion cast (unumber) 4 in memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
 Adding number conversion cast (unumber) $f in memoryRemap::$3 = memoryRemap::$2 & $f
 Adding number conversion cast (unumber) memoryRemap::$3 in memoryRemap::$3 = memoryRemap::$2 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$4 in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Adding number conversion cast (unumber) $f0 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
 Adding number conversion cast (unumber) memoryRemap::$6 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & (unumber)$f0
 Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 & $f
 Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$9 in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
 Adding number conversion cast (unumber) $50 in memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$50
@@ -599,8 +588,7 @@ Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#0 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#0 = 0
 Adding number conversion cast (unumber) $47 in *IO_KEY = $47
 Adding number conversion cast (unumber) $53 in *IO_KEY = $53
-Adding number conversion cast (unumber) 1 in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-Adding number conversion cast (unumber) conio_mega65_init::$2 in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + (unumber)1
+Adding number conversion cast (unumber) 1 in conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
 Adding number conversion cast (unumber) $19 in conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
 Adding number conversion cast (unumber) 0 in gotoxy::x#2 = 0
 Adding number conversion cast (unumber) $19-1 in conio_mega65_init::line#1 = $19-1
@@ -702,27 +690,18 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $50
 Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
-Inferred type updated to byte in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
 Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
-Inferred type updated to byte in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-Inferred type updated to byte in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [40] gotoxy::$1 = gotoxy::y#3 <= $19 from [39] gotoxy::$0 = gotoxy::y#3 > $19
-Inversing boolean not [44] gotoxy::$3 = gotoxy::x#3 < $50 from [43] gotoxy::$2 = gotoxy::x#3 >= $50
-Inversing boolean not [70] cputc::$2 = conio_cursor_x != $50 from [69] cputc::$1 = conio_cursor_x == $50
-Inversing boolean not [111] cscroll::$1 = conio_cursor_y != $19 from [110] cscroll::$0 = conio_cursor_y == $19
-Inversing boolean not [153] conio_mega65_init::$4 = conio_mega65_init::line#0 < $19 from [152] conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
+Inversing boolean not [19] memset::$1 = memset::num#2 <= 0 from [18] memset::$0 = memset::num#2 > 0
+Inversing boolean not [38] gotoxy::$1 = gotoxy::y#3 <= $19 from [37] gotoxy::$0 = gotoxy::y#3 > $19
+Inversing boolean not [42] gotoxy::$3 = gotoxy::x#3 < $50 from [41] gotoxy::$2 = gotoxy::x#3 >= $50
+Inversing boolean not [67] cputc::$2 = conio_cursor_x != $50 from [66] cputc::$1 = conio_cursor_x == $50
+Inversing boolean not [104] cscroll::$1 = conio_cursor_y != $19 from [103] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [145] conio_mega65_init::$4 = conio_mega65_init::line#0 < $19 from [144] conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -731,34 +710,23 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#5 = memset::str#6 
 Alias gotoxy::x#5 = gotoxy::x#6 
-Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#5 = gotoxy::y#6 
 Alias cputc::c#1 = cputc::c#2 
 Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
-Alias conio_mega65_init::line#0 = conio_mega65_init::$2 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Alias gotoxy::x#3 = gotoxy::x#5 
 Alias gotoxy::y#4 = gotoxy::y#5 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Identical Phi Values memcpy::src_end#1 memcpy::src_end#0
 Identical Phi Values memcpy::destination#3 memcpy::destination#2
 Identical Phi Values memset::end#1 memset::end#0
@@ -781,13 +749,13 @@ Simple Condition cputc::$0 [45] if(cputc::c#0=='
 ') goto cputc::@1
 Simple Condition cputc::$2 [51] if(conio_cursor_x!=$50) goto cputc::@return
 Simple Condition cputs::$2 [66] if(0!=cputs::c#1) goto cputs::@2
-Simple Condition cscroll::$1 [88] if(conio_cursor_y!=$19) goto cscroll::@return
-Simple Condition cscroll::$7 [90] if(0!=conio_scroll_enable) goto cscroll::@3
-Simple Condition conio_mega65_init::$4 [128] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@1
+Simple Condition cscroll::$1 [84] if(conio_cursor_y!=$19) goto cscroll::@return
+Simple Condition cscroll::$7 [86] if(0!=conio_scroll_enable) goto cscroll::@3
+Simple Condition conio_mega65_init::$4 [124] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [93] memcpy::num#0 = (unumber)$19*$50-$50
-Constant right-side identified [98] memcpy::num#1 = (unumber)$19*$50-$50
-Constant right-side identified [133] conio_mega65_init::line#1 = (unumber)$19-1
+Constant right-side identified [89] memcpy::num#0 = (unumber)$19*$50-$50
+Constant right-side identified [94] memcpy::num#1 = (unumber)$19*$50-$50
+Constant right-side identified [129] conio_mega65_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
@@ -816,7 +784,7 @@ Constant conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#1 = conio_textcolor
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [90] if(0!=conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [86] if(0!=conio_scroll_enable) goto cscroll::@3
 Successful SSA optimization Pass2ConstantIfs
 Rewriting conditional comparison [27] if(gotoxy::y#3<=$19) goto gotoxy::@1
 Removing PHI-reference to removed block (cscroll::@2) in block gotoxy
@@ -824,10 +792,10 @@ Removing PHI-reference to removed block (cscroll::@2) in block gotoxy
 Removing unused block cscroll::@2
 Removing unused block cscroll::@8
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused variable memcpy::return#2 and assignment [74] memcpy::return#2 = memcpy::destination#2
-Eliminating unused variable memcpy::return#3 and assignment [76] memcpy::return#3 = memcpy::destination#2
-Eliminating unused variable memset::return#2 and assignment [78] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [80] memset::return#3 = memset::str#3
+Eliminating unused variable memcpy::return#2 and assignment [70] memcpy::return#2 = memcpy::destination#2
+Eliminating unused variable memcpy::return#3 and assignment [72] memcpy::return#3 = memcpy::destination#2
+Eliminating unused variable memset::return#2 and assignment [74] memset::return#2 = memset::str#3
+Eliminating unused variable memset::return#3 and assignment [76] memset::return#3 = memset::str#3
 Eliminating unused constant gotoxy::x#1
 Eliminating unused constant gotoxy::y#1
 Eliminating unused constant cputs::c#0
@@ -843,38 +811,32 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Identical Phi Values gotoxy::y#3 gotoxy::y#2
 Identical Phi Values gotoxy::x#3 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [56] memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#0
-Constant right-side identified [58] memoryRemap::$1 = memoryRemap::remapBlocks#0 << 4
-Constant right-side identified [59] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#0
-Constant right-side identified [63] memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#0
-Constant right-side identified [65] memoryRemap::$6 = memoryRemap::remapBlocks#0 & $f0
-Constant right-side identified [66] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#0
+Constant right-side identified [56] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#0
+Constant right-side identified [57] memoryRemap::$1 = memoryRemap::remapBlocks#0 << 4
+Constant right-side identified [58] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#0
+Constant right-side identified [61] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#0
+Constant right-side identified [62] memoryRemap::$6 = memoryRemap::remapBlocks#0 & $f0
+Constant right-side identified [63] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant memoryRemap::$0 = byte0 memoryRemap::lowerPageOffset#0
 Constant memoryRemap::$1 = memoryRemap::remapBlocks#0<<4
 Constant memoryRemap::$2 = byte1 memoryRemap::lowerPageOffset#0
-Constant memoryRemap::$5 = byte0 memoryRemap::upperPageOffset#0
 Constant memoryRemap::$6 = memoryRemap::remapBlocks#0&$f0
 Constant memoryRemap::$7 = byte1 memoryRemap::upperPageOffset#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [24] if(gotoxy::x#2<$50) goto gotoxy::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying constant evaluating to zero byte0 memoryRemap::lowerPageOffset#0 in 
 Simplifying constant evaluating to zero memoryRemap::remapBlocks#0<<4 in 
 Simplifying constant evaluating to zero byte1 memoryRemap::lowerPageOffset#0 in 
-Simplifying constant evaluating to zero byte0 memoryRemap::upperPageOffset#0 in 
 Simplifying constant evaluating to zero memoryRemap::remapBlocks#0&$f0 in 
 Simplifying constant evaluating to zero byte1 memoryRemap::upperPageOffset#0 in 
+Simplifying constant evaluating to zero byte0 memoryRemap::lowerPageOffset#0 in [56] memoryRemap::aVal = byte0 memoryRemap::lowerPageOffset#0
+Simplifying constant evaluating to zero byte0 memoryRemap::upperPageOffset#0 in [61] memoryRemap::yVal = byte0 memoryRemap::upperPageOffset#0
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero memoryRemap::$3 in [61] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-Simplifying expression containing zero memoryRemap::$8 in [68] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
+Simplifying expression containing zero memoryRemap::$3 in [60] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+Simplifying expression containing zero memoryRemap::$8 in [65] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing PHI-reference to removed block (gotoxy::@4) in block gotoxy::@2
 Removing unused block gotoxy::@4
@@ -888,18 +850,15 @@ Eliminating unused constant memoryRemap::$6
 Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias candidate removed (volatile)memoryRemap::$4 = memoryRemap::$3 memoryRemap::xVal 
-Alias candidate removed (volatile)memoryRemap::$9 = memoryRemap::$8 memoryRemap::zVal 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$3 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$8 
 Identical Phi Values gotoxy::x#4 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [55] memoryRemap::$3 = memoryRemap::$2 & $f
-Constant right-side identified [59] memoryRemap::$8 = memoryRemap::$7 & $f
+Constant right-side identified [58] memoryRemap::$8 = memoryRemap::$7 & $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemap::$3 = memoryRemap::$2&$f
 Constant memoryRemap::$8 = memoryRemap::$7&$f
-Successful SSA optimization Pass2ConstantIdentification
-Constant memoryRemap::$4 = memoryRemap::$3
-Constant memoryRemap::$9 = memoryRemap::$8
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero memoryRemap::$2&$f in 
 Simplifying constant evaluating to zero memoryRemap::$7&$f in 
@@ -931,31 +890,27 @@ Inlining constant with var siblings memset::c#1
 Inlining constant with var siblings gotoxy::y#0
 Inlining constant with var siblings cputs::s#1
 Inlining constant with var siblings conio_mega65_init::line#1
+Constant inlined memset::str#1 = (void*)COLORRAM+(word)$19*$50-$50
+Constant inlined memset::str#0 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50
+Constant inlined CONIO_SCREEN_COLORS = COLORRAM
 Constant inlined cputs::s#1 = main::s
 Constant inlined conio_textcolor = LIGHT_BLUE
 Constant inlined memcpy::destination#0 = (void*)DEFAULT_SCREEN
 Constant inlined memset::num#1 = $50
 Constant inlined memcpy::destination#1 = (void*)COLORRAM
 Constant inlined memset::num#0 = $50
-Constant inlined conio_mega65_init::line#1 = (byte)$19-1
-Constant inlined memcpy::source#1 = (void*)COLORRAM+$50
-Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
-Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
-Constant inlined memset::str#1 = (void*)COLORRAM+(word)$19*$50-$50
-Constant inlined memset::str#0 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50
-Constant inlined CONIO_SCREEN_COLORS = COLORRAM
 Constant inlined memcpy::source#0 = (void*)DEFAULT_SCREEN+$50
+Constant inlined conio_mega65_init::line#1 = (byte)$19-1
 Constant inlined memcpy::num#1 = (word)$19*$50-$50
 Constant inlined memcpy::num#0 = (word)$19*$50-$50
-Constant inlined memoryRemap::$0 = 0
+Constant inlined memcpy::source#1 = (void*)COLORRAM+$50
 Constant inlined gotoxy::y#0 = 0
 Constant inlined memoryRemap::$3 = 0
-Constant inlined memoryRemap::$4 = 0
-Constant inlined memoryRemap::$5 = 0
+Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
 Constant inlined memset::c#0 = ' '
 Constant inlined memset::c#1 = LIGHT_BLUE
 Constant inlined memoryRemap::$8 = 0
-Constant inlined memoryRemap::$9 = 0
+Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -2753,13 +2708,12 @@ gotoxy: {
     // conio_cursor_y = y
     // [36] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [37] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [38] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl

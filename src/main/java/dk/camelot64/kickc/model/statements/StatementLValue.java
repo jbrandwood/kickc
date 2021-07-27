@@ -13,4 +13,6 @@ public interface StatementLValue extends Statement {
 
    boolean isInitialAssignment();
 
+   void setInitialAssignment(boolean initialAssignment);
+
 }

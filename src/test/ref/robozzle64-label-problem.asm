@@ -22,10 +22,9 @@ main: {
     lda #0
     sta.z y
   __b1:
-    // mul8u(y,40)
+    // word z1 = mul8u(y,40)
     ldx.z y
     jsr mul8u
-    // mul8u(y,40)
     // word z1 = mul8u(y,40)
     // *screen++ = z1
     ldy #0
@@ -34,10 +33,9 @@ main: {
     iny
     lda.z z1+1
     sta (screen),y
-    // mul8u(y,40)
+    // word z2 = mul8u(y,40)
     ldx.z y
     jsr mul8u
-    // mul8u(y,40)
     // word z2 = mul8u(y,40)
     // *screen++ = z2
     ldy #SIZEOF_WORD

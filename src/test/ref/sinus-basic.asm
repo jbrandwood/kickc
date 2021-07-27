@@ -231,7 +231,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // MAKEWORD( *memHi, *memLo )
+    // unsigned int w = MAKEWORD( *memHi, *memLo )
     sta.z return+1
     tya
     sta.z return

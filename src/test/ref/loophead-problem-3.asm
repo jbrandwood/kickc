@@ -16,9 +16,8 @@
 main: {
     .label result = 2
     .label kaputt = $a
-    // mul16u(4,123)
+    // dword result = mul16u(4,123)
     jsr mul16u
-    // mul16u(4,123)
     // dword result = mul16u(4,123)
     // word kaputt = WORD0(result)
     lda.z result

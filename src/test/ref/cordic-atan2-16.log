@@ -2,6 +2,8 @@ Resolved forward reference FONT_HEX_PROTO to FONT_HEX_PROTO
 Resolved forward reference FONT_HEX_PROTO to FONT_HEX_PROTO
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$1 = call toD018 SCREEN CHARSET 
+Eliminating unused variable with no statement main::$4
+Eliminating unused variable with no statement main::$6
 
 CONTROL FLOW GRAPH SSA
 
@@ -345,11 +347,9 @@ main::@8: scope:[main]  from main::@2
   main::x#3 = phi( main::@2/main::x#2 )
   main::screen#2 = phi( main::@2/main::screen#3 )
   atan2_16::return#4 = phi( main::@2/atan2_16::return#2 )
-  main::$4 = atan2_16::return#4
-  main::angle_w#0 = main::$4
+  main::angle_w#0 = atan2_16::return#4
   main::$5 = main::angle_w#0 + $80
-  main::$6 = byte1  main::$5
-  main::ang_w#0 = main::$6
+  main::ang_w#0 = byte1  main::$5
   *main::screen#2 = main::ang_w#0
   main::screen#1 = ++ main::screen#2
   main::x#1 = main::x#3 + rangenext(-$13,$14)
@@ -625,9 +625,7 @@ byte~ main::$10
 byte~ main::$11
 word~ main::$2
 word~ main::$3
-word~ main::$4
 number~ main::$5
-byte~ main::$6
 bool~ main::$7
 bool~ main::$8
 byte main::ang_w
@@ -856,8 +854,6 @@ Alias atan2_16::return#2 = atan2_16::return#4
 Alias main::screen#2 = main::screen#3 
 Alias main::x#2 = main::x#3 
 Alias main::y#2 = main::y#5 main::y#3 
-Alias main::angle_w#0 = main::$4 
-Alias main::ang_w#0 = main::$6 
 Alias main::screen#1 = main::screen#5 
 Successful SSA optimization Pass2AliasElimination
 Alias atan2_16::x#1 = atan2_16::x#5 atan2_16::x#10 
@@ -2681,14 +2677,13 @@ main: {
     ldy.z y
     sty.z yw+1
     sta.z yw
-    // atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // [8] atan2_16::x#0 = (signed word)main::xw#0
     // [9] atan2_16::y#0 = (signed word)main::yw#0
     // [10] call atan2_16 
     jsr atan2_16
     // [11] atan2_16::return#2 = atan2_16::return#0
     // main::@6
-    // word angle_w = atan2_16(xw, yw)
     // [12] main::angle_w#0 = atan2_16::return#2
     // angle_w+0x0080
     // [13] main::$5 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 

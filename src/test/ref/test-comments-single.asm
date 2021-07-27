@@ -40,7 +40,8 @@ main: {
 // Returns the sum pf the two bytes
 // sum(byte register(A) b)
 sum: {
-    // a+b
+    // byte r = a+b
+    // calculate the sum
     clc
     adc #@a
     // }

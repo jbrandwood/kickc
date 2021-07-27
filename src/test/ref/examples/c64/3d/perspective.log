@@ -8,6 +8,8 @@ Setting inferred volatile on symbol affected by address-of: yr in asm { ldazr st
 Setting inferred volatile on symbol affected by address-of: xr in asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement mulf_init::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -191,8 +193,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -410,8 +411,7 @@ mulf_init::@1: scope:[mulf_init]  from mulf_init mulf_init::@1
   mulf_init::add#2 = phi( mulf_init/mulf_init::add#0, mulf_init::@1/mulf_init::add#1 )
   mulf_init::i#2 = phi( mulf_init/mulf_init::i#0, mulf_init::@1/mulf_init::i#1 )
   mulf_init::sqr#2 = phi( mulf_init/mulf_init::sqr#0, mulf_init::@1/mulf_init::sqr#1 )
-  mulf_init::$0 = byte1  mulf_init::sqr#2
-  mulf_init::val#0 = mulf_init::$0
+  mulf_init::val#0 = byte1  mulf_init::sqr#2
   mulf_sqr1[mulf_init::i#2] = mulf_init::val#0
   (mulf_sqr1+$100)[mulf_init::i#2] = mulf_init::val#0
   mulf_init::$1 = - mulf_init::i#2
@@ -531,7 +531,6 @@ void main()
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -566,7 +565,6 @@ void* memset::str#3
 void* memset::str#4
 void* memset::str#5
 void mulf_init()
-byte~ mulf_init::$0
 byte~ mulf_init::$1
 byte~ mulf_init::$2
 number~ mulf_init::$3
@@ -886,7 +884,6 @@ Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -915,7 +912,6 @@ Alias print_char_cursor#27 = print_char_cursor#60
 Alias print_char_cursor#28 = print_char_cursor#61 
 Alias print_line_cursor#19 = print_line_cursor#7 print_line_cursor#20 print_line_cursor#8 
 Alias print_char_cursor#29 = print_char_cursor#62 print_char_cursor#63 print_char_cursor#30 
-Alias mulf_init::val#0 = mulf_init::$0 
 Alias print_screen#0 = print_line_cursor#9 print_char_cursor#31 print_line_cursor#26 print_char_cursor#76 print_screen#8 print_screen#6 print_screen#4 print_screen#1 
 Alias print_line_cursor#10 = print_line_cursor#21 print_line_cursor#22 print_line_cursor#11 
 Alias print_char_cursor#32 = print_char_cursor#64 print_char_cursor#65 print_char_cursor#33 
@@ -971,8 +967,8 @@ Identical Phi Values print_char_cursor#69 print_char_cursor#1
 Identical Phi Values print_char_cursor#71 print_char_cursor#11
 Identical Phi Values memset::return#1 memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [196] mulf_init::$2 = - mulf_init::i#2
-Identified duplicate assignment right side [204] mulf_init::$6 = 1 - mulf_init::i#2
+Identified duplicate assignment right side [194] mulf_init::$2 = - mulf_init::i#2
+Identified duplicate assignment right side [202] mulf_init::$6 = 1 - mulf_init::i#2
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition print_str::$1 [3] if(0!=*print_str::str#7) goto print_str::@2
 Simple Condition print_ln::$1 [13] if(print_line_cursor#0<print_char_cursor#1) goto print_ln::@1

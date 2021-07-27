@@ -93,7 +93,7 @@ main: {
     bcc !+
     inc.z at_2+1
   !:
-    // fmul8(vals[i], vals[j])
+    // signed char r = fmul8(vals[i], vals[j])
     ldy.z i
     lda vals,y
     sta.z fmul8.aa
@@ -101,7 +101,6 @@ main: {
     lda vals,y
     sta.z fmul8.bb
     jsr fmul8
-    // signed char r = fmul8(vals[i], vals[j])
     // print_schar_at(r, at)
     sta.z print_schar_at.b
     lda.z at_2

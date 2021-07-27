@@ -4,6 +4,9 @@ Setting inferred volatile on symbol affected by address-of: fmul8::aa in asm { l
 Setting inferred volatile on symbol affected by address-of: fmul8::bb in asm { ldaaa staA1+1 eor#$ff staA2+1 ldxbb sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacc  }
 Setting inferred volatile on symbol affected by address-of: fmul8::cc in asm { ldaaa staA1+1 eor#$ff staA2+1 ldxbb sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacc  }
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement main::$1
+Eliminating unused variable with no statement main::$5
 
 CONTROL FLOW GRAPH SSA
 
@@ -119,8 +122,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -152,8 +154,7 @@ main: scope:[main]  from __start::@1
   to:main::@6
 main::@6: scope:[main]  from main
   main::at_line#0 = (byte*)$400
-  main::$1 = main::at_line#0 + 4
-  main::at#0 = main::$1
+  main::at#0 = main::at_line#0 + 4
   main::k#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main::@6 main::@7
@@ -209,8 +210,7 @@ main::@9: scope:[main]  from main::@4
   main::j#4 = phi( main::@4/main::j#2 )
   main::at#7 = phi( main::@4/main::at#3 )
   fmul8::return#3 = phi( main::@4/fmul8::return#0 )
-  main::$5 = fmul8::return#3
-  main::r#0 = main::$5
+  main::r#0 = fmul8::return#3
   print_schar_at::b#3 = main::r#0
   print_schar_at::at#2 = main::at#7
   call print_schar_at 
@@ -338,9 +338,7 @@ byte init_screen::m#0
 byte init_screen::m#1
 byte init_screen::m#2
 void main()
-byte*~ main::$1
 bool~ main::$3
-signed byte~ main::$5
 bool~ main::$7
 bool~ main::$8
 byte* main::at
@@ -391,7 +389,6 @@ signed byte main::r#0
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -508,7 +505,7 @@ Adding number conversion cast (unumber) print_uchar_at::$2 in print_uchar_at::$2
 Adding number conversion cast (unumber) 1 in print_uchar_at::$3 = print_uchar_at::at#2 + 1
 Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
-Adding number conversion cast (unumber) 4 in main::$1 = main::at_line#0 + 4
+Adding number conversion cast (unumber) 4 in main::at#0 = main::at_line#0 + 4
 Adding number conversion cast (unumber) 4 in main::at#1 = main::at#5 + 4
 Adding number conversion cast (unumber) $28 in main::at_line#1 = main::at_line#2 + $28
 Adding number conversion cast (unumber) 4 in main::at#3 = main::at#6 + 4
@@ -573,12 +570,10 @@ Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#4 = memset::str#5 
-Alias main::at#0 = main::$1 
 Alias main::at#4 = main::at#5 
 Alias main::k#2 = main::k#3 
 Alias main::at_line#3 = main::at_line#5 main::at_line#7 
@@ -589,7 +584,6 @@ Alias main::at#3 = main::at#7 main::at#8
 Alias main::j#2 = main::j#4 main::j#3 
 Alias main::i#3 = main::i#7 main::i#5 main::i#4 
 Alias main::at_line#4 = main::at_line#8 main::at_line#9 main::at_line#6 
-Alias main::r#0 = main::$5 
 Alias init_screen::COLS#2 = init_screen::COLS#4 
 Alias print_screen#0 = print_screen#7 print_screen#5 print_screen#3 print_screen#1 
 Successful SSA optimization Pass2AliasElimination
@@ -2182,7 +2176,7 @@ main: {
     bcc !+
     inc.z at_2+1
   !:
-    // fmul8(vals[i], vals[j])
+    // signed char r = fmul8(vals[i], vals[j])
     // [17] fmul8::aa = vals[main::i#2] -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda vals,y
@@ -2195,7 +2189,6 @@ main: {
     jsr fmul8
     // [20] fmul8::return#0 = fmul8::return#2
     // main::@7
-    // signed char r = fmul8(vals[i], vals[j])
     // [21] main::r#0 = fmul8::return#0
     // print_schar_at(r, at)
     // [22] print_schar_at::b#3 = main::r#0 -- vbsz1=vbsaa 

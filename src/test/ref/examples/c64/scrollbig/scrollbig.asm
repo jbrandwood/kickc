@@ -116,10 +116,9 @@ scroll_bit: {
     // if(current_bit==0)
     lda.z current_bit
     bne __b1
-    // next_char()
+    // unsigned int c = next_char()
     jsr next_char
     txa
-    // unsigned int c = next_char()
     sta.z c
     lda #0
     sta.z c+1

@@ -251,23 +251,21 @@ lin16u_gen: {
     lda.z ampl+1
     sbc.z min+1
     sta.z ampl+1
-    // divr16u(ampl, length-1, 0)
+    // word stepi = divr16u(ampl, length-1, 0)
     lda #<0
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
-    // divr16u(ampl, length-1, 0)
     // word stepi = divr16u(ampl, length-1, 0)
     lda.z divr16u.return
     sta.z stepi
     lda.z divr16u.return+1
     sta.z stepi+1
-    // divr16u(0, length-1, rem16u)
+    // word stepf = divr16u(0, length-1, rem16u)
     lda #<0
     sta.z divr16u.dividend
     sta.z divr16u.dividend+1
     jsr divr16u
-    // divr16u(0, length-1, rem16u)
     // word stepf = divr16u(0, length-1, rem16u)
     // dword step = MAKELONG( stepi, stepf )
     lda.z stepi

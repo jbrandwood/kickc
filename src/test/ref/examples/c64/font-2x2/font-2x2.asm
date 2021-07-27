@@ -40,7 +40,8 @@ main: {
     sta PROCPORT
     // asm
     cli
-    // font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)
+    // char size = font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)
+  // Compress the font finding identical characters
     jsr font_compress
     // *D018 = toD018(SCREEN, FONT_COMPRESSED)
     // Show compressed font
@@ -260,11 +261,11 @@ font_compress: {
     lda #>FONT_ORIGINAL
     sta.z next_original+1
   __b1:
-    // font_find(next_original, font_compressed, font_size)
-    jsr font_find
-    // font_find(next_original, font_compressed, font_size)
-    txa
     // char found = font_find(next_original, font_compressed, font_size)
+  // Look for the char in font_compressed
+    jsr font_find
+    // char found = font_find(next_original, font_compressed, font_size)
+    txa
     // if(found==0xff)
     cmp #$ff
     bne __b7

@@ -107,10 +107,9 @@ main: {
     sta.z row
   // Read & print keyboard matrix
   __b5:
-    // keyboard_matrix_read(row)
+    // byte row_pressed_bits = keyboard_matrix_read(row)
     ldx.z row
     jsr keyboard_matrix_read
-    // keyboard_matrix_read(row)
     // byte row_pressed_bits = keyboard_matrix_read(row)
     tax
     ldy #0
@@ -158,10 +157,9 @@ main: {
     sta.z i
     sta.z ch
   __b12:
-    // keyboard_get_keycode(ch)
+    // byte key = keyboard_get_keycode(ch)
     ldx.z ch
     jsr keyboard_get_keycode
-    // byte key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
     beq __b13
@@ -236,7 +234,7 @@ keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }

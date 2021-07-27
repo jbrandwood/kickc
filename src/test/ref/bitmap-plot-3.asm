@@ -214,7 +214,7 @@ bitmap_line: {
     .label y1 = 8
     .label x2 = $10
     .label y2 = $12
-    // abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     lda.z x2
     sec
     sbc.z x1
@@ -223,13 +223,12 @@ bitmap_line: {
     sbc.z x1+1
     sta.z abs_u16.w+1
     jsr abs_u16
-    // abs_u16(x2-x1)
     // unsigned int dx = abs_u16(x2-x1)
     lda.z abs_u16.return
     sta.z dx
     lda.z abs_u16.return+1
     sta.z dx+1
-    // abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     lda.z y2
     sec
     sbc.z y1
@@ -238,7 +237,6 @@ bitmap_line: {
     sbc.z y1+1
     sta.z abs_u16.w+1
     jsr abs_u16
-    // abs_u16(y2-y1)
     // unsigned int dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
@@ -250,7 +248,7 @@ bitmap_line: {
     jmp __b4
   !__b4:
   __b1:
-    // sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     lda.z x2
     sec
     sbc.z x1
@@ -259,13 +257,12 @@ bitmap_line: {
     sbc.z x1+1
     sta.z sgn_u16.w+1
     jsr sgn_u16
-    // sgn_u16(x2-x1)
     // unsigned int sx = sgn_u16(x2-x1)
     lda.z sgn_u16.return
     sta.z sx
     lda.z sgn_u16.return+1
     sta.z sx+1
-    // sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     lda.z y2
     sec
     sbc.z y1
@@ -274,7 +271,6 @@ bitmap_line: {
     sbc.z y1+1
     sta.z sgn_u16.w+1
     jsr sgn_u16
-    // sgn_u16(y2-y1)
     // unsigned int sy = sgn_u16(y2-y1)
     // if(dx > dy)
     lda.z dy+1
@@ -286,6 +282,7 @@ bitmap_line: {
     bcc __b2
   !:
     // unsigned int e = dx/2
+    // Y is the driver
     lda.z dx+1
     lsr
     sta.z e+1
@@ -352,6 +349,7 @@ bitmap_line: {
     rts
   __b2:
     // unsigned int e = dy/2
+    // X is the driver
     lda.z dy+1
     lsr
     sta.z e1+1

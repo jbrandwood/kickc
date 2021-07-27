@@ -15,6 +15,10 @@ Setting inferred volatile on symbol affected by address-of: memoryRemap256M::xVa
 Setting inferred volatile on symbol affected by address-of: memoryRemap256M::yVal in asm { ldalMb ldx#$0f ldyuMb ldz#$0f map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVal in asm { ldalMb ldx#$0f ldyuMb ldz#$0f map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
+Eliminating unused variable with no statement memoryRemap::$0
+Eliminating unused variable with no statement memoryRemap::$4
+Eliminating unused variable with no statement memoryRemap::$5
+Eliminating unused variable with no statement memoryRemap::$9
 
 CONTROL FLOW GRAPH SSA
 
@@ -23,20 +27,16 @@ memoryRemap: scope:[memoryRemap]  from main
   memoryRemap::upperPageOffset#1 = phi( main/memoryRemap::upperPageOffset#0 )
   memoryRemap::remapBlocks#1 = phi( main/memoryRemap::remapBlocks#0 )
   memoryRemap::lowerPageOffset#1 = phi( main/memoryRemap::lowerPageOffset#0 )
-  memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#1
-  memoryRemap::aVal = memoryRemap::$0
+  memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#1
   memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
   memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#1
   memoryRemap::$3 = memoryRemap::$2 & $f
-  memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-  memoryRemap::xVal = memoryRemap::$4
-  memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#1
-  memoryRemap::yVal = memoryRemap::$5
+  memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+  memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#1
   memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
   memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#1
   memoryRemap::$8 = memoryRemap::$7 & $f
-  memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-  memoryRemap::zVal = memoryRemap::$9
+  memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
@@ -85,16 +85,12 @@ constant byte OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
 void __start()
 void main()
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$0
 byte~ memoryRemap::$1
 byte~ memoryRemap::$2
 number~ memoryRemap::$3
-number~ memoryRemap::$4
-byte~ memoryRemap::$5
 number~ memoryRemap::$6
 byte~ memoryRemap::$7
 number~ memoryRemap::$8
-number~ memoryRemap::$9
 volatile byte memoryRemap::aVal loadstore
 word memoryRemap::lowerPageOffset
 word memoryRemap::lowerPageOffset#0
@@ -113,12 +109,10 @@ Adding number conversion cast (unumber) $50 in
 Adding number conversion cast (unumber) 4 in memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
 Adding number conversion cast (unumber) $f in memoryRemap::$3 = memoryRemap::$2 & $f
 Adding number conversion cast (unumber) memoryRemap::$3 in memoryRemap::$3 = memoryRemap::$2 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$4 in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Adding number conversion cast (unumber) $f0 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
 Adding number conversion cast (unumber) memoryRemap::$6 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & (unumber)$f0
 Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 & $f
 Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$9 in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
 Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#0 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#0 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#0 = 0
@@ -164,14 +158,8 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
-Inferred type updated to byte in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
 Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
-Inferred type updated to byte in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Identical Phi Values memoryRemap::lowerPageOffset#1 memoryRemap::lowerPageOffset#0
 Identical Phi Values memoryRemap::remapBlocks#1 memoryRemap::remapBlocks#0
 Identical Phi Values memoryRemap::upperPageOffset#1 memoryRemap::upperPageOffset#0
@@ -180,7 +168,7 @@ Constant memoryRemap::remapBlocks#0 = 0
 Constant memoryRemap::lowerPageOffset#0 = 0
 Constant memoryRemap::upperPageOffset#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)DMA in [25] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &DMA_SCREEN_UP
+Simplifying expression containing zero (byte*)DMA in [21] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &DMA_SCREEN_UP
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG
 Successful SSA optimization PassNEliminateUnusedVars
@@ -189,33 +177,27 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Constant right-side identified [0] memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#0
-Constant right-side identified [2] memoryRemap::$1 = memoryRemap::remapBlocks#0 << 4
-Constant right-side identified [3] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#0
-Constant right-side identified [7] memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#0
-Constant right-side identified [9] memoryRemap::$6 = memoryRemap::remapBlocks#0 & $f0
-Constant right-side identified [10] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#0
+Constant right-side identified [0] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#0
+Constant right-side identified [1] memoryRemap::$1 = memoryRemap::remapBlocks#0 << 4
+Constant right-side identified [2] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#0
+Constant right-side identified [5] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#0
+Constant right-side identified [6] memoryRemap::$6 = memoryRemap::remapBlocks#0 & $f0
+Constant right-side identified [7] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant memoryRemap::$0 = byte0 memoryRemap::lowerPageOffset#0
 Constant memoryRemap::$1 = memoryRemap::remapBlocks#0<<4
 Constant memoryRemap::$2 = byte1 memoryRemap::lowerPageOffset#0
-Constant memoryRemap::$5 = byte0 memoryRemap::upperPageOffset#0
 Constant memoryRemap::$6 = memoryRemap::remapBlocks#0&$f0
 Constant memoryRemap::$7 = byte1 memoryRemap::upperPageOffset#0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero byte0 memoryRemap::lowerPageOffset#0 in 
 Simplifying constant evaluating to zero memoryRemap::remapBlocks#0<<4 in 
 Simplifying constant evaluating to zero byte1 memoryRemap::lowerPageOffset#0 in 
-Simplifying constant evaluating to zero byte0 memoryRemap::upperPageOffset#0 in 
 Simplifying constant evaluating to zero memoryRemap::remapBlocks#0&$f0 in 
 Simplifying constant evaluating to zero byte1 memoryRemap::upperPageOffset#0 in 
+Simplifying constant evaluating to zero byte0 memoryRemap::lowerPageOffset#0 in [0] memoryRemap::aVal = byte0 memoryRemap::lowerPageOffset#0
+Simplifying constant evaluating to zero byte0 memoryRemap::upperPageOffset#0 in [5] memoryRemap::yVal = byte0 memoryRemap::upperPageOffset#0
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero memoryRemap::$3 in [5] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-Simplifying expression containing zero memoryRemap::$8 in [12] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
+Simplifying expression containing zero memoryRemap::$3 in [4] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+Simplifying expression containing zero memoryRemap::$8 in [9] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant memoryRemap::remapBlocks#0
 Eliminating unused constant memoryRemap::lowerPageOffset#0
@@ -223,16 +205,13 @@ Eliminating unused constant memoryRemap::upperPageOffset#0
 Eliminating unused constant memoryRemap::$1
 Eliminating unused constant memoryRemap::$6
 Successful SSA optimization PassNEliminateUnusedVars
-Alias candidate removed (volatile)memoryRemap::$4 = memoryRemap::$3 memoryRemap::xVal 
-Alias candidate removed (volatile)memoryRemap::$9 = memoryRemap::$8 memoryRemap::zVal 
+Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$3 
+Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$8 
 Constant right-side identified [1] memoryRemap::$3 = memoryRemap::$2 & $f
-Constant right-side identified [5] memoryRemap::$8 = memoryRemap::$7 & $f
+Constant right-side identified [4] memoryRemap::$8 = memoryRemap::$7 & $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemap::$3 = memoryRemap::$2&$f
 Constant memoryRemap::$8 = memoryRemap::$7&$f
-Successful SSA optimization Pass2ConstantIdentification
-Constant memoryRemap::$4 = memoryRemap::$3
-Constant memoryRemap::$9 = memoryRemap::$8
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero memoryRemap::$2&$f in 
 Simplifying constant evaluating to zero memoryRemap::$7&$f in 
@@ -240,11 +219,7 @@ Successful SSA optimization PassNSimplifyConstantZero
 Eliminating unused constant memoryRemap::$2
 Eliminating unused constant memoryRemap::$7
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined memoryRemap::$4 = 0
-Constant inlined memoryRemap::$5 = 0
 Constant inlined memoryRemap::$8 = 0
-Constant inlined memoryRemap::$0 = 0
-Constant inlined memoryRemap::$9 = 0
 Constant inlined memoryRemap::$3 = 0
 Successful SSA optimization Pass2ConstantInlining
 Finalized unsigned number type (byte) 8

@@ -48,14 +48,13 @@ main: {
     // char v = a+1
     ldx.z a
     inx
-    // plus('0', v)
+    // char w = plus('0', v)
     lda #'0'
     pha
     txa
     pha
     jsr plus
     pla
-    // char w = plus('0', v)
     pla
     // w+a
     clc

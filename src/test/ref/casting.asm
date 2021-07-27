@@ -15,6 +15,7 @@ main: {
     ldx #0
   __b1:
     // byte b2 = 200-b
+    //Subtract unsigned byte from unsigned byte
     txa
     eor #$ff
     sec
@@ -22,6 +23,7 @@ main: {
     // SCREEN[b] = b2
     sta SCREEN,x
     // signed byte sb = - (signed byte)b
+    // Cast unsigned byte to signed byte & negate
     txa
     eor #$ff
     clc

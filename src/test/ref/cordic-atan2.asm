@@ -39,10 +39,9 @@ main: {
     lda #-$13
     sta.z x
   __b2:
-    // atan2_8(x, y)
+    // byte angle = atan2_8(x, y)
     jsr atan2_8
     txa
-    // byte angle = atan2_8(x, y)
     // *screen++ = angle
     ldy #0
     sta (screen),y

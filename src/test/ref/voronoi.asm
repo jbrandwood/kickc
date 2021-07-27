@@ -67,11 +67,10 @@ render: {
     lda #0
     sta.z x
   __b2:
-    // findcol(x, y)
-    jsr findcol
-    // findcol(x, y)
-    txa
     // byte col = findcol(x, y)
+    jsr findcol
+    // byte col = findcol(x, y)
+    txa
     // colline[x] = col
     ldy.z x
     sta (colline),y

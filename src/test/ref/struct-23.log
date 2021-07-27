@@ -1,11 +1,9 @@
 Eliminating unused variable with no statement main::$0
 Eliminating unused variable with no statement main::$1
-Unwinding list assignment { main::$0_x, main::$0_y } = { getPoint::return_x, getPoint::return_y }
-Unwinding list assignment { main::$1_x, main::$1_y } = { getPoint::return_x, getPoint::return_y }
+Unwinding list assignment { *((byte*)&main::point1+OFFSET_STRUCT_POINT_X), *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) } = { getPoint::return_x, getPoint::return_y }
+Unwinding list assignment { *((byte*)&main::point2+OFFSET_STRUCT_POINT_X), *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) } = { getPoint::return_x, getPoint::return_y }
 Unwinding list assignment { getPoint::return_x#0, getPoint::return_y#0 } = { getPoint::return_x#5, getPoint::return_y#5 }
 Unwinding list assignment { getPoint::return_x#1, getPoint::return_y#1 } = { getPoint::return_x#5, getPoint::return_y#5 }
-Removing C-classic struct-unwound assignment main::point1 = struct-unwound {*((byte*)&main::point1+OFFSET_STRUCT_POINT_X), *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y)}
-Removing C-classic struct-unwound assignment main::point2 = struct-unwound {*((byte*)&main::point2+OFFSET_STRUCT_POINT_X), *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y)}
 
 CONTROL FLOW GRAPH SSA
 
@@ -20,10 +18,8 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main
   getPoint::return_y#3 = phi( main/getPoint::return_y#0 )
   getPoint::return_x#3 = phi( main/getPoint::return_x#0 )
-  main::$0_x = getPoint::return_x#3
-  main::$0_y = getPoint::return_y#3
-  *((byte*)&main::point1+OFFSET_STRUCT_POINT_X) = main::$0_x
-  *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = main::$0_y
+  *((byte*)&main::point1+OFFSET_STRUCT_POINT_X) = getPoint::return_x#3
+  *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#3
   SCREEN[0] = *((byte*)&main::point1+OFFSET_STRUCT_POINT_X)
   SCREEN[1] = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y)
   getPoint::x#1 = 4
@@ -35,10 +31,8 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   getPoint::return_y#4 = phi( main::@1/getPoint::return_y#1 )
   getPoint::return_x#4 = phi( main::@1/getPoint::return_x#1 )
-  main::$1_x = getPoint::return_x#4
-  main::$1_y = getPoint::return_y#4
-  *((byte*)&main::point2+OFFSET_STRUCT_POINT_X) = main::$1_x
-  *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = main::$1_y
+  *((byte*)&main::point2+OFFSET_STRUCT_POINT_X) = getPoint::return_x#4
+  *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#4
   SCREEN[2] = *((byte*)&main::point2+OFFSET_STRUCT_POINT_X)
   SCREEN[3] = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y)
   to:main::@return
@@ -109,10 +103,6 @@ byte getPoint::y#0
 byte getPoint::y#1
 byte getPoint::y#2
 void main()
-byte~ main::$0_x
-byte~ main::$0_y
-byte~ main::$1_x
-byte~ main::$1_y
 struct Point main::point1 loadstore
 struct Point main::point2 loadstore
 
@@ -161,14 +151,14 @@ Constant getPoint::y#0 = 3
 Constant getPoint::x#1 = 4
 Constant getPoint::y#1 = 5
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&main::point1 in [7] *((byte*)&main::point1+OFFSET_STRUCT_POINT_X) = main::$0_x
-Simplifying expression containing zero (byte*)&main::point1 in [9] SCREEN[0] = *((byte*)&main::point1+OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero SCREEN in [9] SCREEN[0] = *((byte*)&main::point1)
-Simplifying expression containing zero (byte*)&main::point2 in [18] *((byte*)&main::point2+OFFSET_STRUCT_POINT_X) = main::$1_x
-Simplifying expression containing zero (byte*)&main::point2 in [20] SCREEN[2] = *((byte*)&main::point2+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)&main::point1 in [5] *((byte*)&main::point1+OFFSET_STRUCT_POINT_X) = getPoint::return_x#0
+Simplifying expression containing zero (byte*)&main::point1 in [7] SCREEN[0] = *((byte*)&main::point1+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [7] SCREEN[0] = *((byte*)&main::point1)
+Simplifying expression containing zero (byte*)&main::point2 in [14] *((byte*)&main::point2+OFFSET_STRUCT_POINT_X) = getPoint::return_x#1
+Simplifying expression containing zero (byte*)&main::point2 in [16] SCREEN[2] = *((byte*)&main::point2+OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable getPoint::return#0 and assignment [20] getPoint::return#0 = struct-unwound {getPoint::return_x#2, getPoint::return_y#2}
-Eliminating unused variable getPoint::return#1 and assignment [21] getPoint::return#1 = struct-unwound {}
+Eliminating unused variable getPoint::return#0 and assignment [16] getPoint::return#0 = struct-unwound {getPoint::return_x#2, getPoint::return_y#2}
+Eliminating unused variable getPoint::return#1 and assignment [17] getPoint::return#1 = struct-unwound {}
 Eliminating unused constant OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
@@ -191,7 +181,7 @@ Consolidated array index constant in *(SCREEN+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [main] to getPoint:1 getPoint:10 
+Calls in [main] to getPoint:1 getPoint:8 
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
@@ -207,35 +197,31 @@ main: scope:[main]  from
   [3] getPoint::return_y#0 = getPoint::return_y#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [4] main::$0_x = getPoint::return_x#0
-  [5] main::$0_y = getPoint::return_y#0
-  [6] *((byte*)&main::point1) = main::$0_x
-  [7] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = main::$0_y
-  [8] *SCREEN = *((byte*)&main::point1)
-  [9] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y)
-  [10] call getPoint 
-  [11] getPoint::return_x#1 = getPoint::return_x#2
-  [12] getPoint::return_y#1 = getPoint::return_y#2
+  [4] *((byte*)&main::point1) = getPoint::return_x#0
+  [5] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#0
+  [6] *SCREEN = *((byte*)&main::point1)
+  [7] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y)
+  [8] call getPoint 
+  [9] getPoint::return_x#1 = getPoint::return_x#2
+  [10] getPoint::return_y#1 = getPoint::return_y#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [13] main::$1_x = getPoint::return_x#1
-  [14] main::$1_y = getPoint::return_y#1
-  [15] *((byte*)&main::point2) = main::$1_x
-  [16] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = main::$1_y
-  [17] *(SCREEN+2) = *((byte*)&main::point2)
-  [18] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y)
+  [11] *((byte*)&main::point2) = getPoint::return_x#1
+  [12] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#1
+  [13] *(SCREEN+2) = *((byte*)&main::point2)
+  [14] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [19] return 
+  [15] return 
   to:@return
 
 struct Point getPoint(byte getPoint::x , byte getPoint::y)
 getPoint: scope:[getPoint]  from main main::@1
-  [20] getPoint::return_y#2 = phi( main/3, main::@1/5 )
-  [20] getPoint::return_x#2 = phi( main/2, main::@1/4 )
+  [16] getPoint::return_y#2 = phi( main/3, main::@1/5 )
+  [16] getPoint::return_x#2 = phi( main/2, main::@1/4 )
   to:getPoint::@return
 getPoint::@return: scope:[getPoint]  from getPoint
-  [21] return 
+  [17] return 
   to:@return
 
 
@@ -255,10 +241,6 @@ byte getPoint::return_y#2 0.6666666666666666
 byte getPoint::x
 byte getPoint::y
 void main()
-byte~ main::$0_x 2.0
-byte~ main::$0_y 2.0
-byte~ main::$1_x 2.0
-byte~ main::$1_y 2.0
 struct Point main::point1 loadstore
 struct Point main::point2 loadstore
 
@@ -267,12 +249,8 @@ Initial phi equivalence classes
 [ getPoint::return_y#2 ]
 Added variable getPoint::return_x#0 to live range equivalence class [ getPoint::return_x#0 ]
 Added variable getPoint::return_y#0 to live range equivalence class [ getPoint::return_y#0 ]
-Added variable main::$0_x to live range equivalence class [ main::$0_x ]
-Added variable main::$0_y to live range equivalence class [ main::$0_y ]
 Added variable getPoint::return_x#1 to live range equivalence class [ getPoint::return_x#1 ]
 Added variable getPoint::return_y#1 to live range equivalence class [ getPoint::return_y#1 ]
-Added variable main::$1_x to live range equivalence class [ main::$1_x ]
-Added variable main::$1_y to live range equivalence class [ main::$1_y ]
 Added variable main::point1 to live range equivalence class [ main::point1 ]
 Added variable main::point2 to live range equivalence class [ main::point2 ]
 Complete equivalence classes
@@ -280,66 +258,51 @@ Complete equivalence classes
 [ getPoint::return_y#2 ]
 [ getPoint::return_x#0 ]
 [ getPoint::return_y#0 ]
-[ main::$0_x ]
-[ main::$0_y ]
 [ getPoint::return_x#1 ]
 [ getPoint::return_y#1 ]
-[ main::$1_x ]
-[ main::$1_y ]
 [ main::point1 ]
 [ main::point2 ]
 Allocated zp[1]:2 [ getPoint::return_x#2 ]
 Allocated zp[1]:3 [ getPoint::return_y#2 ]
 Allocated zp[1]:4 [ getPoint::return_x#0 ]
 Allocated zp[1]:5 [ getPoint::return_y#0 ]
-Allocated zp[1]:6 [ main::$0_x ]
-Allocated zp[1]:7 [ main::$0_y ]
-Allocated zp[1]:8 [ getPoint::return_x#1 ]
-Allocated zp[1]:9 [ getPoint::return_y#1 ]
-Allocated zp[1]:10 [ main::$1_x ]
-Allocated zp[1]:11 [ main::$1_y ]
-Allocated zp[2]:12 [ main::point1 ]
-Allocated zp[2]:14 [ main::point2 ]
+Allocated zp[1]:6 [ getPoint::return_x#1 ]
+Allocated zp[1]:7 [ getPoint::return_y#1 ]
+Allocated zp[2]:8 [ main::point1 ]
+Allocated zp[2]:10 [ main::point2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] *SCREEN = *((byte*)&main::point1) [ main::point1 main::point2 ] (  [ main::point1 main::point2 ] { { getPoint::return_x#1 = getPoint::return_x#2 } { getPoint::return_y#1 = getPoint::return_y#2 } }  ) always clobbers reg byte a 
-Statement [9] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) [ main::point2 ] (  [ main::point2 ] { { getPoint::return_x#1 = getPoint::return_x#2 } { getPoint::return_y#1 = getPoint::return_y#2 } }  ) always clobbers reg byte a 
-Statement [17] *(SCREEN+2) = *((byte*)&main::point2) [ main::point2 ] (  [ main::point2 ] { }  ) always clobbers reg byte a 
-Statement [18] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *SCREEN = *((byte*)&main::point1) [ main::point1 main::point2 ] (  [ main::point1 main::point2 ] { { getPoint::return_x#1 = getPoint::return_x#2 } { getPoint::return_y#1 = getPoint::return_y#2 } }  ) always clobbers reg byte a 
+Statement [7] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) [ main::point2 ] (  [ main::point2 ] { { getPoint::return_x#1 = getPoint::return_x#2 } { getPoint::return_y#1 = getPoint::return_y#2 } }  ) always clobbers reg byte a 
+Statement [13] *(SCREEN+2) = *((byte*)&main::point2) [ main::point2 ] (  [ main::point2 ] { }  ) always clobbers reg byte a 
+Statement [14] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ getPoint::return_x#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ getPoint::return_y#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ getPoint::return_x#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ getPoint::return_y#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ main::$0_x ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ main::$0_y ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:8 [ getPoint::return_x#1 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ getPoint::return_y#1 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:10 [ main::$1_x ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:11 [ main::$1_y ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:12 [ main::point1 ] : zp[2]:12 , 
-Potential registers zp[2]:14 [ main::point2 ] : zp[2]:14 , 
+Potential registers zp[1]:6 [ getPoint::return_x#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ getPoint::return_y#1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:8 [ main::point1 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::point2 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [getPoint] 2: zp[1]:4 [ getPoint::return_x#0 ] 2: zp[1]:5 [ getPoint::return_y#0 ] 2: zp[1]:8 [ getPoint::return_x#1 ] 2: zp[1]:9 [ getPoint::return_y#1 ] 1: zp[1]:2 [ getPoint::return_x#2 ] 0.67: zp[1]:3 [ getPoint::return_y#2 ] 
-Uplift Scope [main] 2: zp[1]:6 [ main::$0_x ] 2: zp[1]:7 [ main::$0_y ] 2: zp[1]:10 [ main::$1_x ] 2: zp[1]:11 [ main::$1_y ] 0: zp[2]:12 [ main::point1 ] 0: zp[2]:14 [ main::point2 ] 
+Uplift Scope [getPoint] 2: zp[1]:4 [ getPoint::return_x#0 ] 2: zp[1]:5 [ getPoint::return_y#0 ] 2: zp[1]:6 [ getPoint::return_x#1 ] 2: zp[1]:7 [ getPoint::return_y#1 ] 1: zp[1]:2 [ getPoint::return_x#2 ] 0.67: zp[1]:3 [ getPoint::return_y#2 ] 
 Uplift Scope [Point] 
+Uplift Scope [main] 0: zp[2]:8 [ main::point1 ] 0: zp[2]:10 [ main::point2 ] 
 Uplift Scope [] 
 
-Uplifting [getPoint] best 169 combination reg byte x [ getPoint::return_x#0 ] reg byte a [ getPoint::return_y#0 ] reg byte x [ getPoint::return_x#1 ] zp[1]:9 [ getPoint::return_y#1 ] zp[1]:2 [ getPoint::return_x#2 ] zp[1]:3 [ getPoint::return_y#2 ] 
+Uplifting [getPoint] best 145 combination reg byte x [ getPoint::return_x#0 ] reg byte a [ getPoint::return_y#0 ] reg byte x [ getPoint::return_x#1 ] zp[1]:7 [ getPoint::return_y#1 ] zp[1]:2 [ getPoint::return_x#2 ] zp[1]:3 [ getPoint::return_y#2 ] 
 Limited combination testing to 100 combinations of 4096 possible.
-Uplifting [main] best 151 combination reg byte x [ main::$0_x ] reg byte a [ main::$0_y ] reg byte x [ main::$1_x ] zp[1]:11 [ main::$1_y ] zp[2]:12 [ main::point1 ] zp[2]:14 [ main::point2 ] 
-Limited combination testing to 100 combinations of 256 possible.
-Uplifting [Point] best 151 combination 
-Uplifting [] best 151 combination 
-Attempting to uplift remaining variables inzp[1]:9 [ getPoint::return_y#1 ]
-Uplifting [getPoint] best 145 combination reg byte a [ getPoint::return_y#1 ] 
-Attempting to uplift remaining variables inzp[1]:11 [ main::$1_y ]
-Uplifting [main] best 139 combination reg byte a [ main::$1_y ] 
+Uplifting [Point] best 145 combination 
+Uplifting [main] best 145 combination zp[2]:8 [ main::point1 ] zp[2]:10 [ main::point2 ] 
+Uplifting [] best 145 combination 
+Attempting to uplift remaining variables inzp[1]:7 [ getPoint::return_y#1 ]
+Uplifting [getPoint] best 139 combination reg byte a [ getPoint::return_y#1 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ getPoint::return_x#2 ]
 Uplifting [getPoint] best 127 combination reg byte x [ getPoint::return_x#2 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ getPoint::return_y#2 ]
 Uplifting [getPoint] best 115 combination reg byte a [ getPoint::return_y#2 ] 
-Allocated (was zp[2]:12) zp[2]:2 [ main::point1 ]
-Allocated (was zp[2]:14) zp[2]:4 [ main::point2 ]
+Allocated (was zp[2]:8) zp[2]:2 [ main::point1 ]
+Allocated (was zp[2]:10) zp[2]:4 [ main::point2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -362,11 +325,11 @@ main: {
     .label point1 = 2
     .label point2 = 4
     // [1] call getPoint 
-    // [20] phi from main to getPoint [phi:main->getPoint]
+    // [16] phi from main to getPoint [phi:main->getPoint]
   getPoint_from_main:
-    // [20] phi getPoint::return_y#2 = 3 [phi:main->getPoint#0] -- vbuaa=vbuc1 
+    // [16] phi getPoint::return_y#2 = 3 [phi:main->getPoint#0] -- vbuaa=vbuc1 
     lda #3
-    // [20] phi getPoint::return_x#2 = 2 [phi:main->getPoint#1] -- vbuxx=vbuc1 
+    // [16] phi getPoint::return_x#2 = 2 [phi:main->getPoint#1] -- vbuxx=vbuc1 
     ldx #2
     jsr getPoint
     // [2] getPoint::return_x#0 = getPoint::return_x#2
@@ -374,47 +337,43 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [4] main::$0_x = getPoint::return_x#0
-    // [5] main::$0_y = getPoint::return_y#0
-    // [6] *((byte*)&main::point1) = main::$0_x -- _deref_pbuc1=vbuxx 
+    // [4] *((byte*)&main::point1) = getPoint::return_x#0 -- _deref_pbuc1=vbuxx 
     stx.z point1
-    // [7] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = main::$0_y -- _deref_pbuc1=vbuaa 
+    // [5] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#0 -- _deref_pbuc1=vbuaa 
     sta point1+OFFSET_STRUCT_POINT_Y
-    // [8] *SCREEN = *((byte*)&main::point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *SCREEN = *((byte*)&main::point1) -- _deref_pbuc1=_deref_pbuc2 
     lda.z point1
     sta SCREEN
-    // [9] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
-    // [10] call getPoint 
-    // [20] phi from main::@1 to getPoint [phi:main::@1->getPoint]
+    // [8] call getPoint 
+    // [16] phi from main::@1 to getPoint [phi:main::@1->getPoint]
   getPoint_from___b1:
-    // [20] phi getPoint::return_y#2 = 5 [phi:main::@1->getPoint#0] -- vbuaa=vbuc1 
+    // [16] phi getPoint::return_y#2 = 5 [phi:main::@1->getPoint#0] -- vbuaa=vbuc1 
     lda #5
-    // [20] phi getPoint::return_x#2 = 4 [phi:main::@1->getPoint#1] -- vbuxx=vbuc1 
+    // [16] phi getPoint::return_x#2 = 4 [phi:main::@1->getPoint#1] -- vbuxx=vbuc1 
     ldx #4
     jsr getPoint
-    // [11] getPoint::return_x#1 = getPoint::return_x#2
-    // [12] getPoint::return_y#1 = getPoint::return_y#2
+    // [9] getPoint::return_x#1 = getPoint::return_x#2
+    // [10] getPoint::return_y#1 = getPoint::return_y#2
     jmp __b2
     // main::@2
   __b2:
-    // [13] main::$1_x = getPoint::return_x#1
-    // [14] main::$1_y = getPoint::return_y#1
-    // [15] *((byte*)&main::point2) = main::$1_x -- _deref_pbuc1=vbuxx 
+    // [11] *((byte*)&main::point2) = getPoint::return_x#1 -- _deref_pbuc1=vbuxx 
     stx.z point2
-    // [16] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = main::$1_y -- _deref_pbuc1=vbuaa 
+    // [12] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#1 -- _deref_pbuc1=vbuaa 
     sta point2+OFFSET_STRUCT_POINT_Y
-    // [17] *(SCREEN+2) = *((byte*)&main::point2) -- _deref_pbuc1=_deref_pbuc2 
+    // [13] *(SCREEN+2) = *((byte*)&main::point2) -- _deref_pbuc1=_deref_pbuc2 
     lda.z point2
     sta SCREEN+2
-    // [18] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [14] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
     jmp __breturn
     // main::@return
   __breturn:
-    // [19] return 
+    // [15] return 
     rts
 }
   // getPoint
@@ -422,7 +381,7 @@ getPoint: {
     jmp __breturn
     // getPoint::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
 }
   // File Data
@@ -461,10 +420,6 @@ byte getPoint::return_y#2 reg byte a 0.6666666666666666
 byte getPoint::x
 byte getPoint::y
 void main()
-byte~ main::$0_x reg byte x 2.0
-byte~ main::$0_y reg byte a 2.0
-byte~ main::$1_x reg byte x 2.0
-byte~ main::$1_y reg byte a 2.0
 struct Point main::point1 loadstore zp[2]:2
 struct Point main::point2 loadstore zp[2]:4
 
@@ -472,12 +427,8 @@ reg byte x [ getPoint::return_x#2 ]
 reg byte a [ getPoint::return_y#2 ]
 reg byte x [ getPoint::return_x#0 ]
 reg byte a [ getPoint::return_y#0 ]
-reg byte x [ main::$0_x ]
-reg byte a [ main::$0_y ]
 reg byte x [ getPoint::return_x#1 ]
 reg byte a [ getPoint::return_y#1 ]
-reg byte x [ main::$1_x ]
-reg byte a [ main::$1_y ]
 zp[2]:2 [ main::point1 ]
 zp[2]:4 [ main::point2 ]
 
@@ -504,69 +455,63 @@ Score: 74
 main: {
     .label point1 = 2
     .label point2 = 4
-    // getPoint(2, 3)
+    // __ma struct Point point1 = getPoint(2, 3)
     // [1] call getPoint 
-    // [20] phi from main to getPoint [phi:main->getPoint]
-    // [20] phi getPoint::return_y#2 = 3 [phi:main->getPoint#0] -- vbuaa=vbuc1 
+    // [16] phi from main to getPoint [phi:main->getPoint]
+    // [16] phi getPoint::return_y#2 = 3 [phi:main->getPoint#0] -- vbuaa=vbuc1 
     lda #3
-    // [20] phi getPoint::return_x#2 = 2 [phi:main->getPoint#1] -- vbuxx=vbuc1 
+    // [16] phi getPoint::return_x#2 = 2 [phi:main->getPoint#1] -- vbuxx=vbuc1 
     ldx #2
     jsr getPoint
-    // getPoint(2, 3)
+    // __ma struct Point point1 = getPoint(2, 3)
     // [2] getPoint::return_x#0 = getPoint::return_x#2
     // [3] getPoint::return_y#0 = getPoint::return_y#2
     // main::@1
-    // [4] main::$0_x = getPoint::return_x#0
-    // [5] main::$0_y = getPoint::return_y#0
-    // __ma struct Point point1 = getPoint(2, 3)
-    // [6] *((byte*)&main::point1) = main::$0_x -- _deref_pbuc1=vbuxx 
+    // [4] *((byte*)&main::point1) = getPoint::return_x#0 -- _deref_pbuc1=vbuxx 
     stx.z point1
-    // [7] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = main::$0_y -- _deref_pbuc1=vbuaa 
+    // [5] *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#0 -- _deref_pbuc1=vbuaa 
     sta point1+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = point1.x
-    // [8] *SCREEN = *((byte*)&main::point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *SCREEN = *((byte*)&main::point1) -- _deref_pbuc1=_deref_pbuc2 
     txa
     sta SCREEN
     // SCREEN[1] = point1.y
-    // [9] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *(SCREEN+1) = *((byte*)&main::point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
-    // getPoint(4, 5)
-    // [10] call getPoint 
-    // [20] phi from main::@1 to getPoint [phi:main::@1->getPoint]
-    // [20] phi getPoint::return_y#2 = 5 [phi:main::@1->getPoint#0] -- vbuaa=vbuc1 
+    // __ma struct Point point2 = getPoint(4, 5)
+    // [8] call getPoint 
+    // [16] phi from main::@1 to getPoint [phi:main::@1->getPoint]
+    // [16] phi getPoint::return_y#2 = 5 [phi:main::@1->getPoint#0] -- vbuaa=vbuc1 
     lda #5
-    // [20] phi getPoint::return_x#2 = 4 [phi:main::@1->getPoint#1] -- vbuxx=vbuc1 
+    // [16] phi getPoint::return_x#2 = 4 [phi:main::@1->getPoint#1] -- vbuxx=vbuc1 
     ldx #4
     jsr getPoint
-    // getPoint(4, 5)
-    // [11] getPoint::return_x#1 = getPoint::return_x#2
-    // [12] getPoint::return_y#1 = getPoint::return_y#2
-    // main::@2
-    // [13] main::$1_x = getPoint::return_x#1
-    // [14] main::$1_y = getPoint::return_y#1
     // __ma struct Point point2 = getPoint(4, 5)
-    // [15] *((byte*)&main::point2) = main::$1_x -- _deref_pbuc1=vbuxx 
+    // [9] getPoint::return_x#1 = getPoint::return_x#2
+    // [10] getPoint::return_y#1 = getPoint::return_y#2
+    // main::@2
+    // [11] *((byte*)&main::point2) = getPoint::return_x#1 -- _deref_pbuc1=vbuxx 
     stx.z point2
-    // [16] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = main::$1_y -- _deref_pbuc1=vbuaa 
+    // [12] *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) = getPoint::return_y#1 -- _deref_pbuc1=vbuaa 
     sta point2+OFFSET_STRUCT_POINT_Y
     // SCREEN[2] = point2.x
-    // [17] *(SCREEN+2) = *((byte*)&main::point2) -- _deref_pbuc1=_deref_pbuc2 
+    // [13] *(SCREEN+2) = *((byte*)&main::point2) -- _deref_pbuc1=_deref_pbuc2 
     txa
     sta SCREEN+2
     // SCREEN[3] = point2.y
-    // [18] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [14] *(SCREEN+3) = *((byte*)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
     // main::@return
     // }
-    // [19] return 
+    // [15] return 
     rts
 }
   // getPoint
 getPoint: {
     // getPoint::@return
-    // [21] return 
+    // [17] return 
     rts
 }
   // File Data

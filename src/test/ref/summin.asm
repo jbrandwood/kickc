@@ -11,25 +11,22 @@
 main: {
     .label s1 = 2
     .label s3 = 3
-    // sum(1,2)
+    // byte s1=sum(1,2)
     lda #2
     ldx #1
     jsr sum
-    // sum(1,2)
     // byte s1=sum(1,2)
     sta.z s1
-    // sum(3,4)
+    // byte s2=sum(3,4)
     lda #4
     ldx #3
     jsr sum
-    // sum(3,4)
     // byte s2=sum(3,4)
     tay
-    // sum(9,13)
+    // byte s3=sum(9,13)
     lda #$d
     ldx #9
     jsr sum
-    // sum(9,13)
     // byte s3=sum(9,13)
     sta.z s3
     // s1+s2

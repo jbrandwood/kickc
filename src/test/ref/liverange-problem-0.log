@@ -1,4 +1,6 @@
 Inlined call call __init 
+Eliminating unused variable with no statement __start::__init1_$0
+Eliminating unused variable with no statement __start::__init1_$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -38,9 +40,8 @@ __start::__init1: scope:[__start]  from __start
 __start::@2: scope:[__start]  from __start::__init1
   MEM#8 = phi( __start::__init1/MEM#1 )
   malloc::return#5 = phi( __start::__init1/malloc::return#2 )
-  __start::__init1_$0 = malloc::return#5
+  SCREEN_1#0 = malloc::return#5
   MEM#3 = MEM#8
-  SCREEN_1#0 = __start::__init1_$0
   call malloc 
   malloc::return#3 = malloc::return#1
   to:__start::@3
@@ -48,9 +49,8 @@ __start::@3: scope:[__start]  from __start::@2
   SCREEN_1#6 = phi( __start::@2/SCREEN_1#0 )
   MEM#9 = phi( __start::@2/MEM#1 )
   malloc::return#6 = phi( __start::@2/malloc::return#3 )
-  __start::__init1_$1 = malloc::return#6
+  SCREEN_2#0 = malloc::return#6
   MEM#4 = MEM#9
-  SCREEN_2#0 = __start::__init1_$1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::@3
   MEM#12 = phi( __start::@3/MEM#4 )
@@ -104,8 +104,6 @@ byte* SCREEN_2#3
 byte* SCREEN_2#4
 byte* SCREEN_2#5
 void __start()
-byte*~ __start::__init1_$0
-byte*~ __start::__init1_$1
 void main()
 byte* malloc()
 byte* malloc::return
@@ -134,10 +132,10 @@ Alias malloc::return#0 = malloc::return#4 malloc::return#1
 Alias MEM#0 = MEM#7 MEM#1 
 Alias malloc::return#2 = malloc::return#5 
 Alias MEM#3 = MEM#8 
-Alias SCREEN_1#0 = __start::__init1_$0 SCREEN_1#6 SCREEN_1#4 SCREEN_1#5 SCREEN_1#3 SCREEN_1#1 
 Alias malloc::return#3 = malloc::return#6 
+Alias SCREEN_1#0 = SCREEN_1#6 SCREEN_1#4 SCREEN_1#5 SCREEN_1#3 SCREEN_1#1 
 Alias MEM#10 = MEM#4 MEM#9 MEM#12 MEM#11 MEM#5 
-Alias SCREEN_2#0 = __start::__init1_$1 SCREEN_2#4 SCREEN_2#5 SCREEN_2#3 SCREEN_2#1 
+Alias SCREEN_2#0 = SCREEN_2#4 SCREEN_2#5 SCREEN_2#3 SCREEN_2#1 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values SCREEN_1#2 SCREEN_1#0
 Identical Phi Values SCREEN_2#2 SCREEN_2#0
@@ -457,7 +455,7 @@ Score: 98
 __start: {
     // [1] phi from __start to __start::__init1 [phi:__start->__start::__init1]
     // __start::__init1
-    // malloc()
+    // byte* SCREEN_1 = malloc()
     // [2] call malloc 
     // [11] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
     // [11] phi MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
@@ -466,7 +464,7 @@ __start: {
     lda #>$400
     sta.z MEM+1
     jsr malloc
-    // malloc()
+    // byte* SCREEN_1 = malloc()
     // [3] malloc::return#2 = malloc::return#0 -- pbuz1=pbuz2 
     lda.z malloc.return
     sta.z malloc.return_1
@@ -474,11 +472,12 @@ __start: {
     sta.z malloc.return_1+1
     // __start::@2
     // [4] SCREEN_1#0 = malloc::return#2
+    // byte* SCREEN_2 = malloc()
     // [5] call malloc 
     // [11] phi from __start::@2 to malloc [phi:__start::@2->malloc]
     // [11] phi MEM#6 = MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
     jsr malloc
-    // malloc()
+    // byte* SCREEN_2 = malloc()
     // [6] malloc::return#3 = malloc::return#0
     // __start::@3
     // [7] SCREEN_2#0 = malloc::return#3

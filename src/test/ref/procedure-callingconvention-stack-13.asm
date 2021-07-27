@@ -23,10 +23,9 @@ pow2: {
     // n-1
     sec
     sbc #1
-    // pow2(n-1)
+    // char c = pow2(n-1)
     pha
     jsr pow2
-    // char c = pow2(n-1)
     pla
     // return c+c;
     asl

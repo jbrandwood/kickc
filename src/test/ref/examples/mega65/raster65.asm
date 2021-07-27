@@ -193,6 +193,7 @@ irq: {
     cpx #$13
     bcc __b29
     // char greet_offset = greet_idx*16
+    // Set up greetings    
     lda.z greet_idx
     asl
     asl
@@ -333,6 +334,7 @@ irq: {
     jmp __b18
   __b17:
     // char col = SINE[sin_col]/4
+    // Greeting colors
     lda SINE,y
     lsr
     lsr

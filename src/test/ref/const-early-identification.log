@@ -1,5 +1,6 @@
 Setting inferred volatile on symbol affected by address-of main::addrA = &A
 Inlined call call __init 
+Eliminating unused variable with no statement sub::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -19,8 +20,7 @@ main::@return: scope:[main]  from main::@1
 void sub()
 sub: scope:[sub]  from main
   SCREEN[3] = sub::C
-  sub::$0 = A + 1
-  sub::D#0 = sub::$0
+  sub::D#0 = A + 1
   SCREEN[4] = sub::D#0
   to:sub::@return
 sub::@return: scope:[sub]  from sub
@@ -50,7 +50,6 @@ void main()
 constant byte main::B = 'b'
 constant byte* main::addrA = &A
 void sub()
-number~ sub::$0
 constant byte sub::C = 'c'
 byte sub::D
 byte sub::D#0
@@ -59,8 +58,7 @@ Adding number conversion cast (unumber) 0 in SCREEN[0] = A
 Adding number conversion cast (unumber) 1 in SCREEN[1] = main::B
 Adding number conversion cast (unumber) 2 in SCREEN[2] = *main::addrA
 Adding number conversion cast (unumber) 3 in SCREEN[3] = sub::C
-Adding number conversion cast (unumber) 1 in sub::$0 = A + 1
-Adding number conversion cast (unumber) sub::$0 in sub::$0 = A + (unumber)1
+Adding number conversion cast (unumber) 1 in sub::D#0 = A + 1
 Adding number conversion cast (unumber) 4 in SCREEN[4] = sub::D#0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
@@ -78,9 +76,6 @@ Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in sub::$0 = A + 1
-Alias sub::D#0 = sub::$0 
-Successful SSA optimization Pass2AliasElimination
 Simplifying expression containing zero SCREEN in [0] SCREEN[0] = A
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
@@ -246,6 +241,7 @@ sub: {
     lda #C
     sta SCREEN+3
     // [11] sub::D#0 = A + 1 -- vbuxx=vbuz1_plus_1 
+    // Not an early constant (expression)
     ldx.z A
     inx
     // [12] *(SCREEN+4) = sub::D#0 -- _deref_pbuc1=vbuxx 
@@ -357,6 +353,7 @@ sub: {
     sta SCREEN+3
     // byte D = A+1
     // [11] sub::D#0 = A + 1 -- vbuxx=vbuz1_plus_1 
+    // Not an early constant (expression)
     ldx.z A
     inx
     // SCREEN[4] = D

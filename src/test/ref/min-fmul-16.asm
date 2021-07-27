@@ -34,9 +34,8 @@ main: {
     bne __b2
     // (*BORDER_COLOR)++;
     inc BORDER_COLOR
-    // mulf16u(a, b)
-    jsr mulf16u
     // dword r = mulf16u(a, b)
+    jsr mulf16u
     // (*BORDER_COLOR)--;
     dec BORDER_COLOR
     // print_ulong(r)

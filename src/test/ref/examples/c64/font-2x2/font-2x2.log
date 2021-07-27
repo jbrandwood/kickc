@@ -1,5 +1,10 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$2 = call toD018 SCREEN FONT_COMPRESSED 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement main::$1
+Eliminating unused variable with no statement show::$3
+Eliminating unused variable with no statement font_2x2::$0
+Eliminating unused variable with no statement font_compress::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -21,8 +26,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -150,8 +154,7 @@ show: scope:[show]  from main::@2
   show::$0 = show::$7 * $50
   show::$1 = SCREEN + show::$0
   show::$2 = show::x#1 * 2
-  show::$3 = show::$1 + show::$2
-  show::ptr#0 = show::$3
+  show::ptr#0 = show::$1 + show::$2
   show::ptr#0[0] = show::font_mapping#1[show::c#1]
   show::$4 = show::c#1 + $40
   show::ptr#0[1] = show::font_mapping#1[show::$4]
@@ -177,8 +180,7 @@ font_2x2::@1: scope:[font_2x2]  from font_2x2 font_2x2::@10
   font_2x2::next_original#4 = phi( font_2x2/font_2x2::next_original#0, font_2x2::@10/font_2x2::next_original#1 )
   font_2x2::next_2x2#2 = phi( font_2x2/font_2x2::next_2x2#0, font_2x2::@10/font_2x2::next_2x2#1 )
   font_2x2::next_2x2_left#0 = font_2x2::next_2x2#2
-  font_2x2::$0 = font_2x2::next_2x2#2 + $40*8
-  font_2x2::next_2x2_right#0 = font_2x2::$0
+  font_2x2::next_2x2_right#0 = font_2x2::next_2x2#2 + $40*8
   font_2x2::l2#0 = 0
   font_2x2::l#0 = 0
   to:font_2x2::@2
@@ -351,8 +353,7 @@ font_compress::@7: scope:[font_compress]  from font_compress::@1
   font_compress::i#4 = phi( font_compress::@1/font_compress::i#5 )
   font_compress::compress_mapping#3 = phi( font_compress::@1/font_compress::compress_mapping#4 )
   font_find::return#4 = phi( font_compress::@1/font_find::return#0 )
-  font_compress::$0 = font_find::return#4
-  font_compress::found#0 = font_compress::$0
+  font_compress::found#0 = font_find::return#4
   font_compress::$1 = font_compress::found#0 == $ff
   font_compress::$2 = ! font_compress::$1
   if(font_compress::$2) goto font_compress::@2
@@ -519,7 +520,6 @@ constant const byte PROCPORT_RAM_CHARROM = 1
 constant byte* const SCREEN = (byte*)$400
 void __start()
 void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
-byte*~ font_2x2::$0
 number~ font_2x2::$1
 byte~ font_2x2::$10
 number~ font_2x2::$11
@@ -655,7 +655,6 @@ byte* font_2x2::next_original#7
 byte* font_2x2::next_original#8
 byte* font_2x2::next_original#9
 byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
-byte~ font_compress::$0
 bool~ font_compress::$1
 bool~ font_compress::$2
 bool~ font_compress::$3
@@ -843,7 +842,6 @@ byte main::y#5
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -881,7 +879,6 @@ void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
 number~ show::$0
 byte*~ show::$1
 number~ show::$2
-byte*~ show::$3
 number~ show::$4
 number~ show::$5
 number~ show::$6
@@ -927,7 +924,7 @@ Adding number conversion cast (unumber) $28 in show::ptr#0[$28] = show::font_map
 Adding number conversion cast (unumber) $c0 in show::$6 = show::c#1 + $c0
 Adding number conversion cast (unumber) show::$6 in show::$6 = show::c#1 + (unumber)$c0
 Adding number conversion cast (unumber) $29 in show::ptr#0[$29] = show::font_mapping#1[show::$6]
-Adding number conversion cast (unumber) $40*8 in font_2x2::$0 = font_2x2::next_2x2#2 + $40*8
+Adding number conversion cast (unumber) $40*8 in font_2x2::next_2x2_right#0 = font_2x2::next_2x2#2 + $40*8
 Adding number conversion cast (unumber) $80 in font_2x2::$1 = font_2x2::glyph_bits#2 & $80
 Adding number conversion cast (unumber) font_2x2::$1 in font_2x2::$1 = font_2x2::glyph_bits#2 & (unumber)$80
 Adding number conversion cast (unumber) 0 in font_2x2::$22 = 0 != font_2x2::$1
@@ -1051,16 +1048,15 @@ Inferred type updated to byte in font_2x2::$1 = font_2x2::glyph_bits#2 & $80
 Inferred type updated to byte in font_2x2::$11 = font_2x2::l2#3 + 1
 Inferred type updated to byte in font_2x2::$14 = font_2x2::l2#3 + 1
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
-Inversing boolean not [138] font_2x2::$17 = font_2x2::l2#1 != 8 from [137] font_2x2::$16 = font_2x2::l2#1 == 8
-Inversing boolean not [172] font_compress::$2 = font_compress::found#0 != $ff from [171] font_compress::$1 = font_compress::found#0 == $ff
-Inversing boolean not [207] font_find::$2 = font_find::glyph#1[font_find::l#2] == font_find::font#2[font_find::l#2] from [206] font_find::$1 = font_find::glyph#1[font_find::l#2] != font_find::font#2[font_find::l#2]
-Inversing boolean not [217] font_find::$4 = 0 == font_find::found#2 from [216] font_find::$5 = 0 != font_find::found#2
+Inversing boolean not [135] font_2x2::$17 = font_2x2::l2#1 != 8 from [134] font_2x2::$16 = font_2x2::l2#1 == 8
+Inversing boolean not [168] font_compress::$2 = font_compress::found#0 != $ff from [167] font_compress::$1 = font_compress::found#0 == $ff
+Inversing boolean not [203] font_find::$2 = font_find::glyph#1[font_find::l#2] == font_find::font#2[font_find::l#2] from [202] font_find::$1 = font_find::glyph#1[font_find::l#2] != font_find::font#2[font_find::l#2]
+Inversing boolean not [213] font_find::$4 = 0 == font_find::found#2 from [212] font_find::$5 = 0 != font_find::found#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1072,11 +1068,9 @@ Alias main::c#2 = main::c#3
 Alias main::x#2 = main::x#3 
 Alias main::y#2 = main::y#5 main::y#3 
 Alias main::c#1 = main::c#5 
-Alias show::ptr#0 = show::$3 
 Alias font_2x2::next_original#0 = font_2x2::font_original#1 
 Alias font_2x2::next_2x2#0 = font_2x2::font_2x2#1 
 Alias font_2x2::next_2x2_left#0 = font_2x2::next_2x2#2 
-Alias font_2x2::next_2x2_right#0 = font_2x2::$0 
 Alias font_2x2::glyph_bits_2x2#5 = font_2x2::glyph_bits_2x2#7 font_2x2::glyph_bits_2x2#6 
 Alias font_2x2::glyph_bits#2 = font_2x2::glyph_bits#4 font_2x2::glyph_bits#5 
 Alias font_2x2::b#3 = font_2x2::b#5 font_2x2::b#4 
@@ -1111,7 +1105,6 @@ Alias font_compress::next_original#2 = font_compress::next_original#6 font_compr
 Alias font_compress::font_compressed#2 = font_compress::font_compressed#5 font_compress::font_compressed#7 
 Alias font_compress::font_size#2 = font_compress::font_size#7 font_compress::font_size#8 
 Alias font_compress::next_compressed#4 = font_compress::next_compressed#5 font_compress::next_compressed#6 
-Alias font_compress::found#0 = font_compress::$0 
 Alias font_compress::next_compressed#2 = font_compress::next_compressed#3 
 Alias font_compress::font_size#3 = font_compress::font_size#6 font_compress::found#1 
 Alias font_compress::compress_mapping#2 = font_compress::compress_mapping#5 
@@ -2366,6 +2359,7 @@ main: {
     // asm { cli  }
     cli
     // [5] call font_compress 
+  // Compress the font finding identical characters
     // [62] phi from main::@6 to font_compress [phi:main::@6->font_compress]
   font_compress_from___b6:
     jsr font_compress
@@ -2735,6 +2729,7 @@ font_compress: {
     // [64] font_find::glyph#0 = font_compress::next_original#2
     // [65] font_find::font_size#0 = font_compress::font_size#2
     // [66] call font_find 
+  // Look for the char in font_compressed
     // [106] phi from font_compress::@1 to font_find [phi:font_compress::@1->font_find]
   font_find_from___b1:
     jsr font_find
@@ -3129,7 +3124,6 @@ Removing instruction __b3_from___b5:
 Removing instruction __b4_from___b3:
 Removing instruction __b5_from___b4:
 Removing instruction __b8_from___b6:
-Removing instruction font_find_from___b1:
 Removing instruction __b3_from___b3:
 Removing instruction __b2_from___b4:
 Removing instruction __b2_from___b7:
@@ -3153,6 +3147,7 @@ Removing instruction __b8_from___b7:
 Removing instruction __b9:
 Removing instruction __breturn:
 Removing instruction __b1_from_font_compress:
+Removing instruction font_find_from___b1:
 Removing instruction __b5:
 Removing instruction __b3_from___b5:
 Removing instruction __b4:
@@ -3187,7 +3182,7 @@ Removing instruction lda #8
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [193] bne __b1 to beq
+Fixing long branch [194] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 constant byte* const CHARGEN = (byte*) 53248
@@ -3438,8 +3433,9 @@ main: {
     // asm
     // asm { cli  }
     cli
-    // font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)
+    // char size = font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)
     // [5] call font_compress 
+  // Compress the font finding identical characters
     // [62] phi from main::@6 to font_compress [phi:main::@6->font_compress]
     jsr font_compress
     // [6] phi from main::@6 to main::toD0181 [phi:main::@6->main::toD0181]
@@ -3784,17 +3780,17 @@ font_compress: {
     sta.z next_original+1
     // font_compress::@1
   __b1:
-    // font_find(next_original, font_compressed, font_size)
+    // char found = font_find(next_original, font_compressed, font_size)
     // [64] font_find::glyph#0 = font_compress::next_original#2
     // [65] font_find::font_size#0 = font_compress::font_size#2
     // [66] call font_find 
+  // Look for the char in font_compressed
     // [106] phi from font_compress::@1 to font_find [phi:font_compress::@1->font_find]
     jsr font_find
-    // font_find(next_original, font_compressed, font_size)
+    // char found = font_find(next_original, font_compressed, font_size)
     // [67] font_find::return#0 = font_find::return#3 -- vbuaa=vbuxx 
     txa
     // font_compress::@5
-    // char found = font_find(next_original, font_compressed, font_size)
     // [68] font_compress::found#0 = font_find::return#0
     // if(found==0xff)
     // [69] if(font_compress::found#0!=$ff) goto font_compress::@7 -- vbuaa_neq_vbuc1_then_la1 

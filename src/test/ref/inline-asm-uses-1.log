@@ -1,5 +1,6 @@
 Setting inferred volatile on symbol affected by address-of: fgetc::channel in asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
 Setting inferred volatile on symbol affected by address-of: fgetc::ret in asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -11,8 +12,7 @@ main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main
   fgetc::return#3 = phi( main/fgetc::return#0 )
-  main::$0 = fgetc::return#3
-  main::x#0 = main::$0
+  main::x#0 = fgetc::return#3
   *main::SCREEN = main::x#0
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -56,7 +56,6 @@ byte fgetc::return#2
 byte fgetc::return#3
 byte fgetc::return#4
 void main()
-byte~ main::$0
 constant byte* const main::SCREEN = (byte*)$1009
 byte main::x
 byte main::x#0
@@ -75,7 +74,6 @@ Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#4 fgetc::return#2 
 Alias fgetc::return#0 = fgetc::return#3 
-Alias main::x#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#4 fgetc::return#2 
 Identical Phi Values fgetc::return#4 fgetc::return#1
@@ -298,7 +296,7 @@ Score: 61
   // main
 main: {
     .label SCREEN = $1009
-    // fgetc(7)
+    // char x = fgetc(7)
     // [0] fgetc::channel = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z fgetc.channel
@@ -306,7 +304,6 @@ main: {
     jsr fgetc
     // [2] fgetc::return#0 = fgetc::return#2
     // main::@1
-    // char x = fgetc(7)
     // [3] main::x#0 = fgetc::return#0
     // *SCREEN = x
     // [4] *main::SCREEN = main::x#0 -- _deref_pbuc1=vbuaa 

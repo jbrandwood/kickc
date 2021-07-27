@@ -1,5 +1,8 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement keyboard_matrix_read::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -7,8 +10,7 @@ byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   keyboard_matrix_read::rowid#1 = phi( keyboard_key_pressed/keyboard_matrix_read::rowid#0 )
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#1]
-  keyboard_matrix_read::$0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
-  keyboard_matrix_read::row_pressed_bits#0 = keyboard_matrix_read::$0
+  keyboard_matrix_read::row_pressed_bits#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -20,10 +22,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from menu::@2 menu::@3 menu::@4 pressed::@2
   keyboard_key_pressed::key#4 = phi( menu::@2/keyboard_key_pressed::key#0, menu::@3/keyboard_key_pressed::key#1, menu::@4/keyboard_key_pressed::key#2, pressed::@2/keyboard_key_pressed::key#3 )
-  keyboard_key_pressed::$0 = keyboard_key_pressed::key#4 & 7
-  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0
-  keyboard_key_pressed::$1 = keyboard_key_pressed::key#4 >> 3
-  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1
+  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#4 & 7
+  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#4 >> 3
   keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
   call keyboard_matrix_read 
   keyboard_matrix_read::return#2 = keyboard_matrix_read::return#1
@@ -171,8 +171,6 @@ constant const byte RED = 2
 constant byte* SCREEN = (byte*)$400
 void __start()
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
-number~ keyboard_key_pressed::$0
-byte~ keyboard_key_pressed::$1
 byte~ keyboard_key_pressed::$2
 byte~ keyboard_key_pressed::$3
 byte keyboard_key_pressed::colidx
@@ -200,7 +198,6 @@ byte keyboard_key_pressed::rowidx
 byte keyboard_key_pressed::rowidx#0
 constant byte* keyboard_matrix_col_bitmask[8]  = { 1, 2, 4, 8, $10, $20, $40, $80 }
 byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
-byte~ keyboard_matrix_read::$0
 byte keyboard_matrix_read::return
 byte keyboard_matrix_read::return#0
 byte keyboard_matrix_read::return#1
@@ -229,9 +226,8 @@ byte~ pressed::$1
 bool~ pressed::$2
 bool~ pressed::$3
 
-Adding number conversion cast (unumber) 7 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#4 & 7
-Adding number conversion cast (unumber) keyboard_key_pressed::$0 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#4 & (unumber)7
-Adding number conversion cast (unumber) 3 in keyboard_key_pressed::$1 = keyboard_key_pressed::key#4 >> 3
+Adding number conversion cast (unumber) 7 in keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#4 & 7
+Adding number conversion cast (unumber) 3 in keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#4 >> 3
 Adding number conversion cast (unumber) 0 in menu::$1 = menu::$0 != 0
 Adding number conversion cast (unumber) 0 in menu::$5 = menu::$4 != 0
 Adding number conversion cast (unumber) 0 in menu::$8 = menu::$7 != 0
@@ -255,16 +251,14 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#4 & 7
-Inversing boolean not [34] menu::$2 = menu::$0 == 0 from [33] menu::$1 = menu::$0 != 0
-Inversing boolean not [42] menu::$6 = menu::$4 == 0 from [41] menu::$5 = menu::$4 != 0
-Inversing boolean not [52] menu::$9 = menu::$7 == 0 from [51] menu::$8 = menu::$7 != 0
-Inversing boolean not [67] pressed::$3 = pressed::$1 == 0 from [66] pressed::$2 = pressed::$1 != 0
+Inversing boolean not [31] menu::$2 = menu::$0 == 0 from [30] menu::$1 = menu::$0 != 0
+Inversing boolean not [39] menu::$6 = menu::$4 == 0 from [38] menu::$5 = menu::$4 != 0
+Inversing boolean not [49] menu::$9 = menu::$7 == 0 from [48] menu::$8 = menu::$7 != 0
+Inversing boolean not [64] pressed::$3 = pressed::$1 == 0 from [63] pressed::$2 = pressed::$1 != 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::$0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
-Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0 keyboard_key_pressed::colidx#1 
-Alias keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1 
+Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
 Alias keyboard_matrix_read::return#2 = keyboard_matrix_read::return#4 
+Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::colidx#1 
 Alias keyboard_key_pressed::return#0 = keyboard_key_pressed::$3 keyboard_key_pressed::return#6 keyboard_key_pressed::return#1 
 Alias keyboard_key_pressed::return#2 = keyboard_key_pressed::return#7 
 Alias keyboard_key_pressed::return#3 = keyboard_key_pressed::return#8 
@@ -1215,7 +1209,7 @@ keyboard_matrix_read: {
     // [43] *((byte*)CIA1) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#0] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     // [44] keyboard_matrix_read::return#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff

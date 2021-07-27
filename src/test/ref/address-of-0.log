@@ -1,4 +1,5 @@
 Setting inferred volatile on symbol affected by address-of main::bp = &main::b
+Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -7,8 +8,7 @@ main: scope:[main]  from __start
   main::b = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  main::$0 = *main::bp + 1
-  main::c#0 = main::$0
+  main::c#0 = *main::bp + 1
   main::SCREEN[main::b] = main::c#0
   main::b = main::b + rangenext(0,$a)
   main::$1 = main::b != rangelast(0,$a)
@@ -31,7 +31,6 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-number~ main::$0
 bool~ main::$1
 constant byte* main::SCREEN = (byte*)$400
 volatile byte main::b loadstore
@@ -39,17 +38,13 @@ constant byte* main::bp = &main::b
 byte main::c
 byte main::c#0
 
-Adding number conversion cast (unumber) 1 in main::$0 = *main::bp + 1
-Adding number conversion cast (unumber) main::$0 in main::$0 = *main::bp + (unumber)1
+Adding number conversion cast (unumber) 1 in main::c#0 = *main::bp + 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$0 = *main::bp + 1
-Alias main::c#0 = main::$0 
-Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$1 [5] if(main::b!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Resolved ranged next value [3] main::b = ++ main::b to ++

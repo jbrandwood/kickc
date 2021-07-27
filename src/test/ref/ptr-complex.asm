@@ -13,6 +13,7 @@ main: {
     .label screen = $400
     // Increment on a const named pointer
     .label BG_COLOR = $d020
+    // LValue pointer expression (constant - through tmp variable)
     .label sc2 = screen+$51
     ldx #0
   // RValue pointer expression (variable)

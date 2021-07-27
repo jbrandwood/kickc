@@ -3,7 +3,7 @@ Adding parameter assignment in __stackcall procedure get::i = param(get::i)
 Adding parameter assignment in __stackcall procedure print::p = param(print::p)
 Inlined call call __init 
 Eliminating unused variable with no statement main::$1
-Calling convention __stackcall adding prepare/execute/finalize for { main::$1_x, main::$1_y } = call get main::i 
+Calling convention __stackcall adding prepare/execute/finalize for { main::p_x, main::p_y } = call get main::i 
 Calling convention __stackcall adding prepare/execute/finalize for call print main::p_x main::p_y 
 Calling convention __stackcall adding prepare/execute/finalize for call main 
 Calling convention STACK_CALL replacing param(get::i) with stackidx(byte,get::OFFSET_STACK_I)
@@ -11,8 +11,8 @@ Calling convention STACK_CALL replacing param(print::p_x) with stackidx(byte,pri
 Calling convention STACK_CALL replacing param(print::p_y) with stackidx(byte,print::OFFSET_STACK_P_Y)
 Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X) = get::return_x
 Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y) = get::return_y
-Calling convention STACK_CALL adding stack pull main::$1_x = stackpull(byte)
-Calling convention STACK_CALL adding stack pull main::$1_y = stackpull(byte)
+Calling convention STACK_CALL adding stack pull main::p_x = stackpull(byte)
+Calling convention STACK_CALL adding stack pull main::p_y = stackpull(byte)
 Calling convention STACK_CALL adding stack push stackpush(byte) = main::i
 Calling convention STACK_CALL adding stack push stackpush(byte) = main::p_x
 Calling convention STACK_CALL adding stack push stackpush(byte) = main::p_y
@@ -33,10 +33,8 @@ main::@2: scope:[main]  from main::@1
   stackpush(byte) = main::i#3
   sideeffect stackpushbytes(1)
   callexecute get 
-  main::$1_x = stackpull(byte)
-  main::$1_y = stackpull(byte)
-  main::p_x#0 = main::$1_x
-  main::p_y#0 = main::$1_y
+  main::p_x#0 = stackpull(byte)
+  main::p_y#0 = stackpull(byte)
   stackpush(byte) = main::p_x#0
   stackpush(byte) = main::p_y#0
   callexecute print 
@@ -118,13 +116,12 @@ byte get::return_y#1
 byte idx loadstore
 __stackcall void main()
 bool~ main::$0
-byte~ main::$1_x
-byte~ main::$1_y
 byte main::i
 byte main::i#0
 byte main::i#1
 byte main::i#2
 byte main::i#3
+struct Point main::p
 byte main::p_x
 byte main::p_x#0
 byte main::p_y
@@ -150,8 +147,6 @@ Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in get::$0 = get::i#0 / 2
 Alias main::i#2 = main::i#3 
-Alias main::p_x#0 = main::$1_x 
-Alias main::p_y#0 = main::$1_y 
 Alias get::return_x#0 = get::p_x#0 get::i#0 get::return_x#1 
 Alias get::return_y#0 = get::p_y#0 get::$0 get::return_y#1 
 Successful SSA optimization Pass2AliasElimination
@@ -273,6 +268,7 @@ __stackcall void main()
 byte main::i
 byte main::i#1 202.0
 byte main::i#2 36.72727272727273
+struct Point main::p
 byte main::p_x
 byte main::p_x#0 101.0
 byte main::p_y
@@ -574,6 +570,7 @@ __stackcall void main()
 byte main::i
 byte main::i#1 i zp[1]:2 202.0
 byte main::i#2 i zp[1]:2 36.72727272727273
+struct Point main::p
 byte main::p_x
 byte main::p_x#0 reg byte y 101.0
 byte main::p_y
@@ -711,7 +708,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // get(i)
+    // struct Point p = get(i)
     // [21] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
@@ -719,7 +716,6 @@ main: {
     pha
     // [23] callexecute get  -- jsr 
     jsr get
-    // struct Point p = get(i)
     // [24] main::p_x#0 = stackpull(byte) -- vbuyy=_stackpullbyte_ 
     pla
     tay

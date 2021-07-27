@@ -8,6 +8,7 @@ Inlined call call prepareMEM (word)divMEMbyFAC::mem
 Inlined call call prepareMEM (word)mulFACbyMEM::mem 
 Inlined call call prepareMEM (word)pwrMEMbyFAC::mem 
 Inlined call call __init 
+Eliminating unused variable with no statement getFAC::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -123,8 +124,7 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
 word getFAC()
 getFAC: scope:[getFAC]  from main::@12
   asm { jsr$b1aa stymemLo stamemHi  }
-  getFAC::$0 = *memHi w= *memLo
-  getFAC::w#0 = getFAC::$0
+  getFAC::w#0 = *memHi w= *memLo
   getFAC::return#0 = getFAC::w#0
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
@@ -401,7 +401,6 @@ word divMEMbyFAC::prepareMEM1_mem
 word divMEMbyFAC::prepareMEM1_mem#0
 word divMEMbyFAC::prepareMEM1_mem#1
 word getFAC()
-word~ getFAC::$0
 word getFAC::return
 word getFAC::return#0
 word getFAC::return#1
@@ -616,7 +615,7 @@ Alias print_char_cursor#21 = print_char_cursor#5
 Alias print_char_cursor#22 = print_char_cursor#6 print_char_cursor#23 print_char_cursor#7 
 Alias print_char_cursor#25 = print_char_cursor#8 print_char_cursor#9 
 Alias setFAC::prepareMEM1_mem#0 = setFAC::w#3 setFAC::prepareMEM1_mem#1 
-Alias getFAC::return#0 = getFAC::w#0 getFAC::$0 getFAC::return#3 getFAC::return#1 
+Alias getFAC::return#0 = getFAC::w#0 getFAC::return#3 getFAC::return#1 
 Alias setMEMtoFAC::prepareMEM1_mem#0 = setMEMtoFAC::prepareMEM1_mem#1 
 Alias addMEMtoFAC::prepareMEM1_mem#0 = addMEMtoFAC::prepareMEM1_mem#1 
 Alias divMEMbyFAC::prepareMEM1_mem#0 = divMEMbyFAC::prepareMEM1_mem#1 
@@ -2398,7 +2397,7 @@ getFAC: {
     jsr $b1aa
     sty memLo
     sta memHi
-    // MAKEWORD( *memHi, *memLo )
+    // unsigned int w = MAKEWORD( *memHi, *memLo )
     // [70] getFAC::return#0 = *memHi w= *memLo -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z return+1
     tya

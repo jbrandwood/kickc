@@ -34,6 +34,7 @@ Inlined call call initNES
 Inlined call call enableVideoOutput 
 Inlined call call ppuSpriteBufferDmaTransfer SPRITE_BUFFER 
 Inlined call call __init 
+Eliminating unused variable with no statement vblank::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -332,8 +333,7 @@ vblank::@16: scope:[vblank]  from vblank::ppuSpriteBufferDmaTransfer1
   to:vblank::@17
 vblank::@17: scope:[vblank]  from vblank::@16
   readJoy1::return#4 = phi( vblank::@16/readJoy1::return#2 )
-  vblank::$1 = readJoy1::return#4
-  vblank::joy#0 = vblank::$1
+  vblank::joy#0 = readJoy1::return#4
   vblank::$33 = 0 != vblank::joy#0
   vblank::$2 = ! vblank::$33
   if(vblank::$2) goto vblank::@1
@@ -673,7 +673,6 @@ byte readJoy1::return#2
 byte readJoy1::return#3
 byte readJoy1::return#4
 __interrupt(hardware_all) void vblank()
-byte~ vblank::$1
 number~ vblank::$10
 number~ vblank::$11
 number~ vblank::$12
@@ -1027,7 +1026,7 @@ Inferred type updated to byte in vblank::$23 = vblank::$22
 Inferred type updated to byte for vblank::$26
 Inversing boolean not [92] main::initNES1_waitForVBlank1_$1 = 0 == main::initNES1_waitForVBlank1_$0 from [91] main::initNES1_waitForVBlank1_$4 = 0 != main::initNES1_waitForVBlank1_$0
 Inversing boolean not [111] main::initNES1_waitForVBlank2_$1 = 0 == main::initNES1_waitForVBlank2_$0 from [110] main::initNES1_waitForVBlank2_$4 = 0 != main::initNES1_waitForVBlank2_$0
-Inversing boolean not [168] vblank::$2 = 0 == vblank::joy#0 from [167] vblank::$33 = 0 != vblank::joy#0
+Inversing boolean not [167] vblank::$2 = 0 == vblank::joy#0 from [166] vblank::$33 = 0 != vblank::joy#0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)x_sin_idx = vblank::$7 
 Alias candidate removed (volatile)x_sin_idx_2 = vblank::$12 
@@ -1051,7 +1050,6 @@ Alias ppuDataTransfer::size#0 = main::$1
 Alias main::s#2 = main::s#3 
 Alias vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer#0 = vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer#1 
 Alias readJoy1::return#2 = readJoy1::return#4 
-Alias vblank::joy#0 = vblank::$1 
 Alias vblank::y_idx#0 = vblank::y_idx#12 vblank::y_idx#13 
 Alias vblank::$5 = vblank::$4 
 Alias vblank::y_idx#10 = vblank::y_idx#6 vblank::y_idx#7 
@@ -1090,7 +1088,7 @@ Identical Phi Values ppuDataTransfer::cpuData#1 ppuDataTransfer::cpuData#0
 Identical Phi Values ppuDataTransfer::size#2 ppuDataTransfer::size#0
 Identical Phi Values ppuDataTransfer::size#1 ppuDataTransfer::size#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [202] vblank::$28 = vblank::s#2 * SIZEOF_STRUCT_SPRITEDATA
+Identified duplicate assignment right side [201] vblank::$28 = vblank::s#2 * SIZEOF_STRUCT_SPRITEDATA
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition readJoy1::$0 [10] if(readJoy1::i#2<8) goto readJoy1::@2
 Simple Condition ppuDataFill::$1 [30] if(ppuDataFill::i#2<ppuDataFill::size#3) goto ppuDataFill::@2
@@ -2246,6 +2244,7 @@ vblank: {
     // vblank::@14
   __b14:
     // [12] call readJoy1 
+    // Read controller 1
     jsr readJoy1
     // [13] readJoy1::return#2 = readJoy1::joy#2
     jmp __b15
@@ -3318,12 +3317,12 @@ vblank: {
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // [11] phi from vblank::ppuSpriteBufferDmaTransfer1 to vblank::@14 [phi:vblank::ppuSpriteBufferDmaTransfer1->vblank::@14]
     // vblank::@14
-    // readJoy1()
+    // char joy = readJoy1()
     // [12] call readJoy1 
+    // Read controller 1
     jsr readJoy1
     // [13] readJoy1::return#2 = readJoy1::joy#2
     // vblank::@15
-    // char joy = readJoy1()
     // [14] vblank::joy#0 = readJoy1::return#2
     // if(joy)
     // [15] if(0==vblank::joy#0) goto vblank::@1 -- 0_eq_vbuaa_then_la1 

@@ -99,6 +99,7 @@ main: {
     cmp #0
     bne __b3
     // unsigned int j = i*2
+    /* Prime number - mark all multiples */
     lda.z i
     asl
     sta.z j

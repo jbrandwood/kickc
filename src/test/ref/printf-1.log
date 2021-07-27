@@ -9,6 +9,9 @@ Added struct type cast to parameter value list main::$5 = call printf_string "cm
 Added struct type cast to parameter value list main::$7 = call printf_string "rules" (struct printf_format_string){ $a, 1 } 
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy::$0
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement printf_buffer
 
 CONTROL FLOW GRAPH SSA
@@ -21,8 +24,7 @@ memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::src#0 = ((byte*)) memcpy::source#2
   memcpy::dst#0 = ((byte*)) memcpy::destination#2
   memcpy::$2 = (byte*)memcpy::source#2
-  memcpy::$0 = memcpy::$2 + memcpy::num#2
-  memcpy::src_end#0 = memcpy::$0
+  memcpy::src_end#0 = memcpy::$2 + memcpy::num#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   memcpy::destination#4 = phi( memcpy/memcpy::destination#2, memcpy::@2/memcpy::destination#5 )
@@ -69,8 +71,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -201,8 +202,7 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_x = gotoxy::x#4
   conio_cursor_y = gotoxy::y#4
   gotoxy::$7 = (word)gotoxy::y#4
-  gotoxy::$4 = gotoxy::$7 * $28
-  gotoxy::line_offset#0 = gotoxy::$4
+  gotoxy::line_offset#0 = gotoxy::$7 * $28
   gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
   gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
@@ -635,7 +635,6 @@ bool~ gotoxy::$0
 bool~ gotoxy::$1
 bool~ gotoxy::$2
 bool~ gotoxy::$3
-number~ gotoxy::$4
 byte*~ gotoxy::$5
 byte*~ gotoxy::$6
 word~ gotoxy::$7
@@ -663,7 +662,6 @@ constant byte* main::str1[6]  = "rules"
 constant byte* main::str2[4]  = "cml"
 constant byte* main::str3[6]  = "rules"
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
-byte*~ memcpy::$0
 bool~ memcpy::$1
 byte*~ memcpy::$2
 void* memcpy::destination
@@ -704,7 +702,6 @@ byte* memcpy::src_end#2
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -858,8 +855,7 @@ Adding number conversion cast (unumber) $28 in clrscr::line_cols#1 = clrscr::lin
 Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#3 > $19
 Adding number conversion cast (unumber) $28 in gotoxy::$2 = gotoxy::x#3 >= $28
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
-Adding number conversion cast (unumber) $28 in gotoxy::$4 = gotoxy::$7 * $28
-Adding number conversion cast (unumber) gotoxy::$4 in gotoxy::$4 = gotoxy::$7 * (unumber)$28
+Adding number conversion cast (unumber) $28 in gotoxy::line_offset#0 = gotoxy::$7 * $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
 Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
@@ -1017,20 +1013,18 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $28
-Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [77] gotoxy::$1 = gotoxy::y#3 <= $19 from [76] gotoxy::$0 = gotoxy::y#3 > $19
-Inversing boolean not [81] gotoxy::$3 = gotoxy::x#3 < $28 from [80] gotoxy::$2 = gotoxy::x#3 >= $28
-Inversing boolean not [107] cputc::$2 = conio_cursor_x != $28 from [106] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [131] cscroll::$1 = conio_cursor_y != $19 from [130] cscroll::$0 = conio_cursor_y == $19
-Inversing boolean not [164] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [163] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
-Inversing boolean not [186] printf_string::$0 = 0 == printf_string::format_min_length#4 from [185] printf_string::$14 = 0 != printf_string::format_min_length#4
-Inversing boolean not [190] printf_string::$1 = 0 == printf_string::format_justify_left#4 from [189] printf_string::$15 = 0 != printf_string::format_justify_left#4
-Inversing boolean not [205] printf_string::$12 = printf_string::padding#1 >= 0 from [204] printf_string::$11 = printf_string::padding#1 < 0
+Inversing boolean not [19] memset::$1 = memset::num#2 <= 0 from [18] memset::$0 = memset::num#2 > 0
+Inversing boolean not [75] gotoxy::$1 = gotoxy::y#3 <= $19 from [74] gotoxy::$0 = gotoxy::y#3 > $19
+Inversing boolean not [79] gotoxy::$3 = gotoxy::x#3 < $28 from [78] gotoxy::$2 = gotoxy::x#3 >= $28
+Inversing boolean not [104] cputc::$2 = conio_cursor_x != $28 from [103] cputc::$1 = conio_cursor_x == $28
+Inversing boolean not [128] cscroll::$1 = conio_cursor_y != $19 from [127] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [161] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [160] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+Inversing boolean not [183] printf_string::$0 = 0 == printf_string::format_min_length#4 from [182] printf_string::$14 = 0 != printf_string::format_min_length#4
+Inversing boolean not [187] printf_string::$1 = 0 == printf_string::format_justify_left#4 from [186] printf_string::$15 = 0 != printf_string::format_justify_left#4
+Inversing boolean not [202] printf_string::$12 = printf_string::padding#1 >= 0 from [201] printf_string::$11 = printf_string::padding#1 < 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -1039,7 +1033,6 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1054,7 +1047,6 @@ Alias clrscr::c#2 = clrscr::c#3
 Alias clrscr::line_cols#2 = clrscr::line_cols#4 clrscr::line_cols#3 
 Alias clrscr::l#3 = clrscr::l#6 clrscr::l#4 
 Alias gotoxy::x#5 = gotoxy::x#6 
-Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#5 = gotoxy::y#6 
 Alias cputc::c#2 = cputc::c#3 
 Alias cputs::c#1 = cputs::$0 cputs::c#2 
@@ -3815,13 +3807,12 @@ gotoxy: {
     // conio_cursor_y = y
     // [37] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [38] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [39] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl

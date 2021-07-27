@@ -34,9 +34,9 @@
 .segment Code
 main: {
     .const toSpritePtr1_return = $ff&SPRITE/$40
-    // krill_install()
-    jsr krill_install
     // char status = krill_install()
+    // Install the Krill drive code
+    jsr krill_install
     // if(status!=KRILL_OK)
     cmp #KRILL_OK
     beq __b1

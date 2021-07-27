@@ -75,12 +75,11 @@ main: {
     // }
     rts
   __b2:
-    // get(i)
+    // struct Point p = get(i)
     lda.z i
     pha
     pha
     jsr get
-    // struct Point p = get(i)
     pla
     tay
     pla

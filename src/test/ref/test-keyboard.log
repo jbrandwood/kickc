@@ -1,5 +1,10 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement keyboard_matrix_read::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$1
+Eliminating unused variable with no statement main::$3
+Eliminating unused variable with no statement main::$11
 
 CONTROL FLOW GRAPH SSA
 
@@ -16,8 +21,7 @@ byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@7
   keyboard_matrix_read::rowid#2 = phi( keyboard_key_pressed/keyboard_matrix_read::rowid#0, main::@7/keyboard_matrix_read::rowid#1 )
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#2]
-  keyboard_matrix_read::$0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
-  keyboard_matrix_read::row_pressed_bits#0 = keyboard_matrix_read::$0
+  keyboard_matrix_read::row_pressed_bits#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -29,10 +33,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@16
   keyboard_key_pressed::key#1 = phi( main::@16/keyboard_key_pressed::key#0 )
-  keyboard_key_pressed::$0 = keyboard_key_pressed::key#1 & 7
-  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0
-  keyboard_key_pressed::$1 = keyboard_key_pressed::key#1 >> 3
-  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1
+  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#1 & 7
+  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#1 >> 3
   keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
   call keyboard_matrix_read 
   keyboard_matrix_read::return#2 = keyboard_matrix_read::return#1
@@ -102,8 +104,7 @@ main::@20: scope:[main]  from main::@7
   main::row#8 = phi( main::@7/main::row#2 )
   main::screen#13 = phi( main::@7/main::screen#16 )
   keyboard_matrix_read::return#6 = phi( main::@7/keyboard_matrix_read::return#3 )
-  main::$3 = keyboard_matrix_read::return#6
-  main::row_pressed_bits#0 = main::$3
+  main::row_pressed_bits#0 = keyboard_matrix_read::return#6
   main::col#0 = 0
   to:main::@8
 main::@8: scope:[main]  from main::@10 main::@20
@@ -169,8 +170,7 @@ main::@21: scope:[main]  from main::@14
   main::screen#14 = phi( main::@14/main::screen#17 )
   main::ch#5 = phi( main::@14/main::ch#2 )
   keyboard_get_keycode::return#4 = phi( main::@14/keyboard_get_keycode::return#2 )
-  main::$11 = keyboard_get_keycode::return#4
-  main::key#0 = main::$11
+  main::key#0 = keyboard_get_keycode::return#4
   main::$12 = main::key#0 != $3f
   main::$13 = ! main::$12
   if(main::$13) goto main::@15
@@ -306,8 +306,6 @@ byte keyboard_get_keycode::return#3
 byte keyboard_get_keycode::return#4
 void keyboard_init()
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
-number~ keyboard_key_pressed::$0
-byte~ keyboard_key_pressed::$1
 byte~ keyboard_key_pressed::$2
 byte~ keyboard_key_pressed::$3
 byte keyboard_key_pressed::colidx
@@ -326,7 +324,6 @@ byte keyboard_key_pressed::rowidx
 byte keyboard_key_pressed::rowidx#0
 constant byte* keyboard_matrix_col_bitmask[8]  = { 1, 2, 4, 8, $10, $20, $40, $80 }
 byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
-byte~ keyboard_matrix_read::$0
 byte keyboard_matrix_read::return
 byte keyboard_matrix_read::return#0
 byte keyboard_matrix_read::return#1
@@ -345,7 +342,6 @@ constant byte* keyboard_matrix_row_bitmask[8]  = { $fe, $fd, $fb, $f7, $ef, $df,
 void main()
 bool~ main::$1
 byte*~ main::$10
-byte~ main::$11
 bool~ main::$12
 bool~ main::$13
 byte~ main::$14
@@ -354,7 +350,6 @@ bool~ main::$16
 bool~ main::$17
 bool~ main::$18
 bool~ main::$2
-byte~ main::$3
 number~ main::$4
 bool~ main::$5
 number~ main::$6
@@ -435,9 +430,8 @@ byte* main::screen#9
 
 Adding number conversion cast (unumber) $ff in *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = $ff
 Adding number conversion cast (unumber) 0 in *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) = 0
-Adding number conversion cast (unumber) 7 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#1 & 7
-Adding number conversion cast (unumber) keyboard_key_pressed::$0 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#1 & (unumber)7
-Adding number conversion cast (unumber) 3 in keyboard_key_pressed::$1 = keyboard_key_pressed::key#1 >> 3
+Adding number conversion cast (unumber) 7 in keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#1 & 7
+Adding number conversion cast (unumber) 3 in keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#1 >> 3
 Adding number conversion cast (unumber) $400+$3e8 in main::$1 = main::sc#2 < $400+$3e8
 Adding number conversion cast (unumber) $ff in main::$2 = *RASTER != $ff
 Adding number conversion cast (unumber) $80 in main::$4 = main::row_pressed_bits#2 & $80
@@ -486,23 +480,20 @@ Finalized unsigned number type (byte) $3f
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#1 & 7
 Inferred type updated to byte in main::$4 = main::row_pressed_bits#2 & $80
 Inferred type updated to byte in main::$6 = main::row_pressed_bits#3 * 2
-Inversing boolean not [85] main::$13 = main::key#0 == $3f from [84] main::$12 = main::key#0 != $3f
-Inversing boolean not [98] main::$16 = main::$14 == 0 from [97] main::$15 = main::$14 != 0
+Inversing boolean not [80] main::$13 = main::key#0 == $3f from [79] main::$12 = main::key#0 != $3f
+Inversing boolean not [93] main::$16 = main::$14 == 0 from [92] main::$15 = main::$14 != 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::$0 keyboard_matrix_read::return#4 keyboard_matrix_read::return#1 
-Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0 keyboard_key_pressed::colidx#1 
-Alias keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1 
+Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::return#4 keyboard_matrix_read::return#1 
 Alias keyboard_matrix_read::return#2 = keyboard_matrix_read::return#5 
+Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::colidx#1 
 Alias keyboard_key_pressed::return#0 = keyboard_key_pressed::$3 keyboard_key_pressed::return#3 keyboard_key_pressed::return#1 
 Alias keyboard_get_keycode::return#0 = keyboard_get_keycode::return#3 keyboard_get_keycode::return#1 
 Alias main::sc#2 = main::sc#3 
 Alias keyboard_matrix_read::return#3 = keyboard_matrix_read::return#6 
 Alias main::screen#13 = main::screen#16 
 Alias main::row#2 = main::row#8 
-Alias main::row_pressed_bits#0 = main::$3 
 Alias main::screen#3 = main::screen#9 main::screen#4 
 Alias main::col#2 = main::col#5 main::col#3 
 Alias main::row_pressed_bits#2 = main::row_pressed_bits#5 main::row_pressed_bits#4 
@@ -516,7 +507,7 @@ Alias keyboard_get_keycode::return#2 = keyboard_get_keycode::return#4
 Alias main::ch#2 = main::ch#5 main::ch#7 main::ch#6 main::ch#4 
 Alias main::screen#11 = main::screen#14 main::screen#17 main::screen#15 main::screen#7 
 Alias main::i#3 = main::i#7 main::i#9 main::i#8 main::i#5 
-Alias main::key#0 = main::$11 main::key#1 
+Alias main::key#0 = main::key#1 
 Alias keyboard_key_pressed::return#2 = keyboard_key_pressed::return#4 
 Successful SSA optimization Pass2AliasElimination
 Alias main::row_pressed_bits#2 = main::row_pressed_bits#3 
@@ -1805,17 +1796,16 @@ main: {
     // [6] phi main::row#2 = main::row#1 [phi:main::@10->main::@5#1] -- register_copy 
     // main::@5
   __b5:
-    // keyboard_matrix_read(row)
+    // byte row_pressed_bits = keyboard_matrix_read(row)
     // [7] keyboard_matrix_read::rowid#1 = main::row#2 -- vbuxx=vbuz1 
     ldx.z row
     // [8] call keyboard_matrix_read 
     // [48] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
     // [48] phi keyboard_matrix_read::rowid#2 = keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-    // keyboard_matrix_read(row)
+    // byte row_pressed_bits = keyboard_matrix_read(row)
     // [9] keyboard_matrix_read::return#3 = keyboard_matrix_read::return#0
     // main::@17
-    // byte row_pressed_bits = keyboard_matrix_read(row)
     // [10] main::row_pressed_bits#0 = keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
     tax
     // [11] phi from main::@17 to main::@6 [phi:main::@17->main::@6]
@@ -1891,14 +1881,13 @@ main: {
     // [22] phi main::ch#2 = main::ch#1 [phi:main::@13->main::@12#1] -- register_copy 
     // main::@12
   __b12:
-    // keyboard_get_keycode(ch)
+    // byte key = keyboard_get_keycode(ch)
     // [23] keyboard_get_keycode::ch#0 = main::ch#2 -- vbuxx=vbuz1 
     ldx.z ch
     // [24] call keyboard_get_keycode 
     jsr keyboard_get_keycode
     // [25] keyboard_get_keycode::return#2 = keyboard_get_keycode::return#0
     // main::@18
-    // byte key = keyboard_get_keycode(ch)
     // [26] main::key#0 = keyboard_get_keycode::return#2
     // if(key!=$3f)
     // [27] if(main::key#0==$3f) goto main::@13 -- vbuaa_eq_vbuc1_then_la1 
@@ -2010,7 +1999,7 @@ keyboard_matrix_read: {
     // [49] *((byte*)CIA1) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     // [50] keyboard_matrix_read::return#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff

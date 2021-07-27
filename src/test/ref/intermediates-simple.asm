@@ -39,10 +39,9 @@ main: {
     sta SCREEN,y
     // SCREEN[idx++] = x;
     iny
-    // sum(i,j)
+    // char y = sum(i,j)
     lda.z i
     jsr sum
-    // char y = sum(i,j)
     // SCREEN[idx++] = y
     sta SCREEN,y
     // SCREEN[idx++] = y;

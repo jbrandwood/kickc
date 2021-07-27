@@ -32,7 +32,7 @@ fg_sum: {
     rts
 }
 main: {
-    // fg_sum(a, b)
+    // char sum1 = fg_sum(a, b)
     lda a
     sta.z fg_sum.a_border
     lda a+OFFSET_STRUCT_COLS_BG
@@ -46,7 +46,6 @@ main: {
     lda b+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     jsr fg_sum
-    // char sum1 = fg_sum(a, b)
     lda.z fg_sum.return
     // *COLS = sum1
     sta COLS
@@ -57,7 +56,7 @@ main: {
     sta d-1,y
     dey
     bne !-
-    // fg_sum(c, d)
+    // char sum2 = fg_sum(c, d)
     lda c
     sta.z fg_sum.a_border
     lda c+OFFSET_STRUCT_COLS_BG
@@ -71,7 +70,6 @@ main: {
     lda d+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     jsr fg_sum
-    // char sum2 = fg_sum(c, d)
     lda.z fg_sum.return
     // *COLS = sum2
     sta COLS

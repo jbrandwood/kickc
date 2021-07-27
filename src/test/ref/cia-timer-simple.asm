@@ -66,7 +66,7 @@ clock: {
     // Stop the timer
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // 0xffffffff - *CIA2_TIMER_AB
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB

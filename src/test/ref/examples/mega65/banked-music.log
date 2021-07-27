@@ -53,6 +53,13 @@ Setting inferred volatile on symbol affected by address-of: memoryRemap256M::yVa
 Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVal in asm { ldalMb ldx#$0f ldyuMb ldz#$0f map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement memoryRemap::$0
+Eliminating unused variable with no statement memoryRemap::$4
+Eliminating unused variable with no statement memoryRemap::$5
+Eliminating unused variable with no statement memoryRemap::$9
+Eliminating unused variable with no statement memoryRemapBlock::$0
+Eliminating unused variable with no statement memoryRemapBlock::$1
+Eliminating unused variable with no statement memoryRemapBlock::$2
 Eliminating unused variable with no statement memcpy_dma_command
 Eliminating unused variable with no statement memset_dma_command
 
@@ -63,20 +70,16 @@ memoryRemap: scope:[memoryRemap]  from irq::@3 main main::@6 memoryRemapBlock
   memoryRemap::upperPageOffset#4 = phi( irq::@3/memoryRemap::upperPageOffset#3, main/memoryRemap::upperPageOffset#1, main::@6/memoryRemap::upperPageOffset#2, memoryRemapBlock/memoryRemap::upperPageOffset#0 )
   memoryRemap::remapBlocks#4 = phi( irq::@3/memoryRemap::remapBlocks#3, main/memoryRemap::remapBlocks#1, main::@6/memoryRemap::remapBlocks#2, memoryRemapBlock/memoryRemap::remapBlocks#0 )
   memoryRemap::lowerPageOffset#4 = phi( irq::@3/memoryRemap::lowerPageOffset#3, main/memoryRemap::lowerPageOffset#1, main::@6/memoryRemap::lowerPageOffset#2, memoryRemapBlock/memoryRemap::lowerPageOffset#0 )
-  memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#4
-  memoryRemap::aVal = memoryRemap::$0
+  memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4
   memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
   memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4
   memoryRemap::$3 = memoryRemap::$2 & $f
-  memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-  memoryRemap::xVal = memoryRemap::$4
-  memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#4
-  memoryRemap::yVal = memoryRemap::$5
+  memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+  memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4
   memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
   memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4
   memoryRemap::$8 = memoryRemap::$7 & $f
-  memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-  memoryRemap::zVal = memoryRemap::$9
+  memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
@@ -87,12 +90,9 @@ void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::
 memoryRemapBlock: scope:[memoryRemapBlock]  from irq main::@5
   memoryRemapBlock::blockPage#2 = phi( irq/memoryRemapBlock::blockPage#1, main::@5/memoryRemapBlock::blockPage#0 )
   memoryRemapBlock::memoryPage#2 = phi( irq/memoryRemapBlock::memoryPage#1, main::@5/memoryRemapBlock::memoryPage#0 )
-  memoryRemapBlock::$0 = memoryRemapBlock::memoryPage#2 - memoryRemapBlock::blockPage#2
-  memoryRemapBlock::pageOffset#0 = memoryRemapBlock::$0
-  memoryRemapBlock::$1 = memoryRemapBlock::blockPage#2 / $20
-  memoryRemapBlock::block#0 = memoryRemapBlock::$1
-  memoryRemapBlock::$2 = 1 << memoryRemapBlock::block#0
-  memoryRemapBlock::blockBits#0 = memoryRemapBlock::$2
+  memoryRemapBlock::pageOffset#0 = memoryRemapBlock::memoryPage#2 - memoryRemapBlock::blockPage#2
+  memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 / $20
+  memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0
   memoryRemap::remapBlocks#0 = memoryRemapBlock::blockBits#0
   memoryRemap::lowerPageOffset#0 = memoryRemapBlock::pageOffset#0
   memoryRemap::upperPageOffset#0 = memoryRemapBlock::pageOffset#0
@@ -319,16 +319,12 @@ byte memcpy_dma4::src_bank#0
 byte memcpy_dma4::src_bank#1
 volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$0
 byte~ memoryRemap::$1
 byte~ memoryRemap::$2
 number~ memoryRemap::$3
-number~ memoryRemap::$4
-byte~ memoryRemap::$5
 number~ memoryRemap::$6
 byte~ memoryRemap::$7
 number~ memoryRemap::$8
-number~ memoryRemap::$9
 volatile byte memoryRemap::aVal loadstore
 word memoryRemap::lowerPageOffset
 word memoryRemap::lowerPageOffset#0
@@ -352,9 +348,6 @@ volatile byte memoryRemap::xVal loadstore
 volatile byte memoryRemap::yVal loadstore
 volatile byte memoryRemap::zVal loadstore
 void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
-word~ memoryRemapBlock::$0
-number~ memoryRemapBlock::$1
-number~ memoryRemapBlock::$2
 byte memoryRemapBlock::block
 byte memoryRemapBlock::block#0
 byte memoryRemapBlock::blockBits
@@ -378,16 +371,12 @@ Adding number conversion cast (unumber) 3 in
 Adding number conversion cast (unumber) 4 in memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
 Adding number conversion cast (unumber) $f in memoryRemap::$3 = memoryRemap::$2 & $f
 Adding number conversion cast (unumber) memoryRemap::$3 in memoryRemap::$3 = memoryRemap::$2 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$4 in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Adding number conversion cast (unumber) $f0 in memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
 Adding number conversion cast (unumber) memoryRemap::$6 in memoryRemap::$6 = memoryRemap::remapBlocks#4 & (unumber)$f0
 Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 & $f
 Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
-Adding number conversion cast (unumber) memoryRemap::$9 in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-Adding number conversion cast (unumber) $20 in memoryRemapBlock::$1 = memoryRemapBlock::blockPage#2 / $20
-Adding number conversion cast (unumber) memoryRemapBlock::$1 in memoryRemapBlock::$1 = memoryRemapBlock::blockPage#2 / (unumber)$20
-Adding number conversion cast (unumber) 1 in memoryRemapBlock::$2 = 1 << memoryRemapBlock::block#0
-Adding number conversion cast (unumber) memoryRemapBlock::$2 in memoryRemapBlock::$2 = (unumber)1 << memoryRemapBlock::block#0
+Adding number conversion cast (unumber) $20 in memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 / $20
+Adding number conversion cast (unumber) 1 in memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0
 Adding number conversion cast (unumber) 1 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
 Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
 Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
@@ -520,27 +509,12 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
-Inferred type updated to byte in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
 Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
 Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
-Inferred type updated to byte in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-Inferred type updated to byte in memoryRemapBlock::$1 = memoryRemapBlock::blockPage#2 / $20
-Inferred type updated to byte in memoryRemapBlock::$2 = 1 << memoryRemapBlock::block#0
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Alias memoryRemapBlock::pageOffset#0 = memoryRemapBlock::$0 
-Alias memoryRemapBlock::block#0 = memoryRemapBlock::$1 
-Alias memoryRemapBlock::blockBits#0 = memoryRemapBlock::$2 
 Alias memcpy_dma4::num#0 = main::$1 
 Alias main::i#2 = main::i#3 
 Alias main::mem_destroy_i#3 = main::mem_destroy_i#4 
 Successful SSA optimization Pass2AliasElimination
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Identical Phi Values memcpy_dma4::num#1 memcpy_dma4::num#0
 Identical Phi Values memcpy_dma4::src_bank#1 memcpy_dma4::src_bank#0
 Identical Phi Values memcpy_dma4::src#1 memcpy_dma4::src#0
@@ -549,10 +523,10 @@ Identical Phi Values memcpy_dma4::dest#1 memcpy_dma4::dest#0
 Identical Phi Values main::mem_destroy_i#3 main::mem_destroy_i#1
 Identical Phi Values irq::raster#1 irq::raster#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition main::$7 [80] if(main::i#2<$f0) goto main::@3
-Simple Condition irq::$5 [97] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1
+Simple Condition main::$7 [76] if(main::i#2<$f0) goto main::@3
+Simple Condition irq::$5 [93] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [52] memcpy_dma4::num#0 = MUSIC_END - MUSIC
+Constant right-side identified [48] memcpy_dma4::num#0 = MUSIC_END - MUSIC
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemap::remapBlocks#1 = 0
 Constant memoryRemap::lowerPageOffset#1 = 0
@@ -575,10 +549,10 @@ Constant memoryRemap::remapBlocks#3 = 0
 Constant memoryRemap::lowerPageOffset#3 = 0
 Constant memoryRemap::upperPageOffset#3 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memcpy_dma4::src#0 in [30] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
-Constant value identified (byte*)memcpy_dma4::dest#0 in [32] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
+Constant value identified (byte*)memcpy_dma4::src#0 in [26] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
+Constant value identified (byte*)memcpy_dma4::dest#0 in [28] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero (byte*)DMA in [37] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
+Simplifying expression containing zero (byte*)DMA in [33] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -591,11 +565,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Rewriting division to use shift [19] memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 / $20
+Rewriting division to use shift [15] memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 / $20
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings memoryRemap::remapBlocks#1
 Inlining constant with var siblings memoryRemap::lowerPageOffset#1
@@ -628,15 +598,11 @@ Constant inlined memoryRemap::lowerPageOffset#2 = 0
 Constant inlined memoryRemap::lowerPageOffset#1 = 0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Identical Phi Values memoryRemapBlock::memoryPage#2 $100
 Identical Phi Values memoryRemapBlock::blockPage#2 $40
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [18] memoryRemapBlock::pageOffset#0 = $100 - $40
-Constant right-side identified [19] memoryRemapBlock::block#0 = $40 >> 5
+Constant right-side identified [14] memoryRemapBlock::pageOffset#0 = $100 - $40
+Constant right-side identified [15] memoryRemapBlock::block#0 = $40 >> 5
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemapBlock::pageOffset#0 = $100-$40
 Constant memoryRemapBlock::block#0 = $40>>5
@@ -649,11 +615,7 @@ Inlining constant with var siblings memoryRemap::upperPageOffset#0
 Constant inlined memoryRemap::lowerPageOffset#0 = memoryRemapBlock::pageOffset#0
 Constant inlined memoryRemap::upperPageOffset#0 = memoryRemapBlock::pageOffset#0
 Successful SSA optimization Pass2ConstantInlining
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Constant right-side identified [17] memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0
+Constant right-side identified [13] memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemapBlock::blockBits#0 = 1<<memoryRemapBlock::block#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -662,28 +624,12 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings memoryRemap::remapBlocks#0
 Constant inlined memoryRemap::remapBlocks#0 = memoryRemapBlock::blockBits#0
 Successful SSA optimization Pass2ConstantInlining
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $4000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
-Alias candidate removed (volatile)memoryRemap::aVal = memoryRemap::$0 
-Alias candidate removed (volatile)memoryRemap::xVal = memoryRemap::$4 
-Alias candidate removed (volatile)memoryRemap::yVal = memoryRemap::$5 
-Alias candidate removed (volatile)memoryRemap::zVal = memoryRemap::$9 
 Added new block during phi lifting main::@8(between main::@2 and main::@1)
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of memoryRemapBlock
@@ -787,43 +733,39 @@ memoryRemap: scope:[memoryRemap]  from irq::@3 main main::@6 memoryRemapBlock
   [40] memoryRemap::upperPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
   [40] memoryRemap::remapBlocks#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::blockBits#0 )
   [40] memoryRemap::lowerPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
-  [41] memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#4
-  [42] memoryRemap::aVal = memoryRemap::$0
-  [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
-  [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4
-  [45] memoryRemap::$3 = memoryRemap::$2 & $f
-  [46] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
-  [47] memoryRemap::xVal = memoryRemap::$4
-  [48] memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#4
-  [49] memoryRemap::yVal = memoryRemap::$5
-  [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
-  [51] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4
-  [52] memoryRemap::$8 = memoryRemap::$7 & $f
-  [53] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
-  [54] memoryRemap::zVal = memoryRemap::$9
+  [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4
+  [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
+  [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4
+  [44] memoryRemap::$3 = memoryRemap::$2 & $f
+  [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+  [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4
+  [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
+  [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4
+  [49] memoryRemap::$8 = memoryRemap::$7 & $f
+  [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
-  [56] return 
+  [52] return 
   to:@return
 
 void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
 memcpy_dma4: scope:[memcpy_dma4]  from main::@4
-  [57] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  [58] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
-  [59] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
-  [60] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
-  [61] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
-  [62] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
-  [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  [66] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
-  [67] *((byte*)DMA) = byte0 &memcpy_dma_command4
-  [68] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
+  [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
+  [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
+  [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
+  [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
+  [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
+  [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
+  [63] *((byte*)DMA) = byte0 &memcpy_dma_command4
+  [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
   to:memcpy_dma4::@return
 memcpy_dma4::@return: scope:[memcpy_dma4]  from memcpy_dma4
-  [69] return 
+  [65] return 
   to:@return
 
 
@@ -848,25 +790,21 @@ void* memcpy_dma4::src
 byte memcpy_dma4::src_bank
 volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$0 202.0
 byte~ memoryRemap::$1 67.33333333333333
 byte~ memoryRemap::$2 202.0
 byte~ memoryRemap::$3 202.0
-byte~ memoryRemap::$4 202.0
-byte~ memoryRemap::$5 202.0
 byte~ memoryRemap::$6 67.33333333333333
 byte~ memoryRemap::$7 202.0
 byte~ memoryRemap::$8 202.0
-byte~ memoryRemap::$9 202.0
-volatile byte memoryRemap::aVal loadstore 7.769230769230769
+volatile byte memoryRemap::aVal loadstore 10.1
 word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#4 50.5
+word memoryRemap::lowerPageOffset#4 67.33333333333333
 byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#4 20.2
+byte memoryRemap::remapBlocks#4 28.857142857142858
 word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#4 18.363636363636363
-volatile byte memoryRemap::xVal loadstore 12.625
-volatile byte memoryRemap::yVal loadstore 16.833333333333332
+word memoryRemap::upperPageOffset#4 25.25
+volatile byte memoryRemap::xVal loadstore 16.833333333333332
+volatile byte memoryRemap::yVal loadstore 20.2
 volatile byte memoryRemap::zVal loadstore 101.0
 void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
 byte memoryRemapBlock::block
@@ -882,19 +820,15 @@ Initial phi equivalence classes
 [ memoryRemap::remapBlocks#4 ]
 [ memoryRemap::upperPageOffset#4 ]
 Added variable irq::raster#0 to live range equivalence class [ irq::raster#0 ]
-Added variable memoryRemap::$0 to live range equivalence class [ memoryRemap::$0 ]
 Added variable memoryRemap::aVal to live range equivalence class [ memoryRemap::aVal ]
 Added variable memoryRemap::$1 to live range equivalence class [ memoryRemap::$1 ]
 Added variable memoryRemap::$2 to live range equivalence class [ memoryRemap::$2 ]
 Added variable memoryRemap::$3 to live range equivalence class [ memoryRemap::$3 ]
-Added variable memoryRemap::$4 to live range equivalence class [ memoryRemap::$4 ]
 Added variable memoryRemap::xVal to live range equivalence class [ memoryRemap::xVal ]
-Added variable memoryRemap::$5 to live range equivalence class [ memoryRemap::$5 ]
 Added variable memoryRemap::yVal to live range equivalence class [ memoryRemap::yVal ]
 Added variable memoryRemap::$6 to live range equivalence class [ memoryRemap::$6 ]
 Added variable memoryRemap::$7 to live range equivalence class [ memoryRemap::$7 ]
 Added variable memoryRemap::$8 to live range equivalence class [ memoryRemap::$8 ]
-Added variable memoryRemap::$9 to live range equivalence class [ memoryRemap::$9 ]
 Added variable memoryRemap::zVal to live range equivalence class [ memoryRemap::zVal ]
 Added variable memcpy_dma4::dmaMode#0 to live range equivalence class [ memcpy_dma4::dmaMode#0 ]
 Added variable memcpy_dma_command4 to live range equivalence class [ memcpy_dma_command4 ]
@@ -905,19 +839,15 @@ Complete equivalence classes
 [ memoryRemap::remapBlocks#4 ]
 [ memoryRemap::upperPageOffset#4 ]
 [ irq::raster#0 ]
-[ memoryRemap::$0 ]
 [ memoryRemap::aVal ]
 [ memoryRemap::$1 ]
 [ memoryRemap::$2 ]
 [ memoryRemap::$3 ]
-[ memoryRemap::$4 ]
 [ memoryRemap::xVal ]
-[ memoryRemap::$5 ]
 [ memoryRemap::yVal ]
 [ memoryRemap::$6 ]
 [ memoryRemap::$7 ]
 [ memoryRemap::$8 ]
-[ memoryRemap::$9 ]
 [ memoryRemap::zVal ]
 [ memcpy_dma4::dmaMode#0 ]
 [ memcpy_dma_command4 ]
@@ -927,21 +857,17 @@ Allocated zp[2]:4 [ memoryRemap::lowerPageOffset#4 ]
 Allocated zp[1]:6 [ memoryRemap::remapBlocks#4 ]
 Allocated zp[2]:7 [ memoryRemap::upperPageOffset#4 ]
 Allocated zp[1]:9 [ irq::raster#0 ]
-Allocated zp[1]:10 [ memoryRemap::$0 ]
-Allocated zp[1]:11 [ memoryRemap::aVal ]
-Allocated zp[1]:12 [ memoryRemap::$1 ]
-Allocated zp[1]:13 [ memoryRemap::$2 ]
-Allocated zp[1]:14 [ memoryRemap::$3 ]
-Allocated zp[1]:15 [ memoryRemap::$4 ]
-Allocated zp[1]:16 [ memoryRemap::xVal ]
-Allocated zp[1]:17 [ memoryRemap::$5 ]
-Allocated zp[1]:18 [ memoryRemap::yVal ]
-Allocated zp[1]:19 [ memoryRemap::$6 ]
-Allocated zp[1]:20 [ memoryRemap::$7 ]
-Allocated zp[1]:21 [ memoryRemap::$8 ]
-Allocated zp[1]:22 [ memoryRemap::$9 ]
-Allocated zp[1]:23 [ memoryRemap::zVal ]
-Allocated zp[1]:24 [ memcpy_dma4::dmaMode#0 ]
+Allocated zp[1]:10 [ memoryRemap::aVal ]
+Allocated zp[1]:11 [ memoryRemap::$1 ]
+Allocated zp[1]:12 [ memoryRemap::$2 ]
+Allocated zp[1]:13 [ memoryRemap::$3 ]
+Allocated zp[1]:14 [ memoryRemap::xVal ]
+Allocated zp[1]:15 [ memoryRemap::yVal ]
+Allocated zp[1]:16 [ memoryRemap::$6 ]
+Allocated zp[1]:17 [ memoryRemap::$7 ]
+Allocated zp[1]:18 [ memoryRemap::$8 ]
+Allocated zp[1]:19 [ memoryRemap::zVal ]
+Allocated zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
 Allocated mem[12] [ memcpy_dma_command4 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -964,25 +890,27 @@ Statement [28] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
-Statement [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ memoryRemap::remapBlocks#4 ]
-Statement [45] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:12 [ memoryRemap::$1 ]
-Statement [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
-Statement [52] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:19 [ memoryRemap::$6 ]
+Statement [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [44] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:11 [ memoryRemap::$1 ]
+Statement [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [49] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:16 [ memoryRemap::$6 ]
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [58] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:24 [ memcpy_dma4::dmaMode#0 ]
-Statement [59] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [66] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [67] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
+Statement [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] call *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [8] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
@@ -1001,49 +929,47 @@ Statement [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)V
 Statement [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [28] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
-Statement [45] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
-Statement [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
-Statement [52] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Statement [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
+Statement [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [44] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Statement [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [49] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [58] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [66] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [67] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ memoryRemap::remapBlocks#4 ] : zp[1]:6 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:7 [ memoryRemap::upperPageOffset#4 ] : zp[2]:7 , 
 Potential registers zp[1]:9 [ irq::raster#0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:10 [ memoryRemap::$0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:11 [ memoryRemap::aVal ] : zp[1]:11 , 
-Potential registers zp[1]:12 [ memoryRemap::$1 ] : zp[1]:12 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:13 [ memoryRemap::$2 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:14 [ memoryRemap::$3 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:15 [ memoryRemap::$4 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:16 [ memoryRemap::xVal ] : zp[1]:16 , 
-Potential registers zp[1]:17 [ memoryRemap::$5 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:18 [ memoryRemap::yVal ] : zp[1]:18 , 
-Potential registers zp[1]:19 [ memoryRemap::$6 ] : zp[1]:19 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:20 [ memoryRemap::$7 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:21 [ memoryRemap::$8 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:22 [ memoryRemap::$9 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:23 [ memoryRemap::zVal ] : zp[1]:23 , 
-Potential registers zp[1]:24 [ memcpy_dma4::dmaMode#0 ] : zp[1]:24 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:10 [ memoryRemap::aVal ] : zp[1]:10 , 
+Potential registers zp[1]:11 [ memoryRemap::$1 ] : zp[1]:11 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:12 [ memoryRemap::$2 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:13 [ memoryRemap::$3 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:14 [ memoryRemap::xVal ] : zp[1]:14 , 
+Potential registers zp[1]:15 [ memoryRemap::yVal ] : zp[1]:15 , 
+Potential registers zp[1]:16 [ memoryRemap::$6 ] : zp[1]:16 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:17 [ memoryRemap::$7 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:18 [ memoryRemap::$8 ] : zp[1]:18 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:19 [ memoryRemap::zVal ] : zp[1]:19 , 
+Potential registers zp[1]:20 [ memcpy_dma4::dmaMode#0 ] : zp[1]:20 , reg byte x , reg byte y , reg byte z , 
 Potential registers mem[12] [ memcpy_dma_command4 ] : mem[12] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memoryRemap] 202: zp[1]:10 [ memoryRemap::$0 ] 202: zp[1]:13 [ memoryRemap::$2 ] 202: zp[1]:14 [ memoryRemap::$3 ] 202: zp[1]:15 [ memoryRemap::$4 ] 202: zp[1]:17 [ memoryRemap::$5 ] 202: zp[1]:20 [ memoryRemap::$7 ] 202: zp[1]:21 [ memoryRemap::$8 ] 202: zp[1]:22 [ memoryRemap::$9 ] 101: zp[1]:23 [ memoryRemap::zVal ] 67.33: zp[1]:12 [ memoryRemap::$1 ] 67.33: zp[1]:19 [ memoryRemap::$6 ] 50.5: zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] 20.2: zp[1]:6 [ memoryRemap::remapBlocks#4 ] 18.36: zp[2]:7 [ memoryRemap::upperPageOffset#4 ] 16.83: zp[1]:18 [ memoryRemap::yVal ] 12.62: zp[1]:16 [ memoryRemap::xVal ] 7.77: zp[1]:11 [ memoryRemap::aVal ] 
+Uplift Scope [memoryRemap] 202: zp[1]:12 [ memoryRemap::$2 ] 202: zp[1]:13 [ memoryRemap::$3 ] 202: zp[1]:17 [ memoryRemap::$7 ] 202: zp[1]:18 [ memoryRemap::$8 ] 101: zp[1]:19 [ memoryRemap::zVal ] 67.33: zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] 67.33: zp[1]:11 [ memoryRemap::$1 ] 67.33: zp[1]:16 [ memoryRemap::$6 ] 28.86: zp[1]:6 [ memoryRemap::remapBlocks#4 ] 25.25: zp[2]:7 [ memoryRemap::upperPageOffset#4 ] 20.2: zp[1]:15 [ memoryRemap::yVal ] 16.83: zp[1]:14 [ memoryRemap::xVal ] 10.1: zp[1]:10 [ memoryRemap::aVal ] 
 Uplift Scope [main] 370.33: zp[1]:3 [ main::i#2 main::i#1 ] 89.4: zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] 
 Uplift Scope [irq] 6.5: zp[1]:9 [ irq::raster#0 ] 
-Uplift Scope [memcpy_dma4] 2: zp[1]:24 [ memcpy_dma4::dmaMode#0 ] 
+Uplift Scope [memcpy_dma4] 2: zp[1]:20 [ memcpy_dma4::dmaMode#0 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -1055,53 +981,45 @@ Uplift Scope [DMA_LIST_F018A]
 Uplift Scope [DMA_LIST_F018B] 
 Uplift Scope [] 0: mem[12] [ memcpy_dma_command4 ] 
 
-Uplifting [memoryRemap] best 4838 combination reg byte a [ memoryRemap::$0 ] reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] zp[1]:15 [ memoryRemap::$4 ] zp[1]:17 [ memoryRemap::$5 ] zp[1]:20 [ memoryRemap::$7 ] zp[1]:21 [ memoryRemap::$8 ] zp[1]:22 [ memoryRemap::$9 ] zp[1]:23 [ memoryRemap::zVal ] zp[1]:12 [ memoryRemap::$1 ] zp[1]:19 [ memoryRemap::$6 ] zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] zp[1]:6 [ memoryRemap::remapBlocks#4 ] zp[2]:7 [ memoryRemap::upperPageOffset#4 ] zp[1]:18 [ memoryRemap::yVal ] zp[1]:16 [ memoryRemap::xVal ] zp[1]:11 [ memoryRemap::aVal ] 
-Limited combination testing to 100 combinations of 25000000 possible.
-Uplifting [main] best 3548 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] 
-Uplifting [irq] best 3515 combination reg byte a [ irq::raster#0 ] 
-Uplifting [memcpy_dma4] best 3509 combination reg byte x [ memcpy_dma4::dmaMode#0 ] 
-Uplifting [MOS6526_CIA] best 3509 combination 
-Uplifting [MOS6569_VICII] best 3509 combination 
-Uplifting [MOS6581_SID] best 3509 combination 
-Uplifting [MOS4569_VICIII] best 3509 combination 
-Uplifting [MEGA65_VICIV] best 3509 combination 
-Uplifting [memoryRemapBlock] best 3509 combination 
-Uplifting [F018_DMAGIC] best 3509 combination 
-Uplifting [DMA_LIST_F018A] best 3509 combination 
-Uplifting [DMA_LIST_F018B] best 3509 combination 
-Uplifting [] best 3509 combination mem[12] [ memcpy_dma_command4 ] 
-Attempting to uplift remaining variables inzp[1]:15 [ memoryRemap::$4 ]
-Uplifting [memoryRemap] best 3503 combination reg byte a [ memoryRemap::$4 ] 
-Attempting to uplift remaining variables inzp[1]:17 [ memoryRemap::$5 ]
-Uplifting [memoryRemap] best 3497 combination reg byte a [ memoryRemap::$5 ] 
-Attempting to uplift remaining variables inzp[1]:20 [ memoryRemap::$7 ]
-Uplifting [memoryRemap] best 3491 combination reg byte a [ memoryRemap::$7 ] 
-Attempting to uplift remaining variables inzp[1]:21 [ memoryRemap::$8 ]
-Uplifting [memoryRemap] best 3485 combination reg byte a [ memoryRemap::$8 ] 
-Attempting to uplift remaining variables inzp[1]:22 [ memoryRemap::$9 ]
-Uplifting [memoryRemap] best 3479 combination reg byte a [ memoryRemap::$9 ] 
-Attempting to uplift remaining variables inzp[1]:23 [ memoryRemap::zVal ]
-Uplifting [memoryRemap] best 3479 combination zp[1]:23 [ memoryRemap::zVal ] 
-Attempting to uplift remaining variables inzp[1]:12 [ memoryRemap::$1 ]
-Uplifting [memoryRemap] best 3479 combination zp[1]:12 [ memoryRemap::$1 ] 
-Attempting to uplift remaining variables inzp[1]:19 [ memoryRemap::$6 ]
-Uplifting [memoryRemap] best 3479 combination zp[1]:19 [ memoryRemap::$6 ] 
+Uplifting [memoryRemap] best 4814 combination reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] reg byte a [ memoryRemap::$7 ] zp[1]:18 [ memoryRemap::$8 ] zp[1]:19 [ memoryRemap::zVal ] zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] zp[1]:11 [ memoryRemap::$1 ] zp[1]:16 [ memoryRemap::$6 ] zp[1]:6 [ memoryRemap::remapBlocks#4 ] zp[2]:7 [ memoryRemap::upperPageOffset#4 ] zp[1]:15 [ memoryRemap::yVal ] zp[1]:14 [ memoryRemap::xVal ] zp[1]:10 [ memoryRemap::aVal ] 
+Limited combination testing to 100 combinations of 40000 possible.
+Uplifting [main] best 3524 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] 
+Uplifting [irq] best 3491 combination reg byte a [ irq::raster#0 ] 
+Uplifting [memcpy_dma4] best 3485 combination reg byte x [ memcpy_dma4::dmaMode#0 ] 
+Uplifting [MOS6526_CIA] best 3485 combination 
+Uplifting [MOS6569_VICII] best 3485 combination 
+Uplifting [MOS6581_SID] best 3485 combination 
+Uplifting [MOS4569_VICIII] best 3485 combination 
+Uplifting [MEGA65_VICIV] best 3485 combination 
+Uplifting [memoryRemapBlock] best 3485 combination 
+Uplifting [F018_DMAGIC] best 3485 combination 
+Uplifting [DMA_LIST_F018A] best 3485 combination 
+Uplifting [DMA_LIST_F018B] best 3485 combination 
+Uplifting [] best 3485 combination mem[12] [ memcpy_dma_command4 ] 
+Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::$8 ]
+Uplifting [memoryRemap] best 3479 combination reg byte a [ memoryRemap::$8 ] 
+Attempting to uplift remaining variables inzp[1]:19 [ memoryRemap::zVal ]
+Uplifting [memoryRemap] best 3479 combination zp[1]:19 [ memoryRemap::zVal ] 
+Attempting to uplift remaining variables inzp[1]:11 [ memoryRemap::$1 ]
+Uplifting [memoryRemap] best 3479 combination zp[1]:11 [ memoryRemap::$1 ] 
+Attempting to uplift remaining variables inzp[1]:16 [ memoryRemap::$6 ]
+Uplifting [memoryRemap] best 3479 combination zp[1]:16 [ memoryRemap::$6 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ memoryRemap::remapBlocks#4 ]
 Uplifting [memoryRemap] best 3463 combination reg byte z [ memoryRemap::remapBlocks#4 ] 
-Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::yVal ]
-Uplifting [memoryRemap] best 3463 combination zp[1]:18 [ memoryRemap::yVal ] 
-Attempting to uplift remaining variables inzp[1]:16 [ memoryRemap::xVal ]
-Uplifting [memoryRemap] best 3463 combination zp[1]:16 [ memoryRemap::xVal ] 
-Attempting to uplift remaining variables inzp[1]:11 [ memoryRemap::aVal ]
-Uplifting [memoryRemap] best 3463 combination zp[1]:11 [ memoryRemap::aVal ] 
+Attempting to uplift remaining variables inzp[1]:15 [ memoryRemap::yVal ]
+Uplifting [memoryRemap] best 3463 combination zp[1]:15 [ memoryRemap::yVal ] 
+Attempting to uplift remaining variables inzp[1]:14 [ memoryRemap::xVal ]
+Uplifting [memoryRemap] best 3463 combination zp[1]:14 [ memoryRemap::xVal ] 
+Attempting to uplift remaining variables inzp[1]:10 [ memoryRemap::aVal ]
+Uplifting [memoryRemap] best 3463 combination zp[1]:10 [ memoryRemap::aVal ] 
 Allocated (was zp[2]:4) zp[2]:2 [ memoryRemap::lowerPageOffset#4 ]
 Allocated (was zp[2]:7) zp[2]:4 [ memoryRemap::upperPageOffset#4 ]
-Allocated (was zp[1]:11) zp[1]:6 [ memoryRemap::aVal ]
-Allocated (was zp[1]:12) zp[1]:7 [ memoryRemap::$1 ]
-Allocated (was zp[1]:16) zp[1]:8 [ memoryRemap::xVal ]
-Allocated (was zp[1]:18) zp[1]:9 [ memoryRemap::yVal ]
-Allocated (was zp[1]:19) zp[1]:10 [ memoryRemap::$6 ]
-Allocated (was zp[1]:23) zp[1]:11 [ memoryRemap::zVal ]
+Allocated (was zp[1]:10) zp[1]:6 [ memoryRemap::aVal ]
+Allocated (was zp[1]:11) zp[1]:7 [ memoryRemap::$1 ]
+Allocated (was zp[1]:14) zp[1]:8 [ memoryRemap::xVal ]
+Allocated (was zp[1]:15) zp[1]:9 [ memoryRemap::yVal ]
+Allocated (was zp[1]:16) zp[1]:10 [ memoryRemap::$6 ]
+Allocated (was zp[1]:19) zp[1]:11 [ memoryRemap::zVal ]
 Interrupt procedure irq clobbers AXYZcnzvidePSB
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -1420,7 +1338,9 @@ main: {
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 memoryRemapBlock: {
+    // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
+    // Which block is being remapped? (0-7)
     .const block = $40>>5
     .const blockBits = 1<<block
     // [38] call memoryRemap 
@@ -1480,44 +1400,40 @@ memoryRemap: {
     .label __6 = $a
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
-    // [41] memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte0_vwuz1 
-    lda.z lowerPageOffset
-    // [42] memoryRemap::aVal = memoryRemap::$0 -- vbuz1=vbuaa 
+    // [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // lower blocks offset page low
+    lda.z lowerPageOffset
     sta.z aVal
-    // [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
+    // [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
     asl
     asl
     sta.z __1
-    // [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z lowerPageOffset+1
-    // [45] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [44] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [46] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z __1
-    // [47] memoryRemap::xVal = memoryRemap::$4 -- vbuz1=vbuaa 
+    // [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
     // lower blocks to map + lower blocks offset high nibble
+    ora.z __1
     sta.z xVal
-    // [48] memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#4 -- vbuaa=_byte0_vwuz1 
-    lda.z upperPageOffset
-    // [49] memoryRemap::yVal = memoryRemap::$5 -- vbuz1=vbuaa 
+    // [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // upper blocks offset page
+    lda.z upperPageOffset
     sta.z yVal
-    // [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
-    // [51] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z upperPageOffset+1
-    // [52] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [49] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [53] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z __6
-    // [54] memoryRemap::zVal = memoryRemap::$9 -- vbuz1=vbuaa 
+    // [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
+    ora.z __6
     sta.z zVal
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
     lda aVal
@@ -1529,7 +1445,7 @@ memoryRemap: {
     jmp __breturn
     // memoryRemap::@return
   __breturn:
-    // [56] return 
+    // [52] return 
     rts
 }
   // memcpy_dma4
@@ -1546,56 +1462,56 @@ memcpy_dma4: {
     .const src_bank = 0
     .label dest = 0
     .label src = upperCodeData
-    // [57] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [58] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
-    // [59] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
-    // [60] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
-    // [61] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
-    // [62] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
-    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
-    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // [66] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // [67] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
-    // [68] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     jmp __breturn
     // memcpy_dma4::@return
   __breturn:
-    // [69] return 
+    // [65] return 
     rts
 }
   // File Data
@@ -1734,25 +1650,21 @@ byte memcpy_dma4::src_bank
 constant byte memcpy_dma4::src_bank#0 src_bank = 0
 volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore mem[12] = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$0 reg byte a 202.0
 byte~ memoryRemap::$1 zp[1]:7 67.33333333333333
 byte~ memoryRemap::$2 reg byte a 202.0
 byte~ memoryRemap::$3 reg byte a 202.0
-byte~ memoryRemap::$4 reg byte a 202.0
-byte~ memoryRemap::$5 reg byte a 202.0
 byte~ memoryRemap::$6 zp[1]:10 67.33333333333333
 byte~ memoryRemap::$7 reg byte a 202.0
 byte~ memoryRemap::$8 reg byte a 202.0
-byte~ memoryRemap::$9 reg byte a 202.0
-volatile byte memoryRemap::aVal loadstore zp[1]:6 7.769230769230769
+volatile byte memoryRemap::aVal loadstore zp[1]:6 10.1
 word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#4 lowerPageOffset zp[2]:2 50.5
+word memoryRemap::lowerPageOffset#4 lowerPageOffset zp[2]:2 67.33333333333333
 byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#4 reg byte z 20.2
+byte memoryRemap::remapBlocks#4 reg byte z 28.857142857142858
 word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#4 upperPageOffset zp[2]:4 18.363636363636363
-volatile byte memoryRemap::xVal loadstore zp[1]:8 12.625
-volatile byte memoryRemap::yVal loadstore zp[1]:9 16.833333333333332
+word memoryRemap::upperPageOffset#4 upperPageOffset zp[2]:4 25.25
+volatile byte memoryRemap::xVal loadstore zp[1]:8 16.833333333333332
+volatile byte memoryRemap::yVal loadstore zp[1]:9 20.2
 volatile byte memoryRemap::zVal loadstore zp[1]:11 101.0
 void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
 byte memoryRemapBlock::block
@@ -1774,19 +1686,15 @@ zp[2]:2 [ memoryRemap::lowerPageOffset#4 ]
 reg byte z [ memoryRemap::remapBlocks#4 ]
 zp[2]:4 [ memoryRemap::upperPageOffset#4 ]
 reg byte a [ irq::raster#0 ]
-reg byte a [ memoryRemap::$0 ]
 zp[1]:6 [ memoryRemap::aVal ]
 zp[1]:7 [ memoryRemap::$1 ]
 reg byte a [ memoryRemap::$2 ]
 reg byte a [ memoryRemap::$3 ]
-reg byte a [ memoryRemap::$4 ]
 zp[1]:8 [ memoryRemap::xVal ]
-reg byte a [ memoryRemap::$5 ]
 zp[1]:9 [ memoryRemap::yVal ]
 zp[1]:10 [ memoryRemap::$6 ]
 reg byte a [ memoryRemap::$7 ]
 reg byte a [ memoryRemap::$8 ]
-reg byte a [ memoryRemap::$9 ]
 zp[1]:11 [ memoryRemap::zVal ]
 reg byte x [ memcpy_dma4::dmaMode#0 ]
 mem[12] [ memcpy_dma_command4 ]
@@ -2105,7 +2013,9 @@ main: {
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 memoryRemapBlock: {
+    // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
+    // Which block is being remapped? (0-7)
     .const block = $40>>5
     .const blockBits = 1<<block
     // memoryRemap(blockBits, pageOffset, pageOffset)
@@ -2164,15 +2074,13 @@ memoryRemap: {
     .label __6 = $a
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
-    // BYTE0(lowerPageOffset)
-    // [41] memoryRemap::$0 = byte0  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte0_vwuz1 
-    lda.z lowerPageOffset
     // char aVal = BYTE0(lowerPageOffset)
-    // [42] memoryRemap::aVal = memoryRemap::$0 -- vbuz1=vbuaa 
+    // [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // lower blocks offset page low
+    lda.z lowerPageOffset
     sta.z aVal
     // remapBlocks << 4
-    // [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
+    // [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
@@ -2180,42 +2088,36 @@ memoryRemap: {
     asl
     sta.z __1
     // BYTE1(lowerPageOffset)
-    // [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z lowerPageOffset+1
     // BYTE1(lowerPageOffset) & 0xf
-    // [45] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [44] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
-    // [46] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z __1
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
-    // [47] memoryRemap::xVal = memoryRemap::$4 -- vbuz1=vbuaa 
+    // [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
     // lower blocks to map + lower blocks offset high nibble
+    ora.z __1
     sta.z xVal
-    // BYTE0(upperPageOffset)
-    // [48] memoryRemap::$5 = byte0  memoryRemap::upperPageOffset#4 -- vbuaa=_byte0_vwuz1 
-    lda.z upperPageOffset
     // char yVal = BYTE0(upperPageOffset)
-    // [49] memoryRemap::yVal = memoryRemap::$5 -- vbuz1=vbuaa 
+    // [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // upper blocks offset page
+    lda.z upperPageOffset
     sta.z yVal
     // remapBlocks & 0xf0
-    // [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
     // BYTE1(upperPageOffset)
-    // [51] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z upperPageOffset+1
     // BYTE1(upperPageOffset) & 0xf
-    // [52] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [49] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
-    // [53] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z __6
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
-    // [54] memoryRemap::zVal = memoryRemap::$9 -- vbuz1=vbuaa 
+    // [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
+    ora.z __6
     sta.z zVal
     // asm
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
@@ -2227,7 +2129,7 @@ memoryRemap: {
     eom
     // memoryRemap::@return
     // }
-    // [56] return 
+    // [52] return 
     rts
 }
   // memcpy_dma4
@@ -2245,65 +2147,65 @@ memcpy_dma4: {
     .label dest = 0
     .label src = upperCodeData
     // char dmaMode = DMA->EN018B
-    // [57] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma_command4.count = num
-    // [58] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // memcpy_dma_command4.src_bank = src_bank
-    // [59] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
     // memcpy_dma_command4.src = src
-    // [60] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // memcpy_dma_command4.dest_bank = dest_bank
-    // [61] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // memcpy_dma_command4.dest = dest
-    // [62] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
-    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4)
-    // [66] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4)
-    // [67] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
     // DMA->EN018B = dmaMode
-    // [68] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma4::@return
     // }
-    // [69] return 
+    // [65] return 
     rts
 }
   // File Data

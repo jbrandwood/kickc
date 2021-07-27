@@ -41,6 +41,7 @@ sub: {
     lda #C
     sta SCREEN+3
     // byte D = A+1
+    // Not an early constant (expression)
     ldx.z A
     inx
     // SCREEN[4] = D

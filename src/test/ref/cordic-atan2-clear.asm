@@ -239,9 +239,8 @@ init_angle_screen: {
     // MAKEWORD( y*2, 0 )
     sta.z yw+1
     sty.z yw
-    // atan2_16(xw, yw)
-    jsr atan2_16
     // word angle_w = atan2_16(xw, yw)
+    jsr atan2_16
     // angle_w+0x0080
     lda #$80
     clc

@@ -1,3 +1,4 @@
+Eliminating unused variable with no statement main::$4
 
 CONTROL FLOW GRAPH SSA
 
@@ -15,8 +16,7 @@ main::@1: scope:[main]  from main main::@1
   (main::SCREEN+$28*2)[main::i#2] = main::$2
   main::$3 = main::i#2 / 8
   (main::SCREEN+$28*3)[main::i#2] = main::$3
-  main::$4 = - (signed byte)main::i#2
-  main::sb#0 = main::$4
+  main::sb#0 = - (signed byte)main::i#2
   main::$5 = main::sb#0 / 2
   (main::SCREEN+$28*5)[main::i#2] = (byte)main::$5
   main::i#1 = main::i#2 + rangenext(0,$a)
@@ -44,7 +44,6 @@ number~ main::$0
 number~ main::$1
 number~ main::$2
 number~ main::$3
-signed byte~ main::$4
 number~ main::$5
 bool~ main::$6
 constant byte* const main::SCREEN = (byte*)$400
@@ -89,8 +88,6 @@ Inferred type updated to byte in main::$1 = main::i#2 / 2
 Inferred type updated to byte in main::$2 = main::i#2 / 4
 Inferred type updated to byte in main::$3 = main::i#2 / 8
 Inferred type updated to signed byte in main::$5 = main::sb#0 / 2
-Alias main::sb#0 = main::$4 
-Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$6 [15] if(main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::i#0 = 0
@@ -287,6 +284,7 @@ main: {
     // [8] (main::SCREEN+$28*3)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*3,x
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
+    // And a single signed byte
     txa
     eor #$ff
     clc
@@ -399,6 +397,7 @@ main: {
     sta SCREEN+$28*3,x
     // signed byte sb = -(signed byte)i
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
+    // And a single signed byte
     txa
     eor #$ff
     clc

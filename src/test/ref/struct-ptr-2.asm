@@ -15,11 +15,10 @@ main: {
     .label point_i1 = 4
     ldx #0
   __b1:
-    // points+i
+    // struct Point* point_i = points+i
     txa
     asl
     tay
-    // struct Point* point_i = points+i
     tya
     clc
     adc #<points
@@ -44,11 +43,10 @@ main: {
     bne __b1
     ldx #0
   __b2:
-    // points+i
+    // struct Point* point_i = points+i
     txa
     asl
     tay
-    // struct Point* point_i = points+i
     tya
     clc
     adc #<points

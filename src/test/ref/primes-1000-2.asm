@@ -203,12 +203,12 @@ mul8u: {
 div16u8u: {
     .label dividend = 5
     .label divisor = 9
-    // divr8u(BYTE1(dividend), divisor, 0)
+    // unsigned char quotient_hi = divr8u(BYTE1(dividend), divisor, 0)
     lda.z dividend+1
     sta.z divr8u.dividend
     ldy #0
     jsr divr8u
-    // divr8u(BYTE0(dividend), divisor, rem8u)
+    // unsigned char quotient_lo = divr8u(BYTE0(dividend), divisor, rem8u)
     lda.z dividend
     sta.z divr8u.dividend
     jsr divr8u

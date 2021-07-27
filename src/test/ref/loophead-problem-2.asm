@@ -12,11 +12,10 @@
 .segment Code
 main: {
     .label screen = $400
-    // scan_for_lowest()
-    jsr scan_for_lowest
-    // scan_for_lowest()
-    lda.z scan_for_lowest.lowest
     // char hit_check=scan_for_lowest()
+    jsr scan_for_lowest
+    // char hit_check=scan_for_lowest()
+    lda.z scan_for_lowest.lowest
     // screen[0] = hit_check
     sta screen
     // BYTE0(ball_y[hit_check])

@@ -34,6 +34,7 @@ main: {
     // clock()
     jsr clock
     // dword cyclecount = clock()-CLOCKS_PER_INIT
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -88,7 +89,7 @@ clock: {
     // Stop the timer
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // 0xffffffff - *CIA2_TIMER_AB
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB

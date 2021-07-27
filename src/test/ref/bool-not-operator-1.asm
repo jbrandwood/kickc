@@ -20,12 +20,12 @@ main: {
     and #1
     // !b ? 1 : 0
     cmp #1
-    beq __b2
-    lda #1
+    bne __b2
+    lda #0
     jmp __b3
   __b2:
     // !b ? 1 : 0
-    lda #0
+    lda #1
   __b3:
     // screen[i] = c
     sta screen,x

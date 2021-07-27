@@ -2,11 +2,13 @@ Converting variable modified inside __stackcall procedure plus() to load/store i
 Adding parameter assignment in __stackcall procedure plus::b = param(plus::b)
 Adding parameter assignment in __stackcall procedure plus::a = param(plus::a)
 Inlined call call __init 
-Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call plus '0' main::v 
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
+Calling convention __stackcall adding prepare/execute/finalize for main::w = call plus '0' main::v 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(byte,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(byte,plus::OFFSET_STACK_B)
 Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return
-Calling convention STACK_CALL adding stack pull main::$1 = stackpull(byte)
+Calling convention STACK_CALL adding stack pull main::w = stackpull(byte)
 Calling convention STACK_CALL adding stack push stackpush(byte) = '0'
 Calling convention STACK_CALL adding stack push stackpush(byte) = main::v
 
@@ -18,14 +20,12 @@ main: scope:[main]  from __start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   main::a#2 = phi( main/main::a#0, main::@1/main::a#1 )
-  main::$0 = main::a#2 + 1
-  main::v#0 = main::$0
+  main::v#0 = main::a#2 + 1
   stackpush(byte) = '0'
   stackpush(byte) = main::v#0
   callexecute plus 
   sideeffect stackpullbytes(1)
-  main::$1 = stackpull(byte)
-  main::w#0 = main::$1
+  main::w#0 = stackpull(byte)
   main::$2 = main::w#0 + main::a#2
   SCREEN[i] = main::$2
   main::a#1 = main::a#2 + rangenext(0,1)
@@ -71,8 +71,6 @@ constant word STACK_BASE = $103
 void __start()
 byte i loadstore
 void main()
-number~ main::$0
-byte~ main::$1
 byte~ main::$2
 bool~ main::$3
 byte main::a
@@ -96,17 +94,13 @@ byte plus::return
 byte plus::return#0
 byte plus::return#1
 
-Adding number conversion cast (unumber) 1 in main::$0 = main::a#2 + 1
-Adding number conversion cast (unumber) main::$0 in main::$0 = main::a#2 + (unumber)1
+Adding number conversion cast (unumber) 1 in main::v#0 = main::a#2 + 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$0 = main::a#2 + 1
-Alias main::v#0 = main::$0 
-Alias main::w#0 = main::$1 
 Alias plus::return#0 = plus::$0 plus::return#1 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$3 [12] if(main::a#1!=rangelast(0,1)) goto main::@1
@@ -556,7 +550,7 @@ main: {
     // [13] main::v#0 = main::a#2 + 1 -- vbuxx=vbuz1_plus_1 
     ldx.z a
     inx
-    // plus('0', v)
+    // char w = plus('0', v)
     // [14] stackpush(byte) = '0' -- _stackpushbyte_=vbuc1 
     lda #'0'
     pha
@@ -567,7 +561,6 @@ main: {
     jsr plus
     // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
     pla
-    // char w = plus('0', v)
     // [18] main::w#0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // w+a

@@ -126,9 +126,9 @@ vblank: {
     // APU->OAMDMA = BYTE1(spriteBuffer)
     lda #>SPRITE_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
-    // readJoy1()
-    jsr readJoy1
     // char joy = readJoy1()
+    // Read controller 1
+    jsr readJoy1
     // if(joy)
     cmp #0
     beq __b1

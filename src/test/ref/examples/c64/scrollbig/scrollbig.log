@@ -1,5 +1,7 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement scroll_bit::$5
+Eliminating unused variable with no statement scroll_bit::$6
 
 CONTROL FLOW GRAPH SSA
 
@@ -137,8 +139,7 @@ scroll_bit::@7: scope:[scroll_bit]  from scroll_bit::@1
   asm { sei  }
   *PROCPORT = $32
   scroll_bit::$4 = SCREEN + $28
-  scroll_bit::$5 = scroll_bit::$4 + $27
-  scroll_bit::sc#0 = scroll_bit::$5
+  scroll_bit::sc#0 = scroll_bit::$4 + $27
   scroll_bit::r#0 = 0
   to:scroll_bit::@3
 scroll_bit::@2: scope:[scroll_bit]  from scroll_bit
@@ -149,9 +150,8 @@ scroll_bit::@2: scope:[scroll_bit]  from scroll_bit
 scroll_bit::@8: scope:[scroll_bit]  from scroll_bit::@2
   nxt#16 = phi( scroll_bit::@2/nxt#8 )
   next_char::return#3 = phi( scroll_bit::@2/next_char::return#0 )
-  scroll_bit::$6 = next_char::return#3
+  scroll_bit::c#0 = next_char::return#3
   nxt#4 = nxt#16
-  scroll_bit::c#0 = scroll_bit::$6
   scroll_bit::$7 = scroll_bit::c#0 * 8
   scroll_bit::$8 = CHARGEN + scroll_bit::$7
   current_chargen#4 = scroll_bit::$8
@@ -531,8 +531,6 @@ byte*~ scroll_bit::$12
 bool~ scroll_bit::$13
 bool~ scroll_bit::$2
 byte*~ scroll_bit::$4
-byte*~ scroll_bit::$5
-byte~ scroll_bit::$6
 number~ scroll_bit::$7
 byte*~ scroll_bit::$8
 byte~ scroll_bit::$9
@@ -601,7 +599,7 @@ Adding number conversion cast (unumber) scroll_bit::$0 in scroll_bit::$0 = curre
 Adding number conversion cast (unumber) 0 in scroll_bit::$1 = current_bit#4 == 0
 Adding number conversion cast (unumber) $32 in *PROCPORT = $32
 Adding number conversion cast (unumber) $28 in scroll_bit::$4 = SCREEN + $28
-Adding number conversion cast (unumber) $27 in scroll_bit::$5 = scroll_bit::$4 + $27
+Adding number conversion cast (unumber) $27 in scroll_bit::sc#0 = scroll_bit::$4 + $27
 Adding number conversion cast (unumber) 8 in scroll_bit::$7 = scroll_bit::c#0 * 8
 Adding number conversion cast (unumber) scroll_bit::$7 in scroll_bit::$7 = scroll_bit::c#0 * (unumber)8
 Adding number conversion cast (unumber) $80 in current_bit#5 = $80
@@ -726,8 +724,8 @@ Inferred type updated to byte in scroll_hard::$21 = scroll_hard::i#3 + 1
 Inferred type updated to byte in scroll_hard::$24 = scroll_hard::i#3 + 1
 Inversing boolean not [30] scroll_soft::$1 = scroll#2 != $ff from [29] scroll_soft::$0 = scroll#2 == $ff
 Inversing boolean not [51] scroll_bit::$2 = current_bit#4 != 0 from [50] scroll_bit::$1 = current_bit#4 == 0
-Inversing boolean not [78] scroll_bit::$11 = scroll_bit::$9 == 0 from [77] scroll_bit::$10 = scroll_bit::$9 != 0
-Inversing boolean not [100] next_char::$1 = next_char::c#0 != 0 from [99] next_char::$0 = next_char::c#0 == 0
+Inversing boolean not [76] scroll_bit::$11 = scroll_bit::$9 == 0 from [75] scroll_bit::$10 = scroll_bit::$9 != 0
+Inversing boolean not [98] next_char::$1 = next_char::c#0 != 0 from [97] next_char::$0 = next_char::c#0 == 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias scroll#20 = scroll#21 
 Alias current_bit#31 = current_bit#32 
@@ -756,11 +754,9 @@ Alias current_bit#4 = scroll_bit::$0
 Alias current_chargen#21 = current_chargen#26 
 Alias current_bit#23 = current_bit#28 
 Alias nxt#37 = nxt#39 
-Alias scroll_bit::sc#0 = scroll_bit::$5 
 Alias nxt#26 = nxt#31 
 Alias next_char::return#0 = next_char::return#3 
 Alias nxt#16 = nxt#4 
-Alias scroll_bit::c#0 = scroll_bit::$6 
 Alias current_chargen#4 = scroll_bit::$8 
 Alias scroll_bit::sc#1 = scroll_bit::$12 
 Alias scroll_bit::sc#3 = scroll_bit::sc#4 
@@ -2190,13 +2186,12 @@ scroll_bit: {
     bne __b1
     // [23] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
     // scroll_bit::@2
-    // next_char()
+    // unsigned int c = next_char()
     // [24] call next_char 
     jsr next_char
     // [25] next_char::return#0 = next_char::return#1 -- vbuaa=vbuxx 
     txa
     // scroll_bit::@8
-    // unsigned int c = next_char()
     // [26] scroll_bit::c#0 = next_char::return#0 -- vwuz1=vbuaa 
     sta.z c
     lda #0

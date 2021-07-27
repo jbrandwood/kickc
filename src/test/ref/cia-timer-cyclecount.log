@@ -1,13 +1,14 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement clock::$0
+Eliminating unused variable with no statement main::$2
 
 CONTROL FLOW GRAPH SSA
 
 dword clock()
 clock: scope:[clock]  from main::@3
   *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
-  clock::$0 = $ffffffff - *CIA2_TIMER_AB
-  clock::ticks#0 = clock::$0
+  clock::ticks#0 = $ffffffff - *CIA2_TIMER_AB
   *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
   clock::return#0 = clock::ticks#0
   to:clock::@return
@@ -128,8 +129,7 @@ main::@3: scope:[main]  from main::@2
 main::@4: scope:[main]  from main::@3
   clock::return#4 = phi( main::@3/clock::return#2 )
   main::$1 = clock::return#4
-  main::$2 = main::$1 - CLOCKS_PER_INIT
-  main::cyclecount#0 = main::$2
+  main::cyclecount#0 = main::$1 - CLOCKS_PER_INIT
   print_ulong_at::dw#0 = main::cyclecount#0
   print_ulong_at::at#0 = SCREEN
   call print_ulong_at 
@@ -172,7 +172,6 @@ constant byte RADIX::OCTAL = 8
 constant byte* const SCREEN = (byte*)$400
 void __start()
 dword clock()
-number~ clock::$0
 dword clock::return
 dword clock::return#0
 dword clock::return#1
@@ -184,7 +183,6 @@ dword clock::ticks#0
 void clock_start()
 void main()
 dword~ main::$1
-dword~ main::$2
 dword main::cyclecount
 dword main::cyclecount#0
 void print_char_at(byte print_char_at::ch , byte* print_char_at::at)
@@ -238,8 +236,7 @@ dword print_ulong_at::dw#0
 dword print_ulong_at::dw#1
 dword print_ulong_at::dw#2
 
-Adding number conversion cast (unumber) $ffffffff in clock::$0 = $ffffffff - *CIA2_TIMER_AB
-Adding number conversion cast (unumber) clock::$0 in clock::$0 = (unumber)$ffffffff - *CIA2_TIMER_AB
+Adding number conversion cast (unumber) $ffffffff in clock::ticks#0 = $ffffffff - *CIA2_TIMER_AB
 Adding number conversion cast (unumber) $ffffffff in *CIA2_TIMER_AB = $ffffffff
 Adding number conversion cast (unumber) 2 in print_uint_at::$3 = print_uint_at::at#3 + 2
 Adding number conversion cast (unumber) 4 in print_ulong_at::$3 = print_ulong_at::at#2 + 4
@@ -269,9 +266,8 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to dword in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Inferred type updated to byte in print_uchar_at::$2 = print_uchar_at::b#3 & $f
-Alias clock::return#0 = clock::ticks#0 clock::$0 clock::return#3 clock::return#1 
+Alias clock::return#0 = clock::ticks#0 clock::return#3 clock::return#1 
 Alias print_uchar_at::b#0 = print_uint_at::$0 
 Alias print_uint_at::w#2 = print_uint_at::w#3 
 Alias print_uint_at::at#2 = print_uint_at::at#3 
@@ -286,7 +282,6 @@ Alias print_uchar_at::b#2 = print_uchar_at::b#3
 Alias print_uchar_at::at#2 = print_uchar_at::at#3 
 Alias print_char_at::at#1 = print_uchar_at::$3 
 Alias clock::return#2 = clock::return#4 
-Alias main::cyclecount#0 = main::$2 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values print_ulong_at::dw#1 print_ulong_at::dw#0
 Identical Phi Values print_ulong_at::at#1 print_ulong_at::at#0
@@ -712,6 +707,7 @@ main: {
   __b3:
     // [6] main::$1 = clock::return#2
     // [7] main::cyclecount#0 = main::$1 - CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -1113,6 +1109,7 @@ main: {
     // [6] main::$1 = clock::return#2
     // dword cyclecount = clock()-CLOCKS_PER_INIT
     // [7] main::cyclecount#0 = main::$1 - CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -1179,7 +1176,7 @@ clock: {
     // Stop the timer
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // 0xffffffff - *CIA2_TIMER_AB
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     // [17] clock::return#0 = $ffffffff - *CIA2_TIMER_AB -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec

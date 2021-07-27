@@ -42,12 +42,11 @@ main: {
     bne !+
     inc.z j+1
   !:
-    // (int)i*2
+    // int k = (int)i*2
     lda.z i
     sta.z __4
     lda #0
     sta.z __4+1
-    // int k = (int)i*2
     asl.z k
     rol.z k+1
     // SCREEN[i++] = k

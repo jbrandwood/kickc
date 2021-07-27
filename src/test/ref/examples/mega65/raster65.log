@@ -24,6 +24,10 @@ Setting inferred volatile on symbol affected by address-of: memoryRemap256M::yVa
 Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVal in asm { ldalMb ldx#$0f ldyuMb ldz#$0f map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement irq::$1
+Eliminating unused variable with no statement irq::$17
+Eliminating unused variable with no statement irq::$20
 
 CONTROL FLOW GRAPH SSA
 
@@ -45,8 +49,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -259,8 +262,7 @@ irq::@16: scope:[irq]  from irq::@17 irq::@3
 irq::@17: scope:[irq]  from irq::@16
   irq::i#3 = phi( irq::@16/irq::i#2 )
   irq::sin_col#2 = phi( irq::@16/irq::sin_col#3 )
-  irq::$17 = SINE[irq::sin_col#2] / 4
-  irq::col1#0 = irq::$17
+  irq::col1#0 = SINE[irq::sin_col#2] / 4
   (COLORRAM+GREET_ROW*$28)[irq::i#3] = irq::col1#0
   irq::col1#1 = irq::col1#0 / 2
   (COLORRAM+LOGO_ROW*$28+0*$28-1)[irq::i#3] = irq::col1#1
@@ -300,8 +302,7 @@ irq::@23: scope:[irq]  from irq::@22
   irq::barcnt#3 = phi( irq::@22/irq::barcnt#2 )
   irq::sin_bar#2 = phi( irq::@22/irq::sin_bar#4 )
   irq::idx#0 = SINE[irq::sin_bar#2]
-  irq::$20 = irq::barcnt#3 * $10
-  irq::barcol#0 = irq::$20
+  irq::barcol#0 = irq::barcnt#3 * $10
   irq::i1#0 = 0
   to:irq::@25
 irq::@24: scope:[irq]  from irq::@22
@@ -375,8 +376,7 @@ irq::@32: scope:[irq]  from irq::@31
   irq::i3#1 = ++ irq::i3#3
   to:irq::@31
 irq::@33: scope:[irq]  from irq::@31
-  irq::$1 = greet_idx * $10
-  irq::greet_offset#0 = irq::$1
+  irq::greet_offset#0 = greet_idx * $10
   irq::i4#0 = 0
   to:irq::@34
 irq::@34: scope:[irq]  from irq::@33 irq::@35
@@ -507,7 +507,6 @@ void __start()
 volatile byte greet_idx loadstore
 volatile byte greet_zoomx loadstore
 __interrupt(hardware_clobber) void irq()
-number~ irq::$1
 number~ irq::$10
 bool~ irq::$11
 bool~ irq::$12
@@ -515,11 +514,9 @@ bool~ irq::$13
 bool~ irq::$14
 bool~ irq::$15
 bool~ irq::$16
-number~ irq::$17
 bool~ irq::$18
 bool~ irq::$19
 bool~ irq::$2
-number~ irq::$20
 bool~ irq::$21
 bool~ irq::$22
 bool~ irq::$23
@@ -695,7 +692,6 @@ byte main::i2#3
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -763,8 +759,7 @@ Adding number conversion cast (unumber) irq::$10 in irq::$10 = irq::zoomval#0 + 
 Adding number conversion cast (unumber) 0 in irq::$11 = greet_zoomx == 0
 Adding number conversion cast (unumber) 0 in greet_idx = 0
 Adding number conversion cast (unumber) $28 in irq::$16 = irq::i#2 < $28
-Adding number conversion cast (unumber) 4 in irq::$17 = SINE[irq::sin_col#2] / 4
-Adding number conversion cast (unumber) irq::$17 in irq::$17 = SINE[irq::sin_col#2] / (unumber)4
+Adding number conversion cast (unumber) 4 in irq::col1#0 = SINE[irq::sin_col#2] / 4
 Adding number conversion cast (unumber) GREET_ROW*$28 in (COLORRAM+GREET_ROW*$28)[irq::i#3] = irq::col1#0
 Adding number conversion cast (unumber) $28 in (COLORRAM+(unumber)GREET_ROW*$28)[irq::i#3] = irq::col1#0
 Adding number conversion cast (unumber) 2 in irq::col1#1 = irq::col1#0 / 2
@@ -796,8 +791,7 @@ Adding number conversion cast (unumber) SCROLL_ROW*$28 in (COLORRAM+SCROLL_ROW*$
 Adding number conversion cast (unumber) $28 in (COLORRAM+(unumber)SCROLL_ROW*$28)[irq::i#3] = PAL_GREEN[irq::sin_col#2]
 Adding number conversion cast (unumber) 0 in rasters[irq::l#3] = 0
 Adding number conversion cast (unumber) $10 in irq::$19 = irq::barcnt#2 < $10
-Adding number conversion cast (unumber) $10 in irq::$20 = irq::barcnt#3 * $10
-Adding number conversion cast (unumber) irq::$20 in irq::$20 = irq::barcnt#3 * (unumber)$10
+Adding number conversion cast (unumber) $10 in irq::barcol#0 = irq::barcnt#3 * $10
 Adding number conversion cast (unumber) $10 in irq::$21 = irq::i1#2 < $10
 Adding number conversion cast (unumber) $f in irq::$22 = irq::i2#2 < $f
 Adding number conversion cast (unumber) $a in irq::sin_bar#1 = irq::sin_bar#3 + $a
@@ -806,8 +800,7 @@ Adding number conversion cast (unumber) 2 in irq::$26 = rasters[irq::$25] / 2
 Adding number conversion cast (unumber) irq::$26 in irq::$26 = rasters[irq::$25] / (unumber)2
 Adding number conversion cast (unumber) 7 in irq::$27 = irq::$26 & 7
 Adding number conversion cast (unumber) irq::$27 in irq::$27 = irq::$26 & (unumber)7
-Adding number conversion cast (unumber) $10 in irq::$1 = greet_idx * $10
-Adding number conversion cast (unumber) irq::$1 in irq::$1 = greet_idx * (unumber)$10
+Adding number conversion cast (unumber) $10 in irq::greet_offset#0 = greet_idx * $10
 Adding number conversion cast (unumber) $10 in irq::$28 = irq::i4#2 < $10
 Adding number conversion cast (unumber) $bf in irq::$29 = GREETING[irq::greet_offset#2] & $bf
 Adding number conversion cast (unumber) irq::$29 in irq::$29 = GREETING[irq::greet_offset#2] & (unumber)$bf
@@ -996,25 +989,21 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $27
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in irq::$10 = irq::zoomval#0 + 1
-Inferred type updated to byte in irq::$17 = SINE[irq::sin_col#2] / 4
-Inferred type updated to byte in irq::$20 = irq::barcnt#3 * $10
 Inferred type updated to byte in irq::$26 = rasters[irq::$25] / 2
 Inferred type updated to byte in irq::$27 = irq::$26 & 7
-Inferred type updated to byte in irq::$1 = greet_idx * $10
 Inferred type updated to byte in irq::$29 = GREETING[irq::greet_offset#2] & $bf
 Inferred type updated to byte in irq::$33 = irq::nxt#2 & $bf
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
-Inversing boolean not [100] irq::$9 = irq::line#6 != SCROLL_Y+SCROLL_BLACKBARS+1 from [99] irq::$8 = irq::line#6 == SCROLL_Y+SCROLL_BLACKBARS+1
-Inversing boolean not [109] irq::$12 = greet_zoomx != 0 from [108] irq::$11 = greet_zoomx == 0
-Inversing boolean not [114] irq::$14 = greet_idx != GREET_COUNT from [113] irq::$13 = greet_idx == GREET_COUNT
-Inversing boolean not [204] irq::$3 = scroll_soft != $ff from [203] irq::$2 = scroll_soft == $ff
-Inversing boolean not [217] irq::$32 = irq::nxt#0 != 0 from [216] irq::$31 = irq::nxt#0 == 0
+Inversing boolean not [99] irq::$9 = irq::line#6 != SCROLL_Y+SCROLL_BLACKBARS+1 from [98] irq::$8 = irq::line#6 == SCROLL_Y+SCROLL_BLACKBARS+1
+Inversing boolean not [108] irq::$12 = greet_zoomx != 0 from [107] irq::$11 = greet_zoomx == 0
+Inversing boolean not [113] irq::$14 = greet_idx != GREET_COUNT from [112] irq::$13 = greet_idx == GREET_COUNT
+Inversing boolean not [200] irq::$3 = scroll_soft != $ff from [199] irq::$2 = scroll_soft == $ff
+Inversing boolean not [213] irq::$32 = irq::nxt#0 != 0 from [212] irq::$31 = irq::nxt#0 == 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1027,11 +1016,9 @@ Alias irq::line#7 = irq::line#8
 Alias irq::wobble_idx#5 = irq::wobble_idx#6 
 Alias irq::sin_col#2 = irq::sin_col#3 
 Alias irq::i#2 = irq::i#3 
-Alias irq::col1#0 = irq::$17 
 Alias irq::l#2 = irq::l#3 
 Alias irq::sin_bar#2 = irq::sin_bar#4 
 Alias irq::barcnt#2 = irq::barcnt#3 
-Alias irq::barcol#0 = irq::$20 
 Alias irq::barcol#3 = irq::barcol#5 irq::barcol#7 
 Alias irq::idx#3 = irq::idx#5 irq::idx#7 
 Alias irq::i1#2 = irq::i1#3 
@@ -1043,7 +1030,6 @@ Alias irq::i2#2 = irq::i2#3
 Alias irq::sin_bar#3 = irq::sin_bar#7 irq::sin_bar#5 
 Alias irq::barcnt#4 = irq::barcnt#7 irq::barcnt#5 
 Alias irq::i3#2 = irq::i3#3 
-Alias irq::greet_offset#0 = irq::$1 
 Alias irq::greet_offset#2 = irq::greet_offset#3 
 Alias irq::i4#2 = irq::i4#3 
 Alias irq::i5#2 = irq::i5#3 
@@ -2313,6 +2299,7 @@ irq: {
     // irq::@30
   __b30:
     // [27] irq::greet_offset#0 = greet_idx << 4 -- vbuyy=vbuz1_rol_4 
+    // Set up greetings    
     lda.z greet_idx
     asl
     asl
@@ -2541,6 +2528,7 @@ irq: {
     // irq::@17
   __b17:
     // [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
+    // Greeting colors
     lda SINE,y
     lsr
     lsr
@@ -3489,6 +3477,7 @@ irq: {
     // irq::@30
     // char greet_offset = greet_idx*16
     // [27] irq::greet_offset#0 = greet_idx << 4 -- vbuyy=vbuz1_rol_4 
+    // Set up greetings    
     lda.z greet_idx
     asl
     asl
@@ -3724,6 +3713,7 @@ irq: {
   __b17:
     // char col = SINE[sin_col]/4
     // [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
+    // Greeting colors
     lda SINE,y
     lsr
     lsr

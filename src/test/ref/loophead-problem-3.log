@@ -1,4 +1,6 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -60,10 +62,8 @@ main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main
   mul16u::return#4 = phi( main/mul16u::return#2 )
-  main::$0 = mul16u::return#4
-  main::result#0 = main::$0
-  main::$1 = word0  main::result#0
-  main::kaputt#0 = main::$1
+  main::result#0 = mul16u::return#4
+  main::kaputt#0 = word0  main::result#0
   main::$2 = byte0  main::kaputt#0
   *BORDER_COLOR = main::$2
   main::$3 = byte1  main::kaputt#0
@@ -88,8 +88,6 @@ constant byte* const BG_COLOR = (byte*)$d021
 constant byte* const BORDER_COLOR = (byte*)$d020
 void __start()
 void main()
-dword~ main::$0
-word~ main::$1
 byte~ main::$2
 byte~ main::$3
 word main::kaputt
@@ -177,8 +175,6 @@ Alias mul16u::a#0 = mul16u::$5
 Alias mul16u::mb#1 = mul16u::$6 
 Alias mul16u::res#1 = mul16u::$4 
 Alias mul16u::return#2 = mul16u::return#4 
-Alias main::result#0 = main::$0 
-Alias main::kaputt#0 = main::$1 
 Successful SSA optimization Pass2AliasElimination
 Alias mul16u::a#2 = mul16u::a#4 
 Alias mul16u::mb#2 = mul16u::mb#3 
@@ -595,14 +591,13 @@ Score: 1414
 main: {
     .label result = 2
     .label kaputt = $a
-    // mul16u(4,123)
+    // dword result = mul16u(4,123)
     // [1] call mul16u 
     // [10] phi from main to mul16u [phi:main->mul16u]
     jsr mul16u
-    // mul16u(4,123)
+    // dword result = mul16u(4,123)
     // [2] mul16u::return#2 = mul16u::res#2
     // main::@1
-    // dword result = mul16u(4,123)
     // [3] main::result#0 = mul16u::return#2
     // word kaputt = WORD0(result)
     // [4] main::kaputt#0 = word0  main::result#0 -- vwuz1=_word0_vduz2 

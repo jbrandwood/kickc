@@ -1,4 +1,6 @@
 Inlined call call __init 
+Eliminating unused variable with no statement main::$2
+Eliminating unused variable with no statement main::$3
 
 CONTROL FLOW GRAPH SSA
 
@@ -29,8 +31,7 @@ main::@4: scope:[main]  from main::@3
   idx#6 = phi( main::@3/idx#11 )
   main::j#3 = phi( main::@3/main::j#2 )
   main::i#3 = phi( main::@3/main::i#5 )
-  main::$2 = main::i#3 + main::j#3
-  main::x#0 = main::$2
+  main::x#0 = main::i#3 + main::j#3
   SCREEN[idx#6] = main::x#0
   idx#0 = ++ idx#6
   sum::a#0 = main::i#3
@@ -43,8 +44,7 @@ main::@6: scope:[main]  from main::@4
   main::j#4 = phi( main::@4/main::j#3 )
   idx#7 = phi( main::@4/idx#0 )
   sum::return#3 = phi( main::@4/sum::return#0 )
-  main::$3 = sum::return#3
-  main::y#0 = main::$3
+  main::y#0 = sum::return#3
   SCREEN[idx#7] = main::y#0
   idx#1 = ++ idx#7
   main::j#1 = ++ main::j#4
@@ -117,8 +117,6 @@ byte idx#9
 void main()
 bool~ main::$0
 bool~ main::$1
-byte~ main::$2
-byte~ main::$3
 byte main::i
 byte main::i#0
 byte main::i#1
@@ -168,10 +166,8 @@ Alias idx#12 = idx#16 idx#8 idx#2
 Alias main::i#3 = main::i#5 main::i#7 main::i#4 
 Alias main::j#2 = main::j#3 main::j#4 
 Alias idx#11 = idx#6 idx#15 
-Alias main::x#0 = main::$2 
 Alias sum::return#0 = sum::return#3 
 Alias idx#0 = idx#7 
-Alias main::y#0 = main::$3 
 Alias sum::return#1 = sum::$0 sum::return#4 sum::return#2 
 Alias idx#13 = idx#3 
 Alias idx#10 = idx#4 idx#9 idx#5 
@@ -592,7 +588,7 @@ main: {
     // SCREEN[idx++] = x;
     // [9] idx#0 = ++ idx#11 -- vbuyy=_inc_vbuyy 
     iny
-    // sum(i,j)
+    // char y = sum(i,j)
     // [10] sum::a#0 = main::i#2 -- vbuaa=vbuz1 
     lda.z i
     // [11] sum::b#0 = main::j#2
@@ -600,7 +596,6 @@ main: {
     jsr sum
     // [13] sum::return#0 = sum::return#1
     // main::@5
-    // char y = sum(i,j)
     // [14] main::y#0 = sum::return#0
     // SCREEN[idx++] = y
     // [15] SCREEN[idx#0] = main::y#0 -- pbuc1_derefidx_vbuyy=vbuaa 

@@ -15,19 +15,20 @@
   .label SCREEN_2 = 6
 .segment Code
 __start: {
-    // malloc()
+    // byte* SCREEN_1 = malloc()
     lda #<$400
     sta.z MEM
     lda #>$400
     sta.z MEM+1
     jsr malloc
-    // malloc()
+    // byte* SCREEN_1 = malloc()
     lda.z malloc.return
     sta.z malloc.return_1
     lda.z malloc.return+1
     sta.z malloc.return_1+1
+    // byte* SCREEN_2 = malloc()
     jsr malloc
-    // malloc()
+    // byte* SCREEN_2 = malloc()
     jsr main
     rts
 }

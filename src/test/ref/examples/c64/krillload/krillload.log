@@ -1,6 +1,7 @@
 Loading link script "krillload.ld"
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$6 = call toSpritePtr SPRITE 
+Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -35,8 +36,7 @@ main: scope:[main]  from __start
   to:main::@6
 main::@6: scope:[main]  from main
   krill_install::return#4 = phi( main/krill_install::return#2 )
-  main::$0 = krill_install::return#4
-  main::status#0 = main::$0
+  main::status#0 = krill_install::return#4
   main::$1 = main::status#0 != KRILL_OK
   main::$2 = ! main::$1
   if(main::$2) goto main::@1
@@ -145,7 +145,6 @@ byte krill_loadraw::return#3
 byte krill_loadraw::return#4
 constant byte* const krill_loadraw::status = (byte*)$ff
 void main()
-byte~ main::$0
 bool~ main::$1
 bool~ main::$2
 byte~ main::$3
@@ -216,13 +215,12 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
-Inversing boolean not [18] main::$2 = main::status#0 == KRILL_OK from [17] main::$1 = main::status#0 != KRILL_OK
-Inversing boolean not [27] main::$5 = main::status#1 == KRILL_OK from [26] main::$4 = main::status#1 != KRILL_OK
+Inversing boolean not [17] main::$2 = main::status#0 == KRILL_OK from [16] main::$1 = main::status#0 != KRILL_OK
+Inversing boolean not [26] main::$5 = main::status#1 == KRILL_OK from [25] main::$4 = main::status#1 != KRILL_OK
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias krill_install::return#0 = krill_install::return#3 krill_install::return#1 
 Alias krill_loadraw::return#0 = krill_loadraw::return#3 krill_loadraw::return#1 
 Alias krill_install::return#2 = krill_install::return#4 
-Alias main::status#0 = main::$0 
 Alias krill_loadraw::return#2 = krill_loadraw::return#4 
 Alias main::status#1 = main::$3 
 Alias main::toSpritePtr1_sprite#0 = main::toSpritePtr1_sprite#1 
@@ -464,6 +462,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const toSpritePtr1_return = $ff&SPRITE/$40
     // [1] call krill_install 
+    // Install the Krill drive code
     jsr krill_install
     // [2] krill_install::return#2 = krill_install::return#0
     jmp __b6
@@ -743,12 +742,12 @@ Score: 130
   // main
 main: {
     .const toSpritePtr1_return = $ff&SPRITE/$40
-    // krill_install()
+    // char status = krill_install()
     // [1] call krill_install 
+    // Install the Krill drive code
     jsr krill_install
     // [2] krill_install::return#2 = krill_install::return#0
     // main::@6
-    // char status = krill_install()
     // [3] main::status#0 = krill_install::return#2
     // if(status!=KRILL_OK)
     // [4] if(main::status#0==KRILL_OK) goto main::@1 -- vbuaa_eq_vbuc1_then_la1 

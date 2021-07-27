@@ -1,3 +1,4 @@
+Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -8,8 +9,7 @@ main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main
   scan_for_lowest::return#3 = phi( main/scan_for_lowest::return#0 )
-  main::$0 = scan_for_lowest::return#3
-  main::hit_check#0 = main::$0
+  main::hit_check#0 = scan_for_lowest::return#3
   main::screen[0] = main::hit_check#0
   main::$3 = main::hit_check#0 * SIZEOF_SIGNED_WORD
   main::$1 = byte0  ball_y[main::$3]
@@ -81,7 +81,6 @@ constant byte SIZEOF_SIGNED_WORD = 2
 void __start()
 constant signed word* ball_y[8]  = { $32, $64, -$c8, $c, -$64, $4b, 0, -$79 }
 void main()
-byte~ main::$0
 byte~ main::$1
 byte~ main::$2
 byte~ main::$3
@@ -138,10 +137,9 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [22] scan_for_lowest::$2 = ball_y[scan_for_lowest::$3] >= scan_for_lowest::height#2 from [21] scan_for_lowest::$1 = ball_y[scan_for_lowest::$3] < scan_for_lowest::height#2
+Inversing boolean not [21] scan_for_lowest::$2 = ball_y[scan_for_lowest::$3] >= scan_for_lowest::height#2 from [20] scan_for_lowest::$1 = ball_y[scan_for_lowest::$3] < scan_for_lowest::height#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias scan_for_lowest::return#0 = scan_for_lowest::return#3 
-Alias main::hit_check#0 = main::$0 
 Alias scan_for_lowest::i#2 = scan_for_lowest::i#3 scan_for_lowest::i#5 scan_for_lowest::lowest#1 
 Alias scan_for_lowest::height#2 = scan_for_lowest::height#3 
 Alias scan_for_lowest::lowest#2 = scan_for_lowest::lowest#5 scan_for_lowest::lowest#3 scan_for_lowest::return#1 scan_for_lowest::return#4 scan_for_lowest::return#2 
@@ -149,7 +147,7 @@ Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) scan_for_lowest::i#2 = scan_for_lowest::i#4 
 Identical Phi Values scan_for_lowest::i#4 scan_for_lowest::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [9] main::$4 = main::hit_check#0 * SIZEOF_SIGNED_WORD
+Identified duplicate assignment right side [8] main::$4 = main::hit_check#0 * SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition scan_for_lowest::$0 [16] if(scan_for_lowest::i#2<8) goto scan_for_lowest::@2
 Simple Condition scan_for_lowest::$2 [19] if(ball_y[scan_for_lowest::$3]>=scan_for_lowest::height#2) goto scan_for_lowest::@4
@@ -554,15 +552,14 @@ Score: 770
   // main
 main: {
     .label screen = $400
-    // scan_for_lowest()
+    // char hit_check=scan_for_lowest()
     // [1] call scan_for_lowest 
     // [11] phi from main to scan_for_lowest [phi:main->scan_for_lowest]
     jsr scan_for_lowest
-    // scan_for_lowest()
+    // char hit_check=scan_for_lowest()
     // [2] scan_for_lowest::return#0 = scan_for_lowest::lowest#2 -- vbuaa=vbuz1 
     lda.z scan_for_lowest.lowest
     // main::@1
-    // char hit_check=scan_for_lowest()
     // [3] main::hit_check#0 = scan_for_lowest::return#0
     // screen[0] = hit_check
     // [4] *main::screen = main::hit_check#0 -- _deref_pbuc1=vbuaa 

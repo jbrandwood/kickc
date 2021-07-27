@@ -1,3 +1,5 @@
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$5
 
 CONTROL FLOW GRAPH SSA
 
@@ -8,8 +10,7 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   main::$9 = main::i#2 * SIZEOF_STRUCT_POINT
-  main::$0 = points + main::$9
-  main::point_i#0 = main::$0
+  main::point_i#0 = points + main::$9
   main::$11 = (byte*)main::point_i#0
   main::$1 = main::$11 + OFFS_X
   *main::$1 = main::i#2
@@ -27,8 +28,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2 main::@3
   main::i1#2 = phi( main::@2/main::i1#0, main::@3/main::i1#1 )
   main::$10 = main::i1#2 * SIZEOF_STRUCT_POINT
-  main::$5 = points + main::$10
-  main::point_i1#0 = main::$5
+  main::point_i1#0 = points + main::$10
   main::$13 = (byte*)main::point_i1#0
   main::$6 = main::$13 + OFFS_X
   main::SCREEN[main::i1#2] = *main::$6
@@ -59,7 +59,6 @@ constant const byte OFFS_Y = 1
 constant byte SIZEOF_STRUCT_POINT = 2
 void __start()
 void main()
-struct Point*~ main::$0
 byte*~ main::$1
 byte~ main::$10
 byte*~ main::$11
@@ -69,7 +68,6 @@ byte*~ main::$14
 byte*~ main::$2
 number~ main::$3
 bool~ main::$4
-struct Point*~ main::$5
 byte*~ main::$6
 byte*~ main::$7
 bool~ main::$8
@@ -101,9 +99,6 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$3 = main::i#2 + 4
-Alias main::point_i#0 = main::$0 
-Alias main::point_i1#0 = main::$5 
-Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$4 [13] if(main::i#1!=rangelast(0,3)) goto main::@1
 Simple Condition main::$8 [26] if(main::i1#1!=rangelast(0,3)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -481,12 +476,11 @@ main: {
     // [1] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
-    // points+i
+    // struct Point* point_i = points+i
     // [2] main::$9 = main::i#2 << 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
-    // struct Point* point_i = points+i
     // [3] main::point_i#0 = points + main::$9 -- pssz1=pssc1_plus_vbuyy 
     tya
     clc
@@ -522,12 +516,11 @@ main: {
     // [9] phi main::i1#2 = main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // main::@2
   __b2:
-    // points+i
+    // struct Point* point_i = points+i
     // [10] main::$10 = main::i1#2 << 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
-    // struct Point* point_i = points+i
     // [11] main::point_i1#0 = points + main::$10 -- pssz1=pssc1_plus_vbuyy 
     tya
     clc

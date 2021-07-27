@@ -111,6 +111,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       statementSequence.addStatement(statement);
    }
 
+   Statement getPreviousStatement() {
+      ProcedureCompilation procedureCompilation = getCurrentProcedureCompilation();
+      if(procedureCompilation == null) {
+         Procedure initProc = getInitProc();
+         procedureCompilation = program.getProcedureCompilation(initProc.getRef());
+      }
+      final StatementSequence statementSequence = procedureCompilation.getStatementSequence();
+      List<Statement> statements = statementSequence.getStatements();
+      if(statements.size()==0)
+         return null;
+      else
+         return statements.get(statements.size()-1);
+   }
+
+
    private Procedure getInitProc() {
       // Statement outside procedure declaration - put into the _init procedure
       Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
@@ -421,7 +436,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(ctx.stmtSeq());
       }
       addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
+      if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null && returnVar.isKindPhiMaster()) {
          addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       }
       SymbolVariableRef returnVarRef = null;
@@ -998,8 +1013,32 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   // Add comments to constant
                   variable.setComments(ensureUnusedComments(declComments));
                } else if(!variable.isKindConstant() && !isStructMember) {
-                  Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, declSource, Comment.NO_COMMENTS);
-                  addStatement(initStmt);
+
+                  // The previous assignment of an intermediate variable that can be modified instead of creating a new statement
+                  StatementLValue previousAssignment = null;
+
+                  if(initValue instanceof VariableRef) {
+                     VariableRef initVarRef = (VariableRef) initValue;
+                     if(initVarRef.isIntermediate()) {
+                        Statement previousStatement = getPreviousStatement();
+                        if(previousStatement instanceof StatementLValue && ((StatementLValue) previousStatement).getlValue().equals(initVarRef)) {
+                           previousAssignment = (StatementLValue) previousStatement;
+                        }
+                     }
+                  }
+
+                  Statement initStmt;
+                  if(previousAssignment!=null) {
+                     previousAssignment.setlValue(variable.getVariableRef());
+                     previousAssignment.setInitialAssignment(true);
+                     previousAssignment.setSource(declSource);
+                     initStmt = previousAssignment;
+                  } else {
+                     initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, declSource, Comment.NO_COMMENTS);
+                     addStatement(initStmt);
+                  }
+
+
                   if(variable.getScope().getRef().equals(ScopeRef.ROOT)) {
                      // Add comments to variable for global vars
                      variable.setComments(ensureUnusedComments(declComments));

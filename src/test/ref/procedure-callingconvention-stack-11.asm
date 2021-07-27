@@ -122,14 +122,13 @@ main: {
     // }
     rts
   __b2:
-    // get(i)
+    // struct Vector v = get(i)
     lda.z i
     pha
     pha
     pha
     pha
     jsr get
-    // struct Vector v = get(i)
     pla
     tay
     pla

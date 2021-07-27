@@ -2238,10 +2238,10 @@ public class TestProgramsFast extends TestPrograms {
    }
 
 
-   //@Test
-   //public void testUnion7() throws IOException {
-   //   compileAndCompare("union-7.c", log().verboseStructUnwind());
-   //}
+   @Test
+   public void testUnion7() throws IOException {
+      compileAndCompare("union-7.c");
+   }
 
    @Test
    public void testUnion6() throws IOException {

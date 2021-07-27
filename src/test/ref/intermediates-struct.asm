@@ -53,7 +53,7 @@ sum: {
     stx.z $ff
     clc
     adc.z $ff
-    // __ma struct Data d = { a+b, b }
+    // struct Data d = { a+b, b }
     sta.z d
     stx d+OFFSET_STRUCT_DATA_D
     // return d;

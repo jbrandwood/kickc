@@ -335,6 +335,8 @@ public class VariableBuilder {
          return false;
       else if(isTypeStruct() && config.isStructModelClassic())
          return false;
+      else if(isTypeStruct() && ((SymbolTypeStruct)type).isUnion())
+         return false;
       else {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeIntermediate(), isScopeParameter(), isScopeMember());
          VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct(), isTypeVar());

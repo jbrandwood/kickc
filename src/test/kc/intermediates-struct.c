@@ -18,7 +18,7 @@ void main() {
 }
 
 struct Data sum(char a,char b) {
-    __ma struct Data d = { a+b, b };
+    struct Data d = { a+b, b };
     return d;
 }
 

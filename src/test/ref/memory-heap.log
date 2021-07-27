@@ -1,4 +1,7 @@
 Inlined call call __init 
+Eliminating unused variable with no statement malloc::$0
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,8 +9,7 @@ void* malloc(word malloc::size)
 malloc: scope:[malloc]  from main main::@3
   malloc::size#2 = phi( main/malloc::size#0, main::@3/malloc::size#1 )
   heap_head#8 = phi( main/heap_head#15, main::@3/heap_head#2 )
-  malloc::$0 = heap_head#8 - malloc::size#2
-  malloc::mem#0 = malloc::$0
+  malloc::mem#0 = heap_head#8 - malloc::size#2
   heap_head#0 = malloc::mem#0
   malloc::return#0 = ((void*)) malloc::mem#0
   to:malloc::@return
@@ -36,9 +38,8 @@ main: scope:[main]  from __start::@1
 main::@3: scope:[main]  from main
   heap_head#10 = phi( main/heap_head#1 )
   malloc::return#5 = phi( main/malloc::return#2 )
-  main::$0 = malloc::return#5
+  main::buf1#0 = ((byte*)) malloc::return#5
   heap_head#2 = heap_head#10
-  main::buf1#0 = ((byte*)) main::$0
   malloc::size#1 = $64
   call malloc 
   malloc::return#3 = malloc::return#1
@@ -47,9 +48,8 @@ main::@4: scope:[main]  from main::@3
   main::buf1#4 = phi( main::@3/main::buf1#0 )
   heap_head#11 = phi( main::@3/heap_head#1 )
   malloc::return#6 = phi( main::@3/malloc::return#3 )
-  main::$1 = malloc::return#6
+  main::buf2#0 = ((byte*)) malloc::return#6
   heap_head#3 = heap_head#11
-  main::buf2#0 = ((byte*)) main::$1
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4
@@ -145,8 +145,6 @@ byte* heap_head#7
 byte* heap_head#8
 byte* heap_head#9
 void main()
-void*~ main::$0
-void*~ main::$1
 number~ main::$4
 bool~ main::$5
 byte* main::buf1
@@ -168,7 +166,6 @@ byte main::i#1
 byte main::i#2
 constant byte* main::screen = (byte*)$400
 void* malloc(word malloc::size)
-byte*~ malloc::$0
 byte* malloc::mem
 byte* malloc::mem#0
 void* malloc::return
@@ -193,9 +190,9 @@ Adding number conversion cast (unumber) 1 in main::screen[1] = *main::buf2#3
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast malloc::return#0 = (void*)malloc::mem#0
 Inlining cast malloc::size#0 = (unumber)$64
-Inlining cast main::buf1#0 = (byte*)main::$0
+Inlining cast main::buf1#0 = (byte*)malloc::return#5
 Inlining cast malloc::size#1 = (unumber)$64
-Inlining cast main::buf2#0 = (byte*)main::$1
+Inlining cast main::buf2#0 = (byte*)malloc::return#6
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 40960
@@ -212,7 +209,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$4 = $ff - main::i#2
-Alias malloc::mem#0 = malloc::$0 
 Alias malloc::return#0 = malloc::return#4 malloc::return#1 
 Alias heap_head#0 = heap_head#9 heap_head#1 
 Alias malloc::return#2 = malloc::return#5 
@@ -234,22 +230,22 @@ Identical Phi Values main::buf2#1 main::buf2#0
 Identical Phi Values heap_head#12 heap_head#11
 Identical Phi Values heap_head#13 heap_head#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition main::$5 [26] if(main::i#1!=rangelast(0,$63)) goto main::@1
+Simple Condition main::$5 [24] if(main::i#1!=rangelast(0,$63)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant malloc::size#0 = $64
 Constant malloc::size#1 = $64
 Constant main::i#0 = 0
 Constant heap_head#17 = HEAP_TOP
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [24] main::i#1 = ++ main::i#2 to ++
-Resolved ranged comparison value [26] if(main::i#1!=rangelast(0,$63)) goto main::@1 to $64
-Simplifying expression containing zero main::screen in [31] main::screen[0] = *main::buf1#0
+Resolved ranged next value [22] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [24] if(main::i#1!=rangelast(0,$63)) goto main::@1 to $64
+Simplifying expression containing zero main::screen in [29] main::screen[0] = *main::buf1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable free::ptr#0 and assignment [20] free::ptr#0 = (void*)main::buf1#0
-Eliminating unused variable free::ptr#1 and assignment [22] free::ptr#1 = (void*)main::buf2#0
+Eliminating unused variable free::ptr#0 and assignment [18] free::ptr#0 = (void*)main::buf1#0
+Eliminating unused variable free::ptr#1 and assignment [20] free::ptr#1 = (void*)main::buf2#0
 Successful SSA optimization PassNEliminateUnusedVars
-Removing call to empty/unused procedure [20] call free 
-Removing call to empty/unused procedure [21] call free 
+Removing call to empty/unused procedure [18] call free 
+Removing call to empty/unused procedure [19] call free 
 Removing unused procedure free
 Removing unused procedure block free
 Removing unused procedure block free::@return
@@ -261,7 +257,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $64 in [18] if(main::i#1!=$64) goto main::@1
+Adding number conversion cast (unumber) $64 in [16] if(main::i#1!=$64) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $64
 Successful SSA optimization PassNCastSimplification
@@ -270,10 +266,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining Noop Cast [3] malloc::return#0 = (void*)malloc::mem#0 keeping malloc::mem#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining Noop Cast [6] malloc::return#2 = (void*)malloc::mem#0 keeping malloc::mem#0
-Inlining Noop Cast [10] malloc::return#3 = (void*)malloc::mem#0 keeping malloc::mem#0
-Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [8] main::buf1#0 = (byte*)main::$0 keeping main::buf1#0
-Inlining Noop Cast [12] main::buf2#0 = (byte*)main::$1 keeping main::buf2#0
+Inlining Noop Cast [9] malloc::return#3 = (void*)malloc::mem#0 keeping malloc::mem#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings malloc::size#0
 Inlining constant with var siblings malloc::size#1
@@ -321,23 +314,23 @@ main: scope:[main]  from
   [1] call malloc 
   to:main::@2
 main::@2: scope:[main]  from main
-  [2] main::buf1#0 = (void*)malloc::mem#0
+  [2] main::buf1#0 = (byte*)(void*)malloc::mem#0
   [3] call malloc 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [4] main::buf2#0 = (void*)malloc::mem#0
+  [4] main::buf2#0 = (byte*)(void*)malloc::mem#0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@3
   [5] main::i#2 = phi( main::@1/main::i#1, main::@3/0 )
-  [6] ((byte*)main::buf1#0)[main::i#2] = main::i#2
+  [6] main::buf1#0[main::i#2] = main::i#2
   [7] main::$4 = $ff - main::i#2
-  [8] ((byte*)main::buf2#0)[main::i#2] = main::$4
+  [8] main::buf2#0[main::i#2] = main::$4
   [9] main::i#1 = ++ main::i#2
   [10] if(main::i#1!=$64) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@1
-  [11] *main::screen = *((byte*)main::buf1#0)
-  [12] *(main::screen+1) = *((byte*)main::buf2#0)
+  [11] *main::screen = *main::buf1#0
+  [12] *(main::screen+1) = *main::buf2#0
   to:main::@return
 main::@return: scope:[main]  from main::@4
   [13] return 
@@ -361,9 +354,9 @@ byte* heap_head#8 13.0
 void main()
 byte~ main::$4 22.0
 byte* main::buf1
-void* main::buf1#0 0.2222222222222222
+byte* main::buf1#0 1.666666666666667
 byte* main::buf2
-void* main::buf2#0 0.25
+byte* main::buf2#0 1.875
 byte main::i
 byte main::i#1 16.5
 byte main::i#2 16.5
@@ -394,20 +387,20 @@ Allocated zp[2]:7 [ main::buf2#0 ]
 Allocated zp[1]:9 [ main::$4 ]
 Allocated zp[2]:10 [ malloc::mem#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::buf1#0 = (void*)malloc::mem#0 [ main::buf1#0 heap_head#0 ] (  [ main::buf1#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
-Statement [4] main::buf2#0 = (void*)malloc::mem#0 [ main::buf1#0 main::buf2#0 ] (  [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::buf1#0 = (byte*)(void*)malloc::mem#0 [ main::buf1#0 heap_head#0 ] (  [ main::buf1#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
+Statement [4] main::buf2#0 = (byte*)(void*)malloc::mem#0 [ main::buf1#0 main::buf2#0 ] (  [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$4 = $ff - main::i#2 [ main::buf1#0 main::buf2#0 main::i#2 main::$4 ] (  [ main::buf1#0 main::buf2#0 main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [11] *main::screen = *((byte*)main::buf1#0) [ main::buf2#0 ] (  [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] *(main::screen+1) = *((byte*)main::buf2#0) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] *main::screen = *main::buf1#0 [ main::buf2#0 ] (  [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] *(main::screen+1) = *main::buf2#0 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [15] malloc::mem#0 = heap_head#8 - $64 [ malloc::mem#0 ] ( malloc:1 [ malloc::mem#0 ] { }  malloc:3 [ main::buf1#0 malloc::mem#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
 Statement [16] heap_head#0 = malloc::mem#0 [ malloc::mem#0 heap_head#0 ] ( malloc:1 [ malloc::mem#0 heap_head#0 ] { }  malloc:3 [ main::buf1#0 malloc::mem#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
-Statement [2] main::buf1#0 = (void*)malloc::mem#0 [ main::buf1#0 heap_head#0 ] (  [ main::buf1#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
-Statement [4] main::buf2#0 = (void*)malloc::mem#0 [ main::buf1#0 main::buf2#0 ] (  [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a 
-Statement [6] ((byte*)main::buf1#0)[main::i#2] = main::i#2 [ main::buf1#0 main::buf2#0 main::i#2 ] (  [ main::buf1#0 main::buf2#0 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] main::buf1#0 = (byte*)(void*)malloc::mem#0 [ main::buf1#0 heap_head#0 ] (  [ main::buf1#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
+Statement [4] main::buf2#0 = (byte*)(void*)malloc::mem#0 [ main::buf1#0 main::buf2#0 ] (  [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a 
+Statement [6] main::buf1#0[main::i#2] = main::i#2 [ main::buf1#0 main::buf2#0 main::i#2 ] (  [ main::buf1#0 main::buf2#0 main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$4 = $ff - main::i#2 [ main::buf1#0 main::buf2#0 main::i#2 main::$4 ] (  [ main::buf1#0 main::buf2#0 main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
-Statement [11] *main::screen = *((byte*)main::buf1#0) [ main::buf2#0 ] (  [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] *(main::screen+1) = *((byte*)main::buf2#0) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] *main::screen = *main::buf1#0 [ main::buf2#0 ] (  [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] *(main::screen+1) = *main::buf2#0 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [15] malloc::mem#0 = heap_head#8 - $64 [ malloc::mem#0 ] ( malloc:1 [ malloc::mem#0 ] { }  malloc:3 [ main::buf1#0 malloc::mem#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
 Statement [16] heap_head#0 = malloc::mem#0 [ malloc::mem#0 heap_head#0 ] ( malloc:1 [ malloc::mem#0 heap_head#0 ] { }  malloc:3 [ main::buf1#0 malloc::mem#0 heap_head#0 ] { { heap_head#0 = heap_head#8 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
@@ -418,7 +411,7 @@ Potential registers zp[1]:9 [ main::$4 ] : zp[1]:9 , reg byte a , reg byte x , r
 Potential registers zp[2]:10 [ malloc::mem#0 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 33: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:9 [ main::$4 ] 0.25: zp[2]:7 [ main::buf2#0 ] 0.22: zp[2]:5 [ main::buf1#0 ] 
+Uplift Scope [main] 33: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:9 [ main::$4 ] 1.88: zp[2]:7 [ main::buf2#0 ] 1.67: zp[2]:5 [ main::buf1#0 ] 
 Uplift Scope [] 16.25: zp[2]:3 [ heap_head#8 heap_head#0 ] 
 Uplift Scope [malloc] 4.4: zp[2]:10 [ malloc::mem#0 ] 
 Uplift Scope [RADIX] 
@@ -467,7 +460,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [2] main::buf1#0 = (void*)malloc::mem#0 -- pvoz1=pvoz2 
+    // [2] main::buf1#0 = (byte*)(void*)malloc::mem#0 -- pbuz1=pbuz2 
     lda.z malloc.mem
     sta.z buf1
     lda.z malloc.mem+1
@@ -480,7 +473,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [4] main::buf2#0 = (void*)malloc::mem#0
+    // [4] main::buf2#0 = (byte*)(void*)malloc::mem#0
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
     // [5] phi main::i#2 = 0 [phi:main::@3->main::@1#0] -- vbuyy=vbuc1 
@@ -492,7 +485,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] ((byte*)main::buf1#0)[main::i#2] = main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
+    // [6] main::buf1#0[main::i#2] = main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
     sta (buf1),y
     // [7] main::$4 = $ff - main::i#2 -- vbuaa=vbuc1_minus_vbuyy 
@@ -500,7 +493,7 @@ main: {
     eor #$ff
     sec
     adc #$ff
-    // [8] ((byte*)main::buf2#0)[main::i#2] = main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [8] main::buf2#0[main::i#2] = main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (buf2),y
     // [9] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -510,11 +503,11 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [11] *main::screen = *((byte*)main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [11] *main::screen = *main::buf1#0 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta screen
-    // [12] *(main::screen+1) = *((byte*)main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [12] *(main::screen+1) = *main::buf2#0 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta screen+1
@@ -587,9 +580,9 @@ byte* heap_head#8 heap_head zp[2]:2 13.0
 void main()
 byte~ main::$4 reg byte a 22.0
 byte* main::buf1
-void* main::buf1#0 buf1 zp[2]:4 0.2222222222222222
+byte* main::buf1#0 buf1 zp[2]:4 1.666666666666667
 byte* main::buf2
-void* main::buf2#0 buf2 zp[2]:6 0.25
+byte* main::buf2#0 buf2 zp[2]:6 1.875
 byte main::i
 byte main::i#1 reg byte y 16.5
 byte main::i#2 reg byte y 16.5
@@ -632,7 +625,7 @@ main: {
     .label screen = $400
     .label buf1 = 4
     .label buf2 = 6
-    // malloc(100)
+    // unsigned char* buf1 = malloc(100)
     // [1] call malloc 
     // [14] phi from main to malloc [phi:main->malloc]
     // [14] phi heap_head#8 = HEAP_TOP [phi:main->malloc#0] -- pbuz1=pbuc1 
@@ -642,19 +635,20 @@ main: {
     sta.z heap_head+1
     jsr malloc
     // main::@2
-    // malloc(100)
-    // [2] main::buf1#0 = (void*)malloc::mem#0 -- pvoz1=pvoz2 
+    // unsigned char* buf1 = malloc(100)
+    // [2] main::buf1#0 = (byte*)(void*)malloc::mem#0 -- pbuz1=pbuz2 
     lda.z malloc.mem
     sta.z buf1
     lda.z malloc.mem+1
     sta.z buf1+1
+    // unsigned char* buf2 = malloc(100)
     // [3] call malloc 
     // [14] phi from main::@2 to malloc [phi:main::@2->malloc]
     // [14] phi heap_head#8 = heap_head#0 [phi:main::@2->malloc#0] -- register_copy 
     jsr malloc
     // main::@3
-    // malloc(100)
-    // [4] main::buf2#0 = (void*)malloc::mem#0
+    // unsigned char* buf2 = malloc(100)
+    // [4] main::buf2#0 = (byte*)(void*)malloc::mem#0
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi main::i#2 = 0 [phi:main::@3->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
@@ -663,7 +657,7 @@ main: {
     // main::@1
   __b1:
     // buf1[i] = i
-    // [6] ((byte*)main::buf1#0)[main::i#2] = main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
+    // [6] main::buf1#0[main::i#2] = main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
     sta (buf1),y
     // 255-i
@@ -673,7 +667,7 @@ main: {
     sec
     adc #$ff
     // buf2[i] = 255-i
-    // [8] ((byte*)main::buf2#0)[main::i#2] = main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [8] main::buf2#0[main::i#2] = main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (buf2),y
     // for(unsigned char i:0..99)
     // [9] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
@@ -683,12 +677,12 @@ main: {
     bne __b1
     // main::@4
     // screen[0] = *buf1
-    // [11] *main::screen = *((byte*)main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [11] *main::screen = *main::buf1#0 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta screen
     // screen[1] = *buf2
-    // [12] *(main::screen+1) = *((byte*)main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [12] *(main::screen+1) = *main::buf2#0 -- _deref_pbuc1=_deref_pbuz1 
     lda (buf2),y
     sta screen+1
     // main::@return

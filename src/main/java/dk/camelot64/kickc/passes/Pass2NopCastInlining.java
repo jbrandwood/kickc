@@ -86,8 +86,12 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                         }
                      } else if(mode == null || mode == Mode.EXPR) {
                         boolean modifyExpr = false;
-                        if(castValue.getValue() instanceof VariableRef) {
-                           VariableRef castVarRef = (VariableRef) castValue.getValue();
+                        RValue castVal = castValue.getValue();
+                        while(castVal instanceof CastValue) {
+                           castVal = ((CastValue) castVal).getValue();
+                        }
+                        if(castVal instanceof VariableRef) {
+                           VariableRef castVarRef = (VariableRef) castVal;
                            VariableRef lValueRef = (VariableRef) assignment.getlValue();
                            if(castVarRef.getScopeNames().equals(lValueRef.getScopeNames())) {
                               // Same scope - optimize away

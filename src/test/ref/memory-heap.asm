@@ -16,19 +16,20 @@ main: {
     .label screen = $400
     .label buf1 = 4
     .label buf2 = 6
-    // malloc(100)
+    // unsigned char* buf1 = malloc(100)
     lda #<HEAP_TOP
     sta.z heap_head
     lda #>HEAP_TOP
     sta.z heap_head+1
     jsr malloc
-    // malloc(100)
+    // unsigned char* buf1 = malloc(100)
     lda.z malloc.mem
     sta.z buf1
     lda.z malloc.mem+1
     sta.z buf1+1
+    // unsigned char* buf2 = malloc(100)
     jsr malloc
-    // malloc(100)
+    // unsigned char* buf2 = malloc(100)
     ldy #0
   __b1:
     // buf1[i] = i

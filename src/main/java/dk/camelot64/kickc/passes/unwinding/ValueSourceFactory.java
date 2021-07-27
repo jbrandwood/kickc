@@ -33,9 +33,14 @@ public class ValueSourceFactory {
       if(valueType instanceof SymbolTypeStruct && value instanceof CastValue && ((CastValue) value).getValue() instanceof ValueList) {
          ValueList valueList = (ValueList) ((CastValue) value).getValue();
          final StructDefinition structDefinition = ((SymbolTypeStruct) valueType).getStructDefinition(programScope);
-         int numMembers = structDefinition.getAllVars(false).size();
-         if(numMembers != valueList.getList().size()) {
-            throw new CompileError("Struct initialization list has wrong size. Need  " + numMembers + " got " + valueList.getList().size(), currentStmt);
+         int expectSize;
+         if(structDefinition.isUnion()) {
+            expectSize = 1;
+         }  else {
+            expectSize = structDefinition.getAllVars(false).size();
+         }
+         if(expectSize != valueList.getList().size()) {
+            throw new CompileError("Struct/Union initialization list has wrong size. Need  " + expectSize + " got " + valueList.getList().size(), currentStmt);
          }
          return new ValueSourceStructValueList(valueList, structDefinition);
       }

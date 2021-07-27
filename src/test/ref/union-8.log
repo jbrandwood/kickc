@@ -1,0 +1,450 @@
+Constantified RValue data::return = (union Data){ data::i }
+Inlined call call __init 
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
+Removing C-classic struct-unwound assignment data::return = struct-unwound {*((word*)&data::return+OFFSET_UNION_DATA_W)}
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  idx#11 = phi( __start::@1/idx#12 )
+  data::i#0 = $1234
+  call data 
+  data::return = data::return
+  to:main::@1
+main::@1: scope:[main]  from main
+  idx#6 = phi( main/idx#11 )
+  main::d1 = data::return
+  SCREEN[idx#6] = *((byte*)&main::d1+OFFSET_UNION_DATA_B)
+  idx#0 = ++ idx#6
+  data::i#1 = $5678
+  call data 
+  data::return = data::return
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  idx#7 = phi( main::@1/idx#0 )
+  main::d2 = data::return
+  SCREEN[idx#7] = *((byte*)&main::d2+OFFSET_UNION_DATA_B)
+  idx#1 = ++ idx#7
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  idx#8 = phi( main::@2/idx#1 )
+  idx#2 = idx#8
+  return 
+  to:@return
+
+union Data data(word data::i)
+data: scope:[data]  from main main::@1
+  data::i#2 = phi( main/data::i#0, main::@1/data::i#1 )
+  *((word*)&data::return+OFFSET_UNION_DATA_W) = data::i#2
+  to:data::@return
+data::@return: scope:[data]  from data
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  idx#3 = 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  idx#12 = phi( __start::__init1/idx#3 )
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  idx#9 = phi( __start::@1/idx#2 )
+  idx#4 = idx#9
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  idx#10 = phi( __start::@2/idx#4 )
+  idx#5 = idx#10
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_UNION_DATA_B = 0
+constant byte OFFSET_UNION_DATA_W = 0
+constant byte* const SCREEN = (byte*)$400
+void __start()
+union Data data(word data::i)
+word data::i
+word data::i#0
+word data::i#1
+word data::i#2
+union Data data::return loadstore
+byte idx
+byte idx#0
+byte idx#1
+byte idx#10
+byte idx#11
+byte idx#12
+byte idx#2
+byte idx#3
+byte idx#4
+byte idx#5
+byte idx#6
+byte idx#7
+byte idx#8
+byte idx#9
+void main()
+union Data main::d1 loadstore
+union Data main::d2 loadstore
+
+Adding number conversion cast (unumber) $1234 in data::i#0 = $1234
+Adding number conversion cast (unumber) $5678 in data::i#1 = $5678
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast data::i#0 = (unumber)$1234
+Inlining cast data::i#1 = (unumber)$5678
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $1234
+Simplifying constant integer cast $5678
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $1234
+Finalized unsigned number type (word) $5678
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias idx#11 = idx#6 
+Alias idx#0 = idx#7 
+Alias idx#1 = idx#8 idx#2 
+Alias idx#12 = idx#3 
+Alias idx#10 = idx#4 idx#9 idx#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values idx#11 idx#12
+Identical Phi Values idx#10 idx#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant data::i#0 = $1234
+Constant data::i#1 = $5678
+Constant idx#12 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero (byte*)&main::d1 in [5] SCREEN[idx#12] = *((byte*)&main::d1+OFFSET_UNION_DATA_B)
+Simplifying expression containing zero SCREEN in [5] SCREEN[idx#12] = *((byte*)&main::d1)
+Simplifying expression containing zero (byte*)&main::d2 in [11] SCREEN[idx#0] = *((byte*)&main::d2+OFFSET_UNION_DATA_B)
+Simplifying expression containing zero (word*)&data::return in [15] *((word*)&data::return+OFFSET_UNION_DATA_W) = data::i#2
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable idx#1 and assignment [9] idx#1 = ++ idx#0
+Eliminating unused constant OFFSET_UNION_DATA_W
+Eliminating unused constant OFFSET_UNION_DATA_B
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [4] idx#0 = ++ idx#12
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant idx#0 = ++idx#12
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings data::i#0
+Inlining constant with var siblings data::i#1
+Inlining constant with different constant siblings idx#12
+Inlining constant with different constant siblings idx#0
+Constant inlined idx#12 = 0
+Constant inlined idx#0 = ++0
+Constant inlined data::i#1 = $5678
+Constant inlined data::i#0 = $1234
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+++0)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer increment ++0
+Successful SSA optimization Pass2ConstantSimplification
+Removing C-classic struct-unwound assignment data::return = struct-unwound {}
+Removing C-classic struct-unwound assignment main::d1 = struct-unwound {*(&main::d1)}
+Removing C-classic struct-unwound assignment data::return = struct-unwound {}
+Removing C-classic struct-unwound assignment main::d2 = struct-unwound {*(&main::d2)}
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to data:1 data:4 
+
+Created 1 initial phi equivalence classes
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call data 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] *(&main::d1) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA)
+  [3] *SCREEN = *((byte*)&main::d1)
+  [4] call data 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [5] *(&main::d2) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA)
+  [6] *(SCREEN+1) = *((byte*)&main::d2)
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [7] return 
+  to:@return
+
+union Data data(word data::i)
+data: scope:[data]  from main main::@1
+  [8] data::i#2 = phi( main/$1234, main::@1/$5678 )
+  [9] *((word*)&data::return) = data::i#2
+  to:data::@return
+data::@return: scope:[data]  from data
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+union Data data(word data::i)
+word data::i
+word data::i#2 11.0
+union Data data::return loadstore
+byte idx
+void main()
+union Data main::d1 loadstore
+union Data main::d2 loadstore
+
+Initial phi equivalence classes
+[ data::i#2 ]
+Added variable main::d1 to live range equivalence class [ main::d1 ]
+Added variable main::d2 to live range equivalence class [ main::d2 ]
+Added variable data::return to live range equivalence class [ data::return ]
+Complete equivalence classes
+[ data::i#2 ]
+[ main::d1 ]
+[ main::d2 ]
+[ data::return ]
+Allocated zp[2]:2 [ data::i#2 ]
+Allocated zp[2]:4 [ main::d1 ]
+Allocated zp[2]:6 [ main::d2 ]
+Allocated zp[2]:8 [ data::return ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] *(&main::d1) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) [ main::d1 data::return main::d2 ] (  [ main::d1 data::return main::d2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *SCREEN = *((byte*)&main::d1) [ data::return main::d2 ] (  [ data::return main::d2 ] { }  ) always clobbers reg byte a 
+Statement [5] *(&main::d2) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) [ main::d2 ] (  [ main::d2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] *(SCREEN+1) = *((byte*)&main::d2) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((word*)&data::return) = data::i#2 [ data::return ] ( data:1 [ main::d1 main::d2 data::return ] { }  data:4 [ main::d2 data::return ] { }  ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ data::i#2 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::d1 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::d2 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ data::return ] : zp[2]:8 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [data] 11: zp[2]:2 [ data::i#2 ] 0: zp[2]:8 [ data::return ] 
+Uplift Scope [Data] 
+Uplift Scope [main] 0: zp[2]:4 [ main::d1 ] 0: zp[2]:6 [ main::d2 ] 
+Uplift Scope [] 
+
+Uplifting [data] best 114 combination zp[2]:2 [ data::i#2 ] zp[2]:8 [ data::return ] 
+Uplifting [Data] best 114 combination 
+Uplifting [main] best 114 combination zp[2]:4 [ main::d1 ] zp[2]:6 [ main::d2 ] 
+Uplifting [] best 114 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Minimal union with C-Standard behavior - union return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_DATA = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label d1 = 4
+    .label d2 = 6
+    // [1] call data 
+    // [8] phi from main to data [phi:main->data]
+  data_from_main:
+    // [8] phi data::i#2 = $1234 [phi:main->data#0] -- vwuz1=vwuc1 
+    lda #<$1234
+    sta.z data.i
+    lda #>$1234
+    sta.z data.i+1
+    jsr data
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] *(&main::d1) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_UNION_DATA
+  !:
+    lda data.return-1,y
+    sta d1-1,y
+    dey
+    bne !-
+    // [3] *SCREEN = *((byte*)&main::d1) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z d1
+    sta SCREEN
+    // [4] call data 
+    // [8] phi from main::@1 to data [phi:main::@1->data]
+  data_from___b1:
+    // [8] phi data::i#2 = $5678 [phi:main::@1->data#0] -- vwuz1=vwuc1 
+    lda #<$5678
+    sta.z data.i
+    lda #>$5678
+    sta.z data.i+1
+    jsr data
+    jmp __b2
+    // main::@2
+  __b2:
+    // [5] *(&main::d2) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_UNION_DATA
+  !:
+    lda data.return-1,y
+    sta d2-1,y
+    dey
+    bne !-
+    // [6] *(SCREEN+1) = *((byte*)&main::d2) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z d2
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // data
+// data(word zp(2) i)
+data: {
+    .label return = 8
+    .label i = 2
+    // [9] *((word*)&data::return) = data::i#2 -- _deref_pwuc1=vwuz1 
+    lda.z i
+    sta.z return
+    lda.z i+1
+    sta.z return+1
+    jmp __breturn
+    // data::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction data_from_main:
+Removing instruction __b1:
+Removing instruction data_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_UNION_DATA = 2
+union Data data(word data::i)
+word data::i
+word data::i#2 i zp[2]:2 11.0
+union Data data::return loadstore zp[2]:8
+byte idx
+void main()
+union Data main::d1 loadstore zp[2]:4
+union Data main::d2 loadstore zp[2]:6
+
+zp[2]:2 [ data::i#2 ]
+zp[2]:4 [ main::d1 ]
+zp[2]:6 [ main::d2 ]
+zp[2]:8 [ data::return ]
+
+
+FINAL ASSEMBLER
+Score: 102
+
+  // File Comments
+// Minimal union with C-Standard behavior - union return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_UNION_DATA = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label d1 = 4
+    .label d2 = 6
+    // union Data d1 = data(0x1234)
+    // [1] call data 
+    // [8] phi from main to data [phi:main->data]
+    // [8] phi data::i#2 = $1234 [phi:main->data#0] -- vwuz1=vwuc1 
+    lda #<$1234
+    sta.z data.i
+    lda #>$1234
+    sta.z data.i+1
+    jsr data
+    // main::@1
+    // union Data d1 = data(0x1234)
+    // [2] *(&main::d1) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_UNION_DATA
+  !:
+    lda data.return-1,y
+    sta d1-1,y
+    dey
+    bne !-
+    // SCREEN[idx++] = d1.b
+    // [3] *SCREEN = *((byte*)&main::d1) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z d1
+    sta SCREEN
+    // union Data d2 = data(0x5678)
+    // [4] call data 
+    // [8] phi from main::@1 to data [phi:main::@1->data]
+    // [8] phi data::i#2 = $5678 [phi:main::@1->data#0] -- vwuz1=vwuc1 
+    lda #<$5678
+    sta.z data.i
+    lda #>$5678
+    sta.z data.i+1
+    jsr data
+    // main::@2
+    // union Data d2 = data(0x5678)
+    // [5] *(&main::d2) = memcpy(*(&data::return), union Data, SIZEOF_UNION_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_UNION_DATA
+  !:
+    lda data.return-1,y
+    sta d2-1,y
+    dey
+    bne !-
+    // SCREEN[idx++] = d2.b
+    // [6] *(SCREEN+1) = *((byte*)&main::d2) -- _deref_pbuc1=_deref_pbuc2 
+    lda.z d2
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // data
+// data(word zp(2) i)
+data: {
+    .label return = 8
+    .label i = 2
+    // return { i };
+    // [9] *((word*)&data::return) = data::i#2 -- _deref_pwuc1=vwuz1 
+    lda.z i
+    sta.z return
+    lda.z i+1
+    sta.z return+1
+    // data::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+

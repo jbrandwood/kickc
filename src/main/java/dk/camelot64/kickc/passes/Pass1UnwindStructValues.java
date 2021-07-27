@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -12,7 +13,6 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.unwinding.ValueSource;
 import dk.camelot64.kickc.passes.unwinding.ValueSourceFactory;
-import dk.camelot64.kickc.passes.unwinding.ValueSourceVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -322,15 +322,30 @@ public class Pass1UnwindStructValues extends Pass1Base {
          if(program.getLog().isVerboseStructUnwind())
             program.getLog().append("Unwinding value copy " + currentStmt.toString(program, false));
 
-         /*
-         if(lValueSource instanceof ValueSourceVariable) {
-            final ValueSourceVariable sourceVariable = (ValueSourceVariable) lValueSource;
-            Statement assignStmt = new StatementAssignment(new PointerDereferenceSimple(new ConstantSymbolPointer(sourceVariable.getVariable().getVariableRef())), new MemsetValue(sourceVariable.getByteSize(program.getScope()), sourceVariable.getSymbolType()), initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
-            stmtIt.add(assignStmt);
-            stmtIt.next();
+         //Special handling of unions
+         if(lValueSource.getSymbolType() instanceof SymbolTypeStruct) {
+            SymbolTypeStruct structType = (SymbolTypeStruct) lValueSource.getSymbolType();
+            if(structType.isUnion()) {
+               // Find the largest member to unwind to
+               final StructDefinition unionDefinition = structType.getStructDefinition(program.getScope());
+               int unionBytes = structType.getSizeBytes();
+               for(String memberName : lValueSource.getMemberNames(program.getScope())) {
+                  final Variable unionMember = unionDefinition.getMember(memberName);
+                  final int memberBytes = unionMember.getType().getSizeBytes();
+                  if(memberBytes==unionBytes) {
+                     // Found a union member with the total number of bytes - unwind to this member
+                     ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);
+                     ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);
+                     boolean success = copyValues(lValueSubSource, rValueSubSource, lValueUnwoundList, initialAssignment, currentStmt, currentBlock, stmtIt, program);
+                     if(!success)
+                        throw new InternalError("Error during value unwinding copy! ", currentStmt);
+                     return true;
+                  }
+               }
+            }
          }
-          */
 
+         // Normal unwinding of non-unions
          for(String memberName : lValueSource.getMemberNames(program.getScope())) {
             ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);
             ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, program, program.getScope(), currentStmt, stmtIt, currentBlock);

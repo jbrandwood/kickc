@@ -15275,3 +15275,6 @@ lda {z1}+1
 sta {z1}
 lda #0
 sta {z1}+1
+//FRAGMENT vbuaa_eq_vbuz1_then_la1
+cmp {z1}
+beq {la1}

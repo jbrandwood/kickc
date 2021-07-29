@@ -30,6 +30,7 @@ void testSimpleTypes() {
     assertType(typeid(12sd), typeid(signed dword));
     assertType(typeid(12sl), typeid(signed dword));
     assertType(typeid(12l), typeid(signed dword));
+    assertType(typeid(12u), typeid(unsigned word));
 }
 
 // Check that the two passed type IDs are equal.

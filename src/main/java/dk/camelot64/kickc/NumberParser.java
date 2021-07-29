@@ -36,6 +36,9 @@ public class NumberParser {
       }  else if(literal.endsWith("l")) {
          type = SymbolType.SDWORD;
          literal = literal.substring(0, literal.length()-1);
+      }  else if(literal.endsWith("u")) {
+         type = SymbolType.WORD;
+         literal = literal.substring(0, literal.length()-1);
       }
 
          Long value;

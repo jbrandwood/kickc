@@ -46,6 +46,21 @@ char* strcpy( char* destination, char* source ) {
     return destination;
 }
 
+/// Copies up to n characters from the string pointed to, by src to dst.
+/// In a case where the length of src is less than that of n, the remainder of dst will be padded with null bytes.
+/// @param dst − This is the pointer to the destination array where the content is to be copied.
+/// @param src − This is the string to be copied.
+/// @param n − The number of characters to be copied from source.
+/// @return The destination
+char *strncpy(char *dst, const char *src, size_t n) {
+    for(size_t i = 0;i<n;i++) {
+        char c = *src;
+        if(c) src++;
+        *dst++ = c;
+    }
+    return dst;
+}
+
 // Converts a string to uppercase.
 char * strupr(char *str) {
     char * src = str;

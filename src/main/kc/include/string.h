@@ -19,6 +19,14 @@ void *memset(void *str, char c, size_t num);
 /// Copies the C string pointed by source into the array pointed by destination, including the terminating null character (and stopping at that point).
 char* strcpy( char* destination, char*  source );
 
+/// Copies up to n characters from the string pointed to, by src to dest.
+/// In a case where the length of src is less than that of n, the remainder of dest will be padded with null bytes.
+/// @param dst − This is the pointer to the destination array where the content is to be copied.
+/// @param src − This is the string to be copied.
+/// @param n − The number of characters to be copied from source.
+/// @return The destination
+char *strncpy(char *dst, const char *src, size_t n);
+
 /// Computes the length of the string str up to but not including the terminating null character.
 size_t strlen(char *str);
 

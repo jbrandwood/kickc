@@ -11,6 +11,7 @@
 #include <mega65-memorymapper.h>
 #include <mega65-f018.h>
 #include <mega65-math.h>
+#include <mega65-hypervisor.h>
 
 /// I/O Personality selection
 volatile char * const IO_KEY = (char*)0xd02f;

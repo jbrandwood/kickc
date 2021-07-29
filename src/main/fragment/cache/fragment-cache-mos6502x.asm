@@ -15265,3 +15265,13 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT vwuz1=vwuz2_ror_8
+lda {z2}+1
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_ror_8
+lda {z1}+1
+sta {z1}
+lda #0
+sta {z1}+1

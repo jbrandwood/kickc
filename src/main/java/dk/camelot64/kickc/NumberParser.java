@@ -15,6 +15,7 @@ public class NumberParser {
       }
 
       SymbolType type = SymbolType.NUMBER;
+      literal = literal.toLowerCase();
       if(literal.endsWith("ub") || literal.endsWith("uc")) {
          type = SymbolType.BYTE;
          literal = literal.substring(0, literal.length()-2);

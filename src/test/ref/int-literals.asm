@@ -115,6 +115,10 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_DWORD
     ldx #TYPEID_SIGNED_DWORD
     jsr assertType
+    // assertType(typeid(12u), typeid(unsigned word))
+    ldy #TYPEID_WORD
+    ldx #TYPEID_WORD
+    jsr assertType
     // }
     rts
 }

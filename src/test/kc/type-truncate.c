@@ -1,4 +1,4 @@
-// Type mismatch - should fail gracefully
+// Type match  bytes can be assigned from integers without issue
 void main() {
     word w = 5000;
     byte b = w;

@@ -190,6 +190,18 @@ public class SymbolTypeConversion {
          return true;
       if(lValueType.equals(rValueType))
          return true;
+      if(SymbolType.BYTE.equals(lValueType) && SymbolType.WORD.equals(rValueType))
+         return true;
+      if(SymbolType.BYTE.equals(lValueType) && SymbolType.SWORD.equals(rValueType))
+         return true;
+      if(SymbolType.BYTE.equals(lValueType) && SymbolType.DWORD.equals(rValueType))
+         return true;
+      if(SymbolType.BYTE.equals(lValueType) && SymbolType.SDWORD.equals(rValueType))
+         return true;
+      if(SymbolType.SBYTE.equals(lValueType) && SymbolType.SWORD.equals(rValueType))
+         return true;
+      if(SymbolType.SBYTE.equals(lValueType) && SymbolType.SDWORD.equals(rValueType))
+         return true;
       if(SymbolType.WORD.equals(lValueType) && SymbolType.BYTE.equals(rValueType))
          return true;
       if(SymbolType.DWORD.equals(lValueType) && SymbolType.BYTE.equals(rValueType))

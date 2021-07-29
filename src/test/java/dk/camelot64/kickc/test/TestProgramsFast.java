@@ -3481,13 +3481,18 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
-   public void testCastNotNeeded2() throws IOException {
-      compileAndCompare("cast-not-needed-2.c");
+   public void testCastNotNeeded4() throws IOException {
+      compileAndCompare("cast-not-needed-4.c");
    }
 
    @Test
    public void testCastNotNeeded3() throws IOException {
       compileAndCompare("cast-not-needed-3.c");
+   }
+
+   @Test
+   public void testCastNotNeeded2() throws IOException {
+      compileAndCompare("cast-not-needed-2.c");
    }
 
    @Test
@@ -4663,8 +4668,8 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
-   public void testTypeMismatch() throws IOException {
-      assertError("typemismatch.c", "Type mismatch (byte) cannot be assigned from (word)");
+   public void testTypeTruncate() throws IOException {
+      compileAndCompare("type-truncate.c");
    }
 
    @Test

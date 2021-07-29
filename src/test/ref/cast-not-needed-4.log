@@ -1,0 +1,320 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::screen#0 = (byte*)$400
+  main::i#0 = -$3e8
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::screen#3 = phi( main/main::screen#0, main::@2/main::screen#1 )
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < $3e8
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::screen#2 = phi( main::@1/main::screen#3 )
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::c#0 = (byte)main::i#3
+  *main::screen#2 = main::c#0
+  main::screen#1 = ++ main::screen#2
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+bool~ main::$0
+byte main::c
+byte main::c#0
+signed word main::i
+signed word main::i#0
+signed word main::i#1
+signed word main::i#2
+signed word main::i#3
+byte* main::screen
+byte* main::screen#0
+byte* main::screen#1
+byte* main::screen#2
+byte* main::screen#3
+
+Adding number conversion cast (snumber) $3e8 in main::$0 = main::i#2 < $3e8
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $3e8
+Successful SSA optimization PassNCastSimplification
+Finalized signed number type (signed word) $3e8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Alias main::screen#2 = main::screen#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [4] if(main::i#2<$3e8) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::screen#0 = (byte*) 1024
+Constant main::i#0 = -$3e8
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::screen#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::screen#0 = (byte*) 1024
+Constant inlined main::i#0 = -$3e8
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 2 initial phi equivalence classes
+Coalesced [8] main::i#4 = main::i#1
+Coalesced [9] main::screen#4 = main::screen#1
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] main::screen#2 = phi( main/(byte*) 1024, main::@2/main::screen#1 )
+  [1] main::i#2 = phi( main/-$3e8, main::@2/main::i#1 )
+  [2] if(main::i#2<$3e8) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::c#0 = (byte)main::i#2
+  [5] *main::screen#2 = main::c#0
+  [6] main::screen#1 = ++ main::screen#2
+  [7] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::c
+byte main::c#0 22.0
+signed word main::i
+signed word main::i#1 22.0
+signed word main::i#2 6.6000000000000005
+byte* main::screen
+byte* main::screen#1 11.0
+byte* main::screen#2 8.25
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::screen#2 main::screen#1 ]
+Added variable main::c#0 to live range equivalence class [ main::c#0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::screen#2 main::screen#1 ]
+[ main::c#0 ]
+Allocated zp[2]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:4 [ main::screen#2 main::screen#1 ]
+Allocated zp[1]:6 [ main::c#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] if(main::i#2<$3e8) goto main::@2 [ main::i#2 main::screen#2 ] (  [ main::i#2 main::screen#2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::c#0 = (byte)main::i#2 [ main::i#2 main::screen#2 main::c#0 ] (  [ main::i#2 main::screen#2 main::c#0 ] { }  ) always clobbers reg byte a 
+Statement [5] *main::screen#2 = main::c#0 [ main::i#2 main::screen#2 ] (  [ main::i#2 main::screen#2 ] { }  ) always clobbers reg byte y 
+Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::screen#2 main::screen#1 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ main::c#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 28.6: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[1]:6 [ main::c#0 ] 19.25: zp[2]:4 [ main::screen#2 main::screen#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 826 combination zp[2]:2 [ main::i#2 main::i#1 ] reg byte a [ main::c#0 ] zp[2]:4 [ main::screen#2 main::screen#1 ] 
+Uplifting [] best 826 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests a cast that is not needed
+// When assigning a char from an integer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="cast-not-needed-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label screen = 4
+    .label i = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [1] phi main::i#2 = -$3e8 [phi:main->main::@1#1] -- vwsz1=vwsc1 
+    lda #<-$3e8
+    sta.z i
+    lda #>-$3e8
+    sta.z i+1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<$3e8) goto main::@2 -- vwsz1_lt_vwsc1_then_la1 
+    lda.z i
+    cmp #<$3e8
+    lda.z i+1
+    sbc #>$3e8
+    bvc !+
+    eor #$80
+  !:
+    bmi __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::c#0 = (byte)main::i#2 -- vbuaa=_byte_vwsz1 
+    lda.z i
+    // [5] *main::screen#2 = main::c#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (screen),y
+    // [6] main::screen#1 = ++ main::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [7] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi main::screen#2 = main::screen#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte main::c
+byte main::c#0 reg byte a 22.0
+signed word main::i
+signed word main::i#1 i zp[2]:2 22.0
+signed word main::i#2 i zp[2]:2 6.6000000000000005
+byte* main::screen
+byte* main::screen#1 screen zp[2]:4 11.0
+byte* main::screen#2 screen zp[2]:4 8.25
+
+zp[2]:2 [ main::i#2 main::i#1 ]
+zp[2]:4 [ main::screen#2 main::screen#1 ]
+reg byte a [ main::c#0 ]
+
+
+FINAL ASSEMBLER
+Score: 766
+
+  // File Comments
+// Tests a cast that is not needed
+// When assigning a char from an integer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="cast-not-needed-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label screen = 4
+    .label i = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [1] phi main::i#2 = -$3e8 [phi:main->main::@1#1] -- vwsz1=vwsc1 
+    lda #<-$3e8
+    sta.z i
+    lda #>-$3e8
+    sta.z i+1
+    // main::@1
+  __b1:
+    // for(int i=-1000;i<1000;i++)
+    // [2] if(main::i#2<$3e8) goto main::@2 -- vwsz1_lt_vwsc1_then_la1 
+    lda.z i
+    cmp #<$3e8
+    lda.z i+1
+    sbc #>$3e8
+    bvc !+
+    eor #$80
+  !:
+    bmi __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // char c = i
+    // [4] main::c#0 = (byte)main::i#2 -- vbuaa=_byte_vwsz1 
+    lda.z i
+    // *(screen++) = c
+    // [5] *main::screen#2 = main::c#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (screen),y
+    // *(screen++) = c;
+    // [6] main::screen#1 = ++ main::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // for(int i=-1000;i<1000;i++)
+    // [7] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi main::screen#2 = main::screen#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

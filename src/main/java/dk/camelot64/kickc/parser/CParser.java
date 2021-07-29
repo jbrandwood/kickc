@@ -98,7 +98,7 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            final CommonToken offendingToken = (CommonToken) offendingSymbol;
+            final Token offendingToken = (Token) offendingSymbol;
             StatementSource source = new StatementSource(offendingToken.getInputStream().getSourceName(), line, charPositionInLine, null, -1, -1);
             throw new CompileError("Error parsing file: " + msg, source);
          }

@@ -930,6 +930,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testPreprocessor15() throws IOException {
+      assertError("preprocessor-15.c", "Error parsing file: extraneous input 'X' ");
+   }
+
+   @Test
    public void testPreprocessor14() throws IOException {
       compileAndCompare("preprocessor-14.c");
    }

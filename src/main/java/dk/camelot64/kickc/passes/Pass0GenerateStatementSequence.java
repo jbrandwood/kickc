@@ -1938,7 +1938,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.currentEnum = null;
          // Copy all members to upper-level scope
          Scope parentScope = getCurrentScope();
-         while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
+         while(parentScope instanceof StructDefinition || parentScope instanceof TypeDefsScope) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
             parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, member.getInitValue(), currentDataSegment));
          }

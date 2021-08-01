@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9.1
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9
 package dk.camelot64.kickc.parser;
 
 
@@ -157,13 +157,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSignedSimple}
-	 * labeled alternative in {@link KickCParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typeStructDef}
 	 * labeled alternative in {@link KickCParser#type}.

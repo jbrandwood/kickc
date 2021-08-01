@@ -1778,7 +1778,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testUnsignedVoidError() throws IOException {
-      assertError("unsigned-void-error.c", "Unknown type unsigned void");
+      assertError("unsigned-void-error.c", "Unknown type 'unsigned void'");
    }
 
    @Test

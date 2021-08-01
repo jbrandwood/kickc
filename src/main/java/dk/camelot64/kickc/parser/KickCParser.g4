@@ -85,8 +85,7 @@ declarator
     ;
 
 type
-    : SIMPLETYPE  #typeSimple
-    | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
+    : SIMPLETYPE+  #typeSimple
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef

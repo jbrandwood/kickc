@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -1871,7 +1872,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitTypeSimple(KickCParser.TypeSimpleContext ctx) {
-      final SymbolType typeSimple = SymbolType.get(ctx.getText());
+      String typeName = "";
+      for(TerminalNode simpleTypeNode : ctx.SIMPLETYPE()) {
+         if(typeName.length()>0)
+            typeName += " ";
+         typeName += simpleTypeNode.getText();
+      }
+      final SymbolType typeSimple = SymbolType.get(typeName);
+      if(typeSimple==null)
+         throw new CompileError("Unknown type '" +typeName+"'" , new StatementSource(ctx));
       varDecl.setDeclType(typeSimple);
       return null;
    }
@@ -2148,24 +2157,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          return null;
       }
       throw new CompileError("Unknown type " + ctx.getText(), new StatementSource(ctx));
-   }
-
-   @Override
-   public Object visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
-      String signedness = ctx.getChild(0).getText();
-      String simpleTypeName;
-      if(ctx.SIMPLETYPE() != null) {
-         simpleTypeName = ctx.SIMPLETYPE().getText();
-      } else {
-         simpleTypeName = "int";
-      }
-      String fullName = signedness + " " + simpleTypeName;
-      SymbolType symbolType = SymbolType.get(fullName);
-      if(symbolType == null) {
-         throw new CompileError("Unknown type " + fullName, new StatementSource(ctx));
-      }
-      varDecl.setDeclType(symbolType);
-      return null;
    }
 
    @Override

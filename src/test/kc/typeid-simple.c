@@ -30,17 +30,22 @@ void main() {
     idx = 40;
     // Test C types
     SCREEN[idx++] = typeid(char);
-    SCREEN[idx++] = typeid(unsigned char);
     SCREEN[idx++] = typeid(signed char);
+    SCREEN[idx++] = typeid(unsigned char);
     SCREEN[idx++] = typeid(short);
-    SCREEN[idx++] = typeid(unsigned short);
-    SCREEN[idx++] = typeid(signed short);
+    SCREEN[idx++] = typeid(short int);
+    SCREEN[idx++] = typeid(signed);
     SCREEN[idx++] = typeid(int);
-    SCREEN[idx++] = typeid(unsigned int);
+    SCREEN[idx++] = typeid(signed short);
+    SCREEN[idx++] = typeid(signed short int);
     SCREEN[idx++] = typeid(signed int);
+    SCREEN[idx++] = typeid(unsigned short);
+    SCREEN[idx++] = typeid(unsigned short int);
+    SCREEN[idx++] = typeid(unsigned int);
     SCREEN[idx++] = typeid(long);
-    SCREEN[idx++] = typeid(unsigned long);
     SCREEN[idx++] = typeid(signed long);
-
+    SCREEN[idx++] = typeid(signed long int);
+    SCREEN[idx++] = typeid(unsigned long);
+    SCREEN[idx++] = typeid(unsigned long int);
 
 }

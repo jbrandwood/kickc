@@ -58,32 +58,39 @@ public interface SymbolType extends Serializable {
     */
    static SymbolType get(String name) {
       switch(name) {
-         case "byte":
-         case "unsigned byte":
          case "char":
          case "unsigned char":
+         case "byte":
+         case "unsigned byte":
             return BYTE;
-         case "signed byte":
          case "signed char":
+         case "signed byte":
             return SBYTE;
+         case "unsigned":
+         case "unsigned int":
+         case "unsigned short":
+         case "unsigned short int":
          case "word":
          case "unsigned word":
-         case "unsigned short":
-         case "unsigned int":
             return WORD;
-         case "signed word":
+         case "signed":
          case "short":
-         case "signed short":
+         case "short int":
          case "int":
          case "signed int":
+         case "signed short":
+         case "signed short int":
+         case "signed word":
             return SWORD;
+         case "unsigned long":
+         case "unsigned long int":
          case "dword":
          case "unsigned dword":
-         case "unsigned long":
             return DWORD;
-         case "signed dword":
          case "long":
          case "signed long":
+         case "signed long int":
+         case "signed dword":
             return SDWORD;
          case "bool":
             return BOOLEAN;

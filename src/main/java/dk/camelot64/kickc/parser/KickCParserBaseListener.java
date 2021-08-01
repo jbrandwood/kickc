@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9.1
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9
 package dk.camelot64.kickc.parser;
 
 
@@ -277,18 +277,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeSimple(KickCParser.TypeSimpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

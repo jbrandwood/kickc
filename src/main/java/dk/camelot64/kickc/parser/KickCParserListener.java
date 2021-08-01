@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9.1
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9
 package dk.camelot64.kickc.parser;
 
 
@@ -255,18 +255,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeSimple(KickCParser.TypeSimpleContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code typeSignedSimple}
-	 * labeled alternative in {@link KickCParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code typeSignedSimple}
-	 * labeled alternative in {@link KickCParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typeStructDef}
 	 * labeled alternative in {@link KickCParser#type}.

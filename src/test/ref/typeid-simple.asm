@@ -86,37 +86,46 @@ main: {
     // Test C types
     lda #TYPEID_BYTE
     sta SCREEN+$28
-    // SCREEN[idx++] = typeid(unsigned char)
-    sta SCREEN+$29
     // SCREEN[idx++] = typeid(signed char)
     lda #TYPEID_SIGNED_BYTE
+    sta SCREEN+$29
+    // SCREEN[idx++] = typeid(unsigned char)
+    lda #TYPEID_BYTE
     sta SCREEN+$2a
     // SCREEN[idx++] = typeid(short)
     lda #TYPEID_SIGNED_WORD
     sta SCREEN+$2b
-    // SCREEN[idx++] = typeid(unsigned short)
-    lda #TYPEID_WORD
+    // SCREEN[idx++] = typeid(short int)
     sta SCREEN+$2c
-    // SCREEN[idx++] = typeid(signed short)
-    lda #TYPEID_SIGNED_WORD
+    // SCREEN[idx++] = typeid(signed)
     sta SCREEN+$2d
     // SCREEN[idx++] = typeid(int)
     sta SCREEN+$2e
-    // SCREEN[idx++] = typeid(unsigned int)
-    lda #TYPEID_WORD
+    // SCREEN[idx++] = typeid(signed short)
     sta SCREEN+$2f
-    // SCREEN[idx++] = typeid(signed int)
-    lda #TYPEID_SIGNED_WORD
+    // SCREEN[idx++] = typeid(signed short int)
     sta SCREEN+$30
+    // SCREEN[idx++] = typeid(signed int)
+    sta SCREEN+$31
+    // SCREEN[idx++] = typeid(unsigned short)
+    lda #TYPEID_WORD
+    sta SCREEN+$32
+    // SCREEN[idx++] = typeid(unsigned short int)
+    sta SCREEN+$33
+    // SCREEN[idx++] = typeid(unsigned int)
+    sta SCREEN+$34
     // SCREEN[idx++] = typeid(long)
     lda #TYPEID_SIGNED_DWORD
-    sta SCREEN+$31
+    sta SCREEN+$35
+    // SCREEN[idx++] = typeid(signed long)
+    sta SCREEN+$36
+    // SCREEN[idx++] = typeid(signed long int)
+    sta SCREEN+$37
     // SCREEN[idx++] = typeid(unsigned long)
     lda #TYPEID_DWORD
-    sta SCREEN+$32
-    // SCREEN[idx++] = typeid(signed long)
-    lda #TYPEID_SIGNED_DWORD
-    sta SCREEN+$33
+    sta SCREEN+$38
+    // SCREEN[idx++] = typeid(unsigned long int)
+    sta SCREEN+$39
     // }
     rts
 }

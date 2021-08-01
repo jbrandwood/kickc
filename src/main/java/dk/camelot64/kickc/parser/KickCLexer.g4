@@ -104,8 +104,7 @@ CLOBBERS : 'clobbers' ;
 BYTES : 'bytes' ;
 CYCLES : 'cycles' ;
 LOGIC_NOT : '!' ;
-SIGNEDNESS : 'signed' | 'unsigned' ;
-SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
+SIMPLETYPE: 'signed' | 'unsigned' | 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
 BOOLEAN : 'true' | 'false';
 KICKASM_BODY: '{{' .*? '}}';
 

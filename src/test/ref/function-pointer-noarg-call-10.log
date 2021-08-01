@@ -8,15 +8,19 @@ do10: scope:[do10]  from main main::@1
   do10::fn#3 = phi( main/do10::fn#0, main::@1/do10::fn#1 )
   do10::i#0 = 0
   to:do10::@1
-do10::@1: scope:[do10]  from do10 do10::@1
-  do10::i#2 = phi( do10/do10::i#0, do10::@1/do10::i#1 )
-  do10::fn#2 = phi( do10/do10::fn#3, do10::@1/do10::fn#2 )
+do10::@1: scope:[do10]  from do10 do10::@2
+  do10::i#3 = phi( do10/do10::i#0, do10::@2/do10::i#1 )
+  do10::fn#2 = phi( do10/do10::fn#3, do10::@2/do10::fn#4 )
   callexecute *do10::fn#2 
+  to:do10::@2
+do10::@2: scope:[do10]  from do10::@1
+  do10::fn#4 = phi( do10::@1/do10::fn#2 )
+  do10::i#2 = phi( do10::@1/do10::i#3 )
   do10::i#1 = do10::i#2 + rangenext(0,9)
   do10::$1 = do10::i#1 != rangelast(0,9)
   if(do10::$1) goto do10::@1
   to:do10::@return
-do10::@return: scope:[do10]  from do10::@1
+do10::@return: scope:[do10]  from do10::@2
   return 
   to:@return
 
@@ -100,10 +104,12 @@ void()* do10::fn#0
 void()* do10::fn#1
 void()* do10::fn#2
 void()* do10::fn#3
+void()* do10::fn#4
 byte do10::i
 byte do10::i#0
 byte do10::i#1
 byte do10::i#2
+byte do10::i#3
 void hello()
 constant byte* hello::msg[7]  = "hello "
 volatile byte idx loadstore
@@ -129,6 +135,9 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias do10::i#2 = do10::i#3 
+Alias do10::fn#2 = do10::fn#4 
+Successful SSA optimization Pass2AliasElimination
 Identical Phi Values do10::fn#2 do10::fn#3
 Identical Phi Values print::msg#2 print::msg#3
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -163,7 +172,7 @@ Constant inlined do10::fn#0 = &hello
 Constant inlined print::msg#1 = world::msg
 Constant inlined print::msg#0 = hello::msg
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting do10::@2(between do10::@1 and do10::@1)
+Added new block during phi lifting do10::@3(between do10::@2 and do10::@1)
 Added new block during phi lifting print::@2(between print::@1 and print::@1)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -184,14 +193,14 @@ Calls in [do10] to null:30
 
 Created 4 initial phi equivalence classes
 Coalesced [27] print::i#3 = print::i#1
-Coalesced [34] do10::i#3 = do10::i#1
+Coalesced [34] do10::i#4 = do10::i#1
 Coalesced down to 4 phi equivalence classes
 Culled Empty Block label __start::@2
 Culled Empty Block label world::@1
 Culled Empty Block label hello::@1
 Culled Empty Block label main::@2
 Culled Empty Block label print::@2
-Culled Empty Block label do10::@2
+Culled Empty Block label do10::@3
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of world
@@ -266,13 +275,15 @@ void do10(void()* do10::fn)
 do10: scope:[do10]  from main main::@1
   [23] do10::fn#3 = phi( main/&hello, main::@1/&world )
   to:do10::@1
-do10::@1: scope:[do10]  from do10 do10::@1
-  [24] do10::i#2 = phi( do10/0, do10::@1/do10::i#1 )
+do10::@1: scope:[do10]  from do10 do10::@2
+  [24] do10::i#2 = phi( do10/0, do10::@2/do10::i#1 )
   [25] callexecute *do10::fn#3 
+  to:do10::@2
+do10::@2: scope:[do10]  from do10::@1
   [26] do10::i#1 = ++ do10::i#2
   [27] if(do10::i#1!=$a) goto do10::@1
   to:do10::@return
-do10::@return: scope:[do10]  from do10::@1
+do10::@return: scope:[do10]  from do10::@2
   [28] return 
   to:@return
 
@@ -344,17 +355,17 @@ Uplift Scope [world]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [do10] best 1024 combination zp[1]:7 [ do10::i#2 do10::i#1 ] zp[2]:5 [ do10::fn#3 ] 
-Uplifting [print] best 904 combination reg byte y [ print::i#2 print::i#1 ] zp[2]:2 [ print::msg#3 ] 
-Uplifting [] best 904 combination zp[1]:8 [ idx ] 
-Uplifting [hello] best 904 combination 
-Uplifting [world] best 904 combination 
-Uplifting [main] best 904 combination 
-Uplifting [__start] best 904 combination 
+Uplifting [do10] best 1054 combination zp[1]:7 [ do10::i#2 do10::i#1 ] zp[2]:5 [ do10::fn#3 ] 
+Uplifting [print] best 934 combination reg byte y [ print::i#2 print::i#1 ] zp[2]:2 [ print::msg#3 ] 
+Uplifting [] best 934 combination zp[1]:8 [ idx ] 
+Uplifting [hello] best 934 combination 
+Uplifting [world] best 934 combination 
+Uplifting [main] best 934 combination 
+Uplifting [__start] best 934 combination 
 Attempting to uplift remaining variables inzp[1]:7 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 904 combination zp[1]:7 [ do10::i#2 do10::i#1 ] 
+Uplifting [do10] best 934 combination zp[1]:7 [ do10::i#2 do10::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ idx ]
-Uplifting [] best 904 combination zp[1]:8 [ idx ] 
+Uplifting [] best 934 combination zp[1]:8 [ idx ] 
 Allocated (was zp[2]:5) zp[2]:4 [ do10::fn#3 ]
 Allocated (was zp[1]:7) zp[1]:6 [ do10::i#2 do10::i#1 ]
 Allocated (was zp[1]:8) zp[1]:7 [ idx ]
@@ -515,20 +526,23 @@ do10: {
     lda #0
     sta.z i
     jmp __b1
-    // [24] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  __b1_from___b1:
-    // [24] phi do10::i#2 = do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // [24] phi from do10::@2 to do10::@1 [phi:do10::@2->do10::@1]
+  __b1_from___b2:
+    // [24] phi do10::i#2 = do10::i#1 [phi:do10::@2->do10::@1#0] -- register_copy 
     jmp __b1
     // do10::@1
   __b1:
     // [25] callexecute *do10::fn#3 
     jsr bi_fn
+    jmp __b2
+    // do10::@2
+  __b2:
     // [26] do10::i#1 = ++ do10::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [27] if(do10::i#1!=$a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp.z i
-    bne __b1_from___b1
+    bne __b1_from___b2
     jmp __breturn
     // do10::@return
   __breturn:
@@ -550,16 +564,17 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
+Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
-Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b2 with __b1
 Removing instruction __b1_from___init1:
 Removing instruction main_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction do10_from___b1:
 Removing instruction __b1_from___b1:
-Removing instruction __b1_from___b1:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
@@ -574,6 +589,7 @@ Removing instruction __breturn:
 Removing instruction __b1_from_print:
 Removing instruction __breturn:
 Removing instruction __b1_from_do10:
+Removing instruction __b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -750,13 +766,14 @@ do10: {
     // [24] phi do10::i#2 = 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [24] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-    // [24] phi do10::i#2 = do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // [24] phi from do10::@2 to do10::@1 [phi:do10::@2->do10::@1]
+    // [24] phi do10::i#2 = do10::i#1 [phi:do10::@2->do10::@1#0] -- register_copy 
     // do10::@1
   __b1:
     // (*fn)()
     // [25] callexecute *do10::fn#3 
     jsr bi_fn
+    // do10::@2
     // for( byte i: 0..9)
     // [26] do10::i#1 = ++ do10::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i

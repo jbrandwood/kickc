@@ -59,9 +59,10 @@ main: {
     lda #>fn1
     sta.z f+1
   __b3:
-    // char v = (*f)()
+    // (*f)()
     pha
     jsr bi_f
+    // char v = (*f)()
     pla
     // SCREEN[0] = v
     sta SCREEN

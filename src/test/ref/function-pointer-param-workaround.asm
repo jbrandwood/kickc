@@ -109,8 +109,8 @@ fn1: {
 main: {
     .label param_char = $c
     .label f = $d
-    .label j = 3
     .label i = 2
+    .label j = 3
     lda #'a'
     sta.z i
   __b1:

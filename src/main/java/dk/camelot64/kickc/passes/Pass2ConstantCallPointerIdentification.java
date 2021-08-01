@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -64,6 +65,8 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
     */
    private void replacePointerCall(StatementCallExecute callPointer, ProcedureRef constProcedureRef, ControlFlowBlock block) {
       callPointer.setProcedure(constProcedureRef);
+      if(block.getCallSuccessor()!=null)
+         throw new CompileError("Internal error! Block has two calls!", callPointer);
       block.setCallSuccessor(constProcedureRef.getLabelRef());
       final Procedure procedure = getScope().getProcedure(constProcedureRef);
       procedure.setCallingConvention(Procedure.CallingConvention.STACK_CALL);

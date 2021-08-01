@@ -106,10 +106,10 @@ irq: {
     // char raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-  __b1:
+  __b2:
     // while(VICII->RASTER==raster)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b1
+    beq __b2
     // (VICII->BORDER_COLOR)--;
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
@@ -206,24 +206,24 @@ main: {
     // Enable IRQ
     cli
     ldx #0
-  __b1:
+  __b2:
     // MUSIC[mem_destroy_i++]++;
     inc MUSIC,x
     inx
     ldy #0
   // Show unmapped MUSIC memory
-  __b2:
+  __b3:
     // for(char i=0;i<240;i++)
     cpy #$f0
-    bcc __b3
-    jmp __b1
-  __b3:
+    bcc __b4
+    jmp __b2
+  __b4:
     // DEFAULT_SCREEN[i] = MUSIC[i]
     lda MUSIC,y
     sta DEFAULT_SCREEN,y
     // for(char i=0;i<240;i++)
     iny
-    jmp __b2
+    jmp __b3
 }
 // Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.

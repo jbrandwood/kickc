@@ -24,11 +24,13 @@ void main()
 main: scope:[main]  from __start::@1
   proc_ptr#0 = &proc1
   callexecute *proc_ptr#0 
+  to:main::@1
+main::@1: scope:[main]  from main
   proc_ptr#1 = &proc2
   callexecute *proc_ptr#1 
   to:main::@return
-main::@return: scope:[main]  from main
-  proc_ptr#6 = phi( main/proc_ptr#1 )
+main::@return: scope:[main]  from main::@1
+  proc_ptr#6 = phi( main::@1/proc_ptr#1 )
   proc_ptr#2 = proc_ptr#6
   return 
   to:@return
@@ -110,12 +112,14 @@ Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [main] to proc1:1 proc2:2 
+Calls in [main] to proc1:1 proc2:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
@@ -123,26 +127,29 @@ void main()
 main: scope:[main]  from
   [0] phi()
   [1] callexecute proc1 
-  [2] callexecute proc2 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] phi()
+  [3] callexecute proc2 
   to:main::@return
-main::@return: scope:[main]  from main
-  [3] return 
+main::@return: scope:[main]  from main::@1
+  [4] return 
   to:@return
 
 __stackcall void proc2()
-proc2: scope:[proc2]  from main
-  [4] *(SCREEN+1) = 'b'
+proc2: scope:[proc2]  from main::@1
+  [5] *(SCREEN+1) = 'b'
   to:proc2::@return
 proc2::@return: scope:[proc2]  from proc2
-  [5] return 
+  [6] return 
   to:@return
 
 __stackcall void proc1()
-proc1: scope:[proc1]  from
-  [6] *SCREEN = 'a'
+proc1: scope:[proc1]  from main
+  [7] *SCREEN = 'a'
   to:proc1::@return
 proc1::@return: scope:[proc1]  from proc1
-  [7] return 
+  [8] return 
   to:@return
 
 
@@ -155,8 +162,8 @@ void()* proc_ptr
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *(SCREEN+1) = 'b' [ ] ( proc2:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *SCREEN = 'a' [ ] ( proc1:1 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *(SCREEN+1) = 'b' [ ] ( proc2:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *SCREEN = 'a' [ ] ( proc1:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [proc1] 
@@ -164,10 +171,10 @@ Uplift Scope [proc2]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [proc1] best 51 combination 
-Uplifting [proc2] best 51 combination 
-Uplifting [main] best 51 combination 
-Uplifting [] best 51 combination 
+Uplifting [proc1] best 54 combination 
+Uplifting [proc2] best 54 combination 
+Uplifting [main] best 54 combination 
+Uplifting [] best 54 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -188,43 +195,52 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] callexecute proc1  -- jsr 
     jsr proc1
-    // [2] callexecute proc2  -- jsr 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] callexecute proc2  -- jsr 
     jsr proc2
     jmp __breturn
     // main::@return
   __breturn:
-    // [3] return 
+    // [4] return 
     rts
 }
   // proc2
 proc2: {
-    // [4] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
+    // [5] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     jmp __breturn
     // proc2::@return
   __breturn:
-    // [5] return 
+    // [6] return 
     rts
 }
   // proc1
 proc1: {
-    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    // [7] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
     // proc1::@return
   __breturn:
-    // [7] return 
+    // [8] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -261,33 +277,36 @@ main: {
     // (*proc_ptr)()
     // [1] callexecute proc1  -- jsr 
     jsr proc1
-    // [2] callexecute proc2  -- jsr 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // (*proc_ptr)()
+    // [3] callexecute proc2  -- jsr 
     jsr proc2
     // main::@return
     // }
-    // [3] return 
+    // [4] return 
     rts
 }
   // proc2
 proc2: {
     // SCREEN[1] = 'b'
-    // [4] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
+    // [5] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     // proc2::@return
     // }
-    // [5] return 
+    // [6] return 
     rts
 }
   // proc1
 proc1: {
     // SCREEN[0] = 'a'
-    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
+    // [7] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // proc1::@return
     // }
-    // [7] return 
+    // [8] return 
     rts
 }
   // File Data

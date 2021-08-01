@@ -2414,6 +2414,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          result = addIntermediateVar().getRef();
          addStatement(new StatementCallPointer((LValue) result, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
          consumeExpr(procedurePointer);
+         Label afterCallLabel = getCurrentScope().addLabelIntermediate();
+         addStatement(new StatementLabel(afterCallLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       }
       for(RValue parameter : parameters) {
          consumeExpr(parameter);

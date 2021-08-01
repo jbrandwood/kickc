@@ -24,14 +24,17 @@ void main()
 main: scope:[main]  from __start
   main::cols#0 = (byte*)$d800
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  main::cols#2 = phi( main/main::cols#0, main::@2/main::cols#1 )
+main::@1: scope:[main]  from main main::@3
+  main::cols#2 = phi( main/main::cols#0, main::@3/main::cols#1 )
   main::$0 = main::cols#2 < $d800+$3e8
   if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  main::cols#3 = phi( main::@1/main::cols#2 )
+  main::cols#4 = phi( main::@1/main::cols#2 )
   callexecute *main::cls 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  main::cols#3 = phi( main::@2/main::cols#4 )
   *main::cols#3 = ++ *main::cols#3
   main::cols#1 = ++ main::cols#3
   to:main::@1
@@ -66,6 +69,7 @@ byte* main::cols#0
 byte* main::cols#1
 byte* main::cols#2
 byte* main::cols#3
+byte* main::cols#4
 
 Adding number conversion cast (unumber) $400+$3e8 in fn1::$0 = fn1::screen#2 < $400+$3e8
 Adding number conversion cast (unumber) $d800+$3e8 in main::$0 = main::cols#2 < $d800+$3e8
@@ -74,7 +78,7 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
 Successful SSA optimization PassNCastSimplification
 Alias fn1::screen#2 = fn1::screen#3 
-Alias main::cols#2 = main::cols#3 
+Alias main::cols#2 = main::cols#4 main::cols#3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition fn1::$0 [3] if(fn1::screen#2<(word)$400+$3e8) goto fn1::@2
 Simple Condition main::$0 [10] if(main::cols#2<(word)$d800+$3e8) goto main::@2
@@ -111,7 +115,7 @@ CALL GRAPH
 Calls in [main] to fn1:5 
 
 Created 2 initial phi equivalence classes
-Coalesced [8] main::cols#4 = main::cols#1
+Coalesced [8] main::cols#5 = main::cols#1
 Coalesced [15] fn1::screen#4 = fn1::screen#1
 Coalesced down to 2 phi equivalence classes
 Adding NOP phi() at start of main
@@ -124,8 +128,8 @@ void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [1] main::cols#2 = phi( main/(byte*) 55296, main::@2/main::cols#1 )
+main::@1: scope:[main]  from main main::@3
+  [1] main::cols#2 = phi( main/(byte*) 55296, main::@3/main::cols#1 )
   [2] if(main::cols#2<$d800+$3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -134,6 +138,8 @@ main::@return: scope:[main]  from main::@1
 main::@2: scope:[main]  from main::@1
   [4] phi()
   [5] callexecute fn1 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   [6] *main::cols#2 = ++ *main::cols#2
   [7] main::cols#1 = ++ main::cols#2
   to:main::@1
@@ -186,9 +192,9 @@ Uplift Scope [fn1] 36,670.33: zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
 Uplift Scope [main] 33: zp[2]:2 [ main::cols#2 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [fn1] best 7637 combination zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [main] best 7637 combination zp[2]:2 [ main::cols#2 main::cols#1 ] 
-Uplifting [] best 7637 combination 
+Uplifting [fn1] best 7667 combination zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplifting [main] best 7667 combination zp[2]:2 [ main::cols#2 main::cols#1 ] 
+Uplifting [] best 7667 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -238,6 +244,9 @@ main: {
   __b2:
     // [5] callexecute fn1  -- jsr 
     jsr fn1
+    jmp __b3
+    // main::@3
+  __b3:
     // [6] *main::cols#2 = ++ *main::cols#2 -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (cols),y
@@ -250,9 +259,9 @@ main: {
     bne !+
     inc.z cols+1
   !:
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi main::cols#2 = main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  __b1_from___b3:
+    // [1] phi main::cols#2 = main::cols#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // fn1
@@ -307,6 +316,7 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b2
+Removing instruction jmp __b3
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -319,7 +329,8 @@ Removing instruction __b2_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
-Removing instruction __b1_from___b2:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
 Removing instruction __b1_from_fn1:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
@@ -386,6 +397,7 @@ main: {
     // (*cls)()
     // [5] callexecute fn1  -- jsr 
     jsr fn1
+    // main::@3
     // (*cols)++;
     // [6] *main::cols#2 = ++ *main::cols#2 -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
@@ -399,8 +411,8 @@ main: {
     bne !+
     inc.z cols+1
   !:
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi main::cols#2 = main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi main::cols#2 = main::cols#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // fn1

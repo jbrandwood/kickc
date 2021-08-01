@@ -12,6 +12,7 @@
 main: {
     // (*proc_ptr)()
     jsr proc1
+    // (*proc_ptr)()
     jsr proc2
     // }
     rts

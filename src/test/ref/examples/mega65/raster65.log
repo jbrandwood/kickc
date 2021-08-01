@@ -34,10 +34,10 @@ Calling convention STACK_CALL adding prepare/execute/finalize for call *songPlay
 CONTROL FLOW GRAPH SSA
 
 void* memset(void* memset::str , byte memset::c , word memset::num)
-memset: scope:[memset]  from main
-  memset::c#4 = phi( main/memset::c#0 )
-  memset::str#3 = phi( main/memset::str#0 )
-  memset::num#1 = phi( main/memset::num#0 )
+memset: scope:[memset]  from main::@1
+  memset::c#4 = phi( main::@1/memset::c#0 )
+  memset::str#3 = phi( main::@1/memset::str#0 )
+  memset::num#1 = phi( main::@1/memset::num#0 )
   memset::$0 = memset::num#1 > 0
   memset::$1 = ! memset::$0
   if(memset::$1) goto memset::@1
@@ -84,52 +84,54 @@ main: scope:[main]  from __start::@1
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
   asm { lda#0  }
   callexecute *songInit 
+  to:main::@1
+main::@1: scope:[main]  from main
   memset::str#0 = (void*)SCREEN
   memset::c#0 = ' '
   memset::num#0 = $28*$19
   call memset 
   memset::return#2 = memset::return#1
-  to:main::@10
-main::@10: scope:[main]  from main
+  to:main::@11
+main::@11: scope:[main]  from main::@1
   main::i1#0 = 0
-  to:main::@1
-main::@1: scope:[main]  from main::@10 main::@2
-  main::i1#2 = phi( main::@10/main::i1#0, main::@2/main::i1#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@11 main::@3
+  main::i1#2 = phi( main::@11/main::i1#0, main::@3/main::i1#1 )
   main::$2 = sizeof  MEGA_LOGO
   main::$3 = main::i1#2 < main::$2
-  if(main::$3) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1
-  main::i1#3 = phi( main::@1/main::i1#2 )
+  if(main::$3) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2
+  main::i1#3 = phi( main::@2/main::i1#2 )
   (SCREEN+LOGO_ROW*$28)[main::i1#3] = MEGA_LOGO[main::i1#3]
   main::i1#1 = ++ main::i1#3
-  to:main::@1
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@4: scope:[main]  from main::@2
   main::i2#0 = 0
-  to:main::@4
-main::@4: scope:[main]  from main::@3 main::@5
-  main::i2#2 = phi( main::@3/main::i2#0, main::@5/main::i2#1 )
+  to:main::@5
+main::@5: scope:[main]  from main::@4 main::@6
+  main::i2#2 = phi( main::@4/main::i2#0, main::@6/main::i2#1 )
   main::$4 = main::i2#2 < $28
-  if(main::$4) goto main::@5
-  to:main::@6
-main::@5: scope:[main]  from main::@4
-  main::i2#3 = phi( main::@4/main::i2#2 )
+  if(main::$4) goto main::@6
+  to:main::@7
+main::@6: scope:[main]  from main::@5
+  main::i2#3 = phi( main::@5/main::i2#2 )
   (SCREEN+GREET_ROW*$28)[main::i2#3] = '*'
   main::i2#1 = ++ main::i2#3
-  to:main::@4
-main::@6: scope:[main]  from main::@4
+  to:main::@5
+main::@7: scope:[main]  from main::@5
   main::i#0 = 0
-  to:main::@7
-main::@7: scope:[main]  from main::@6 main::@7
-  main::i#2 = phi( main::@6/main::i#0, main::@7/main::i#1 )
+  to:main::@8
+main::@8: scope:[main]  from main::@7 main::@8
+  main::i#2 = phi( main::@7/main::i#0, main::@8/main::i#1 )
   PALETTE_RED[main::i#2] = PAL_RED[main::i#2]
   PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2]
   PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2]
   main::i#1 = ++ main::i#2
   main::$5 = main::i#1 != 0
-  if(main::$5) goto main::@7
-  to:main::@8
-main::@8: scope:[main]  from main::@7
+  if(main::$5) goto main::@8
+  to:main::@9
+main::@9: scope:[main]  from main::@8
   asm { sei  }
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y
@@ -140,9 +142,9 @@ main::@8: scope:[main]  from main::@7
   *PROCPORT = PROCPORT_RAM_IO
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
   asm { cli  }
-  to:main::@9
-main::@9: scope:[main]  from main::@8 main::@9
-  to:main::@9
+  to:main::@10
+main::@10: scope:[main]  from main::@10 main::@9
+  to:main::@10
 main::@return: scope:[main]  from
   return 
   to:@return
@@ -155,67 +157,65 @@ irq: scope:[irq]  from
   sin_idx = ++ sin_idx
   irq::wobble_idx#0 = sin_idx
   irq::line#0 = 0
-  to:irq::@1
-irq::@1: scope:[irq]  from irq irq::@9
-  irq::wobble_idx#4 = phi( irq/irq::wobble_idx#0, irq::@9/irq::wobble_idx#5 )
-  irq::line#2 = phi( irq/irq::line#0, irq::@9/irq::line#1 )
+  to:irq::@2
+irq::@2: scope:[irq]  from irq irq::@10
+  irq::wobble_idx#4 = phi( irq/irq::wobble_idx#0, irq::@10/irq::wobble_idx#5 )
+  irq::line#2 = phi( irq/irq::line#0, irq::@10/irq::line#1 )
   irq::$4 = irq::line#2 != RASTER_LINES
-  if(irq::$4) goto irq::@2
-  to:irq::@3
-irq::@2: scope:[irq]  from irq::@1
-  irq::wobble_idx#3 = phi( irq::@1/irq::wobble_idx#4 )
-  irq::line#3 = phi( irq::@1/irq::line#2 )
+  if(irq::$4) goto irq::@3
+  to:irq::@4
+irq::@3: scope:[irq]  from irq::@2
+  irq::wobble_idx#3 = phi( irq::@2/irq::wobble_idx#4 )
+  irq::line#3 = phi( irq::@2/irq::line#2 )
   irq::col#0 = rasters[irq::line#3]
   *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) = irq::col#0
   *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) = irq::col#0
   irq::$5 = irq::line#3 < SCROLL_Y
-  if(irq::$5) goto irq::@4
-  to:irq::@10
-irq::@3: scope:[irq]  from irq::@1
-  callexecute *songPlay 
-  irq::sin_col#0 = sin_idx
-  irq::i#0 = 0
-  to:irq::@16
+  if(irq::$5) goto irq::@5
+  to:irq::@11
 irq::@4: scope:[irq]  from irq::@2
-  irq::line#13 = phi( irq::@2/irq::line#3 )
-  irq::wobble_idx#2 = phi( irq::@2/irq::wobble_idx#3 )
+  callexecute *songPlay 
+  to:irq::@1
+irq::@5: scope:[irq]  from irq::@3
+  irq::line#13 = phi( irq::@3/irq::line#3 )
+  irq::wobble_idx#2 = phi( irq::@3/irq::wobble_idx#3 )
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#2]
   irq::wobble_idx#1 = ++ irq::wobble_idx#2
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66
-  to:irq::@7
-irq::@10: scope:[irq]  from irq::@2
-  irq::wobble_idx#14 = phi( irq::@2/irq::wobble_idx#3 )
-  irq::line#4 = phi( irq::@2/irq::line#3 )
+  to:irq::@8
+irq::@11: scope:[irq]  from irq::@3
+  irq::wobble_idx#14 = phi( irq::@3/irq::wobble_idx#3 )
+  irq::line#4 = phi( irq::@3/irq::line#3 )
   irq::$6 = irq::line#4 == SCROLL_Y
-  if(irq::$6) goto irq::@5
-  to:irq::@11
-irq::@5: scope:[irq]  from irq::@10
-  irq::wobble_idx#12 = phi( irq::@10/irq::wobble_idx#14 )
-  irq::line#14 = phi( irq::@10/irq::line#4 )
-  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft
-  to:irq::@7
-irq::@11: scope:[irq]  from irq::@10
-  irq::wobble_idx#15 = phi( irq::@10/irq::wobble_idx#14 )
-  irq::line#5 = phi( irq::@10/irq::line#4 )
-  irq::$7 = irq::line#5 == SCROLL_Y+SCROLL_BLACKBARS
-  if(irq::$7) goto irq::@6
+  if(irq::$6) goto irq::@6
   to:irq::@12
 irq::@6: scope:[irq]  from irq::@11
-  irq::wobble_idx#13 = phi( irq::@11/irq::wobble_idx#15 )
-  irq::line#15 = phi( irq::@11/irq::line#5 )
+  irq::wobble_idx#12 = phi( irq::@11/irq::wobble_idx#14 )
+  irq::line#14 = phi( irq::@11/irq::line#4 )
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50
-  to:irq::@7
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft
+  to:irq::@8
 irq::@12: scope:[irq]  from irq::@11
-  irq::wobble_idx#8 = phi( irq::@11/irq::wobble_idx#15 )
-  irq::line#6 = phi( irq::@11/irq::line#5 )
+  irq::wobble_idx#15 = phi( irq::@11/irq::wobble_idx#14 )
+  irq::line#5 = phi( irq::@11/irq::line#4 )
+  irq::$7 = irq::line#5 == SCROLL_Y+SCROLL_BLACKBARS
+  if(irq::$7) goto irq::@7
+  to:irq::@13
+irq::@7: scope:[irq]  from irq::@12
+  irq::wobble_idx#13 = phi( irq::@12/irq::wobble_idx#15 )
+  irq::line#15 = phi( irq::@12/irq::line#5 )
+  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50
+  to:irq::@8
+irq::@13: scope:[irq]  from irq::@12
+  irq::wobble_idx#8 = phi( irq::@12/irq::wobble_idx#15 )
+  irq::line#6 = phi( irq::@12/irq::line#5 )
   irq::$8 = irq::line#6 == SCROLL_Y+SCROLL_BLACKBARS+1
   irq::$9 = ! irq::$8
-  if(irq::$9) goto irq::@7
-  to:irq::@13
-irq::@13: scope:[irq]  from irq::@12
-  irq::wobble_idx#9 = phi( irq::@12/irq::wobble_idx#8 )
-  irq::line#10 = phi( irq::@12/irq::line#6 )
+  if(irq::$9) goto irq::@8
+  to:irq::@14
+irq::@14: scope:[irq]  from irq::@13
+  irq::wobble_idx#9 = phi( irq::@13/irq::wobble_idx#8 )
+  irq::line#10 = phi( irq::@13/irq::line#6 )
   irq::zoomval#0 = SINE[greet_zoomx]
   greet_zoomx = ++ greet_zoomx
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = irq::zoomval#0
@@ -223,47 +223,51 @@ irq::@13: scope:[irq]  from irq::@12
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = irq::$10
   irq::$11 = greet_zoomx == 0
   irq::$12 = ! irq::$11
-  if(irq::$12) goto irq::@7
-  to:irq::@14
-irq::@14: scope:[irq]  from irq::@13
-  irq::wobble_idx#10 = phi( irq::@13/irq::wobble_idx#9 )
-  irq::line#11 = phi( irq::@13/irq::line#10 )
+  if(irq::$12) goto irq::@8
+  to:irq::@15
+irq::@15: scope:[irq]  from irq::@14
+  irq::wobble_idx#10 = phi( irq::@14/irq::wobble_idx#9 )
+  irq::line#11 = phi( irq::@14/irq::line#10 )
   greet_idx = ++ greet_idx
   irq::$13 = greet_idx == GREET_COUNT
   irq::$14 = ! irq::$13
-  if(irq::$14) goto irq::@7
-  to:irq::@15
-irq::@15: scope:[irq]  from irq::@14
-  irq::wobble_idx#11 = phi( irq::@14/irq::wobble_idx#10 )
-  irq::line#12 = phi( irq::@14/irq::line#11 )
+  if(irq::$14) goto irq::@8
+  to:irq::@16
+irq::@16: scope:[irq]  from irq::@15
+  irq::wobble_idx#11 = phi( irq::@15/irq::wobble_idx#10 )
+  irq::line#12 = phi( irq::@15/irq::line#11 )
   greet_idx = 0
-  to:irq::@7
-irq::@7: scope:[irq]  from irq::@12 irq::@13 irq::@14 irq::@15 irq::@4 irq::@5 irq::@6
-  irq::wobble_idx#7 = phi( irq::@12/irq::wobble_idx#8, irq::@13/irq::wobble_idx#9, irq::@14/irq::wobble_idx#10, irq::@15/irq::wobble_idx#11, irq::@4/irq::wobble_idx#1, irq::@5/irq::wobble_idx#12, irq::@6/irq::wobble_idx#13 )
-  irq::line#9 = phi( irq::@12/irq::line#6, irq::@13/irq::line#10, irq::@14/irq::line#11, irq::@15/irq::line#12, irq::@4/irq::line#13, irq::@5/irq::line#14, irq::@6/irq::line#15 )
-  irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@8
-irq::@8: scope:[irq]  from irq::@7 irq::@8
-  irq::wobble_idx#6 = phi( irq::@7/irq::wobble_idx#7, irq::@8/irq::wobble_idx#6 )
-  irq::line#8 = phi( irq::@7/irq::line#9, irq::@8/irq::line#8 )
-  irq::raster#1 = phi( irq::@7/irq::raster#0, irq::@8/irq::raster#1 )
-  irq::$15 = irq::raster#1 == *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
-  if(irq::$15) goto irq::@8
+irq::@8: scope:[irq]  from irq::@13 irq::@14 irq::@15 irq::@16 irq::@5 irq::@6 irq::@7
+  irq::wobble_idx#7 = phi( irq::@13/irq::wobble_idx#8, irq::@14/irq::wobble_idx#9, irq::@15/irq::wobble_idx#10, irq::@16/irq::wobble_idx#11, irq::@5/irq::wobble_idx#1, irq::@6/irq::wobble_idx#12, irq::@7/irq::wobble_idx#13 )
+  irq::line#9 = phi( irq::@13/irq::line#6, irq::@14/irq::line#10, irq::@15/irq::line#11, irq::@16/irq::line#12, irq::@5/irq::line#13, irq::@6/irq::line#14, irq::@7/irq::line#15 )
+  irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@9
-irq::@9: scope:[irq]  from irq::@8
-  irq::wobble_idx#5 = phi( irq::@8/irq::wobble_idx#6 )
-  irq::line#7 = phi( irq::@8/irq::line#8 )
+irq::@9: scope:[irq]  from irq::@8 irq::@9
+  irq::wobble_idx#6 = phi( irq::@8/irq::wobble_idx#7, irq::@9/irq::wobble_idx#6 )
+  irq::line#8 = phi( irq::@8/irq::line#9, irq::@9/irq::line#8 )
+  irq::raster#1 = phi( irq::@8/irq::raster#0, irq::@9/irq::raster#1 )
+  irq::$15 = irq::raster#1 == *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  if(irq::$15) goto irq::@9
+  to:irq::@10
+irq::@10: scope:[irq]  from irq::@9
+  irq::wobble_idx#5 = phi( irq::@9/irq::wobble_idx#6 )
+  irq::line#7 = phi( irq::@9/irq::line#8 )
   irq::line#1 = ++ irq::line#7
-  to:irq::@1
-irq::@16: scope:[irq]  from irq::@17 irq::@3
-  irq::sin_col#3 = phi( irq::@17/irq::sin_col#1, irq::@3/irq::sin_col#0 )
-  irq::i#2 = phi( irq::@17/irq::i#1, irq::@3/irq::i#0 )
+  to:irq::@2
+irq::@1: scope:[irq]  from irq::@4
+  irq::sin_col#0 = sin_idx
+  irq::i#0 = 0
+  to:irq::@17
+irq::@17: scope:[irq]  from irq::@1 irq::@18
+  irq::sin_col#3 = phi( irq::@1/irq::sin_col#0, irq::@18/irq::sin_col#1 )
+  irq::i#2 = phi( irq::@1/irq::i#0, irq::@18/irq::i#1 )
   irq::$16 = irq::i#2 < $28
-  if(irq::$16) goto irq::@17
-  to:irq::@18
-irq::@17: scope:[irq]  from irq::@16
-  irq::i#3 = phi( irq::@16/irq::i#2 )
-  irq::sin_col#2 = phi( irq::@16/irq::sin_col#3 )
+  if(irq::$16) goto irq::@18
+  to:irq::@19
+irq::@18: scope:[irq]  from irq::@17
+  irq::i#3 = phi( irq::@17/irq::i#2 )
+  irq::sin_col#2 = phi( irq::@17/irq::sin_col#3 )
   irq::col1#0 = SINE[irq::sin_col#2] / 4
   (COLORRAM+GREET_ROW*$28)[irq::i#3] = irq::col1#0
   irq::col1#1 = irq::col1#0 / 2
@@ -276,162 +280,162 @@ irq::@17: scope:[irq]  from irq::@16
   (COLORRAM+SCROLL_ROW*$28)[irq::i#3] = PAL_GREEN[irq::sin_col#2]
   irq::sin_col#1 = ++ irq::sin_col#2
   irq::i#1 = ++ irq::i#3
-  to:irq::@16
-irq::@18: scope:[irq]  from irq::@16
+  to:irq::@17
+irq::@19: scope:[irq]  from irq::@17
   irq::l#0 = 0
-  to:irq::@19
-irq::@19: scope:[irq]  from irq::@18 irq::@20
-  irq::l#2 = phi( irq::@18/irq::l#0, irq::@20/irq::l#1 )
+  to:irq::@20
+irq::@20: scope:[irq]  from irq::@19 irq::@21
+  irq::l#2 = phi( irq::@19/irq::l#0, irq::@21/irq::l#1 )
   irq::$18 = irq::l#2 != RASTER_LINES
-  if(irq::$18) goto irq::@20
-  to:irq::@21
-irq::@20: scope:[irq]  from irq::@19
-  irq::l#3 = phi( irq::@19/irq::l#2 )
+  if(irq::$18) goto irq::@21
+  to:irq::@22
+irq::@21: scope:[irq]  from irq::@20
+  irq::l#3 = phi( irq::@20/irq::l#2 )
   rasters[irq::l#3] = 0
   irq::l#1 = ++ irq::l#3
-  to:irq::@19
-irq::@21: scope:[irq]  from irq::@19
+  to:irq::@20
+irq::@22: scope:[irq]  from irq::@20
   irq::sin_bar#0 = sin_idx
   irq::barcnt#0 = 0
-  to:irq::@22
-irq::@22: scope:[irq]  from irq::@21 irq::@30
-  irq::sin_bar#4 = phi( irq::@21/irq::sin_bar#0, irq::@30/irq::sin_bar#1 )
-  irq::barcnt#2 = phi( irq::@21/irq::barcnt#0, irq::@30/irq::barcnt#1 )
+  to:irq::@23
+irq::@23: scope:[irq]  from irq::@22 irq::@31
+  irq::sin_bar#4 = phi( irq::@22/irq::sin_bar#0, irq::@31/irq::sin_bar#1 )
+  irq::barcnt#2 = phi( irq::@22/irq::barcnt#0, irq::@31/irq::barcnt#1 )
   irq::$19 = irq::barcnt#2 < $10
-  if(irq::$19) goto irq::@23
-  to:irq::@24
-irq::@23: scope:[irq]  from irq::@22
-  irq::barcnt#3 = phi( irq::@22/irq::barcnt#2 )
-  irq::sin_bar#2 = phi( irq::@22/irq::sin_bar#4 )
+  if(irq::$19) goto irq::@24
+  to:irq::@25
+irq::@24: scope:[irq]  from irq::@23
+  irq::barcnt#3 = phi( irq::@23/irq::barcnt#2 )
+  irq::sin_bar#2 = phi( irq::@23/irq::sin_bar#4 )
   irq::idx#0 = SINE[irq::sin_bar#2]
   irq::barcol#0 = irq::barcnt#3 * $10
   irq::i1#0 = 0
-  to:irq::@25
-irq::@24: scope:[irq]  from irq::@22
+  to:irq::@26
+irq::@25: scope:[irq]  from irq::@23
   irq::i3#0 = 0
-  to:irq::@31
-irq::@25: scope:[irq]  from irq::@23 irq::@26
-  irq::barcnt#8 = phi( irq::@23/irq::barcnt#3, irq::@26/irq::barcnt#9 )
-  irq::sin_bar#8 = phi( irq::@23/irq::sin_bar#2, irq::@26/irq::sin_bar#9 )
-  irq::idx#5 = phi( irq::@23/irq::idx#0, irq::@26/irq::idx#1 )
-  irq::barcol#5 = phi( irq::@23/irq::barcol#0, irq::@26/irq::barcol#1 )
-  irq::i1#2 = phi( irq::@23/irq::i1#0, irq::@26/irq::i1#1 )
+  to:irq::@32
+irq::@26: scope:[irq]  from irq::@24 irq::@27
+  irq::barcnt#8 = phi( irq::@24/irq::barcnt#3, irq::@27/irq::barcnt#9 )
+  irq::sin_bar#8 = phi( irq::@24/irq::sin_bar#2, irq::@27/irq::sin_bar#9 )
+  irq::idx#5 = phi( irq::@24/irq::idx#0, irq::@27/irq::idx#1 )
+  irq::barcol#5 = phi( irq::@24/irq::barcol#0, irq::@27/irq::barcol#1 )
+  irq::i1#2 = phi( irq::@24/irq::i1#0, irq::@27/irq::i1#1 )
   irq::$21 = irq::i1#2 < $10
-  if(irq::$21) goto irq::@26
-  to:irq::@27
-irq::@26: scope:[irq]  from irq::@25
-  irq::barcnt#9 = phi( irq::@25/irq::barcnt#8 )
-  irq::sin_bar#9 = phi( irq::@25/irq::sin_bar#8 )
-  irq::i1#3 = phi( irq::@25/irq::i1#2 )
-  irq::idx#3 = phi( irq::@25/irq::idx#5 )
-  irq::barcol#3 = phi( irq::@25/irq::barcol#5 )
+  if(irq::$21) goto irq::@27
+  to:irq::@28
+irq::@27: scope:[irq]  from irq::@26
+  irq::barcnt#9 = phi( irq::@26/irq::barcnt#8 )
+  irq::sin_bar#9 = phi( irq::@26/irq::sin_bar#8 )
+  irq::i1#3 = phi( irq::@26/irq::i1#2 )
+  irq::idx#3 = phi( irq::@26/irq::idx#5 )
+  irq::barcol#3 = phi( irq::@26/irq::barcol#5 )
   rasters[irq::idx#3] = irq::barcol#3
   irq::idx#1 = ++ irq::idx#3
   irq::barcol#1 = ++ irq::barcol#3
   irq::i1#1 = ++ irq::i1#3
-  to:irq::@25
-irq::@27: scope:[irq]  from irq::@25
-  irq::barcnt#6 = phi( irq::@25/irq::barcnt#8 )
-  irq::sin_bar#6 = phi( irq::@25/irq::sin_bar#8 )
-  irq::idx#7 = phi( irq::@25/irq::idx#5 )
-  irq::barcol#7 = phi( irq::@25/irq::barcol#5 )
+  to:irq::@26
+irq::@28: scope:[irq]  from irq::@26
+  irq::barcnt#6 = phi( irq::@26/irq::barcnt#8 )
+  irq::sin_bar#6 = phi( irq::@26/irq::sin_bar#8 )
+  irq::idx#7 = phi( irq::@26/irq::idx#5 )
+  irq::barcol#7 = phi( irq::@26/irq::barcol#5 )
   irq::i2#0 = 0
-  to:irq::@28
-irq::@28: scope:[irq]  from irq::@27 irq::@29
-  irq::barcnt#5 = phi( irq::@27/irq::barcnt#6, irq::@29/irq::barcnt#7 )
-  irq::sin_bar#5 = phi( irq::@27/irq::sin_bar#6, irq::@29/irq::sin_bar#7 )
-  irq::idx#6 = phi( irq::@27/irq::idx#7, irq::@29/irq::idx#2 )
-  irq::barcol#6 = phi( irq::@27/irq::barcol#7, irq::@29/irq::barcol#2 )
-  irq::i2#2 = phi( irq::@27/irq::i2#0, irq::@29/irq::i2#1 )
+  to:irq::@29
+irq::@29: scope:[irq]  from irq::@28 irq::@30
+  irq::barcnt#5 = phi( irq::@28/irq::barcnt#6, irq::@30/irq::barcnt#7 )
+  irq::sin_bar#5 = phi( irq::@28/irq::sin_bar#6, irq::@30/irq::sin_bar#7 )
+  irq::idx#6 = phi( irq::@28/irq::idx#7, irq::@30/irq::idx#2 )
+  irq::barcol#6 = phi( irq::@28/irq::barcol#7, irq::@30/irq::barcol#2 )
+  irq::i2#2 = phi( irq::@28/irq::i2#0, irq::@30/irq::i2#1 )
   irq::$22 = irq::i2#2 < $f
-  if(irq::$22) goto irq::@29
-  to:irq::@30
-irq::@29: scope:[irq]  from irq::@28
-  irq::barcnt#7 = phi( irq::@28/irq::barcnt#5 )
-  irq::sin_bar#7 = phi( irq::@28/irq::sin_bar#5 )
-  irq::i2#3 = phi( irq::@28/irq::i2#2 )
-  irq::idx#4 = phi( irq::@28/irq::idx#6 )
-  irq::barcol#4 = phi( irq::@28/irq::barcol#6 )
+  if(irq::$22) goto irq::@30
+  to:irq::@31
+irq::@30: scope:[irq]  from irq::@29
+  irq::barcnt#7 = phi( irq::@29/irq::barcnt#5 )
+  irq::sin_bar#7 = phi( irq::@29/irq::sin_bar#5 )
+  irq::i2#3 = phi( irq::@29/irq::i2#2 )
+  irq::idx#4 = phi( irq::@29/irq::idx#6 )
+  irq::barcol#4 = phi( irq::@29/irq::barcol#6 )
   irq::barcol#2 = -- irq::barcol#4
   rasters[irq::idx#4] = irq::barcol#2
   irq::idx#2 = ++ irq::idx#4
   irq::i2#1 = ++ irq::i2#3
-  to:irq::@28
-irq::@30: scope:[irq]  from irq::@28
-  irq::barcnt#4 = phi( irq::@28/irq::barcnt#5 )
-  irq::sin_bar#3 = phi( irq::@28/irq::sin_bar#5 )
+  to:irq::@29
+irq::@31: scope:[irq]  from irq::@29
+  irq::barcnt#4 = phi( irq::@29/irq::barcnt#5 )
+  irq::sin_bar#3 = phi( irq::@29/irq::sin_bar#5 )
   irq::sin_bar#1 = irq::sin_bar#3 + $a
   irq::barcnt#1 = ++ irq::barcnt#4
-  to:irq::@22
-irq::@31: scope:[irq]  from irq::@24 irq::@32
-  irq::i3#2 = phi( irq::@24/irq::i3#0, irq::@32/irq::i3#1 )
+  to:irq::@23
+irq::@32: scope:[irq]  from irq::@25 irq::@33
+  irq::i3#2 = phi( irq::@25/irq::i3#0, irq::@33/irq::i3#1 )
   irq::$23 = irq::i3#2 < $13
-  if(irq::$23) goto irq::@32
-  to:irq::@33
-irq::@32: scope:[irq]  from irq::@31
-  irq::i3#3 = phi( irq::@31/irq::i3#2 )
+  if(irq::$23) goto irq::@33
+  to:irq::@34
+irq::@33: scope:[irq]  from irq::@32
+  irq::i3#3 = phi( irq::@32/irq::i3#2 )
   irq::$24 = SCROLL_Y + irq::i3#3
   irq::$25 = SCROLL_Y + irq::i3#3
   irq::$26 = rasters[irq::$25] / 2
   irq::$27 = irq::$26 & 7
   rasters[irq::$24] = irq::$27
   irq::i3#1 = ++ irq::i3#3
-  to:irq::@31
-irq::@33: scope:[irq]  from irq::@31
+  to:irq::@32
+irq::@34: scope:[irq]  from irq::@32
   irq::greet_offset#0 = greet_idx * $10
   irq::i4#0 = 0
-  to:irq::@34
-irq::@34: scope:[irq]  from irq::@33 irq::@35
-  irq::greet_offset#3 = phi( irq::@33/irq::greet_offset#0, irq::@35/irq::greet_offset#1 )
-  irq::i4#2 = phi( irq::@33/irq::i4#0, irq::@35/irq::i4#1 )
+  to:irq::@35
+irq::@35: scope:[irq]  from irq::@34 irq::@36
+  irq::greet_offset#3 = phi( irq::@34/irq::greet_offset#0, irq::@36/irq::greet_offset#1 )
+  irq::i4#2 = phi( irq::@34/irq::i4#0, irq::@36/irq::i4#1 )
   irq::$28 = irq::i4#2 < $10
-  if(irq::$28) goto irq::@35
-  to:irq::@36
-irq::@35: scope:[irq]  from irq::@34
-  irq::i4#3 = phi( irq::@34/irq::i4#2 )
-  irq::greet_offset#2 = phi( irq::@34/irq::greet_offset#3 )
+  if(irq::$28) goto irq::@36
+  to:irq::@37
+irq::@36: scope:[irq]  from irq::@35
+  irq::i4#3 = phi( irq::@35/irq::i4#2 )
+  irq::greet_offset#2 = phi( irq::@35/irq::greet_offset#3 )
   irq::$29 = GREETING[irq::greet_offset#2] & $bf
   (SCREEN+GREET_ROW*$28+$d)[irq::i4#3] = irq::$29
   irq::greet_offset#1 = ++ irq::greet_offset#2
   irq::i4#1 = ++ irq::i4#3
-  to:irq::@34
-irq::@36: scope:[irq]  from irq::@34
+  to:irq::@35
+irq::@37: scope:[irq]  from irq::@35
   scroll_soft = -- scroll_soft
   irq::$2 = scroll_soft == $ff
   irq::$3 = ! irq::$2
   if(irq::$3) goto irq::@return
-  to:irq::@37
-irq::@37: scope:[irq]  from irq::@36
+  to:irq::@38
+irq::@38: scope:[irq]  from irq::@37
   scroll_soft = 7
   irq::i5#0 = 0
-  to:irq::@38
-irq::@38: scope:[irq]  from irq::@37 irq::@39
-  irq::i5#2 = phi( irq::@37/irq::i5#0, irq::@39/irq::i5#1 )
+  to:irq::@39
+irq::@39: scope:[irq]  from irq::@38 irq::@40
+  irq::i5#2 = phi( irq::@38/irq::i5#0, irq::@40/irq::i5#1 )
   irq::$30 = irq::i5#2 < $27
-  if(irq::$30) goto irq::@39
-  to:irq::@40
-irq::@39: scope:[irq]  from irq::@38
-  irq::i5#3 = phi( irq::@38/irq::i5#2 )
+  if(irq::$30) goto irq::@40
+  to:irq::@41
+irq::@40: scope:[irq]  from irq::@39
+  irq::i5#3 = phi( irq::@39/irq::i5#2 )
   (SCREEN+SCROLL_ROW*$28)[irq::i5#3] = (SCREEN+SCROLL_ROW*$28+1)[irq::i5#3]
   irq::i5#1 = ++ irq::i5#3
-  to:irq::@38
-irq::@40: scope:[irq]  from irq::@38
+  to:irq::@39
+irq::@41: scope:[irq]  from irq::@39
   irq::nxt#0 = *scroll_ptr
   scroll_ptr = ++ scroll_ptr
   irq::$31 = irq::nxt#0 == 0
   irq::$32 = ! irq::$31
-  if(irq::$32) goto irq::@42
-  to:irq::@41
-irq::@42: scope:[irq]  from irq::@40 irq::@41
-  irq::nxt#2 = phi( irq::@40/irq::nxt#0, irq::@41/irq::nxt#1 )
+  if(irq::$32) goto irq::@43
+  to:irq::@42
+irq::@43: scope:[irq]  from irq::@41 irq::@42
+  irq::nxt#2 = phi( irq::@41/irq::nxt#0, irq::@42/irq::nxt#1 )
   irq::$33 = irq::nxt#2 & $bf
   *(SCREEN+SCROLL_ROW*$28+$27) = irq::$33
   to:irq::@return
-irq::@41: scope:[irq]  from irq::@40
+irq::@42: scope:[irq]  from irq::@41
   scroll_ptr = SCROLL_TEXT
   irq::nxt#1 = *scroll_ptr
-  to:irq::@42
-irq::@return: scope:[irq]  from irq::@36 irq::@42
+  to:irq::@43
+irq::@return: scope:[irq]  from irq::@37 irq::@43
   return 
   to:@return
 
@@ -996,9 +1000,9 @@ Inferred type updated to byte in irq::$27 = irq::$26 & 7
 Inferred type updated to byte in irq::$29 = GREETING[irq::greet_offset#2] & $bf
 Inferred type updated to byte in irq::$33 = irq::nxt#2 & $bf
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
-Inversing boolean not [99] irq::$9 = irq::line#6 != SCROLL_Y+SCROLL_BLACKBARS+1 from [98] irq::$8 = irq::line#6 == SCROLL_Y+SCROLL_BLACKBARS+1
-Inversing boolean not [108] irq::$12 = greet_zoomx != 0 from [107] irq::$11 = greet_zoomx == 0
-Inversing boolean not [113] irq::$14 = greet_idx != GREET_COUNT from [112] irq::$13 = greet_idx == GREET_COUNT
+Inversing boolean not [97] irq::$9 = irq::line#6 != SCROLL_Y+SCROLL_BLACKBARS+1 from [96] irq::$8 = irq::line#6 == SCROLL_Y+SCROLL_BLACKBARS+1
+Inversing boolean not [106] irq::$12 = greet_zoomx != 0 from [105] irq::$11 = greet_zoomx == 0
+Inversing boolean not [111] irq::$14 = greet_idx != GREET_COUNT from [110] irq::$13 = greet_idx == GREET_COUNT
 Inversing boolean not [200] irq::$3 = scroll_soft != $ff from [199] irq::$2 = scroll_soft == $ff
 Inversing boolean not [213] irq::$32 = irq::nxt#0 != 0 from [212] irq::$31 = irq::nxt#0 == 0
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -1056,27 +1060,27 @@ Identical Phi Values memset::return#0 memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition memset::$1 [2] if(memset::num#0<=0) goto memset::@1
 Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition main::$3 [28] if(main::i1#2<main::$2) goto main::@2
-Simple Condition main::$4 [34] if(main::i2#2<$28) goto main::@5
-Simple Condition main::$5 [44] if(main::i#1!=0) goto main::@7
-Simple Condition irq::$4 [64] if(irq::line#10!=RASTER_LINES) goto irq::@2
-Simple Condition irq::$5 [69] if(irq::line#10<SCROLL_Y) goto irq::@4
-Simple Condition irq::$6 [77] if(irq::line#10==SCROLL_Y) goto irq::@5
-Simple Condition irq::$7 [81] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@6
-Simple Condition irq::$9 [84] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@7
-Simple Condition irq::$12 [91] if(greet_zoomx!=0) goto irq::@7
-Simple Condition irq::$14 [94] if(greet_idx!=GREET_COUNT) goto irq::@7
-Simple Condition irq::$15 [100] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@8
-Simple Condition irq::$16 [104] if(irq::i#2<$28) goto irq::@17
-Simple Condition irq::$18 [120] if(irq::l#2!=RASTER_LINES) goto irq::@20
-Simple Condition irq::$19 [127] if(irq::barcnt#2<$10) goto irq::@23
-Simple Condition irq::$21 [134] if(irq::i1#2<$10) goto irq::@26
-Simple Condition irq::$22 [142] if(irq::i2#2<$f) goto irq::@29
-Simple Condition irq::$23 [151] if(irq::i3#2<$13) goto irq::@32
-Simple Condition irq::$28 [162] if(irq::i4#2<$10) goto irq::@35
+Simple Condition main::$3 [28] if(main::i1#2<main::$2) goto main::@3
+Simple Condition main::$4 [34] if(main::i2#2<$28) goto main::@6
+Simple Condition main::$5 [44] if(main::i#1!=0) goto main::@8
+Simple Condition irq::$4 [64] if(irq::line#10!=RASTER_LINES) goto irq::@3
+Simple Condition irq::$5 [69] if(irq::line#10<SCROLL_Y) goto irq::@5
+Simple Condition irq::$6 [75] if(irq::line#10==SCROLL_Y) goto irq::@6
+Simple Condition irq::$7 [79] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@7
+Simple Condition irq::$9 [82] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@8
+Simple Condition irq::$12 [89] if(greet_zoomx!=0) goto irq::@8
+Simple Condition irq::$14 [92] if(greet_idx!=GREET_COUNT) goto irq::@8
+Simple Condition irq::$15 [98] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@9
+Simple Condition irq::$16 [104] if(irq::i#2<$28) goto irq::@18
+Simple Condition irq::$18 [120] if(irq::l#2!=RASTER_LINES) goto irq::@21
+Simple Condition irq::$19 [127] if(irq::barcnt#2<$10) goto irq::@24
+Simple Condition irq::$21 [134] if(irq::i1#2<$10) goto irq::@27
+Simple Condition irq::$22 [142] if(irq::i2#2<$f) goto irq::@30
+Simple Condition irq::$23 [151] if(irq::i3#2<$13) goto irq::@33
+Simple Condition irq::$28 [162] if(irq::i4#2<$10) goto irq::@36
 Simple Condition irq::$3 [169] if(scroll_soft!=$ff) goto irq::@return
-Simple Condition irq::$30 [174] if(irq::i5#2<$27) goto irq::@39
-Simple Condition irq::$32 [180] if(irq::nxt#0!=0) goto irq::@42
+Simple Condition irq::$30 [174] if(irq::i5#2<$27) goto irq::@40
+Simple Condition irq::$32 [180] if(irq::nxt#0!=0) goto irq::@43
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [21] memset::num#0 = (unumber)$28*$19
 Constant right-side identified [26] main::$2 = sizeof  MEGA_LOGO
@@ -1193,32 +1197,33 @@ Simplifying constant integer cast 3*$28
 Simplifying constant integer cast 4*$28
 Simplifying constant integer cast 5*$28
 Successful SSA optimization PassNCastSimplification
-Added new block during phi lifting main::@11(between main::@7 and main::@7)
-Added new block during phi lifting irq::@43(between irq::@12 and irq::@7)
-Added new block during phi lifting irq::@44(between irq::@13 and irq::@7)
-Added new block during phi lifting irq::@45(between irq::@14 and irq::@7)
-Added new block during phi lifting irq::@46(between irq::@40 and irq::@42)
+Added new block during phi lifting main::@12(between main::@8 and main::@8)
+Added new block during phi lifting irq::@44(between irq::@13 and irq::@8)
+Added new block during phi lifting irq::@45(between irq::@14 and irq::@8)
+Added new block during phi lifting irq::@46(between irq::@15 and irq::@8)
+Added new block during phi lifting irq::@47(between irq::@41 and irq::@43)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
-Adding NOP phi() at start of irq::@3
-Adding NOP phi() at start of irq::@18
-Adding NOP phi() at start of irq::@24
+Adding NOP phi() at start of irq::@4
+Adding NOP phi() at start of irq::@19
+Adding NOP phi() at start of irq::@25
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@11
+Adding NOP phi() at start of main::@4
+Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of main::@10
-Adding NOP phi() at start of main::@3
-Adding NOP phi() at start of main::@6
-Adding NOP phi() at start of main::@9
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [__start] to main:7 
 Calls in [irq] to null:19 
-Calls in [main] to null:153 memset:154 
+Calls in [main] to null:153 memset:155 
 
 Created 23 initial phi equivalence classes
 Coalesced [15] irq::wobble_idx#16 = irq::wobble_idx#0
-Coalesced [21] irq::sin_col#5 = irq::sin_col#0
+Coalesced [21] irq::sin_col#4 = irq::sin_col#0
 Coalesced [28] irq::sin_bar#10 = irq::sin_bar#0
 Coalesced [35] irq::greet_offset#4 = irq::greet_offset#0
 Coalesced [48] irq::nxt#4 = irq::nxt#1
@@ -1241,7 +1246,7 @@ Coalesced [94] irq::barcol#9 = irq::barcol#1
 Coalesced [95] irq::idx#9 = irq::idx#1
 Coalesced [98] irq::l#4 = irq::l#1
 Coalesced [111] irq::i#4 = irq::i#1
-Coalesced [112] irq::sin_col#4 = irq::sin_col#1
+Coalesced [112] irq::sin_col#5 = irq::sin_col#1
 Coalesced [129] irq::wobble_idx#21 = irq::wobble_idx#10
 Coalesced [134] irq::line#16 = irq::line#1
 Coalesced (already) [135] irq::wobble_idx#17 = irq::wobble_idx#7
@@ -1251,40 +1256,39 @@ Coalesced (already) [138] irq::wobble_idx#18 = irq::wobble_idx#10
 Coalesced (already) [140] irq::wobble_idx#24 = irq::wobble_idx#10
 Coalesced (already) [143] irq::wobble_idx#23 = irq::wobble_idx#10
 Coalesced [147] irq::wobble_idx#22 = irq::wobble_idx#1
-Coalesced [179] main::i#3 = main::i#1
-Coalesced [182] main::i2#4 = main::i2#1
-Coalesced [185] main::i1#4 = main::i1#1
-Coalesced [194] memset::dst#4 = memset::dst#1
+Coalesced [180] main::i#3 = main::i#1
+Coalesced [183] main::i2#4 = main::i2#1
+Coalesced [186] main::i1#4 = main::i1#1
+Coalesced [195] memset::dst#4 = memset::dst#1
 Coalesced down to 20 phi equivalence classes
 Culled Empty Block label __start::@2
-Culled Empty Block label irq::@18
-Culled Empty Block label irq::@24
+Culled Empty Block label irq::@19
+Culled Empty Block label irq::@25
+Culled Empty Block label irq::@47
+Culled Empty Block label irq::@28
 Culled Empty Block label irq::@46
-Culled Empty Block label irq::@27
 Culled Empty Block label irq::@45
 Culled Empty Block label irq::@44
-Culled Empty Block label irq::@43
-Culled Empty Block label main::@10
-Culled Empty Block label main::@3
-Culled Empty Block label main::@6
 Culled Empty Block label main::@11
+Culled Empty Block label main::@4
+Culled Empty Block label main::@7
+Culled Empty Block label main::@12
 Culled Empty Block label memset::@2
 Culled Empty Block label memset::@1
 Renumbering block memset::@3 to memset::@1
 Renumbering block memset::@4 to memset::@2
-Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
-Renumbering block main::@7 to main::@5
+Renumbering block main::@6 to main::@5
 Renumbering block main::@8 to main::@6
 Renumbering block main::@9 to main::@7
-Renumbering block irq::@19 to irq::@18
+Renumbering block main::@10 to main::@8
 Renumbering block irq::@20 to irq::@19
 Renumbering block irq::@21 to irq::@20
 Renumbering block irq::@22 to irq::@21
 Renumbering block irq::@23 to irq::@22
-Renumbering block irq::@25 to irq::@23
+Renumbering block irq::@24 to irq::@23
 Renumbering block irq::@26 to irq::@24
-Renumbering block irq::@28 to irq::@25
+Renumbering block irq::@27 to irq::@25
 Renumbering block irq::@29 to irq::@26
 Renumbering block irq::@30 to irq::@27
 Renumbering block irq::@31 to irq::@28
@@ -1299,10 +1303,12 @@ Renumbering block irq::@39 to irq::@36
 Renumbering block irq::@40 to irq::@37
 Renumbering block irq::@41 to irq::@38
 Renumbering block irq::@42 to irq::@39
+Renumbering block irq::@43 to irq::@40
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
-Adding NOP phi() at start of irq::@3
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of irq::@4
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@8
 Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
@@ -1333,127 +1339,129 @@ irq: scope:[irq]  from
   [11] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = 0
   [12] sin_idx = ++ sin_idx
   [13] irq::wobble_idx#0 = sin_idx
-  to:irq::@1
-irq::@1: scope:[irq]  from irq irq::@9
-  [14] irq::wobble_idx#10 = phi( irq/irq::wobble_idx#0, irq::@9/irq::wobble_idx#7 )
-  [14] irq::line#10 = phi( irq/0, irq::@9/irq::line#1 )
-  [15] if(irq::line#10!=RASTER_LINES) goto irq::@2
-  to:irq::@3
-irq::@3: scope:[irq]  from irq::@1
+  to:irq::@2
+irq::@2: scope:[irq]  from irq irq::@10
+  [14] irq::wobble_idx#10 = phi( irq/irq::wobble_idx#0, irq::@10/irq::wobble_idx#7 )
+  [14] irq::line#10 = phi( irq/0, irq::@10/irq::line#1 )
+  [15] if(irq::line#10!=RASTER_LINES) goto irq::@3
+  to:irq::@4
+irq::@4: scope:[irq]  from irq::@2
   [16] phi()
   [17] callexecute *songPlay 
+  to:irq::@1
+irq::@1: scope:[irq]  from irq::@4
   [18] irq::sin_col#0 = sin_idx
-  to:irq::@16
-irq::@16: scope:[irq]  from irq::@17 irq::@3
-  [19] irq::sin_col#2 = phi( irq::@17/irq::sin_col#1, irq::@3/irq::sin_col#0 )
-  [19] irq::i#2 = phi( irq::@17/irq::i#1, irq::@3/0 )
-  [20] if(irq::i#2<$28) goto irq::@17
-  to:irq::@18
-irq::@18: scope:[irq]  from irq::@16 irq::@19
-  [21] irq::l#2 = phi( irq::@16/0, irq::@19/irq::l#1 )
-  [22] if(irq::l#2!=RASTER_LINES) goto irq::@19
-  to:irq::@20
-irq::@20: scope:[irq]  from irq::@18
-  [23] irq::sin_bar#0 = sin_idx
+  to:irq::@17
+irq::@17: scope:[irq]  from irq::@1 irq::@18
+  [19] irq::sin_col#2 = phi( irq::@1/irq::sin_col#0, irq::@18/irq::sin_col#1 )
+  [19] irq::i#2 = phi( irq::@1/0, irq::@18/irq::i#1 )
+  [20] if(irq::i#2<$28) goto irq::@18
+  to:irq::@19
+irq::@19: scope:[irq]  from irq::@17 irq::@20
+  [21] irq::l#2 = phi( irq::@17/0, irq::@20/irq::l#1 )
+  [22] if(irq::l#2!=RASTER_LINES) goto irq::@20
   to:irq::@21
-irq::@21: scope:[irq]  from irq::@20 irq::@27
-  [24] irq::sin_bar#2 = phi( irq::@20/irq::sin_bar#0, irq::@27/irq::sin_bar#1 )
-  [24] irq::barcnt#2 = phi( irq::@20/0, irq::@27/irq::barcnt#1 )
-  [25] if(irq::barcnt#2<$10) goto irq::@22
-  to:irq::@28
-irq::@28: scope:[irq]  from irq::@21 irq::@29
-  [26] irq::i3#2 = phi( irq::@21/0, irq::@29/irq::i3#1 )
-  [27] if(irq::i3#2<$13) goto irq::@29
-  to:irq::@30
-irq::@30: scope:[irq]  from irq::@28
-  [28] irq::greet_offset#0 = greet_idx << 4
+irq::@21: scope:[irq]  from irq::@19
+  [23] irq::sin_bar#0 = sin_idx
+  to:irq::@22
+irq::@22: scope:[irq]  from irq::@21 irq::@28
+  [24] irq::sin_bar#2 = phi( irq::@21/irq::sin_bar#0, irq::@28/irq::sin_bar#1 )
+  [24] irq::barcnt#2 = phi( irq::@21/0, irq::@28/irq::barcnt#1 )
+  [25] if(irq::barcnt#2<$10) goto irq::@23
+  to:irq::@29
+irq::@29: scope:[irq]  from irq::@22 irq::@30
+  [26] irq::i3#2 = phi( irq::@22/0, irq::@30/irq::i3#1 )
+  [27] if(irq::i3#2<$13) goto irq::@30
   to:irq::@31
-irq::@31: scope:[irq]  from irq::@30 irq::@32
-  [29] irq::greet_offset#2 = phi( irq::@30/irq::greet_offset#0, irq::@32/irq::greet_offset#1 )
-  [29] irq::i4#2 = phi( irq::@30/0, irq::@32/irq::i4#1 )
-  [30] if(irq::i4#2<$10) goto irq::@32
-  to:irq::@33
-irq::@33: scope:[irq]  from irq::@31
+irq::@31: scope:[irq]  from irq::@29
+  [28] irq::greet_offset#0 = greet_idx << 4
+  to:irq::@32
+irq::@32: scope:[irq]  from irq::@31 irq::@33
+  [29] irq::greet_offset#2 = phi( irq::@31/irq::greet_offset#0, irq::@33/irq::greet_offset#1 )
+  [29] irq::i4#2 = phi( irq::@31/0, irq::@33/irq::i4#1 )
+  [30] if(irq::i4#2<$10) goto irq::@33
+  to:irq::@34
+irq::@34: scope:[irq]  from irq::@32
   [31] scroll_soft = -- scroll_soft
   [32] if(scroll_soft!=$ff) goto irq::@return
-  to:irq::@34
-irq::@34: scope:[irq]  from irq::@33
-  [33] scroll_soft = 7
   to:irq::@35
-irq::@35: scope:[irq]  from irq::@34 irq::@36
-  [34] irq::i5#2 = phi( irq::@34/0, irq::@36/irq::i5#1 )
-  [35] if(irq::i5#2<$27) goto irq::@36
-  to:irq::@37
-irq::@37: scope:[irq]  from irq::@35
+irq::@35: scope:[irq]  from irq::@34
+  [33] scroll_soft = 7
+  to:irq::@36
+irq::@36: scope:[irq]  from irq::@35 irq::@37
+  [34] irq::i5#2 = phi( irq::@35/0, irq::@37/irq::i5#1 )
+  [35] if(irq::i5#2<$27) goto irq::@37
+  to:irq::@38
+irq::@38: scope:[irq]  from irq::@36
   [36] irq::nxt#0 = *scroll_ptr
   [37] scroll_ptr = ++ scroll_ptr
-  [38] if(irq::nxt#0!=0) goto irq::@39
-  to:irq::@38
-irq::@38: scope:[irq]  from irq::@37
+  [38] if(irq::nxt#0!=0) goto irq::@40
+  to:irq::@39
+irq::@39: scope:[irq]  from irq::@38
   [39] scroll_ptr = SCROLL_TEXT
   [40] irq::nxt#1 = *scroll_ptr
-  to:irq::@39
-irq::@39: scope:[irq]  from irq::@37 irq::@38
-  [41] irq::nxt#2 = phi( irq::@37/irq::nxt#0, irq::@38/irq::nxt#1 )
+  to:irq::@40
+irq::@40: scope:[irq]  from irq::@38 irq::@39
+  [41] irq::nxt#2 = phi( irq::@38/irq::nxt#0, irq::@39/irq::nxt#1 )
   [42] irq::$33 = irq::nxt#2 & $bf
   [43] *(DEFAULT_SCREEN+SCROLL_ROW*$28+$27) = irq::$33
   to:irq::@return
-irq::@return: scope:[irq]  from irq::@33 irq::@39
+irq::@return: scope:[irq]  from irq::@34 irq::@40
   [44] return 
   to:@return
-irq::@36: scope:[irq]  from irq::@35
+irq::@37: scope:[irq]  from irq::@36
   [45] (DEFAULT_SCREEN+SCROLL_ROW*$28)[irq::i5#2] = (DEFAULT_SCREEN+SCROLL_ROW*$28+1)[irq::i5#2]
   [46] irq::i5#1 = ++ irq::i5#2
-  to:irq::@35
-irq::@32: scope:[irq]  from irq::@31
+  to:irq::@36
+irq::@33: scope:[irq]  from irq::@32
   [47] irq::$29 = GREETING[irq::greet_offset#2] & $bf
   [48] (DEFAULT_SCREEN+GREET_ROW*$28+$d)[irq::i4#2] = irq::$29
   [49] irq::greet_offset#1 = ++ irq::greet_offset#2
   [50] irq::i4#1 = ++ irq::i4#2
-  to:irq::@31
-irq::@29: scope:[irq]  from irq::@28
+  to:irq::@32
+irq::@30: scope:[irq]  from irq::@29
   [51] irq::$26 = (rasters+SCROLL_Y)[irq::i3#2] >> 1
   [52] irq::$27 = irq::$26 & 7
   [53] (rasters+SCROLL_Y)[irq::i3#2] = irq::$27
   [54] irq::i3#1 = ++ irq::i3#2
-  to:irq::@28
-irq::@22: scope:[irq]  from irq::@21
+  to:irq::@29
+irq::@23: scope:[irq]  from irq::@22
   [55] irq::idx#0 = SINE[irq::sin_bar#2]
   [56] irq::barcol#0 = irq::barcnt#2 << 4
-  to:irq::@23
-irq::@23: scope:[irq]  from irq::@22 irq::@24
-  [57] irq::idx#3 = phi( irq::@22/irq::idx#0, irq::@24/irq::idx#1 )
-  [57] irq::barcol#3 = phi( irq::@22/irq::barcol#0, irq::@24/irq::barcol#1 )
-  [57] irq::i1#2 = phi( irq::@22/0, irq::@24/irq::i1#1 )
-  [58] if(irq::i1#2<$10) goto irq::@24
-  to:irq::@25
-irq::@25: scope:[irq]  from irq::@23 irq::@26
-  [59] irq::idx#4 = phi( irq::@23/irq::idx#3, irq::@26/irq::idx#2 )
-  [59] irq::barcol#4 = phi( irq::@23/irq::barcol#3, irq::@26/irq::barcol#2 )
-  [59] irq::i2#2 = phi( irq::@23/0, irq::@26/irq::i2#1 )
-  [60] if(irq::i2#2<$f) goto irq::@26
-  to:irq::@27
-irq::@27: scope:[irq]  from irq::@25
+  to:irq::@24
+irq::@24: scope:[irq]  from irq::@23 irq::@25
+  [57] irq::idx#3 = phi( irq::@23/irq::idx#0, irq::@25/irq::idx#1 )
+  [57] irq::barcol#3 = phi( irq::@23/irq::barcol#0, irq::@25/irq::barcol#1 )
+  [57] irq::i1#2 = phi( irq::@23/0, irq::@25/irq::i1#1 )
+  [58] if(irq::i1#2<$10) goto irq::@25
+  to:irq::@26
+irq::@26: scope:[irq]  from irq::@24 irq::@27
+  [59] irq::idx#4 = phi( irq::@24/irq::idx#3, irq::@27/irq::idx#2 )
+  [59] irq::barcol#4 = phi( irq::@24/irq::barcol#3, irq::@27/irq::barcol#2 )
+  [59] irq::i2#2 = phi( irq::@24/0, irq::@27/irq::i2#1 )
+  [60] if(irq::i2#2<$f) goto irq::@27
+  to:irq::@28
+irq::@28: scope:[irq]  from irq::@26
   [61] irq::sin_bar#1 = irq::sin_bar#2 + $a
   [62] irq::barcnt#1 = ++ irq::barcnt#2
-  to:irq::@21
-irq::@26: scope:[irq]  from irq::@25
+  to:irq::@22
+irq::@27: scope:[irq]  from irq::@26
   [63] irq::barcol#2 = -- irq::barcol#4
   [64] rasters[irq::idx#4] = irq::barcol#2
   [65] irq::idx#2 = ++ irq::idx#4
   [66] irq::i2#1 = ++ irq::i2#2
-  to:irq::@25
-irq::@24: scope:[irq]  from irq::@23
+  to:irq::@26
+irq::@25: scope:[irq]  from irq::@24
   [67] rasters[irq::idx#3] = irq::barcol#3
   [68] irq::idx#1 = ++ irq::idx#3
   [69] irq::barcol#1 = ++ irq::barcol#3
   [70] irq::i1#1 = ++ irq::i1#2
-  to:irq::@23
-irq::@19: scope:[irq]  from irq::@18
+  to:irq::@24
+irq::@20: scope:[irq]  from irq::@19
   [71] rasters[irq::l#2] = 0
   [72] irq::l#1 = ++ irq::l#2
-  to:irq::@18
-irq::@17: scope:[irq]  from irq::@16
+  to:irq::@19
+irq::@18: scope:[irq]  from irq::@17
   [73] irq::col1#0 = SINE[irq::sin_col#2] >> 2
   [74] (COLORRAM+GREET_ROW*$28)[irq::i#2] = irq::col1#0
   [75] irq::col1#1 = irq::col1#0 >> 1
@@ -1466,59 +1474,59 @@ irq::@17: scope:[irq]  from irq::@16
   [82] (COLORRAM+SCROLL_ROW*$28)[irq::i#2] = PAL_GREEN[irq::sin_col#2]
   [83] irq::sin_col#1 = ++ irq::sin_col#2
   [84] irq::i#1 = ++ irq::i#2
-  to:irq::@16
-irq::@2: scope:[irq]  from irq::@1
+  to:irq::@17
+irq::@3: scope:[irq]  from irq::@2
   [85] irq::col#0 = rasters[irq::line#10]
   [86] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) = irq::col#0
   [87] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) = irq::col#0
-  [88] if(irq::line#10<SCROLL_Y) goto irq::@4
-  to:irq::@10
-irq::@10: scope:[irq]  from irq::@2
-  [89] if(irq::line#10==SCROLL_Y) goto irq::@5
+  [88] if(irq::line#10<SCROLL_Y) goto irq::@5
   to:irq::@11
-irq::@11: scope:[irq]  from irq::@10
-  [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@6
+irq::@11: scope:[irq]  from irq::@3
+  [89] if(irq::line#10==SCROLL_Y) goto irq::@6
   to:irq::@12
 irq::@12: scope:[irq]  from irq::@11
-  [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@7
+  [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@7
   to:irq::@13
 irq::@13: scope:[irq]  from irq::@12
+  [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@8
+  to:irq::@14
+irq::@14: scope:[irq]  from irq::@13
   [92] irq::zoomval#0 = SINE[greet_zoomx]
   [93] greet_zoomx = ++ greet_zoomx
   [94] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = irq::zoomval#0
   [95] irq::$10 = irq::zoomval#0 + 1
   [96] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = irq::$10
-  [97] if(greet_zoomx!=0) goto irq::@7
-  to:irq::@14
-irq::@14: scope:[irq]  from irq::@13
-  [98] greet_idx = ++ greet_idx
-  [99] if(greet_idx!=GREET_COUNT) goto irq::@7
+  [97] if(greet_zoomx!=0) goto irq::@8
   to:irq::@15
 irq::@15: scope:[irq]  from irq::@14
+  [98] greet_idx = ++ greet_idx
+  [99] if(greet_idx!=GREET_COUNT) goto irq::@8
+  to:irq::@16
+irq::@16: scope:[irq]  from irq::@15
   [100] greet_idx = 0
-  to:irq::@7
-irq::@7: scope:[irq]  from irq::@12 irq::@13 irq::@14 irq::@15 irq::@4 irq::@5 irq::@6
-  [101] irq::wobble_idx#7 = phi( irq::@12/irq::wobble_idx#10, irq::@13/irq::wobble_idx#10, irq::@14/irq::wobble_idx#10, irq::@15/irq::wobble_idx#10, irq::@4/irq::wobble_idx#1, irq::@5/irq::wobble_idx#10, irq::@6/irq::wobble_idx#10 )
-  [102] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@8
-irq::@8: scope:[irq]  from irq::@7 irq::@8
-  [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@8
+irq::@8: scope:[irq]  from irq::@13 irq::@14 irq::@15 irq::@16 irq::@5 irq::@6 irq::@7
+  [101] irq::wobble_idx#7 = phi( irq::@13/irq::wobble_idx#10, irq::@14/irq::wobble_idx#10, irq::@15/irq::wobble_idx#10, irq::@16/irq::wobble_idx#10, irq::@5/irq::wobble_idx#1, irq::@6/irq::wobble_idx#10, irq::@7/irq::wobble_idx#10 )
+  [102] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@9
-irq::@9: scope:[irq]  from irq::@8
+irq::@9: scope:[irq]  from irq::@8 irq::@9
+  [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@9
+  to:irq::@10
+irq::@10: scope:[irq]  from irq::@9
   [104] irq::line#1 = ++ irq::line#10
-  to:irq::@1
-irq::@6: scope:[irq]  from irq::@11
+  to:irq::@2
+irq::@7: scope:[irq]  from irq::@12
   [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50
-  to:irq::@7
-irq::@5: scope:[irq]  from irq::@10
+  to:irq::@8
+irq::@6: scope:[irq]  from irq::@11
   [106] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50
   [107] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft
-  to:irq::@7
-irq::@4: scope:[irq]  from irq::@2
+  to:irq::@8
+irq::@5: scope:[irq]  from irq::@3
   [108] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10]
   [109] irq::wobble_idx#1 = ++ irq::wobble_idx#10
   [110] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66
-  to:irq::@7
+  to:irq::@8
 
 void main()
 main: scope:[main]  from __start::@1
@@ -1528,62 +1536,65 @@ main: scope:[main]  from __start::@1
   [114] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
   asm { lda#0  }
   [116] callexecute *songInit 
-  [117] call memset 
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [118] main::i1#2 = phi( main/0, main::@2/main::i1#1 )
-  [119] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@2
-  to:main::@3
-main::@3: scope:[main]  from main::@1 main::@4
-  [120] main::i2#2 = phi( main::@1/0, main::@4/main::i2#1 )
-  [121] if(main::i2#2<$28) goto main::@4
-  to:main::@5
-main::@5: scope:[main]  from main::@3 main::@5
-  [122] main::i#2 = phi( main::@3/0, main::@5/main::i#1 )
-  [123] PALETTE_RED[main::i#2] = PAL_RED[main::i#2]
-  [124] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2]
-  [125] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2]
-  [126] main::i#1 = ++ main::i#2
-  [127] if(main::i#1!=0) goto main::@5
+main::@1: scope:[main]  from main
+  [117] phi()
+  [118] call memset 
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  [119] main::i1#2 = phi( main::@1/0, main::@3/main::i1#1 )
+  [120] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@2 main::@5
+  [121] main::i2#2 = phi( main::@2/0, main::@5/main::i2#1 )
+  [122] if(main::i2#2<$28) goto main::@5
   to:main::@6
-main::@6: scope:[main]  from main::@5
+main::@6: scope:[main]  from main::@4 main::@6
+  [123] main::i#2 = phi( main::@4/0, main::@6/main::i#1 )
+  [124] PALETTE_RED[main::i#2] = PAL_RED[main::i#2]
+  [125] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2]
+  [126] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2]
+  [127] main::i#1 = ++ main::i#2
+  [128] if(main::i#1!=0) goto main::@6
+  to:main::@7
+main::@7: scope:[main]  from main::@6
   asm { sei  }
-  [129] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [130] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y
-  [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
-  [133] *HARDWARE_IRQ = &irq
-  [134] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-  [135] *PROCPORT = PROCPORT_RAM_IO
-  [136] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
+  [130] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y
+  [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  [133] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  [134] *HARDWARE_IRQ = &irq
+  [135] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+  [136] *PROCPORT = PROCPORT_RAM_IO
+  [137] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
   asm { cli  }
-  to:main::@7
-main::@7: scope:[main]  from main::@6 main::@7
-  [138] phi()
-  to:main::@7
-main::@4: scope:[main]  from main::@3
-  [139] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*'
-  [140] main::i2#1 = ++ main::i2#2
-  to:main::@3
-main::@2: scope:[main]  from main::@1
-  [141] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2]
-  [142] main::i1#1 = ++ main::i1#2
-  to:main::@1
+  to:main::@8
+main::@8: scope:[main]  from main::@7 main::@8
+  [139] phi()
+  to:main::@8
+main::@5: scope:[main]  from main::@4
+  [140] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*'
+  [141] main::i2#1 = ++ main::i2#2
+  to:main::@4
+main::@3: scope:[main]  from main::@2
+  [142] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2]
+  [143] main::i1#1 = ++ main::i1#2
+  to:main::@2
 
 void* memset(void* memset::str , byte memset::c , word memset::num)
-memset: scope:[memset]  from main
-  [143] phi()
+memset: scope:[memset]  from main::@1
+  [144] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [144] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
-  [145] if(memset::dst#2!=memset::end#0) goto memset::@2
+  [145] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
+  [146] if(memset::dst#2!=memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [146] return 
+  [147] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [147] *memset::dst#2 = memset::c#0
-  [148] memset::dst#1 = ++ memset::dst#2
+  [148] *memset::dst#2 = memset::c#0
+  [149] memset::dst#1 = ++ memset::dst#2
   to:memset::@1
 
 
@@ -1693,7 +1704,7 @@ Initial phi equivalence classes
 [ irq::line#10 irq::line#1 ]
 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
 [ irq::i#2 irq::i#1 ]
-[ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
+[ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
 [ irq::l#2 irq::l#1 ]
 [ irq::barcnt#2 irq::barcnt#1 ]
 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
@@ -1729,7 +1740,7 @@ Complete equivalence classes
 [ irq::line#10 irq::line#1 ]
 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
 [ irq::i#2 irq::i#1 ]
-[ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
+[ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
 [ irq::l#2 irq::l#1 ]
 [ irq::barcnt#2 irq::barcnt#1 ]
 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
@@ -1764,7 +1775,7 @@ Complete equivalence classes
 Allocated zp[1]:2 [ irq::line#10 irq::line#1 ]
 Allocated zp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
 Allocated zp[1]:4 [ irq::i#2 irq::i#1 ]
-Allocated zp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
+Allocated zp[1]:5 [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
 Allocated zp[1]:6 [ irq::l#2 irq::l#1 ]
 Allocated zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ]
 Allocated zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
@@ -1831,13 +1842,13 @@ Statement [71] rasters[irq::l#2] = 0 [ sin_idx scroll_soft scroll_ptr greet_idx 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ irq::l#2 irq::l#1 ]
 Statement [73] irq::col1#0 = SINE[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ irq::i#2 irq::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
 Statement [75] irq::col1#1 = irq::col1#0 >> 1 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] { }  ) always clobbers reg byte a 
 Statement [82] (COLORRAM+SCROLL_ROW*$28)[irq::i#2] = PAL_GREEN[irq::sin_col#2] [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] { }  ) always clobbers reg byte a 
-Statement [97] if(greet_zoomx!=0) goto irq::@7 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [97] if(greet_zoomx!=0) goto irq::@8 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq::line#10 irq::line#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
-Statement [99] if(greet_idx!=GREET_COUNT) goto irq::@7 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [99] if(greet_idx!=GREET_COUNT) goto irq::@8 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [100] greet_idx = 0 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [106] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
@@ -1850,24 +1861,24 @@ Statement [113] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)V
 Statement [114] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [116] callexecute *songInit  [ ] ( main:7 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [123] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [124] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ main::i#2 main::i#1 ]
-Statement [124] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [125] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [129] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [130] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [133] *HARDWARE_IRQ = &irq [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [134] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [135] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [136] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [139] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' [ main::i2#2 ] ( main:7 [ main::i2#2 ] { }  ) always clobbers reg byte a 
+Statement [125] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [126] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [130] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [133] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [134] *HARDWARE_IRQ = &irq [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [135] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [136] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [137] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [140] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' [ main::i2#2 ] ( main:7 [ main::i2#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ main::i2#2 main::i2#1 ]
-Statement [141] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] [ main::i1#2 ] ( main:7 [ main::i1#2 ] { }  ) always clobbers reg byte a 
+Statement [142] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] [ main::i1#2 ] ( main:7 [ main::i1#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ main::i1#2 main::i1#1 ]
-Statement [145] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:7::memset:117 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [147] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( main:7::memset:117 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [146] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:7::memset:118 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [148] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( main:7::memset:118 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [1] sin_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] scroll_soft = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] scroll_ptr = SCROLL_TEXT [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1895,8 +1906,8 @@ Statement [71] rasters[irq::l#2] = 0 [ sin_idx scroll_soft scroll_ptr greet_idx 
 Statement [73] irq::col1#0 = SINE[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
 Statement [75] irq::col1#1 = irq::col1#0 >> 1 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] { }  ) always clobbers reg byte a 
 Statement [82] (COLORRAM+SCROLL_ROW*$28)[irq::i#2] = PAL_GREEN[irq::sin_col#2] [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] { }  ) always clobbers reg byte a 
-Statement [97] if(greet_zoomx!=0) goto irq::@7 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
-Statement [99] if(greet_idx!=GREET_COUNT) goto irq::@7 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [97] if(greet_zoomx!=0) goto irq::@8 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [99] if(greet_idx!=GREET_COUNT) goto irq::@8 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [100] greet_idx = 0 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [106] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ scroll_soft greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
@@ -1909,25 +1920,25 @@ Statement [113] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)V
 Statement [114] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [116] callexecute *songInit  [ ] ( main:7 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [123] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [124] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [125] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [129] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [130] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [133] *HARDWARE_IRQ = &irq [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [134] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [135] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [136] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
-Statement [139] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' [ main::i2#2 ] ( main:7 [ main::i2#2 ] { }  ) always clobbers reg byte a 
-Statement [141] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] [ main::i1#2 ] ( main:7 [ main::i1#2 ] { }  ) always clobbers reg byte a 
-Statement [145] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:7::memset:117 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [147] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( main:7::memset:117 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [124] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [125] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [126] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] [ main::i#2 ] ( main:7 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [130] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [133] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [134] *HARDWARE_IRQ = &irq [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [135] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [136] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [137] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
+Statement [140] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' [ main::i2#2 ] ( main:7 [ main::i2#2 ] { }  ) always clobbers reg byte a 
+Statement [142] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] [ main::i1#2 ] ( main:7 [ main::i1#2 ] { }  ) always clobbers reg byte a 
+Statement [146] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:7::memset:118 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [148] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( main:7::memset:118 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ irq::line#10 irq::line#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:4 [ irq::i#2 irq::i#1 ] : zp[1]:4 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:5 [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:6 [ irq::l#2 irq::l#1 ] : zp[1]:6 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ] : zp[1]:7 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ] : zp[1]:8 , reg byte x , reg byte y , reg byte z , 
@@ -1962,7 +1973,7 @@ Potential registers zp[1]:38 [ irq::raster#0 ] : zp[1]:38 , reg byte a , reg byt
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [memset] 3,336.67: zp[2]:21 [ memset::dst#2 memset::dst#1 ] 
-Uplift Scope [irq] 454: zp[1]:16 [ irq::barcol#4 irq::barcol#3 irq::barcol#0 irq::barcol#1 irq::barcol#2 ] 418.67: zp[1]:17 [ irq::idx#4 irq::idx#3 irq::idx#0 irq::idx#1 irq::idx#2 ] 262.6: zp[1]:14 [ irq::i1#2 irq::i1#1 ] 262.6: zp[1]:15 [ irq::i2#2 irq::i2#1 ] 56: zp[1]:38 [ irq::raster#0 ] 41.59: zp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ] 40.33: zp[1]:12 [ irq::i5#2 irq::i5#1 ] 36.67: zp[1]:6 [ irq::l#2 irq::l#1 ] 33: zp[1]:9 [ irq::i3#2 irq::i3#1 ] 31.31: zp[1]:4 [ irq::i#2 irq::i#1 ] 30.8: zp[1]:10 [ irq::i4#2 irq::i4#1 ] 25.26: zp[1]:2 [ irq::line#10 irq::line#1 ] 24.59: zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ] 23.75: zp[1]:11 [ irq::greet_offset#2 irq::greet_offset#0 irq::greet_offset#1 ] 22: zp[1]:30 [ irq::$29 ] 22: zp[1]:31 [ irq::$26 ] 22: zp[1]:32 [ irq::$27 ] 22: zp[1]:37 [ irq::$10 ] 18.83: zp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ] 17.19: zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ] 16.5: zp[1]:33 [ irq::col1#0 ] 16.5: zp[1]:35 [ irq::col#0 ] 12.83: zp[1]:34 [ irq::col1#1 ] 12: zp[1]:13 [ irq::nxt#2 irq::nxt#0 irq::nxt#1 ] 11: zp[1]:36 [ irq::zoomval#0 ] 4: zp[1]:29 [ irq::$33 ] 
+Uplift Scope [irq] 454: zp[1]:16 [ irq::barcol#4 irq::barcol#3 irq::barcol#0 irq::barcol#1 irq::barcol#2 ] 418.67: zp[1]:17 [ irq::idx#4 irq::idx#3 irq::idx#0 irq::idx#1 irq::idx#2 ] 262.6: zp[1]:14 [ irq::i1#2 irq::i1#1 ] 262.6: zp[1]:15 [ irq::i2#2 irq::i2#1 ] 56: zp[1]:38 [ irq::raster#0 ] 41.59: zp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ] 40.33: zp[1]:12 [ irq::i5#2 irq::i5#1 ] 36.67: zp[1]:6 [ irq::l#2 irq::l#1 ] 33: zp[1]:9 [ irq::i3#2 irq::i3#1 ] 31.31: zp[1]:4 [ irq::i#2 irq::i#1 ] 30.8: zp[1]:10 [ irq::i4#2 irq::i4#1 ] 25.26: zp[1]:2 [ irq::line#10 irq::line#1 ] 24.59: zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ] 23.75: zp[1]:11 [ irq::greet_offset#2 irq::greet_offset#0 irq::greet_offset#1 ] 22: zp[1]:30 [ irq::$29 ] 22: zp[1]:31 [ irq::$26 ] 22: zp[1]:32 [ irq::$27 ] 22: zp[1]:37 [ irq::$10 ] 18.83: zp[1]:5 [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ] 17.19: zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ] 16.5: zp[1]:33 [ irq::col1#0 ] 16.5: zp[1]:35 [ irq::col#0 ] 12.83: zp[1]:34 [ irq::col1#1 ] 12: zp[1]:13 [ irq::nxt#2 irq::nxt#0 irq::nxt#1 ] 11: zp[1]:36 [ irq::zoomval#0 ] 4: zp[1]:29 [ irq::$33 ] 
 Uplift Scope [main] 370.33: zp[1]:18 [ main::i1#2 main::i1#1 ] 353.5: zp[1]:20 [ main::i#2 main::i#1 ] 336.67: zp[1]:19 [ main::i2#2 main::i2#1 ] 
 Uplift Scope [] 1.39: zp[1]:27 [ greet_zoomx ] 0.62: zp[1]:28 [ greet_idx ] 0.5: zp[1]:23 [ sin_idx ] 0.24: zp[1]:24 [ scroll_soft ] 0.2: zp[2]:25 [ scroll_ptr ] 
 Uplift Scope [MOS6526_CIA] 
@@ -1975,78 +1986,78 @@ Uplift Scope [DMA_LIST_F018A]
 Uplift Scope [DMA_LIST_F018B] 
 Uplift Scope [__start] 
 
-Uplifting [memset] best 19089 combination zp[2]:21 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [main] best 18689 combination reg byte x [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::i2#2 main::i2#1 ] 
-Uplifting [] best 18689 combination zp[1]:27 [ greet_zoomx ] zp[1]:28 [ greet_idx ] zp[1]:23 [ sin_idx ] zp[1]:24 [ scroll_soft ] zp[2]:25 [ scroll_ptr ] 
-Uplifting [MOS6526_CIA] best 18689 combination 
-Uplifting [MOS6569_VICII] best 18689 combination 
-Uplifting [MOS6581_SID] best 18689 combination 
-Uplifting [MOS4569_VICIII] best 18689 combination 
-Uplifting [MEGA65_VICIV] best 18689 combination 
-Uplifting [F018_DMAGIC] best 18689 combination 
-Uplifting [DMA_LIST_F018A] best 18689 combination 
-Uplifting [DMA_LIST_F018B] best 18689 combination 
-Uplifting [__start] best 18689 combination 
+Uplifting [memset] best 19095 combination zp[2]:21 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [main] best 18695 combination reg byte x [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::i2#2 main::i2#1 ] 
+Uplifting [] best 18695 combination zp[1]:27 [ greet_zoomx ] zp[1]:28 [ greet_idx ] zp[1]:23 [ sin_idx ] zp[1]:24 [ scroll_soft ] zp[2]:25 [ scroll_ptr ] 
+Uplifting [MOS6526_CIA] best 18695 combination 
+Uplifting [MOS6569_VICII] best 18695 combination 
+Uplifting [MOS6581_SID] best 18695 combination 
+Uplifting [MOS4569_VICIII] best 18695 combination 
+Uplifting [MEGA65_VICIV] best 18695 combination 
+Uplifting [F018_DMAGIC] best 18695 combination 
+Uplifting [DMA_LIST_F018A] best 18695 combination 
+Uplifting [DMA_LIST_F018B] best 18695 combination 
+Uplifting [__start] best 18695 combination 
 Attempting to uplift remaining variables inzp[1]:16 [ irq::barcol#4 irq::barcol#3 irq::barcol#0 irq::barcol#1 irq::barcol#2 ]
-Uplifting [irq] best 17469 combination reg byte z [ irq::barcol#4 irq::barcol#3 irq::barcol#0 irq::barcol#1 irq::barcol#2 ] 
+Uplifting [irq] best 17475 combination reg byte z [ irq::barcol#4 irq::barcol#3 irq::barcol#0 irq::barcol#1 irq::barcol#2 ] 
 Attempting to uplift remaining variables inzp[1]:17 [ irq::idx#4 irq::idx#3 irq::idx#0 irq::idx#1 irq::idx#2 ]
-Uplifting [irq] best 16239 combination reg byte x [ irq::idx#4 irq::idx#3 irq::idx#0 irq::idx#1 irq::idx#2 ] 
+Uplifting [irq] best 16245 combination reg byte x [ irq::idx#4 irq::idx#3 irq::idx#0 irq::idx#1 irq::idx#2 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ irq::i1#2 irq::i1#1 ]
-Uplifting [irq] best 15339 combination reg byte y [ irq::i1#2 irq::i1#1 ] 
+Uplifting [irq] best 15345 combination reg byte y [ irq::i1#2 irq::i1#1 ] 
 Attempting to uplift remaining variables inzp[1]:15 [ irq::i2#2 irq::i2#1 ]
-Uplifting [irq] best 14439 combination reg byte y [ irq::i2#2 irq::i2#1 ] 
+Uplifting [irq] best 14445 combination reg byte y [ irq::i2#2 irq::i2#1 ] 
 Attempting to uplift remaining variables inzp[1]:38 [ irq::raster#0 ]
-Uplifting [irq] best 14109 combination reg byte a [ irq::raster#0 ] 
+Uplifting [irq] best 14115 combination reg byte a [ irq::raster#0 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
-Uplifting [irq] best 14046 combination reg byte x [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ] 
+Uplifting [irq] best 14052 combination reg byte x [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ] 
 Attempting to uplift remaining variables inzp[1]:12 [ irq::i5#2 irq::i5#1 ]
-Uplifting [irq] best 13926 combination reg byte x [ irq::i5#2 irq::i5#1 ] 
+Uplifting [irq] best 13932 combination reg byte x [ irq::i5#2 irq::i5#1 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ irq::l#2 irq::l#1 ]
-Uplifting [irq] best 13806 combination reg byte x [ irq::l#2 irq::l#1 ] 
+Uplifting [irq] best 13812 combination reg byte x [ irq::l#2 irq::l#1 ] 
 Attempting to uplift remaining variables inzp[1]:9 [ irq::i3#2 irq::i3#1 ]
-Uplifting [irq] best 13656 combination reg byte x [ irq::i3#2 irq::i3#1 ] 
+Uplifting [irq] best 13662 combination reg byte x [ irq::i3#2 irq::i3#1 ] 
 Attempting to uplift remaining variables inzp[1]:4 [ irq::i#2 irq::i#1 ]
-Uplifting [irq] best 13326 combination reg byte x [ irq::i#2 irq::i#1 ] 
+Uplifting [irq] best 13332 combination reg byte x [ irq::i#2 irq::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ irq::i4#2 irq::i4#1 ]
-Uplifting [irq] best 13206 combination reg byte x [ irq::i4#2 irq::i4#1 ] 
+Uplifting [irq] best 13212 combination reg byte x [ irq::i4#2 irq::i4#1 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ irq::line#10 irq::line#1 ]
-Uplifting [irq] best 12986 combination reg byte z [ irq::line#10 irq::line#1 ] 
+Uplifting [irq] best 12992 combination reg byte z [ irq::line#10 irq::line#1 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ]
-Uplifting [irq] best 12986 combination zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ] 
+Uplifting [irq] best 12992 combination zp[1]:7 [ irq::barcnt#2 irq::barcnt#1 ] 
 Attempting to uplift remaining variables inzp[1]:11 [ irq::greet_offset#2 irq::greet_offset#0 irq::greet_offset#1 ]
-Uplifting [irq] best 12925 combination reg byte y [ irq::greet_offset#2 irq::greet_offset#0 irq::greet_offset#1 ] 
+Uplifting [irq] best 12931 combination reg byte y [ irq::greet_offset#2 irq::greet_offset#0 irq::greet_offset#1 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ irq::$29 ]
-Uplifting [irq] best 12865 combination reg byte a [ irq::$29 ] 
+Uplifting [irq] best 12871 combination reg byte a [ irq::$29 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ irq::$26 ]
-Uplifting [irq] best 12805 combination reg byte a [ irq::$26 ] 
+Uplifting [irq] best 12811 combination reg byte a [ irq::$26 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ irq::$27 ]
-Uplifting [irq] best 12745 combination reg byte a [ irq::$27 ] 
+Uplifting [irq] best 12751 combination reg byte a [ irq::$27 ] 
 Attempting to uplift remaining variables inzp[1]:37 [ irq::$10 ]
-Uplifting [irq] best 12685 combination reg byte a [ irq::$10 ] 
-Attempting to uplift remaining variables inzp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
-Uplifting [irq] best 12592 combination reg byte y [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ] 
+Uplifting [irq] best 12691 combination reg byte a [ irq::$10 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
+Uplifting [irq] best 12598 combination reg byte y [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
-Uplifting [irq] best 12592 combination zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ] 
+Uplifting [irq] best 12598 combination zp[1]:8 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ] 
 Attempting to uplift remaining variables inzp[1]:33 [ irq::col1#0 ]
-Uplifting [irq] best 12502 combination reg byte a [ irq::col1#0 ] 
+Uplifting [irq] best 12508 combination reg byte a [ irq::col1#0 ] 
 Attempting to uplift remaining variables inzp[1]:35 [ irq::col#0 ]
-Uplifting [irq] best 12412 combination reg byte a [ irq::col#0 ] 
+Uplifting [irq] best 12418 combination reg byte a [ irq::col#0 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ irq::col1#1 ]
-Uplifting [irq] best 12202 combination reg byte a [ irq::col1#1 ] 
+Uplifting [irq] best 12208 combination reg byte a [ irq::col1#1 ] 
 Attempting to uplift remaining variables inzp[1]:13 [ irq::nxt#2 irq::nxt#0 irq::nxt#1 ]
-Uplifting [irq] best 12192 combination reg byte a [ irq::nxt#2 irq::nxt#0 irq::nxt#1 ] 
+Uplifting [irq] best 12198 combination reg byte a [ irq::nxt#2 irq::nxt#0 irq::nxt#1 ] 
 Attempting to uplift remaining variables inzp[1]:36 [ irq::zoomval#0 ]
-Uplifting [irq] best 12102 combination reg byte a [ irq::zoomval#0 ] 
+Uplifting [irq] best 12108 combination reg byte a [ irq::zoomval#0 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ irq::$33 ]
-Uplifting [irq] best 12096 combination reg byte a [ irq::$33 ] 
+Uplifting [irq] best 12102 combination reg byte a [ irq::$33 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ greet_zoomx ]
-Uplifting [] best 12096 combination zp[1]:27 [ greet_zoomx ] 
+Uplifting [] best 12102 combination zp[1]:27 [ greet_zoomx ] 
 Attempting to uplift remaining variables inzp[1]:28 [ greet_idx ]
-Uplifting [] best 12096 combination zp[1]:28 [ greet_idx ] 
+Uplifting [] best 12102 combination zp[1]:28 [ greet_idx ] 
 Attempting to uplift remaining variables inzp[1]:23 [ sin_idx ]
-Uplifting [] best 12096 combination zp[1]:23 [ sin_idx ] 
+Uplifting [] best 12102 combination zp[1]:23 [ sin_idx ] 
 Attempting to uplift remaining variables inzp[1]:24 [ scroll_soft ]
-Uplifting [] best 12096 combination zp[1]:24 [ scroll_soft ] 
+Uplifting [] best 12102 combination zp[1]:24 [ scroll_soft ] 
 Allocated (was zp[1]:7) zp[1]:2 [ irq::barcnt#2 irq::barcnt#1 ]
 Allocated (was zp[1]:8) zp[1]:3 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
 Allocated (was zp[2]:21) zp[2]:4 [ memset::dst#2 memset::dst#1 ]
@@ -2228,84 +2239,87 @@ irq: {
     // [13] irq::wobble_idx#0 = sin_idx -- vbuxx=vbuz1 
     // Generate Raster Bars and more
     ldx.z sin_idx
-    // [14] phi from irq to irq::@1 [phi:irq->irq::@1]
-  __b1_from_irq:
-    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#0 [phi:irq->irq::@1#0] -- register_copy 
-    // [14] phi irq::line#10 = 0 [phi:irq->irq::@1#1] -- vbuzz=vbuc1 
+    // [14] phi from irq to irq::@2 [phi:irq->irq::@2]
+  __b2_from_irq:
+    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#0 [phi:irq->irq::@2#0] -- register_copy 
+    // [14] phi irq::line#10 = 0 [phi:irq->irq::@2#1] -- vbuzz=vbuc1 
     ldz #0
-    jmp __b1
-    // irq::@1
-  __b1:
-    // [15] if(irq::line#10!=RASTER_LINES) goto irq::@2 -- vbuzz_neq_vbuc1_then_la1 
+    jmp __b2
+    // irq::@2
+  __b2:
+    // [15] if(irq::line#10!=RASTER_LINES) goto irq::@3 -- vbuzz_neq_vbuc1_then_la1 
     cpz #RASTER_LINES
-    bne __b2
-    // [16] phi from irq::@1 to irq::@3 [phi:irq::@1->irq::@3]
-  __b3_from___b1:
-    jmp __b3
-    // irq::@3
-  __b3:
+    bne __b3
+    // [16] phi from irq::@2 to irq::@4 [phi:irq::@2->irq::@4]
+  __b4_from___b2:
+    jmp __b4
+    // irq::@4
+  __b4:
     // [17] callexecute *songPlay 
     // play music
     jsr songPlay
+    jmp __b1
+    // irq::@1
+  __b1:
     // [18] irq::sin_col#0 = sin_idx -- vbuyy=vbuz1 
     // Set up colors behind logo, scroll and greets
     ldy.z sin_idx
-    // [19] phi from irq::@3 to irq::@16 [phi:irq::@3->irq::@16]
-  __b16_from___b3:
-    // [19] phi irq::sin_col#2 = irq::sin_col#0 [phi:irq::@3->irq::@16#0] -- register_copy 
-    // [19] phi irq::i#2 = 0 [phi:irq::@3->irq::@16#1] -- vbuxx=vbuc1 
+    // [19] phi from irq::@1 to irq::@17 [phi:irq::@1->irq::@17]
+  __b17_from___b1:
+    // [19] phi irq::sin_col#2 = irq::sin_col#0 [phi:irq::@1->irq::@17#0] -- register_copy 
+    // [19] phi irq::i#2 = 0 [phi:irq::@1->irq::@17#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b16
-    // irq::@16
-  __b16:
-    // [20] if(irq::i#2<$28) goto irq::@17 -- vbuxx_lt_vbuc1_then_la1 
+    jmp __b17
+    // irq::@17
+  __b17:
+    // [20] if(irq::i#2<$28) goto irq::@18 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
-    bcc __b17
-    // [21] phi from irq::@16 to irq::@18 [phi:irq::@16->irq::@18]
-  __b18_from___b16:
-    // [21] phi irq::l#2 = 0 [phi:irq::@16->irq::@18#0] -- vbuxx=vbuc1 
+    bcc __b18
+    // [21] phi from irq::@17 to irq::@19 [phi:irq::@17->irq::@19]
+  __b19_from___b17:
+    // [21] phi irq::l#2 = 0 [phi:irq::@17->irq::@19#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b18
+    jmp __b19
   // Set all raster bars to black
-    // irq::@18
-  __b18:
-    // [22] if(irq::l#2!=RASTER_LINES) goto irq::@19 -- vbuxx_neq_vbuc1_then_la1 
+    // irq::@19
+  __b19:
+    // [22] if(irq::l#2!=RASTER_LINES) goto irq::@20 -- vbuxx_neq_vbuc1_then_la1 
     cpx #RASTER_LINES
-    bne __b19
-    jmp __b20
-    // irq::@20
-  __b20:
+    bne __b20
+    jmp __b21
+    // irq::@21
+  __b21:
     // [23] irq::sin_bar#0 = sin_idx -- vbuz1=vbuz2 
     // Big block of bars (16)
     lda.z sin_idx
     sta.z sin_bar
-    // [24] phi from irq::@20 to irq::@21 [phi:irq::@20->irq::@21]
-  __b21_from___b20:
-    // [24] phi irq::sin_bar#2 = irq::sin_bar#0 [phi:irq::@20->irq::@21#0] -- register_copy 
-    // [24] phi irq::barcnt#2 = 0 [phi:irq::@20->irq::@21#1] -- vbuz1=vbuc1 
+    // [24] phi from irq::@21 to irq::@22 [phi:irq::@21->irq::@22]
+  __b22_from___b21:
+    // [24] phi irq::sin_bar#2 = irq::sin_bar#0 [phi:irq::@21->irq::@22#0] -- register_copy 
+    // [24] phi irq::barcnt#2 = 0 [phi:irq::@21->irq::@22#1] -- vbuz1=vbuc1 
     lda #0
     sta.z barcnt
-    jmp __b21
-    // irq::@21
-  __b21:
-    // [25] if(irq::barcnt#2<$10) goto irq::@22 -- vbuz1_lt_vbuc1_then_la1 
+    jmp __b22
+    // irq::@22
+  __b22:
+    // [25] if(irq::barcnt#2<$10) goto irq::@23 -- vbuz1_lt_vbuc1_then_la1 
     lda.z barcnt
     cmp #$10
-    bcc __b22
-    // [26] phi from irq::@21 to irq::@28 [phi:irq::@21->irq::@28]
-  __b28_from___b21:
-    // [26] phi irq::i3#2 = 0 [phi:irq::@21->irq::@28#0] -- vbuxx=vbuc1 
+    bcc __b23
+    // [26] phi from irq::@22 to irq::@29 [phi:irq::@22->irq::@29]
+  __b29_from___b22:
+    // [26] phi irq::i3#2 = 0 [phi:irq::@22->irq::@29#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b28
+    jmp __b29
   // Produce dark area behind text
-    // irq::@28
-  __b28:
-    // [27] if(irq::i3#2<$13) goto irq::@29 -- vbuxx_lt_vbuc1_then_la1 
+    // irq::@29
+  __b29:
+    // [27] if(irq::i3#2<$13) goto irq::@30 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$13
-    bcc __b29
-    jmp __b30
-    // irq::@30
-  __b30:
+    bcc __b30
+    jmp __b31
+    // irq::@31
+  __b31:
     // [28] irq::greet_offset#0 = greet_idx << 4 -- vbuyy=vbuz1_rol_4 
     // Set up greetings    
     lda.z greet_idx
@@ -2314,58 +2328,58 @@ irq: {
     asl
     asl
     tay
-    // [29] phi from irq::@30 to irq::@31 [phi:irq::@30->irq::@31]
-  __b31_from___b30:
-    // [29] phi irq::greet_offset#2 = irq::greet_offset#0 [phi:irq::@30->irq::@31#0] -- register_copy 
-    // [29] phi irq::i4#2 = 0 [phi:irq::@30->irq::@31#1] -- vbuxx=vbuc1 
+    // [29] phi from irq::@31 to irq::@32 [phi:irq::@31->irq::@32]
+  __b32_from___b31:
+    // [29] phi irq::greet_offset#2 = irq::greet_offset#0 [phi:irq::@31->irq::@32#0] -- register_copy 
+    // [29] phi irq::i4#2 = 0 [phi:irq::@31->irq::@32#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b31
-    // irq::@31
-  __b31:
-    // [30] if(irq::i4#2<$10) goto irq::@32 -- vbuxx_lt_vbuc1_then_la1 
+    jmp __b32
+    // irq::@32
+  __b32:
+    // [30] if(irq::i4#2<$10) goto irq::@33 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$10
-    bcc __b32
-    jmp __b33
-    // irq::@33
-  __b33:
+    bcc __b33
+    jmp __b34
+    // irq::@34
+  __b34:
     // [31] scroll_soft = -- scroll_soft -- vbuz1=_dec_vbuz1 
     dec.z scroll_soft
     // [32] if(scroll_soft!=$ff) goto irq::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
     cmp.z scroll_soft
     bne __breturn
-    jmp __b34
-    // irq::@34
-  __b34:
+    jmp __b35
+    // irq::@35
+  __b35:
     // [33] scroll_soft = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z scroll_soft
-    // [34] phi from irq::@34 to irq::@35 [phi:irq::@34->irq::@35]
-  __b35_from___b34:
-    // [34] phi irq::i5#2 = 0 [phi:irq::@34->irq::@35#0] -- vbuxx=vbuc1 
+    // [34] phi from irq::@35 to irq::@36 [phi:irq::@35->irq::@36]
+  __b36_from___b35:
+    // [34] phi irq::i5#2 = 0 [phi:irq::@35->irq::@36#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b35
+    jmp __b36
   // Move scroll on screen
-    // irq::@35
-  __b35:
-    // [35] if(irq::i5#2<$27) goto irq::@36 -- vbuxx_lt_vbuc1_then_la1 
+    // irq::@36
+  __b36:
+    // [35] if(irq::i5#2<$27) goto irq::@37 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$27
-    bcc __b36
-    jmp __b37
-    // irq::@37
-  __b37:
+    bcc __b37
+    jmp __b38
+    // irq::@38
+  __b38:
     // [36] irq::nxt#0 = *scroll_ptr -- vbuaa=_deref_pbuz1 
     // Show next char
     ldy #0
     lda (scroll_ptr),y
     // [37] scroll_ptr = ++ scroll_ptr -- pbuz1=_inc_pbuz1 
     inw.z scroll_ptr
-    // [38] if(irq::nxt#0!=0) goto irq::@39 -- vbuaa_neq_0_then_la1 
+    // [38] if(irq::nxt#0!=0) goto irq::@40 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne __b39_from___b37
-    jmp __b38
-    // irq::@38
-  __b38:
+    bne __b40_from___b38
+    jmp __b39
+    // irq::@39
+  __b39:
     // [39] scroll_ptr = SCROLL_TEXT -- pbuz1=pbuc1 
     lda #<SCROLL_TEXT
     sta.z scroll_ptr
@@ -2374,13 +2388,13 @@ irq: {
     // [40] irq::nxt#1 = *scroll_ptr -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (scroll_ptr),y
-    // [41] phi from irq::@37 irq::@38 to irq::@39 [phi:irq::@37/irq::@38->irq::@39]
-  __b39_from___b37:
-  __b39_from___b38:
-    // [41] phi irq::nxt#2 = irq::nxt#0 [phi:irq::@37/irq::@38->irq::@39#0] -- register_copy 
-    jmp __b39
-    // irq::@39
-  __b39:
+    // [41] phi from irq::@38 irq::@39 to irq::@40 [phi:irq::@38/irq::@39->irq::@40]
+  __b40_from___b38:
+  __b40_from___b39:
+    // [41] phi irq::nxt#2 = irq::nxt#0 [phi:irq::@38/irq::@39->irq::@40#0] -- register_copy 
+    jmp __b40
+    // irq::@40
+  __b40:
     // [42] irq::$33 = irq::nxt#2 & $bf -- vbuaa=vbuaa_band_vbuc1 
     and #$bf
     // [43] *(DEFAULT_SCREEN+SCROLL_ROW*$28+$27) = irq::$33 -- _deref_pbuc1=vbuaa 
@@ -2395,19 +2409,19 @@ irq: {
     plx
     pla
     rti
-    // irq::@36
-  __b36:
+    // irq::@37
+  __b37:
     // [45] (DEFAULT_SCREEN+SCROLL_ROW*$28)[irq::i5#2] = (DEFAULT_SCREEN+SCROLL_ROW*$28+1)[irq::i5#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda DEFAULT_SCREEN+SCROLL_ROW*$28+1,x
     sta DEFAULT_SCREEN+SCROLL_ROW*$28,x
     // [46] irq::i5#1 = ++ irq::i5#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [34] phi from irq::@36 to irq::@35 [phi:irq::@36->irq::@35]
-  __b35_from___b36:
-    // [34] phi irq::i5#2 = irq::i5#1 [phi:irq::@36->irq::@35#0] -- register_copy 
-    jmp __b35
-    // irq::@32
-  __b32:
+    // [34] phi from irq::@37 to irq::@36 [phi:irq::@37->irq::@36]
+  __b36_from___b37:
+    // [34] phi irq::i5#2 = irq::i5#1 [phi:irq::@37->irq::@36#0] -- register_copy 
+    jmp __b36
+    // irq::@33
+  __b33:
     // [47] irq::$29 = GREETING[irq::greet_offset#2] & $bf -- vbuaa=pbuc1_derefidx_vbuyy_band_vbuc2 
     lda #$bf
     and GREETING,y
@@ -2417,13 +2431,13 @@ irq: {
     iny
     // [50] irq::i4#1 = ++ irq::i4#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [29] phi from irq::@32 to irq::@31 [phi:irq::@32->irq::@31]
-  __b31_from___b32:
-    // [29] phi irq::greet_offset#2 = irq::greet_offset#1 [phi:irq::@32->irq::@31#0] -- register_copy 
-    // [29] phi irq::i4#2 = irq::i4#1 [phi:irq::@32->irq::@31#1] -- register_copy 
-    jmp __b31
-    // irq::@29
-  __b29:
+    // [29] phi from irq::@33 to irq::@32 [phi:irq::@33->irq::@32]
+  __b32_from___b33:
+    // [29] phi irq::greet_offset#2 = irq::greet_offset#1 [phi:irq::@33->irq::@32#0] -- register_copy 
+    // [29] phi irq::i4#2 = irq::i4#1 [phi:irq::@33->irq::@32#1] -- register_copy 
+    jmp __b32
+    // irq::@30
+  __b30:
     // [51] irq::$26 = (rasters+SCROLL_Y)[irq::i3#2] >> 1 -- vbuaa=pbuc1_derefidx_vbuxx_ror_1 
     lda rasters+SCROLL_Y,x
     lsr
@@ -2433,12 +2447,12 @@ irq: {
     sta rasters+SCROLL_Y,x
     // [54] irq::i3#1 = ++ irq::i3#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [26] phi from irq::@29 to irq::@28 [phi:irq::@29->irq::@28]
-  __b28_from___b29:
-    // [26] phi irq::i3#2 = irq::i3#1 [phi:irq::@29->irq::@28#0] -- register_copy 
-    jmp __b28
-    // irq::@22
-  __b22:
+    // [26] phi from irq::@30 to irq::@29 [phi:irq::@30->irq::@29]
+  __b29_from___b30:
+    // [26] phi irq::i3#2 = irq::i3#1 [phi:irq::@30->irq::@29#0] -- register_copy 
+    jmp __b29
+    // irq::@23
+  __b23:
     // [55] irq::idx#0 = SINE[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z sin_bar
     ldx SINE,y
@@ -2449,33 +2463,33 @@ irq: {
     asl
     asl
     taz
-    // [57] phi from irq::@22 to irq::@23 [phi:irq::@22->irq::@23]
-  __b23_from___b22:
-    // [57] phi irq::idx#3 = irq::idx#0 [phi:irq::@22->irq::@23#0] -- register_copy 
-    // [57] phi irq::barcol#3 = irq::barcol#0 [phi:irq::@22->irq::@23#1] -- register_copy 
-    // [57] phi irq::i1#2 = 0 [phi:irq::@22->irq::@23#2] -- vbuyy=vbuc1 
+    // [57] phi from irq::@23 to irq::@24 [phi:irq::@23->irq::@24]
+  __b24_from___b23:
+    // [57] phi irq::idx#3 = irq::idx#0 [phi:irq::@23->irq::@24#0] -- register_copy 
+    // [57] phi irq::barcol#3 = irq::barcol#0 [phi:irq::@23->irq::@24#1] -- register_copy 
+    // [57] phi irq::i1#2 = 0 [phi:irq::@23->irq::@24#2] -- vbuyy=vbuc1 
     ldy #0
-    jmp __b23
-    // irq::@23
-  __b23:
-    // [58] if(irq::i1#2<$10) goto irq::@24 -- vbuyy_lt_vbuc1_then_la1 
+    jmp __b24
+    // irq::@24
+  __b24:
+    // [58] if(irq::i1#2<$10) goto irq::@25 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$10
-    bcc __b24
-    // [59] phi from irq::@23 to irq::@25 [phi:irq::@23->irq::@25]
-  __b25_from___b23:
-    // [59] phi irq::idx#4 = irq::idx#3 [phi:irq::@23->irq::@25#0] -- register_copy 
-    // [59] phi irq::barcol#4 = irq::barcol#3 [phi:irq::@23->irq::@25#1] -- register_copy 
-    // [59] phi irq::i2#2 = 0 [phi:irq::@23->irq::@25#2] -- vbuyy=vbuc1 
+    bcc __b25
+    // [59] phi from irq::@24 to irq::@26 [phi:irq::@24->irq::@26]
+  __b26_from___b24:
+    // [59] phi irq::idx#4 = irq::idx#3 [phi:irq::@24->irq::@26#0] -- register_copy 
+    // [59] phi irq::barcol#4 = irq::barcol#3 [phi:irq::@24->irq::@26#1] -- register_copy 
+    // [59] phi irq::i2#2 = 0 [phi:irq::@24->irq::@26#2] -- vbuyy=vbuc1 
     ldy #0
-    jmp __b25
-    // irq::@25
-  __b25:
-    // [60] if(irq::i2#2<$f) goto irq::@26 -- vbuyy_lt_vbuc1_then_la1 
+    jmp __b26
+    // irq::@26
+  __b26:
+    // [60] if(irq::i2#2<$f) goto irq::@27 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$f
-    bcc __b26
-    jmp __b27
-    // irq::@27
-  __b27:
+    bcc __b27
+    jmp __b28
+    // irq::@28
+  __b28:
     // [61] irq::sin_bar#1 = irq::sin_bar#2 + $a -- vbuz1=vbuz1_plus_vbuc1 
     lda #$a
     clc
@@ -2483,13 +2497,13 @@ irq: {
     sta.z sin_bar
     // [62] irq::barcnt#1 = ++ irq::barcnt#2 -- vbuz1=_inc_vbuz1 
     inc.z barcnt
-    // [24] phi from irq::@27 to irq::@21 [phi:irq::@27->irq::@21]
-  __b21_from___b27:
-    // [24] phi irq::sin_bar#2 = irq::sin_bar#1 [phi:irq::@27->irq::@21#0] -- register_copy 
-    // [24] phi irq::barcnt#2 = irq::barcnt#1 [phi:irq::@27->irq::@21#1] -- register_copy 
-    jmp __b21
-    // irq::@26
-  __b26:
+    // [24] phi from irq::@28 to irq::@22 [phi:irq::@28->irq::@22]
+  __b22_from___b28:
+    // [24] phi irq::sin_bar#2 = irq::sin_bar#1 [phi:irq::@28->irq::@22#0] -- register_copy 
+    // [24] phi irq::barcnt#2 = irq::barcnt#1 [phi:irq::@28->irq::@22#1] -- register_copy 
+    jmp __b22
+    // irq::@27
+  __b27:
     // [63] irq::barcol#2 = -- irq::barcol#4 -- vbuzz=_dec_vbuzz 
     dez
     // [64] rasters[irq::idx#4] = irq::barcol#2 -- pbuc1_derefidx_vbuxx=vbuzz 
@@ -2499,14 +2513,14 @@ irq: {
     inx
     // [66] irq::i2#1 = ++ irq::i2#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [59] phi from irq::@26 to irq::@25 [phi:irq::@26->irq::@25]
-  __b25_from___b26:
-    // [59] phi irq::idx#4 = irq::idx#2 [phi:irq::@26->irq::@25#0] -- register_copy 
-    // [59] phi irq::barcol#4 = irq::barcol#2 [phi:irq::@26->irq::@25#1] -- register_copy 
-    // [59] phi irq::i2#2 = irq::i2#1 [phi:irq::@26->irq::@25#2] -- register_copy 
-    jmp __b25
-    // irq::@24
-  __b24:
+    // [59] phi from irq::@27 to irq::@26 [phi:irq::@27->irq::@26]
+  __b26_from___b27:
+    // [59] phi irq::idx#4 = irq::idx#2 [phi:irq::@27->irq::@26#0] -- register_copy 
+    // [59] phi irq::barcol#4 = irq::barcol#2 [phi:irq::@27->irq::@26#1] -- register_copy 
+    // [59] phi irq::i2#2 = irq::i2#1 [phi:irq::@27->irq::@26#2] -- register_copy 
+    jmp __b26
+    // irq::@25
+  __b25:
     // [67] rasters[irq::idx#3] = irq::barcol#3 -- pbuc1_derefidx_vbuxx=vbuzz 
     tza
     sta rasters,x
@@ -2516,25 +2530,25 @@ irq: {
     inz
     // [70] irq::i1#1 = ++ irq::i1#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [57] phi from irq::@24 to irq::@23 [phi:irq::@24->irq::@23]
-  __b23_from___b24:
-    // [57] phi irq::idx#3 = irq::idx#1 [phi:irq::@24->irq::@23#0] -- register_copy 
-    // [57] phi irq::barcol#3 = irq::barcol#1 [phi:irq::@24->irq::@23#1] -- register_copy 
-    // [57] phi irq::i1#2 = irq::i1#1 [phi:irq::@24->irq::@23#2] -- register_copy 
-    jmp __b23
-    // irq::@19
-  __b19:
+    // [57] phi from irq::@25 to irq::@24 [phi:irq::@25->irq::@24]
+  __b24_from___b25:
+    // [57] phi irq::idx#3 = irq::idx#1 [phi:irq::@25->irq::@24#0] -- register_copy 
+    // [57] phi irq::barcol#3 = irq::barcol#1 [phi:irq::@25->irq::@24#1] -- register_copy 
+    // [57] phi irq::i1#2 = irq::i1#1 [phi:irq::@25->irq::@24#2] -- register_copy 
+    jmp __b24
+    // irq::@20
+  __b20:
     // [71] rasters[irq::l#2] = 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta rasters,x
     // [72] irq::l#1 = ++ irq::l#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [21] phi from irq::@19 to irq::@18 [phi:irq::@19->irq::@18]
-  __b18_from___b19:
-    // [21] phi irq::l#2 = irq::l#1 [phi:irq::@19->irq::@18#0] -- register_copy 
-    jmp __b18
-    // irq::@17
-  __b17:
+    // [21] phi from irq::@20 to irq::@19 [phi:irq::@20->irq::@19]
+  __b19_from___b20:
+    // [21] phi irq::l#2 = irq::l#1 [phi:irq::@20->irq::@19#0] -- register_copy 
+    jmp __b19
+    // irq::@18
+  __b18:
     // [73] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
     // Greeting colors
     lda SINE,y
@@ -2565,13 +2579,13 @@ irq: {
     iny
     // [84] irq::i#1 = ++ irq::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [19] phi from irq::@17 to irq::@16 [phi:irq::@17->irq::@16]
-  __b16_from___b17:
-    // [19] phi irq::sin_col#2 = irq::sin_col#1 [phi:irq::@17->irq::@16#0] -- register_copy 
-    // [19] phi irq::i#2 = irq::i#1 [phi:irq::@17->irq::@16#1] -- register_copy 
-    jmp __b16
-    // irq::@2
-  __b2:
+    // [19] phi from irq::@18 to irq::@17 [phi:irq::@18->irq::@17]
+  __b17_from___b18:
+    // [19] phi irq::sin_col#2 = irq::sin_col#1 [phi:irq::@18->irq::@17#0] -- register_copy 
+    // [19] phi irq::i#2 = irq::i#1 [phi:irq::@18->irq::@17#1] -- register_copy 
+    jmp __b17
+    // irq::@3
+  __b3:
     // [85] irq::col#0 = rasters[irq::line#10] -- vbuaa=pbuc1_derefidx_vbuzz 
     tza
     tay
@@ -2580,30 +2594,30 @@ irq: {
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
     // [87] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) = irq::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
-    // [88] if(irq::line#10<SCROLL_Y) goto irq::@4 -- vbuzz_lt_vbuc1_then_la1 
+    // [88] if(irq::line#10<SCROLL_Y) goto irq::@5 -- vbuzz_lt_vbuc1_then_la1 
     cpz #SCROLL_Y
-    bcc __b4
-    jmp __b10
-    // irq::@10
-  __b10:
-    // [89] if(irq::line#10==SCROLL_Y) goto irq::@5 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #SCROLL_Y
-    beq __b5
+    bcc __b5
     jmp __b11
     // irq::@11
   __b11:
-    // [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@6 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #SCROLL_Y+SCROLL_BLACKBARS
+    // [89] if(irq::line#10==SCROLL_Y) goto irq::@6 -- vbuzz_eq_vbuc1_then_la1 
+    cpz #SCROLL_Y
     beq __b6
     jmp __b12
     // irq::@12
   __b12:
-    // [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@7 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #SCROLL_Y+SCROLL_BLACKBARS+1
-    bne __b7_from___b12
+    // [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@7 -- vbuzz_eq_vbuc1_then_la1 
+    cpz #SCROLL_Y+SCROLL_BLACKBARS
+    beq __b7
     jmp __b13
     // irq::@13
   __b13:
+    // [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@8 -- vbuzz_neq_vbuc1_then_la1 
+    cpz #SCROLL_Y+SCROLL_BLACKBARS+1
+    bne __b8_from___b13
+    jmp __b14
+    // irq::@14
+  __b14:
     // [92] irq::zoomval#0 = SINE[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
@@ -2616,65 +2630,65 @@ irq: {
     inc
     // [96] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = irq::$10 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [97] if(greet_zoomx!=0) goto irq::@7 -- vbuz1_neq_0_then_la1 
+    // [97] if(greet_zoomx!=0) goto irq::@8 -- vbuz1_neq_0_then_la1 
     lda.z greet_zoomx
-    bne __b7_from___b13
-    jmp __b14
-    // irq::@14
-  __b14:
-    // [98] greet_idx = ++ greet_idx -- vbuz1=_inc_vbuz1 
-    inc.z greet_idx
-    // [99] if(greet_idx!=GREET_COUNT) goto irq::@7 -- vbuz1_neq_vbuc1_then_la1 
-    lda #GREET_COUNT
-    cmp.z greet_idx
-    bne __b7_from___b14
+    bne __b8_from___b14
     jmp __b15
     // irq::@15
   __b15:
+    // [98] greet_idx = ++ greet_idx -- vbuz1=_inc_vbuz1 
+    inc.z greet_idx
+    // [99] if(greet_idx!=GREET_COUNT) goto irq::@8 -- vbuz1_neq_vbuc1_then_la1 
+    lda #GREET_COUNT
+    cmp.z greet_idx
+    bne __b8_from___b15
+    jmp __b16
+    // irq::@16
+  __b16:
     // [100] greet_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greet_idx
-    // [101] phi from irq::@12 irq::@13 irq::@14 irq::@15 irq::@4 irq::@5 irq::@6 to irq::@7 [phi:irq::@12/irq::@13/irq::@14/irq::@15/irq::@4/irq::@5/irq::@6->irq::@7]
-  __b7_from___b12:
-  __b7_from___b13:
-  __b7_from___b14:
-  __b7_from___b15:
-  __b7_from___b4:
-  __b7_from___b5:
-  __b7_from___b6:
-    // [101] phi irq::wobble_idx#7 = irq::wobble_idx#10 [phi:irq::@12/irq::@13/irq::@14/irq::@15/irq::@4/irq::@5/irq::@6->irq::@7#0] -- register_copy 
-    jmp __b7
-    // irq::@7
-  __b7:
-    // [102] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
-    // Wait for the next raster line
-    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // [101] phi from irq::@13 irq::@14 irq::@15 irq::@16 irq::@5 irq::@6 irq::@7 to irq::@8 [phi:irq::@13/irq::@14/irq::@15/irq::@16/irq::@5/irq::@6/irq::@7->irq::@8]
+  __b8_from___b13:
+  __b8_from___b14:
+  __b8_from___b15:
+  __b8_from___b16:
+  __b8_from___b5:
+  __b8_from___b6:
+  __b8_from___b7:
+    // [101] phi irq::wobble_idx#7 = irq::wobble_idx#10 [phi:irq::@13/irq::@14/irq::@15/irq::@16/irq::@5/irq::@6/irq::@7->irq::@8#0] -- register_copy 
     jmp __b8
     // irq::@8
   __b8:
-    // [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b8
+    // [102] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // Wait for the next raster line
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     jmp __b9
     // irq::@9
   __b9:
+    // [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@9 -- vbuaa_eq__deref_pbuc1_then_la1 
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b9
+    jmp __b10
+    // irq::@10
+  __b10:
     // [104] irq::line#1 = ++ irq::line#10 -- vbuzz=_inc_vbuzz 
     inz
-    // [14] phi from irq::@9 to irq::@1 [phi:irq::@9->irq::@1]
-  __b1_from___b9:
-    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#7 [phi:irq::@9->irq::@1#0] -- register_copy 
-    // [14] phi irq::line#10 = irq::line#1 [phi:irq::@9->irq::@1#1] -- register_copy 
-    jmp __b1
-    // irq::@6
-  __b6:
+    // [14] phi from irq::@10 to irq::@2 [phi:irq::@10->irq::@2]
+  __b2_from___b10:
+    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#7 [phi:irq::@10->irq::@2#0] -- register_copy 
+    // [14] phi irq::line#10 = irq::line#1 [phi:irq::@10->irq::@2#1] -- register_copy 
+    jmp __b2
+    // irq::@7
+  __b7:
     // [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 -- _deref_pbuc1=vbuc2 
     // if raster position > SCROLL_Y pos do nozoom
     // default value
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    jmp __b7_from___b6
-    // irq::@5
-  __b5:
+    jmp __b8_from___b7
+    // irq::@6
+  __b6:
     // [106] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 -- _deref_pbuc1=vbuc2 
     // if raster position = SCROLL_Y pos do scroll
     // no wobbling from this point
@@ -2684,9 +2698,9 @@ irq: {
     // set softscroll
     lda.z scroll_soft
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    jmp __b7_from___b5
-    // irq::@4
-  __b4:
+    jmp __b8_from___b6
+    // irq::@5
+  __b5:
     // [108] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     // if raster position < SCROLL_Y pos do wobble Logo!
     lda SINE,x
@@ -2697,7 +2711,7 @@ irq: {
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    jmp __b7_from___b4
+    jmp __b8_from___b5
 }
   // main
 main: {
@@ -2722,129 +2736,134 @@ main: {
     lda #0
     // [116] callexecute *songInit 
     jsr songInit
-    // [117] call memset 
-  // Clear screen 
-    // [143] phi from main to memset [phi:main->memset]
-  memset_from_main:
-    jsr memset
-    // [118] phi from main to main::@1 [phi:main->main::@1]
+    // [117] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [118] phi main::i1#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
     jmp __b1
-  // Put MEGA logo on screen
     // main::@1
   __b1:
-    // [119] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [118] call memset 
+  // Clear screen 
+    // [144] phi from main::@1 to memset [phi:main::@1->memset]
+  memset_from___b1:
+    jsr memset
+    // [119] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b2_from___b1:
+    // [119] phi main::i1#2 = 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b2
+  // Put MEGA logo on screen
+    // main::@2
+  __b2:
+    // [120] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$bc*SIZEOF_BYTE
-    bcc __b2
-    // [120] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  __b3_from___b1:
-    // [120] phi main::i2#2 = 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
+    bcc __b3
+    // [121] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  __b4_from___b2:
+    // [121] phi main::i2#2 = 0 [phi:main::@2->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b3
+    jmp __b4
   // Put '*' as default greeting
-    // main::@3
-  __b3:
-    // [121] if(main::i2#2<$28) goto main::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // main::@4
+  __b4:
+    // [122] if(main::i2#2<$28) goto main::@5 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
-    bcc __b4
-    // [122] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-  __b5_from___b3:
-    // [122] phi main::i#2 = 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
+    bcc __b5
+    // [123] phi from main::@4 to main::@6 [phi:main::@4->main::@6]
+  __b6_from___b4:
+    // [123] phi main::i#2 = 0 [phi:main::@4->main::@6#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp __b5
-    // [122] phi from main::@5 to main::@5 [phi:main::@5->main::@5]
-  __b5_from___b5:
-    // [122] phi main::i#2 = main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
-    jmp __b5
-    // main::@5
-  __b5:
-    // [123] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda PAL_RED,x
-    sta PALETTE_RED,x
-    // [124] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda PAL_GREEN,x
-    sta PALETTE_GREEN,x
-    // [125] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda PAL_BLUE,x
-    sta PALETTE_BLUE,x
-    // [126] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [127] if(main::i#1!=0) goto main::@5 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b5_from___b5
+    jmp __b6
+    // [123] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+  __b6_from___b6:
+    // [123] phi main::i#2 = main::i#1 [phi:main::@6->main::@6#0] -- register_copy 
     jmp __b6
     // main::@6
   __b6:
+    // [124] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda PAL_RED,x
+    sta PALETTE_RED,x
+    // [125] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda PAL_GREEN,x
+    sta PALETTE_GREEN,x
+    // [126] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda PAL_BLUE,x
+    sta PALETTE_BLUE,x
+    // [127] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [128] if(main::i#1!=0) goto main::@6 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b6_from___b6
+    jmp __b7
+    // main::@7
+  __b7:
     // asm { sei  }
     // Set up raster interrupts C64 style
     sei
-    // [129] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [130] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [130] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y -- _deref_pbuc1=vbuc2 
+    // [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y -- _deref_pbuc1=vbuc2 
     // Set raster line to 0x16
     lda #IRQ_Y
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [133] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // [133] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
+    // [134] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-    // [134] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [135] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // [135] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [136] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [136] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [137] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm { cli  }
     // Enable IRQ
     cli
-    // [138] phi from main::@6 main::@7 to main::@7 [phi:main::@6/main::@7->main::@7]
-  __b7_from___b6:
-  __b7_from___b7:
-    jmp __b7
-    // main::@7
-  __b7:
-    jmp __b7_from___b7
-    // main::@4
-  __b4:
-    // [139] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [139] phi from main::@7 main::@8 to main::@8 [phi:main::@7/main::@8->main::@8]
+  __b8_from___b7:
+  __b8_from___b8:
+    jmp __b8
+    // main::@8
+  __b8:
+    jmp __b8_from___b8
+    // main::@5
+  __b5:
+    // [140] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta DEFAULT_SCREEN+GREET_ROW*$28,x
-    // [140] main::i2#1 = ++ main::i2#2 -- vbuxx=_inc_vbuxx 
+    // [141] main::i2#1 = ++ main::i2#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [120] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  __b3_from___b4:
-    // [120] phi main::i2#2 = main::i2#1 [phi:main::@4->main::@3#0] -- register_copy 
-    jmp __b3
-    // main::@2
-  __b2:
-    // [141] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [121] phi from main::@5 to main::@4 [phi:main::@5->main::@4]
+  __b4_from___b5:
+    // [121] phi main::i2#2 = main::i2#1 [phi:main::@5->main::@4#0] -- register_copy 
+    jmp __b4
+    // main::@3
+  __b3:
+    // [142] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MEGA_LOGO,x
     sta DEFAULT_SCREEN+LOGO_ROW*$28,x
-    // [142] main::i1#1 = ++ main::i1#2 -- vbuxx=_inc_vbuxx 
+    // [143] main::i1#1 = ++ main::i1#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [118] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [118] phi main::i1#2 = main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
+    // [119] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  __b2_from___b3:
+    // [119] phi main::i1#2 = main::i1#1 [phi:main::@3->main::@2#0] -- register_copy 
+    jmp __b2
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -2854,9 +2873,9 @@ memset: {
     .label str = DEFAULT_SCREEN
     .label end = str+num
     .label dst = 4
-    // [144] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [145] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [144] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [145] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -2864,7 +2883,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [145] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [146] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -2874,19 +2893,19 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [146] return 
+    // [147] return 
     rts
     // memset::@2
   __b2:
-    // [147] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [148] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [148] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [149] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [144] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [145] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [144] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [145] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -2923,122 +2942,127 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b4
 Removing instruction jmp __b1
-Removing instruction jmp __b3
-Removing instruction jmp __b16
-Removing instruction jmp __b18
-Removing instruction jmp __b20
+Removing instruction jmp __b17
+Removing instruction jmp __b19
 Removing instruction jmp __b21
-Removing instruction jmp __b28
-Removing instruction jmp __b30
+Removing instruction jmp __b22
+Removing instruction jmp __b29
 Removing instruction jmp __b31
-Removing instruction jmp __b33
+Removing instruction jmp __b32
 Removing instruction jmp __b34
 Removing instruction jmp __b35
-Removing instruction jmp __b37
+Removing instruction jmp __b36
 Removing instruction jmp __b38
 Removing instruction jmp __b39
+Removing instruction jmp __b40
 Removing instruction jmp __breturn
-Removing instruction jmp __b23
-Removing instruction jmp __b25
-Removing instruction jmp __b27
-Removing instruction jmp __b10
+Removing instruction jmp __b24
+Removing instruction jmp __b26
+Removing instruction jmp __b28
 Removing instruction jmp __b11
 Removing instruction jmp __b12
 Removing instruction jmp __b13
 Removing instruction jmp __b14
 Removing instruction jmp __b15
-Removing instruction jmp __b7
+Removing instruction jmp __b16
 Removing instruction jmp __b8
 Removing instruction jmp __b9
+Removing instruction jmp __b10
 Removing instruction jmp __b1
-Removing instruction jmp __b3
-Removing instruction jmp __b5
+Removing instruction jmp __b2
+Removing instruction jmp __b4
 Removing instruction jmp __b6
 Removing instruction jmp __b7
+Removing instruction jmp __b8
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label __b39_from___b37 with __b39
-Replacing label __b7_from___b12 with __b7
-Replacing label __b7_from___b13 with __b7
-Replacing label __b7_from___b14 with __b7
-Replacing label __b7_from___b6 with __b7
-Replacing label __b7_from___b5 with __b7
-Replacing label __b7_from___b4 with __b7
-Replacing label __b5_from___b5 with __b5
-Replacing label __b7_from___b7 with __b7
+Replacing label __b40_from___b38 with __b40
+Replacing label __b8_from___b13 with __b8
+Replacing label __b8_from___b14 with __b8
+Replacing label __b8_from___b15 with __b8
+Replacing label __b8_from___b7 with __b8
+Replacing label __b8_from___b6 with __b8
+Replacing label __b8_from___b5 with __b8
+Replacing label __b6_from___b6 with __b6
+Replacing label __b8_from___b8 with __b8
 Removing instruction __b1_from___init1:
-Removing instruction __b3_from___b1:
-Removing instruction __b39_from___b37:
-Removing instruction __b39_from___b38:
-Removing instruction __b7_from___b12:
-Removing instruction __b7_from___b13:
-Removing instruction __b7_from___b14:
-Removing instruction __b7_from___b15:
-Removing instruction __b7_from___b4:
-Removing instruction __b7_from___b5:
-Removing instruction __b7_from___b6:
-Removing instruction __b5_from___b5:
-Removing instruction __b7_from___b6:
-Removing instruction __b7_from___b7:
+Removing instruction __b4_from___b2:
+Removing instruction __b40_from___b38:
+Removing instruction __b40_from___b39:
+Removing instruction __b8_from___b13:
+Removing instruction __b8_from___b14:
+Removing instruction __b8_from___b15:
+Removing instruction __b8_from___b16:
+Removing instruction __b8_from___b5:
+Removing instruction __b8_from___b6:
+Removing instruction __b8_from___b7:
+Removing instruction __b1_from_main:
+Removing instruction __b6_from___b6:
+Removing instruction __b8_from___b7:
+Removing instruction __b8_from___b8:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b1_from_irq:
-Removing instruction __b3:
-Removing instruction __b16_from___b3:
-Removing instruction __b18_from___b16:
-Removing instruction __b20:
-Removing instruction __b21_from___b20:
-Removing instruction __b28_from___b21:
-Removing instruction __b30:
-Removing instruction __b31_from___b30:
-Removing instruction __b33:
+Removing instruction __b2_from_irq:
+Removing instruction __b4:
+Removing instruction __b1:
+Removing instruction __b17_from___b1:
+Removing instruction __b19_from___b17:
+Removing instruction __b21:
+Removing instruction __b22_from___b21:
+Removing instruction __b29_from___b22:
+Removing instruction __b31:
+Removing instruction __b32_from___b31:
 Removing instruction __b34:
-Removing instruction __b35_from___b34:
-Removing instruction __b37:
+Removing instruction __b35:
+Removing instruction __b36_from___b35:
 Removing instruction __b38:
-Removing instruction __b35_from___b36:
-Removing instruction __b31_from___b32:
-Removing instruction __b28_from___b29:
-Removing instruction __b23_from___b22:
-Removing instruction __b25_from___b23:
-Removing instruction __b27:
-Removing instruction __b21_from___b27:
-Removing instruction __b25_from___b26:
-Removing instruction __b23_from___b24:
-Removing instruction __b18_from___b19:
-Removing instruction __b16_from___b17:
-Removing instruction __b10:
+Removing instruction __b39:
+Removing instruction __b36_from___b37:
+Removing instruction __b32_from___b33:
+Removing instruction __b29_from___b30:
+Removing instruction __b24_from___b23:
+Removing instruction __b26_from___b24:
+Removing instruction __b28:
+Removing instruction __b22_from___b28:
+Removing instruction __b26_from___b27:
+Removing instruction __b24_from___b25:
+Removing instruction __b19_from___b20:
+Removing instruction __b17_from___b18:
 Removing instruction __b11:
 Removing instruction __b12:
 Removing instruction __b13:
 Removing instruction __b14:
 Removing instruction __b15:
-Removing instruction __b9:
-Removing instruction __b1_from___b9:
-Removing instruction memset_from_main:
-Removing instruction __b1_from_main:
-Removing instruction __b3_from___b1:
-Removing instruction __b5_from___b3:
-Removing instruction __b6:
-Removing instruction __b3_from___b4:
-Removing instruction __b1_from___b2:
+Removing instruction __b16:
+Removing instruction __b10:
+Removing instruction __b2_from___b10:
+Removing instruction __b1:
+Removing instruction memset_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction __b4_from___b2:
+Removing instruction __b6_from___b4:
+Removing instruction __b7:
+Removing instruction __b4_from___b5:
+Removing instruction __b2_from___b3:
 Removing instruction __b1_from_memset:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jmp __b5
+Removing instruction jmp __b6
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [143] bne __b2 to beq
-Fixing long branch [153] bcc __b17 to bcs
-Fixing long branch [160] bne __b19 to beq
+Fixing long branch [143] bne __b3 to beq
+Fixing long branch [153] bcc __b18 to bcs
+Fixing long branch [160] bne __b20 to beq
 
 FINAL SYMBOL TABLE
 constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
@@ -3202,7 +3226,7 @@ constant void()* songPlay = (void()*)SONG+3
 reg byte z [ irq::line#10 irq::line#1 ]
 reg byte x [ irq::wobble_idx#10 irq::wobble_idx#0 irq::wobble_idx#7 irq::wobble_idx#1 ]
 reg byte x [ irq::i#2 irq::i#1 ]
-reg byte y [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
+reg byte y [ irq::sin_col#2 irq::sin_col#0 irq::sin_col#1 ]
 reg byte x [ irq::l#2 irq::l#1 ]
 zp[1]:2 [ irq::barcnt#2 irq::barcnt#1 ]
 zp[1]:3 [ irq::sin_bar#2 irq::sin_bar#0 irq::sin_bar#1 ]
@@ -3410,81 +3434,82 @@ irq: {
     // [13] irq::wobble_idx#0 = sin_idx -- vbuxx=vbuz1 
     // Generate Raster Bars and more
     ldx.z sin_idx
-    // [14] phi from irq to irq::@1 [phi:irq->irq::@1]
-    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#0 [phi:irq->irq::@1#0] -- register_copy 
-    // [14] phi irq::line#10 = 0 [phi:irq->irq::@1#1] -- vbuzz=vbuc1 
+    // [14] phi from irq to irq::@2 [phi:irq->irq::@2]
+    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#0 [phi:irq->irq::@2#0] -- register_copy 
+    // [14] phi irq::line#10 = 0 [phi:irq->irq::@2#1] -- vbuzz=vbuc1 
     ldz #0
-    // irq::@1
-  __b1:
+    // irq::@2
+  __b2:
     // for(char line=0;line!=RASTER_LINES;line++)
-    // [15] if(irq::line#10!=RASTER_LINES) goto irq::@2 -- vbuzz_neq_vbuc1_then_la1 
+    // [15] if(irq::line#10!=RASTER_LINES) goto irq::@3 -- vbuzz_neq_vbuc1_then_la1 
     cpz #RASTER_LINES
-    beq !__b2+
-    jmp __b2
-  !__b2:
-    // [16] phi from irq::@1 to irq::@3 [phi:irq::@1->irq::@3]
-    // irq::@3
+    beq !__b3+
+    jmp __b3
+  !__b3:
+    // [16] phi from irq::@2 to irq::@4 [phi:irq::@2->irq::@4]
+    // irq::@4
     // (*songPlay)()
     // [17] callexecute *songPlay 
     // play music
     jsr songPlay
+    // irq::@1
     // char sin_col = sin_idx
     // [18] irq::sin_col#0 = sin_idx -- vbuyy=vbuz1 
     // Set up colors behind logo, scroll and greets
     ldy.z sin_idx
-    // [19] phi from irq::@3 to irq::@16 [phi:irq::@3->irq::@16]
-    // [19] phi irq::sin_col#2 = irq::sin_col#0 [phi:irq::@3->irq::@16#0] -- register_copy 
-    // [19] phi irq::i#2 = 0 [phi:irq::@3->irq::@16#1] -- vbuxx=vbuc1 
+    // [19] phi from irq::@1 to irq::@17 [phi:irq::@1->irq::@17]
+    // [19] phi irq::sin_col#2 = irq::sin_col#0 [phi:irq::@1->irq::@17#0] -- register_copy 
+    // [19] phi irq::i#2 = 0 [phi:irq::@1->irq::@17#1] -- vbuxx=vbuc1 
     ldx #0
-    // irq::@16
-  __b16:
+    // irq::@17
+  __b17:
     // for(char i=0;i<40;i++)
-    // [20] if(irq::i#2<$28) goto irq::@17 -- vbuxx_lt_vbuc1_then_la1 
+    // [20] if(irq::i#2<$28) goto irq::@18 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
-    bcs !__b17+
-    jmp __b17
-  !__b17:
-    // [21] phi from irq::@16 to irq::@18 [phi:irq::@16->irq::@18]
-    // [21] phi irq::l#2 = 0 [phi:irq::@16->irq::@18#0] -- vbuxx=vbuc1 
+    bcs !__b18+
+    jmp __b18
+  !__b18:
+    // [21] phi from irq::@17 to irq::@19 [phi:irq::@17->irq::@19]
+    // [21] phi irq::l#2 = 0 [phi:irq::@17->irq::@19#0] -- vbuxx=vbuc1 
     ldx #0
   // Set all raster bars to black
-    // irq::@18
-  __b18:
+    // irq::@19
+  __b19:
     // for(char l=0;l!=RASTER_LINES;l++)
-    // [22] if(irq::l#2!=RASTER_LINES) goto irq::@19 -- vbuxx_neq_vbuc1_then_la1 
+    // [22] if(irq::l#2!=RASTER_LINES) goto irq::@20 -- vbuxx_neq_vbuc1_then_la1 
     cpx #RASTER_LINES
-    beq !__b19+
-    jmp __b19
-  !__b19:
-    // irq::@20
+    beq !__b20+
+    jmp __b20
+  !__b20:
+    // irq::@21
     // char sin_bar = sin_idx
     // [23] irq::sin_bar#0 = sin_idx -- vbuz1=vbuz2 
     // Big block of bars (16)
     lda.z sin_idx
     sta.z sin_bar
-    // [24] phi from irq::@20 to irq::@21 [phi:irq::@20->irq::@21]
-    // [24] phi irq::sin_bar#2 = irq::sin_bar#0 [phi:irq::@20->irq::@21#0] -- register_copy 
-    // [24] phi irq::barcnt#2 = 0 [phi:irq::@20->irq::@21#1] -- vbuz1=vbuc1 
+    // [24] phi from irq::@21 to irq::@22 [phi:irq::@21->irq::@22]
+    // [24] phi irq::sin_bar#2 = irq::sin_bar#0 [phi:irq::@21->irq::@22#0] -- register_copy 
+    // [24] phi irq::barcnt#2 = 0 [phi:irq::@21->irq::@22#1] -- vbuz1=vbuc1 
     lda #0
     sta.z barcnt
-    // irq::@21
-  __b21:
+    // irq::@22
+  __b22:
     // for(char barcnt=0; barcnt<16; barcnt++)
-    // [25] if(irq::barcnt#2<$10) goto irq::@22 -- vbuz1_lt_vbuc1_then_la1 
+    // [25] if(irq::barcnt#2<$10) goto irq::@23 -- vbuz1_lt_vbuc1_then_la1 
     lda.z barcnt
     cmp #$10
-    bcc __b22
-    // [26] phi from irq::@21 to irq::@28 [phi:irq::@21->irq::@28]
-    // [26] phi irq::i3#2 = 0 [phi:irq::@21->irq::@28#0] -- vbuxx=vbuc1 
+    bcc __b23
+    // [26] phi from irq::@22 to irq::@29 [phi:irq::@22->irq::@29]
+    // [26] phi irq::i3#2 = 0 [phi:irq::@22->irq::@29#0] -- vbuxx=vbuc1 
     ldx #0
   // Produce dark area behind text
-    // irq::@28
-  __b28:
+    // irq::@29
+  __b29:
     // for(char i=0;i<19;i++)
-    // [27] if(irq::i3#2<$13) goto irq::@29 -- vbuxx_lt_vbuc1_then_la1 
+    // [27] if(irq::i3#2<$13) goto irq::@30 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$13
-    bcc __b29
-    // irq::@30
+    bcc __b30
+    // irq::@31
     // char greet_offset = greet_idx*16
     // [28] irq::greet_offset#0 = greet_idx << 4 -- vbuyy=vbuz1_rol_4 
     // Set up greetings    
@@ -3494,17 +3519,17 @@ irq: {
     asl
     asl
     tay
-    // [29] phi from irq::@30 to irq::@31 [phi:irq::@30->irq::@31]
-    // [29] phi irq::greet_offset#2 = irq::greet_offset#0 [phi:irq::@30->irq::@31#0] -- register_copy 
-    // [29] phi irq::i4#2 = 0 [phi:irq::@30->irq::@31#1] -- vbuxx=vbuc1 
+    // [29] phi from irq::@31 to irq::@32 [phi:irq::@31->irq::@32]
+    // [29] phi irq::greet_offset#2 = irq::greet_offset#0 [phi:irq::@31->irq::@32#0] -- register_copy 
+    // [29] phi irq::i4#2 = 0 [phi:irq::@31->irq::@32#1] -- vbuxx=vbuc1 
     ldx #0
-    // irq::@31
-  __b31:
+    // irq::@32
+  __b32:
     // for(char i=0;i<16;i++)
-    // [30] if(irq::i4#2<$10) goto irq::@32 -- vbuxx_lt_vbuc1_then_la1 
+    // [30] if(irq::i4#2<$10) goto irq::@33 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$10
-    bcc __b32
-    // irq::@33
+    bcc __b33
+    // irq::@34
     // if(--scroll_soft == 0xff)
     // [31] scroll_soft = -- scroll_soft -- vbuz1=_dec_vbuz1 
     dec.z scroll_soft
@@ -3512,22 +3537,22 @@ irq: {
     lda #$ff
     cmp.z scroll_soft
     bne __breturn
-    // irq::@34
+    // irq::@35
     // scroll_soft = 7
     // [33] scroll_soft = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z scroll_soft
-    // [34] phi from irq::@34 to irq::@35 [phi:irq::@34->irq::@35]
-    // [34] phi irq::i5#2 = 0 [phi:irq::@34->irq::@35#0] -- vbuxx=vbuc1 
+    // [34] phi from irq::@35 to irq::@36 [phi:irq::@35->irq::@36]
+    // [34] phi irq::i5#2 = 0 [phi:irq::@35->irq::@36#0] -- vbuxx=vbuc1 
     ldx #0
   // Move scroll on screen
-    // irq::@35
-  __b35:
+    // irq::@36
+  __b36:
     // for(char i=0;i<39;i++)
-    // [35] if(irq::i5#2<$27) goto irq::@36 -- vbuxx_lt_vbuc1_then_la1 
+    // [35] if(irq::i5#2<$27) goto irq::@37 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$27
-    bcc __b36
-    // irq::@37
+    bcc __b37
+    // irq::@38
     // char nxt = *(scroll_ptr++)
     // [36] irq::nxt#0 = *scroll_ptr -- vbuaa=_deref_pbuz1 
     // Show next char
@@ -3536,10 +3561,10 @@ irq: {
     // [37] scroll_ptr = ++ scroll_ptr -- pbuz1=_inc_pbuz1 
     inw.z scroll_ptr
     // if(nxt == 0)
-    // [38] if(irq::nxt#0!=0) goto irq::@39 -- vbuaa_neq_0_then_la1 
+    // [38] if(irq::nxt#0!=0) goto irq::@40 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne __b39
-    // irq::@38
+    bne __b40
+    // irq::@39
     // scroll_ptr = SCROLL_TEXT
     // [39] scroll_ptr = SCROLL_TEXT -- pbuz1=pbuc1 
     lda #<SCROLL_TEXT
@@ -3549,10 +3574,10 @@ irq: {
     // nxt = *scroll_ptr
     // [40] irq::nxt#1 = *scroll_ptr -- vbuaa=_deref_pbuz1 
     lda (scroll_ptr),y
-    // [41] phi from irq::@37 irq::@38 to irq::@39 [phi:irq::@37/irq::@38->irq::@39]
-    // [41] phi irq::nxt#2 = irq::nxt#0 [phi:irq::@37/irq::@38->irq::@39#0] -- register_copy 
-    // irq::@39
-  __b39:
+    // [41] phi from irq::@38 irq::@39 to irq::@40 [phi:irq::@38/irq::@39->irq::@40]
+    // [41] phi irq::nxt#2 = irq::nxt#0 [phi:irq::@38/irq::@39->irq::@40#0] -- register_copy 
+    // irq::@40
+  __b40:
     // nxt & 0xbf
     // [42] irq::$33 = irq::nxt#2 & $bf -- vbuaa=vbuaa_band_vbuc1 
     and #$bf
@@ -3569,8 +3594,8 @@ irq: {
     plx
     pla
     rti
-    // irq::@36
-  __b36:
+    // irq::@37
+  __b37:
     // (SCREEN + SCROLL_ROW*40)[i] = (SCREEN + SCROLL_ROW*40 + 1)[i]
     // [45] (DEFAULT_SCREEN+SCROLL_ROW*$28)[irq::i5#2] = (DEFAULT_SCREEN+SCROLL_ROW*$28+1)[irq::i5#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda DEFAULT_SCREEN+SCROLL_ROW*$28+1,x
@@ -3578,11 +3603,11 @@ irq: {
     // for(char i=0;i<39;i++)
     // [46] irq::i5#1 = ++ irq::i5#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [34] phi from irq::@36 to irq::@35 [phi:irq::@36->irq::@35]
-    // [34] phi irq::i5#2 = irq::i5#1 [phi:irq::@36->irq::@35#0] -- register_copy 
-    jmp __b35
-    // irq::@32
-  __b32:
+    // [34] phi from irq::@37 to irq::@36 [phi:irq::@37->irq::@36]
+    // [34] phi irq::i5#2 = irq::i5#1 [phi:irq::@37->irq::@36#0] -- register_copy 
+    jmp __b36
+    // irq::@33
+  __b33:
     // GREETING[greet_offset++] & 0xbf
     // [47] irq::$29 = GREETING[irq::greet_offset#2] & $bf -- vbuaa=pbuc1_derefidx_vbuyy_band_vbuc2 
     lda #$bf
@@ -3596,12 +3621,12 @@ irq: {
     // for(char i=0;i<16;i++)
     // [50] irq::i4#1 = ++ irq::i4#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [29] phi from irq::@32 to irq::@31 [phi:irq::@32->irq::@31]
-    // [29] phi irq::greet_offset#2 = irq::greet_offset#1 [phi:irq::@32->irq::@31#0] -- register_copy 
-    // [29] phi irq::i4#2 = irq::i4#1 [phi:irq::@32->irq::@31#1] -- register_copy 
-    jmp __b31
-    // irq::@29
-  __b29:
+    // [29] phi from irq::@33 to irq::@32 [phi:irq::@33->irq::@32]
+    // [29] phi irq::greet_offset#2 = irq::greet_offset#1 [phi:irq::@33->irq::@32#0] -- register_copy 
+    // [29] phi irq::i4#2 = irq::i4#1 [phi:irq::@33->irq::@32#1] -- register_copy 
+    jmp __b32
+    // irq::@30
+  __b30:
     // rasters[SCROLL_Y+i] /2
     // [51] irq::$26 = (rasters+SCROLL_Y)[irq::i3#2] >> 1 -- vbuaa=pbuc1_derefidx_vbuxx_ror_1 
     lda rasters+SCROLL_Y,x
@@ -3615,11 +3640,11 @@ irq: {
     // for(char i=0;i<19;i++)
     // [54] irq::i3#1 = ++ irq::i3#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [26] phi from irq::@29 to irq::@28 [phi:irq::@29->irq::@28]
-    // [26] phi irq::i3#2 = irq::i3#1 [phi:irq::@29->irq::@28#0] -- register_copy 
-    jmp __b28
-    // irq::@22
-  __b22:
+    // [26] phi from irq::@30 to irq::@29 [phi:irq::@30->irq::@29]
+    // [26] phi irq::i3#2 = irq::i3#1 [phi:irq::@30->irq::@29#0] -- register_copy 
+    jmp __b29
+    // irq::@23
+  __b23:
     // char idx = SINE[sin_bar]
     // [55] irq::idx#0 = SINE[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z sin_bar
@@ -3632,29 +3657,29 @@ irq: {
     asl
     asl
     taz
-    // [57] phi from irq::@22 to irq::@23 [phi:irq::@22->irq::@23]
-    // [57] phi irq::idx#3 = irq::idx#0 [phi:irq::@22->irq::@23#0] -- register_copy 
-    // [57] phi irq::barcol#3 = irq::barcol#0 [phi:irq::@22->irq::@23#1] -- register_copy 
-    // [57] phi irq::i1#2 = 0 [phi:irq::@22->irq::@23#2] -- vbuyy=vbuc1 
+    // [57] phi from irq::@23 to irq::@24 [phi:irq::@23->irq::@24]
+    // [57] phi irq::idx#3 = irq::idx#0 [phi:irq::@23->irq::@24#0] -- register_copy 
+    // [57] phi irq::barcol#3 = irq::barcol#0 [phi:irq::@23->irq::@24#1] -- register_copy 
+    // [57] phi irq::i1#2 = 0 [phi:irq::@23->irq::@24#2] -- vbuyy=vbuc1 
     ldy #0
-    // irq::@23
-  __b23:
+    // irq::@24
+  __b24:
     // for(char i=0;i<16;i++)
-    // [58] if(irq::i1#2<$10) goto irq::@24 -- vbuyy_lt_vbuc1_then_la1 
+    // [58] if(irq::i1#2<$10) goto irq::@25 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$10
-    bcc __b24
-    // [59] phi from irq::@23 to irq::@25 [phi:irq::@23->irq::@25]
-    // [59] phi irq::idx#4 = irq::idx#3 [phi:irq::@23->irq::@25#0] -- register_copy 
-    // [59] phi irq::barcol#4 = irq::barcol#3 [phi:irq::@23->irq::@25#1] -- register_copy 
-    // [59] phi irq::i2#2 = 0 [phi:irq::@23->irq::@25#2] -- vbuyy=vbuc1 
+    bcc __b25
+    // [59] phi from irq::@24 to irq::@26 [phi:irq::@24->irq::@26]
+    // [59] phi irq::idx#4 = irq::idx#3 [phi:irq::@24->irq::@26#0] -- register_copy 
+    // [59] phi irq::barcol#4 = irq::barcol#3 [phi:irq::@24->irq::@26#1] -- register_copy 
+    // [59] phi irq::i2#2 = 0 [phi:irq::@24->irq::@26#2] -- vbuyy=vbuc1 
     ldy #0
-    // irq::@25
-  __b25:
+    // irq::@26
+  __b26:
     // for(char i=0;i<15;i++)
-    // [60] if(irq::i2#2<$f) goto irq::@26 -- vbuyy_lt_vbuc1_then_la1 
+    // [60] if(irq::i2#2<$f) goto irq::@27 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$f
-    bcc __b26
-    // irq::@27
+    bcc __b27
+    // irq::@28
     // sin_bar += 10
     // [61] irq::sin_bar#1 = irq::sin_bar#2 + $a -- vbuz1=vbuz1_plus_vbuc1 
     lda #$a
@@ -3664,12 +3689,12 @@ irq: {
     // for(char barcnt=0; barcnt<16; barcnt++)
     // [62] irq::barcnt#1 = ++ irq::barcnt#2 -- vbuz1=_inc_vbuz1 
     inc.z barcnt
-    // [24] phi from irq::@27 to irq::@21 [phi:irq::@27->irq::@21]
-    // [24] phi irq::sin_bar#2 = irq::sin_bar#1 [phi:irq::@27->irq::@21#0] -- register_copy 
-    // [24] phi irq::barcnt#2 = irq::barcnt#1 [phi:irq::@27->irq::@21#1] -- register_copy 
-    jmp __b21
-    // irq::@26
-  __b26:
+    // [24] phi from irq::@28 to irq::@22 [phi:irq::@28->irq::@22]
+    // [24] phi irq::sin_bar#2 = irq::sin_bar#1 [phi:irq::@28->irq::@22#0] -- register_copy 
+    // [24] phi irq::barcnt#2 = irq::barcnt#1 [phi:irq::@28->irq::@22#1] -- register_copy 
+    jmp __b22
+    // irq::@27
+  __b27:
     // rasters[idx++] = --barcol;
     // [63] irq::barcol#2 = -- irq::barcol#4 -- vbuzz=_dec_vbuzz 
     dez
@@ -3683,13 +3708,13 @@ irq: {
     // for(char i=0;i<15;i++)
     // [66] irq::i2#1 = ++ irq::i2#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [59] phi from irq::@26 to irq::@25 [phi:irq::@26->irq::@25]
-    // [59] phi irq::idx#4 = irq::idx#2 [phi:irq::@26->irq::@25#0] -- register_copy 
-    // [59] phi irq::barcol#4 = irq::barcol#2 [phi:irq::@26->irq::@25#1] -- register_copy 
-    // [59] phi irq::i2#2 = irq::i2#1 [phi:irq::@26->irq::@25#2] -- register_copy 
-    jmp __b25
-    // irq::@24
-  __b24:
+    // [59] phi from irq::@27 to irq::@26 [phi:irq::@27->irq::@26]
+    // [59] phi irq::idx#4 = irq::idx#2 [phi:irq::@27->irq::@26#0] -- register_copy 
+    // [59] phi irq::barcol#4 = irq::barcol#2 [phi:irq::@27->irq::@26#1] -- register_copy 
+    // [59] phi irq::i2#2 = irq::i2#1 [phi:irq::@27->irq::@26#2] -- register_copy 
+    jmp __b26
+    // irq::@25
+  __b25:
     // rasters[idx++] = barcol++
     // [67] rasters[irq::idx#3] = irq::barcol#3 -- pbuc1_derefidx_vbuxx=vbuzz 
     tza
@@ -3702,13 +3727,13 @@ irq: {
     // for(char i=0;i<16;i++)
     // [70] irq::i1#1 = ++ irq::i1#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [57] phi from irq::@24 to irq::@23 [phi:irq::@24->irq::@23]
-    // [57] phi irq::idx#3 = irq::idx#1 [phi:irq::@24->irq::@23#0] -- register_copy 
-    // [57] phi irq::barcol#3 = irq::barcol#1 [phi:irq::@24->irq::@23#1] -- register_copy 
-    // [57] phi irq::i1#2 = irq::i1#1 [phi:irq::@24->irq::@23#2] -- register_copy 
-    jmp __b23
-    // irq::@19
-  __b19:
+    // [57] phi from irq::@25 to irq::@24 [phi:irq::@25->irq::@24]
+    // [57] phi irq::idx#3 = irq::idx#1 [phi:irq::@25->irq::@24#0] -- register_copy 
+    // [57] phi irq::barcol#3 = irq::barcol#1 [phi:irq::@25->irq::@24#1] -- register_copy 
+    // [57] phi irq::i1#2 = irq::i1#1 [phi:irq::@25->irq::@24#2] -- register_copy 
+    jmp __b24
+    // irq::@20
+  __b20:
     // rasters[l] = 0
     // [71] rasters[irq::l#2] = 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
@@ -3716,11 +3741,11 @@ irq: {
     // for(char l=0;l!=RASTER_LINES;l++)
     // [72] irq::l#1 = ++ irq::l#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [21] phi from irq::@19 to irq::@18 [phi:irq::@19->irq::@18]
-    // [21] phi irq::l#2 = irq::l#1 [phi:irq::@19->irq::@18#0] -- register_copy 
-    jmp __b18
-    // irq::@17
-  __b17:
+    // [21] phi from irq::@20 to irq::@19 [phi:irq::@20->irq::@19]
+    // [21] phi irq::l#2 = irq::l#1 [phi:irq::@20->irq::@19#0] -- register_copy 
+    jmp __b19
+    // irq::@18
+  __b18:
     // char col = SINE[sin_col]/4
     // [73] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
     // Greeting colors
@@ -3763,12 +3788,12 @@ irq: {
     // for(char i=0;i<40;i++)
     // [84] irq::i#1 = ++ irq::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [19] phi from irq::@17 to irq::@16 [phi:irq::@17->irq::@16]
-    // [19] phi irq::sin_col#2 = irq::sin_col#1 [phi:irq::@17->irq::@16#0] -- register_copy 
-    // [19] phi irq::i#2 = irq::i#1 [phi:irq::@17->irq::@16#1] -- register_copy 
-    jmp __b16
-    // irq::@2
-  __b2:
+    // [19] phi from irq::@18 to irq::@17 [phi:irq::@18->irq::@17]
+    // [19] phi irq::sin_col#2 = irq::sin_col#1 [phi:irq::@18->irq::@17#0] -- register_copy 
+    // [19] phi irq::i#2 = irq::i#1 [phi:irq::@18->irq::@17#1] -- register_copy 
+    jmp __b17
+    // irq::@3
+  __b3:
     // char col = rasters[line]
     // [85] irq::col#0 = rasters[irq::line#10] -- vbuaa=pbuc1_derefidx_vbuzz 
     tza
@@ -3781,25 +3806,25 @@ irq: {
     // [87] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) = irq::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < SCROLL_Y)
-    // [88] if(irq::line#10<SCROLL_Y) goto irq::@4 -- vbuzz_lt_vbuc1_then_la1 
+    // [88] if(irq::line#10<SCROLL_Y) goto irq::@5 -- vbuzz_lt_vbuc1_then_la1 
     cpz #SCROLL_Y
-    bcc __b4
-    // irq::@10
-    // if(line == SCROLL_Y)
-    // [89] if(irq::line#10==SCROLL_Y) goto irq::@5 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #SCROLL_Y
-    beq __b5
+    bcc __b5
     // irq::@11
-    // if(line == SCROLL_Y+SCROLL_BLACKBARS)
-    // [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@6 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #SCROLL_Y+SCROLL_BLACKBARS
+    // if(line == SCROLL_Y)
+    // [89] if(irq::line#10==SCROLL_Y) goto irq::@6 -- vbuzz_eq_vbuc1_then_la1 
+    cpz #SCROLL_Y
     beq __b6
     // irq::@12
-    // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
-    // [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@7 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #SCROLL_Y+SCROLL_BLACKBARS+1
-    bne __b7
+    // if(line == SCROLL_Y+SCROLL_BLACKBARS)
+    // [90] if(irq::line#10==SCROLL_Y+SCROLL_BLACKBARS) goto irq::@7 -- vbuzz_eq_vbuc1_then_la1 
+    cpz #SCROLL_Y+SCROLL_BLACKBARS
+    beq __b7
     // irq::@13
+    // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
+    // [91] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@8 -- vbuzz_neq_vbuc1_then_la1 
+    cpz #SCROLL_Y+SCROLL_BLACKBARS+1
+    bne __b8
+    // irq::@14
     // char zoomval = SINE[greet_zoomx++]
     // [92] irq::zoomval#0 = SINE[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > SCROLL_Y pos do zoom
@@ -3817,55 +3842,55 @@ irq: {
     // [96] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = irq::$10 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // if(greet_zoomx==0)
-    // [97] if(greet_zoomx!=0) goto irq::@7 -- vbuz1_neq_0_then_la1 
+    // [97] if(greet_zoomx!=0) goto irq::@8 -- vbuz1_neq_0_then_la1 
     lda.z greet_zoomx
-    bne __b7
-    // irq::@14
+    bne __b8
+    // irq::@15
     // if(++greet_idx == GREET_COUNT)
     // [98] greet_idx = ++ greet_idx -- vbuz1=_inc_vbuz1 
     inc.z greet_idx
-    // [99] if(greet_idx!=GREET_COUNT) goto irq::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [99] if(greet_idx!=GREET_COUNT) goto irq::@8 -- vbuz1_neq_vbuc1_then_la1 
     lda #GREET_COUNT
     cmp.z greet_idx
-    bne __b7
-    // irq::@15
+    bne __b8
+    // irq::@16
     // greet_idx = 0
     // [100] greet_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greet_idx
-    // [101] phi from irq::@12 irq::@13 irq::@14 irq::@15 irq::@4 irq::@5 irq::@6 to irq::@7 [phi:irq::@12/irq::@13/irq::@14/irq::@15/irq::@4/irq::@5/irq::@6->irq::@7]
-    // [101] phi irq::wobble_idx#7 = irq::wobble_idx#10 [phi:irq::@12/irq::@13/irq::@14/irq::@15/irq::@4/irq::@5/irq::@6->irq::@7#0] -- register_copy 
-    // irq::@7
-  __b7:
+    // [101] phi from irq::@13 irq::@14 irq::@15 irq::@16 irq::@5 irq::@6 irq::@7 to irq::@8 [phi:irq::@13/irq::@14/irq::@15/irq::@16/irq::@5/irq::@6/irq::@7->irq::@8]
+    // [101] phi irq::wobble_idx#7 = irq::wobble_idx#10 [phi:irq::@13/irq::@14/irq::@15/irq::@16/irq::@5/irq::@6/irq::@7->irq::@8#0] -- register_copy 
+    // irq::@8
+  __b8:
     // char raster = VICII->RASTER
     // [102] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // irq::@8
-  __b8:
-    // while(raster == VICII->RASTER)
-    // [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b8
     // irq::@9
+  __b9:
+    // while(raster == VICII->RASTER)
+    // [103] if(irq::raster#0==*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq::@9 -- vbuaa_eq__deref_pbuc1_then_la1 
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b9
+    // irq::@10
     // for(char line=0;line!=RASTER_LINES;line++)
     // [104] irq::line#1 = ++ irq::line#10 -- vbuzz=_inc_vbuzz 
     inz
-    // [14] phi from irq::@9 to irq::@1 [phi:irq::@9->irq::@1]
-    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#7 [phi:irq::@9->irq::@1#0] -- register_copy 
-    // [14] phi irq::line#10 = irq::line#1 [phi:irq::@9->irq::@1#1] -- register_copy 
-    jmp __b1
-    // irq::@6
-  __b6:
+    // [14] phi from irq::@10 to irq::@2 [phi:irq::@10->irq::@2]
+    // [14] phi irq::wobble_idx#10 = irq::wobble_idx#7 [phi:irq::@10->irq::@2#0] -- register_copy 
+    // [14] phi irq::line#10 = irq::line#1 [phi:irq::@10->irq::@2#1] -- register_copy 
+    jmp __b2
+    // irq::@7
+  __b7:
     // VICIV->TEXTXPOS_LO = 0x50
     // [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 -- _deref_pbuc1=vbuc2 
     // if raster position > SCROLL_Y pos do nozoom
     // default value
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    jmp __b7
-    // irq::@5
-  __b5:
+    jmp __b8
+    // irq::@6
+  __b6:
     // [106] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 -- _deref_pbuc1=vbuc2 
     // if raster position = SCROLL_Y pos do scroll
     // no wobbling from this point
@@ -3876,9 +3901,9 @@ irq: {
     // set softscroll
     lda.z scroll_soft
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    jmp __b7
-    // irq::@4
-  __b4:
+    jmp __b8
+    // irq::@5
+  __b5:
     // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++]
     // [108] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     // if raster position < SCROLL_Y pos do wobble Logo!
@@ -3892,7 +3917,7 @@ irq: {
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    jmp __b7
+    jmp __b8
 }
   // main
 main: {
@@ -3923,99 +3948,101 @@ main: {
     // (*songInit)()
     // [116] callexecute *songInit 
     jsr songInit
+    // [117] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
     // memset(SCREEN, ' ', 40*25)
-    // [117] call memset 
+    // [118] call memset 
   // Clear screen 
-    // [143] phi from main to memset [phi:main->memset]
+    // [144] phi from main::@1 to memset [phi:main::@1->memset]
     jsr memset
-    // [118] phi from main to main::@1 [phi:main->main::@1]
-    // [118] phi main::i1#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [119] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [119] phi main::i1#2 = 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
   // Put MEGA logo on screen
-    // main::@1
-  __b1:
+    // main::@2
+  __b2:
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
-    // [119] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [120] if(main::i1#2<$bc*SIZEOF_BYTE) goto main::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$bc*SIZEOF_BYTE
-    bcc __b2
-    // [120] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-    // [120] phi main::i2#2 = 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
+    bcc __b3
+    // [121] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [121] phi main::i2#2 = 0 [phi:main::@2->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
   // Put '*' as default greeting
-    // main::@3
-  __b3:
+    // main::@4
+  __b4:
     // for( char i=0;i<40;i++)
-    // [121] if(main::i2#2<$28) goto main::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // [122] if(main::i2#2<$28) goto main::@5 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
-    bcc __b4
-    // [122] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-    // [122] phi main::i#2 = 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
+    bcc __b5
+    // [123] phi from main::@4 to main::@6 [phi:main::@4->main::@6]
+    // [123] phi main::i#2 = 0 [phi:main::@4->main::@6#0] -- vbuxx=vbuc1 
     ldx #0
-    // [122] phi from main::@5 to main::@5 [phi:main::@5->main::@5]
-    // [122] phi main::i#2 = main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
-    // main::@5
-  __b5:
+    // [123] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+    // [123] phi main::i#2 = main::i#1 [phi:main::@6->main::@6#0] -- register_copy 
+    // main::@6
+  __b6:
     // PALETTE_RED[i] = PAL_RED[i]
-    // [123] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [124] PALETTE_RED[main::i#2] = PAL_RED[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_RED,x
     sta PALETTE_RED,x
     // PALETTE_GREEN[i] = PAL_GREEN[i]
-    // [124] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [125] PALETTE_GREEN[main::i#2] = PAL_GREEN[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_GREEN,x
     sta PALETTE_GREEN,x
     // PALETTE_BLUE[i] = PAL_BLUE[i]
-    // [125] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [126] PALETTE_BLUE[main::i#2] = PAL_BLUE[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_BLUE,x
     sta PALETTE_BLUE,x
     // while(++i!=0)
-    // [126] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    // [127] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [127] if(main::i#1!=0) goto main::@5 -- vbuxx_neq_0_then_la1 
+    // [128] if(main::i#1!=0) goto main::@6 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne __b5
-    // main::@6
+    bne __b6
+    // main::@7
     // asm
     // asm { sei  }
     // Set up raster interrupts C64 style
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [129] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [130] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = IRQ_Y
-    // [130] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y -- _deref_pbuc1=vbuc2 
+    // [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = IRQ_Y -- _deref_pbuc1=vbuc2 
     // Set raster line to 0x16
     lda #IRQ_Y
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
-    // [131] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
-    // [132] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [133] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *HARDWARE_IRQ = &irq
-    // [133] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
+    // [134] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // [134] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [135] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    // [135] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [136] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // VICIV->SIDBDRWD_LO = 1
-    // [136] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [137] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
@@ -4023,34 +4050,34 @@ main: {
     // asm { cli  }
     // Enable IRQ
     cli
-    // [138] phi from main::@6 main::@7 to main::@7 [phi:main::@6/main::@7->main::@7]
-    // main::@7
-  __b7:
-    jmp __b7
-    // main::@4
-  __b4:
+    // [139] phi from main::@7 main::@8 to main::@8 [phi:main::@7/main::@8->main::@8]
+    // main::@8
+  __b8:
+    jmp __b8
+    // main::@5
+  __b5:
     // (SCREEN + GREET_ROW*40)[i] = '*'
-    // [139] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [140] (DEFAULT_SCREEN+GREET_ROW*$28)[main::i2#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta DEFAULT_SCREEN+GREET_ROW*$28,x
     // for( char i=0;i<40;i++)
-    // [140] main::i2#1 = ++ main::i2#2 -- vbuxx=_inc_vbuxx 
+    // [141] main::i2#1 = ++ main::i2#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [120] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-    // [120] phi main::i2#2 = main::i2#1 [phi:main::@4->main::@3#0] -- register_copy 
-    jmp __b3
-    // main::@2
-  __b2:
+    // [121] phi from main::@5 to main::@4 [phi:main::@5->main::@4]
+    // [121] phi main::i2#2 = main::i2#1 [phi:main::@5->main::@4#0] -- register_copy 
+    jmp __b4
+    // main::@3
+  __b3:
     // (SCREEN + LOGO_ROW*40)[i] = MEGA_LOGO[i]
-    // [141] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [142] (DEFAULT_SCREEN+LOGO_ROW*$28)[main::i1#2] = MEGA_LOGO[main::i1#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MEGA_LOGO,x
     sta DEFAULT_SCREEN+LOGO_ROW*$28,x
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
-    // [142] main::i1#1 = ++ main::i1#2 -- vbuxx=_inc_vbuxx 
+    // [143] main::i1#1 = ++ main::i1#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [118] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [118] phi main::i1#2 = main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
+    // [119] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [119] phi main::i1#2 = main::i1#1 [phi:main::@3->main::@2#0] -- register_copy 
+    jmp __b2
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -4060,8 +4087,8 @@ memset: {
     .label str = DEFAULT_SCREEN
     .label end = str+num
     .label dst = 4
-    // [144] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [144] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [145] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [145] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -4069,7 +4096,7 @@ memset: {
     // memset::@1
   __b1:
     // for(char* dst = str; dst!=end; dst++)
-    // [145] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [146] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -4078,20 +4105,20 @@ memset: {
     bne __b2
     // memset::@return
     // }
-    // [146] return 
+    // [147] return 
     rts
     // memset::@2
   __b2:
     // *dst = c
-    // [147] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [148] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [148] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [149] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [144] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [144] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [145] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [145] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

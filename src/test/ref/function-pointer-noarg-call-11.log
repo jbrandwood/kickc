@@ -24,11 +24,13 @@ void main()
 main: scope:[main]  from __start::@1
   funcPointer#0 = &myFunc
   callexecute *funcPointer#0 
+  to:main::@1
+main::@1: scope:[main]  from main
   funcPointer#1 = &myFunc2
   callexecute *funcPointer#1 
   to:main::@return
-main::@return: scope:[main]  from main
-  funcPointer#6 = phi( main/funcPointer#1 )
+main::@return: scope:[main]  from main::@1
+  funcPointer#6 = phi( main::@1/funcPointer#1 )
   funcPointer#2 = funcPointer#6
   return 
   to:@return
@@ -100,12 +102,14 @@ Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [main] to myFunc:1 myFunc2:2 
+Calls in [main] to myFunc:1 myFunc2:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
@@ -113,26 +117,29 @@ void main()
 main: scope:[main]  from
   [0] phi()
   [1] callexecute myFunc 
-  [2] callexecute myFunc2 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] phi()
+  [3] callexecute myFunc2 
   to:main::@return
-main::@return: scope:[main]  from main
-  [3] return 
+main::@return: scope:[main]  from main::@1
+  [4] return 
   to:@return
 
 __stackcall void myFunc2()
-myFunc2: scope:[myFunc2]  from main
-  [4] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR
+myFunc2: scope:[myFunc2]  from main::@1
+  [5] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR
   to:myFunc2::@return
 myFunc2::@return: scope:[myFunc2]  from myFunc2
-  [5] return 
+  [6] return 
   to:@return
 
 __stackcall void myFunc()
-myFunc: scope:[myFunc]  from
-  [6] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR
+myFunc: scope:[myFunc]  from main
+  [7] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR
   to:myFunc::@return
 myFunc::@return: scope:[myFunc]  from myFunc
-  [7] return 
+  [8] return 
   to:@return
 
 
@@ -152,10 +159,10 @@ Uplift Scope [myFunc2]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [myFunc] best 51 combination 
-Uplifting [myFunc2] best 51 combination 
-Uplifting [main] best 51 combination 
-Uplifting [] best 51 combination 
+Uplifting [myFunc] best 54 combination 
+Uplifting [myFunc2] best 54 combination 
+Uplifting [main] best 54 combination 
+Uplifting [] best 54 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -175,43 +182,52 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] callexecute myFunc  -- jsr 
     jsr myFunc
-    // [2] callexecute myFunc2  -- jsr 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] callexecute myFunc2  -- jsr 
     jsr myFunc2
     jmp __breturn
     // main::@return
   __breturn:
-    // [3] return 
+    // [4] return 
     rts
 }
   // myFunc2
 myFunc2: {
     .label BG_COLOR = $d021
-    // [4] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // myFunc2::@return
   __breturn:
-    // [5] return 
+    // [6] return 
     rts
 }
   // myFunc
 myFunc: {
     .label BORDER_COLOR = $d020
-    // [6] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __breturn
     // myFunc::@return
   __breturn:
-    // [7] return 
+    // [8] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -248,33 +264,36 @@ main: {
     // (*funcPointer)()
     // [1] callexecute myFunc  -- jsr 
     jsr myFunc
-    // [2] callexecute myFunc2  -- jsr 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // (*funcPointer)()
+    // [3] callexecute myFunc2  -- jsr 
     jsr myFunc2
     // main::@return
     // }
-    // [3] return 
+    // [4] return 
     rts
 }
   // myFunc2
 myFunc2: {
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
-    // [4] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // myFunc2::@return
     // }
-    // [5] return 
+    // [6] return 
     rts
 }
   // myFunc
 myFunc: {
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
-    // [6] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // myFunc::@return
     // }
-    // [7] return 
+    // [8] return 
     rts
 }
   // File Data

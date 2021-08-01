@@ -15,11 +15,15 @@ fn1::@return: scope:[fn1]  from fn1
 void main()
 main: scope:[main]  from __start::@1
   callexecute *main::f 
+  to:main::@1
+main::@1: scope:[main]  from main
   SCREEN[idx] = 'a'
   callexecute *main::f 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   SCREEN[idx] = 'a'
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
@@ -86,7 +90,7 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 __stackcall void fn1()
-fn1: scope:[fn1]  from main
+fn1: scope:[fn1]  from main main::@1
   [5] idx = ++ idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
@@ -97,11 +101,15 @@ void main()
 main: scope:[main]  from __start::@1
   [7] phi()
   [8] callexecute fn1 
+  to:main::@1
+main::@1: scope:[main]  from main
   [9] SCREEN[idx] = 'a'
   [10] callexecute fn1 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   [11] SCREEN[idx] = 'a'
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@2
   [12] return 
   to:@return
 
@@ -129,12 +137,12 @@ Uplift Scope [fn1]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [] best 108 combination zp[1]:2 [ idx ] 
-Uplifting [fn1] best 108 combination 
-Uplifting [main] best 108 combination 
-Uplifting [__start] best 108 combination 
+Uplifting [] best 114 combination zp[1]:2 [ idx ] 
+Uplifting [fn1] best 114 combination 
+Uplifting [main] best 114 combination 
+Uplifting [__start] best 114 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ idx ]
-Uplifting [] best 108 combination zp[1]:2 [ idx ] 
+Uplifting [] best 114 combination zp[1]:2 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -189,12 +197,18 @@ fn1: {
 main: {
     // [8] callexecute fn1  -- jsr 
     jsr fn1
+    jmp __b1
+    // main::@1
+  __b1:
     // [9] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [10] callexecute fn1  -- jsr 
     jsr fn1
+    jmp __b2
+    // main::@2
+  __b2:
     // [11] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
@@ -212,6 +226,8 @@ Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from___init1:
@@ -221,6 +237,8 @@ Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -283,6 +301,7 @@ main: {
     // (*f)()
     // [8] callexecute fn1  -- jsr 
     jsr fn1
+    // main::@1
     // SCREEN[idx] = 'a'
     // [9] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
@@ -291,6 +310,7 @@ main: {
     // (*f)()
     // [10] callexecute fn1  -- jsr 
     jsr fn1
+    // main::@2
     // SCREEN[idx] = 'a'
     // [11] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'

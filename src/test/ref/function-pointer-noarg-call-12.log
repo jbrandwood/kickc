@@ -28,11 +28,13 @@ main: scope:[main]  from __start
   main::$4 = 0 * SIZEOF_POINTER
   main::fn#0 = addrtable[main::$4]
   callexecute *main::fn#0 
+  to:main::@1
+main::@1: scope:[main]  from main
   main::$5 = 1 * SIZEOF_POINTER
   main::fn#1 = addrtable[main::$5]
   callexecute *main::fn#1 
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
@@ -135,10 +137,12 @@ main: scope:[main]  from
   [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2
   [2] main::fn#0 = *addrtable
   [3] callexecute *main::fn#0 
+  to:main::@1
+main::@1: scope:[main]  from main
   [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER)
   [5] callexecute *main::fn#1 
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@1
   [6] return 
   to:@return
 
@@ -191,10 +195,10 @@ Uplift Scope [myFunc]
 Uplift Scope [myFunc2] 
 Uplift Scope [] 
 
-Uplifting [main] best 113 combination zp[2]:2 [ main::fn#0 ] zp[2]:4 [ main::fn#1 ] 
-Uplifting [myFunc] best 113 combination 
-Uplifting [myFunc2] best 113 combination 
-Uplifting [] best 113 combination 
+Uplifting [main] best 116 combination zp[2]:2 [ main::fn#0 ] zp[2]:4 [ main::fn#1 ] 
+Uplifting [myFunc] best 116 combination 
+Uplifting [myFunc2] best 116 combination 
+Uplifting [] best 116 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -232,6 +236,9 @@ main: {
     sta.z fn+1
     // [3] callexecute *main::fn#0 
     jsr bi_fn
+    jmp __b1
+    // main::@1
+  __b1:
     // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
     lda addrtable+1*SIZEOF_POINTER
     sta.z fn_1
@@ -276,10 +283,12 @@ myFunc: {
   addrtable: .fill 2*$100, 0
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -343,6 +352,7 @@ main: {
     // (*fn)()
     // [3] callexecute *main::fn#0 
     jsr bi_fn
+    // main::@1
     // fn = addrtable[1]
     // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
     lda addrtable+1*SIZEOF_POINTER

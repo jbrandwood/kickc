@@ -3157,6 +3157,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerAdvanced1() throws IOException {
+      compileAndCompare("function-pointer-advanced-1.c");
+   }
+
+   @Test
    public void testPointerPointer3() throws IOException {
       compileAndCompare("pointer-pointer-3.c");
    }

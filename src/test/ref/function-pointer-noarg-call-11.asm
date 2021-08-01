@@ -11,6 +11,7 @@
 main: {
     // (*funcPointer)()
     jsr myFunc
+    // (*funcPointer)()
     jsr myFunc2
     // }
     rts

@@ -148,12 +148,12 @@ irq: {
     // Generate Raster Bars and more
     ldx.z sin_idx
     ldz #0
-  __b1:
+  __b2:
     // for(char line=0;line!=RASTER_LINES;line++)
     cpz #RASTER_LINES
-    beq !__b2+
-    jmp __b2
-  !__b2:
+    beq !__b3+
+    jmp __b3
+  !__b3:
     // (*songPlay)()
     // play music
     jsr songPlay
@@ -161,37 +161,37 @@ irq: {
     // Set up colors behind logo, scroll and greets
     ldy.z sin_idx
     ldx #0
-  __b16:
+  __b17:
     // for(char i=0;i<40;i++)
     cpx #$28
-    bcs !__b17+
-    jmp __b17
-  !__b17:
+    bcs !__b18+
+    jmp __b18
+  !__b18:
     ldx #0
   // Set all raster bars to black
-  __b18:
+  __b19:
     // for(char l=0;l!=RASTER_LINES;l++)
     cpx #RASTER_LINES
-    beq !__b19+
-    jmp __b19
-  !__b19:
+    beq !__b20+
+    jmp __b20
+  !__b20:
     // char sin_bar = sin_idx
     // Big block of bars (16)
     lda.z sin_idx
     sta.z sin_bar
     lda #0
     sta.z barcnt
-  __b21:
+  __b22:
     // for(char barcnt=0; barcnt<16; barcnt++)
     lda.z barcnt
     cmp #$10
-    bcc __b22
+    bcc __b23
     ldx #0
   // Produce dark area behind text
-  __b28:
+  __b29:
     // for(char i=0;i<19;i++)
     cpx #$13
-    bcc __b29
+    bcc __b30
     // char greet_offset = greet_idx*16
     // Set up greetings    
     lda.z greet_idx
@@ -201,10 +201,10 @@ irq: {
     asl
     tay
     ldx #0
-  __b31:
+  __b32:
     // for(char i=0;i<16;i++)
     cpx #$10
-    bcc __b32
+    bcc __b33
     // if(--scroll_soft == 0xff)
     dec.z scroll_soft
     lda #$ff
@@ -215,10 +215,10 @@ irq: {
     sta.z scroll_soft
     ldx #0
   // Move scroll on screen
-  __b35:
+  __b36:
     // for(char i=0;i<39;i++)
     cpx #$27
-    bcc __b36
+    bcc __b37
     // char nxt = *(scroll_ptr++)
     // Show next char
     ldy #0
@@ -226,7 +226,7 @@ irq: {
     inw.z scroll_ptr
     // if(nxt == 0)
     cmp #0
-    bne __b39
+    bne __b40
     // scroll_ptr = SCROLL_TEXT
     lda #<SCROLL_TEXT
     sta.z scroll_ptr
@@ -234,7 +234,7 @@ irq: {
     sta.z scroll_ptr+1
     // nxt = *scroll_ptr
     lda (scroll_ptr),y
-  __b39:
+  __b40:
     // nxt & 0xbf
     and #$bf
     // *(SCREEN + SCROLL_ROW*40 + 39) = nxt & 0xbf
@@ -246,14 +246,14 @@ irq: {
     plx
     pla
     rti
-  __b36:
+  __b37:
     // (SCREEN + SCROLL_ROW*40)[i] = (SCREEN + SCROLL_ROW*40 + 1)[i]
     lda DEFAULT_SCREEN+SCROLL_ROW*$28+1,x
     sta DEFAULT_SCREEN+SCROLL_ROW*$28,x
     // for(char i=0;i<39;i++)
     inx
-    jmp __b35
-  __b32:
+    jmp __b36
+  __b33:
     // GREETING[greet_offset++] & 0xbf
     lda #$bf
     and GREETING,y
@@ -263,8 +263,8 @@ irq: {
     iny
     // for(char i=0;i<16;i++)
     inx
-    jmp __b31
-  __b29:
+    jmp __b32
+  __b30:
     // rasters[SCROLL_Y+i] /2
     lda rasters+SCROLL_Y,x
     lsr
@@ -274,8 +274,8 @@ irq: {
     sta rasters+SCROLL_Y,x
     // for(char i=0;i<19;i++)
     inx
-    jmp __b28
-  __b22:
+    jmp __b29
+  __b23:
     // char idx = SINE[sin_bar]
     ldy.z sin_bar
     ldx SINE,y
@@ -287,15 +287,15 @@ irq: {
     asl
     taz
     ldy #0
-  __b23:
+  __b24:
     // for(char i=0;i<16;i++)
     cpy #$10
-    bcc __b24
+    bcc __b25
     ldy #0
-  __b25:
+  __b26:
     // for(char i=0;i<15;i++)
     cpy #$f
-    bcc __b26
+    bcc __b27
     // sin_bar += 10
     lda #$a
     clc
@@ -303,8 +303,8 @@ irq: {
     sta.z sin_bar
     // for(char barcnt=0; barcnt<16; barcnt++)
     inc.z barcnt
-    jmp __b21
-  __b26:
+    jmp __b22
+  __b27:
     // rasters[idx++] = --barcol;
     dez
     // rasters[idx++] = --barcol
@@ -314,8 +314,8 @@ irq: {
     inx
     // for(char i=0;i<15;i++)
     iny
-    jmp __b25
-  __b24:
+    jmp __b26
+  __b25:
     // rasters[idx++] = barcol++
     tza
     sta rasters,x
@@ -324,15 +324,15 @@ irq: {
     inz
     // for(char i=0;i<16;i++)
     iny
-    jmp __b23
-  __b19:
+    jmp __b24
+  __b20:
     // rasters[l] = 0
     lda #0
     sta rasters,x
     // for(char l=0;l!=RASTER_LINES;l++)
     inx
-    jmp __b18
-  __b17:
+    jmp __b19
+  __b18:
     // char col = SINE[sin_col]/4
     // Greeting colors
     lda SINE,y
@@ -363,8 +363,8 @@ irq: {
     iny
     // for(char i=0;i<40;i++)
     inx
-    jmp __b16
-  __b2:
+    jmp __b17
+  __b3:
     // char col = rasters[line]
     tza
     tay
@@ -375,16 +375,16 @@ irq: {
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < SCROLL_Y)
     cpz #SCROLL_Y
-    bcc __b4
+    bcc __b5
     // if(line == SCROLL_Y)
     cpz #SCROLL_Y
-    beq __b5
+    beq __b6
     // if(line == SCROLL_Y+SCROLL_BLACKBARS)
     cpz #SCROLL_Y+SCROLL_BLACKBARS
-    beq __b6
+    beq __b7
     // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
     cpz #SCROLL_Y+SCROLL_BLACKBARS+1
-    bne __b7
+    bne __b8
     // char zoomval = SINE[greet_zoomx++]
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
@@ -398,34 +398,34 @@ irq: {
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // if(greet_zoomx==0)
     lda.z greet_zoomx
-    bne __b7
+    bne __b8
     // if(++greet_idx == GREET_COUNT)
     inc.z greet_idx
     lda #GREET_COUNT
     cmp.z greet_idx
-    bne __b7
+    bne __b8
     // greet_idx = 0
     lda #0
     sta.z greet_idx
-  __b7:
+  __b8:
     // char raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-  __b8:
+  __b9:
     // while(raster == VICII->RASTER)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b8
+    beq __b9
     // for(char line=0;line!=RASTER_LINES;line++)
     inz
-    jmp __b1
-  __b6:
+    jmp __b2
+  __b7:
     // VICIV->TEXTXPOS_LO = 0x50
     // if raster position > SCROLL_Y pos do nozoom
     // default value
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    jmp __b7
-  __b5:
+    jmp __b8
+  __b6:
     // if raster position = SCROLL_Y pos do scroll
     // no wobbling from this point
     lda #$50
@@ -434,8 +434,8 @@ irq: {
     // set softscroll
     lda.z scroll_soft
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    jmp __b7
-  __b4:
+    jmp __b8
+  __b5:
     // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++]
     // if raster position < SCROLL_Y pos do wobble Logo!
     lda SINE,x
@@ -446,7 +446,7 @@ irq: {
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    jmp __b7
+    jmp __b8
 }
 main: {
     // VICIII->KEY = 0x47
@@ -475,18 +475,18 @@ main: {
     jsr memset
     ldx #0
   // Put MEGA logo on screen
-  __b1:
+  __b2:
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
     cpx #$bc*SIZEOF_BYTE
-    bcc __b2
+    bcc __b3
     ldx #0
   // Put '*' as default greeting
-  __b3:
+  __b4:
     // for( char i=0;i<40;i++)
     cpx #$28
-    bcc __b4
+    bcc __b5
     ldx #0
-  __b5:
+  __b6:
     // PALETTE_RED[i] = PAL_RED[i]
     lda PAL_RED,x
     sta PALETTE_RED,x
@@ -499,7 +499,7 @@ main: {
     // while(++i!=0)
     inx
     cpx #0
-    bne __b5
+    bne __b6
     // asm
     // Set up raster interrupts C64 style
     sei
@@ -539,22 +539,22 @@ main: {
     // asm
     // Enable IRQ
     cli
-  __b7:
-    jmp __b7
-  __b4:
+  __b8:
+    jmp __b8
+  __b5:
     // (SCREEN + GREET_ROW*40)[i] = '*'
     lda #'*'
     sta DEFAULT_SCREEN+GREET_ROW*$28,x
     // for( char i=0;i<40;i++)
     inx
-    jmp __b3
-  __b2:
+    jmp __b4
+  __b3:
     // (SCREEN + LOGO_ROW*40)[i] = MEGA_LOGO[i]
     lda MEGA_LOGO,x
     sta DEFAULT_SCREEN+LOGO_ROW*$28,x
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
     inx
-    jmp __b1
+    jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {

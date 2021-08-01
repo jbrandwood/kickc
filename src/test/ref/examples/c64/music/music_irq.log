@@ -10,6 +10,8 @@ void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   callexecute *musicInit 
+  to:main::@1
+main::@1: scope:[main]  from main
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
@@ -17,7 +19,7 @@ main: scope:[main]  from __start::@1
   *KERNEL_IRQ = &irq_play
   asm { cli  }
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
@@ -25,10 +27,12 @@ __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   callexecute *musicPlay 
+  to:irq_play::@1
+irq_play::@1: scope:[irq_play]  from irq_play
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
-irq_play::@return: scope:[irq_play]  from irq_play
+irq_play::@return: scope:[irq_play]  from irq_play::@1
   return 
   to:@return
 
@@ -106,10 +110,12 @@ __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [1] callexecute *musicPlay 
+  to:irq_play::@1
+irq_play::@1: scope:[irq_play]  from irq_play
   [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
   [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
-irq_play::@return: scope:[irq_play]  from irq_play
+irq_play::@return: scope:[irq_play]  from irq_play::@1
   [4] return 
   to:@return
 
@@ -117,6 +123,8 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [6] callexecute *musicInit 
+  to:main::@1
+main::@1: scope:[main]  from main
   [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
@@ -124,7 +132,7 @@ main: scope:[main]  from
   [11] *KERNEL_IRQ = &irq_play
   asm { cli  }
   to:main::@return
-main::@return: scope:[main]  from main
+main::@return: scope:[main]  from main::@1
   [13] return 
   to:@return
 
@@ -153,12 +161,12 @@ Uplift Scope [main]
 Uplift Scope [irq_play] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 116 combination 
-Uplifting [MOS6569_VICII] best 116 combination 
-Uplifting [MOS6581_SID] best 116 combination 
-Uplifting [main] best 116 combination 
-Uplifting [irq_play] best 116 combination 
-Uplifting [] best 116 combination 
+Uplifting [MOS6526_CIA] best 122 combination 
+Uplifting [MOS6569_VICII] best 122 combination 
+Uplifting [MOS6581_SID] best 122 combination 
+Uplifting [main] best 122 combination 
+Uplifting [irq_play] best 122 combination 
+Uplifting [] best 122 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -215,6 +223,9 @@ irq_play: {
     // [1] callexecute *musicPlay 
     // Play SID
     jsr musicPlay
+    jmp __b1
+    // irq_play::@1
+  __b1:
     // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -235,6 +246,9 @@ main: {
     sei
     // [6] callexecute *musicInit 
     jsr musicInit
+    jmp __b1
+    // main::@1
+  __b1:
     // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
@@ -275,10 +289,14 @@ MUSIC:
 
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
 Removing instruction __breturn:
+Removing instruction __b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -363,6 +381,7 @@ irq_play: {
     // [1] callexecute *musicPlay 
     // Play SID
     jsr musicPlay
+    // irq_play::@1
     // VICII->IRQ_STATUS = IRQ_RASTER
     // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
@@ -386,6 +405,7 @@ main: {
     // (*musicInit)()
     // [6] callexecute *musicInit 
     jsr musicInit
+    // main::@1
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ

@@ -9,17 +9,19 @@ void main()
 main: scope:[main]  from __start::@1
   callexecute *musicInit 
   to:main::@1
-main::@1: scope:[main]  from main main::@1 main::@2
+main::@1: scope:[main]  from main main::@1 main::@3
   main::$1 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
   if(main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   callexecute *musicPlay 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   if(true) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
@@ -90,12 +92,14 @@ main: scope:[main]  from
   [0] phi()
   [1] callexecute *musicInit 
   to:main::@1
-main::@1: scope:[main]  from main main::@1 main::@2
+main::@1: scope:[main]  from main main::@1 main::@3
   [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [4] callexecute *musicPlay 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:main::@1
 
@@ -117,11 +121,11 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 1369 combination 
-Uplifting [MOS6569_VICII] best 1369 combination 
-Uplifting [MOS6581_SID] best 1369 combination 
-Uplifting [main] best 1369 combination 
-Uplifting [] best 1369 combination 
+Uplifting [MOS6526_CIA] best 1399 combination 
+Uplifting [MOS6569_VICII] best 1399 combination 
+Uplifting [MOS6581_SID] best 1399 combination 
+Uplifting [main] best 1399 combination 
+Uplifting [] best 1399 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -173,6 +177,9 @@ main: {
     // [4] callexecute *musicPlay 
     // Play the music
     jsr musicPlay
+    jmp __b3
+    // main::@3
+  __b3:
     // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
@@ -189,8 +196,10 @@ MUSIC:
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __b2
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b2:
+Removing instruction __b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -259,6 +268,7 @@ main: {
     // [4] callexecute *musicPlay 
     // Play the music
     jsr musicPlay
+    // main::@3
     // (VICII->BORDER_COLOR)--;
     // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR

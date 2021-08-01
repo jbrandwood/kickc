@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantRef;
 
@@ -20,7 +21,7 @@ public class CallingConventionStack {
    public static final String OFFSET_STACK = "OFFSET_STACK_";
 
    /** Name of the constant holding the stack offset for the return value. */
-   public static final String OFFSET_STACK_RETURN = OFFSET_STACK + "RETURN";
+   public static final String OFFSET_STACK_RETURN = OFFSET_STACK + "RETURN_";
 
    /**
     * Get the name of the constant variable containing the (byte) offset of a specific parameter on the stack
@@ -35,16 +36,17 @@ public class CallingConventionStack {
    /**
     * Get the constant variable containing the (byte) index of the return value on the stack
     *
-    * @param procedure The procedure
+    * @param procedureType The procedure type
     * @return The return value stack offset constant
     */
-   public static ConstantRef getReturnOffsetConstant(Procedure procedure) {
-      Variable returnOffsetConstant = procedure.getLocalConstant(OFFSET_STACK_RETURN);
+   public static ConstantRef getReturnOffsetConstant(SymbolTypeProcedure procedureType, Scope scope) {
+      long returnByteOffset = getReturnByteOffset(procedureType);
+      String offsetConstName = OFFSET_STACK_RETURN+returnByteOffset;
+      Variable returnOffsetConstant = scope.getLocalConstant(offsetConstName);
       if(returnOffsetConstant == null) {
          // Constant not found - create it
-         long returnByteOffset = getReturnByteOffset(procedure);
-         returnOffsetConstant = Variable.createConstant(OFFSET_STACK_RETURN, SymbolType.BYTE, procedure, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
-         procedure.add(returnOffsetConstant);
+         returnOffsetConstant = Variable.createConstant(offsetConstName, SymbolType.BYTE, scope, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         scope.add(returnOffsetConstant);
       }
       return returnOffsetConstant.getConstantRef();
    }
@@ -71,13 +73,13 @@ public class CallingConventionStack {
    /**
     * Get the number of bytes that needed on the stack to pass parameters/return value to/from a procedure
     *
-    * @param procedure The procedure to find the stack frame size for
+    * @param procedureType The procedure type to find the stack frame size for
     * @return The byte size of the stack frame
     */
-   public static long getStackFrameByteSize(Procedure procedure) {
-      long byteSize = getParametersByteSize(procedure);
-      if(procedure.getReturnType() != null) {
-         int returnBytes = procedure.getReturnType().getSizeBytes();
+   public static long getStackFrameByteSize(SymbolTypeProcedure procedureType) {
+      long byteSize = getParametersByteSize(procedureType);
+      if(procedureType.getReturnType() != null) {
+         int returnBytes = procedureType.getReturnType().getSizeBytes();
          if(returnBytes > byteSize) byteSize = returnBytes;
       }
       return byteSize;
@@ -86,13 +88,13 @@ public class CallingConventionStack {
    /**
     * Get the number of bytes needed on the stack to store the parameters from a procedure
     *
-    * @param procedure The procedure
+    * @param procedureType The procedure type
     * @return The byte size of parameters
     */
-   public static long getParametersByteSize(Procedure procedure) {
+   public static long getParametersByteSize(SymbolTypeProcedure procedureType) {
       long byteSize = 0;
-      for(Variable procedureParameter : procedure.getParameters()) {
-         byteSize += procedureParameter.getType().getSizeBytes();
+      for(SymbolType paramType : procedureType.getParamTypes()) {
+         byteSize += paramType.getSizeBytes();
       }
       return byteSize;
    }
@@ -122,11 +124,11 @@ public class CallingConventionStack {
    /**
     * Get the number of bytes that the return value is offset on the stack
     *
-    * @param procedure The procedure
+    * @param procedureType The procedure type
     * @return The byte offset of the return value
     */
-   private static long getReturnByteOffset(Procedure procedure) {
-      return getStackFrameByteSize(procedure) - procedure.getReturnType().getSizeBytes();
+   private static long getReturnByteOffset(SymbolTypeProcedure procedureType) {
+      return getStackFrameByteSize(procedureType) - procedureType.getReturnType().getSizeBytes();
    }
 
    /**

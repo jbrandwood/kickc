@@ -1,3 +1,4 @@
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::cls 
 
 CONTROL FLOW GRAPH SSA
 
@@ -30,7 +31,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   main::cols#3 = phi( main::@1/main::cols#2 )
-  call *main::cls 
+  callexecute *main::cls 
   *main::cols#3 = ++ *main::cols#3
   main::cols#1 = ++ main::cols#3
   to:main::@1
@@ -81,7 +82,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant fn1::screen#0 = (byte*) 1024
 Constant main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [11] call fn1 
+Replacing constant pointer function [11] callexecute fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant main::cls
 Successful SSA optimization PassNEliminateUnusedVars
@@ -132,7 +133,7 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] phi()
-  [5] call fn1 
+  [5] callexecute fn1 
   [6] *main::cols#2 = ++ *main::cols#2
   [7] main::cols#1 = ++ main::cols#2
   to:main::@1
@@ -235,7 +236,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] call fn1 
+    // [5] callexecute fn1  -- jsr 
     jsr fn1
     // [6] *main::cols#2 = ++ *main::cols#2 -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
@@ -383,7 +384,7 @@ main: {
     // main::@2
   __b2:
     // (*cls)()
-    // [5] call fn1 
+    // [5] callexecute fn1  -- jsr 
     jsr fn1
     // (*cols)++;
     // [6] *main::cols#2 = ++ *main::cols#2 -- _deref_pbuz1=_inc__deref_pbuz1 

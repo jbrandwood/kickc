@@ -2,6 +2,7 @@
 // Returning and passing struct values
 
 #pragma calling(__stackcall)
+#pragma struct_model(classic)
 
 char* const SCREEN = (char*)0x0400;
 char idx = 0;

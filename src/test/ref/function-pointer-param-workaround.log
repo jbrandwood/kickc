@@ -2,6 +2,7 @@ Setting inferred volatile on symbol affected by address-of: fn1::param_char in a
 Setting inferred volatile on symbol affected by address-of: fn2::param_char in asm { pla staparam_char  }
 Setting inferred volatile on symbol affected by address-of: main::param_char in asm { ldaparam_char pha  }
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::f 
 
 CONTROL FLOW GRAPH SSA
 
@@ -72,7 +73,7 @@ main::@4: scope:[main]  from main::@3
   asm { ldaparam_char pha  }
   main::$3 = main::j#3 * SIZEOF_POINTER
   main::f#0 = main::fns[main::$3]
-  call *main::f#0 
+  callexecute *main::f#0 
   main::j#1 = ++ main::j#3
   to:main::@3
 main::@5: scope:[main]  from main::@3
@@ -203,6 +204,7 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [__start] to main:4 
+Calls in [main] to null:49 
 
 Created 2 initial phi equivalence classes
 Coalesced [41] main::i#7 = main::i#1
@@ -299,7 +301,7 @@ main::@3: scope:[main]  from main::@2
   asm { ldaparam_char pha  }
   [44] main::$3 = main::j#2 << 1
   [45] main::f#0 = main::fns[main::$3]
-  [46] call *main::f#0 
+  [46] callexecute *main::f#0 
   [47] main::j#1 = ++ main::j#2
   to:main::@2
 
@@ -325,13 +327,13 @@ volatile byte idx2 loadstore 1.272727272727273
 void main()
 byte~ main::$3 2002.0
 void()* main::f
-void()* main::f#0 1001.0
+void()* main::f#0 10010.0
 byte main::i
 byte main::i#1 202.0
-byte main::i#2 100.3076923076923
+byte main::i#2 186.28571428571428
 byte main::j
 byte main::j#1 2002.0
-byte main::j#2 500.5
+byte main::j#2 625.625
 volatile byte main::param_char loadstore 1501.5
 
 Initial phi equivalence classes
@@ -411,9 +413,9 @@ Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::j#2 main::j#1 ]
 Statement asm { ldaparam_char pha  } always clobbers reg byte a 
 Statement asm { ldaparam_char pha  } always clobbers reg byte a 
-Statement [44] main::$3 = main::j#2 << 1 [ main::i#2 main::j#2 main::$3 ] ( main:4 [ main::i#2 main::j#2 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [45] main::f#0 = main::fns[main::$3] [ main::i#2 main::j#2 main::f#0 ] ( main:4 [ main::i#2 main::j#2 main::f#0 ] { }  ) always clobbers reg byte a 
-Statement [46] call *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [44] main::$3 = main::j#2 << 1 [ main::$3 ] ( main:4 [ main::$3 ] { }  ) always clobbers reg byte a 
+Statement [45] main::f#0 = main::fns[main::$3] [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [46] callexecute *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::j#2 main::j#1 ]
@@ -439,13 +441,13 @@ Statement [29] SCREEN1[idx1] = fn1::c#0 [ idx1 ] (  [ idx1 ] { }  ) always clobb
 Statement [34] if(main::i#2<='p') goto main::@2 [ main::i#2 ] ( main:4 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [37] if(main::j#2<2) goto main::@3 [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a 
 Statement [39] main::param_char = 0 [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a 
-Statement [40] main::param_char = main::i#2 [ main::i#2 main::j#2 main::param_char ] ( main:4 [ main::i#2 main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
+Statement [40] main::param_char = main::i#2 [ main::j#2 main::param_char ] ( main:4 [ main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
 Statement asm { ldaparam_char pha  } always clobbers reg byte a 
-Statement [42] main::param_char = main::j#2 [ main::i#2 main::j#2 main::param_char ] ( main:4 [ main::i#2 main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
+Statement [42] main::param_char = main::j#2 [ main::j#2 main::param_char ] ( main:4 [ main::j#2 main::param_char ] { }  ) always clobbers reg byte a 
 Statement asm { ldaparam_char pha  } always clobbers reg byte a 
-Statement [44] main::$3 = main::j#2 << 1 [ main::i#2 main::j#2 main::$3 ] ( main:4 [ main::i#2 main::j#2 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [45] main::f#0 = main::fns[main::$3] [ main::i#2 main::j#2 main::f#0 ] ( main:4 [ main::i#2 main::j#2 main::f#0 ] { }  ) always clobbers reg byte a 
-Statement [46] call *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [44] main::$3 = main::j#2 << 1 [ main::$3 ] ( main:4 [ main::$3 ] { }  ) always clobbers reg byte a 
+Statement [45] main::f#0 = main::fns[main::$3] [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [46] callexecute *main::f#0  [ main::i#2 main::j#2 ] ( main:4 [ main::i#2 main::j#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::j#2 main::j#1 ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ idx1 ] : zp[1]:4 , 
@@ -463,13 +465,13 @@ Potential registers zp[1]:17 [ main::$3 ] : zp[1]:17 , reg byte a , reg byte x ,
 Potential registers zp[2]:18 [ main::f#0 ] : zp[2]:18 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2,502.5: zp[1]:3 [ main::j#2 main::j#1 ] 2,002: zp[1]:17 [ main::$3 ] 1,501.5: zp[1]:16 [ main::param_char ] 1,001: zp[2]:18 [ main::f#0 ] 302.31: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 10,010: zp[2]:18 [ main::f#0 ] 2,627.62: zp[1]:3 [ main::j#2 main::j#1 ] 2,002: zp[1]:17 [ main::$3 ] 1,501.5: zp[1]:16 [ main::param_char ] 388.29: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [fn1] 1.2: zp[1]:13 [ fn1::param_char ] 1: zp[1]:14 [ fn1::b#0 ] 1: zp[1]:15 [ fn1::c#0 ] 0.29: zp[2]:11 [ fn1::ret_addr ] 
 Uplift Scope [fn2] 1.2: zp[1]:8 [ fn2::param_char ] 1: zp[1]:9 [ fn2::b#0 ] 1: zp[1]:10 [ fn2::c#0 ] 0.29: zp[2]:6 [ fn2::ret_addr ] 
 Uplift Scope [] 1.27: zp[1]:4 [ idx1 ] 1.27: zp[1]:5 [ idx2 ] 
 Uplift Scope [__start] 
 
-Uplifting [main] best 9607 combination zp[1]:3 [ main::j#2 main::j#1 ] reg byte a [ main::$3 ] zp[1]:16 [ main::param_char ] zp[2]:18 [ main::f#0 ] zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 9607 combination zp[2]:18 [ main::f#0 ] zp[1]:3 [ main::j#2 main::j#1 ] reg byte a [ main::$3 ] zp[1]:16 [ main::param_char ] zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplifting [fn1] best 9599 combination zp[1]:13 [ fn1::param_char ] reg byte y [ fn1::b#0 ] reg byte x [ fn1::c#0 ] zp[2]:11 [ fn1::ret_addr ] 
 Uplifting [fn2] best 9591 combination zp[1]:8 [ fn2::param_char ] reg byte y [ fn2::b#0 ] reg byte x [ fn2::c#0 ] zp[2]:6 [ fn2::ret_addr ] 
 Uplifting [] best 9591 combination zp[1]:4 [ idx1 ] zp[1]:5 [ idx2 ] 
@@ -714,7 +716,7 @@ main: {
     sta.z f
     lda fns+1,y
     sta.z f+1
-    // [46] call *main::f#0 
+    // [46] callexecute *main::f#0 
     jsr bi_f
     // [47] main::j#1 = ++ main::j#2 -- vbuz1=_inc_vbuz1 
     inc.z j
@@ -792,14 +794,14 @@ volatile byte idx2 loadstore zp[1]:5 1.272727272727273
 void main()
 byte~ main::$3 reg byte a 2002.0
 void()* main::f
-void()* main::f#0 f zp[2]:13 1001.0
+void()* main::f#0 f zp[2]:13 10010.0
 constant void()** main::fns[2]  = { &fn1, &fn2 }
 byte main::i
 byte main::i#1 i zp[1]:2 202.0
-byte main::i#2 i zp[1]:2 100.3076923076923
+byte main::i#2 i zp[1]:2 186.28571428571428
 byte main::j
 byte main::j#1 j zp[1]:3 2002.0
-byte main::j#2 j zp[1]:3 500.5
+byte main::j#2 j zp[1]:3 625.625
 volatile byte main::param_char loadstore zp[1]:12 1501.5
 
 zp[1]:2 [ main::i#2 main::i#1 ]
@@ -1041,7 +1043,7 @@ main: {
     lda fns+1,y
     sta.z f+1
     // (*f)()
-    // [46] call *main::f#0 
+    // [46] callexecute *main::f#0 
     jsr bi_f
     // for(char j=0;j<2;j++)
     // [47] main::j#1 = ++ main::j#2 -- vbuz1=_inc_vbuz1 

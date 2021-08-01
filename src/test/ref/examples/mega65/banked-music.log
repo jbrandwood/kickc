@@ -62,6 +62,8 @@ Eliminating unused variable with no statement memoryRemapBlock::$1
 Eliminating unused variable with no statement memoryRemapBlock::$2
 Eliminating unused variable with no statement memcpy_dma_command
 Eliminating unused variable with no statement memset_dma_command
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicInit 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicPlay 
 
 CONTROL FLOW GRAPH SSA
 
@@ -159,7 +161,7 @@ main::@5: scope:[main]  from main::@4
   to:main::@6
 main::@6: scope:[main]  from main::@5
   asm { lda#0  }
-  call *musicInit 
+  callexecute *musicInit 
   memoryRemap::remapBlocks#2 = 0
   memoryRemap::lowerPageOffset#2 = 0
   memoryRemap::upperPageOffset#2 = 0
@@ -205,7 +207,7 @@ irq: scope:[irq]  from
   call memoryRemapBlock 
   to:irq::@3
 irq::@3: scope:[irq]  from irq
-  call *musicPlay 
+  callexecute *musicPlay 
   memoryRemap::remapBlocks#3 = 0
   memoryRemap::lowerPageOffset#3 = 0
   memoryRemap::upperPageOffset#3 = 0
@@ -631,20 +633,22 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $4000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@8(between main::@2 and main::@1)
+Adding NOP phi() at start of irq::@3
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of memoryRemapBlock
 Adding NOP phi() at start of memoryRemapBlock::@1
 CALL GRAPH
-Calls in [irq] to memoryRemapBlock:2 memoryRemap:4 
-Calls in [main] to memoryRemap:10 memcpy_dma4:18 memoryRemapBlock:20 memoryRemap:23 
-Calls in [memoryRemapBlock] to memoryRemap:40 
+Calls in [irq] to memoryRemapBlock:2 null:4 memoryRemap:5 
+Calls in [main] to memoryRemap:11 memcpy_dma4:19 memoryRemapBlock:21 null:23 memoryRemap:24 
+Calls in [memoryRemapBlock] to memoryRemap:41 
 
 Created 5 initial phi equivalence classes
-Coalesced [35] main::mem_destroy_i#5 = main::mem_destroy_i#1
-Coalesced [38] main::i#4 = main::i#1
+Coalesced [36] main::mem_destroy_i#5 = main::mem_destroy_i#1
+Coalesced [39] main::i#4 = main::i#1
 Coalesced down to 5 phi equivalence classes
 Culled Empty Block label main::@8
 Culled Empty Block label memoryRemapBlock::@1
+Adding NOP phi() at start of irq::@3
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of memoryRemapBlock
 
@@ -657,115 +661,116 @@ irq: scope:[irq]  from
   [2] call memoryRemapBlock 
   to:irq::@3
 irq::@3: scope:[irq]  from irq
-  [3] call *musicPlay 
-  [4] call memoryRemap 
+  [3] phi()
+  [4] callexecute *musicPlay 
+  [5] call memoryRemap 
   to:irq::@4
 irq::@4: scope:[irq]  from irq::@3
-  [5] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  [6] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@1
 irq::@1: scope:[irq]  from irq::@1 irq::@4
-  [6] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1
+  [7] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq::@1
-  [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@2
-  [8] return 
+  [9] return 
   to:@return
 
 void main()
 main: scope:[main]  from
   asm { sei  }
-  [10] call memoryRemap 
+  [11] call memoryRemap 
   to:main::@4
 main::@4: scope:[main]  from main
-  [11] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
-  [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
-  [13] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
-  [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
-  [15] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-  [16] *PROCPORT = PROCPORT_RAM_IO
-  [17] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
-  [18] call memcpy_dma4 
+  [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
+  [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
+  [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
+  [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
+  [16] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+  [17] *PROCPORT = PROCPORT_RAM_IO
+  [18] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
+  [19] call memcpy_dma4 
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  [19] phi()
-  [20] call memoryRemapBlock 
+  [20] phi()
+  [21] call memoryRemapBlock 
   to:main::@6
 main::@6: scope:[main]  from main::@5
   asm { lda#0  }
-  [22] call *musicInit 
-  [23] call memoryRemap 
+  [23] callexecute *musicInit 
+  [24] call memoryRemap 
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  [24] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [25] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
-  [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
-  [28] *HARDWARE_IRQ = &irq
+  [25] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
+  [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  [29] *HARDWARE_IRQ = &irq
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@7
-  [30] main::mem_destroy_i#2 = phi( main::@2/main::mem_destroy_i#1, main::@7/0 )
-  [31] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2]
-  [32] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2
+  [31] main::mem_destroy_i#2 = phi( main::@2/main::mem_destroy_i#1, main::@7/0 )
+  [32] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2]
+  [33] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [33] main::i#2 = phi( main::@1/0, main::@3/main::i#1 )
-  [34] if(main::i#2<$f0) goto main::@3
+  [34] main::i#2 = phi( main::@1/0, main::@3/main::i#1 )
+  [35] if(main::i#2<$f0) goto main::@3
   to:main::@1
 main::@3: scope:[main]  from main::@2
-  [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2]
-  [36] main::i#1 = ++ main::i#2
+  [36] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2]
+  [37] main::i#1 = ++ main::i#2
   to:main::@2
 
 void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
 memoryRemapBlock: scope:[memoryRemapBlock]  from irq main::@5
-  [37] phi()
-  [38] call memoryRemap 
+  [38] phi()
+  [39] call memoryRemap 
   to:memoryRemapBlock::@return
 memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock
-  [39] return 
+  [40] return 
   to:@return
 
 void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from irq::@3 main main::@6 memoryRemapBlock
-  [40] memoryRemap::upperPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
-  [40] memoryRemap::remapBlocks#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::blockBits#0 )
-  [40] memoryRemap::lowerPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
-  [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4
-  [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
-  [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4
-  [44] memoryRemap::$3 = memoryRemap::$2 & $f
-  [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
-  [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4
-  [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
-  [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4
-  [49] memoryRemap::$8 = memoryRemap::$7 & $f
-  [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
+  [41] memoryRemap::upperPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
+  [41] memoryRemap::remapBlocks#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::blockBits#0 )
+  [41] memoryRemap::lowerPageOffset#4 = phi( irq::@3/0, main/0, main::@6/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
+  [42] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4
+  [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4
+  [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4
+  [45] memoryRemap::$3 = memoryRemap::$2 & $f
+  [46] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3
+  [47] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4
+  [48] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
+  [49] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4
+  [50] memoryRemap::$8 = memoryRemap::$7 & $f
+  [51] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
-  [52] return 
+  [53] return 
   to:@return
 
 void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
 memcpy_dma4: scope:[memcpy_dma4]  from main::@4
-  [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
-  [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
-  [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
-  [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
-  [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
-  [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
-  [63] *((byte*)DMA) = byte0 &memcpy_dma_command4
-  [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
+  [54] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  [55] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
+  [56] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
+  [57] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
+  [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
+  [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
+  [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
+  [64] *((byte*)DMA) = byte0 &memcpy_dma_command4
+  [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
   to:memcpy_dma4::@return
 memcpy_dma4::@return: scope:[memcpy_dma4]  from memcpy_dma4
-  [65] return 
+  [66] return 
   to:@return
 
 
@@ -871,81 +876,81 @@ Allocated zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
 Allocated mem[12] [ memcpy_dma_command4 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] call *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [8] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [11] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [15] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [16] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [9] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [16] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [17] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [18] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
-Statement [22] call *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [24] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [25] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [28] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [23] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [25] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [29] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [36] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
-Statement [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
+Statement [42] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:24 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ memoryRemap::remapBlocks#4 ]
-Statement [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
-Statement [44] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Statement [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:24 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [45] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:5 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:24 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:11 [ memoryRemap::$1 ]
-Statement [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
-Statement [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
-Statement [49] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Statement [47] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:5 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:24 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [48] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:5 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:24 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [50] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:5 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:24 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ memoryRemap::$6 ]
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [55] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
-Statement [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [64] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] call *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [8] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [11] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [15] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [16] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [9] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [16] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [17] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [18] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
-Statement [22] call *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [24] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [25] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [28] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
-Statement [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:23 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
-Statement [44] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
-Statement [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:23 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
-Statement [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:4 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:23 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
-Statement [49] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:4 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:10 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:23 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:20::memoryRemap:38 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Statement [23] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [25] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [29] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [36] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [42] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:24 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
+Statement [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemap:24 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [45] memoryRemap::$3 = memoryRemap::$2 & $f [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:5 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:24 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Statement [47] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:5 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemap:24 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
+Statement [48] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:5 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:24 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [50] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:5 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:11 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:24 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:39 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:21::memoryRemap:39 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:18 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [55] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [64] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:19 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] : zp[2]:4 , 
@@ -1120,27 +1125,29 @@ irq: {
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [2] call memoryRemapBlock 
   // Remap memory to put music at $4000
-    // [37] phi from irq to memoryRemapBlock [phi:irq->memoryRemapBlock]
+    // [38] phi from irq to memoryRemapBlock [phi:irq->memoryRemapBlock]
   memoryRemapBlock_from_irq:
     jsr memoryRemapBlock
+    // [3] phi from irq to irq::@3 [phi:irq->irq::@3]
+  __b3_from_irq:
     jmp __b3
     // irq::@3
   __b3:
-    // [3] call *musicPlay 
+    // [4] callexecute *musicPlay 
     // Play remapped SID
     jsr musicPlay
-    // [4] call memoryRemap 
+    // [5] call memoryRemap 
   // Reset memory mapping
-    // [40] phi from irq::@3 to memoryRemap [phi:irq::@3->memoryRemap]
+    // [41] phi from irq::@3 to memoryRemap [phi:irq::@3->memoryRemap]
   memoryRemap_from___b3:
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:irq::@3->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:irq::@3->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     lda #>0
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:irq::@3->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:irq::@3->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:irq::@3->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:irq::@3->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.lowerPageOffset
     lda #>0
@@ -1149,24 +1156,24 @@ irq: {
     jmp __b4
     // irq::@4
   __b4:
-    // [5] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [6] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     jmp __b1
     // irq::@1
   __b1:
-    // [6] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1 -- _deref_pbuc1_eq_vbuaa_then_la1 
+    // [7] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1 -- _deref_pbuc1_eq_vbuaa_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b1
     jmp __b2
     // irq::@2
   __b2:
-    // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
-    // [8] return 
+    // [9] return 
     // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
     plz
     ply
@@ -1179,18 +1186,18 @@ main: {
     // asm { sei  }
     // Stop IRQ's
     sei
-    // [10] call memoryRemap 
+    // [11] call memoryRemap 
   // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-    // [40] phi from main to memoryRemap [phi:main->memoryRemap]
+    // [41] phi from main to memoryRemap [phi:main->memoryRemap]
   memoryRemap_from_main:
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:main->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:main->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     lda #>0
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:main->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:main->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.lowerPageOffset
     lda #>0
@@ -1199,44 +1206,44 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [11] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
+    // [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
+    // [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [13] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 48MHz fast mode
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
-    // [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
-    // [15] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [16] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // [16] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [17] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [17] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [18] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
-    // [18] call memcpy_dma4 
+    // [19] call memcpy_dma4 
     // Transfer banked code/data to upper memory ($10000)
     jsr memcpy_dma4
-    // [19] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [20] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
   __b5_from___b4:
     jmp __b5
     // main::@5
   __b5:
-    // [20] call memoryRemapBlock 
+    // [21] call memoryRemapBlock 
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
-    // [37] phi from main::@5 to memoryRemapBlock [phi:main::@5->memoryRemapBlock]
+    // [38] phi from main::@5 to memoryRemapBlock [phi:main::@5->memoryRemapBlock]
   memoryRemapBlock_from___b5:
     jsr memoryRemapBlock
     jmp __b6
@@ -1245,20 +1252,20 @@ main: {
     // asm { lda#0  }
     // Initialize SID 
     lda #0
-    // [22] call *musicInit 
+    // [23] callexecute *musicInit 
     jsr musicInit
-    // [23] call memoryRemap 
+    // [24] call memoryRemap 
   // Reset memory mapping
-    // [40] phi from main::@6 to memoryRemap [phi:main::@6->memoryRemap]
+    // [41] phi from main::@6 to memoryRemap [phi:main::@6->memoryRemap]
   memoryRemap_from___b6:
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:main::@6->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:main::@6->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     lda #>0
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:main::@6->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:main::@6->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main::@6->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main::@6->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.lowerPageOffset
     lda #>0
@@ -1267,24 +1274,24 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [24] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [25] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
+    // [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
     // Set raster line to 0xff
     lda #$ff
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // [28] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
+    // [29] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
@@ -1293,42 +1300,42 @@ main: {
     // asm { cli  }
     // Enable IRQ
     cli
-    // [30] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+    // [31] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   __b1_from___b7:
-    // [30] phi main::mem_destroy_i#2 = 0 [phi:main::@7->main::@1#0] -- vbuxx=vbuc1 
+    // [31] phi main::mem_destroy_i#2 = 0 [phi:main::@7->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [31] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2] -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+    // [32] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2] -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc MUSIC,x
-    // [32] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2 -- vbuxx=_inc_vbuxx 
+    // [33] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [34] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [33] phi main::i#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [34] phi main::i#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b2
   // Show unmapped MUSIC memory
     // main::@2
   __b2:
-    // [34] if(main::i#2<$f0) goto main::@3 -- vbuyy_lt_vbuc1_then_la1 
+    // [35] if(main::i#2<$f0) goto main::@3 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$f0
     bcc __b3
-    // [30] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [31] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [30] phi main::mem_destroy_i#2 = main::mem_destroy_i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [31] phi main::mem_destroy_i#2 = main::mem_destroy_i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
     // main::@3
   __b3:
-    // [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [36] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
     lda MUSIC,y
     sta DEFAULT_SCREEN,y
-    // [36] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    // [37] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [33] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [34] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   __b2_from___b3:
-    // [33] phi main::i#2 = main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // [34] phi main::i#2 = main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp __b2
 }
   // memoryRemapBlock
@@ -1343,17 +1350,17 @@ memoryRemapBlock: {
     // Which block is being remapped? (0-7)
     .const block = $40>>5
     .const blockBits = 1<<block
-    // [38] call memoryRemap 
-    // [40] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    // [39] call memoryRemap 
+    // [41] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
   memoryRemap_from_memoryRemapBlock:
-    // [40] phi memoryRemap::upperPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
+    // [41] phi memoryRemap::upperPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
     lda #<pageOffset
     sta.z memoryRemap.upperPageOffset
     lda #>pageOffset
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #blockBits
-    // [40] phi memoryRemap::lowerPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
     lda #<pageOffset
     sta.z memoryRemap.lowerPageOffset
     lda #>pageOffset
@@ -1362,7 +1369,7 @@ memoryRemapBlock: {
     jmp __breturn
     // memoryRemapBlock::@return
   __breturn:
-    // [39] return 
+    // [40] return 
     rts
 }
   // memoryRemap
@@ -1400,38 +1407,38 @@ memoryRemap: {
     .label __6 = $a
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
-    // [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
+    // [42] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // lower blocks offset page low
     lda.z lowerPageOffset
     sta.z aVal
-    // [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
+    // [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
     asl
     asl
     sta.z __1
-    // [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z lowerPageOffset+1
-    // [44] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [45] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
+    // [46] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
     // lower blocks to map + lower blocks offset high nibble
     ora.z __1
     sta.z xVal
-    // [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
+    // [47] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // upper blocks offset page
     lda.z upperPageOffset
     sta.z yVal
-    // [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [48] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
-    // [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [49] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z upperPageOffset+1
-    // [49] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [50] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
+    // [51] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
     ora.z __6
     sta.z zVal
@@ -1445,7 +1452,7 @@ memoryRemap: {
     jmp __breturn
     // memoryRemap::@return
   __breturn:
-    // [52] return 
+    // [53] return 
     rts
 }
   // memcpy_dma4
@@ -1462,56 +1469,56 @@ memcpy_dma4: {
     .const src_bank = 0
     .label dest = 0
     .label src = upperCodeData
-    // [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [54] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [55] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
-    // [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [56] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
-    // [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [57] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
-    // [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
-    // [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
-    // [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
-    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [64] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     jmp __breturn
     // memcpy_dma4::@return
   __breturn:
-    // [65] return 
+    // [66] return 
     rts
 }
   // File Data
@@ -1562,6 +1569,7 @@ Removing instruction lda #<0
 Removing instruction lda #>0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b3_from_irq:
 Removing instruction __b5_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction memoryRemapBlock_from_irq:
@@ -1803,45 +1811,46 @@ irq: {
     // memoryRemapBlock(0x40, 0x100)
     // [2] call memoryRemapBlock 
   // Remap memory to put music at $4000
-    // [37] phi from irq to memoryRemapBlock [phi:irq->memoryRemapBlock]
+    // [38] phi from irq to memoryRemapBlock [phi:irq->memoryRemapBlock]
     jsr memoryRemapBlock
+    // [3] phi from irq to irq::@3 [phi:irq->irq::@3]
     // irq::@3
     // (*musicPlay)()
-    // [3] call *musicPlay 
+    // [4] callexecute *musicPlay 
     // Play remapped SID
     jsr musicPlay
     // memoryRemap(0,0,0)
-    // [4] call memoryRemap 
+    // [5] call memoryRemap 
   // Reset memory mapping
-    // [40] phi from irq::@3 to memoryRemap [phi:irq::@3->memoryRemap]
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:irq::@3->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi from irq::@3 to memoryRemap [phi:irq::@3->memoryRemap]
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:irq::@3->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:irq::@3->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:irq::@3->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:irq::@3->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:irq::@3->memoryRemap#2] -- vwuz1=vbuc1 
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // irq::@4
     // char raster = VICII->RASTER
-    // [5] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [6] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // irq::@1
   __b1:
     // while(VICII->RASTER==raster)
-    // [6] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1 -- _deref_pbuc1_eq_vbuaa_then_la1 
+    // [7] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@1 -- _deref_pbuc1_eq_vbuaa_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b1
     // irq::@2
     // (VICII->BORDER_COLOR)--;
-    // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq::@return
     // }
-    // [8] return 
+    // [9] return 
     // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
     plz
     ply
@@ -1856,64 +1865,64 @@ main: {
     // Stop IRQ's
     sei
     // memoryRemap(0,0,0)
-    // [10] call memoryRemap 
+    // [11] call memoryRemap 
   // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-    // [40] phi from main to memoryRemap [phi:main->memoryRemap]
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:main->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi from main to memoryRemap [phi:main->memoryRemap]
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:main->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:main->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:main->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main->memoryRemap#2] -- vwuz1=vbuc1 
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // main::@4
     // VICIII->KEY = 0x47
-    // [11] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
+    // [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIII->KEY = 0x53
-    // [12] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
+    // [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIV->CONTROLB |= 0x40
-    // [13] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 48MHz fast mode
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     // VICIV->CONTROLC |= 0x40
-    // [14] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // [15] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [16] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    // [16] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [17] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // VICIV->SIDBDRWD_LO = 1
-    // [17] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [18] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // memcpy_dma4(1, (void*)0x0000, 0, upperCodeData, MUSIC_END-MUSIC)
-    // [18] call memcpy_dma4 
+    // [19] call memcpy_dma4 
     // Transfer banked code/data to upper memory ($10000)
     jsr memcpy_dma4
-    // [19] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [20] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
     // main::@5
     // memoryRemapBlock(0x40, 0x100)
-    // [20] call memoryRemapBlock 
+    // [21] call memoryRemapBlock 
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
-    // [37] phi from main::@5 to memoryRemapBlock [phi:main::@5->memoryRemapBlock]
+    // [38] phi from main::@5 to memoryRemapBlock [phi:main::@5->memoryRemapBlock]
     jsr memoryRemapBlock
     // main::@6
     // asm
@@ -1921,46 +1930,46 @@ main: {
     // Initialize SID 
     lda #0
     // (*musicInit)()
-    // [22] call *musicInit 
+    // [23] callexecute *musicInit 
     jsr musicInit
     // memoryRemap(0,0,0)
-    // [23] call memoryRemap 
+    // [24] call memoryRemap 
   // Reset memory mapping
-    // [40] phi from main::@6 to memoryRemap [phi:main::@6->memoryRemap]
-    // [40] phi memoryRemap::upperPageOffset#4 = 0 [phi:main::@6->memoryRemap#0] -- vwuz1=vbuc1 
+    // [41] phi from main::@6 to memoryRemap [phi:main::@6->memoryRemap]
+    // [41] phi memoryRemap::upperPageOffset#4 = 0 [phi:main::@6->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = 0 [phi:main::@6->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = 0 [phi:main::@6->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #0
-    // [40] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main::@6->memoryRemap#2] -- vwuz1=vbuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = 0 [phi:main::@6->memoryRemap#2] -- vwuz1=vbuc1 
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // main::@7
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [24] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0xff
-    // [25] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
+    // [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
     // Set raster line to 0xff
     lda #$ff
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
-    // [26] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
-    // [27] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *HARDWARE_IRQ = &irq
-    // [28] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
+    // [29] *HARDWARE_IRQ = &irq -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
@@ -1970,40 +1979,40 @@ main: {
     // asm { cli  }
     // Enable IRQ
     cli
-    // [30] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-    // [30] phi main::mem_destroy_i#2 = 0 [phi:main::@7->main::@1#0] -- vbuxx=vbuc1 
+    // [31] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+    // [31] phi main::mem_destroy_i#2 = 0 [phi:main::@7->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // MUSIC[mem_destroy_i++]++;
-    // [31] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2] -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+    // [32] MUSIC[main::mem_destroy_i#2] = ++ MUSIC[main::mem_destroy_i#2] -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc MUSIC,x
-    // [32] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2 -- vbuxx=_inc_vbuxx 
+    // [33] main::mem_destroy_i#1 = ++ main::mem_destroy_i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // [33] phi main::i#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [34] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [34] phi main::i#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
   // Show unmapped MUSIC memory
     // main::@2
   __b2:
     // for(char i=0;i<240;i++)
-    // [34] if(main::i#2<$f0) goto main::@3 -- vbuyy_lt_vbuc1_then_la1 
+    // [35] if(main::i#2<$f0) goto main::@3 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$f0
     bcc __b3
-    // [30] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [30] phi main::mem_destroy_i#2 = main::mem_destroy_i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [31] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [31] phi main::mem_destroy_i#2 = main::mem_destroy_i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
     // main::@3
   __b3:
     // DEFAULT_SCREEN[i] = MUSIC[i]
-    // [35] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [36] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
     lda MUSIC,y
     sta DEFAULT_SCREEN,y
     // for(char i=0;i<240;i++)
-    // [36] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    // [37] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [33] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-    // [33] phi main::i#2 = main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // [34] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [34] phi main::i#2 = main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp __b2
 }
   // memoryRemapBlock
@@ -2019,16 +2028,16 @@ memoryRemapBlock: {
     .const block = $40>>5
     .const blockBits = 1<<block
     // memoryRemap(blockBits, pageOffset, pageOffset)
-    // [38] call memoryRemap 
-    // [40] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
-    // [40] phi memoryRemap::upperPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
+    // [39] call memoryRemap 
+    // [41] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    // [41] phi memoryRemap::upperPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
     lda #<pageOffset
     sta.z memoryRemap.upperPageOffset
     lda #>pageOffset
     sta.z memoryRemap.upperPageOffset+1
-    // [40] phi memoryRemap::remapBlocks#4 = memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
+    // [41] phi memoryRemap::remapBlocks#4 = memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #blockBits
-    // [40] phi memoryRemap::lowerPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
+    // [41] phi memoryRemap::lowerPageOffset#4 = memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
     lda #<pageOffset
     sta.z memoryRemap.lowerPageOffset
     lda #>pageOffset
@@ -2036,7 +2045,7 @@ memoryRemapBlock: {
     jsr memoryRemap
     // memoryRemapBlock::@return
     // }
-    // [39] return 
+    // [40] return 
     rts
 }
   // memoryRemap
@@ -2075,12 +2084,12 @@ memoryRemap: {
     .label lowerPageOffset = 2
     .label upperPageOffset = 4
     // char aVal = BYTE0(lowerPageOffset)
-    // [41] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
+    // [42] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // lower blocks offset page low
     lda.z lowerPageOffset
     sta.z aVal
     // remapBlocks << 4
-    // [42] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
+    // [43] memoryRemap::$1 = memoryRemap::remapBlocks#4 << 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
@@ -2088,34 +2097,34 @@ memoryRemap: {
     asl
     sta.z __1
     // BYTE1(lowerPageOffset)
-    // [43] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [44] memoryRemap::$2 = byte1  memoryRemap::lowerPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z lowerPageOffset+1
     // BYTE1(lowerPageOffset) & 0xf
-    // [44] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [45] memoryRemap::$3 = memoryRemap::$2 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
-    // [45] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
+    // [46] memoryRemap::xVal = memoryRemap::$1 | memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuaa 
     // lower blocks to map + lower blocks offset high nibble
     ora.z __1
     sta.z xVal
     // char yVal = BYTE0(upperPageOffset)
-    // [46] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
+    // [47] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 -- vbuz1=_byte0_vwuz2 
     // upper blocks offset page
     lda.z upperPageOffset
     sta.z yVal
     // remapBlocks & 0xf0
-    // [47] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [48] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
     // BYTE1(upperPageOffset)
-    // [48] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
+    // [49] memoryRemap::$7 = byte1  memoryRemap::upperPageOffset#4 -- vbuaa=_byte1_vwuz1 
     lda.z upperPageOffset+1
     // BYTE1(upperPageOffset) & 0xf
-    // [49] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
+    // [50] memoryRemap::$8 = memoryRemap::$7 & $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
-    // [50] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
+    // [51] memoryRemap::zVal = memoryRemap::$6 | memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuaa 
     // upper blocks to map + upper blocks offset page high nibble
     ora.z __6
     sta.z zVal
@@ -2129,7 +2138,7 @@ memoryRemap: {
     eom
     // memoryRemap::@return
     // }
-    // [52] return 
+    // [53] return 
     rts
 }
   // memcpy_dma4
@@ -2147,65 +2156,65 @@ memcpy_dma4: {
     .label dest = 0
     .label src = upperCodeData
     // char dmaMode = DMA->EN018B
-    // [53] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [54] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma_command4.count = num
-    // [54] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [55] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // memcpy_dma_command4.src_bank = src_bank
-    // [55] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [56] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
     // memcpy_dma_command4.src = src
-    // [56] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [57] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // memcpy_dma_command4.dest_bank = dest_bank
-    // [57] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // memcpy_dma_command4.dest = dest
-    // [58] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
-    // [59] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
-    // [60] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    // [61] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4)
-    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4)
-    // [63] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [64] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
     // DMA->EN018B = dmaMode
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma4::@return
     // }
-    // [65] return 
+    // [66] return 
     rts
 }
   // File Data

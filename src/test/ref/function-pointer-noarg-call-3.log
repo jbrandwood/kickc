@@ -1,5 +1,6 @@
 Resolved forward reference fn1 to void fn1()
 Resolved forward reference fn2 to void fn2()
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::$0 
 
 CONTROL FLOW GRAPH SSA
 
@@ -22,7 +23,7 @@ main::@3: scope:[main]  from main::@2
   main::i#4 = phi( main::@2/main::i#1 )
   getfn::return#4 = phi( main::@2/getfn::return#0 )
   main::$0 = getfn::return#4
-  call *main::$0 
+  callexecute *main::$0 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -147,7 +148,7 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of getfn::@2
 Adding NOP phi() at start of getfn::@1
 CALL GRAPH
-Calls in [main] to getfn:8 
+Calls in [main] to getfn:8 null:11 
 
 Created 2 initial phi equivalence classes
 Coalesced [12] main::i#5 = main::i#1
@@ -189,7 +190,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [10] main::$0 = getfn::return#0
-  [11] call *main::$0 
+  [11] callexecute *main::$0 
   to:main::@1
 
 void()* getfn(byte getfn::b)
@@ -217,9 +218,9 @@ void()* getfn::return
 void()* getfn::return#0 22.0
 void()* getfn::return#3 3.6666666666666665
 void main()
-void()*~ main::$0 11.0
+void()*~ main::$0 110.0
 byte main::i
-byte main::i#1 5.5
+byte main::i#1 16.5
 byte main::i#2 22.0
 
 Initial phi equivalence classes
@@ -243,15 +244,15 @@ Allocated zp[2]:6 [ getfn::return#0 ]
 Allocated zp[2]:8 [ main::$0 ]
 Allocated zp[1]:10 [ getfn::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] getfn::return#0 = getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
+Statement [9] getfn::return#0 = getfn::return#3 [ getfn::return#0 ] (  [ getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
+Statement [10] main::$0 = getfn::return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] callexecute *main::$0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [10] main::$0 = getfn::return#0 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [11] call *main::$0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] getfn::return#0 = getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
-Statement [10] main::$0 = getfn::return#0 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [11] call *main::$0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [9] getfn::return#0 = getfn::return#3 [ getfn::return#0 ] (  [ getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
+Statement [10] main::$0 = getfn::return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] callexecute *main::$0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ getfn::return#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ getfn::b#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -261,13 +262,13 @@ Potential registers zp[1]:10 [ getfn::$0 ] : zp[1]:10 , reg byte a , reg byte x 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [getfn] 202: zp[1]:10 [ getfn::$0 ] 112: zp[1]:5 [ getfn::b#0 ] 22: zp[2]:6 [ getfn::return#0 ] 3.67: zp[2]:3 [ getfn::return#3 ] 
-Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 11: zp[2]:8 [ main::$0 ] 
+Uplift Scope [main] 110: zp[2]:8 [ main::$0 ] 38.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
 Uplifting [getfn] best 731 combination reg byte a [ getfn::$0 ] reg byte a [ getfn::b#0 ] zp[2]:6 [ getfn::return#0 ] zp[2]:3 [ getfn::return#3 ] 
-Uplifting [main] best 731 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[2]:8 [ main::$0 ] 
+Uplifting [main] best 731 combination zp[2]:8 [ main::$0 ] zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplifting [fn1] best 731 combination 
 Uplifting [fn2] best 731 combination 
 Uplifting [] best 731 combination 
@@ -338,7 +339,7 @@ main: {
     // main::@3
   __b3:
     // [10] main::$0 = getfn::return#0
-    // [11] call *main::$0 
+    // [11] callexecute *main::$0 
     jsr bi___0
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
@@ -425,9 +426,9 @@ void()* getfn::return
 void()* getfn::return#0 return zp[2]:3 22.0
 void()* getfn::return#3 return zp[2]:3 3.6666666666666665
 void main()
-void()*~ main::$0 zp[2]:3 11.0
+void()*~ main::$0 zp[2]:3 110.0
 byte main::i
-byte main::i#1 i zp[1]:2 5.5
+byte main::i#1 i zp[1]:2 16.5
 byte main::i#2 i zp[1]:2 22.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
@@ -497,7 +498,7 @@ main: {
     // main::@3
     // [10] main::$0 = getfn::return#0
     // (*getfn(++i))()
-    // [11] call *main::$0 
+    // [11] callexecute *main::$0 
     jsr bi___0
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 

@@ -23,6 +23,10 @@ public class ValueSourceParamValue extends ValueSourceBase {
       this.valueSource = valueSource;
    }
 
+   public ValueSource getValueSource() {
+      return valueSource;
+   }
+
    @Override
    public SymbolType getSymbolType() {
       return valueSource.getSymbolType();

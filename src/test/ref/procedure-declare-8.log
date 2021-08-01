@@ -1,4 +1,6 @@
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *proc_ptr 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *proc_ptr 
 
 CONTROL FLOW GRAPH SSA
 
@@ -21,9 +23,9 @@ proc2::@return: scope:[proc2]  from proc2
 void main()
 main: scope:[main]  from __start::@1
   proc_ptr#0 = &proc1
-  call *proc_ptr#0 
+  callexecute *proc_ptr#0 
   proc_ptr#1 = &proc2
-  call *proc_ptr#1 
+  callexecute *proc_ptr#1 
   to:main::@return
 main::@return: scope:[main]  from main
   proc_ptr#6 = phi( main/proc_ptr#1 )
@@ -89,8 +91,8 @@ Constant proc_ptr#0 = &proc1
 Constant proc_ptr#1 = &proc2
 Constant proc_ptr#3 = (void()*) 0
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [5] call proc1 
-Replacing constant pointer function [7] call proc2 
+Replacing constant pointer function [5] callexecute proc1 
+Replacing constant pointer function [7] callexecute proc2 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Simplifying expression containing zero SCREEN in [0] SCREEN[0] = 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -120,8 +122,8 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call proc1 
-  [2] call proc2 
+  [1] callexecute proc1 
+  [2] callexecute proc2 
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -184,9 +186,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call proc1 
+    // [1] callexecute proc1  -- jsr 
     jsr proc1
-    // [2] call proc2 
+    // [2] callexecute proc2  -- jsr 
     jsr proc2
     jmp __breturn
     // main::@return
@@ -257,9 +259,9 @@ Score: 42
   // main
 main: {
     // (*proc_ptr)()
-    // [1] call proc1 
+    // [1] callexecute proc1  -- jsr 
     jsr proc1
-    // [2] call proc2 
+    // [2] callexecute proc2  -- jsr 
     jsr proc2
     // main::@return
     // }

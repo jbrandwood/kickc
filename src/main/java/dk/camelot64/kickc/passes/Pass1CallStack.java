@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
@@ -43,7 +44,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
             }
             // Introduce the return value offset
             if(procedure.getReturnType() != null && !SymbolType.VOID.equals(procedure.getReturnType())) {
-               CallingConventionStack.getReturnOffsetConstant(procedure);
+               CallingConventionStack.getReturnOffsetConstant(procedure.getType(), procedure);
                createStackBase = true;
             }
          }
@@ -81,7 +82,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                   Procedure procedure = (Procedure) blockScope;
                   final SymbolType returnType = procedure.getReturnType();
                   if(!SymbolType.VOID.equals(returnType) && Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                     ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
+                     ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure.getType(), procedure);
                      final RValue value = ((StatementReturn) statement).getValue();
                      stmtIt.previous();
                      generateStackReturnValues(value, returnType, returnOffsetConstant, statement.getSource(), statement.getComments(), stmtIt);
@@ -100,11 +101,11 @@ public class Pass1CallStack extends Pass2SsaOptimization {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementCallFinalize) {
                final StatementCallFinalize call = (StatementCallFinalize) statement;
-               Procedure procedure = getScope().getProcedure(call.getProcedure());
-               final SymbolType returnType = procedure.getReturnType();
-               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
-                  long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
+               SymbolTypeProcedure procedureType = call.getProcedureType();
+               final SymbolType returnType = procedureType.getReturnType();
+               if(Procedure.CallingConvention.STACK_CALL.equals(call.getCallingConvention())) {
+                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedureType);
+                  long returnByteSize = procedureType.getReturnType() == null ? 0 : procedureType.getReturnType().getSizeBytes();
                   long stackCleanBytes = (call.getlValue() == null) ? stackFrameByteSize : (stackFrameByteSize - returnByteSize);
                   stmtIt.previous();
                   final StatementSource source = call.getSource();
@@ -130,22 +131,21 @@ public class Pass1CallStack extends Pass2SsaOptimization {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementCallPrepare) {
                final StatementCallPrepare call = (StatementCallPrepare) statement;
-               Procedure procedure = getScope().getProcedure(call.getProcedure());
-               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+               if(Procedure.CallingConvention.STACK_CALL.equals(call.getCallingConvention())) {
                   stmtIt.previous();
                   final StatementSource source = call.getSource();
                   List<Comment> comments = call.getComments();
-                  final List<Variable> parameterDefs = procedure.getParameters();
-                  for(int i=0;i<parameterDefs.size();i++) {
+                  List<SymbolType> paramTypes = call.getProcedureType().getParamTypes();
+                  for(int i=0;i<paramTypes.size();i++) {
+                     SymbolType paramType = paramTypes.get(i);
                      final RValue parameterVal = call.getParameters().get(i);
-                     final Variable parameterDef = parameterDefs.get(i);
-                     generateStackPushValues(parameterVal, parameterDef.getType(), source, comments, stmtIt);
+                     generateStackPushValues(parameterVal, paramType, source, comments, stmtIt);
                      // Clear comments - enduring they are only output once
                      comments = Comment.NO_COMMENTS;
                   }
                   // Push additional bytes for padding if needed
-                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
-                  long parametersByteSize = CallingConventionStack.getParametersByteSize(procedure);
+                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(call.getProcedureType());
+                  long parametersByteSize = CallingConventionStack.getParametersByteSize(call.getProcedureType());
                   final long stackPadBytes = stackFrameByteSize - parametersByteSize;
                   if(stackFrameByteSize > parametersByteSize) {
                      // Add padding to the stack to make room for the return value

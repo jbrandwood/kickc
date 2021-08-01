@@ -122,15 +122,17 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   // Add all vars from next statement that the method does not use
                   StatementCalling call = (StatementCalling) nextStmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procReferenced = procedureReferencedVars.get(procedure);
-                  // The call statement has no used or defined by itself so only work with the alive vars
-                  for(VariableRef aliveVar : aliveNextStmt) {
-                     // Add all variables to previous that are not used inside the method
-                     if(!procReferenced.contains(aliveVar) && !definedNextStmt.contains(aliveVar)) {
-                        boolean added = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
-                        modified |= added;
-                        if(added && getLog().isVerboseLiveRanges()) {
-                           getLog().append("Propagated alive var unused in method by skipping call " + aliveVar + " to " + previousStmt.getStatement());
+                  if(procedure!=null) {
+                     Collection<VariableRef> procReferenced = procedureReferencedVars.get(procedure);
+                     // The call statement has no used or defined by itself so only work with the alive vars
+                     for(VariableRef aliveVar : aliveNextStmt) {
+                        // Add all variables to previous that are not used inside the method
+                        if(!procReferenced.contains(aliveVar) && !definedNextStmt.contains(aliveVar)) {
+                           boolean added = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
+                           modified |= added;
+                           if(added && getLog().isVerboseLiveRanges()) {
+                              getLog().append("Propagated alive var unused in method by skipping call " + aliveVar + " to " + previousStmt.getStatement());
+                           }
                         }
                      }
                   }
@@ -256,12 +258,14 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
          // Add the last statement of the called method
          StatementCalling call = (StatementCalling) statement;
          ProcedureRef procedure = call.getProcedure();
-         LabelRef procedureReturnBlock = procedure.getReturnBlock();
-         ControlFlowBlock returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);
-         if(returnBlock != null) {
-            Collection<Statement> lastStatements = getLastInBlock(returnBlock, getGraph());
-            for(Statement lastStatement : lastStatements) {
-               previousStatements.add(new PreviousStatement(lastStatement, PreviousStatement.Type.LAST_IN_METHOD));
+         if(procedure!=null) {
+            LabelRef procedureReturnBlock = procedure.getReturnBlock();
+            ControlFlowBlock returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);
+            if(returnBlock != null) {
+               Collection<Statement> lastStatements = getLastInBlock(returnBlock, getGraph());
+               for(Statement lastStatement : lastStatements) {
+                  previousStatements.add(new PreviousStatement(lastStatement, PreviousStatement.Type.LAST_IN_METHOD));
+               }
             }
          }
       } else if(precedingStatements.size() > 0) {

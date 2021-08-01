@@ -184,7 +184,7 @@ public class Procedure extends Scope {
    }
 
    @Override
-   public SymbolType getType() {
+   public SymbolTypeProcedure getType() {
       return procedureType;
    }
 

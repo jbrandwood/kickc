@@ -3,19 +3,17 @@ Adding parameter assignment in __stackcall procedure get::i = param(get::i)
 Adding parameter assignment in __stackcall procedure print::p = param(print::p)
 Inlined call call __init 
 Eliminating unused variable with no statement main::$1
-Calling convention __stackcall adding prepare/execute/finalize for { main::p_x, main::p_y } = call get main::i 
-Calling convention __stackcall adding prepare/execute/finalize for call print main::p_x main::p_y 
+Calling convention __stackcall adding prepare/execute/finalize for main::p = call get main::i 
+Calling convention __stackcall adding prepare/execute/finalize for call print main::p 
 Calling convention __stackcall adding prepare/execute/finalize for call main 
 Calling convention STACK_CALL replacing param(get::i) with stackidx(byte,get::OFFSET_STACK_I)
-Calling convention STACK_CALL replacing param(print::p_x) with stackidx(byte,print::OFFSET_STACK_P_X)
-Calling convention STACK_CALL replacing param(print::p_y) with stackidx(byte,print::OFFSET_STACK_P_Y)
-Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X) = get::return_x
-Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y) = get::return_y
-Calling convention STACK_CALL adding stack pull main::p_x = stackpull(byte)
-Calling convention STACK_CALL adding stack pull main::p_y = stackpull(byte)
+Calling convention STACK_CALL replacing param(print::p) with stackidx(struct Point,print::OFFSET_STACK_P)
+Calling convention STACK_CALL adding stack return stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return
+Calling convention STACK_CALL adding stack pull main::p = stackpull(struct Point)
 Calling convention STACK_CALL adding stack push stackpush(byte) = main::i
-Calling convention STACK_CALL adding stack push stackpush(byte) = main::p_x
-Calling convention STACK_CALL adding stack push stackpush(byte) = main::p_y
+Calling convention STACK_CALL adding stack push stackpush(struct Point) = main::p
+Removing C-classic struct-unwound assignment get::p = struct-unwound {*((byte*)&get::p+OFFSET_STRUCT_POINT_X), *((byte*)&get::p+OFFSET_STRUCT_POINT_Y)}
+Removing C-classic struct-unwound assignment get::return = struct-unwound {*(&get::return)}
 
 CONTROL FLOW GRAPH SSA
 
@@ -33,10 +31,8 @@ main::@2: scope:[main]  from main::@1
   stackpush(byte) = main::i#3
   sideeffect stackpushbytes(1)
   callexecute get 
-  main::p_x#0 = stackpull(byte)
-  main::p_y#0 = stackpull(byte)
-  stackpush(byte) = main::p_x#0
-  stackpush(byte) = main::p_y#0
+  main::p = stackpull(struct Point)
+  stackpush(struct Point) = main::p
   callexecute print 
   sideeffect stackpullbytes(2)
   main::i#1 = ++ main::i#3
@@ -49,27 +45,21 @@ __stackcall struct Point get(byte get::i)
 get: scope:[get]  from
   get::i#0 = stackidx(byte,get::OFFSET_STACK_I)
   get::$0 = get::i#0 / 2
-  get::p_x#0 = get::i#0
-  get::p_y#0 = get::$0
-  get::return_x#0 = get::p_x#0
-  get::return_y#0 = get::p_y#0
-  get::return#0 = struct-unwound {get::return_x#0, get::return_y#0}
+  *((byte*)&get::p+OFFSET_STRUCT_POINT_X) = get::i#0
+  *((byte*)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0
+  *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT)
   to:get::@return
 get::@return: scope:[get]  from get
-  get::return_y#1 = phi( get/get::return_y#0 )
-  get::return_x#1 = phi( get/get::return_x#0 )
-  stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X) = get::return_x#1
-  stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y) = get::return_y#1
+  stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return
   return 
   to:@return
 
-__stackcall void print(byte print::p_x , byte print::p_y)
+__stackcall void print(struct Point print::p)
 print: scope:[print]  from
-  print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X)
-  print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y)
-  SCREEN[idx] = print::p_x#0
+  print::p = stackidx(struct Point,print::OFFSET_STACK_P)
+  SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_X)
   idx = ++ idx
-  SCREEN[idx] = print::p_y#0
+  SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y)
   idx = ++ idx
   to:print::@return
 print::@return: scope:[print]  from print
@@ -93,26 +83,17 @@ SYMBOL TABLE SSA
 constant byte OFFSET_STRUCT_POINT_X = 0
 constant byte OFFSET_STRUCT_POINT_Y = 1
 constant byte* const SCREEN = (byte*)$400
+constant byte SIZEOF_STRUCT_POINT = 2
 constant word STACK_BASE = $103
 void __start()
 __stackcall struct Point get(byte get::i)
 number~ get::$0
 constant byte get::OFFSET_STACK_I = 0
-constant byte get::OFFSET_STACK_RETURN = 0
+constant byte get::OFFSET_STACK_RETURN_0 = 0
 byte get::i
 byte get::i#0
-byte get::p_x
-byte get::p_x#0
-byte get::p_y
-byte get::p_y#0
-struct Point get::return
-struct Point get::return#0
-byte get::return_x
-byte get::return_x#0
-byte get::return_x#1
-byte get::return_y
-byte get::return_y#0
-byte get::return_y#1
+struct Point get::p loadstore
+struct Point get::return loadstore
 byte idx loadstore
 __stackcall void main()
 bool~ main::$0
@@ -121,18 +102,10 @@ byte main::i#0
 byte main::i#1
 byte main::i#2
 byte main::i#3
-struct Point main::p
-byte main::p_x
-byte main::p_x#0
-byte main::p_y
-byte main::p_y#0
-__stackcall void print(byte print::p_x , byte print::p_y)
-constant byte print::OFFSET_STACK_P_X = 1
-constant byte print::OFFSET_STACK_P_Y = 0
-byte print::p_x
-byte print::p_x#0
-byte print::p_y
-byte print::p_y#0
+struct Point main::p loadstore
+__stackcall void print(struct Point print::p)
+constant byte print::OFFSET_STACK_P = 0
+struct Point print::p loadstore
 
 Adding number conversion cast (unumber) 5 in main::$0 = main::i#2 < 5
 Adding number conversion cast (unumber) 2 in get::$0 = get::i#0 / 2
@@ -147,22 +120,17 @@ Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in get::$0 = get::i#0 / 2
 Alias main::i#2 = main::i#3 
-Alias get::return_x#0 = get::p_x#0 get::i#0 get::return_x#1 
-Alias get::return_y#0 = get::p_y#0 get::$0 get::return_y#1 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$0 [3] if(main::i#2<5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X in [18] stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X) = get::return_x#0
-Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero OFFSET_STRUCT_POINT_Y in [19] stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y) = get::return_y#0
+Simplifying expression containing zero (byte*)&get::p in [15] *((byte*)&get::p+OFFSET_STRUCT_POINT_X) = get::i#0
+Simplifying expression containing zero (byte*)&print::p in [21] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable get::return#0 and assignment [15] get::return#0 = struct-unwound {get::return_x#0, get::return_y#0}
-Eliminating unused constant get::OFFSET_STACK_RETURN
 Eliminating unused constant OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
-Rewriting division to use shift [14] get::return_y#0 = get::return_x#0 / 2
+Rewriting division to use shift [12] get::$0 = get::i#0 / 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
@@ -175,10 +143,10 @@ Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [__start] to main:3 
-Calls in [main] to get:23 print:28 
+Calls in [main] to get:24 print:27 
 
 Created 1 initial phi equivalence classes
-Coalesced [31] main::i#4 = main::i#1
+Coalesced [30] main::i#4 = main::i#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -201,52 +169,51 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-__stackcall void print(byte print::p_x , byte print::p_y)
+__stackcall void print(struct Point print::p)
 print: scope:[print]  from
-  [5] print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X)
-  [6] print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y)
-  [7] SCREEN[idx] = print::p_x#0
-  [8] idx = ++ idx
-  [9] SCREEN[idx] = print::p_y#0
-  [10] idx = ++ idx
+  [5] print::p = stackidx(struct Point,print::OFFSET_STACK_P)
+  [6] SCREEN[idx] = *((byte*)&print::p)
+  [7] idx = ++ idx
+  [8] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y)
+  [9] idx = ++ idx
   to:print::@return
 print::@return: scope:[print]  from print
-  [11] return 
+  [10] return 
   to:@return
 
 __stackcall struct Point get(byte get::i)
 get: scope:[get]  from
-  [12] get::return_x#0 = stackidx(byte,get::OFFSET_STACK_I)
-  [13] get::return_y#0 = get::return_x#0 >> 1
+  [11] get::i#0 = stackidx(byte,get::OFFSET_STACK_I)
+  [12] get::$0 = get::i#0 >> 1
+  [13] *((byte*)&get::p) = get::i#0
+  [14] *((byte*)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0
+  [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT)
   to:get::@return
 get::@return: scope:[get]  from get
-  [14] stackidx(byte,0) = get::return_x#0
-  [15] stackidx(byte,OFFSET_STRUCT_POINT_Y) = get::return_y#0
-  [16] return 
+  [16] stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return
+  [17] return 
   to:@return
 
 __stackcall void main()
 main: scope:[main]  from
-  [17] phi()
+  [18] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [18] main::i#2 = phi( main/0, main::@2/main::i#1 )
-  [19] if(main::i#2<5) goto main::@2
+  [19] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [20] if(main::i#2<5) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [20] return 
+  [21] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [21] stackpush(byte) = main::i#2
+  [22] stackpush(byte) = main::i#2
   sideeffect stackpushbytes(1)
-  [23] callexecute get 
-  [24] main::p_x#0 = stackpull(byte)
-  [25] main::p_y#0 = stackpull(byte)
-  [26] stackpush(byte) = main::p_x#0
-  [27] stackpush(byte) = main::p_y#0
-  [28] callexecute print 
+  [24] callexecute get 
+  [25] main::p = stackpull(struct Point)
+  [26] stackpush(struct Point) = main::p
+  [27] callexecute print 
   sideeffect stackpullbytes(2)
-  [30] main::i#1 = ++ main::i#2
+  [29] main::i#1 = ++ main::i#2
   to:main::@1
 
 null depth in calling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1  in scope print
@@ -255,128 +222,108 @@ null depth in calling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 
 VARIABLE REGISTER WEIGHTS
 void __start()
 __stackcall struct Point get(byte get::i)
+byte~ get::$0 1001.0
 byte get::i
-byte get::p_x
-byte get::p_y
-struct Point get::return
-byte get::return_x
-byte get::return_x#0 1501.5
-byte get::return_y
-byte get::return_y#0 1001.0
-byte idx loadstore 273.0909090909091
+byte get::i#0 1501.5
+struct Point get::p loadstore
+struct Point get::return loadstore 47.666666666666664
+byte idx loadstore 316.2105263157895
 __stackcall void main()
 byte main::i
 byte main::i#1 202.0
-byte main::i#2 36.72727272727273
-struct Point main::p
-byte main::p_x
-byte main::p_x#0 101.0
-byte main::p_y
-byte main::p_y#0 101.0
-__stackcall void print(byte print::p_x , byte print::p_y)
-byte print::p_x
-byte print::p_x#0 1001.0
-byte print::p_y
-byte print::p_y#0 667.3333333333334
+byte main::i#2 44.888888888888886
+struct Point main::p loadstore 202.0
+__stackcall void print(struct Point print::p)
+struct Point print::p loadstore 333.6666666666667
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Added variable idx to live range equivalence class [ idx ]
-Added variable print::p_x#0 to live range equivalence class [ print::p_x#0 ]
-Added variable print::p_y#0 to live range equivalence class [ print::p_y#0 ]
-Added variable get::return_x#0 to live range equivalence class [ get::return_x#0 ]
-Added variable get::return_y#0 to live range equivalence class [ get::return_y#0 ]
-Added variable main::p_x#0 to live range equivalence class [ main::p_x#0 ]
-Added variable main::p_y#0 to live range equivalence class [ main::p_y#0 ]
+Added variable print::p to live range equivalence class [ print::p ]
+Added variable get::i#0 to live range equivalence class [ get::i#0 ]
+Added variable get::$0 to live range equivalence class [ get::$0 ]
+Added variable main::p to live range equivalence class [ main::p ]
+Added variable get::return to live range equivalence class [ get::return ]
+Added variable get::p to live range equivalence class [ get::p ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx ]
-[ print::p_x#0 ]
-[ print::p_y#0 ]
-[ get::return_x#0 ]
-[ get::return_y#0 ]
-[ main::p_x#0 ]
-[ main::p_y#0 ]
+[ print::p ]
+[ get::i#0 ]
+[ get::$0 ]
+[ main::p ]
+[ get::return ]
+[ get::p ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ idx ]
-Allocated zp[1]:4 [ print::p_x#0 ]
-Allocated zp[1]:5 [ print::p_y#0 ]
-Allocated zp[1]:6 [ get::return_x#0 ]
-Allocated zp[1]:7 [ get::return_y#0 ]
-Allocated zp[1]:8 [ main::p_x#0 ]
-Allocated zp[1]:9 [ main::p_y#0 ]
+Allocated zp[2]:4 [ print::p ]
+Allocated zp[1]:6 [ get::i#0 ]
+Allocated zp[1]:7 [ get::$0 ]
+Allocated zp[2]:8 [ main::p ]
+Allocated zp[2]:10 [ get::return ]
+Allocated zp[2]:12 [ get::p ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [5] print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:3::print:28 [ main::i#2 idx print::p_x#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [1] idx = 0 [ idx get::p get::return ] (  [ idx get::p get::return ] { }  ) always clobbers reg byte a 
+Statement [5] print::p = stackidx(struct Point,print::OFFSET_STACK_P) [ idx print::p ] ( main:3::print:27 [ get::p get::return main::i#2 idx print::p ] { }  ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [6] print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:3::print:28 [ main::i#2 idx print::p_x#0 print::p_y#0 ] { }  ) always clobbers reg byte a reg byte x 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::p_x#0 ]
-Removing always clobbered register reg byte x as potential for zp[1]:4 [ print::p_x#0 ]
-Statement [7] SCREEN[idx] = print::p_x#0 [ idx print::p_y#0 ] ( main:3::print:28 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] SCREEN[idx] = *((byte*)&print::p) [ idx print::p ] ( main:3::print:27 [ get::p get::return main::i#2 idx print::p ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:5 [ print::p_y#0 ]
-Removing always clobbered register reg byte y as potential for zp[1]:5 [ print::p_y#0 ]
-Statement [9] SCREEN[idx] = print::p_y#0 [ idx ] ( main:3::print:28 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] get::return_x#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::return_x#0 ] ( main:3::get:23 [ idx main::i#2 get::return_x#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [13] get::return_y#0 = get::return_x#0 >> 1 [ get::return_x#0 get::return_y#0 ] ( main:3::get:23 [ idx main::i#2 get::return_x#0 get::return_y#0 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:6 [ get::return_x#0 ]
-Statement [14] stackidx(byte,0) = get::return_x#0 [ get::return_y#0 ] ( main:3::get:23 [ idx main::i#2 get::return_y#0 ] { }  ) always clobbers reg byte a reg byte x 
-Removing always clobbered register reg byte a as potential for zp[1]:7 [ get::return_y#0 ]
-Removing always clobbered register reg byte x as potential for zp[1]:7 [ get::return_y#0 ]
-Statement [15] stackidx(byte,OFFSET_STRUCT_POINT_Y) = get::return_y#0 [ ] ( main:3::get:23 [ idx main::i#2 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [19] if(main::i#2<5) goto main::@2 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [21] stackpush(byte) = main::i#2 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [24] main::p_x#0 = stackpull(byte) [ idx main::i#2 main::p_x#0 ] ( main:3 [ idx main::i#2 main::p_x#0 ] { }  ) always clobbers reg byte a 
-Statement [25] main::p_y#0 = stackpull(byte) [ idx main::i#2 main::p_x#0 main::p_y#0 ] ( main:3 [ idx main::i#2 main::p_x#0 main::p_y#0 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::p_x#0 ]
-Statement [26] stackpush(byte) = main::p_x#0 [ idx main::i#2 main::p_y#0 ] ( main:3 [ idx main::i#2 main::p_y#0 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::p_y#0 ]
-Statement [27] stackpush(byte) = main::p_y#0 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [8] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:27 [ get::p get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::i#0 get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::i#0 get::p get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [12] get::$0 = get::i#0 >> 1 [ get::i#0 get::$0 get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::i#0 get::$0 get::p get::return ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ get::i#0 ]
+Statement [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) [ get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::p get::return ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return [ get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::p get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [20] if(main::i#2<5) goto main::@2 [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [22] stackpush(byte) = main::i#2 [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [25] main::p = stackpull(struct Point) [ idx get::p get::return main::i#2 main::p ] ( main:3 [ idx get::p get::return main::i#2 main::p ] { }  ) always clobbers reg byte a 
+Statement [26] stackpush(struct Point) = main::p [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(2) always clobbers reg byte a 
-Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [5] print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:3::print:28 [ main::i#2 idx print::p_x#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [6] print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:3::print:28 [ main::i#2 idx print::p_x#0 print::p_y#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [7] SCREEN[idx] = print::p_x#0 [ idx print::p_y#0 ] ( main:3::print:28 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] SCREEN[idx] = print::p_y#0 [ idx ] ( main:3::print:28 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] get::return_x#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::return_x#0 ] ( main:3::get:23 [ idx main::i#2 get::return_x#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [13] get::return_y#0 = get::return_x#0 >> 1 [ get::return_x#0 get::return_y#0 ] ( main:3::get:23 [ idx main::i#2 get::return_x#0 get::return_y#0 ] { }  ) always clobbers reg byte a 
-Statement [14] stackidx(byte,0) = get::return_x#0 [ get::return_y#0 ] ( main:3::get:23 [ idx main::i#2 get::return_y#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [15] stackidx(byte,OFFSET_STRUCT_POINT_Y) = get::return_y#0 [ ] ( main:3::get:23 [ idx main::i#2 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [19] if(main::i#2<5) goto main::@2 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [21] stackpush(byte) = main::i#2 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [24] main::p_x#0 = stackpull(byte) [ idx main::i#2 main::p_x#0 ] ( main:3 [ idx main::i#2 main::p_x#0 ] { }  ) always clobbers reg byte a 
-Statement [25] main::p_y#0 = stackpull(byte) [ idx main::i#2 main::p_x#0 main::p_y#0 ] ( main:3 [ idx main::i#2 main::p_x#0 main::p_y#0 ] { }  ) always clobbers reg byte a 
-Statement [26] stackpush(byte) = main::p_x#0 [ idx main::i#2 main::p_y#0 ] ( main:3 [ idx main::i#2 main::p_y#0 ] { }  ) always clobbers reg byte a 
-Statement [27] stackpush(byte) = main::p_y#0 [ idx main::i#2 ] ( main:3 [ idx main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [1] idx = 0 [ idx get::p get::return ] (  [ idx get::p get::return ] { }  ) always clobbers reg byte a 
+Statement [5] print::p = stackidx(struct Point,print::OFFSET_STACK_P) [ idx print::p ] ( main:3::print:27 [ get::p get::return main::i#2 idx print::p ] { }  ) always clobbers reg byte a reg byte x 
+Statement [6] SCREEN[idx] = *((byte*)&print::p) [ idx print::p ] ( main:3::print:27 [ get::p get::return main::i#2 idx print::p ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:27 [ get::p get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::i#0 get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::i#0 get::p get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [12] get::$0 = get::i#0 >> 1 [ get::i#0 get::$0 get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::i#0 get::$0 get::p get::return ] { }  ) always clobbers reg byte a 
+Statement [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) [ get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::p get::return ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return [ get::p get::return ] ( main:3::get:24 [ idx main::i#2 get::p get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [20] if(main::i#2<5) goto main::@2 [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [22] stackpush(byte) = main::i#2 [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [25] main::p = stackpull(struct Point) [ idx get::p get::return main::i#2 main::p ] ( main:3 [ idx get::p get::return main::i#2 main::p ] { }  ) always clobbers reg byte a 
+Statement [26] stackpush(struct Point) = main::p [ idx get::p get::return main::i#2 ] ( main:3 [ idx get::p get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(2) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
-Potential registers zp[1]:4 [ print::p_x#0 ] : zp[1]:4 , reg byte y , 
-Potential registers zp[1]:5 [ print::p_y#0 ] : zp[1]:5 , reg byte x , 
-Potential registers zp[1]:6 [ get::return_x#0 ] : zp[1]:6 , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ get::return_y#0 ] : zp[1]:7 , reg byte y , 
-Potential registers zp[1]:8 [ main::p_x#0 ] : zp[1]:8 , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ main::p_y#0 ] : zp[1]:9 , reg byte x , reg byte y , 
+Potential registers zp[2]:4 [ print::p ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ get::i#0 ] : zp[1]:6 , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ get::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:8 [ main::p ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ get::return ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ get::p ] : zp[2]:12 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [get] 1,501.5: zp[1]:6 [ get::return_x#0 ] 1,001: zp[1]:7 [ get::return_y#0 ] 
-Uplift Scope [print] 1,001: zp[1]:4 [ print::p_x#0 ] 667.33: zp[1]:5 [ print::p_y#0 ] 
-Uplift Scope [main] 238.73: zp[1]:2 [ main::i#2 main::i#1 ] 101: zp[1]:8 [ main::p_x#0 ] 101: zp[1]:9 [ main::p_y#0 ] 
-Uplift Scope [] 273.09: zp[1]:3 [ idx ] 
+Uplift Scope [get] 1,501.5: zp[1]:6 [ get::i#0 ] 1,001: zp[1]:7 [ get::$0 ] 47.67: zp[2]:10 [ get::return ] 0: zp[2]:12 [ get::p ] 
+Uplift Scope [main] 246.89: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[2]:8 [ main::p ] 
+Uplift Scope [print] 333.67: zp[2]:4 [ print::p ] 
+Uplift Scope [] 316.21: zp[1]:3 [ idx ] 
 Uplift Scope [Point] 
 Uplift Scope [__start] 
 
-Uplifting [get] best 974 combination reg byte x [ get::return_x#0 ] reg byte y [ get::return_y#0 ] 
-Uplifting [print] best 970 combination reg byte y [ print::p_x#0 ] reg byte x [ print::p_y#0 ] 
-Uplifting [main] best 930 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte y [ main::p_x#0 ] reg byte x [ main::p_y#0 ] 
-Uplifting [] best 930 combination zp[1]:3 [ idx ] 
-Uplifting [Point] best 930 combination 
-Uplifting [__start] best 930 combination 
+Uplifting [get] best 995 combination reg byte x [ get::i#0 ] reg byte a [ get::$0 ] zp[2]:10 [ get::return ] zp[2]:12 [ get::p ] 
+Uplifting [main] best 995 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[2]:8 [ main::p ] 
+Uplifting [print] best 995 combination zp[2]:4 [ print::p ] 
+Uplifting [] best 995 combination zp[1]:3 [ idx ] 
+Uplifting [Point] best 995 combination 
+Uplifting [__start] best 995 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ idx ]
-Uplifting [] best 930 combination zp[1]:3 [ idx ] 
+Uplifting [] best 995 combination zp[1]:3 [ idx ] 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 930 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 995 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Coalescing zero page register [ zp[2]:8 [ main::p ] ] with [ zp[2]:4 [ print::p ] ]
+Allocated (was zp[2]:8) zp[2]:4 [ main::p print::p ]
+Allocated (was zp[2]:10) zp[2]:6 [ get::return ]
+Allocated (was zp[2]:12) zp[2]:8 [ get::p ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -392,8 +339,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
+  .const SIZEOF_STRUCT_POINT = 2
+  .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -419,112 +367,121 @@ __start: {
     rts
 }
   // print
-// print(byte register(Y) p_x, byte register(X) p_y)
+// print(struct Point zp(4) p)
 print: {
-    .const OFFSET_STACK_P_X = 1
-    .const OFFSET_STACK_P_Y = 0
-    // [5] print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X) -- vbuyy=_stackidxbyte_vbuc1 
+    .const OFFSET_STACK_P = 0
+    .label p = 4
+    // [5] print::p = stackidx(struct Point,print::OFFSET_STACK_P) -- vssz1=_stackidxstruct_2_vbuc1 
     tsx
-    lda STACK_BASE+OFFSET_STACK_P_X,x
-    tay
-    // [6] print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y) -- vbuxx=_stackidxbyte_vbuc1 
-    tsx
-    lda STACK_BASE+OFFSET_STACK_P_Y,x
-    tax
-    // [7] SCREEN[idx] = print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
-    tya
+    lda STACK_BASE+OFFSET_STACK_P,x
+    sta.z p
+    lda STACK_BASE+OFFSET_STACK_P+1,x
+    sta.z p+1
+    // [6] SCREEN[idx] = *((byte*)&print::p) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    lda.z p
     ldy.z idx
     sta SCREEN,y
-    // [8] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [9] SCREEN[idx] = print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [8] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    lda p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
-    txa
     sta SCREEN,y
-    // [10] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // print::@return
   __breturn:
-    // [11] return 
+    // [10] return 
     rts
 }
   // get
+// get(byte register(X) i)
 get: {
     .const OFFSET_STACK_I = 0
-    // [12] get::return_x#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuxx=_stackidxbyte_vbuc1 
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label return = 6
+    .label p = 8
+    // [11] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuxx=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tax
-    // [13] get::return_y#0 = get::return_x#0 >> 1 -- vbuyy=vbuxx_ror_1 
+    // [12] get::$0 = get::i#0 >> 1 -- vbuaa=vbuxx_ror_1 
     txa
     lsr
-    tay
+    // [13] *((byte*)&get::p) = get::i#0 -- _deref_pbuc1=vbuxx 
+    stx.z p
+    // [14] *((byte*)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuaa 
+    sta p+OFFSET_STRUCT_POINT_Y
+    // [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p-1,y
+    sta return-1,y
+    dey
+    bne !-
     jmp __breturn
     // get::@return
   __breturn:
-    // [14] stackidx(byte,0) = get::return_x#0 -- _stackidxbyte_vbuc1=vbuxx 
-    txa
+    // [16] stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return -- _stackidxstruct_2_vbuc1=vssz1 
     tsx
-    sta STACK_BASE+0,x
-    // [15] stackidx(byte,OFFSET_STRUCT_POINT_Y) = get::return_y#0 -- _stackidxbyte_vbuc1=vbuyy 
-    tya
-    tsx
-    sta STACK_BASE+OFFSET_STRUCT_POINT_Y,x
-    // [16] return 
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
+    // [17] return 
     rts
 }
   // main
 main: {
+    .label p = 4
     .label i = 2
-    // [18] phi from main to main::@1 [phi:main->main::@1]
+    // [19] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [18] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [19] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // main::@1
   __b1:
-    // [19] if(main::i#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [20] if(main::i#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #5
     bcc __b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [20] return 
+    // [21] return 
     rts
     // main::@2
   __b2:
-    // [21] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
+    // [22] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
     // sideeffect stackpushbytes(1) -- _stackpushbyte_1 
     pha
-    // [23] callexecute get  -- jsr 
+    // [24] callexecute get  -- jsr 
     jsr get
-    // [24] main::p_x#0 = stackpull(byte) -- vbuyy=_stackpullbyte_ 
+    // [25] main::p = stackpull(struct Point) -- vssz1=_stackpullstruct_2_ 
     pla
-    tay
-    // [25] main::p_y#0 = stackpull(byte) -- vbuxx=_stackpullbyte_ 
+    sta.z p
     pla
-    tax
-    // [26] stackpush(byte) = main::p_x#0 -- _stackpushbyte_=vbuyy 
-    tya
+    sta.z p+1
+    // [26] stackpush(struct Point) = main::p -- _stackpushstruct_2_=vssz1 
+    lda.z p+1
     pha
-    // [27] stackpush(byte) = main::p_y#0 -- _stackpushbyte_=vbuxx 
-    txa
+    lda.z p
     pha
-    // [28] callexecute print  -- jsr 
+    // [27] callexecute print  -- jsr 
     jsr print
     // sideeffect stackpullbytes(2) -- _stackpullbyte_2 
     pla
     pla
-    // [30] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    // [29] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [18] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [19] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [18] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [19] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -538,6 +495,8 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda.z p+1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
@@ -553,48 +512,38 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 constant byte OFFSET_STRUCT_POINT_Y = 1
 constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_STRUCT_POINT = 2
 constant word STACK_BASE = $103
 void __start()
 __stackcall struct Point get(byte get::i)
+byte~ get::$0 reg byte a 1001.0
 constant byte get::OFFSET_STACK_I = 0
+constant byte get::OFFSET_STACK_RETURN_0 = 0
 byte get::i
-byte get::p_x
-byte get::p_y
-struct Point get::return
-byte get::return_x
-byte get::return_x#0 reg byte x 1501.5
-byte get::return_y
-byte get::return_y#0 reg byte y 1001.0
-byte idx loadstore zp[1]:3 273.0909090909091
+byte get::i#0 reg byte x 1501.5
+struct Point get::p loadstore zp[2]:8
+struct Point get::return loadstore zp[2]:6 47.666666666666664
+byte idx loadstore zp[1]:3 316.2105263157895
 __stackcall void main()
 byte main::i
 byte main::i#1 i zp[1]:2 202.0
-byte main::i#2 i zp[1]:2 36.72727272727273
-struct Point main::p
-byte main::p_x
-byte main::p_x#0 reg byte y 101.0
-byte main::p_y
-byte main::p_y#0 reg byte x 101.0
-__stackcall void print(byte print::p_x , byte print::p_y)
-constant byte print::OFFSET_STACK_P_X = 1
-constant byte print::OFFSET_STACK_P_Y = 0
-byte print::p_x
-byte print::p_x#0 reg byte y 1001.0
-byte print::p_y
-byte print::p_y#0 reg byte x 667.3333333333334
+byte main::i#2 i zp[1]:2 44.888888888888886
+struct Point main::p loadstore zp[2]:4 202.0
+__stackcall void print(struct Point print::p)
+constant byte print::OFFSET_STACK_P = 0
+struct Point print::p loadstore zp[2]:4 333.6666666666667
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[1]:3 [ idx ]
-reg byte y [ print::p_x#0 ]
-reg byte x [ print::p_y#0 ]
-reg byte x [ get::return_x#0 ]
-reg byte y [ get::return_y#0 ]
-reg byte y [ main::p_x#0 ]
-reg byte x [ main::p_y#0 ]
+reg byte x [ get::i#0 ]
+reg byte a [ get::$0 ]
+zp[2]:4 [ main::p print::p ]
+zp[2]:6 [ get::return ]
+zp[2]:8 [ get::p ]
 
 
 FINAL ASSEMBLER
-Score: 828
+Score: 863
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -609,8 +558,9 @@ Score: 828
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
+  .const SIZEOF_STRUCT_POINT = 2
+  .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -630,115 +580,125 @@ __start: {
     rts
 }
   // print
-// print(byte register(Y) p_x, byte register(X) p_y)
+// print(struct Point zp(4) p)
 print: {
-    .const OFFSET_STACK_P_X = 1
-    .const OFFSET_STACK_P_Y = 0
-    // [5] print::p_x#0 = stackidx(byte,print::OFFSET_STACK_P_X) -- vbuyy=_stackidxbyte_vbuc1 
+    .const OFFSET_STACK_P = 0
+    .label p = 4
+    // [5] print::p = stackidx(struct Point,print::OFFSET_STACK_P) -- vssz1=_stackidxstruct_2_vbuc1 
     tsx
-    lda STACK_BASE+OFFSET_STACK_P_X,x
-    tay
-    // [6] print::p_y#0 = stackidx(byte,print::OFFSET_STACK_P_Y) -- vbuxx=_stackidxbyte_vbuc1 
-    tsx
-    lda STACK_BASE+OFFSET_STACK_P_Y,x
-    tax
+    lda STACK_BASE+OFFSET_STACK_P,x
+    sta.z p
+    lda STACK_BASE+OFFSET_STACK_P+1,x
+    sta.z p+1
     // SCREEN[idx++] = p.x
-    // [7] SCREEN[idx] = print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
-    tya
+    // [6] SCREEN[idx] = *((byte*)&print::p) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    lda.z p
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.x;
-    // [8] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // SCREEN[idx++] = p.y
-    // [9] SCREEN[idx] = print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [8] SCREEN[idx] = *((byte*)&print::p+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    lda p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
-    txa
     sta SCREEN,y
     // SCREEN[idx++] = p.y;
-    // [10] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // print::@return
     // }
-    // [11] return 
+    // [10] return 
     rts
 }
   // get
+// get(byte register(X) i)
 get: {
     .const OFFSET_STACK_I = 0
-    // [12] get::return_x#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuxx=_stackidxbyte_vbuc1 
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label return = 6
+    .label p = 8
+    // [11] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuxx=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tax
     // i/2
-    // [13] get::return_y#0 = get::return_x#0 >> 1 -- vbuyy=vbuxx_ror_1 
+    // [12] get::$0 = get::i#0 >> 1 -- vbuaa=vbuxx_ror_1 
     txa
     lsr
-    tay
+    // struct Point p = { i, i/2 }
+    // [13] *((byte*)&get::p) = get::i#0 -- _deref_pbuc1=vbuxx 
+    stx.z p
+    // [14] *((byte*)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuaa 
+    sta p+OFFSET_STRUCT_POINT_Y
+    // return p;
+    // [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p-1,y
+    sta return-1,y
+    dey
+    bne !-
     // get::@return
     // }
-    // [14] stackidx(byte,0) = get::return_x#0 -- _stackidxbyte_vbuc1=vbuxx 
-    txa
+    // [16] stackidx(struct Point,get::OFFSET_STACK_RETURN_0) = get::return -- _stackidxstruct_2_vbuc1=vssz1 
     tsx
-    sta STACK_BASE+0,x
-    // [15] stackidx(byte,OFFSET_STRUCT_POINT_Y) = get::return_y#0 -- _stackidxbyte_vbuc1=vbuyy 
-    tya
-    tsx
-    sta STACK_BASE+OFFSET_STRUCT_POINT_Y,x
-    // [16] return 
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
+    // [17] return 
     rts
 }
   // main
 main: {
+    .label p = 4
     .label i = 2
-    // [18] phi from main to main::@1 [phi:main->main::@1]
-    // [18] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [19] phi from main to main::@1 [phi:main->main::@1]
+    // [19] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // main::@1
   __b1:
     // for(char i=0;i<5;i++)
-    // [19] if(main::i#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [20] if(main::i#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #5
     bcc __b2
     // main::@return
     // }
-    // [20] return 
+    // [21] return 
     rts
     // main::@2
   __b2:
     // struct Point p = get(i)
-    // [21] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
+    // [22] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
     // sideeffect stackpushbytes(1) -- _stackpushbyte_1 
     pha
-    // [23] callexecute get  -- jsr 
+    // [24] callexecute get  -- jsr 
     jsr get
-    // [24] main::p_x#0 = stackpull(byte) -- vbuyy=_stackpullbyte_ 
+    // [25] main::p = stackpull(struct Point) -- vssz1=_stackpullstruct_2_ 
     pla
-    tay
-    // [25] main::p_y#0 = stackpull(byte) -- vbuxx=_stackpullbyte_ 
+    sta.z p
     pla
-    tax
+    sta.z p+1
     // print(p)
-    // [26] stackpush(byte) = main::p_x#0 -- _stackpushbyte_=vbuyy 
-    tya
+    // [26] stackpush(struct Point) = main::p -- _stackpushstruct_2_=vssz1 
     pha
-    // [27] stackpush(byte) = main::p_y#0 -- _stackpushbyte_=vbuxx 
-    txa
+    lda.z p
     pha
-    // [28] callexecute print  -- jsr 
+    // [27] callexecute print  -- jsr 
     jsr print
     // sideeffect stackpullbytes(2) -- _stackpullbyte_2 
     pla
     pla
     // for(char i=0;i<5;i++)
-    // [30] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    // [29] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [18] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [18] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [19] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [19] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

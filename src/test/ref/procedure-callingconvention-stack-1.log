@@ -3,7 +3,7 @@ Adding parameter assignment in __stackcall procedure plus::a = param(plus::a)
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call plus '0' 7 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(byte,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(byte,plus::OFFSET_STACK_B)
-Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return
+Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(byte)
 Calling convention STACK_CALL adding stack push stackpush(byte) = '0'
 Calling convention STACK_CALL adding stack push stackpush(byte) = 7
@@ -32,7 +32,7 @@ plus: scope:[plus]  from
   to:plus::@return
 plus::@return: scope:[plus]  from plus
   plus::return#1 = phi( plus/plus::return#0 )
-  stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#1
+  stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#1
   return 
   to:@return
 
@@ -56,7 +56,7 @@ __stackcall byte plus(byte plus::a , byte plus::b)
 byte~ plus::$0
 constant byte plus::OFFSET_STACK_A = 1
 constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN = 1
+constant byte plus::OFFSET_STACK_RETURN_1 = 1
 byte plus::a
 byte plus::a#0
 byte plus::b
@@ -103,7 +103,7 @@ plus: scope:[plus]  from
   [2] plus::return#0 = plus::a#0 + plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [3] stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#0
+  [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0
   [4] return 
   to:@return
 
@@ -152,7 +152,7 @@ Statement [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ plus::a#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ plus::a#0 ]
 Statement [2] plus::return#0 = plus::a#0 + plus::b#0 [ plus::return#0 ] ( plus:7 [ plus::return#0 ] { }  ) always clobbers reg byte a 
-Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
+Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
 Statement [5] stackpush(byte) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] stackpush(byte) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
@@ -160,7 +160,7 @@ Statement [9] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { }  ) alw
 Statement [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [2] plus::return#0 = plus::a#0 + plus::b#0 [ plus::return#0 ] ( plus:7 [ plus::return#0 ] { }  ) always clobbers reg byte a 
-Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
+Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
 Statement [5] stackpush(byte) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] stackpush(byte) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
@@ -202,7 +202,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 1
+    .const OFFSET_STACK_RETURN_1 = 1
     .label a = 2
     // [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
@@ -217,9 +217,9 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [4] return 
     rts
 }
@@ -263,7 +263,7 @@ byte~ main::$0 reg byte a 4.0
 __stackcall byte plus(byte plus::a , byte plus::b)
 constant byte plus::OFFSET_STACK_A = 1
 constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN = 1
+constant byte plus::OFFSET_STACK_RETURN_1 = 1
 byte plus::a
 byte plus::a#0 a zp[1]:2 11.0
 byte plus::b
@@ -300,7 +300,7 @@ Score: 67
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 1
+    .const OFFSET_STACK_RETURN_1 = 1
     .label a = 2
     // [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
@@ -315,9 +315,9 @@ plus: {
     adc.z a
     // plus::@return
     // }
-    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [4] return 
     rts
 }

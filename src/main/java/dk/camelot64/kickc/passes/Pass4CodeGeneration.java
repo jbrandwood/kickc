@@ -811,11 +811,15 @@ public class Pass4CodeGeneration {
             try {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+               StatementSource statementSource = statement.getSource();
                if(warnFragmentMissing) {
-                  program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + statement.getSource().format());
+                  String stmtFormat = "";
+                  if(statementSource!=null)
+                     stmtFormat = statementSource.format();
+                  program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + stmtFormat);
                   asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment " + e.getFragmentSignature() + "\", 0, 1", 0L, 0L));
                } else {
-                  throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());
+                  throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statementSource);
                }
             } catch(CompileError e) {
                if(e.getSource() == null) {
@@ -909,8 +913,55 @@ public class Pass4CodeGeneration {
             }
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
-            asm.getCurrentChunk().setFragment("jsr");
-            asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            RValue procedureRVal = call.getProcedureRVal();
+            boolean supported = false;
+            if(procedureRVal instanceof ProcedureRef) {
+               asm.getCurrentChunk().setFragment("jsr");
+               asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+               supported = true;
+            } else if(procedureRVal instanceof PointerDereferenceSimple) {
+               RValue pointer = ((PointerDereferenceSimple) procedureRVal).getPointer();
+               if(pointer instanceof ConstantValue) {
+                  ensureEncoding(asm, pointer);
+                  asm.addInstruction("jsr", CpuAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
+                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                  supported = true;
+               } else if(pointer instanceof VariableRef) {
+                  Variable variable = getScope().getVariable((VariableRef) pointer);
+                  generateIndirectCall(asm, variable, block.getScope());
+                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                  supported = true;
+               } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
+                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
+                  generateIndirectCall(asm, variable, block.getScope());
+                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                  supported = true;
+               }
+            } else if(procedureRVal instanceof VariableRef) {
+               Variable procedureVariable = getScope().getVariable((VariableRef) procedureRVal);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     generateIndirectCall(asm, procedureVariable, block.getScope());
+                     supported = true;
+                     asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                  }
+               }
+            } else if(procedureRVal instanceof ConstantRef) {
+               Variable procedureVariable = getScope().getConstant((ConstantRef) procedureRVal);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, block.getScope());
+                     asm.addInstruction("jsr", CpuAddressingMode.ABS, varAsmName, false);
+                     asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                     supported = true;
+                  }
+               }
+            }
+            if(!supported) {
+               throw new InternalError("Call Pointer not supported " + statement);
+            }
          } else if(statement instanceof StatementExprSideEffect) {
             AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program);
             ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
@@ -952,51 +1003,6 @@ public class Pass4CodeGeneration {
                asm.getCurrentChunk().setClobberOverwrite(statementKasm.getDeclaredClobber());
             }
          } else if(statement instanceof StatementCallPointer) {
-            StatementCallPointer callPointer = (StatementCallPointer) statement;
-            RValue procedure = callPointer.getProcedure();
-            boolean supported = false;
-            if(procedure instanceof PointerDereferenceSimple) {
-               RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
-               if(pointer instanceof ConstantValue) {
-                  ensureEncoding(asm, pointer);
-                  asm.addInstruction("jsr", CpuAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
-                  supported = true;
-               } else if(pointer instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) pointer);
-                  generateIndirectCall(asm, variable, block.getScope());
-                  supported = true;
-               } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
-                  generateIndirectCall(asm, variable, block.getScope());
-                  supported = true;
-               }
-            } else if(procedure instanceof VariableRef) {
-               Variable procedureVariable = getScope().getVariable((VariableRef) procedure);
-               SymbolType procedureVariableType = procedureVariable.getType();
-               if(procedureVariableType instanceof SymbolTypePointer) {
-                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     generateIndirectCall(asm, procedureVariable, block.getScope());
-                     supported = true;
-                  }
-               }
-            } else if(procedure instanceof ConstantRef) {
-               Variable procedureVariable = getScope().getConstant((ConstantRef) procedure);
-               SymbolType procedureVariableType = procedureVariable.getType();
-               if(procedureVariableType instanceof SymbolTypePointer) {
-                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, block.getScope());
-                     asm.addInstruction("jsr", CpuAddressingMode.ABS, varAsmName, false);
-                     supported = true;
-                  }
-               }
-            }
-            if(supported) {
-               asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-            }
-            if(!supported) {
-               throw new InternalError("Call Pointer not supported " + statement);
-            }
-         } else {
             throw new InternalError("Statement not supported " + statement);
          }
       }

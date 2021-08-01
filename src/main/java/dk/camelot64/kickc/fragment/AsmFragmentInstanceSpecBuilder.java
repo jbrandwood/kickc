@@ -11,6 +11,7 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.lang.InternalError;
 import java.util.HashMap;
@@ -127,6 +128,7 @@ public class AsmFragmentInstanceSpecBuilder {
 
    /**
     * MAKELONG4() creates a long form 4 bytes
+    *
     * @param call The intrinsic call
     * @param program The program
     * @return The ASM fragment instance
@@ -142,7 +144,7 @@ public class AsmFragmentInstanceSpecBuilder {
       signature.append(bind(make4long.getlValue()));
       signature.append("=");
       signature.append("_makelong4_(");
-      if(make4long.getParameters().size()!=4)
+      if(make4long.getParameters().size() != 4)
          throw new CompileError("MAKELONG4() needs 4 parameters.", make4long);
       signature.append(bind(make4long.getParameter(3)));
       signature.append(")_(");
@@ -279,7 +281,7 @@ public class AsmFragmentInstanceSpecBuilder {
       } else if(
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 0 &&
-                  (Operators.MINUS.equals(operator) || Operators.PLUS.equals(operator)) ) {
+                  (Operators.MINUS.equals(operator) || Operators.PLUS.equals(operator))) {
          signature.append("0");
       } else {
          signature.append(bind(rValue2));
@@ -475,15 +477,15 @@ public class AsmFragmentInstanceSpecBuilder {
          StackIdxValue stackIdxValue = (StackIdxValue) value;
          SymbolType type = stackIdxValue.getValueType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
-         return "_stackidx" + typeShortName + "_" + bind(stackIdxValue.getStackOffset());
+         return "_stackidx" + typeShortName + bindStructSize(type) + "_" + bind(stackIdxValue.getStackOffset());
       } else if(value instanceof StackPushValue) {
          SymbolType type = ((StackPushValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
-         return "_stackpush" + typeShortName + "_";
+         return "_stackpush" + typeShortName + bindStructSize(type) + "_";
       } else if(value instanceof StackPullValue) {
          SymbolType type = ((StackPullValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
-         return "_stackpull" + typeShortName + "_";
+         return "_stackpull" + typeShortName + bindStructSize(type) + "_";
       } else if(value instanceof StackPullBytes) {
          final ConstantInteger bytes = (ConstantInteger) ((StackPullBytes) value).getBytes();
          return "_stackpullbyte_" + AsmFormat.getAsmNumber(bytes.getInteger());
@@ -508,6 +510,23 @@ public class AsmFragmentInstanceSpecBuilder {
          return bind(memcpyValue.getSource()) + "_memcpy_" + bind(sizeConst);
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
+   }
+
+   /**
+    * Binds the struct size (if the type is a struct.)
+    *
+    * @param type The type
+    * @return The bind name
+    */
+   private String bindStructSize(SymbolType type) {
+      if(type instanceof SymbolTypeStruct) {
+         ConstantRef sizeConst = SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
+         ConstantLiteral literal = sizeConst.calculateLiteral(program.getScope());
+         if(literal instanceof ConstantInteger && ((ConstantInteger) literal).getInteger() <= 4L)
+            return "_" + ((ConstantInteger) literal).getInteger();
+         return "_" + bind(sizeConst);
+      }
+      return "";
    }
 
    /**

@@ -5,7 +5,7 @@ Calling convention __stackcall adding prepare/execute/finalize for main::$0 = ca
 Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call call1 3 4 
 Calling convention STACK_CALL replacing param(call1::param1) with stackidx(byte,call1::OFFSET_STACK_PARAM1)
 Calling convention STACK_CALL replacing param(call1::param2) with stackidx(byte,call1::OFFSET_STACK_PARAM2)
-Calling convention STACK_CALL adding stack return stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return
+Calling convention STACK_CALL adding stack return stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(byte)
 Calling convention STACK_CALL adding stack pull main::$1 = stackpull(byte)
 Calling convention STACK_CALL adding stack push stackpush(byte) = 1
@@ -24,7 +24,7 @@ call1: scope:[call1]  from
   to:call1::@return
 call1::@return: scope:[call1]  from call1
   call1::return#1 = phi( call1/call1::return#0 )
-  stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#1
+  stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#1
   return 
   to:@return
 
@@ -122,7 +122,7 @@ __stackcall byte call1(byte call1::param1 , byte call1::param2)
 byte~ call1::$0
 constant byte call1::OFFSET_STACK_PARAM1 = 1
 constant byte call1::OFFSET_STACK_PARAM2 = 0
-constant byte call1::OFFSET_STACK_RETURN = 1
+constant byte call1::OFFSET_STACK_RETURN_1 = 1
 byte call1::param1
 byte call1::param1#0
 byte call1::param2
@@ -325,7 +325,7 @@ call1: scope:[call1]  from
   [31] call1::return#0 = call1::param1#0 + call1::param2#0
   to:call1::@return
 call1::@return: scope:[call1]  from call1
-  [32] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0
+  [32] stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#0
   [33] return 
   to:@return
 
@@ -453,7 +453,7 @@ Statement [30] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) [ cal
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ call1::param1#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:15 [ call1::param1#0 ]
 Statement [31] call1::return#0 = call1::param1#0 + call1::param2#0 [ call1::return#0 ] ( call1:2 [ call1::return#0 ] { }  call1:8 [ call1::return#0 ] { }  ) always clobbers reg byte a 
-Statement [32] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
+Statement [32] stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
 Statement [35] call2::$0 = call2::param1#2 + call2::param2#2 [ call2::$0 ] ( call2:12 [ call2::$0 ] { { call2::return = } }  call2:16 [ call2::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
 Statement [39] call3::return#0 = call3::param1#2 + call3::param2#2 [ call3::return#0 ] ( call3:20 [ call3::return#0 ] { { call3::return#0 = call3::return#2 } }  call3:24 [ call3::return#0 ] { { call3::return#0 = call3::return#3 } }  ) always clobbers reg byte a 
 Statement [0] stackpush(byte) = 1 [ ] (  [ ] { { call2::return = } }  ) always clobbers reg byte a 
@@ -467,7 +467,7 @@ Statement [10] main::$1 = stackpull(byte) [ main::$1 ] (  [ main::$1 ] { { call2
 Statement [29] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) [ call1::param1#0 ] ( call1:2 [ call1::param1#0 ] { }  call1:8 [ call1::param1#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [30] call1::param2#0 = stackidx(byte,call1::OFFSET_STACK_PARAM2) [ call1::param1#0 call1::param2#0 ] ( call1:2 [ call1::param1#0 call1::param2#0 ] { }  call1:8 [ call1::param1#0 call1::param2#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [31] call1::return#0 = call1::param1#0 + call1::param2#0 [ call1::return#0 ] ( call1:2 [ call1::return#0 ] { }  call1:8 [ call1::return#0 ] { }  ) always clobbers reg byte a 
-Statement [32] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
+Statement [32] stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#0 [ ] ( call1:2 [ ] { }  call1:8 [ ] { }  ) always clobbers reg byte x 
 Statement [35] call2::$0 = call2::param1#2 + call2::param2#2 [ call2::$0 ] ( call2:12 [ call2::$0 ] { { call2::return = } }  call2:16 [ call2::$0 ] { { call2::return = } }  ) always clobbers reg byte a 
 Statement [39] call3::return#0 = call3::param1#2 + call3::param2#2 [ call3::return#0 ] ( call3:20 [ call3::return#0 ] { { call3::return#0 = call3::return#2 } }  call3:24 [ call3::return#0 ] { { call3::return#0 = call3::return#3 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ call2::param1#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
@@ -637,7 +637,7 @@ main: {
 call1: {
     .const OFFSET_STACK_PARAM1 = 1
     .const OFFSET_STACK_PARAM2 = 0
-    .const OFFSET_STACK_RETURN = 1
+    .const OFFSET_STACK_RETURN_1 = 1
     .label param1 = 2
     // [29] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
@@ -652,9 +652,9 @@ call1: {
     jmp __breturn
     // call1::@return
   __breturn:
-    // [32] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [32] stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [33] return 
     rts
 }
@@ -720,7 +720,7 @@ constant word STACK_BASE = $103
 __stackcall byte call1(byte call1::param1 , byte call1::param2)
 constant byte call1::OFFSET_STACK_PARAM1 = 1
 constant byte call1::OFFSET_STACK_PARAM2 = 0
-constant byte call1::OFFSET_STACK_RETURN = 1
+constant byte call1::OFFSET_STACK_RETURN_1 = 1
 byte call1::param1
 byte call1::param1#0 param1 zp[1]:2 11.0
 byte call1::param2
@@ -897,7 +897,7 @@ main: {
 call1: {
     .const OFFSET_STACK_PARAM1 = 1
     .const OFFSET_STACK_PARAM2 = 0
-    .const OFFSET_STACK_RETURN = 1
+    .const OFFSET_STACK_RETURN_1 = 1
     .label param1 = 2
     // [29] call1::param1#0 = stackidx(byte,call1::OFFSET_STACK_PARAM1) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
@@ -912,9 +912,9 @@ call1: {
     adc.z param1
     // call1::@return
     // }
-    // [32] stackidx(byte,call1::OFFSET_STACK_RETURN) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [32] stackidx(byte,call1::OFFSET_STACK_RETURN_1) = call1::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [33] return 
     rts
 }

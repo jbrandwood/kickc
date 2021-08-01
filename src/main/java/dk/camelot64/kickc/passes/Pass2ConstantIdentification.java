@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -140,7 +141,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   if(var.isVolatile() || var.isKindLoadStore())
                      // Do not examine volatiles and non-versioned variables
                      continue;
-                  if(var.getRegister()!=null && var.getRegister().isMem())
+                  if(var.getRegister() != null && var.getRegister().isMem())
                      // Skip variables allocated into memory
                      continue;
                   ConstantValue constant = getConstant(assignment.getrValue2());
@@ -173,7 +174,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          if(variable.isVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
-         if(variable.getRegister()!=null && variable.getRegister().isMem())
+         if(variable.getRegister() != null && variable.getRegister().isMem())
             // Skip variables allocated into memory
             continue;
          final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable.getRef(), getGraph(), getScope());
@@ -290,7 +291,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(value instanceof ProcedureRef && value.equals(procedureRef)) {
-            found[0] = true;
+            if(!(programValue instanceof ProgramValue.CallExecuteProcedure))
+               found[0] = true;
          }
       });
       if(found[0]) {

@@ -133,6 +133,8 @@ public class ProgramValueIterator {
                execute(new ProgramValue.CallPrepareParameter(call, i), handler, statement, statementsIt, block);
             }
          }
+      } else if(statement instanceof StatementCallExecute) {
+         execute(new ProgramValue.CallExecuteProcedure((StatementCallExecute) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementCallFinalize) {
          execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementCallPointer) {

@@ -138,9 +138,9 @@ public class CallGraph {
       Collection<CallBlock.Call> callers = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
          for(CallBlock.Call call : callBlock.getCalls()) {
-            if(call.getProcedure().equals(procedureRef)) {
-               callers.add(call);
-            }
+            if(call.getProcedure()!=null)
+               if(call.getProcedure().equals(procedureRef))
+                  callers.add(call);
          }
       }
       return callers;
@@ -183,9 +183,10 @@ public class CallGraph {
       Collection<ScopeRef> callers = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
          for(CallBlock.Call call : callBlock.getCalls()) {
-            if(call.getProcedure().equals(label)) {
-               callers.add(callBlock.getScopeLabel());
-            }
+            if(call.getProcedure()!=null)
+               if(call.getProcedure().equals(label)) {
+                  callers.add(callBlock.getScopeLabel());
+               }
          }
       }
       return callers;
@@ -267,7 +268,8 @@ public class CallGraph {
       public Collection<ScopeRef> getCalledBlocks() {
          LinkedHashSet<ScopeRef> called = new LinkedHashSet<>();
          for(Call call : calls) {
-            called.add(call.getProcedure());
+            if(call.getProcedure()!=null)
+               called.add(call.getProcedure());
          }
          return called;
       }
@@ -300,8 +302,10 @@ public class CallGraph {
       public Collection<Call> getCalls(ScopeRef scope) {
          ArrayList<Call> callsToScope = new ArrayList<>();
          for(Call call : calls) {
-            if(call.getProcedure().equals(scope)) {
-               callsToScope.add(call);
+            if(call.getProcedure()!=null) {
+               if(call.getProcedure().equals(scope)) {
+                  callsToScope.add(call);
+               }
             }
          }
          return callsToScope;

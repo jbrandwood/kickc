@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model.statements;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 
@@ -17,17 +19,26 @@ import java.util.Objects;
  */
 public class StatementCallFinalize extends StatementBase implements StatementLValue {
 
+   /** The procedure called (if this is a call to a specific procedure). Null if this is a pointer-based call. */
+   private ProcedureRef procedure;
+
+   /** The type of the procedure. */
+   private SymbolTypeProcedure procedureType;
+
+   /** The calling convention to use. */
+   private Procedure.CallingConvention callingConvention;
+
    /** The variable being assigned a value by the call. Can be null. */
    private LValue lValue;
-   /** The procedure called. */
-   private ProcedureRef procedure;
    /** This is the initial assignment of the lValue. */
    private boolean initialAssignment;
 
-   public StatementCallFinalize(LValue lValue, ProcedureRef procedure, StatementSource source, List<Comment> comments) {
+   public StatementCallFinalize(LValue lValue, SymbolTypeProcedure procedureType, ProcedureRef procedure, Procedure.CallingConvention callingConvention, StatementSource source, List<Comment> comments) {
       super(source, comments);
       this.lValue = lValue;
       this.procedure = procedure;
+      this.procedureType = procedureType;
+      this.callingConvention = callingConvention;
    }
 
    public LValue getlValue() {
@@ -44,6 +55,14 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
 
    public void setProcedure(ProcedureRef procedure) {
       this.procedure = procedure;
+   }
+
+   public SymbolTypeProcedure getProcedureType() {
+      return procedureType;
+   }
+
+   public Procedure.CallingConvention getCallingConvention() {
+      return callingConvention;
    }
 
    @Override

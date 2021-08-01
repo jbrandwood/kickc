@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.unwinding.ValueSource;
 import dk.camelot64.kickc.passes.unwinding.ValueSourceFactory;
+import dk.camelot64.kickc.passes.unwinding.ValueSourceParamValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -280,6 +281,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
    public static boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt, Program program) {
       if(lValueSource == null || rValueSource == null)
+         return false;
+      if(rValueSource instanceof ValueSourceParamValue && lValueSource.equals(((ValueSourceParamValue) rValueSource).getValueSource()))
          return false;
       if(lValueSource.equals(rValueSource))
          return true;

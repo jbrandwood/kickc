@@ -1,4 +1,6 @@
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *funcPointer 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *funcPointer 
 
 CONTROL FLOW GRAPH SSA
 
@@ -21,9 +23,9 @@ myFunc2::@return: scope:[myFunc2]  from myFunc2
 void main()
 main: scope:[main]  from __start::@1
   funcPointer#0 = &myFunc
-  call *funcPointer#0 
+  callexecute *funcPointer#0 
   funcPointer#1 = &myFunc2
-  call *funcPointer#1 
+  callexecute *funcPointer#1 
   to:main::@return
 main::@return: scope:[main]  from main
   funcPointer#6 = phi( main/funcPointer#1 )
@@ -83,8 +85,8 @@ Constant funcPointer#0 = &myFunc
 Constant funcPointer#1 = &myFunc2
 Constant funcPointer#3 = (void()*) 0
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [5] call myFunc 
-Replacing constant pointer function [7] call myFunc2 
+Replacing constant pointer function [5] callexecute myFunc 
+Replacing constant pointer function [7] callexecute myFunc2 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant funcPointer#0
 Eliminating unused constant funcPointer#1
@@ -110,8 +112,8 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call myFunc 
-  [2] call myFunc2 
+  [1] callexecute myFunc 
+  [2] callexecute myFunc2 
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -171,9 +173,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call myFunc 
+    // [1] callexecute myFunc  -- jsr 
     jsr myFunc
-    // [2] call myFunc2 
+    // [2] callexecute myFunc2  -- jsr 
     jsr myFunc2
     jmp __breturn
     // main::@return
@@ -244,9 +246,9 @@ Score: 42
   // main
 main: {
     // (*funcPointer)()
-    // [1] call myFunc 
+    // [1] callexecute myFunc  -- jsr 
     jsr myFunc
-    // [2] call myFunc2 
+    // [2] callexecute myFunc2  -- jsr 
     jsr myFunc2
     // main::@return
     // }

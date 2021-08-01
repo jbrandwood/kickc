@@ -8,8 +8,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
+  .const SIZEOF_STRUCT_POINT = 2
+  .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -20,50 +21,62 @@ __start: {
     jsr main
     rts
 }
-// print(byte register(Y) p_x, byte register(X) p_y)
+// print(struct Point zp(4) p)
 print: {
-    .const OFFSET_STACK_P_X = 1
-    .const OFFSET_STACK_P_Y = 0
+    .const OFFSET_STACK_P = 0
+    .label p = 4
     tsx
-    lda STACK_BASE+OFFSET_STACK_P_X,x
-    tay
-    tsx
-    lda STACK_BASE+OFFSET_STACK_P_Y,x
-    tax
+    lda STACK_BASE+OFFSET_STACK_P,x
+    sta.z p
+    lda STACK_BASE+OFFSET_STACK_P+1,x
+    sta.z p+1
     // SCREEN[idx++] = p.x
-    tya
+    lda.z p
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.x;
     inc.z idx
     // SCREEN[idx++] = p.y
+    lda p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
-    txa
     sta SCREEN,y
     // SCREEN[idx++] = p.y;
     inc.z idx
     // }
     rts
 }
+// get(byte register(X) i)
 get: {
     .const OFFSET_STACK_I = 0
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label return = 6
+    .label p = 8
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tax
     // i/2
     txa
     lsr
-    tay
+    // struct Point p = { i, i/2 }
+    stx.z p
+    sta p+OFFSET_STRUCT_POINT_Y
+    // return p;
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p-1,y
+    sta return-1,y
+    dey
+    bne !-
     // }
-    txa
     tsx
-    sta STACK_BASE+0,x
-    tya
-    tsx
-    sta STACK_BASE+OFFSET_STRUCT_POINT_Y,x
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
     rts
 }
 main: {
+    .label p = 4
     .label i = 2
     lda #0
     sta.z i
@@ -81,13 +94,12 @@ main: {
     pha
     jsr get
     pla
-    tay
+    sta.z p
     pla
-    tax
+    sta.z p+1
     // print(p)
-    tya
     pha
-    txa
+    lda.z p
     pha
     jsr print
     pla

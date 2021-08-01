@@ -75,6 +75,25 @@ public interface ProgramValue {
       }
    }
 
+   class CallExecuteProcedure implements ProgramValue {
+      private final StatementCallExecute call;
+
+      CallExecuteProcedure(StatementCallExecute call) {
+         this.call = call;
+      }
+
+      @Override
+      public Value get() {
+         return call.getProcedureRVal();
+      }
+
+      @Override
+      public void set(Value value) {
+         call.setProcedureRVal((RValue) value);
+      }
+   }
+
+
    class CallParameter implements ProgramValue {
       private final StatementCall call;
       private final int i;
@@ -328,7 +347,7 @@ public interface ProgramValue {
       }
 
       @Override
-       public void set(Value value) {
+      public void set(Value value) {
          statementExprSideEffect.setExpression((RValue) value);
       }
 

@@ -3,7 +3,7 @@ Adding parameter assignment in __stackcall procedure plus::a = param(plus::a)
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call plus '0' 7 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(word,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(word,plus::OFFSET_STACK_B)
-Calling convention STACK_CALL adding stack return stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return
+Calling convention STACK_CALL adding stack return stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(word)
 Calling convention STACK_CALL adding stack push stackpush(word) = '0'
 Calling convention STACK_CALL adding stack push stackpush(word) = 7
@@ -33,7 +33,7 @@ plus: scope:[plus]  from
   to:plus::@return
 plus::@return: scope:[plus]  from plus
   plus::return#1 = phi( plus/plus::return#0 )
-  stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return#1
+  stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return#1
   return 
   to:@return
 
@@ -59,7 +59,7 @@ __stackcall word plus(word plus::a , word plus::b)
 word~ plus::$0
 constant byte plus::OFFSET_STACK_A = 2
 constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN = 2
+constant byte plus::OFFSET_STACK_RETURN_2 = 2
 word plus::a
 word plus::a#0
 word plus::b
@@ -117,7 +117,7 @@ plus: scope:[plus]  from
   [2] plus::return#0 = plus::a#0 + plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [3] stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return#0
+  [3] stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return#0
   [4] return 
   to:@return
 
@@ -164,7 +164,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] plus::a#0 = stackidx(word,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [1] plus::b#0 = stackidx(word,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [2] plus::return#0 = plus::a#0 + plus::b#0 [ plus::return#0 ] ( plus:7 [ plus::return#0 ] { }  ) always clobbers reg byte a 
-Statement [3] stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte a reg byte x 
+Statement [3] stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte a reg byte x 
 Statement [5] stackpush(word) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] stackpush(word) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(2) always clobbers reg byte a 
@@ -212,7 +212,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 2
+    .const OFFSET_STACK_RETURN_2 = 2
     .label a = 4
     .label b = 2
     .label return = 4
@@ -239,12 +239,12 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [3] stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return#0 -- _stackidxword_vbuc1=vwuz1 
+    // [3] stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
     lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_2,x
     lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_2+1,x
     // [4] return 
     rts
 }
@@ -300,7 +300,7 @@ word~ main::$0 zp[2]:4 4.0
 __stackcall word plus(word plus::a , word plus::b)
 constant byte plus::OFFSET_STACK_A = 2
 constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN = 2
+constant byte plus::OFFSET_STACK_RETURN_2 = 2
 word plus::a
 word plus::a#0 a zp[2]:4 11.0
 word plus::b
@@ -338,7 +338,7 @@ Score: 146
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 2
+    .const OFFSET_STACK_RETURN_2 = 2
     .label a = 4
     .label b = 2
     .label return = 4
@@ -365,12 +365,12 @@ plus: {
     sta.z return+1
     // plus::@return
     // }
-    // [3] stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return#0 -- _stackidxword_vbuc1=vwuz1 
+    // [3] stackidx(word,plus::OFFSET_STACK_RETURN_2) = plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
     lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_2,x
     lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_2+1,x
     // [4] return 
     rts
 }

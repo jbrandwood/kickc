@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model.statements;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.RValue;
 
@@ -17,15 +19,28 @@ import java.util.Objects;
  */
 public class StatementCallPrepare extends StatementBase {
 
-   /** The procedure called. */
+   /** The procedure called (if this is a call to a specific procedure). Null if this is a pointer-based call. */
    private ProcedureRef procedure;
+
+   /** The type of the procedure. */
+   private SymbolTypeProcedure procedureType;
+
+   /** The calling convention to use. */
+   private Procedure.CallingConvention callingConvention;
+
    /** The parameter values passed to the procedure. */
    private List<RValue> parameters;
 
-   public StatementCallPrepare(ProcedureRef procedure, List<RValue> parameters, StatementSource source, List<Comment> comments) {
+   public StatementCallPrepare(SymbolTypeProcedure procedureType, ProcedureRef procedure, List<RValue> parameters, Procedure.CallingConvention callingConvention, StatementSource source, List<Comment> comments) {
       super(source, comments);
+      this.procedureType = procedureType;
       this.procedure = procedure;
       this.parameters = parameters;
+      this.callingConvention = callingConvention;
+   }
+
+   public SymbolTypeProcedure getProcedureType() {
+      return procedureType;
    }
 
    public ProcedureRef getProcedure() {
@@ -50,6 +65,10 @@ public class StatementCallPrepare extends StatementBase {
 
    public RValue getParameter(int idx) {
       return parameters.get(idx);
+   }
+
+   public Procedure.CallingConvention getCallingConvention() {
+      return callingConvention;
    }
 
    @Override

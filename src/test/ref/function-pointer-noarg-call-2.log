@@ -1,5 +1,6 @@
 Resolved forward reference fn1 to void fn1()
 Resolved forward reference fn2 to void fn2()
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::f 
 
 CONTROL FLOW GRAPH SSA
 
@@ -30,7 +31,7 @@ main::@5: scope:[main]  from main::@2
 main::@4: scope:[main]  from main::@3 main::@5
   main::i#4 = phi( main::@3/main::i#5, main::@5/main::i#6 )
   main::f#3 = phi( main::@3/main::f#1, main::@5/main::f#2 )
-  call *main::f#3 
+  callexecute *main::f#3 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -132,6 +133,7 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@3
 CALL GRAPH
+Calls in [main] to null:11 
 
 Created 2 initial phi equivalence classes
 Coalesced [12] main::i#7 = main::i#1
@@ -175,7 +177,7 @@ main::@3: scope:[main]  from main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@3
   [10] main::f#3 = phi( main::@3/&fn1, main::@2/&fn2 )
-  [11] call *main::f#3 
+  [11] callexecute *main::f#3 
   to:main::@1
 
 
@@ -187,7 +189,7 @@ byte~ main::$0 22.0
 void()* main::f
 void()* main::f#3
 byte main::i
-byte main::i#1 5.5
+byte main::i#1 16.5
 byte main::i#2 22.0
 
 Initial phi equivalence classes
@@ -202,18 +204,18 @@ Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:3 [ main::f#3 ]
 Allocated zp[1]:5 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] call *main::f#3  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [11] callexecute *main::f#3  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] main::$0 = main::i#1 & 1 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [11] call *main::f#3  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [7] main::$0 = main::i#1 & 1 [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [11] callexecute *main::f#3  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ main::f#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
@@ -307,7 +309,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [11] call *main::f#3 
+    // [11] callexecute *main::f#3 
     jsr bi_f
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
@@ -349,7 +351,7 @@ byte~ main::$0 reg byte a 22.0
 void()* main::f
 void()* main::f#3 f zp[2]:3
 byte main::i
-byte main::i#1 i zp[1]:2 5.5
+byte main::i#1 i zp[1]:2 16.5
 byte main::i#2 i zp[1]:2 22.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
@@ -436,7 +438,7 @@ main: {
     // main::@4
   __b4:
     // (*f)()
-    // [11] call *main::f#3 
+    // [11] callexecute *main::f#3 
     jsr bi_f
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 

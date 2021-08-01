@@ -3,7 +3,7 @@ Eliminating unused variable with no statement pow2::$2
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call pow2 6 
 Calling convention __stackcall adding prepare/execute/finalize for pow2::c = call pow2 pow2::$1 
 Calling convention STACK_CALL replacing param(pow2::n) with stackidx(byte,pow2::OFFSET_STACK_N)
-Calling convention STACK_CALL adding stack return stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return
+Calling convention STACK_CALL adding stack return stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(byte)
 Calling convention STACK_CALL adding stack pull pow2::c = stackpull(byte)
 Calling convention STACK_CALL adding stack push stackpush(byte) = 6
@@ -42,7 +42,7 @@ pow2::@2: scope:[pow2]  from pow2
   to:pow2::@return
 pow2::@return: scope:[pow2]  from pow2::@1 pow2::@2
   pow2::return#2 = phi( pow2::@1/pow2::return#0, pow2::@2/pow2::return#1 )
-  stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return#2
+  stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return#2
   return 
   to:@return
 
@@ -67,7 +67,7 @@ bool~ pow2::$0
 number~ pow2::$1
 byte~ pow2::$3
 constant byte pow2::OFFSET_STACK_N = 0
-constant byte pow2::OFFSET_STACK_RETURN = 0
+constant byte pow2::OFFSET_STACK_RETURN_0 = 0
 byte pow2::c
 byte pow2::c#0
 byte pow2::n
@@ -141,7 +141,7 @@ pow2::@1: scope:[pow2]  from pow2
   to:pow2::@return
 pow2::@return: scope:[pow2]  from pow2 pow2::@1
   [7] pow2::return#2 = phi( pow2/1, pow2::@1/pow2::return#1 )
-  [8] stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return#2
+  [8] stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return#2
   [9] return 
   to:@return
 
@@ -191,7 +191,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] pow2::n#0 = stackidx(byte,pow2::OFFSET_STACK_N) [ pow2::n#0 ] ( pow2:11 [ pow2::n#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [5] pow2::c#0 = stackpull(byte) [ pow2::c#0 ] ( pow2:11 [ pow2::c#0 ] { }  ) always clobbers reg byte a 
 Statement [6] pow2::return#1 = pow2::c#0 + pow2::c#0 [ pow2::return#1 ] ( pow2:11 [ pow2::return#1 ] { }  ) always clobbers reg byte a 
-Statement [8] stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return#2 [ ] ( pow2:11 [ ] { }  ) always clobbers reg byte x 
+Statement [8] stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return#2 [ ] ( pow2:11 [ ] { }  ) always clobbers reg byte x 
 Statement [10] stackpush(byte) = 6 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ pow2::return#2 pow2::return#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
@@ -231,7 +231,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     // [0] pow2::n#0 = stackidx(byte,pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
@@ -263,9 +263,9 @@ pow2: {
     jmp __breturn
     // pow2::@return
   __breturn:
-    // [8] stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    // [8] stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     // [9] return 
     rts
 }
@@ -308,7 +308,7 @@ byte~ main::$0 reg byte a 4.0
 __stackcall byte pow2(byte pow2::n)
 byte~ pow2::$1 reg byte a 22.0
 constant byte pow2::OFFSET_STACK_N = 0
-constant byte pow2::OFFSET_STACK_RETURN = 0
+constant byte pow2::OFFSET_STACK_RETURN_0 = 0
 byte pow2::c
 byte pow2::c#0 reg byte a 33.0
 byte pow2::n
@@ -347,7 +347,7 @@ Score: 72
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     // [0] pow2::n#0 = stackidx(byte,pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
@@ -380,9 +380,9 @@ pow2: {
     // pow2::@return
   __breturn:
     // }
-    // [8] stackidx(byte,pow2::OFFSET_STACK_RETURN) = pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    // [8] stackidx(byte,pow2::OFFSET_STACK_RETURN_0) = pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     // [9] return 
     rts
 }

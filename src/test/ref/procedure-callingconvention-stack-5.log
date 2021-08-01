@@ -2,7 +2,7 @@ Converting variable modified inside __stackcall procedure next() to load/store c
 Inlined call call __init 
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call next 
 Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call next 
-Calling convention STACK_CALL adding stack return stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return
+Calling convention STACK_CALL adding stack return stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(signed word)
 Calling convention STACK_CALL adding stack pull main::$1 = stackpull(signed word)
 
@@ -32,7 +32,7 @@ next: scope:[next]  from
   to:next::@return
 next::@return: scope:[next]  from next
   next::return#1 = phi( next/next::return#0 )
-  stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return#1
+  stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#1
   return 
   to:@return
 
@@ -63,7 +63,7 @@ signed word~ main::$1
 number~ main::$2
 number~ main::$3
 __stackcall signed word next()
-constant byte next::OFFSET_STACK_RETURN = 0
+constant byte next::OFFSET_STACK_RETURN_0 = 0
 signed word next::return
 signed word next::return#0
 signed word next::return#1
@@ -139,7 +139,7 @@ next: scope:[next]  from
   [6] current = ++ current
   to:next::@return
 next::@return: scope:[next]  from next
-  [7] stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return#0
+  [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0
   [8] return 
   to:@return
 
@@ -186,7 +186,7 @@ Allocated zp[2]:8 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] current = $30 [ current ] (  [ current ] { }  ) always clobbers reg byte a 
 Statement [5] next::return#0 = current [ current next::return#0 ] ( main:3::next:10 [ current next::return#0 ] { }  main:3::next:14 [ current next::return#0 ] { }  ) always clobbers reg byte a 
-Statement [7] stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return#0 [ current ] ( main:3::next:10 [ current ] { }  main:3::next:14 [ current ] { }  ) always clobbers reg byte a reg byte x 
+Statement [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 [ current ] ( main:3::next:10 [ current ] { }  main:3::next:14 [ current ] { }  ) always clobbers reg byte a reg byte x 
 Statement [11] main::$0 = stackpull(signed word) [ current main::$0 ] ( main:3 [ current main::$0 ] { }  ) always clobbers reg byte a 
 Statement [12] *SCREEN = main::$0 [ current ] ( main:3 [ current ] { }  ) always clobbers reg byte a 
 Statement [15] main::$1 = stackpull(signed word) [ main::$1 ] ( main:3 [ main::$1 ] { }  ) always clobbers reg byte a 
@@ -255,7 +255,7 @@ __start: {
 }
   // next
 next: {
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     .label return = 2
     // [5] next::return#0 = current -- vwsz1=vwsz2 
     lda.z current
@@ -270,12 +270,12 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
     // [8] return 
     rts
 }
@@ -347,7 +347,7 @@ void main()
 signed word~ main::$0 zp[2]:2 22.0
 signed word~ main::$1 zp[2]:4 22.0
 __stackcall signed word next()
-constant byte next::OFFSET_STACK_RETURN = 0
+constant byte next::OFFSET_STACK_RETURN_0 = 0
 signed word next::return
 signed word next::return#0 return zp[2]:2 101.0
 
@@ -395,7 +395,7 @@ __start: {
 }
   // next
 next: {
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     .label return = 2
     // return current++;
     // [5] next::return#0 = current -- vwsz1=vwsz2 
@@ -410,12 +410,12 @@ next: {
   !:
     // next::@return
     // }
-    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
     // [8] return 
     rts
 }

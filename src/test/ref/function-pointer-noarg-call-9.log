@@ -1,4 +1,6 @@
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::f 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::f 
 
 CONTROL FLOW GRAPH SSA
 
@@ -12,9 +14,9 @@ fn1::@return: scope:[fn1]  from fn1
 
 void main()
 main: scope:[main]  from __start::@1
-  call *main::f 
+  callexecute *main::f 
   SCREEN[idx] = 'a'
-  call *main::f 
+  callexecute *main::f 
   SCREEN[idx] = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
@@ -46,8 +48,8 @@ constant void()* main::f = &fn1
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Replacing constant pointer function [2] call fn1 
-Replacing constant pointer function [4] call fn1 
+Replacing constant pointer function [2] callexecute fn1 
+Replacing constant pointer function [4] callexecute fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant main::f
 Successful SSA optimization PassNEliminateUnusedVars
@@ -94,9 +96,9 @@ fn1::@return: scope:[fn1]  from fn1
 void main()
 main: scope:[main]  from __start::@1
   [7] phi()
-  [8] call fn1 
+  [8] callexecute fn1 
   [9] SCREEN[idx] = 'a'
-  [10] call fn1 
+  [10] callexecute fn1 
   [11] SCREEN[idx] = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
@@ -185,13 +187,13 @@ fn1: {
 }
   // main
 main: {
-    // [8] call fn1 
+    // [8] callexecute fn1  -- jsr 
     jsr fn1
     // [9] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
-    // [10] call fn1 
+    // [10] callexecute fn1  -- jsr 
     jsr fn1
     // [11] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
@@ -279,7 +281,7 @@ fn1: {
   // main
 main: {
     // (*f)()
-    // [8] call fn1 
+    // [8] callexecute fn1  -- jsr 
     jsr fn1
     // SCREEN[idx] = 'a'
     // [9] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
@@ -287,7 +289,7 @@ main: {
     ldy.z idx
     sta SCREEN,y
     // (*f)()
-    // [10] call fn1 
+    // [10] callexecute fn1  -- jsr 
     jsr fn1
     // SCREEN[idx] = 'a'
     // [11] SCREEN[idx] = 'a' -- pbuc1_derefidx_vbuz1=vbuc2 

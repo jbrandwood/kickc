@@ -1,3 +1,4 @@
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::f 
 
 CONTROL FLOW GRAPH SSA
 
@@ -11,7 +12,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 void main()
 main: scope:[main]  from __start
-  call *main::f 
+  callexecute *main::f 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -36,7 +37,7 @@ constant void()* main::f = &fn1
 
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
-Replacing constant pointer function [2] call fn1 
+Replacing constant pointer function [2] callexecute fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant main::f
 Successful SSA optimization PassNEliminateUnusedVars
@@ -58,7 +59,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call fn1 
+  [1] callexecute fn1 
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -106,7 +107,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call fn1 
+    // [1] callexecute fn1  -- jsr 
     jsr fn1
     jmp __breturn
     // main::@return
@@ -161,7 +162,7 @@ Score: 24
   // main
 main: {
     // (*f)()
-    // [1] call fn1 
+    // [1] callexecute fn1  -- jsr 
     jsr fn1
     // main::@return
     // }

@@ -7,19 +7,30 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  .const STACK_BASE = $103
 .segment Code
 fn2: {
+    .const OFFSET_STACK_RETURN_0 = 0
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
     inc BG_COLOR
+    // return *BG_COLOR;
+    lda BG_COLOR
     // }
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     rts
 }
 fn1: {
+    .const OFFSET_STACK_RETURN_0 = 0
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
     inc BORDER_COLOR
+    // return *BORDER_COLOR;
+    lda BORDER_COLOR
     // }
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     rts
 }
 main: {

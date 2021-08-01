@@ -54,7 +54,8 @@ public class PassNCalcBlockSuccessorClosure extends PassNCalcBase<ControlFlowBlo
       for(Statement statement : block.getStatements()) {
          if(statement instanceof StatementCallExecute) {
             final ProcedureRef calledProcRef = ((StatementCallExecute) statement).getProcedure();
-            findSuccessorClosure(calledProcRef.getLabelRef(), successorClosure, visited);
+            if(calledProcRef != null)
+               findSuccessorClosure(calledProcRef.getLabelRef(), successorClosure, visited);
          }
       }
    }

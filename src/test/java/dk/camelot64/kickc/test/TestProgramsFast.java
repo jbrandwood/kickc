@@ -3176,10 +3176,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("function-pointer-param-workaround.c");
    }
 
-   //@Test
-   //public void testFunctionPointerParam0() throws IOException {
-   //   compileAndCompare("function-pointer-param-0.c", log().verboseParse().verboseCreateSsa());
-   //}
+   @Test
+   public void testFunctionPointerParam0() throws IOException {
+      compileAndCompare("function-pointer-param-0.c");
+   }
 
    @Test
    public void testFunctionPointerNoargCall14() throws IOException {
@@ -3252,7 +3252,12 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
-   public void testFunctionPointerReturn() throws IOException {
+   public void testFunctionPointerReturn1() throws IOException {
+      compileAndCompare("function-pointer-return-1.c");
+   }
+
+   @Test
+   public void testFunctionPointerReturn0() throws IOException {
       compileAndCompare("function-pointer-return.c");
    }
 

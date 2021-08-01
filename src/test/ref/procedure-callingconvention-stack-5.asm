@@ -23,7 +23,7 @@ __start: {
     rts
 }
 next: {
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     .label return = 2
     // return current++;
     lda.z current
@@ -37,9 +37,9 @@ next: {
     // }
     tsx
     lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
     rts
 }
 main: {

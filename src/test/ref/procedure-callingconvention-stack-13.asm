@@ -14,7 +14,7 @@
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
-    .const OFFSET_STACK_RETURN = 0
+    .const OFFSET_STACK_RETURN_0 = 0
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
     // if (n == 0)
@@ -35,7 +35,7 @@ pow2: {
   __breturn:
     // }
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     rts
 }
 main: {

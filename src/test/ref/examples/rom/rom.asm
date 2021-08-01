@@ -70,7 +70,7 @@ main: {
 call1: {
     .const OFFSET_STACK_PARAM1 = 1
     .const OFFSET_STACK_PARAM2 = 0
-    .const OFFSET_STACK_RETURN = 1
+    .const OFFSET_STACK_RETURN_1 = 1
     .label param1 = 2
     tsx
     lda STACK_BASE+OFFSET_STACK_PARAM1,x
@@ -82,7 +82,7 @@ call1: {
     adc.z param1
     // }
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
 // A memory based ROM function that will transfer all parameters and return values through zeropage.

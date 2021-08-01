@@ -3,8 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementCallPointer;
+import dk.camelot64.kickc.model.statements.StatementCallExecute;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -28,14 +27,14 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
          ListIterator<Statement> statementsIt = block.getStatements().listIterator();
          while(statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
-            if(statement instanceof StatementCallPointer) {
-               StatementCallPointer callPointer = (StatementCallPointer) statement;
-               RValue procedure = callPointer.getProcedure();
+            if(statement instanceof StatementCallExecute) {
+               StatementCallExecute callPointer = (StatementCallExecute) statement;
+               RValue procedure = callPointer.getProcedureRVal();
                if(procedure instanceof PointerDereferenceSimple) {
                   RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
                   ProcedureRef constProcedureRef = findConstProcedure(pointer);
                   if(constProcedureRef != null) {
-                     replacePointerCall(callPointer, constProcedureRef, statementsIt, block);
+                     replacePointerCall(callPointer, constProcedureRef, block);
                      optimized = true;
                   }
                } else if(procedure instanceof ConstantRef) {
@@ -45,7 +44,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
                      if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
                         ProcedureRef constProcedureRef = findConstProcedure(procedure);
                         if(constProcedureRef != null) {
-                           replacePointerCall(callPointer, constProcedureRef, statementsIt, block);
+                           replacePointerCall(callPointer, constProcedureRef, block);
                            optimized = true;
                         }
                      }
@@ -59,21 +58,16 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
 
    /**
     * Replace a pointer-based call to a constant procedure with a classic procedure call
-    * @param callPointer The call to replace
+    *  @param callPointer The call to replace
     * @param constProcedureRef The constant procedure pointed to
-    * @param statementsIt The statement iterator currently pointing to the pointer-based call
     * @param block The block containing the call
     */
-   private void replacePointerCall(StatementCallPointer callPointer, ProcedureRef constProcedureRef, ListIterator<Statement> statementsIt, ControlFlowBlock block) {
-      statementsIt.remove();
-      StatementCall call = new StatementCall(callPointer.getlValue(), constProcedureRef.getFullName(), callPointer.getParameters(), callPointer.getSource(), callPointer.getComments());
-      call.setProcedure(constProcedureRef);
-      call.setIndex(callPointer.getIndex());
+   private void replacePointerCall(StatementCallExecute callPointer, ProcedureRef constProcedureRef, ControlFlowBlock block) {
+      callPointer.setProcedure(constProcedureRef);
       block.setCallSuccessor(constProcedureRef.getLabelRef());
-      statementsIt.add(call);
       final Procedure procedure = getScope().getProcedure(constProcedureRef);
       procedure.setCallingConvention(Procedure.CallingConvention.STACK_CALL);
-      getLog().append("Replacing constant pointer function " + call.toString(getProgram(), false));
+      getLog().append("Replacing constant pointer function " + callPointer.toString(getProgram(), false));
    }
 
    /**

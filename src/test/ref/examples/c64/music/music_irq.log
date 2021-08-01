@@ -1,13 +1,15 @@
 Resolved forward reference irq_play to __interrupt(rom_sys_c64) void irq_play()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicInit 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicPlay 
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
-  call *musicInit 
+  callexecute *musicInit 
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
@@ -22,7 +24,7 @@ main::@return: scope:[main]  from main
 __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
-  call *musicPlay 
+  callexecute *musicPlay 
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
@@ -92,6 +94,8 @@ Successful SSA optimization PassNEliminateEmptyStart
 Finalized unsigned number type (word) $1000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
+Calls in [irq_play] to null:1 
+Calls in [main] to null:6 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
@@ -101,7 +105,7 @@ FINAL CONTROL FLOW GRAPH
 __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
-  [1] call *musicPlay 
+  [1] callexecute *musicPlay 
   [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
   [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
@@ -112,7 +116,7 @@ irq_play::@return: scope:[irq_play]  from irq_play
 void main()
 main: scope:[main]  from
   asm { sei  }
-  [6] call *musicInit 
+  [6] callexecute *musicInit 
   [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
@@ -132,9 +136,9 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] call *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [1] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] call *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -208,7 +212,7 @@ irq_play: {
     // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // [1] call *musicPlay 
+    // [1] callexecute *musicPlay 
     // Play SID
     jsr musicPlay
     // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
@@ -229,7 +233,7 @@ irq_play: {
 main: {
     // asm { sei  }
     sei
-    // [6] call *musicInit 
+    // [6] callexecute *musicInit 
     jsr musicInit
     // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
@@ -356,7 +360,7 @@ irq_play: {
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // (*musicPlay)()
-    // [1] call *musicPlay 
+    // [1] callexecute *musicPlay 
     // Play SID
     jsr musicPlay
     // VICII->IRQ_STATUS = IRQ_RASTER
@@ -380,7 +384,7 @@ main: {
     // asm { sei  }
     sei
     // (*musicInit)()
-    // [6] call *musicInit 
+    // [6] callexecute *musicInit 
     jsr musicInit
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 

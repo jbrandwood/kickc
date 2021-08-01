@@ -1,4 +1,5 @@
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *do10::fn 
 
 CONTROL FLOW GRAPH SSA
 
@@ -10,7 +11,7 @@ do10: scope:[do10]  from main
 do10::@1: scope:[do10]  from do10 do10::@1
   do10::i#2 = phi( do10/do10::i#0, do10::@1/do10::i#1 )
   do10::fn#1 = phi( do10/do10::fn#2, do10::@1/do10::fn#1 )
-  call *do10::fn#1 
+  callexecute *do10::fn#1 
   do10::i#1 = do10::i#2 + rangenext(0,9)
   do10::$1 = do10::i#1 != rangelast(0,9)
   if(do10::$1) goto do10::@1
@@ -102,7 +103,7 @@ Constant do10::i#0 = 0
 Constant hello::i#0 = 0
 Constant do10::fn#0 = main::f
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [3] call hello 
+Replacing constant pointer function [3] callexecute hello 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Resolved ranged next value [4] do10::i#1 = ++ do10::i#2 to ++
 Resolved ranged comparison value [6] if(do10::i#1!=rangelast(0,9)) goto do10::@1 to $a
@@ -196,7 +197,7 @@ do10: scope:[do10]  from main
   to:do10::@1
 do10::@1: scope:[do10]  from do10 do10::@1
   [16] do10::i#2 = phi( do10/0, do10::@1/do10::i#1 )
-  [17] call hello 
+  [17] callexecute hello 
   [18] do10::i#1 = ++ do10::i#2
   [19] if(do10::i#1!=$a) goto do10::@1
   to:do10::@return
@@ -362,7 +363,7 @@ do10: {
     jmp __b1
     // do10::@1
   __b1:
-    // [17] call hello 
+    // [17] callexecute hello  -- jsr 
     jsr hello
     // [18] do10::i#1 = ++ do10::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
@@ -519,7 +520,7 @@ do10: {
     // do10::@1
   __b1:
     // (*fn)()
-    // [17] call hello 
+    // [17] callexecute hello  -- jsr 
     jsr hello
     // for( byte i: 0..9)
     // [18] do10::i#1 = ++ do10::i#2 -- vbuz1=_inc_vbuz1 

@@ -8,9 +8,10 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_VECTOR_P2 = 2
+  .const SIZEOF_STRUCT_VECTOR = 4
+  .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -21,47 +22,40 @@ __start: {
     jsr main
     rts
 }
-// print(byte register(Y) v_p1_x, byte zp(4) v_p1_y, byte zp(5) v_p2_x, byte register(X) v_p2_y)
+// print(struct Vector zp(6) v)
 print: {
-    .const OFFSET_STACK_V_P1_X = 3
-    .const OFFSET_STACK_V_P1_Y = 2
-    .const OFFSET_STACK_V_P2_X = 1
-    .const OFFSET_STACK_V_P2_Y = 0
-    .label v_p1_y = 4
-    .label v_p2_x = 5
+    .const OFFSET_STACK_V = 0
+    .label v = 6
     tsx
-    lda STACK_BASE+OFFSET_STACK_V_P1_X,x
-    tay
-    tsx
-    lda STACK_BASE+OFFSET_STACK_V_P1_Y,x
-    sta.z v_p1_y
-    tsx
-    lda STACK_BASE+OFFSET_STACK_V_P2_X,x
-    sta.z v_p2_x
-    tsx
-    lda STACK_BASE+OFFSET_STACK_V_P2_Y,x
-    tax
+    lda STACK_BASE+OFFSET_STACK_V,x
+    sta.z v
+    lda STACK_BASE+OFFSET_STACK_V+1,x
+    sta.z v+1
+    lda STACK_BASE+OFFSET_STACK_V+2,x
+    sta.z v+2
+    lda STACK_BASE+OFFSET_STACK_V+3,x
+    sta.z v+3
     // SCREEN[idx++] = v.p1.x
-    tya
+    lda.z v
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p1.x;
     inc.z idx
     // SCREEN[idx++] = v.p1.y
-    lda.z v_p1_y
+    lda v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p1.y;
     inc.z idx
     // SCREEN[idx++] = v.p2.x
-    lda.z v_p2_x
+    lda v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.x;
     inc.z idx
     // SCREEN[idx++] = v.p2.y
+    lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
-    txa
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.y;
     inc.z idx
@@ -74,43 +68,57 @@ print: {
     // }
     rts
 }
+// get(byte register(Y) i)
 get: {
     .const OFFSET_STACK_I = 0
-    .label return_p1_y = 4
-    .label return_p2_y = 5
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label return = $a
+    .label v = $e
+    .label __0 = 4
+    .label __2 = 5
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
-    tax
-    // i/2
-    txa
-    lsr
-    sta.z return_p1_y
-    // i+1
-    txa
     tay
-    iny
-    // i*2
-    txa
-    asl
-    sta.z return_p2_y
-    // }
-    txa
-    tsx
-    sta STACK_BASE+0,x
-    lda.z return_p1_y
-    tsx
-    sta STACK_BASE+OFFSET_STRUCT_POINT_Y,x
+    // i/2
     tya
+    lsr
+    sta.z __0
+    // i+1
+    tya
+    tax
+    inx
+    // i*2
+    tya
+    asl
+    sta.z __2
+    // struct Vector v = { {i, i/2}, {i+1, i*2} }
+    sty.z v
+    lda.z __0
+    sta v+OFFSET_STRUCT_POINT_Y
+    stx v+OFFSET_STRUCT_VECTOR_P2
+    lda.z __2
+    sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    // return v;
+    ldy #SIZEOF_STRUCT_VECTOR
+  !:
+    lda v-1,y
+    sta return-1,y
+    dey
+    bne !-
+    // }
     tsx
-    sta STACK_BASE+OFFSET_STRUCT_VECTOR_P2,x
-    lda.z return_p2_y
-    tsx
-    sta STACK_BASE+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y,x
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+1,x
+    lda.z return+2
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+2,x
+    lda.z return+3
+    sta STACK_BASE+OFFSET_STACK_RETURN_0+3,x
     rts
 }
 main: {
-    .label v_p2_x = 4
-    .label v_p2_y = 5
+    .label v = 6
     .label i = 2
     lda #0
     sta.z i
@@ -130,21 +138,20 @@ main: {
     pha
     jsr get
     pla
-    tay
+    sta.z v
     pla
-    tax
+    sta.z v+1
     pla
-    sta.z v_p2_x
+    sta.z v+2
     pla
-    sta.z v_p2_y
+    sta.z v+3
     // print(v)
-    tya
     pha
-    txa
+    lda.z v+2
     pha
-    lda.z v_p2_x
+    lda.z v+1
     pha
-    lda.z v_p2_y
+    lda.z v
     pha
     jsr print
     tsx

@@ -1,4 +1,5 @@
 Resolved forward reference fn1 to void fn1()
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::$0 
 
 CONTROL FLOW GRAPH SSA
 
@@ -21,7 +22,7 @@ main::@3: scope:[main]  from main::@2
   main::i#4 = phi( main::@2/main::i#1 )
   getfn::return#3 = phi( main::@2/getfn::return#0 )
   main::$0 = getfn::return#3
-  call *main::$0 
+  callexecute *main::$0 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -91,7 +92,7 @@ Constant getfn::return#0 = getfn::return#1
 Successful SSA optimization Pass2ConstantIdentification
 Constant main::$0 = getfn::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [8] call fn1 
+Replacing constant pointer function [8] callexecute fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -150,7 +151,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [5] phi()
-  [6] call fn1 
+  [6] callexecute fn1 
   to:main::@1
 
 null depth in calling loop Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2 main::@1  in scope fn1
@@ -223,7 +224,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [6] call fn1 
+    // [6] callexecute fn1  -- jsr 
     jsr fn1
     // [3] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
@@ -300,7 +301,7 @@ main: {
     // [5] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // (*getfn(++i))()
-    // [6] call fn1 
+    // [6] callexecute fn1  -- jsr 
     jsr fn1
     // [3] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [3] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 

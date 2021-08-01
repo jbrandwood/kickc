@@ -1,3 +1,5 @@
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::fn 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *main::fn 
 
 CONTROL FLOW GRAPH SSA
 
@@ -25,10 +27,10 @@ main: scope:[main]  from __start
   addrtable[main::$3] = &myFunc2
   main::$4 = 0 * SIZEOF_POINTER
   main::fn#0 = addrtable[main::$4]
-  call *main::fn#0 
+  callexecute *main::fn#0 
   main::$5 = 1 * SIZEOF_POINTER
   main::fn#1 = addrtable[main::$5]
-  call *main::fn#1 
+  callexecute *main::fn#1 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -120,6 +122,7 @@ Finalized unsigned number type (word) $100
 Finalized unsigned number type (word) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
+Calls in [main] to null:3 null:5 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
@@ -131,9 +134,9 @@ main: scope:[main]  from
   [0] *addrtable = &myFunc
   [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2
   [2] main::fn#0 = *addrtable
-  [3] call *main::fn#0 
+  [3] callexecute *main::fn#0 
   [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER)
-  [5] call *main::fn#1 
+  [5] callexecute *main::fn#1 
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -159,8 +162,8 @@ myFunc::@return: scope:[myFunc]  from myFunc
 VARIABLE REGISTER WEIGHTS
 void main()
 void()* main::fn
-void()* main::fn#0 2.0
-void()* main::fn#1 2.0
+void()* main::fn#0 20.0
+void()* main::fn#1 20.0
 void myFunc()
 void myFunc2()
 
@@ -175,15 +178,15 @@ Allocated zp[2]:4 [ main::fn#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *addrtable = &myFunc [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] main::fn#0 = *addrtable [ main::fn#0 ] (  [ main::fn#0 ] { }  ) always clobbers reg byte a 
-Statement [3] call *main::fn#0  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) [ main::fn#1 ] (  [ main::fn#1 ] { }  ) always clobbers reg byte a 
-Statement [5] call *main::fn#1  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [2] main::fn#0 = *addrtable [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] callexecute *main::fn#0  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] callexecute *main::fn#1  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[2]:2 [ main::fn#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::fn#1 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2: zp[2]:2 [ main::fn#0 ] 2: zp[2]:4 [ main::fn#1 ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::fn#0 ] 20: zp[2]:4 [ main::fn#1 ] 
 Uplift Scope [myFunc] 
 Uplift Scope [myFunc2] 
 Uplift Scope [] 
@@ -227,14 +230,14 @@ main: {
     sta.z fn
     lda addrtable+1
     sta.z fn+1
-    // [3] call *main::fn#0 
+    // [3] callexecute *main::fn#0 
     jsr bi_fn
     // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
     lda addrtable+1*SIZEOF_POINTER
     sta.z fn_1
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
-    // [5] call *main::fn#1 
+    // [5] callexecute *main::fn#1 
     jsr bi_fn_1
     jmp __breturn
     // main::@return
@@ -287,8 +290,8 @@ constant byte SIZEOF_POINTER = 2
 constant void()** addrtable[$100]  = { fill( $100, 0) }
 void main()
 void()* main::fn
-void()* main::fn#0 fn zp[2]:2 2.0
-void()* main::fn#1 fn_1 zp[2]:4 2.0
+void()* main::fn#0 fn zp[2]:2 20.0
+void()* main::fn#1 fn_1 zp[2]:4 20.0
 void myFunc()
 constant byte* const myFunc::BORDER_COLOR = (byte*) 53280
 void myFunc2()
@@ -338,7 +341,7 @@ main: {
     lda addrtable+1
     sta.z fn+1
     // (*fn)()
-    // [3] call *main::fn#0 
+    // [3] callexecute *main::fn#0 
     jsr bi_fn
     // fn = addrtable[1]
     // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
@@ -347,7 +350,7 @@ main: {
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
     // (*fn)()
-    // [5] call *main::fn#1 
+    // [5] callexecute *main::fn#1 
     jsr bi_fn_1
     // main::@return
     // }

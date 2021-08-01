@@ -77,6 +77,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
    /**
     * Removes an entire procedure from the program (control flow graph and symbol table)
+    *
     * @param procedureRef The procedure to remove
     * @param removedBlocks A set where all removed blocks are added to.
     */
@@ -173,7 +174,9 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
             findReferencedBlocks(getGraph().getBlock(procedure.getLabelRef()), used);
          } else if(statement instanceof StatementCallExecute) {
             final ProcedureRef procedure = ((StatementCallExecute) statement).getProcedure();
-            findReferencedBlocks(getGraph().getBlock(procedure.getLabelRef()), used);
+            if(procedure != null) {
+               findReferencedBlocks(getGraph().getBlock(procedure.getLabelRef()), used);
+            }
          }
       }
    }

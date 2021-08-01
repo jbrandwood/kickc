@@ -81,10 +81,12 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       List<CallGraph.CallBlock.Call> calls = callBlock.getCalls();
       for(CallGraph.CallBlock.Call call : calls) {
          ScopeRef calledProcLabel = call.getProcedure();
-         ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
-         Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
-         CpuClobber calledClobber = getProcedureClobber(calledProc);
-         procClobber = new CpuClobber(procClobber, calledClobber);
+         if(calledProcLabel!=null) {
+            ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
+            Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
+            CpuClobber calledClobber = getProcedureClobber(calledProc);
+            procClobber = new CpuClobber(procClobber, calledClobber);
+         }
       }
 
       return procClobber;

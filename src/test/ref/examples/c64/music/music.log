@@ -1,11 +1,13 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicInit 
+Calling convention STACK_CALL adding prepare/execute/finalize for call *musicPlay 
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  call *musicInit 
+  callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
   main::$1 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
@@ -13,7 +15,7 @@ main::@1: scope:[main]  from main main::@1 main::@2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
-  call *musicPlay 
+  callexecute *musicPlay 
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   if(true) goto main::@1
   to:main::@return
@@ -73,24 +75,28 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Finalized unsigned number type (word) $1000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main
 CALL GRAPH
+Calls in [main] to null:1 null:4 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] call *musicInit 
+  [0] phi()
+  [1] callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [1] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
+  [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
-  [3] call *musicPlay 
-  [4] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [4] callexecute *musicPlay 
+  [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:main::@1
 
 
@@ -100,9 +106,9 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] call *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [1] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] call *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [1] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [MOS6526_CIA] 
@@ -148,26 +154,26 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 // Play the music 
 main: {
-    // [0] call *musicInit 
+    // [1] callexecute *musicInit 
     // Initialize the music
     jsr musicInit
     jmp __b1
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [1] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // [3] call *musicPlay 
+    // [4] callexecute *musicPlay 
     // Play the music
     jsr musicPlay
-    // [4] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
@@ -234,27 +240,27 @@ Score: 1066
 // Play the music 
 main: {
     // (*musicInit)()
-    // [0] call *musicInit 
+    // [1] callexecute *musicInit 
     // Initialize the music
     jsr musicInit
   // Wait for the RASTER
     // main::@1
   __b1:
     // while (VICII->RASTER != $fd)
-    // [1] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     // main::@2
     // (VICII->BORDER_COLOR)++;
-    // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // (*musicPlay)()
-    // [3] call *musicPlay 
+    // [4] callexecute *musicPlay 
     // Play the music
     jsr musicPlay
     // (VICII->BORDER_COLOR)--;
-    // [4] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }

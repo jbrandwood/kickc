@@ -1707,6 +1707,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testProblemCallIllegal() throws IOException {
+      assertError("problem-call-illegal.c", "Called object is not a function or function pointer");
+   }
+
+   @Test
    public void testProblemNegativeWordConst() throws IOException {
       compileAndCompare("problem-negative-word-const.c");
    }

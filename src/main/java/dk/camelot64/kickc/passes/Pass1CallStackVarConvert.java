@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
@@ -44,7 +45,11 @@ public class Pass1CallStackVarConvert extends Pass2SsaOptimization {
                StatementCallPointer call = (StatementCallPointer) statement;
                boolean hasParamOrReturn = call.getNumParameters() > 0 || call.getlValue() != null;
                //if(hasParamOrReturn) {
-                  SymbolTypeProcedure procedureType = (SymbolTypeProcedure) SymbolTypeInference.inferType(getScope(), call.getProcedure());
+               final SymbolType procType = SymbolTypeInference.inferType(getScope(), call.getProcedure());
+               if(!(procType instanceof SymbolTypeProcedure)) {
+                  throw new CompileError("Called object is not a function or function pointer "+call.getProcedure().toString(), call);
+               }
+               SymbolTypeProcedure procedureType = (SymbolTypeProcedure) procType;
                   // Perform stack call
                   stmtIt.remove();
                   stmtIt.add(new StatementCallPrepare(procedureType, null, call.getParameters(), Procedure.CallingConvention.STACK_CALL, call.getSource(), hasParamOrReturn?call.getComments():Comment.NO_COMMENTS));

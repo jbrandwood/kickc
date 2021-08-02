@@ -3081,13 +3081,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("literal-word-pointer-0.c");
    }
 
-   // TODO: Fix casting literal char* to word https://gitlab.com/camelot/kickc/issues/298
-   /*
    @Test
    public void testLiteralWordPointer1() throws IOException {
       compileAndCompare("literal-word-pointer-1.c");
    }
-    */
 
    @Test
    public void testLiteralStrings() throws IOException {

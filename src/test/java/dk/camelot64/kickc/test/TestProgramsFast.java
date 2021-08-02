@@ -2268,6 +2268,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testWeeipBbbsList() throws IOException {
+      compileAndCompare("weeip-bbslist.c");
+   }
+
+   @Test
    public void testUnion8() throws IOException {
       compileAndCompare("union-8.c");
    }

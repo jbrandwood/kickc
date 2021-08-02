@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.StructMemberRef;
 
@@ -32,6 +33,11 @@ public class PassNAssertStructMembers extends Pass2SsaOptimization {
                if(member==null) {
                   throw new CompileError("Unknown struct member "+structMemberRef.getMemberName()+" in struct "+structType.getTypeName(), currentStmt);
                }
+            } else {
+               if(type instanceof SymbolTypePointer)
+                  throw new CompileError("member '"+structMemberRef.getMemberName()+"' reference type '"+type.getTypeBaseName()+"' is a pointer; did you mean to use '->'?", currentStmt);
+               else
+                  throw new CompileError("member '"+structMemberRef.getMemberName()+"' reference operator '.'/'->' applied to a non-struct", currentStmt);
             }
          }
       });

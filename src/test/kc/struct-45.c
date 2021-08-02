@@ -1,7 +1,7 @@
 // https://gitlab.com/camelot/kickc/-/issues/590
 
-#pragma var_model(mem)
 #pragma struct_model(classic)
+#pragma var_model(struct_mem)
 
 struct deviceslot {
 	unsigned char hostSlot;

@@ -14,6 +14,7 @@
 .segment Code
 main: {
     .label slotsA = ssA
+    .label i = 2
     // deviceslot_t s1 = {'A', 'R', "f1"}
     ldy #SIZEOF_STRUCT_DEVICESLOT
   !:
@@ -50,17 +51,17 @@ main: {
     dey
     bne !-
     lda #0
-    sta i
+    sta.z i
   __b1:
     // deviceslot_t ds = slotsA->slot[i]
-    lda i
+    lda.z i
     asl
     asl
     asl
     asl
     asl
     clc
-    adc i
+    adc.z i
     asl
     tax
     ldy #0
@@ -73,12 +74,12 @@ main: {
     bne !-
     // *(OUT + i) = ds.mode
     lda ds+OFFSET_STRUCT_DEVICESLOT_MODE
-    ldy i
+    ldy.z i
     sta OUT,y
     // for(char i: 0..1)
-    inc i
+    inc.z i
     lda #2
-    cmp i
+    cmp.z i
     bne __b1
     // }
     rts
@@ -87,7 +88,6 @@ main: {
     s2: .fill SIZEOF_STRUCT_DEVICESLOT, 0
     ssA: .fill SIZEOF_STRUCT_DEVICESLOTSA, 0
     ds: .fill SIZEOF_STRUCT_DEVICESLOT, 0
-    i: .byte 0
 }
   __0: .byte 'A', 'R'
   .text "f1"

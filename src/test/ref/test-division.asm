@@ -63,10 +63,9 @@ test_8u: {
     // byte divisor = divisors[i]
     lda divisors,y
     sta.z divisor
-    // div8u(dividend, divisor)
+    // byte res = div8u(dividend, divisor)
     ldx.z dividend
     jsr div8u
-    // div8u(dividend, divisor)
     // byte res = div8u(dividend, divisor)
     sta.z res
     // print_uchar(dividend)
@@ -141,13 +140,12 @@ test_16u: {
     sta.z divisor
     lda divisors+1,x
     sta.z divisor+1
-    // div16u(dividend, divisor)
+    // word res = div16u(dividend, divisor)
     lda.z dividend
     sta.z div16u.dividend
     lda.z dividend+1
     sta.z div16u.dividend+1
     jsr div16u
-    // word res = div16u(dividend, divisor)
     // print_uint(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -220,11 +218,10 @@ test_8s: {
     // signed byte divisor = divisors[i]
     lda divisors,y
     sta.z divisor
-    // div8s(dividend, divisor)
+    // signed byte res = div8s(dividend, divisor)
     ldx.z dividend
     tay
     jsr div8s
-    // signed byte res = div8s(dividend, divisor)
     sta.z res
     // print_schar(dividend)
     lda.z print_line_cursor
@@ -297,9 +294,8 @@ test_16s: {
     sta.z divisor
     lda divisors+1,x
     sta.z divisor+1
-    // div16s(dividend, divisor)
-    jsr div16s
     // signed word res = div16s(dividend, divisor)
+    jsr div16s
     // print_sint(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -527,9 +523,8 @@ div8s: {
     bmi __b3
     tya
   __b4:
-    // div8u(dividendu, divisoru)
+    // char resultu = div8u(dividendu, divisoru)
     jsr div8u
-    // div8u(dividendu, divisoru)
     // char resultu = div8u(dividendu, divisoru)
     tay
     // if(neg==0)
@@ -816,9 +811,8 @@ divr16s: {
     lda.z divisor+1
     bmi __b3
   __b4:
-    // divr16u(dividendu, divisoru, remu)
+    // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     jsr divr16u
-    // divr16u(dividendu, divisoru, remu)
     // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     // if(neg==0)
     cpy #0

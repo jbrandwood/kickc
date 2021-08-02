@@ -357,20 +357,17 @@ mul8u_compare: {
     lda #0
     sta.z b
   __b2:
-    // muls8u(a, b)
+    // word ms = muls8u(a, b)
     ldx.z b
     jsr muls8u
-    // word ms = muls8u(a, b)
-    // mulf8u(a,b)
+    // word mf = mulf8u(a,b)
     lda.z a
     ldx.z b
     jsr mulf8u
-    // word mf = mulf8u(a,b)
-    // mul8u(a,b)
+    // word mn = mul8u(a,b)
     ldx.z a
     lda.z b
     jsr mul8u
-    // mul8u(a,b)
     // word mn = mul8u(a,b)
     // if(ms!=mf)
     lda.z ms
@@ -469,20 +466,17 @@ mul8s_compare: {
     inc.z a
     jmp __b1
   __b4:
-    // muls8s(a, b)
+    // signed word ms = muls8s(a, b)
     ldx.z b
     jsr muls8s
-    // signed word ms = muls8s(a, b)
-    // mulf8s(a,b)
+    // signed word mf = mulf8s(a,b)
     lda.z a
     ldx.z b
     jsr mulf8s
-    // mulf8s(a,b)
     // signed word mf = mulf8s(a,b)
-    // mul8s(a,b)
+    // signed word mn = mul8s(a,b)
     ldy.z b
     jsr mul8s
-    // signed word mn = mul8s(a,b)
     // if(ms!=mf)
     lda.z ms
     cmp.z mf
@@ -869,11 +863,10 @@ mulf8s: {
 mul8s: {
     .label m = $a
     .label a = 4
-    // mul8u((char)a, (char) b)
+    // unsigned int m = mul8u((char)a, (char) b)
     ldx.z a
     tya
     jsr mul8u
-    // mul8u((char)a, (char) b)
     // unsigned int m = mul8u((char)a, (char) b)
     // if(a<0)
     lda.z a
@@ -1056,10 +1049,9 @@ mulf8s_prepared: {
     .label memA = $fd
     .label m = $10
     .label b = $12
-    // mulf8u_prepared((char) b)
+    // unsigned int m = mulf8u_prepared((char) b)
     lda.z b
     jsr mulf8u_prepared
-    // mulf8u_prepared((char) b)
     // unsigned int m = mulf8u_prepared((char) b)
     // if(*memA<0)
     lda memA

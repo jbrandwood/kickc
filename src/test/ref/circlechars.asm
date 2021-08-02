@@ -3,6 +3,7 @@
 /// C standard library string.h
 ///
 /// Functions to manipulate C strings and arrays.
+/// NULL pointer
   // Commodore 64 PRG executable file
 .file [name="circlechars.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -136,12 +137,15 @@ main: {
     lda.z x
     asl
     // signed char xd = x*2-39
+    // xd = x-19.5 
+    // Multiply everything by 2 to allow integer math to calculate with .5 precision
     tax
     axs #$27
     // y*2
     lda.z y
     asl
     // signed char yd = y*2-24
+    // yd = y-12 
     sec
     sbc #$18
     sta.z yd
@@ -162,6 +166,7 @@ main: {
     jsr mul8s
     // mul8s(yd,yd)
     // signed int dist_sq = mul8s(xd,xd) + mul8s(yd,yd)
+    // dist_sq = xd*xd + yd*yd
     clc
     lda.z dist_sq
     adc.z __10
@@ -220,12 +225,11 @@ gotoxy: {
     sta.z conio_cursor_x
     // conio_cursor_y = y
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -365,11 +369,10 @@ cputs: {
 mul8s: {
     .label m = 8
     .label a = $a
-    // mul8u((char)a, (char) b)
+    // unsigned int m = mul8u((char)a, (char) b)
     ldx.z a
     tya
     jsr mul8u
-    // unsigned int m = mul8u((char)a, (char) b)
     // if(a<0)
     lda.z a
     cmp #0

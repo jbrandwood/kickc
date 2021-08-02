@@ -10,6 +10,6 @@ void main() {
 }
 
 // KickAsm data initializer
-export char A[] = kickasm {{
+__export char A[] = kickasm {{
     .byte 1, 2, 3
 }};

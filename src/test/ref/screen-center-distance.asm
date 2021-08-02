@@ -242,14 +242,13 @@ init_dist_screen: {
     sec
     adc #$18
   __b4:
-    // sqr(yd)
+    // word yds = sqr(yd)
     jsr sqr
-    // sqr(yd)
+    // word yds = sqr(yd)
     lda.z sqr.return
     sta.z sqr.return_1
     lda.z sqr.return+1
     sta.z sqr.return_1+1
-    // word yds = sqr(yd)
     lda #$27
     sta.z xb
     lda #0
@@ -293,9 +292,8 @@ init_dist_screen: {
     sec
     adc #$27
   __b10:
-    // sqr(xd)
+    // word xds = sqr(xd)
     jsr sqr
-    // sqr(xd)
     // word xds = sqr(xd)
     // word ds = xds+yds
     clc
@@ -305,9 +303,8 @@ init_dist_screen: {
     lda.z ds+1
     adc.z yds+1
     sta.z ds+1
-    // sqrt(ds)
-    jsr sqrt
     // byte d = sqrt(ds)
+    jsr sqrt
     // screen_topline[x] = d
     ldy.z x
     sta (screen_topline),y
@@ -337,7 +334,11 @@ init_dist_screen: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $c
-    // 0xffffffff - *CIA2_TIMER_AB
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -351,6 +352,10 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }
@@ -460,9 +465,8 @@ sqrt: {
     .label __2 = $a
     .label found = $a
     .label val = $13
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
+    // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     jsr bsearch16u
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
     lda.z __2
@@ -557,7 +561,7 @@ bsearch16u: {
     // num >> 1
     txa
     lsr
-    // items + (num >> 1)
+    // unsigned int* pivot = items + (num >> 1)
     asl
     clc
     adc.z items

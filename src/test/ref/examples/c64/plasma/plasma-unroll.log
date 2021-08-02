@@ -3,6 +3,8 @@ Inlined call main::$1 = call toD018 SCREEN1 CHARSET
 Inlined call call sid_rnd_init 
 Inlined call makecharset::$6 = call sid_rnd 
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement doplasma::$1
 
 CONTROL FLOW GRAPH SSA
 
@@ -59,8 +61,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -258,8 +259,7 @@ doplasma::@2: scope:[doplasma]  from doplasma::@1
   doplasma::yprev#2 = phi( doplasma::@1/doplasma::yprev#3 )
   doplasma::c1b#2 = phi( doplasma::@1/doplasma::c1b#3 )
   doplasma::c1a#2 = phi( doplasma::@1/doplasma::c1a#3 )
-  doplasma::$1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2]
-  doplasma::yval#0 = doplasma::$1
+  doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2]
   doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2
   doplasma::ybuf[doplasma::i#3] = doplasma::$2
   doplasma::yprev#1 = doplasma::yval#0
@@ -797,7 +797,6 @@ byte c2B#8
 byte c2B#9
 void doplasma(byte* doplasma::screen)
 bool~ doplasma::$0
-byte~ doplasma::$1
 byte~ doplasma::$2
 bool~ doplasma::$3
 byte~ doplasma::$4
@@ -1006,7 +1005,6 @@ byte makecharset::sid_rnd1_return#3
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -1274,8 +1272,8 @@ Inferred type updated to byte in makecharset::$7 = makecharset::$6 & $ff
 Inferred type updated to word in makecharset::$10 = makecharset::c#5 * 8
 Inferred type updated to word in makecharset::$11 = makecharset::$10 + makecharset::i#3
 Inversing boolean not [21] memset::$1 = memset::num#1 <= 0 from [20] memset::$0 = memset::num#1 > 0
-Inversing boolean not [175] makecharset::$14 = makecharset::$12 != 0 from [174] makecharset::$13 = makecharset::$12 == 0
-Inversing boolean not [188] makecharset::$9 = makecharset::$7 <= makecharset::s#1 from [187] makecharset::$8 = makecharset::$7 > makecharset::s#1
+Inversing boolean not [173] makecharset::$14 = makecharset::$12 != 0 from [172] makecharset::$13 = makecharset::$12 == 0
+Inversing boolean not [186] makecharset::$9 = makecharset::$7 <= makecharset::s#1 from [185] makecharset::$8 = makecharset::$7 > makecharset::s#1
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias print_char_cursor#0 = print_char_cursor#13 print_char_cursor#1 
 Alias print_line_cursor#0 = print_screen#3 print_screen#2 print_char_cursor#2 print_line_cursor#9 print_char_cursor#14 print_line_cursor#1 print_char_cursor#3 
@@ -1283,7 +1281,6 @@ Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1319,7 +1316,7 @@ Alias c1B#10 = c1B#20 c1B#16
 Alias c2A#16 = c2A#22 c2A#9 
 Alias c2B#16 = c2B#22 c2B#9 
 Alias doplasma::screen#10 = doplasma::screen#12 doplasma::screen#8 
-Alias doplasma::yval#0 = doplasma::$1 doplasma::yprev#1 
+Alias doplasma::yprev#1 = doplasma::yval#0 
 Alias doplasma::c2a#2 = doplasma::c2a#3 
 Alias doplasma::c2b#2 = doplasma::c2b#3 
 Alias doplasma::i1#2 = doplasma::i1#3 
@@ -2387,7 +2384,7 @@ Coalesced [169] doplasma::c2b#5 = doplasma::c2b#1
 Coalesced [176] doplasma::i#4 = doplasma::i#1
 Coalesced [177] doplasma::c1a#5 = doplasma::c1a#1
 Coalesced [178] doplasma::c1b#5 = doplasma::c1b#1
-Not coalescing [179] doplasma::yprev#4 = doplasma::yval#0
+Not coalescing [179] doplasma::yprev#4 = doplasma::yprev#1
 Coalesced [195] memset::dst#4 = memset::dst#1
 Coalesced down to 20 phi equivalence classes
 Culled Empty Block label main::@6
@@ -2702,13 +2699,13 @@ doplasma::@5: scope:[doplasma]  from doplasma::@4
   [116] doplasma::i1#1 = ++ doplasma::i1#2
   to:doplasma::@4
 doplasma::@2: scope:[doplasma]  from doplasma::@1
-  [117] doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2]
-  [118] doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2
+  [117] doplasma::yprev#1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2]
+  [118] doplasma::$2 = doplasma::yprev#1 - doplasma::yprev#2
   [119] doplasma::ybuf[doplasma::i#2] = doplasma::$2
   [120] doplasma::c1a#1 = doplasma::c1a#2 + 4
   [121] doplasma::c1b#1 = doplasma::c1b#2 + 9
   [122] doplasma::i#1 = ++ doplasma::i#2
-  [123] doplasma::yprev#4 = doplasma::yval#0
+  [123] doplasma::yprev#4 = doplasma::yprev#1
   to:doplasma::@1
 
 void print_cls()
@@ -2817,10 +2814,10 @@ byte doplasma::val#5 15001.5
 byte doplasma::val#51 20002.0
 byte doplasma::val#7 15001.5
 byte doplasma::yprev
+byte doplasma::yprev#1 5000.5
 byte doplasma::yprev#2 6667.333333333333
 byte doplasma::yprev#4 20002.0
 byte doplasma::yval
-byte doplasma::yval#0 5000.5
 void main()
 byte* main::col
 byte* main::col#1 16.5
@@ -2927,7 +2924,7 @@ Added variable doplasma::val#47 to live range equivalence class [ doplasma::val#
 Added variable doplasma::val#49 to live range equivalence class [ doplasma::val#49 ]
 Added variable doplasma::val#51 to live range equivalence class [ doplasma::val#51 ]
 Added variable doplasma::$4 to live range equivalence class [ doplasma::$4 ]
-Added variable doplasma::yval#0 to live range equivalence class [ doplasma::yval#0 ]
+Added variable doplasma::yprev#1 to live range equivalence class [ doplasma::yprev#1 ]
 Added variable doplasma::$2 to live range equivalence class [ doplasma::$2 ]
 Complete equivalence classes
 [ main::col#2 main::col#1 ]
@@ -2984,7 +2981,7 @@ Complete equivalence classes
 [ doplasma::val#49 ]
 [ doplasma::val#51 ]
 [ doplasma::$4 ]
-[ doplasma::yval#0 ]
+[ doplasma::yprev#1 ]
 [ doplasma::$2 ]
 Allocated zp[2]:2 [ main::col#2 main::col#1 ]
 Allocated zp[1]:4 [ c1A#1 c1A#2 ]
@@ -3040,7 +3037,7 @@ Allocated zp[1]:59 [ doplasma::val#47 ]
 Allocated zp[1]:60 [ doplasma::val#49 ]
 Allocated zp[1]:61 [ doplasma::val#51 ]
 Allocated zp[1]:62 [ doplasma::$4 ]
-Allocated zp[1]:63 [ doplasma::yval#0 ]
+Allocated zp[1]:63 [ doplasma::yprev#1 ]
 Allocated zp[1]:64 [ doplasma::$2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = BLUE [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -3102,15 +3099,15 @@ Removing always clobbered register reg byte a as potential for zp[1]:20 [ doplas
 Removing always clobbered register reg byte a as potential for zp[1]:21 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ]
 Statement [114] doplasma::c2a#1 = doplasma::c2a#2 + 3 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2b#2 doplasma::c2a#1 ] ( doplasma:13 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2b#2 doplasma::c2a#1 ] { }  ) always clobbers reg byte a 
 Statement [115] doplasma::c2b#1 = doplasma::c2b#2 + 7 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#1 doplasma::c2b#1 ] ( doplasma:13 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#1 doplasma::c2b#1 ] { }  ) always clobbers reg byte a 
-Statement [117] doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
+Statement [117] doplasma::yprev#1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ doplasma::i#2 doplasma::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ doplasma::yprev#2 doplasma::yprev#4 ]
-Statement [118] doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yval#0 doplasma::$2 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yval#0 doplasma::$2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:63 [ doplasma::yval#0 ]
-Statement [120] doplasma::c1a#1 = doplasma::c1a#2 + 4 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
-Statement [121] doplasma::c1b#1 = doplasma::c1b#2 + 9 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
+Statement [118] doplasma::$2 = doplasma::yprev#1 - doplasma::yprev#2 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#1 doplasma::$2 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#1 doplasma::$2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:63 [ doplasma::yprev#1 ]
+Statement [120] doplasma::c1a#1 = doplasma::c1a#2 + 4 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
+Statement [121] doplasma::c1b#1 = doplasma::c1b#2 + 9 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
 Statement [127] *print_char_cursor#19 = print_char::ch#0 [ print_char_cursor#19 ] ( makecharset:8::print_char:29 [ makecharset::c#2 print_char_cursor#19 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [132] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( makecharset:8::print_cls:18::memset:125 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [134] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( makecharset:8::print_cls:18::memset:125 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -3159,10 +3156,10 @@ Statement [109] doplasma::val#51 = doplasma::val#49 + *(doplasma::ybuf+$18) [ c1
 Statement [112] doplasma::$4 = SINTABLE[doplasma::c2a#2] + SINTABLE[doplasma::c2b#2] [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#2 doplasma::c2b#2 doplasma::$4 ] ( doplasma:13 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#2 doplasma::c2b#2 doplasma::$4 ] { }  ) always clobbers reg byte a 
 Statement [114] doplasma::c2a#1 = doplasma::c2a#2 + 3 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2b#2 doplasma::c2a#1 ] ( doplasma:13 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2b#2 doplasma::c2a#1 ] { }  ) always clobbers reg byte a 
 Statement [115] doplasma::c2b#1 = doplasma::c2b#2 + 7 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#1 doplasma::c2b#1 ] ( doplasma:13 [ c2A#1 c2B#1 c1A#2 c1B#2 doplasma::i1#2 doplasma::c2a#1 doplasma::c2b#1 ] { }  ) always clobbers reg byte a 
-Statement [117] doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
-Statement [118] doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yval#0 doplasma::$2 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yval#0 doplasma::$2 ] { }  ) always clobbers reg byte a 
-Statement [120] doplasma::c1a#1 = doplasma::c1a#2 + 4 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
-Statement [121] doplasma::c1b#1 = doplasma::c1b#2 + 9 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yval#0 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yval#0 ] { }  ) always clobbers reg byte a 
+Statement [117] doplasma::yprev#1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#2 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
+Statement [118] doplasma::$2 = doplasma::yprev#1 - doplasma::yprev#2 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#1 doplasma::$2 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#2 doplasma::c1b#2 doplasma::yprev#1 doplasma::$2 ] { }  ) always clobbers reg byte a 
+Statement [120] doplasma::c1a#1 = doplasma::c1a#2 + 4 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1b#2 doplasma::c1a#1 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
+Statement [121] doplasma::c1b#1 = doplasma::c1b#2 + 9 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yprev#1 ] ( doplasma:13 [ c1A#1 c1B#1 c2A#1 c2B#1 doplasma::i#2 doplasma::c1a#1 doplasma::c1b#1 doplasma::yprev#1 ] { }  ) always clobbers reg byte a 
 Statement [127] *print_char_cursor#19 = print_char::ch#0 [ print_char_cursor#19 ] ( makecharset:8::print_char:29 [ makecharset::c#2 print_char_cursor#19 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [132] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( makecharset:8::print_cls:18::memset:125 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [134] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( makecharset:8::print_cls:18::memset:125 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -3220,11 +3217,11 @@ Potential registers zp[1]:59 [ doplasma::val#47 ] : zp[1]:59 , reg byte a , reg 
 Potential registers zp[1]:60 [ doplasma::val#49 ] : zp[1]:60 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:61 [ doplasma::val#51 ] : zp[1]:61 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:62 [ doplasma::$4 ] : zp[1]:62 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:63 [ doplasma::yval#0 ] : zp[1]:63 , reg byte x , reg byte y , 
+Potential registers zp[1]:63 [ doplasma::yprev#1 ] : zp[1]:63 , reg byte x , reg byte y , 
 Potential registers zp[1]:64 [ doplasma::$2 ] : zp[1]:64 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [doplasma] 26,669.33: zp[1]:18 [ doplasma::yprev#2 doplasma::yprev#4 ] 26,669.33: zp[1]:19 [ doplasma::i1#2 doplasma::i1#1 ] 25,474.25: zp[1]:22 [ doplasma::i2#2 doplasma::i2#1 ] 20,002: zp[1]:36 [ doplasma::val#0 ] 20,002: zp[1]:61 [ doplasma::val#51 ] 20,002: zp[1]:62 [ doplasma::$4 ] 20,002: zp[1]:64 [ doplasma::$2 ] 16,223.8: zp[1]:21 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] 15,715.86: zp[1]:15 [ doplasma::i#2 doplasma::i#1 ] 15,001.5: zp[1]:37 [ doplasma::val#1 ] 15,001.5: zp[1]:38 [ doplasma::val#5 ] 15,001.5: zp[1]:39 [ doplasma::val#7 ] 15,001.5: zp[1]:40 [ doplasma::val#10 ] 15,001.5: zp[1]:41 [ doplasma::val#11 ] 15,001.5: zp[1]:42 [ doplasma::val#13 ] 15,001.5: zp[1]:43 [ doplasma::val#15 ] 15,001.5: zp[1]:44 [ doplasma::val#17 ] 15,001.5: zp[1]:45 [ doplasma::val#19 ] 15,001.5: zp[1]:46 [ doplasma::val#21 ] 15,001.5: zp[1]:47 [ doplasma::val#23 ] 15,001.5: zp[1]:48 [ doplasma::val#25 ] 15,001.5: zp[1]:49 [ doplasma::val#27 ] 15,001.5: zp[1]:50 [ doplasma::val#29 ] 15,001.5: zp[1]:51 [ doplasma::val#31 ] 15,001.5: zp[1]:52 [ doplasma::val#33 ] 15,001.5: zp[1]:53 [ doplasma::val#35 ] 15,001.5: zp[1]:54 [ doplasma::val#37 ] 15,001.5: zp[1]:55 [ doplasma::val#39 ] 15,001.5: zp[1]:56 [ doplasma::val#41 ] 15,001.5: zp[1]:57 [ doplasma::val#43 ] 15,001.5: zp[1]:58 [ doplasma::val#45 ] 15,001.5: zp[1]:59 [ doplasma::val#47 ] 15,001.5: zp[1]:60 [ doplasma::val#49 ] 14,294.33: zp[1]:20 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] 11,886.67: zp[1]:17 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 11,122.3: zp[1]:16 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 5,000.5: zp[1]:63 [ doplasma::yval#0 ] 
+Uplift Scope [doplasma] 26,669.33: zp[1]:18 [ doplasma::yprev#2 doplasma::yprev#4 ] 26,669.33: zp[1]:19 [ doplasma::i1#2 doplasma::i1#1 ] 25,474.25: zp[1]:22 [ doplasma::i2#2 doplasma::i2#1 ] 20,002: zp[1]:36 [ doplasma::val#0 ] 20,002: zp[1]:61 [ doplasma::val#51 ] 20,002: zp[1]:62 [ doplasma::$4 ] 20,002: zp[1]:64 [ doplasma::$2 ] 16,223.8: zp[1]:21 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] 15,715.86: zp[1]:15 [ doplasma::i#2 doplasma::i#1 ] 15,001.5: zp[1]:37 [ doplasma::val#1 ] 15,001.5: zp[1]:38 [ doplasma::val#5 ] 15,001.5: zp[1]:39 [ doplasma::val#7 ] 15,001.5: zp[1]:40 [ doplasma::val#10 ] 15,001.5: zp[1]:41 [ doplasma::val#11 ] 15,001.5: zp[1]:42 [ doplasma::val#13 ] 15,001.5: zp[1]:43 [ doplasma::val#15 ] 15,001.5: zp[1]:44 [ doplasma::val#17 ] 15,001.5: zp[1]:45 [ doplasma::val#19 ] 15,001.5: zp[1]:46 [ doplasma::val#21 ] 15,001.5: zp[1]:47 [ doplasma::val#23 ] 15,001.5: zp[1]:48 [ doplasma::val#25 ] 15,001.5: zp[1]:49 [ doplasma::val#27 ] 15,001.5: zp[1]:50 [ doplasma::val#29 ] 15,001.5: zp[1]:51 [ doplasma::val#31 ] 15,001.5: zp[1]:52 [ doplasma::val#33 ] 15,001.5: zp[1]:53 [ doplasma::val#35 ] 15,001.5: zp[1]:54 [ doplasma::val#37 ] 15,001.5: zp[1]:55 [ doplasma::val#39 ] 15,001.5: zp[1]:56 [ doplasma::val#41 ] 15,001.5: zp[1]:57 [ doplasma::val#43 ] 15,001.5: zp[1]:58 [ doplasma::val#45 ] 15,001.5: zp[1]:59 [ doplasma::val#47 ] 15,001.5: zp[1]:60 [ doplasma::val#49 ] 14,294.33: zp[1]:20 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] 11,886.67: zp[1]:17 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 11,122.3: zp[1]:16 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 5,000.5: zp[1]:63 [ doplasma::yprev#1 ] 
 Uplift Scope [makecharset] 38,879: zp[1]:14 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] 25,716.86: zp[1]:13 [ makecharset::ii#2 makecharset::ii#1 ] 20,002: zp[1]:34 [ makecharset::sid_rnd1_return#0 ] 20,002: zp[1]:35 [ makecharset::$7 ] 2,288: zp[1]:12 [ makecharset::i#2 makecharset::i#1 ] 2,002: zp[2]:28 [ makecharset::$10 ] 2,002: zp[2]:30 [ makecharset::$11 ] 2,002: zp[2]:32 [ makecharset::$16 ] 631.38: zp[1]:26 [ makecharset::s#0 ] 264.75: zp[2]:8 [ makecharset::c#2 makecharset::c#1 ] 202: zp[1]:25 [ makecharset::$3 ] 202: zp[1]:27 [ makecharset::$12 ] 
 Uplift Scope [memset] 33,336.67: zp[2]:23 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [] 614.66: zp[2]:10 [ print_char_cursor#19 print_char_cursor#32 print_char_cursor#0 ] 18.01: zp[1]:4 [ c1A#1 c1A#2 ] 16.86: zp[1]:5 [ c1B#1 c1B#2 ] 10.81: zp[1]:6 [ c2A#1 c2A#2 ] 10.48: zp[1]:7 [ c2B#1 c2B#2 ] 
@@ -3321,8 +3318,8 @@ Attempting to uplift remaining variables inzp[1]:17 [ doplasma::c1b#2 doplasma::
 Uplifting [doplasma] best 120851 combination zp[1]:17 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ]
 Uplifting [doplasma] best 120851 combination zp[1]:16 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 
-Attempting to uplift remaining variables inzp[1]:63 [ doplasma::yval#0 ]
-Uplifting [doplasma] best 120851 combination zp[1]:63 [ doplasma::yval#0 ] 
+Attempting to uplift remaining variables inzp[1]:63 [ doplasma::yprev#1 ]
+Uplifting [doplasma] best 120851 combination zp[1]:63 [ doplasma::yprev#1 ] 
 Attempting to uplift remaining variables inzp[1]:12 [ makecharset::i#2 makecharset::i#1 ]
 Uplifting [makecharset] best 120851 combination zp[1]:12 [ makecharset::i#2 makecharset::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:26 [ makecharset::s#0 ]
@@ -3359,7 +3356,7 @@ Allocated (was zp[1]:21) zp[1]:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2
 Allocated (was zp[1]:26) zp[1]:14 [ makecharset::s#0 c1B#1 c1B#2 ]
 Allocated (was zp[2]:28) zp[2]:15 [ makecharset::$10 makecharset::$11 makecharset::$16 memset::dst#2 memset::dst#1 ]
 Allocated (was zp[1]:35) zp[1]:17 [ makecharset::$7 c2A#1 c2A#2 ]
-Allocated (was zp[1]:63) zp[1]:18 [ doplasma::yval#0 ]
+Allocated (was zp[1]:63) zp[1]:18 [ doplasma::yprev#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -3711,7 +3708,7 @@ makecharset: {
 doplasma: {
     .label c1a = 9
     .label c1b = $a
-    .label yval = $12
+    .label yprev = $12
     .label i = 8
     .label c2a = $c
     .label c2b = $d
@@ -4040,18 +4037,18 @@ doplasma: {
     jmp __b4
     // doplasma::@2
   __b2:
-    // [117] doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // [117] doplasma::yprev#1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy.z c1a
     lda SINTABLE,y
     ldy.z c1b
     clc
     adc SINTABLE,y
-    sta.z yval
-    // [118] doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
+    sta.z yprev
+    // [118] doplasma::$2 = doplasma::yprev#1 - doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
     txa
     eor #$ff
     sec
-    adc.z yval
+    adc.z yprev
     // [119] doplasma::ybuf[doplasma::i#2] = doplasma::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
     sta ybuf,y
@@ -4065,8 +4062,8 @@ doplasma: {
     stx.z c1b
     // [122] doplasma::i#1 = ++ doplasma::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [123] doplasma::yprev#4 = doplasma::yval#0 -- vbuxx=vbuz1 
-    ldx.z yval
+    // [123] doplasma::yprev#4 = doplasma::yprev#1 -- vbuxx=vbuz1 
+    ldx.z yprev
     // [47] phi from doplasma::@2 to doplasma::@1 [phi:doplasma::@2->doplasma::@1]
   __b1_from___b2:
     // [47] phi doplasma::yprev#2 = doplasma::yprev#4 [phi:doplasma::@2->doplasma::@1#0] -- register_copy 
@@ -4410,10 +4407,10 @@ byte doplasma::val#7 reg byte a 15001.5
 constant byte* doplasma::xbuf[$28]  = { fill( $28, 0) }
 constant byte* doplasma::ybuf[$19]  = { fill( $19, 0) }
 byte doplasma::yprev
+byte doplasma::yprev#1 yprev zp[1]:18 5000.5
 byte doplasma::yprev#2 reg byte x 6667.333333333333
 byte doplasma::yprev#4 reg byte x 20002.0
 byte doplasma::yval
-byte doplasma::yval#0 yval zp[1]:18 5000.5
 void main()
 byte* main::col
 byte* main::col#1 col zp[2]:5 16.5
@@ -4520,7 +4517,7 @@ reg byte a [ doplasma::val#47 ]
 reg byte a [ doplasma::val#49 ]
 reg byte a [ doplasma::val#51 ]
 reg byte a [ doplasma::$4 ]
-zp[1]:18 [ doplasma::yval#0 ]
+zp[1]:18 [ doplasma::yprev#1 ]
 reg byte a [ doplasma::$2 ]
 
 
@@ -4849,7 +4846,7 @@ makecharset: {
 doplasma: {
     .label c1a = 9
     .label c1b = $a
-    .label yval = $12
+    .label yprev = $12
     .label i = 8
     .label c2a = $c
     .label c2b = $d
@@ -5185,20 +5182,20 @@ doplasma: {
     jmp __b4
     // doplasma::@2
   __b2:
-    // SINTABLE[c1a] + SINTABLE[c1b]
-    // [117] doplasma::yval#0 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // unsigned char yval = (SINTABLE[c1a] + SINTABLE[c1b])
+    // [117] doplasma::yprev#1 = SINTABLE[doplasma::c1a#2] + SINTABLE[doplasma::c1b#2] -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy.z c1a
     lda SINTABLE,y
     ldy.z c1b
     clc
     adc SINTABLE,y
-    sta.z yval
+    sta.z yprev
     // yval - yprev
-    // [118] doplasma::$2 = doplasma::yval#0 - doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
+    // [118] doplasma::$2 = doplasma::yprev#1 - doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
     txa
     eor #$ff
     sec
-    adc.z yval
+    adc.z yprev
     // ybuf[i] = yval - yprev
     // [119] doplasma::ybuf[doplasma::i#2] = doplasma::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
@@ -5216,8 +5213,8 @@ doplasma: {
     // for (unsigned char i = 0; i < 25; ++i)
     // [122] doplasma::i#1 = ++ doplasma::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [123] doplasma::yprev#4 = doplasma::yval#0 -- vbuxx=vbuz1 
-    ldx.z yval
+    // [123] doplasma::yprev#4 = doplasma::yprev#1 -- vbuxx=vbuz1 
+    ldx.z yprev
     // [47] phi from doplasma::@2 to doplasma::@1 [phi:doplasma::@2->doplasma::@1]
     // [47] phi doplasma::yprev#2 = doplasma::yprev#4 [phi:doplasma::@2->doplasma::@1#0] -- register_copy 
     // [47] phi doplasma::c1b#2 = doplasma::c1b#1 [phi:doplasma::@2->doplasma::@1#1] -- register_copy 

@@ -430,6 +430,7 @@ memcpy_to_vram: {
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
     sta VERA_ADDRX_H
     // char *end = (char*)src+num
+    // Transfer the data
     clc
     lda.z end
     adc.z src

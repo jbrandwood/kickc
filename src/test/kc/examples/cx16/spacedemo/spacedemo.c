@@ -19,10 +19,10 @@ const byte NUM_TILES_SMALL = 4;
 const byte NUM_TILES_LARGE = 4;
 
 #pragma data_seg(Palettes)
-export char* PALETTES;
+__export char* PALETTES;
 
 #pragma data_seg(Sprites)
-export char SPRITE_PIXELS[] = kickasm(resource "Ship_1/ship_1_360_1.png") {{
+__export char SPRITE_PIXELS[] = kickasm(resource "Ship_1/ship_1_360_1.png") {{
     .var pic = LoadPicture("Ship_1/ship_1_360_1.png")
     // palette: rgb->idx
     .var palette = Hashtable()
@@ -81,7 +81,7 @@ export char SPRITE_PIXELS[] = kickasm(resource "Ship_1/ship_1_360_1.png") {{
 }};
 
 #pragma data_seg(TileS)
-export char TILE_PIXELS_SMALL[] = kickasm(resource "Metal_1/frame_1.png") {{
+__export char TILE_PIXELS_SMALL[] = kickasm(resource "Metal_1/frame_1.png") {{
     // palette: rgb->idx
     .var palette2 = Hashtable()
     // RGB value for each palette index
@@ -153,7 +153,7 @@ export char TILE_PIXELS_SMALL[] = kickasm(resource "Metal_1/frame_1.png") {{
 }};
 
 #pragma data_seg(TileB)
-export char TILE_PIXELS_LARGE[] = kickasm(resource "Metal_1/metal_1.png") {{
+__export char TILE_PIXELS_LARGE[] = kickasm(resource "Metal_1/metal_1.png") {{
     .var pic3 = LoadPicture("Metal_1/metal_1.png")
     // palette: rgb->idx
     .var palette3 = Hashtable()

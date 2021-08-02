@@ -927,16 +927,16 @@ game_logic: {
     sta.z ghost4_reverse
   __b48:
     // char pacman_xtile = pacman_xfine/2
+    // Examine if pacman is on a pill tile - and handle it
     lda.z pacman_xfine
     lsr
     sta.z pacman_xtile
     // char pacman_ytile = pacman_yfine/2
     lda.z pacman_yfine
     lsr
-    // LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
+    // char* ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
     asl
     sta.z __210
-    // char* ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[pacman_ytile]
     tay
     clc
     lda #<LEVEL_TILES
@@ -1305,6 +1305,7 @@ game_logic: {
     lda.z ghost4_reverse
     bne __b78
     // char ghost4_xtile = ghost4_xfine/2
+    // Examine open directions from the new tile to determine next action
     lda.z ghost4_xfine
     lsr
     sta.z ghost4_xtile
@@ -1312,10 +1313,9 @@ game_logic: {
     lda.z ghost4_yfine
     lsr
     sta.z ghost4_ytile
-    // level_tile_directions(ghost4_xtile, ghost4_ytile)
+    // char open_directions = level_tile_directions(ghost4_xtile, ghost4_ytile)
     ldx.z ghost4_xtile
     jsr level_tile_directions
-    // level_tile_directions(ghost4_xtile, ghost4_ytile)
     // char open_directions = level_tile_directions(ghost4_xtile, ghost4_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost4_direction]
     // Eliminate the direction ghost came from
@@ -1474,6 +1474,7 @@ game_logic: {
     lda.z ghost3_reverse
     bne __b95
     // char ghost3_xtile = ghost3_xfine/2
+    // Examine open directions from the new tile to determine next action
     lda.z ghost3_xfine
     lsr
     sta.z ghost3_xtile
@@ -1481,10 +1482,9 @@ game_logic: {
     lda.z ghost3_yfine
     lsr
     sta.z ghost3_ytile
-    // level_tile_directions(ghost3_xtile, ghost3_ytile)
+    // char open_directions = level_tile_directions(ghost3_xtile, ghost3_ytile)
     ldx.z ghost3_xtile
     jsr level_tile_directions
-    // level_tile_directions(ghost3_xtile, ghost3_ytile)
     // char open_directions = level_tile_directions(ghost3_xtile, ghost3_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost3_direction]
     // Eliminate the direction ghost came from
@@ -1644,6 +1644,7 @@ game_logic: {
     lda.z ghost2_reverse
     bne __b112
     // char ghost2_xtile = ghost2_xfine/2
+    // Examine open directions from the new tile to determine next action
     lda.z ghost2_xfine
     lsr
     sta.z ghost2_xtile
@@ -1651,10 +1652,9 @@ game_logic: {
     lda.z ghost2_yfine
     lsr
     sta.z ghost2_ytile
-    // level_tile_directions(ghost2_xtile, ghost2_ytile)
+    // char open_directions = level_tile_directions(ghost2_xtile, ghost2_ytile)
     ldx.z ghost2_xtile
     jsr level_tile_directions
-    // level_tile_directions(ghost2_xtile, ghost2_ytile)
     // char open_directions = level_tile_directions(ghost2_xtile, ghost2_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost2_direction]
     // Eliminate the direction ghost came from
@@ -1815,6 +1815,7 @@ game_logic: {
     lda.z ghost1_reverse
     bne __b129
     // char ghost1_xtile = ghost1_xfine/2
+    // Examine open directions from the new tile to determine next action
     lda.z ghost1_xfine
     lsr
     sta.z ghost1_xtile
@@ -1822,10 +1823,9 @@ game_logic: {
     lda.z ghost1_yfine
     lsr
     sta.z ghost1_ytile
-    // level_tile_directions(ghost1_xtile, ghost1_ytile)
+    // char open_directions = level_tile_directions(ghost1_xtile, ghost1_ytile)
     ldx.z ghost1_xtile
     jsr level_tile_directions
-    // level_tile_directions(ghost1_xtile, ghost1_ytile)
     // char open_directions = level_tile_directions(ghost1_xtile, ghost1_ytile)
     // open_directions &= DIRECTION_ELIMINATE[ghost1_direction]
     // Eliminate the direction ghost came from
@@ -1971,15 +1971,15 @@ game_logic: {
     lda #0
     sta.z pacman_substep
     // char pacman_xtile = pacman_xfine/2
+    // Examine open directions from the new tile to determine next action
     lda.z pacman_xfine
     lsr
     tax
     // char pacman_ytile = pacman_yfine/2
     lda.z pacman_yfine
     lsr
-    // level_tile_directions(pacman_xtile, pacman_ytile)
+    // char open_directions = level_tile_directions(pacman_xtile, pacman_ytile)
     jsr level_tile_directions
-    // level_tile_directions(pacman_xtile, pacman_ytile)
     // char open_directions = level_tile_directions(pacman_xtile, pacman_ytile)
     tax
     // CIA1->PORT_A & 0x0f
@@ -1988,6 +1988,7 @@ game_logic: {
     // (CIA1->PORT_A & 0x0f)^0x0f
     eor #$f
     // char joy_directions = ((CIA1->PORT_A & 0x0f)^0x0f)*4
+    // Read joystick#2 - arrange bits to match DIRECTION
     asl
     asl
     // if(joy_directions!=0)
@@ -2215,13 +2216,13 @@ splash_run: {
     ldx #0
     txa
     sta.z i
-  __b1:
+  __b2:
     // for(char i=0;i<8;i++)
     lda.z i
     cmp #8
-    bcs !__b2+
-    jmp __b2
-  !__b2:
+    bcs !__b3+
+    jmp __b3
+  !__b3:
     // CIA2->PORT_A = toDd00(SCREENS_1)
     // Set initial graphics bank
     lda #toDd001_return
@@ -2281,20 +2282,20 @@ splash_run: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_MC
     ldx #0
   // Set initial Sprite Color
-  __b5:
+  __b6:
     // for(char i=0;i<8;i++)
     cpx #8
-    bcc __b6
+    bcc __b7
     // VICII->CONTROL2 = 0x08
     // Set VICII CONTROL2 ($d016) to 8 to allow ASL, LSR to be used for opening the border
     lda #8
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     ldx #0
   // Move the bobs to the center to avoid interference while rendering the level
-  __b8:
+  __b9:
     // for(char i=0;i<4;i++)
     cpx #4
-    bcc __b9
+    bcc __b10
     // asm
     // Disable SID CH#3
     lda #1
@@ -2314,11 +2315,11 @@ splash_run: {
     lda #VICII_RSEL|VICII_DEN|VICII_ECM|VICII_BMM
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
   // Wait for line 0xfa (lower border)
-  __b11:
+  __b12:
     // while(VICII->RASTER!=0xfa)
     lda #$fa
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b11
+    bne __b12
     // VICII->CONTROL1 &= ~(VICII_RST8|VICII_RSEL|VICII_DEN)
     // Open lower/upper border using RSEL - and disable all graphics (except sprites)
     // Set up RASTER IRQ to start at irq_screen_top() (RST8=0)
@@ -2353,18 +2354,18 @@ splash_run: {
     // Wait for fire
     lda #0
     sta.z music_play_next
-  __b13:
+  __b14:
     // joyfire()
     jsr joyfire
     // while(!joyfire())
     cmp #0
-    beq __b14
+    beq __b15
     // }
     rts
-  __b14:
+  __b15:
     // if(music_play_next)
     lda.z music_play_next
-    beq __b13
+    beq __b14
     // (*musicPlay)()
     //VICII->BG_COLOR=1;
     jsr musicPlay
@@ -2372,8 +2373,8 @@ splash_run: {
     //VICII->BG_COLOR=0;
     lda #0
     sta.z music_play_next
-    jmp __b13
-  __b9:
+    jmp __b14
+  __b10:
     // bobs_xcol[i] = 10
     lda #$a
     sta bobs_xcol,x
@@ -2385,15 +2386,15 @@ splash_run: {
     sta bobs_bob_id,x
     // for(char i=0;i<4;i++)
     inx
-    jmp __b8
-  __b6:
+    jmp __b9
+  __b7:
     // SPRITES_COLOR[i] = top_sprites_color
     lda.z top_sprites_color
     sta SPRITES_COLOR,x
     // for(char i=0;i<8;i++)
     inx
-    jmp __b5
-  __b2:
+    jmp __b6
+  __b3:
     // i*2
     lda.z i
     asl
@@ -2417,15 +2418,15 @@ splash_run: {
     lda.z xpos+1
     // if(BYTE1(xpos))
     cmp #0
-    beq __b3
+    beq __b4
     // msb |=0x80
     txa
     ora #$80
     tax
-  __b3:
+  __b4:
     // for(char i=0;i<8;i++)
     inc.z i
-    jmp __b1
+    jmp __b2
   .segment Data
     // Sprite positions
     sprites_xpos: .word $1e7, $13f, $10f, $df, $af, $7f, $4f, $1f
@@ -2627,18 +2628,18 @@ done_run: {
     sta.z phase
     tax
   // Stop any sound
-  __b2:
+  __b4:
     // for(char i=0;i<0x2f;i++)
     cpx #$2f
-    bcs !__b3+
-    jmp __b3
-  !__b3:
+    bcs !__b5+
+    jmp __b5
+  !__b5:
     ldx #0
   // Move the bobs to the center to avoid interference while rendering the level
-  __b4:
+  __b6:
     // for(char i=0;i<4;i++)
     cpx #4
-    bcc __b5
+    bcc __b7
     // asm
     // Init music
     lda #0
@@ -2646,7 +2647,7 @@ done_run: {
     jsr musicInit
     // if(pacman_wins)
     lda.z pacman_wins
-    bne __b1
+    bne __b2
     // byteboozer_decrunch(GAMEOVER_GFX_CRUNCHED)
     lda #<GAMEOVER_GFX_CRUNCHED
     sta.z byteboozer_decrunch.crunched
@@ -2654,34 +2655,34 @@ done_run: {
     sta.z byteboozer_decrunch.crunched+1
     // decrunch game over graphics 
     jsr byteboozer_decrunch
-  __b6:
+  __b1:
     lda #<WIN_GFX
     sta.z gfx
     lda #>WIN_GFX
     sta.z gfx+1
     lda #0
     sta.z xcol
-  __b8:
+  __b9:
     // for(char xcol=0;xcol<25;xcol++)
     lda.z xcol
     cmp #$19
-    bcc __b7
+    bcc __b3
     // music_play_next = 0
     // Wait for fire
     lda #0
     sta.z music_play_next
-  __b13:
+  __b14:
     // joyfire()
     jsr joyfire
     // while(!joyfire())
     cmp #0
-    beq __b14
+    beq __b15
     // }
     rts
-  __b14:
+  __b15:
     // if(music_play_next)
     lda.z music_play_next
-    beq __b13
+    beq __b14
     // (*musicPlay)()
     //VICII->BG_COLOR=1;
     jsr musicPlay
@@ -2689,19 +2690,19 @@ done_run: {
     //VICII->BG_COLOR=0;
     lda #0
     sta.z music_play_next
-    jmp __b13
-  __b7:
+    jmp __b14
+  __b3:
     lda #0
     sta.z ypos
-  __b10:
+  __b11:
     // for(char ypos=0;ypos<25;ypos++)
     lda.z ypos
     cmp #$19
-    bcc __b11
+    bcc __b12
     // for(char xcol=0;xcol<25;xcol++)
     inc.z xcol
-    jmp __b8
-  __b11:
+    jmp __b9
+  __b12:
     // char pixels = *gfx++
     // Render 8px x 1px
     ldy #0
@@ -2716,8 +2717,8 @@ done_run: {
     jsr render
     // for(char ypos=0;ypos<25;ypos++)
     inc.z ypos
-    jmp __b10
-  __b1:
+    jmp __b11
+  __b2:
     // byteboozer_decrunch(WIN_GFX_CRUNCHED)
     lda #<WIN_GFX_CRUNCHED
     sta.z byteboozer_decrunch.crunched
@@ -2725,8 +2726,8 @@ done_run: {
     sta.z byteboozer_decrunch.crunched+1
     // decrunch win graphics 
     jsr byteboozer_decrunch
-    jmp __b6
-  __b5:
+    jmp __b1
+  __b7:
     // bobs_xcol[i] = 10
     lda #$a
     sta bobs_xcol,x
@@ -2738,14 +2739,14 @@ done_run: {
     sta bobs_bob_id,x
     // for(char i=0;i<4;i++)
     inx
-    jmp __b4
-  __b3:
+    jmp __b6
+  __b5:
     // ((char*)SID)[i] = 0
     lda #0
     sta SID,x
     // for(char i=0;i<0x2f;i++)
     inx
-    jmp __b2
+    jmp __b4
 }
 // Spawn pacman and all ghosts
 spawn_all: {
@@ -2822,9 +2823,8 @@ level_tile_directions: {
     bcs __b1
     cmp #$24+1
     bcs __b1
-    // LEVEL_TILES_DIRECTIONS + LEVEL_YTILE_OFFSET[ytile]
-    asl
     // char* ytiles = LEVEL_TILES_DIRECTIONS + LEVEL_YTILE_OFFSET[ytile]
+    asl
     tay
     clc
     lda #<LEVEL_TILES_DIRECTIONS
@@ -2873,7 +2873,7 @@ choose_direction: {
     // if(open_directions&UP)
     cmp #0
     beq __b5
-    // ABS[xdiff] + ABS[ydiff-1]
+    // char dist_up = ABS[xdiff] + ABS[ydiff-1]
     ldy.z xdiff
     lda ABS,y
     ldy.z ydiff
@@ -2897,7 +2897,7 @@ choose_direction: {
     // if(open_directions&DOWN)
     cmp #0
     beq __b10
-    // ABS[xdiff] + ABS[ydiff+1]
+    // char dist_down = ABS[xdiff] + ABS[ydiff+1]
     ldx.z xdiff
     lda ABS,x
     ldx.z ydiff
@@ -2921,7 +2921,7 @@ choose_direction: {
     // if(open_directions&LEFT)
     cmp #0
     beq __b12
-    // ABS[xdiff-1] + ABS[ydiff]
+    // char dist_left = ABS[xdiff-1] + ABS[ydiff]
     ldy.z xdiff
     lda ABS+-1,y
     ldy.z ydiff
@@ -2944,7 +2944,7 @@ choose_direction: {
     // if(open_directions&RIGHT)
     cmp #0
     beq __b4
-    // ABS[xdiff+1] + ABS[ydiff]
+    // char dist_right = ABS[xdiff+1] + ABS[ydiff]
     ldy.z xdiff
     lda ABS+1,y
     ldy.z ydiff
@@ -3362,14 +3362,13 @@ init_render_index: {
     inc.z x_col
     jmp __b1
   __b6:
-    // canvas_xcol + render_ypos_table[(unsigned int)y_pos]
+    // char * canvas = canvas_xcol + render_ypos_table[(unsigned int)y_pos]
     lda.z y_pos
     sta.z __11
     lda #0
     sta.z __11+1
     asl.z __10
     rol.z __10+1
-    // char * canvas = canvas_xcol + render_ypos_table[(unsigned int)y_pos]
     clc
     lda.z __12
     adc.z render_ypos_table
@@ -3946,6 +3945,7 @@ render: {
     lda (render_index_xcol),y
     tax
     // char ypix = ypos&3
+    // Move the last few y-pixels
     lda #3
     and.z ypos
     sta.z ypix
@@ -3997,9 +3997,8 @@ level_tile_get: {
     bcs __b1
     cmp #$24+1
     bcs __b1
-    // LEVEL_TILES + LEVEL_YTILE_OFFSET[ytile]
-    asl
     // char* ytiles = LEVEL_TILES + LEVEL_YTILE_OFFSET[ytile]
+    asl
     tay
     clc
     lda #<LEVEL_TILES

@@ -1,4 +1,4 @@
-// Test the export directive usable for ensuring a data variable is always added to the output - even if it is never used
+// Test the __export directive usable for ensuring a data variable is always added to the output - even if it is never used
   // Commodore 64 PRG executable file
 .file [name="var-export.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

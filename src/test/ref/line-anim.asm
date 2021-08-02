@@ -257,7 +257,7 @@ point_init: {
     .label abs16s2_return = 7
     .label x_stepf = 5
     .label x_diff = $12
-    // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
+    // signed word x_diff = ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
     lda.z point_idx
     asl
     sta.z __13
@@ -269,7 +269,7 @@ point_init: {
     lda x_end+1,y
     sbc x_start+1,y
     sta.z x_diff+1
-    // ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
+    // signed word y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     ldy.z point_idx
     lda y_end,y
     sta.z __17
@@ -279,7 +279,6 @@ point_init: {
     sta.z __18
     lda #0
     sta.z __18+1
-    // signed word y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     lda.z y_diff
     sec
     sbc.z __18
@@ -373,9 +372,8 @@ point_init: {
     ldy.z point_idx
     sta x_add,y
   __b5:
-    // divr16s(0, x_diff, y_diff)
+    // signed word x_stepf = divr16s(0, x_diff, y_diff)
     jsr divr16s
-    // divr16s(0, x_diff, y_diff)
     // signed word x_stepf = divr16s(0, x_diff, y_diff)
     // BYTE1(x_stepf)
     lda.z x_stepf+1
@@ -474,9 +472,8 @@ divr16s: {
     lda.z divisor+1
     bmi __b3
   __b4:
-    // divr16u(dividendu, divisoru, remu)
+    // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     jsr divr16u
-    // divr16u(dividendu, divisoru, remu)
     // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     // if(neg==0)
     cpy #0

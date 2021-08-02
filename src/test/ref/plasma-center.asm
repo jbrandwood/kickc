@@ -50,7 +50,7 @@
   .label sin_offset_y = $13
 .segment Code
 __start: {
-    // malloc(1000)
+    // byte* SCREEN_DIST = malloc(1000)
     lda #<$3e8
     sta.z malloc.size
     lda #>$3e8
@@ -60,17 +60,18 @@ __start: {
     lda #>HEAP_TOP
     sta.z heap_head+1
     jsr malloc
-    // malloc(1000)
+    // byte* SCREEN_DIST = malloc(1000)
     lda.z malloc.mem
     sta.z SCREEN_DIST
     lda.z malloc.mem+1
     sta.z SCREEN_DIST+1
+    // byte* SCREEN_ANGLE = malloc(1000)
     lda #<$3e8
     sta.z malloc.size
     lda #>$3e8
     sta.z malloc.size+1
     jsr malloc
-    // malloc(1000)
+    // byte* SCREEN_ANGLE = malloc(1000)
     lda.z malloc.mem
     sta.z SCREEN_ANGLE
     lda.z malloc.mem+1
@@ -185,14 +186,13 @@ init_dist_screen: {
     sec
     adc #$18
   __b4:
-    // sqr(yd)
+    // word yds = sqr(yd)
     jsr sqr
-    // sqr(yd)
+    // word yds = sqr(yd)
     lda.z sqr.return
     sta.z sqr.return_1
     lda.z sqr.return+1
     sta.z sqr.return_1+1
-    // word yds = sqr(yd)
     lda #$27
     sta.z xb
     lda #0
@@ -236,9 +236,8 @@ init_dist_screen: {
     sec
     adc #$27
   __b10:
-    // sqr(xd)
+    // word xds = sqr(xd)
     jsr sqr
-    // sqr(xd)
     // word xds = sqr(xd)
     // word ds = xds+yds
     clc
@@ -248,9 +247,8 @@ init_dist_screen: {
     lda.z ds+1
     adc.z yds+1
     sta.z ds+1
-    // sqrt(ds)
-    jsr sqrt
     // byte d = sqrt(ds)
+    jsr sqrt
     // screen_topline[x] = d
     ldy.z x
     sta (screen_topline),y
@@ -356,9 +354,8 @@ init_angle_screen: {
     // MAKEWORD( y*2, 0 )
     sta.z yw+1
     sty.z yw
-    // atan2_16(xw, yw)
-    jsr atan2_16
     // word angle_w = atan2_16(xw, yw)
+    jsr atan2_16
     // angle_w+0x0080
     lda #$80
     clc
@@ -746,13 +743,12 @@ sqrt: {
     .label __2 = 9
     .label found = 9
     .label val = $11
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
+    // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
     lda.z SQUARES+1
     sta.z bsearch16u.items+1
     jsr bsearch16u
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
     lda.z __2
@@ -1053,7 +1049,7 @@ bsearch16u: {
     // num >> 1
     txa
     lsr
-    // items + (num >> 1)
+    // unsigned int* pivot = items + (num >> 1)
     asl
     clc
     adc.z items

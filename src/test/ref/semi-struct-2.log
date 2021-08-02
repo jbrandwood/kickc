@@ -1,6 +1,6 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
-Inlined call main::$1 = call fileEntry 1 
-Inlined call main::$2 = call fileEntry 2 
+Inlined call main::entry1 = call fileEntry 1 
+Inlined call main::entry2 = call fileEntry 2 
 Inlined call initEntry::$0 = call entryBufDisk initEntry::entry 
 Inlined call initEntry::$2 = call entryBufEdit initEntry::entry 
 Inlined call initEntry::$4 = call entryTsLen initEntry::entry 
@@ -28,6 +28,12 @@ Inlined call printEntry::$41 = call entryBAddrHi printEntry::entry
 Inlined call printEntry::$45 = call entryTHi printEntry::entry 
 Inlined call printEntry::$49 = call entryTLo printEntry::entry 
 Inlined call call __init 
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement keyboard_matrix_read::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$1
+Eliminating unused variable with no statement main::$1
+Eliminating unused variable with no statement main::$2
 
 CONTROL FLOW GRAPH SSA
 
@@ -239,8 +245,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
   memset::$4 = (byte*)memset::str#2
-  memset::$2 = memset::$4 + memset::num#2
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#2
   memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -278,8 +283,7 @@ byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   keyboard_matrix_read::rowid#1 = phi( keyboard_key_pressed/keyboard_matrix_read::rowid#0 )
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#1]
-  keyboard_matrix_read::$0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
-  keyboard_matrix_read::row_pressed_bits#0 = keyboard_matrix_read::$0
+  keyboard_matrix_read::row_pressed_bits#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -291,10 +295,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@1 main::@3
   keyboard_key_pressed::key#2 = phi( main::@1/keyboard_key_pressed::key#0, main::@3/keyboard_key_pressed::key#1 )
-  keyboard_key_pressed::$0 = keyboard_key_pressed::key#2 & 7
-  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0
-  keyboard_key_pressed::$1 = keyboard_key_pressed::key#2 >> 3
-  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1
+  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#2 & 7
+  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#2 >> 3
   keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
   call keyboard_matrix_read 
   keyboard_matrix_read::return#2 = keyboard_matrix_read::return#1
@@ -356,8 +358,7 @@ main::@5: scope:[main]  from main::fileEntry1_@return
   print_line_cursor#149 = phi( main::fileEntry1_@return/print_line_cursor#150 )
   print_screen#25 = phi( main::fileEntry1_@return/print_screen#28 )
   main::fileEntry1_return#3 = phi( main::fileEntry1_@return/main::fileEntry1_return#1 )
-  main::$1 = main::fileEntry1_return#3
-  main::entry1#0 = main::$1
+  main::entry1#0 = main::fileEntry1_return#3
   main::fileEntry2_idx#0 = 2
   to:main::fileEntry2
 main::fileEntry2: scope:[main]  from main::@5
@@ -395,8 +396,7 @@ main::@6: scope:[main]  from main::fileEntry2_@return
   print_screen#13 = phi( main::fileEntry2_@return/print_screen#16 )
   main::entry1#1 = phi( main::fileEntry2_@return/main::entry1#3 )
   main::fileEntry2_return#3 = phi( main::fileEntry2_@return/main::fileEntry2_return#1 )
-  main::$2 = main::fileEntry2_return#3
-  main::entry2#0 = main::$2
+  main::entry2#0 = main::fileEntry2_return#3
   initEntry::entry#0 = main::entry1#1
   initEntry::n#0 = 0
   call initEntry 
@@ -1796,8 +1796,6 @@ byte initEntry::n#8
 byte initEntry::n#9
 void keyboard_init()
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
-number~ keyboard_key_pressed::$0
-byte~ keyboard_key_pressed::$1
 byte~ keyboard_key_pressed::$2
 byte~ keyboard_key_pressed::$3
 byte keyboard_key_pressed::colidx
@@ -1819,7 +1817,6 @@ byte keyboard_key_pressed::rowidx
 byte keyboard_key_pressed::rowidx#0
 constant byte* keyboard_matrix_col_bitmask[8]  = { 1, 2, 4, 8, $10, $20, $40, $80 }
 byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
-byte~ keyboard_matrix_read::$0
 byte keyboard_matrix_read::return
 byte keyboard_matrix_read::return#0
 byte keyboard_matrix_read::return#1
@@ -1833,8 +1830,6 @@ byte keyboard_matrix_read::rowid#0
 byte keyboard_matrix_read::rowid#1
 constant byte* keyboard_matrix_row_bitmask[8]  = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
 void main()
-byte*~ main::$1
-byte*~ main::$2
 byte~ main::$20
 bool~ main::$21
 byte~ main::$22
@@ -1896,7 +1891,6 @@ constant byte* main::str3[$10]  = "- press space -"
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -2680,9 +2674,8 @@ Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) $ff in *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = $ff
 Adding number conversion cast (unumber) 0 in *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) = 0
-Adding number conversion cast (unumber) 7 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#2 & 7
-Adding number conversion cast (unumber) keyboard_key_pressed::$0 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#2 & (unumber)7
-Adding number conversion cast (unumber) 3 in keyboard_key_pressed::$1 = keyboard_key_pressed::key#2 >> 3
+Adding number conversion cast (unumber) 7 in keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#2 & 7
+Adding number conversion cast (unumber) 3 in keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#2 >> 3
 Adding number conversion cast (unumber) 1 in main::fileEntry1_idx#0 = 1
 Adding number conversion cast (unumber) 2 in main::fileEntry2_idx#0 = 2
 Adding number conversion cast (unumber) 0 in initEntry::n#0 = 0
@@ -2891,7 +2884,6 @@ Finalized unsigned number type (byte) $11
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in mul8u::$1 = mul8u::a#4 & 1
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#11 & $f
-Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#2 & 7
 Inferred type updated to word in initEntry::$1 = $1111 + initEntry::n#2
 Inferred type updated to word in initEntry::$3 = $2222 + initEntry::n#3
 Inferred type updated to word in initEntry::$5 = $3333 + initEntry::n#4
@@ -2932,25 +2924,23 @@ Alias memset::return#1 = memset::str#1 memset::return#3 memset::return#2
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#4 = memset::str#5 
-Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::$0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
-Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0 keyboard_key_pressed::colidx#1 
-Alias keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1 
+Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
 Alias keyboard_matrix_read::return#2 = keyboard_matrix_read::return#4 
+Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::colidx#1 
 Alias keyboard_key_pressed::return#0 = keyboard_key_pressed::$3 keyboard_key_pressed::return#4 keyboard_key_pressed::return#1 
 Alias print_screen#13 = print_screen#37 print_screen#38 print_screen#34 print_screen#31 print_screen#28 print_screen#25 print_screen#22 print_screen#19 print_screen#16 print_screen#9 print_screen#5 print_screen#35 print_screen#32 print_screen#29 print_screen#26 print_screen#23 print_screen#20 print_screen#17 
 Alias print_line_cursor#101 = print_line_cursor#153 print_line_cursor#154 print_line_cursor#152 print_line_cursor#151 print_line_cursor#150 print_line_cursor#149 print_line_cursor#147 print_line_cursor#133 print_line_cursor#117 print_line_cursor#85 print_line_cursor#66 
 Alias print_char_cursor#149 = print_char_cursor#207 print_char_cursor#208 print_char_cursor#206 print_char_cursor#205 print_char_cursor#204 print_char_cursor#203 print_char_cursor#202 print_char_cursor#201 print_char_cursor#200 print_char_cursor#184 print_char_cursor#168 
 Alias main::fileEntry1_idx#0 = main::fileEntry1_idx#1 
 Alias mul8u::return#2 = mul8u::return#5 
-Alias main::entry1#0 = main::fileEntry1_return#0 main::fileEntry1_$1 main::fileEntry1_return#2 main::fileEntry1_return#1 main::fileEntry1_return#3 main::$1 main::entry1#7 main::entry1#5 main::entry1#3 main::entry1#1 main::entry1#10 main::entry1#9 main::entry1#8 main::entry1#6 main::entry1#4 main::entry1#2 
+Alias main::entry1#0 = main::fileEntry1_return#0 main::fileEntry1_$1 main::fileEntry1_return#2 main::fileEntry1_return#1 main::fileEntry1_return#3 main::entry1#7 main::entry1#5 main::entry1#3 main::entry1#1 main::entry1#10 main::entry1#9 main::entry1#8 main::entry1#6 main::entry1#4 main::entry1#2 
 Alias main::fileEntry2_idx#0 = main::fileEntry2_idx#1 
 Alias mul8u::return#3 = mul8u::return#6 
-Alias main::entry2#0 = main::fileEntry2_return#0 main::fileEntry2_$1 main::fileEntry2_return#2 main::fileEntry2_return#1 main::fileEntry2_return#3 main::$2 main::entry2#1 main::entry2#16 main::entry2#15 main::entry2#14 main::entry2#13 main::entry2#12 main::entry2#11 main::entry2#10 main::entry2#9 
+Alias main::entry2#0 = main::fileEntry2_return#0 main::fileEntry2_$1 main::fileEntry2_return#2 main::fileEntry2_return#1 main::fileEntry2_return#3 main::entry2#1 main::entry2#16 main::entry2#15 main::entry2#14 main::entry2#13 main::entry2#12 main::entry2#11 main::entry2#10 main::entry2#9 
 Alias print_line_cursor#37 = print_line_cursor#4 print_line_cursor#67 
 Alias print_char_cursor#14 = print_char_cursor#86 
 Alias print_char_cursor#15 = print_char_cursor#87 
@@ -8911,7 +8901,7 @@ keyboard_matrix_read: {
     // [254] *((byte*)CIA1) = *(keyboard_matrix_row_bitmask+keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     // [255] keyboard_matrix_read::return#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff

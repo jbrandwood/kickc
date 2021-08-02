@@ -5,6 +5,7 @@ Setting inferred volatile on symbol affected by address-of: load::address in asm
 Setting inferred volatile on symbol affected by address-of: load::verify in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Setting inferred volatile on symbol affected by address-of: load::status in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Setting inferred volatile on symbol affected by address-of: getin::ch in asm { jsr$ffe4 stach  }
+Eliminating unused variable with no statement memcpy_to_vram::$3
 
 CONTROL FLOW GRAPH SSA
 
@@ -40,8 +41,7 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#1
   *VERA_ADDRX_H = memcpy_to_vram::$2
   memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#1
-  memcpy_to_vram::$3 = memcpy_to_vram::$5 + memcpy_to_vram::num#1
-  memcpy_to_vram::end#0 = memcpy_to_vram::$3
+  memcpy_to_vram::end#0 = memcpy_to_vram::$5 + memcpy_to_vram::num#1
   memcpy_to_vram::s#0 = ((byte*)) memcpy_to_vram::src#1
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
@@ -153,7 +153,6 @@ void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , v
 byte~ memcpy_to_vram::$0
 byte~ memcpy_to_vram::$1
 byte~ memcpy_to_vram::$2
-byte*~ memcpy_to_vram::$3
 bool~ memcpy_to_vram::$4
 byte*~ memcpy_to_vram::$5
 byte* memcpy_to_vram::end
@@ -227,7 +226,6 @@ Finalized unsigned number type (byte) $21
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias memcpy_to_vram::end#0 = memcpy_to_vram::$3 
 Alias memcpy_to_vram::s#2 = memcpy_to_vram::s#3 
 Alias memcpy_to_vram::end#1 = memcpy_to_vram::end#2 
 Alias main::vaddr#3 = main::vaddr#6 main::vaddr#4 
@@ -643,6 +641,7 @@ memcpy_to_vram: {
     .const num = $19*SIZEOF_BYTE
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
+    // Transfer the data
     .label end = src+num
     .label s = 4
     // [14] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
@@ -943,6 +942,7 @@ memcpy_to_vram: {
     .const num = $19*SIZEOF_BYTE
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
+    // Transfer the data
     .label end = src+num
     .label s = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL

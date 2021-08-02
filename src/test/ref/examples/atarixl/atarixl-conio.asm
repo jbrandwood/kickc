@@ -409,9 +409,9 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    // work out the new location for oldadr based on new column/row
+    jsr cursorLocation
     // char c = *loc
     ldy #0
     lda (loc),y
@@ -734,9 +734,8 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    jsr cursorLocation
     // char newChar = code | conio_reverse_value
     txa
     ora.z conio_reverse_value

@@ -69,9 +69,9 @@ sin8s_gen: {
     // Iterate over the table
     .label x = 6
     .label i = 3
-    // div16u(PI2_u4f12, wavelength)
+    // unsigned int step = div16u(PI2_u4f12, wavelength)
+  // u[4.28] step = PI*2/wavelength
     jsr div16u
-    // div16u(PI2_u4f12, wavelength)
     // unsigned int step = div16u(PI2_u4f12, wavelength)
     lda #<sintab2
     sta.z sintab
@@ -262,55 +262,58 @@ sin8s: {
     asl.z __4
     rol.z __4+1
     // char x1 = BYTE1(x<<3)
+    // sinx = x - x^3/6 + x5/128;
     lda.z __4+1
     sta.z x1
-    // mulu8_sel(x1, x1, 0)
+    // char x2 = mulu8_sel(x1, x1, 0)
     tax
     tay
+  // u[1.7]
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
-    // mulu8_sel(x1, x1, 0)
     // char x2 = mulu8_sel(x1, x1, 0)
-    // mulu8_sel(x2, x1, 1)
+    // char x3 = mulu8_sel(x2, x1, 1)
     tax
     ldy.z x1
+  // u[2.6] x^2
     lda #1
     sta.z mulu8_sel.select
     jsr mulu8_sel
-    // mulu8_sel(x2, x1, 1)
     // char x3 = mulu8_sel(x2, x1, 1)
     sta.z x3
-    // mulu8_sel(x3, DIV_6, 1)
+    // char x3_6 = mulu8_sel(x3, DIV_6, 1)
     tax
+  // u[0.7] - $2a.aa rounded to $2b
     lda #1
     sta.z mulu8_sel.select
     ldy #DIV_6
     jsr mulu8_sel
-    // mulu8_sel(x3, DIV_6, 1)
     // char x3_6 = mulu8_sel(x3, DIV_6, 1)
     // char usinx = x1 - x3_6
+    // u[1.7] x^3/6;
     eor #$ff
     sec
     adc.z x1
     sta.z usinx
-    // mulu8_sel(x3, x1, 0)
+    // char x4 = mulu8_sel(x3, x1, 0)
     ldx.z x3
     ldy.z x1
+  // u[1.7] x - x^3/6
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
-    // mulu8_sel(x3, x1, 0)
     // char x4 = mulu8_sel(x3, x1, 0)
-    // mulu8_sel(x4, x1, 0)
+    // char x5 = mulu8_sel(x4, x1, 0)
     tax
     ldy.z x1
+  // u[3.5] x^4
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
-    // mulu8_sel(x4, x1, 0)
     // char x5 = mulu8_sel(x4, x1, 0)
     // char x5_128 = x5>>4
+    // u[4.4] x^5
     lsr
     lsr
     lsr

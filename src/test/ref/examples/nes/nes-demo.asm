@@ -96,9 +96,9 @@ vblank: {
     pha
     tya
     pha
-    // readJoy1()
-    jsr readJoy1
     // char joy = readJoy1()
+    // Read controller 1
+    jsr readJoy1
     tax
     // joy&JOY_DOWN
     txa

@@ -63,9 +63,8 @@ main: {
     ldy.z y
     sty.z yw+1
     sta.z yw
-    // atan2_16(xw, yw)
-    jsr atan2_16
     // word angle_w = atan2_16(xw, yw)
+    jsr atan2_16
     // angle_w+0x0080
     lda #$80
     clc

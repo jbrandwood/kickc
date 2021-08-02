@@ -89,13 +89,13 @@ main: {
     lda #>s
     sta.z cputs.s+1
     jsr cputs
-    // rand()
+    // unsigned int first = rand()
     lda #<1
     sta.z rand_state
     lda #>1
     sta.z rand_state+1
     jsr rand
-    // rand()
+    // unsigned int first = rand()
     lda.z rand.return
     sta.z rand.return_1
     lda.z rand.return+1
@@ -219,11 +219,10 @@ gotoxy: {
     stx.z conio_cursor_x
     // conio_cursor_y = y
     sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8

@@ -3,6 +3,8 @@ Resolved forward reference FONT_HEX_PROTO to FONT_HEX_PROTO
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$1 = call toD018 SCREEN CHARSET 
 Inlined call call __init 
+Eliminating unused variable with no statement main::$5
+Eliminating unused variable with no statement main::$7
 
 CONTROL FLOW GRAPH SSA
 
@@ -427,11 +429,9 @@ main::@9: scope:[main]  from main::@2
   main::diff_sum#4 = phi( main::@2/main::diff_sum#6 )
   main::screen_ref#2 = phi( main::@2/main::screen_ref#4 )
   atan2_16::return#4 = phi( main::@2/atan2_16::return#2 )
-  main::$5 = atan2_16::return#4
-  main::angle_w#0 = main::$5
+  main::angle_w#0 = atan2_16::return#4
   main::$6 = main::angle_w#0 + $80
-  main::$7 = byte1  main::$6
-  main::ang_w#0 = main::$7
+  main::ang_w#0 = byte1  main::$6
   diff::bb1#0 = main::ang_w#0
   diff::bb2#0 = *main::screen_ref#2
   call diff 
@@ -824,9 +824,7 @@ byte~ main::$13
 byte~ main::$14
 word~ main::$3
 word~ main::$4
-word~ main::$5
 number~ main::$6
-byte~ main::$7
 byte~ main::$8
 byte~ main::$9
 byte main::ang_w
@@ -1173,9 +1171,8 @@ Alias main::screen#2 = main::screen#3 main::screen#4
 Alias main::x#2 = main::x#4 main::x#3 
 Alias main::y#2 = main::y#6 main::y#5 main::y#3 
 Alias print_char_cursor#27 = print_char_cursor#33 print_char_cursor#34 print_char_cursor#32 print_char_cursor#30 
-Alias main::angle_w#0 = main::$5 
-Alias main::ang_w#0 = main::$7 main::ang_w#1 
 Alias diff::return#0 = diff::return#3 
+Alias main::ang_w#0 = main::ang_w#1 
 Alias main::diff_sum#1 = main::diff_sum#5 main::diff_sum#3 
 Alias main::screen_ref#1 = main::screen_ref#6 
 Alias main::screen#1 = main::screen#6 
@@ -3580,14 +3577,13 @@ main: {
     ldy.z y
     sty.z yw+1
     sta.z yw
-    // atan2_16(xw, yw)
+    // word angle_w = atan2_16(xw, yw)
     // [8] atan2_16::x#0 = (signed word)main::xw#0
     // [9] atan2_16::y#0 = (signed word)main::yw#0
     // [10] call atan2_16 
     jsr atan2_16
     // [11] atan2_16::return#2 = atan2_16::return#0
     // main::@7
-    // word angle_w = atan2_16(xw, yw)
     // [12] main::angle_w#0 = atan2_16::return#2
     // angle_w+0x0080
     // [13] main::$6 = main::angle_w#0 + $80 -- vwuz1=vwuz1_plus_vbuc1 

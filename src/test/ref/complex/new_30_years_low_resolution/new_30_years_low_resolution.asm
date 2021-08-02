@@ -513,6 +513,7 @@ irq_swing_plex: {
     lda.z __7
     sta.z new_coarse_scroll
     // char coarse_scroll_diff = vsp_coarse_scroll - new_coarse_scroll
+    // Update the VSP value with a sinus
     lda.z vsp_coarse_scroll
     sec
     sbc.z new_coarse_scroll
@@ -524,6 +525,7 @@ irq_swing_plex: {
     cmp #$ff
     bne __b8
     // char x_offset = 0x27-vsp_coarse_scroll
+    // Moving right - put a new column at the left border
     lda #$27
     sec
     sbc.z vsp_coarse_scroll
@@ -597,6 +599,7 @@ irq_swing_plex: {
     jmp __b10
   __b7:
     // char x_offset = 0x50-vsp_coarse_scroll
+    // Moving left - put a new column at the right border
     lda #$50
     sec
     sbc.z vsp_coarse_scroll
@@ -1130,13 +1133,13 @@ main: {
     // Initialize Part 1 (Revealing "Happy New Year" logo)
     jsr part1_init
   // Start part 1 at 0:04,5
-  __b1:
+  __b2:
     // while(demo_frame_count<5*50)
     lda.z demo_frame_count+1
     bne !+
     lda.z demo_frame_count
     cmp #5*$32
-    bcc __b1
+    bcc __b2
   !:
     // part1_run()
   // Run Part 1 (Revealing "Happy New Year" logo)
@@ -1145,15 +1148,15 @@ main: {
     // Initialize part 2
     jsr part2_init
   // Wait for the right place to start part 2
-  __b3:
+  __b4:
     // while(demo_frame_count<16*50)
     lda.z demo_frame_count+1
     cmp #>$10*$32
-    bcc __b3
+    bcc __b4
     bne !+
     lda.z demo_frame_count
     cmp #<$10*$32
-    bcc __b3
+    bcc __b4
   !:
     // sparkler_active = 0
     // Disable sparkler
@@ -1162,8 +1165,8 @@ main: {
     // part2_run()
   // Run part 2
     jsr part2_run
-  __b5:
-    jmp __b5
+  __b6:
+    jmp __b6
 }
 // Work to be performed every frame while the demo runs
 // Assumes that I/O is enabled
@@ -1294,7 +1297,6 @@ update_frame_plex_id_offset: {
 vsp_update_screen: {
     .label x_offset = $31
     .label x_offset8 = $40
-    .label __0 = $3e
     .label __5 = $3e
     // kickasm
     // Update screen and colors
@@ -1313,24 +1315,24 @@ vsp_update_screen: {
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
     sta PROCPORT
-    // (unsigned int)x_offset*8
+    // unsigned int x_offset8 = (unsigned int)x_offset*8
     lda.z x_offset
     sta.z __5
     lda #0
     sta.z __5+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    // unsigned int x_offset8 = (unsigned int)x_offset*8
     // Update bitmap (using 3 routines to handle all bitmap columns)
-    lda.z __0
+    lda.z __5
+    asl
     sta.z x_offset8
-    lda.z __0+1
+    lda.z __5+1
+    rol
     sta.z x_offset8+1
+    asl.z x_offset8
+    rol.z x_offset8+1
+    asl.z x_offset8
+    rol.z x_offset8+1
     // BYTE1(x_offset8)
+    lda.z x_offset8+1
     // if(BYTE1(x_offset8) == 0)
     cmp #0
     bne !__b1+
@@ -2669,12 +2671,11 @@ flipper_fix_colors: {
     // if(charline>=flipper_charline)
     cmp.z flipper_charline
     bcc __breturn
-    // (unsigned int)flipper_charline*40
+    // unsigned int offset = (unsigned int)flipper_charline*40
     lda.z flipper_charline
     sta.z __12
     lda #0
     sta.z __12+1
-    // unsigned int offset = (unsigned int)flipper_charline*40
     lda.z __12
     asl
     sta.z __13
@@ -2697,6 +2698,7 @@ flipper_fix_colors: {
     asl.z offset
     rol.z offset+1
     // char* colors = COLS+offset
+    // We have to update some colors
     lda.z offset
     clc
     adc #<COLS

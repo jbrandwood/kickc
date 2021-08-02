@@ -122,9 +122,9 @@ vblank: {
     pha
     tya
     pha
-    // readJoy1()
-    jsr readJoy1
     // char joy = readJoy1()
+    // Read controller 1
+    jsr readJoy1
     tax
     // joy&JOY_DOWN
     txa
@@ -676,11 +676,10 @@ gotoxy: {
     stx.z conio_cursor_x
     // conio_cursor_y = y
     sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     sta.z __6
     lda #0
     sta.z __6+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     asl.z line_offset
     rol.z line_offset+1
     asl.z line_offset

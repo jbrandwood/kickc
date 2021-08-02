@@ -13,6 +13,7 @@ Resolving sizeof() irq_vsync::$6 = sizeof  SPRITE_ATTR
 Inlined call call SEI 
 Inlined call call CLI 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy_to_vram::$3
 
 CONTROL FLOW GRAPH SSA
 
@@ -30,8 +31,7 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@6 main main::@2 main::@
   memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#4
   *VERA_ADDRX_H = memcpy_to_vram::$2
   memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#4
-  memcpy_to_vram::$3 = memcpy_to_vram::$5 + memcpy_to_vram::num#4
-  memcpy_to_vram::end#0 = memcpy_to_vram::$3
+  memcpy_to_vram::end#0 = memcpy_to_vram::$5 + memcpy_to_vram::num#4
   memcpy_to_vram::s#0 = ((byte*)) memcpy_to_vram::src#4
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
@@ -368,7 +368,6 @@ void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , v
 byte~ memcpy_to_vram::$0
 byte~ memcpy_to_vram::$1
 byte~ memcpy_to_vram::$2
-byte*~ memcpy_to_vram::$3
 bool~ memcpy_to_vram::$4
 byte*~ memcpy_to_vram::$5
 byte* memcpy_to_vram::end
@@ -472,12 +471,11 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) $13
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [56] irq_vsync::$1 = sin_idx_x != SINX_LEN from [55] irq_vsync::$0 = sin_idx_x == SINX_LEN
-Inversing boolean not [60] irq_vsync::$3 = sin_idx_y != $ffff from [59] irq_vsync::$2 = sin_idx_y == $ffff
-Inversing boolean not [86] irq_vsync::$8 = irq_vsync::i_x#1 < SINX_LEN from [85] irq_vsync::$7 = irq_vsync::i_x#1 >= SINX_LEN
-Inversing boolean not [92] irq_vsync::$10 = irq_vsync::i_y#1 < SINY_LEN from [91] irq_vsync::$9 = irq_vsync::i_y#1 >= SINY_LEN
+Inversing boolean not [55] irq_vsync::$1 = sin_idx_x != SINX_LEN from [54] irq_vsync::$0 = sin_idx_x == SINX_LEN
+Inversing boolean not [59] irq_vsync::$3 = sin_idx_y != $ffff from [58] irq_vsync::$2 = sin_idx_y == $ffff
+Inversing boolean not [85] irq_vsync::$8 = irq_vsync::i_x#1 < SINX_LEN from [84] irq_vsync::$7 = irq_vsync::i_x#1 >= SINX_LEN
+Inversing boolean not [91] irq_vsync::$10 = irq_vsync::i_y#1 < SINY_LEN from [90] irq_vsync::$9 = irq_vsync::i_y#1 >= SINY_LEN
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias memcpy_to_vram::end#0 = memcpy_to_vram::$3 
 Alias memcpy_to_vram::s#2 = memcpy_to_vram::s#3 
 Alias memcpy_to_vram::end#1 = memcpy_to_vram::end#2 
 Alias main::vram_sprite_attr#2 = main::vram_sprite_attr#4 main::vram_sprite_attr#3 
@@ -1627,6 +1625,7 @@ memcpy_to_vram: {
     // [62] *VERA_ADDRX_H = memcpy_to_vram::$2 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_H
     // [63] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#4 + memcpy_to_vram::num#4 -- pbuz1=pbuz2_plus_vwuz1 
+    // Transfer the data
     clc
     lda.z end
     adc.z src
@@ -2495,6 +2494,7 @@ memcpy_to_vram: {
     sta VERA_ADDRX_H
     // char *end = (char*)src+num
     // [63] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#4 + memcpy_to_vram::num#4 -- pbuz1=pbuz2_plus_vwuz1 
+    // Transfer the data
     clc
     lda.z end
     adc.z src

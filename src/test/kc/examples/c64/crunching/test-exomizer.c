@@ -25,7 +25,7 @@ void main() {
 }
 
 // The exomizer decruncher
-export char EXOMIZER[] = kickasm(resource "exomizer_decrunch.asm") {{
+__export char EXOMIZER[] = kickasm(resource "exomizer_decrunch.asm") {{
     .const EXO_LITERAL_SEQUENCES_USED = true
     .const EXO_ZP_BASE = $02
     .const EXO_DECRUNCH_TABLE = $0200
@@ -33,7 +33,7 @@ export char EXOMIZER[] = kickasm(resource "exomizer_decrunch.asm") {{
 }};
 
 // Array with crunched data created using inline kickasm
-export char CRUNCHED_SPRITE[] = kickasm(uses SPRITE, resource "sprite.png") {{
+__export char CRUNCHED_SPRITE[] = kickasm(uses SPRITE, resource "sprite.png") {{
     .modify MemExomizer(false, true) {
 	    .pc = SPRITE
         .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))

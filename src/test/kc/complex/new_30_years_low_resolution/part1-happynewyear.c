@@ -73,7 +73,7 @@ char P1_SPRITES_CRUNCHED[] = kickasm(uses P1_SPRITES, resource "sparklers.png") 
 }};
 
 // An easing curve from 0x000 to 0x130
-export char FLIPPER_EASING_CRUNCHED[] = kickasm {{
+__export char FLIPPER_EASING_CRUNCHED[] = kickasm {{
     .modify B2() {
         .pc = FLIPPER_EASING "FLIPPER_EASING"
         .fillword $130, round($98+$98*cos(PI+PI*i/$130))

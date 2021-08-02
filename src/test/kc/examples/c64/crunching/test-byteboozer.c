@@ -25,7 +25,7 @@ void main() {
 }
 
 // Array with crunched data created using inline kickasm
-export char CRUNCHED_SPRITE[] = kickasm(uses SPRITE, resource "sprite.png") {{
+__export char CRUNCHED_SPRITE[] = kickasm(uses SPRITE, resource "sprite.png") {{
     .modify B2() {
 	    .pc = SPRITE
         .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))

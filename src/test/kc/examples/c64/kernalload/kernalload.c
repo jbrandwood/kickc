@@ -9,7 +9,7 @@
 
 // Sprite file
 #pragma data_seg(Sprite)
-export char SPRITE[] = kickasm(resource "sprite.png") {{
+__export char SPRITE[] = kickasm(resource "sprite.png") {{
     .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)

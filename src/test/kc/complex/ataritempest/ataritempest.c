@@ -28,4 +28,4 @@ void main() {
 
 #pragma data_seg(Vectors)
 
-export void (*VECTORS[])() = { &nmiHandler, &entryPoint };
+__export void (*VECTORS[])() = { &nmiHandler, &entryPoint };

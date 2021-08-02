@@ -138,12 +138,11 @@ textbox: {
     ldy.z x1
     iny
     sty.z x
-    // (word)y*40
+    // word z = (word)y*40
     lda.z y
     sta.z __31
     lda #0
     sta.z __31+1
-    // word z = (word)y*40
     lda.z __31
     asl
     sta.z __33

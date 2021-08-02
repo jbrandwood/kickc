@@ -4,6 +4,15 @@ Inlined call call mulf8s_prepare mulf8s::a
 Inlined call call mulf8s_prepare anim::cos_a 
 Inlined call call mulf8s_prepare anim::sin_a 
 Inlined call call __init 
+Eliminating unused variable with no statement mulf8s_prepared::$0
+Eliminating unused variable with no statement clock::$0
+Eliminating unused variable with no statement init::$1
+Eliminating unused variable with no statement anim::$5
+Eliminating unused variable with no statement anim::$7
+Eliminating unused variable with no statement anim::$15
+Eliminating unused variable with no statement anim::$22
+Eliminating unused variable with no statement anim::$23
+Eliminating unused variable with no statement anim::$27
 
 CONTROL FLOW GRAPH SSA
 
@@ -143,8 +152,7 @@ mulf8s_prepared: scope:[mulf8s_prepared]  from anim::@12 anim::@15 anim::@8 anim
 mulf8s_prepared::@5: scope:[mulf8s_prepared]  from mulf8s_prepared
   mulf8s_prepared::b#7 = phi( mulf8s_prepared/mulf8s_prepared::b#4 )
   mulf8u_prepared::return#4 = phi( mulf8s_prepared/mulf8u_prepared::return#2 )
-  mulf8s_prepared::$0 = mulf8u_prepared::return#4
-  mulf8s_prepared::m#0 = mulf8s_prepared::$0
+  mulf8s_prepared::m#0 = mulf8u_prepared::return#4
   mulf8s_prepared::$1 = *mulf8s_prepared::memA < 0
   mulf8s_prepared::$2 = ! mulf8s_prepared::$1
   if(mulf8s_prepared::$2) goto mulf8s_prepared::@1
@@ -185,8 +193,10 @@ mulf8s_prepared::@return: scope:[mulf8s_prepared]  from mulf8s_prepared::@2
 
 dword clock()
 clock: scope:[clock]  from anim::@7
-  clock::$0 = $ffffffff - *CIA2_TIMER_AB
-  clock::return#0 = clock::$0
+  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+  clock::ticks#0 = $ffffffff - *CIA2_TIMER_AB
+  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+  clock::return#0 = clock::ticks#0
   to:clock::@return
 clock::@return: scope:[clock]  from clock
   clock::return#3 = phi( clock/clock::return#0 )
@@ -308,8 +318,7 @@ init: scope:[init]  from main
   to:init::@2
 init::@2: scope:[init]  from init
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = $ff
-  init::$1 = SCREEN + $3f8
-  init::sprites_ptr#0 = init::$1
+  init::sprites_ptr#0 = SCREEN + $3f8
   init::i#0 = 0
   to:init::@1
 init::@1: scope:[init]  from init::@1 init::@2
@@ -404,8 +413,7 @@ anim::@12: scope:[anim]  from anim::@8
   anim::y#1 = phi( anim::@8/anim::y#3 )
   mulf8s_prepared::return#7 = phi( anim::@8/mulf8s_prepared::return#2 )
   anim::$4 = mulf8s_prepared::return#7
-  anim::$5 = anim::$4 * 2
-  anim::xr#0 = anim::$5
+  anim::xr#0 = anim::$4 * 2
   mulf8s_prepared::b#1 = anim::y#1
   call mulf8s_prepared 
   mulf8s_prepared::return#3 = mulf8s_prepared::return#1
@@ -421,8 +429,7 @@ anim::@13: scope:[anim]  from anim::@12
   anim::sin_a#1 = phi( anim::@12/anim::sin_a#2 )
   mulf8s_prepared::return#8 = phi( anim::@12/mulf8s_prepared::return#3 )
   anim::$6 = mulf8s_prepared::return#8
-  anim::$7 = anim::$6 * 2
-  anim::yr#0 = anim::$7
+  anim::yr#0 = anim::$6 * 2
   anim::mulf8s_prepare2_a#0 = anim::sin_a#1
   to:anim::mulf8s_prepare2
 anim::mulf8s_prepare2: scope:[anim]  from anim::@13
@@ -496,8 +503,7 @@ anim::@16: scope:[anim]  from anim::@15
   anim::$13 = byte1  anim::xr#3
   anim::$29 = (signed byte)anim::$13
   anim::$14 = anim::$29 + $18
-  anim::$15 = anim::$14 + $95
-  anim::xpos#0 = anim::$15
+  anim::xpos#0 = anim::$14 + $95
   anim::$16 = anim::sprite_msb#3 / 2
   anim::sprite_msb#1 = anim::$16
   anim::$17 = byte1  anim::xpos#0
@@ -515,10 +521,8 @@ anim::@5: scope:[anim]  from anim::@16 anim::@6
   anim::yr#3 = phi( anim::@16/anim::yr#1, anim::@6/anim::yr#5 )
   anim::$20 = byte1  anim::yr#3
   anim::$21 = anim::$20 + $59
-  anim::$22 = anim::$21 + $33
-  anim::ypos#0 = anim::$22
-  anim::$23 = anim::i#3 * 2
-  anim::i2#0 = anim::$23
+  anim::ypos#0 = anim::$21 + $33
+  anim::i2#0 = anim::i#3 * 2
   anim::$24 = byte0  anim::xpos#1
   SPRITES_XPOS[anim::i2#0] = anim::$24
   SPRITES_YPOS[anim::i2#0] = anim::ypos#0
@@ -548,8 +552,7 @@ anim::@17: scope:[anim]  from anim::@7
   anim::angle#14 = phi( anim::@7/anim::angle#1 )
   clock::return#4 = phi( anim::@7/clock::return#2 )
   anim::$26 = clock::return#4
-  anim::$27 = anim::$26 - CLOCKS_PER_INIT
-  anim::cyclecount#0 = anim::$27
+  anim::cyclecount#0 = anim::$26 - CLOCKS_PER_INIT
   print_ulong_at::dw#0 = anim::cyclecount#0
   print_ulong_at::at#0 = SCREEN
   call print_ulong_at 
@@ -619,24 +622,18 @@ signed word~ anim::$11
 number~ anim::$12
 byte~ anim::$13
 number~ anim::$14
-number~ anim::$15
 number~ anim::$16
 byte~ anim::$17
 bool~ anim::$18
 bool~ anim::$19
 byte~ anim::$20
 number~ anim::$21
-number~ anim::$22
-number~ anim::$23
 byte~ anim::$24
 bool~ anim::$25
 dword~ anim::$26
-dword~ anim::$27
 signed byte~ anim::$29
 signed word~ anim::$4
-number~ anim::$5
 signed word~ anim::$6
-number~ anim::$7
 signed word~ anim::$9
 byte anim::angle
 byte anim::angle#0
@@ -782,16 +779,16 @@ signed word anim::yr#6
 signed word anim::yr#7
 signed word anim::yr#8
 dword clock()
-number~ clock::$0
 dword clock::return
 dword clock::return#0
 dword clock::return#1
 dword clock::return#2
 dword clock::return#3
 dword clock::return#4
+dword clock::ticks
+dword clock::ticks#0
 void clock_start()
 void init()
-byte*~ init::$1
 byte*~ init::$2
 bool~ init::$3
 byte init::i
@@ -803,7 +800,6 @@ byte* init::sprites_ptr#0
 byte* init::sprites_ptr#1
 void main()
 signed word mulf8s_prepared(signed byte mulf8s_prepared::b)
-word~ mulf8s_prepared::$0
 bool~ mulf8s_prepared::$1
 byte~ mulf8s_prepared::$10
 byte~ mulf8s_prepared::$11
@@ -1013,8 +1009,7 @@ Adding number conversion cast (unumber) $1ff in *(mulf_sqr2_hi+$1ff) = *(mulf_sq
 Adding number conversion cast (unumber) 1 in mulf_init::dir#1 = 1
 Adding number conversion cast (snumber) 0 in mulf8s_prepared::$1 = *mulf8s_prepared::memA < 0
 Adding number conversion cast (snumber) 0 in mulf8s_prepared::$3 = mulf8s_prepared::b#5 < 0
-Adding number conversion cast (unumber) $ffffffff in clock::$0 = $ffffffff - *CIA2_TIMER_AB
-Adding number conversion cast (unumber) clock::$0 in clock::$0 = (unumber)$ffffffff - *CIA2_TIMER_AB
+Adding number conversion cast (unumber) $ffffffff in clock::ticks#0 = $ffffffff - *CIA2_TIMER_AB
 Adding number conversion cast (unumber) $ffffffff in *CIA2_TIMER_AB = $ffffffff
 Adding number conversion cast (unumber) 2 in print_uint_at::$3 = print_uint_at::at#3 + 2
 Adding number conversion cast (unumber) 4 in print_ulong_at::$3 = print_ulong_at::at#2 + 4
@@ -1023,30 +1018,25 @@ Adding number conversion cast (unumber) $f in print_uchar_at::$2 = print_uchar_a
 Adding number conversion cast (unumber) print_uchar_at::$2 in print_uchar_at::$2 = print_uchar_at::b#3 & (unumber)$f
 Adding number conversion cast (unumber) 1 in print_uchar_at::$3 = print_uchar_at::at#3 + 1
 Adding number conversion cast (unumber) $ff in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = $ff
-Adding number conversion cast (unumber) $3f8 in init::$1 = SCREEN + $3f8
+Adding number conversion cast (unumber) $3f8 in init::sprites_ptr#0 = SCREEN + $3f8
 Adding number conversion cast (unumber) $40 in init::$2 = SPRITE / $40
 Adding number conversion cast (unumber) $ff in anim::$0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $ff
-Adding number conversion cast (snumber) 2 in anim::$5 = anim::$4 * 2
-Adding number conversion cast (snumber) anim::$5 in anim::$5 = anim::$4 * (snumber)2
-Adding number conversion cast (snumber) 2 in anim::$7 = anim::$6 * 2
-Adding number conversion cast (snumber) anim::$7 in anim::$7 = anim::$6 * (snumber)2
+Adding number conversion cast (snumber) 2 in anim::xr#0 = anim::$4 * 2
+Adding number conversion cast (snumber) 2 in anim::yr#0 = anim::$6 * 2
 Adding number conversion cast (snumber) 2 in anim::$10 = anim::$9 * 2
 Adding number conversion cast (snumber) anim::$10 in anim::$10 = anim::$9 * (snumber)2
 Adding number conversion cast (snumber) 2 in anim::$12 = anim::$11 * 2
 Adding number conversion cast (snumber) anim::$12 in anim::$12 = anim::$11 * (snumber)2
 Adding number conversion cast (snumber) $18 in anim::$14 = anim::$29 + $18
 Adding number conversion cast (snumber) anim::$14 in anim::$14 = anim::$29 + (snumber)$18
-Adding number conversion cast (snumber) $95 in anim::$15 = anim::$14 + $95
-Adding number conversion cast (snumber) anim::$15 in anim::$15 = anim::$14 + (snumber)$95
+Adding number conversion cast (snumber) $95 in anim::xpos#0 = anim::$14 + $95
 Adding number conversion cast (unumber) 2 in anim::$16 = anim::sprite_msb#3 / 2
 Adding number conversion cast (unumber) anim::$16 in anim::$16 = anim::sprite_msb#3 / (unumber)2
 Adding number conversion cast (unumber) 0 in anim::$18 = anim::$17 != 0
 Adding number conversion cast (unumber) $59 in anim::$21 = anim::$20 + $59
 Adding number conversion cast (unumber) anim::$21 in anim::$21 = anim::$20 + (unumber)$59
-Adding number conversion cast (unumber) $33 in anim::$22 = anim::$21 + $33
-Adding number conversion cast (unumber) anim::$22 in anim::$22 = anim::$21 + (unumber)$33
-Adding number conversion cast (unumber) 2 in anim::$23 = anim::i#3 * 2
-Adding number conversion cast (unumber) anim::$23 in anim::$23 = anim::i#3 * (unumber)2
+Adding number conversion cast (unumber) $33 in anim::ypos#0 = anim::$21 + $33
+Adding number conversion cast (unumber) 2 in anim::i2#0 = anim::i#3 * 2
 Adding number conversion cast (unumber) $80 in anim::sprite_msb#2 = anim::sprite_msb#4 | $80
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast mulf_init::dir#1 = (unumber)1
@@ -1144,23 +1134,17 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $80
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in mulf_init::$1 = mulf_init::c#1 & 1
-Inferred type updated to dword in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Inferred type updated to byte in print_uchar_at::$2 = print_uchar_at::b#3 & $f
-Inferred type updated to signed word in anim::$5 = anim::$4 * 2
-Inferred type updated to signed word in anim::$7 = anim::$6 * 2
 Inferred type updated to signed word in anim::$10 = anim::$9 * 2
 Inferred type updated to signed word in anim::$12 = anim::$11 * 2
 Inferred type updated to signed byte in anim::$14 = anim::$29 + $18
-Inferred type updated to signed word in anim::$15 = anim::$14 + $95
 Inferred type updated to byte in anim::$16 = anim::sprite_msb#3 / 2
 Inferred type updated to byte in anim::$21 = anim::$20 + $59
-Inferred type updated to byte in anim::$22 = anim::$21 + $33
-Inferred type updated to byte in anim::$23 = anim::i#3 * 2
 Inversing boolean not [12] mulf_init::$3 = mulf_init::$1 != 0 from [11] mulf_init::$2 = mulf_init::$1 == 0
 Inversing boolean not [40] mulf_init::$10 = mulf_init::x_255#1 != 0 from [39] mulf_init::$9 = mulf_init::x_255#1 == 0
-Inversing boolean not [69] mulf8s_prepared::$2 = *mulf8s_prepared::memA >= 0 from [68] mulf8s_prepared::$1 = *mulf8s_prepared::memA < 0
-Inversing boolean not [73] mulf8s_prepared::$4 = mulf8s_prepared::b#5 >= 0 from [72] mulf8s_prepared::$3 = mulf8s_prepared::b#5 < 0
-Inversing boolean not [225] anim::$19 = anim::$17 == 0 from [224] anim::$18 = anim::$17 != 0
+Inversing boolean not [68] mulf8s_prepared::$2 = *mulf8s_prepared::memA >= 0 from [67] mulf8s_prepared::$1 = *mulf8s_prepared::memA < 0
+Inversing boolean not [72] mulf8s_prepared::$4 = mulf8s_prepared::b#5 >= 0 from [71] mulf8s_prepared::$3 = mulf8s_prepared::b#5 < 0
+Inversing boolean not [222] anim::$19 = anim::$17 == 0 from [221] anim::$18 = anim::$17 != 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias mulf_init::c#2 = mulf_init::c#3 
 Alias mulf_init::sqr#4 = mulf_init::sqr#5 mulf_init::sqr#6 
@@ -1178,12 +1162,12 @@ Alias mulf_init::sqr2_hi#1 = mulf_init::sqr2_hi#5
 Alias mulf8u_prepared::return#0 = mulf8u_prepared::$0 mulf8u_prepared::return#3 mulf8u_prepared::return#1 
 Alias mulf8u_prepared::return#2 = mulf8u_prepared::return#4 
 Alias mulf8s_prepared::b#4 = mulf8s_prepared::b#7 mulf8s_prepared::b#6 
-Alias mulf8s_prepared::m#0 = mulf8s_prepared::$0 mulf8s_prepared::m#3 
+Alias mulf8s_prepared::m#0 = mulf8s_prepared::m#3 
 Alias mulf8s_prepared::$11 = mulf8s_prepared::$7 
 Alias mulf8s_prepared::m#5 = mulf8s_prepared::m#6 
 Alias mulf8s_prepared::$12 = mulf8s_prepared::$10 
 Alias mulf8s_prepared::return#0 = mulf8s_prepared::return#6 mulf8s_prepared::return#1 
-Alias clock::return#0 = clock::$0 clock::return#3 clock::return#1 
+Alias clock::return#0 = clock::ticks#0 clock::return#3 clock::return#1 
 Alias print_uchar_at::b#0 = print_uint_at::$0 
 Alias print_uint_at::w#2 = print_uint_at::w#3 
 Alias print_uint_at::at#2 = print_uint_at::at#3 
@@ -1197,7 +1181,6 @@ Alias print_uint_at::at#1 = print_ulong_at::$3
 Alias print_uchar_at::b#2 = print_uchar_at::b#3 
 Alias print_uchar_at::at#2 = print_uchar_at::at#3 
 Alias print_char_at::at#1 = print_uchar_at::$3 
-Alias init::sprites_ptr#0 = init::$1 
 Alias anim::angle#2 = anim::angle#4 anim::angle#6 
 Alias anim::cos_a#1 = anim::mulf8s_prepare1_a#0 anim::mulf8s_prepare1_a#1 anim::cos_a#13 anim::cos_a#12 anim::cos_a#11 anim::cos_a#10 anim::cos_a#9 anim::cos_a#8 anim::cos_a#7 anim::cos_a#6 anim::cos_a#5 anim::cos_a#3 anim::cos_a#4 
 Alias anim::x#0 = anim::x#5 anim::x#3 anim::x#1 anim::x#9 anim::x#8 anim::x#7 anim::x#6 anim::x#4 anim::x#2 
@@ -1207,22 +1190,19 @@ Alias anim::sprite_msb#10 = anim::sprite_msb#15 anim::sprite_msb#16 anim::sprite
 Alias anim::i#10 = anim::i#14 anim::i#2 anim::i#13 anim::i#12 anim::i#11 anim::i#9 anim::i#8 anim::i#7 anim::i#6 anim::i#4 anim::i#5 
 Alias anim::angle#10 = anim::angle#20 anim::angle#21 anim::angle#19 anim::angle#18 anim::angle#17 anim::angle#16 anim::angle#15 anim::angle#13 anim::angle#12 anim::angle#7 anim::angle#8 
 Alias mulf8s_prepared::return#2 = mulf8s_prepared::return#7 
-Alias anim::xr#0 = anim::$5 anim::xr#7 anim::xr#6 anim::xr#5 anim::xr#4 anim::xr#2 
 Alias mulf8s_prepared::return#3 = mulf8s_prepared::return#8 
-Alias anim::yr#0 = anim::$7 anim::yr#8 anim::yr#7 anim::yr#6 anim::yr#4 anim::yr#2 
+Alias anim::xr#0 = anim::xr#7 anim::xr#6 anim::xr#5 anim::xr#4 anim::xr#2 
+Alias anim::yr#0 = anim::yr#8 anim::yr#7 anim::yr#6 anim::yr#4 anim::yr#2 
 Alias mulf8s_prepared::return#4 = mulf8s_prepared::return#9 
 Alias mulf8s_prepared::return#10 = mulf8s_prepared::return#5 
 Alias anim::xr#1 = anim::xr#3 
-Alias anim::xpos#0 = anim::$15 anim::xpos#2 
 Alias anim::sprite_msb#1 = anim::$16 anim::sprite_msb#4 
-Alias anim::ypos#0 = anim::$22 
-Alias anim::i2#0 = anim::$23 
 Alias anim::yr#1 = anim::yr#5 
+Alias anim::xpos#0 = anim::xpos#2 
 Alias anim::sprite_msb#5 = anim::sprite_msb#7 
 Alias anim::angle#3 = anim::angle#5 
 Alias clock::return#2 = clock::return#4 
 Alias anim::angle#1 = anim::angle#14 anim::angle#11 
-Alias anim::cyclecount#0 = anim::$27 
 Successful SSA optimization Pass2AliasElimination
 Alias mulf_init::sqr1_lo#2 = mulf_init::sqr1_lo#3 
 Alias mulf_init::sqr1_hi#2 = mulf_init::sqr1_hi#3 
@@ -1253,13 +1233,13 @@ Simple Condition mulf_init::$7 [28] if(mulf_init::sqr2_lo#2!=mulf_sqr2_lo+$1ff) 
 Simple Condition mulf_init::$10 [34] if(mulf_init::x_255#1!=0) goto mulf_init::@9
 Simple Condition mulf8s_prepared::$2 [56] if(*mulf8s_prepared::memA>=0) goto mulf8s_prepared::@1
 Simple Condition mulf8s_prepared::$4 [59] if(mulf8s_prepared::b#4>=0) goto mulf8s_prepared::@2
-Simple Condition init::$3 [122] if(init::i#1!=rangelast(0,7)) goto init::@1
-Simple Condition anim::$0 [129] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$ff) goto anim::@2
-Simple Condition anim::$19 [172] if(anim::$17==0) goto anim::@5
-Simple Condition anim::$25 [183] if(anim::i#1!=rangelast(0,7)) goto anim::@4
+Simple Condition init::$3 [124] if(init::i#1!=rangelast(0,7)) goto init::@1
+Simple Condition anim::$0 [131] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$ff) goto anim::@2
+Simple Condition anim::$19 [174] if(anim::$17==0) goto anim::@5
+Simple Condition anim::$25 [185] if(anim::i#1!=rangelast(0,7)) goto anim::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [114] init::sprites_ptr#0 = SCREEN + $3f8
-Constant right-side identified [117] init::$2 = SPRITE / $40
+Constant right-side identified [116] init::sprites_ptr#0 = SCREEN + $3f8
+Constant right-side identified [119] init::$2 = SPRITE / $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant mulf_init::sqr#0 = 0
 Constant mulf_init::x_2#0 = 0
@@ -1281,22 +1261,25 @@ Constant print_ulong_at::at#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Constant print_uint_at::at#0 = print_ulong_at::at#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)init::$2 in [118] init::sprites_ptr#0[init::i#2] = (byte)init::$2
+Constant value identified (byte)init::$2 in [120] init::sprites_ptr#0[init::i#2] = (byte)init::$2
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [126] if(true) goto anim::@2
+if() condition always true - replacing block destination [128] if(true) goto anim::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [120] init::i#1 = ++ init::i#2 to ++
-Resolved ranged comparison value [122] if(init::i#1!=rangelast(0,7)) goto init::@1 to 8
-Resolved ranged next value [181] anim::i#1 = ++ anim::i#10 to ++
-Resolved ranged comparison value [183] if(anim::i#1!=rangelast(0,7)) goto anim::@4 to 8
-Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES in [73] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
-Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS in [74] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Resolved ranged next value [122] init::i#1 = ++ init::i#2 to ++
+Resolved ranged comparison value [124] if(init::i#1!=rangelast(0,7)) goto init::@1 to 8
+Resolved ranged next value [183] anim::i#1 = ++ anim::i#10 to ++
+Resolved ranged comparison value [185] if(anim::i#1!=rangelast(0,7)) goto anim::@4 to 8
+Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES in [71] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES in [75] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS in [76] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [74] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = 0|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [76] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [77] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [73] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [76] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = 0|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [78] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [79] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [77] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [73] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [79] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block anim::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -1311,8 +1294,8 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 8 in [99] if(init::i#1!=8) goto init::@1
-Adding number conversion cast (unumber) 8 in [152] if(anim::i#1!=8) goto anim::@4
+Adding number conversion cast (unumber) 8 in [101] if(init::i#1!=8) goto init::@1
+Adding number conversion cast (unumber) 8 in [154] if(anim::i#1!=8) goto anim::@4
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Simplifying constant integer cast 8
@@ -1320,31 +1303,31 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [73] print_uint_at::at#1 = print_ulong_at::at#0 + 4
+Constant right-side identified [75] print_uint_at::at#1 = print_ulong_at::at#0 + 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant print_uint_at::at#1 = print_ulong_at::at#0+4
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [44] mulf8s_prepared::$13 = (byte)mulf8s_prepared::b#4 keeping mulf8s_prepared::b#4
 Inlining Noop Cast [48] mulf8s_prepared::return#0 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
 Inlining Noop Cast [50] mulf8s_prepared::$14 = (byte)*mulf8s_prepared::memA keeping *mulf8s_prepared::memA
-Inlining Noop Cast [104] anim::cos_a#0 = (signed byte)COS[anim::angle#9] keeping COS[anim::angle#9]
-Inlining Noop Cast [105] anim::sin_a#0 = (signed byte)SIN[anim::angle#9] keeping SIN[anim::angle#9]
+Inlining Noop Cast [106] anim::cos_a#0 = (signed byte)COS[anim::angle#9] keeping COS[anim::angle#9]
+Inlining Noop Cast [107] anim::sin_a#0 = (signed byte)SIN[anim::angle#9] keeping SIN[anim::angle#9]
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [109] mulf8u_prepare::a#0 = (byte)(signed byte)COS[anim::angle#9] keeping (signed byte)COS[anim::angle#9]
-Inlining Noop Cast [113] mulf8s_prepared::return#2 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
-Inlining Noop Cast [118] mulf8s_prepared::return#3 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
-Inlining Noop Cast [121] mulf8u_prepare::a#1 = (byte)(signed byte)SIN[anim::angle#9] keeping (signed byte)SIN[anim::angle#9]
-Inlining Noop Cast [125] mulf8s_prepared::return#4 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
-Inlining Noop Cast [131] mulf8s_prepared::return#10 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
+Inlining Noop Cast [111] mulf8u_prepare::a#0 = (byte)(signed byte)COS[anim::angle#9] keeping (signed byte)COS[anim::angle#9]
+Inlining Noop Cast [115] mulf8s_prepared::return#2 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
+Inlining Noop Cast [120] mulf8s_prepared::return#3 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
+Inlining Noop Cast [123] mulf8u_prepare::a#1 = (byte)(signed byte)SIN[anim::angle#9] keeping (signed byte)SIN[anim::angle#9]
+Inlining Noop Cast [127] mulf8s_prepared::return#4 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
+Inlining Noop Cast [133] mulf8s_prepared::return#10 = (signed word)mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [136] anim::$29 = (signed byte)anim::$13 keeping anim::$29
+Inlining Noop Cast [138] anim::$29 = (signed byte)anim::$13 keeping anim::$29
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [115] anim::xr#0 = anim::$4 * 2
-Rewriting multiplication to use shift [120] anim::yr#0 = anim::$6 * 2
-Rewriting multiplication to use shift [127] anim::$10 = anim::$9 * 2
-Rewriting multiplication to use shift [133] anim::$12 = anim::$11 * 2
-Rewriting division to use shift [139] anim::sprite_msb#1 = anim::sprite_msb#10 / 2
-Rewriting multiplication to use shift [146] anim::i2#0 = anim::i#10 * 2
+Rewriting multiplication to use shift [117] anim::xr#0 = anim::$4 * 2
+Rewriting multiplication to use shift [122] anim::yr#0 = anim::$6 * 2
+Rewriting multiplication to use shift [129] anim::$10 = anim::$9 * 2
+Rewriting multiplication to use shift [135] anim::$12 = anim::$11 * 2
+Rewriting division to use shift [141] anim::sprite_msb#1 = anim::sprite_msb#10 / 2
+Rewriting multiplication to use shift [148] anim::i2#0 = anim::i#10 * 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings mulf_init::sqr#0
 Inlining constant with var siblings mulf_init::x_2#0
@@ -1386,7 +1369,7 @@ Consolidated constant in assignment anim::ypos#0
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias anim::$21 = anim::$20 
 Successful SSA optimization Pass2AliasElimination
-Inlining Noop Cast [125] anim::$14 = (signed byte)anim::$29 keeping anim::$14
+Inlining Noop Cast [127] anim::$14 = (signed byte)anim::$29 keeping anim::$14
 Successful SSA optimization Pass2NopCastInlining
 Finalized unsigned number type (word) $200
 Finalized unsigned number type (word) $200
@@ -1430,9 +1413,9 @@ Calls in [main] to init:1 anim:3
 Calls in [init] to mulf_init:7 
 Calls in [anim] to clock_start:20 mulf8u_prepare:26 mulf8s_prepared:30 mulf8s_prepared:35 mulf8u_prepare:39 mulf8s_prepared:43 mulf8s_prepared:49 clock:71 print_ulong_at:76 
 Calls in [mulf8s_prepared] to mulf8u_prepared:138 
-Calls in [print_ulong_at] to print_uint_at:160 print_uint_at:163 
-Calls in [print_uint_at] to print_uchar_at:175 print_uchar_at:180 
-Calls in [print_uchar_at] to print_char_at:189 print_char_at:195 
+Calls in [print_ulong_at] to print_uint_at:162 print_uint_at:165 
+Calls in [print_uint_at] to print_uchar_at:177 print_uchar_at:182 
+Calls in [print_uchar_at] to print_char_at:191 print_char_at:197 
 
 Created 27 initial phi equivalence classes
 Coalesced [15] init::i#3 = init::i#1
@@ -1463,16 +1446,16 @@ Coalesced [145] mulf8s_prepared::m#7 = mulf8s_prepared::m#1
 Coalesced [151] mulf8s_prepared::m#10 = mulf8s_prepared::m#2
 Coalesced [154] mulf8s_prepared::m#9 = mulf8s_prepared::m#5
 Coalesced [155] mulf8s_prepared::m#8 = mulf8s_prepared::m#0
-Coalesced [159] print_uint_at::w#4 = print_uint_at::w#0
-Coalesced [162] print_uint_at::w#5 = print_uint_at::w#1
-Coalesced [173] print_uchar_at::b#4 = print_uchar_at::b#0
-Coalesced [174] print_uchar_at::at#4 = print_uchar_at::at#0
-Coalesced [178] print_uchar_at::b#5 = print_uchar_at::b#1
-Coalesced [179] print_uchar_at::at#5 = print_uchar_at::at#1
-Coalesced [187] print_char_at::ch#3 = print_char_at::ch#0
-Coalesced [188] print_char_at::at#3 = print_char_at::at#0
-Coalesced [193] print_char_at::ch#4 = print_char_at::ch#1
-Coalesced [194] print_char_at::at#4 = print_char_at::at#1
+Coalesced [161] print_uint_at::w#4 = print_uint_at::w#0
+Coalesced [164] print_uint_at::w#5 = print_uint_at::w#1
+Coalesced [175] print_uchar_at::b#4 = print_uchar_at::b#0
+Coalesced [176] print_uchar_at::at#4 = print_uchar_at::at#0
+Coalesced [180] print_uchar_at::b#5 = print_uchar_at::b#1
+Coalesced [181] print_uchar_at::at#5 = print_uchar_at::at#1
+Coalesced [189] print_char_at::ch#3 = print_char_at::ch#0
+Coalesced [190] print_char_at::at#3 = print_char_at::at#0
+Coalesced [195] print_char_at::ch#4 = print_char_at::ch#1
+Coalesced [196] print_char_at::at#4 = print_char_at::at#1
 Coalesced down to 22 phi equivalence classes
 Culled Empty Block label main::@2
 Culled Empty Block label init::@3
@@ -1752,79 +1735,81 @@ mulf8s_prepared::@return: scope:[mulf8s_prepared]  from mulf8s_prepared::@2
 
 dword clock()
 clock: scope:[clock]  from anim::@7
-  [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB
+  [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0
+  [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB
+  [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START
   to:clock::@return
 clock::@return: scope:[clock]  from clock
-  [124] return 
+  [126] return 
   to:@return
 
 void print_ulong_at(dword print_ulong_at::dw , byte* print_ulong_at::at)
 print_ulong_at: scope:[print_ulong_at]  from anim::@14
-  [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0
-  [126] call print_uint_at 
+  [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0
+  [128] call print_uint_at 
   to:print_ulong_at::@1
 print_ulong_at::@1: scope:[print_ulong_at]  from print_ulong_at
-  [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0
-  [128] call print_uint_at 
+  [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0
+  [130] call print_uint_at 
   to:print_ulong_at::@return
 print_ulong_at::@return: scope:[print_ulong_at]  from print_ulong_at::@1
-  [129] return 
+  [131] return 
   to:@return
 
 word mulf8u_prepared(byte mulf8u_prepared::b)
 mulf8u_prepared: scope:[mulf8u_prepared]  from mulf8s_prepared
-  [130] *mulf8u_prepared::memB = mulf8u_prepared::b#0
+  [132] *mulf8u_prepared::memB = mulf8u_prepared::b#0
   asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
-  [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL
+  [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL
   to:mulf8u_prepared::@return
 mulf8u_prepared::@return: scope:[mulf8u_prepared]  from mulf8u_prepared
-  [133] return 
+  [135] return 
   to:@return
 
 void print_uint_at(word print_uint_at::w , byte* print_uint_at::at)
 print_uint_at: scope:[print_uint_at]  from print_ulong_at print_ulong_at::@1
-  [134] print_uint_at::at#2 = phi( print_ulong_at/SCREEN, print_ulong_at::@1/SCREEN+4 )
-  [134] print_uint_at::w#2 = phi( print_ulong_at/print_uint_at::w#0, print_ulong_at::@1/print_uint_at::w#1 )
-  [135] print_uchar_at::b#0 = byte1  print_uint_at::w#2
-  [136] print_uchar_at::at#0 = print_uint_at::at#2
-  [137] call print_uchar_at 
+  [136] print_uint_at::at#2 = phi( print_ulong_at/SCREEN, print_ulong_at::@1/SCREEN+4 )
+  [136] print_uint_at::w#2 = phi( print_ulong_at/print_uint_at::w#0, print_ulong_at::@1/print_uint_at::w#1 )
+  [137] print_uchar_at::b#0 = byte1  print_uint_at::w#2
+  [138] print_uchar_at::at#0 = print_uint_at::at#2
+  [139] call print_uchar_at 
   to:print_uint_at::@1
 print_uint_at::@1: scope:[print_uint_at]  from print_uint_at
-  [138] print_uchar_at::b#1 = byte0  print_uint_at::w#2
-  [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2
-  [140] call print_uchar_at 
+  [140] print_uchar_at::b#1 = byte0  print_uint_at::w#2
+  [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2
+  [142] call print_uchar_at 
   to:print_uint_at::@return
 print_uint_at::@return: scope:[print_uint_at]  from print_uint_at::@1
-  [141] return 
+  [143] return 
   to:@return
 
 void print_uchar_at(byte print_uchar_at::b , byte* print_uchar_at::at)
 print_uchar_at: scope:[print_uchar_at]  from print_uint_at print_uint_at::@1
-  [142] print_uchar_at::at#2 = phi( print_uint_at/print_uchar_at::at#0, print_uint_at::@1/print_uchar_at::at#1 )
-  [142] print_uchar_at::b#2 = phi( print_uint_at/print_uchar_at::b#0, print_uint_at::@1/print_uchar_at::b#1 )
-  [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4
-  [144] print_char_at::ch#0 = print_hextab[print_uchar_at::$0]
-  [145] print_char_at::at#0 = print_uchar_at::at#2
-  [146] call print_char_at 
+  [144] print_uchar_at::at#2 = phi( print_uint_at/print_uchar_at::at#0, print_uint_at::@1/print_uchar_at::at#1 )
+  [144] print_uchar_at::b#2 = phi( print_uint_at/print_uchar_at::b#0, print_uint_at::@1/print_uchar_at::b#1 )
+  [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4
+  [146] print_char_at::ch#0 = print_hextab[print_uchar_at::$0]
+  [147] print_char_at::at#0 = print_uchar_at::at#2
+  [148] call print_char_at 
   to:print_uchar_at::@1
 print_uchar_at::@1: scope:[print_uchar_at]  from print_uchar_at
-  [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f
-  [148] print_char_at::at#1 = print_uchar_at::at#2 + 1
-  [149] print_char_at::ch#1 = print_hextab[print_uchar_at::$2]
-  [150] call print_char_at 
+  [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f
+  [150] print_char_at::at#1 = print_uchar_at::at#2 + 1
+  [151] print_char_at::ch#1 = print_hextab[print_uchar_at::$2]
+  [152] call print_char_at 
   to:print_uchar_at::@return
 print_uchar_at::@return: scope:[print_uchar_at]  from print_uchar_at::@1
-  [151] return 
+  [153] return 
   to:@return
 
 void print_char_at(byte print_char_at::ch , byte* print_char_at::at)
 print_char_at: scope:[print_char_at]  from print_uchar_at print_uchar_at::@1
-  [152] print_char_at::at#2 = phi( print_uchar_at/print_char_at::at#0, print_uchar_at::@1/print_char_at::at#1 )
-  [152] print_char_at::ch#2 = phi( print_uchar_at/print_char_at::ch#0, print_uchar_at::@1/print_char_at::ch#1 )
-  [153] *print_char_at::at#2 = print_char_at::ch#2
+  [154] print_char_at::at#2 = phi( print_uchar_at/print_char_at::at#0, print_uchar_at::@1/print_char_at::at#1 )
+  [154] print_char_at::ch#2 = phi( print_uchar_at/print_char_at::ch#0, print_uchar_at::@1/print_char_at::ch#1 )
+  [155] *print_char_at::at#2 = print_char_at::ch#2
   to:print_char_at::@return
 print_char_at::@return: scope:[print_char_at]  from print_char_at
-  [154] return 
+  [156] return 
   to:@return
 
 
@@ -1876,8 +1861,9 @@ signed word anim::yr#0 166.83333333333334
 signed word anim::yr#1 250.25
 dword clock()
 dword clock::return
-dword clock::return#0 367.33333333333337
+dword clock::return#0 275.5
 dword clock::return#2 202.0
+dword clock::ticks
 void clock_start()
 void init()
 byte init::i
@@ -2219,9 +2205,11 @@ Statement [111] mulf8s_prepared::m#0 = mulf8u_prepared::return#2 [ mulf8s_prepar
 Statement [112] if(*mulf8s_prepared::memA>=0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [114] mulf8s_prepared::$11 = mulf8s_prepared::$6 - (byte)mulf8s_prepared::b#4 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [119] mulf8s_prepared::$12 = mulf8s_prepared::$9 - (byte)*mulf8s_prepared::memA [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
-Statement [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0 [ ] ( anim:3::clock:61 [ anim::angle#1 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ anim::angle#9 anim::angle#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:4 [ anim::i#10 anim::i#1 ]
@@ -2229,17 +2217,17 @@ Removing always clobbered register reg byte x as potential for zp[1]:5 [ anim::s
 Removing always clobbered register reg byte x as potential for zp[1]:34 [ anim::x#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:35 [ anim::y#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:21 [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ]
-Statement [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
-Statement [136] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
+Statement [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
+Statement [138] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
-Statement [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
-Statement [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [145] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
+Statement [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [147] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:31 [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ]
-Statement [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [148] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [150] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:97 [ print_uchar_at::$2 ]
-Statement [153] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:150 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [155] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:152 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ anim::angle#9 anim::angle#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
 Statement [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = $ff [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
@@ -2295,18 +2283,20 @@ Statement [111] mulf8s_prepared::m#0 = mulf8u_prepared::return#2 [ mulf8s_prepar
 Statement [112] if(*mulf8s_prepared::memA>=0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [114] mulf8s_prepared::$11 = mulf8s_prepared::$6 - (byte)mulf8s_prepared::b#4 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [119] mulf8s_prepared::$12 = mulf8s_prepared::$9 - (byte)*mulf8s_prepared::memA [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
-Statement [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0 [ ] ( anim:3::clock:61 [ anim::angle#1 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
-Statement [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
-Statement [136] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
-Statement [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
-Statement [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [145] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [148] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [153] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:150 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
+Statement [138] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
+Statement [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
+Statement [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [147] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [150] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [155] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:152 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = $ff [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
 Statement [9] init::sprites_ptr#0[init::i#2] = (byte)SPRITE/$40 [ init::i#2 ] ( init:1 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [10] SPRITES_COLOR[init::i#2] = GREEN [ init::i#2 ] ( init:1 [ init::i#2 ] { }  ) always clobbers reg byte a 
@@ -2358,18 +2348,20 @@ Statement [111] mulf8s_prepared::m#0 = mulf8u_prepared::return#2 [ mulf8s_prepar
 Statement [112] if(*mulf8s_prepared::memA>=0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [114] mulf8s_prepared::$11 = mulf8s_prepared::$6 - (byte)mulf8s_prepared::b#4 [ mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
 Statement [119] mulf8s_prepared::$12 = mulf8s_prepared::$9 - (byte)*mulf8s_prepared::memA [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( anim:3::mulf8s_prepared:25 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } }  anim:3::mulf8s_prepared:29 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:35 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } }  anim:3::mulf8s_prepared:40 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } }  ) always clobbers reg byte a 
-Statement [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0 [ ] ( anim:3::clock:61 [ anim::angle#1 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START [ clock::return#0 ] ( anim:3::clock:61 [ anim::angle#1 clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( anim:3::print_ulong_at:66 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
-Statement [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
-Statement [136] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
-Statement [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
-Statement [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [145] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [148] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [153] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:146 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:146 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:137::print_char_at:150 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:126::print_uchar_at:140::print_char_at:150 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:140::print_char_at:150 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL [ mulf8u_prepared::return#0 ] ( anim:3::mulf8s_prepared:25::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#0 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:29::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::xr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:35::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::xr#0 anim::yr#0 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#2 = mulf8s_prepared::b#4 anim::y#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  anim:3::mulf8s_prepared:40::mulf8u_prepared:109 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::yr#0 anim::xr#1 mulf8s_prepared::b#4 mulf8u_prepared::return#0 ] { { mulf8s_prepared::b#3 = mulf8s_prepared::b#4 anim::x#0 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
+Statement [138] print_uchar_at::at#0 = print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
+Statement [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130 [ anim::angle#1 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
+Statement [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [147] print_char_at::at#0 = print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [150] print_char_at::at#1 = print_uchar_at::at#2 + 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142 [ anim::angle#1 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [155] *print_char_at::at#2 = print_char_at::ch#2 [ ] ( anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:148 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:148 [ anim::angle#1 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:139::print_char_at:152 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:128::print_uchar_at:142::print_char_at:152 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  anim:3::print_ulong_at:66::print_uint_at:130::print_uchar_at:142::print_char_at:152 [ anim::angle#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ init::i#2 init::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ anim::angle#9 anim::angle#1 ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ anim::i#10 anim::i#1 ] : zp[1]:4 , 
@@ -2439,7 +2431,7 @@ Uplift Scope [mulf_init] 4,337.67: zp[2]:18 [ mulf_init::sqr#3 mulf_init::sqr#4 
 Uplift Scope [mulf8u_prepare] 16,007: zp[1]:20 [ mulf8u_prepare::a#2 mulf8u_prepare::a#3 mulf8u_prepare::a#4 ] 
 Uplift Scope [print_uint_at] 9,505: zp[2]:24 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] 4,000.4: zp[2]:26 [ print_uint_at::at#2 ] 
 Uplift Scope [print_ulong_at] 701: zp[4]:76 [ print_ulong_at::dw#0 ] 
-Uplift Scope [clock] 367.33: zp[4]:90 [ clock::return#0 ] 202: zp[4]:64 [ clock::return#2 ] 
+Uplift Scope [clock] 275.5: zp[4]:90 [ clock::return#0 ] 202: zp[4]:64 [ clock::return#2 ] 
 Uplift Scope [init] 286.17: zp[1]:2 [ init::i#2 init::i#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
@@ -2449,53 +2441,53 @@ Uplift Scope [RADIX]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print_char_at] best 44177 combination reg byte x [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] zp[2]:32 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
-Uplifting [print_uchar_at] best 44169 combination reg byte a [ print_uchar_at::$0 ] reg byte y [ print_uchar_at::$2 ] zp[2]:29 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
-Uplifting [mulf8u_prepared] best 44163 combination reg byte a [ mulf8u_prepared::b#0 ] zp[2]:94 [ mulf8u_prepared::return#0 ] zp[2]:84 [ mulf8u_prepared::return#2 ] 
-Uplifting [mulf8s_prepared] best 44139 combination zp[2]:22 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] reg byte a [ mulf8s_prepared::$6 ] reg byte a [ mulf8s_prepared::$11 ] reg byte a [ mulf8s_prepared::$9 ] reg byte a [ mulf8s_prepared::$12 ] zp[1]:21 [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ] 
+Uplifting [print_char_at] best 44189 combination reg byte x [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] zp[2]:32 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
+Uplifting [print_uchar_at] best 44181 combination reg byte a [ print_uchar_at::$0 ] reg byte y [ print_uchar_at::$2 ] zp[2]:29 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
+Uplifting [mulf8u_prepared] best 44175 combination reg byte a [ mulf8u_prepared::b#0 ] zp[2]:94 [ mulf8u_prepared::return#0 ] zp[2]:84 [ mulf8u_prepared::return#2 ] 
+Uplifting [mulf8s_prepared] best 44151 combination zp[2]:22 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] reg byte a [ mulf8s_prepared::$6 ] reg byte a [ mulf8s_prepared::$11 ] reg byte a [ mulf8s_prepared::$9 ] reg byte a [ mulf8s_prepared::$12 ] zp[1]:21 [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ] 
 Limited combination testing to 100 combinations of 512 possible.
-Uplifting [anim] best 42739 combination zp[1]:5 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ] zp[2]:36 [ anim::$4 ] zp[2]:40 [ anim::$6 ] zp[2]:44 [ anim::$9 ] zp[2]:46 [ anim::$10 ] zp[2]:50 [ anim::$11 ] zp[2]:52 [ anim::$12 ] reg byte a [ anim::$17 ] reg byte a [ anim::$21 ] reg byte a [ anim::$24 ] zp[1]:4 [ anim::i#10 anim::i#1 ] zp[1]:56 [ anim::$14 ] zp[1]:62 [ anim::i2#0 ] zp[1]:61 [ anim::ypos#0 ] zp[2]:48 [ anim::xr#1 ] zp[2]:57 [ anim::xpos#0 ] zp[2]:54 [ anim::yr#1 ] zp[1]:35 [ anim::y#0 ] zp[4]:68 [ anim::$26 ] zp[4]:72 [ anim::cyclecount#0 ] zp[2]:38 [ anim::xr#0 ] zp[2]:42 [ anim::yr#0 ] zp[1]:34 [ anim::x#0 ] zp[1]:3 [ anim::angle#9 anim::angle#1 ] 
+Uplifting [anim] best 42751 combination zp[1]:5 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ] zp[2]:36 [ anim::$4 ] zp[2]:40 [ anim::$6 ] zp[2]:44 [ anim::$9 ] zp[2]:46 [ anim::$10 ] zp[2]:50 [ anim::$11 ] zp[2]:52 [ anim::$12 ] reg byte a [ anim::$17 ] reg byte a [ anim::$21 ] reg byte a [ anim::$24 ] zp[1]:4 [ anim::i#10 anim::i#1 ] zp[1]:56 [ anim::$14 ] zp[1]:62 [ anim::i2#0 ] zp[1]:61 [ anim::ypos#0 ] zp[2]:48 [ anim::xr#1 ] zp[2]:57 [ anim::xpos#0 ] zp[2]:54 [ anim::yr#1 ] zp[1]:35 [ anim::y#0 ] zp[4]:68 [ anim::$26 ] zp[4]:72 [ anim::cyclecount#0 ] zp[2]:38 [ anim::xr#0 ] zp[2]:42 [ anim::yr#0 ] zp[1]:34 [ anim::x#0 ] zp[1]:3 [ anim::angle#9 anim::angle#1 ] 
 Limited combination testing to 100 combinations of 3840 possible.
-Uplifting [mulf_init] best 42509 combination zp[2]:18 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp[2]:12 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp[2]:6 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$1 ] reg byte a [ mulf_init::$4 ] reg byte a [ mulf_init::$5 ] zp[1]:14 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp[1]:17 [ mulf_init::dir#2 mulf_init::dir#4 ] zp[1]:8 [ mulf_init::c#2 mulf_init::c#1 ] zp[2]:15 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp[2]:9 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
+Uplifting [mulf_init] best 42521 combination zp[2]:18 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp[2]:12 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp[2]:6 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$1 ] reg byte a [ mulf_init::$4 ] reg byte a [ mulf_init::$5 ] zp[1]:14 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp[1]:17 [ mulf_init::dir#2 mulf_init::dir#4 ] zp[1]:8 [ mulf_init::c#2 mulf_init::c#1 ] zp[2]:15 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp[2]:9 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [mulf8u_prepare] best 41906 combination reg byte a [ mulf8u_prepare::a#2 mulf8u_prepare::a#3 mulf8u_prepare::a#4 ] 
-Uplifting [print_uint_at] best 41906 combination zp[2]:24 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] zp[2]:26 [ print_uint_at::at#2 ] 
-Uplifting [print_ulong_at] best 41906 combination zp[4]:76 [ print_ulong_at::dw#0 ] 
-Uplifting [clock] best 41906 combination zp[4]:90 [ clock::return#0 ] zp[4]:64 [ clock::return#2 ] 
-Uplifting [init] best 41756 combination reg byte x [ init::i#2 init::i#1 ] 
-Uplifting [MOS6526_CIA] best 41756 combination 
-Uplifting [MOS6569_VICII] best 41756 combination 
-Uplifting [MOS6581_SID] best 41756 combination 
-Uplifting [clock_start] best 41756 combination 
-Uplifting [RADIX] best 41756 combination 
-Uplifting [main] best 41756 combination 
-Uplifting [] best 41756 combination 
+Uplifting [mulf8u_prepare] best 41918 combination reg byte a [ mulf8u_prepare::a#2 mulf8u_prepare::a#3 mulf8u_prepare::a#4 ] 
+Uplifting [print_uint_at] best 41918 combination zp[2]:24 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] zp[2]:26 [ print_uint_at::at#2 ] 
+Uplifting [print_ulong_at] best 41918 combination zp[4]:76 [ print_ulong_at::dw#0 ] 
+Uplifting [clock] best 41918 combination zp[4]:90 [ clock::return#0 ] zp[4]:64 [ clock::return#2 ] 
+Uplifting [init] best 41768 combination reg byte x [ init::i#2 init::i#1 ] 
+Uplifting [MOS6526_CIA] best 41768 combination 
+Uplifting [MOS6569_VICII] best 41768 combination 
+Uplifting [MOS6581_SID] best 41768 combination 
+Uplifting [clock_start] best 41768 combination 
+Uplifting [RADIX] best 41768 combination 
+Uplifting [main] best 41768 combination 
+Uplifting [] best 41768 combination 
 Attempting to uplift remaining variables inzp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
-Uplifting [print_uchar_at] best 41756 combination zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
+Uplifting [print_uchar_at] best 41768 combination zp[1]:28 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
 Attempting to uplift remaining variables inzp[1]:21 [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ]
-Uplifting [mulf8s_prepared] best 40555 combination reg byte y [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ] 
+Uplifting [mulf8s_prepared] best 40567 combination reg byte y [ mulf8s_prepared::b#4 mulf8s_prepared::b#1 mulf8s_prepared::b#3 mulf8s_prepared::b#0 mulf8s_prepared::b#2 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ]
-Uplifting [anim] best 40555 combination zp[1]:5 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ] 
+Uplifting [anim] best 40567 combination zp[1]:5 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ] 
 Attempting to uplift remaining variables inzp[1]:4 [ anim::i#10 anim::i#1 ]
-Uplifting [anim] best 40555 combination zp[1]:4 [ anim::i#10 anim::i#1 ] 
+Uplifting [anim] best 40567 combination zp[1]:4 [ anim::i#10 anim::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Uplifting [mulf_init] best 40435 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
+Uplifting [mulf_init] best 40447 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
 Attempting to uplift remaining variables inzp[1]:17 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Uplifting [mulf_init] best 40435 combination zp[1]:17 [ mulf_init::dir#2 mulf_init::dir#4 ] 
+Uplifting [mulf_init] best 40447 combination zp[1]:17 [ mulf_init::dir#2 mulf_init::dir#4 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ mulf_init::c#2 mulf_init::c#1 ]
-Uplifting [mulf_init] best 40435 combination zp[1]:8 [ mulf_init::c#2 mulf_init::c#1 ] 
+Uplifting [mulf_init] best 40447 combination zp[1]:8 [ mulf_init::c#2 mulf_init::c#1 ] 
 Attempting to uplift remaining variables inzp[1]:56 [ anim::$14 ]
-Uplifting [anim] best 39835 combination reg byte a [ anim::$14 ] 
+Uplifting [anim] best 39847 combination reg byte a [ anim::$14 ] 
 Attempting to uplift remaining variables inzp[1]:62 [ anim::i2#0 ]
-Uplifting [anim] best 39135 combination reg byte x [ anim::i2#0 ] 
+Uplifting [anim] best 39147 combination reg byte x [ anim::i2#0 ] 
 Attempting to uplift remaining variables inzp[1]:61 [ anim::ypos#0 ]
-Uplifting [anim] best 38935 combination reg byte y [ anim::ypos#0 ] 
+Uplifting [anim] best 38947 combination reg byte y [ anim::ypos#0 ] 
 Attempting to uplift remaining variables inzp[1]:35 [ anim::y#0 ]
-Uplifting [anim] best 38935 combination zp[1]:35 [ anim::y#0 ] 
+Uplifting [anim] best 38947 combination zp[1]:35 [ anim::y#0 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ anim::x#0 ]
-Uplifting [anim] best 38935 combination zp[1]:34 [ anim::x#0 ] 
+Uplifting [anim] best 38947 combination zp[1]:34 [ anim::x#0 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ anim::angle#9 anim::angle#1 ]
-Uplifting [anim] best 38935 combination zp[1]:3 [ anim::angle#9 anim::angle#1 ] 
+Uplifting [anim] best 38947 combination zp[1]:3 [ anim::angle#9 anim::angle#1 ] 
 Coalescing zero page register [ zp[2]:26 [ print_uint_at::at#2 ] ] with [ zp[2]:29 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] ] - score: 2
 Coalescing zero page register [ zp[2]:22 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] ] with [ zp[2]:36 [ anim::$4 ] ] - score: 1
 Coalescing zero page register [ zp[2]:22 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 anim::$4 ] ] with [ zp[2]:40 [ anim::$6 ] ] - score: 1
@@ -2751,6 +2743,7 @@ anim: {
   __b11:
     // [30] anim::$6 = (signed word)mulf8s_prepared::m#4
     // [31] anim::yr#0 = anim::$6 << 1 -- vwsz1=vwsz2_rol_1 
+    // signed fixed[8.8]
     lda.z __6
     asl
     sta.z yr
@@ -2819,6 +2812,7 @@ anim: {
     // [44] anim::$14 = byte1  anim::xr#1 -- vbuaa=_byte1_vwsz1 
     lda.z xr+1
     // [45] anim::xpos#0 = (signed byte)anim::$14 + $18+$95 -- vwsz1=vbsaa_plus_vwsc1 
+    // signed fixed[8.8]
     sta.z $ff
     clc
     adc #<$18+$95
@@ -2890,6 +2884,7 @@ anim: {
   __b14:
     // [63] anim::$26 = clock::return#2
     // [64] anim::cyclecount#0 = anim::$26 - CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -3245,7 +3240,11 @@ mulf8s_prepared: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $11
-    // [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB -- vduz1=vduc1_minus__deref_pduc2 
+    // [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0 -- _deref_pbuc1=vbuc2 
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -3259,10 +3258,14 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     jmp __breturn
     // clock::@return
   __breturn:
-    // [124] return 
+    // [126] return 
     rts
 }
   // print_ulong_at
@@ -3270,43 +3273,43 @@ clock: {
 // print_ulong_at(dword zp($11) dw)
 print_ulong_at: {
     .label dw = $11
-    // [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0 -- vwuz1=_word1_vduz2 
+    // [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0 -- vwuz1=_word1_vduz2 
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
     sta.z print_uint_at.w+1
-    // [126] call print_uint_at 
-    // [134] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
+    // [128] call print_uint_at 
+    // [136] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
   print_uint_at_from_print_ulong_at:
-    // [134] phi print_uint_at::at#2 = SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
+    // [136] phi print_uint_at::at#2 = SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [134] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
+    // [136] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __b1
     // print_ulong_at::@1
   __b1:
-    // [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0 -- vwuz1=_word0_vduz2 
+    // [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0 -- vwuz1=_word0_vduz2 
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
     sta.z print_uint_at.w+1
-    // [128] call print_uint_at 
-    // [134] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
+    // [130] call print_uint_at 
+    // [136] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
   print_uint_at_from___b1:
-    // [134] phi print_uint_at::at#2 = SCREEN+4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
+    // [136] phi print_uint_at::at#2 = SCREEN+4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [134] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
+    // [136] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __breturn
     // print_ulong_at::@return
   __breturn:
-    // [129] return 
+    // [131] return 
     rts
 }
   // mulf8u_prepared
@@ -3317,7 +3320,7 @@ mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
     .label return = 5
-    // [130] *mulf8u_prepared::memB = mulf8u_prepared::b#0 -- _deref_pbuc1=vbuaa 
+    // [132] *mulf8u_prepared::memB = mulf8u_prepared::b#0 -- _deref_pbuc1=vbuaa 
     sta memB
     // asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
     ldx memB
@@ -3332,7 +3335,7 @@ mulf8u_prepared: {
   sm4:
     sbc mulf_sqr2_hi,x
     sta memB
-    // [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memB
     sta.z return+1
     lda resL
@@ -3340,7 +3343,7 @@ mulf8u_prepared: {
     jmp __breturn
     // mulf8u_prepared::@return
   __breturn:
-    // [133] return 
+    // [135] return 
     rts
 }
   // print_uint_at
@@ -3349,23 +3352,23 @@ mulf8u_prepared: {
 print_uint_at: {
     .label w = $d
     .label at = $f
-    // [135] print_uchar_at::b#0 = byte1  print_uint_at::w#2 -- vbuz1=_byte1_vwuz2 
+    // [137] print_uchar_at::b#0 = byte1  print_uint_at::w#2 -- vbuz1=_byte1_vwuz2 
     lda.z w+1
     sta.z print_uchar_at.b
-    // [136] print_uchar_at::at#0 = print_uint_at::at#2
-    // [137] call print_uchar_at 
-    // [142] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
+    // [138] print_uchar_at::at#0 = print_uint_at::at#2
+    // [139] call print_uchar_at 
+    // [144] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
   print_uchar_at_from_print_uint_at:
-    // [142] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [142] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
+    // [144] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
+    // [144] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __b1
     // print_uint_at::@1
   __b1:
-    // [138] print_uchar_at::b#1 = byte0  print_uint_at::w#2 -- vbuz1=_byte0_vwuz2 
+    // [140] print_uchar_at::b#1 = byte0  print_uint_at::w#2 -- vbuz1=_byte0_vwuz2 
     lda.z w
     sta.z print_uchar_at.b
-    // [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z print_uchar_at.at
@@ -3373,16 +3376,16 @@ print_uint_at: {
     bcc !+
     inc.z print_uchar_at.at+1
   !:
-    // [140] call print_uchar_at 
-    // [142] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
+    // [142] call print_uchar_at 
+    // [144] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
   print_uchar_at_from___b1:
-    // [142] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [142] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
+    // [144] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
+    // [144] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __breturn
     // print_uint_at::@return
   __breturn:
-    // [141] return 
+    // [143] return 
     rts
 }
   // print_uchar_at
@@ -3391,35 +3394,35 @@ print_uint_at: {
 print_uchar_at: {
     .label b = 9
     .label at = $f
-    // [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 -- vbuaa=vbuz1_ror_4 
+    // [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 -- vbuaa=vbuz1_ror_4 
     lda.z b
     lsr
     lsr
     lsr
     lsr
-    // [144] print_char_at::ch#0 = print_hextab[print_uchar_at::$0] -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [146] print_char_at::ch#0 = print_hextab[print_uchar_at::$0] -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-    // [145] print_char_at::at#0 = print_uchar_at::at#2 -- pbuz1=pbuz2 
+    // [147] print_char_at::at#0 = print_uchar_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
-    // [146] call print_char_at 
+    // [148] call print_char_at 
   // Table of hexadecimal digits
-    // [152] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
+    // [154] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
   print_char_at_from_print_uchar_at:
-    // [152] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [152] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
+    // [154] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
+    // [154] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __b1
     // print_uchar_at::@1
   __b1:
-    // [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f -- vbuyy=vbuz1_band_vbuc1 
+    // [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and.z b
     tay
-    // [148] print_char_at::at#1 = print_uchar_at::at#2 + 1 -- pbuz1=pbuz2_plus_1 
+    // [150] print_char_at::at#1 = print_uchar_at::at#2 + 1 -- pbuz1=pbuz2_plus_1 
     clc
     lda.z at
     adc #1
@@ -3427,18 +3430,18 @@ print_uchar_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [149] print_char_at::ch#1 = print_hextab[print_uchar_at::$2] -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [151] print_char_at::ch#1 = print_hextab[print_uchar_at::$2] -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-    // [150] call print_char_at 
-    // [152] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
+    // [152] call print_char_at 
+    // [154] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
   print_char_at_from___b1:
-    // [152] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [152] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
+    // [154] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
+    // [154] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __breturn
     // print_uchar_at::@return
   __breturn:
-    // [151] return 
+    // [153] return 
     rts
 }
   // print_char_at
@@ -3446,14 +3449,14 @@ print_uchar_at: {
 // print_char_at(byte register(X) ch, byte* zp(7) at)
 print_char_at: {
     .label at = 7
-    // [153] *print_char_at::at#2 = print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+    // [155] *print_char_at::at#2 = print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
     jmp __breturn
     // print_char_at::@return
   __breturn:
-    // [154] return 
+    // [156] return 
     rts
 }
   // File Data
@@ -3641,7 +3644,7 @@ Removing instruction jmp __b1
 Removing instruction jmp __b4
 Removing instruction jmp __b8
 Succesful ASM optimization Pass5NextJumpElimination
-Fixing long branch [176] bne __b4 to beq
+Fixing long branch [178] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 constant struct MOS6526_CIA* const CIA2 = (struct MOS6526_CIA*) 56576
@@ -3722,8 +3725,9 @@ signed word anim::yr#0 yr zp[2]:13 166.83333333333334
 signed word anim::yr#1 yr zp[2]:13 250.25
 dword clock()
 dword clock::return
-dword clock::return#0 return zp[4]:17 367.33333333333337
+dword clock::return#0 return zp[4]:17 275.5
 dword clock::return#2 return zp[4]:17 202.0
+dword clock::ticks
 void clock_start()
 void init()
 byte init::i
@@ -3874,7 +3878,7 @@ reg byte y [ print_uchar_at::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 28630
+Score: 28642
 
   // File Comments
 // 2D rotattion of 8 sprites 
@@ -4076,6 +4080,7 @@ anim: {
     // [30] anim::$6 = (signed word)mulf8s_prepared::m#4
     // signed int yr = mulf8s_prepared(y)*2
     // [31] anim::yr#0 = anim::$6 << 1 -- vwsz1=vwsz2_rol_1 
+    // signed fixed[8.8]
     lda.z __6
     asl
     sta.z yr
@@ -4144,6 +4149,7 @@ anim: {
     lda.z xr+1
     // signed int xpos = ((signed char) BYTE1(xr)) + 24 /*border*/ + 149
     // [45] anim::xpos#0 = (signed byte)anim::$14 + $18+$95 -- vwsz1=vbsaa_plus_vwsc1 
+    // signed fixed[8.8]
     sta.z $ff
     clc
     adc #<$18+$95
@@ -4222,6 +4228,7 @@ anim: {
     // [63] anim::$26 = clock::return#2
     // unsigned long cyclecount = clock()-CLOCKS_PER_INIT
     // [64] anim::cyclecount#0 = anim::$26 - CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -4515,14 +4522,13 @@ mulf8u_prepare: {
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
-    // mulf8u_prepared((char) b)
+    // unsigned int m = mulf8u_prepared((char) b)
     // [108] mulf8u_prepared::b#0 = (byte)mulf8s_prepared::b#4 -- vbuaa=vbuyy 
     tya
     // [109] call mulf8u_prepared 
     jsr mulf8u_prepared
     // [110] mulf8u_prepared::return#2 = mulf8u_prepared::return#0
     // mulf8s_prepared::@5
-    // unsigned int m = mulf8u_prepared((char) b)
     // [111] mulf8s_prepared::m#0 = mulf8u_prepared::return#2
     // if(*memA<0)
     // [112] if(*mulf8s_prepared::memA>=0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
@@ -4572,8 +4578,13 @@ mulf8s_prepared: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $11
-    // 0xffffffff - *CIA2_TIMER_AB
-    // [123] clock::return#0 = $ffffffff - *CIA2_TIMER_AB -- vduz1=vduc1_minus__deref_pduc2 
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // [123] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 0 -- _deref_pbuc1=vbuc2 
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
+    // [124] clock::return#0 = $ffffffff - *CIA2_TIMER_AB -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -4587,9 +4598,14 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // [125] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // clock::@return
     // }
-    // [124] return 
+    // [126] return 
     rts
 }
   // print_ulong_at
@@ -4598,39 +4614,39 @@ clock: {
 print_ulong_at: {
     .label dw = $11
     // print_uint_at(WORD1(dw), at)
-    // [125] print_uint_at::w#0 = word1  print_ulong_at::dw#0 -- vwuz1=_word1_vduz2 
+    // [127] print_uint_at::w#0 = word1  print_ulong_at::dw#0 -- vwuz1=_word1_vduz2 
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
     sta.z print_uint_at.w+1
-    // [126] call print_uint_at 
-    // [134] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
-    // [134] phi print_uint_at::at#2 = SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
+    // [128] call print_uint_at 
+    // [136] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
+    // [136] phi print_uint_at::at#2 = SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [134] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
+    // [136] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@1
     // print_uint_at(WORD0(dw), at+4)
-    // [127] print_uint_at::w#1 = word0  print_ulong_at::dw#0 -- vwuz1=_word0_vduz2 
+    // [129] print_uint_at::w#1 = word0  print_ulong_at::dw#0 -- vwuz1=_word0_vduz2 
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
     sta.z print_uint_at.w+1
-    // [128] call print_uint_at 
-    // [134] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
-    // [134] phi print_uint_at::at#2 = SCREEN+4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
+    // [130] call print_uint_at 
+    // [136] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
+    // [136] phi print_uint_at::at#2 = SCREEN+4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [134] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
+    // [136] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@return
     // }
-    // [129] return 
+    // [131] return 
     rts
 }
   // mulf8u_prepared
@@ -4642,7 +4658,7 @@ mulf8u_prepared: {
     .label memB = $ff
     .label return = 5
     // *memB = b
-    // [130] *mulf8u_prepared::memB = mulf8u_prepared::b#0 -- _deref_pbuc1=vbuaa 
+    // [132] *mulf8u_prepared::memB = mulf8u_prepared::b#0 -- _deref_pbuc1=vbuaa 
     sta memB
     // asm
     // asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
@@ -4659,13 +4675,13 @@ mulf8u_prepared: {
     sbc mulf_sqr2_hi,x
     sta memB
     // MAKEWORD( *memB, *resL )
-    // [132] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [134] mulf8u_prepared::return#0 = *mulf8u_prepared::memB w= *mulf8u_prepared::resL -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     sta.z return+1
     lda resL
     sta.z return
     // mulf8u_prepared::@return
     // }
-    // [133] return 
+    // [135] return 
     rts
 }
   // print_uint_at
@@ -4675,21 +4691,21 @@ print_uint_at: {
     .label w = $d
     .label at = $f
     // print_uchar_at(BYTE1(w), at)
-    // [135] print_uchar_at::b#0 = byte1  print_uint_at::w#2 -- vbuz1=_byte1_vwuz2 
+    // [137] print_uchar_at::b#0 = byte1  print_uint_at::w#2 -- vbuz1=_byte1_vwuz2 
     lda.z w+1
     sta.z print_uchar_at.b
-    // [136] print_uchar_at::at#0 = print_uint_at::at#2
-    // [137] call print_uchar_at 
-    // [142] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
-    // [142] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [142] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
+    // [138] print_uchar_at::at#0 = print_uint_at::at#2
+    // [139] call print_uchar_at 
+    // [144] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
+    // [144] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
+    // [144] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@1
     // print_uchar_at(BYTE0(w), at+2)
-    // [138] print_uchar_at::b#1 = byte0  print_uint_at::w#2 -- vbuz1=_byte0_vwuz2 
+    // [140] print_uchar_at::b#1 = byte0  print_uint_at::w#2 -- vbuz1=_byte0_vwuz2 
     lda.z w
     sta.z print_uchar_at.b
-    // [139] print_uchar_at::at#1 = print_uint_at::at#2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [141] print_uchar_at::at#1 = print_uint_at::at#2 + 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z print_uchar_at.at
@@ -4697,14 +4713,14 @@ print_uint_at: {
     bcc !+
     inc.z print_uchar_at.at+1
   !:
-    // [140] call print_uchar_at 
-    // [142] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
-    // [142] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [142] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
+    // [142] call print_uchar_at 
+    // [144] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
+    // [144] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
+    // [144] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@return
     // }
-    // [141] return 
+    // [143] return 
     rts
 }
   // print_uchar_at
@@ -4714,35 +4730,35 @@ print_uchar_at: {
     .label b = 9
     .label at = $f
     // b>>4
-    // [143] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 -- vbuaa=vbuz1_ror_4 
+    // [145] print_uchar_at::$0 = print_uchar_at::b#2 >> 4 -- vbuaa=vbuz1_ror_4 
     lda.z b
     lsr
     lsr
     lsr
     lsr
     // print_char_at(print_hextab[b>>4], at)
-    // [144] print_char_at::ch#0 = print_hextab[print_uchar_at::$0] -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [146] print_char_at::ch#0 = print_hextab[print_uchar_at::$0] -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-    // [145] print_char_at::at#0 = print_uchar_at::at#2 -- pbuz1=pbuz2 
+    // [147] print_char_at::at#0 = print_uchar_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
-    // [146] call print_char_at 
+    // [148] call print_char_at 
   // Table of hexadecimal digits
-    // [152] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
-    // [152] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [152] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
+    // [154] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
+    // [154] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
+    // [154] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@1
     // b&$f
-    // [147] print_uchar_at::$2 = print_uchar_at::b#2 & $f -- vbuyy=vbuz1_band_vbuc1 
+    // [149] print_uchar_at::$2 = print_uchar_at::b#2 & $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and.z b
     tay
     // print_char_at(print_hextab[b&$f], at+1)
-    // [148] print_char_at::at#1 = print_uchar_at::at#2 + 1 -- pbuz1=pbuz2_plus_1 
+    // [150] print_char_at::at#1 = print_uchar_at::at#2 + 1 -- pbuz1=pbuz2_plus_1 
     clc
     lda.z at
     adc #1
@@ -4750,16 +4766,16 @@ print_uchar_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [149] print_char_at::ch#1 = print_hextab[print_uchar_at::$2] -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [151] print_char_at::ch#1 = print_hextab[print_uchar_at::$2] -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-    // [150] call print_char_at 
-    // [152] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
-    // [152] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [152] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
+    // [152] call print_char_at 
+    // [154] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
+    // [154] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
+    // [154] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@return
     // }
-    // [151] return 
+    // [153] return 
     rts
 }
   // print_char_at
@@ -4768,13 +4784,13 @@ print_uchar_at: {
 print_char_at: {
     .label at = 7
     // *(at) = ch
-    // [153] *print_char_at::at#2 = print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+    // [155] *print_char_at::at#2 = print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
     // print_char_at::@return
     // }
-    // [154] return 
+    // [156] return 
     rts
 }
   // File Data

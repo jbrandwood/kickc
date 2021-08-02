@@ -183,30 +183,29 @@ main: {
   __b19:
     jmp __b19
   __b2:
-    // strtouc(pwd, &pwd)
+    // char min = strtouc(pwd, &pwd)
     lda.z pwd
     sta.z strtouc.str
     lda.z pwd+1
     sta.z strtouc.str+1
+  // Parse the first number in the policy        
     jsr strtouc
-    // strtouc(pwd, &pwd)
-    lda.z strtouc.val
     // char min = strtouc(pwd, &pwd)
+    lda.z strtouc.val
     sta.z min
     // pwd++;
     inc.z pwd
     bne !+
     inc.z pwd+1
   !:
-    // strtouc(pwd, &pwd)
+    // char max = strtouc(pwd, &pwd)
     lda.z pwd
     sta.z strtouc.str
     lda.z pwd+1
     sta.z strtouc.str+1
     jsr strtouc
-    // strtouc(pwd, &pwd)
-    lda.z strtouc.val
     // char max = strtouc(pwd, &pwd)
+    lda.z strtouc.val
     sta.z max
     // pwd++;
     inc.z pwd
@@ -358,12 +357,11 @@ gotoxy: {
     sta.z conio_cursor_x
     // conio_cursor_y = y
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8

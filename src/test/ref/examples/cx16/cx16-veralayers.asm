@@ -293,10 +293,9 @@ main: {
     lda #>s4
     sta.z cputs.s+1
     jsr cputs
-    // vera_layer_get_config(1)
+    // unsigned byte config = vera_layer_get_config(1)
     lda #1
     jsr vera_layer_get_config
-    // vera_layer_get_config(1)
     // unsigned byte config = vera_layer_get_config(1)
     sta.z config
     // printf("\nvera layer 1 config = %x\n", config)
@@ -334,16 +333,14 @@ main: {
     lda #>s4
     sta.z cputs.s+1
     jsr cputs
-    // vera_layer_get_mapbase(1)
+    // unsigned byte mapbase = vera_layer_get_mapbase(1)
     lda #1
     jsr vera_layer_get_mapbase
-    // vera_layer_get_mapbase(1)
     // unsigned byte mapbase = vera_layer_get_mapbase(1)
     sta.z mapbase
-    // vera_layer_get_tilebase(1)
+    // unsigned byte tilebase = vera_layer_get_tilebase(1)
     lda #1
     jsr vera_layer_get_tilebase
-    // vera_layer_get_tilebase(1)
     // unsigned byte tilebase = vera_layer_get_tilebase(1)
     sta.z tilebase
     // printf("vera layer 1 mapbase = %hhx, tilebase = %hhx\n", mapbase, tilebase)
@@ -804,6 +801,11 @@ screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
     // char hscale = (*VERA_DC_HSCALE) >> 7
+    // VERA returns in VERA_DC_HSCALE the value of 128 when 80 columns is used in text mode,
+    // and the value of 64 when 40 columns is used in text mode.
+    // Basically, 40 columns mode in the VERA is a double scan mode.
+    // Same for the VERA_DC_VSCALE mode, but then the subdivision is 60 or 30 rows.
+    // I still need to test the other modes, but this will suffice for now for the pure text modes.
     lda VERA_DC_HSCALE
     rol
     rol
@@ -1014,12 +1016,11 @@ gotoxy: {
     // conio_cursor_y[conio_screen_layer] = y
     txa
     sta conio_cursor_y,y
-    // (unsigned int)y << conio_rowshift
+    // unsigned int line_offset = (unsigned int)y << conio_rowshift
     txa
     sta.z __6
     lda #0
     sta.z __6+1
-    // unsigned int line_offset = (unsigned int)y << conio_rowshift
     ldy.z conio_rowshift
     beq !e+
   !:
@@ -1210,10 +1211,10 @@ clearline: {
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // Set address
     tay
     clc
     lda.z CONIO_SCREEN_TEXT
@@ -1233,10 +1234,9 @@ clearline: {
     // *VERA_ADDRX_H = VERA_INC_1
     lda #VERA_INC_1
     sta VERA_ADDRX_H
-    // vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
-    // vera_layer_get_color( conio_screen_layer)
     // char color = vera_layer_get_color( conio_screen_layer)
     tax
     lda #<0
@@ -1315,16 +1315,14 @@ cputc: {
     .label __16 = $1f
     .label conio_addr = $1d
     .label c = 6
-    // vera_layer_get_color( conio_screen_layer)
+    // char color = vera_layer_get_color( conio_screen_layer)
     ldx.z conio_screen_layer
     jsr vera_layer_get_color
-    // vera_layer_get_color( conio_screen_layer)
     // char color = vera_layer_get_color( conio_screen_layer)
     tax
-    // CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
-    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
     tay
     clc
     lda.z CONIO_SCREEN_TEXT

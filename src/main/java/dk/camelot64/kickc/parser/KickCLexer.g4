@@ -64,7 +64,7 @@ ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|='
 TYPEDEF: 'typedef' ;
 CONST: 'const' ;
 EXTERN: 'extern' ;
-EXPORT: 'export' ;
+EXPORT: '__export' ;
 ALIGN: '__align' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;

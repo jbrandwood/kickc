@@ -208,12 +208,11 @@ print_ln: {
 print_mulf8u127: {
     .label c = 6
     .label b = 4
-    // mulf8u127(a,b)
+    // unsigned word c = mulf8u127(a,b)
     tya
     tax
     lda.z b
     jsr mulf8u127
-    // mulf8u127(a,b)
     // unsigned word c = mulf8u127(a,b)
     // print_uchar(a)
     tya
@@ -245,10 +244,9 @@ print_mulf8s127: {
     .label c = 6
     .label a = 4
     .label b = 5
-    // mulf8s127(a,b)
+    // signed word c = mulf8s127(a,b)
     ldy.z b
     jsr mulf8s127
-    // signed word c = mulf8s127(a,b)
     // print_schar(a)
     ldx.z a
     lda.z print_line_cursor

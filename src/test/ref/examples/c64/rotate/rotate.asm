@@ -131,6 +131,7 @@ anim: {
     jsr mulf8s_prepared
     // mulf8s_prepared(y)
     // signed int yr = mulf8s_prepared(y)*2
+    // signed fixed[8.8]
     lda.z __6
     asl
     sta.z yr
@@ -175,6 +176,7 @@ anim: {
     // BYTE1(xr)
     lda.z xr+1
     // signed int xpos = ((signed char) BYTE1(xr)) + 24 /*border*/ + 149
+    // signed fixed[8.8]
     sta.z $ff
     clc
     adc #<$18+$95
@@ -229,6 +231,7 @@ anim: {
     // clock()
     jsr clock
     // unsigned long cyclecount = clock()-CLOCKS_PER_INIT
+    // Calculate the cycle count - 0x12 is the base usage of start/read
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -438,10 +441,9 @@ mulf8u_prepare: {
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
-    // mulf8u_prepared((char) b)
+    // unsigned int m = mulf8u_prepared((char) b)
     tya
     jsr mulf8u_prepared
-    // unsigned int m = mulf8u_prepared((char) b)
     // if(*memA<0)
     lda memA
     cmp #0
@@ -471,7 +473,11 @@ mulf8s_prepared: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $11
-    // 0xffffffff - *CIA2_TIMER_AB
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -485,6 +491,10 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }

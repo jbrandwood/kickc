@@ -219,10 +219,9 @@ main: {
     sta.z ch
   // Check for key presses - and plot char if found
   __b12:
-    // keyboard_get_keycode(ch)
+    // char key = keyboard_get_keycode(ch)
     ldx.z ch
     jsr keyboard_get_keycode
-    // char key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
     beq __b3
@@ -459,7 +458,7 @@ keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }

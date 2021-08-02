@@ -546,6 +546,7 @@ gfx_mode: {
     asl
     asl
     // byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo
+    // Linear Graphics Plane A Counter
     ora form_a_start_lo
     tax
     // get_plane(*form_a_pattern)
@@ -608,6 +609,7 @@ gfx_mode: {
     asl
     asl
     // byte plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
+    // Linear Graphics Plane B Counter
     ora form_b_start_lo
     tax
     // get_plane(*form_b_pattern)
@@ -717,10 +719,10 @@ gfx_mode: {
     // Set VIC Bank
     // VIC memory
     sta VICII_MEMORY
-    // get_VICII_screen(*form_VICII_cols)
+    // byte* VICII_colors = get_VICII_screen(*form_VICII_cols)
     lda form_VICII_cols
+  // VIC Colors
     jsr get_VICII_screen
-    // get_VICII_screen(*form_VICII_cols)
     // byte* VICII_colors = get_VICII_screen(*form_VICII_cols)
     lda #0
     sta.z cy
@@ -818,9 +820,8 @@ gfx_mode: {
     bne __b25
     // keyboard_event_scan()
     jsr keyboard_event_scan
-    // keyboard_event_get()
-    jsr keyboard_event_get
     // byte keyboard_event = keyboard_event_get()
+    jsr keyboard_event_get
     // if(keyboard_event==KEY_SPACE)
     cmp #KEY_SPACE
     beq __breturn
@@ -1637,7 +1638,7 @@ form_render_values: {
     // }
     rts
   __b2:
-    // form_field_ptr(idx)
+    // byte* field = form_field_ptr(idx)
     jsr form_field_ptr
     // *field = print_hextab[form_fields_val[idx]]
     ldy form_fields_val,x
@@ -1786,10 +1787,9 @@ render_preset_name: {
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = $27
-    // form_field_ptr(form_field_idx)
+    // byte* field = form_field_ptr(form_field_idx)
     ldx.z form_field_idx
     jsr form_field_ptr
-    // form_field_ptr(form_field_idx)
     // byte* field = form_field_ptr(form_field_idx)
     // if(--form_cursor_count < 0)
     dec.z form_cursor_count
@@ -1819,9 +1819,8 @@ form_control: {
     // keyboard_event_scan()
   // Scan the keyboard
     jsr keyboard_event_scan
-    // keyboard_event_get()
-    jsr keyboard_event_get
     // byte key_event = keyboard_event_get()
+    jsr keyboard_event_get
     // if(key_event==KEY_CRSR_DOWN)
     cmp #KEY_CRSR_DOWN
     bne __b4
@@ -2326,10 +2325,9 @@ keyboard_event_scan: {
     sta.z keycode
     sta.z row
   __b7:
-    // keyboard_matrix_read(row)
+    // char row_scan = keyboard_matrix_read(row)
     ldx.z row
     jsr keyboard_matrix_read
-    // char row_scan = keyboard_matrix_read(row)
     sta.z row_scan
     // if(row_scan!=keyboard_scan_values[row])
     ldy.z row
@@ -2417,6 +2415,7 @@ keyboard_event_scan: {
     cmp.z keyboard_events_size
     beq __b10
     // char event_type = row_scan&keyboard_matrix_col_bitmask[col]
+    // AND of row scan and bit mask determines if key is pressed or released
     lda keyboard_matrix_col_bitmask,x
     and.z row_scan
     // if(event_type==0)
@@ -2575,7 +2574,7 @@ bitmap_line: {
     .label y1 = $f
     .label x2 = $15
     .label y2 = $17
-    // abs_u16(x2-x1)
+    // unsigned int dx = abs_u16(x2-x1)
     lda.z x2
     sec
     sbc.z x1
@@ -2584,13 +2583,12 @@ bitmap_line: {
     sbc.z x1+1
     sta.z abs_u16.w+1
     jsr abs_u16
-    // abs_u16(x2-x1)
     // unsigned int dx = abs_u16(x2-x1)
     lda.z abs_u16.return
     sta.z dx
     lda.z abs_u16.return+1
     sta.z dx+1
-    // abs_u16(y2-y1)
+    // unsigned int dy = abs_u16(y2-y1)
     lda.z y2
     sec
     sbc.z y1
@@ -2599,7 +2597,6 @@ bitmap_line: {
     sbc.z y1+1
     sta.z abs_u16.w+1
     jsr abs_u16
-    // abs_u16(y2-y1)
     // unsigned int dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
@@ -2611,7 +2608,7 @@ bitmap_line: {
     jmp __b4
   !__b4:
   __b1:
-    // sgn_u16(x2-x1)
+    // unsigned int sx = sgn_u16(x2-x1)
     lda.z x2
     sec
     sbc.z x1
@@ -2620,13 +2617,12 @@ bitmap_line: {
     sbc.z x1+1
     sta.z sgn_u16.w+1
     jsr sgn_u16
-    // sgn_u16(x2-x1)
     // unsigned int sx = sgn_u16(x2-x1)
     lda.z sgn_u16.return
     sta.z sx
     lda.z sgn_u16.return+1
     sta.z sx+1
-    // sgn_u16(y2-y1)
+    // unsigned int sy = sgn_u16(y2-y1)
     lda.z y2
     sec
     sbc.z y1
@@ -2635,7 +2631,6 @@ bitmap_line: {
     sbc.z y1+1
     sta.z sgn_u16.w+1
     jsr sgn_u16
-    // sgn_u16(y2-y1)
     // unsigned int sy = sgn_u16(y2-y1)
     // if(dx > dy)
     lda.z dy+1
@@ -2647,6 +2642,7 @@ bitmap_line: {
     bcc __b2
   !:
     // unsigned int e = dx/2
+    // Y is the driver
     lda.z dx+1
     lsr
     sta.z e+1
@@ -2713,6 +2709,7 @@ bitmap_line: {
     rts
   __b2:
     // unsigned int e = dy/2
+    // X is the driver
     lda.z dy+1
     lsr
     sta.z e1+1
@@ -2973,7 +2970,7 @@ form_field_ptr: {
     // byte x = form_fields_x[field_idx]
     lda form_fields_x,x
     sta.z x
-    // line+x
+    // byte* field = line+x
     clc
     adc.z line
     sta.z return
@@ -3026,7 +3023,7 @@ keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }

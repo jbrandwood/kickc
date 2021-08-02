@@ -2,6 +2,7 @@
 /// C standard library string.h
 ///
 /// Functions to manipulate C strings and arrays.
+/// NULL pointer
   // Commodore 64 PRG executable file
 .file [name="sieve.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -240,6 +241,7 @@ main: {
     cmp #0
     bne __b4
     // unsigned int j = i*2
+    /* Prime number - mark all multiples */
     lda.z i
     asl
     sta.z j
@@ -473,7 +475,11 @@ clock_start: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $11
-    // 0xffffffff - *CIA2_TIMER_AB
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -487,6 +493,10 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }
@@ -499,7 +509,7 @@ div32u16u: {
     .label quotient_lo = $1b
     .label return = $17
     .label dividend = $11
-    // divr16u(WORD1(dividend), divisor, 0)
+    // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z dividend+2
     sta.z divr16u.dividend
     lda.z dividend+3
@@ -508,21 +518,19 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
-    // divr16u(WORD1(dividend), divisor, 0)
     // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
-    // divr16u(WORD0(dividend), divisor, rem16u)
+    // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
     lda.z dividend
     sta.z divr16u.dividend
     lda.z dividend+1
     sta.z divr16u.dividend+1
     jsr divr16u
-    // divr16u(WORD0(dividend), divisor, rem16u)
     // unsigned int quotient_lo = divr16u(WORD0(dividend), divisor, rem16u)
-    // MAKELONG( quotient_hi, quotient_lo )
+    // unsigned long quotient = MAKELONG( quotient_hi, quotient_lo )
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1

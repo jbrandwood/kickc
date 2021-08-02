@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 #pragma data_seg(Sprite)
-export char SPRITE_PIXELS[] = kickasm(resource "ship.png") {{
+__export char SPRITE_PIXELS[] = kickasm(resource "ship.png") {{
     .var pic = LoadPicture("ship.png")
     // palette: rgb->idx
     .var palette = Hashtable()

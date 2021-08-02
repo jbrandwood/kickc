@@ -108,7 +108,7 @@ char PALETTE[0x20] = {
 
 // Tile Set (in CHR ROM)
 #pragma data_seg(Tiles)
-export char TILES[] = kickasm(resource "smb1_chr.bin") {{
+__export char TILES[] = kickasm(resource "smb1_chr.bin") {{
 	.import binary "smb1_chr.bin"
 }};
 
@@ -119,7 +119,7 @@ struct SpriteData __align(0x100) SPRITE_BUFFER[0x40];
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)
-export void (*VECTORS[])() = {
+__export void (*VECTORS[])() = {
     // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
     &vblank, 
     // RESET Called when the NES is reset, including when it is turned on.

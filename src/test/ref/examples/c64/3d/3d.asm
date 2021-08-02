@@ -644,22 +644,26 @@ calculate_matrix: {
     adc.z t2
     sta.z t5
     // signed char t6 = sx-t1
+    // = sx+sy+sz
     txa
     sec
     sbc.z t1
     sta.z t6
     // signed char t7 = sx+t1
+    // = sx-sy+sz
     txa
     clc
     adc.z t1
     sta.z t7
     // signed char t8 = t2-sx
+    // = sx+sy-sz
     txa
     eor #$ff
     sec
     adc.z t2
     sta.z t8
     // signed char t9 = sy-sx
+    // = sy+sz-sx
     txa
     eor #$ff
     sec

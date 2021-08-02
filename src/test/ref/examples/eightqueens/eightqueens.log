@@ -12,6 +12,9 @@ Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx
 Inlined call legal::$3 = call diff board[legal::i] legal::column 
 Inlined call legal::$4 = call diff legal::i legal::row 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy::$0
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement main::$1
 Eliminating unused variable with no statement main::$2
 Eliminating unused variable with no statement main::$4
@@ -31,8 +34,7 @@ memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::src#0 = ((byte*)) memcpy::source#2
   memcpy::dst#0 = ((byte*)) memcpy::destination#2
   memcpy::$2 = (byte*)memcpy::source#2
-  memcpy::$0 = memcpy::$2 + memcpy::num#2
-  memcpy::src_end#0 = memcpy::$0
+  memcpy::src_end#0 = memcpy::$2 + memcpy::num#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   memcpy::destination#4 = phi( memcpy/memcpy::destination#2, memcpy::@2/memcpy::destination#5 )
@@ -79,8 +81,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -806,8 +807,7 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_x = gotoxy::x#5
   conio_cursor_y = gotoxy::y#5
   gotoxy::$7 = (word)gotoxy::y#5
-  gotoxy::$4 = gotoxy::$7 * $28
-  gotoxy::line_offset#0 = gotoxy::$4
+  gotoxy::line_offset#0 = gotoxy::$7 * $28
   gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
   gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
@@ -2035,7 +2035,6 @@ bool~ gotoxy::$0
 bool~ gotoxy::$1
 bool~ gotoxy::$2
 bool~ gotoxy::$3
-number~ gotoxy::$4
 byte*~ gotoxy::$5
 byte*~ gotoxy::$6
 word~ gotoxy::$7
@@ -2187,7 +2186,6 @@ solutions: "
 constant byte* main::s3[2]  = "
 "
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
-byte*~ memcpy::$0
 bool~ memcpy::$1
 byte*~ memcpy::$2
 void* memcpy::destination
@@ -2228,7 +2226,6 @@ byte* memcpy::src_end#2
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -3203,8 +3200,7 @@ Adding number conversion cast (unumber) $28 in clrscr::line_cols#1 = clrscr::lin
 Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#4 > $19
 Adding number conversion cast (unumber) $28 in gotoxy::$2 = gotoxy::x#4 >= $28
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
-Adding number conversion cast (unumber) $28 in gotoxy::$4 = gotoxy::$7 * $28
-Adding number conversion cast (unumber) gotoxy::$4 in gotoxy::$4 = gotoxy::$7 * (unumber)$28
+Adding number conversion cast (unumber) $28 in gotoxy::line_offset#0 = gotoxy::$7 * $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
 Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
@@ -3550,7 +3546,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
 Inferred type updated to byte in ultoa::$4 = ultoa::max_digits#5 - 1
 Inferred type updated to byte in uctoa::$4 = uctoa::max_digits#5 - 1
-Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $28
 Inferred type updated to byte in printf_ulong::$0 = 0
 Inferred type updated to byte for printf_ulong::$2
 Inferred type updated to byte in printf_uint::$0 = 0
@@ -3558,27 +3553,26 @@ Inferred type updated to byte for printf_uint::$2
 Inferred type updated to byte in printf_uchar::$0 = 0
 Inferred type updated to byte for printf_uchar::$2
 Inferred type updated to byte in legal::$0 = legal::row#1 - 1
-Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [350] gotoxy::$1 = gotoxy::y#4 <= $19 from [349] gotoxy::$0 = gotoxy::y#4 > $19
-Inversing boolean not [354] gotoxy::$3 = gotoxy::x#4 < $28 from [353] gotoxy::$2 = gotoxy::x#4 >= $28
-Inversing boolean not [380] cputc::$2 = conio_cursor_x != $28 from [379] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [410] cscroll::$1 = conio_cursor_y != $19 from [409] cscroll::$0 = conio_cursor_y == $19
-Inversing boolean not [443] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [442] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
-Inversing boolean not [537] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#3 from [536] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#3
-Inversing boolean not [541] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#3 from [540] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#3
-Inversing boolean not [543] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#3 from [542] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#3
-Inversing boolean not [556] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#3 from [555] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#3
-Inversing boolean not [563] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [562] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
-Inversing boolean not [571] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#4 from [570] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#4
-Inversing boolean not [588] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#3 from [587] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#3
-Inversing boolean not [600] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#5 from [599] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#5
-Inversing boolean not [657] main::$6 = 0 == main::$5 from [656] main::$7 = 0 != main::$5
-Inversing boolean not [683] queens::$3 = 0 == queens::$2 from [682] queens::$8 = 0 != queens::$2
-Inversing boolean not [742] legal::$6 = legal::$3 != legal::$4 from [741] legal::$5 = legal::$3 == legal::$4
+Inversing boolean not [19] memset::$1 = memset::num#2 <= 0 from [18] memset::$0 = memset::num#2 > 0
+Inversing boolean not [348] gotoxy::$1 = gotoxy::y#4 <= $19 from [347] gotoxy::$0 = gotoxy::y#4 > $19
+Inversing boolean not [352] gotoxy::$3 = gotoxy::x#4 < $28 from [351] gotoxy::$2 = gotoxy::x#4 >= $28
+Inversing boolean not [377] cputc::$2 = conio_cursor_x != $28 from [376] cputc::$1 = conio_cursor_x == $28
+Inversing boolean not [407] cscroll::$1 = conio_cursor_y != $19 from [406] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [440] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [439] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+Inversing boolean not [534] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#3 from [533] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#3
+Inversing boolean not [538] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#3 from [537] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#3
+Inversing boolean not [540] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#3 from [539] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#3
+Inversing boolean not [553] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#3 from [552] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#3
+Inversing boolean not [560] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [559] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
+Inversing boolean not [568] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#4 from [567] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#4
+Inversing boolean not [585] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#3 from [584] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#3
+Inversing boolean not [597] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#5 from [596] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#5
+Inversing boolean not [654] main::$6 = 0 == main::$5 from [653] main::$7 = 0 != main::$5
+Inversing boolean not [680] queens::$3 = 0 == queens::$2 from [679] queens::$8 = 0 != queens::$2
+Inversing boolean not [739] legal::$6 = legal::$3 != legal::$4 from [738] legal::$5 = legal::$3 == legal::$4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -3587,7 +3581,6 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -3657,7 +3650,6 @@ Alias clrscr::c#2 = clrscr::c#3
 Alias clrscr::line_cols#2 = clrscr::line_cols#4 clrscr::line_cols#3 
 Alias clrscr::l#3 = clrscr::l#6 clrscr::l#4 
 Alias gotoxy::x#6 = gotoxy::x#7 
-Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#6 = gotoxy::y#7 
 Alias cputc::c#3 = cputc::c#4 
 Alias cputs::c#1 = cputs::$0 cputs::c#2 
@@ -10704,13 +10696,12 @@ gotoxy: {
     // conio_cursor_y = y
     // [43] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuxx 
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [44] gotoxy::$7 = (word)gotoxy::y#5 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [45] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl

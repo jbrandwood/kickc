@@ -12,7 +12,7 @@ void byteboozer_decrunch(char* crunched) {
 }
 
 // The byteboozer decruncher
-export char BYTEBOOZER[] = kickasm(resource "byteboozer_decrunch.asm") {{
+__export char BYTEBOOZER[] = kickasm(resource "byteboozer_decrunch.asm") {{
     .const B2_ZP_BASE = $fc
     #import "byteboozer_decrunch.asm"
 }};

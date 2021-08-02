@@ -36,7 +36,9 @@ Inlined call main::$18 = call screensizex
 Inlined call main::$21 = call screensizey 
 Inlined call call enableVideoOutput 
 Inlined call call __init 
+Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement printf_buffer
+Eliminating unused variable with no statement vblank::$0
 
 CONTROL FLOW GRAPH SSA
 
@@ -330,8 +332,7 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_x = gotoxy::x#5
   conio_cursor_y = gotoxy::y#5
   gotoxy::$6 = (word)gotoxy::y#5
-  gotoxy::$4 = gotoxy::$6 * $20
-  gotoxy::line_offset#0 = gotoxy::$4
+  gotoxy::line_offset#0 = gotoxy::$6 * $20
   gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
   to:gotoxy::@return
@@ -959,8 +960,7 @@ vblank: scope:[vblank]  from
   to:vblank::@11
 vblank::@11: scope:[vblank]  from vblank
   readJoy1::return#4 = phi( vblank/readJoy1::return#2 )
-  vblank::$0 = readJoy1::return#4
-  vblank::joy#0 = vblank::$0
+  vblank::joy#0 = readJoy1::return#4
   vblank::$1 = vblank::joy#0 & JOY_DOWN
   vblank::$17 = 0 != vblank::$1
   vblank::$2 = ! vblank::$17
@@ -1189,7 +1189,6 @@ bool~ gotoxy::$0
 bool~ gotoxy::$1
 bool~ gotoxy::$2
 bool~ gotoxy::$3
-number~ gotoxy::$4
 byte*~ gotoxy::$5
 word~ gotoxy::$6
 word gotoxy::line_offset
@@ -1648,7 +1647,6 @@ byte uctoa_append::value#3
 byte uctoa_append::value#4
 byte uctoa_append::value#5
 __interrupt(hardware_all) void vblank()
-byte~ vblank::$0
 byte~ vblank::$1
 bool~ vblank::$10
 bool~ vblank::$11
@@ -1695,8 +1693,7 @@ Adding number conversion cast (unumber) 0 in conio_cursor_y = 0
 Adding number conversion cast (unumber) $1e in gotoxy::$0 = gotoxy::y#4 > $1e
 Adding number conversion cast (unumber) $20 in gotoxy::$2 = gotoxy::x#4 >= $20
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
-Adding number conversion cast (unumber) $20 in gotoxy::$4 = gotoxy::$6 * $20
-Adding number conversion cast (unumber) gotoxy::$4 in gotoxy::$4 = gotoxy::$6 * (unumber)$20
+Adding number conversion cast (unumber) $20 in gotoxy::line_offset#0 = gotoxy::$6 * $20
 Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
 Adding number conversion cast (unumber) $20 in cputc::$3 = conio_cursor_x == $20
 Adding number conversion cast (unumber) $20 in conio_line_text = conio_line_text + $20
@@ -2031,7 +2028,6 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in readJoy1::$2 = *readJoy1::$6 & 1
 Inferred type updated to byte in readJoy1::$3 = readJoy1::$1 | readJoy1::$2
-Inferred type updated to word in gotoxy::$4 = gotoxy::$6 * $20
 Inferred type updated to byte in uctoa::$4 = uctoa::max_digits#5 - 1
 Inferred type updated to byte in main::initNES1_waitForVBlank1_$0 = *main::initNES1_waitForVBlank1_$2 & $80
 Inferred type updated to byte in main::initNES1_waitForVBlank2_$0 = *main::initNES1_waitForVBlank2_$2 & $80
@@ -2042,16 +2038,16 @@ Inferred type updated to byte in main::$19 = main::$18 - 2
 Inferred type updated to byte in main::$23 = main::i#3 & $f
 Inversing boolean not [134] gotoxy::$1 = gotoxy::y#4 <= $1e from [133] gotoxy::$0 = gotoxy::y#4 > $1e
 Inversing boolean not [138] gotoxy::$3 = gotoxy::x#4 < $20 from [137] gotoxy::$2 = gotoxy::x#4 >= $20
-Inversing boolean not [164] cputc::$4 = conio_cursor_x != $20 from [163] cputc::$3 = conio_cursor_x == $20
-Inversing boolean not [203] cscroll::$1 = conio_cursor_y != $1e from [202] cscroll::$0 = conio_cursor_y == $1e
-Inversing boolean not [333] main::initNES1_waitForVBlank1_$1 = 0 == main::initNES1_waitForVBlank1_$0 from [332] main::initNES1_waitForVBlank1_$4 = 0 != main::initNES1_waitForVBlank1_$0
-Inversing boolean not [352] main::initNES1_waitForVBlank2_$1 = 0 == main::initNES1_waitForVBlank2_$0 from [351] main::initNES1_waitForVBlank2_$4 = 0 != main::initNES1_waitForVBlank2_$0
-Inversing boolean not [467] vblank::$2 = 0 == vblank::$1 from [466] vblank::$17 = 0 != vblank::$1
-Inversing boolean not [472] vblank::$4 = 0 == vblank::$3 from [471] vblank::$18 = 0 != vblank::$3
-Inversing boolean not [477] vblank::$10 = y_scroll != $f0 from [476] vblank::$9 = y_scroll == $f0
-Inversing boolean not [484] vblank::$6 = 0 == vblank::$5 from [483] vblank::$19 = 0 != vblank::$5
-Inversing boolean not [489] vblank::$12 = y_scroll != $ff from [488] vblank::$11 = y_scroll == $ff
-Inversing boolean not [496] vblank::$8 = 0 == vblank::$7 from [495] vblank::$20 = 0 != vblank::$7
+Inversing boolean not [163] cputc::$4 = conio_cursor_x != $20 from [162] cputc::$3 = conio_cursor_x == $20
+Inversing boolean not [202] cscroll::$1 = conio_cursor_y != $1e from [201] cscroll::$0 = conio_cursor_y == $1e
+Inversing boolean not [332] main::initNES1_waitForVBlank1_$1 = 0 == main::initNES1_waitForVBlank1_$0 from [331] main::initNES1_waitForVBlank1_$4 = 0 != main::initNES1_waitForVBlank1_$0
+Inversing boolean not [351] main::initNES1_waitForVBlank2_$1 = 0 == main::initNES1_waitForVBlank2_$0 from [350] main::initNES1_waitForVBlank2_$4 = 0 != main::initNES1_waitForVBlank2_$0
+Inversing boolean not [465] vblank::$2 = 0 == vblank::$1 from [464] vblank::$17 = 0 != vblank::$1
+Inversing boolean not [470] vblank::$4 = 0 == vblank::$3 from [469] vblank::$18 = 0 != vblank::$3
+Inversing boolean not [475] vblank::$10 = y_scroll != $f0 from [474] vblank::$9 = y_scroll == $f0
+Inversing boolean not [482] vblank::$6 = 0 == vblank::$5 from [481] vblank::$19 = 0 != vblank::$5
+Inversing boolean not [487] vblank::$12 = y_scroll != $ff from [486] vblank::$11 = y_scroll == $ff
+Inversing boolean not [494] vblank::$8 = 0 == vblank::$7 from [493] vblank::$20 = 0 != vblank::$7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias readJoy1::joy#2 = readJoy1::joy#4 readJoy1::joy#3 readJoy1::return#0 readJoy1::return#3 readJoy1::return#1 
@@ -2080,7 +2076,6 @@ Alias ppuDataFetch::ppuDataRead1_return#0 = ppuDataFetch::ppuDataRead1_return#2 
 Alias ppuDataSet::ppuDataPrepare1_ppuData#0 = ppuDataSet::ppuData#1 ppuDataSet::ppuDataPrepare1_ppuData#1 
 Alias ppuDataSet::val#1 = ppuDataSet::val#2 ppuDataSet::val#3 ppuDataSet::ppuDataPut1_val#0 ppuDataSet::ppuDataPut1_val#1 
 Alias gotoxy::x#6 = gotoxy::x#7 
-Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#6 = gotoxy::y#7 
 Alias cputc::c#2 = cputc::c#3 
 Alias cputcxy::c#4 = cputcxy::c#5 
@@ -2119,7 +2114,7 @@ Alias main::screensizey3_return#0 = main::screensizey3_return#2 main::screensize
 Alias main::i#2 = main::i#6 main::i#7 main::i#3 main::i#4 main::i#5 
 Alias uctoa::value#1 = main::$23 
 Alias readJoy1::return#2 = readJoy1::return#4 
-Alias vblank::joy#0 = vblank::$0 vblank::joy#4 vblank::joy#5 
+Alias vblank::joy#0 = vblank::joy#4 vblank::joy#5 
 Alias vblank::joy#1 = vblank::joy#6 vblank::joy#7 
 Alias vblank::joy#2 = vblank::joy#8 
 Successful SSA optimization Pass2AliasElimination
@@ -4332,6 +4327,7 @@ vblank: {
     tya
     pha
     // [10] call readJoy1 
+    // Read controller 1
     jsr readJoy1
     // [11] readJoy1::return#2 = readJoy1::joy#2
     jmp __b11
@@ -6484,12 +6480,12 @@ vblank: {
     pha
     tya
     pha
-    // readJoy1()
+    // char joy = readJoy1()
     // [10] call readJoy1 
+    // Read controller 1
     jsr readJoy1
     // [11] readJoy1::return#2 = readJoy1::joy#2
     // vblank::@11
-    // char joy = readJoy1()
     // [12] vblank::joy#0 = readJoy1::return#2 -- vbuxx=vbuaa 
     tax
     // joy&JOY_DOWN
@@ -7390,12 +7386,11 @@ gotoxy: {
     // conio_cursor_y = y
     // [179] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuaa 
     sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [180] gotoxy::$6 = (word)gotoxy::y#5 -- vwuz1=_word_vbuaa 
     sta.z __6
     lda #0
     sta.z __6+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [181] gotoxy::line_offset#0 = gotoxy::$6 << 5 -- vwuz1=vwuz1_rol_5 
     asl.z line_offset
     rol.z line_offset+1

@@ -220,20 +220,17 @@ mul16u_compare: {
     lda.z b+1
     adc #>$ffd
     sta.z b+1
-    // muls16u(a, b)
-    jsr muls16u
     // dword ms = muls16u(a, b)
-    // mul16u(a,b)
+    jsr muls16u
+    // dword mn = mul16u(a,b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
     sta.z mul16u.a+1
     jsr mul16u
-    // mul16u(a,b)
     // dword mn = mul16u(a,b)
-    // mulf16u(a,b)
+    // dword mf = mulf16u(a,b)
     jsr mulf16u
-    // mulf16u(a,b)
     // dword mf = mulf16u(a,b)
     // if(ms!=mf)
     lda.z ms
@@ -363,15 +360,12 @@ mul16s_compare: {
     lda.z b+1
     adc #>$ffd
     sta.z b+1
-    // muls16s(a, b)
-    jsr muls16s
     // signed dword ms = muls16s(a, b)
-    // mul16s(a,b)
-    jsr mul16s
+    jsr muls16s
     // signed dword mn = mul16s(a,b)
-    // mulf16s(a,b)
-    jsr mulf16s
+    jsr mul16s
     // signed dword mf = mulf16s(a,b)
+    jsr mulf16s
     // if(ms!=mf)
     lda.z ms
     cmp.z mf
@@ -994,7 +988,7 @@ mul16s: {
     .label return = $c
     .label a = 4
     .label b = 6
-    // mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
@@ -1004,7 +998,6 @@ mul16s: {
     lda.z b+1
     sta.z mul16u.b+1
     jsr mul16u
-    // mul16u((unsigned int)a, (unsigned int) b)
     // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
@@ -1064,7 +1057,7 @@ mulf16s: {
     .label return = $12
     .label a = 4
     .label b = 6
-    // mulf16u((unsigned int)a, (unsigned int)b)
+    // unsigned long m = mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
     lda.z a+1
@@ -1074,7 +1067,6 @@ mulf16s: {
     lda.z b+1
     sta.z mulf16u.b+1
     jsr mulf16u
-    // mulf16u((unsigned int)a, (unsigned int)b)
     // unsigned long m = mulf16u((unsigned int)a, (unsigned int)b)
     // if(a<0)
     lda.z a+1

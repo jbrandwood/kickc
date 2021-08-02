@@ -377,7 +377,7 @@ main: {
     lda #>s10
     sta.z cputs.s+1
     jsr cputs
-    // mul16u(entries[i],entries[k])
+    // unsigned long mul1 = mul16u(entries[i],entries[k])
     lda.z __59
     clc
     adc #<entries
@@ -409,9 +409,8 @@ main: {
     pla
     sta.z mul16u.b
     jsr mul16u
-    // mul16u(entries[i],entries[k])
     // unsigned long mul1 = mul16u(entries[i],entries[k])
-    // mul16u( WORD0(mul1) ,entries[j] )
+    // unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] )
     lda.z mul1
     sta.z mul16u.a
     lda.z mul1+1
@@ -431,8 +430,8 @@ main: {
     sta.z mul16u.b+1
     pla
     sta.z mul16u.b
+  // I am cheating a bit here multiplying entry i&k first
     jsr mul16u
-    // mul16u( WORD0(mul1) ,entries[j] )
     // unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] )
     // printf("multiplied %lu\n", mul2)
     lda #<s11
@@ -618,7 +617,7 @@ main: {
     lda #>s10
     sta.z cputs.s+1
     jsr cputs
-    // mul16u(entries[i],entries[j])
+    // unsigned long mul = mul16u(entries[i],entries[j])
     lda.z __51
     clc
     adc #<entries
@@ -650,7 +649,6 @@ main: {
     pla
     sta.z mul16u.b
     jsr mul16u
-    // mul16u(entries[i],entries[j])
     // unsigned long mul = mul16u(entries[i],entries[j])
     // printf("multiplied %lu\n", mul)
     lda #<s11
@@ -1162,9 +1160,9 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    // work out the new location for oldadr based on new column/row
+    jsr cursorLocation
     // char c = *loc
     ldy #0
     lda (loc),y
@@ -1204,9 +1202,8 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    jsr cursorLocation
     // char newChar = code | conio_reverse_value
     txa
     // *loc = newChar

@@ -229,7 +229,7 @@ mul16s: {
     .label return = 8
     .label a = $15
     .label b = $15
-    // mul16u((unsigned int)a, (unsigned int) b)
+    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
@@ -239,7 +239,6 @@ mul16s: {
     lda.z b+1
     sta.z mul16u.b+1
     jsr mul16u
-    // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b1
@@ -431,7 +430,7 @@ divr16s: {
     lda.z divisor+1
     bmi __b3
   __b4:
-    // divr16u(dividendu, divisoru, remu)
+    // unsigned int resultu = divr16u(dividendu, divisoru, remu)
     jsr divr16u
     // if(neg==0)
     cpy #0

@@ -89,6 +89,7 @@ memcpy_to_vram: {
     .const num = $19*SIZEOF_BYTE
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
+    // Transfer the data
     .label end = src+num
     .label s = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL

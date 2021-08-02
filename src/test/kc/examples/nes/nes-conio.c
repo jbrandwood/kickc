@@ -89,7 +89,7 @@ char PALETTE[0x20] = {
 
 // Tile Set (in CHR ROM) - A C64 charset from http://www.zimmers.net/anonftp/pub/cbm/firmware/computers/c64/
 #pragma data_seg(Tiles)
-export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
+__export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
     .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
@@ -101,7 +101,7 @@ export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)
-export void (*VECTORS[])() = {
+__export void (*VECTORS[])() = {
     // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
     &vblank, 
     // RESET Called when the NES is reset, including when it is turned on.

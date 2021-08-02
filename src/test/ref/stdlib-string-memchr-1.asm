@@ -77,7 +77,7 @@ main: {
     .label ptr2 = 2
     // clrscr()
     jsr clrscr
-    // memchr( str, 'a', 14)
+    // char* ptr = memchr( str, 'a', 14)
     lda #'a'
     sta.z memchr.c
     lda #<$e
@@ -85,7 +85,7 @@ main: {
     lda #>$e
     sta.z memchr.n+1
     jsr memchr
-    // memchr( str, 'a', 14)
+    // char* ptr = memchr( str, 'a', 14)
     // assert_uint(8, (ptr-str), "finding a")
     lda.z assert_uint.actual
     sec
@@ -95,7 +95,7 @@ main: {
     sbc #>str
     sta.z assert_uint.actual+1
     jsr assert_uint
-    // memchr( str, 'a', 7)
+    // char* ptr2 = memchr( str, 'a', 7)
     lda #'a'
     sta.z memchr.c
     lda #<7
@@ -103,7 +103,7 @@ main: {
     lda #>7
     sta.z memchr.n+1
     jsr memchr
-    // memchr( str, 'a', 7)
+    // char* ptr2 = memchr( str, 'a', 7)
     // assert_ptr((void*)0, ptr2, "not finding a")
     jsr assert_ptr
     // }
@@ -137,12 +137,11 @@ gotoxy: {
     sta.z conio_cursor_x
     // conio_cursor_y = y
     stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     lda.z __7
     asl
     sta.z __8
@@ -407,13 +406,15 @@ assert_uint: {
     .byte 0
 }
 .segment Code
+// assert_ptr(void* zp(2) actual)
 assert_ptr: {
     .label expect = 0
+    .label actual = 2
     // if(expect!=actual)
-    lda.z main.ptr2+1
+    lda.z actual+1
     cmp #>expect
     bne __b1
-    lda.z main.ptr2
+    lda.z actual
     cmp #<expect
     bne __b1
     // textcolor(GREEN)
@@ -461,11 +462,11 @@ assert_ptr: {
     lda #>s1
     sta.z cputs.s+1
     jsr cputs
-    lda.z main.ptr2
-    sta.z printf_uint.uvalue
-    lda.z main.ptr2+1
-    sta.z printf_uint.uvalue+1
     // printf("Assert failed. expected:0x%x actual:0x%x. %s\n", (unsigned int)expect, (unsigned int)actual, message)
+    lda.z actual
+    sta.z printf_uint.uvalue
+    lda.z actual+1
+    sta.z printf_uint.uvalue+1
     ldx #HEXADECIMAL
     jsr printf_uint
     // printf("Assert failed. expected:0x%x actual:0x%x. %s\n", (unsigned int)expect, (unsigned int)actual, message)

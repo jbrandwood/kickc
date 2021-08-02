@@ -1284,14 +1284,14 @@ void game_logic() {
 
 // Lookup the absolute value of a signed number
 // PRE_ and POST_ are used to ensure lookup of ABS-1,y works for y=0 and ABS+1,y works for y=0xff
-export __align(0x100) char ABS_PRE[1] = { 1 }; 
-export char ABS[0x100] = kickasm {{
+__export __align(0x100) char ABS_PRE[1] = { 1 };
+__export char ABS[0x100] = kickasm {{
     .for(var i=0;i<$100;i++) {
         .var x = (i<$80)?i:($100-i);
         .byte abs(x)
     }
 }};
-export char ABS_POST[1] = { 0 }; 
+__export char ABS_POST[1] = { 0 };
 
 // Choose the open direction that brings the ghost closest to the target
 // Uses Manhattan distance calculation

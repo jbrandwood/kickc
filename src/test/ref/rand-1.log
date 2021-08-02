@@ -7,7 +7,11 @@ Added struct type cast to parameter value list call printf_uint main::rnd (struc
 Added struct type cast to parameter value list call printf_ulong main::cnt (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL } 
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy::$0
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement main::$2
+Eliminating unused variable with no statement main::$3
 Eliminating unused variable with no statement main::$7
 Eliminating unused variable with no statement main::$11
 
@@ -21,8 +25,7 @@ memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
   memcpy::src#0 = ((byte*)) memcpy::source#2
   memcpy::dst#0 = ((byte*)) memcpy::destination#2
   memcpy::$2 = (byte*)memcpy::source#2
-  memcpy::$0 = memcpy::$2 + memcpy::num#2
-  memcpy::src_end#0 = memcpy::$0
+  memcpy::src_end#0 = memcpy::$2 + memcpy::num#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   memcpy::destination#4 = phi( memcpy/memcpy::destination#2, memcpy::@2/memcpy::destination#5 )
@@ -69,8 +72,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -637,8 +639,7 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_x = gotoxy::x#6
   conio_cursor_y = gotoxy::y#6
   gotoxy::$7 = (word)gotoxy::y#6
-  gotoxy::$4 = gotoxy::$7 * $28
-  gotoxy::line_offset#0 = gotoxy::$4
+  gotoxy::line_offset#0 = gotoxy::$7 * $28
   gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
   gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
@@ -1222,9 +1223,8 @@ main::@9: scope:[main]  from main::@8
 main::@10: scope:[main]  from main::@9
   rand_state#12 = phi( main::@9/rand_state#3 )
   rand::return#5 = phi( main::@9/rand::return#2 )
-  main::$3 = rand::return#5
+  main::first#0 = rand::return#5
   rand_state#4 = rand_state#12
-  main::first#0 = main::$3
   main::cnt#0 = 0
   textcolor::color#1 = LIGHT_BLUE
   call textcolor 
@@ -1512,7 +1512,6 @@ bool~ gotoxy::$0
 bool~ gotoxy::$1
 bool~ gotoxy::$2
 bool~ gotoxy::$3
-number~ gotoxy::$4
 byte*~ gotoxy::$5
 byte*~ gotoxy::$6
 word~ gotoxy::$7
@@ -1546,7 +1545,6 @@ bool~ main::$15
 word~ main::$16
 bool~ main::$17
 byte~ main::$18
-word~ main::$3
 bool~ main::$8
 bool~ main::$9
 dword main::cnt
@@ -1607,7 +1605,6 @@ byte main::row#9
 constant byte* main::s[$1d]  = "generating unique randoms..."
 constant byte* main::s1[7]  = "found "
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
-byte*~ memcpy::$0
 bool~ memcpy::$1
 byte*~ memcpy::$2
 void* memcpy::destination
@@ -1648,7 +1645,6 @@ byte* memcpy::src_end#2
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -2408,8 +2404,7 @@ Adding number conversion cast (unumber) $28 in clrscr::line_cols#1 = clrscr::lin
 Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#5 > $19
 Adding number conversion cast (unumber) $28 in gotoxy::$2 = gotoxy::x#5 >= $28
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
-Adding number conversion cast (unumber) $28 in gotoxy::$4 = gotoxy::$7 * $28
-Adding number conversion cast (unumber) gotoxy::$4 in gotoxy::$4 = gotoxy::$7 * (unumber)$28
+Adding number conversion cast (unumber) $28 in gotoxy::line_offset#0 = gotoxy::$7 * $28
 Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
 Adding number conversion cast (unumber) $28 in cputc::$1 = conio_cursor_x == $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text + $28
@@ -2679,32 +2674,30 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
 Inferred type updated to byte in ultoa::$4 = ultoa::max_digits#5 - 1
-Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $28
 Inferred type updated to byte in printf_ulong::$0 = 0
 Inferred type updated to byte for printf_ulong::$2
 Inferred type updated to byte in printf_uint::$0 = 0
 Inferred type updated to byte for printf_uint::$2
-Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [282] gotoxy::$1 = gotoxy::y#5 <= $19 from [281] gotoxy::$0 = gotoxy::y#5 > $19
-Inversing boolean not [286] gotoxy::$3 = gotoxy::x#5 < $28 from [285] gotoxy::$2 = gotoxy::x#5 >= $28
-Inversing boolean not [312] cputc::$2 = conio_cursor_x != $28 from [311] cputc::$1 = conio_cursor_x == $28
-Inversing boolean not [343] cscroll::$1 = conio_cursor_y != $19 from [342] cscroll::$0 = conio_cursor_y == $19
-Inversing boolean not [376] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [375] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
-Inversing boolean not [446] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#2 from [445] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#2
-Inversing boolean not [450] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#2 from [449] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#2
-Inversing boolean not [452] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#2 from [451] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#2
-Inversing boolean not [465] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#2 from [464] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#2
-Inversing boolean not [472] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [471] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
-Inversing boolean not [480] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#3 from [479] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#3
-Inversing boolean not [497] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#2 from [496] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#2
-Inversing boolean not [509] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#4 from [508] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#4
-Inversing boolean not [552] main::$9 = main::$18 != 0 from [551] main::$8 = main::$18 == 0
-Inversing boolean not [579] main::$13 = main::row#1 != $19 from [578] main::$12 = main::row#1 == $19
-Inversing boolean not [585] main::$15 = main::col#1 <= (byte)$28-5 from [584] main::$14 = main::col#1 > (byte)$28-5
+Inversing boolean not [19] memset::$1 = memset::num#2 <= 0 from [18] memset::$0 = memset::num#2 > 0
+Inversing boolean not [280] gotoxy::$1 = gotoxy::y#5 <= $19 from [279] gotoxy::$0 = gotoxy::y#5 > $19
+Inversing boolean not [284] gotoxy::$3 = gotoxy::x#5 < $28 from [283] gotoxy::$2 = gotoxy::x#5 >= $28
+Inversing boolean not [309] cputc::$2 = conio_cursor_x != $28 from [308] cputc::$1 = conio_cursor_x == $28
+Inversing boolean not [340] cscroll::$1 = conio_cursor_y != $19 from [339] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [373] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [372] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+Inversing boolean not [443] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#2 from [442] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#2
+Inversing boolean not [447] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#2 from [446] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#2
+Inversing boolean not [449] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#2 from [448] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#2
+Inversing boolean not [462] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#2 from [461] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#2
+Inversing boolean not [469] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [468] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
+Inversing boolean not [477] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#3 from [476] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#3
+Inversing boolean not [494] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#2 from [493] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#2
+Inversing boolean not [506] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#4 from [505] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#4
+Inversing boolean not [548] main::$9 = main::$18 != 0 from [547] main::$8 = main::$18 == 0
+Inversing boolean not [575] main::$13 = main::row#1 != $19 from [574] main::$12 = main::row#1 == $19
+Inversing boolean not [581] main::$15 = main::col#1 <= (byte)$28-5 from [580] main::$14 = main::col#1 > (byte)$28-5
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -2713,7 +2706,6 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -2769,7 +2761,6 @@ Alias clrscr::c#2 = clrscr::c#3
 Alias clrscr::line_cols#2 = clrscr::line_cols#4 clrscr::line_cols#3 
 Alias clrscr::l#3 = clrscr::l#6 clrscr::l#4 
 Alias gotoxy::x#7 = gotoxy::x#8 
-Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#7 = gotoxy::y#8 
 Alias cputc::c#3 = cputc::c#4 
 Alias cputs::c#1 = cputs::$0 cputs::c#2 
@@ -2845,7 +2836,7 @@ Alias printf_number_buffer::padding#14 = printf_number_buffer::padding#17 printf
 Alias rand_state#18 = rand_state#28 rand_state#32 rand_state#21 
 Alias rand::return#2 = rand::return#5 
 Alias rand_state#12 = rand_state#4 rand_state#29 
-Alias main::first#0 = main::$3 main::first#1 main::rnd#0 
+Alias main::first#0 = main::first#1 main::rnd#0 
 Alias main::cnt#0 = main::cnt#4 
 Alias rand::return#3 = rand::return#6 
 Alias main::first#2 = main::first#3 
@@ -8285,7 +8276,7 @@ main: {
     jsr cputs
     // [23] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
     // main::@8
-    // rand()
+    // unsigned int first = rand()
     // [24] call rand 
     // [102] phi from main::@8 to rand [phi:main::@8->rand]
     // [102] phi rand_state#10 = 1 [phi:main::@8->rand#0] -- vwuz1=vwuc1 
@@ -8294,7 +8285,7 @@ main: {
     lda #>1
     sta.z rand_state+1
     jsr rand
-    // rand()
+    // unsigned int first = rand()
     // [25] rand::return#2 = rand::return#0 -- vwuz1=vwuz2 
     lda.z rand.return
     sta.z rand.return_1
@@ -8517,12 +8508,11 @@ gotoxy: {
     // conio_cursor_y = y
     // [65] conio_cursor_y = gotoxy::y#6 -- vbuz1=vbuaa 
     sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
+    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [66] gotoxy::$7 = (word)gotoxy::y#6 -- vwuz1=_word_vbuaa 
     sta.z __7
     lda #0
     sta.z __7+1
-    // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     // [67] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl

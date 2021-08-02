@@ -1918,7 +1918,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testTypedef9() throws IOException {
-      compileAndCompare("typedef-9.c", log());
+      compileAndCompare("typedef-9.c");
    }
 
    @Test

@@ -4,10 +4,7 @@
 /// C standard library stdlib.h
 ///
 /// Implementation of functions found int C stdlib.h / stdlib.c
-/// @file
-/// C standard library string.h
-///
-/// Functions to manipulate C strings and arrays.
+/// NULL pointer
   // Commodore 64 PRG executable file
 .file [name="screen-center-angle.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -285,9 +282,8 @@ init_angle_screen: {
     // MAKEWORD( y*2, 0 )
     sta.z yw+1
     sty.z yw
-    // atan2_16(xw, yw)
-    jsr atan2_16
     // word angle_w = atan2_16(xw, yw)
+    jsr atan2_16
     // angle_w+0x0080
     lda #$80
     clc
@@ -330,7 +326,11 @@ init_angle_screen: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $13
-    // 0xffffffff - *CIA2_TIMER_AB
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Stop the timer
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // clock_t ticks = 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -344,6 +344,10 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Start the timer
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }

@@ -114,7 +114,6 @@ md5: {
     .label __2 = $b2
     .label __3 = $b2
     .label bits_len = $b8
-    .label __8 = $80
     .label __26 = $a5
     .label __27 = $d0
     .label __28 = $d0
@@ -208,7 +207,6 @@ md5: {
     sta.z memcpy.destination
     lda.z msg+1
     sta.z memcpy.destination+1
-    // memcpy(msg, initial_msg, initial_len)
     lda #<main.message
     sta.z memcpy.source
     lda #>main.message
@@ -225,21 +223,8 @@ md5: {
     lda #$80
     ldy #0
     sta (__74),y
-    // initial_len * 8
-    asl.z __8
-    rol.z __8+1
-    asl.z __8
-    rol.z __8+1
-    asl.z __8
-    rol.z __8+1
     // uint32_t bits_len = initial_len * 8
-    lda.z __8
-    sta.z bits_len
-    lda.z __8+1
-    sta.z bits_len+1
-    tya
-    sta.z bits_len+2
-    sta.z bits_len+3
+    .assert "Missing ASM fragment Fragment not found vduz1=vwuz2_rol_3. Attempted variations vduz1=vwuz2_rol_3 ", 0, 1
     // msg + new_len
     lda.z msg
     clc
@@ -737,7 +722,7 @@ md5: {
     lda.z __67+3
     adc (w),y
     sta.z __67+3
-    // leftRotate((a + f + k[i] + w[g]), r[i])
+    // uint32_t lr = leftRotate((a + f + k[i] + w[g]), r[i])
     lda.z __67
     sta.z leftRotate.a
     lda.z __67+1
@@ -749,8 +734,8 @@ md5: {
     ldy.z i
     lda r,y
     sta.z leftRotate.r
+    //b = b + LEFTROTATE((a + f + k[i] + w[g]), r[i]);
     jsr leftRotate
-    // uint32_t lr = leftRotate((a + f + k[i] + w[g]), r[i])
     // b += lr
     clc
     lda.z b_1
@@ -1105,7 +1090,7 @@ cputc: {
 calloc: {
     .label return = $b4
     .label nitems = $db
-    // malloc(nitems*size)
+    // void* mem = malloc(nitems*size)
     lda.z nitems
     sta.z malloc.size
     lda.z nitems+1
@@ -1417,9 +1402,8 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    jsr cursorLocation
     // char newChar = code | conio_reverse_value
     txa
     // *loc = newChar
@@ -1444,9 +1428,9 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
-    jsr cursorLocation
     // char * loc = cursorLocation()
+    // work out the new location for oldadr based on new column/row
+    jsr cursorLocation
     // char c = *loc
     ldy #0
     lda (loc),y

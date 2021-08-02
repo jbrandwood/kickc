@@ -17,6 +17,11 @@ Added struct type cast to parameter value list call printf_sint main::i1 (struct
 Inlined call cputc::$4 = call convertToScreenCode &cputc::c 
 Inlined call call clrkb 
 Inlined call call __init 
+Eliminating unused variable with no statement memcpy::$0
+Eliminating unused variable with no statement memset::$2
+Eliminating unused variable with no statement putchar::$0
+Eliminating unused variable with no statement putchar::$1
+Eliminating unused variable with no statement setcursor::$0
 Eliminating unused variable with no statement main::$7
 Eliminating unused variable with no statement main::$14
 Eliminating unused variable with no statement main::$16
@@ -31,8 +36,7 @@ memcpy: scope:[memcpy]  from newline::@5
   memcpy::src#0 = ((byte*)) memcpy::source#1
   memcpy::dst#0 = ((byte*)) memcpy::destination#1
   memcpy::$2 = (byte*)memcpy::source#1
-  memcpy::$0 = memcpy::$2 + memcpy::num#1
-  memcpy::src_end#0 = memcpy::$0
+  memcpy::src_end#0 = memcpy::$2 + memcpy::num#1
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   memcpy::destination#3 = phi( memcpy/memcpy::destination#1, memcpy::@2/memcpy::destination#4 )
@@ -79,8 +83,7 @@ memset::@2: scope:[memset]  from memset
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
   memset::$4 = (byte*)memset::str#3
-  memset::$2 = memset::$4 + memset::num#3
-  memset::end#0 = memset::$2
+  memset::end#0 = memset::$4 + memset::num#3
   memset::dst#0 = ((byte*)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
@@ -603,10 +606,8 @@ putchar: scope:[putchar]  from cputc::@7
 putchar::@1: scope:[putchar]  from putchar
   putchar::code#1 = phi( putchar/putchar::code#2 )
   cursorLocation::return#4 = phi( putchar/cursorLocation::return#0 )
-  putchar::$0 = cursorLocation::return#4
-  putchar::loc#0 = putchar::$0
-  putchar::$1 = putchar::code#1 | conio_reverse_value
-  putchar::newChar#0 = putchar::$1
+  putchar::loc#0 = cursorLocation::return#4
+  putchar::newChar#0 = putchar::code#1 | conio_reverse_value
   *putchar::loc#0 = putchar::newChar#0
   *OLDCHR = putchar::newChar#0
   call setcursor 
@@ -695,8 +696,7 @@ setcursor: scope:[setcursor]  from cputc::@1 cputc::@5 gotoxy newline::@1 putcha
   to:setcursor::@4
 setcursor::@4: scope:[setcursor]  from setcursor
   cursorLocation::return#6 = phi( setcursor/cursorLocation::return#3 )
-  setcursor::$0 = cursorLocation::return#6
-  setcursor::loc#0 = setcursor::$0
+  setcursor::loc#0 = cursorLocation::return#6
   setcursor::c#0 = *setcursor::loc#0
   *OLDCHR = setcursor::c#0
   *OLDADR = setcursor::loc#0
@@ -1522,7 +1522,6 @@ constant byte* main::s5[$19]  = "Some wrapping lines ... "at
 constant byte* main::s6[2]  = "
 "at
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
-byte*~ memcpy::$0
 bool~ memcpy::$1
 byte*~ memcpy::$2
 void* memcpy::destination
@@ -1559,7 +1558,6 @@ byte* memcpy::src_end#2
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
-byte*~ memset::$2
 bool~ memset::$3
 byte*~ memset::$4
 byte memset::c
@@ -1923,8 +1921,6 @@ byte* printf_string::str#6
 byte* printf_string::str#7
 byte* printf_string::str#8
 void putchar(byte putchar::code)
-byte*~ putchar::$0
-byte~ putchar::$1
 byte putchar::code
 byte putchar::code#0
 byte putchar::code#1
@@ -1969,7 +1965,6 @@ byte scroll::return#1
 byte scroll::return#2
 byte scroll::return#3
 void setcursor()
-byte*~ setcursor::$0
 bool~ setcursor::$1
 number~ setcursor::$2
 byte setcursor::c
@@ -2456,24 +2451,23 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
 Inferred type updated to word in cursorLocation::$0 = cursorLocation::$3 * $28
 Inferred type updated to byte in setcursor::$2 = setcursor::c#2 ^ $80
-Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [290] newline::$1 = *ROWCRS != $18 from [288] newline::$0 = *ROWCRS == $18
-Inversing boolean not [296] newline::$6 = conio_display_cursor != 1 from [295] newline::$5 = conio_display_cursor == 1
-Inversing boolean not [372] printf_sint::$3 = 0 == printf_sint::format_sign_always#2 from [371] printf_sint::$5 = 0 != printf_sint::format_sign_always#2
-Inversing boolean not [396] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#1 from [395] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#1
-Inversing boolean not [400] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#1 from [399] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#1
-Inversing boolean not [402] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#1 from [401] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#1
-Inversing boolean not [415] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#1 from [414] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#1
-Inversing boolean not [422] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [421] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
-Inversing boolean not [430] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#2 from [429] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#2
-Inversing boolean not [447] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#1 from [446] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#1
-Inversing boolean not [459] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#3 from [458] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#3
-Inversing boolean not [477] printf_string::$0 = 0 == printf_string::format_min_length#1 from [476] printf_string::$14 = 0 != printf_string::format_min_length#1
-Inversing boolean not [481] printf_string::$1 = 0 == printf_string::format_justify_left#1 from [480] printf_string::$15 = 0 != printf_string::format_justify_left#1
-Inversing boolean not [496] printf_string::$12 = printf_string::padding#1 >= 0 from [495] printf_string::$11 = printf_string::padding#1 < 0
-Inversing boolean not [603] waitkey::$2 = 0 == waitkey::$1 from [602] waitkey::$3 = 0 != waitkey::$1
+Inversing boolean not [19] memset::$1 = memset::num#2 <= 0 from [18] memset::$0 = memset::num#2 > 0
+Inversing boolean not [286] newline::$1 = *ROWCRS != $18 from [284] newline::$0 = *ROWCRS == $18
+Inversing boolean not [292] newline::$6 = conio_display_cursor != 1 from [291] newline::$5 = conio_display_cursor == 1
+Inversing boolean not [367] printf_sint::$3 = 0 == printf_sint::format_sign_always#2 from [366] printf_sint::$5 = 0 != printf_sint::format_sign_always#2
+Inversing boolean not [391] printf_number_buffer::$0 = 0 == printf_number_buffer::format_min_length#1 from [390] printf_number_buffer::$26 = 0 != printf_number_buffer::format_min_length#1
+Inversing boolean not [395] printf_number_buffer::$1 = 0 == printf_number_buffer::format_justify_left#1 from [394] printf_number_buffer::$27 = 0 != printf_number_buffer::format_justify_left#1
+Inversing boolean not [397] printf_number_buffer::$2 = 0 == printf_number_buffer::format_zero_padding#1 from [396] printf_number_buffer::$28 = 0 != printf_number_buffer::format_zero_padding#1
+Inversing boolean not [410] printf_number_buffer::$20 = 0 == printf_number_buffer::buffer_sign#1 from [409] printf_number_buffer::$29 = 0 != printf_number_buffer::buffer_sign#1
+Inversing boolean not [417] printf_number_buffer::$23 = printf_number_buffer::padding#1 >= 0 from [416] printf_number_buffer::$22 = printf_number_buffer::padding#1 < 0
+Inversing boolean not [425] printf_number_buffer::$7 = 0 == printf_number_buffer::buffer_sign#2 from [424] printf_number_buffer::$30 = 0 != printf_number_buffer::buffer_sign#2
+Inversing boolean not [442] printf_number_buffer::$12 = 0 == printf_number_buffer::format_upper_case#1 from [441] printf_number_buffer::$31 = 0 != printf_number_buffer::format_upper_case#1
+Inversing boolean not [454] printf_number_buffer::$14 = 0 == printf_number_buffer::format_zero_padding#3 from [453] printf_number_buffer::$32 = 0 != printf_number_buffer::format_zero_padding#3
+Inversing boolean not [472] printf_string::$0 = 0 == printf_string::format_min_length#1 from [471] printf_string::$14 = 0 != printf_string::format_min_length#1
+Inversing boolean not [476] printf_string::$1 = 0 == printf_string::format_justify_left#1 from [475] printf_string::$15 = 0 != printf_string::format_justify_left#1
+Inversing boolean not [491] printf_string::$12 = printf_string::padding#1 >= 0 from [490] printf_string::$11 = printf_string::padding#1 < 0
+Inversing boolean not [598] waitkey::$2 = 0 == waitkey::$1 from [597] waitkey::$3 = 0 != waitkey::$1
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -2482,7 +2476,6 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -2525,12 +2518,9 @@ Alias cursor::return#0 = cursor::oldValue#0 cursor::return#3 cursor::return#1
 Alias scroll::return#0 = scroll::old#0 scroll::return#3 scroll::return#1 
 Alias cursorLocation::return#0 = cursorLocation::return#4 
 Alias putchar::code#1 = putchar::code#2 
-Alias putchar::loc#0 = putchar::$0 
-Alias putchar::newChar#0 = putchar::$1 
 Alias cursorLocation::return#1 = cursorLocation::$2 cursorLocation::return#5 cursorLocation::return#2 
 Alias newline::start#0 = newline::start#1 
 Alias cursorLocation::return#3 = cursorLocation::return#6 
-Alias setcursor::loc#0 = setcursor::$0 
 Alias setcursor::c#0 = setcursor::c#4 setcursor::c#2 
 Alias setcursor::c#1 = setcursor::$2 
 Alias revers::old#0 = revers::old#2 revers::old#3 
@@ -5593,6 +5583,7 @@ setcursor: {
     ldy #0
     sta ($fe),y
     // [118] call cursorLocation 
+    // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [119] cursorLocation::return#3 = cursorLocation::return#1
     jmp __b4
@@ -7569,12 +7560,12 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
+    // char * loc = cursorLocation()
     // [118] call cursorLocation 
+    // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [119] cursorLocation::return#3 = cursorLocation::return#1
     // setcursor::@4
-    // char * loc = cursorLocation()
     // [120] setcursor::loc#0 = cursorLocation::return#3
     // char c = *loc
     // [121] setcursor::c#0 = *setcursor::loc#0 -- vbuxx=_deref_pbuz1 
@@ -8035,12 +8026,11 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // cursorLocation()
+    // char * loc = cursorLocation()
     // [197] call cursorLocation 
     jsr cursorLocation
     // [198] cursorLocation::return#0 = cursorLocation::return#1
     // putchar::@1
-    // char * loc = cursorLocation()
     // [199] putchar::loc#0 = cursorLocation::return#0
     // char newChar = code | conio_reverse_value
     // [200] putchar::newChar#0 = cputc::convertToScreenCode1_return#0 | conio_reverse_value -- vbuaa=vbuxx_bor_vbuz1 

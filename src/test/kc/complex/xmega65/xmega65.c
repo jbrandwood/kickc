@@ -59,11 +59,11 @@ struct SysCall {
 const char JMP = 0x4c;
 const char NOP = 0xea;
 
-export struct SysCall SYSCALLS[] = {
+__export struct SysCall SYSCALLS[] = {
     { JMP, &syscall1, NOP },
     { JMP, &syscall2, NOP }
     };
 
-export __align(0x100) struct SysCall SYSCALL_RESET[] = {
+__export __align(0x100) struct SysCall SYSCALL_RESET[] = {
     { JMP, &main, NOP }
 };

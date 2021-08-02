@@ -55,17 +55,7 @@ public class Directive {
 
    /** Variable declared as export. */
    public static class Export extends Directive {
-      public Export() { super("export"); }
-   }
-
-   /** Variable declared as pointer to volatile ( volatile * )  */
-   public static class ToVolatile extends Directive {
-      public ToVolatile() { super("volatile*"); }
-   }
-
-   /** Variable declared as pointer to const ( const * )  */
-   public static class ToConst extends Directive {
-      public ToConst() { super("const*"); }
+      public Export() { super("__export"); }
    }
 
    /** Variable __ssa */

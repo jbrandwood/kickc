@@ -14,7 +14,7 @@ public class ProcedureUtils {
     * - interrupts
     * - any procedure where address-of is used in the code.
     * TODO: Should all stack call procedures be included (probably no!)
-    * TODO: Also look at kickasm/asm uses! (Maybe also look at some directive like "export" )
+    * TODO: Also look at kickasm/asm uses! (Maybe also look at some directive like "__export" )
     *
     * @param procedure The procedure to examine
     * @param program The program

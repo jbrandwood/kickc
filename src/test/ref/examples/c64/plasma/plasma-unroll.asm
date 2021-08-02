@@ -220,7 +220,7 @@ makecharset: {
 doplasma: {
     .label c1a = 9
     .label c1b = $a
-    .label yval = $12
+    .label yprev = $12
     .label i = 8
     .label c2a = $c
     .label c2b = $d
@@ -435,18 +435,18 @@ doplasma: {
     inc.z i1
     jmp __b4
   __b2:
-    // SINTABLE[c1a] + SINTABLE[c1b]
+    // unsigned char yval = (SINTABLE[c1a] + SINTABLE[c1b])
     ldy.z c1a
     lda SINTABLE,y
     ldy.z c1b
     clc
     adc SINTABLE,y
-    sta.z yval
+    sta.z yprev
     // yval - yprev
     txa
     eor #$ff
     sec
-    adc.z yval
+    adc.z yprev
     // ybuf[i] = yval - yprev
     ldy.z i
     sta ybuf,y
@@ -460,7 +460,7 @@ doplasma: {
     stx.z c1b
     // for (unsigned char i = 0; i < 25; ++i)
     inc.z i
-    ldx.z yval
+    ldx.z yprev
     jmp __b1
   .segment Data
     xbuf: .fill $28, 0

@@ -1,5 +1,11 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
+Eliminating unused variable with no statement keyboard_matrix_read::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$0
+Eliminating unused variable with no statement keyboard_key_pressed::$1
+Eliminating unused variable with no statement main::$29
+Eliminating unused variable with no statement plot_chargen::$1
+Eliminating unused variable with no statement plot_chargen::$6
 
 CONTROL FLOW GRAPH SSA
 
@@ -7,8 +13,7 @@ byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   keyboard_matrix_read::rowid#1 = phi( keyboard_key_pressed/keyboard_matrix_read::rowid#0 )
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#1]
-  keyboard_matrix_read::$0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
-  keyboard_matrix_read::row_pressed_bits#0 = keyboard_matrix_read::$0
+  keyboard_matrix_read::row_pressed_bits#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -20,10 +25,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@10 main::@16 main::@6 main::@7 main::@8 main::@9
   keyboard_key_pressed::key#6 = phi( main::@10/keyboard_key_pressed::key#4, main::@16/keyboard_key_pressed::key#5, main::@6/keyboard_key_pressed::key#0, main::@7/keyboard_key_pressed::key#1, main::@8/keyboard_key_pressed::key#2, main::@9/keyboard_key_pressed::key#3 )
-  keyboard_key_pressed::$0 = keyboard_key_pressed::key#6 & 7
-  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0
-  keyboard_key_pressed::$1 = keyboard_key_pressed::key#6 >> 3
-  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1
+  keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#6 & 7
+  keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#6 >> 3
   keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
   call keyboard_matrix_read 
   keyboard_matrix_read::return#2 = keyboard_matrix_read::return#1
@@ -223,8 +226,7 @@ main::@34: scope:[main]  from main::@13
   main::ch#7 = phi( main::@13/main::ch#2 )
   main::pressed#3 = phi( main::@13/main::pressed#0 )
   keyboard_get_keycode::return#4 = phi( main::@13/keyboard_get_keycode::return#2 )
-  main::$29 = keyboard_get_keycode::return#4
-  main::key#0 = main::$29
+  main::key#0 = keyboard_get_keycode::return#4
   main::$30 = main::key#0 != $3f
   main::$31 = ! main::$30
   if(main::$31) goto main::@14
@@ -315,8 +317,7 @@ plot_chargen: scope:[plot_chargen]  from main::@17 main::@4
   asm { sei  }
   plot_chargen::$15 = (word)plot_chargen::ch#2
   plot_chargen::$0 = plot_chargen::$15 * 8
-  plot_chargen::$1 = CHARGEN + plot_chargen::$0
-  plot_chargen::chargen#0 = plot_chargen::$1
+  plot_chargen::chargen#0 = CHARGEN + plot_chargen::$0
   plot_chargen::$2 = plot_chargen::shift#2 != 0
   plot_chargen::$3 = ! plot_chargen::$2
   if(plot_chargen::$3) goto plot_chargen::@1
@@ -327,8 +328,7 @@ plot_chargen::@1: scope:[plot_chargen]  from plot_chargen plot_chargen::@2
   *PROCPORT = $32
   plot_chargen::$4 = SCREEN + $29
   plot_chargen::$5 = plot_chargen::pos#2 * $a
-  plot_chargen::$6 = plot_chargen::$4 + plot_chargen::$5
-  plot_chargen::sc#0 = plot_chargen::$6
+  plot_chargen::sc#0 = plot_chargen::$4 + plot_chargen::$5
   plot_chargen::y#0 = 0
   to:plot_chargen::@3
 plot_chargen::@2: scope:[plot_chargen]  from plot_chargen
@@ -486,8 +486,6 @@ byte keyboard_get_keycode::return#2
 byte keyboard_get_keycode::return#3
 byte keyboard_get_keycode::return#4
 byte keyboard_key_pressed(byte keyboard_key_pressed::key)
-number~ keyboard_key_pressed::$0
-byte~ keyboard_key_pressed::$1
 byte~ keyboard_key_pressed::$2
 byte~ keyboard_key_pressed::$3
 byte keyboard_key_pressed::colidx
@@ -521,7 +519,6 @@ byte keyboard_key_pressed::rowidx
 byte keyboard_key_pressed::rowidx#0
 constant byte* keyboard_matrix_col_bitmask[8]  = { 1, 2, 4, 8, $10, $20, $40, $80 }
 byte keyboard_matrix_read(byte keyboard_matrix_read::rowid)
-byte~ keyboard_matrix_read::$0
 byte keyboard_matrix_read::return
 byte keyboard_matrix_read::return#0
 byte keyboard_matrix_read::return#1
@@ -554,7 +551,6 @@ bool~ main::$25
 bool~ main::$26
 byte~ main::$27
 bool~ main::$28
-byte~ main::$29
 byte*~ main::$3
 bool~ main::$30
 bool~ main::$31
@@ -642,7 +638,6 @@ constant byte* main::str2[3]  = "f5"
 constant byte* main::str3[3]  = "f7"
 void plot_chargen(byte plot_chargen::pos , byte plot_chargen::ch , byte plot_chargen::shift)
 number~ plot_chargen::$0
-byte*~ plot_chargen::$1
 bool~ plot_chargen::$10
 number~ plot_chargen::$11
 bool~ plot_chargen::$12
@@ -653,7 +648,6 @@ bool~ plot_chargen::$2
 bool~ plot_chargen::$3
 byte*~ plot_chargen::$4
 number~ plot_chargen::$5
-byte*~ plot_chargen::$6
 byte*~ plot_chargen::$7
 number~ plot_chargen::$8
 bool~ plot_chargen::$9
@@ -735,9 +729,8 @@ byte* print_str_at::str#5
 byte* print_str_at::str#6
 byte* print_str_at::str#7
 
-Adding number conversion cast (unumber) 7 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#6 & 7
-Adding number conversion cast (unumber) keyboard_key_pressed::$0 in keyboard_key_pressed::$0 = keyboard_key_pressed::key#6 & (unumber)7
-Adding number conversion cast (unumber) 3 in keyboard_key_pressed::$1 = keyboard_key_pressed::key#6 >> 3
+Adding number conversion cast (unumber) 7 in keyboard_key_pressed::colidx#0 = keyboard_key_pressed::key#6 & 7
+Adding number conversion cast (unumber) 3 in keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key#6 >> 3
 Adding number conversion cast (unumber) $3e8 in main::$11 = SCREEN + $3e8
 Adding number conversion cast (unumber) 1 in main::$0 = SCREEN + 1
 Adding number conversion cast (unumber) 1 in main::$2 = SCREEN + 1
@@ -869,24 +862,22 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $37
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#6 & 7
 Inferred type updated to word in plot_chargen::$0 = plot_chargen::$15 * 8
 Inferred type updated to byte in plot_chargen::$5 = plot_chargen::pos#2 * $a
 Inferred type updated to byte in plot_chargen::$8 = plot_chargen::bits#2 & $80
 Inferred type updated to byte in plot_chargen::$11 = plot_chargen::bits#3 * 2
-Inversing boolean not [74] main::$17 = main::$15 == 0 from [73] main::$16 = main::$15 != 0
-Inversing boolean not [83] main::$20 = main::$18 == 0 from [82] main::$19 = main::$18 != 0
-Inversing boolean not [93] main::$23 = main::$21 == 0 from [92] main::$22 = main::$21 != 0
-Inversing boolean not [103] main::$26 = main::$24 == 0 from [102] main::$25 = main::$24 != 0
-Inversing boolean not [130] main::$31 = main::key#0 == $3f from [129] main::$30 = main::key#0 != $3f
-Inversing boolean not [134] main::$34 = main::pressed#2 == 0 from [133] main::$33 = main::pressed#2 != 0
-Inversing boolean not [172] plot_chargen::$3 = plot_chargen::shift#2 == 0 from [171] plot_chargen::$2 = plot_chargen::shift#2 != 0
-Inversing boolean not [191] plot_chargen::$10 = plot_chargen::$8 == 0 from [190] plot_chargen::$9 = plot_chargen::$8 != 0
+Inversing boolean not [71] main::$17 = main::$15 == 0 from [70] main::$16 = main::$15 != 0
+Inversing boolean not [80] main::$20 = main::$18 == 0 from [79] main::$19 = main::$18 != 0
+Inversing boolean not [90] main::$23 = main::$21 == 0 from [89] main::$22 = main::$21 != 0
+Inversing boolean not [100] main::$26 = main::$24 == 0 from [99] main::$25 = main::$24 != 0
+Inversing boolean not [126] main::$31 = main::key#0 == $3f from [125] main::$30 = main::key#0 != $3f
+Inversing boolean not [130] main::$34 = main::pressed#2 == 0 from [129] main::$33 = main::pressed#2 != 0
+Inversing boolean not [167] plot_chargen::$3 = plot_chargen::shift#2 == 0 from [166] plot_chargen::$2 = plot_chargen::shift#2 != 0
+Inversing boolean not [185] plot_chargen::$10 = plot_chargen::$8 == 0 from [184] plot_chargen::$9 = plot_chargen::$8 != 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::$0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
-Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::$0 keyboard_key_pressed::colidx#1 
-Alias keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::$1 
+Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
 Alias keyboard_matrix_read::return#2 = keyboard_matrix_read::return#4 
+Alias keyboard_key_pressed::colidx#0 = keyboard_key_pressed::colidx#1 
 Alias keyboard_key_pressed::return#0 = keyboard_key_pressed::$3 keyboard_key_pressed::return#8 keyboard_key_pressed::return#1 
 Alias keyboard_get_keycode::return#0 = keyboard_get_keycode::return#3 keyboard_get_keycode::return#1 
 Alias main::sc#2 = main::sc#3 
@@ -910,7 +901,7 @@ Alias main::pressed#0 = main::pressed#3
 Alias main::ch#2 = main::ch#7 main::ch#9 main::ch#8 
 Alias main::cur_pos#10 = main::cur_pos#7 main::cur_pos#9 main::cur_pos#8 
 Alias main::shift#5 = main::shift#7 main::shift#8 main::shift#6 
-Alias main::key#0 = main::$29 main::key#1 
+Alias main::key#0 = main::key#1 
 Alias keyboard_key_pressed::return#14 = keyboard_key_pressed::return#7 
 Alias main::pressed#1 = main::$32 
 Alias main::cur_pos#15 = main::cur_pos#5 main::cur_pos#6 
@@ -919,8 +910,7 @@ Alias main::shift#11 = main::shift#3 main::shift#4
 Alias main::cur_pos#12 = main::cur_pos#26 
 Alias print_str_at::str#5 = print_str_at::str#6 
 Alias print_str_at::at#5 = print_str_at::at#6 
-Alias plot_chargen::chargen#0 = plot_chargen::$1 plot_chargen::chargen#2 
-Alias plot_chargen::sc#0 = plot_chargen::$6 
+Alias plot_chargen::chargen#0 = plot_chargen::chargen#2 
 Alias plot_chargen::pos#3 = plot_chargen::pos#4 
 Alias plot_chargen::chargen#1 = plot_chargen::$7 
 Alias plot_chargen::bits#1 = plot_chargen::$11 
@@ -3438,14 +3428,13 @@ main: {
     // [47] phi main::ch#2 = main::ch#1 [phi:main::@14->main::@12#0] -- register_copy 
     // main::@12
   __b12:
-    // keyboard_get_keycode(ch)
+    // char key = keyboard_get_keycode(ch)
     // [48] keyboard_get_keycode::ch#0 = main::ch#2 -- vbuxx=vbuz1 
     ldx.z ch
     // [49] call keyboard_get_keycode 
     jsr keyboard_get_keycode
     // [50] keyboard_get_keycode::return#2 = keyboard_get_keycode::return#0
     // main::@26
-    // char key = keyboard_get_keycode(ch)
     // [51] main::key#0 = keyboard_get_keycode::return#2
     // if(key!=$3f)
     // [52] if(main::key#0==$3f) goto main::@13 -- vbuaa_eq_vbuc1_then_la1 
@@ -3802,7 +3791,7 @@ keyboard_matrix_read: {
     // [116] *((byte*)CIA1) = keyboard_matrix_row_bitmask[keyboard_matrix_read::rowid#0] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // ~CIA1->PORT_B
+    // char row_pressed_bits = ~CIA1->PORT_B
     // [117] keyboard_matrix_read::return#0 = ~ *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff

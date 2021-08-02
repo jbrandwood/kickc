@@ -1,0 +1,201 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  SCREEN[0] = main::a
+  SCREEN[1] = main::b
+  SCREEN[2] = main::c
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte A = 0
+constant byte I = 0
+constant byte J = 1
+constant byte* const SCREEN = (byte*)$400
+void __start()
+void main()
+constant byte main::a = I
+constant byte main::b = J
+constant byte main::c = A
+constant byte y::I = 0
+constant byte y::J = 1
+constant byte y::K = 2
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::a
+Adding number conversion cast (unumber) 1 in SCREEN[1] = main::b
+Adding number conversion cast (unumber) 2 in SCREEN[2] = main::c
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = main::a
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant inlined main::c = A
+Constant inlined main::b = J
+Constant inlined main::a = I
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+1)
+Consolidated array index constant in *(SCREEN+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SCREEN = I
+  [1] *(SCREEN+1) = J
+  [2] *(SCREEN+2) = A
+  to:main::@return
+main::@return: scope:[main]  from main
+  [3] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SCREEN = I [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = J [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+2) = A [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [y] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [y] best 27 combination 
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/586
+// typedef enum not defining values
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="typedef-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const A = 0
+  .const I = 0
+  .const J = 1
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *SCREEN = I -- _deref_pbuc1=vbuc2 
+    // <<<--- ERROR here
+    lda #I
+    sta SCREEN
+    // [1] *(SCREEN+1) = J -- _deref_pbuc1=vbuc2 
+    lda #J
+    sta SCREEN+1
+    // [2] *(SCREEN+2) = A -- _deref_pbuc1=vbuc2 
+    lda #A
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte A = 0
+constant byte I = 0
+constant byte J = 1
+constant byte* const SCREEN = (byte*) 1024
+void main()
+constant byte y::I = 0
+constant byte y::J = 1
+constant byte y::K = 2
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/586
+// typedef enum not defining values
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="typedef-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const A = 0
+  .const I = 0
+  .const J = 1
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[0] = a
+    // [0] *SCREEN = I -- _deref_pbuc1=vbuc2 
+    // <<<--- ERROR here
+    lda #I
+    sta SCREEN
+    // SCREEN[1] = b
+    // [1] *(SCREEN+1) = J -- _deref_pbuc1=vbuc2 
+    lda #J
+    sta SCREEN+1
+    // SCREEN[2] = c
+    // [2] *(SCREEN+2) = A -- _deref_pbuc1=vbuc2 
+    lda #A
+    sta SCREEN+2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+}
+  // File Data
+

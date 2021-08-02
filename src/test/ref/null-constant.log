@@ -1,0 +1,372 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  screen#10 = phi( __start::@1/screen#9 )
+  main::ptr#0 = ptrs
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  screen#8 = phi( main/screen#10, main::@2/screen#0 )
+  main::ptr#2 = phi( main/main::ptr#0, main::@2/main::ptr#1 )
+  main::$0 = (byte*)0 != *main::ptr#2
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::ptr#3 = phi( main::@1/main::ptr#2 )
+  *(*main::ptr#3) = 'a'
+  screen#0 = *main::ptr#3
+  screen#0[1] = 'b'
+  main::ptr#1 = main::ptr#3 + SIZEOF_POINTER
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  screen#5 = phi( main::@1/screen#8 )
+  screen#1 = screen#5
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  screen#2 = 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  screen#9 = phi( __start::__init1/screen#2 )
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  screen#6 = phi( __start::@1/screen#1 )
+  screen#3 = screen#6
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  screen#7 = phi( __start::@2/screen#3 )
+  screen#4 = screen#7
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte SIZEOF_POINTER = 2
+void __start()
+void main()
+bool~ main::$0
+byte** main::ptr
+byte** main::ptr#0
+byte** main::ptr#1
+byte** main::ptr#2
+byte** main::ptr#3
+constant byte** ptrs[]  = { (byte*)$400, (byte*)$450, (byte*)$4a0, 0 }
+byte* screen
+byte* screen#0
+byte* screen#1
+byte* screen#10
+byte* screen#2
+byte* screen#3
+byte* screen#4
+byte* screen#5
+byte* screen#6
+byte* screen#7
+byte* screen#8
+byte* screen#9
+
+Adding number conversion cast (unumber) 1 in screen#0[1] = 'b'
+Adding number conversion cast (unumber) 0 in screen#2 = 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast screen#2 = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1104
+Simplifying constant pointer cast (byte*) 1184
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::ptr#2 = main::ptr#3 
+Alias screen#1 = screen#5 screen#8 
+Alias screen#2 = screen#9 
+Alias screen#3 = screen#6 screen#7 screen#4 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values screen#10 screen#2
+Identical Phi Values screen#3 screen#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [4] if((byte*)0!=*main::ptr#2) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::ptr#0 = ptrs
+Constant screen#2 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable - keeping the phi block screen#1
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant screen#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::ptr#0
+Constant inlined main::ptr#0 = ptrs
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [8] main::ptr#4 = main::ptr#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] main::ptr#2 = phi( main/ptrs, main::@2/main::ptr#1 )
+  [2] if((byte*)0!=*main::ptr#2) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] *(*main::ptr#2) = 'a'
+  [5] screen#0 = *main::ptr#2
+  [6] screen#0[1] = 'b'
+  [7] main::ptr#1 = main::ptr#2 + SIZEOF_POINTER
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte** main::ptr
+byte** main::ptr#1 22.0
+byte** main::ptr#2 11.0
+byte* screen
+byte* screen#0 22.0
+
+Initial phi equivalence classes
+[ main::ptr#2 main::ptr#1 ]
+Added variable screen#0 to live range equivalence class [ screen#0 ]
+Complete equivalence classes
+[ main::ptr#2 main::ptr#1 ]
+[ screen#0 ]
+Allocated zp[2]:2 [ main::ptr#2 main::ptr#1 ]
+Allocated zp[2]:4 [ screen#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] if((byte*)0!=*main::ptr#2) goto main::@2 [ main::ptr#2 ] (  [ main::ptr#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] *(*main::ptr#2) = 'a' [ main::ptr#2 ] (  [ main::ptr#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] screen#0 = *main::ptr#2 [ main::ptr#2 screen#0 ] (  [ main::ptr#2 screen#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] screen#0[1] = 'b' [ main::ptr#2 ] (  [ main::ptr#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::ptr#1 = main::ptr#2 + SIZEOF_POINTER [ main::ptr#1 ] (  [ main::ptr#1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ main::ptr#2 main::ptr#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ screen#0 ] : zp[2]:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp[2]:2 [ main::ptr#2 main::ptr#1 ] 
+Uplift Scope [] 22: zp[2]:4 [ screen#0 ] 
+
+Uplifting [main] best 1281 combination zp[2]:2 [ main::ptr#2 main::ptr#1 ] 
+Uplifting [] best 1281 combination zp[2]:4 [ screen#0 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the NULL pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="null-constant.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  .label screen = 4
+.segment Code
+  // main
+main: {
+    .label ptr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::ptr#2 = ptrs [phi:main->main::@1#0] -- qbuz1=qbuc1 
+    lda #<ptrs
+    sta.z ptr
+    lda #>ptrs
+    sta.z ptr+1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte*)0!=*main::ptr#2) goto main::@2 -- pbuc1_neq__deref_qbuz1_then_la1 
+    ldy #0
+    lda #<0
+    cmp (ptr),y
+    bne __b2
+    iny
+    lda #>0
+    cmp (ptr),y
+    bne __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] *(*main::ptr#2) = 'a' -- _deref_(_deref_qbuz1)=vbuc1 
+    lda #'a'
+    pha
+    ldy #1
+    lda (ptr),y
+    sta.z $ff
+    dey
+    lda (ptr),y
+    sta.z $fe
+    pla
+    sta ($fe),y
+    // [5] screen#0 = *main::ptr#2 -- pbuz1=_deref_qbuz2 
+    ldy #0
+    lda (ptr),y
+    sta.z screen
+    iny
+    lda (ptr),y
+    sta.z screen+1
+    // [6] screen#0[1] = 'b' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'b'
+    ldy #1
+    sta (screen),y
+    // [7] main::ptr#1 = main::ptr#2 + SIZEOF_POINTER -- qbuz1=qbuz1_plus_vbuc1 
+    lda #SIZEOF_POINTER
+    clc
+    adc.z ptr
+    sta.z ptr
+    bcc !+
+    inc.z ptr+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi main::ptr#2 = main::ptr#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  ptrs: .word $400, $450, $4a0, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction lda #<0 with TYA
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte SIZEOF_POINTER = 2
+void main()
+byte** main::ptr
+byte** main::ptr#1 ptr zp[2]:2 22.0
+byte** main::ptr#2 ptr zp[2]:2 11.0
+constant byte** ptrs[]  = { (byte*) 1024, (byte*) 1104, (byte*) 1184, 0 }
+byte* screen
+byte* screen#0 screen zp[2]:4 22.0
+
+zp[2]:2 [ main::ptr#2 main::ptr#1 ]
+zp[2]:4 [ screen#0 ]
+
+
+FINAL ASSEMBLER
+Score: 1201
+
+  // File Comments
+// Test the NULL pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="null-constant.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  .label screen = 4
+.segment Code
+  // main
+main: {
+    .label ptr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::ptr#2 = ptrs [phi:main->main::@1#0] -- qbuz1=qbuc1 
+    lda #<ptrs
+    sta.z ptr
+    lda #>ptrs
+    sta.z ptr+1
+    // main::@1
+  __b1:
+    // for(char ** ptr = ptrs; *ptr; ptr++)
+    // [2] if((byte*)0!=*main::ptr#2) goto main::@2 -- pbuc1_neq__deref_qbuz1_then_la1 
+    ldy #0
+    tya
+    cmp (ptr),y
+    bne __b2
+    iny
+    cmp (ptr),y
+    bne __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // **ptr = 'a'
+    // [4] *(*main::ptr#2) = 'a' -- _deref_(_deref_qbuz1)=vbuc1 
+    lda #'a'
+    pha
+    ldy #1
+    lda (ptr),y
+    sta.z $ff
+    dey
+    lda (ptr),y
+    sta.z $fe
+    pla
+    sta ($fe),y
+    // screen = *ptr
+    // [5] screen#0 = *main::ptr#2 -- pbuz1=_deref_qbuz2 
+    ldy #0
+    lda (ptr),y
+    sta.z screen
+    iny
+    lda (ptr),y
+    sta.z screen+1
+    // screen[1] = 'b'
+    // [6] screen#0[1] = 'b' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'b'
+    ldy #1
+    sta (screen),y
+    // for(char ** ptr = ptrs; *ptr; ptr++)
+    // [7] main::ptr#1 = main::ptr#2 + SIZEOF_POINTER -- qbuz1=qbuz1_plus_vbuc1 
+    lda #SIZEOF_POINTER
+    clc
+    adc.z ptr
+    sta.z ptr
+    bcc !+
+    inc.z ptr+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi main::ptr#2 = main::ptr#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  ptrs: .word $400, $450, $4a0, 0
+

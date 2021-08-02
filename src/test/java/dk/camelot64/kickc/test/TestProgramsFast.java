@@ -15,6 +15,11 @@ public class TestProgramsFast extends TestPrograms {
    //}
 
    @Test
+   public void testNullConstant() throws IOException {
+      compileAndCompare("null-constant.c");
+   }
+
+   @Test
    public void testBlockError2() throws IOException {
       compileAndCompare("block-error-2.c");
    }

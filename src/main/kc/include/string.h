@@ -2,8 +2,7 @@
 /// C standard library string.h
 ///
 /// Functions to manipulate C strings and arrays.
-
-typedef unsigned int size_t ;
+#include <stddef.h>
 
 /// Copy block of memory (forwards)
 /// Copies the values of num chars from the location pointed to by source directly to the memory block pointed to by destination.

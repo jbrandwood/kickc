@@ -15573,3 +15573,188 @@ sta {z1}
 bcc !+
 inc {z1}+1
 !:
+//FRAGMENT vbum1=vbum2_rol_5
+lda {m2}
+asl
+asl
+asl
+asl
+asl
+sta {m1}
+//FRAGMENT vbum1=vbum2_rol_1
+lda {m2}
+asl
+sta {m1}
+//FRAGMENT _deref_pssc1=pssc2_derefidx_vbum1_memcpy_vbuc3
+ldx {m1}
+ldy #0
+!:
+lda {c2},x
+sta {c1},y
+inx
+iny
+cpy #{c3}
+bne !-
+//FRAGMENT pbuc1_derefidx_vbum1=_deref_pbuc2
+lda {c2}
+ldy {m1}
+sta {c1},y
+//FRAGMENT vbum1=vbuaa_rol_5
+asl
+asl
+asl
+asl
+asl
+sta {m1}
+//FRAGMENT vbum1=vbuxx_rol_5
+txa
+asl
+asl
+asl
+asl
+asl
+sta {m1}
+//FRAGMENT vbum1=vbuyy_rol_5
+tya
+asl
+asl
+asl
+asl
+asl
+sta {m1}
+//FRAGMENT vbuaa=vbum1_rol_5
+lda {m1}
+asl
+asl
+asl
+asl
+asl
+//FRAGMENT vbuaa=vbuaa_rol_5
+asl
+asl
+asl
+asl
+asl
+//FRAGMENT vbuaa=vbuxx_rol_5
+txa
+asl
+asl
+asl
+asl
+asl
+//FRAGMENT vbuaa=vbuyy_rol_5
+tya
+asl
+asl
+asl
+asl
+asl
+//FRAGMENT vbuxx=vbum1_rol_5
+lda {m1}
+asl
+asl
+asl
+asl
+asl
+tax
+//FRAGMENT vbuxx=vbuaa_rol_5
+asl
+asl
+asl
+asl
+asl
+tax
+//FRAGMENT vbuxx=vbuxx_rol_5
+txa
+asl
+asl
+asl
+asl
+asl
+tax
+//FRAGMENT vbuxx=vbuyy_rol_5
+tya
+asl
+asl
+asl
+asl
+asl
+tax
+//FRAGMENT vbuyy=vbum1_rol_5
+lda {m1}
+asl
+asl
+asl
+asl
+asl
+tay
+//FRAGMENT vbuyy=vbuaa_rol_5
+asl
+asl
+asl
+asl
+asl
+tay
+//FRAGMENT vbuyy=vbuxx_rol_5
+txa
+asl
+asl
+asl
+asl
+asl
+tay
+//FRAGMENT vbuyy=vbuyy_rol_5
+tya
+asl
+asl
+asl
+asl
+asl
+tay
+//FRAGMENT vbum1=vbuaa_rol_1
+asl
+sta {m1}
+//FRAGMENT vbum1=vbuxx_rol_1
+txa
+asl
+sta {m1}
+//FRAGMENT vbum1=vbuyy_rol_1
+tya
+asl
+sta {m1}
+//FRAGMENT vbuaa=vbum1_rol_1
+lda {m1}
+asl
+//FRAGMENT vbuxx=vbum1_rol_1
+lda {m1}
+asl
+tax
+//FRAGMENT vbuyy=vbum1_rol_1
+lda {m1}
+asl
+tay
+//FRAGMENT pbuz1=qbuz2_derefidx_vbuc1
+ldy #{c1}
+lda ({z2}),y
+sta {z1}
+iny
+lda ({z2}),y
+sta {z1}+1
+//FRAGMENT vwuz1=pwuz2_derefidx_vbuc1
+ldy #{c1}
+lda ({z2}),y
+sta {z1}
+iny
+lda ({z2}),y
+sta {z1}+1
+//FRAGMENT _deref_(_deref_qbuz1)=vbuc1
+lda #{c1}
+pha
+ldy #1
+lda ({z1}),y
+sta $ff
+dey
+lda ({z1}),y
+sta $fe
+pla
+sta ($fe),y

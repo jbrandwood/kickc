@@ -2,6 +2,7 @@
 /// C standard library string.h
 ///
 /// Functions to manipulate C strings and arrays.
+/// NULL pointer
   // Commodore 64 PRG executable file
 .file [name="sieve-min.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

@@ -2,6 +2,7 @@
 /// C standard library stdlib.h
 ///
 /// Implementation of functions found int C stdlib.h / stdlib.c
+#include <stddef.h>
 #include <string.h>
 
 /// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.

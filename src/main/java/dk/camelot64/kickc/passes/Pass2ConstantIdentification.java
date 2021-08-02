@@ -18,6 +18,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.VarAssignments;
 
@@ -57,7 +58,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             continue;
          }
 
-         if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
+         if(variableType instanceof SymbolTypePointer && constVal instanceof ConstantInteger && ((ConstantInteger) constVal).getInteger().equals(0L))
+            // NULL pointer assigment is OK
+            ;
+         else if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
             ConstantLiteral constantLiteral = null;
             try {
                constantLiteral = constVal.calculateLiteral(getScope());

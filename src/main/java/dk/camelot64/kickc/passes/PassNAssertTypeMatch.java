@@ -9,8 +9,11 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.AssignmentRValue;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.RValue;
 
 /**
  * Asserts that types match in all assignments and calculations
@@ -52,6 +55,14 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
    private void checkAssignment(StatementAssignment statement) {
       LValue lValue = statement.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
+      // Test NULL pointer assignment
+      if(lValueType instanceof SymbolTypePointer) {
+         final RValue rValue = statement.getrValue2();
+         if(rValue instanceof ConstantInteger && ((ConstantInteger) rValue).getInteger().equals(0L))
+            // A null-pointer assignment is OK!
+            return;
+      }
+
       SymbolType rValueType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(statement));
       if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match

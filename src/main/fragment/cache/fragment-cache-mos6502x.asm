@@ -15485,3 +15485,91 @@ bcc {la1}
 sta $ff
 cpy $ff
 bcc {la1}
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1
+NO_SYNTHESIS
+//FRAGMENT pbuc1_derefidx_vbuz1=(qbuz2_derefidx_vbuc2)_derefidx_vbuz3
+ldx {z1}
+ldy #{c2}
+lda ({z2}),y
+sta $fe
+iny
+lda ({z2}),y
+sta $ff
+ldy {z3}
+lda ($fe),y
+sta {c1},x
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuaa_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuxx_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuyy_then_la1
+NO_SYNTHESIS
+//FRAGMENT qbuz1=qbuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT pbuc1_neq__deref_qbuz1_then_la1
+ldy #0
+lda #<{c1}
+cmp ({z1}),y
+bne {la1}
+iny
+lda #>{c1}
+cmp ({z1}),y
+bne {la1}
+//FRAGMENT pbuz1=_deref_qbuz2
+ldy #0
+lda ({z2}),y
+sta {z1}
+iny
+lda ({z2}),y
+sta {z1}+1
+//FRAGMENT qbuz1=qbuz1_plus_vbuc1
+lda #{c1}
+clc
+adc {z1}
+sta {z1}
+bcc !+
+inc {z1}+1
+!:

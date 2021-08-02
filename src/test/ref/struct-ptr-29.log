@@ -1,621 +1,450 @@
-Fixing pointer array-indexing *((struct Person[2]) persons + (number) 0)
-Fixing pointer array-indexing *((struct Person[2]) persons + (number) 1)
-Rewriting struct pointer member access *((struct Person*) print_person::person).id
-Rewriting struct pointer member access *((struct Person*) print_person::person).name
-Rewriting struct pointer member access *((struct Person*) print_person::person).name
-Warning! Adding boolean cast to non-boolean condition *(*((byte**) print_person::$1) + (byte) print_person::i)
-Culled Empty Block (label) print_person::@4
-Culled Empty Block (label) print_person::@5
-Culled Empty Block (label) print_person::@6
+Fixing constant pointer addition persons+0
+Fixing constant pointer addition persons+1
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (struct Person[2]) persons ← { (struct Person){ (byte)(number) 4, (const string) $0 }, (struct Person){ (byte)(number) 7, (const string) $1 } }
-  to:@1
 
-(void()) main()
-main: scope:[main]  from @2
-  (byte) idx#18 ← phi( @2/(byte) idx#20 )
-  (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_STRUCT_PERSON
-  (struct Person*~) main::$0 ← & *((struct Person[2]) persons + (number~) main::$4)
-  (struct Person*) print_person::person#0 ← (struct Person*~) main::$0
+void main()
+main: scope:[main]  from __start::@1
+  idx#20 = phi( __start::@1/idx#22 )
+  print_person::person#0 = persons+0*SIZEOF_STRUCT_PERSON
   call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) idx#10 ← phi( main/(byte) idx#8 )
-  (byte) idx#0 ← (byte) idx#10
-  (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_PERSON
-  (struct Person*~) main::$2 ← & *((struct Person[2]) persons + (number~) main::$5)
-  (struct Person*) print_person::person#1 ← (struct Person*~) main::$2
+  idx#11 = phi( main/idx#7 )
+  idx#0 = idx#11
+  print_person::person#1 = persons+1*SIZEOF_STRUCT_PERSON
   call print_person 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) idx#11 ← phi( main::@1/(byte) idx#8 )
-  (byte) idx#1 ← (byte) idx#11
+  idx#12 = phi( main::@1/idx#7 )
+  idx#1 = idx#12
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (byte) idx#12 ← phi( main::@2/(byte) idx#1 )
-  (byte) idx#2 ← (byte) idx#12
+  idx#13 = phi( main::@2/idx#1 )
+  idx#2 = idx#13
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) idx#3 ← (number) 0
-  to:@2
 
-(void()) print_person((struct Person*) print_person::person)
+void print_person(struct Person* print_person::person)
 print_person: scope:[print_person]  from main main::@1
-  (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
-  (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
-  (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-  *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))
-  (byte) idx#4 ← ++ (byte) idx#13
-  *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
-  (byte) idx#5 ← ++ (byte) idx#4
-  (byte) print_person::i#0 ← (number) 0
+  idx#14 = phi( main/idx#20, main::@1/idx#0 )
+  print_person::person#2 = phi( main/print_person::person#0, main::@1/print_person::person#1 )
+  print_person::$3 = (byte*)print_person::person#2
+  print_person::$0 = print_person::$3 + OFFSET_STRUCT_PERSON_ID
+  SCREEN[idx#14] = DIGIT[*print_person::$0]
+  idx#3 = ++ idx#14
+  SCREEN[idx#3] = ' '
+  idx#4 = ++ idx#3
+  print_person::i#0 = 0
   to:print_person::@1
 print_person::@1: scope:[print_person]  from print_person print_person::@2
-  (byte) idx#19 ← phi( print_person/(byte) idx#5 print_person::@2/(byte) idx#6 )
-  (byte) print_person::i#2 ← phi( print_person/(byte) print_person::i#0 print_person::@2/(byte) print_person::i#1 )
-  (struct Person*) print_person::person#3 ← phi( print_person/(struct Person*) print_person::person#2 print_person::@2/(struct Person*) print_person::person#4 )
-  (byte**) print_person::$1 ← (byte**)(struct Person*) print_person::person#3 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  (bool~) print_person::$3 ← (number) 0 != *(*((byte**) print_person::$1) + (byte) print_person::i#2)
-  if((bool~) print_person::$3) goto print_person::@2
+  idx#21 = phi( print_person/idx#4, print_person::@2/idx#5 )
+  print_person::i#2 = phi( print_person/print_person::i#0, print_person::@2/print_person::i#1 )
+  print_person::person#3 = phi( print_person/print_person::person#2, print_person::@2/print_person::person#4 )
+  print_person::$4 = (byte**)print_person::person#3
+  print_person::$1 = print_person::$4 + OFFSET_STRUCT_PERSON_NAME
+  print_person::$6 = 0 != (*print_person::$1)[print_person::i#2]
+  if(print_person::$6) goto print_person::@2
   to:print_person::@3
 print_person::@2: scope:[print_person]  from print_person::@1
-  (byte) idx#14 ← phi( print_person::@1/(byte) idx#19 )
-  (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
-  (struct Person*) print_person::person#4 ← phi( print_person::@1/(struct Person*) print_person::person#3 )
-  (byte**) print_person::$2 ← (byte**)(struct Person*) print_person::person#4 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#3)
-  (byte) idx#6 ← ++ (byte) idx#14
-  (byte) print_person::i#1 ← ++ (byte) print_person::i#3
+  idx#15 = phi( print_person::@1/idx#21 )
+  print_person::i#3 = phi( print_person::@1/print_person::i#2 )
+  print_person::person#4 = phi( print_person::@1/print_person::person#3 )
+  print_person::$5 = (byte**)print_person::person#4
+  print_person::$2 = print_person::$5 + OFFSET_STRUCT_PERSON_NAME
+  SCREEN[idx#15] = (*print_person::$2)[print_person::i#3]
+  idx#5 = ++ idx#15
+  print_person::i#1 = ++ print_person::i#3
   to:print_person::@1
 print_person::@3: scope:[print_person]  from print_person::@1
-  (byte) idx#15 ← phi( print_person::@1/(byte) idx#19 )
-  *((const byte*) SCREEN + (byte) idx#15) ← (byte) ' '
-  (byte) idx#7 ← ++ (byte) idx#15
+  idx#16 = phi( print_person::@1/idx#21 )
+  SCREEN[idx#16] = ' '
+  idx#6 = ++ idx#16
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
-  (byte) idx#16 ← phi( print_person::@3/(byte) idx#7 )
-  (byte) idx#8 ← (byte) idx#16
+  idx#17 = phi( print_person::@3/idx#6 )
+  idx#7 = idx#17
   return 
   to:@return
-@2: scope:[]  from @1
-  (byte) idx#20 ← phi( @1/(byte) idx#3 )
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  idx#8 = 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  idx#22 = phi( __start::__init1/idx#8 )
   call main 
-  to:@3
-@3: scope:[]  from @2
-  (byte) idx#17 ← phi( @2/(byte) idx#2 )
-  (byte) idx#9 ← (byte) idx#17
-  to:@end
-@end: scope:[]  from @3
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  idx#18 = phi( __start::@1/idx#2 )
+  idx#9 = idx#18
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  idx#19 = phi( __start::@2/idx#9 )
+  idx#10 = idx#19
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "jesper"
-(const string) $1 = (string) "repsej"
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(const byte[]) DIGIT = (string) "0123456789"
-(const byte) OFFSET_STRUCT_PERSON_ID = (byte) 0
-(const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
-(byte) Person::id
-(byte*) Person::name
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte) SIZEOF_STRUCT_PERSON = (byte) 3
-(byte) idx
-(byte) idx#0
-(byte) idx#1
-(byte) idx#10
-(byte) idx#11
-(byte) idx#12
-(byte) idx#13
-(byte) idx#14
-(byte) idx#15
-(byte) idx#16
-(byte) idx#17
-(byte) idx#18
-(byte) idx#19
-(byte) idx#2
-(byte) idx#20
-(byte) idx#3
-(byte) idx#4
-(byte) idx#5
-(byte) idx#6
-(byte) idx#7
-(byte) idx#8
-(byte) idx#9
-(void()) main()
-(struct Person*~) main::$0
-(struct Person*~) main::$2
-(number~) main::$4
-(number~) main::$5
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(struct Person[2]) persons
-(void()) print_person((struct Person*) print_person::person)
-(byte*) print_person::$0
-(byte**) print_person::$1
-(byte**) print_person::$2
-(bool~) print_person::$3
-(label) print_person::@1
-(label) print_person::@2
-(label) print_person::@3
-(label) print_person::@return
-(byte) print_person::i
-(byte) print_person::i#0
-(byte) print_person::i#1
-(byte) print_person::i#2
-(byte) print_person::i#3
-(struct Person*) print_person::person
-(struct Person*) print_person::person#0
-(struct Person*) print_person::person#1
-(struct Person*) print_person::person#2
-(struct Person*) print_person::person#3
-(struct Person*) print_person::person#4
+constant byte* DIGIT[]  = "0123456789"
+constant byte OFFSET_STRUCT_PERSON_ID = 0
+constant byte OFFSET_STRUCT_PERSON_NAME = 1
+constant byte* const SCREEN = (byte*)$400
+constant byte SIZEOF_STRUCT_PERSON = 3
+void __start()
+byte idx
+byte idx#0
+byte idx#1
+byte idx#10
+byte idx#11
+byte idx#12
+byte idx#13
+byte idx#14
+byte idx#15
+byte idx#16
+byte idx#17
+byte idx#18
+byte idx#19
+byte idx#2
+byte idx#20
+byte idx#21
+byte idx#22
+byte idx#3
+byte idx#4
+byte idx#5
+byte idx#6
+byte idx#7
+byte idx#8
+byte idx#9
+void main()
+constant byte* person_name[7]  = "jesper"
+constant byte* person_name1[7]  = "repsej"
+constant struct Person* persons[2]  = { { id: 4, name: person_name }, { id: 7, name: person_name1 } }
+void print_person(struct Person* print_person::person)
+byte*~ print_person::$0
+byte**~ print_person::$1
+byte**~ print_person::$2
+byte*~ print_person::$3
+byte**~ print_person::$4
+byte**~ print_person::$5
+bool~ print_person::$6
+byte print_person::i
+byte print_person::i#0
+byte print_person::i#1
+byte print_person::i#2
+byte print_person::i#3
+struct Person* print_person::person
+struct Person* print_person::person#0
+struct Person* print_person::person#1
+struct Person* print_person::person#2
+struct Person* print_person::person#3
+struct Person* print_person::person#4
 
-Adding number conversion cast (unumber) 0 in (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_STRUCT_PERSON
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber)(number) 0 * (const byte) SIZEOF_STRUCT_PERSON
-Adding number conversion cast (unumber) 1 in (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_PERSON
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber)(number) 1 * (const byte) SIZEOF_STRUCT_PERSON
-Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) print_person::i#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) print_person::$3 ← (number) 0 != *(*((byte**) print_person::$1) + (byte) print_person::i#2)
+Adding number conversion cast (unumber) 0*SIZEOF_STRUCT_PERSON in print_person::person#0 = persons+0*SIZEOF_STRUCT_PERSON
+Adding number conversion cast (unumber) 0 in print_person::person#0 = persons+(unumber)0*SIZEOF_STRUCT_PERSON
+Adding number conversion cast (unumber) 1*SIZEOF_STRUCT_PERSON in print_person::person#1 = persons+1*SIZEOF_STRUCT_PERSON
+Adding number conversion cast (unumber) 1 in print_person::person#1 = persons+(unumber)1*SIZEOF_STRUCT_PERSON
+Adding number conversion cast (unumber) 0 in print_person::$6 = 0 != (*print_person::$1)[print_person::i#2]
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) idx#3 ← (unumber)(number) 0
-Inlining cast (byte) print_person::i#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 4
-Simplifying constant integer cast 7
+Simplifying constant integer cast (unumber)0*SIZEOF_STRUCT_PERSON
 Simplifying constant integer cast 0
+Simplifying constant integer cast (unumber)1*SIZEOF_STRUCT_PERSON
 Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$4 ← (byte) 0 * (const byte) SIZEOF_STRUCT_PERSON
-Inferred type updated to byte in (unumber~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_PERSON
-Alias (struct Person*) print_person::person#0 = (struct Person*~) main::$0 
-Alias (byte) idx#0 = (byte) idx#10 
-Alias (struct Person*) print_person::person#1 = (struct Person*~) main::$2 
-Alias (byte) idx#1 = (byte) idx#11 (byte) idx#12 (byte) idx#2 
-Alias (struct Person*) print_person::person#3 = (struct Person*) print_person::person#4 
-Alias (byte) print_person::i#2 = (byte) print_person::i#3 
-Alias (byte) idx#14 = (byte) idx#19 (byte) idx#15 
-Alias (byte) idx#16 = (byte) idx#7 (byte) idx#8 
-Alias (byte) idx#20 = (byte) idx#3 
-Alias (byte) idx#17 = (byte) idx#9 
+Alias idx#0 = idx#11 
+Alias idx#1 = idx#12 idx#13 idx#2 
+Alias print_person::person#3 = print_person::person#4 
+Alias print_person::i#2 = print_person::i#3 
+Alias idx#15 = idx#21 idx#16 
+Alias idx#17 = idx#6 idx#7 
+Alias idx#22 = idx#8 
+Alias idx#10 = idx#9 idx#18 idx#19 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#18 (byte) idx#20
-Identical Phi Values (byte) idx#0 (byte) idx#16
-Identical Phi Values (byte) idx#1 (byte) idx#16
-Identical Phi Values (struct Person*) print_person::person#3 (struct Person*) print_person::person#2
-Identical Phi Values (byte) idx#17 (byte) idx#1
+Identical Phi Values idx#20 idx#22
+Identical Phi Values idx#0 idx#17
+Identical Phi Values idx#1 idx#17
+Identical Phi Values print_person::person#3 print_person::person#2
+Identical Phi Values idx#10 idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_person::$3 [28] if((byte) 0!=*(*((byte**) print_person::$1) + (byte) print_person::i#2)) goto print_person::@2
+Simple Condition print_person::$6 [20] if(0!=(*print_person::$1)[print_person::i#2]) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting array member address-of to pointer addition [3] (struct Person*) print_person::person#0 ← (struct Person[2]) persons + (byte~) main::$4
-Rewriting array member address-of to pointer addition [9] (struct Person*) print_person::person#1 ← (struct Person[2]) persons + (byte~) main::$5
-Successful SSA optimization PassNArrayElementAddressOfRewriting
-Constant right-side identified [2] (byte~) main::$4 ← (byte) 0 * (const byte) SIZEOF_STRUCT_PERSON
-Constant right-side identified [8] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_PERSON
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (struct Person) { id: (byte) 4, name: (const string) $0 }
-Identified constant from value list (struct Person) { id: (byte) 7, name: (const string) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Identified constant from value list (struct Person[2]) { { id: (byte) 4, name: (const string) $0 }, { id: (byte) 7, name: (const string) $1 } }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct Person[2]) persons = { { id: 4, name: $0 }, { id: 7, name: $1 } }
-Constant (const byte) main::$4 = 0*SIZEOF_STRUCT_PERSON
-Constant (const byte) main::$5 = 1*SIZEOF_STRUCT_PERSON
-Constant (const byte) idx#20 = 0
-Constant (const byte) print_person::i#0 = 0
+Constant print_person::person#0 = persons+0*SIZEOF_STRUCT_PERSON
+Constant print_person::person#1 = persons+1*SIZEOF_STRUCT_PERSON
+Constant print_person::i#0 = 0
+Constant idx#22 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
-Converting *(pointer+n) to pointer[n] [28] if((byte) 0!=*(*((byte**) print_person::$1) + (byte) print_person::i#2)) goto print_person::@2  -- *((byte**)print_person::person#2 + OFFSET_STRUCT_PERSON_NAME)
-Converting *(pointer+n) to pointer[n] [31] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#2)  -- *((byte**)print_person::person#2 + OFFSET_STRUCT_PERSON_NAME)
+Converting *(pointer+n) to pointer[n] [11] SCREEN[idx#14] = DIGIT[*print_person::$0]  -- print_person::$3[OFFSET_STRUCT_PERSON_ID]
+Converting *(pointer+n) to pointer[n] [20] if(0!=(*print_person::$1)[print_person::i#2]) goto print_person::@2  -- print_person::$4[OFFSET_STRUCT_PERSON_NAME]
+Converting *(pointer+n) to pointer[n] [23] SCREEN[idx#15] = (*print_person::$2)[print_person::i#2]  -- print_person::$5[OFFSET_STRUCT_PERSON_NAME]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_PERSON in 
+Simplifying constant evaluating to zero 0*SIZEOF_STRUCT_PERSON in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero persons in [3] (struct Person*) print_person::person#0 ← (const struct Person[2]) persons + (const byte) main::$4
-Simplifying expression containing zero (byte*)print_person::person#2 in [19] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [20] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
+Simplifying expression containing zero persons in 
+Simplifying expression containing zero print_person::$3 in [10] print_person::$0 = print_person::$3 + OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero print_person::$3 in [11] SCREEN[idx#14] = DIGIT[print_person::$3[OFFSET_STRUCT_PERSON_ID]]
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*) print_person::$0 and assignment [6] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2
-Eliminating unused variable (byte**) print_person::$1 and assignment [12] (byte**) print_person::$1 ← (byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME
-Eliminating unused variable (byte**) print_person::$2 and assignment [14] (byte**) print_person::$2 ← (byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME
-Eliminating unused constant (const byte) main::$4
-Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
+Eliminating unused variable print_person::$0 and assignment [5] print_person::$0 = print_person::$3
+Eliminating unused variable print_person::$1 and assignment [12] print_person::$1 = print_person::$4 + OFFSET_STRUCT_PERSON_NAME
+Eliminating unused variable print_person::$2 and assignment [15] print_person::$2 = print_person::$5 + OFFSET_STRUCT_PERSON_NAME
+Eliminating unused constant OFFSET_STRUCT_PERSON_ID
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [2] (struct Person*) print_person::person#1 ← (const struct Person[2]) persons + (const byte) main::$5
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const struct Person*) print_person::person#0 = persons
-Constant (const struct Person*) print_person::person#1 = persons+main::$5
-Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) print_person::i#0
-Inlining constant with var siblings (const struct Person*) print_person::person#0
-Inlining constant with var siblings (const struct Person*) print_person::person#1
-Inlining constant with var siblings (const byte) idx#20
-Constant inlined main::$5 = (byte) 1*(const byte) SIZEOF_STRUCT_PERSON
-Constant inlined idx#20 = (byte) 0
-Constant inlined print_person::person#0 = (const struct Person[2]) persons
-Constant inlined print_person::i#0 = (byte) 0
-Constant inlined print_person::person#1 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining Noop Cast [4] print_person::$3 = (byte*)print_person::person#2 keeping print_person::person#2
+Inlining Noop Cast [10] print_person::$4 = (byte**)print_person::person#2 keeping print_person::person#2
+Inlining Noop Cast [12] print_person::$5 = (byte**)print_person::person#2 keeping print_person::person#2
+Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings print_person::person#0
+Inlining constant with var siblings print_person::person#1
+Inlining constant with var siblings print_person::i#0
+Inlining constant with var siblings idx#22
+Constant inlined idx#22 = 0
+Constant inlined print_person::person#0 = persons
+Constant inlined print_person::i#0 = 0
+Constant inlined print_person::person#1 = persons+1*SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to print_person:7 print_person:9 
+Calls in [main] to print_person:1 print_person:3 
 
 Created 4 initial phi equivalence classes
-Coalesced [8] idx#21 ← idx#16
-Coalesced [17] idx#22 ← idx#5
-Coalesced [26] print_person::i#4 ← print_person::i#1
-Coalesced [27] idx#23 ← idx#6
+Coalesced [2] idx#23 = idx#17
+Coalesced [11] idx#24 = idx#4
+Coalesced [20] print_person::i#4 = print_person::i#1
+Coalesced [21] idx#25 = idx#5
 Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) @1
-Culled Empty Block (label) @3
-Culled Empty Block (label) main::@2
-Renumbering block @2 to @1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
+Culled Empty Block label main::@2
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
-(void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call print_person 
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call print_person 
+  [2] phi()
+  [3] call print_person 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
-(void()) print_person((struct Person*) print_person::person)
+void print_person(struct Person* print_person::person)
 print_person: scope:[print_person]  from main main::@1
-  [9] (byte) idx#13 ← phi( main/(byte) 0 main::@1/(byte) idx#16 )
-  [9] (struct Person*) print_person::person#2 ← phi( main/(const struct Person[2]) persons main::@1/(const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON )
-  [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2))
-  [11] (byte) idx#4 ← ++ (byte) idx#13
-  [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
-  [13] (byte) idx#5 ← ++ (byte) idx#4
+  [5] idx#14 = phi( main/0, main::@1/idx#17 )
+  [5] print_person::person#2 = phi( main/persons, main::@1/persons+1*SIZEOF_STRUCT_PERSON )
+  [6] SCREEN[idx#14] = DIGIT[*((byte*)print_person::person#2)]
+  [7] idx#3 = ++ idx#14
+  [8] SCREEN[idx#3] = ' '
+  [9] idx#4 = ++ idx#3
   to:print_person::@1
 print_person::@1: scope:[print_person]  from print_person print_person::@2
-  [14] (byte) idx#14 ← phi( print_person/(byte) idx#5 print_person::@2/(byte) idx#6 )
-  [14] (byte) print_person::i#2 ← phi( print_person/(byte) 0 print_person::@2/(byte) print_person::i#1 )
-  [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2
+  [10] idx#15 = phi( print_person/idx#4, print_person::@2/idx#5 )
+  [10] print_person::i#2 = phi( print_person/0, print_person::@2/print_person::i#1 )
+  [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
   to:print_person::@3
 print_person::@3: scope:[print_person]  from print_person::@1
-  [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' '
-  [17] (byte) idx#16 ← ++ (byte) idx#14
+  [12] SCREEN[idx#15] = ' '
+  [13] idx#17 = ++ idx#15
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
-  [18] return 
+  [14] return 
   to:@return
 print_person::@2: scope:[print_person]  from print_person::@1
-  [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)
-  [20] (byte) idx#6 ← ++ (byte) idx#14
-  [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2
+  [15] SCREEN[idx#15] = (((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]
+  [16] idx#5 = ++ idx#15
+  [17] print_person::i#1 = ++ print_person::i#2
   to:print_person::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Person::id
-(byte*) Person::name
-(byte) idx
-(byte) idx#13 3.0
-(byte) idx#14 9.75
-(byte) idx#16 1.0
-(byte) idx#4 3.0
-(byte) idx#5 4.0
-(byte) idx#6 11.0
-(void()) main()
-(void()) print_person((struct Person*) print_person::person)
-(byte) print_person::i
-(byte) print_person::i#1 22.0
-(byte) print_person::i#2 11.0
-(struct Person*) print_person::person
-(struct Person*) print_person::person#2
+byte idx
+byte idx#14 12.0
+byte idx#15 84.0
+byte idx#17 3.25
+byte idx#3 16.5
+byte idx#4 22.0
+byte idx#5 101.0
+void main()
+void print_person(struct Person* print_person::person)
+byte print_person::i
+byte print_person::i#1 202.0
+byte print_person::i#2 101.0
+struct Person* print_person::person
+struct Person* print_person::person#2
 
 Initial phi equivalence classes
 [ print_person::person#2 ]
-[ idx#13 idx#16 ]
+[ idx#14 idx#17 ]
 [ print_person::i#2 print_person::i#1 ]
-[ idx#14 idx#5 idx#6 ]
-Added variable idx#4 to zero page equivalence class [ idx#4 ]
+[ idx#15 idx#4 idx#5 ]
+Added variable idx#3 to live range equivalence class [ idx#3 ]
 Complete equivalence classes
 [ print_person::person#2 ]
-[ idx#13 idx#16 ]
+[ idx#14 idx#17 ]
 [ print_person::i#2 print_person::i#1 ]
-[ idx#14 idx#5 idx#6 ]
-[ idx#4 ]
+[ idx#15 idx#4 idx#5 ]
+[ idx#3 ]
 Allocated zp[2]:2 [ print_person::person#2 ]
-Allocated zp[1]:4 [ idx#13 idx#16 ]
+Allocated zp[1]:4 [ idx#14 idx#17 ]
 Allocated zp[1]:5 [ print_person::i#2 print_person::i#1 ]
-Allocated zp[1]:6 [ idx#14 idx#5 idx#6 ]
-Allocated zp[1]:7 [ idx#4 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Example of a struct containing a pointer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__bbegin)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .const SIZEOF_STRUCT_PERSON = 3
-  .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label idx = 7
-  .label idx_1 = 6
-  .label idx_2 = 4
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
-  // main
-main: {
-    // [5] call print_person 
-    // [9] phi from main to print_person [phi:main->print_person]
-  print_person_from_main:
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z idx_2
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
-    lda #<persons
-    sta.z print_person.person
-    lda #>persons
-    sta.z print_person.person+1
-    jsr print_person
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [7] call print_person 
-    // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-  print_person_from___b1:
-    // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
-    lda #<persons+1*SIZEOF_STRUCT_PERSON
-    sta.z print_person.person
-    lda #>persons+1*SIZEOF_STRUCT_PERSON
-    sta.z print_person.person+1
-    jsr print_person
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // print_person
-// print_person(struct Person* zeropage(2) person)
-print_person: {
-    .label i = 5
-    .label person = 2
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(_deref_pbuz2) 
-    ldx.z idx_2
-    ldy #0
-    lda (person),y
-    tay
-    lda DIGIT,y
-    sta SCREEN,x
-    // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuz1=_inc_vbuz2 
-    ldy.z idx_2
-    iny
-    sty.z idx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #' '
-    ldy.z idx
-    sta SCREEN,y
-    // [13] (byte) idx#5 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuz2 
-    ldy.z idx
-    iny
-    sty.z idx_1
-    // [14] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
-  __b1_from_print_person:
-    // [14] phi (byte) idx#14 = (byte) idx#5 [phi:print_person->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) 0 [phi:print_person->print_person::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // print_person::@1
-  __b1:
-    // [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 -- vbuc1_neq_(pptz1_derefidx_vbuc2)_derefidx_vbuz2_then_la1 
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
-    cmp #0
-    bne __b2
-    jmp __b3
-    // print_person::@3
-  __b3:
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #' '
-    ldy.z idx_1
-    sta SCREEN,y
-    // [17] (byte) idx#16 ← ++ (byte) idx#14 -- vbuz1=_inc_vbuz2 
-    ldy.z idx_1
-    iny
-    sty.z idx_2
-    jmp __breturn
-    // print_person::@return
-  __breturn:
-    // [18] return 
-    rts
-    // print_person::@2
-  __b2:
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuz1=(pptz2_derefidx_vbuc2)_derefidx_vbuz3 
-    ldx.z idx_1
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
-    sta SCREEN,x
-    // [20] (byte) idx#6 ← ++ (byte) idx#14 -- vbuz1=_inc_vbuz1 
-    inc.z idx_1
-    // [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [14] phi from print_person::@2 to print_person::@1 [phi:print_person::@2->print_person::@1]
-  __b1_from___b2:
-    // [14] phi (byte) idx#14 = (byte) idx#6 [phi:print_person::@2->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) print_person::i#1 [phi:print_person::@2->print_person::@1#1] -- register_copy 
-    jmp __b1
-}
-  // File Data
-  DIGIT: .text "0123456789"
-  .byte 0
-  __0: .text "jesper"
-  .byte 0
-  __1: .text "repsej"
-  .byte 0
-  persons: .byte 4
-  .word __0
-  .byte 7
-  .word __1
-
+Allocated zp[1]:6 [ idx#15 idx#4 idx#5 ]
+Allocated zp[1]:7 [ idx#3 ]
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#13 idx#16 ]
-Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#13 idx#16 ]
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:7 [ idx#4 ]
-Statement [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
+Statement [6] SCREEN[idx#14] = DIGIT[*((byte*)print_person::person#2)] [ print_person::person#2 idx#14 ] ( print_person:1 [ print_person::person#2 idx#14 ] { }  print_person:3 [ print_person::person#2 idx#14 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#14 idx#17 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#14 idx#17 ]
+Statement [8] SCREEN[idx#3] = ' ' [ print_person::person#2 idx#3 ] ( print_person:1 [ print_person::person#2 idx#3 ] { }  print_person:3 [ print_person::person#2 idx#3 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:7 [ idx#3 ]
+Potential register analysis [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 missing fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1  allocation: zp[1]:5 [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+Potential register analysis [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 missing fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuaa_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuaa_then_la1  allocation: reg byte a [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+Potential register analysis [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 missing fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuxx_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuxx_then_la1  allocation: reg byte x [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+Potential register analysis [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 missing fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuyy_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuyy_then_la1  allocation: reg byte y [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+MISSING FRAGMENTS
+  Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+  Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuaa_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuaa_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuaa_then_la1 
+  Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuxx_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuxx_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuxx_then_la1 
+  Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuyy_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuyy_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuyy_then_la1 
+Statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#15 ] ( print_person:1 [ print_person::person#2 print_person::i#2 idx#15 ] { }  print_person:3 [ print_person::person#2 print_person::i#2 idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ print_person::i#2 print_person::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:5 [ print_person::i#2 print_person::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ print_person::i#2 print_person::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:6 [ idx#14 idx#5 idx#6 ]
-Removing always clobbered register reg byte y as potential for zp[1]:6 [ idx#14 idx#5 idx#6 ]
-Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
-Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
-Statement [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
-Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ idx#15 idx#4 idx#5 ]
+Removing always clobbered register reg byte x as potential for zp[1]:6 [ idx#15 idx#4 idx#5 ]
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ idx#15 idx#4 idx#5 ]
+Statement [12] SCREEN[idx#15] = ' ' [ idx#15 ] ( print_person:1 [ idx#15 ] { }  print_person:3 [ idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte y 
+Statement [15] SCREEN[idx#15] = (((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2] [ print_person::person#2 print_person::i#2 idx#15 ] ( print_person:1 [ print_person::person#2 print_person::i#2 idx#15 ] { }  print_person:3 [ print_person::person#2 print_person::i#2 idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] SCREEN[idx#14] = DIGIT[*((byte*)print_person::person#2)] [ print_person::person#2 idx#14 ] ( print_person:1 [ print_person::person#2 idx#14 ] { }  print_person:3 [ print_person::person#2 idx#14 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte y 
+Statement [8] SCREEN[idx#3] = ' ' [ print_person::person#2 idx#3 ] ( print_person:1 [ print_person::person#2 idx#3 ] { }  print_person:3 [ print_person::person#2 idx#3 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a 
+Potential register analysis [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 missing fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1  allocation: zp[1]:5 [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+MISSING FRAGMENTS
+  Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+Statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#15 ] ( print_person:1 [ print_person::person#2 print_person::i#2 idx#15 ] { }  print_person:3 [ print_person::person#2 print_person::i#2 idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [12] SCREEN[idx#15] = ' ' [ idx#15 ] ( print_person:1 [ idx#15 ] { }  print_person:3 [ idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte y 
+Statement [15] SCREEN[idx#15] = (((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2] [ print_person::person#2 print_person::i#2 idx#15 ] ( print_person:1 [ print_person::person#2 print_person::i#2 idx#15 ] { }  print_person:3 [ print_person::person#2 print_person::i#2 idx#15 ] { { idx#14 = idx#17 } }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[2]:2 [ print_person::person#2 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ idx#13 idx#16 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[1]:5 [ print_person::i#2 print_person::i#1 ] : zp[1]:5 , reg byte x , 
-Potential registers zp[1]:6 [ idx#14 idx#5 idx#6 ] : zp[1]:6 , reg byte x , 
-Potential registers zp[1]:7 [ idx#4 ] : zp[1]:7 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ idx#14 idx#17 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[1]:5 [ print_person::i#2 print_person::i#1 ] : zp[1]:5 , 
+Potential registers zp[1]:6 [ idx#15 idx#4 idx#5 ] : zp[1]:6 , 
+Potential registers zp[1]:7 [ idx#3 ] : zp[1]:7 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print_person] 33: zp[1]:5 [ print_person::i#2 print_person::i#1 ] 0: zp[2]:2 [ print_person::person#2 ] 
-Uplift Scope [] 24.75: zp[1]:6 [ idx#14 idx#5 idx#6 ] 4: zp[1]:4 [ idx#13 idx#16 ] 3: zp[1]:7 [ idx#4 ] 
+Uplift Scope [print_person] 303: zp[1]:5 [ print_person::i#2 print_person::i#1 ] 0: zp[2]:2 [ print_person::person#2 ] 
+Uplift Scope [] 207: zp[1]:6 [ idx#15 idx#4 idx#5 ] 16.5: zp[1]:7 [ idx#3 ] 15.25: zp[1]:4 [ idx#14 idx#17 ] 
 Uplift Scope [Person] 
 Uplift Scope [main] 
 
-Uplifting [print_person] best 1091 combination zp[1]:5 [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
-Uplifting [] best 1001 combination reg byte x [ idx#14 idx#5 idx#6 ] reg byte x [ idx#13 idx#16 ] reg byte x [ idx#4 ] 
-Uplifting [Person] best 1001 combination 
-Uplifting [main] best 1001 combination 
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [print_person] best 739 combination zp[1]:5 [ print_person::i#2 print_person::i#1 ] zp[2]:2 [ print_person::person#2 ] 
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [] best 718 combination zp[1]:6 [ idx#15 idx#4 idx#5 ] reg byte x [ idx#3 ] reg byte x [ idx#14 idx#17 ] 
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [Person] best 718 combination 
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [main] best 718 combination 
 Attempting to uplift remaining variables inzp[1]:5 [ print_person::i#2 print_person::i#1 ]
-Uplifting [print_person] best 1001 combination zp[1]:5 [ print_person::i#2 print_person::i#1 ] 
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [print_person] best 718 combination zp[1]:5 [ print_person::i#2 print_person::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:6 [ idx#15 idx#4 idx#5 ]
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
+Uplifting [] best 718 combination zp[1]:6 [ idx#15 idx#4 idx#5 ] 
 Allocated (was zp[1]:5) zp[1]:4 [ print_person::i#2 print_person::i#1 ]
+Allocated (was zp[1]:6) zp[1]:5 [ idx#15 idx#4 idx#5 ]
+Warning! Unknown fragment for statement [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 
+/Users/jespergravgaard/c64/kickc/src/test/kc/struct-ptr-29.c:25:5:
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Example of a struct containing a pointer
   // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__bbegin)
-.pc = $80d "Program"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-29.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
   // Global Constants & labels
-  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 3
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  .label SCREEN = $400
+  .label idx = 5
+.segment Code
   // main
 main: {
-    // [5] call print_person 
-    // [9] phi from main to print_person [phi:main->print_person]
+    // [1] call print_person 
+    // [5] phi from main to print_person [phi:main->print_person]
   print_person_from_main:
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
+    // [5] phi idx#14 = 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
+    // [5] phi print_person::person#2 = persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
     sta.z print_person.person+1
     jsr print_person
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call print_person 
-    // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
+    // [3] call print_person 
+    // [5] phi from main::@1 to print_person [phi:main::@1->print_person]
   print_person_from___b1:
-    // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
+    // [5] phi idx#14 = idx#17 [phi:main::@1->print_person#0] -- register_copy 
+    // [5] phi print_person::person#2 = persons+1*SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
@@ -624,63 +453,58 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // print_person
-// print_person(struct Person* zeropage(2) person)
+// print_person(struct Person* zp(2) person)
 print_person: {
     .label i = 4
     .label person = 2
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
+    // [6] SCREEN[idx#14] = DIGIT[*((byte*)print_person::person#2)] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
     ldy #0
     lda (person),y
     tay
     lda DIGIT,y
     sta SCREEN,x
-    // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
+    // [7] idx#3 = ++ idx#14 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] SCREEN[idx#3] = ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
-    // [13] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
+    // [9] idx#4 = ++ idx#3 -- vbuz1=_inc_vbuxx 
     inx
-    // [14] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
+    stx.z idx
+    // [10] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
   __b1_from_print_person:
-    // [14] phi (byte) idx#14 = (byte) idx#5 [phi:print_person->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) 0 [phi:print_person->print_person::@1#1] -- vbuz1=vbuc1 
+    // [10] phi idx#15 = idx#4 [phi:print_person->print_person::@1#0] -- register_copy 
+    // [10] phi print_person::i#2 = 0 [phi:print_person->print_person::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // print_person::@1
   __b1:
-    // [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 -- vbuc1_neq_(pptz1_derefidx_vbuc2)_derefidx_vbuz2_then_la1 
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
-    cmp #0
-    bne __b2
+    // [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+    .assert "Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 ", 0, 1
     jmp __b3
     // print_person::@3
   __b3:
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] SCREEN[idx#15] = ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
-    sta SCREEN,x
-    // [17] (byte) idx#16 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
+    ldy.z idx
+    sta SCREEN,y
+    // [13] idx#17 = ++ idx#15 -- vbuxx=_inc_vbuz1 
+    ldx.z idx
     inx
     jmp __breturn
     // print_person::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
     // print_person::@2
   __b2:
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
+    // [15] SCREEN[idx#15] = (((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2] -- pbuc1_derefidx_vbuz1=(qbuz2_derefidx_vbuc2)_derefidx_vbuz3 
+    ldx.z idx
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
     sta.z $fe
@@ -690,141 +514,137 @@ print_person: {
     ldy.z i
     lda ($fe),y
     sta SCREEN,x
-    // [20] (byte) idx#6 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
-    inx
-    // [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2 -- vbuz1=_inc_vbuz1 
+    // [16] idx#5 = ++ idx#15 -- vbuz1=_inc_vbuz1 
+    inc.z idx
+    // [17] print_person::i#1 = ++ print_person::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [14] phi from print_person::@2 to print_person::@1 [phi:print_person::@2->print_person::@1]
+    // [10] phi from print_person::@2 to print_person::@1 [phi:print_person::@2->print_person::@1]
   __b1_from___b2:
-    // [14] phi (byte) idx#14 = (byte) idx#6 [phi:print_person::@2->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) print_person::i#1 [phi:print_person::@2->print_person::@1#1] -- register_copy 
+    // [10] phi idx#15 = idx#5 [phi:print_person::@2->print_person::@1#0] -- register_copy 
+    // [10] phi print_person::i#2 = print_person::i#1 [phi:print_person::@2->print_person::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
+.segment Data
+  persons: .byte 4
+  .word person_name
+  .byte 7
+  .word person_name1
   DIGIT: .text "0123456789"
   .byte 0
-  __0: .text "jesper"
+  person_name: .text "jesper"
   .byte 0
-  __1: .text "repsej"
+  person_name1: .text "repsej"
   .byte 0
-  persons: .byte 4
-  .word __0
-  .byte 7
-  .word __1
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label __bbegin with __b1
-Removing instruction __bbegin:
-Removing instruction __b1_from___bbegin:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction print_person_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bend:
 Removing instruction print_person_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b1_from_print_person:
 Removing instruction __b3:
 Removing instruction __breturn:
+Removing instruction __b2:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Updating BasicUpstart to call main directly
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
+Removing unreachable instruction ldx.z idx
+Removing unreachable instruction ldy #OFFSET_STRUCT_PERSON_NAME
+Removing unreachable instruction lda (person),y
+Removing unreachable instruction sta.z $fe
+Removing unreachable instruction iny
+Removing unreachable instruction lda (person),y
+Removing unreachable instruction sta.z $ff
+Removing unreachable instruction ldy.z i
+Removing unreachable instruction lda ($fe),y
+Removing unreachable instruction sta SCREEN,x
+Removing unreachable instruction inc.z idx
+Removing unreachable instruction inc.z i
+Removing unreachable instruction jmp __b1
+Succesful ASM optimization Pass5UnreachableCodeElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction ldx.z idx
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-(const string) $0 = (string) "jesper"
-(const string) $1 = (string) "repsej"
-(label) @1
-(label) @begin
-(label) @end
-(const byte[]) DIGIT = (string) "0123456789"
-(const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
-(byte) Person::id
-(byte*) Person::name
-(const byte*) SCREEN = (byte*) 1024
-(const byte) SIZEOF_STRUCT_PERSON = (byte) 3
-(byte) idx
-(byte) idx#13 reg byte x 3.0
-(byte) idx#14 reg byte x 9.75
-(byte) idx#16 reg byte x 1.0
-(byte) idx#4 reg byte x 3.0
-(byte) idx#5 reg byte x 4.0
-(byte) idx#6 reg byte x 11.0
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const struct Person[2]) persons = { { id: (byte) 4, name: (const string) $0 }, { id: (byte) 7, name: (const string) $1 } }
-(void()) print_person((struct Person*) print_person::person)
-(label) print_person::@1
-(label) print_person::@2
-(label) print_person::@3
-(label) print_person::@return
-(byte) print_person::i
-(byte) print_person::i#1 i zp[1]:4 22.0
-(byte) print_person::i#2 i zp[1]:4 11.0
-(struct Person*) print_person::person
-(struct Person*) print_person::person#2 person zp[2]:2
+constant byte* DIGIT[]  = "0123456789"
+constant byte OFFSET_STRUCT_PERSON_NAME = 1
+constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_STRUCT_PERSON = 3
+byte idx
+byte idx#14 reg byte x 12.0
+byte idx#15 idx zp[1]:5 84.0
+byte idx#17 reg byte x 3.25
+byte idx#3 reg byte x 16.5
+byte idx#4 idx zp[1]:5 22.0
+byte idx#5 idx zp[1]:5 101.0
+void main()
+constant byte* person_name[7]  = "jesper"
+constant byte* person_name1[7]  = "repsej"
+constant struct Person* persons[2]  = { { id: 4, name: person_name }, { id: 7, name: person_name1 } }
+void print_person(struct Person* print_person::person)
+byte print_person::i
+byte print_person::i#1 i zp[1]:4 202.0
+byte print_person::i#2 i zp[1]:4 101.0
+struct Person* print_person::person
+struct Person* print_person::person#2 person zp[2]:2
 
 zp[2]:2 [ print_person::person#2 ]
-reg byte x [ idx#13 idx#16 ]
+reg byte x [ idx#14 idx#17 ]
 zp[1]:4 [ print_person::i#2 print_person::i#1 ]
-reg byte x [ idx#14 idx#5 idx#6 ]
-reg byte x [ idx#4 ]
+zp[1]:5 [ idx#15 idx#4 idx#5 ]
+reg byte x [ idx#3 ]
 
 
 FINAL ASSEMBLER
-Score: 920
+Score: 141
 
   // File Comments
 // Example of a struct containing a pointer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-29.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
-  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 3
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  .label SCREEN = $400
+  .label idx = 5
+.segment Code
   // main
 main: {
     // print_person(&persons[0])
-    // [5] call print_person 
-    // [9] phi from main to print_person [phi:main->print_person]
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
+    // [1] call print_person 
+    // [5] phi from main to print_person [phi:main->print_person]
+    // [5] phi idx#14 = 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
+    // [5] phi print_person::person#2 = persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
     sta.z print_person.person+1
     jsr print_person
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print_person(&persons[1])
-    // [7] call print_person 
-    // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-    // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
+    // [3] call print_person 
+    // [5] phi from main::@1 to print_person [phi:main::@1->print_person]
+    // [5] phi idx#14 = idx#17 [phi:main::@1->print_person#0] -- register_copy 
+    // [5] phi print_person::person#2 = persons+1*SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
@@ -832,95 +652,75 @@ main: {
     jsr print_person
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // print_person
-// print_person(struct Person* zeropage(2) person)
+// print_person(struct Person* zp(2) person)
 print_person: {
     .label i = 4
     .label person = 2
     // SCREEN[idx++] = DIGIT[person->id]
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
+    // [6] SCREEN[idx#14] = DIGIT[*((byte*)print_person::person#2)] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
     ldy #0
     lda (person),y
     tay
     lda DIGIT,y
     sta SCREEN,x
     // SCREEN[idx++] = DIGIT[person->id];
-    // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
+    // [7] idx#3 = ++ idx#14 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = ' '
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] SCREEN[idx#3] = ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
-    // [13] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
+    // [9] idx#4 = ++ idx#3 -- vbuz1=_inc_vbuxx 
     inx
-    // [14] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
-    // [14] phi (byte) idx#14 = (byte) idx#5 [phi:print_person->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) 0 [phi:print_person->print_person::@1#1] -- vbuz1=vbuc1 
+    stx.z idx
+    // [10] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
+    // [10] phi idx#15 = idx#4 [phi:print_person->print_person::@1#0] -- register_copy 
+    // [10] phi print_person::i#2 = 0 [phi:print_person->print_person::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // print_person::@1
-  __b1:
     // for(byte i=0; person->name[i]; i++)
-    // [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 -- vbuc1_neq_(pptz1_derefidx_vbuc2)_derefidx_vbuz2_then_la1 
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
-    cmp #0
-    bne __b2
+    // [11] if(0!=(((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2]) goto print_person::@2
+    .assert "Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 ", 0, 1
     // print_person::@3
     // SCREEN[idx++] = ' '
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] SCREEN[idx#15] = ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
-    sta SCREEN,x
+    ldy.z idx
+    sta SCREEN,y
     // SCREEN[idx++] = ' ';
-    // [17] (byte) idx#16 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
+    // [13] idx#17 = ++ idx#15 -- vbuxx=_inc_vbuz1 
     inx
     // print_person::@return
     // }
-    // [18] return 
+    // [14] return 
     rts
     // print_person::@2
-  __b2:
     // SCREEN[idx++] = person->name[i]
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
-    sta SCREEN,x
+    // [15] SCREEN[idx#15] = (((byte**)print_person::person#2)[OFFSET_STRUCT_PERSON_NAME])[print_person::i#2] -- pbuc1_derefidx_vbuz1=(qbuz2_derefidx_vbuc2)_derefidx_vbuz3 
     // SCREEN[idx++] = person->name[i];
-    // [20] (byte) idx#6 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
-    inx
+    // [16] idx#5 = ++ idx#15 -- vbuz1=_inc_vbuz1 
     // for(byte i=0; person->name[i]; i++)
-    // [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [14] phi from print_person::@2 to print_person::@1 [phi:print_person::@2->print_person::@1]
-    // [14] phi (byte) idx#14 = (byte) idx#6 [phi:print_person::@2->print_person::@1#0] -- register_copy 
-    // [14] phi (byte) print_person::i#2 = (byte) print_person::i#1 [phi:print_person::@2->print_person::@1#1] -- register_copy 
-    jmp __b1
+    // [17] print_person::i#1 = ++ print_person::i#2 -- vbuz1=_inc_vbuz1 
+    // [10] phi from print_person::@2 to print_person::@1 [phi:print_person::@2->print_person::@1]
+    // [10] phi idx#15 = idx#5 [phi:print_person::@2->print_person::@1#0] -- register_copy 
+    // [10] phi print_person::i#2 = print_person::i#1 [phi:print_person::@2->print_person::@1#1] -- register_copy 
 }
   // File Data
+.segment Data
+  persons: .byte 4
+  .word person_name
+  .byte 7
+  .word person_name1
   DIGIT: .text "0123456789"
   .byte 0
-  __0: .text "jesper"
+  person_name: .text "jesper"
   .byte 0
-  __1: .text "repsej"
+  person_name1: .text "repsej"
   .byte 0
-  persons: .byte 4
-  .word __0
-  .byte 7
-  .word __1
 

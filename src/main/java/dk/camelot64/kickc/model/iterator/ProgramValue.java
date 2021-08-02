@@ -497,6 +497,11 @@ public interface ProgramValue {
       public void set(Value value) {
          arrayList.getElements().set(idx, (ConstantValue) value);
       }
+
+      public ConstantArrayList getArrayList() {
+         return arrayList;
+      }
+
    }
 
    /** Member of a constant struct value. */

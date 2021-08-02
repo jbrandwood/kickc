@@ -1,0 +1,483 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  main::msg#0 = msgs
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  main::i#5 = phi( main/main::i#0, main::@5/main::i#6 )
+  main::msg#2 = phi( main/main::msg#0, main::@5/main::msg#1 )
+  main::$0 = (byte*)0 != *main::msg#2
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#4 = phi( main::@1/main::i#5 )
+  main::msg#3 = phi( main::@1/main::msg#2 )
+  main::c#0 = *main::msg#3
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  main::msg#5 = phi( main::@2/main::msg#3, main::@4/main::msg#6 )
+  main::i#3 = phi( main::@2/main::i#4, main::@4/main::i#1 )
+  main::c#2 = phi( main::@2/main::c#0, main::@4/main::c#1 )
+  main::$1 = 0 != *main::c#2
+  if(main::$1) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3
+  main::msg#6 = phi( main::@3/main::msg#5 )
+  main::i#2 = phi( main::@3/main::i#3 )
+  main::c#3 = phi( main::@3/main::c#2 )
+  SCREEN[main::i#2] = *main::c#3
+  main::i#1 = ++ main::i#2
+  main::c#1 = ++ main::c#3
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  main::i#6 = phi( main::@3/main::i#3 )
+  main::msg#4 = phi( main::@3/main::msg#5 )
+  main::msg#1 = main::msg#4 + SIZEOF_POINTER
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* $0[6]  = "hello"
+constant byte* $1[6]  = "cruel"
+constant byte* $2[6]  = "world"
+constant void* const NUL = (void*)0
+constant byte* const SCREEN = (byte*)$400
+constant byte SIZEOF_POINTER = 2
+void __start()
+void main()
+bool~ main::$0
+bool~ main::$1
+byte* main::c
+byte* main::c#0
+byte* main::c#1
+byte* main::c#2
+byte* main::c#3
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte main::i#6
+byte** main::msg
+byte** main::msg#0
+byte** main::msg#1
+byte** main::msg#2
+byte** main::msg#3
+byte** main::msg#4
+byte** main::msg#5
+byte** main::msg#6
+constant byte** msgs[]  = { $0, $1, $2, NUL }
+
+Adding number conversion cast (unumber) 0 in main::$1 = 0 != *main::c#2
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (void*) 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::msg#2 = main::msg#3 
+Alias main::i#4 = main::i#5 
+Alias main::c#2 = main::c#3 
+Alias main::i#2 = main::i#3 main::i#6 
+Alias main::msg#4 = main::msg#6 main::msg#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::msg#4 main::msg#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [4] if((byte*)0!=*main::msg#2) goto main::@2
+Simple Condition main::$1 [8] if(0!=*main::c#2) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Constant main::msg#0 = msgs
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Inlining constant with var siblings main::msg#0
+Constant inlined main::i#0 = 0
+Constant inlined main::msg#0 = msgs
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 4 initial phi equivalence classes
+Coalesced [5] main::c#4 = main::c#0
+Coalesced [6] main::i#8 = main::i#4
+Coalesced [10] main::msg#7 = main::msg#1
+Coalesced (already) [11] main::i#7 = main::i#2
+Coalesced [15] main::c#5 = main::c#1
+Coalesced [16] main::i#9 = main::i#1
+Coalesced down to 3 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [1] main::i#4 = phi( main/0, main::@5/main::i#2 )
+  [1] main::msg#2 = phi( main/msgs, main::@5/main::msg#1 )
+  [2] if((byte*)0!=*main::msg#2) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::c#0 = *main::msg#2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [5] main::i#2 = phi( main::@2/main::i#4, main::@4/main::i#1 )
+  [5] main::c#2 = phi( main::@2/main::c#0, main::@4/main::c#1 )
+  [6] if(0!=*main::c#2) goto main::@4
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER
+  to:main::@1
+main::@4: scope:[main]  from main::@3
+  [8] SCREEN[main::i#2] = *main::c#2
+  [9] main::i#1 = ++ main::i#2
+  [10] main::c#1 = ++ main::c#2
+  to:main::@3
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte* main::c
+byte* main::c#0 22.0
+byte* main::c#1 202.0
+byte* main::c#2 103.75
+byte main::i
+byte main::i#1 101.0
+byte main::i#2 81.25
+byte main::i#4 7.333333333333333
+byte** main::msg
+byte** main::msg#1 22.0
+byte** main::msg#2 5.5
+
+Initial phi equivalence classes
+[ main::msg#2 main::msg#1 ]
+[ main::i#4 main::i#2 main::i#1 ]
+[ main::c#2 main::c#0 main::c#1 ]
+Complete equivalence classes
+[ main::msg#2 main::msg#1 ]
+[ main::i#4 main::i#2 main::i#1 ]
+[ main::c#2 main::c#0 main::c#1 ]
+Allocated zp[2]:2 [ main::msg#2 main::msg#1 ]
+Allocated zp[1]:4 [ main::i#4 main::i#2 main::i#1 ]
+Allocated zp[2]:5 [ main::c#2 main::c#0 main::c#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] if((byte*)0!=*main::msg#2) goto main::@2 [ main::msg#2 main::i#4 ] (  [ main::msg#2 main::i#4 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i#4 main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::i#4 main::i#2 main::i#1 ]
+Statement [4] main::c#0 = *main::msg#2 [ main::msg#2 main::i#4 main::c#0 ] (  [ main::msg#2 main::i#4 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] if(0!=*main::c#2) goto main::@4 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER [ main::msg#1 main::i#2 ] (  [ main::msg#1 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [8] SCREEN[main::i#2] = *main::c#2 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] if((byte*)0!=*main::msg#2) goto main::@2 [ main::msg#2 main::i#4 ] (  [ main::msg#2 main::i#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] main::c#0 = *main::msg#2 [ main::msg#2 main::i#4 main::c#0 ] (  [ main::msg#2 main::i#4 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] if(0!=*main::c#2) goto main::@4 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER [ main::msg#1 main::i#2 ] (  [ main::msg#1 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [8] SCREEN[main::i#2] = *main::c#2 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ main::i#4 main::i#2 main::i#1 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] : zp[2]:5 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 327.75: zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] 189.58: zp[1]:4 [ main::i#4 main::i#2 main::i#1 ] 27.5: zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 5641 combination zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] reg byte x [ main::i#4 main::i#2 main::i#1 ] zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplifting [] best 5641 combination 
+Allocated (was zp[2]:5) zp[2]:4 [ main::c#2 main::c#0 main::c#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests literal string array
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="literal-string-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  .label SCREEN = $400
+  .label NUL = 0
+.segment Code
+  // main
+main: {
+    .label c = 4
+    .label msg = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#4 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [1] phi main::msg#2 = msgs [phi:main->main::@1#1] -- qbuz1=qbuc1 
+    lda #<msgs
+    sta.z msg
+    lda #>msgs
+    sta.z msg+1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte*)0!=*main::msg#2) goto main::@2 -- pbuc1_neq__deref_qbuz1_then_la1 
+    ldy #0
+    lda #<0
+    cmp (msg),y
+    bne __b2
+    iny
+    lda #>0
+    cmp (msg),y
+    bne __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::c#0 = *main::msg#2 -- pbuz1=_deref_qbuz2 
+    ldy #0
+    lda (msg),y
+    sta.z c
+    iny
+    lda (msg),y
+    sta.z c+1
+    // [5] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
+  __b3_from___b2:
+  __b3_from___b4:
+    // [5] phi main::i#2 = main::i#4 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
+    // [5] phi main::c#2 = main::c#0 [phi:main::@2/main::@4->main::@3#1] -- register_copy 
+    jmp __b3
+    // main::@3
+  __b3:
+    // [6] if(0!=*main::c#2) goto main::@4 -- 0_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (c),y
+    cmp #0
+    bne __b4
+    jmp __b5
+    // main::@5
+  __b5:
+    // [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER -- qbuz1=qbuz1_plus_vbuc1 
+    lda #SIZEOF_POINTER
+    clc
+    adc.z msg
+    sta.z msg
+    bcc !+
+    inc.z msg+1
+  !:
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  __b1_from___b5:
+    // [1] phi main::i#4 = main::i#2 [phi:main::@5->main::@1#0] -- register_copy 
+    // [1] phi main::msg#2 = main::msg#1 [phi:main::@5->main::@1#1] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // [8] SCREEN[main::i#2] = *main::c#2 -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    ldy #0
+    lda (c),y
+    sta SCREEN,x
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [10] main::c#1 = ++ main::c#2 -- pbuz1=_inc_pbuz1 
+    inc.z c
+    bne !+
+    inc.z c+1
+  !:
+    jmp __b3_from___b4
+}
+  // File Data
+.segment Data
+  // Works
+  // char*[] msgs = { (char*)"hello", (char*)"cruel", (char*)"world", (char*)NUL };
+  // Not working
+  msgs: .word __0, __1, __2, NUL
+  __0: .text "hello"
+  .byte 0
+  __1: .text "cruel"
+  .byte 0
+  __2: .text "world"
+  .byte 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction lda #<0 with TYA
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __b3_from___b4 with __b3
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte* $0[6]  = "hello"
+constant byte* $1[6]  = "cruel"
+constant byte* $2[6]  = "world"
+constant void* const NUL = (void*) 0
+constant byte* const SCREEN = (byte*) 1024
+constant byte SIZEOF_POINTER = 2
+void main()
+byte* main::c
+byte* main::c#0 c zp[2]:4 22.0
+byte* main::c#1 c zp[2]:4 202.0
+byte* main::c#2 c zp[2]:4 103.75
+byte main::i
+byte main::i#1 reg byte x 101.0
+byte main::i#2 reg byte x 81.25
+byte main::i#4 reg byte x 7.333333333333333
+byte** main::msg
+byte** main::msg#1 msg zp[2]:2 22.0
+byte** main::msg#2 msg zp[2]:2 5.5
+constant byte** msgs[]  = { $0, $1, $2, NUL }
+
+zp[2]:2 [ main::msg#2 main::msg#1 ]
+reg byte x [ main::i#4 main::i#2 main::i#1 ]
+zp[2]:4 [ main::c#2 main::c#0 main::c#1 ]
+
+
+FINAL ASSEMBLER
+Score: 4961
+
+  // File Comments
+// Tests literal string array
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="literal-string-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  .label SCREEN = $400
+  .label NUL = 0
+.segment Code
+  // main
+main: {
+    .label c = 4
+    .label msg = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#4 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [1] phi main::msg#2 = msgs [phi:main->main::@1#1] -- qbuz1=qbuc1 
+    lda #<msgs
+    sta.z msg
+    lda #>msgs
+    sta.z msg+1
+    // main::@1
+  __b1:
+    // while(*msg)
+    // [2] if((byte*)0!=*main::msg#2) goto main::@2 -- pbuc1_neq__deref_qbuz1_then_la1 
+    ldy #0
+    tya
+    cmp (msg),y
+    bne __b2
+    iny
+    cmp (msg),y
+    bne __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // char* c = *msg
+    // [4] main::c#0 = *main::msg#2 -- pbuz1=_deref_qbuz2 
+    ldy #0
+    lda (msg),y
+    sta.z c
+    iny
+    lda (msg),y
+    sta.z c+1
+    // [5] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
+    // [5] phi main::i#2 = main::i#4 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
+    // [5] phi main::c#2 = main::c#0 [phi:main::@2/main::@4->main::@3#1] -- register_copy 
+    // main::@3
+  __b3:
+    // while(*c)
+    // [6] if(0!=*main::c#2) goto main::@4 -- 0_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (c),y
+    cmp #0
+    bne __b4
+    // main::@5
+    // msg++;
+    // [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER -- qbuz1=qbuz1_plus_vbuc1 
+    lda #SIZEOF_POINTER
+    clc
+    adc.z msg
+    sta.z msg
+    bcc !+
+    inc.z msg+1
+  !:
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi main::i#4 = main::i#2 [phi:main::@5->main::@1#0] -- register_copy 
+    // [1] phi main::msg#2 = main::msg#1 [phi:main::@5->main::@1#1] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // SCREEN[i++] = *c++
+    // [8] SCREEN[main::i#2] = *main::c#2 -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    ldy #0
+    lda (c),y
+    sta SCREEN,x
+    // SCREEN[i++] = *c++;
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [10] main::c#1 = ++ main::c#2 -- pbuz1=_inc_pbuz1 
+    inc.z c
+    bne !+
+    inc.z c+1
+  !:
+    jmp __b3
+}
+  // File Data
+.segment Data
+  // Works
+  // char*[] msgs = { (char*)"hello", (char*)"cruel", (char*)"world", (char*)NUL };
+  // Not working
+  msgs: .word __0, __1, __2, NUL
+  __0: .text "hello"
+  .byte 0
+  __1: .text "cruel"
+  .byte 0
+  __2: .text "world"
+  .byte 0
+

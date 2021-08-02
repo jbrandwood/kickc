@@ -2049,11 +2049,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("struct-ptr-30.c");
    }
 
-   // TODO: Fix problem with structs containing pointer elements
-   //@Test
-   //public void testStructPtr29() throws IOException {
-   //   compileAndCompare("struct-ptr-29.c");
-   //}
+   @Test
+   public void testStructPtr29() throws IOException {
+      compileAndCompare("struct-ptr-29.c");
+   }
 
    @Test
    public void testStructPtr28() throws IOException {
@@ -3072,13 +3071,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("pointer-cast.c");
    }
 
-   // TODO: Fix literal string array initialization. https://gitlab.com/camelot/kickc/issues/297
-   /*
    @Test
    public void testLiteralStringArray() throws IOException {
       compileAndCompare("literal-string-array.c");
    }
-    */
 
    @Test
    public void testLiteralWordPointer0() throws IOException {

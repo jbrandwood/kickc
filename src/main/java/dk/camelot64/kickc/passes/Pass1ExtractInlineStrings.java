@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallPrepare;
@@ -10,10 +11,7 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantString;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
 
    @Override
    public boolean step() {
-      ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+      ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          String nameHint = null;
          if(currentStmt instanceof StatementCall) {
             StatementCall call = (StatementCall) currentStmt;
@@ -55,11 +53,36 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
                }
             }
          }
-         Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
          Value value = programValue.get();
-         if(value instanceof ConstantString) {
+         if(value instanceof ConstantString && currentStmt!=null) {
+            // String in statement expression
+            Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
             Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
             programValue.set(strConst.getRef());
+         } else if(value instanceof ConstantString && programValue instanceof ProgramValue.ProgramValueConstantStructMember) {
+            // Struct member initialization
+            final ProgramValue.ProgramValueConstantStructMember constantStructMember = (ProgramValue.ProgramValueConstantStructMember) programValue;
+            final SymbolVariableRef memberRef = constantStructMember.getMemberRef();
+            final Variable memberDef = getScope().getVar(memberRef);
+            if(memberDef.getType() instanceof SymbolTypePointer) {
+               if(((SymbolTypePointer) memberDef.getType()).getArraySpec()==null) {
+                  // Member is not an array - create a string.
+                  nameHint = memberDef.getFullName().replace("::","_").toLowerCase();
+                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getScope(), (ConstantString) programValue.get(), nameHint);
+                  programValue.set(strConst.getRef());
+               }
+            }
+      } else if(value instanceof ConstantString && programValue instanceof ProgramValue.ProgramValueConstantArrayElement) {
+            // Array element initialization
+            final ProgramValue.ProgramValueConstantArrayElement constantArrayElement = (ProgramValue.ProgramValueConstantArrayElement) programValue;
+            final SymbolType elementType = constantArrayElement.getArrayList().getElementType();
+            if(elementType instanceof SymbolTypePointer) {
+               if(((SymbolTypePointer) elementType).getArraySpec()==null) {
+                  // Element is not an array - create a string.
+                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getScope(), (ConstantString) programValue.get(), null);
+                  programValue.set(strConst.getRef());
+               }
+            }
          }
       });
       return false;

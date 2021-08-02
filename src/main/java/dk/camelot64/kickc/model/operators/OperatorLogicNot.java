@@ -1,10 +1,8 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantBool;
-import dk.camelot64.kickc.model.values.ConstantEnumerable;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
 /** Unary Logic Not operator (!b) */

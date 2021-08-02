@@ -38,7 +38,7 @@ public class CPreprocessor implements TokenSource {
    static class Macro {
       /** The name of the define. */
       final String name;
-      /** The parameters. Empty if there are no parameters. */
+      /** The parameters. Null if there are no parameters. */
       final List<String> parameters;
       /** The body. */
       final List<Token> body;
@@ -47,6 +47,25 @@ public class CPreprocessor implements TokenSource {
          this.name = name;
          this.parameters = parameters;
          this.body = body;
+      }
+
+      /** Does the macro have any parameters */
+      boolean hasParameters() { return parameters!=null; }
+
+      /** Does the macro have a specific parameter */
+      boolean hasParameter(String param) {
+         return parameters!=null && parameters.contains(param);
+      }
+
+      /**
+       * Get the index of a specific parameter in the parameter list
+       * @param param The parameter name to look for
+       * @return The index of the parameter in the list. -1 if the passed name is not a parameter.
+       */
+      private int getParameterIndex(String param) {
+         if(parameters==null)
+            return -1;
+         return parameters.indexOf(param);
       }
    }
 
@@ -275,8 +294,9 @@ public class CPreprocessor implements TokenSource {
       skipWhitespace(cTokenSource);
       String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
       // Examine whether the macro has parameters
-      List<String> macroParameters = new ArrayList<>();
+      List<String> macroParameters = null;
       if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
+         macroParameters = new ArrayList<>();
          // Read past the '('
          cTokenSource.nextToken();
          // Macro has parameters - find parameter name list
@@ -327,7 +347,7 @@ public class CPreprocessor implements TokenSource {
       if(macro != null) {
          // Handle parameters
          List<List<Token>> paramValues = new ArrayList<>();
-         if(!macro.parameters.isEmpty()) {
+         if(macro.hasParameters()) {
             // Parse parameter value list
             {
                // Skip '('
@@ -383,9 +403,9 @@ public class CPreprocessor implements TokenSource {
          List<Token> expandedBody = new ArrayList<>();
          final List<Token> macroBody = macro.body;
          for(Token macroBodyToken : macroBody) {
-            if(macroBodyToken.getType() == KickCLexer.NAME && macro.parameters.contains(macroBodyToken.getText())) {
+            if(macroBodyToken.getType() == KickCLexer.NAME && macro.hasParameter(macroBodyToken.getText())) {
                // body token is a parameter name - replace with expanded parameter value
-               final int paramIndex = macro.parameters.indexOf(macroBodyToken.getText());
+               final int paramIndex = macro.getParameterIndex(macroBodyToken.getText());
                final List<Token> expandedParamValue = paramValues.get(paramIndex);
                for(Token expandedParamValueToken : expandedParamValue) {
                   addTokenToExpandedBody(expandedParamValueToken, macroNameToken, expandedBody);

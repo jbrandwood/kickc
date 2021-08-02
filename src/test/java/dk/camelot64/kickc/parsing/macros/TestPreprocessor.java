@@ -182,6 +182,8 @@ public class TestPreprocessor {
     */
    @Test
    public void testDefineParams() {
+      // A simple define with an empty parameter
+      assertEquals("+(name:a,num:1);", parse("#define A() a+1\nA();"));
       // A simple define with one parameter
       assertEquals("+(name:b,num:1);", parse("#define A(a) a+1\nA(b);"));
       // A simple define with one parameter used twice

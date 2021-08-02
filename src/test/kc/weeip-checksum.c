@@ -98,7 +98,7 @@ add_checksum
 unsigned int * const SCREEN = (unsigned int *)0x0400;
 
 void main() {
-    checksum_init;
+    checksum_init();
     add_checksum(0x1234);
     SCREEN[0] = chks.u;
     add_checksum(0x2345);

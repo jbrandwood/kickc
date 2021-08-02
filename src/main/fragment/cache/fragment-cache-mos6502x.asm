@@ -15338,3 +15338,150 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT vbuz1=vbuz2_bxor_vbuz3
+lda {z2}
+eor {z3}
+sta {z1}
+//FRAGMENT _stackpushbyte_=pbuc1_derefidx_vbuz1
+ldy {z1}
+lda {c1},y
+pha
+//FRAGMENT vbuz1=vbuz2_bxor_vbuaa
+eor {z2}
+sta {z1}
+//FRAGMENT vbuz1=vbuz2_bxor_vbuxx
+txa
+eor {z2}
+sta {z1}
+//FRAGMENT vbuz1=vbuz2_bxor_vbuyy
+tya
+eor {z2}
+sta {z1}
+//FRAGMENT vbuz1=vbuyy_bxor_vbuz2
+tya
+eor {z2}
+sta {z1}
+//FRAGMENT vbuz1=vbuyy_bxor_vbuaa
+sty $ff
+eor $ff
+sta {z1}
+//FRAGMENT vbuz1=vbuyy_bxor_vbuxx
+txa
+sty $ff
+eor $ff
+sta {z1}
+//FRAGMENT vbuz1=vbuyy_bxor_vbuyy
+tya
+sty $ff
+eor $ff
+sta {z1}
+//FRAGMENT vbuaa=vbuz1_bxor_vbuz2
+lda {z1}
+eor {z2}
+//FRAGMENT vbuaa=vbuz1_bxor_vbuaa
+eor {z1}
+//FRAGMENT vbuaa=vbuz1_bxor_vbuxx
+txa
+eor {z1}
+//FRAGMENT vbuaa=vbuz1_bxor_vbuyy
+tya
+eor {z1}
+//FRAGMENT vbuaa=vbuyy_bxor_vbuz1
+tya
+eor {z1}
+//FRAGMENT vbuaa=vbuyy_bxor_vbuaa
+sty $ff
+eor $ff
+//FRAGMENT vbuaa=vbuyy_bxor_vbuxx
+txa
+sty $ff
+eor $ff
+//FRAGMENT vbuaa=vbuyy_bxor_vbuyy
+tya
+sty $ff
+eor $ff
+//FRAGMENT vbuxx=vbuz1_bxor_vbuz2
+lda {z1}
+eor {z2}
+tax
+//FRAGMENT vbuxx=vbuz1_bxor_vbuaa
+eor {z1}
+tax
+//FRAGMENT vbuxx=vbuz1_bxor_vbuxx
+txa
+eor {z1}
+tax
+//FRAGMENT vbuxx=vbuz1_bxor_vbuyy
+tya
+eor {z1}
+tax
+//FRAGMENT vbuxx=vbuyy_bxor_vbuz1
+tya
+eor {z1}
+tax
+//FRAGMENT vbuxx=vbuyy_bxor_vbuaa
+sty $ff
+eor $ff
+tax
+//FRAGMENT vbuxx=vbuyy_bxor_vbuxx
+sty $ff
+txa
+eor $ff
+tax
+//FRAGMENT vbuxx=vbuyy_bxor_vbuyy
+tya
+sty $ff
+eor $ff
+tax
+//FRAGMENT vbuyy=vbuz1_bxor_vbuz2
+lda {z1}
+eor {z2}
+tay
+//FRAGMENT vbuyy=vbuz1_bxor_vbuaa
+eor {z1}
+tay
+//FRAGMENT vbuyy=vbuz1_bxor_vbuxx
+txa
+eor {z1}
+tay
+//FRAGMENT vbuyy=vbuz1_bxor_vbuyy
+tya
+eor {z1}
+tay
+//FRAGMENT vbuyy=vbuyy_bxor_vbuz1
+tya
+eor {z1}
+tay
+//FRAGMENT vbuyy=vbuyy_bxor_vbuaa
+sty $ff
+eor $ff
+tay
+//FRAGMENT vbuyy=vbuyy_bxor_vbuxx
+txa
+sty $ff
+eor $ff
+tay
+//FRAGMENT vbuyy=vbuyy_bxor_vbuyy
+tya
+sty $ff
+eor $ff
+tay
+//FRAGMENT _stackpushbyte_=pbuc1_derefidx_vbuaa
+tay
+lda {c1},y
+pha
+//FRAGMENT _stackpushbyte_=pbuc1_derefidx_vbuxx
+lda {c1},x
+pha
+//FRAGMENT _stackpushbyte_=pbuc1_derefidx_vbuyy
+lda {c1},y
+pha
+//FRAGMENT vbuyy_gt_vbuaa_then_la1
+tax
+sty $ff
+cpx $ff
+bcc {la1}
+//FRAGMENT vbuyy_lt_vbuaa_then_la1
+sta $ff
+cpy $ff
+bcc {la1}

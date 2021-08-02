@@ -1,0 +1,175 @@
+Fixing struct type SIZE_OF struct __os to 258
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DDEVIC) = 1
+  *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte OFFSET_STRUCT___DCB_DDEVIC = 0
+constant byte OFFSET_STRUCT___DCB_DUNIT = 1
+constant word OFFSET_STRUCT___OS_DCB = $100
+void __start()
+void main()
+
+Adding number conversion cast (unumber) 1 in *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DDEVIC) = 1
+Adding number conversion cast (unumber) 2 in *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DDEVIC) = (unumber)1
+Inlining cast *((byte*)(struct __dcb*)(struct __os*)0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 1
+Simplifying constant pointer cast (struct __os*) 0
+Simplifying constant integer cast 2
+Simplifying constant pointer cast (struct __os*) 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB in [0] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DDEVIC) = 1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_STRUCT___DCB_DDEVIC
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB) = 1
+  [1] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [__dcb] 
+Uplift Scope [__os] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [__dcb] best 21 combination 
+Uplifting [__os] best 21 combination 
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/588
+// Struct offset calculation is ignoring the high byte
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-47.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT___OS_DCB = $100
+  .const OFFSET_STRUCT___DCB_DUNIT = 1
+.segment Code
+  // main
+main: {
+    // [0] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB) = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta 0+OFFSET_STRUCT___OS_DCB
+    // [1] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte OFFSET_STRUCT___DCB_DUNIT = 1
+constant word OFFSET_STRUCT___OS_DCB = $100
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+  // File Comments
+// https://gitlab.com/camelot/kickc/-/issues/588
+// Struct offset calculation is ignoring the high byte
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-47.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT___OS_DCB = $100
+  .const OFFSET_STRUCT___DCB_DUNIT = 1
+.segment Code
+  // main
+main: {
+    // OS.dcb.ddevic = 1
+    // [0] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB) = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta 0+OFFSET_STRUCT___OS_DCB
+    // OS.dcb.dunit = 2
+    // [1] *((byte*)(struct __dcb*)(struct __os*) 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta 0+OFFSET_STRUCT___OS_DCB+OFFSET_STRUCT___DCB_DUNIT
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

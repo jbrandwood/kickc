@@ -2328,6 +2328,16 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testStruct48() throws IOException {
+      compileAndCompare("struct-48.c");
+   }
+
+   @Test
+   public void testStruct47() throws IOException {
+      compileAndCompare("struct-47.c");
+   }
+
+   @Test
    public void testStruct46() throws IOException {
       compileAndCompare("struct-46.c");
    }

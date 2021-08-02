@@ -26,7 +26,8 @@ public class SizeOfConstants {
       if(typeSizeConstant == null) {
          // Constant not found - create it
          long typeSize = type.getSizeBytes();
-         typeSizeConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         SymbolType constType = typeSize < 0x100 ? SymbolType.BYTE : SymbolType.WORD;
+         typeSizeConstant = Variable.createConstant(typeConstName, constType, programScope, new ConstantInteger(typeSize, constType), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeSizeConstant);
       }
       return typeSizeConstant.getConstantRef();
@@ -44,7 +45,9 @@ public class SizeOfConstants {
       if(typeSizeConstant != null) {
          // Constant found - update it
          long typeSize = type.getSizeBytes();
-         typeSizeConstant.setInitValue(new ConstantInteger(typeSize&0xff, SymbolType.BYTE));
+         SymbolType constType = typeSize < 0x100 ? SymbolType.BYTE : SymbolType.WORD;
+         typeSizeConstant.setType(constType);
+         typeSizeConstant.setInitValue(new ConstantInteger(typeSize, constType));
       }
    }
 
@@ -77,7 +80,8 @@ public class SizeOfConstants {
          // Constant not found - create it
          Variable memberDef = structDefinition.getMember(memberName);
          long memberByteOffset = structDefinition.getMemberByteOffset(memberDef, programScope);
-         memberOffsetConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         SymbolType constType = memberByteOffset < 0x100 ? SymbolType.BYTE : SymbolType.WORD;
+         memberOffsetConstant = Variable.createConstant(typeConstName, constType, programScope, new ConstantInteger(memberByteOffset, constType), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(memberOffsetConstant);
       }
       return memberOffsetConstant.getConstantRef();

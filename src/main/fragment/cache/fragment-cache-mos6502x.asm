@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 83118539c 8311873aa
+//KICKC FRAGMENT CACHE 81e098389 81e09a3d7
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -3450,6 +3450,150 @@ asl
 asl
 asl
 tay
+//FRAGMENT _deref_pssc1=_deref_pssc2_memcpy_vwuc3
+lda #<{c2}
+sta $fc
+lda #>{c2}
+sta $fd
+lda #<{c1}
+sta $fe
+lda #>{c1}
+sta $ff
+ldy #0
+ldx #0
+!n:
+lda ($fc),y
+sta ($fe),y
+iny
+cpy #$ff
+bne !+
+inc $fd
+inc $ff
+inx
+!:
+cpy #<{c3}
+bne !n-
+cpx #>{c3}
+bne !n-
+//FRAGMENT _deref_pssc1=_memset_vwuc2
+lda #<{c1}
+sta $fe
+lda #>{c1}
+sta $ff
+lda #0
+tay
+tax
+!n:
+sta ($fe),y
+iny
+cpy #$ff
+bne !+
+inc $ff
+inx
+!:
+cpy #<{c2}
+bne !n-
+cpx #>{c2}
+bne !n-
+//FRAGMENT vwuz1=vwuz2_rol_7
+lda {z2}+1
+lsr
+lda {z2}
+ror
+sta {z1}+1
+lda #0
+ror
+sta {z1}
+//FRAGMENT vwuz1=vwuz2_plus_vwuz3
+lda {z2}
+clc
+adc {z3}
+sta {z1}
+lda {z2}+1
+adc {z3}+1
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz2_rol_1
+lda {z2}
+asl
+sta {z1}
+lda {z2}+1
+rol
+sta {z1}+1
+//FRAGMENT pssz1=pssc1_plus_vwuz2
+lda {z2}
+clc
+adc #<{c1}
+sta {z1}
+lda {z2}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT _deref_pssc1=_deref_pssz1_memcpy_vwuc2
+lda {z1}
+sta $fc
+lda {z1}+1
+sta $fd
+lda #<{c1}
+sta $fe
+lda #>{c1}
+sta $ff
+ldy #0
+ldx #0
+!n:
+lda ($fc),y
+sta ($fe),y
+iny
+cpy #$ff
+bne !+
+inc $fd
+inc $ff
+inx
+!:
+cpy #<{c2}
+bne !n-
+cpx #>{c2}
+bne !n-
+//FRAGMENT pbuz1=pbuc1_plus_vwuz2
+lda {z2}
+clc
+adc #<{c1}
+sta {z1}
+lda {z2}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT _deref_pbuz1=_deref_pbuc1
+lda {c1}
+ldy #0
+sta ({z1}),y
+//FRAGMENT vwuz1=_inc_vwuz1
+inc {z1}
+bne !+
+inc {z1}+1
+!:
+//FRAGMENT vwuz1_neq_vbuc1_then_la1
+lda {z1}+1
+bne {la1}
+lda {z1}
+cmp #{c1}
+bne {la1}
+//FRAGMENT vwuz1=vwuz1_plus_vwuz2
+clc
+lda {z1}
+adc {z2}
+sta {z1}
+lda {z1}+1
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT pssz1=pssc1_plus_vwuz1
+lda {z1}
+clc
+adc #<{c1}
+sta {z1}
+lda {z1}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_rol_1
+asl {z1}
+rol {z1}+1
 //FRAGMENT vwuz1=_deref_pwuc1_minus_vwuc2
 sec
 lda {c1}
@@ -4656,11 +4800,6 @@ bne {la1}
 //FRAGMENT vbuz1=_byte_vwuz2
 lda {z2}
 sta {z1}
-//FRAGMENT vwuz1=_inc_vwuz1
-inc {z1}
-bne !+
-inc {z1}+1
-!:
 //FRAGMENT vwuz1_neq_vwuc1_then_la1
 lda {z1}+1
 cmp #>{c1}
@@ -5240,14 +5379,6 @@ lda {z2}
 cmp {z1}
 bcc {la1}
 !:
-//FRAGMENT vwuz1=vwuz1_plus_vwuz2
-clc
-lda {z1}
-adc {z2}
-sta {z1}
-lda {z1}+1
-adc {z2}+1
-sta {z1}+1
 //FRAGMENT vwuz1_ge_vwuz2_then_la1
 lda {z2}+1
 cmp {z1}+1
@@ -5439,14 +5570,6 @@ rol
 sta {z1}+1
 asl {z1}
 rol {z1}+1
-//FRAGMENT vwuz1=vwuz2_plus_vwuz3
-lda {z2}
-clc
-adc {z3}
-sta {z1}
-lda {z2}+1
-adc {z3}+1
-sta {z1}+1
 //FRAGMENT vwuz1=vwuz2_rol_3
 lda {z2}
 asl
@@ -5458,14 +5581,6 @@ asl {z1}
 rol {z1}+1
 asl {z1}
 rol {z1}+1
-//FRAGMENT pbuz1=pbuc1_plus_vwuz2
-lda {z2}
-clc
-adc #<{c1}
-sta {z1}
-lda {z2}+1
-adc #>{c1}
-sta {z1}+1
 //FRAGMENT vwuz1=vwuz2_plus_vwuz1
 clc
 lda {z1}
@@ -6317,13 +6432,6 @@ dey
 txa
 tay
 dey
-//FRAGMENT vwuz1=vwuz2_rol_1
-lda {z2}
-asl
-sta {z1}
-lda {z2}+1
-rol
-sta {z1}+1
 //FRAGMENT vwuz1=vwuz2_bor_vbuz3
 lda {z3}
 ora {z2}
@@ -6449,9 +6557,6 @@ bcs {la1}
 sty $ff
 cpx $ff
 bcc {la1}
-//FRAGMENT vwuz1=vwuz1_rol_1
-asl {z1}
-rol {z1}+1
 //FRAGMENT vwuz1=vwuz1_bor_vbuxx
 txa
 ora {z1}
@@ -6873,12 +6978,6 @@ bne {la1}
 lda {z1}
 cmp #<{c1}
 bne {la1}
-//FRAGMENT vwuz1_neq_vbuc1_then_la1
-lda {z1}+1
-bne {la1}
-lda {z1}
-cmp #{c1}
-bne {la1}
 //FRAGMENT pwsc1_derefidx_vbuz1=vwsc2
 ldy {z1}
 lda #<{c2}
@@ -6906,15 +7005,6 @@ lda #<{c2}
 sta {c1},y
 lda #>{c2}
 sta {c1}+1,y
-//FRAGMENT vwuz1=vwuz2_rol_7
-lda {z2}+1
-lsr
-lda {z2}
-ror
-sta {z1}+1
-lda #0
-ror
-sta {z1}
 //FRAGMENT vwuz1=vwuz2_bxor_vwuz3
 lda {z2}
 eor {z3}
@@ -8850,10 +8940,6 @@ tax
 //FRAGMENT vboyy=vboxx
 txa
 tay
-//FRAGMENT _deref_pbuz1=_deref_pbuc1
-lda {c1}
-ldy #0
-sta ({z1}),y
 //FRAGMENT vbuz1_ge_vbuz2_then_la1
 lda {z1}
 cmp {z2}
@@ -12834,14 +12920,6 @@ bne {la1}
 ldy #{c1}
 lda {z2}
 sta ({z1}),y
-//FRAGMENT pssz1=pssc1_plus_vwuz2
-lda {z2}
-clc
-adc #<{c1}
-sta {z1}
-lda {z2}+1
-adc #>{c1}
-sta {z1}+1
 //FRAGMENT _deref_pssz1=_deref_pssz2_memcpy_vbuc1
 ldy #00
 !:
@@ -12850,14 +12928,6 @@ sta ({z1}),y
 iny
 cpy #{c1}
 bne !-
-//FRAGMENT pssz1=pssc1_plus_vwuz1
-lda {z1}
-clc
-adc #<{c1}
-sta {z1}
-lda {z1}+1
-adc #>{c1}
-sta {z1}+1
 //FRAGMENT _deref_pbuc1=_deref_pbuc1_plus_vbuc2
 lax {c1}
 axs #-[{c2}]

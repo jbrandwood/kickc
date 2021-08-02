@@ -224,7 +224,24 @@ md5: {
     ldy #0
     sta (__74),y
     // uint32_t bits_len = initial_len * 8
-    .assert "Missing ASM fragment Fragment not found vduz1=vwuz2_rol_3. Attempted variations vduz1=vwuz2_rol_3 ", 0, 1
+    lda.z initial_len
+    asl
+    sta.z bits_len
+    lda.z initial_len+1
+    rol
+    sta.z bits_len+1
+    tya
+    sta.z bits_len+3
+    rol
+    sta.z bits_len+2
+    asl.z bits_len
+    rol.z bits_len+1
+    rol.z bits_len+2
+    rol.z bits_len+3
+    asl.z bits_len
+    rol.z bits_len+1
+    rol.z bits_len+2
+    rol.z bits_len+3
     // msg + new_len
     lda.z msg
     clc

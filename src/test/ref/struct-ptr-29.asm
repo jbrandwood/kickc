@@ -10,7 +10,6 @@
   .const SIZEOF_STRUCT_PERSON = 3
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .label SCREEN = $400
-  .label idx = 5
 .segment Code
 main: {
     // print_person(&persons[0])
@@ -46,22 +45,42 @@ print_person: {
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
     inx
-    stx.z idx
     lda #0
     sta.z i
+  __b1:
     // for(byte i=0; person->name[i]; i++)
-    .assert "Missing ASM fragment Fragment not found 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1. Attempted variations 0_neq_(qbuz1_derefidx_vbuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vbsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwuc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vwsc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vduc1)_derefidx_vbuz2_then_la1 0_neq_(qbuz1_derefidx_vdsc1)_derefidx_vbuz2_then_la1 ", 0, 1
+    ldy #OFFSET_STRUCT_PERSON_NAME
+    lda (person),y
+    sta.z $fe
+    iny
+    lda (person),y
+    sta.z $ff
+    ldy.z i
+    lda ($fe),y
+    bne __b2
     // SCREEN[idx++] = ' '
     lda #' '
-    ldy.z idx
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = ' ';
     inx
     // }
     rts
+  __b2:
     // SCREEN[idx++] = person->name[i]
+    ldy #OFFSET_STRUCT_PERSON_NAME
+    lda (person),y
+    sta.z $fe
+    iny
+    lda (person),y
+    sta.z $ff
+    ldy.z i
+    lda ($fe),y
+    sta SCREEN,x
     // SCREEN[idx++] = person->name[i];
+    inx
     // for(byte i=0; person->name[i]; i++)
+    inc.z i
+    jmp __b1
 }
 .segment Data
   persons: .byte 4

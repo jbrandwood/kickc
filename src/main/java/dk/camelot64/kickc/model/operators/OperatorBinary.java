@@ -33,4 +33,7 @@ public abstract class OperatorBinary extends Operator {
    public boolean isAssociative() {
       return associative;
    }
+
+
+
 }

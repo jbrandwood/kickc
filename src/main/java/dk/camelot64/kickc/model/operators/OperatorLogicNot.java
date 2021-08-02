@@ -16,13 +16,7 @@ public class OperatorLogicNot extends OperatorUnary {
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ProgramScope scope) {
-      if(left instanceof ConstantEnumerable) {
-         left = new ConstantBool(((ConstantEnumerable) left).getInteger()!=0);
-      }
-      if(left instanceof ConstantBool) {
-         return new ConstantBool(!((ConstantBool) left).getBool() );
-      }
-      throw new CompileError("Calculation not implemented " + getOperator() + " " + left );
+      return new ConstantBool(!getBool(left));
    }
 
    @Override

@@ -1,5 +1,11 @@
 package dk.camelot64.kickc.model.operators;
 
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.values.ConstantBool;
+import dk.camelot64.kickc.model.values.ConstantEnumerable;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantLiteral;
+
 import java.io.Serializable;
 
 /**
@@ -62,6 +68,14 @@ public class Operator implements Serializable {
       result = 31 * result + precedence;
       result = 31 * result + type.hashCode();
       return result;
+   }
+
+   static Boolean getBool(ConstantLiteral literal) {
+      if(literal instanceof ConstantBool)
+         return ((ConstantBool) literal).getBool();
+      if(literal instanceof ConstantEnumerable)
+         return !((ConstantEnumerable) literal).getInteger().equals(0L);
+      throw new CompileError("Not a boolean" + literal);
    }
 
 }

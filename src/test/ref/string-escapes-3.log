@@ -8,41 +8,53 @@ main: scope:[main]  from __start::@1
   main::cursor#0 = main::line#0
   main::msg#0 = MESSAGE
   to:main::@1
-main::@1: scope:[main]  from main main::@6
-  main::cursor#5 = phi( main/main::cursor#0, main::@6/main::cursor#6 )
-  main::line#4 = phi( main/main::line#0, main::@6/main::line#5 )
-  main::msg#2 = phi( main/main::msg#0, main::@6/main::msg#1 )
+main::@1: scope:[main]  from main main::@7
+  main::cursor#7 = phi( main/main::cursor#0, main::@7/main::cursor#8 )
+  main::line#7 = phi( main/main::line#0, main::@7/main::line#8 )
+  main::msg#2 = phi( main/main::msg#0, main::@7/main::msg#1 )
   main::$1 = 0 != *main::msg#2
   if(main::$1) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  main::cursor#4 = phi( main::@1/main::cursor#5 )
-  main::line#3 = phi( main::@1/main::line#4 )
+  main::cursor#6 = phi( main::@1/main::cursor#7 )
+  main::line#5 = phi( main::@1/main::line#7 )
   main::msg#3 = phi( main::@1/main::msg#2 )
   if(*main::msg#3=='
 'pm) goto main::@4
-  to:main::@5
+  to:main::@8
 main::@3: scope:[main]  from main::@1
-  SCREEN[$50] = CH
+  SCREEN[$a0] = CH
   to:main::@return
 main::@4: scope:[main]  from main::@2
-  main::msg#6 = phi( main::@2/main::msg#3 )
-  main::line#2 = phi( main::@2/main::line#3 )
-  main::line#1 = main::line#2 + $28
+  main::msg#7 = phi( main::@2/main::msg#3 )
+  main::line#3 = phi( main::@2/main::line#5 )
+  main::line#1 = main::line#3 + $28
   main::cursor#1 = main::line#1
+  to:main::@7
+main::@8: scope:[main]  from main::@2
+  main::cursor#5 = phi( main::@2/main::cursor#6 )
+  main::msg#6 = phi( main::@2/main::msg#3 )
+  main::line#6 = phi( main::@2/main::line#5 )
+  if(*main::msg#3=='\'pm) goto main::@5
   to:main::@6
-main::@5: scope:[main]  from main::@2
-  main::line#6 = phi( main::@2/main::line#3 )
-  main::cursor#3 = phi( main::@2/main::cursor#4 )
-  main::msg#4 = phi( main::@2/main::msg#3 )
+main::@5: scope:[main]  from main::@8
+  main::msg#8 = phi( main::@8/main::msg#6 )
+  main::line#4 = phi( main::@8/main::line#6 )
+  main::line#2 = main::line#4 + $50
+  main::cursor#2 = main::line#2
+  to:main::@7
+main::@6: scope:[main]  from main::@8
+  main::line#9 = phi( main::@8/main::line#6 )
+  main::cursor#4 = phi( main::@8/main::cursor#5 )
+  main::msg#4 = phi( main::@8/main::msg#6 )
   main::$0 = *main::msg#4 & $3f
-  *main::cursor#3 = main::$0
-  main::cursor#2 = ++ main::cursor#3
-  to:main::@6
-main::@6: scope:[main]  from main::@4 main::@5
-  main::cursor#6 = phi( main::@4/main::cursor#1, main::@5/main::cursor#2 )
-  main::line#5 = phi( main::@4/main::line#1, main::@5/main::line#6 )
-  main::msg#5 = phi( main::@4/main::msg#6, main::@5/main::msg#4 )
+  *main::cursor#4 = main::$0
+  main::cursor#3 = ++ main::cursor#4
+  to:main::@7
+main::@7: scope:[main]  from main::@4 main::@5 main::@6
+  main::cursor#8 = phi( main::@4/main::cursor#1, main::@5/main::cursor#2, main::@6/main::cursor#3 )
+  main::line#8 = phi( main::@4/main::line#1, main::@5/main::line#2, main::@6/main::line#9 )
+  main::msg#5 = phi( main::@4/main::msg#7, main::@5/main::msg#8, main::@6/main::msg#4 )
   main::msg#1 = ++ main::msg#5
   to:main::@1
 main::@return: scope:[main]  from main::@3
@@ -67,7 +79,7 @@ SYMBOL TABLE SSA
 constant byte CH = '
 'pm
 constant byte* MESSAGE[]  = "hello
-world"pm
+world\again"pm
 constant byte* SCREEN = (byte*)$400
 void __start()
 void main()
@@ -81,6 +93,8 @@ byte* main::cursor#3
 byte* main::cursor#4
 byte* main::cursor#5
 byte* main::cursor#6
+byte* main::cursor#7
+byte* main::cursor#8
 byte* main::line
 byte* main::line#0
 byte* main::line#1
@@ -89,6 +103,9 @@ byte* main::line#3
 byte* main::line#4
 byte* main::line#5
 byte* main::line#6
+byte* main::line#7
+byte* main::line#8
+byte* main::line#9
 byte* main::msg
 byte* main::msg#0
 byte* main::msg#1
@@ -97,31 +114,37 @@ byte* main::msg#3
 byte* main::msg#4
 byte* main::msg#5
 byte* main::msg#6
+byte* main::msg#7
+byte* main::msg#8
 
 Adding number conversion cast (unumber) 0 in main::$1 = 0 != *main::msg#2
-Adding number conversion cast (unumber) $50 in SCREEN[$50] = CH
-Adding number conversion cast (unumber) $28 in main::line#1 = main::line#2 + $28
+Adding number conversion cast (unumber) $a0 in SCREEN[$a0] = CH
+Adding number conversion cast (unumber) $28 in main::line#1 = main::line#3 + $28
+Adding number conversion cast (unumber) $50 in main::line#2 = main::line#4 + $50
 Adding number conversion cast (unumber) $3f in main::$0 = *main::msg#4 & $3f
 Adding number conversion cast (unumber) main::$0 in main::$0 = *main::msg#4 & (unumber)$3f
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast $50
+Simplifying constant integer cast $a0
 Simplifying constant integer cast $28
+Simplifying constant integer cast $50
 Simplifying constant integer cast $3f
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) $a0
 Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) $3f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = *main::msg#4 & $3f
 Alias main::cursor#0 = main::line#0 
-Alias main::msg#2 = main::msg#3 main::msg#6 main::msg#4 
-Alias main::line#2 = main::line#3 main::line#4 main::line#6 
-Alias main::cursor#3 = main::cursor#4 main::cursor#5 
+Alias main::msg#2 = main::msg#3 main::msg#7 main::msg#6 main::msg#8 main::msg#4 
+Alias main::line#3 = main::line#5 main::line#7 main::line#6 main::line#4 main::line#9 
+Alias main::cursor#4 = main::cursor#6 main::cursor#7 main::cursor#5 
 Alias main::cursor#1 = main::line#1 
+Alias main::cursor#2 = main::line#2 
 Successful SSA optimization Pass2AliasElimination
 Alias main::msg#2 = main::msg#5 
 Successful SSA optimization Pass2AliasElimination
@@ -142,19 +165,21 @@ Inlining constant with var siblings main::msg#0
 Constant inlined main::cursor#0 = (byte*) 1024
 Constant inlined main::msg#0 = MESSAGE
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN+$50)
+Consolidated array index constant in *(SCREEN+$a0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 5 initial phi equivalence classes
-Coalesced [9] main::line#9 = main::line#2
-Coalesced [10] main::cursor#9 = main::cursor#2
-Coalesced [13] main::msg#7 = main::msg#1
-Coalesced (already) [14] main::line#7 = main::line#5
-Coalesced [15] main::cursor#7 = main::cursor#6
-Not coalescing [17] main::line#8 = main::cursor#1
-Coalesced [18] main::cursor#8 = main::cursor#1
+Coalesced [10] main::line#13 = main::line#3
+Coalesced [11] main::cursor#12 = main::cursor#3
+Coalesced [14] main::msg#9 = main::msg#1
+Coalesced (already) [15] main::line#10 = main::line#8
+Coalesced [16] main::cursor#9 = main::cursor#8
+Not coalescing [18] main::line#12 = main::cursor#2
+Coalesced [19] main::cursor#11 = main::cursor#2
+Not coalescing [21] main::line#11 = main::cursor#1
+Coalesced [22] main::cursor#10 = main::cursor#1
 Coalesced down to 3 phi equivalence classes
 Adding NOP phi() at start of main
 
@@ -164,14 +189,14 @@ void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@6
-  [1] main::cursor#3 = phi( main/(byte*) 1024, main::@6/main::cursor#6 )
-  [1] main::line#2 = phi( main/(byte*) 1024, main::@6/main::line#5 )
-  [1] main::msg#2 = phi( main/MESSAGE, main::@6/main::msg#1 )
+main::@1: scope:[main]  from main main::@7
+  [1] main::cursor#4 = phi( main/(byte*) 1024, main::@7/main::cursor#8 )
+  [1] main::line#3 = phi( main/(byte*) 1024, main::@7/main::line#8 )
+  [1] main::msg#2 = phi( main/MESSAGE, main::@7/main::msg#1 )
   [2] if(0!=*main::msg#2) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [3] *(SCREEN+$50) = CH
+  [3] *(SCREEN+$a0) = CH
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [4] return 
@@ -179,21 +204,28 @@ main::@return: scope:[main]  from main::@3
 main::@2: scope:[main]  from main::@1
   [5] if(*main::msg#2=='
 'pm) goto main::@4
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  [6] main::$0 = *main::msg#2 & $3f
-  [7] *main::cursor#3 = main::$0
-  [8] main::cursor#2 = ++ main::cursor#3
+  to:main::@8
+main::@8: scope:[main]  from main::@2
+  [6] if(*main::msg#2=='\'pm) goto main::@5
   to:main::@6
-main::@6: scope:[main]  from main::@4 main::@5
-  [9] main::cursor#6 = phi( main::@4/main::cursor#1, main::@5/main::cursor#2 )
-  [9] main::line#5 = phi( main::@4/main::line#8, main::@5/main::line#2 )
-  [10] main::msg#1 = ++ main::msg#2
+main::@6: scope:[main]  from main::@8
+  [7] main::$0 = *main::msg#2 & $3f
+  [8] *main::cursor#4 = main::$0
+  [9] main::cursor#3 = ++ main::cursor#4
+  to:main::@7
+main::@7: scope:[main]  from main::@4 main::@5 main::@6
+  [10] main::cursor#8 = phi( main::@4/main::cursor#1, main::@5/main::cursor#2, main::@6/main::cursor#3 )
+  [10] main::line#8 = phi( main::@4/main::line#11, main::@5/main::line#12, main::@6/main::line#3 )
+  [11] main::msg#1 = ++ main::msg#2
   to:main::@1
+main::@5: scope:[main]  from main::@8
+  [12] main::cursor#2 = main::line#3 + $50
+  [13] main::line#12 = main::cursor#2
+  to:main::@7
 main::@4: scope:[main]  from main::@2
-  [11] main::cursor#1 = main::line#2 + $28
-  [12] main::line#8 = main::cursor#1
-  to:main::@6
+  [14] main::cursor#1 = main::line#3 + $28
+  [15] main::line#11 = main::cursor#1
+  to:main::@7
 
 
 VARIABLE REGISTER WEIGHTS
@@ -201,51 +233,56 @@ void main()
 byte~ main::$0 22.0
 byte* main::cursor
 byte* main::cursor#1 16.5
-byte* main::cursor#2 22.0
-byte* main::cursor#3 6.6000000000000005
-byte* main::cursor#6 16.5
+byte* main::cursor#2 16.5
+byte* main::cursor#3 22.0
+byte* main::cursor#4 5.5
+byte* main::cursor#8 22.0
 byte* main::line
-byte* main::line#2 5.5
-byte* main::line#5 16.5
+byte* main::line#11 22.0
+byte* main::line#12 22.0
+byte* main::line#3 6.285714285714286
 byte* main::line#8 22.0
 byte* main::msg
 byte* main::msg#1 22.0
-byte* main::msg#2 6.111111111111112
+byte* main::msg#2 5.5
 
 Initial phi equivalence classes
 [ main::msg#2 main::msg#1 ]
-[ main::line#2 main::line#5 main::line#8 ]
-[ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+[ main::line#3 main::line#8 main::line#11 main::line#12 ]
+[ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ]
 Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::msg#2 main::msg#1 ]
-[ main::line#2 main::line#5 main::line#8 ]
-[ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+[ main::line#3 main::line#8 main::line#11 main::line#12 ]
+[ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ]
 [ main::$0 ]
 Allocated zp[2]:2 [ main::msg#2 main::msg#1 ]
-Allocated zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
-Allocated zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+Allocated zp[2]:4 [ main::line#3 main::line#8 main::line#11 main::line#12 ]
+Allocated zp[2]:6 [ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ]
 Allocated zp[1]:8 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] if(0!=*main::msg#2) goto main::@2 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *(SCREEN+$50) = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] if(0!=*main::msg#2) goto main::@2 [ main::msg#2 main::line#3 main::cursor#4 ] (  [ main::msg#2 main::line#3 main::cursor#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *(SCREEN+$a0) = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] if(*main::msg#2=='
-'pm) goto main::@4 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [6] main::$0 = *main::msg#2 & $3f [ main::msg#2 main::line#2 main::cursor#3 main::$0 ] (  [ main::msg#2 main::line#2 main::cursor#3 main::$0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] *main::cursor#3 = main::$0 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte y 
-Statement [11] main::cursor#1 = main::line#2 + $28 [ main::msg#2 main::cursor#1 ] (  [ main::msg#2 main::cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [12] main::line#8 = main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] (  [ main::msg#2 main::line#8 main::cursor#1 ] { }  ) always clobbers reg byte a 
+'pm) goto main::@4 [ main::msg#2 main::line#3 main::cursor#4 ] (  [ main::msg#2 main::line#3 main::cursor#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] if(*main::msg#2=='\'pm) goto main::@5 [ main::msg#2 main::line#3 main::cursor#4 ] (  [ main::msg#2 main::line#3 main::cursor#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::$0 = *main::msg#2 & $3f [ main::msg#2 main::line#3 main::cursor#4 main::$0 ] (  [ main::msg#2 main::line#3 main::cursor#4 main::$0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *main::cursor#4 = main::$0 [ main::msg#2 main::line#3 main::cursor#4 ] (  [ main::msg#2 main::line#3 main::cursor#4 ] { }  ) always clobbers reg byte y 
+Statement [12] main::cursor#2 = main::line#3 + $50 [ main::msg#2 main::cursor#2 ] (  [ main::msg#2 main::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [13] main::line#12 = main::cursor#2 [ main::msg#2 main::line#12 main::cursor#2 ] (  [ main::msg#2 main::line#12 main::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [14] main::cursor#1 = main::line#3 + $28 [ main::msg#2 main::cursor#1 ] (  [ main::msg#2 main::cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [15] main::line#11 = main::cursor#1 [ main::msg#2 main::line#11 main::cursor#1 ] (  [ main::msg#2 main::line#11 main::cursor#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp[2]:6 , 
+Potential registers zp[2]:4 [ main::line#3 main::line#8 main::line#11 main::line#12 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ] : zp[2]:6 , 
 Potential registers zp[1]:8 [ main::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 61.6: zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 44: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 28.11: zp[2]:2 [ main::msg#2 main::msg#1 ] 22: zp[1]:8 [ main::$0 ] 
+Uplift Scope [main] 82.5: zp[2]:6 [ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ] 72.29: zp[2]:4 [ main::line#3 main::line#8 main::line#11 main::line#12 ] 27.5: zp[2]:2 [ main::msg#2 main::msg#1 ] 22: zp[1]:8 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1460 combination zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:2 [ main::msg#2 main::msg#1 ] reg byte a [ main::$0 ] 
-Uplifting [] best 1460 combination 
+Uplifting [main] best 1940 combination zp[2]:6 [ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ] zp[2]:4 [ main::line#3 main::line#8 main::line#11 main::line#12 ] zp[2]:2 [ main::msg#2 main::msg#1 ] reg byte a [ main::$0 ] 
+Uplifting [] best 1940 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -272,12 +309,12 @@ main: {
     .label line = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cursor#4 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
     lda #>$400
     sta.z cursor+1
-    // [1] phi main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::line#3 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z line
     lda #>$400
@@ -298,9 +335,9 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [3] *(SCREEN+$50) = CH -- _deref_pbuc1=vbuc2 
+    // [3] *(SCREEN+$a0) = CH -- _deref_pbuc1=vbuc2 
     lda #CH
-    sta SCREEN+$50
+    sta SCREEN+$a0
     jmp __breturn
     // main::@return
   __breturn:
@@ -313,43 +350,68 @@ main: {
     ldy #0
     cmp (msg),y
     beq __b4
-    jmp __b5
-    // main::@5
-  __b5:
-    // [6] main::$0 = *main::msg#2 & $3f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    jmp __b8
+    // main::@8
+  __b8:
+    // [6] if(*main::msg#2=='\'pm) goto main::@5 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    lda #'\\'
+    ldy #0
+    cmp (msg),y
+    beq __b5
+    jmp __b6
+    // main::@6
+  __b6:
+    // [7] main::$0 = *main::msg#2 & $3f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$3f
     ldy #0
     and (msg),y
-    // [7] *main::cursor#3 = main::$0 -- _deref_pbuz1=vbuaa 
+    // [8] *main::cursor#4 = main::$0 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
-    // [8] main::cursor#2 = ++ main::cursor#3 -- pbuz1=_inc_pbuz1 
+    // [9] main::cursor#3 = ++ main::cursor#4 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [9] phi from main::@4 main::@5 to main::@6 [phi:main::@4/main::@5->main::@6]
-  __b6_from___b4:
-  __b6_from___b5:
-    // [9] phi main::cursor#6 = main::cursor#1 [phi:main::@4/main::@5->main::@6#0] -- register_copy 
-    // [9] phi main::line#5 = main::line#8 [phi:main::@4/main::@5->main::@6#1] -- register_copy 
-    jmp __b6
-    // main::@6
-  __b6:
-    // [10] main::msg#1 = ++ main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [10] phi from main::@4 main::@5 main::@6 to main::@7 [phi:main::@4/main::@5/main::@6->main::@7]
+  __b7_from___b4:
+  __b7_from___b5:
+  __b7_from___b6:
+    // [10] phi main::cursor#8 = main::cursor#1 [phi:main::@4/main::@5/main::@6->main::@7#0] -- register_copy 
+    // [10] phi main::line#8 = main::line#11 [phi:main::@4/main::@5/main::@6->main::@7#1] -- register_copy 
+    jmp __b7
+    // main::@7
+  __b7:
+    // [11] main::msg#1 = ++ main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [1] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  __b1_from___b6:
-    // [1] phi main::cursor#3 = main::cursor#6 [phi:main::@6->main::@1#0] -- register_copy 
-    // [1] phi main::line#2 = main::line#5 [phi:main::@6->main::@1#1] -- register_copy 
-    // [1] phi main::msg#2 = main::msg#1 [phi:main::@6->main::@1#2] -- register_copy 
+    // [1] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+  __b1_from___b7:
+    // [1] phi main::cursor#4 = main::cursor#8 [phi:main::@7->main::@1#0] -- register_copy 
+    // [1] phi main::line#3 = main::line#8 [phi:main::@7->main::@1#1] -- register_copy 
+    // [1] phi main::msg#2 = main::msg#1 [phi:main::@7->main::@1#2] -- register_copy 
     jmp __b1
+    // main::@5
+  __b5:
+    // [12] main::cursor#2 = main::line#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
+    lda #$50
+    clc
+    adc.z line
+    sta.z cursor
+    lda #0
+    adc.z line+1
+    sta.z cursor+1
+    // [13] main::line#12 = main::cursor#2 -- pbuz1=pbuz2 
+    lda.z cursor
+    sta.z line
+    lda.z cursor+1
+    sta.z line+1
+    jmp __b7_from___b5
     // main::@4
   __b4:
-    // [11] main::cursor#1 = main::line#2 + $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [14] main::cursor#1 = main::line#3 + $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -357,37 +419,42 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [12] main::line#8 = main::cursor#1 -- pbuz1=pbuz2 
+    // [15] main::line#11 = main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp __b6_from___b4
+    jmp __b7_from___b4
 }
   // File Data
 .segment Data
-  MESSAGE: .text @"hello\nworld"
+  MESSAGE: .text @"hello\nworld\\again"
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
-Removing instruction jmp __b5
+Removing instruction jmp __b8
 Removing instruction jmp __b6
+Removing instruction jmp __b7
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label __b6_from___b4 with __b6
-Removing instruction __b6_from___b4:
-Removing instruction __b6_from___b5:
+Replacing label __b7_from___b5 with __b7
+Replacing label __b7_from___b4 with __b7
+Removing instruction __b7_from___b4:
+Removing instruction __b7_from___b5:
+Removing instruction __b7_from___b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction __breturn:
-Removing instruction __b5:
-Removing instruction __b1_from___b6:
+Removing instruction __b8:
+Removing instruction __b6:
+Removing instruction __b1_from___b7:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction ldy #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
@@ -395,31 +462,33 @@ FINAL SYMBOL TABLE
 constant byte CH = '
 'pm
 constant byte* MESSAGE[]  = "hello
-world"pm
+world\again"pm
 constant byte* SCREEN = (byte*) 1024
 void main()
 byte~ main::$0 reg byte a 22.0
 byte* main::cursor
 byte* main::cursor#1 cursor zp[2]:6 16.5
-byte* main::cursor#2 cursor zp[2]:6 22.0
-byte* main::cursor#3 cursor zp[2]:6 6.6000000000000005
-byte* main::cursor#6 cursor zp[2]:6 16.5
+byte* main::cursor#2 cursor zp[2]:6 16.5
+byte* main::cursor#3 cursor zp[2]:6 22.0
+byte* main::cursor#4 cursor zp[2]:6 5.5
+byte* main::cursor#8 cursor zp[2]:6 22.0
 byte* main::line
-byte* main::line#2 line zp[2]:4 5.5
-byte* main::line#5 line zp[2]:4 16.5
+byte* main::line#11 line zp[2]:4 22.0
+byte* main::line#12 line zp[2]:4 22.0
+byte* main::line#3 line zp[2]:4 6.285714285714286
 byte* main::line#8 line zp[2]:4 22.0
 byte* main::msg
 byte* main::msg#1 msg zp[2]:2 22.0
-byte* main::msg#2 msg zp[2]:2 6.111111111111112
+byte* main::msg#2 msg zp[2]:2 5.5
 
 zp[2]:2 [ main::msg#2 main::msg#1 ]
-zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
-zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+zp[2]:4 [ main::line#3 main::line#8 main::line#11 main::line#12 ]
+zp[2]:6 [ main::cursor#4 main::cursor#8 main::cursor#1 main::cursor#2 main::cursor#3 ]
 reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 1297
+Score: 1727
 
   // File Comments
 // Test using some simple supported string escape \n in both string and char
@@ -444,12 +513,12 @@ main: {
     .label msg = 2
     .label line = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cursor#4 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
     lda #>$400
     sta.z cursor+1
-    // [1] phi main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::line#3 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z line
     lda #>$400
@@ -468,10 +537,10 @@ main: {
     cmp #0
     bne __b2
     // main::@3
-    // SCREEN[0x50] = CH
-    // [3] *(SCREEN+$50) = CH -- _deref_pbuc1=vbuc2 
+    // SCREEN[0xa0] = CH
+    // [3] *(SCREEN+$a0) = CH -- _deref_pbuc1=vbuc2 
     lda #CH
-    sta SCREEN+$50
+    sta SCREEN+$a0
     // main::@return
     // }
     // [4] return 
@@ -487,40 +556,66 @@ main: {
     ldy #0
     cmp (msg),y
     beq __b4
-    // main::@5
+    // main::@8
+    // case '\\':
+    //                 line += 0x50;
+    //                 cursor = line;
+    //                 break;
+    // [6] if(*main::msg#2=='\'pm) goto main::@5 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    lda #'\\'
+    cmp (msg),y
+    beq __b5
+    // main::@6
     // *msg & 0x3f
-    // [6] main::$0 = *main::msg#2 & $3f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [7] main::$0 = *main::msg#2 & $3f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$3f
     and (msg),y
     // *cursor++ = *msg & 0x3f
-    // [7] *main::cursor#3 = main::$0 -- _deref_pbuz1=vbuaa 
+    // [8] *main::cursor#4 = main::$0 -- _deref_pbuz1=vbuaa 
     sta (cursor),y
     // *cursor++ = *msg & 0x3f;
-    // [8] main::cursor#2 = ++ main::cursor#3 -- pbuz1=_inc_pbuz1 
+    // [9] main::cursor#3 = ++ main::cursor#4 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [9] phi from main::@4 main::@5 to main::@6 [phi:main::@4/main::@5->main::@6]
-    // [9] phi main::cursor#6 = main::cursor#1 [phi:main::@4/main::@5->main::@6#0] -- register_copy 
-    // [9] phi main::line#5 = main::line#8 [phi:main::@4/main::@5->main::@6#1] -- register_copy 
-    // main::@6
-  __b6:
+    // [10] phi from main::@4 main::@5 main::@6 to main::@7 [phi:main::@4/main::@5/main::@6->main::@7]
+    // [10] phi main::cursor#8 = main::cursor#1 [phi:main::@4/main::@5/main::@6->main::@7#0] -- register_copy 
+    // [10] phi main::line#8 = main::line#11 [phi:main::@4/main::@5/main::@6->main::@7#1] -- register_copy 
+    // main::@7
+  __b7:
     // msg++;
-    // [10] main::msg#1 = ++ main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [11] main::msg#1 = ++ main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [1] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-    // [1] phi main::cursor#3 = main::cursor#6 [phi:main::@6->main::@1#0] -- register_copy 
-    // [1] phi main::line#2 = main::line#5 [phi:main::@6->main::@1#1] -- register_copy 
-    // [1] phi main::msg#2 = main::msg#1 [phi:main::@6->main::@1#2] -- register_copy 
+    // [1] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+    // [1] phi main::cursor#4 = main::cursor#8 [phi:main::@7->main::@1#0] -- register_copy 
+    // [1] phi main::line#3 = main::line#8 [phi:main::@7->main::@1#1] -- register_copy 
+    // [1] phi main::msg#2 = main::msg#1 [phi:main::@7->main::@1#2] -- register_copy 
     jmp __b1
+    // main::@5
+  __b5:
+    // line += 0x50
+    // [12] main::cursor#2 = main::line#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
+    lda #$50
+    clc
+    adc.z line
+    sta.z cursor
+    lda #0
+    adc.z line+1
+    sta.z cursor+1
+    // [13] main::line#12 = main::cursor#2 -- pbuz1=pbuz2 
+    lda.z cursor
+    sta.z line
+    lda.z cursor+1
+    sta.z line+1
+    jmp __b7
     // main::@4
   __b4:
     // line += 0x28
-    // [11] main::cursor#1 = main::line#2 + $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [14] main::cursor#1 = main::line#3 + $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -528,15 +623,15 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [12] main::line#8 = main::cursor#1 -- pbuz1=pbuz2 
+    // [15] main::line#11 = main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp __b6
+    jmp __b7
 }
   // File Data
 .segment Data
-  MESSAGE: .text @"hello\nworld"
+  MESSAGE: .text @"hello\nworld\\again"
   .byte 0
 

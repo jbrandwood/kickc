@@ -34,9 +34,9 @@ main: {
     lda (msg),y
     cmp #0
     bne __b2
-    // SCREEN[0x50] = CH
+    // SCREEN[0xa0] = CH
     lda #CH
-    sta SCREEN+$50
+    sta SCREEN+$a0
     // }
     rts
   __b2:
@@ -48,6 +48,13 @@ main: {
     ldy #0
     cmp (msg),y
     beq __b4
+    // case '\\':
+    //                 line += 0x50;
+    //                 cursor = line;
+    //                 break;
+    lda #'\\'
+    cmp (msg),y
+    beq __b5
     // *msg & 0x3f
     lda #$3f
     and (msg),y
@@ -58,13 +65,27 @@ main: {
     bne !+
     inc.z cursor+1
   !:
-  __b6:
+  __b7:
     // msg++;
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     jmp __b1
+  __b5:
+    // line += 0x50
+    lda #$50
+    clc
+    adc.z line
+    sta.z cursor
+    lda #0
+    adc.z line+1
+    sta.z cursor+1
+    lda.z cursor
+    sta.z line
+    lda.z cursor+1
+    sta.z line+1
+    jmp __b7
   __b4:
     // line += 0x28
     lda #$28
@@ -78,8 +99,8 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp __b6
+    jmp __b7
 }
 .segment Data
-  MESSAGE: .text @"hello\nworld"
+  MESSAGE: .text @"hello\nworld\\again"
   .byte 0

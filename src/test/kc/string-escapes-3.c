@@ -3,7 +3,7 @@
 
 #pragma encoding(petscii_mixed)
 
-char MESSAGE[] = "hello\nworld";
+char MESSAGE[] = "hello\nworld\\again";
 char CH = '\n';
 
 char* SCREEN = (char*)0x0400;
@@ -19,12 +19,16 @@ void main() {
                 line += 0x28;
                 cursor = line;
                 break;
+            case '\\':
+                line += 0x50;
+                cursor = line;
+                break;
             default:
                 *cursor++ = *msg & 0x3f;
         }
         msg++;
     }
 
-    SCREEN[0x50] = CH;
-    
+    SCREEN[0xa0] = CH;
+
 }

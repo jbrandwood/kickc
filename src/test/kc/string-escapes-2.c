@@ -7,7 +7,7 @@ char MESSAGE[] = "hello\nworld\\";
 char* const memA = (char*)0xff;
 
 void main() {
-    byte i=0;
+    char i=0;
     while(MESSAGE[i])
         chrout(MESSAGE[i++]);
 }

@@ -1532,6 +1532,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testStringEscapes7() throws IOException {
+      compileAndCompare("string-escapes-6.c");
+   }
+
+   @Test
    public void testStringEscapes5() throws IOException {
       compileAndCompare("string-escapes-5.c");
    }

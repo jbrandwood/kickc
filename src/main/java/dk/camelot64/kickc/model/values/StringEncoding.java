@@ -165,6 +165,8 @@ public enum StringEncoding {
             return '\r';
          case 'f':
             return '\f';
+         case '0':
+            return '\0';
          case '"':
             return '"';
          case '\'':
@@ -205,6 +207,8 @@ public enum StringEncoding {
             return "\\r";
          case '\f':
             return "\\f";
+         case '\0':
+            return "\\$00";
          case '\"':
             return "\\\"";
          case '\'':

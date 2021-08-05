@@ -1,0 +1,158 @@
+
+CONTROL FLOW GRAPH SSA
+
+signed word main(signed word main::argc , byte** main::argv)
+main: scope:[main]  from __start
+  main::return#0 = (signed word)*main::SCREEN
+  to:main::@return
+main::@return: scope:[main]  from main
+  main::return#3 = phi( main/main::return#0 )
+  main::return#1 = main::return#3
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  main::argc#0 = 0
+  main::argv#0 = (byte**) 0
+  call main 
+  main::return#2 = main::return#1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+signed word main(signed word main::argc , byte** main::argv)
+constant byte* main::SCREEN = (byte*)$400
+signed word main::argc
+signed word main::argc#0
+byte** main::argv
+byte** main::argv#0
+signed word main::return
+signed word main::return#0
+signed word main::return#1
+signed word main::return#2
+signed word main::return#3
+
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Alias main::return#0 = main::return#3 main::return#1 
+Successful SSA optimization Pass2AliasElimination
+Constant main::argc#0 = 0
+Constant main::argv#0 = (byte**) 0
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable main::return#2 and assignment [3] main::return#2 = main::return#0
+Eliminating unused constant main::argc#0
+Eliminating unused constant main::argv#0
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused variable main::return#0 and assignment [0] main::return#0 = (signed word)*main::SCREEN
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant main::SCREEN
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+signed word main(signed word main::argc , byte** main::argv)
+main: scope:[main]  from
+  [0] phi()
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+signed word main(signed word main::argc , byte** main::argv)
+signed word main::argc
+byte** main::argv
+signed word main::return
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 36 combination 
+Uplifting [] best 36 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test main() with parameters
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="main-param-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+signed word main(signed word main::argc , byte** main::argv)
+signed word main::argc
+byte** main::argv
+signed word main::return
+
+
+
+FINAL ASSEMBLER
+Score: 6
+
+  // File Comments
+// Test main() with parameters
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="main-param-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

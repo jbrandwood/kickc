@@ -197,7 +197,29 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          if(initCompilation != null)
             startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         final Procedure mainProc = program.getScope().getLocalProcedure(SymbolRef.MAIN_PROC_NAME);
+         if(mainProc==null)
+            throw new CompileError("Required main() not defined in program.");
+         if(!SymbolType.VOID.equals(mainProc.getReturnType()) && !SymbolType.SWORD.equals(mainProc.getReturnType()))
+            throw new CompileError("return of main() must be 'void' or of type 'int'.", mainProc.getDefinitionSource());
+         if(mainProc.getParameterNames().size()==0) {
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         } else if(mainProc.getParameterNames().size()==2) {
+            final List<Variable> parameters = mainProc.getParameters();
+            final Variable argc = parameters.get(0);
+            if(!SymbolType.SWORD.equals(argc.getType()))
+               throw new CompileError("first parameter of main() must be of type 'int'.", mainProc.getDefinitionSource());
+            final Variable argv = parameters.get(1);
+            if(!argv.getType().equals(new SymbolTypePointer(new SymbolTypePointer(SymbolType.BYTE))))
+               throw new CompileError("second parameter of main() must be of type 'char **'.", mainProc.getDefinitionSource());
+            final ArrayList<RValue> params = new ArrayList<>();
+            params.add(new ConstantInteger(0L, SymbolType.SWORD));
+            params.add(new ConstantPointer(0L, new SymbolTypePointer(SymbolType.BYTE)));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, params, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         } else
+            throw new CompileError("main() has wrong number of parameters. It must have zero or 2 parameters.", mainProc.getDefinitionSource());
+
+
          final Label startReturnLabel = startProcedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
          startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          startSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));

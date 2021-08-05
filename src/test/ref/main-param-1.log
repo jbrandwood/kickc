@@ -1,0 +1,210 @@
+
+CONTROL FLOW GRAPH SSA
+
+signed word main(signed word main::argc , byte** main::argv)
+main: scope:[main]  from __start
+  main::argv#1 = phi( __start/main::argv#0 )
+  main::argc#1 = phi( __start/main::argc#0 )
+  main::SCREEN[0] = (byte)main::argc#1
+  main::SCREEN[1] = (byte)main::argv#1
+  main::return#0 = -1
+  to:main::@return
+main::@return: scope:[main]  from main
+  main::return#3 = phi( main/main::return#0 )
+  main::return#1 = main::return#3
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  main::argc#0 = 0
+  main::argv#0 = (byte**) 0
+  call main 
+  main::return#2 = main::return#1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+signed word main(signed word main::argc , byte** main::argv)
+constant byte* main::SCREEN = (byte*)$400
+signed word main::argc
+signed word main::argc#0
+signed word main::argc#1
+byte** main::argv
+byte** main::argv#0
+byte** main::argv#1
+signed word main::return
+signed word main::return#0
+signed word main::return#1
+signed word main::return#2
+signed word main::return#3
+
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = (byte)main::argc#1
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = (byte)main::argv#1
+Adding number conversion cast (snumber) -1 in main::return#0 = -1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast main::return#0 = (snumber)-1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast -1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized signed number type (signed byte) -1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::return#0 = main::return#3 main::return#1 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::argc#1 main::argc#0
+Identical Phi Values main::argv#1 main::argv#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant main::return#0 = -1
+Constant main::argc#0 = 0
+Constant main::argv#0 = (byte**) 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::return#2 = main::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte)main::argc#0 in [1] main::SCREEN[0] = (byte)main::argc#0
+Constant value identified (byte)main::argv#0 in [2] main::SCREEN[1] = (byte)main::argv#0
+Successful SSA optimization Pass2ConstantValues
+Simplifying constant evaluating to zero (byte)main::argc#0 in [1] main::SCREEN[0] = (byte)main::argc#0
+Simplifying constant evaluating to zero (byte)main::argv#0 in [2] main::SCREEN[1] = (byte)main::argv#0
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero main::SCREEN in [1] main::SCREEN[0] = 0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant main::argc#0
+Eliminating unused constant main::argv#0
+Eliminating unused constant main::return#2
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant main::return#0
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(main::SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+signed word main(signed word main::argc , byte** main::argv)
+main: scope:[main]  from
+  [0] *main::SCREEN = 0
+  [1] *(main::SCREEN+1) = 0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+signed word main(signed word main::argc , byte** main::argv)
+signed word main::argc
+byte** main::argv
+signed word main::return
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::SCREEN = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test main() with parameters
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="main-param-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [0] *main::SCREEN = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SCREEN
+    // [1] *(main::SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+signed word main(signed word main::argc , byte** main::argv)
+constant byte* main::SCREEN = (byte*) 1024
+signed word main::argc
+byte** main::argv
+signed word main::return
+
+
+
+FINAL ASSEMBLER
+Score: 16
+
+  // File Comments
+// Test main() with parameters
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="main-param-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // SCREEN[0] = (char)argc
+    // [0] *main::SCREEN = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SCREEN
+    // SCREEN[1] = (char) argv
+    // [1] *(main::SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

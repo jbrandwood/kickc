@@ -15,6 +15,46 @@ public class TestProgramsFast extends TestPrograms {
    //}
 
    @Test
+   public void testMainWrong3() throws IOException {
+      assertError("main-wrong-3.c", "return of main() must be 'void' or of type 'int'");
+   }
+
+   @Test
+   public void testMainWrong2() throws IOException {
+      assertError("main-wrong-2.c", "second parameter of main() must be of type 'char **'");
+   }
+
+   @Test
+   public void testMainWrong1() throws IOException {
+      assertError("main-wrong-1.c", "first parameter of main() must be of type 'int'");
+   }
+
+   @Test
+   public void testMainWrong0() throws IOException {
+      assertError("main-wrong-0.c", "main() has wrong number of parameters. It must have zero or 2 parameters");
+   }
+
+   @Test
+   public void testMainMissing() throws IOException {
+      assertError("main-missing.c", "Required main() not defined in program.", false);
+   }
+
+   @Test
+   public void testMainParam1() throws IOException {
+      compileAndCompare("main-param-1.c");
+   }
+
+   @Test
+   public void testMainParam0() throws IOException {
+      compileAndCompare("main-param-0.c");
+   }
+
+   @Test
+   public void testMainReturn() throws IOException {
+      compileAndCompare("main-return.c");
+   }
+
+   @Test
    public void testNullConstant() throws IOException {
       compileAndCompare("null-constant.c");
    }

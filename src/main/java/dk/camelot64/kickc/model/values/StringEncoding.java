@@ -188,10 +188,10 @@ public enum StringEncoding {
     * Converts a char to an encoded escape sequence if needed. If not needed the char itself is returned.
     *
     * @param aChar The char
-    * @param escapeSingleQuotes Should single quotes ' be escaped. (true when encoding chars, false when encoding chars)
+    * @param encodingAChar Are we encoding a single char? Affects whether single and double quotes are escaped.
     * @return The char itself - or the appropriate escape sequence if needed.
     */
-   public String asciiToEscapedEncoded(char aChar, boolean escapeSingleQuotes) {
+   public String asciiToEscapedEncoded(char aChar, boolean encodingAChar) {
       if(this.asmEncoding == null) {
          // Encoding not supported by KickAsm - convert to ASCII / use escapes
          final byte encoded = encodedFromChar(aChar);
@@ -210,9 +210,12 @@ public enum StringEncoding {
          case '\0':
             return "\\$00";
          case '\"':
-            return "\\\"";
+            if(encodingAChar)
+               return Character.toString(aChar);
+            else
+               return "\\\"";
          case '\'':
-            if(escapeSingleQuotes)
+            if(encodingAChar)
                return "\\'";
             else
                return Character.toString(aChar);

@@ -1,0 +1,283 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  SCREEN[$28] = Q1
+  SCREEN[$29] = Q2
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = 0 != S[main::i#2]
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  SCREEN[main::i#3] = S[main::i#3]
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte Q1 = '"'
+constant byte Q2 = '''
+constant byte* S[]  = ""'"
+constant byte* const SCREEN = (byte*)$400
+void __start()
+void main()
+bool~ main::$0
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+
+Adding number conversion cast (unumber) $28 in SCREEN[$28] = Q1
+Adding number conversion cast (unumber) $29 in SCREEN[$29] = Q2
+Adding number conversion cast (unumber) 0 in main::$0 = 0 != S[main::i#2]
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $28
+Simplifying constant integer cast $29
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $29
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [5] if(0!=S[main::i#2]) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+$28)
+Consolidated array index constant in *(SCREEN+$29)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [7] main::i#4 = main::i#1
+Coalesced down to 1 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *(SCREEN+$28) = Q1
+  [1] *(SCREEN+$29) = Q2
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [2] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [3] if(0!=S[main::i#2]) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [4] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [5] SCREEN[main::i#2] = S[main::i#2]
+  [6] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 18.333333333333332
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *(SCREEN+$28) = Q1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+$29) = Q2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] if(0!=S[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [5] SCREEN[main::i#2] = S[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] *(SCREEN+$28) = Q1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+$29) = Q2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] if(0!=S[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [5] SCREEN[main::i#2] = S[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 40.33: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 333 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 333 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test using some simple supported string escape
+// Test escaping of quotes in chars and strings
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const Q1 = '"'
+  .const Q2 = '\''
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *(SCREEN+$28) = Q1 -- _deref_pbuc1=vbuc2 
+    lda #Q1
+    sta SCREEN+$28
+    // [1] *(SCREEN+$29) = Q2 -- _deref_pbuc1=vbuc2 
+    lda #Q2
+    sta SCREEN+$29
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [2] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] if(0!=S[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
+    lda S,x
+    cmp #0
+    bne __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+    // main::@2
+  __b2:
+    // [5] SCREEN[main::i#2] = S[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda S,x
+    sta SCREEN,x
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [2] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  S: .text @"\"'"
+  .byte 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+constant byte Q1 = '"'
+constant byte Q2 = '''
+constant byte* S[]  = ""'"
+constant byte* const SCREEN = (byte*) 1024
+void main()
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 18.333333333333332
+
+reg byte x [ main::i#2 main::i#1 ]
+
+
+FINAL ASSEMBLER
+Score: 273
+
+  // File Comments
+// Test using some simple supported string escape
+// Test escaping of quotes in chars and strings
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const Q1 = '"'
+  .const Q2 = '\''
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[40] = Q1
+    // [0] *(SCREEN+$28) = Q1 -- _deref_pbuc1=vbuc2 
+    lda #Q1
+    sta SCREEN+$28
+    // SCREEN[41] = Q2
+    // [1] *(SCREEN+$29) = Q2 -- _deref_pbuc1=vbuc2 
+    lda #Q2
+    sta SCREEN+$29
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char i=0;S[i];i++)
+    // [3] if(0!=S[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
+    lda S,x
+    cmp #0
+    bne __b2
+    // main::@return
+    // }
+    // [4] return 
+    rts
+    // main::@2
+  __b2:
+    // SCREEN[i] = S[i]
+    // [5] SCREEN[main::i#2] = S[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda S,x
+    sta SCREEN,x
+    // for(char i=0;S[i];i++)
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [2] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+.segment Data
+  S: .text @"\"'"
+  .byte 0
+

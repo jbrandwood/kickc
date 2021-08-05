@@ -975,6 +975,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testPreprocessor17() throws IOException {
+      compileAndCompare("preprocessor-17.c", log());
+   }
+
+   @Test
    public void testPreprocessor16() throws IOException {
       compileAndCompare("preprocessor-16.c");
    }

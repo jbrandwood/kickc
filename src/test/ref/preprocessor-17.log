@@ -1,0 +1,176 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::CLEAR#0 = $7f
+  main::SCREEN[0] = main::CLEAR#0
+  main::CLEAR#1 = 0
+  main::SCREEN[1] = main::CLEAR#1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+byte main::CLEAR
+byte main::CLEAR#0
+byte main::CLEAR#1
+constant byte* const main::SCREEN = (byte*)$400
+
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::CLEAR#0
+Adding number conversion cast (unumber) 0 in main::CLEAR#1 = 0
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::CLEAR#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast main::CLEAR#1 = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant main::CLEAR#0 = $7f
+Constant main::CLEAR#1 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [1] main::SCREEN[0] = main::CLEAR#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with different constant siblings main::CLEAR#0
+Inlining constant with different constant siblings main::CLEAR#1
+Constant inlined main::CLEAR#1 = 0
+Constant inlined main::CLEAR#0 = $7f
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *main::SCREEN = $7f
+  [1] *(main::SCREEN+1) = 0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::CLEAR
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::SCREEN = $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates a problem where a preprocessor macro with parameters name is used without any call parenthesis.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="preprocessor-17.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [0] *main::SCREEN = $7f -- _deref_pbuc1=vbuc2 
+    lda #$7f
+    sta SCREEN
+    // [1] *(main::SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte main::CLEAR
+constant byte* const main::SCREEN = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+  // File Comments
+// Demonstrates a problem where a preprocessor macro with parameters name is used without any call parenthesis.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="preprocessor-17.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // SCREEN[0] = CLEAR
+    // [0] *main::SCREEN = $7f -- _deref_pbuc1=vbuc2 
+    lda #$7f
+    sta SCREEN
+    // SCREEN[1] = CLEAR
+    // [1] *(main::SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

@@ -198,6 +198,8 @@ public class TestPreprocessor {
       assertEquals("+(+(+(name:x,num:1),num:1),num:1);", parse("#define A(a) a+1\nA(A(A(x)));"));
       // A nested call for a 2-parameter macro
       assertEquals("+(+(+(name:x,name:y),name:z),name:w);", parse("#define A(a,b) a+b\nA(A(x,y),A(z,w));"));
+      // A simple define with one parameter - used without the parenthesis
+      assertEquals("+(name:A,name:b);", parse("#define A(a) a+1\nA+b;"));
    }
 
    /**

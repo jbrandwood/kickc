@@ -352,7 +352,14 @@ public class CPreprocessor implements TokenSource {
             {
                // Skip '('
                skipWhitespace(cTokenSource);
-               nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
+               final Token nextToken = cTokenSource.peekToken();
+               if(nextToken.getType()!=KickCLexer.PAR_BEGIN) {
+                  // The macro has parameters - but the expansion has no parameters - add the name directly to the output
+                  return false;
+               }  else {
+                  // Gobble the parenthesis
+                  cTokenSource.nextToken();
+               }
                // Read parameter values
                List<Token> paramValue = new ArrayList<>();
                int nesting = 1;

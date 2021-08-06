@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model.types;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -18,7 +16,7 @@ public class SymbolTypeInference {
       if(rValue instanceof SymbolVariableRef) {
          Variable variable = symbols.getVar((SymbolVariableRef) rValue);
          if(variable==null)
-            throw new CompileError("Unknown variable "+rValue.toString());
+            return null; // throw new CompileError("Unknown variable "+rValue.toString());
          type = variable.getType().getQualified(false, variable.getType().isNomodify());
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
@@ -97,7 +95,7 @@ public class SymbolTypeInference {
             SymbolType rightType = inferType(symbols, rValue2);
             rValueType = ((OperatorBinary) assignment.getOperator()).inferType(leftType, rightType);
          } else {
-            throw new InternalError("Cannot infer type of " + assignment.toString());
+            return null; // throw new InternalError("Cannot infer type of " + assignment.toString());
          }
          return rValueType.getQualified(false, false);
       } else if(rValue instanceof StructMemberRef) {
@@ -108,12 +106,12 @@ public class SymbolTypeInference {
             StructDefinition structDefinition = symbols.getLocalStructDefinition(typeName);
             Variable structMember = structDefinition.getLocalVar(structMemberRef.getMemberName());
             if(structMember == null)
-               throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName());
+               return null; // throw new InternalError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName());
             return structMember.getType();
-         } else if(structType.equals(SymbolType.VAR)) {
+         } else if(SymbolType.VAR.equals(structType)) {
             return SymbolType.VAR;
          } else {
-            throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());
+            return null; // throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());
          }
       } else if(rValue instanceof StructZero) {
          return ((StructZero)rValue).getTypeStruct();
@@ -135,7 +133,7 @@ public class SymbolTypeInference {
          return ((StackPushValue) rValue).getType();
       }
       if(type == null) {
-         throw new InternalError("Cannot infer type for " + rValue.toString());
+         return null; // throw new InternalError("Cannot infer type for " + rValue.toString());
       }
       return type;
    }

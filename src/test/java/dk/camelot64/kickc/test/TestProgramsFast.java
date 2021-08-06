@@ -2266,7 +2266,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testStructError7() throws IOException {
-      assertError("struct-err-7.c", "Unknown struct member");
+      assertError("struct-err-7.c", "Type mismatch (signed word) cannot be assigned from '*main::per.qwe'");
    }
 
    @Test

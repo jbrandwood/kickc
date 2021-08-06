@@ -116,11 +116,11 @@ public class Initializers {
                initValue = new ConstantCastValue(typeSpec.getType(), (ConstantValue) initValue);
          } else {
             SymbolType inferredType = SymbolTypeInference.inferType(program.getScope(), initValue);
-            if(!inferredType.equals(typeSpec.getType()) && !inferredType.equals(SymbolType.VAR)) {
+            if(!typeSpec.getType().equals(inferredType) && !SymbolType.VAR.equals(inferredType)) {
                if(SymbolTypeConversion.assignmentTypeMatch(typeSpec.getType(), inferredType))
                   initValue = new CastValue(typeSpec.getType(), initValue);
                else
-                  throw new CompileError("Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from (" + inferredType.getTypeName() + ").", source);
+                  throw new CompileError("Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from '" + initValue + "'.", source);
             }
          }
       }

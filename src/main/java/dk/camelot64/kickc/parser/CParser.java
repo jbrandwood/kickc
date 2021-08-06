@@ -228,19 +228,20 @@ public class CParser {
                return null;
             else
                throw new CompileError("File not found " + fileName);
+         Path filePath = file.toPath().toAbsolutePath().normalize();
          List<String> included = program.getLoadedFiles();
-         if(included.contains(file.getAbsolutePath())) {
+         if(included.contains(filePath.toString())) {
             return null;
          }
-         final CharStream fileStream = CharStreams.fromPath(file.toPath().toAbsolutePath());
-         included.add(file.getAbsolutePath());
+         final CharStream fileStream = CharStreams.fromPath(filePath);
+         included.add(filePath.toString());
          if(program.getLog().isVerboseParse()) {
-            program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
+            program.getLog().append("PARSING " + filePath.toString().replace("\\", "/"));
             program.getLog().append(fileStream.toString());
          }
          KickCLexer lexer = makeLexer(fileStream);
          CFile cFile = new CFile(file, lexer);
-         cFiles.put(file.getAbsolutePath(), cFile);
+         cFiles.put(filePath.toString(), cFile);
          return lexer;
       } catch(IOException e) {
          throw new CompileError("Error parsing file " + fileName, e);

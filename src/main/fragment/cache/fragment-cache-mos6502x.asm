@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 81e098389 81e09a3d7
+//KICKC FRAGMENT CACHE 81bc8cd4f 81bc8edac
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -3594,6 +3594,26 @@ sta {z1}+1
 //FRAGMENT vwuz1=vwuz1_rol_1
 asl {z1}
 rol {z1}+1
+//FRAGMENT pssz1=pssc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT pbuz1=qbuz2_derefidx_vbuc1
+ldy #{c1}
+lda ({z2}),y
+sta {z1}
+iny
+lda ({z2}),y
+sta {z1}+1
+//FRAGMENT pssz1=pssz1_plus_vbuc1
+lda #{c1}
+clc
+adc {z1}
+sta {z1}
+bcc !+
+inc {z1}+1
+!:
 //FRAGMENT vwuz1=_deref_pwuc1_minus_vwuc2
 sec
 lda {c1}
@@ -8688,18 +8708,6 @@ tax
 lda {c1}
 eor #$ff
 tay
-//FRAGMENT pssz1=pssc1
-lda #<{c1}
-sta {z1}
-lda #>{c1}
-sta {z1}+1
-//FRAGMENT pbuz1=qbuz2_derefidx_vbuc1
-ldy #{c1}
-lda ({z2}),y
-sta {z1}
-iny
-lda ({z2}),y
-sta {z1}+1
 //FRAGMENT vwuz1=pwuz2_derefidx_vbuc1
 ldy #{c1}
 lda ({z2}),y
@@ -8707,14 +8715,6 @@ sta {z1}
 iny
 lda ({z2}),y
 sta {z1}+1
-//FRAGMENT pssz1=pssz1_plus_vbuc1
-lda #{c1}
-clc
-adc {z1}
-sta {z1}
-bcc !+
-inc {z1}+1
-!:
 //FRAGMENT _deref_pwsc1=vwsc2
 lda #<{c2}
 sta {c1}

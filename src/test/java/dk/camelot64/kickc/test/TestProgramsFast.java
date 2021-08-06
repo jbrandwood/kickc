@@ -976,7 +976,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testPreprocessor17() throws IOException {
-      compileAndCompare("preprocessor-17.c", log());
+      compileAndCompare("preprocessor-17.c");
    }
 
    @Test
@@ -2380,6 +2380,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testUnion0() throws IOException {
       compileAndCompare("union-0.c");
+   }
+
+   @Test
+   public void testStruct49() throws IOException {
+      compileAndCompare("struct-49.c");
    }
 
    @Test

@@ -117,8 +117,7 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
             }
          }
          res.append(")");
-      } else
-         res.append(" ");
+      }
       if(aliveInfo) {
          res.append(super.aliveString(program));
       }

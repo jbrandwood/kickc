@@ -112,10 +112,10 @@ public class ProgramScope extends Scope {
    }
 
    @Override
-   public String toString(Program program, boolean onlyVars) {
+   public String toStringVars(Program program, boolean onlyVars) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = program.getLiveRangeEquivalenceClassSet();
       StringBuilder out = new StringBuilder();
-      out.append(super.toString(program, onlyVars));
+      out.append(super.toStringVars(program, onlyVars));
       if(liveRangeEquivalenceClassSet != null) {
          out.append("\n");
          for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {

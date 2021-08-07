@@ -226,7 +226,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
-         getLog().append(program.getScope().toString(program, false));
+         getLog().append(program.getScope().toStringVars(program, false));
       }
 
       new Pass1AddressOfHandling(program).execute();
@@ -321,7 +321,7 @@ public class Compiler {
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");
-      getLog().append(program.getScope().toString(program, false));
+      getLog().append(program.getScope().toStringVars(program, false));
 
       program.endPass1();
 
@@ -657,7 +657,7 @@ public class Compiler {
 
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
       program.getVariableRegisterWeights();
-      getLog().append(program.getScope().toString(program, true));
+      getLog().append(program.getScope().toStringVars(program, true));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
@@ -762,7 +762,7 @@ public class Compiler {
       new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
-      getLog().append(program.getScope().toString(program, false));
+      getLog().append(program.getScope().toStringVars(program, false));
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");

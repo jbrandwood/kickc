@@ -175,11 +175,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   public String toString(Program program, boolean onlyVars) {
+   public String toStringVars(Program program, boolean onlyVars) {
       StringBuilder res = new StringBuilder();
       res.append(toString(program));
       res.append("\n");
-      res.append(super.toString(program, onlyVars));
+      res.append(super.toStringVars(program, onlyVars));
       return res.toString();
    }
 
@@ -240,11 +240,14 @@ public class Procedure extends Scope {
 
    @Override
    public String toString() {
-      return toString(null);
+      return toString(null, false);
    }
 
-   @Override
    public String toString(Program program) {
+      return toString(program, false);
+   }
+
+   public String toString(Program program, boolean onlyTypes) {
       StringBuilder res = new StringBuilder();
       if(declaredInline) {
          res.append("inline ");
@@ -264,7 +267,11 @@ public class Procedure extends Scope {
          for(Variable parameter : getParameters()) {
             if(!first) res.append(" , ");
             first = false;
-            res.append(parameter.typeString()+" "+parameter.toString(program));
+            if(onlyTypes) {
+               res.append(parameter.getType().getTypeName());
+            }  else {
+               res.append(parameter.getType().getTypeName()+" "+parameter.toString(program));
+            }
          }
       }
       if(isVariableLengthParameterList()) {

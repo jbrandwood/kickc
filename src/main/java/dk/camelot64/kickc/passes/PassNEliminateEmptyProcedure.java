@@ -120,13 +120,13 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
          final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
-            if(statement instanceof StatementCalling && ((StatementCalling) statement).getProcedure().equals(removeProcRef)) {
+            if(statement instanceof StatementCalling && removeProcRef.equals(((StatementCalling) statement).getProcedure())) {
                log.append("Removing call to empty/unused procedure " + statement.toString());
                stmtIt.remove();
-            } else if(statement instanceof StatementCallPrepare && ((StatementCallPrepare) statement).getProcedure().equals(removeProcRef)) {
+            } else if(statement instanceof StatementCallPrepare && removeProcRef.equals(((StatementCallPrepare) statement).getProcedure())) {
                log.append("Removing call to empty/unused procedure " + statement.toString());
                stmtIt.remove();
-            } else if(statement instanceof StatementCallFinalize && ((StatementCallFinalize) statement).getProcedure().equals(removeProcRef)) {
+            } else if(statement instanceof StatementCallFinalize && removeProcRef.equals(((StatementCallFinalize) statement).getProcedure())) {
                log.append("Removing call to empty/unused procedure " + statement.toString());
                stmtIt.remove();
             }

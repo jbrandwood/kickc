@@ -340,7 +340,7 @@ public abstract class Scope implements Symbol, Serializable {
       return (Scope) symbol;
    }
 
-   public String toString(Program program, boolean onlyVars) {
+   public String toStringVars(Program program, boolean onlyVars) {
       VariableRegisterWeights registerWeights = program.getOrNullVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
@@ -353,7 +353,7 @@ public abstract class Scope implements Symbol, Serializable {
             if(symbol instanceof StructDefinition )
                continue;
             if(!onlyVars || symbol instanceof Procedure ||  symbol instanceof BlockScope||  symbol instanceof ProgramScope)
-               res.append(((Scope) symbol).toString(program, onlyVars));
+               res.append(((Scope) symbol).toStringVars(program, onlyVars));
          } else if(symbol instanceof Variable) {
             Variable symVar = (Variable) symbol;
             if(!onlyVars || symVar.isVariable()) {

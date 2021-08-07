@@ -41,7 +41,7 @@ public class Pass1AssertProcedureCallParameters extends Pass1Base {
                   SymbolType callParameterType = SymbolTypeInference.inferType(getScope(), callParameter);
                   SymbolType declParameterType = declParameter.getType();
                   if(!SymbolTypeConversion.assignmentTypeMatch(declParameterType, callParameterType)) {
-                     throw new CompileError("Parameters type mismatch in call "+call.toString(getProgram(), false)+" expected "+procedure.toString(getProgram()), statement);
+                     throw new CompileError("Parameters type mismatch in call "+call.toString(getProgram(), true, false)+" expected "+procedure.toString(getProgram(), true), statement);
                   }
                }
             }

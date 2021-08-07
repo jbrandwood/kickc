@@ -1,9 +1,11 @@
 package dk.camelot64.kickc.model.statements;
 
 import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.List;
@@ -85,6 +87,10 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
 
    @Override
    public String toString(Program program, boolean aliveInfo) {
+      return toString(program, false, aliveInfo);
+   }
+
+   public String toString(Program program, boolean onlyTypes, boolean aliveInfo) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());
       if(lValue != null) {
@@ -93,15 +99,26 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
       }
       res.append("call ");
       if(procedure != null) {
-         res.append(procedure.getFullName() + " ");
+         res.append(procedure.getFullName());
       } else {
-         res.append(procedureName + " ");
+         res.append(procedureName);
       }
-      if(parameters != null) {
+      if(parameters != null && parameters.size()>0) {
+         res.append("(");
+         boolean first = true;
          for(RValue parameter : parameters) {
-            res.append(parameter.toString(program) + " ");
+            if(!first) res.append(", ");
+            first = false;
+            if(onlyTypes) {
+               final SymbolType symbolType = SymbolTypeInference.inferType(program.getScope(), parameter);
+               res.append(symbolType.getTypeName());
+            } else {
+               res.append(parameter.toString(program));
+            }
          }
-      }
+         res.append(")");
+      } else
+         res.append(" ");
       if(aliveInfo) {
          res.append(super.aliveString(program));
       }

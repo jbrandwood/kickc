@@ -95,3 +95,35 @@ void *memchr(const void *str, char c, size_t n) {
     }
     return (void*)0;
 }
+
+/// compares the string pointed to, by str1 to the string pointed to by str2.
+/// @param str1 This is the first string to be compared.
+/// @param str2 This is the second string to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int strcmp(const char *str1, const char *str2) {
+    char *s1 = str1, *s2 = str2;
+    while(*s1==*s2) {
+        if(*s1==0) return 0;
+        s1++; s2++;
+    }
+    return (int)(signed char)(*s1-*s2);
+}
+
+/// Compares at most the first n bytes of str1 and str2.
+/// @param str1 This is the first string to be compared.
+/// @param str2 This is the second string to be compared.
+/// @param The maximum number of characters to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int strncmp(const char *str1, const char *str2, size_t n) {
+    char *s1 = str1, *s2 = str2;
+    while(*s1==*s2) {
+        n--;
+        if(*s1==0 || n==0) return 0;
+        s1++; s2++;
+    }
+    return (int)(signed char)(*s1-*s2);
+}

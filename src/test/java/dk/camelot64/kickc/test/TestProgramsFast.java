@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testStrcmp0() throws IOException {
+      compileAndCompare("strcmp-0.c");
+   }
+
+   @Test
    public void testLabelGoto5() throws IOException {
       compileAndCompare("labelgoto-5.c");
    }

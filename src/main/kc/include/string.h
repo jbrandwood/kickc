@@ -35,3 +35,20 @@ size_t strlen(char *str);
 /// @param n  The number of bytes to look through
 /// @return A pointer to the matching byte or NULL if the character does not occur in the given memory area.
 void *memchr(const void *str, char c, size_t n);
+
+/// compares the string pointed to, by str1 to the string pointed to by str2.
+/// @param str1 This is the first string to be compared.
+/// @param str2 This is the second string to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int strcmp(const char *str1, const char *str2);
+
+/// Compares at most the first n bytes of str1 and str2.
+/// @param str1 This is the first string to be compared.
+/// @param str2 This is the second string to be compared.
+/// @param The maximum number of characters to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int strncmp(const char *str1, const char *str2, size_t n);

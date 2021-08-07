@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.9.1
 package dk.camelot64.kickc.parser;
 
 
@@ -531,6 +531,20 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStmtEmpty(KickCParser.StmtEmptyContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtLabel}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtLabel(KickCParser.StmtLabelContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtGoto}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtGoto(KickCParser.StmtGotoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#switchCases}.
 	 * @param ctx the parse tree

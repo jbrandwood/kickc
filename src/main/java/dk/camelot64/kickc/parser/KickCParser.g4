@@ -186,6 +186,8 @@ stmt
     | ASM asmDirectives? CURLY_BEGIN asmLines ASM_CURLY_END #stmtAsm
     | kasmContent #stmtDeclKasm
     | ';' #stmtEmpty
+    | NAME COLON #stmtLabel
+    | GOTO NAME ';' #stmtGoto
     ;
 
 switchCases:

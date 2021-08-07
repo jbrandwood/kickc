@@ -1,0 +1,314 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  to:main::label1
+main::label1: scope:[main]  from main
+  to:main::label2
+main::label2: scope:[main]  from main::label1
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main::label2 main::label4
+  main::i#2 = phi( main::label2/main::i#0, main::label4/main::i#1 )
+  main::$0 = main::i#2 < $a
+  if(main::$0) goto main::label3
+  to:main::label5
+main::label3: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::SCREEN[main::i#3] = main::i#3
+  to:main::label4
+main::label4: scope:[main]  from main::label3
+  main::i#4 = phi( main::label3/main::i#3 )
+  main::i#1 = ++ main::i#4
+  to:main::@1
+main::label5: scope:[main]  from main::@1
+  main::SCREEN[$28] = '*'
+  to:main::label6
+main::label6: scope:[main]  from main::label5
+  to:main::@return
+main::@return: scope:[main]  from main::label6
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+bool~ main::$0
+constant byte* const main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+
+Adding number conversion cast (unumber) $a in main::$0 = main::i#2 < $a
+Adding number conversion cast (unumber) $28 in main::SCREEN[$28] = '*'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $a
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 main::i#4 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [3] if(main::i#2<$a) goto main::label3
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+$28)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::label1
+Adding NOP phi() at start of main::label2
+Adding NOP phi() at start of main::label6
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [10] main::i#5 = main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::label1
+Adding NOP phi() at start of main::label2
+Adding NOP phi() at start of main::label6
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::label1
+main::label1: scope:[main]  from main
+  [1] phi()
+  to:main::label2
+main::label2: scope:[main]  from main::label1
+  [2] phi()
+  to:main::@1
+main::@1: scope:[main]  from main::label2 main::label4
+  [3] main::i#2 = phi( main::label2/0, main::label4/main::i#1 )
+  [4] if(main::i#2<$a) goto main::label3
+  to:main::label5
+main::label5: scope:[main]  from main::@1
+  [5] *(main::SCREEN+$28) = '*'
+  to:main::label6
+main::label6: scope:[main]  from main::label5
+  [6] phi()
+  to:main::@return
+main::@return: scope:[main]  from main::label6
+  [7] return 
+  to:@return
+main::label3: scope:[main]  from main::@1
+  [8] main::SCREEN[main::i#2] = main::i#2
+  to:main::label4
+main::label4: scope:[main]  from main::label3
+  [9] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 18.333333333333332
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *(main::SCREEN+$28) = '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 40.33: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 326 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 326 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test labels/goto
+// a few simple labels
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="labelgoto-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] phi from main to main::label1 [phi:main->main::label1]
+  label1_from_main:
+    jmp label1
+    // main::label1
+  label1:
+    // [2] phi from main::label1 to main::label2 [phi:main::label1->main::label2]
+  label2_from_label1:
+    jmp label2
+    // main::label2
+  label2:
+    // [3] phi from main::label2 to main::@1 [phi:main::label2->main::@1]
+  __b1_from_label2:
+    // [3] phi main::i#2 = 0 [phi:main::label2->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [4] if(main::i#2<$a) goto main::label3 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc label3
+    jmp label5
+    // main::label5
+  label5:
+    // [5] *(main::SCREEN+$28) = '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+$28
+    // [6] phi from main::label5 to main::label6 [phi:main::label5->main::label6]
+  label6_from_label5:
+    jmp label6
+    // main::label6
+  label6:
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+    // main::label3
+  label3:
+    // [8] main::SCREEN[main::i#2] = main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+    jmp label4
+    // main::label4
+  label4:
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::label4 to main::@1 [phi:main::label4->main::@1]
+  __b1_from_label4:
+    // [3] phi main::i#2 = main::i#1 [phi:main::label4->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp label1
+Removing instruction jmp label2
+Removing instruction jmp __b1
+Removing instruction jmp label5
+Removing instruction jmp label6
+Removing instruction jmp __breturn
+Removing instruction jmp label4
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction label1_from_main:
+Removing instruction label1:
+Removing instruction label2_from_label1:
+Removing instruction __b1_from_label2:
+Removing instruction label6_from_label5:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction label2:
+Removing instruction label5:
+Removing instruction label6:
+Removing instruction label4:
+Removing instruction __b1_from_label4:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+constant byte* const main::SCREEN = (byte*) 1024
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 18.333333333333332
+
+reg byte x [ main::i#2 main::i#1 ]
+
+
+FINAL ASSEMBLER
+Score: 197
+
+  // File Comments
+// Test labels/goto
+// a few simple labels
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="labelgoto-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] phi from main to main::label1 [phi:main->main::label1]
+    // main::label1
+    // [2] phi from main::label1 to main::label2 [phi:main::label1->main::label2]
+    // main::label2
+    // [3] phi from main::label2 to main::@1 [phi:main::label2->main::@1]
+    // [3] phi main::i#2 = 0 [phi:main::label2->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char i=0;i<10;i++)
+    // [4] if(main::i#2<$a) goto main::label3 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc label3
+    // main::label5
+    // SCREEN[40] = '*'
+    // [5] *(main::SCREEN+$28) = '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+$28
+    // [6] phi from main::label5 to main::label6 [phi:main::label5->main::label6]
+    // main::label6
+    // main::@return
+    // }
+    // [7] return 
+    rts
+    // main::label3
+  label3:
+    // SCREEN[i] = i
+    // [8] main::SCREEN[main::i#2] = main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+    // main::label4
+    // for(char i=0;i<10;i++)
+    // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::label4 to main::@1 [phi:main::label4->main::@1]
+    // [3] phi main::i#2 = main::i#1 [phi:main::label4->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

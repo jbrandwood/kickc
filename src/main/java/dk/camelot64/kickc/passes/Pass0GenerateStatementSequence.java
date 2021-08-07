@@ -1740,6 +1740,25 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitStmtLabel(KickCParser.StmtLabelContext ctx) {
+      String labelName = ctx.NAME().getText();
+      if(getCurrentScope().getLocalLabel(labelName)!=null)
+         throw new CompileError("label already defined '"+labelName+"'.", new StatementSource(ctx));
+      Scope procedureScope = getCurrentProcedure();
+      Label label = procedureScope.addLabel(labelName);
+      addStatement(new StatementLabel(label.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      return null;
+   }
+
+   @Override
+   public Object visitStmtGoto(KickCParser.StmtGotoContext ctx) {
+      String labelName = ctx.NAME().getText();
+      Label label = new Label(labelName, getCurrentScope(), false);
+      addStatement(new StatementJump(label.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      return null;
+   }
+
+   @Override
    public Object visitStmtBreak(KickCParser.StmtBreakContext ctx) {
       if(loopStack.isEmpty()) {
          throw new CompileError("Break not inside a loop! ", new StatementSource(ctx));

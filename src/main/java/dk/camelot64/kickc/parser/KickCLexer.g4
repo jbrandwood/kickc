@@ -88,6 +88,7 @@ SWITCH: 'switch' ;
 RETURN: 'return' ;
 BREAK: 'break' ;
 CONTINUE: 'continue' ;
+GOTO: 'goto' ;
 ASM: 'asm' { asmEnter=true; };
 DEFAULT : 'default' ;
 CASE : 'case' ;

@@ -9,6 +9,36 @@ import java.io.IOException;
  */
 public class TestProgramsFast extends TestPrograms {
 
+   @Test
+   public void testLabelGoto5() throws IOException {
+      compileAndCompare("labelgoto-5.c");
+   }
+
+   @Test
+   public void testLabelGoto4() throws IOException {
+      assertError("labelgoto-4.c", "goto label undefined 'skip'");
+   }
+
+   @Test
+   public void testLabelGoto3() throws IOException {
+      compileAndCompare("labelgoto-3.c");
+   }
+
+   @Test
+   public void testLabelGoto2() throws IOException {
+      compileAndCompare("labelgoto-2.c");
+   }
+
+   @Test
+   public void testLabelGoto1() throws IOException {
+      assertError("labelgoto-1.c", "label already defined 'label1'.");
+   }
+
+   @Test
+   public void testLabelGoto0() throws IOException {
+      compileAndCompare("labelgoto-0.c");
+   }
+
    //@Test
    //public void testShadowVariableError1() throws IOException {
    //   compileAndCompare("shadow-variable-error-1.c");

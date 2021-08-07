@@ -1,0 +1,186 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  to:main::repeat
+main::repeat: scope:[main]  from main main::repeat
+  main::i#2 = phi( main/main::i#0, main::repeat/main::i#1 )
+  main::SCREEN[main::i#2] = '*'
+  main::i#1 = ++ main::i#2
+  to:main::repeat
+main::@return: scope:[main]  from
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+constant byte* const main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [4] main::i#3 = main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::repeat
+main::repeat: scope:[main]  from main main::repeat
+  [1] main::i#2 = phi( main/0, main::repeat/main::i#1 )
+  [2] main::SCREEN[main::i#2] = '*'
+  [3] main::i#1 = ++ main::i#2
+  to:main::repeat
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 16.5
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] main::SCREEN[main::i#2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [2] main::SCREEN[main::i#2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 170 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 170 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test labels/goto
+// an infinite loop using goto
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="labelgoto-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] phi from main to main::repeat [phi:main->main::repeat]
+  repeat_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::repeat#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp repeat
+    // main::repeat
+  repeat:
+    // [2] main::SCREEN[main::i#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #'*'
+    sta SCREEN,x
+    // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::repeat to main::repeat [phi:main::repeat->main::repeat]
+  repeat_from_repeat:
+    // [1] phi main::i#2 = main::i#1 [phi:main::repeat->main::repeat#0] -- register_copy 
+    jmp repeat
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp repeat
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction repeat_from_main:
+Removing instruction repeat_from_repeat:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+constant byte* const main::SCREEN = (byte*) 1024
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 16.5
+
+reg byte x [ main::i#2 main::i#1 ]
+
+
+FINAL ASSEMBLER
+Score: 140
+
+  // File Comments
+// Test labels/goto
+// an infinite loop using goto
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="labelgoto-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] phi from main to main::repeat [phi:main->main::repeat]
+    // [1] phi main::i#2 = 0 [phi:main->main::repeat#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::repeat
+  repeat:
+    // SCREEN[i++] = '*'
+    // [2] main::SCREEN[main::i#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #'*'
+    sta SCREEN,x
+    // SCREEN[i++] = '*';
+    // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::repeat to main::repeat [phi:main::repeat->main::repeat]
+    // [1] phi main::i#2 = main::i#1 [phi:main::repeat->main::repeat#0] -- register_copy 
+    jmp repeat
+}
+  // File Data
+

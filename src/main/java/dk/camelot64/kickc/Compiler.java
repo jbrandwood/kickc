@@ -202,6 +202,7 @@ public class Compiler {
             getLog().append(procedureCompilation.getStatementSequence().toString(program));
          }
       }
+      new Pass1AssertJumpLabels(program).execute();
       new Pass1GenerateControlFlowGraph(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("FIRST CONTROL FLOW GRAPH");

@@ -80,7 +80,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("a","b")
-    // assert_cmp(LESS_THAN, strcmp("a","b"), "a<b")
+    // assert_cmp(LESS_THAN, strcmp("a","b"), "a<b strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message
@@ -101,7 +101,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("aaa","aab")
-    // assert_cmp(LESS_THAN, strcmp("aaa","aab"), "aaa<aab")
+    // assert_cmp(LESS_THAN, strcmp("aaa","aab"), "aaa<aab strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message1
@@ -122,7 +122,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("aa","aaa")
-    // assert_cmp(LESS_THAN, strcmp("aa","aaa"), "aa<aaa")
+    // assert_cmp(LESS_THAN, strcmp("aa","aaa"), "aa<aaa strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message2
@@ -143,7 +143,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("x","x")
-    // assert_cmp(EQUAL, strcmp("x","x"), "x=x")
+    // assert_cmp(EQUAL, strcmp("x","x"), "x=x strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message3
@@ -164,7 +164,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("qwez","qwez")
-    // assert_cmp(EQUAL, strcmp("qwez","qwez"), "qwez=qwez")
+    // assert_cmp(EQUAL, strcmp("qwez","qwez"), "qwez=qwez strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message4
@@ -185,7 +185,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("q","k")
-    // assert_cmp(GREATER_THAN, strcmp("q","k"), "q>k")
+    // assert_cmp(GREATER_THAN, strcmp("q","k"), "q>k strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message5
@@ -206,7 +206,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("kkkq","kkkp")
-    // assert_cmp(GREATER_THAN, strcmp("kkkq","kkkp"), "kkkq>kkkp")
+    // assert_cmp(GREATER_THAN, strcmp("kkkq","kkkp"), "kkkq>kkkp strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message6
@@ -227,7 +227,7 @@ main: {
     sta.z strcmp.s1+1
     jsr strcmp
     // strcmp("kkkq","kkk")
-    // assert_cmp(GREATER_THAN, strcmp("kkkq","kkk"), "kkkq>kkk")
+    // assert_cmp(GREATER_THAN, strcmp("kkkq","kkk"), "kkkq>kkk strcmp()")
     lda.z strcmp.return
     sta.z assert_cmp.actual
     lda #<message7
@@ -252,7 +252,7 @@ main: {
     sta.z strncmp.s1+1
     jsr strncmp
     // strncmp("aaax","aabx", 3)
-    // assert_cmp(LESS_THAN, strncmp("aaax","aabx", 3), "aaax<aabx (3)")
+    // assert_cmp(LESS_THAN, strncmp("aaax","aabx", 3), "aaax<aabx strncmp(3)")
     lda.z strncmp.return
     sta.z assert_cmp.actual
     lda #<message8
@@ -277,7 +277,7 @@ main: {
     sta.z strncmp.s1+1
     jsr strncmp
     // strncmp("qwe","qee", 3)
-    // assert_cmp(GREATER_THAN, strncmp("qwe","qee", 3), "qwe>qee (2)")
+    // assert_cmp(GREATER_THAN, strncmp("qwe","qee", 3), "qwe>qee strncmp(2)")
     lda.z strncmp.return
     sta.z assert_cmp.actual
     lda #<message9
@@ -302,7 +302,7 @@ main: {
     sta.z strncmp.s1+1
     jsr strncmp
     // strncmp("aab","aac", 2)
-    // assert_cmp(EQUAL, strncmp("aab","aac", 2), "aab=aac (2)")
+    // assert_cmp(EQUAL, strncmp("aab","aac", 2), "aab=aac strncmp(2)")
     lda.z strncmp.return
     sta.z assert_cmp.actual
     lda #<message10
@@ -327,7 +327,7 @@ main: {
     sta.z strncmp.s1+1
     jsr strncmp
     // strncmp("qwex","qwea", 3)
-    // assert_cmp(EQUAL, strncmp("qwex","qwea", 3), "qwex=qwea (3)")
+    // assert_cmp(EQUAL, strncmp("qwex","qwea", 3), "qwex=qwea strncmp(3)")
     lda.z strncmp.return
     sta.z assert_cmp.actual
     lda #<message11
@@ -337,6 +337,131 @@ main: {
     lda #0
     sta.z assert_cmp.expect
     jsr assert_cmp
+    // strncmp("aa","aacx", 3)
+    lda #<3
+    sta.z strncmp.n
+    lda #>3
+    sta.z strncmp.n+1
+    lda #<str212
+    sta.z strncmp.s2
+    lda #>str212
+    sta.z strncmp.s2+1
+    lda #<str12
+    sta.z strncmp.s1
+    lda #>str12
+    sta.z strncmp.s1+1
+    jsr strncmp
+    // strncmp("aa","aacx", 3)
+    // assert_cmp(LESS_THAN, strncmp("aa","aacx", 3), "aa<aacx strncmp(3)")
+    lda.z strncmp.return
+    sta.z assert_cmp.actual
+    lda #<message12
+    sta.z assert_cmp.message
+    lda #>message12
+    sta.z assert_cmp.message+1
+    lda #-1
+    sta.z assert_cmp.expect
+    jsr assert_cmp
+    // memcmp("aa","aba", 2)
+    lda #<2
+    sta.z memcmp.n
+    lda #>2
+    sta.z memcmp.n+1
+    lda #<__35
+    sta.z memcmp.str2
+    lda #>__35
+    sta.z memcmp.str2+1
+    lda #<str12
+    sta.z memcmp.str1
+    lda #>str12
+    sta.z memcmp.str1+1
+    jsr memcmp
+    // memcmp("aa","aba", 2)
+    // assert_cmp(LESS_THAN, memcmp("aa","aba", 2), "aa<ab memcmp(2)")
+    lda.z memcmp.return
+    sta.z assert_cmp.actual
+    lda #<message13
+    sta.z assert_cmp.message
+    lda #>message13
+    sta.z assert_cmp.message+1
+    lda #-1
+    sta.z assert_cmp.expect
+    jsr assert_cmp
+    // memcmp("x","x", 2)
+    lda #<2
+    sta.z memcmp.n
+    lda #>2
+    sta.z memcmp.n+1
+    lda #<str13
+    sta.z memcmp.str2
+    lda #>str13
+    sta.z memcmp.str2+1
+    lda #<str13
+    sta.z memcmp.str1
+    lda #>str13
+    sta.z memcmp.str1+1
+    jsr memcmp
+    // memcmp("x","x", 2)
+    // assert_cmp(EQUAL, memcmp("x","x", 2), "x=x memcmp(2)")
+    lda.z memcmp.return
+    sta.z assert_cmp.actual
+    lda #<message14
+    sta.z assert_cmp.message
+    lda #>message14
+    sta.z assert_cmp.message+1
+    lda #0
+    sta.z assert_cmp.expect
+    jsr assert_cmp
+    // memcmp("xy","xz", 1)
+    lda #<1
+    sta.z memcmp.n
+    lda #>1
+    sta.z memcmp.n+1
+    lda #<__39
+    sta.z memcmp.str2
+    lda #>__39
+    sta.z memcmp.str2+1
+    lda #<__38
+    sta.z memcmp.str1
+    lda #>__38
+    sta.z memcmp.str1+1
+    jsr memcmp
+    // memcmp("xy","xz", 1)
+    // assert_cmp(EQUAL, memcmp("xy","xz", 1), "xy=xz memcmp(1)")
+    lda.z memcmp.return
+    sta.z assert_cmp.actual
+    lda #<message15
+    sta.z assert_cmp.message
+    lda #>message15
+    sta.z assert_cmp.message+1
+    lda #0
+    sta.z assert_cmp.expect
+    jsr assert_cmp
+    // memcmp("qwez","qwex",4)
+    lda #<4
+    sta.z memcmp.n
+    lda #>4
+    sta.z memcmp.n+1
+    lda #<str111
+    sta.z memcmp.str2
+    lda #>str111
+    sta.z memcmp.str2+1
+    lda #<str14
+    sta.z memcmp.str1
+    lda #>str14
+    sta.z memcmp.str1+1
+    jsr memcmp
+    // memcmp("qwez","qwex",4)
+    // assert_cmp(GREATER_THAN, memcmp("qwez","qwex",4), "qwez>qwex memcmp(4)")
+    lda.z memcmp.return
+    sta.z assert_cmp.actual
+    lda #<message16
+    sta.z assert_cmp.message
+    lda #>message16
+    sta.z assert_cmp.message+1
+    lda #1
+    sta.z assert_cmp.expect
+    jsr assert_cmp
   __b1:
     jmp __b1
   .segment Data
@@ -344,63 +469,81 @@ main: {
     .byte 0
     str2: .text "b"
     .byte 0
-    message: .text "a<b"
+    message: .text "a<b strcmp()"
     .byte 0
     str11: .text "aaa"
     .byte 0
     str21: .text "aab"
     .byte 0
-    message1: .text "aaa<aab"
+    message1: .text "aaa<aab strcmp()"
     .byte 0
     str12: .text "aa"
     .byte 0
-    message2: .text "aa<aaa"
+    message2: .text "aa<aaa strcmp()"
     .byte 0
     str13: .text "x"
     .byte 0
-    message3: .text "x=x"
+    message3: .text "x=x strcmp()"
     .byte 0
     str14: .text "qwez"
     .byte 0
-    message4: .text "qwez=qwez"
+    message4: .text "qwez=qwez strcmp()"
     .byte 0
     str15: .text "q"
     .byte 0
     str25: .text "k"
     .byte 0
-    message5: .text "q>k"
+    message5: .text "q>k strcmp()"
     .byte 0
     str16: .text "kkkq"
     .byte 0
     str26: .text "kkkp"
     .byte 0
-    message6: .text "kkkq>kkkp"
+    message6: .text "kkkq>kkkp strcmp()"
     .byte 0
     str27: .text "kkk"
     .byte 0
-    message7: .text "kkkq>kkk"
+    message7: .text "kkkq>kkk strcmp()"
     .byte 0
     str18: .text "aaax"
     .byte 0
     str28: .text "aabx"
     .byte 0
-    message8: .text "aaax<aabx (3)"
+    message8: .text "aaax<aabx strncmp(3)"
     .byte 0
     str19: .text "qwe"
     .byte 0
     str29: .text "qee"
     .byte 0
-    message9: .text "qwe>qee (2)"
+    message9: .text "qwe>qee strncmp(2)"
     .byte 0
     str210: .text "aac"
     .byte 0
-    message10: .text "aab=aac (2)"
+    message10: .text "aab=aac strncmp(2)"
     .byte 0
     str111: .text "qwex"
     .byte 0
     str211: .text "qwea"
     .byte 0
-    message11: .text "qwex=qwea (3)"
+    message11: .text "qwex=qwea strncmp(3)"
+    .byte 0
+    str212: .text "aacx"
+    .byte 0
+    message12: .text "aa<aacx strncmp(3)"
+    .byte 0
+    __35: .text "aba"
+    .byte 0
+    message13: .text "aa<ab memcmp(2)"
+    .byte 0
+    message14: .text "x=x memcmp(2)"
+    .byte 0
+    __38: .text "xy"
+    .byte 0
+    __39: .text "xz"
+    .byte 0
+    message15: .text "xy=xz memcmp(1)"
+    .byte 0
+    message16: .text "qwez>qwex memcmp(4)"
     .byte 0
 }
 .segment Code
@@ -487,7 +630,7 @@ gotoxy: {
 ///         if Return value = 0 then it indicates str1 is equal to str2.
 strcmp: {
     .label s1 = 4
-    .label s2 = $a
+    .label s2 = 6
     .label return = $1a
   __b1:
     // while(*s1==*s2)
@@ -537,20 +680,19 @@ assert_cmp: {
     .label expect = 2
     .label message = 4
     // case LESS_THAN:
-    //             BREAK();
     //             ok = (char)(actual<0);
     //             break;
     lda #-1
     cmp.z expect
-    bne !BREAK1+
-    jmp BREAK1
-  !BREAK1:
+    bne !__b4+
+    jmp __b4
+  !__b4:
     // case EQUAL:
     //             ok = (char)(actual==0);
     //             break;
     lda.z expect
     cmp #0
-    beq __b4
+    beq __b5
     // case GREATER_THAN:
     //             ok = (char)(actual>0);
     //             break;
@@ -570,10 +712,10 @@ assert_cmp: {
     rol
   !a:
     // ok = (char)(actual>0)
-    jmp __b6
+    jmp __b7
   __b3:
     lda #0
-  __b6:
+  __b7:
     // if(ok)
     cmp #0
     bne __b1
@@ -633,7 +775,7 @@ assert_cmp: {
     sta.z cputs.s+1
     jsr cputs
     rts
-  __b4:
+  __b5:
     // actual==0
     lda.z actual
     eor #0
@@ -642,10 +784,8 @@ assert_cmp: {
   !:
     eor #1
     // ok = (char)(actual==0)
-    jmp __b6
-  BREAK1:
-    // kickasm
-    .break 
+    jmp __b7
+  __b4:
     // actual<0
     lda.z actual
     sec
@@ -657,7 +797,7 @@ assert_cmp: {
     lda #0
     rol
     // ok = (char)(actual<0)
-    jmp __b6
+    jmp __b7
   .segment Data
     s: .text "ok! "
     .byte 0
@@ -678,12 +818,12 @@ assert_cmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// strncmp(word zp(6) n)
+// strncmp(word zp(4) n)
 strncmp: {
-    .label s1 = $a
+    .label s1 = 6
     .label s2 = $1a
-    .label n = 6
-    .label return = $1c
+    .label n = 4
+    .label return = $a
   __b1:
     // while(*s1==*s2)
     ldy #0
@@ -729,6 +869,66 @@ strncmp: {
     inc.z s1+1
   !:
     // s2++;
+    inc.z s2
+    bne !+
+    inc.z s2+1
+  !:
+    jmp __b1
+}
+/// Compares the first n bytes of memory area str1 and memory area str2.
+/// @param str1 This is the pointer to a block of memory.
+/// @param str2 This is the pointer to a block of memory.
+/// @param n This is the number of bytes to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+// memcmp(const void* zp(4) str1, const void* zp($a) str2, word zp(6) n)
+memcmp: {
+    .label n = 6
+    .label s1 = 4
+    .label s2 = $a
+    .label return = $1a
+    .label str1 = 4
+    .label str2 = $a
+  __b1:
+    // for(char *s1 = str1, *s2 = str2; n!=0; n--,s1++,s2++)
+    lda.z n
+    ora.z n+1
+    bne __b2
+    lda #<0
+    sta.z return
+    sta.z return+1
+    // }
+    rts
+  __b2:
+    // if(*s1!=*s2)
+    ldy #0
+    lda (s1),y
+    cmp (s2),y
+    beq __b3
+    // *s1-*s2
+    lda (s1),y
+    sec
+    sbc (s2),y
+    // return (int)(signed char)(*s1-*s2);
+    sta.z return
+    ora #$7f
+    bmi !+
+    tya
+  !:
+    sta.z return+1
+    rts
+  __b3:
+    // for(char *s1 = str1, *s2 = str2; n!=0; n--,s1++,s2++)
+    lda.z n
+    bne !+
+    dec.z n+1
+  !:
+    dec.z n
+    inc.z s1
+    bne !+
+    inc.z s1+1
+  !:
     inc.z s2
     bne !+
     inc.z s2+1
@@ -842,10 +1042,10 @@ cputc: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($1c) buffer)
+// uctoa(byte register(X) value, byte* zp($1a) buffer)
 uctoa: {
     .label digit_value = $19
-    .label buffer = $1c
+    .label buffer = $1a
     .label digit = 8
     .label started = 9
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -959,9 +1159,9 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($1c) buffer, byte register(X) value, byte zp($19) sub)
+// uctoa_append(byte* zp($1a) buffer, byte register(X) value, byte zp($19) sub)
 uctoa_append: {
-    .label buffer = $1c
+    .label buffer = $1a
     .label sub = $19
     ldy #0
   __b1:

@@ -96,6 +96,22 @@ void *memchr(const void *str, char c, size_t n) {
     return (void*)0;
 }
 
+/// Compares the first n bytes of memory area str1 and memory area str2.
+/// @param str1 This is the pointer to a block of memory.
+/// @param str2 This is the pointer to a block of memory.
+/// @param n This is the number of bytes to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int memcmp(const void *str1, const void *str2, size_t n) {
+    for(char *s1 = str1, *s2 = str2; n!=0; n--,s1++,s2++) {
+        if(*s1!=*s2)
+            return (int)(signed char)(*s1-*s2);
+    }
+    return 0;
+}
+
+
 /// compares the string pointed to, by str1 to the string pointed to by str2.
 /// @param str1 This is the first string to be compared.
 /// @param str2 This is the second string to be compared.

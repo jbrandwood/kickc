@@ -15,6 +15,15 @@ void* memmove( void* destination, void* source, size_t num );
 /// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 void *memset(void *str, char c, size_t num);
 
+/// Compares the first n bytes of memory area str1 and memory area str2.
+/// @param str1 This is the pointer to a block of memory.
+/// @param str2 This is the pointer to a block of memory.
+/// @param n This is the number of bytes to be compared.
+/// @return if Return value < 0 then it indicates str1 is less than str2.
+///         if Return value > 0 then it indicates str2 is less than str1.
+///         if Return value = 0 then it indicates str1 is equal to str2.
+int memcmp(const void *str1, const void *str2, size_t n);
+
 /// Copies the C string pointed by source into the array pointed by destination, including the terminating null character (and stopping at that point).
 char* strcpy( char* destination, char*  source );
 

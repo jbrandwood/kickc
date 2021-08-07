@@ -222,8 +222,8 @@ expr
     | expr DOT NAME #exprDot
     | expr '->' NAME  #exprArrow
     | expr PAR_BEGIN parameterList? PAR_END #exprCall
-    | SIZEOF PAR_BEGIN ( expr | typeName ) PAR_END #exprSizeOf
-    | TYPEID PAR_BEGIN ( expr | typeName ) PAR_END #exprTypeId
+    | SIZEOF ( expr | PAR_BEGIN typeName PAR_END )  #exprSizeOf
+    | TYPEID ( expr | PAR_BEGIN typeName PAR_END )  #exprTypeId
     | DEFINED PAR_BEGIN? NAME PAR_END? #exprDefined
     | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
     | PAR_BEGIN typeName PAR_END expr #exprCast

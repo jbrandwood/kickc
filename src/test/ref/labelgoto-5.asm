@@ -1,5 +1,5 @@
 // Test labels/goto
-// goto a nested label
+// goto a label nested in a loop
   // Commodore 64 PRG executable file
 .file [name="labelgoto-5.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

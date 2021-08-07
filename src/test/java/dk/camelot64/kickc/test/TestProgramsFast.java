@@ -200,6 +200,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testSizeNoParen() throws IOException {
+      compileAndCompare("sizeof-noparen.c");
+   }
+
+   @Test
    public void testSizeOfProblem() throws IOException {
       compileAndCompare("sizeof-problem.c");
    }

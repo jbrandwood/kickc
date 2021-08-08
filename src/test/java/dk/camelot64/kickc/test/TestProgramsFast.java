@@ -3394,6 +3394,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerReturn3() throws IOException {
+      compileAndCompare("function-pointer-return-3.c");
+   }
+
+   @Test
    public void testFunctionPointerReturn2() throws IOException {
       compileAndCompare("function-pointer-return-2.c");
    }

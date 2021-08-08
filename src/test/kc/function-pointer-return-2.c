@@ -1,5 +1,5 @@
-// Calling a function pointer with parameters
-// Reference the function without &
+// Calling a function pointer with return value
+// Reference the function without &, Call it without *
 
 char * const RASTER = (char*)0xd012;
 char * const BORDER = (char*)0xd020;

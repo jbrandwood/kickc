@@ -17,7 +17,6 @@ import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -658,17 +657,17 @@ public class Pass4CodeGeneration {
                ConstantValue memberValue = structValue.getValue(memberRef);
                Variable memberVariable = getScope().getVar(memberRef);
                addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
-               size += SymbolTypeStruct.getMemberSizeBytes(memberVariable.getType(),  memberVariable.getArraySize(), getScope());
+               size += SymbolTypeStruct.getMemberSizeBytes(memberVariable.getType(), memberVariable.getArraySize(), getScope());
             }
             // Add padding if this is a union and the first member does not use all bytes
             final int declaredSize = structValue.getStructType().getSizeBytes();
-            if(size<declaredSize) {
+            if(size < declaredSize) {
                long paddingSize = declaredSize - size;
                // TODO: Use SIZEOF constant
                ConstantValue paddingSizeVal = new ConstantInteger(paddingSize);
-               String paddingBytesAsm  = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
+               String paddingBytesAsm = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
                ConstantValue zeroValue = new ConstantInteger(0l, SymbolType.BYTE);
-               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, paddingBytesAsm, (int)paddingSize, getEncoding(zeroValue));
+               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, paddingBytesAsm, (int) paddingSize, getEncoding(zeroValue));
             }
          } else if(value instanceof StructZero) {
             final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();
@@ -814,7 +813,7 @@ public class Pass4CodeGeneration {
                StatementSource statementSource = statement.getSource();
                if(warnFragmentMissing) {
                   String stmtFormat = "";
-                  if(statementSource!=null)
+                  if(statementSource != null)
                      stmtFormat = statementSource.format();
                   program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + stmtFormat);
                   asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment " + e.getFragmentSignature() + "\", 0, 1", 0L, 0L));
@@ -892,8 +891,8 @@ public class Pass4CodeGeneration {
                   AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.makelong4(call, program);
                   ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
                   generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
-               } else  {
-                  throw new CompileError("Intrinsic procedure not supported "+procedure.toString(program));
+               } else {
+                  throw new CompileError("Intrinsic procedure not supported " + procedure.toString(program));
                }
             } else if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                // Generate PHI transition
@@ -921,19 +920,18 @@ public class Pass4CodeGeneration {
                supported = true;
             } else if(procedureRVal instanceof PointerDereferenceSimple) {
                RValue pointer = ((PointerDereferenceSimple) procedureRVal).getPointer();
-               if(pointer instanceof ConstantValue) {
-                  ensureEncoding(asm, pointer);
-                  asm.addInstruction("jsr", CpuAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
-                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                  supported = true;
-               } else if(pointer instanceof VariableRef) {
+               while(pointer instanceof CastValue)
+                  pointer = ((CastValue) pointer).getValue();
+               if(pointer instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) pointer);
                   generateIndirectCall(asm, variable, block.getScope());
                   asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
                   supported = true;
-               } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
-                  generateIndirectCall(asm, variable, block.getScope());
+               } else {
+                  // Generate ASM for an indirect call
+                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.call(call, program);
+                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
                   asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
                   supported = true;
                }
@@ -1059,7 +1057,7 @@ public class Pass4CodeGeneration {
          entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature();
       }
       try {
-         asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName+ ")");
+         asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
          generateAsm(asm, entryFragment.getAsmFragmentInstanceSpec());
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());

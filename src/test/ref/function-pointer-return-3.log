@@ -1,0 +1,646 @@
+Setting inferred __stackcall on procedure affected by address-of __stackcall void set_border(byte set_border::col) caused by statement void set_border(byte set_border::col)
+Setting inferred __stackcall on procedure affected by address-of __stackcall void set_bg(byte set_bg::col) caused by statement void set_bg(byte set_bg::col)
+Setting inferred __stackcall on procedure affected by address-of __stackcall void set_border(byte set_border::col) caused by statement __stackcall void set_border(byte set_border::col)
+Setting inferred __stackcall on procedure affected by address-of __stackcall void set_bg(byte set_bg::col) caused by statement __stackcall void set_bg(byte set_bg::col)
+Adding parameter assignment in __stackcall procedure set_border::col = param(set_border::col)
+Adding parameter assignment in __stackcall procedure set_bg::col = param(set_bg::col)
+Calling convention STACK_CALL adding prepare/execute/finalize for call *(*run::$1) *run::$2 
+Calling convention STACK_CALL replacing param(set_border::col) with stackidx(byte,set_border::OFFSET_STACK_COL)
+Calling convention STACK_CALL replacing param(set_bg::col) with stackidx(byte,set_bg::OFFSET_STACK_COL)
+Calling convention STACK_CALL adding stack push stackpush(byte) = *run::$2
+
+CONTROL FLOW GRAPH SSA
+
+__stackcall void set_border(byte set_border::col)
+set_border: scope:[set_border]  from
+  set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL)
+  *BORDER = set_border::col#0
+  to:set_border::@return
+set_border::@return: scope:[set_border]  from set_border
+  return 
+  to:@return
+
+__stackcall void set_bg(byte set_bg::col)
+set_bg: scope:[set_bg]  from
+  set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL)
+  *BACKGROUND = set_bg::col#0
+  to:set_bg::@return
+set_bg::@return: scope:[set_bg]  from set_bg
+  return 
+  to:@return
+
+void run(struct Task* run::task)
+run: scope:[run]  from main::@3
+  run::task#1 = phi( main::@3/run::task#0 )
+  run::$3 = (void(byte)**)run::task#1
+  run::$1 = run::$3 + OFFSET_STRUCT_TASK_HANDLER
+  run::$4 = (byte*)run::task#1
+  run::$2 = run::$4 + OFFSET_STRUCT_TASK_PARAM
+  stackpush(byte) = *run::$2
+  callexecute *(*run::$1) 
+  sideeffect stackpullbytes(1)
+  to:run::@return
+run::@return: scope:[run]  from run
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::i#0 = 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@4
+  main::i#2 = phi( main::@1/main::i#0, main::@4/main::i#1 )
+  main::$0 = sizeof  tasks
+  main::$1 = main::$0 / SIZEOF_STRUCT_TASK
+  main::$2 = main::i#2 < main::$1
+  if(main::$2) goto main::@3
+  to:main::@1
+main::@3: scope:[main]  from main::@2
+  main::i#3 = phi( main::@2/main::i#2 )
+  main::$5 = main::i#3 * SIZEOF_STRUCT_TASK
+  main::$3 = tasks + main::$5
+  run::task#0 = main::$3
+  call run
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  main::i#4 = phi( main::@3/main::i#3 )
+  main::i#1 = ++ main::i#4
+  to:main::@2
+main::@return: scope:[main]  from
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+constant byte* const BACKGROUND = (byte*)$d021
+constant byte* const BORDER = (byte*)$d020
+constant byte OFFSET_STRUCT_TASK_HANDLER = 1
+constant byte OFFSET_STRUCT_TASK_PARAM = 0
+constant byte SIZEOF_STRUCT_TASK = 3
+constant word STACK_BASE = $103
+void __start()
+void main()
+word~ main::$0
+word~ main::$1
+bool~ main::$2
+struct Task*~ main::$3
+byte~ main::$5
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+void run(struct Task* run::task)
+void(byte)**~ run::$1
+byte*~ run::$2
+void(byte)**~ run::$3
+byte*~ run::$4
+struct Task* run::task
+struct Task* run::task#0
+struct Task* run::task#1
+__stackcall void set_bg(byte set_bg::col)
+constant byte set_bg::OFFSET_STACK_COL = 0
+byte set_bg::col
+byte set_bg::col#0
+__stackcall void set_border(byte set_border::col)
+constant byte set_border::OFFSET_STACK_COL = 0
+byte set_border::col
+byte set_border::col#0
+constant struct Task* tasks[]  = { { param: 0, handler: &set_border }, { param: 0, handler: &set_bg }, { param: 1, handler: &set_border }, { param: 2, handler: &set_bg } }
+
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 53281
+Successful SSA optimization PassNCastSimplification
+Alias main::i#2 = main::i#3 main::i#4 
+Alias run::task#0 = main::$3 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values run::task#1 run::task#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$2 [20] if(main::i#2<main::$1) goto main::@3
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [17] main::$0 = sizeof  tasks
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::i#0 = 0
+Constant main::$0 = sizeof tasks
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [11] stackpush(byte) = *run::$2  -- run::$4[OFFSET_STRUCT_TASK_PARAM]
+Converting *(pointer+n) to pointer[n] [12] callexecute *(*run::$1)   -- run::$3[OFFSET_STRUCT_TASK_HANDLER]
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero run::$4 in [10] run::$2 = run::$4 + OFFSET_STRUCT_TASK_PARAM
+Simplifying expression containing zero run::$4 in [11] stackpush(byte) = run::$4[OFFSET_STRUCT_TASK_PARAM]
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Eliminating unused variable run::$1 and assignment [7] run::$1 = run::$3 + OFFSET_STRUCT_TASK_HANDLER
+Eliminating unused variable run::$2 and assignment [9] run::$2 = run::$4
+Eliminating unused constant OFFSET_STRUCT_TASK_PARAM
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Resolving array sizeof() sizeof tasks
+Successful SSA optimization PassNSizeOfSimplification
+Constant right-side identified [13] main::$1 = main::$0 / SIZEOF_STRUCT_TASK
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::$1 = main::$0/SIZEOF_STRUCT_TASK
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [8] stackpush(byte) = *run::$4  -- ((byte*)tasks)[main::$5]
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable run::$4 and assignment [7] run::$4 = (byte*)run::task#0
+Successful SSA optimization PassNEliminateUnusedVars
+Adding number conversion cast (unumber) 4 in 
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant value identified (byte*)tasks in [7] stackpush(byte) = ((byte*)tasks)[main::$5]
+Successful SSA optimization Pass2ConstantValues
+Inlining Noop Cast [6] run::$3 = (void(byte)**)run::task#0 keeping run::task#0
+Successful SSA optimization Pass2NopCastInlining
+Rewriting multiplication to use shift and addition[13] main::$5 = main::i#2 * SIZEOF_STRUCT_TASK
+Inlining constant with var siblings main::i#0
+Constant inlined main::$1 = 4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK
+Constant inlined main::i#0 = 0
+Constant inlined main::$0 = 4*SIZEOF_STRUCT_TASK
+Successful SSA optimization Pass2ConstantInlining
+Alias main::$5 = main::$7 
+Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [main] to run:7 
+Calls in [run] to null:17 
+
+Created 1 initial phi equivalence classes
+Coalesced [9] main::i#5 = main::i#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block label main::@1
+Renumbering block main::@2 to main::@1
+Renumbering block main::@3 to main::@2
+Renumbering block main::@4 to main::@3
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@3
+  [1] main::i#2 = phi( main/0, main::@3/main::i#1, main::@1/0 )
+  [2] if(main::i#2<4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK) goto main::@2
+  to:main::@1
+main::@2: scope:[main]  from main::@1
+  [3] main::$6 = main::i#2 << 1
+  [4] main::$5 = main::$6 + main::i#2
+  [5] run::task#0 = tasks + main::$5
+  [6] call run
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [7] main::i#1 = ++ main::i#2
+  to:main::@1
+
+__stackcall void set_bg(byte set_bg::col)
+set_bg: scope:[set_bg]  from
+  [8] set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL)
+  [9] *BACKGROUND = set_bg::col#0
+  to:set_bg::@return
+set_bg::@return: scope:[set_bg]  from set_bg
+  [10] return 
+  to:@return
+
+__stackcall void set_border(byte set_border::col)
+set_border: scope:[set_border]  from
+  [11] set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL)
+  [12] *BORDER = set_border::col#0
+  to:set_border::@return
+set_border::@return: scope:[set_border]  from set_border
+  [13] return 
+  to:@return
+
+void run(struct Task* run::task)
+run: scope:[run]  from main::@2
+  [14] stackpush(byte) = ((byte*)tasks)[main::$5]
+  [15] callexecute *(((void(byte)**)run::task#0)[OFFSET_STRUCT_TASK_HANDLER]) 
+  sideeffect stackpullbytes(1)
+  to:run::@return
+run::@return: scope:[run]  from run
+  [17] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$5 61.5
+byte~ main::$6 22.0
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 24.16666666666666
+void run(struct Task* run::task)
+struct Task* run::task
+struct Task* run::task#0 110.0
+__stackcall void set_bg(byte set_bg::col)
+byte set_bg::col
+byte set_bg::col#0 4.0
+__stackcall void set_border(byte set_border::col)
+byte set_border::col
+byte set_border::col#0 4.0
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable run::task#0 to live range equivalence class [ run::task#0 ]
+Added variable set_bg::col#0 to live range equivalence class [ set_bg::col#0 ]
+Added variable set_border::col#0 to live range equivalence class [ set_border::col#0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$6 ]
+[ main::$5 ]
+[ run::task#0 ]
+[ set_bg::col#0 ]
+[ set_border::col#0 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::$6 ]
+Allocated zp[1]:4 [ main::$5 ]
+Allocated zp[2]:5 [ run::task#0 ]
+Allocated zp[1]:7 [ set_bg::col#0 ]
+Allocated zp[1]:8 [ set_border::col#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [3] main::$6 = main::i#2 << 1 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [4] main::$5 = main::$6 + main::i#2 [ main::i#2 main::$5 ] (  [ main::i#2 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [5] run::task#0 = tasks + main::$5 [ main::i#2 main::$5 ] (  [ main::i#2 main::$5 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$5 ]
+Statement [8] set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL) [ set_bg::col#0 ] (  [ set_bg::col#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [11] set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL) [ set_border::col#0 ] (  [ set_border::col#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [14] stackpush(byte) = ((byte*)tasks)[main::$5] [ ] ( run:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [15] callexecute *(((void(byte)**)run::task#0)[OFFSET_STRUCT_TASK_HANDLER])  [ ] ( run:6 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Statement [2] if(main::i#2<4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$6 = main::i#2 << 1 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$5 = main::$6 + main::i#2 [ main::i#2 main::$5 ] (  [ main::i#2 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [5] run::task#0 = tasks + main::$5 [ main::i#2 main::$5 ] (  [ main::i#2 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [8] set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL) [ set_bg::col#0 ] (  [ set_bg::col#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [11] set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL) [ set_border::col#0 ] (  [ set_border::col#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [14] stackpush(byte) = ((byte*)tasks)[main::$5] [ ] ( run:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [15] callexecute *(((void(byte)**)run::task#0)[OFFSET_STRUCT_TASK_HANDLER])  [ ] ( run:6 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ main::$6 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$5 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[2]:5 [ run::task#0 ] : zp[2]:5 , 
+Potential registers zp[1]:7 [ set_bg::col#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ set_border::col#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 61.5: zp[1]:4 [ main::$5 ] 46.17: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:3 [ main::$6 ] 
+Uplift Scope [run] 110: zp[2]:5 [ run::task#0 ] 
+Uplift Scope [set_border] 4: zp[1]:8 [ set_border::col#0 ] 
+Uplift Scope [set_bg] 4: zp[1]:7 [ set_bg::col#0 ] 
+Uplift Scope [Task] 
+Uplift Scope [] 
+
+Uplifting [main] best 2669 combination reg byte x [ main::$5 ] zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$6 ] 
+Uplifting [run] best 2669 combination zp[2]:5 [ run::task#0 ] 
+Uplifting [set_border] best 2663 combination reg byte a [ set_border::col#0 ] 
+Uplifting [set_bg] best 2657 combination reg byte a [ set_bg::col#0 ] 
+Uplifting [Task] best 2657 combination 
+Uplifting [] best 2657 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 2657 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Allocated (was zp[2]:5) zp[2]:3 [ run::task#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Calling a function pointer with return value
+// Calling a function pointer inside a struct without *
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-return-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_TASK = 3
+  .const OFFSET_STRUCT_TASK_HANDLER = 1
+  .const STACK_BASE = $103
+  .label BORDER = $d020
+  .label BACKGROUND = $d021
+.segment Code
+  // main
+main: {
+    .label i = 2
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  __b1_from_main:
+  __b1_from___b1:
+    // [1] phi main::i#2 = 0 [phi:main/main::@1->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK
+    bcc __b2
+    jmp __b1_from___b1
+    // main::@2
+  __b2:
+    // [3] main::$6 = main::i#2 << 1 -- vbuaa=vbuz1_rol_1 
+    lda.z i
+    asl
+    // [4] main::$5 = main::$6 + main::i#2 -- vbuxx=vbuaa_plus_vbuz1 
+    clc
+    adc.z i
+    tax
+    // [5] run::task#0 = tasks + main::$5 -- pssz1=pssc1_plus_vbuxx 
+    txa
+    clc
+    adc #<tasks
+    sta.z run.task
+    lda #>tasks
+    adc #0
+    sta.z run.task+1
+    // [6] call run
+    jsr run
+    jmp __b3
+    // main::@3
+  __b3:
+    // [7] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  __b1_from___b3:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // set_bg
+// set_bg(byte register(A) col)
+set_bg: {
+    .const OFFSET_STACK_COL = 0
+    // [8] set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_COL,x
+    // [9] *BACKGROUND = set_bg::col#0 -- _deref_pbuc1=vbuaa 
+    sta BACKGROUND
+    jmp __breturn
+    // set_bg::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // set_border
+// set_border(byte register(A) col)
+set_border: {
+    .const OFFSET_STACK_COL = 0
+    // [11] set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_COL,x
+    // [12] *BORDER = set_border::col#0 -- _deref_pbuc1=vbuaa 
+    sta BORDER
+    jmp __breturn
+    // set_border::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // run
+// run(struct Task* zp(3) task)
+run: {
+    .label task = 3
+    // [14] stackpush(byte) = ((byte*)tasks)[main::$5] -- _stackpushbyte_=pbuc1_derefidx_vbuxx 
+    lda tasks,x
+    pha
+    // [15] callexecute *(((void(byte)**)run::task#0)[OFFSET_STRUCT_TASK_HANDLER])  -- call__deref_(qprz1_derefidx_vbuc1) 
+    ldy #OFFSET_STRUCT_TASK_HANDLER
+    lda (task),y
+    sta !+ +1
+    iny
+    lda (task),y
+    sta !+ +2
+  !:
+    jsr 0
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    jmp __breturn
+    // run::@return
+  __breturn:
+    // [17] return 
+    rts
+}
+  // File Data
+.segment Data
+  tasks: .byte 0
+  .word set_border
+  .byte 0
+  .word set_bg
+  .byte 1
+  .word set_border
+  .byte 2
+  .word set_bg
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Relabelling long label __b1_from___b1 to __b3
+Succesful ASM optimization Pass5RelabelLongLabels
+
+FINAL SYMBOL TABLE
+constant byte* const BACKGROUND = (byte*) 53281
+constant byte* const BORDER = (byte*) 53280
+constant byte OFFSET_STRUCT_TASK_HANDLER = 1
+constant byte SIZEOF_STRUCT_TASK = 3
+constant word STACK_BASE = $103
+void main()
+byte~ main::$5 reg byte x 61.5
+byte~ main::$6 reg byte a 22.0
+byte main::i
+byte main::i#1 i zp[1]:2 22.0
+byte main::i#2 i zp[1]:2 24.16666666666666
+void run(struct Task* run::task)
+struct Task* run::task
+struct Task* run::task#0 task zp[2]:3 110.0
+__stackcall void set_bg(byte set_bg::col)
+constant byte set_bg::OFFSET_STACK_COL = 0
+byte set_bg::col
+byte set_bg::col#0 reg byte a 4.0
+__stackcall void set_border(byte set_border::col)
+constant byte set_border::OFFSET_STACK_COL = 0
+byte set_border::col
+byte set_border::col#0 reg byte a 4.0
+constant struct Task* tasks[]  = { { param: 0, handler: &set_border }, { param: 0, handler: &set_bg }, { param: 1, handler: &set_border }, { param: 2, handler: &set_bg } }
+
+zp[1]:2 [ main::i#2 main::i#1 ]
+reg byte a [ main::$6 ]
+reg byte x [ main::$5 ]
+zp[2]:3 [ run::task#0 ]
+reg byte a [ set_bg::col#0 ]
+reg byte a [ set_border::col#0 ]
+
+
+FINAL ASSEMBLER
+Score: 2318
+
+  // File Comments
+// Calling a function pointer with return value
+// Calling a function pointer inside a struct without *
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-return-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_TASK = 3
+  .const OFFSET_STRUCT_TASK_HANDLER = 1
+  .const STACK_BASE = $103
+  .label BORDER = $d020
+  .label BACKGROUND = $d021
+.segment Code
+  // main
+main: {
+    .label i = 2
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  __b3:
+    // [1] phi main::i#2 = 0 [phi:main/main::@1->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // main::@1
+  __b1:
+    // for(char i=0; i < sizeof(tasks)/sizeof(struct Task); i++)
+    // [2] if(main::i#2<4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #4*SIZEOF_STRUCT_TASK/SIZEOF_STRUCT_TASK
+    bcc __b2
+    jmp __b3
+    // main::@2
+  __b2:
+    // tasks+i
+    // [3] main::$6 = main::i#2 << 1 -- vbuaa=vbuz1_rol_1 
+    lda.z i
+    asl
+    // [4] main::$5 = main::$6 + main::i#2 -- vbuxx=vbuaa_plus_vbuz1 
+    clc
+    adc.z i
+    tax
+    // run(tasks+i)
+    // [5] run::task#0 = tasks + main::$5 -- pssz1=pssc1_plus_vbuxx 
+    txa
+    clc
+    adc #<tasks
+    sta.z run.task
+    lda #>tasks
+    adc #0
+    sta.z run.task+1
+    // [6] call run
+    jsr run
+    // main::@3
+    // for(char i=0; i < sizeof(tasks)/sizeof(struct Task); i++)
+    // [7] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // set_bg
+// set_bg(byte register(A) col)
+set_bg: {
+    .const OFFSET_STACK_COL = 0
+    // [8] set_bg::col#0 = stackidx(byte,set_bg::OFFSET_STACK_COL) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_COL,x
+    // *BACKGROUND = col
+    // [9] *BACKGROUND = set_bg::col#0 -- _deref_pbuc1=vbuaa 
+    sta BACKGROUND
+    // set_bg::@return
+    // }
+    // [10] return 
+    rts
+}
+  // set_border
+// set_border(byte register(A) col)
+set_border: {
+    .const OFFSET_STACK_COL = 0
+    // [11] set_border::col#0 = stackidx(byte,set_border::OFFSET_STACK_COL) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_COL,x
+    // *BORDER = col
+    // [12] *BORDER = set_border::col#0 -- _deref_pbuc1=vbuaa 
+    sta BORDER
+    // set_border::@return
+    // }
+    // [13] return 
+    rts
+}
+  // run
+// run(struct Task* zp(3) task)
+run: {
+    .label task = 3
+    // task->handler(task->param)
+    // [14] stackpush(byte) = ((byte*)tasks)[main::$5] -- _stackpushbyte_=pbuc1_derefidx_vbuxx 
+    lda tasks,x
+    pha
+    // [15] callexecute *(((void(byte)**)run::task#0)[OFFSET_STRUCT_TASK_HANDLER])  -- call__deref_(qprz1_derefidx_vbuc1) 
+    ldy #OFFSET_STRUCT_TASK_HANDLER
+    lda (task),y
+    sta !+ +1
+    iny
+    lda (task),y
+    sta !+ +2
+  !:
+    jsr 0
+    // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
+    pla
+    // run::@return
+    // }
+    // [17] return 
+    rts
+}
+  // File Data
+.segment Data
+  tasks: .byte 0
+  .word set_border
+  .byte 0
+  .word set_bg
+  .byte 1
+  .word set_border
+  .byte 2
+  .word set_bg
+

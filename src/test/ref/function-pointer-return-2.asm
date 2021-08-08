@@ -1,5 +1,5 @@
-// Calling a function pointer with parameters
-// Reference the function without &
+// Calling a function pointer with return value
+// Reference the function without &, Call it without *
   // Commodore 64 PRG executable file
 .file [name="function-pointer-return-2.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

@@ -59,6 +59,24 @@ public class AsmFragmentInstanceSpecBuilder {
    }
 
    /**
+    * Create a fragment instance spec factory for an indirect call
+    * @return the fragment instance spec factory
+    */
+   public static AsmFragmentInstanceSpecBuilder call(StatementCallExecute call, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(call, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(StatementCallExecute call, Program program) {
+      this.program = program;
+      this.bindings = new LinkedHashMap<>();
+      ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
+      StringBuilder signature = new StringBuilder();
+      signature.append("call_");
+      signature.append(bind(call.getProcedureRVal()));
+      this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature.toString(), bindings, codeScope);
+   }
+
+   /**
     * Create a fragment instance spec factory for an interrupt routine entry
     *
     * @param interruptType The interrupt routine handle name

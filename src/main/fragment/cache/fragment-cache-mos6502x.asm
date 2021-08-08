@@ -15819,3 +15819,536 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT vbsz1=vwsz2
+lda {z2}
+sta {z1}
+//FRAGMENT _deref_pbuz1_eq__deref_pbuz2_then_la1
+ldy #0
+lda ({z1}),y
+ldy #0
+cmp ({z2}),y
+beq {la1}
+//FRAGMENT vbuz1=_deref_pbuz2_minus__deref_pbuz3
+ldy #0
+lda ({z2}),y
+sec
+ldy #0
+sbc ({z3}),y
+sta {z1}
+//FRAGMENT vwsz1=_sword_vbsz2
+lda {z2}
+sta {z1}
+// sign-extend the byte
+ora #$7f 
+bmi !+
+lda #0
+!:
+sta {z1}+1
+//FRAGMENT vbsz1_eq_vbsc1_then_la1
+lda #{c1}
+cmp {z1}
+beq {la1}
+//FRAGMENT vbsz1_eq_0_then_la1
+lda {z1}
+cmp #0
+beq {la1}
+//FRAGMENT vboz1=vbsz2_gt_vbsc1
+lda {z2}
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+sta {z1}
+//FRAGMENT vboz1=vbsz2_eq_vbsc1
+lda {z2}
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+sta {z1}
+//FRAGMENT vboz1=vbsz2_lt_vbsc1
+lda {z2}
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+sta {z1}
+//FRAGMENT _deref_pbuz1_eq_0_then_la1
+ldy #0
+lda ({z1}),y
+cmp #0
+beq {la1}
+//FRAGMENT vbsaa=vwsz1
+lda {z1}
+//FRAGMENT vbsxx=vwsz1
+lda {z1}
+tax
+//FRAGMENT vbsyy=vwsz1
+lda {z1}
+tay
+//FRAGMENT vbuaa=_deref_pbuz1_minus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+sec
+ldy #0
+sbc ({z2}),y
+//FRAGMENT vbuxx=_deref_pbuz1_minus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+sec
+ldy #0
+sbc ({z2}),y
+tax
+//FRAGMENT vbuyy=_deref_pbuz1_minus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+sec
+ldy #0
+sbc ({z2}),y
+tay
+//FRAGMENT vwsz1=_sword_vbsaa
+sta {z1}
+// sign-extend the byte
+ora #$7f 
+bmi !+
+lda #0
+!:
+sta {z1}+1
+//FRAGMENT vwsz1=_sword_vbsxx
+txa
+sta {z1}
+// sign-extend the byte
+ora #$7f 
+bmi !+
+lda #0
+!:
+sta {z1}+1
+//FRAGMENT vwsz1=_sword_vbsyy
+tya
+sta {z1}
+// sign-extend the byte
+ora #$7f 
+bmi !+
+lda #0
+!:
+sta {z1}+1
+//FRAGMENT vbsaa_eq_vbsc1_then_la1
+cmp #{c1}
+beq {la1}
+//FRAGMENT vbsaa_eq_0_then_la1
+cmp #0
+beq {la1}
+//FRAGMENT vboz1=vbsaa_gt_vbsc1
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+sta {z1}
+//FRAGMENT vboz1=vbsxx_gt_vbsc1
+txa
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+sta {z1}
+//FRAGMENT vboz1=vbsyy_gt_vbsc1
+tya
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+sta {z1}
+//FRAGMENT vboaa=vbsz1_gt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+//FRAGMENT vboaa=vbsaa_gt_vbsc1
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+//FRAGMENT vboaa=vbsxx_gt_vbsc1
+txa
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+//FRAGMENT vboaa=vbsyy_gt_vbsc1
+tya
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+//FRAGMENT vboxx=vbsz1_gt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tax
+//FRAGMENT vboxx=vbsaa_gt_vbsc1
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tax
+//FRAGMENT vboxx=vbsxx_gt_vbsc1
+txa
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tax
+//FRAGMENT vboxx=vbsyy_gt_vbsc1
+tya
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tax
+//FRAGMENT vboyy=vbsz1_gt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tay
+//FRAGMENT vboyy=vbsaa_gt_vbsc1
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tay
+//FRAGMENT vboyy=vbsxx_gt_vbsc1
+txa
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tay
+//FRAGMENT vboyy=vbsyy_gt_vbsc1
+tya
+sec
+sbc #{c1}
+beq !a+
+bvs !+
+eor #$80
+!:
+asl
+lda #0
+rol
+!a:
+tay
+//FRAGMENT vboz1=vbsxx_eq_vbsc1
+txa
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+sta {z1}
+//FRAGMENT vboz1=vbsyy_eq_vbsc1
+tya
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+sta {z1}
+//FRAGMENT vboaa=vbsz1_eq_vbsc1
+lda {z1}
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+//FRAGMENT vboaa=vbsxx_eq_vbsc1
+txa
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+//FRAGMENT vboaa=vbsyy_eq_vbsc1
+tya
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+//FRAGMENT vboxx=vbsz1_eq_vbsc1
+lda {z1}
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tax
+//FRAGMENT vboxx=vbsxx_eq_vbsc1
+txa
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tax
+//FRAGMENT vboxx=vbsyy_eq_vbsc1
+tya
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tax
+//FRAGMENT vboyy=vbsz1_eq_vbsc1
+lda {z1}
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tay
+//FRAGMENT vboyy=vbsxx_eq_vbsc1
+txa
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tay
+//FRAGMENT vboyy=vbsyy_eq_vbsc1
+tya
+eor #{c1}
+beq !+
+lda #1
+!:
+eor #1
+tay
+//FRAGMENT vboz1=vbsxx_lt_vbsc1
+txa
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+sta {z1}
+//FRAGMENT vboz1=vbsyy_lt_vbsc1
+tya
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+sta {z1}
+//FRAGMENT vboaa=vbsz1_lt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+//FRAGMENT vboaa=vbsxx_lt_vbsc1
+txa
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+//FRAGMENT vboaa=vbsyy_lt_vbsc1
+tya
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+//FRAGMENT vboxx=vbsz1_lt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tax
+//FRAGMENT vboxx=vbsxx_lt_vbsc1
+txa
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tax
+//FRAGMENT vboxx=vbsyy_lt_vbsc1
+tya
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tax
+//FRAGMENT vboyy=vbsz1_lt_vbsc1
+lda {z1}
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tay
+//FRAGMENT vboyy=vbsxx_lt_vbsc1
+txa
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tay
+//FRAGMENT vboyy=vbsyy_lt_vbsc1
+tya
+sec
+sbc #{c1}
+bvc !+
+eor #$80
+!:
+asl
+lda #0
+rol
+tay
+//FRAGMENT vbsxx_eq_vbsc1_then_la1
+cpx #{c1}
+beq {la1}
+//FRAGMENT vbsxx_eq_0_then_la1
+cpx #0
+beq {la1}
+//FRAGMENT vbsyy_lt_0_then_la1
+cpy #0
+bmi {la1}
+//FRAGMENT _stackidxbyte_vbuc1=vbuc2
+lda #{c2}
+tsx
+sta STACK_BASE+{c1},x

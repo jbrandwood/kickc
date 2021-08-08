@@ -1,7 +1,7 @@
-Setting inferred volatile on symbol affected by address-of main::$0 = call print(&main::b)
-Setting inferred volatile on symbol affected by address-of main::$1 = call print(&main::w)
-Setting inferred volatile on symbol affected by address-of main::$2 = call print(&main::d)
-Inlined call call __init 
+Setting inferred volatile on symbol affected by address-of main::$0 = call print((void*)&main::b)
+Setting inferred volatile on symbol affected by address-of main::$1 = call print((void*)&main::w)
+Setting inferred volatile on symbol affected by address-of main::$2 = call print((void*)&main::d)
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -12,19 +12,19 @@ main: scope:[main]  from __start::@1
   main::w = $1234
   main::b = $12
   print::ptr#0 = (void*)&main::b
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   idx#9 = phi( main/idx#5 )
   idx#0 = idx#9
   print::ptr#1 = (void*)&main::w
-  call print 
+  call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#10 = phi( main::@1/idx#5 )
   idx#1 = idx#10
   print::ptr#2 = (void*)&main::d
-  call print 
+  call print
   to:main::@3
 main::@3: scope:[main]  from main::@2
   idx#11 = phi( main::@2/idx#5 )
@@ -57,7 +57,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#18 = phi( __start::__init1/idx#6 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#15 = phi( __start::@1/idx#3 )
@@ -158,15 +158,15 @@ main: scope:[main]  from
   [0] main::d = $12345678
   [1] main::w = $1234
   [2] main::b = $12
-  [3] call print 
+  [3] call print
   to:main::@1
 main::@1: scope:[main]  from main
   [4] phi()
-  [5] call print 
+  [5] call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] phi()
-  [7] call print 
+  [7] call print
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [8] return 
@@ -281,7 +281,7 @@ main: {
     // [2] main::b = $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
-    // [3] call print 
+    // [3] call print
     // [9] phi from main to print [phi:main->print]
   print_from_main:
     // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
@@ -297,7 +297,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] call print 
+    // [5] call print
     // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
     // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
@@ -312,7 +312,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] call print 
+    // [7] call print
     // [9] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
     // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
@@ -427,7 +427,7 @@ main: {
     lda #$12
     sta.z b
     // print(&b)
-    // [3] call print 
+    // [3] call print
     // [9] phi from main to print [phi:main->print]
     // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
@@ -440,7 +440,7 @@ main: {
     // [4] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print(&w)
-    // [5] call print 
+    // [5] call print
     // [9] phi from main::@1 to print [phi:main::@1->print]
     // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
     // [9] phi print::ptr#3 = (void*)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
@@ -452,7 +452,7 @@ main: {
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // print(&d)
-    // [7] call print 
+    // [7] call print
     // [9] phi from main::@2 to print [phi:main::@2->print]
     // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
     // [9] phi print::ptr#3 = (void*)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 

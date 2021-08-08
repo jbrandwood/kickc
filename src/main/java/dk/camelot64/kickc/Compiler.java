@@ -230,11 +230,11 @@ public class Compiler {
          getLog().append(program.getScope().toStringVars(program, false));
       }
 
-      new Pass1AddressOfHandling(program).execute();
-      new Pass1AsmUsesHandling(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, true).execute();
+      new Pass1AddressOfHandling(program).execute();
+      new Pass1AsmUsesHandling(program).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
       new Pass1ModifiedVarsAnalysis(program).execute();
       new Pass1CallStackVarPrepare(program).execute();

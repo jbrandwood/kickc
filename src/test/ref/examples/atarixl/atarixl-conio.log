@@ -10,13 +10,13 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct ATARI_GTIA_READ to 32
 Fixing struct type SIZE_OF struct ATARI_POKEY_READ to 16
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
-Setting inferred volatile on symbol affected by address-of cputc::$4 = call convertToScreenCode &cputc::c 
-Added struct type cast to parameter value list call printf_string main::name (struct printf_format_string){ 0, 0 } 
-Added struct type cast to parameter value list call printf_sint main::i (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL } 
-Added struct type cast to parameter value list call printf_sint main::i1 (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL } 
-Inlined call cputc::$4 = call convertToScreenCode &cputc::c 
-Inlined call call clrkb 
-Inlined call call __init 
+Setting inferred volatile on symbol affected by address-of cputc::$4 = call convertToScreenCode(&cputc::c)
+Added struct type cast to parameter value list call printf_string(main::name, (struct printf_format_string){ 0, 0 })
+Added struct type cast to parameter value list call printf_sint(main::i, (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL })
+Added struct type cast to parameter value list call printf_sint(main::i1, (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL })
+Inlined call cputc::$4 = call convertToScreenCode(&cputc::c)
+Inlined call call clrkb
+Inlined call call __init
 Eliminating unused variable with no statement memcpy::$0
 Eliminating unused variable with no statement memset::$2
 Eliminating unused variable with no statement putchar::$0
@@ -173,7 +173,7 @@ strupr::@2: scope:[strupr]  from strupr::@1
   strupr::str#5 = phi( strupr::@1/strupr::str#3 )
   strupr::src#3 = phi( strupr::@1/strupr::src#2 )
   toupper::ch#0 = *strupr::src#3
-  call toupper 
+  call toupper
   toupper::return#3 = toupper::return#2
   to:strupr::@4
 strupr::@4: scope:[strupr]  from strupr::@2
@@ -322,7 +322,7 @@ utoa::@14: scope:[utoa]  from utoa::@11
   utoa_append::buffer#0 = utoa::buffer#8
   utoa_append::value#0 = utoa::value#4
   utoa_append::sub#0 = utoa::digit_value#1
-  call utoa_append 
+  call utoa_append
   utoa_append::return#0 = utoa_append::return#2
   to:utoa::@15
 utoa::@15: scope:[utoa]  from utoa::@14
@@ -378,14 +378,14 @@ clrscr: scope:[clrscr]  from main::@15
   memset::str#0 = (void*)*SAVMSC
   memset::c#0 = 0
   memset::num#0 = $28*$18
-  call memset 
+  call memset
   memset::return#2 = memset::return#1
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr
   *OLDCHR = 0
   gotoxy::x#0 = 0
   gotoxy::y#0 = 0
-  call gotoxy 
+  call gotoxy
   to:clrscr::@2
 clrscr::@2: scope:[clrscr]  from clrscr::@1
   to:clrscr::@return
@@ -399,7 +399,7 @@ gotoxy: scope:[gotoxy]  from clrscr::@1 cputsxy main::@9 newline::@3
   gotoxy::x#4 = phi( clrscr::@1/gotoxy::x#0, cputsxy/gotoxy::x#1, main::@9/gotoxy::x#3, newline::@3/gotoxy::x#2 )
   *COLCRS = gotoxy::x#4
   *ROWCRS = gotoxy::y#4
-  call setcursor 
+  call setcursor
   to:gotoxy::@1
 gotoxy::@1: scope:[gotoxy]  from gotoxy
   to:gotoxy::@return
@@ -414,7 +414,7 @@ cputc: scope:[cputc]  from cputs::@2 printf_number_buffer::@9 printf_padding::@2
   to:cputc::@3
 cputc::@1: scope:[cputc]  from cputc
   *COLCRS = 0
-  call setcursor 
+  call setcursor
   to:cputc::@8
 cputc::@8: scope:[cputc]  from cputc::@1
   to:cputc::@return
@@ -427,7 +427,7 @@ cputc::@3: scope:[cputc]  from cputc
   to:cputc::@4
 cputc::@2: scope:[cputc]  from cputc::@3
   *COLCRS = 0
-  call newline 
+  call newline
   to:cputc::@9
 cputc::@9: scope:[cputc]  from cputc::@2
   to:cputc::@return
@@ -446,7 +446,7 @@ cputc::@7: scope:[cputc]  from cputc::convertToScreenCode1_@return
   cputc::convertToScreenCode1_return#3 = phi( cputc::convertToScreenCode1_@return/cputc::convertToScreenCode1_return#1 )
   cputc::$4 = cputc::convertToScreenCode1_return#3
   putchar::code#0 = cputc::$4
-  call putchar 
+  call putchar
   to:cputc::@10
 cputc::@10: scope:[cputc]  from cputc::@7
   *COLCRS = ++ *COLCRS
@@ -455,12 +455,12 @@ cputc::@10: scope:[cputc]  from cputc::@7
   to:cputc::@5
 cputc::@6: scope:[cputc]  from cputc::@10
   *COLCRS = 0
-  call newline 
+  call newline
   to:cputc::@11
 cputc::@11: scope:[cputc]  from cputc::@6
   to:cputc::@return
 cputc::@5: scope:[cputc]  from cputc::@10
-  call setcursor 
+  call setcursor
   to:cputc::@12
 cputc::@12: scope:[cputc]  from cputc::@5
   to:cputc::@return
@@ -485,7 +485,7 @@ cputs::@2: scope:[cputs]  from cputs::@1
   cputs::s#13 = phi( cputs::@1/cputs::s#0 )
   cputs::c#2 = phi( cputs::@1/cputs::c#1 )
   cputc::c = cputs::c#2
-  call cputc 
+  call cputc
   to:cputs::@3
 cputs::@3: scope:[cputs]  from cputs::@2
   cputs::s#12 = phi( cputs::@2/cputs::s#13 )
@@ -501,12 +501,12 @@ cputsxy: scope:[cputsxy]  from main::@8
   cputsxy::x#1 = phi( main::@8/cputsxy::x#0 )
   gotoxy::x#1 = cputsxy::x#1
   gotoxy::y#1 = cputsxy::y#1
-  call gotoxy 
+  call gotoxy
   to:cputsxy::@1
 cputsxy::@1: scope:[cputsxy]  from cputsxy
   cputsxy::s#1 = phi( cputsxy/cputsxy::s#2 )
   cputs::s#1 = cputsxy::s#1
-  call cputs 
+  call cputs
   to:cputsxy::@2
 cputsxy::@2: scope:[cputsxy]  from cputsxy::@1
   to:cputsxy::@return
@@ -600,7 +600,7 @@ void putchar(byte putchar::code)
 putchar: scope:[putchar]  from cputc::@7
   putchar::code#2 = phi( cputc::@7/putchar::code#0 )
   *(*OLDADR) = *OLDCHR
-  call cursorLocation 
+  call cursorLocation
   cursorLocation::return#0 = cursorLocation::return#2
   to:putchar::@1
 putchar::@1: scope:[putchar]  from putchar
@@ -610,7 +610,7 @@ putchar::@1: scope:[putchar]  from putchar
   putchar::newChar#0 = putchar::code#1 | conio_reverse_value
   *putchar::loc#0 = putchar::newChar#0
   *OLDCHR = putchar::newChar#0
-  call setcursor 
+  call setcursor
   to:putchar::@2
 putchar::@2: scope:[putchar]  from putchar::@1
   to:putchar::@return
@@ -640,7 +640,7 @@ newline: scope:[newline]  from cputc::@2 cputc::@6
   if(newline::$1) goto newline::@1
   to:newline::@2
 newline::@1: scope:[newline]  from newline newline::@10 newline::@8
-  call setcursor 
+  call setcursor
   to:newline::@7
 newline::@7: scope:[newline]  from newline::@1
   to:newline::@return
@@ -656,7 +656,7 @@ newline::@4: scope:[newline]  from newline::@2
 newline::@3: scope:[newline]  from newline::@2
   gotoxy::x#2 = 0
   gotoxy::y#2 = 0
-  call gotoxy 
+  call gotoxy
   to:newline::@8
 newline::@8: scope:[newline]  from newline::@3
   to:newline::@1
@@ -666,7 +666,7 @@ newline::@5: scope:[newline]  from newline::@4 newline::@6
   memcpy::destination#0 = (void*)newline::start#0
   memcpy::source#0 = (void*)newline::$7
   memcpy::num#0 = $28*$17
-  call memcpy 
+  call memcpy
   memcpy::return#2 = memcpy::return#1
   to:newline::@9
 newline::@9: scope:[newline]  from newline::@5
@@ -675,7 +675,7 @@ newline::@9: scope:[newline]  from newline::@5
   memset::str#1 = (void*)newline::$9
   memset::c#1 = 0
   memset::num#1 = $28
-  call memset 
+  call memset
   memset::return#3 = memset::return#1
   to:newline::@10
 newline::@10: scope:[newline]  from newline::@9
@@ -691,7 +691,7 @@ newline::@return: scope:[newline]  from newline::@7
 void setcursor()
 setcursor: scope:[setcursor]  from cputc::@1 cputc::@5 gotoxy newline::@1 putchar::@1
   *(*OLDADR) = *OLDCHR
-  call cursorLocation 
+  call cursorLocation
   cursorLocation::return#3 = cursorLocation::return#2
   to:setcursor::@4
 setcursor::@4: scope:[setcursor]  from setcursor
@@ -764,7 +764,7 @@ printf_padding::@2: scope:[printf_padding]  from printf_padding::@1
   printf_padding::i#4 = phi( printf_padding::@1/printf_padding::i#2 )
   printf_padding::pad#5 = phi( printf_padding::@1/printf_padding::pad#6 )
   cputc::c = printf_padding::pad#5
-  call cputc 
+  call cputc
   to:printf_padding::@3
 printf_padding::@3: scope:[printf_padding]  from printf_padding::@2
   printf_padding::pad#8 = phi( printf_padding::@2/printf_padding::pad#5 )
@@ -835,7 +835,7 @@ printf_sint::@2: scope:[printf_sint]  from printf_sint::@1 printf_sint::@3 print
   utoa::value#1 = printf_sint::uvalue#0
   utoa::buffer#5 = (byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
   utoa::radix#0 = printf_sint::format_radix#2
-  call utoa 
+  call utoa
   to:printf_sint::@5
 printf_sint::@5: scope:[printf_sint]  from printf_sint::@2
   printf_sint::format_radix#3 = phi( printf_sint::@2/printf_sint::format_radix#2 )
@@ -852,7 +852,7 @@ printf_sint::@5: scope:[printf_sint]  from printf_sint::@2
   printf_number_buffer::format_zero_padding#0 = printf_sint::format_zero_padding#2
   printf_number_buffer::format_upper_case#0 = printf_sint::format_upper_case#2
   printf_number_buffer::format_radix#0 = printf_sint::format_radix#3
-  call printf_number_buffer 
+  call printf_number_buffer
   to:printf_sint::@6
 printf_sint::@6: scope:[printf_sint]  from printf_sint::@5
   to:printf_sint::@return
@@ -897,7 +897,7 @@ printf_number_buffer::@6: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::buffer_sign#4 = phi( printf_number_buffer/printf_number_buffer::buffer_sign#7 )
   printf_number_buffer::buffer_digits#1 = phi( printf_number_buffer/printf_number_buffer::buffer_digits#4 )
   strlen::str#1 = printf_number_buffer::buffer_digits#1
-  call strlen 
+  call strlen
   strlen::return#2 = strlen::return#1
   to:printf_number_buffer::@15
 printf_number_buffer::@15: scope:[printf_number_buffer]  from printf_number_buffer::@6
@@ -967,7 +967,7 @@ printf_number_buffer::@8: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::padding#4 = phi( printf_number_buffer::@1/printf_number_buffer::padding#3 )
   printf_padding::pad#0 = ' 'at
   printf_padding::length#0 = (byte)printf_number_buffer::padding#4
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@16
 printf_number_buffer::@16: scope:[printf_number_buffer]  from printf_number_buffer::@8
   printf_number_buffer::format_justify_left#18 = phi( printf_number_buffer::@8/printf_number_buffer::format_justify_left#20 )
@@ -995,7 +995,7 @@ printf_number_buffer::@9: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::format_zero_padding#13 = phi( printf_number_buffer::@2/printf_number_buffer::format_zero_padding#8 )
   printf_number_buffer::buffer_sign#3 = phi( printf_number_buffer::@2/printf_number_buffer::buffer_sign#2 )
   cputc::c = printf_number_buffer::buffer_sign#3
-  call cputc 
+  call cputc
   to:printf_number_buffer::@17
 printf_number_buffer::@17: scope:[printf_number_buffer]  from printf_number_buffer::@9
   printf_number_buffer::format_justify_left#15 = phi( printf_number_buffer::@9/printf_number_buffer::format_justify_left#19 )
@@ -1022,7 +1022,7 @@ printf_number_buffer::@10: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::padding#6 = phi( printf_number_buffer::@3/printf_number_buffer::padding#5 )
   printf_padding::pad#1 = '0'at
   printf_padding::length#1 = (byte)printf_number_buffer::padding#6
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@18
 printf_number_buffer::@18: scope:[printf_number_buffer]  from printf_number_buffer::@10
   printf_number_buffer::padding#16 = phi( printf_number_buffer::@10/printf_number_buffer::padding#6 )
@@ -1037,7 +1037,7 @@ printf_number_buffer::@5: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::format_zero_padding#9 = phi( printf_number_buffer::@20/printf_number_buffer::format_zero_padding#14, printf_number_buffer::@4/printf_number_buffer::format_zero_padding#15 )
   printf_number_buffer::buffer_digits#2 = phi( printf_number_buffer::@20/printf_number_buffer::buffer_digits#5, printf_number_buffer::@4/printf_number_buffer::buffer_digits#6 )
   cputs::s#2 = printf_number_buffer::buffer_digits#2
-  call cputs 
+  call cputs
   to:printf_number_buffer::@19
 printf_number_buffer::@19: scope:[printf_number_buffer]  from printf_number_buffer::@5
   printf_number_buffer::padding#7 = phi( printf_number_buffer::@5/printf_number_buffer::padding#11 )
@@ -1056,7 +1056,7 @@ printf_number_buffer::@11: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::format_zero_padding#19 = phi( printf_number_buffer::@4/printf_number_buffer::format_zero_padding#15 )
   printf_number_buffer::buffer_digits#3 = phi( printf_number_buffer::@4/printf_number_buffer::buffer_digits#6 )
   strupr::str#0 = printf_number_buffer::buffer_digits#3
-  call strupr 
+  call strupr
   strupr::return#2 = strupr::return#1
   to:printf_number_buffer::@20
 printf_number_buffer::@20: scope:[printf_number_buffer]  from printf_number_buffer::@11
@@ -1069,7 +1069,7 @@ printf_number_buffer::@12: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::padding#8 = phi( printf_number_buffer::@19/printf_number_buffer::padding#7 )
   printf_padding::pad#2 = ' 'at
   printf_padding::length#2 = (byte)printf_number_buffer::padding#8
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@21
 printf_number_buffer::@21: scope:[printf_number_buffer]  from printf_number_buffer::@12
   to:printf_number_buffer::@return
@@ -1102,7 +1102,7 @@ printf_string::@3: scope:[printf_string]  from printf_string
   printf_string::format_min_length#3 = phi( printf_string/printf_string::format_min_length#1 )
   printf_string::str#1 = phi( printf_string/printf_string::str#3 )
   strlen::str#2 = printf_string::str#1
-  call strlen 
+  call strlen
   strlen::return#3 = strlen::return#1
   to:printf_string::@7
 printf_string::@7: scope:[printf_string]  from printf_string::@3
@@ -1129,7 +1129,7 @@ printf_string::@2: scope:[printf_string]  from printf_string::@1 printf_string::
   printf_string::format_justify_left#6 = phi( printf_string::@1/printf_string::format_justify_left#1, printf_string::@9/printf_string::format_justify_left#8 )
   printf_string::str#2 = phi( printf_string::@1/printf_string::str#4, printf_string::@9/printf_string::str#5 )
   cputs::s#3 = printf_string::str#2
-  call cputs 
+  call cputs
   to:printf_string::@8
 printf_string::@8: scope:[printf_string]  from printf_string::@2
   printf_string::padding#4 = phi( printf_string::@2/printf_string::padding#7 )
@@ -1144,7 +1144,7 @@ printf_string::@5: scope:[printf_string]  from printf_string::@1
   printf_string::padding#5 = phi( printf_string::@1/printf_string::padding#3 )
   printf_padding::pad#3 = ' 'at
   printf_padding::length#3 = (byte)printf_string::padding#5
-  call printf_padding 
+  call printf_padding
   to:printf_string::@9
 printf_string::@9: scope:[printf_string]  from printf_string::@5
   printf_string::padding#8 = phi( printf_string::@5/printf_string::padding#5 )
@@ -1155,7 +1155,7 @@ printf_string::@6: scope:[printf_string]  from printf_string::@8
   printf_string::padding#6 = phi( printf_string::@8/printf_string::padding#4 )
   printf_padding::pad#4 = ' 'at
   printf_padding::length#4 = (byte)printf_string::padding#6
-  call printf_padding 
+  call printf_padding
   to:printf_string::@10
 printf_string::@10: scope:[printf_string]  from printf_string::@6
   to:printf_string::@return
@@ -1166,63 +1166,63 @@ printf_string::@return: scope:[printf_string]  from printf_string::@10 printf_st
 void main()
 main: scope:[main]  from __start::@1
   cursor::onoff#0 = 0
-  call cursor 
+  call cursor
   cursor::return#2 = cursor::return#1
   to:main::@5
 main::@5: scope:[main]  from main
   bgcolor::color#0 = DARK_ORANGE
-  call bgcolor 
+  call bgcolor
   bgcolor::return#2 = bgcolor::return#1
   to:main::@6
 main::@6: scope:[main]  from main::@5
   bordercolor::color#0 = MEDIUM_BLUE
-  call bordercolor 
+  call bordercolor
   bordercolor::return#2 = bordercolor::return#1
   to:main::@7
 main::@7: scope:[main]  from main::@6
   textcolor::color#0 = WHITE
-  call textcolor 
+  call textcolor
   textcolor::return#2 = textcolor::return#1
   to:main::@8
 main::@8: scope:[main]  from main::@7
   cputsxy::x#0 = 0
   cputsxy::y#0 = 1
   cputsxy::s#0 = main::s
-  call cputsxy 
+  call cputsxy
   to:main::@9
 main::@9: scope:[main]  from main::@8
   gotoxy::x#3 = 0
   gotoxy::y#3 = 3
-  call gotoxy 
+  call gotoxy
   to:main::@10
 main::@10: scope:[main]  from main::@9
   revers::onoff#0 = 1
-  call revers 
+  call revers
   revers::return#2 = revers::return#1
   to:main::@11
 main::@11: scope:[main]  from main::@10
   cputs::s#4 = main::s1
-  call cputs 
+  call cputs
   to:main::@12
 main::@12: scope:[main]  from main::@11
   printf_string::str#0 = main::name
   printf_string::format_min_length#0 = 0
   printf_string::format_justify_left#0 = 0
-  call printf_string 
+  call printf_string
   to:main::@13
 main::@13: scope:[main]  from main::@12
   cputs::s#5 = main::s2
-  call cputs 
+  call cputs
   to:main::@14
 main::@14: scope:[main]  from main::@13
-  call waitkey 
+  call waitkey
   to:main::@15
 main::@15: scope:[main]  from main::@14
-  call clrscr 
+  call clrscr
   to:main::@16
 main::@16: scope:[main]  from main::@15
   revers::onoff#1 = 0
-  call revers 
+  call revers
   revers::return#3 = revers::return#1
   to:main::@17
 main::@17: scope:[main]  from main::@16
@@ -1231,7 +1231,7 @@ main::@17: scope:[main]  from main::@16
 main::@1: scope:[main]  from main::@17 main::@20
   main::i#4 = phi( main::@17/main::i#0, main::@20/main::i#1 )
   cputs::s#6 = main::s3
-  call cputs 
+  call cputs
   to:main::@18
 main::@18: scope:[main]  from main::@1
   main::i#2 = phi( main::@1/main::i#4 )
@@ -1242,12 +1242,12 @@ main::@18: scope:[main]  from main::@1
   printf_sint::format_zero_padding#0 = 0
   printf_sint::format_upper_case#0 = 0
   printf_sint::format_radix#0 = DECIMAL
-  call printf_sint 
+  call printf_sint
   to:main::@19
 main::@19: scope:[main]  from main::@18
   main::i#5 = phi( main::@18/main::i#2 )
   cputs::s#7 = main::s4
-  call cputs 
+  call cputs
   to:main::@20
 main::@20: scope:[main]  from main::@19
   main::i#3 = phi( main::@19/main::i#5 )
@@ -1256,11 +1256,11 @@ main::@20: scope:[main]  from main::@19
   if(main::$15) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@20
-  call waitkey 
+  call waitkey
   to:main::@21
 main::@21: scope:[main]  from main::@2
   scroll::onoff#0 = 0
-  call scroll 
+  call scroll
   scroll::return#2 = scroll::return#1
   to:main::@22
 main::@22: scope:[main]  from main::@21
@@ -1269,7 +1269,7 @@ main::@22: scope:[main]  from main::@21
 main::@3: scope:[main]  from main::@22 main::@25
   main::i1#4 = phi( main::@22/main::i1#0, main::@25/main::i1#1 )
   cputs::s#8 = main::s5
-  call cputs 
+  call cputs
   to:main::@23
 main::@23: scope:[main]  from main::@3
   main::i1#2 = phi( main::@3/main::i1#4 )
@@ -1280,12 +1280,12 @@ main::@23: scope:[main]  from main::@3
   printf_sint::format_zero_padding#1 = 0
   printf_sint::format_upper_case#1 = 0
   printf_sint::format_radix#1 = DECIMAL
-  call printf_sint 
+  call printf_sint
   to:main::@24
 main::@24: scope:[main]  from main::@23
   main::i1#5 = phi( main::@23/main::i1#2 )
   cputs::s#9 = main::s6
-  call cputs 
+  call cputs
   to:main::@25
 main::@25: scope:[main]  from main::@24
   main::i1#3 = phi( main::@24/main::i1#5 )
@@ -1294,7 +1294,7 @@ main::@25: scope:[main]  from main::@24
   if(main::$17) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@25
-  call waitkey 
+  call waitkey
   to:main::@26
 main::@26: scope:[main]  from main::@4
   to:main::@return
@@ -1306,7 +1306,7 @@ void waitkey()
 waitkey: scope:[waitkey]  from main::@14 main::@2 main::@4
   to:waitkey::@1
 waitkey::@1: scope:[waitkey]  from waitkey waitkey::@2
-  call kbhit 
+  call kbhit
   kbhit::return#3 = kbhit::return#2
   to:waitkey::@2
 waitkey::@2: scope:[waitkey]  from waitkey::@1
@@ -1332,7 +1332,7 @@ __start::__init1: scope:[__start]  from __start
   conio_scroll_enable = 1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -3571,7 +3571,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [4] phi()
-  [5] call main 
+  [5] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [6] return 
@@ -3580,67 +3580,67 @@ __start::@return: scope:[__start]  from __start::@1
 void main()
 main: scope:[main]  from __start::@1
   [7] phi()
-  [8] call cursor 
+  [8] call cursor
   to:main::@5
 main::@5: scope:[main]  from main
   [9] phi()
-  [10] call bgcolor 
+  [10] call bgcolor
   to:main::@6
 main::@6: scope:[main]  from main::@5
   [11] phi()
-  [12] call bordercolor 
+  [12] call bordercolor
   to:main::@7
 main::@7: scope:[main]  from main::@6
   [13] phi()
-  [14] call textcolor 
+  [14] call textcolor
   to:main::@8
 main::@8: scope:[main]  from main::@7
   [15] phi()
-  [16] call cputsxy 
+  [16] call cputsxy
   to:main::@9
 main::@9: scope:[main]  from main::@8
   [17] phi()
-  [18] call gotoxy 
+  [18] call gotoxy
   to:main::@10
 main::@10: scope:[main]  from main::@9
   [19] phi()
-  [20] call revers 
+  [20] call revers
   to:main::@11
 main::@11: scope:[main]  from main::@10
   [21] phi()
-  [22] call cputs 
+  [22] call cputs
   to:main::@12
 main::@12: scope:[main]  from main::@11
   [23] phi()
-  [24] call printf_string 
+  [24] call printf_string
   to:main::@13
 main::@13: scope:[main]  from main::@12
   [25] phi()
-  [26] call cputs 
+  [26] call cputs
   to:main::@14
 main::@14: scope:[main]  from main::@13
   [27] phi()
-  [28] call waitkey 
+  [28] call waitkey
   to:main::@15
 main::@15: scope:[main]  from main::@14
   [29] phi()
-  [30] call clrscr 
+  [30] call clrscr
   to:main::@16
 main::@16: scope:[main]  from main::@15
   [31] phi()
-  [32] call revers 
+  [32] call revers
   to:main::@1
 main::@1: scope:[main]  from main::@16 main::@19
   [33] main::i#2 = phi( main::@16/0, main::@19/main::i#1 )
-  [34] call cputs 
+  [34] call cputs
   to:main::@17
 main::@17: scope:[main]  from main::@1
   [35] printf_sint::value#1 = main::i#2
-  [36] call printf_sint 
+  [36] call printf_sint
   to:main::@18
 main::@18: scope:[main]  from main::@17
   [37] phi()
-  [38] call cputs 
+  [38] call cputs
   to:main::@19
 main::@19: scope:[main]  from main::@18
   [39] main::i#1 = ++ main::i#2
@@ -3648,23 +3648,23 @@ main::@19: scope:[main]  from main::@18
   to:main::@2
 main::@2: scope:[main]  from main::@19
   [41] phi()
-  [42] call waitkey 
+  [42] call waitkey
   to:main::@20
 main::@20: scope:[main]  from main::@2
   [43] phi()
-  [44] call scroll 
+  [44] call scroll
   to:main::@3
 main::@3: scope:[main]  from main::@20 main::@23
   [45] main::i1#2 = phi( main::@20/$33, main::@23/main::i1#1 )
-  [46] call cputs 
+  [46] call cputs
   to:main::@21
 main::@21: scope:[main]  from main::@3
   [47] printf_sint::value#2 = main::i1#2
-  [48] call printf_sint 
+  [48] call printf_sint
   to:main::@22
 main::@22: scope:[main]  from main::@21
   [49] phi()
-  [50] call cputs 
+  [50] call cputs
   to:main::@23
 main::@23: scope:[main]  from main::@22
   [51] main::i1#1 = ++ main::i1#2
@@ -3672,7 +3672,7 @@ main::@23: scope:[main]  from main::@22
   to:main::@4
 main::@4: scope:[main]  from main::@23
   [53] phi()
-  [54] call waitkey 
+  [54] call waitkey
   to:main::@return
 main::@return: scope:[main]  from main::@4
   [55] return 
@@ -3713,11 +3713,11 @@ textcolor::@return: scope:[textcolor]  from textcolor
 void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
 cputsxy: scope:[cputsxy]  from main::@8
   [64] phi()
-  [65] call gotoxy 
+  [65] call gotoxy
   to:cputsxy::@1
 cputsxy::@1: scope:[cputsxy]  from cputsxy
   [66] phi()
-  [67] call cputs 
+  [67] call cputs
   to:cputsxy::@return
 cputsxy::@return: scope:[cputsxy]  from cputsxy::@1
   [68] return 
@@ -3729,7 +3729,7 @@ gotoxy: scope:[gotoxy]  from clrscr::@1 cputsxy main::@9 newline::@3
   [69] gotoxy::x#4 = phi( clrscr::@1/0, cputsxy/cputsxy::x#0, main::@9/0, newline::@3/0 )
   [70] *COLCRS = gotoxy::x#4
   [71] *ROWCRS = gotoxy::y#4
-  [72] call setcursor 
+  [72] call setcursor
   to:gotoxy::@return
 gotoxy::@return: scope:[gotoxy]  from gotoxy
   [73] return 
@@ -3765,7 +3765,7 @@ cputs::@return: scope:[cputs]  from cputs::@1
   to:@return
 cputs::@2: scope:[cputs]  from cputs::@1
   [85] cputc::c = cputs::c#1
-  [86] call cputc 
+  [86] call cputc
   to:cputs::@1
 
 void printf_string(byte* printf_string::str , byte printf_string::format_min_length , byte printf_string::format_justify_left)
@@ -3774,7 +3774,7 @@ printf_string: scope:[printf_string]  from main::@12
   to:printf_string::@1
 printf_string::@1: scope:[printf_string]  from printf_string
   [88] phi()
-  [89] call cputs 
+  [89] call cputs
   to:printf_string::@return
 printf_string::@return: scope:[printf_string]  from printf_string::@1
   [90] return 
@@ -3786,7 +3786,7 @@ waitkey: scope:[waitkey]  from main::@14 main::@2 main::@4
   to:waitkey::@1
 waitkey::@1: scope:[waitkey]  from waitkey waitkey::@2
   [92] phi()
-  [93] call kbhit 
+  [93] call kbhit
   [94] kbhit::return#3 = kbhit::return#2
   to:waitkey::@2
 waitkey::@2: scope:[waitkey]  from waitkey::@1
@@ -3803,11 +3803,11 @@ waitkey::@return: scope:[waitkey]  from waitkey::clrkb1
 void clrscr()
 clrscr: scope:[clrscr]  from main::@15
   [99] memset::str#7 = (void*)*SAVMSC
-  [100] call memset 
+  [100] call memset
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr
   [101] *OLDCHR = 0
-  [102] call gotoxy 
+  [102] call gotoxy
   to:clrscr::@return
 clrscr::@return: scope:[clrscr]  from clrscr::@1
   [103] return 
@@ -3826,11 +3826,11 @@ printf_sint::@1: scope:[printf_sint]  from printf_sint
 printf_sint::@2: scope:[printf_sint]  from printf_sint printf_sint::@1
   [109] printf_sint::value#5 = phi( printf_sint::@1/printf_sint::value#0, printf_sint/printf_sint::value#3 )
   [110] utoa::value#1 = (word)printf_sint::value#5
-  [111] call utoa 
+  [111] call utoa
   to:printf_sint::@3
 printf_sint::@3: scope:[printf_sint]  from printf_sint::@2
   [112] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer)
-  [113] call printf_number_buffer 
+  [113] call printf_number_buffer
   to:printf_sint::@return
 printf_sint::@return: scope:[printf_sint]  from printf_sint::@3
   [114] return 
@@ -3847,7 +3847,7 @@ scroll::@return: scope:[scroll]  from scroll
 void setcursor()
 setcursor: scope:[setcursor]  from cputc::@1 cputc::@4 gotoxy newline::@1 putchar::@1
   [117] *(*OLDADR) = *OLDCHR
-  [118] call cursorLocation 
+  [118] call cursorLocation
   [119] cursorLocation::return#3 = cursorLocation::return#1
   to:setcursor::@4
 setcursor::@4: scope:[setcursor]  from setcursor
@@ -3888,7 +3888,7 @@ cputc::convertToScreenCode1: scope:[cputc]  from cputc::@8
   to:cputc::@6
 cputc::@6: scope:[cputc]  from cputc::convertToScreenCode1
   [135] phi()
-  [136] call putchar 
+  [136] call putchar
   to:cputc::@7
 cputc::@7: scope:[cputc]  from cputc::@6
   [137] *COLCRS = ++ *COLCRS
@@ -3896,22 +3896,22 @@ cputc::@7: scope:[cputc]  from cputc::@6
   to:cputc::@4
 cputc::@4: scope:[cputc]  from cputc::@7
   [139] phi()
-  [140] call setcursor 
+  [140] call setcursor
   to:cputc::@return
 cputc::@return: scope:[cputc]  from cputc::@1 cputc::@2 cputc::@4 cputc::@5
   [141] return 
   to:@return
 cputc::@5: scope:[cputc]  from cputc::@7
   [142] *COLCRS = 0
-  [143] call newline 
+  [143] call newline
   to:cputc::@return
 cputc::@2: scope:[cputc]  from cputc::@3 cputc::@8
   [144] *COLCRS = 0
-  [145] call newline 
+  [145] call newline
   to:cputc::@return
 cputc::@1: scope:[cputc]  from cputc
   [146] *COLCRS = 0
-  [147] call setcursor 
+  [147] call setcursor
   to:cputc::@return
 
 byte kbhit()
@@ -3986,7 +3986,7 @@ utoa::@5: scope:[utoa]  from utoa::@2 utoa::@7
   [175] utoa_append::buffer#0 = utoa::buffer#11
   [176] utoa_append::value#0 = utoa::value#2
   [177] utoa_append::sub#0 = utoa::digit_value#0
-  [178] call utoa_append 
+  [178] call utoa_append
   [179] utoa_append::return#0 = utoa_append::value#2
   to:utoa::@6
 utoa::@6: scope:[utoa]  from utoa::@5
@@ -4003,11 +4003,11 @@ printf_number_buffer::@1: scope:[printf_number_buffer]  from printf_number_buffe
   to:printf_number_buffer::@3
 printf_number_buffer::@3: scope:[printf_number_buffer]  from printf_number_buffer::@1
   [184] cputc::c = printf_number_buffer::buffer_sign#0
-  [185] call cputc 
+  [185] call cputc
   to:printf_number_buffer::@2
 printf_number_buffer::@2: scope:[printf_number_buffer]  from printf_number_buffer::@1 printf_number_buffer::@3
   [186] phi()
-  [187] call cputs 
+  [187] call cputs
   to:printf_number_buffer::@return
 printf_number_buffer::@return: scope:[printf_number_buffer]  from printf_number_buffer::@2
   [188] return 
@@ -4029,7 +4029,7 @@ cursorLocation::@return: scope:[cursorLocation]  from cursorLocation
 void putchar(byte putchar::code)
 putchar: scope:[putchar]  from cputc::@6
   [196] *(*OLDADR) = *OLDCHR
-  [197] call cursorLocation 
+  [197] call cursorLocation
   [198] cursorLocation::return#0 = cursorLocation::return#1
   to:putchar::@1
 putchar::@1: scope:[putchar]  from putchar
@@ -4037,7 +4037,7 @@ putchar::@1: scope:[putchar]  from putchar
   [200] putchar::newChar#0 = cputc::convertToScreenCode1_return#0 | conio_reverse_value
   [201] *putchar::loc#0 = putchar::newChar#0
   [202] *OLDCHR = putchar::newChar#0
-  [203] call setcursor 
+  [203] call setcursor
   to:putchar::@return
 putchar::@return: scope:[putchar]  from putchar::@1
   [204] return 
@@ -4053,11 +4053,11 @@ newline::@2: scope:[newline]  from newline
   to:newline::@3
 newline::@3: scope:[newline]  from newline::@2
   [208] phi()
-  [209] call gotoxy 
+  [209] call gotoxy
   to:newline::@1
 newline::@1: scope:[newline]  from newline newline::@3 newline::@8
   [210] phi()
-  [211] call setcursor 
+  [211] call setcursor
   to:newline::@return
 newline::@return: scope:[newline]  from newline::@1
   [212] return 
@@ -4072,12 +4072,12 @@ newline::@5: scope:[newline]  from newline::@4 newline::@6
   [215] newline::start#0 = *SAVMSC
   [216] memcpy::source#0 = newline::start#0 + $28
   [217] memcpy::destination#0 = (void*)newline::start#0
-  [218] call memcpy 
+  [218] call memcpy
   to:newline::@7
 newline::@7: scope:[newline]  from newline::@5
   [219] memset::str#1 = newline::start#0 + (word)$28*$17
   [220] memset::str#8 = (void*)memset::str#1
-  [221] call memset 
+  [221] call memset
   to:newline::@8
 newline::@8: scope:[newline]  from newline::@7
   [222] *ROWCRS = $18-1
@@ -4921,7 +4921,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [5] call main 
+    // [5] call main
     // [7] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -4935,7 +4935,7 @@ __start: {
 main: {
     .label i = $80
     .label i1 = $82
-    // [8] call cursor 
+    // [8] call cursor
     // hide the cursor
     jsr cursor
     // [9] phi from main to main::@5 [phi:main->main::@5]
@@ -4943,7 +4943,7 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [10] call bgcolor 
+    // [10] call bgcolor
     // change colors
     jsr bgcolor
     // [11] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
@@ -4951,21 +4951,21 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [12] call bordercolor 
+    // [12] call bordercolor
     jsr bordercolor
     // [13] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
   __b7_from___b6:
     jmp __b7
     // main::@7
   __b7:
-    // [14] call textcolor 
+    // [14] call textcolor
     jsr textcolor
     // [15] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
   __b8_from___b7:
     jmp __b8
     // main::@8
   __b8:
-    // [16] call cputsxy 
+    // [16] call cputsxy
   // print some text at a location
     // [64] phi from main::@8 to cputsxy [phi:main::@8->cputsxy]
   cputsxy_from___b8:
@@ -4975,7 +4975,7 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [18] call gotoxy 
+    // [18] call gotoxy
   // skip a line
     // [69] phi from main::@9 to gotoxy [phi:main::@9->gotoxy]
   gotoxy_from___b9:
@@ -4989,7 +4989,7 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [20] call revers 
+    // [20] call revers
   // set inverse text and use printf to output a string
     // [74] phi from main::@10 to revers [phi:main::@10->revers]
   revers_from___b10:
@@ -5001,7 +5001,7 @@ main: {
     jmp __b11
     // main::@11
   __b11:
-    // [22] call cputs 
+    // [22] call cputs
     // [79] phi from main::@11 to cputs [phi:main::@11->cputs]
   cputs_from___b11:
     // [79] phi cputs::s#11 = main::s1 [phi:main::@11->cputs#0] -- pbuz1=pbuc1 
@@ -5015,7 +5015,7 @@ main: {
     jmp __b12
     // main::@12
   __b12:
-    // [24] call printf_string 
+    // [24] call printf_string
     // [87] phi from main::@12 to printf_string [phi:main::@12->printf_string]
   printf_string_from___b12:
     jsr printf_string
@@ -5024,7 +5024,7 @@ main: {
     jmp __b13
     // main::@13
   __b13:
-    // [26] call cputs 
+    // [26] call cputs
     // [79] phi from main::@13 to cputs [phi:main::@13->cputs]
   cputs_from___b13:
     // [79] phi cputs::s#11 = main::s2 [phi:main::@13->cputs#0] -- pbuz1=pbuc1 
@@ -5038,7 +5038,7 @@ main: {
     jmp __b14
     // main::@14
   __b14:
-    // [28] call waitkey 
+    // [28] call waitkey
   // wait for user keypress
     // [91] phi from main::@14 to waitkey [phi:main::@14->waitkey]
   waitkey_from___b14:
@@ -5048,7 +5048,7 @@ main: {
     jmp __b15
     // main::@15
   __b15:
-    // [30] call clrscr 
+    // [30] call clrscr
     // clear screen
     jsr clrscr
     // [31] phi from main::@15 to main::@16 [phi:main::@15->main::@16]
@@ -5056,7 +5056,7 @@ main: {
     jmp __b16
     // main::@16
   __b16:
-    // [32] call revers 
+    // [32] call revers
   // reset reverse and do some scrolling lines.
     // [74] phi from main::@16 to revers [phi:main::@16->revers]
   revers_from___b16:
@@ -5077,7 +5077,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [34] call cputs 
+    // [34] call cputs
     // [79] phi from main::@1 to cputs [phi:main::@1->cputs]
   cputs_from___b1:
     // [79] phi cputs::s#11 = main::s3 [phi:main::@1->cputs#0] -- pbuz1=pbuc1 
@@ -5094,7 +5094,7 @@ main: {
     sta.z printf_sint.value
     lda.z i+1
     sta.z printf_sint.value+1
-    // [36] call printf_sint 
+    // [36] call printf_sint
     // [104] phi from main::@17 to printf_sint [phi:main::@17->printf_sint]
   printf_sint_from___b17:
     // [104] phi printf_sint::value#3 = printf_sint::value#1 [phi:main::@17->printf_sint#0] -- register_copy 
@@ -5104,7 +5104,7 @@ main: {
     jmp __b18
     // main::@18
   __b18:
-    // [38] call cputs 
+    // [38] call cputs
     // [79] phi from main::@18 to cputs [phi:main::@18->cputs]
   cputs_from___b18:
     // [79] phi cputs::s#11 = main::s4 [phi:main::@18->cputs#0] -- pbuz1=pbuc1 
@@ -5133,7 +5133,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [42] call waitkey 
+    // [42] call waitkey
     // [91] phi from main::@2 to waitkey [phi:main::@2->waitkey]
   waitkey_from___b2:
     jsr waitkey
@@ -5142,7 +5142,7 @@ main: {
     jmp __b20
     // main::@20
   __b20:
-    // [44] call scroll 
+    // [44] call scroll
     // turn scroll off and do more lines
     jsr scroll
     // [45] phi from main::@20 to main::@3 [phi:main::@20->main::@3]
@@ -5159,7 +5159,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [46] call cputs 
+    // [46] call cputs
     // [79] phi from main::@3 to cputs [phi:main::@3->cputs]
   cputs_from___b3:
     // [79] phi cputs::s#11 = main::s5 [phi:main::@3->cputs#0] -- pbuz1=pbuc1 
@@ -5176,7 +5176,7 @@ main: {
     sta.z printf_sint.value
     lda.z i1+1
     sta.z printf_sint.value+1
-    // [48] call printf_sint 
+    // [48] call printf_sint
     // [104] phi from main::@21 to printf_sint [phi:main::@21->printf_sint]
   printf_sint_from___b21:
     // [104] phi printf_sint::value#3 = printf_sint::value#2 [phi:main::@21->printf_sint#0] -- register_copy 
@@ -5186,7 +5186,7 @@ main: {
     jmp __b22
     // main::@22
   __b22:
-    // [50] call cputs 
+    // [50] call cputs
     // [79] phi from main::@22 to cputs [phi:main::@22->cputs]
   cputs_from___b22:
     // [79] phi cputs::s#11 = main::s4 [phi:main::@22->cputs#0] -- pbuz1=pbuc1 
@@ -5215,7 +5215,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [54] call waitkey 
+    // [54] call waitkey
     // [91] phi from main::@4 to waitkey [phi:main::@4->waitkey]
   waitkey_from___b4:
     jsr waitkey
@@ -5298,7 +5298,7 @@ textcolor: {
 cputsxy: {
     .const x = 0
     .const y = 1
-    // [65] call gotoxy 
+    // [65] call gotoxy
     // [69] phi from cputsxy to gotoxy [phi:cputsxy->gotoxy]
   gotoxy_from_cputsxy:
     // [69] phi gotoxy::y#4 = cputsxy::y#0 [phi:cputsxy->gotoxy#0] -- vbuxx=vbuc1 
@@ -5311,7 +5311,7 @@ cputsxy: {
     jmp __b1
     // cputsxy::@1
   __b1:
-    // [67] call cputs 
+    // [67] call cputs
     // [79] phi from cputsxy::@1 to cputs [phi:cputsxy::@1->cputs]
   cputs_from___b1:
     // [79] phi cputs::s#11 = main::s [phi:cputsxy::@1->cputs#0] -- pbuz1=pbuc1 
@@ -5336,7 +5336,7 @@ gotoxy: {
     sta COLCRS+1
     // [71] *ROWCRS = gotoxy::y#4 -- _deref_pbuc1=vbuxx 
     stx ROWCRS
-    // [72] call setcursor 
+    // [72] call setcursor
     jsr setcursor
     jmp __breturn
     // gotoxy::@return
@@ -5401,7 +5401,7 @@ cputs: {
   __b2:
     // [85] cputc::c = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [86] call cputc 
+    // [86] call cputc
     jsr cputc
     jmp __b1_from___b2
 }
@@ -5414,7 +5414,7 @@ printf_string: {
     jmp __b1
     // printf_string::@1
   __b1:
-    // [89] call cputs 
+    // [89] call cputs
     // [79] phi from printf_string::@1 to cputs [phi:printf_string::@1->cputs]
   cputs_from___b1:
     // [79] phi cputs::s#11 = main::name [phi:printf_string::@1->cputs#0] -- pbuz1=pbuc1 
@@ -5437,7 +5437,7 @@ waitkey: {
     jmp __b1
     // waitkey::@1
   __b1:
-    // [93] call kbhit 
+    // [93] call kbhit
     jsr kbhit
     // [94] kbhit::return#3 = kbhit::return#2
     jmp __b2
@@ -5467,7 +5467,7 @@ clrscr: {
     sta.z memset.str
     lda SAVMSC+1
     sta.z memset.str+1
-    // [100] call memset 
+    // [100] call memset
   // Fill entire screen with spaces
     // [152] phi from clrscr to memset [phi:clrscr->memset]
   memset_from_clrscr:
@@ -5486,7 +5486,7 @@ clrscr: {
     // set the old character to a space so the cursor doesn't reappear at the last position it was at
     lda #0
     sta OLDCHR
-    // [102] call gotoxy 
+    // [102] call gotoxy
     // [69] phi from clrscr::@1 to gotoxy [phi:clrscr::@1->gotoxy]
   gotoxy_from___b1:
     // [69] phi gotoxy::y#4 = 0 [phi:clrscr::@1->gotoxy#0] -- vbuxx=vbuc1 
@@ -5534,7 +5534,7 @@ printf_sint: {
     // printf_sint::@2
   __b2:
     // [110] utoa::value#1 = (word)printf_sint::value#5
-    // [111] call utoa 
+    // [111] call utoa
     // [161] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa]
   utoa_from___b2:
     jsr utoa
@@ -5543,7 +5543,7 @@ printf_sint: {
   __b3:
     // [112] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer) -- vbuaa=_deref_pbuc1 
     lda printf_buffer
-    // [113] call printf_number_buffer 
+    // [113] call printf_number_buffer
   // Print using format
     // [182] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer]
   printf_number_buffer_from___b3:
@@ -5582,7 +5582,7 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [118] call cursorLocation 
+    // [118] call cursorLocation
     // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [119] cursorLocation::return#3 = cursorLocation::return#1
@@ -5679,7 +5679,7 @@ cputc: {
     jmp __b6
     // cputc::@6
   __b6:
-    // [136] call putchar 
+    // [136] call putchar
     jsr putchar
     jmp __b7
     // cputc::@7
@@ -5701,7 +5701,7 @@ cputc: {
     jmp __b4
     // cputc::@4
   __b4:
-    // [140] call setcursor 
+    // [140] call setcursor
     jsr setcursor
     jmp __breturn
     // cputc::@return
@@ -5715,7 +5715,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [143] call newline 
+    // [143] call newline
     jsr newline
     jmp __breturn
     // cputc::@2
@@ -5726,7 +5726,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [145] call newline 
+    // [145] call newline
     jsr newline
     jmp __breturn
     // cputc::@1
@@ -5737,7 +5737,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [147] call setcursor 
+    // [147] call setcursor
     jsr setcursor
     jmp __breturn
 }
@@ -5929,7 +5929,7 @@ utoa: {
     // [175] utoa_append::buffer#0 = utoa::buffer#11
     // [176] utoa_append::value#0 = utoa::value#2
     // [177] utoa_append::sub#0 = utoa::digit_value#0
-    // [178] call utoa_append 
+    // [178] call utoa_append
     // [223] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
   utoa_append_from___b5:
     jsr utoa_append
@@ -5968,7 +5968,7 @@ printf_number_buffer: {
   __b3:
     // [184] cputc::c = printf_number_buffer::buffer_sign#0 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [185] call cputc 
+    // [185] call cputc
     jsr cputc
     // [186] phi from printf_number_buffer::@1 printf_number_buffer::@3 to printf_number_buffer::@2 [phi:printf_number_buffer::@1/printf_number_buffer::@3->printf_number_buffer::@2]
   __b2_from___b1:
@@ -5976,7 +5976,7 @@ printf_number_buffer: {
     jmp __b2
     // printf_number_buffer::@2
   __b2:
-    // [187] call cputs 
+    // [187] call cputs
     // [79] phi from printf_number_buffer::@2 to cputs [phi:printf_number_buffer::@2->cputs]
   cputs_from___b2:
     // [79] phi cputs::s#11 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->cputs#0] -- pbuz1=pbuc1 
@@ -6063,7 +6063,7 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [197] call cursorLocation 
+    // [197] call cursorLocation
     jsr cursorLocation
     // [198] cursorLocation::return#0 = cursorLocation::return#1
     jmp __b1
@@ -6078,7 +6078,7 @@ putchar: {
     sta (loc),y
     // [202] *OLDCHR = putchar::newChar#0 -- _deref_pbuc1=vbuaa 
     sta OLDCHR
-    // [203] call setcursor 
+    // [203] call setcursor
     jsr setcursor
     jmp __breturn
     // putchar::@return
@@ -6107,7 +6107,7 @@ newline: {
     jmp __b3
     // newline::@3
   __b3:
-    // [209] call gotoxy 
+    // [209] call gotoxy
     // [69] phi from newline::@3 to gotoxy [phi:newline::@3->gotoxy]
   gotoxy_from___b3:
     // [69] phi gotoxy::y#4 = 0 [phi:newline::@3->gotoxy#0] -- vbuxx=vbuc1 
@@ -6122,7 +6122,7 @@ newline: {
     jmp __b1
     // newline::@1
   __b1:
-    // [211] call setcursor 
+    // [211] call setcursor
     jsr setcursor
     jmp __breturn
     // newline::@return
@@ -6169,7 +6169,7 @@ newline: {
     sta.z memcpy.destination
     lda.z start+1
     sta.z memcpy.destination+1
-    // [218] call memcpy 
+    // [218] call memcpy
     jsr memcpy
     jmp __b7
     // newline::@7
@@ -6183,7 +6183,7 @@ newline: {
     adc #>$28*$17
     sta.z memset.str+1
     // [220] memset::str#8 = (void*)memset::str#1
-    // [221] call memset 
+    // [221] call memset
     // [152] phi from newline::@7 to memset [phi:newline::@7->memset]
   memset_from___b7:
     // [152] phi memset::str#3 = memset::str#8 [phi:newline::@7->memset#0] -- register_copy 
@@ -6979,7 +6979,7 @@ __start: {
     sta.z conio_scroll_enable
     // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [5] call main 
+    // [5] call main
     // [7] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -6991,36 +6991,36 @@ main: {
     .label i = $80
     .label i1 = $82
     // cursor(0)
-    // [8] call cursor 
+    // [8] call cursor
     // hide the cursor
     jsr cursor
     // [9] phi from main to main::@5 [phi:main->main::@5]
     // main::@5
     // bgcolor(DARK_ORANGE)
-    // [10] call bgcolor 
+    // [10] call bgcolor
     // change colors
     jsr bgcolor
     // [11] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
     // main::@6
     // bordercolor(MEDIUM_BLUE)
-    // [12] call bordercolor 
+    // [12] call bordercolor
     jsr bordercolor
     // [13] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
     // main::@7
     // textcolor(WHITE)
-    // [14] call textcolor 
+    // [14] call textcolor
     jsr textcolor
     // [15] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
     // main::@8
     // cputsxy(0, 1, "Hello, World!\n")
-    // [16] call cputsxy 
+    // [16] call cputsxy
   // print some text at a location
     // [64] phi from main::@8 to cputsxy [phi:main::@8->cputsxy]
     jsr cputsxy
     // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
     // main::@9
     // gotoxy(0, 3)
-    // [18] call gotoxy 
+    // [18] call gotoxy
   // skip a line
     // [69] phi from main::@9 to gotoxy [phi:main::@9->gotoxy]
     // [69] phi gotoxy::y#4 = 3 [phi:main::@9->gotoxy#0] -- vbuxx=vbuc1 
@@ -7031,7 +7031,7 @@ main: {
     // [19] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
     // main::@10
     // revers(1)
-    // [20] call revers 
+    // [20] call revers
   // set inverse text and use printf to output a string
     // [74] phi from main::@10 to revers [phi:main::@10->revers]
     // [74] phi revers::onoff#2 = 1 [phi:main::@10->revers#0] -- vbuaa=vbuc1 
@@ -7040,7 +7040,7 @@ main: {
     // [21] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
     // main::@11
     // printf("Hello, %s - press a key!\n", name)
-    // [22] call cputs 
+    // [22] call cputs
     // [79] phi from main::@11 to cputs [phi:main::@11->cputs]
     // [79] phi cputs::s#11 = main::s1 [phi:main::@11->cputs#0] -- pbuz1=pbuc1 
     lda #<s1
@@ -7051,13 +7051,13 @@ main: {
     // [23] phi from main::@11 to main::@12 [phi:main::@11->main::@12]
     // main::@12
     // printf("Hello, %s - press a key!\n", name)
-    // [24] call printf_string 
+    // [24] call printf_string
     // [87] phi from main::@12 to printf_string [phi:main::@12->printf_string]
     jsr printf_string
     // [25] phi from main::@12 to main::@13 [phi:main::@12->main::@13]
     // main::@13
     // printf("Hello, %s - press a key!\n", name)
-    // [26] call cputs 
+    // [26] call cputs
     // [79] phi from main::@13 to cputs [phi:main::@13->cputs]
     // [79] phi cputs::s#11 = main::s2 [phi:main::@13->cputs#0] -- pbuz1=pbuc1 
     lda #<s2
@@ -7068,20 +7068,20 @@ main: {
     // [27] phi from main::@13 to main::@14 [phi:main::@13->main::@14]
     // main::@14
     // waitkey()
-    // [28] call waitkey 
+    // [28] call waitkey
   // wait for user keypress
     // [91] phi from main::@14 to waitkey [phi:main::@14->waitkey]
     jsr waitkey
     // [29] phi from main::@14 to main::@15 [phi:main::@14->main::@15]
     // main::@15
     // clrscr()
-    // [30] call clrscr 
+    // [30] call clrscr
     // clear screen
     jsr clrscr
     // [31] phi from main::@15 to main::@16 [phi:main::@15->main::@16]
     // main::@16
     // revers(0)
-    // [32] call revers 
+    // [32] call revers
   // reset reverse and do some scrolling lines.
     // [74] phi from main::@16 to revers [phi:main::@16->revers]
     // [74] phi revers::onoff#2 = 0 [phi:main::@16->revers#0] -- vbuaa=vbuc1 
@@ -7097,7 +7097,7 @@ main: {
     // main::@1
   __b1:
     // printf("Scrolling lines ... %d\n", i)
-    // [34] call cputs 
+    // [34] call cputs
     // [79] phi from main::@1 to cputs [phi:main::@1->cputs]
     // [79] phi cputs::s#11 = main::s3 [phi:main::@1->cputs#0] -- pbuz1=pbuc1 
     lda #<s3
@@ -7112,14 +7112,14 @@ main: {
     sta.z printf_sint.value
     lda.z i+1
     sta.z printf_sint.value+1
-    // [36] call printf_sint 
+    // [36] call printf_sint
     // [104] phi from main::@17 to printf_sint [phi:main::@17->printf_sint]
     // [104] phi printf_sint::value#3 = printf_sint::value#1 [phi:main::@17->printf_sint#0] -- register_copy 
     jsr printf_sint
     // [37] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
     // main::@18
     // printf("Scrolling lines ... %d\n", i)
-    // [38] call cputs 
+    // [38] call cputs
     // [79] phi from main::@18 to cputs [phi:main::@18->cputs]
     // [79] phi cputs::s#11 = main::s4 [phi:main::@18->cputs#0] -- pbuz1=pbuc1 
     lda #<s4
@@ -7144,13 +7144,13 @@ main: {
     // [41] phi from main::@19 to main::@2 [phi:main::@19->main::@2]
     // main::@2
     // waitkey()
-    // [42] call waitkey 
+    // [42] call waitkey
     // [91] phi from main::@2 to waitkey [phi:main::@2->waitkey]
     jsr waitkey
     // [43] phi from main::@2 to main::@20 [phi:main::@2->main::@20]
     // main::@20
     // scroll(0)
-    // [44] call scroll 
+    // [44] call scroll
     // turn scroll off and do more lines
     jsr scroll
     // [45] phi from main::@20 to main::@3 [phi:main::@20->main::@3]
@@ -7164,7 +7164,7 @@ main: {
     // main::@3
   __b3:
     // printf("Some wrapping lines ... %d\n", i)
-    // [46] call cputs 
+    // [46] call cputs
     // [79] phi from main::@3 to cputs [phi:main::@3->cputs]
     // [79] phi cputs::s#11 = main::s5 [phi:main::@3->cputs#0] -- pbuz1=pbuc1 
     lda #<s5
@@ -7179,14 +7179,14 @@ main: {
     sta.z printf_sint.value
     lda.z i1+1
     sta.z printf_sint.value+1
-    // [48] call printf_sint 
+    // [48] call printf_sint
     // [104] phi from main::@21 to printf_sint [phi:main::@21->printf_sint]
     // [104] phi printf_sint::value#3 = printf_sint::value#2 [phi:main::@21->printf_sint#0] -- register_copy 
     jsr printf_sint
     // [49] phi from main::@21 to main::@22 [phi:main::@21->main::@22]
     // main::@22
     // printf("Some wrapping lines ... %d\n", i)
-    // [50] call cputs 
+    // [50] call cputs
     // [79] phi from main::@22 to cputs [phi:main::@22->cputs]
     // [79] phi cputs::s#11 = main::s4 [phi:main::@22->cputs#0] -- pbuz1=pbuc1 
     lda #<s4
@@ -7211,7 +7211,7 @@ main: {
     // [53] phi from main::@23 to main::@4 [phi:main::@23->main::@4]
     // main::@4
     // waitkey()
-    // [54] call waitkey 
+    // [54] call waitkey
     // [91] phi from main::@4 to waitkey [phi:main::@4->waitkey]
     jsr waitkey
     // main::@return
@@ -7293,7 +7293,7 @@ cputsxy: {
     .const x = 0
     .const y = 1
     // gotoxy(x, y)
-    // [65] call gotoxy 
+    // [65] call gotoxy
     // [69] phi from cputsxy to gotoxy [phi:cputsxy->gotoxy]
     // [69] phi gotoxy::y#4 = cputsxy::y#0 [phi:cputsxy->gotoxy#0] -- vbuxx=vbuc1 
     ldx #y
@@ -7303,7 +7303,7 @@ cputsxy: {
     // [66] phi from cputsxy to cputsxy::@1 [phi:cputsxy->cputsxy::@1]
     // cputsxy::@1
     // cputs(s)
-    // [67] call cputs 
+    // [67] call cputs
     // [79] phi from cputsxy::@1 to cputs [phi:cputsxy::@1->cputs]
     // [79] phi cputs::s#11 = main::s [phi:cputsxy::@1->cputs#0] -- pbuz1=pbuc1 
     lda #<main.s
@@ -7329,7 +7329,7 @@ gotoxy: {
     // [71] *ROWCRS = gotoxy::y#4 -- _deref_pbuc1=vbuxx 
     stx ROWCRS
     // setcursor()
-    // [72] call setcursor 
+    // [72] call setcursor
     jsr setcursor
     // gotoxy::@return
     // }
@@ -7391,7 +7391,7 @@ cputs: {
     // cputc(c)
     // [85] cputc::c = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [86] call cputc 
+    // [86] call cputc
     jsr cputc
     jmp __b1
 }
@@ -7402,7 +7402,7 @@ printf_string: {
     // [88] phi from printf_string to printf_string::@1 [phi:printf_string->printf_string::@1]
     // printf_string::@1
     // cputs(str)
-    // [89] call cputs 
+    // [89] call cputs
     // [79] phi from printf_string::@1 to cputs [phi:printf_string::@1->cputs]
     // [79] phi cputs::s#11 = main::name [phi:printf_string::@1->cputs#0] -- pbuz1=pbuc1 
     lda #<main.name
@@ -7421,7 +7421,7 @@ waitkey: {
     // waitkey::@1
   __b1:
     // kbhit()
-    // [93] call kbhit 
+    // [93] call kbhit
     jsr kbhit
     // [94] kbhit::return#3 = kbhit::return#2
     // waitkey::@2
@@ -7449,7 +7449,7 @@ clrscr: {
     lda SAVMSC+1
     sta.z memset.str+1
     // memset(*SAVMSC, 0x00, CONIO_WIDTH * CONIO_HEIGHT)
-    // [100] call memset 
+    // [100] call memset
   // Fill entire screen with spaces
     // [152] phi from clrscr to memset [phi:clrscr->memset]
     // [152] phi memset::str#3 = memset::str#7 [phi:clrscr->memset#0] -- register_copy 
@@ -7467,7 +7467,7 @@ clrscr: {
     lda #0
     sta OLDCHR
     // gotoxy(0,0)
-    // [102] call gotoxy 
+    // [102] call gotoxy
     // [69] phi from clrscr::@1 to gotoxy [phi:clrscr::@1->gotoxy]
     // [69] phi gotoxy::y#4 = 0 [phi:clrscr::@1->gotoxy#0] -- vbuxx=vbuc1 
     tax
@@ -7515,14 +7515,14 @@ printf_sint: {
   __b2:
     // utoa(uvalue, printf_buffer.digits, format.radix)
     // [110] utoa::value#1 = (word)printf_sint::value#5
-    // [111] call utoa 
+    // [111] call utoa
     // [161] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa]
     jsr utoa
     // printf_sint::@3
     // printf_number_buffer(printf_buffer, format)
     // [112] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer) -- vbuaa=_deref_pbuc1 
     lda printf_buffer
-    // [113] call printf_number_buffer 
+    // [113] call printf_number_buffer
   // Print using format
     // [182] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer]
     jsr printf_number_buffer
@@ -7561,7 +7561,7 @@ setcursor: {
     ldy #0
     sta ($fe),y
     // char * loc = cursorLocation()
-    // [118] call cursorLocation 
+    // [118] call cursorLocation
     // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [119] cursorLocation::return#3 = cursorLocation::return#1
@@ -7653,7 +7653,7 @@ cputc: {
     // [135] phi from cputc::convertToScreenCode1 to cputc::@6 [phi:cputc::convertToScreenCode1->cputc::@6]
     // cputc::@6
     // putchar(convertToScreenCode(&c))
-    // [136] call putchar 
+    // [136] call putchar
     jsr putchar
     // cputc::@7
     // (*COLCRS)++;
@@ -7673,7 +7673,7 @@ cputc: {
     // [139] phi from cputc::@7 to cputc::@4 [phi:cputc::@7->cputc::@4]
     // cputc::@4
     // setcursor()
-    // [140] call setcursor 
+    // [140] call setcursor
     jsr setcursor
     // cputc::@return
     // }
@@ -7687,7 +7687,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // newline()
-    // [143] call newline 
+    // [143] call newline
     jsr newline
     rts
     // cputc::@2
@@ -7699,7 +7699,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // newline()
-    // [145] call newline 
+    // [145] call newline
     jsr newline
     rts
     // cputc::@1
@@ -7711,7 +7711,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // setcursor()
-    // [147] call setcursor 
+    // [147] call setcursor
     jsr setcursor
     rts
 }
@@ -7896,7 +7896,7 @@ utoa: {
     // [175] utoa_append::buffer#0 = utoa::buffer#11
     // [176] utoa_append::value#0 = utoa::value#2
     // [177] utoa_append::sub#0 = utoa::digit_value#0
-    // [178] call utoa_append 
+    // [178] call utoa_append
     // [223] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
     jsr utoa_append
     // utoa_append(buffer++, value, digit_value)
@@ -7932,13 +7932,13 @@ printf_number_buffer: {
     // cputc(buffer.sign)
     // [184] cputc::c = printf_number_buffer::buffer_sign#0 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [185] call cputc 
+    // [185] call cputc
     jsr cputc
     // [186] phi from printf_number_buffer::@1 printf_number_buffer::@3 to printf_number_buffer::@2 [phi:printf_number_buffer::@1/printf_number_buffer::@3->printf_number_buffer::@2]
     // printf_number_buffer::@2
   __b2:
     // cputs(buffer.digits)
-    // [187] call cputs 
+    // [187] call cputs
     // [79] phi from printf_number_buffer::@2 to cputs [phi:printf_number_buffer::@2->cputs]
     // [79] phi cputs::s#11 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->cputs#0] -- pbuz1=pbuc1 
     lda #<buffer_digits
@@ -8027,7 +8027,7 @@ putchar: {
     ldy #0
     sta ($fe),y
     // char * loc = cursorLocation()
-    // [197] call cursorLocation 
+    // [197] call cursorLocation
     jsr cursorLocation
     // [198] cursorLocation::return#0 = cursorLocation::return#1
     // putchar::@1
@@ -8044,7 +8044,7 @@ putchar: {
     // [202] *OLDCHR = putchar::newChar#0 -- _deref_pbuc1=vbuaa 
     sta OLDCHR
     // setcursor()
-    // [203] call setcursor 
+    // [203] call setcursor
     jsr setcursor
     // putchar::@return
     // }
@@ -8070,7 +8070,7 @@ newline: {
     // [208] phi from newline::@2 to newline::@3 [phi:newline::@2->newline::@3]
     // newline::@3
     // gotoxy(0, 0)
-    // [209] call gotoxy 
+    // [209] call gotoxy
     // [69] phi from newline::@3 to gotoxy [phi:newline::@3->gotoxy]
     // [69] phi gotoxy::y#4 = 0 [phi:newline::@3->gotoxy#0] -- vbuxx=vbuc1 
     ldx #0
@@ -8081,7 +8081,7 @@ newline: {
     // newline::@1
   __b1:
     // setcursor()
-    // [211] call setcursor 
+    // [211] call setcursor
     jsr setcursor
     // newline::@return
     // }
@@ -8129,7 +8129,7 @@ newline: {
     sta.z memcpy.destination
     lda.z start+1
     sta.z memcpy.destination+1
-    // [218] call memcpy 
+    // [218] call memcpy
     jsr memcpy
     // newline::@7
     // start + CONIO_WIDTH * 23
@@ -8143,7 +8143,7 @@ newline: {
     sta.z memset.str+1
     // [220] memset::str#8 = (void*)memset::str#1
     // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
-    // [221] call memset 
+    // [221] call memset
     // [152] phi from newline::@7 to memset [phi:newline::@7->memset]
     // [152] phi memset::str#3 = memset::str#8 [phi:newline::@7->memset#0] -- register_copy 
     // [152] phi memset::num#2 = $28 [phi:newline::@7->memset#1] -- vwuz1=vbuc1 

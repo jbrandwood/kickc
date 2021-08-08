@@ -11,11 +11,11 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct ATARI_GTIA_READ to 32
 Fixing struct type SIZE_OF struct ATARI_POKEY_READ to 16
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
-Setting inferred volatile on symbol affected by address-of cputc::$4 = call convertToScreenCode &cputc::c 
-Added struct type cast to parameter value list call printf_uint main::valid (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL } 
-Added struct type cast to parameter value list call printf_uint main::total (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL } 
-Inlined call cputc::$4 = call convertToScreenCode &cputc::c 
-Inlined call call __init 
+Setting inferred volatile on symbol affected by address-of cputc::$4 = call convertToScreenCode(&cputc::c)
+Added struct type cast to parameter value list call printf_uint(main::valid, (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL })
+Added struct type cast to parameter value list call printf_uint(main::total, (struct printf_format_number){ 0, 0, 0, 0, 0, DECIMAL })
+Inlined call cputc::$4 = call convertToScreenCode(&cputc::c)
+Inlined call call __init
 Eliminating unused variable with no statement memcpy::$0
 Eliminating unused variable with no statement memset::$2
 Eliminating unused variable with no statement putchar::$0
@@ -172,7 +172,7 @@ strupr::@2: scope:[strupr]  from strupr::@1
   strupr::str#5 = phi( strupr::@1/strupr::str#3 )
   strupr::src#3 = phi( strupr::@1/strupr::src#2 )
   toupper::ch#0 = *strupr::src#3
-  call toupper 
+  call toupper
   toupper::return#3 = toupper::return#2
   to:strupr::@4
 strupr::@4: scope:[strupr]  from strupr::@2
@@ -321,7 +321,7 @@ utoa::@14: scope:[utoa]  from utoa::@11
   utoa_append::buffer#0 = utoa::buffer#8
   utoa_append::value#0 = utoa::value#4
   utoa_append::sub#0 = utoa::digit_value#1
-  call utoa_append 
+  call utoa_append
   utoa_append::return#0 = utoa_append::return#2
   to:utoa::@15
 utoa::@15: scope:[utoa]  from utoa::@14
@@ -377,14 +377,14 @@ clrscr: scope:[clrscr]  from main
   memset::str#0 = (void*)*SAVMSC
   memset::c#0 = 0
   memset::num#0 = $28*$18
-  call memset 
+  call memset
   memset::return#2 = memset::return#1
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr
   *OLDCHR = 0
   gotoxy::x#0 = 0
   gotoxy::y#0 = 0
-  call gotoxy 
+  call gotoxy
   to:clrscr::@2
 clrscr::@2: scope:[clrscr]  from clrscr::@1
   to:clrscr::@return
@@ -398,7 +398,7 @@ gotoxy: scope:[gotoxy]  from clrscr::@1 newline::@3
   gotoxy::x#2 = phi( clrscr::@1/gotoxy::x#0, newline::@3/gotoxy::x#1 )
   *COLCRS = gotoxy::x#2
   *ROWCRS = gotoxy::y#2
-  call setcursor 
+  call setcursor
   to:gotoxy::@1
 gotoxy::@1: scope:[gotoxy]  from gotoxy
   to:gotoxy::@return
@@ -413,7 +413,7 @@ cputc: scope:[cputc]  from cputs::@2 printf_number_buffer::@9 printf_padding::@2
   to:cputc::@3
 cputc::@1: scope:[cputc]  from cputc
   *COLCRS = 0
-  call setcursor 
+  call setcursor
   to:cputc::@8
 cputc::@8: scope:[cputc]  from cputc::@1
   to:cputc::@return
@@ -426,7 +426,7 @@ cputc::@3: scope:[cputc]  from cputc
   to:cputc::@4
 cputc::@2: scope:[cputc]  from cputc::@3
   *COLCRS = 0
-  call newline 
+  call newline
   to:cputc::@9
 cputc::@9: scope:[cputc]  from cputc::@2
   to:cputc::@return
@@ -445,7 +445,7 @@ cputc::@7: scope:[cputc]  from cputc::convertToScreenCode1_@return
   cputc::convertToScreenCode1_return#3 = phi( cputc::convertToScreenCode1_@return/cputc::convertToScreenCode1_return#1 )
   cputc::$4 = cputc::convertToScreenCode1_return#3
   putchar::code#0 = cputc::$4
-  call putchar 
+  call putchar
   to:cputc::@10
 cputc::@10: scope:[cputc]  from cputc::@7
   *COLCRS = ++ *COLCRS
@@ -454,12 +454,12 @@ cputc::@10: scope:[cputc]  from cputc::@7
   to:cputc::@5
 cputc::@6: scope:[cputc]  from cputc::@10
   *COLCRS = 0
-  call newline 
+  call newline
   to:cputc::@11
 cputc::@11: scope:[cputc]  from cputc::@6
   to:cputc::@return
 cputc::@5: scope:[cputc]  from cputc::@10
-  call setcursor 
+  call setcursor
   to:cputc::@12
 cputc::@12: scope:[cputc]  from cputc::@5
   to:cputc::@return
@@ -484,7 +484,7 @@ cputs::@2: scope:[cputs]  from cputs::@1
   cputs::s#10 = phi( cputs::@1/cputs::s#0 )
   cputs::c#2 = phi( cputs::@1/cputs::c#1 )
   cputc::c = cputs::c#2
-  call cputc 
+  call cputc
   to:cputs::@3
 cputs::@3: scope:[cputs]  from cputs::@2
   cputs::s#9 = phi( cputs::@2/cputs::s#10 )
@@ -497,7 +497,7 @@ void putchar(byte putchar::code)
 putchar: scope:[putchar]  from cputc::@7
   putchar::code#2 = phi( cputc::@7/putchar::code#0 )
   *(*OLDADR) = *OLDCHR
-  call cursorLocation 
+  call cursorLocation
   cursorLocation::return#0 = cursorLocation::return#2
   to:putchar::@1
 putchar::@1: scope:[putchar]  from putchar
@@ -507,7 +507,7 @@ putchar::@1: scope:[putchar]  from putchar
   putchar::newChar#0 = putchar::code#1 | conio_reverse_value
   *putchar::loc#0 = putchar::newChar#0
   *OLDCHR = putchar::newChar#0
-  call setcursor 
+  call setcursor
   to:putchar::@2
 putchar::@2: scope:[putchar]  from putchar::@1
   to:putchar::@return
@@ -537,7 +537,7 @@ newline: scope:[newline]  from cputc::@2 cputc::@6
   if(newline::$1) goto newline::@1
   to:newline::@2
 newline::@1: scope:[newline]  from newline newline::@10 newline::@8
-  call setcursor 
+  call setcursor
   to:newline::@7
 newline::@7: scope:[newline]  from newline::@1
   to:newline::@return
@@ -553,7 +553,7 @@ newline::@4: scope:[newline]  from newline::@2
 newline::@3: scope:[newline]  from newline::@2
   gotoxy::x#1 = 0
   gotoxy::y#1 = 0
-  call gotoxy 
+  call gotoxy
   to:newline::@8
 newline::@8: scope:[newline]  from newline::@3
   to:newline::@1
@@ -563,7 +563,7 @@ newline::@5: scope:[newline]  from newline::@4 newline::@6
   memcpy::destination#0 = (void*)newline::start#0
   memcpy::source#0 = (void*)newline::$7
   memcpy::num#0 = $28*$17
-  call memcpy 
+  call memcpy
   memcpy::return#2 = memcpy::return#1
   to:newline::@9
 newline::@9: scope:[newline]  from newline::@5
@@ -572,7 +572,7 @@ newline::@9: scope:[newline]  from newline::@5
   memset::str#1 = (void*)newline::$9
   memset::c#1 = 0
   memset::num#1 = $28
-  call memset 
+  call memset
   memset::return#3 = memset::return#1
   to:newline::@10
 newline::@10: scope:[newline]  from newline::@9
@@ -588,7 +588,7 @@ newline::@return: scope:[newline]  from newline::@7
 void setcursor()
 setcursor: scope:[setcursor]  from cputc::@1 cputc::@5 gotoxy newline::@1 putchar::@1
   *(*OLDADR) = *OLDCHR
-  call cursorLocation 
+  call cursorLocation
   cursorLocation::return#3 = cursorLocation::return#2
   to:setcursor::@4
 setcursor::@4: scope:[setcursor]  from setcursor
@@ -636,7 +636,7 @@ printf_padding::@2: scope:[printf_padding]  from printf_padding::@1
   printf_padding::i#4 = phi( printf_padding::@1/printf_padding::i#2 )
   printf_padding::pad#3 = phi( printf_padding::@1/printf_padding::pad#4 )
   cputc::c = printf_padding::pad#3
-  call cputc 
+  call cputc
   to:printf_padding::@3
 printf_padding::@3: scope:[printf_padding]  from printf_padding::@2
   printf_padding::pad#6 = phi( printf_padding::@2/printf_padding::pad#3 )
@@ -693,7 +693,7 @@ printf_uint::@3: scope:[printf_uint]  from printf_uint::@1 printf_uint::@2
   utoa::value#1 = printf_uint::uvalue#2
   utoa::buffer#5 = (byte*)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
   utoa::radix#0 = printf_uint::format_radix#2
-  call utoa 
+  call utoa
   to:printf_uint::@4
 printf_uint::@4: scope:[printf_uint]  from printf_uint::@3
   printf_uint::format_radix#3 = phi( printf_uint::@3/printf_uint::format_radix#2 )
@@ -710,7 +710,7 @@ printf_uint::@4: scope:[printf_uint]  from printf_uint::@3
   printf_number_buffer::format_zero_padding#0 = printf_uint::format_zero_padding#2
   printf_number_buffer::format_upper_case#0 = printf_uint::format_upper_case#2
   printf_number_buffer::format_radix#0 = printf_uint::format_radix#3
-  call printf_number_buffer 
+  call printf_number_buffer
   to:printf_uint::@5
 printf_uint::@5: scope:[printf_uint]  from printf_uint::@4
   to:printf_uint::@return
@@ -755,7 +755,7 @@ printf_number_buffer::@6: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::buffer_sign#4 = phi( printf_number_buffer/printf_number_buffer::buffer_sign#7 )
   printf_number_buffer::buffer_digits#1 = phi( printf_number_buffer/printf_number_buffer::buffer_digits#4 )
   strlen::str#1 = printf_number_buffer::buffer_digits#1
-  call strlen 
+  call strlen
   strlen::return#2 = strlen::return#1
   to:printf_number_buffer::@15
 printf_number_buffer::@15: scope:[printf_number_buffer]  from printf_number_buffer::@6
@@ -825,7 +825,7 @@ printf_number_buffer::@8: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::padding#4 = phi( printf_number_buffer::@1/printf_number_buffer::padding#3 )
   printf_padding::pad#0 = ' 'at
   printf_padding::length#0 = (byte)printf_number_buffer::padding#4
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@16
 printf_number_buffer::@16: scope:[printf_number_buffer]  from printf_number_buffer::@8
   printf_number_buffer::format_justify_left#18 = phi( printf_number_buffer::@8/printf_number_buffer::format_justify_left#20 )
@@ -853,7 +853,7 @@ printf_number_buffer::@9: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::format_zero_padding#13 = phi( printf_number_buffer::@2/printf_number_buffer::format_zero_padding#8 )
   printf_number_buffer::buffer_sign#3 = phi( printf_number_buffer::@2/printf_number_buffer::buffer_sign#2 )
   cputc::c = printf_number_buffer::buffer_sign#3
-  call cputc 
+  call cputc
   to:printf_number_buffer::@17
 printf_number_buffer::@17: scope:[printf_number_buffer]  from printf_number_buffer::@9
   printf_number_buffer::format_justify_left#15 = phi( printf_number_buffer::@9/printf_number_buffer::format_justify_left#19 )
@@ -880,7 +880,7 @@ printf_number_buffer::@10: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::padding#6 = phi( printf_number_buffer::@3/printf_number_buffer::padding#5 )
   printf_padding::pad#1 = '0'at
   printf_padding::length#1 = (byte)printf_number_buffer::padding#6
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@18
 printf_number_buffer::@18: scope:[printf_number_buffer]  from printf_number_buffer::@10
   printf_number_buffer::padding#16 = phi( printf_number_buffer::@10/printf_number_buffer::padding#6 )
@@ -895,7 +895,7 @@ printf_number_buffer::@5: scope:[printf_number_buffer]  from printf_number_buffe
   printf_number_buffer::format_zero_padding#9 = phi( printf_number_buffer::@20/printf_number_buffer::format_zero_padding#14, printf_number_buffer::@4/printf_number_buffer::format_zero_padding#15 )
   printf_number_buffer::buffer_digits#2 = phi( printf_number_buffer::@20/printf_number_buffer::buffer_digits#5, printf_number_buffer::@4/printf_number_buffer::buffer_digits#6 )
   cputs::s#1 = printf_number_buffer::buffer_digits#2
-  call cputs 
+  call cputs
   to:printf_number_buffer::@19
 printf_number_buffer::@19: scope:[printf_number_buffer]  from printf_number_buffer::@5
   printf_number_buffer::padding#7 = phi( printf_number_buffer::@5/printf_number_buffer::padding#11 )
@@ -914,7 +914,7 @@ printf_number_buffer::@11: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::format_zero_padding#19 = phi( printf_number_buffer::@4/printf_number_buffer::format_zero_padding#15 )
   printf_number_buffer::buffer_digits#3 = phi( printf_number_buffer::@4/printf_number_buffer::buffer_digits#6 )
   strupr::str#0 = printf_number_buffer::buffer_digits#3
-  call strupr 
+  call strupr
   strupr::return#2 = strupr::return#1
   to:printf_number_buffer::@20
 printf_number_buffer::@20: scope:[printf_number_buffer]  from printf_number_buffer::@11
@@ -927,7 +927,7 @@ printf_number_buffer::@12: scope:[printf_number_buffer]  from printf_number_buff
   printf_number_buffer::padding#8 = phi( printf_number_buffer::@19/printf_number_buffer::padding#7 )
   printf_padding::pad#2 = ' 'at
   printf_padding::length#2 = (byte)printf_number_buffer::padding#8
-  call printf_padding 
+  call printf_padding
   to:printf_number_buffer::@21
 printf_number_buffer::@21: scope:[printf_number_buffer]  from printf_number_buffer::@12
   to:printf_number_buffer::@return
@@ -937,7 +937,7 @@ printf_number_buffer::@return: scope:[printf_number_buffer]  from printf_number_
 
 void main()
 main: scope:[main]  from __start::@1
-  call clrscr 
+  call clrscr
   to:main::@30
 main::@30: scope:[main]  from main
   main::valid#0 = 0
@@ -963,7 +963,7 @@ main::@3: scope:[main]  from main::@1
   main::total#10 = phi( main::@1/main::total#12 )
   main::valid#4 = phi( main::@1/main::valid#6 )
   cputs::s#2 = main::s
-  call cputs 
+  call cputs
   to:main::@31
 main::@31: scope:[main]  from main::@3
   main::total#7 = phi( main::@3/main::total#10 )
@@ -975,12 +975,12 @@ main::@31: scope:[main]  from main::@3
   printf_uint::format_zero_padding#0 = 0
   printf_uint::format_upper_case#0 = 0
   printf_uint::format_radix#0 = DECIMAL
-  call printf_uint 
+  call printf_uint
   to:main::@32
 main::@32: scope:[main]  from main::@31
   main::total#4 = phi( main::@31/main::total#7 )
   cputs::s#3 = main::s1
-  call cputs 
+  call cputs
   to:main::@33
 main::@33: scope:[main]  from main::@32
   main::total#2 = phi( main::@32/main::total#4 )
@@ -991,11 +991,11 @@ main::@33: scope:[main]  from main::@32
   printf_uint::format_zero_padding#1 = 0
   printf_uint::format_upper_case#1 = 0
   printf_uint::format_radix#1 = DECIMAL
-  call printf_uint 
+  call printf_uint
   to:main::@34
 main::@34: scope:[main]  from main::@33
   cputs::s#4 = main::s2
-  call cputs 
+  call cputs
   to:main::@35
 main::@35: scope:[main]  from main::@34
   to:main::@29
@@ -1089,7 +1089,7 @@ main::@12: scope:[main]  from main::@8
   main::valid#3 = phi( main::@8/main::valid#5 )
   main::valid#1 = ++ main::valid#3
   cputs::s#5 = main::s3
-  call cputs 
+  call cputs
   to:main::@36
 main::@36: scope:[main]  from main::@12
   main::valid#18 = phi( main::@12/main::valid#1 )
@@ -1101,7 +1101,7 @@ main::@11: scope:[main]  from main::@8
   main::pass#28 = phi( main::@8/main::pass#30 )
   main::total#9 = phi( main::@8/main::total#11 )
   cputs::s#6 = main::s4
-  call cputs 
+  call cputs
   to:main::@37
 main::@37: scope:[main]  from main::@11
   main::valid#19 = phi( main::@11/main::valid#22 )
@@ -1240,7 +1240,7 @@ __start::__init1: scope:[__start]  from __start
   conio_scroll_enable = 1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -4453,7 +4453,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call clrscr 
+  [1] call clrscr
   to:main::@1
 main::@1: scope:[main]  from main main::@12 main::@22 main::@24 main::@25 main::@32 main::@33
   [2] main::total#10 = phi( main::@12/main::total#1, main::@22/main::total#10, main::@24/main::total#10, main::@25/main::total#10, main/0 )
@@ -4463,23 +4463,23 @@ main::@1: scope:[main]  from main main::@12 main::@22 main::@24 main::@25 main::
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [4] phi()
-  [5] call cputs 
+  [5] call cputs
   to:main::@28
 main::@28: scope:[main]  from main::@3
   [6] printf_uint::uvalue#0 = main::valid#10
-  [7] call printf_uint 
+  [7] call printf_uint
   to:main::@29
 main::@29: scope:[main]  from main::@28
   [8] phi()
-  [9] call cputs 
+  [9] call cputs
   to:main::@30
 main::@30: scope:[main]  from main::@29
   [10] printf_uint::uvalue#1 = main::total#10
-  [11] call printf_uint 
+  [11] call printf_uint
   to:main::@31
 main::@31: scope:[main]  from main::@30
   [12] phi()
-  [13] call cputs 
+  [13] call cputs
   to:main::@27
 main::@27: scope:[main]  from main::@27 main::@31
   [14] phi()
@@ -4512,7 +4512,7 @@ main::@7: scope:[main]  from main::@5
   to:main::@10
 main::@10: scope:[main]  from main::@7
   [24] phi()
-  [25] call cputs 
+  [25] call cputs
   to:main::@12
 main::@12: scope:[main]  from main::@10 main::@11
   [26] main::valid#8 = phi( main::@11/main::valid#1, main::@10/main::valid#10 )
@@ -4520,7 +4520,7 @@ main::@12: scope:[main]  from main::@10 main::@11
   to:main::@1
 main::@11: scope:[main]  from main::@7
   [28] main::valid#1 = ++ main::valid#10
-  [29] call cputs 
+  [29] call cputs
   to:main::@12
 main::@6: scope:[main]  from main::@5
   [30] if(0==main::tags_found[main::i#2]) goto main::@8
@@ -4584,11 +4584,11 @@ main::@17: scope:[main]  from main::@15 main::@18
 void clrscr()
 clrscr: scope:[clrscr]  from main
   [53] memset::str#7 = (void*)*SAVMSC
-  [54] call memset 
+  [54] call memset
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr
   [55] *OLDCHR = 0
-  [56] call gotoxy 
+  [56] call gotoxy
   to:clrscr::@return
 clrscr::@return: scope:[clrscr]  from clrscr::@1
   [57] return 
@@ -4609,7 +4609,7 @@ cputs::@return: scope:[cputs]  from cputs::@1
   to:@return
 cputs::@2: scope:[cputs]  from cputs::@1
   [64] cputc::c = cputs::c#1
-  [65] call cputc 
+  [65] call cputc
   to:cputs::@1
 
 void printf_uint(word printf_uint::uvalue , byte printf_uint::format_min_length , byte printf_uint::format_justify_left , byte printf_uint::format_sign_always , byte printf_uint::format_zero_padding , byte printf_uint::format_upper_case , byte printf_uint::format_radix)
@@ -4619,11 +4619,11 @@ printf_uint: scope:[printf_uint]  from main::@28 main::@30
 printf_uint::@1: scope:[printf_uint]  from printf_uint
   [67] *((byte*)&printf_buffer) = 0
   [68] utoa::value#1 = printf_uint::uvalue#2
-  [69] call utoa 
+  [69] call utoa
   to:printf_uint::@2
 printf_uint::@2: scope:[printf_uint]  from printf_uint::@1
   [70] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer)
-  [71] call printf_number_buffer 
+  [71] call printf_number_buffer
   to:printf_uint::@return
 printf_uint::@return: scope:[printf_uint]  from printf_uint::@2
   [72] return 
@@ -4655,7 +4655,7 @@ void gotoxy(byte gotoxy::x , byte gotoxy::y)
 gotoxy: scope:[gotoxy]  from clrscr::@1
   [82] *COLCRS = gotoxy::x#0
   [83] *ROWCRS = gotoxy::y#0
-  [84] call setcursor 
+  [84] call setcursor
   to:gotoxy::@return
 gotoxy::@return: scope:[gotoxy]  from gotoxy
   [85] return 
@@ -4677,7 +4677,7 @@ cputc::convertToScreenCode1: scope:[cputc]  from cputc::@8
   to:cputc::@6
 cputc::@6: scope:[cputc]  from cputc::convertToScreenCode1
   [90] phi()
-  [91] call putchar 
+  [91] call putchar
   to:cputc::@7
 cputc::@7: scope:[cputc]  from cputc::@6
   [92] *COLCRS = ++ *COLCRS
@@ -4685,22 +4685,22 @@ cputc::@7: scope:[cputc]  from cputc::@6
   to:cputc::@4
 cputc::@4: scope:[cputc]  from cputc::@7
   [94] phi()
-  [95] call setcursor 
+  [95] call setcursor
   to:cputc::@return
 cputc::@return: scope:[cputc]  from cputc::@1 cputc::@2 cputc::@4 cputc::@5
   [96] return 
   to:@return
 cputc::@5: scope:[cputc]  from cputc::@7
   [97] *COLCRS = 0
-  [98] call newline 
+  [98] call newline
   to:cputc::@return
 cputc::@2: scope:[cputc]  from cputc::@3 cputc::@8
   [99] *COLCRS = 0
-  [100] call newline 
+  [100] call newline
   to:cputc::@return
 cputc::@1: scope:[cputc]  from cputc
   [101] *COLCRS = 0
-  [102] call setcursor 
+  [102] call setcursor
   to:cputc::@return
 
 void utoa(word utoa::value , byte* utoa::buffer , byte utoa::radix)
@@ -4741,7 +4741,7 @@ utoa::@5: scope:[utoa]  from utoa::@2 utoa::@7
   [117] utoa_append::buffer#0 = utoa::buffer#11
   [118] utoa_append::value#0 = utoa::value#2
   [119] utoa_append::sub#0 = utoa::digit_value#0
-  [120] call utoa_append 
+  [120] call utoa_append
   [121] utoa_append::return#0 = utoa_append::value#2
   to:utoa::@6
 utoa::@6: scope:[utoa]  from utoa::@5
@@ -4758,11 +4758,11 @@ printf_number_buffer::@1: scope:[printf_number_buffer]  from printf_number_buffe
   to:printf_number_buffer::@3
 printf_number_buffer::@3: scope:[printf_number_buffer]  from printf_number_buffer::@1
   [126] cputc::c = printf_number_buffer::buffer_sign#0
-  [127] call cputc 
+  [127] call cputc
   to:printf_number_buffer::@2
 printf_number_buffer::@2: scope:[printf_number_buffer]  from printf_number_buffer::@1 printf_number_buffer::@3
   [128] phi()
-  [129] call cputs 
+  [129] call cputs
   to:printf_number_buffer::@return
 printf_number_buffer::@return: scope:[printf_number_buffer]  from printf_number_buffer::@2
   [130] return 
@@ -4771,7 +4771,7 @@ printf_number_buffer::@return: scope:[printf_number_buffer]  from printf_number_
 void setcursor()
 setcursor: scope:[setcursor]  from cputc::@1 cputc::@4 gotoxy newline::@1 putchar::@1
   [131] *(*OLDADR) = *OLDCHR
-  [132] call cursorLocation 
+  [132] call cursorLocation
   [133] cursorLocation::return#3 = cursorLocation::return#1
   to:setcursor::@3
 setcursor::@3: scope:[setcursor]  from setcursor
@@ -4794,7 +4794,7 @@ setcursor::@return: scope:[setcursor]  from setcursor::@1
 void putchar(byte putchar::code)
 putchar: scope:[putchar]  from cputc::@6
   [142] *(*OLDADR) = *OLDCHR
-  [143] call cursorLocation 
+  [143] call cursorLocation
   [144] cursorLocation::return#0 = cursorLocation::return#1
   to:putchar::@1
 putchar::@1: scope:[putchar]  from putchar
@@ -4802,7 +4802,7 @@ putchar::@1: scope:[putchar]  from putchar
   [146] putchar::newChar#0 = cputc::convertToScreenCode1_return#0
   [147] *putchar::loc#0 = putchar::newChar#0
   [148] *OLDCHR = putchar::newChar#0
-  [149] call setcursor 
+  [149] call setcursor
   to:putchar::@return
 putchar::@return: scope:[putchar]  from putchar::@1
   [150] return 
@@ -4820,19 +4820,19 @@ newline::@2: scope:[newline]  from newline::@3
   [154] newline::start#0 = *SAVMSC
   [155] memcpy::source#0 = newline::start#0 + $28
   [156] memcpy::destination#0 = (void*)newline::start#0
-  [157] call memcpy 
+  [157] call memcpy
   to:newline::@4
 newline::@4: scope:[newline]  from newline::@2
   [158] memset::str#1 = newline::start#0 + (word)$28*$17
   [159] memset::str#8 = (void*)memset::str#1
-  [160] call memset 
+  [160] call memset
   to:newline::@5
 newline::@5: scope:[newline]  from newline::@4
   [161] *ROWCRS = $18-1
   to:newline::@1
 newline::@1: scope:[newline]  from newline newline::@5
   [162] phi()
-  [163] call setcursor 
+  [163] call setcursor
   to:newline::@return
 newline::@return: scope:[newline]  from newline::@1
   [164] return 
@@ -5614,7 +5614,7 @@ main: {
     // Read a tag - and examine whether it is one of the required tags
     .label required_tag = $87
     .label tag_idx = $86
-    // [1] call clrscr 
+    // [1] call clrscr
     jsr clrscr
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
@@ -5659,7 +5659,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [5] call cputs 
+    // [5] call cputs
     // [58] phi from main::@3 to cputs [phi:main::@3->cputs]
   cputs_from___b3:
     // [58] phi cputs::s#8 = main::s [phi:main::@3->cputs#0] -- pbuz1=pbuc1 
@@ -5672,7 +5672,7 @@ main: {
     // main::@28
   __b28:
     // [6] printf_uint::uvalue#0 = main::valid#10
-    // [7] call printf_uint 
+    // [7] call printf_uint
     // [66] phi from main::@28 to printf_uint [phi:main::@28->printf_uint]
   printf_uint_from___b28:
     // [66] phi printf_uint::uvalue#2 = printf_uint::uvalue#0 [phi:main::@28->printf_uint#0] -- register_copy 
@@ -5682,7 +5682,7 @@ main: {
     jmp __b29
     // main::@29
   __b29:
-    // [9] call cputs 
+    // [9] call cputs
     // [58] phi from main::@29 to cputs [phi:main::@29->cputs]
   cputs_from___b29:
     // [58] phi cputs::s#8 = main::s1 [phi:main::@29->cputs#0] -- pbuz1=pbuc1 
@@ -5699,7 +5699,7 @@ main: {
     sta.z printf_uint.uvalue
     lda.z total+1
     sta.z printf_uint.uvalue+1
-    // [11] call printf_uint 
+    // [11] call printf_uint
     // [66] phi from main::@30 to printf_uint [phi:main::@30->printf_uint]
   printf_uint_from___b30:
     // [66] phi printf_uint::uvalue#2 = printf_uint::uvalue#1 [phi:main::@30->printf_uint#0] -- register_copy 
@@ -5709,7 +5709,7 @@ main: {
     jmp __b31
     // main::@31
   __b31:
-    // [13] call cputs 
+    // [13] call cputs
     // [58] phi from main::@31 to cputs [phi:main::@31->cputs]
   cputs_from___b31:
     // [58] phi cputs::s#8 = main::s2 [phi:main::@31->cputs#0] -- pbuz1=pbuc1 
@@ -5793,7 +5793,7 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [25] call cputs 
+    // [25] call cputs
     // [58] phi from main::@10 to cputs [phi:main::@10->cputs]
   cputs_from___b10:
     // [58] phi cputs::s#8 = main::s4 [phi:main::@10->cputs#0] -- pbuz1=pbuc1 
@@ -5822,7 +5822,7 @@ main: {
     bne !+
     inc.z valid+1
   !:
-    // [29] call cputs 
+    // [29] call cputs
     // [58] phi from main::@11 to cputs [phi:main::@11->cputs]
   cputs_from___b11:
     // [58] phi cputs::s#8 = main::s3 [phi:main::@11->cputs#0] -- pbuz1=pbuc1 
@@ -6025,7 +6025,7 @@ clrscr: {
     sta.z memset.str
     lda SAVMSC+1
     sta.z memset.str+1
-    // [54] call memset 
+    // [54] call memset
   // Fill entire screen with spaces
     // [73] phi from clrscr to memset [phi:clrscr->memset]
   memset_from_clrscr:
@@ -6044,7 +6044,7 @@ clrscr: {
     // set the old character to a space so the cursor doesn't reappear at the last position it was at
     lda #0
     sta OLDCHR
-    // [56] call gotoxy 
+    // [56] call gotoxy
     jsr gotoxy
     jmp __breturn
     // clrscr::@return
@@ -6084,7 +6084,7 @@ cputs: {
   __b2:
     // [64] cputc::c = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [65] call cputc 
+    // [65] call cputc
     jsr cputc
     jmp __b1_from___b2
 }
@@ -6101,7 +6101,7 @@ printf_uint: {
     lda #0
     sta printf_buffer
     // [68] utoa::value#1 = printf_uint::uvalue#2
-    // [69] call utoa 
+    // [69] call utoa
   // Format number into buffer
     // [103] phi from printf_uint::@1 to utoa [phi:printf_uint::@1->utoa]
   utoa_from___b1:
@@ -6111,7 +6111,7 @@ printf_uint: {
   __b2:
     // [70] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer) -- vbuaa=_deref_pbuc1 
     lda printf_buffer
-    // [71] call printf_number_buffer 
+    // [71] call printf_number_buffer
   // Print using format
     // [124] phi from printf_uint::@2 to printf_number_buffer [phi:printf_uint::@2->printf_number_buffer]
   printf_number_buffer_from___b2:
@@ -6193,7 +6193,7 @@ gotoxy: {
     // [83] *ROWCRS = gotoxy::y#0 -- _deref_pbuc1=vbuc2 
     lda #y
     sta ROWCRS
-    // [84] call setcursor 
+    // [84] call setcursor
     jsr setcursor
     jmp __breturn
     // gotoxy::@return
@@ -6237,7 +6237,7 @@ cputc: {
     jmp __b6
     // cputc::@6
   __b6:
-    // [91] call putchar 
+    // [91] call putchar
     jsr putchar
     jmp __b7
     // cputc::@7
@@ -6259,7 +6259,7 @@ cputc: {
     jmp __b4
     // cputc::@4
   __b4:
-    // [95] call setcursor 
+    // [95] call setcursor
     jsr setcursor
     jmp __breturn
     // cputc::@return
@@ -6273,7 +6273,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [98] call newline 
+    // [98] call newline
     jsr newline
     jmp __breturn
     // cputc::@2
@@ -6284,7 +6284,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [100] call newline 
+    // [100] call newline
     jsr newline
     jmp __breturn
     // cputc::@1
@@ -6295,7 +6295,7 @@ cputc: {
     sta COLCRS
     lda #>0
     sta COLCRS+1
-    // [102] call setcursor 
+    // [102] call setcursor
     jsr setcursor
     jmp __breturn
 }
@@ -6402,7 +6402,7 @@ utoa: {
     // [117] utoa_append::buffer#0 = utoa::buffer#11
     // [118] utoa_append::value#0 = utoa::value#2
     // [119] utoa_append::sub#0 = utoa::digit_value#0
-    // [120] call utoa_append 
+    // [120] call utoa_append
     // [165] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
   utoa_append_from___b5:
     jsr utoa_append
@@ -6441,7 +6441,7 @@ printf_number_buffer: {
   __b3:
     // [126] cputc::c = printf_number_buffer::buffer_sign#0 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [127] call cputc 
+    // [127] call cputc
     jsr cputc
     // [128] phi from printf_number_buffer::@1 printf_number_buffer::@3 to printf_number_buffer::@2 [phi:printf_number_buffer::@1/printf_number_buffer::@3->printf_number_buffer::@2]
   __b2_from___b1:
@@ -6449,7 +6449,7 @@ printf_number_buffer: {
     jmp __b2
     // printf_number_buffer::@2
   __b2:
-    // [129] call cputs 
+    // [129] call cputs
     // [58] phi from printf_number_buffer::@2 to cputs [phi:printf_number_buffer::@2->cputs]
   cputs_from___b2:
     // [58] phi cputs::s#8 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->cputs#0] -- pbuz1=pbuc1 
@@ -6477,7 +6477,7 @@ setcursor: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [132] call cursorLocation 
+    // [132] call cursorLocation
     // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [133] cursorLocation::return#3 = cursorLocation::return#1
@@ -6534,7 +6534,7 @@ putchar: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [143] call cursorLocation 
+    // [143] call cursorLocation
     jsr cursorLocation
     // [144] cursorLocation::return#0 = cursorLocation::return#1
     jmp __b1
@@ -6548,7 +6548,7 @@ putchar: {
     sta (loc),y
     // [148] *OLDCHR = putchar::newChar#0 -- _deref_pbuc1=vbuaa 
     sta OLDCHR
-    // [149] call setcursor 
+    // [149] call setcursor
     jsr setcursor
     jmp __breturn
     // putchar::@return
@@ -6599,7 +6599,7 @@ newline: {
     sta.z memcpy.destination
     lda.z start+1
     sta.z memcpy.destination+1
-    // [157] call memcpy 
+    // [157] call memcpy
     jsr memcpy
     jmp __b4
     // newline::@4
@@ -6613,7 +6613,7 @@ newline: {
     adc #>$28*$17
     sta.z memset.str+1
     // [159] memset::str#8 = (void*)memset::str#1
-    // [160] call memset 
+    // [160] call memset
     // [73] phi from newline::@4 to memset [phi:newline::@4->memset]
   memset_from___b4:
     // [73] phi memset::str#3 = memset::str#8 [phi:newline::@4->memset#0] -- register_copy 
@@ -6635,7 +6635,7 @@ newline: {
     jmp __b1
     // newline::@1
   __b1:
-    // [163] call setcursor 
+    // [163] call setcursor
     jsr setcursor
     jmp __breturn
     // newline::@return
@@ -8473,7 +8473,7 @@ main: {
     .label required_tag = $87
     .label tag_idx = $86
     // clrscr()
-    // [1] call clrscr 
+    // [1] call clrscr
     jsr clrscr
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // [2] phi main::total#10 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
@@ -8504,7 +8504,7 @@ main: {
     // [4] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // main::@3
     // printf("\nValid %u Total %u\n", valid, total)
-    // [5] call cputs 
+    // [5] call cputs
     // [58] phi from main::@3 to cputs [phi:main::@3->cputs]
     // [58] phi cputs::s#8 = main::s [phi:main::@3->cputs#0] -- pbuz1=pbuc1 
     lda #<s
@@ -8515,14 +8515,14 @@ main: {
     // main::@28
     // printf("\nValid %u Total %u\n", valid, total)
     // [6] printf_uint::uvalue#0 = main::valid#10
-    // [7] call printf_uint 
+    // [7] call printf_uint
     // [66] phi from main::@28 to printf_uint [phi:main::@28->printf_uint]
     // [66] phi printf_uint::uvalue#2 = printf_uint::uvalue#0 [phi:main::@28->printf_uint#0] -- register_copy 
     jsr printf_uint
     // [8] phi from main::@28 to main::@29 [phi:main::@28->main::@29]
     // main::@29
     // printf("\nValid %u Total %u\n", valid, total)
-    // [9] call cputs 
+    // [9] call cputs
     // [58] phi from main::@29 to cputs [phi:main::@29->cputs]
     // [58] phi cputs::s#8 = main::s1 [phi:main::@29->cputs#0] -- pbuz1=pbuc1 
     lda #<s1
@@ -8537,14 +8537,14 @@ main: {
     sta.z printf_uint.uvalue
     lda.z total+1
     sta.z printf_uint.uvalue+1
-    // [11] call printf_uint 
+    // [11] call printf_uint
     // [66] phi from main::@30 to printf_uint [phi:main::@30->printf_uint]
     // [66] phi printf_uint::uvalue#2 = printf_uint::uvalue#1 [phi:main::@30->printf_uint#0] -- register_copy 
     jsr printf_uint
     // [12] phi from main::@30 to main::@31 [phi:main::@30->main::@31]
     // main::@31
     // printf("\nValid %u Total %u\n", valid, total)
-    // [13] call cputs 
+    // [13] call cputs
     // [58] phi from main::@31 to cputs [phi:main::@31->cputs]
     // [58] phi cputs::s#8 = main::s2 [phi:main::@31->cputs#0] -- pbuz1=pbuc1 
     lda #<s2
@@ -8620,7 +8620,7 @@ main: {
     // [24] phi from main::@7 to main::@10 [phi:main::@7->main::@10]
     // main::@10
     // printf(".")
-    // [25] call cputs 
+    // [25] call cputs
     // [58] phi from main::@10 to cputs [phi:main::@10->cputs]
     // [58] phi cputs::s#8 = main::s4 [phi:main::@10->cputs#0] -- pbuz1=pbuc1 
     lda #<s4
@@ -8648,7 +8648,7 @@ main: {
     inc.z valid+1
   !:
     // printf("+")
-    // [29] call cputs 
+    // [29] call cputs
     // [58] phi from main::@11 to cputs [phi:main::@11->cputs]
     // [58] phi cputs::s#8 = main::s3 [phi:main::@11->cputs#0] -- pbuz1=pbuc1 
     lda #<s3
@@ -8841,7 +8841,7 @@ clrscr: {
     lda SAVMSC+1
     sta.z memset.str+1
     // memset(*SAVMSC, 0x00, CONIO_WIDTH * CONIO_HEIGHT)
-    // [54] call memset 
+    // [54] call memset
   // Fill entire screen with spaces
     // [73] phi from clrscr to memset [phi:clrscr->memset]
     // [73] phi memset::str#3 = memset::str#7 [phi:clrscr->memset#0] -- register_copy 
@@ -8859,7 +8859,7 @@ clrscr: {
     lda #0
     sta OLDCHR
     // gotoxy(0,0)
-    // [56] call gotoxy 
+    // [56] call gotoxy
     jsr gotoxy
     // clrscr::@return
     // }
@@ -8896,7 +8896,7 @@ cputs: {
     // cputc(c)
     // [64] cputc::c = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [65] call cputc 
+    // [65] call cputc
     jsr cputc
     jmp __b1
 }
@@ -8913,7 +8913,7 @@ printf_uint: {
     sta printf_buffer
     // utoa(uvalue, printf_buffer.digits, format.radix)
     // [68] utoa::value#1 = printf_uint::uvalue#2
-    // [69] call utoa 
+    // [69] call utoa
   // Format number into buffer
     // [103] phi from printf_uint::@1 to utoa [phi:printf_uint::@1->utoa]
     jsr utoa
@@ -8921,7 +8921,7 @@ printf_uint: {
     // printf_number_buffer(printf_buffer, format)
     // [70] printf_number_buffer::buffer_sign#0 = *((byte*)&printf_buffer) -- vbuaa=_deref_pbuc1 
     lda printf_buffer
-    // [71] call printf_number_buffer 
+    // [71] call printf_number_buffer
   // Print using format
     // [124] phi from printf_uint::@2 to printf_number_buffer [phi:printf_uint::@2->printf_number_buffer]
     jsr printf_number_buffer
@@ -9004,7 +9004,7 @@ gotoxy: {
     lda #y
     sta ROWCRS
     // setcursor()
-    // [84] call setcursor 
+    // [84] call setcursor
     jsr setcursor
     // gotoxy::@return
     // }
@@ -9042,7 +9042,7 @@ cputc: {
     // [90] phi from cputc::convertToScreenCode1 to cputc::@6 [phi:cputc::convertToScreenCode1->cputc::@6]
     // cputc::@6
     // putchar(convertToScreenCode(&c))
-    // [91] call putchar 
+    // [91] call putchar
     jsr putchar
     // cputc::@7
     // (*COLCRS)++;
@@ -9062,7 +9062,7 @@ cputc: {
     // [94] phi from cputc::@7 to cputc::@4 [phi:cputc::@7->cputc::@4]
     // cputc::@4
     // setcursor()
-    // [95] call setcursor 
+    // [95] call setcursor
     jsr setcursor
     // cputc::@return
     // }
@@ -9076,7 +9076,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // newline()
-    // [98] call newline 
+    // [98] call newline
     jsr newline
     rts
     // cputc::@2
@@ -9088,7 +9088,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // newline()
-    // [100] call newline 
+    // [100] call newline
     jsr newline
     rts
     // cputc::@1
@@ -9100,7 +9100,7 @@ cputc: {
     sta COLCRS
     sta COLCRS+1
     // setcursor()
-    // [102] call setcursor 
+    // [102] call setcursor
     jsr setcursor
     rts
 }
@@ -9204,7 +9204,7 @@ utoa: {
     // [117] utoa_append::buffer#0 = utoa::buffer#11
     // [118] utoa_append::value#0 = utoa::value#2
     // [119] utoa_append::sub#0 = utoa::digit_value#0
-    // [120] call utoa_append 
+    // [120] call utoa_append
     // [165] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
     jsr utoa_append
     // utoa_append(buffer++, value, digit_value)
@@ -9240,13 +9240,13 @@ printf_number_buffer: {
     // cputc(buffer.sign)
     // [126] cputc::c = printf_number_buffer::buffer_sign#0 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [127] call cputc 
+    // [127] call cputc
     jsr cputc
     // [128] phi from printf_number_buffer::@1 printf_number_buffer::@3 to printf_number_buffer::@2 [phi:printf_number_buffer::@1/printf_number_buffer::@3->printf_number_buffer::@2]
     // printf_number_buffer::@2
   __b2:
     // cputs(buffer.digits)
-    // [129] call cputs 
+    // [129] call cputs
     // [58] phi from printf_number_buffer::@2 to cputs [phi:printf_number_buffer::@2->cputs]
     // [58] phi cputs::s#8 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->cputs#0] -- pbuz1=pbuc1 
     lda #<buffer_digits
@@ -9274,7 +9274,7 @@ setcursor: {
     ldy #0
     sta ($fe),y
     // char * loc = cursorLocation()
-    // [132] call cursorLocation 
+    // [132] call cursorLocation
     // work out the new location for oldadr based on new column/row
     jsr cursorLocation
     // [133] cursorLocation::return#3 = cursorLocation::return#1
@@ -9332,7 +9332,7 @@ putchar: {
     ldy #0
     sta ($fe),y
     // char * loc = cursorLocation()
-    // [143] call cursorLocation 
+    // [143] call cursorLocation
     jsr cursorLocation
     // [144] cursorLocation::return#0 = cursorLocation::return#1
     // putchar::@1
@@ -9348,7 +9348,7 @@ putchar: {
     // [148] *OLDCHR = putchar::newChar#0 -- _deref_pbuc1=vbuaa 
     sta OLDCHR
     // setcursor()
-    // [149] call setcursor 
+    // [149] call setcursor
     jsr setcursor
     // putchar::@return
     // }
@@ -9399,7 +9399,7 @@ newline: {
     sta.z memcpy.destination
     lda.z start+1
     sta.z memcpy.destination+1
-    // [157] call memcpy 
+    // [157] call memcpy
     jsr memcpy
     // newline::@4
     // start + CONIO_WIDTH * 23
@@ -9413,7 +9413,7 @@ newline: {
     sta.z memset.str+1
     // [159] memset::str#8 = (void*)memset::str#1
     // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
-    // [160] call memset 
+    // [160] call memset
     // [73] phi from newline::@4 to memset [phi:newline::@4->memset]
     // [73] phi memset::str#3 = memset::str#8 [phi:newline::@4->memset#0] -- register_copy 
     // [73] phi memset::num#2 = $28 [phi:newline::@4->memset#1] -- vwuz1=vbuc1 
@@ -9431,7 +9431,7 @@ newline: {
     // newline::@1
   __b1:
     // setcursor()
-    // [163] call setcursor 
+    // [163] call setcursor
     jsr setcursor
     // newline::@return
     // }

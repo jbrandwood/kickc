@@ -14,10 +14,10 @@ Fixing struct type size struct $0 to 41
 Fixing struct type size struct $0 to 41
 Fixing struct type SIZE_OF struct $0 to 41
 Fixing struct type SIZE_OF struct $0 to 41
-Setting inferred volatile on symbol affected by address-of main::$0 = call screensize &XSize &YSize 
-Setting inferred volatile on symbol affected by address-of main::$0 = call screensize &XSize &YSize 
-Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
-Inlined call call __init 
+Setting inferred volatile on symbol affected by address-of main::$0 = call screensize(&XSize, &YSize)
+Setting inferred volatile on symbol affected by address-of main::$0 = call screensize(&XSize, &YSize)
+Inlined call vicSelectGfxBank::$0 = call toDd00(vicSelectGfxBank::gfx)
+Inlined call call __init
 Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement memcpy::$0
 Eliminating unused variable with no statement memset::$2
@@ -136,7 +136,7 @@ cputc: scope:[cputc]  from MakeNiceScreen::@10 MakeNiceScreen::@12 MakeNiceScree
   if(cputc::$0) goto cputc::@1
   to:cputc::@2
 cputc::@1: scope:[cputc]  from cputc
-  call cputln 
+  call cputln
   to:cputc::@4
 cputc::@4: scope:[cputc]  from cputc::@1
   to:cputc::@return
@@ -150,7 +150,7 @@ cputc::@2: scope:[cputc]  from cputc
   if(cputc::$2) goto cputc::@return
   to:cputc::@3
 cputc::@3: scope:[cputc]  from cputc::@2
-  call cputln 
+  call cputln
   to:cputc::@5
 cputc::@5: scope:[cputc]  from cputc::@3
   to:cputc::@return
@@ -164,7 +164,7 @@ cputln: scope:[cputln]  from cputc::@1 cputc::@3
   conio_line_color = conio_line_color + $28
   conio_cursor_x = 0
   conio_cursor_y = ++ conio_cursor_y
-  call cscroll 
+  call cscroll
   to:cputln::@1
 cputln::@1: scope:[cputln]  from cputln
   to:cputln::@return
@@ -179,12 +179,12 @@ cputcxy: scope:[cputcxy]  from MakeNiceScreen::@8 MakeTeeLine
   cputcxy::x#2 = phi( MakeNiceScreen::@8/cputcxy::x#1, MakeTeeLine/cputcxy::x#0 )
   gotoxy::x#1 = cputcxy::x#2
   gotoxy::y#1 = cputcxy::y#2
-  call gotoxy 
+  call gotoxy
   to:cputcxy::@1
 cputcxy::@1: scope:[cputcxy]  from cputcxy
   cputcxy::c#2 = phi( cputcxy/cputcxy::c#3 )
   cputc::c#0 = cputcxy::c#2
-  call cputc 
+  call cputc
   to:cputcxy::@2
 cputcxy::@2: scope:[cputcxy]  from cputcxy::@1
   to:cputcxy::@return
@@ -209,7 +209,7 @@ cputs::@2: scope:[cputs]  from cputs::@1
   cputs::s#5 = phi( cputs::@1/cputs::s#0 )
   cputs::c#2 = phi( cputs::@1/cputs::c#1 )
   cputc::c#1 = cputs::c#2
-  call cputc 
+  call cputc
   to:cputs::@3
 cputs::@3: scope:[cputs]  from cputs::@2
   cputs::s#4 = phi( cputs::@2/cputs::s#5 )
@@ -225,12 +225,12 @@ cputsxy: scope:[cputsxy]  from MakeNiceScreen::@19
   cputsxy::x#1 = phi( MakeNiceScreen::@19/cputsxy::x#0 )
   gotoxy::x#2 = cputsxy::x#1
   gotoxy::y#2 = cputsxy::y#1
-  call gotoxy 
+  call gotoxy
   to:cputsxy::@1
 cputsxy::@1: scope:[cputsxy]  from cputsxy
   cputsxy::s#1 = phi( cputsxy/cputsxy::s#2 )
   cputs::s#1 = cputsxy::s#1
-  call cputs 
+  call cputs
   to:cputsxy::@2
 cputsxy::@2: scope:[cputsxy]  from cputsxy::@1
   to:cputsxy::@return
@@ -436,28 +436,28 @@ cscroll::@3: scope:[cscroll]  from cscroll::@1
   memcpy::destination#0 = (void*)CONIO_SCREEN_TEXT
   memcpy::source#0 = (void*)CONIO_SCREEN_TEXT+$28
   memcpy::num#0 = $19*$28-$28
-  call memcpy 
+  call memcpy
   memcpy::return#2 = memcpy::return#1
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@3
   memcpy::destination#1 = (void*)CONIO_SCREEN_COLORS
   memcpy::source#1 = (void*)CONIO_SCREEN_COLORS+$28
   memcpy::num#1 = $19*$28-$28
-  call memcpy 
+  call memcpy
   memcpy::return#3 = memcpy::return#1
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
   memset::str#0 = (void*)CONIO_SCREEN_TEXT+$19*$28-$28
   memset::c#0 = ' '
   memset::num#0 = $28
-  call memset 
+  call memset
   memset::return#2 = memset::return#1
   to:cscroll::@6
 cscroll::@6: scope:[cscroll]  from cscroll::@5
   memset::str#1 = (void*)CONIO_SCREEN_COLORS+$19*$28-$28
   memset::c#1 = conio_textcolor
   memset::num#1 = $28
-  call memset 
+  call memset
   memset::return#3 = memset::return#1
   to:cscroll::@7
 cscroll::@7: scope:[cscroll]  from cscroll::@6
@@ -468,7 +468,7 @@ cscroll::@7: scope:[cscroll]  from cscroll::@6
 cscroll::@2: scope:[cscroll]  from cscroll::@1
   gotoxy::x#3 = 0
   gotoxy::y#3 = 0
-  call gotoxy 
+  call gotoxy
   to:cscroll::@8
 cscroll::@8: scope:[cscroll]  from cscroll::@2
   to:cscroll::@return
@@ -487,7 +487,7 @@ conio_c64_init::@1: scope:[conio_c64_init]  from conio_c64_init conio_c64_init::
   conio_c64_init::line#2 = phi( conio_c64_init/conio_c64_init::line#0, conio_c64_init::@2/conio_c64_init::line#1 )
   gotoxy::x#4 = 0
   gotoxy::y#4 = conio_c64_init::line#2
-  call gotoxy 
+  call gotoxy
   to:conio_c64_init::@3
 conio_c64_init::@3: scope:[conio_c64_init]  from conio_c64_init::@1
   to:conio_c64_init::@return
@@ -513,7 +513,7 @@ chline::@2: scope:[chline]  from chline::@1
   chline::length#6 = phi( chline::@1/chline::length#3 )
   chline::i#4 = phi( chline::@1/chline::i#2 )
   cputc::c#2 = CH_HLINE
-  call cputc 
+  call cputc
   to:chline::@3
 chline::@3: scope:[chline]  from chline::@2
   chline::length#5 = phi( chline::@2/chline::length#6 )
@@ -545,7 +545,7 @@ cvline::@2: scope:[cvline]  from cvline::@1
   cvline::x#2 = phi( cvline::@1/cvline::x#3 )
   cvline::y#3 = phi( cvline::@1/cvline::y#4 )
   cputc::c#3 = CH_VLINE
-  call cputc 
+  call cputc
   to:cvline::@3
 cvline::@3: scope:[cvline]  from cvline::@2
   cvline::length#4 = phi( cvline::@2/cvline::length#5 )
@@ -555,7 +555,7 @@ cvline::@3: scope:[cvline]  from cvline::@2
   cvline::y#1 = ++ cvline::y#2
   gotoxy::x#5 = cvline::x#1
   gotoxy::y#5 = cvline::y#1
-  call gotoxy 
+  call gotoxy
   to:cvline::@4
 cvline::@4: scope:[cvline]  from cvline::@3
   cvline::x#4 = phi( cvline::@3/cvline::x#1 )
@@ -575,12 +575,12 @@ cvlinexy: scope:[cvlinexy]  from MakeNiceScreen::@11 MakeNiceScreen::@15
   cvlinexy::x#2 = phi( MakeNiceScreen::@11/cvlinexy::x#0, MakeNiceScreen::@15/cvlinexy::x#1 )
   gotoxy::x#6 = cvlinexy::x#2
   gotoxy::y#6 = cvlinexy::y#2
-  call gotoxy 
+  call gotoxy
   to:cvlinexy::@1
 cvlinexy::@1: scope:[cvlinexy]  from cvlinexy
   cvlinexy::length#2 = phi( cvlinexy/cvlinexy::length#3 )
   cvline::length#0 = cvlinexy::length#2
-  call cvline 
+  call cvline
   to:cvlinexy::@2
 cvlinexy::@2: scope:[cvlinexy]  from cvlinexy::@1
   to:cvlinexy::@return
@@ -593,15 +593,15 @@ main: scope:[main]  from __start::@1
   *VICII_MEMORY = $17
   screensize::x#0 = &XSize
   screensize::y#0 = &YSize
-  call screensize 
+  call screensize
   to:main::@3
 main::@3: scope:[main]  from main
-  call MakeNiceScreen 
+  call MakeNiceScreen
   to:main::@4
 main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@4 main::@5
-  call kbhit 
+  call kbhit
   kbhit::return#2 = kbhit::return#1
   to:main::@5
 main::@5: scope:[main]  from main::@1
@@ -612,7 +612,7 @@ main::@5: scope:[main]  from main::@1
   if(main::$4) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@5
-  call clrscr 
+  call clrscr
   to:main::@6
 main::@6: scope:[main]  from main::@2
   to:main::@return
@@ -626,16 +626,16 @@ MakeTeeLine: scope:[MakeTeeLine]  from MakeNiceScreen::@16 MakeNiceScreen::@17
   cputcxy::x#0 = 0
   cputcxy::y#0 = MakeTeeLine::Y#2
   cputcxy::c#0 = CH_LTEE
-  call cputcxy 
+  call cputcxy
   to:MakeTeeLine::@1
 MakeTeeLine::@1: scope:[MakeTeeLine]  from MakeTeeLine
   MakeTeeLine::$1 = XSize - 2
   chline::length#0 = MakeTeeLine::$1
-  call chline 
+  call chline
   to:MakeTeeLine::@2
 MakeTeeLine::@2: scope:[MakeTeeLine]  from MakeTeeLine::@1
   cputc::c#4 = CH_RTEE
-  call cputc 
+  call cputc
   to:MakeTeeLine::@3
 MakeTeeLine::@3: scope:[MakeTeeLine]  from MakeTeeLine::@2
   to:MakeTeeLine::@return
@@ -649,80 +649,80 @@ MakeNiceScreen: scope:[MakeNiceScreen]  from main::@3
   MakeNiceScreen::I#0 = 0
   MakeNiceScreen::X#0 = 0
   scroll::onoff#0 = 0
-  call scroll 
+  call scroll
   scroll::return#2 = scroll::return#1
   to:MakeNiceScreen::@3
 MakeNiceScreen::@3: scope:[MakeNiceScreen]  from MakeNiceScreen
   textcolor::color#0 = COLOR_GRAY3
-  call textcolor 
+  call textcolor
   textcolor::return#2 = textcolor::return#1
   to:MakeNiceScreen::@4
 MakeNiceScreen::@4: scope:[MakeNiceScreen]  from MakeNiceScreen::@3
   bordercolor::color#0 = COLOR_BLACK
-  call bordercolor 
+  call bordercolor
   bordercolor::return#2 = bordercolor::return#1
   to:MakeNiceScreen::@5
 MakeNiceScreen::@5: scope:[MakeNiceScreen]  from MakeNiceScreen::@4
   bgcolor::color#0 = COLOR_BLACK
-  call bgcolor 
+  call bgcolor
   bgcolor::return#2 = bgcolor::return#1
   to:MakeNiceScreen::@6
 MakeNiceScreen::@6: scope:[MakeNiceScreen]  from MakeNiceScreen::@5
-  call clrscr 
+  call clrscr
   to:MakeNiceScreen::@7
 MakeNiceScreen::@7: scope:[MakeNiceScreen]  from MakeNiceScreen::@6
   cursor::onoff#0 = 0
-  call cursor 
+  call cursor
   cursor::return#2 = cursor::return#1
   to:MakeNiceScreen::@8
 MakeNiceScreen::@8: scope:[MakeNiceScreen]  from MakeNiceScreen::@7
   cputcxy::x#1 = 0
   cputcxy::y#1 = 0
   cputcxy::c#1 = CH_ULCORNER
-  call cputcxy 
+  call cputcxy
   to:MakeNiceScreen::@9
 MakeNiceScreen::@9: scope:[MakeNiceScreen]  from MakeNiceScreen::@8
   MakeNiceScreen::$7 = XSize - 2
   chline::length#1 = MakeNiceScreen::$7
-  call chline 
+  call chline
   to:MakeNiceScreen::@10
 MakeNiceScreen::@10: scope:[MakeNiceScreen]  from MakeNiceScreen::@9
   cputc::c#5 = CH_URCORNER
-  call cputc 
+  call cputc
   to:MakeNiceScreen::@11
 MakeNiceScreen::@11: scope:[MakeNiceScreen]  from MakeNiceScreen::@10
   cvlinexy::x#0 = 0
   cvlinexy::y#0 = 1
   cvlinexy::length#0 = $17
-  call cvlinexy 
+  call cvlinexy
   to:MakeNiceScreen::@12
 MakeNiceScreen::@12: scope:[MakeNiceScreen]  from MakeNiceScreen::@11
   cputc::c#6 = CH_LLCORNER
-  call cputc 
+  call cputc
   to:MakeNiceScreen::@13
 MakeNiceScreen::@13: scope:[MakeNiceScreen]  from MakeNiceScreen::@12
   MakeNiceScreen::$12 = XSize - 2
   chline::length#2 = MakeNiceScreen::$12
-  call chline 
+  call chline
   to:MakeNiceScreen::@14
 MakeNiceScreen::@14: scope:[MakeNiceScreen]  from MakeNiceScreen::@13
   cputc::c#7 = CH_LRCORNER
-  call cputc 
+  call cputc
   to:MakeNiceScreen::@15
 MakeNiceScreen::@15: scope:[MakeNiceScreen]  from MakeNiceScreen::@14
   MakeNiceScreen::$15 = XSize - 1
   cvlinexy::x#1 = MakeNiceScreen::$15
   cvlinexy::y#1 = 1
   cvlinexy::length#1 = $17
-  call cvlinexy 
+  call cvlinexy
   to:MakeNiceScreen::@16
 MakeNiceScreen::@16: scope:[MakeNiceScreen]  from MakeNiceScreen::@15
   MakeTeeLine::Y#0 = 7
-  call MakeTeeLine 
+  call MakeTeeLine
   to:MakeNiceScreen::@17
 MakeNiceScreen::@17: scope:[MakeNiceScreen]  from MakeNiceScreen::@16
   MakeTeeLine::Y#1 = $16
-  call MakeTeeLine 
+  call MakeTeeLine
   to:MakeNiceScreen::@18
 MakeNiceScreen::@18: scope:[MakeNiceScreen]  from MakeNiceScreen::@17
   MakeNiceScreen::I#1 = 0
@@ -742,7 +742,7 @@ MakeNiceScreen::@2: scope:[MakeNiceScreen]  from MakeNiceScreen::@1
   MakeNiceScreen::$29 = (byte*)MakeNiceScreen::T#3
   MakeNiceScreen::$26 = MakeNiceScreen::$29 + OFFSET_STRUCT_$0_MSG
   strlen::str#1 = MakeNiceScreen::$26
-  call strlen 
+  call strlen
   strlen::return#2 = strlen::return#1
   to:MakeNiceScreen::@19
 MakeNiceScreen::@19: scope:[MakeNiceScreen]  from MakeNiceScreen::@2
@@ -761,7 +761,7 @@ MakeNiceScreen::@19: scope:[MakeNiceScreen]  from MakeNiceScreen::@2
   cputsxy::x#0 = MakeNiceScreen::X#1
   cputsxy::y#0 = *MakeNiceScreen::$27
   cputsxy::s#0 = MakeNiceScreen::$28
-  call cputsxy 
+  call cputsxy
   to:MakeNiceScreen::@20
 MakeNiceScreen::@20: scope:[MakeNiceScreen]  from MakeNiceScreen::@19
   MakeNiceScreen::I#4 = phi( MakeNiceScreen::@19/MakeNiceScreen::I#5 )
@@ -786,12 +786,12 @@ __start::__init1: scope:[__start]  from __start
   conio_scroll_enable = 1
   XSize = 0
   YSize = 0
-  call conio_c64_init 
+  call conio_c64_init
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::@2
-  call main 
+  call main
   to:__start::@3
 __start::@3: scope:[__start]  from __start::@1
   to:__start::@return
@@ -1678,7 +1678,7 @@ Eliminating unused variable conio_display_cursor(null) and assignment [208] coni
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant cursor::onoff#0
 Successful SSA optimization PassNEliminateUnusedVars
-Removing call to empty/unused procedure [168] call cursor 
+Removing call to empty/unused procedure [168] call cursor
 Removing unused procedure cursor
 Removing unused procedure block cursor
 Removing unused procedure block cursor::@return
@@ -2065,11 +2065,11 @@ __start::__init1: scope:[__start]  from __start
   [6] conio_scroll_enable = 1
   [7] XSize = 0
   [8] YSize = 0
-  [9] call conio_c64_init 
+  [9] call conio_c64_init
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [10] phi()
-  [11] call main 
+  [11] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [12] return 
@@ -2086,7 +2086,7 @@ conio_c64_init::@2: scope:[conio_c64_init]  from conio_c64_init
 conio_c64_init::@1: scope:[conio_c64_init]  from conio_c64_init conio_c64_init::@2
   [16] conio_c64_init::line#2 = phi( conio_c64_init::@2/conio_c64_init::line#0, conio_c64_init/$19-1 )
   [17] gotoxy::y#4 = conio_c64_init::line#2
-  [18] call gotoxy 
+  [18] call gotoxy
   to:conio_c64_init::@return
 conio_c64_init::@return: scope:[conio_c64_init]  from conio_c64_init::@1
   [19] return 
@@ -2095,15 +2095,15 @@ conio_c64_init::@return: scope:[conio_c64_init]  from conio_c64_init::@1
 void main()
 main: scope:[main]  from __start::@1
   [20] *VICII_MEMORY = $17
-  [21] call screensize 
+  [21] call screensize
   to:main::@3
 main::@3: scope:[main]  from main
   [22] phi()
-  [23] call MakeNiceScreen 
+  [23] call MakeNiceScreen
   to:main::@1
 main::@1: scope:[main]  from main::@3 main::@4
   [24] phi()
-  [25] call kbhit 
+  [25] call kbhit
   [26] kbhit::return#2 = kbhit::return#0
   to:main::@4
 main::@4: scope:[main]  from main::@1
@@ -2112,7 +2112,7 @@ main::@4: scope:[main]  from main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@4
   [29] phi()
-  [30] call clrscr 
+  [30] call clrscr
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [31] return 
@@ -2163,63 +2163,63 @@ screensize::@return: scope:[screensize]  from screensize
 void MakeNiceScreen()
 MakeNiceScreen: scope:[MakeNiceScreen]  from main::@3
   [53] phi()
-  [54] call scroll 
+  [54] call scroll
   to:MakeNiceScreen::@3
 MakeNiceScreen::@3: scope:[MakeNiceScreen]  from MakeNiceScreen
   [55] phi()
-  [56] call textcolor 
+  [56] call textcolor
   to:MakeNiceScreen::@4
 MakeNiceScreen::@4: scope:[MakeNiceScreen]  from MakeNiceScreen::@3
   [57] phi()
-  [58] call bordercolor 
+  [58] call bordercolor
   to:MakeNiceScreen::@5
 MakeNiceScreen::@5: scope:[MakeNiceScreen]  from MakeNiceScreen::@4
   [59] phi()
-  [60] call bgcolor 
+  [60] call bgcolor
   to:MakeNiceScreen::@6
 MakeNiceScreen::@6: scope:[MakeNiceScreen]  from MakeNiceScreen::@5
   [61] phi()
-  [62] call clrscr 
+  [62] call clrscr
   to:MakeNiceScreen::@7
 MakeNiceScreen::@7: scope:[MakeNiceScreen]  from MakeNiceScreen::@6
   [63] phi()
-  [64] call cputcxy 
+  [64] call cputcxy
   to:MakeNiceScreen::@8
 MakeNiceScreen::@8: scope:[MakeNiceScreen]  from MakeNiceScreen::@7
   [65] chline::length#1 = XSize - 2
-  [66] call chline 
+  [66] call chline
   to:MakeNiceScreen::@9
 MakeNiceScreen::@9: scope:[MakeNiceScreen]  from MakeNiceScreen::@8
   [67] phi()
-  [68] call cputc 
+  [68] call cputc
   to:MakeNiceScreen::@10
 MakeNiceScreen::@10: scope:[MakeNiceScreen]  from MakeNiceScreen::@9
   [69] phi()
-  [70] call cvlinexy 
+  [70] call cvlinexy
   to:MakeNiceScreen::@11
 MakeNiceScreen::@11: scope:[MakeNiceScreen]  from MakeNiceScreen::@10
   [71] phi()
-  [72] call cputc 
+  [72] call cputc
   to:MakeNiceScreen::@12
 MakeNiceScreen::@12: scope:[MakeNiceScreen]  from MakeNiceScreen::@11
   [73] chline::length#2 = XSize - 2
-  [74] call chline 
+  [74] call chline
   to:MakeNiceScreen::@13
 MakeNiceScreen::@13: scope:[MakeNiceScreen]  from MakeNiceScreen::@12
   [75] phi()
-  [76] call cputc 
+  [76] call cputc
   to:MakeNiceScreen::@14
 MakeNiceScreen::@14: scope:[MakeNiceScreen]  from MakeNiceScreen::@13
   [77] cvlinexy::x#1 = XSize - 1
-  [78] call cvlinexy 
+  [78] call cvlinexy
   to:MakeNiceScreen::@15
 MakeNiceScreen::@15: scope:[MakeNiceScreen]  from MakeNiceScreen::@14
   [79] phi()
-  [80] call MakeTeeLine 
+  [80] call MakeTeeLine
   to:MakeNiceScreen::@16
 MakeNiceScreen::@16: scope:[MakeNiceScreen]  from MakeNiceScreen::@15
   [81] phi()
-  [82] call MakeTeeLine 
+  [82] call MakeTeeLine
   to:MakeNiceScreen::@1
 MakeNiceScreen::@1: scope:[MakeNiceScreen]  from MakeNiceScreen::@16 MakeNiceScreen::@18
   [83] MakeNiceScreen::T#3 = phi( MakeNiceScreen::@16/MakeNiceScreen::Text, MakeNiceScreen::@18/MakeNiceScreen::T#2 )
@@ -2231,7 +2231,7 @@ MakeNiceScreen::@return: scope:[MakeNiceScreen]  from MakeNiceScreen::@1
   to:@return
 MakeNiceScreen::@2: scope:[MakeNiceScreen]  from MakeNiceScreen::@1
   [86] strlen::str#1 = (byte*)MakeNiceScreen::T#3 + 1
-  [87] call strlen 
+  [87] call strlen
   [88] strlen::return#2 = strlen::len#2
   to:MakeNiceScreen::@17
 MakeNiceScreen::@17: scope:[MakeNiceScreen]  from MakeNiceScreen::@2
@@ -2242,7 +2242,7 @@ MakeNiceScreen::@17: scope:[MakeNiceScreen]  from MakeNiceScreen::@2
   [93] cputsxy::s#0 = (byte*)MakeNiceScreen::T#3 + 1
   [94] cputsxy::x#0 = MakeNiceScreen::X#1
   [95] cputsxy::y#0 = *((byte*)MakeNiceScreen::T#3)
-  [96] call cputsxy 
+  [96] call cputsxy
   to:MakeNiceScreen::@18
 MakeNiceScreen::@18: scope:[MakeNiceScreen]  from MakeNiceScreen::@17
   [97] MakeNiceScreen::T#2 = MakeNiceScreen::T#3 + $29
@@ -2329,11 +2329,11 @@ cputcxy: scope:[cputcxy]  from MakeNiceScreen::@7 MakeTeeLine
   [126] cputcxy::c#2 = phi( MakeNiceScreen::@7/CH_ULCORNER, MakeTeeLine/CH_LTEE )
   [126] cputcxy::y#2 = phi( MakeNiceScreen::@7/0, MakeTeeLine/cputcxy::y#0 )
   [127] gotoxy::y#1 = cputcxy::y#2
-  [128] call gotoxy 
+  [128] call gotoxy
   to:cputcxy::@1
 cputcxy::@1: scope:[cputcxy]  from cputcxy
   [129] cputc::c#0 = cputcxy::c#2
-  [130] call cputc 
+  [130] call cputc
   to:cputcxy::@return
 cputcxy::@return: scope:[cputcxy]  from cputcxy::@1
   [131] return 
@@ -2352,7 +2352,7 @@ chline::@return: scope:[chline]  from chline::@1
   to:@return
 chline::@2: scope:[chline]  from chline::@1
   [136] phi()
-  [137] call cputc 
+  [137] call cputc
   to:chline::@3
 chline::@3: scope:[chline]  from chline::@2
   [138] chline::i#1 = ++ chline::i#2
@@ -2372,25 +2372,25 @@ cputc::@2: scope:[cputc]  from cputc
   to:cputc::@3
 cputc::@3: scope:[cputc]  from cputc::@2
   [145] phi()
-  [146] call cputln 
+  [146] call cputln
   to:cputc::@return
 cputc::@return: scope:[cputc]  from cputc::@1 cputc::@2 cputc::@3
   [147] return 
   to:@return
 cputc::@1: scope:[cputc]  from cputc
   [148] phi()
-  [149] call cputln 
+  [149] call cputln
   to:cputc::@return
 
 void cvlinexy(byte cvlinexy::x , byte cvlinexy::y , byte cvlinexy::length)
 cvlinexy: scope:[cvlinexy]  from MakeNiceScreen::@10 MakeNiceScreen::@14
   [150] cvlinexy::x#2 = phi( MakeNiceScreen::@10/0, MakeNiceScreen::@14/cvlinexy::x#1 )
   [151] gotoxy::x#6 = cvlinexy::x#2
-  [152] call gotoxy 
+  [152] call gotoxy
   to:cvlinexy::@1
 cvlinexy::@1: scope:[cvlinexy]  from cvlinexy
   [153] phi()
-  [154] call cvline 
+  [154] call cvline
   to:cvlinexy::@return
 cvlinexy::@return: scope:[cvlinexy]  from cvlinexy::@1
   [155] return 
@@ -2400,15 +2400,15 @@ void MakeTeeLine(byte MakeTeeLine::Y)
 MakeTeeLine: scope:[MakeTeeLine]  from MakeNiceScreen::@15 MakeNiceScreen::@16
   [156] MakeTeeLine::Y#2 = phi( MakeNiceScreen::@15/7, MakeNiceScreen::@16/$16 )
   [157] cputcxy::y#0 = MakeTeeLine::Y#2
-  [158] call cputcxy 
+  [158] call cputcxy
   to:MakeTeeLine::@1
 MakeTeeLine::@1: scope:[MakeTeeLine]  from MakeTeeLine
   [159] chline::length#0 = XSize - 2
-  [160] call chline 
+  [160] call chline
   to:MakeTeeLine::@2
 MakeTeeLine::@2: scope:[MakeTeeLine]  from MakeTeeLine::@1
   [161] phi()
-  [162] call cputc 
+  [162] call cputc
   to:MakeTeeLine::@return
 MakeTeeLine::@return: scope:[MakeTeeLine]  from MakeTeeLine::@2
   [163] return 
@@ -2435,11 +2435,11 @@ void cputsxy(byte cputsxy::x , byte cputsxy::y , const byte* cputsxy::s)
 cputsxy: scope:[cputsxy]  from MakeNiceScreen::@17
   [170] gotoxy::x#2 = cputsxy::x#0
   [171] gotoxy::y#2 = cputsxy::y#0
-  [172] call gotoxy 
+  [172] call gotoxy
   to:cputsxy::@1
 cputsxy::@1: scope:[cputsxy]  from cputsxy
   [173] cputs::s#1 = cputsxy::s#0
-  [174] call cputs 
+  [174] call cputs
   to:cputsxy::@return
 cputsxy::@return: scope:[cputsxy]  from cputsxy::@1
   [175] return 
@@ -2451,7 +2451,7 @@ cputln: scope:[cputln]  from cputc::@1 cputc::@3
   [177] conio_line_color = conio_line_color + $28
   [178] conio_cursor_x = 0
   [179] conio_cursor_y = ++ conio_cursor_y
-  [180] call cscroll 
+  [180] call cscroll
   to:cputln::@return
 cputln::@return: scope:[cputln]  from cputln
   [181] return 
@@ -2472,13 +2472,13 @@ cvline::@return: scope:[cvline]  from cvline::@1
   to:@return
 cvline::@2: scope:[cvline]  from cvline::@1
   [187] phi()
-  [188] call cputc 
+  [188] call cputc
   to:cvline::@3
 cvline::@3: scope:[cvline]  from cvline::@2
   [189] cvline::y#1 = ++ cvline::y#2
   [190] gotoxy::x#5 = cvline::x#0
   [191] gotoxy::y#5 = cvline::y#1
-  [192] call gotoxy 
+  [192] call gotoxy
   to:cvline::@4
 cvline::@4: scope:[cvline]  from cvline::@3
   [193] cvline::i#1 = ++ cvline::i#2
@@ -2499,7 +2499,7 @@ cputs::@return: scope:[cputs]  from cputs::@1
   to:@return
 cputs::@2: scope:[cputs]  from cputs::@1
   [200] cputc::c#1 = cputs::c#1
-  [201] call cputc 
+  [201] call cputc
   to:cputs::@1
 
 void cscroll()
@@ -2511,26 +2511,26 @@ cscroll::@1: scope:[cscroll]  from cscroll
   to:cscroll::@2
 cscroll::@2: scope:[cscroll]  from cscroll::@1
   [204] phi()
-  [205] call gotoxy 
+  [205] call gotoxy
   to:cscroll::@return
 cscroll::@return: scope:[cscroll]  from cscroll cscroll::@2 cscroll::@7
   [206] return 
   to:@return
 cscroll::@3: scope:[cscroll]  from cscroll::@1
   [207] phi()
-  [208] call memcpy 
+  [208] call memcpy
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@3
   [209] phi()
-  [210] call memcpy 
+  [210] call memcpy
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
   [211] phi()
-  [212] call memset 
+  [212] call memset
   to:cscroll::@6
 cscroll::@6: scope:[cscroll]  from cscroll::@5
   [213] memset::c#1 = conio_textcolor
-  [214] call memset 
+  [214] call memset
   to:cscroll::@7
 cscroll::@7: scope:[cscroll]  from cscroll::@6
   [215] conio_line_text = conio_line_text - $28
@@ -3378,14 +3378,14 @@ __start: {
     // [8] YSize = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z YSize
-    // [9] call conio_c64_init 
+    // [9] call conio_c64_init
     jsr conio_c64_init
     // [10] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
     jmp __b1
     // __start::@1
   __b1:
-    // [11] call main 
+    // [11] call main
     jsr main
     jmp __breturn
     // __start::@return
@@ -3420,7 +3420,7 @@ conio_c64_init: {
     // conio_c64_init::@1
   __b1:
     // [17] gotoxy::y#4 = conio_c64_init::line#2
-    // [18] call gotoxy 
+    // [18] call gotoxy
     // [32] phi from conio_c64_init::@1 to gotoxy [phi:conio_c64_init::@1->gotoxy]
   gotoxy_from___b1:
     // [32] phi gotoxy::x#10 = 0 [phi:conio_c64_init::@1->gotoxy#0] -- vbuxx=vbuc1 
@@ -3438,14 +3438,14 @@ main: {
     // [20] *VICII_MEMORY = $17 -- _deref_pbuc1=vbuc2 
     lda #$17
     sta VICII_MEMORY
-    // [21] call screensize 
+    // [21] call screensize
     jsr screensize
     // [22] phi from main to main::@3 [phi:main->main::@3]
   __b3_from_main:
     jmp __b3
     // main::@3
   __b3:
-    // [23] call MakeNiceScreen 
+    // [23] call MakeNiceScreen
     // [53] phi from main::@3 to MakeNiceScreen [phi:main::@3->MakeNiceScreen]
   MakeNiceScreen_from___b3:
     jsr MakeNiceScreen
@@ -3455,7 +3455,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [25] call kbhit 
+    // [25] call kbhit
     jsr kbhit
     // [26] kbhit::return#2 = kbhit::return#0
     jmp __b4
@@ -3470,7 +3470,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [30] call clrscr 
+    // [30] call clrscr
     // [102] phi from main::@2 to clrscr [phi:main::@2->clrscr]
   clrscr_from___b2:
     jsr clrscr
@@ -3614,7 +3614,7 @@ MakeNiceScreen: {
     .label __22 = 5
     .label T = 3
     .label I = 2
-    // [54] call scroll 
+    // [54] call scroll
     // disable scrolling
     jsr scroll
     // [55] phi from MakeNiceScreen to MakeNiceScreen::@3 [phi:MakeNiceScreen->MakeNiceScreen::@3]
@@ -3622,7 +3622,7 @@ MakeNiceScreen: {
     jmp __b3
     // MakeNiceScreen::@3
   __b3:
-    // [56] call textcolor 
+    // [56] call textcolor
     /* Clear the screen hide the cursor, set colors */
     jsr textcolor
     // [57] phi from MakeNiceScreen::@3 to MakeNiceScreen::@4 [phi:MakeNiceScreen::@3->MakeNiceScreen::@4]
@@ -3630,21 +3630,21 @@ MakeNiceScreen: {
     jmp __b4
     // MakeNiceScreen::@4
   __b4:
-    // [58] call bordercolor 
+    // [58] call bordercolor
     jsr bordercolor
     // [59] phi from MakeNiceScreen::@4 to MakeNiceScreen::@5 [phi:MakeNiceScreen::@4->MakeNiceScreen::@5]
   __b5_from___b4:
     jmp __b5
     // MakeNiceScreen::@5
   __b5:
-    // [60] call bgcolor 
+    // [60] call bgcolor
     jsr bgcolor
     // [61] phi from MakeNiceScreen::@5 to MakeNiceScreen::@6 [phi:MakeNiceScreen::@5->MakeNiceScreen::@6]
   __b6_from___b5:
     jmp __b6
     // MakeNiceScreen::@6
   __b6:
-    // [62] call clrscr 
+    // [62] call clrscr
     // [102] phi from MakeNiceScreen::@6 to clrscr [phi:MakeNiceScreen::@6->clrscr]
   clrscr_from___b6:
     jsr clrscr
@@ -3653,7 +3653,7 @@ MakeNiceScreen: {
     jmp __b7
     // MakeNiceScreen::@7
   __b7:
-    // [64] call cputcxy 
+    // [64] call cputcxy
   /* Top line */
     // [126] phi from MakeNiceScreen::@7 to cputcxy [phi:MakeNiceScreen::@7->cputcxy]
   cputcxy_from___b7:
@@ -3670,7 +3670,7 @@ MakeNiceScreen: {
     sec
     sbc #2
     sta.z chline.length
-    // [66] call chline 
+    // [66] call chline
     // [132] phi from MakeNiceScreen::@8 to chline [phi:MakeNiceScreen::@8->chline]
   chline_from___b8:
     // [132] phi chline::length#4 = chline::length#1 [phi:MakeNiceScreen::@8->chline#0] -- register_copy 
@@ -3680,7 +3680,7 @@ MakeNiceScreen: {
     jmp __b9
     // MakeNiceScreen::@9
   __b9:
-    // [68] call cputc 
+    // [68] call cputc
     // [139] phi from MakeNiceScreen::@9 to cputc [phi:MakeNiceScreen::@9->cputc]
   cputc_from___b9:
     // [139] phi cputc::c#8 = CH_URCORNER [phi:MakeNiceScreen::@9->cputc#0] -- vbuaa=vbuc1 
@@ -3691,7 +3691,7 @@ MakeNiceScreen: {
     jmp __b10
     // MakeNiceScreen::@10
   __b10:
-    // [70] call cvlinexy 
+    // [70] call cvlinexy
   /* Left line */
     // [150] phi from MakeNiceScreen::@10 to cvlinexy [phi:MakeNiceScreen::@10->cvlinexy]
   cvlinexy_from___b10:
@@ -3703,7 +3703,7 @@ MakeNiceScreen: {
     jmp __b11
     // MakeNiceScreen::@11
   __b11:
-    // [72] call cputc 
+    // [72] call cputc
   /* Bottom line */
     // [139] phi from MakeNiceScreen::@11 to cputc [phi:MakeNiceScreen::@11->cputc]
   cputc_from___b11:
@@ -3718,7 +3718,7 @@ MakeNiceScreen: {
     sec
     sbc #2
     sta.z chline.length
-    // [74] call chline 
+    // [74] call chline
     // [132] phi from MakeNiceScreen::@12 to chline [phi:MakeNiceScreen::@12->chline]
   chline_from___b12:
     // [132] phi chline::length#4 = chline::length#2 [phi:MakeNiceScreen::@12->chline#0] -- register_copy 
@@ -3728,7 +3728,7 @@ MakeNiceScreen: {
     jmp __b13
     // MakeNiceScreen::@13
   __b13:
-    // [76] call cputc 
+    // [76] call cputc
     // [139] phi from MakeNiceScreen::@13 to cputc [phi:MakeNiceScreen::@13->cputc]
   cputc_from___b13:
     // [139] phi cputc::c#8 = CH_LRCORNER [phi:MakeNiceScreen::@13->cputc#0] -- vbuaa=vbuc1 
@@ -3740,7 +3740,7 @@ MakeNiceScreen: {
     // [77] cvlinexy::x#1 = XSize - 1 -- vbuxx=vbuz1_minus_1 
     ldx.z XSize
     dex
-    // [78] call cvlinexy 
+    // [78] call cvlinexy
   /* Right line */
     // [150] phi from MakeNiceScreen::@14 to cvlinexy [phi:MakeNiceScreen::@14->cvlinexy]
   cvlinexy_from___b14:
@@ -3751,7 +3751,7 @@ MakeNiceScreen: {
     jmp __b15
     // MakeNiceScreen::@15
   __b15:
-    // [80] call MakeTeeLine 
+    // [80] call MakeTeeLine
   /* Several divider lines */
     // [156] phi from MakeNiceScreen::@15 to MakeTeeLine [phi:MakeNiceScreen::@15->MakeTeeLine]
   MakeTeeLine_from___b15:
@@ -3763,7 +3763,7 @@ MakeNiceScreen: {
     jmp __b16
     // MakeNiceScreen::@16
   __b16:
-    // [82] call MakeTeeLine 
+    // [82] call MakeTeeLine
     // [156] phi from MakeNiceScreen::@16 to MakeTeeLine [phi:MakeNiceScreen::@16->MakeTeeLine]
   MakeTeeLine_from___b16:
     // [156] phi MakeTeeLine::Y#2 = $16 [phi:MakeNiceScreen::@16->MakeTeeLine#0] -- vbuaa=vbuc1 
@@ -3802,7 +3802,7 @@ MakeNiceScreen: {
     lda.z T+1
     adc #0
     sta.z strlen.str+1
-    // [87] call strlen 
+    // [87] call strlen
     // [164] phi from MakeNiceScreen::@2 to strlen [phi:MakeNiceScreen::@2->strlen]
   strlen_from___b2:
     jsr strlen
@@ -3832,7 +3832,7 @@ MakeNiceScreen: {
     // [95] cputsxy::y#0 = *((byte*)MakeNiceScreen::T#3) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (T),y
-    // [96] call cputsxy 
+    // [96] call cputsxy
     jsr cputsxy
     jmp __b18
     // MakeNiceScreen::@18
@@ -4084,7 +4084,7 @@ bgcolor: {
 // cputcxy(byte register(A) y, byte register(Y) c)
 cputcxy: {
     // [127] gotoxy::y#1 = cputcxy::y#2
-    // [128] call gotoxy 
+    // [128] call gotoxy
     // [32] phi from cputcxy to gotoxy [phi:cputcxy->gotoxy]
   gotoxy_from_cputcxy:
     // [32] phi gotoxy::x#10 = 0 [phi:cputcxy->gotoxy#0] -- vbuxx=vbuc1 
@@ -4096,7 +4096,7 @@ cputcxy: {
   __b1:
     // [129] cputc::c#0 = cputcxy::c#2 -- vbuaa=vbuyy 
     tya
-    // [130] call cputc 
+    // [130] call cputc
     // [139] phi from cputcxy::@1 to cputc [phi:cputcxy::@1->cputc]
   cputc_from___b1:
     // [139] phi cputc::c#8 = cputc::c#0 [phi:cputcxy::@1->cputc#0] -- register_copy 
@@ -4135,7 +4135,7 @@ chline: {
     jmp __b2
     // chline::@2
   __b2:
-    // [137] call cputc 
+    // [137] call cputc
     // [139] phi from chline::@2 to cputc [phi:chline::@2->cputc]
   cputc_from___b2:
     // [139] phi cputc::c#8 = CH_HLINE [phi:chline::@2->cputc#0] -- vbuaa=vbuc1 
@@ -4180,7 +4180,7 @@ cputc: {
     jmp __b3
     // cputc::@3
   __b3:
-    // [146] call cputln 
+    // [146] call cputln
     jsr cputln
     jmp __breturn
     // cputc::@return
@@ -4192,7 +4192,7 @@ cputc: {
     jmp __b1
     // cputc::@1
   __b1:
-    // [149] call cputln 
+    // [149] call cputln
     jsr cputln
     jmp __breturn
 }
@@ -4202,7 +4202,7 @@ cputc: {
 // cvlinexy(byte register(X) x)
 cvlinexy: {
     // [151] gotoxy::x#6 = cvlinexy::x#2
-    // [152] call gotoxy 
+    // [152] call gotoxy
     // [32] phi from cvlinexy to gotoxy [phi:cvlinexy->gotoxy]
   gotoxy_from_cvlinexy:
     // [32] phi gotoxy::x#10 = gotoxy::x#6 [phi:cvlinexy->gotoxy#0] -- register_copy 
@@ -4214,7 +4214,7 @@ cvlinexy: {
     jmp __b1
     // cvlinexy::@1
   __b1:
-    // [154] call cvline 
+    // [154] call cvline
     jsr cvline
     jmp __breturn
     // cvlinexy::@return
@@ -4226,7 +4226,7 @@ cvlinexy: {
 // MakeTeeLine(byte register(A) Y)
 MakeTeeLine: {
     // [157] cputcxy::y#0 = MakeTeeLine::Y#2
-    // [158] call cputcxy 
+    // [158] call cputcxy
     // [126] phi from MakeTeeLine to cputcxy [phi:MakeTeeLine->cputcxy]
   cputcxy_from_MakeTeeLine:
     // [126] phi cputcxy::c#2 = CH_LTEE [phi:MakeTeeLine->cputcxy#0] -- vbuyy=vbuc1 
@@ -4241,7 +4241,7 @@ MakeTeeLine: {
     sec
     sbc #2
     sta.z chline.length
-    // [160] call chline 
+    // [160] call chline
     // [132] phi from MakeTeeLine::@1 to chline [phi:MakeTeeLine::@1->chline]
   chline_from___b1:
     // [132] phi chline::length#4 = chline::length#0 [phi:MakeTeeLine::@1->chline#0] -- register_copy 
@@ -4251,7 +4251,7 @@ MakeTeeLine: {
     jmp __b2
     // MakeTeeLine::@2
   __b2:
-    // [162] call cputc 
+    // [162] call cputc
     // [139] phi from MakeTeeLine::@2 to cputc [phi:MakeTeeLine::@2->cputc]
   cputc_from___b2:
     // [139] phi cputc::c#8 = CH_RTEE [phi:MakeTeeLine::@2->cputc#0] -- vbuaa=vbuc1 
@@ -4317,7 +4317,7 @@ cputsxy: {
     .label s = 9
     // [170] gotoxy::x#2 = cputsxy::x#0
     // [171] gotoxy::y#2 = cputsxy::y#0
-    // [172] call gotoxy 
+    // [172] call gotoxy
     // [32] phi from cputsxy to gotoxy [phi:cputsxy->gotoxy]
   gotoxy_from_cputsxy:
     // [32] phi gotoxy::x#10 = gotoxy::x#2 [phi:cputsxy->gotoxy#0] -- register_copy 
@@ -4327,7 +4327,7 @@ cputsxy: {
     // cputsxy::@1
   __b1:
     // [173] cputs::s#1 = cputsxy::s#0
-    // [174] call cputs 
+    // [174] call cputs
     // [194] phi from cputsxy::@1 to cputs [phi:cputsxy::@1->cputs]
   cputs_from___b1:
     jsr cputs
@@ -4361,7 +4361,7 @@ cputln: {
     sta.z conio_cursor_x
     // [179] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
-    // [180] call cscroll 
+    // [180] call cscroll
     jsr cscroll
     jmp __breturn
     // cputln::@return
@@ -4405,7 +4405,7 @@ cvline: {
     jmp __b2
     // cvline::@2
   __b2:
-    // [188] call cputc 
+    // [188] call cputc
     // [139] phi from cvline::@2 to cputc [phi:cvline::@2->cputc]
   cputc_from___b2:
     // [139] phi cputc::c#8 = CH_VLINE [phi:cvline::@2->cputc#0] -- vbuaa=vbuc1 
@@ -4420,7 +4420,7 @@ cvline: {
     ldx.z x
     // [191] gotoxy::y#5 = cvline::y#1 -- vbuaa=vbuz1 
     lda.z y
-    // [192] call gotoxy 
+    // [192] call gotoxy
     // [32] phi from cvline::@3 to gotoxy [phi:cvline::@3->gotoxy]
   gotoxy_from___b3:
     // [32] phi gotoxy::x#10 = gotoxy::x#5 [phi:cvline::@3->gotoxy#0] -- register_copy 
@@ -4468,7 +4468,7 @@ cputs: {
     // cputs::@2
   __b2:
     // [200] cputc::c#1 = cputs::c#1
-    // [201] call cputc 
+    // [201] call cputc
     // [139] phi from cputs::@2 to cputc [phi:cputs::@2->cputc]
   cputc_from___b2:
     // [139] phi cputc::c#8 = cputc::c#1 [phi:cputs::@2->cputc#0] -- register_copy 
@@ -4493,7 +4493,7 @@ cscroll: {
     jmp __b2
     // cscroll::@2
   __b2:
-    // [205] call gotoxy 
+    // [205] call gotoxy
     // [32] phi from cscroll::@2 to gotoxy [phi:cscroll::@2->gotoxy]
   gotoxy_from___b2:
     // [32] phi gotoxy::x#10 = 0 [phi:cscroll::@2->gotoxy#0] -- vbuxx=vbuc1 
@@ -4511,7 +4511,7 @@ cscroll: {
     jmp __b3
     // cscroll::@3
   __b3:
-    // [208] call memcpy 
+    // [208] call memcpy
     // [218] phi from cscroll::@3 to memcpy [phi:cscroll::@3->memcpy]
   memcpy_from___b3:
     // [218] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@3->memcpy#0] -- pvoz1=pvoc1 
@@ -4530,7 +4530,7 @@ cscroll: {
     jmp __b4
     // cscroll::@4
   __b4:
-    // [210] call memcpy 
+    // [210] call memcpy
     // [218] phi from cscroll::@4 to memcpy [phi:cscroll::@4->memcpy]
   memcpy_from___b4:
     // [218] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@4->memcpy#0] -- pvoz1=pvoc1 
@@ -4549,7 +4549,7 @@ cscroll: {
     jmp __b5
     // cscroll::@5
   __b5:
-    // [212] call memset 
+    // [212] call memset
     // [228] phi from cscroll::@5 to memset [phi:cscroll::@5->memset]
   memset_from___b5:
     // [228] phi memset::c#4 = ' ' [phi:cscroll::@5->memset#0] -- vbuxx=vbuc1 
@@ -4565,7 +4565,7 @@ cscroll: {
   __b6:
     // [213] memset::c#1 = conio_textcolor -- vbuxx=vbuz1 
     ldx.z conio_textcolor
-    // [214] call memset 
+    // [214] call memset
     // [228] phi from cscroll::@6 to memset [phi:cscroll::@6->memset]
   memset_from___b6:
     // [228] phi memset::c#4 = memset::c#1 [phi:cscroll::@6->memset#0] -- register_copy 
@@ -5330,11 +5330,11 @@ __start: {
     // [8] YSize = 0 -- vbuz1=vbuc1 
     sta.z YSize
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
-    // [9] call conio_c64_init 
+    // [9] call conio_c64_init
     jsr conio_c64_init
     // [10] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [11] call main 
+    // [11] call main
     jsr main
     // __start::@return
     // [12] return 
@@ -5363,7 +5363,7 @@ conio_c64_init: {
   __b1:
     // gotoxy(0, line)
     // [17] gotoxy::y#4 = conio_c64_init::line#2
-    // [18] call gotoxy 
+    // [18] call gotoxy
     // [32] phi from conio_c64_init::@1 to gotoxy [phi:conio_c64_init::@1->gotoxy]
     // [32] phi gotoxy::x#10 = 0 [phi:conio_c64_init::@1->gotoxy#0] -- vbuxx=vbuc1 
     ldx #0
@@ -5381,19 +5381,19 @@ main: {
     lda #$17
     sta VICII_MEMORY
     // screensize(&XSize, &YSize)
-    // [21] call screensize 
+    // [21] call screensize
     jsr screensize
     // [22] phi from main to main::@3 [phi:main->main::@3]
     // main::@3
     // MakeNiceScreen()
-    // [23] call MakeNiceScreen 
+    // [23] call MakeNiceScreen
     // [53] phi from main::@3 to MakeNiceScreen [phi:main::@3->MakeNiceScreen]
     jsr MakeNiceScreen
     // [24] phi from main::@3 main::@4 to main::@1 [phi:main::@3/main::@4->main::@1]
     // main::@1
   __b1:
     // kbhit()
-    // [25] call kbhit 
+    // [25] call kbhit
     jsr kbhit
     // [26] kbhit::return#2 = kbhit::return#0
     // main::@4
@@ -5405,7 +5405,7 @@ main: {
     // [29] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
     // main::@2
     // clrscr ()
-    // [30] call clrscr 
+    // [30] call clrscr
     // [102] phi from main::@2 to clrscr [phi:main::@2->clrscr]
     jsr clrscr
     // main::@return
@@ -5543,35 +5543,35 @@ MakeNiceScreen: {
     .label T = 3
     .label I = 2
     // scroll(0)
-    // [54] call scroll 
+    // [54] call scroll
     // disable scrolling
     jsr scroll
     // [55] phi from MakeNiceScreen to MakeNiceScreen::@3 [phi:MakeNiceScreen->MakeNiceScreen::@3]
     // MakeNiceScreen::@3
     // textcolor (COLOR_GRAY3)
-    // [56] call textcolor 
+    // [56] call textcolor
     /* Clear the screen hide the cursor, set colors */
     jsr textcolor
     // [57] phi from MakeNiceScreen::@3 to MakeNiceScreen::@4 [phi:MakeNiceScreen::@3->MakeNiceScreen::@4]
     // MakeNiceScreen::@4
     // bordercolor (COLOR_BLACK)
-    // [58] call bordercolor 
+    // [58] call bordercolor
     jsr bordercolor
     // [59] phi from MakeNiceScreen::@4 to MakeNiceScreen::@5 [phi:MakeNiceScreen::@4->MakeNiceScreen::@5]
     // MakeNiceScreen::@5
     // bgcolor (COLOR_BLACK)
-    // [60] call bgcolor 
+    // [60] call bgcolor
     jsr bgcolor
     // [61] phi from MakeNiceScreen::@5 to MakeNiceScreen::@6 [phi:MakeNiceScreen::@5->MakeNiceScreen::@6]
     // MakeNiceScreen::@6
     // clrscr ()
-    // [62] call clrscr 
+    // [62] call clrscr
     // [102] phi from MakeNiceScreen::@6 to clrscr [phi:MakeNiceScreen::@6->clrscr]
     jsr clrscr
     // [63] phi from MakeNiceScreen::@6 to MakeNiceScreen::@7 [phi:MakeNiceScreen::@6->MakeNiceScreen::@7]
     // MakeNiceScreen::@7
     // cputcxy (0, 0, CH_ULCORNER)
-    // [64] call cputcxy 
+    // [64] call cputcxy
   /* Top line */
     // [126] phi from MakeNiceScreen::@7 to cputcxy [phi:MakeNiceScreen::@7->cputcxy]
     // [126] phi cputcxy::c#2 = CH_ULCORNER [phi:MakeNiceScreen::@7->cputcxy#0] -- vbuyy=vbuc1 
@@ -5586,14 +5586,14 @@ MakeNiceScreen: {
     sec
     sbc #2
     sta.z chline.length
-    // [66] call chline 
+    // [66] call chline
     // [132] phi from MakeNiceScreen::@8 to chline [phi:MakeNiceScreen::@8->chline]
     // [132] phi chline::length#4 = chline::length#1 [phi:MakeNiceScreen::@8->chline#0] -- register_copy 
     jsr chline
     // [67] phi from MakeNiceScreen::@8 to MakeNiceScreen::@9 [phi:MakeNiceScreen::@8->MakeNiceScreen::@9]
     // MakeNiceScreen::@9
     // cputc (CH_URCORNER)
-    // [68] call cputc 
+    // [68] call cputc
     // [139] phi from MakeNiceScreen::@9 to cputc [phi:MakeNiceScreen::@9->cputc]
     // [139] phi cputc::c#8 = CH_URCORNER [phi:MakeNiceScreen::@9->cputc#0] -- vbuaa=vbuc1 
     lda #CH_URCORNER
@@ -5601,7 +5601,7 @@ MakeNiceScreen: {
     // [69] phi from MakeNiceScreen::@9 to MakeNiceScreen::@10 [phi:MakeNiceScreen::@9->MakeNiceScreen::@10]
     // MakeNiceScreen::@10
     // cvlinexy (0, 1, 23)
-    // [70] call cvlinexy 
+    // [70] call cvlinexy
   /* Left line */
     // [150] phi from MakeNiceScreen::@10 to cvlinexy [phi:MakeNiceScreen::@10->cvlinexy]
     // [150] phi cvlinexy::x#2 = 0 [phi:MakeNiceScreen::@10->cvlinexy#0] -- vbuxx=vbuc1 
@@ -5610,7 +5610,7 @@ MakeNiceScreen: {
     // [71] phi from MakeNiceScreen::@10 to MakeNiceScreen::@11 [phi:MakeNiceScreen::@10->MakeNiceScreen::@11]
     // MakeNiceScreen::@11
     // cputc (CH_LLCORNER)
-    // [72] call cputc 
+    // [72] call cputc
   /* Bottom line */
     // [139] phi from MakeNiceScreen::@11 to cputc [phi:MakeNiceScreen::@11->cputc]
     // [139] phi cputc::c#8 = CH_LLCORNER [phi:MakeNiceScreen::@11->cputc#0] -- vbuaa=vbuc1 
@@ -5623,14 +5623,14 @@ MakeNiceScreen: {
     sec
     sbc #2
     sta.z chline.length
-    // [74] call chline 
+    // [74] call chline
     // [132] phi from MakeNiceScreen::@12 to chline [phi:MakeNiceScreen::@12->chline]
     // [132] phi chline::length#4 = chline::length#2 [phi:MakeNiceScreen::@12->chline#0] -- register_copy 
     jsr chline
     // [75] phi from MakeNiceScreen::@12 to MakeNiceScreen::@13 [phi:MakeNiceScreen::@12->MakeNiceScreen::@13]
     // MakeNiceScreen::@13
     // cputc (CH_LRCORNER)
-    // [76] call cputc 
+    // [76] call cputc
     // [139] phi from MakeNiceScreen::@13 to cputc [phi:MakeNiceScreen::@13->cputc]
     // [139] phi cputc::c#8 = CH_LRCORNER [phi:MakeNiceScreen::@13->cputc#0] -- vbuaa=vbuc1 
     lda #CH_LRCORNER
@@ -5640,7 +5640,7 @@ MakeNiceScreen: {
     // [77] cvlinexy::x#1 = XSize - 1 -- vbuxx=vbuz1_minus_1 
     ldx.z XSize
     dex
-    // [78] call cvlinexy 
+    // [78] call cvlinexy
   /* Right line */
     // [150] phi from MakeNiceScreen::@14 to cvlinexy [phi:MakeNiceScreen::@14->cvlinexy]
     // [150] phi cvlinexy::x#2 = cvlinexy::x#1 [phi:MakeNiceScreen::@14->cvlinexy#0] -- register_copy 
@@ -5648,7 +5648,7 @@ MakeNiceScreen: {
     // [79] phi from MakeNiceScreen::@14 to MakeNiceScreen::@15 [phi:MakeNiceScreen::@14->MakeNiceScreen::@15]
     // MakeNiceScreen::@15
     // MakeTeeLine (7)
-    // [80] call MakeTeeLine 
+    // [80] call MakeTeeLine
   /* Several divider lines */
     // [156] phi from MakeNiceScreen::@15 to MakeTeeLine [phi:MakeNiceScreen::@15->MakeTeeLine]
     // [156] phi MakeTeeLine::Y#2 = 7 [phi:MakeNiceScreen::@15->MakeTeeLine#0] -- vbuaa=vbuc1 
@@ -5657,7 +5657,7 @@ MakeNiceScreen: {
     // [81] phi from MakeNiceScreen::@15 to MakeNiceScreen::@16 [phi:MakeNiceScreen::@15->MakeNiceScreen::@16]
     // MakeNiceScreen::@16
     // MakeTeeLine (22)
-    // [82] call MakeTeeLine 
+    // [82] call MakeTeeLine
     // [156] phi from MakeNiceScreen::@16 to MakeTeeLine [phi:MakeNiceScreen::@16->MakeTeeLine]
     // [156] phi MakeTeeLine::Y#2 = $16 [phi:MakeNiceScreen::@16->MakeTeeLine#0] -- vbuaa=vbuc1 
     lda #$16
@@ -5694,7 +5694,7 @@ MakeNiceScreen: {
     lda.z T+1
     adc #0
     sta.z strlen.str+1
-    // [87] call strlen 
+    // [87] call strlen
     // [164] phi from MakeNiceScreen::@2 to strlen [phi:MakeNiceScreen::@2->strlen]
     jsr strlen
     // strlen (T->Msg)
@@ -5725,7 +5725,7 @@ MakeNiceScreen: {
     // [95] cputsxy::y#0 = *((byte*)MakeNiceScreen::T#3) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (T),y
-    // [96] call cputsxy 
+    // [96] call cputsxy
     jsr cputsxy
     // MakeNiceScreen::@18
     // ++T;
@@ -5979,7 +5979,7 @@ bgcolor: {
 cputcxy: {
     // gotoxy(x, y)
     // [127] gotoxy::y#1 = cputcxy::y#2
-    // [128] call gotoxy 
+    // [128] call gotoxy
     // [32] phi from cputcxy to gotoxy [phi:cputcxy->gotoxy]
     // [32] phi gotoxy::x#10 = 0 [phi:cputcxy->gotoxy#0] -- vbuxx=vbuc1 
     ldx #0
@@ -5989,7 +5989,7 @@ cputcxy: {
     // cputc(c)
     // [129] cputc::c#0 = cputcxy::c#2 -- vbuaa=vbuyy 
     tya
-    // [130] call cputc 
+    // [130] call cputc
     // [139] phi from cputcxy::@1 to cputc [phi:cputcxy::@1->cputc]
     // [139] phi cputc::c#8 = cputc::c#0 [phi:cputcxy::@1->cputc#0] -- register_copy 
     jsr cputc
@@ -6023,7 +6023,7 @@ chline: {
     // chline::@2
   __b2:
     // cputc(CH_HLINE)
-    // [137] call cputc 
+    // [137] call cputc
     // [139] phi from chline::@2 to cputc [phi:chline::@2->cputc]
     // [139] phi cputc::c#8 = CH_HLINE [phi:chline::@2->cputc#0] -- vbuaa=vbuc1 
     lda #CH_HLINE
@@ -6064,7 +6064,7 @@ cputc: {
     // [145] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
     // cputln()
-    // [146] call cputln 
+    // [146] call cputln
     jsr cputln
     // cputc::@return
   __breturn:
@@ -6075,7 +6075,7 @@ cputc: {
     // cputc::@1
   __b1:
     // cputln()
-    // [149] call cputln 
+    // [149] call cputln
     jsr cputln
     rts
 }
@@ -6086,7 +6086,7 @@ cputc: {
 cvlinexy: {
     // gotoxy(x,y)
     // [151] gotoxy::x#6 = cvlinexy::x#2
-    // [152] call gotoxy 
+    // [152] call gotoxy
     // [32] phi from cvlinexy to gotoxy [phi:cvlinexy->gotoxy]
     // [32] phi gotoxy::x#10 = gotoxy::x#6 [phi:cvlinexy->gotoxy#0] -- register_copy 
     // [32] phi gotoxy::y#7 = 1 [phi:cvlinexy->gotoxy#1] -- vbuaa=vbuc1 
@@ -6095,7 +6095,7 @@ cvlinexy: {
     // [153] phi from cvlinexy to cvlinexy::@1 [phi:cvlinexy->cvlinexy::@1]
     // cvlinexy::@1
     // cvline(length)
-    // [154] call cvline 
+    // [154] call cvline
     jsr cvline
     // cvlinexy::@return
     // }
@@ -6107,7 +6107,7 @@ cvlinexy: {
 MakeTeeLine: {
     // cputcxy (0, Y, CH_LTEE)
     // [157] cputcxy::y#0 = MakeTeeLine::Y#2
-    // [158] call cputcxy 
+    // [158] call cputcxy
     // [126] phi from MakeTeeLine to cputcxy [phi:MakeTeeLine->cputcxy]
     // [126] phi cputcxy::c#2 = CH_LTEE [phi:MakeTeeLine->cputcxy#0] -- vbuyy=vbuc1 
     ldy #CH_LTEE
@@ -6120,14 +6120,14 @@ MakeTeeLine: {
     sec
     sbc #2
     sta.z chline.length
-    // [160] call chline 
+    // [160] call chline
     // [132] phi from MakeTeeLine::@1 to chline [phi:MakeTeeLine::@1->chline]
     // [132] phi chline::length#4 = chline::length#0 [phi:MakeTeeLine::@1->chline#0] -- register_copy 
     jsr chline
     // [161] phi from MakeTeeLine::@1 to MakeTeeLine::@2 [phi:MakeTeeLine::@1->MakeTeeLine::@2]
     // MakeTeeLine::@2
     // cputc (CH_RTEE)
-    // [162] call cputc 
+    // [162] call cputc
     // [139] phi from MakeTeeLine::@2 to cputc [phi:MakeTeeLine::@2->cputc]
     // [139] phi cputc::c#8 = CH_RTEE [phi:MakeTeeLine::@2->cputc#0] -- vbuaa=vbuc1 
     lda #CH_RTEE
@@ -6190,7 +6190,7 @@ cputsxy: {
     // gotoxy(x, y)
     // [170] gotoxy::x#2 = cputsxy::x#0
     // [171] gotoxy::y#2 = cputsxy::y#0
-    // [172] call gotoxy 
+    // [172] call gotoxy
     // [32] phi from cputsxy to gotoxy [phi:cputsxy->gotoxy]
     // [32] phi gotoxy::x#10 = gotoxy::x#2 [phi:cputsxy->gotoxy#0] -- register_copy 
     // [32] phi gotoxy::y#7 = gotoxy::y#2 [phi:cputsxy->gotoxy#1] -- register_copy 
@@ -6198,7 +6198,7 @@ cputsxy: {
     // cputsxy::@1
     // cputs(s)
     // [173] cputs::s#1 = cputsxy::s#0
-    // [174] call cputs 
+    // [174] call cputs
     // [194] phi from cputsxy::@1 to cputs [phi:cputsxy::@1->cputs]
     jsr cputs
     // cputsxy::@return
@@ -6235,7 +6235,7 @@ cputln: {
     // [179] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // cscroll()
-    // [180] call cscroll 
+    // [180] call cscroll
     jsr cscroll
     // cputln::@return
     // }
@@ -6277,7 +6277,7 @@ cvline: {
     // cvline::@2
   __b2:
     // cputc(CH_VLINE)
-    // [188] call cputc 
+    // [188] call cputc
     // [139] phi from cvline::@2 to cputc [phi:cvline::@2->cputc]
     // [139] phi cputc::c#8 = CH_VLINE [phi:cvline::@2->cputc#0] -- vbuaa=vbuc1 
     lda #CH_VLINE
@@ -6291,7 +6291,7 @@ cvline: {
     ldx.z x
     // [191] gotoxy::y#5 = cvline::y#1 -- vbuaa=vbuz1 
     lda.z y
-    // [192] call gotoxy 
+    // [192] call gotoxy
     // [32] phi from cvline::@3 to gotoxy [phi:cvline::@3->gotoxy]
     // [32] phi gotoxy::x#10 = gotoxy::x#5 [phi:cvline::@3->gotoxy#0] -- register_copy 
     // [32] phi gotoxy::y#7 = gotoxy::y#5 [phi:cvline::@3->gotoxy#1] -- register_copy 
@@ -6334,7 +6334,7 @@ cputs: {
   __b2:
     // cputc(c)
     // [200] cputc::c#1 = cputs::c#1
-    // [201] call cputc 
+    // [201] call cputc
     // [139] phi from cputs::@2 to cputc [phi:cputs::@2->cputc]
     // [139] phi cputc::c#8 = cputc::c#1 [phi:cputs::@2->cputc#0] -- register_copy 
     jsr cputc
@@ -6356,7 +6356,7 @@ cscroll: {
     // [204] phi from cscroll::@1 to cscroll::@2 [phi:cscroll::@1->cscroll::@2]
     // cscroll::@2
     // gotoxy(0,0)
-    // [205] call gotoxy 
+    // [205] call gotoxy
     // [32] phi from cscroll::@2 to gotoxy [phi:cscroll::@2->gotoxy]
     // [32] phi gotoxy::x#10 = 0 [phi:cscroll::@2->gotoxy#0] -- vbuxx=vbuc1 
     ldx #0
@@ -6372,7 +6372,7 @@ cscroll: {
     // cscroll::@3
   __b3:
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    // [208] call memcpy 
+    // [208] call memcpy
     // [218] phi from cscroll::@3 to memcpy [phi:cscroll::@3->memcpy]
     // [218] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@3->memcpy#0] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN
@@ -6388,7 +6388,7 @@ cscroll: {
     // [209] phi from cscroll::@3 to cscroll::@4 [phi:cscroll::@3->cscroll::@4]
     // cscroll::@4
     // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    // [210] call memcpy 
+    // [210] call memcpy
     // [218] phi from cscroll::@4 to memcpy [phi:cscroll::@4->memcpy]
     // [218] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@4->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLORRAM
@@ -6404,7 +6404,7 @@ cscroll: {
     // [211] phi from cscroll::@4 to cscroll::@5 [phi:cscroll::@4->cscroll::@5]
     // cscroll::@5
     // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
-    // [212] call memset 
+    // [212] call memset
     // [228] phi from cscroll::@5 to memset [phi:cscroll::@5->memset]
     // [228] phi memset::c#4 = ' ' [phi:cscroll::@5->memset#0] -- vbuxx=vbuc1 
     ldx #' '
@@ -6418,7 +6418,7 @@ cscroll: {
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
     // [213] memset::c#1 = conio_textcolor -- vbuxx=vbuz1 
     ldx.z conio_textcolor
-    // [214] call memset 
+    // [214] call memset
     // [228] phi from cscroll::@6 to memset [phi:cscroll::@6->memset]
     // [228] phi memset::c#4 = memset::c#1 [phi:cscroll::@6->memset#0] -- register_copy 
     // [228] phi memset::str#3 = (void*)COLORRAM+(word)$19*$28-$28 [phi:cscroll::@6->memset#1] -- pvoz1=pvoc1 

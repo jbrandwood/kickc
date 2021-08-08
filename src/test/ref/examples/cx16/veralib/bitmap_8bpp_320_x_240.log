@@ -4,8 +4,8 @@ Fixing struct type size struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Setting inferred volatile on symbol affected by address-of kbhit::ch
-Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
-Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize &conio_screen_width &conio_screen_height 
+Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize(&conio_screen_width, &conio_screen_height)
+Setting inferred volatile on symbol affected by address-of conio_x16_init::$1 = call screensize(&conio_screen_width, &conio_screen_height)
 Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -13,23 +13,23 @@ Setting inferred volatile on symbol affected by address-of: load::address in asm
 Setting inferred volatile on symbol affected by address-of: load::verify in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Setting inferred volatile on symbol affected by address-of: load::status in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Setting inferred volatile on symbol affected by address-of: getin::ch in asm { jsr$ffe4 stach  }
-Inlined call call vera_display_set_scale_double 
-Inlined call call vera_display_set_scale_none 
-Inlined call call vera_vram_address0 vera_tile_area::mapbase VERA_INC_1 
-Inlined call screenlayer::$2 = call vera_layer_get_width conio_screen_layer 
-Inlined call screenlayer::$5 = call vera_layer_get_height conio_screen_layer 
-Inlined call bitmap_init::$0 = call vera_layer_get_color_depth __bitmap_layer 
-Inlined call call vera_vram_address0 bitmap_plot::plotter VERA_INC_0 
-Inlined call main::$4 = call textcolor WHITE 
-Inlined call main::$5 = call bgcolor BLACK 
-Inlined call call vera_layer_show 0 
-Inlined call main::$16 = call textcolor YELLOW 
-Inlined call main::$18 = call textcolor WHITE 
-Inlined call main::$19 = call bgcolor BLACK 
-Inlined call main::$24 = call textcolor YELLOW 
-Inlined call main::$27 = call textcolor WHITE 
-Inlined call main::$28 = call bgcolor BLUE 
-Inlined call call __init 
+Inlined call call vera_display_set_scale_double
+Inlined call call vera_display_set_scale_none
+Inlined call call vera_vram_address0(vera_tile_area::mapbase, VERA_INC_1)
+Inlined call screenlayer::$2 = call vera_layer_get_width(conio_screen_layer)
+Inlined call screenlayer::$5 = call vera_layer_get_height(conio_screen_layer)
+Inlined call bitmap_init::$0 = call vera_layer_get_color_depth(__bitmap_layer)
+Inlined call call vera_vram_address0(bitmap_plot::plotter, VERA_INC_0)
+Inlined call main::$4 = call textcolor(WHITE)
+Inlined call main::$5 = call bgcolor(BLACK)
+Inlined call call vera_layer_show(0)
+Inlined call main::$16 = call textcolor(YELLOW)
+Inlined call main::$18 = call textcolor(WHITE)
+Inlined call main::$19 = call bgcolor(BLACK)
+Inlined call main::$24 = call textcolor(YELLOW)
+Inlined call main::$27 = call textcolor(WHITE)
+Inlined call main::$28 = call bgcolor(BLUE)
+Inlined call call __init
 Eliminating unused variable with no statement clrscr::$3
 Eliminating unused variable with no statement gotoxy::$4
 Eliminating unused variable with no statement screensize::$0
@@ -142,7 +142,7 @@ clrscr: scope:[clrscr]  from main::@13 main::@16 main::@9
   CONIO_SCREEN_TEXT#11 = phi( main::@13/CONIO_SCREEN_TEXT#24, main::@16/CONIO_SCREEN_TEXT#25, main::@9/CONIO_SCREEN_TEXT#26 )
   clrscr::line_text#0 = CONIO_SCREEN_TEXT#11
   vera_layer_get_backcolor::layer#0 = conio_screen_layer
-  call vera_layer_get_backcolor 
+  call vera_layer_get_backcolor
   vera_layer_get_backcolor::return#0 = vera_layer_get_backcolor::return#2
   to:clrscr::@7
 clrscr::@7: scope:[clrscr]  from clrscr
@@ -152,7 +152,7 @@ clrscr::@7: scope:[clrscr]  from clrscr
   clrscr::$0 = vera_layer_get_backcolor::return#3
   clrscr::$1 = clrscr::$0 << 4
   vera_layer_get_textcolor::layer#0 = conio_screen_layer
-  call vera_layer_get_textcolor 
+  call vera_layer_get_textcolor
   vera_layer_get_textcolor::return#0 = vera_layer_get_textcolor::return#2
   to:clrscr::@8
 clrscr::@8: scope:[clrscr]  from clrscr::@7
@@ -281,7 +281,7 @@ cputc: scope:[cputc]  from cputs::@2
   cputc::c#3 = phi( cputs::@2/cputc::c#0 )
   CONIO_SCREEN_TEXT#27 = phi( cputs::@2/CONIO_SCREEN_TEXT#37 )
   vera_layer_get_color::layer#0 = conio_screen_layer
-  call vera_layer_get_color 
+  call vera_layer_get_color
   vera_layer_get_color::return#0 = vera_layer_get_color::return#3
   to:cputc::@7
 cputc::@7: scope:[cputc]  from cputc
@@ -300,7 +300,7 @@ cputc::@7: scope:[cputc]  from cputc
   to:cputc::@2
 cputc::@1: scope:[cputc]  from cputc::@7
   CONIO_SCREEN_TEXT#95 = phi( cputc::@7/CONIO_SCREEN_TEXT#12 )
-  call cputln 
+  call cputln
   to:cputc::@8
 cputc::@8: scope:[cputc]  from cputc::@1
   to:cputc::@return
@@ -339,13 +339,13 @@ cputc::@3: scope:[cputc]  from cputc::@2
   to:cputc::@4
 cputc::@4: scope:[cputc]  from cputc::@3
   CONIO_SCREEN_TEXT#96 = phi( cputc::@3/CONIO_SCREEN_TEXT#102 )
-  call cputln 
+  call cputln
   to:cputc::@9
 cputc::@9: scope:[cputc]  from cputc::@4
   to:cputc::@return
 cputc::@6: scope:[cputc]  from cputc::@5
   CONIO_SCREEN_TEXT#97 = phi( cputc::@5/CONIO_SCREEN_TEXT#103 )
-  call cputln 
+  call cputln
   to:cputc::@10
 cputc::@10: scope:[cputc]  from cputc::@6
   to:cputc::@return
@@ -363,7 +363,7 @@ cputln: scope:[cputln]  from cputc::@1 cputc::@4 cputc::@6
   conio_line_text[cputln::$3] = cputln::temp#1
   conio_cursor_x[conio_screen_layer] = 0
   conio_cursor_y[conio_screen_layer] = ++ conio_cursor_y[conio_screen_layer]
-  call cscroll 
+  call cscroll
   to:cputln::@1
 cputln::@1: scope:[cputln]  from cputln
   to:cputln::@return
@@ -394,7 +394,7 @@ cputs::@2: scope:[cputs]  from cputs::@1
   CONIO_SCREEN_TEXT#37 = phi( cputs::@1/CONIO_SCREEN_TEXT#48 )
   cputs::c#2 = phi( cputs::@1/cputs::c#1 )
   cputc::c#0 = cputs::c#2
-  call cputc 
+  call cputc
   to:cputs::@3
 cputs::@3: scope:[cputs]  from cputs::@2
   CONIO_SCREEN_BANK#63 = phi( cputs::@2/CONIO_SCREEN_BANK#42 )
@@ -955,7 +955,7 @@ vera_layer_mode_tile::@24: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   vera_layer_mode_tile::layer#6 = phi( vera_layer_mode_tile::@19/vera_layer_mode_tile::layer#14, vera_layer_mode_tile::@20/vera_layer_mode_tile::layer#15, vera_layer_mode_tile::@21/vera_layer_mode_tile::layer#16, vera_layer_mode_tile::@22/vera_layer_mode_tile::layer#17, vera_layer_mode_tile::@23/vera_layer_mode_tile::layer#18 )
   vera_layer_set_config::layer#0 = vera_layer_mode_tile::layer#6
   vera_layer_set_config::config#0 = vera_layer_mode_tile::config#25
-  call vera_layer_set_config 
+  call vera_layer_set_config
   to:vera_layer_mode_tile::@33
 vera_layer_mode_tile::@33: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@24
   vera_layer_mode_tile::tileheight#8 = phi( vera_layer_mode_tile::@24/vera_layer_mode_tile::tileheight#9 )
@@ -975,7 +975,7 @@ vera_layer_mode_tile::@33: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   vera_layer_mode_tile::mapbase#0 = byte1  vera_layer_mode_tile::mapbase_address#0
   vera_layer_set_mapbase::layer#0 = vera_layer_mode_tile::layer#7
   vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
-  call vera_layer_set_mapbase 
+  call vera_layer_set_mapbase
   to:vera_layer_mode_tile::@34
 vera_layer_mode_tile::@34: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@33
   vera_layer_mode_tile::tileheight#7 = phi( vera_layer_mode_tile::@33/vera_layer_mode_tile::tileheight#8 )
@@ -1041,7 +1041,7 @@ vera_layer_mode_tile::@32: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   vera_layer_mode_tile::layer#9 = phi( vera_layer_mode_tile::@29/vera_layer_mode_tile::layer#19, vera_layer_mode_tile::@30/vera_layer_mode_tile::layer#20, vera_layer_mode_tile::@31/vera_layer_mode_tile::layer#21 )
   vera_layer_set_tilebase::layer#0 = vera_layer_mode_tile::layer#9
   vera_layer_set_tilebase::tilebase#0 = vera_layer_mode_tile::tilebase#10
-  call vera_layer_set_tilebase 
+  call vera_layer_set_tilebase
   to:vera_layer_mode_tile::@35
 vera_layer_mode_tile::@35: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@32
   to:vera_layer_mode_tile::@return
@@ -1067,7 +1067,7 @@ vera_layer_mode_text: scope:[vera_layer_mode_text]  from conio_x16_init
   vera_layer_mode_tile::tilewidth#0 = vera_layer_mode_text::tilewidth#1
   vera_layer_mode_tile::tileheight#0 = vera_layer_mode_text::tileheight#1
   vera_layer_mode_tile::color_depth#0 = 1
-  call vera_layer_mode_tile 
+  call vera_layer_mode_tile
   to:vera_layer_mode_text::@4
 vera_layer_mode_text::@4: scope:[vera_layer_mode_text]  from vera_layer_mode_text
   vera_layer_mode_text::layer#4 = phi( vera_layer_mode_text/vera_layer_mode_text::layer#1 )
@@ -1078,7 +1078,7 @@ vera_layer_mode_text::@2: scope:[vera_layer_mode_text]  from vera_layer_mode_tex
   vera_layer_mode_text::layer#2 = phi( vera_layer_mode_text::@4/vera_layer_mode_text::layer#4 )
   vera_layer_set_text_color_mode::layer#0 = vera_layer_mode_text::layer#2
   vera_layer_set_text_color_mode::color_mode#0 = VERA_LAYER_CONFIG_16C
-  call vera_layer_set_text_color_mode 
+  call vera_layer_set_text_color_mode
   to:vera_layer_mode_text::@5
 vera_layer_mode_text::@5: scope:[vera_layer_mode_text]  from vera_layer_mode_text::@2
   to:vera_layer_mode_text::@return
@@ -1091,7 +1091,7 @@ vera_layer_mode_text::@3: scope:[vera_layer_mode_text]  from vera_layer_mode_tex
   vera_layer_mode_text::layer#3 = phi( vera_layer_mode_text::@1/vera_layer_mode_text::layer#5 )
   vera_layer_set_text_color_mode::layer#1 = vera_layer_mode_text::layer#3
   vera_layer_set_text_color_mode::color_mode#1 = VERA_LAYER_CONFIG_256C
-  call vera_layer_set_text_color_mode 
+  call vera_layer_set_text_color_mode
   to:vera_layer_mode_text::@6
 vera_layer_mode_text::@6: scope:[vera_layer_mode_text]  from vera_layer_mode_text::@3
   to:vera_layer_mode_text::@return
@@ -1219,14 +1219,14 @@ vera_layer_mode_bitmap::@10: scope:[vera_layer_mode_bitmap]  from vera_layer_mod
   vera_layer_mode_bitmap::layer#2 = phi( vera_layer_mode_bitmap::@11/vera_layer_mode_bitmap::layer#9, vera_layer_mode_bitmap::@12/vera_layer_mode_bitmap::layer#10, vera_layer_mode_bitmap::@9/vera_layer_mode_bitmap::layer#11 )
   vera_layer_set_config::layer#1 = vera_layer_mode_bitmap::layer#2
   vera_layer_set_config::config#1 = vera_layer_mode_bitmap::config#11
-  call vera_layer_set_config 
+  call vera_layer_set_config
   to:vera_layer_mode_bitmap::@13
 vera_layer_mode_bitmap::@13: scope:[vera_layer_mode_bitmap]  from vera_layer_mode_bitmap::@10
   vera_layer_mode_bitmap::tilebase#6 = phi( vera_layer_mode_bitmap::@10/vera_layer_mode_bitmap::tilebase#9 )
   vera_layer_mode_bitmap::layer#3 = phi( vera_layer_mode_bitmap::@10/vera_layer_mode_bitmap::layer#2 )
   vera_layer_set_tilebase::layer#1 = vera_layer_mode_bitmap::layer#3
   vera_layer_set_tilebase::tilebase#1 = vera_layer_mode_bitmap::tilebase#6
-  call vera_layer_set_tilebase 
+  call vera_layer_set_tilebase
   to:vera_layer_mode_bitmap::@14
 vera_layer_mode_bitmap::@14: scope:[vera_layer_mode_bitmap]  from vera_layer_mode_bitmap::@13
   to:vera_layer_mode_bitmap::@return
@@ -1247,7 +1247,7 @@ conio_x16_init: scope:[conio_x16_init]  from __start::__init1
   vera_layer_mode_text::tilewidth#0 = 8
   vera_layer_mode_text::tileheight#0 = 8
   vera_layer_mode_text::color_mode#0 = $10
-  call vera_layer_mode_text 
+  call vera_layer_mode_text
   to:conio_x16_init::@3
 conio_x16_init::@3: scope:[conio_x16_init]  from conio_x16_init
   conio_x16_init::line#9 = phi( conio_x16_init/conio_x16_init::line#0 )
@@ -1255,14 +1255,14 @@ conio_x16_init::@3: scope:[conio_x16_init]  from conio_x16_init
   CONIO_SCREEN_BANK#34 = phi( conio_x16_init/CONIO_SCREEN_BANK#43 )
   screensize::x#0 = &conio_screen_width
   screensize::y#0 = &conio_screen_height
-  call screensize 
+  call screensize
   to:conio_x16_init::@4
 conio_x16_init::@4: scope:[conio_x16_init]  from conio_x16_init::@3
   conio_x16_init::line#8 = phi( conio_x16_init::@3/conio_x16_init::line#9 )
   CONIO_SCREEN_TEXT#28 = phi( conio_x16_init::@3/CONIO_SCREEN_TEXT#38 )
   CONIO_SCREEN_BANK#24 = phi( conio_x16_init::@3/CONIO_SCREEN_BANK#34 )
   screenlayer::layer#0 = 1
-  call screenlayer 
+  call screenlayer
   to:conio_x16_init::@5
 conio_x16_init::@5: scope:[conio_x16_init]  from conio_x16_init::@4
   conio_x16_init::line#7 = phi( conio_x16_init::@4/conio_x16_init::line#8 )
@@ -1272,7 +1272,7 @@ conio_x16_init::@5: scope:[conio_x16_init]  from conio_x16_init::@4
   CONIO_SCREEN_TEXT#0 = CONIO_SCREEN_TEXT#13
   vera_layer_set_textcolor::layer#0 = 1
   vera_layer_set_textcolor::color#0 = WHITE
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#2 = vera_layer_set_textcolor::return#1
   to:conio_x16_init::@6
 conio_x16_init::@6: scope:[conio_x16_init]  from conio_x16_init::@5
@@ -1281,7 +1281,7 @@ conio_x16_init::@6: scope:[conio_x16_init]  from conio_x16_init::@5
   conio_x16_init::line#6 = phi( conio_x16_init::@5/conio_x16_init::line#7 )
   vera_layer_set_backcolor::layer#0 = 1
   vera_layer_set_backcolor::color#0 = BLUE
-  call vera_layer_set_backcolor 
+  call vera_layer_set_backcolor
   vera_layer_set_backcolor::return#2 = vera_layer_set_backcolor::return#1
   to:conio_x16_init::@7
 conio_x16_init::@7: scope:[conio_x16_init]  from conio_x16_init::@6
@@ -1290,7 +1290,7 @@ conio_x16_init::@7: scope:[conio_x16_init]  from conio_x16_init::@6
   conio_x16_init::line#5 = phi( conio_x16_init::@6/conio_x16_init::line#6 )
   vera_layer_set_mapbase::layer#1 = 0
   vera_layer_set_mapbase::mapbase#1 = $20
-  call vera_layer_set_mapbase 
+  call vera_layer_set_mapbase
   to:conio_x16_init::@8
 conio_x16_init::@8: scope:[conio_x16_init]  from conio_x16_init::@7
   CONIO_SCREEN_TEXT#61 = phi( conio_x16_init::@7/CONIO_SCREEN_TEXT#78 )
@@ -1298,7 +1298,7 @@ conio_x16_init::@8: scope:[conio_x16_init]  from conio_x16_init::@7
   conio_x16_init::line#4 = phi( conio_x16_init::@7/conio_x16_init::line#5 )
   vera_layer_set_mapbase::layer#2 = 1
   vera_layer_set_mapbase::mapbase#2 = 0
-  call vera_layer_set_mapbase 
+  call vera_layer_set_mapbase
   to:conio_x16_init::@9
 conio_x16_init::@9: scope:[conio_x16_init]  from conio_x16_init::@8
   CONIO_SCREEN_TEXT#51 = phi( conio_x16_init::@8/CONIO_SCREEN_TEXT#61 )
@@ -1314,7 +1314,7 @@ conio_x16_init::@1: scope:[conio_x16_init]  from conio_x16_init::@2 conio_x16_in
   conio_x16_init::line#3 = phi( conio_x16_init::@2/conio_x16_init::line#1, conio_x16_init::@9/conio_x16_init::line#2 )
   gotoxy::x#1 = 0
   gotoxy::y#1 = conio_x16_init::line#3
-  call gotoxy 
+  call gotoxy
   to:conio_x16_init::@10
 conio_x16_init::@10: scope:[conio_x16_init]  from conio_x16_init::@1
   CONIO_SCREEN_TEXT#29 = phi( conio_x16_init::@1/CONIO_SCREEN_TEXT#39 )
@@ -1346,7 +1346,7 @@ clearline: scope:[clearline]  from insertup::@3
   *VERA_ADDRX_M = clearline::$2
   *VERA_ADDRX_H = VERA_INC_1
   vera_layer_get_color::layer#1 = conio_screen_layer
-  call vera_layer_get_color 
+  call vera_layer_get_color
   vera_layer_get_color::return#4 = vera_layer_get_color::return#3
   to:clearline::@4
 clearline::@4: scope:[clearline]  from clearline
@@ -1405,7 +1405,7 @@ insertup::@2: scope:[insertup]  from insertup::@1
   memcpy_in_vram::src#0 = (void*)insertup::$6
   memcpy_in_vram::src_increment#0 = VERA_INC_1
   memcpy_in_vram::num#0 = insertup::width#1
-  call memcpy_in_vram 
+  call memcpy_in_vram
   to:insertup::@4
 insertup::@4: scope:[insertup]  from insertup::@2
   insertup::width#3 = phi( insertup::@2/insertup::width#1 )
@@ -1416,7 +1416,7 @@ insertup::@4: scope:[insertup]  from insertup::@2
   to:insertup::@1
 insertup::@3: scope:[insertup]  from insertup::@1
   CONIO_SCREEN_TEXT#30 = phi( insertup::@1/CONIO_SCREEN_TEXT#31 )
-  call clearline 
+  call clearline
   to:insertup::@5
 insertup::@5: scope:[insertup]  from insertup::@3
   to:insertup::@return
@@ -1438,13 +1438,13 @@ cscroll::@1: scope:[cscroll]  from cscroll
   to:cscroll::@2
 cscroll::@4: scope:[cscroll]  from cscroll::@1
   CONIO_SCREEN_TEXT#52 = phi( cscroll::@1/CONIO_SCREEN_TEXT#62 )
-  call insertup 
+  call insertup
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
   cscroll::$5 = conio_screen_height - 1
   gotoxy::x#2 = 0
   gotoxy::y#2 = cscroll::$5
-  call gotoxy 
+  call gotoxy
   to:cscroll::@6
 cscroll::@6: scope:[cscroll]  from cscroll::@5
   to:cscroll::@return
@@ -1464,7 +1464,7 @@ screenlayer: scope:[screenlayer]  from conio_x16_init::@4 main::@19 main::@6
   screenlayer::layer#3 = phi( conio_x16_init::@4/screenlayer::layer#0, main::@19/screenlayer::layer#1, main::@6/screenlayer::layer#2 )
   conio_screen_layer = screenlayer::layer#3
   vera_layer_get_mapbase_bank::layer#0 = conio_screen_layer
-  call vera_layer_get_mapbase_bank 
+  call vera_layer_get_mapbase_bank
   vera_layer_get_mapbase_bank::return#2 = vera_layer_get_mapbase_bank::return#1
   to:screenlayer::@3
 screenlayer::@3: scope:[screenlayer]  from screenlayer
@@ -1472,7 +1472,7 @@ screenlayer::@3: scope:[screenlayer]  from screenlayer
   screenlayer::$0 = vera_layer_get_mapbase_bank::return#4
   CONIO_SCREEN_BANK#2 = screenlayer::$0
   vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer
-  call vera_layer_get_mapbase_offset 
+  call vera_layer_get_mapbase_offset
   vera_layer_get_mapbase_offset::return#2 = vera_layer_get_mapbase_offset::return#1
   to:screenlayer::@4
 screenlayer::@4: scope:[screenlayer]  from screenlayer::@3
@@ -1506,7 +1506,7 @@ screenlayer::@1: scope:[screenlayer]  from screenlayer::vera_layer_get_width1_@r
   screenlayer::$2 = screenlayer::vera_layer_get_width1_return#3
   conio_width = screenlayer::$2
   vera_layer_get_rowshift::layer#0 = conio_screen_layer
-  call vera_layer_get_rowshift 
+  call vera_layer_get_rowshift
   vera_layer_get_rowshift::return#2 = vera_layer_get_rowshift::return#1
   to:screenlayer::@5
 screenlayer::@5: scope:[screenlayer]  from screenlayer::@1
@@ -1516,7 +1516,7 @@ screenlayer::@5: scope:[screenlayer]  from screenlayer::@1
   screenlayer::$3 = vera_layer_get_rowshift::return#4
   conio_rowshift = screenlayer::$3
   vera_layer_get_rowskip::layer#0 = conio_screen_layer
-  call vera_layer_get_rowskip 
+  call vera_layer_get_rowskip
   vera_layer_get_rowskip::return#2 = vera_layer_get_rowskip::return#1
   to:screenlayer::@6
 screenlayer::@6: scope:[screenlayer]  from screenlayer::@5
@@ -1601,14 +1601,14 @@ bitmap_init::@16: scope:[bitmap_init]  from bitmap_init::vera_layer_get_color_de
   bitmap_init::vera_layer_get_color_depth1_return#3 = phi( bitmap_init::vera_layer_get_color_depth1_@return/bitmap_init::vera_layer_get_color_depth1_return#1 )
   bitmap_init::$0 = bitmap_init::vera_layer_get_color_depth1_return#3
   __bitmap_color_depth = bitmap_init::$0
-  call vera_display_get_hscale 
+  call vera_display_get_hscale
   vera_display_get_hscale::return#2 = vera_display_get_hscale::return#1
   to:bitmap_init::@17
 bitmap_init::@17: scope:[bitmap_init]  from bitmap_init::@16
   vera_display_get_hscale::return#4 = phi( bitmap_init::@16/vera_display_get_hscale::return#2 )
   bitmap_init::$1 = vera_display_get_hscale::return#4
   __bitmap_hscale = bitmap_init::$1
-  call vera_display_get_vscale 
+  call vera_display_get_vscale
   vera_display_get_vscale::return#2 = vera_display_get_vscale::return#1
   to:bitmap_init::@18
 bitmap_init::@18: scope:[bitmap_init]  from bitmap_init::@17
@@ -1764,7 +1764,7 @@ bitmap_clear: scope:[bitmap_clear]  from main::@29
   bitmap_clear::hdelta#0 = hdeltas[bitmap_clear::$7]
   mul16u::a#0 = bitmap_clear::hdelta#0
   mul16u::b#0 = bitmap_clear::vdelta#0
-  call mul16u 
+  call mul16u
   mul16u::return#0 = mul16u::return#2
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
@@ -1777,7 +1777,7 @@ bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
   memset_vram::vdest#0 = bitmap_clear::vdest#0
   memset_vram::data#0 = 0
   memset_vram::num#0 = bitmap_clear::count#0
-  call memset_vram 
+  call memset_vram
   to:bitmap_clear::@2
 bitmap_clear::@2: scope:[bitmap_clear]  from bitmap_clear::@1
   to:bitmap_clear::@return
@@ -1918,7 +1918,7 @@ bitmap_line::@8: scope:[bitmap_line]  from bitmap_line::@3
   bitmap_line_xdyi::xd#0 = bitmap_line::xd#5
   bitmap_line_xdyi::yd#0 = bitmap_line::yd#5
   bitmap_line_xdyi::c#0 = bitmap_line::c#2
-  call bitmap_line_xdyi 
+  call bitmap_line_xdyi
   to:bitmap_line::@15
 bitmap_line::@15: scope:[bitmap_line]  from bitmap_line::@8
   to:bitmap_line::@return
@@ -1935,7 +1935,7 @@ bitmap_line::@4: scope:[bitmap_line]  from bitmap_line::@3
   bitmap_line_ydxi::yd#0 = bitmap_line::yd#6
   bitmap_line_ydxi::xd#0 = bitmap_line::xd#6
   bitmap_line_ydxi::c#0 = bitmap_line::c#3
-  call bitmap_line_ydxi 
+  call bitmap_line_ydxi
   to:bitmap_line::@16
 bitmap_line::@16: scope:[bitmap_line]  from bitmap_line::@4
   to:bitmap_line::@return
@@ -1952,7 +1952,7 @@ bitmap_line::@9: scope:[bitmap_line]  from bitmap_line::@7
   bitmap_line_xdyd::xd#0 = bitmap_line::xd#7
   bitmap_line_xdyd::yd#0 = bitmap_line::yd#7
   bitmap_line_xdyd::c#0 = bitmap_line::c#4
-  call bitmap_line_xdyd 
+  call bitmap_line_xdyd
   to:bitmap_line::@17
 bitmap_line::@17: scope:[bitmap_line]  from bitmap_line::@9
   to:bitmap_line::@return
@@ -1969,7 +1969,7 @@ bitmap_line::@10: scope:[bitmap_line]  from bitmap_line::@7
   bitmap_line_ydxd::yd#0 = bitmap_line::yd#8
   bitmap_line_ydxd::xd#0 = bitmap_line::xd#8
   bitmap_line_ydxd::c#0 = bitmap_line::c#5
-  call bitmap_line_ydxd 
+  call bitmap_line_ydxd
   to:bitmap_line::@18
 bitmap_line::@18: scope:[bitmap_line]  from bitmap_line::@10
   to:bitmap_line::@return
@@ -2010,7 +2010,7 @@ bitmap_line::@12: scope:[bitmap_line]  from bitmap_line::@5
   bitmap_line_xdyd::xd#1 = bitmap_line::xd#11
   bitmap_line_xdyd::yd#1 = bitmap_line::yd#9
   bitmap_line_xdyd::c#1 = bitmap_line::c#6
-  call bitmap_line_xdyd 
+  call bitmap_line_xdyd
   to:bitmap_line::@19
 bitmap_line::@19: scope:[bitmap_line]  from bitmap_line::@12
   to:bitmap_line::@return
@@ -2027,7 +2027,7 @@ bitmap_line::@6: scope:[bitmap_line]  from bitmap_line::@5
   bitmap_line_ydxd::yd#1 = bitmap_line::yd#10
   bitmap_line_ydxd::xd#1 = bitmap_line::xd#12
   bitmap_line_ydxd::c#1 = bitmap_line::c#7
-  call bitmap_line_ydxd 
+  call bitmap_line_ydxd
   to:bitmap_line::@20
 bitmap_line::@20: scope:[bitmap_line]  from bitmap_line::@6
   to:bitmap_line::@return
@@ -2044,7 +2044,7 @@ bitmap_line::@13: scope:[bitmap_line]  from bitmap_line::@11
   bitmap_line_xdyi::xd#1 = bitmap_line::xd#13
   bitmap_line_xdyi::yd#1 = bitmap_line::yd#11
   bitmap_line_xdyi::c#1 = bitmap_line::c#8
-  call bitmap_line_xdyi 
+  call bitmap_line_xdyi
   to:bitmap_line::@21
 bitmap_line::@21: scope:[bitmap_line]  from bitmap_line::@13
   to:bitmap_line::@return
@@ -2061,7 +2061,7 @@ bitmap_line::@14: scope:[bitmap_line]  from bitmap_line::@11
   bitmap_line_ydxi::yd#1 = bitmap_line::yd#12
   bitmap_line_ydxi::xd#1 = bitmap_line::xd#14
   bitmap_line_ydxi::c#1 = bitmap_line::c#9
-  call bitmap_line_ydxi 
+  call bitmap_line_ydxi
   to:bitmap_line::@22
 bitmap_line::@22: scope:[bitmap_line]  from bitmap_line::@14
   to:bitmap_line::@return
@@ -2139,7 +2139,7 @@ bitmap_line_xdyi::@1: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi bitmap_lin
   bitmap_plot::x#0 = bitmap_line_xdyi::x#3
   bitmap_plot::y#0 = bitmap_line_xdyi::y#3
   bitmap_plot::c#1 = bitmap_line_xdyi::c#2
-  call bitmap_plot 
+  call bitmap_plot
   to:bitmap_line_xdyi::@4
 bitmap_line_xdyi::@4: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi::@1
   bitmap_line_xdyi::c#6 = phi( bitmap_line_xdyi::@1/bitmap_line_xdyi::c#2 )
@@ -2205,7 +2205,7 @@ bitmap_line_xdyd::@1: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd bitmap_lin
   bitmap_plot::x#1 = bitmap_line_xdyd::x#3
   bitmap_plot::y#1 = bitmap_line_xdyd::y#3
   bitmap_plot::c#2 = bitmap_line_xdyd::c#2
-  call bitmap_plot 
+  call bitmap_plot
   to:bitmap_line_xdyd::@4
 bitmap_line_xdyd::@4: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd::@1
   bitmap_line_xdyd::c#6 = phi( bitmap_line_xdyd::@1/bitmap_line_xdyd::c#2 )
@@ -2271,7 +2271,7 @@ bitmap_line_ydxi::@1: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi bitmap_lin
   bitmap_plot::x#2 = bitmap_line_ydxi::x#3
   bitmap_plot::y#2 = bitmap_line_ydxi::y#3
   bitmap_plot::c#3 = bitmap_line_ydxi::c#2
-  call bitmap_plot 
+  call bitmap_plot
   to:bitmap_line_ydxi::@4
 bitmap_line_ydxi::@4: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi::@1
   bitmap_line_ydxi::c#6 = phi( bitmap_line_ydxi::@1/bitmap_line_ydxi::c#2 )
@@ -2337,7 +2337,7 @@ bitmap_line_ydxd::@1: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd bitmap_lin
   bitmap_plot::x#3 = bitmap_line_ydxd::x#3
   bitmap_plot::y#3 = bitmap_line_ydxd::y#4
   bitmap_plot::c#4 = bitmap_line_ydxd::c#2
-  call bitmap_plot 
+  call bitmap_plot
   to:bitmap_line_ydxd::@4
 bitmap_line_ydxd::@4: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@1
   bitmap_line_ydxd::c#6 = phi( bitmap_line_ydxd::@1/bitmap_line_ydxd::c#2 )
@@ -2471,7 +2471,7 @@ modr16u: scope:[modr16u]  from main::@35 main::@37 main::@39 main::@41
   divr16u::dividend#1 = modr16u::dividend#4
   divr16u::divisor#0 = modr16u::divisor#4
   divr16u::rem#3 = modr16u::rem#4
-  call divr16u 
+  call divr16u
   divr16u::return#2 = divr16u::return#1
   to:modr16u::@1
 modr16u::@1: scope:[modr16u]  from modr16u
@@ -2500,7 +2500,7 @@ main: scope:[main]  from __start::@1
   memcpy_in_vram::src#1 = (void*)(byte*)$f800
   memcpy_in_vram::src_increment#1 = VERA_INC_1
   memcpy_in_vram::num#1 = $100*8
-  call memcpy_in_vram 
+  call memcpy_in_vram
   to:main::@17
 main::@17: scope:[main]  from main
   rem16u#87 = phi( main/rem16u#88 )
@@ -2515,7 +2515,7 @@ main::@17: scope:[main]  from main
   vera_layer_mode_tile::tilewidth#1 = 8
   vera_layer_mode_tile::tileheight#1 = 8
   vera_layer_mode_tile::color_depth#1 = 1
-  call vera_layer_mode_tile 
+  call vera_layer_mode_tile
   to:main::@18
 main::@18: scope:[main]  from main::@17
   rem16u#86 = phi( main::@17/rem16u#87 )
@@ -2526,7 +2526,7 @@ main::@18: scope:[main]  from main::@17
   vera_layer_mode_bitmap::bitmap_address#1 = (dword)0
   vera_layer_mode_bitmap::mapwidth#0 = $140
   vera_layer_mode_bitmap::color_depth#0 = 8
-  call vera_layer_mode_bitmap 
+  call vera_layer_mode_bitmap
   to:main::@19
 main::@19: scope:[main]  from main::@18
   rem16u#85 = phi( main::@18/rem16u#86 )
@@ -2534,7 +2534,7 @@ main::@19: scope:[main]  from main::@18
   CONIO_SCREEN_TEXT#33 = phi( main::@18/CONIO_SCREEN_TEXT#43 )
   CONIO_SCREEN_BANK#27 = phi( main::@18/CONIO_SCREEN_BANK#37 )
   screenlayer::layer#1 = 1
-  call screenlayer 
+  call screenlayer
   to:main::@20
 main::@20: scope:[main]  from main::@19
   rem16u#83 = phi( main::@19/rem16u#85 )
@@ -2553,7 +2553,7 @@ main::textcolor1: scope:[main]  from main::@20
   main::textcolor1_color#1 = phi( main::@20/main::textcolor1_color#0 )
   vera_layer_set_textcolor::layer#1 = conio_screen_layer
   vera_layer_set_textcolor::color#1 = main::textcolor1_color#1
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#3 = vera_layer_set_textcolor::return#1
   to:main::@21
 main::@21: scope:[main]  from main::textcolor1
@@ -2577,7 +2577,7 @@ main::bgcolor1: scope:[main]  from main::@8
   main::bgcolor1_color#1 = phi( main::@8/main::bgcolor1_color#0 )
   vera_layer_set_backcolor::layer#1 = conio_screen_layer
   vera_layer_set_backcolor::color#1 = main::bgcolor1_color#1
-  call vera_layer_set_backcolor 
+  call vera_layer_set_backcolor
   vera_layer_set_backcolor::return#3 = vera_layer_set_backcolor::return#1
   to:main::@22
 main::@22: scope:[main]  from main::bgcolor1
@@ -2591,7 +2591,7 @@ main::@9: scope:[main]  from main::@22
   rand_state#69 = phi( main::@22/rand_state#71 )
   CONIO_SCREEN_BANK#61 = phi( main::@22/CONIO_SCREEN_BANK#77 )
   CONIO_SCREEN_TEXT#26 = phi( main::@22/CONIO_SCREEN_TEXT#44 )
-  call clrscr 
+  call clrscr
   to:main::@23
 main::@23: scope:[main]  from main::@9
   rem16u#69 = phi( main::@9/rem16u#71 )
@@ -2600,7 +2600,7 @@ main::@23: scope:[main]  from main::@9
   CONIO_SCREEN_TEXT#89 = phi( main::@9/CONIO_SCREEN_TEXT#26 )
   gotoxy::x#3 = 0
   gotoxy::y#3 = $19
-  call gotoxy 
+  call gotoxy
   to:main::@24
 main::@24: scope:[main]  from main::@23
   rem16u#67 = phi( main::@23/rem16u#69 )
@@ -2608,7 +2608,7 @@ main::@24: scope:[main]  from main::@23
   CONIO_SCREEN_BANK#70 = phi( main::@23/CONIO_SCREEN_BANK#83 )
   CONIO_SCREEN_TEXT#73 = phi( main::@23/CONIO_SCREEN_TEXT#89 )
   cputs::s#1 = main::s
-  call cputs 
+  call cputs
   to:main::@25
 main::@25: scope:[main]  from main::@24
   rem16u#65 = phi( main::@24/rem16u#67 )
@@ -2616,7 +2616,7 @@ main::@25: scope:[main]  from main::@24
   CONIO_SCREEN_BANK#71 = phi( main::@24/CONIO_SCREEN_BANK#70 )
   CONIO_SCREEN_TEXT#74 = phi( main::@24/CONIO_SCREEN_TEXT#73 )
   cputs::s#2 = main::s1
-  call cputs 
+  call cputs
   to:main::@26
 main::@26: scope:[main]  from main::@25
   rem16u#63 = phi( main::@25/rem16u#65 )
@@ -2624,7 +2624,7 @@ main::@26: scope:[main]  from main::@25
   CONIO_SCREEN_BANK#72 = phi( main::@25/CONIO_SCREEN_BANK#71 )
   CONIO_SCREEN_TEXT#75 = phi( main::@25/CONIO_SCREEN_TEXT#74 )
   cputs::s#3 = main::s2
-  call cputs 
+  call cputs
   to:main::@27
 main::@27: scope:[main]  from main::@26
   rem16u#61 = phi( main::@26/rem16u#63 )
@@ -2632,7 +2632,7 @@ main::@27: scope:[main]  from main::@26
   CONIO_SCREEN_BANK#73 = phi( main::@26/CONIO_SCREEN_BANK#72 )
   CONIO_SCREEN_TEXT#76 = phi( main::@26/CONIO_SCREEN_TEXT#75 )
   cputs::s#4 = main::s3
-  call cputs 
+  call cputs
   to:main::@28
 main::@28: scope:[main]  from main::@27
   rem16u#59 = phi( main::@27/rem16u#61 )
@@ -2656,14 +2656,14 @@ main::@10: scope:[main]  from main::vera_layer_show1
   CONIO_SCREEN_TEXT#115 = phi( main::vera_layer_show1/CONIO_SCREEN_TEXT#117 )
   bitmap_init::layer#0 = 0
   bitmap_init::address#0 = 0
-  call bitmap_init 
+  call bitmap_init
   to:main::@29
 main::@29: scope:[main]  from main::@10
   rem16u#50 = phi( main::@10/rem16u#52 )
   CONIO_SCREEN_BANK#102 = phi( main::@10/CONIO_SCREEN_BANK#104 )
   rand_state#48 = phi( main::@10/rand_state#50 )
   CONIO_SCREEN_TEXT#112 = phi( main::@10/CONIO_SCREEN_TEXT#115 )
-  call bitmap_clear 
+  call bitmap_clear
   to:main::@30
 main::@30: scope:[main]  from main::@29
   rem16u#48 = phi( main::@29/rem16u#50 )
@@ -2672,7 +2672,7 @@ main::@30: scope:[main]  from main::@29
   CONIO_SCREEN_TEXT#109 = phi( main::@29/CONIO_SCREEN_TEXT#112 )
   gotoxy::x#4 = 0
   gotoxy::y#4 = $1d
-  call gotoxy 
+  call gotoxy
   to:main::@31
 main::@31: scope:[main]  from main::@30
   rem16u#46 = phi( main::@30/rem16u#48 )
@@ -2689,7 +2689,7 @@ main::textcolor2: scope:[main]  from main::@31
   main::textcolor2_color#1 = phi( main::@31/main::textcolor2_color#0 )
   vera_layer_set_textcolor::layer#2 = conio_screen_layer
   vera_layer_set_textcolor::color#2 = main::textcolor2_color#1
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#4 = vera_layer_set_textcolor::return#1
   to:main::@32
 main::@32: scope:[main]  from main::textcolor2
@@ -2704,7 +2704,7 @@ main::@11: scope:[main]  from main::@32
   rand_state#38 = phi( main::@32/rand_state#40 )
   CONIO_SCREEN_TEXT#71 = phi( main::@32/CONIO_SCREEN_TEXT#90 )
   cputs::s#5 = main::s4
-  call cputs 
+  call cputs
   to:main::@33
 main::@33: scope:[main]  from main::@11
   CONIO_SCREEN_BANK#109 = phi( main::@11/CONIO_SCREEN_BANK#69 )
@@ -2717,7 +2717,7 @@ main::@1: scope:[main]  from main::@33 main::@44
   CONIO_SCREEN_TEXT#110 = phi( main::@33/CONIO_SCREEN_TEXT#113, main::@44/CONIO_SCREEN_TEXT#114 )
   rem16u#34 = phi( main::@33/rem16u#36, main::@44/rem16u#37 )
   rand_state#33 = phi( main::@33/rand_state#35, main::@44/rand_state#36 )
-  call kbhit 
+  call kbhit
   kbhit::return#2 = kbhit::return#1
   to:main::@34
 main::@34: scope:[main]  from main::@1
@@ -2736,7 +2736,7 @@ main::@2: scope:[main]  from main::@34
   CONIO_SCREEN_TEXT#127 = phi( main::@34/CONIO_SCREEN_TEXT#106 )
   rem16u#29 = phi( main::@34/rem16u#32 )
   rand_state#23 = phi( main::@34/rand_state#30 )
-  call rand 
+  call rand
   rand::return#2 = rand::return#1
   to:main::@35
 main::@35: scope:[main]  from main::@2
@@ -2750,7 +2750,7 @@ main::@35: scope:[main]  from main::@2
   modr16u::dividend#0 = main::$32
   modr16u::divisor#0 = $140
   modr16u::rem#0 = 0
-  call modr16u 
+  call modr16u
   modr16u::return#2 = modr16u::return#1
   to:main::@36
 main::@36: scope:[main]  from main::@35
@@ -2761,7 +2761,7 @@ main::@36: scope:[main]  from main::@35
   modr16u::return#7 = phi( main::@35/modr16u::return#2 )
   main::$33 = modr16u::return#7
   rem16u#4 = rem16u#15
-  call rand 
+  call rand
   rand::return#3 = rand::return#1
   to:main::@37
 main::@37: scope:[main]  from main::@36
@@ -2775,7 +2775,7 @@ main::@37: scope:[main]  from main::@36
   modr16u::dividend#1 = main::$34
   modr16u::divisor#1 = $140
   modr16u::rem#1 = 0
-  call modr16u 
+  call modr16u
   modr16u::return#3 = modr16u::return#1
   to:main::@38
 main::@38: scope:[main]  from main::@37
@@ -2786,7 +2786,7 @@ main::@38: scope:[main]  from main::@37
   modr16u::return#8 = phi( main::@37/modr16u::return#3 )
   main::$35 = modr16u::return#8
   rem16u#5 = rem16u#16
-  call rand 
+  call rand
   rand::return#4 = rand::return#1
   to:main::@39
 main::@39: scope:[main]  from main::@38
@@ -2800,7 +2800,7 @@ main::@39: scope:[main]  from main::@38
   modr16u::dividend#2 = main::$36
   modr16u::divisor#2 = $c8
   modr16u::rem#2 = 0
-  call modr16u 
+  call modr16u
   modr16u::return#4 = modr16u::return#1
   to:main::@40
 main::@40: scope:[main]  from main::@39
@@ -2811,7 +2811,7 @@ main::@40: scope:[main]  from main::@39
   modr16u::return#9 = phi( main::@39/modr16u::return#4 )
   main::$37 = modr16u::return#9
   rem16u#6 = rem16u#17
-  call rand 
+  call rand
   rand::return#5 = rand::return#1
   to:main::@41
 main::@41: scope:[main]  from main::@40
@@ -2825,7 +2825,7 @@ main::@41: scope:[main]  from main::@40
   modr16u::dividend#3 = main::$38
   modr16u::divisor#3 = $c8
   modr16u::rem#3 = 0
-  call modr16u 
+  call modr16u
   modr16u::return#5 = modr16u::return#1
   to:main::@42
 main::@42: scope:[main]  from main::@41
@@ -2836,7 +2836,7 @@ main::@42: scope:[main]  from main::@41
   modr16u::return#10 = phi( main::@41/modr16u::return#5 )
   main::$39 = modr16u::return#10
   rem16u#7 = rem16u#18
-  call rand 
+  call rand
   rand::return#6 = rand::return#1
   to:main::@43
 main::@43: scope:[main]  from main::@42
@@ -2853,7 +2853,7 @@ main::@43: scope:[main]  from main::@42
   bitmap_line::y0#0 = main::$37
   bitmap_line::y1#0 = main::$39
   bitmap_line::c#0 = main::$41
-  call bitmap_line 
+  call bitmap_line
   to:main::@44
 main::@44: scope:[main]  from main::@43
   CONIO_SCREEN_BANK#110 = phi( main::@43/CONIO_SCREEN_BANK#111 )
@@ -2876,7 +2876,7 @@ main::textcolor3: scope:[main]  from main::@3
   main::textcolor3_color#1 = phi( main::@3/main::textcolor3_color#0 )
   vera_layer_set_textcolor::layer#3 = conio_screen_layer
   vera_layer_set_textcolor::color#3 = main::textcolor3_color#1
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#5 = vera_layer_set_textcolor::return#1
   to:main::@45
 main::@45: scope:[main]  from main::textcolor3
@@ -2900,7 +2900,7 @@ main::bgcolor2: scope:[main]  from main::@12
   main::bgcolor2_color#1 = phi( main::@12/main::bgcolor2_color#0 )
   vera_layer_set_backcolor::layer#2 = conio_screen_layer
   vera_layer_set_backcolor::color#2 = main::bgcolor2_color#1
-  call vera_layer_set_backcolor 
+  call vera_layer_set_backcolor
   vera_layer_set_backcolor::return#4 = vera_layer_set_backcolor::return#1
   to:main::@46
 main::@46: scope:[main]  from main::bgcolor2
@@ -2914,7 +2914,7 @@ main::@13: scope:[main]  from main::@46
   rand_state#72 = phi( main::@46/rand_state#74 )
   CONIO_SCREEN_BANK#60 = phi( main::@46/CONIO_SCREEN_BANK#78 )
   CONIO_SCREEN_TEXT#24 = phi( main::@46/CONIO_SCREEN_TEXT#45 )
-  call clrscr 
+  call clrscr
   to:main::@47
 main::@47: scope:[main]  from main::@13
   rem16u#70 = phi( main::@13/rem16u#72 )
@@ -2923,7 +2923,7 @@ main::@47: scope:[main]  from main::@13
   CONIO_SCREEN_TEXT#92 = phi( main::@13/CONIO_SCREEN_TEXT#24 )
   gotoxy::x#5 = 0
   gotoxy::y#5 = $1a
-  call gotoxy 
+  call gotoxy
   to:main::@48
 main::@48: scope:[main]  from main::@47
   rem16u#68 = phi( main::@47/rem16u#70 )
@@ -2931,7 +2931,7 @@ main::@48: scope:[main]  from main::@47
   CONIO_SCREEN_BANK#74 = phi( main::@47/CONIO_SCREEN_BANK#86 )
   CONIO_SCREEN_TEXT#77 = phi( main::@47/CONIO_SCREEN_TEXT#92 )
   cputs::s#6 = main::s5
-  call cputs 
+  call cputs
   to:main::@49
 main::@49: scope:[main]  from main::@48
   rem16u#66 = phi( main::@48/rem16u#68 )
@@ -2940,7 +2940,7 @@ main::@49: scope:[main]  from main::@48
   CONIO_SCREEN_TEXT#111 = phi( main::@48/CONIO_SCREEN_TEXT#77 )
   gotoxy::x#6 = 0
   gotoxy::y#6 = $1d
-  call gotoxy 
+  call gotoxy
   to:main::@50
 main::@50: scope:[main]  from main::@49
   rem16u#64 = phi( main::@49/rem16u#66 )
@@ -2957,7 +2957,7 @@ main::textcolor4: scope:[main]  from main::@50
   main::textcolor4_color#1 = phi( main::@50/main::textcolor4_color#0 )
   vera_layer_set_textcolor::layer#4 = conio_screen_layer
   vera_layer_set_textcolor::color#4 = main::textcolor4_color#1
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#6 = vera_layer_set_textcolor::return#1
   to:main::@51
 main::@51: scope:[main]  from main::textcolor4
@@ -2972,7 +2972,7 @@ main::@14: scope:[main]  from main::@51
   CONIO_SCREEN_BANK#66 = phi( main::@51/CONIO_SCREEN_BANK#79 )
   CONIO_SCREEN_TEXT#72 = phi( main::@51/CONIO_SCREEN_TEXT#93 )
   cputs::s#7 = main::s6
-  call cputs 
+  call cputs
   to:main::@52
 main::@52: scope:[main]  from main::@14
   rem16u#53 = phi( main::@14/rem16u#57 )
@@ -2989,7 +2989,7 @@ main::@4: scope:[main]  from main::@52 main::@54 main::@7
   CONIO_SCREEN_BANK#48 = phi( main::@52/CONIO_SCREEN_BANK#56, main::@54/CONIO_SCREEN_BANK#57, main::@7/CONIO_SCREEN_BANK#58 )
   main::color#5 = phi( main::@52/main::color#0, main::@54/main::color#1, main::@7/main::color#6 )
   main::x#6 = phi( main::@52/main::x#0, main::@54/main::x#1, main::@7/main::x#2 )
-  call kbhit 
+  call kbhit
   kbhit::return#3 = kbhit::return#1
   to:main::@53
 main::@53: scope:[main]  from main::@4
@@ -3017,7 +3017,7 @@ main::@5: scope:[main]  from main::@53
   bitmap_line::y0#1 = 0
   bitmap_line::y1#1 = $c7
   bitmap_line::c#1 = main::color#2
-  call bitmap_line 
+  call bitmap_line
   to:main::@54
 main::@54: scope:[main]  from main::@5
   rem16u#54 = phi( main::@5/rem16u#58 )
@@ -3038,7 +3038,7 @@ main::@6: scope:[main]  from main::@53
   CONIO_SCREEN_TEXT#34 = phi( main::@53/CONIO_SCREEN_TEXT#46 )
   CONIO_SCREEN_BANK#28 = phi( main::@53/CONIO_SCREEN_BANK#38 )
   screenlayer::layer#2 = 1
-  call screenlayer 
+  call screenlayer
   to:main::@55
 main::@55: scope:[main]  from main::@6
   rem16u#45 = phi( main::@6/rem16u#47 )
@@ -3057,7 +3057,7 @@ main::textcolor5: scope:[main]  from main::@55
   main::textcolor5_color#1 = phi( main::@55/main::textcolor5_color#0 )
   vera_layer_set_textcolor::layer#5 = conio_screen_layer
   vera_layer_set_textcolor::color#5 = main::textcolor5_color#1
-  call vera_layer_set_textcolor 
+  call vera_layer_set_textcolor
   vera_layer_set_textcolor::return#7 = vera_layer_set_textcolor::return#1
   to:main::@56
 main::@56: scope:[main]  from main::textcolor5
@@ -3081,7 +3081,7 @@ main::bgcolor3: scope:[main]  from main::@15
   main::bgcolor3_color#1 = phi( main::@15/main::bgcolor3_color#0 )
   vera_layer_set_backcolor::layer#3 = conio_screen_layer
   vera_layer_set_backcolor::color#3 = main::bgcolor3_color#1
-  call vera_layer_set_backcolor 
+  call vera_layer_set_backcolor
   vera_layer_set_backcolor::return#5 = vera_layer_set_backcolor::return#1
   to:main::@57
 main::@57: scope:[main]  from main::bgcolor3
@@ -3095,7 +3095,7 @@ main::@16: scope:[main]  from main::@57
   rand_state#31 = phi( main::@57/rand_state#34 )
   CONIO_SCREEN_BANK#39 = phi( main::@57/CONIO_SCREEN_BANK#49 )
   CONIO_SCREEN_TEXT#25 = phi( main::@57/CONIO_SCREEN_TEXT#47 )
-  call clrscr 
+  call clrscr
   to:main::@58
 main::@58: scope:[main]  from main::@16
   rem16u#27 = phi( main::@16/rem16u#30 )
@@ -3143,7 +3143,7 @@ __start::__init1: scope:[__start]  from __start
   __bitmap_vscale = 0
   __bitmap_color_depth = 0
   rem16u#9 = 0
-  call conio_x16_init 
+  call conio_x16_init
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
   rem16u#31 = phi( __start::__init1/rem16u#9 )
@@ -3158,7 +3158,7 @@ __start::@1: scope:[__start]  from __start::@2
   rand_state#29 = phi( __start::@2/rand_state#32 )
   CONIO_SCREEN_TEXT#36 = phi( __start::@2/CONIO_SCREEN_TEXT#8 )
   CONIO_SCREEN_BANK#30 = phi( __start::@2/CONIO_SCREEN_BANK#8 )
-  call main 
+  call main
   to:__start::@3
 __start::@3: scope:[__start]  from __start::@1
   rem16u#20 = phi( __start::@1/rem16u#8 )
@@ -8059,11 +8059,11 @@ __start::__init1: scope:[__start]  from __start
   [10] __bitmap_hscale = 0
   [11] __bitmap_vscale = 0
   [12] __bitmap_color_depth = 0
-  [13] call conio_x16_init 
+  [13] call conio_x16_init
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [14] phi()
-  [15] call main 
+  [15] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [16] return 
@@ -8072,31 +8072,31 @@ __start::@return: scope:[__start]  from __start::@1
 void conio_x16_init()
 conio_x16_init: scope:[conio_x16_init]  from __start::__init1
   [17] conio_x16_init::line#0 = *conio_x16_init::BASIC_CURSOR_LINE
-  [18] call vera_layer_mode_text 
+  [18] call vera_layer_mode_text
   to:conio_x16_init::@3
 conio_x16_init::@3: scope:[conio_x16_init]  from conio_x16_init
   [19] phi()
-  [20] call screensize 
+  [20] call screensize
   to:conio_x16_init::@4
 conio_x16_init::@4: scope:[conio_x16_init]  from conio_x16_init::@3
   [21] phi()
-  [22] call screenlayer 
+  [22] call screenlayer
   to:conio_x16_init::@5
 conio_x16_init::@5: scope:[conio_x16_init]  from conio_x16_init::@4
   [23] phi()
-  [24] call vera_layer_set_textcolor 
+  [24] call vera_layer_set_textcolor
   to:conio_x16_init::@6
 conio_x16_init::@6: scope:[conio_x16_init]  from conio_x16_init::@5
   [25] phi()
-  [26] call vera_layer_set_backcolor 
+  [26] call vera_layer_set_backcolor
   to:conio_x16_init::@7
 conio_x16_init::@7: scope:[conio_x16_init]  from conio_x16_init::@6
   [27] phi()
-  [28] call vera_layer_set_mapbase 
+  [28] call vera_layer_set_mapbase
   to:conio_x16_init::@8
 conio_x16_init::@8: scope:[conio_x16_init]  from conio_x16_init::@7
   [29] phi()
-  [30] call vera_layer_set_mapbase 
+  [30] call vera_layer_set_mapbase
   to:conio_x16_init::@9
 conio_x16_init::@9: scope:[conio_x16_init]  from conio_x16_init::@8
   [31] if(conio_x16_init::line#0<conio_screen_height) goto conio_x16_init::@1
@@ -8107,7 +8107,7 @@ conio_x16_init::@2: scope:[conio_x16_init]  from conio_x16_init::@9
 conio_x16_init::@1: scope:[conio_x16_init]  from conio_x16_init::@2 conio_x16_init::@9
   [33] conio_x16_init::line#3 = phi( conio_x16_init::@2/conio_x16_init::line#1, conio_x16_init::@9/conio_x16_init::line#0 )
   [34] gotoxy::y#1 = conio_x16_init::line#3
-  [35] call gotoxy 
+  [35] call gotoxy
   to:conio_x16_init::@return
 conio_x16_init::@return: scope:[conio_x16_init]  from conio_x16_init::@1
   [36] return 
@@ -8116,78 +8116,78 @@ conio_x16_init::@return: scope:[conio_x16_init]  from conio_x16_init::@1
 void main()
 main: scope:[main]  from __start::@1
   [37] phi()
-  [38] call memcpy_in_vram 
+  [38] call memcpy_in_vram
   to:main::@12
 main::@12: scope:[main]  from main
   [39] phi()
-  [40] call vera_layer_mode_tile 
+  [40] call vera_layer_mode_tile
   to:main::@13
 main::@13: scope:[main]  from main::@12
   [41] phi()
-  [42] call vera_layer_mode_bitmap 
+  [42] call vera_layer_mode_bitmap
   to:main::@14
 main::@14: scope:[main]  from main::@13
   [43] phi()
-  [44] call screenlayer 
+  [44] call screenlayer
   to:main::textcolor1
 main::textcolor1: scope:[main]  from main::@14
   [45] vera_layer_set_textcolor::layer#1 = conio_screen_layer
-  [46] call vera_layer_set_textcolor 
+  [46] call vera_layer_set_textcolor
   to:main::bgcolor1
 main::bgcolor1: scope:[main]  from main::textcolor1
   [47] vera_layer_set_backcolor::layer#1 = conio_screen_layer
-  [48] call vera_layer_set_backcolor 
+  [48] call vera_layer_set_backcolor
   to:main::@6
 main::@6: scope:[main]  from main::bgcolor1
   [49] phi()
-  [50] call clrscr 
+  [50] call clrscr
   to:main::@15
 main::@15: scope:[main]  from main::@6
   [51] phi()
-  [52] call gotoxy 
+  [52] call gotoxy
   to:main::@16
 main::@16: scope:[main]  from main::@15
   [53] phi()
-  [54] call cputs 
+  [54] call cputs
   to:main::@17
 main::@17: scope:[main]  from main::@16
   [55] phi()
-  [56] call cputs 
+  [56] call cputs
   to:main::@18
 main::@18: scope:[main]  from main::@17
   [57] phi()
-  [58] call cputs 
+  [58] call cputs
   to:main::@19
 main::@19: scope:[main]  from main::@18
   [59] phi()
-  [60] call cputs 
+  [60] call cputs
   to:main::vera_layer_show1
 main::vera_layer_show1: scope:[main]  from main::@19
   [61] *VERA_DC_VIDEO = *VERA_DC_VIDEO | *vera_layer_enable
   to:main::@7
 main::@7: scope:[main]  from main::vera_layer_show1
   [62] phi()
-  [63] call bitmap_init 
+  [63] call bitmap_init
   to:main::@20
 main::@20: scope:[main]  from main::@7
   [64] phi()
-  [65] call bitmap_clear 
+  [65] call bitmap_clear
   to:main::@21
 main::@21: scope:[main]  from main::@20
   [66] phi()
-  [67] call gotoxy 
+  [67] call gotoxy
   to:main::textcolor2
 main::textcolor2: scope:[main]  from main::@21
   [68] vera_layer_set_textcolor::layer#2 = conio_screen_layer
-  [69] call vera_layer_set_textcolor 
+  [69] call vera_layer_set_textcolor
   to:main::@8
 main::@8: scope:[main]  from main::textcolor2
   [70] phi()
-  [71] call cputs 
+  [71] call cputs
   to:main::@1
 main::@1: scope:[main]  from main::@31 main::@8
   [72] rand_state#23 = phi( main::@8/1, main::@31/rand_state#14 )
-  [73] call kbhit 
+  [73] call kbhit
   [74] kbhit::return#2 = kbhit::return#1
   to:main::@22
 main::@22: scope:[main]  from main::@1
@@ -8196,40 +8196,40 @@ main::@22: scope:[main]  from main::@1
   to:main::textcolor3
 main::textcolor3: scope:[main]  from main::@22
   [77] vera_layer_set_textcolor::layer#3 = conio_screen_layer
-  [78] call vera_layer_set_textcolor 
+  [78] call vera_layer_set_textcolor
   to:main::bgcolor2
 main::bgcolor2: scope:[main]  from main::textcolor3
   [79] vera_layer_set_backcolor::layer#2 = conio_screen_layer
-  [80] call vera_layer_set_backcolor 
+  [80] call vera_layer_set_backcolor
   to:main::@9
 main::@9: scope:[main]  from main::bgcolor2
   [81] phi()
-  [82] call clrscr 
+  [82] call clrscr
   to:main::@32
 main::@32: scope:[main]  from main::@9
   [83] phi()
-  [84] call gotoxy 
+  [84] call gotoxy
   to:main::@33
 main::@33: scope:[main]  from main::@32
   [85] phi()
-  [86] call cputs 
+  [86] call cputs
   to:main::@34
 main::@34: scope:[main]  from main::@33
   [87] phi()
-  [88] call gotoxy 
+  [88] call gotoxy
   to:main::textcolor4
 main::textcolor4: scope:[main]  from main::@34
   [89] vera_layer_set_textcolor::layer#4 = conio_screen_layer
-  [90] call vera_layer_set_textcolor 
+  [90] call vera_layer_set_textcolor
   to:main::@10
 main::@10: scope:[main]  from main::textcolor4
   [91] phi()
-  [92] call cputs 
+  [92] call cputs
   to:main::@3
 main::@3: scope:[main]  from main::@10 main::@36 main::@37
   [93] main::color#2 = phi( main::@10/0, main::@37/main::color#1, main::@36/main::color#1 )
   [93] main::x#3 = phi( main::@10/0, main::@37/main::x#1, main::@36/0 )
-  [94] call kbhit 
+  [94] call kbhit
   [95] kbhit::return#3 = kbhit::return#1
   to:main::@35
 main::@35: scope:[main]  from main::@3
@@ -8238,19 +8238,19 @@ main::@35: scope:[main]  from main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@35
   [98] phi()
-  [99] call screenlayer 
+  [99] call screenlayer
   to:main::textcolor5
 main::textcolor5: scope:[main]  from main::@5
   [100] vera_layer_set_textcolor::layer#5 = conio_screen_layer
-  [101] call vera_layer_set_textcolor 
+  [101] call vera_layer_set_textcolor
   to:main::bgcolor3
 main::bgcolor3: scope:[main]  from main::textcolor5
   [102] vera_layer_set_backcolor::layer#3 = conio_screen_layer
-  [103] call vera_layer_set_backcolor 
+  [103] call vera_layer_set_backcolor
   to:main::@11
 main::@11: scope:[main]  from main::bgcolor3
   [104] phi()
-  [105] call clrscr 
+  [105] call clrscr
   to:main::@return
 main::@return: scope:[main]  from main::@11
   [106] return 
@@ -8259,7 +8259,7 @@ main::@4: scope:[main]  from main::@35
   [107] bitmap_line::x0#1 = main::x#3
   [108] bitmap_line::x1#1 = main::x#3
   [109] bitmap_line::c#1 = main::color#2
-  [110] call bitmap_line 
+  [110] call bitmap_line
   to:main::@36
 main::@36: scope:[main]  from main::@4
   [111] main::color#1 = ++ main::color#2
@@ -8271,63 +8271,63 @@ main::@37: scope:[main]  from main::@36
   to:main::@3
 main::@2: scope:[main]  from main::@22
   [115] phi()
-  [116] call rand 
+  [116] call rand
   [117] rand::return#2 = rand::return#0
   to:main::@23
 main::@23: scope:[main]  from main::@2
   [118] modr16u::dividend#0 = rand::return#2
-  [119] call modr16u 
+  [119] call modr16u
   [120] modr16u::return#2 = modr16u::return#0
   to:main::@24
 main::@24: scope:[main]  from main::@23
   [121] bitmap_line::x0#0 = modr16u::return#2
-  [122] call rand 
+  [122] call rand
   [123] rand::return#3 = rand::return#0
   to:main::@25
 main::@25: scope:[main]  from main::@24
   [124] modr16u::dividend#1 = rand::return#3
-  [125] call modr16u 
+  [125] call modr16u
   [126] modr16u::return#3 = modr16u::return#0
   to:main::@26
 main::@26: scope:[main]  from main::@25
   [127] bitmap_line::x1#0 = modr16u::return#3
-  [128] call rand 
+  [128] call rand
   [129] rand::return#10 = rand::return#0
   to:main::@27
 main::@27: scope:[main]  from main::@26
   [130] modr16u::dividend#2 = rand::return#10
-  [131] call modr16u 
+  [131] call modr16u
   [132] modr16u::return#4 = modr16u::return#0
   to:main::@28
 main::@28: scope:[main]  from main::@27
   [133] bitmap_line::y0#0 = modr16u::return#4
-  [134] call rand 
+  [134] call rand
   [135] rand::return#11 = rand::return#0
   to:main::@29
 main::@29: scope:[main]  from main::@28
   [136] modr16u::dividend#3 = rand::return#11
-  [137] call modr16u 
+  [137] call modr16u
   [138] modr16u::return#10 = modr16u::return#0
   to:main::@30
 main::@30: scope:[main]  from main::@29
   [139] bitmap_line::y1#0 = modr16u::return#10
-  [140] call rand 
+  [140] call rand
   [141] rand::return#12 = rand::return#0
   to:main::@31
 main::@31: scope:[main]  from main::@30
   [142] main::$40 = rand::return#12
   [143] bitmap_line::c#0 = main::$40 & $ff
-  [144] call bitmap_line 
+  [144] call bitmap_line
   to:main::@1
 
 void vera_layer_mode_text(byte vera_layer_mode_text::layer , dword vera_layer_mode_text::mapbase_address , dword vera_layer_mode_text::tilebase_address , word vera_layer_mode_text::mapwidth , word vera_layer_mode_text::mapheight , byte vera_layer_mode_text::tilewidth , byte vera_layer_mode_text::tileheight , word vera_layer_mode_text::color_mode)
 vera_layer_mode_text: scope:[vera_layer_mode_text]  from conio_x16_init
   [145] phi()
-  [146] call vera_layer_mode_tile 
+  [146] call vera_layer_mode_tile
   to:vera_layer_mode_text::@1
 vera_layer_mode_text::@1: scope:[vera_layer_mode_text]  from vera_layer_mode_text
   [147] phi()
-  [148] call vera_layer_set_text_color_mode 
+  [148] call vera_layer_set_text_color_mode
   to:vera_layer_mode_text::@return
 vera_layer_mode_text::@return: scope:[vera_layer_mode_text]  from vera_layer_mode_text::@1
   [149] return 
@@ -8350,13 +8350,13 @@ void screenlayer(byte screenlayer::layer)
 screenlayer: scope:[screenlayer]  from conio_x16_init::@4 main::@14 main::@5
   [157] conio_screen_layer = 1
   [158] vera_layer_get_mapbase_bank::layer#0 = conio_screen_layer
-  [159] call vera_layer_get_mapbase_bank 
+  [159] call vera_layer_get_mapbase_bank
   [160] vera_layer_get_mapbase_bank::return#2 = vera_layer_get_mapbase_bank::return#0
   to:screenlayer::@3
 screenlayer::@3: scope:[screenlayer]  from screenlayer
   [161] CONIO_SCREEN_BANK#15 = vera_layer_get_mapbase_bank::return#2
   [162] vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer
-  [163] call vera_layer_get_mapbase_offset 
+  [163] call vera_layer_get_mapbase_offset
   [164] vera_layer_get_mapbase_offset::return#2 = vera_layer_get_mapbase_offset::return#0
   to:screenlayer::@4
 screenlayer::@4: scope:[screenlayer]  from screenlayer::@3
@@ -8378,14 +8378,14 @@ screenlayer::@1: scope:[screenlayer]  from screenlayer::vera_layer_get_width1_@r
   [174] screenlayer::$2 = screenlayer::vera_layer_get_width1_return#1
   [175] conio_width = screenlayer::$2
   [176] vera_layer_get_rowshift::layer#0 = conio_screen_layer
-  [177] call vera_layer_get_rowshift 
+  [177] call vera_layer_get_rowshift
   [178] vera_layer_get_rowshift::return#2 = vera_layer_get_rowshift::return#0
   to:screenlayer::@5
 screenlayer::@5: scope:[screenlayer]  from screenlayer::@1
   [179] screenlayer::$3 = vera_layer_get_rowshift::return#2
   [180] conio_rowshift = screenlayer::$3
   [181] vera_layer_get_rowskip::layer#0 = conio_screen_layer
-  [182] call vera_layer_get_rowskip 
+  [182] call vera_layer_get_rowskip
   [183] vera_layer_get_rowskip::return#2 = vera_layer_get_rowskip::return#0
   to:screenlayer::@6
 screenlayer::@6: scope:[screenlayer]  from screenlayer::@5
@@ -8550,7 +8550,7 @@ vera_layer_mode_tile::@16: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   [254] vera_layer_mode_tile::config#25 = phi( vera_layer_mode_tile::@12/vera_layer_mode_tile::config#21, vera_layer_mode_tile::@9/vera_layer_mode_tile::config#21, vera_layer_mode_tile::@13/vera_layer_mode_tile::config#10, vera_layer_mode_tile::@14/vera_layer_mode_tile::config#11, vera_layer_mode_tile::@15/vera_layer_mode_tile::config#12 )
   [255] vera_layer_set_config::layer#0 = vera_layer_mode_tile::layer#10
   [256] vera_layer_set_config::config#0 = vera_layer_mode_tile::config#25
-  [257] call vera_layer_set_config 
+  [257] call vera_layer_set_config
   to:vera_layer_mode_tile::@23
 vera_layer_mode_tile::@23: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@16
   [258] vera_layer_mode_tile::$1 = word0  vera_layer_mode_tile::mapbase_address#10
@@ -8564,7 +8564,7 @@ vera_layer_mode_tile::@23: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   [266] vera_layer_mode_tile::mapbase#0 = byte1  vera_layer_mode_tile::mapbase_address#0
   [267] vera_layer_set_mapbase::layer#0 = vera_layer_mode_tile::layer#10
   [268] vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
-  [269] call vera_layer_set_mapbase 
+  [269] call vera_layer_set_mapbase
   to:vera_layer_mode_tile::@24
 vera_layer_mode_tile::@24: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@23
   [270] vera_layer_mode_tile::$6 = word0  vera_layer_mode_tile::tilebase_address#10
@@ -8597,7 +8597,7 @@ vera_layer_mode_tile::@22: scope:[vera_layer_mode_tile]  from vera_layer_mode_ti
   [285] vera_layer_mode_tile::tilebase#10 = phi( vera_layer_mode_tile::@20/vera_layer_mode_tile::tilebase#12, vera_layer_mode_tile::@19/vera_layer_mode_tile::tilebase#12, vera_layer_mode_tile::@21/vera_layer_mode_tile::tilebase#5 )
   [286] vera_layer_set_tilebase::layer#0 = vera_layer_mode_tile::layer#10
   [287] vera_layer_set_tilebase::tilebase#0 = vera_layer_mode_tile::tilebase#10
-  [288] call vera_layer_set_tilebase 
+  [288] call vera_layer_set_tilebase
   to:vera_layer_mode_tile::@return
 vera_layer_mode_tile::@return: scope:[vera_layer_mode_tile]  from vera_layer_mode_tile::@22
   [289] return 
@@ -8639,11 +8639,11 @@ vera_layer_mode_bitmap::vera_display_set_scale_double1: scope:[vera_layer_mode_b
   to:vera_layer_mode_bitmap::@2
 vera_layer_mode_bitmap::@2: scope:[vera_layer_mode_bitmap]  from vera_layer_mode_bitmap::vera_display_set_scale_double1
   [307] phi()
-  [308] call vera_layer_set_config 
+  [308] call vera_layer_set_config
   to:vera_layer_mode_bitmap::@3
 vera_layer_mode_bitmap::@3: scope:[vera_layer_mode_bitmap]  from vera_layer_mode_bitmap::@2
   [309] phi()
-  [310] call vera_layer_set_tilebase 
+  [310] call vera_layer_set_tilebase
   to:vera_layer_mode_bitmap::@return
 vera_layer_mode_bitmap::@return: scope:[vera_layer_mode_bitmap]  from vera_layer_mode_bitmap::@3
   [311] return 
@@ -8653,14 +8653,14 @@ void clrscr()
 clrscr: scope:[clrscr]  from main::@11 main::@6 main::@9
   [312] clrscr::line_text#0 = (byte*)CONIO_SCREEN_TEXT#104
   [313] vera_layer_get_backcolor::layer#0 = conio_screen_layer
-  [314] call vera_layer_get_backcolor 
+  [314] call vera_layer_get_backcolor
   [315] vera_layer_get_backcolor::return#0 = vera_layer_get_backcolor::return#1
   to:clrscr::@7
 clrscr::@7: scope:[clrscr]  from clrscr
   [316] clrscr::$0 = vera_layer_get_backcolor::return#0
   [317] clrscr::$1 = clrscr::$0 << 4
   [318] vera_layer_get_textcolor::layer#0 = conio_screen_layer
-  [319] call vera_layer_get_textcolor 
+  [319] call vera_layer_get_textcolor
   [320] vera_layer_get_textcolor::return#0 = vera_layer_get_textcolor::return#1
   to:clrscr::@8
 clrscr::@8: scope:[clrscr]  from clrscr::@7
@@ -8719,7 +8719,7 @@ cputs::@return: scope:[cputs]  from cputs::@1
   to:@return
 cputs::@2: scope:[cputs]  from cputs::@1
   [350] cputc::c#0 = cputs::c#1
-  [351] call cputc 
+  [351] call cputc
   to:cputs::@1
 
 void bitmap_init(byte bitmap_init::layer , dword bitmap_init::address)
@@ -8740,13 +8740,13 @@ bitmap_init::vera_layer_get_color_depth1_@return: scope:[bitmap_init]  from bitm
 bitmap_init::@16: scope:[bitmap_init]  from bitmap_init::vera_layer_get_color_depth1_@return
   [360] bitmap_init::$0 = bitmap_init::vera_layer_get_color_depth1_return#1
   [361] __bitmap_color_depth = bitmap_init::$0
-  [362] call vera_display_get_hscale 
+  [362] call vera_display_get_hscale
   [363] vera_display_get_hscale::return#2 = vera_display_get_hscale::return#0
   to:bitmap_init::@17
 bitmap_init::@17: scope:[bitmap_init]  from bitmap_init::@16
   [364] bitmap_init::$1 = vera_display_get_hscale::return#2
   [365] __bitmap_hscale = bitmap_init::$1
-  [366] call vera_display_get_vscale 
+  [366] call vera_display_get_vscale
   [367] vera_display_get_vscale::return#2 = vera_display_get_vscale::return#0
   to:bitmap_init::@18
 bitmap_init::@18: scope:[bitmap_init]  from bitmap_init::@17
@@ -8870,7 +8870,7 @@ bitmap_clear: scope:[bitmap_clear]  from main::@20
   [443] bitmap_clear::hdelta#0 = hdeltas[bitmap_clear::$7]
   [444] mul16u::a#0 = bitmap_clear::hdelta#0
   [445] mul16u::b#0 = bitmap_clear::vdelta#0
-  [446] call mul16u 
+  [446] call mul16u
   [447] mul16u::return#0 = mul16u::res#2
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
@@ -8880,7 +8880,7 @@ bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
   [451] memset_vram::vbank#0 = bitmap_clear::vbank#0
   [452] memset_vram::vdest#0 = (void*)bitmap_clear::vdest#0
   [453] memset_vram::num#0 = bitmap_clear::count#0
-  [454] call memset_vram 
+  [454] call memset_vram
   to:bitmap_clear::@return
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@1
   [455] return 
@@ -8949,7 +8949,7 @@ bitmap_line::@4: scope:[bitmap_line]  from bitmap_line::@3
   [470] bitmap_line_ydxi::yd#0 = bitmap_line::yd#2
   [471] bitmap_line_ydxi::xd#0 = bitmap_line::xd#2
   [472] bitmap_line_ydxi::c#0 = bitmap_line::c#10
-  [473] call bitmap_line_ydxi 
+  [473] call bitmap_line_ydxi
   to:bitmap_line::@return
 bitmap_line::@return: scope:[bitmap_line]  from bitmap_line::@10 bitmap_line::@12 bitmap_line::@13 bitmap_line::@14 bitmap_line::@4 bitmap_line::@6 bitmap_line::@8 bitmap_line::@9
   [474] return 
@@ -8961,7 +8961,7 @@ bitmap_line::@8: scope:[bitmap_line]  from bitmap_line::@3
   [478] bitmap_line_xdyi::xd#0 = bitmap_line::xd#2
   [479] bitmap_line_xdyi::yd#0 = bitmap_line::yd#2
   [480] bitmap_line_xdyi::c#0 = bitmap_line::c#10
-  [481] call bitmap_line_xdyi 
+  [481] call bitmap_line_xdyi
   to:bitmap_line::@return
 bitmap_line::@7: scope:[bitmap_line]  from bitmap_line::@2
   [482] bitmap_line::yd#1 = bitmap_line::y1#10 - bitmap_line::y0#10
@@ -8974,7 +8974,7 @@ bitmap_line::@10: scope:[bitmap_line]  from bitmap_line::@7
   [487] bitmap_line_ydxd::yd#0 = bitmap_line::yd#1
   [488] bitmap_line_ydxd::xd#0 = bitmap_line::xd#2
   [489] bitmap_line_ydxd::c#0 = bitmap_line::c#10
-  [490] call bitmap_line_ydxd 
+  [490] call bitmap_line_ydxd
   to:bitmap_line::@return
 bitmap_line::@9: scope:[bitmap_line]  from bitmap_line::@7
   [491] bitmap_line_xdyd::x#0 = bitmap_line::x1#10
@@ -8983,7 +8983,7 @@ bitmap_line::@9: scope:[bitmap_line]  from bitmap_line::@7
   [494] bitmap_line_xdyd::xd#0 = bitmap_line::xd#2
   [495] bitmap_line_xdyd::yd#0 = bitmap_line::yd#1
   [496] bitmap_line_xdyd::c#0 = bitmap_line::c#10
-  [497] call bitmap_line_xdyd 
+  [497] call bitmap_line_xdyd
   to:bitmap_line::@return
 bitmap_line::@1: scope:[bitmap_line]  from bitmap_line
   [498] bitmap_line::xd#1 = bitmap_line::x1#10 - bitmap_line::x0#10
@@ -9000,7 +9000,7 @@ bitmap_line::@6: scope:[bitmap_line]  from bitmap_line::@5
   [505] bitmap_line_ydxd::yd#1 = bitmap_line::yd#10
   [506] bitmap_line_ydxd::xd#1 = bitmap_line::xd#1
   [507] bitmap_line_ydxd::c#1 = bitmap_line::c#10
-  [508] call bitmap_line_ydxd 
+  [508] call bitmap_line_ydxd
   to:bitmap_line::@return
 bitmap_line::@12: scope:[bitmap_line]  from bitmap_line::@5
   [509] bitmap_line_xdyd::x#1 = bitmap_line::x0#10
@@ -9009,7 +9009,7 @@ bitmap_line::@12: scope:[bitmap_line]  from bitmap_line::@5
   [512] bitmap_line_xdyd::xd#1 = bitmap_line::xd#1
   [513] bitmap_line_xdyd::yd#1 = bitmap_line::yd#10
   [514] bitmap_line_xdyd::c#1 = bitmap_line::c#10
-  [515] call bitmap_line_xdyd 
+  [515] call bitmap_line_xdyd
   to:bitmap_line::@return
 bitmap_line::@11: scope:[bitmap_line]  from bitmap_line::@1
   [516] bitmap_line::yd#11 = bitmap_line::y1#10 - bitmap_line::y0#10
@@ -9022,7 +9022,7 @@ bitmap_line::@14: scope:[bitmap_line]  from bitmap_line::@11
   [521] bitmap_line_ydxi::yd#1 = bitmap_line::yd#11
   [522] bitmap_line_ydxi::xd#1 = bitmap_line::xd#1
   [523] bitmap_line_ydxi::c#1 = bitmap_line::c#10
-  [524] call bitmap_line_ydxi 
+  [524] call bitmap_line_ydxi
   to:bitmap_line::@return
 bitmap_line::@13: scope:[bitmap_line]  from bitmap_line::@11
   [525] bitmap_line_xdyi::x#1 = bitmap_line::x0#10
@@ -9031,7 +9031,7 @@ bitmap_line::@13: scope:[bitmap_line]  from bitmap_line::@11
   [528] bitmap_line_xdyi::xd#1 = bitmap_line::xd#1
   [529] bitmap_line_xdyi::yd#1 = bitmap_line::yd#11
   [530] bitmap_line_xdyi::c#1 = bitmap_line::c#10
-  [531] call bitmap_line_xdyi 
+  [531] call bitmap_line_xdyi
   to:bitmap_line::@return
 
 word rand()
@@ -9055,7 +9055,7 @@ modr16u: scope:[modr16u]  from main::@23 main::@25 main::@27 main::@29
   [541] modr16u::dividend#4 = phi( main::@23/modr16u::dividend#0, main::@25/modr16u::dividend#1, main::@27/modr16u::dividend#2, main::@29/modr16u::dividend#3 )
   [542] divr16u::dividend#1 = modr16u::dividend#4
   [543] divr16u::divisor#0 = modr16u::divisor#4
-  [544] call divr16u 
+  [544] call divr16u
   to:modr16u::@1
 modr16u::@1: scope:[modr16u]  from modr16u
   [545] modr16u::return#0 = rem16u#0
@@ -9151,7 +9151,7 @@ vera_layer_get_textcolor::@return: scope:[vera_layer_get_textcolor]  from vera_l
 void cputc(byte cputc::c)
 cputc: scope:[cputc]  from cputs::@2
   [575] vera_layer_get_color::layer#0 = conio_screen_layer
-  [576] call vera_layer_get_color 
+  [576] call vera_layer_get_color
   [577] vera_layer_get_color::return#0 = vera_layer_get_color::return#3
   to:cputc::@7
 cputc::@7: scope:[cputc]  from cputc
@@ -9183,7 +9183,7 @@ cputc::@3: scope:[cputc]  from cputc::@2
   to:cputc::@4
 cputc::@4: scope:[cputc]  from cputc::@3
   [598] phi()
-  [599] call cputln 
+  [599] call cputln
   to:cputc::@return
 cputc::@return: scope:[cputc]  from cputc::@1 cputc::@3 cputc::@4 cputc::@5 cputc::@6
   [600] return 
@@ -9193,11 +9193,11 @@ cputc::@5: scope:[cputc]  from cputc::@2
   to:cputc::@6
 cputc::@6: scope:[cputc]  from cputc::@5
   [602] phi()
-  [603] call cputln 
+  [603] call cputln
   to:cputc::@return
 cputc::@1: scope:[cputc]  from cputc::@7
   [604] phi()
-  [605] call cputln 
+  [605] call cputln
   to:cputc::@return
 
 byte vera_display_get_hscale()
@@ -9303,7 +9303,7 @@ bitmap_line_ydxi::@1: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi bitmap_lin
   [645] bitmap_plot::x#2 = bitmap_line_ydxi::x#3
   [646] bitmap_plot::y#2 = bitmap_line_ydxi::y#3
   [647] bitmap_plot::c#3 = bitmap_line_ydxi::c#3
-  [648] call bitmap_plot 
+  [648] call bitmap_plot
   to:bitmap_line_ydxi::@4
 bitmap_line_ydxi::@4: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi::@1
   [649] bitmap_line_ydxi::y#2 = ++ bitmap_line_ydxi::y#3
@@ -9341,7 +9341,7 @@ bitmap_line_xdyi::@1: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi bitmap_lin
   [661] bitmap_plot::x#0 = bitmap_line_xdyi::x#3
   [662] bitmap_plot::y#0 = bitmap_line_xdyi::y#3
   [663] bitmap_plot::c#1 = bitmap_line_xdyi::c#3
-  [664] call bitmap_plot 
+  [664] call bitmap_plot
   to:bitmap_line_xdyi::@4
 bitmap_line_xdyi::@4: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi::@1
   [665] bitmap_line_xdyi::x#2 = ++ bitmap_line_xdyi::x#3
@@ -9379,7 +9379,7 @@ bitmap_line_ydxd::@1: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd bitmap_lin
   [677] bitmap_plot::x#3 = bitmap_line_ydxd::x#3
   [678] bitmap_plot::y#3 = bitmap_line_ydxd::y#2
   [679] bitmap_plot::c#4 = bitmap_line_ydxd::c#3
-  [680] call bitmap_plot 
+  [680] call bitmap_plot
   to:bitmap_line_ydxd::@4
 bitmap_line_ydxd::@4: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@1
   [681] bitmap_line_ydxd::y#3 = ++ bitmap_line_ydxd::y#2
@@ -9417,7 +9417,7 @@ bitmap_line_xdyd::@1: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd bitmap_lin
   [693] bitmap_plot::x#1 = bitmap_line_xdyd::x#3
   [694] bitmap_plot::y#1 = bitmap_line_xdyd::y#3
   [695] bitmap_plot::c#2 = bitmap_line_xdyd::c#3
-  [696] call bitmap_plot 
+  [696] call bitmap_plot
   to:bitmap_line_xdyd::@4
 bitmap_line_xdyd::@4: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd::@1
   [697] bitmap_line_xdyd::x#2 = ++ bitmap_line_xdyd::x#3
@@ -9507,7 +9507,7 @@ cputln: scope:[cputln]  from cputc::@1 cputc::@4 cputc::@6
   [738] conio_line_text[cputln::$3] = cputln::temp#1
   [739] conio_cursor_x[conio_screen_layer] = 0
   [740] conio_cursor_y[conio_screen_layer] = ++ conio_cursor_y[conio_screen_layer]
-  [741] call cscroll 
+  [741] call cscroll
   to:cputln::@return
 cputln::@return: scope:[cputln]  from cputln
   [742] return 
@@ -9573,11 +9573,11 @@ cscroll::@return: scope:[cscroll]  from cscroll cscroll::@2 cscroll::@3 cscroll:
   to:@return
 cscroll::@4: scope:[cscroll]  from cscroll::@1
   [774] phi()
-  [775] call insertup 
+  [775] call insertup
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
   [776] gotoxy::y#2 = conio_screen_height - 1
-  [777] call gotoxy 
+  [777] call gotoxy
   to:cscroll::@return
 
 void insertup()
@@ -9591,7 +9591,7 @@ insertup::@1: scope:[insertup]  from insertup insertup::@4
   to:insertup::@3
 insertup::@3: scope:[insertup]  from insertup::@1
   [782] phi()
-  [783] call clearline 
+  [783] call clearline
   to:insertup::@return
 insertup::@return: scope:[insertup]  from insertup::@3
   [784] return 
@@ -9604,7 +9604,7 @@ insertup::@2: scope:[insertup]  from insertup::@1
   [789] memcpy_in_vram::dest#0 = (void*)insertup::start#0
   [790] memcpy_in_vram::num#0 = insertup::width#0
   [791] memcpy_in_vram::src#3 = (void*)memcpy_in_vram::src#0
-  [792] call memcpy_in_vram 
+  [792] call memcpy_in_vram
   to:insertup::@4
 insertup::@4: scope:[insertup]  from insertup::@2
   [793] insertup::i#1 = ++ insertup::i#2
@@ -9621,7 +9621,7 @@ clearline: scope:[clearline]  from insertup::@3
   [800] *VERA_ADDRX_M = clearline::$2
   [801] *VERA_ADDRX_H = VERA_INC_1
   [802] vera_layer_get_color::layer#1 = conio_screen_layer
-  [803] call vera_layer_get_color 
+  [803] call vera_layer_get_color
   [804] vera_layer_get_color::return#4 = vera_layer_get_color::return#3
   to:clearline::@4
 clearline::@4: scope:[clearline]  from clearline
@@ -13187,14 +13187,14 @@ __start: {
     // [12] __bitmap_color_depth = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z __bitmap_color_depth
-    // [13] call conio_x16_init 
+    // [13] call conio_x16_init
     jsr conio_x16_init
     // [14] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
     jmp __b1
     // __start::@1
   __b1:
-    // [15] call main 
+    // [15] call main
     // [37] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -13213,7 +13213,7 @@ conio_x16_init: {
     // [17] conio_x16_init::line#0 = *conio_x16_init::BASIC_CURSOR_LINE -- vbuz1=_deref_pbuc1 
     lda BASIC_CURSOR_LINE
     sta.z line
-    // [18] call vera_layer_mode_text 
+    // [18] call vera_layer_mode_text
     // [145] phi from conio_x16_init to vera_layer_mode_text [phi:conio_x16_init->vera_layer_mode_text]
   vera_layer_mode_text_from_conio_x16_init:
     jsr vera_layer_mode_text
@@ -13222,21 +13222,21 @@ conio_x16_init: {
     jmp __b3
     // conio_x16_init::@3
   __b3:
-    // [20] call screensize 
+    // [20] call screensize
     jsr screensize
     // [21] phi from conio_x16_init::@3 to conio_x16_init::@4 [phi:conio_x16_init::@3->conio_x16_init::@4]
   __b4_from___b3:
     jmp __b4
     // conio_x16_init::@4
   __b4:
-    // [22] call screenlayer 
+    // [22] call screenlayer
     jsr screenlayer
     // [23] phi from conio_x16_init::@4 to conio_x16_init::@5 [phi:conio_x16_init::@4->conio_x16_init::@5]
   __b5_from___b4:
     jmp __b5
     // conio_x16_init::@5
   __b5:
-    // [24] call vera_layer_set_textcolor 
+    // [24] call vera_layer_set_textcolor
     // [197] phi from conio_x16_init::@5 to vera_layer_set_textcolor [phi:conio_x16_init::@5->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from___b5:
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:conio_x16_init::@5->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13249,7 +13249,7 @@ conio_x16_init: {
     jmp __b6
     // conio_x16_init::@6
   __b6:
-    // [26] call vera_layer_set_backcolor 
+    // [26] call vera_layer_set_backcolor
     // [200] phi from conio_x16_init::@6 to vera_layer_set_backcolor [phi:conio_x16_init::@6->vera_layer_set_backcolor]
   vera_layer_set_backcolor_from___b6:
     // [200] phi vera_layer_set_backcolor::color#4 = BLUE [phi:conio_x16_init::@6->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
@@ -13262,7 +13262,7 @@ conio_x16_init: {
     jmp __b7
     // conio_x16_init::@7
   __b7:
-    // [28] call vera_layer_set_mapbase 
+    // [28] call vera_layer_set_mapbase
     // [203] phi from conio_x16_init::@7 to vera_layer_set_mapbase [phi:conio_x16_init::@7->vera_layer_set_mapbase]
   vera_layer_set_mapbase_from___b7:
     // [203] phi vera_layer_set_mapbase::mapbase#3 = $20 [phi:conio_x16_init::@7->vera_layer_set_mapbase#0] -- vbuxx=vbuc1 
@@ -13275,7 +13275,7 @@ conio_x16_init: {
     jmp __b8
     // conio_x16_init::@8
   __b8:
-    // [30] call vera_layer_set_mapbase 
+    // [30] call vera_layer_set_mapbase
     // [203] phi from conio_x16_init::@8 to vera_layer_set_mapbase [phi:conio_x16_init::@8->vera_layer_set_mapbase]
   vera_layer_set_mapbase_from___b8:
     // [203] phi vera_layer_set_mapbase::mapbase#3 = 0 [phi:conio_x16_init::@8->vera_layer_set_mapbase#0] -- vbuxx=vbuc1 
@@ -13306,7 +13306,7 @@ conio_x16_init: {
   __b1:
     // [34] gotoxy::y#1 = conio_x16_init::line#3 -- vbuxx=vbuz1 
     ldx.z line
-    // [35] call gotoxy 
+    // [35] call gotoxy
     // [208] phi from conio_x16_init::@1 to gotoxy [phi:conio_x16_init::@1->gotoxy]
   gotoxy_from___b1:
     // [208] phi gotoxy::y#7 = gotoxy::y#1 [phi:conio_x16_init::@1->gotoxy#0] -- register_copy 
@@ -13322,7 +13322,7 @@ main: {
     .label __40 = $13
     .label color = 5
     .label x = 3
-    // [38] call memcpy_in_vram 
+    // [38] call memcpy_in_vram
   // Before we configure the bitmap pane into vera  memory we need to re-arrange a few things!
   // It is better to load all in bank 0, but then there is an issue.
   // So the default CX16 character set is located in bank 0, at address 0xF800.
@@ -13356,7 +13356,7 @@ main: {
     jmp __b12
     // main::@12
   __b12:
-    // [40] call vera_layer_mode_tile 
+    // [40] call vera_layer_mode_tile
   // We copy the 128 character set of 8 bytes each.
     // [240] phi from main::@12 to vera_layer_mode_tile [phi:main::@12->vera_layer_mode_tile]
   vera_layer_mode_tile_from___b12:
@@ -13403,7 +13403,7 @@ main: {
     jmp __b13
     // main::@13
   __b13:
-    // [42] call vera_layer_mode_bitmap 
+    // [42] call vera_layer_mode_bitmap
     // [301] phi from main::@13 to vera_layer_mode_bitmap [phi:main::@13->vera_layer_mode_bitmap]
   vera_layer_mode_bitmap_from___b13:
     jsr vera_layer_mode_bitmap
@@ -13412,14 +13412,14 @@ main: {
     jmp __b14
     // main::@14
   __b14:
-    // [44] call screenlayer 
+    // [44] call screenlayer
     jsr screenlayer
     jmp textcolor1
     // main::textcolor1
   textcolor1:
     // [45] vera_layer_set_textcolor::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [46] call vera_layer_set_textcolor 
+    // [46] call vera_layer_set_textcolor
     // [197] phi from main::textcolor1 to vera_layer_set_textcolor [phi:main::textcolor1->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from_textcolor1:
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor1->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13431,7 +13431,7 @@ main: {
   bgcolor1:
     // [47] vera_layer_set_backcolor::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [48] call vera_layer_set_backcolor 
+    // [48] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor1 to vera_layer_set_backcolor [phi:main::bgcolor1->vera_layer_set_backcolor]
   vera_layer_set_backcolor_from_bgcolor1:
     // [200] phi vera_layer_set_backcolor::color#4 = BLACK [phi:main::bgcolor1->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
@@ -13443,14 +13443,14 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [50] call clrscr 
+    // [50] call clrscr
     jsr clrscr
     // [51] phi from main::@6 to main::@15 [phi:main::@6->main::@15]
   __b15_from___b6:
     jmp __b15
     // main::@15
   __b15:
-    // [52] call gotoxy 
+    // [52] call gotoxy
     // [208] phi from main::@15 to gotoxy [phi:main::@15->gotoxy]
   gotoxy_from___b15:
     // [208] phi gotoxy::y#7 = $19 [phi:main::@15->gotoxy#0] -- vbuxx=vbuc1 
@@ -13461,7 +13461,7 @@ main: {
     jmp __b16
     // main::@16
   __b16:
-    // [54] call cputs 
+    // [54] call cputs
     // [344] phi from main::@16 to cputs [phi:main::@16->cputs]
   cputs_from___b16:
     // [344] phi cputs::s#9 = main::s [phi:main::@16->cputs#0] -- pbuz1=pbuc1 
@@ -13475,7 +13475,7 @@ main: {
     jmp __b17
     // main::@17
   __b17:
-    // [56] call cputs 
+    // [56] call cputs
     // [344] phi from main::@17 to cputs [phi:main::@17->cputs]
   cputs_from___b17:
     // [344] phi cputs::s#9 = main::s1 [phi:main::@17->cputs#0] -- pbuz1=pbuc1 
@@ -13489,7 +13489,7 @@ main: {
     jmp __b18
     // main::@18
   __b18:
-    // [58] call cputs 
+    // [58] call cputs
     // [344] phi from main::@18 to cputs [phi:main::@18->cputs]
   cputs_from___b18:
     // [344] phi cputs::s#9 = main::s2 [phi:main::@18->cputs#0] -- pbuz1=pbuc1 
@@ -13503,7 +13503,7 @@ main: {
     jmp __b19
     // main::@19
   __b19:
-    // [60] call cputs 
+    // [60] call cputs
     // [344] phi from main::@19 to cputs [phi:main::@19->cputs]
   cputs_from___b19:
     // [344] phi cputs::s#9 = main::s3 [phi:main::@19->cputs#0] -- pbuz1=pbuc1 
@@ -13524,21 +13524,21 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [63] call bitmap_init 
+    // [63] call bitmap_init
     jsr bitmap_init
     // [64] phi from main::@7 to main::@20 [phi:main::@7->main::@20]
   __b20_from___b7:
     jmp __b20
     // main::@20
   __b20:
-    // [65] call bitmap_clear 
+    // [65] call bitmap_clear
     jsr bitmap_clear
     // [66] phi from main::@20 to main::@21 [phi:main::@20->main::@21]
   __b21_from___b20:
     jmp __b21
     // main::@21
   __b21:
-    // [67] call gotoxy 
+    // [67] call gotoxy
     // [208] phi from main::@21 to gotoxy [phi:main::@21->gotoxy]
   gotoxy_from___b21:
     // [208] phi gotoxy::y#7 = $1d [phi:main::@21->gotoxy#0] -- vbuxx=vbuc1 
@@ -13549,7 +13549,7 @@ main: {
   textcolor2:
     // [68] vera_layer_set_textcolor::layer#2 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [69] call vera_layer_set_textcolor 
+    // [69] call vera_layer_set_textcolor
     // [197] phi from main::textcolor2 to vera_layer_set_textcolor [phi:main::textcolor2->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from_textcolor2:
     // [197] phi vera_layer_set_textcolor::color#6 = YELLOW [phi:main::textcolor2->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13561,7 +13561,7 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [71] call cputs 
+    // [71] call cputs
     // [344] phi from main::@8 to cputs [phi:main::@8->cputs]
   cputs_from___b8:
     // [344] phi cputs::s#9 = main::s4 [phi:main::@8->cputs#0] -- pbuz1=pbuc1 
@@ -13580,7 +13580,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [73] call kbhit 
+    // [73] call kbhit
     jsr kbhit
     // [74] kbhit::return#2 = kbhit::return#1
     jmp __b22
@@ -13595,7 +13595,7 @@ main: {
   textcolor3:
     // [77] vera_layer_set_textcolor::layer#3 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [78] call vera_layer_set_textcolor 
+    // [78] call vera_layer_set_textcolor
     // [197] phi from main::textcolor3 to vera_layer_set_textcolor [phi:main::textcolor3->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from_textcolor3:
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor3->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13607,7 +13607,7 @@ main: {
   bgcolor2:
     // [79] vera_layer_set_backcolor::layer#2 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [80] call vera_layer_set_backcolor 
+    // [80] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor2 to vera_layer_set_backcolor [phi:main::bgcolor2->vera_layer_set_backcolor]
   vera_layer_set_backcolor_from_bgcolor2:
     // [200] phi vera_layer_set_backcolor::color#4 = BLACK [phi:main::bgcolor2->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
@@ -13619,14 +13619,14 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [82] call clrscr 
+    // [82] call clrscr
     jsr clrscr
     // [83] phi from main::@9 to main::@32 [phi:main::@9->main::@32]
   __b32_from___b9:
     jmp __b32
     // main::@32
   __b32:
-    // [84] call gotoxy 
+    // [84] call gotoxy
     // [208] phi from main::@32 to gotoxy [phi:main::@32->gotoxy]
   gotoxy_from___b32:
     // [208] phi gotoxy::y#7 = $1a [phi:main::@32->gotoxy#0] -- vbuxx=vbuc1 
@@ -13637,7 +13637,7 @@ main: {
     jmp __b33
     // main::@33
   __b33:
-    // [86] call cputs 
+    // [86] call cputs
     // [344] phi from main::@33 to cputs [phi:main::@33->cputs]
   cputs_from___b33:
     // [344] phi cputs::s#9 = main::s5 [phi:main::@33->cputs#0] -- pbuz1=pbuc1 
@@ -13651,7 +13651,7 @@ main: {
     jmp __b34
     // main::@34
   __b34:
-    // [88] call gotoxy 
+    // [88] call gotoxy
     // [208] phi from main::@34 to gotoxy [phi:main::@34->gotoxy]
   gotoxy_from___b34:
     // [208] phi gotoxy::y#7 = $1d [phi:main::@34->gotoxy#0] -- vbuxx=vbuc1 
@@ -13662,7 +13662,7 @@ main: {
   textcolor4:
     // [89] vera_layer_set_textcolor::layer#4 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [90] call vera_layer_set_textcolor 
+    // [90] call vera_layer_set_textcolor
     // [197] phi from main::textcolor4 to vera_layer_set_textcolor [phi:main::textcolor4->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from_textcolor4:
     // [197] phi vera_layer_set_textcolor::color#6 = YELLOW [phi:main::textcolor4->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13674,7 +13674,7 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [92] call cputs 
+    // [92] call cputs
     // [344] phi from main::@10 to cputs [phi:main::@10->cputs]
   cputs_from___b10:
     // [344] phi cputs::s#9 = main::s4 [phi:main::@10->cputs#0] -- pbuz1=pbuc1 
@@ -13696,7 +13696,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [94] call kbhit 
+    // [94] call kbhit
     jsr kbhit
     // [95] kbhit::return#3 = kbhit::return#1
     jmp __b35
@@ -13711,14 +13711,14 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [99] call screenlayer 
+    // [99] call screenlayer
     jsr screenlayer
     jmp textcolor5
     // main::textcolor5
   textcolor5:
     // [100] vera_layer_set_textcolor::layer#5 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [101] call vera_layer_set_textcolor 
+    // [101] call vera_layer_set_textcolor
     // [197] phi from main::textcolor5 to vera_layer_set_textcolor [phi:main::textcolor5->vera_layer_set_textcolor]
   vera_layer_set_textcolor_from_textcolor5:
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor5->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
@@ -13730,7 +13730,7 @@ main: {
   bgcolor3:
     // [102] vera_layer_set_backcolor::layer#3 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [103] call vera_layer_set_backcolor 
+    // [103] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor3 to vera_layer_set_backcolor [phi:main::bgcolor3->vera_layer_set_backcolor]
   vera_layer_set_backcolor_from_bgcolor3:
     // [200] phi vera_layer_set_backcolor::color#4 = BLUE [phi:main::bgcolor3->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
@@ -13742,7 +13742,7 @@ main: {
     jmp __b11
     // main::@11
   __b11:
-    // [105] call clrscr 
+    // [105] call clrscr
     jsr clrscr
     jmp __breturn
     // main::@return
@@ -13759,7 +13759,7 @@ main: {
     sta.z bitmap_line.x1+1
     // [109] bitmap_line::c#1 = main::color#2 -- vbuxx=vbuz1 
     ldx.z color
-    // [110] call bitmap_line 
+    // [110] call bitmap_line
     // [461] phi from main::@4 to bitmap_line [phi:main::@4->bitmap_line]
   bitmap_line_from___b4:
     // [461] phi bitmap_line::c#10 = bitmap_line::c#1 [phi:main::@4->bitmap_line#0] -- register_copy 
@@ -13819,7 +13819,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [116] call rand 
+    // [116] call rand
     // [532] phi from main::@2 to rand [phi:main::@2->rand]
   rand_from___b2:
     // [532] phi rand_state#13 = rand_state#23 [phi:main::@2->rand#0] -- register_copy 
@@ -13829,7 +13829,7 @@ main: {
     // main::@23
   __b23:
     // [118] modr16u::dividend#0 = rand::return#2
-    // [119] call modr16u 
+    // [119] call modr16u
     // [541] phi from main::@23 to modr16u [phi:main::@23->modr16u]
   modr16u_from___b23:
     // [541] phi modr16u::divisor#4 = $140 [phi:main::@23->modr16u#0] -- vwuz1=vwuc1 
@@ -13848,7 +13848,7 @@ main: {
     sta.z bitmap_line.x0
     lda.z modr16u.return+1
     sta.z bitmap_line.x0+1
-    // [122] call rand 
+    // [122] call rand
     // [532] phi from main::@24 to rand [phi:main::@24->rand]
   rand_from___b24:
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@24->rand#0] -- register_copy 
@@ -13858,7 +13858,7 @@ main: {
     // main::@25
   __b25:
     // [124] modr16u::dividend#1 = rand::return#3
-    // [125] call modr16u 
+    // [125] call modr16u
     // [541] phi from main::@25 to modr16u [phi:main::@25->modr16u]
   modr16u_from___b25:
     // [541] phi modr16u::divisor#4 = $140 [phi:main::@25->modr16u#0] -- vwuz1=vwuc1 
@@ -13877,7 +13877,7 @@ main: {
     // main::@26
   __b26:
     // [127] bitmap_line::x1#0 = modr16u::return#3
-    // [128] call rand 
+    // [128] call rand
     // [532] phi from main::@26 to rand [phi:main::@26->rand]
   rand_from___b26:
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@26->rand#0] -- register_copy 
@@ -13887,7 +13887,7 @@ main: {
     // main::@27
   __b27:
     // [130] modr16u::dividend#2 = rand::return#10
-    // [131] call modr16u 
+    // [131] call modr16u
     // [541] phi from main::@27 to modr16u [phi:main::@27->modr16u]
   modr16u_from___b27:
     // [541] phi modr16u::divisor#4 = $c8 [phi:main::@27->modr16u#0] -- vwuz1=vbuc1 
@@ -13906,7 +13906,7 @@ main: {
     // main::@28
   __b28:
     // [133] bitmap_line::y0#0 = modr16u::return#4
-    // [134] call rand 
+    // [134] call rand
     // [532] phi from main::@28 to rand [phi:main::@28->rand]
   rand_from___b28:
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@28->rand#0] -- register_copy 
@@ -13916,7 +13916,7 @@ main: {
     // main::@29
   __b29:
     // [136] modr16u::dividend#3 = rand::return#11
-    // [137] call modr16u 
+    // [137] call modr16u
     // [541] phi from main::@29 to modr16u [phi:main::@29->modr16u]
   modr16u_from___b29:
     // [541] phi modr16u::divisor#4 = $c8 [phi:main::@29->modr16u#0] -- vwuz1=vbuc1 
@@ -13931,7 +13931,7 @@ main: {
     // main::@30
   __b30:
     // [139] bitmap_line::y1#0 = modr16u::return#10
-    // [140] call rand 
+    // [140] call rand
     // [532] phi from main::@30 to rand [phi:main::@30->rand]
   rand_from___b30:
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@30->rand#0] -- register_copy 
@@ -13945,7 +13945,7 @@ main: {
     lda #$ff
     and.z __40
     tax
-    // [144] call bitmap_line 
+    // [144] call bitmap_line
     // [461] phi from main::@31 to bitmap_line [phi:main::@31->bitmap_line]
   bitmap_line_from___b31:
     // [461] phi bitmap_line::c#10 = bitmap_line::c#0 [phi:main::@31->bitmap_line#0] -- register_copy 
@@ -13999,7 +13999,7 @@ vera_layer_mode_text: {
     .const tilewidth = 8
     .const tileheight = 8
     .label layer = 1
-    // [146] call vera_layer_mode_tile 
+    // [146] call vera_layer_mode_tile
     // [240] phi from vera_layer_mode_text to vera_layer_mode_tile [phi:vera_layer_mode_text->vera_layer_mode_tile]
   vera_layer_mode_tile_from_vera_layer_mode_text:
     // [240] phi vera_layer_mode_tile::tileheight#10 = vera_layer_mode_text::tileheight#0 [phi:vera_layer_mode_text->vera_layer_mode_tile#0] -- vbuz1=vbuc1 
@@ -14045,7 +14045,7 @@ vera_layer_mode_text: {
     jmp __b1
     // vera_layer_mode_text::@1
   __b1:
-    // [148] call vera_layer_set_text_color_mode 
+    // [148] call vera_layer_set_text_color_mode
     jsr vera_layer_set_text_color_mode
     jmp __breturn
     // vera_layer_mode_text::@return
@@ -14119,7 +14119,7 @@ screenlayer: {
     sta.z conio_screen_layer
     // [158] vera_layer_get_mapbase_bank::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [159] call vera_layer_get_mapbase_bank 
+    // [159] call vera_layer_get_mapbase_bank
     jsr vera_layer_get_mapbase_bank
     // [160] vera_layer_get_mapbase_bank::return#2 = vera_layer_get_mapbase_bank::return#0
     jmp __b3
@@ -14129,7 +14129,7 @@ screenlayer: {
     sta.z CONIO_SCREEN_BANK
     // [162] vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
-    // [163] call vera_layer_get_mapbase_offset 
+    // [163] call vera_layer_get_mapbase_offset
     jsr vera_layer_get_mapbase_offset
     // [164] vera_layer_get_mapbase_offset::return#2 = vera_layer_get_mapbase_offset::return#0
     jmp __b4
@@ -14185,7 +14185,7 @@ screenlayer: {
     sta.z conio_width+1
     // [176] vera_layer_get_rowshift::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [177] call vera_layer_get_rowshift 
+    // [177] call vera_layer_get_rowshift
     jsr vera_layer_get_rowshift
     // [178] vera_layer_get_rowshift::return#2 = vera_layer_get_rowshift::return#0
     jmp __b5
@@ -14196,7 +14196,7 @@ screenlayer: {
     sta.z conio_rowshift
     // [181] vera_layer_get_rowskip::layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
-    // [182] call vera_layer_get_rowskip 
+    // [182] call vera_layer_get_rowskip
     jsr vera_layer_get_rowskip
     // [183] vera_layer_get_rowskip::return#2 = vera_layer_get_rowskip::return#0
     jmp __b6
@@ -14641,7 +14641,7 @@ vera_layer_mode_tile: {
     // [255] vera_layer_set_config::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [256] vera_layer_set_config::config#0 = vera_layer_mode_tile::config#25
-    // [257] call vera_layer_set_config 
+    // [257] call vera_layer_set_config
     // [561] phi from vera_layer_mode_tile::@16 to vera_layer_set_config [phi:vera_layer_mode_tile::@16->vera_layer_set_config]
   vera_layer_set_config_from___b16:
     // [561] phi vera_layer_set_config::config#2 = vera_layer_set_config::config#0 [phi:vera_layer_mode_tile::@16->vera_layer_set_config#0] -- register_copy 
@@ -14696,7 +14696,7 @@ vera_layer_mode_tile: {
     // [267] vera_layer_set_mapbase::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [268] vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
-    // [269] call vera_layer_set_mapbase 
+    // [269] call vera_layer_set_mapbase
     // [203] phi from vera_layer_mode_tile::@23 to vera_layer_set_mapbase [phi:vera_layer_mode_tile::@23->vera_layer_set_mapbase]
   vera_layer_set_mapbase_from___b23:
     // [203] phi vera_layer_set_mapbase::mapbase#3 = vera_layer_set_mapbase::mapbase#0 [phi:vera_layer_mode_tile::@23->vera_layer_set_mapbase#0] -- register_copy 
@@ -14797,7 +14797,7 @@ vera_layer_mode_tile: {
     // [286] vera_layer_set_tilebase::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [287] vera_layer_set_tilebase::tilebase#0 = vera_layer_mode_tile::tilebase#10
-    // [288] call vera_layer_set_tilebase 
+    // [288] call vera_layer_set_tilebase
     // [566] phi from vera_layer_mode_tile::@22 to vera_layer_set_tilebase [phi:vera_layer_mode_tile::@22->vera_layer_set_tilebase]
   vera_layer_set_tilebase_from___b22:
     // [566] phi vera_layer_set_tilebase::tilebase#2 = vera_layer_set_tilebase::tilebase#0 [phi:vera_layer_mode_tile::@22->vera_layer_set_tilebase#0] -- register_copy 
@@ -14938,7 +14938,7 @@ vera_layer_mode_bitmap: {
     jmp __b2
     // vera_layer_mode_bitmap::@2
   __b2:
-    // [308] call vera_layer_set_config 
+    // [308] call vera_layer_set_config
     // [561] phi from vera_layer_mode_bitmap::@2 to vera_layer_set_config [phi:vera_layer_mode_bitmap::@2->vera_layer_set_config]
   vera_layer_set_config_from___b2:
     // [561] phi vera_layer_set_config::config#2 = vera_layer_mode_bitmap::config#11 [phi:vera_layer_mode_bitmap::@2->vera_layer_set_config#0] -- vbuxx=vbuc1 
@@ -14951,7 +14951,7 @@ vera_layer_mode_bitmap: {
     jmp __b3
     // vera_layer_mode_bitmap::@3
   __b3:
-    // [310] call vera_layer_set_tilebase 
+    // [310] call vera_layer_set_tilebase
     // [566] phi from vera_layer_mode_bitmap::@3 to vera_layer_set_tilebase [phi:vera_layer_mode_bitmap::@3->vera_layer_set_tilebase]
   vera_layer_set_tilebase_from___b3:
     // [566] phi vera_layer_set_tilebase::tilebase#2 = vera_layer_mode_bitmap::tilebase#1 [phi:vera_layer_mode_bitmap::@3->vera_layer_set_tilebase#0] -- vbuxx=vbuc1 
@@ -14978,7 +14978,7 @@ clrscr: {
     sta.z line_text+1
     // [313] vera_layer_get_backcolor::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [314] call vera_layer_get_backcolor 
+    // [314] call vera_layer_get_backcolor
     jsr vera_layer_get_backcolor
     // [315] vera_layer_get_backcolor::return#0 = vera_layer_get_backcolor::return#1
     jmp __b7
@@ -14993,7 +14993,7 @@ clrscr: {
     sta.z __1
     // [318] vera_layer_get_textcolor::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [319] call vera_layer_get_textcolor 
+    // [319] call vera_layer_get_textcolor
     jsr vera_layer_get_textcolor
     // [320] vera_layer_get_textcolor::return#0 = vera_layer_get_textcolor::return#1
     jmp __b8
@@ -15139,7 +15139,7 @@ cputs: {
   __b2:
     // [350] cputc::c#0 = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [351] call cputc 
+    // [351] call cputc
     jsr cputc
     jmp __b1_from___b2
 }
@@ -15215,7 +15215,7 @@ bitmap_init: {
     // [360] bitmap_init::$0 = bitmap_init::vera_layer_get_color_depth1_return#1
     // [361] __bitmap_color_depth = bitmap_init::$0 -- vbuz1=vbuaa 
     sta.z __bitmap_color_depth
-    // [362] call vera_display_get_hscale 
+    // [362] call vera_display_get_hscale
     // [606] phi from bitmap_init::@16 to vera_display_get_hscale [phi:bitmap_init::@16->vera_display_get_hscale]
   vera_display_get_hscale_from___b16:
     jsr vera_display_get_hscale
@@ -15226,7 +15226,7 @@ bitmap_init: {
     // [364] bitmap_init::$1 = vera_display_get_hscale::return#2
     // [365] __bitmap_hscale = bitmap_init::$1 -- vbuz1=vbuxx 
     stx.z __bitmap_hscale
-    // [366] call vera_display_get_vscale 
+    // [366] call vera_display_get_vscale
     // [613] phi from bitmap_init::@17 to vera_display_get_vscale [phi:bitmap_init::@17->vera_display_get_vscale]
   vera_display_get_vscale_from___b17:
     jsr vera_display_get_vscale
@@ -15738,7 +15738,7 @@ bitmap_clear: {
     sta.z hdelta+1
     // [444] mul16u::a#0 = bitmap_clear::hdelta#0
     // [445] mul16u::b#0 = bitmap_clear::vdelta#0
-    // [446] call mul16u 
+    // [446] call mul16u
     jsr mul16u
     // [447] mul16u::return#0 = mul16u::res#2
     jmp __b1
@@ -15755,7 +15755,7 @@ bitmap_clear: {
     // [451] memset_vram::vbank#0 = bitmap_clear::vbank#0
     // [452] memset_vram::vdest#0 = (void*)bitmap_clear::vdest#0
     // [453] memset_vram::num#0 = bitmap_clear::count#0
-    // [454] call memset_vram 
+    // [454] call memset_vram
     jsr memset_vram
     jmp __breturn
     // bitmap_clear::@return
@@ -15888,7 +15888,7 @@ bitmap_line: {
     // [471] bitmap_line_ydxi::xd#0 = bitmap_line::xd#2
     // [472] bitmap_line_ydxi::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxi.c
-    // [473] call bitmap_line_ydxi 
+    // [473] call bitmap_line_ydxi
     // [642] phi from bitmap_line::@4 to bitmap_line_ydxi [phi:bitmap_line::@4->bitmap_line_ydxi]
   bitmap_line_ydxi_from___b4:
     // [642] phi bitmap_line_ydxi::y1#6 = bitmap_line_ydxi::y1#0 [phi:bitmap_line::@4->bitmap_line_ydxi#0] -- register_copy 
@@ -15924,7 +15924,7 @@ bitmap_line: {
     // [479] bitmap_line_xdyi::yd#0 = bitmap_line::yd#2
     // [480] bitmap_line_xdyi::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyi.c
-    // [481] call bitmap_line_xdyi 
+    // [481] call bitmap_line_xdyi
     // [658] phi from bitmap_line::@8 to bitmap_line_xdyi [phi:bitmap_line::@8->bitmap_line_xdyi]
   bitmap_line_xdyi_from___b8:
     // [658] phi bitmap_line_xdyi::x1#6 = bitmap_line_xdyi::x1#0 [phi:bitmap_line::@8->bitmap_line_xdyi#0] -- register_copy 
@@ -15976,7 +15976,7 @@ bitmap_line: {
     // [488] bitmap_line_ydxd::xd#0 = bitmap_line::xd#2
     // [489] bitmap_line_ydxd::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxd.c
-    // [490] call bitmap_line_ydxd 
+    // [490] call bitmap_line_ydxd
     // [674] phi from bitmap_line::@10 to bitmap_line_ydxd [phi:bitmap_line::@10->bitmap_line_ydxd]
   bitmap_line_ydxd_from___b10:
     // [674] phi bitmap_line_ydxd::y1#6 = bitmap_line_ydxd::y1#0 [phi:bitmap_line::@10->bitmap_line_ydxd#0] -- register_copy 
@@ -16008,7 +16008,7 @@ bitmap_line: {
     // [495] bitmap_line_xdyd::yd#0 = bitmap_line::yd#1
     // [496] bitmap_line_xdyd::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyd.c
-    // [497] call bitmap_line_xdyd 
+    // [497] call bitmap_line_xdyd
     // [690] phi from bitmap_line::@9 to bitmap_line_xdyd [phi:bitmap_line::@9->bitmap_line_xdyd]
   bitmap_line_xdyd_from___b9:
     // [690] phi bitmap_line_xdyd::x1#6 = bitmap_line_xdyd::x1#0 [phi:bitmap_line::@9->bitmap_line_xdyd#0] -- register_copy 
@@ -16072,7 +16072,7 @@ bitmap_line: {
     // [506] bitmap_line_ydxd::xd#1 = bitmap_line::xd#1
     // [507] bitmap_line_ydxd::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxd.c
-    // [508] call bitmap_line_ydxd 
+    // [508] call bitmap_line_ydxd
     // [674] phi from bitmap_line::@6 to bitmap_line_ydxd [phi:bitmap_line::@6->bitmap_line_ydxd]
   bitmap_line_ydxd_from___b6:
     // [674] phi bitmap_line_ydxd::y1#6 = bitmap_line_ydxd::y1#1 [phi:bitmap_line::@6->bitmap_line_ydxd#0] -- register_copy 
@@ -16096,7 +16096,7 @@ bitmap_line: {
     // [513] bitmap_line_xdyd::yd#1 = bitmap_line::yd#10
     // [514] bitmap_line_xdyd::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyd.c
-    // [515] call bitmap_line_xdyd 
+    // [515] call bitmap_line_xdyd
     // [690] phi from bitmap_line::@12 to bitmap_line_xdyd [phi:bitmap_line::@12->bitmap_line_xdyd]
   bitmap_line_xdyd_from___b12:
     // [690] phi bitmap_line_xdyd::x1#6 = bitmap_line_xdyd::x1#1 [phi:bitmap_line::@12->bitmap_line_xdyd#0] -- register_copy 
@@ -16148,7 +16148,7 @@ bitmap_line: {
     // [522] bitmap_line_ydxi::xd#1 = bitmap_line::xd#1
     // [523] bitmap_line_ydxi::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxi.c
-    // [524] call bitmap_line_ydxi 
+    // [524] call bitmap_line_ydxi
     // [642] phi from bitmap_line::@14 to bitmap_line_ydxi [phi:bitmap_line::@14->bitmap_line_ydxi]
   bitmap_line_ydxi_from___b14:
     // [642] phi bitmap_line_ydxi::y1#6 = bitmap_line_ydxi::y1#1 [phi:bitmap_line::@14->bitmap_line_ydxi#0] -- register_copy 
@@ -16172,7 +16172,7 @@ bitmap_line: {
     // [529] bitmap_line_xdyi::yd#1 = bitmap_line::yd#11
     // [530] bitmap_line_xdyi::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyi.c
-    // [531] call bitmap_line_xdyi 
+    // [531] call bitmap_line_xdyi
     // [658] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
   bitmap_line_xdyi_from___b13:
     // [658] phi bitmap_line_xdyi::x1#6 = bitmap_line_xdyi::x1#1 [phi:bitmap_line::@13->bitmap_line_xdyi#0] -- register_copy 
@@ -16259,7 +16259,7 @@ modr16u: {
     .label divisor = $17
     // [542] divr16u::dividend#1 = modr16u::dividend#4
     // [543] divr16u::divisor#0 = modr16u::divisor#4
-    // [544] call divr16u 
+    // [544] call divr16u
     // [706] phi from modr16u to divr16u [phi:modr16u->divr16u]
   divr16u_from_modr16u:
     jsr divr16u
@@ -16469,7 +16469,7 @@ cputc: {
     .label c = $38
     // [575] vera_layer_get_color::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [576] call vera_layer_get_color 
+    // [576] call vera_layer_get_color
     // [724] phi from cputc to vera_layer_get_color [phi:cputc->vera_layer_get_color]
   vera_layer_get_color_from_cputc:
     // [724] phi vera_layer_get_color::layer#2 = vera_layer_get_color::layer#0 [phi:cputc->vera_layer_get_color#0] -- register_copy 
@@ -16564,7 +16564,7 @@ cputc: {
     jmp __b4
     // cputc::@4
   __b4:
-    // [599] call cputln 
+    // [599] call cputln
     jsr cputln
     jmp __breturn
     // cputc::@return
@@ -16583,7 +16583,7 @@ cputc: {
     jmp __b6
     // cputc::@6
   __b6:
-    // [603] call cputln 
+    // [603] call cputln
     jsr cputln
     jmp __breturn
     // [604] phi from cputc::@7 to cputc::@1 [phi:cputc::@7->cputc::@1]
@@ -16591,7 +16591,7 @@ cputc: {
     jmp __b1
     // cputc::@1
   __b1:
-    // [605] call cputln 
+    // [605] call cputln
     jsr cputln
     jmp __breturn
 }
@@ -16897,7 +16897,7 @@ bitmap_line_ydxi: {
     // [646] bitmap_plot::y#2 = bitmap_line_ydxi::y#3
     // [647] bitmap_plot::c#3 = bitmap_line_ydxi::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [648] call bitmap_plot 
+    // [648] call bitmap_plot
     // [743] phi from bitmap_line_ydxi::@1 to bitmap_plot [phi:bitmap_line_ydxi::@1->bitmap_plot]
   bitmap_plot_from___b1:
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#3 [phi:bitmap_line_ydxi::@1->bitmap_plot#0] -- register_copy 
@@ -17009,7 +17009,7 @@ bitmap_line_xdyi: {
     sta.z bitmap_plot.y+1
     // [663] bitmap_plot::c#1 = bitmap_line_xdyi::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [664] call bitmap_plot 
+    // [664] call bitmap_plot
     // [743] phi from bitmap_line_xdyi::@1 to bitmap_plot [phi:bitmap_line_xdyi::@1->bitmap_plot]
   bitmap_plot_from___b1:
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#1 [phi:bitmap_line_xdyi::@1->bitmap_plot#0] -- register_copy 
@@ -17121,7 +17121,7 @@ bitmap_line_ydxd: {
     // [678] bitmap_plot::y#3 = bitmap_line_ydxd::y#2
     // [679] bitmap_plot::c#4 = bitmap_line_ydxd::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [680] call bitmap_plot 
+    // [680] call bitmap_plot
     // [743] phi from bitmap_line_ydxd::@1 to bitmap_plot [phi:bitmap_line_ydxd::@1->bitmap_plot]
   bitmap_plot_from___b1:
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#4 [phi:bitmap_line_ydxd::@1->bitmap_plot#0] -- register_copy 
@@ -17234,7 +17234,7 @@ bitmap_line_xdyd: {
     sta.z bitmap_plot.y+1
     // [695] bitmap_plot::c#2 = bitmap_line_xdyd::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [696] call bitmap_plot 
+    // [696] call bitmap_plot
     // [743] phi from bitmap_line_xdyd::@1 to bitmap_plot [phi:bitmap_line_xdyd::@1->bitmap_plot]
   bitmap_plot_from___b1:
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#2 [phi:bitmap_line_xdyd::@1->bitmap_plot#0] -- register_copy 
@@ -17520,7 +17520,7 @@ cputln: {
     // [740] conio_cursor_y[conio_screen_layer] = ++ conio_cursor_y[conio_screen_layer] -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z conio_screen_layer
     inc conio_cursor_y,x
-    // [741] call cscroll 
+    // [741] call cscroll
     jsr cscroll
     jmp __breturn
     // cputln::@return
@@ -17734,7 +17734,7 @@ cscroll: {
     jmp __b4
     // cscroll::@4
   __b4:
-    // [775] call insertup 
+    // [775] call insertup
     jsr insertup
     jmp __b5
     // cscroll::@5
@@ -17742,7 +17742,7 @@ cscroll: {
     // [776] gotoxy::y#2 = conio_screen_height - 1 -- vbuxx=vbuz1_minus_1 
     ldx.z conio_screen_height
     dex
-    // [777] call gotoxy 
+    // [777] call gotoxy
     // [208] phi from cscroll::@5 to gotoxy [phi:cscroll::@5->gotoxy]
   gotoxy_from___b5:
     // [208] phi gotoxy::y#7 = gotoxy::y#2 [phi:cscroll::@5->gotoxy#0] -- register_copy 
@@ -17781,7 +17781,7 @@ insertup: {
     jmp __b3
     // insertup::@3
   __b3:
-    // [783] call clearline 
+    // [783] call clearline
     jsr clearline
     jmp __breturn
     // insertup::@return
@@ -17830,7 +17830,7 @@ insertup: {
     lda #0
     sta.z memcpy_in_vram.num+1
     // [791] memcpy_in_vram::src#3 = (void*)memcpy_in_vram::src#0
-    // [792] call memcpy_in_vram 
+    // [792] call memcpy_in_vram
     // [221] phi from insertup::@2 to memcpy_in_vram [phi:insertup::@2->memcpy_in_vram]
   memcpy_in_vram_from___b2:
     // [221] phi memcpy_in_vram::num#3 = memcpy_in_vram::num#0 [phi:insertup::@2->memcpy_in_vram#0] -- register_copy 
@@ -17884,7 +17884,7 @@ clearline: {
     sta VERA_ADDRX_H
     // [802] vera_layer_get_color::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [803] call vera_layer_get_color 
+    // [803] call vera_layer_get_color
     // [724] phi from clearline to vera_layer_get_color [phi:clearline->vera_layer_get_color]
   vera_layer_get_color_from_clearline:
     // [724] phi vera_layer_get_color::layer#2 = vera_layer_get_color::layer#1 [phi:clearline->vera_layer_get_color#0] -- register_copy 
@@ -20027,11 +20027,11 @@ __start: {
     // [12] __bitmap_color_depth = 0 -- vbuz1=vbuc1 
     sta.z __bitmap_color_depth
     // #pragma constructor_for(conio_x16_init, cputc, clrscr, cscroll)
-    // [13] call conio_x16_init 
+    // [13] call conio_x16_init
     jsr conio_x16_init
     // [14] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [15] call main 
+    // [15] call main
     // [37] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -20049,23 +20049,23 @@ conio_x16_init: {
     lda BASIC_CURSOR_LINE
     sta.z line
     // vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16)
-    // [18] call vera_layer_mode_text 
+    // [18] call vera_layer_mode_text
     // [145] phi from conio_x16_init to vera_layer_mode_text [phi:conio_x16_init->vera_layer_mode_text]
     jsr vera_layer_mode_text
     // [19] phi from conio_x16_init to conio_x16_init::@3 [phi:conio_x16_init->conio_x16_init::@3]
     // conio_x16_init::@3
     // screensize(&conio_screen_width, &conio_screen_height)
-    // [20] call screensize 
+    // [20] call screensize
     jsr screensize
     // [21] phi from conio_x16_init::@3 to conio_x16_init::@4 [phi:conio_x16_init::@3->conio_x16_init::@4]
     // conio_x16_init::@4
     // screenlayer(1)
-    // [22] call screenlayer 
+    // [22] call screenlayer
     jsr screenlayer
     // [23] phi from conio_x16_init::@4 to conio_x16_init::@5 [phi:conio_x16_init::@4->conio_x16_init::@5]
     // conio_x16_init::@5
     // vera_layer_set_textcolor(1, WHITE)
-    // [24] call vera_layer_set_textcolor 
+    // [24] call vera_layer_set_textcolor
     // [197] phi from conio_x16_init::@5 to vera_layer_set_textcolor [phi:conio_x16_init::@5->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:conio_x16_init::@5->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #WHITE
@@ -20075,7 +20075,7 @@ conio_x16_init: {
     // [25] phi from conio_x16_init::@5 to conio_x16_init::@6 [phi:conio_x16_init::@5->conio_x16_init::@6]
     // conio_x16_init::@6
     // vera_layer_set_backcolor(1, BLUE)
-    // [26] call vera_layer_set_backcolor 
+    // [26] call vera_layer_set_backcolor
     // [200] phi from conio_x16_init::@6 to vera_layer_set_backcolor [phi:conio_x16_init::@6->vera_layer_set_backcolor]
     // [200] phi vera_layer_set_backcolor::color#4 = BLUE [phi:conio_x16_init::@6->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
     lda #BLUE
@@ -20085,7 +20085,7 @@ conio_x16_init: {
     // [27] phi from conio_x16_init::@6 to conio_x16_init::@7 [phi:conio_x16_init::@6->conio_x16_init::@7]
     // conio_x16_init::@7
     // vera_layer_set_mapbase(0,0x20)
-    // [28] call vera_layer_set_mapbase 
+    // [28] call vera_layer_set_mapbase
     // [203] phi from conio_x16_init::@7 to vera_layer_set_mapbase [phi:conio_x16_init::@7->vera_layer_set_mapbase]
     // [203] phi vera_layer_set_mapbase::mapbase#3 = $20 [phi:conio_x16_init::@7->vera_layer_set_mapbase#0] -- vbuxx=vbuc1 
     ldx #$20
@@ -20095,7 +20095,7 @@ conio_x16_init: {
     // [29] phi from conio_x16_init::@7 to conio_x16_init::@8 [phi:conio_x16_init::@7->conio_x16_init::@8]
     // conio_x16_init::@8
     // vera_layer_set_mapbase(1,0x00)
-    // [30] call vera_layer_set_mapbase 
+    // [30] call vera_layer_set_mapbase
     // [203] phi from conio_x16_init::@8 to vera_layer_set_mapbase [phi:conio_x16_init::@8->vera_layer_set_mapbase]
     // [203] phi vera_layer_set_mapbase::mapbase#3 = 0 [phi:conio_x16_init::@8->vera_layer_set_mapbase#0] -- vbuxx=vbuc1 
     ldx #0
@@ -20121,7 +20121,7 @@ conio_x16_init: {
     // gotoxy(0, line)
     // [34] gotoxy::y#1 = conio_x16_init::line#3 -- vbuxx=vbuz1 
     ldx.z line
-    // [35] call gotoxy 
+    // [35] call gotoxy
     // [208] phi from conio_x16_init::@1 to gotoxy [phi:conio_x16_init::@1->gotoxy]
     // [208] phi gotoxy::y#7 = gotoxy::y#1 [phi:conio_x16_init::@1->gotoxy#0] -- register_copy 
     jsr gotoxy
@@ -20136,7 +20136,7 @@ main: {
     .label color = 5
     .label x = 3
     // memcpy_in_vram(1, (char*)0xF000, VERA_INC_1, 0, (char*)0xF800, VERA_INC_1, 256*8)
-    // [38] call memcpy_in_vram 
+    // [38] call memcpy_in_vram
   // Before we configure the bitmap pane into vera  memory we need to re-arrange a few things!
   // It is better to load all in bank 0, but then there is an issue.
   // So the default CX16 character set is located in bank 0, at address 0xF800.
@@ -20167,7 +20167,7 @@ main: {
     // [39] phi from main to main::@12 [phi:main->main::@12]
     // main::@12
     // vera_layer_mode_tile(1, 0x14000, 0x1F000, 128, 64, 8, 8, 1)
-    // [40] call vera_layer_mode_tile 
+    // [40] call vera_layer_mode_tile
   // We copy the 128 character set of 8 bytes each.
     // [240] phi from main::@12 to vera_layer_mode_tile [phi:main::@12->vera_layer_mode_tile]
     // [240] phi vera_layer_mode_tile::tileheight#10 = 8 [phi:main::@12->vera_layer_mode_tile#0] -- vbuz1=vbuc1 
@@ -20210,19 +20210,19 @@ main: {
     // [41] phi from main::@12 to main::@13 [phi:main::@12->main::@13]
     // main::@13
     // vera_layer_mode_bitmap(0, (dword)0x00000, 320, 8)
-    // [42] call vera_layer_mode_bitmap 
+    // [42] call vera_layer_mode_bitmap
     // [301] phi from main::@13 to vera_layer_mode_bitmap [phi:main::@13->vera_layer_mode_bitmap]
     jsr vera_layer_mode_bitmap
     // [43] phi from main::@13 to main::@14 [phi:main::@13->main::@14]
     // main::@14
     // screenlayer(1)
-    // [44] call screenlayer 
+    // [44] call screenlayer
     jsr screenlayer
     // main::textcolor1
     // vera_layer_set_textcolor(conio_screen_layer, color)
     // [45] vera_layer_set_textcolor::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [46] call vera_layer_set_textcolor 
+    // [46] call vera_layer_set_textcolor
     // [197] phi from main::textcolor1 to vera_layer_set_textcolor [phi:main::textcolor1->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor1->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #WHITE
@@ -20232,7 +20232,7 @@ main: {
     // vera_layer_set_backcolor(conio_screen_layer, color)
     // [47] vera_layer_set_backcolor::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [48] call vera_layer_set_backcolor 
+    // [48] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor1 to vera_layer_set_backcolor [phi:main::bgcolor1->vera_layer_set_backcolor]
     // [200] phi vera_layer_set_backcolor::color#4 = BLACK [phi:main::bgcolor1->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
     lda #BLACK
@@ -20241,12 +20241,12 @@ main: {
     // [49] phi from main::bgcolor1 to main::@6 [phi:main::bgcolor1->main::@6]
     // main::@6
     // clrscr()
-    // [50] call clrscr 
+    // [50] call clrscr
     jsr clrscr
     // [51] phi from main::@6 to main::@15 [phi:main::@6->main::@15]
     // main::@15
     // gotoxy(0,25)
-    // [52] call gotoxy 
+    // [52] call gotoxy
     // [208] phi from main::@15 to gotoxy [phi:main::@15->gotoxy]
     // [208] phi gotoxy::y#7 = $19 [phi:main::@15->gotoxy#0] -- vbuxx=vbuc1 
     ldx #$19
@@ -20254,7 +20254,7 @@ main: {
     // [53] phi from main::@15 to main::@16 [phi:main::@15->main::@16]
     // main::@16
     // printf("vera in bitmap mode,\n")
-    // [54] call cputs 
+    // [54] call cputs
     // [344] phi from main::@16 to cputs [phi:main::@16->cputs]
     // [344] phi cputs::s#9 = main::s [phi:main::@16->cputs#0] -- pbuz1=pbuc1 
     lda #<s
@@ -20265,7 +20265,7 @@ main: {
     // [55] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
     // main::@17
     // printf("color depth 8 bits per pixel.\n")
-    // [56] call cputs 
+    // [56] call cputs
     // [344] phi from main::@17 to cputs [phi:main::@17->cputs]
     // [344] phi cputs::s#9 = main::s1 [phi:main::@17->cputs#0] -- pbuz1=pbuc1 
     lda #<s1
@@ -20276,7 +20276,7 @@ main: {
     // [57] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
     // main::@18
     // printf("in this mode, it is possible to display\n")
-    // [58] call cputs 
+    // [58] call cputs
     // [344] phi from main::@18 to cputs [phi:main::@18->cputs]
     // [344] phi cputs::s#9 = main::s2 [phi:main::@18->cputs#0] -- pbuz1=pbuc1 
     lda #<s2
@@ -20287,7 +20287,7 @@ main: {
     // [59] phi from main::@18 to main::@19 [phi:main::@18->main::@19]
     // main::@19
     // printf("graphics in 256 colors.\n")
-    // [60] call cputs 
+    // [60] call cputs
     // [344] phi from main::@19 to cputs [phi:main::@19->cputs]
     // [344] phi cputs::s#9 = main::s3 [phi:main::@19->cputs#0] -- pbuz1=pbuc1 
     lda #<s3
@@ -20304,17 +20304,17 @@ main: {
     // [62] phi from main::vera_layer_show1 to main::@7 [phi:main::vera_layer_show1->main::@7]
     // main::@7
     // bitmap_init(0, 0x00000)
-    // [63] call bitmap_init 
+    // [63] call bitmap_init
     jsr bitmap_init
     // [64] phi from main::@7 to main::@20 [phi:main::@7->main::@20]
     // main::@20
     // bitmap_clear()
-    // [65] call bitmap_clear 
+    // [65] call bitmap_clear
     jsr bitmap_clear
     // [66] phi from main::@20 to main::@21 [phi:main::@20->main::@21]
     // main::@21
     // gotoxy(0,29)
-    // [67] call gotoxy 
+    // [67] call gotoxy
     // [208] phi from main::@21 to gotoxy [phi:main::@21->gotoxy]
     // [208] phi gotoxy::y#7 = $1d [phi:main::@21->gotoxy#0] -- vbuxx=vbuc1 
     ldx #$1d
@@ -20323,7 +20323,7 @@ main: {
     // vera_layer_set_textcolor(conio_screen_layer, color)
     // [68] vera_layer_set_textcolor::layer#2 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [69] call vera_layer_set_textcolor 
+    // [69] call vera_layer_set_textcolor
     // [197] phi from main::textcolor2 to vera_layer_set_textcolor [phi:main::textcolor2->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = YELLOW [phi:main::textcolor2->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #YELLOW
@@ -20332,7 +20332,7 @@ main: {
     // [70] phi from main::textcolor2 to main::@8 [phi:main::textcolor2->main::@8]
     // main::@8
     // printf("press a key ...")
-    // [71] call cputs 
+    // [71] call cputs
     // [344] phi from main::@8 to cputs [phi:main::@8->cputs]
     // [344] phi cputs::s#9 = main::s4 [phi:main::@8->cputs#0] -- pbuz1=pbuc1 
     lda #<s4
@@ -20349,7 +20349,7 @@ main: {
     // main::@1
   __b1:
     // kbhit()
-    // [73] call kbhit 
+    // [73] call kbhit
     jsr kbhit
     // [74] kbhit::return#2 = kbhit::return#1
     // main::@22
@@ -20364,7 +20364,7 @@ main: {
     // vera_layer_set_textcolor(conio_screen_layer, color)
     // [77] vera_layer_set_textcolor::layer#3 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [78] call vera_layer_set_textcolor 
+    // [78] call vera_layer_set_textcolor
     // [197] phi from main::textcolor3 to vera_layer_set_textcolor [phi:main::textcolor3->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor3->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #WHITE
@@ -20374,7 +20374,7 @@ main: {
     // vera_layer_set_backcolor(conio_screen_layer, color)
     // [79] vera_layer_set_backcolor::layer#2 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [80] call vera_layer_set_backcolor 
+    // [80] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor2 to vera_layer_set_backcolor [phi:main::bgcolor2->vera_layer_set_backcolor]
     // [200] phi vera_layer_set_backcolor::color#4 = BLACK [phi:main::bgcolor2->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
     lda #BLACK
@@ -20383,12 +20383,12 @@ main: {
     // [81] phi from main::bgcolor2 to main::@9 [phi:main::bgcolor2->main::@9]
     // main::@9
     // clrscr()
-    // [82] call clrscr 
+    // [82] call clrscr
     jsr clrscr
     // [83] phi from main::@9 to main::@32 [phi:main::@9->main::@32]
     // main::@32
     // gotoxy(0,26)
-    // [84] call gotoxy 
+    // [84] call gotoxy
     // [208] phi from main::@32 to gotoxy [phi:main::@32->gotoxy]
     // [208] phi gotoxy::y#7 = $1a [phi:main::@32->gotoxy#0] -- vbuxx=vbuc1 
     ldx #$1a
@@ -20396,7 +20396,7 @@ main: {
     // [85] phi from main::@32 to main::@33 [phi:main::@32->main::@33]
     // main::@33
     // printf("here you see all the colors possible.\n")
-    // [86] call cputs 
+    // [86] call cputs
     // [344] phi from main::@33 to cputs [phi:main::@33->cputs]
     // [344] phi cputs::s#9 = main::s5 [phi:main::@33->cputs#0] -- pbuz1=pbuc1 
     lda #<s5
@@ -20407,7 +20407,7 @@ main: {
     // [87] phi from main::@33 to main::@34 [phi:main::@33->main::@34]
     // main::@34
     // gotoxy(0,29)
-    // [88] call gotoxy 
+    // [88] call gotoxy
     // [208] phi from main::@34 to gotoxy [phi:main::@34->gotoxy]
     // [208] phi gotoxy::y#7 = $1d [phi:main::@34->gotoxy#0] -- vbuxx=vbuc1 
     ldx #$1d
@@ -20416,7 +20416,7 @@ main: {
     // vera_layer_set_textcolor(conio_screen_layer, color)
     // [89] vera_layer_set_textcolor::layer#4 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [90] call vera_layer_set_textcolor 
+    // [90] call vera_layer_set_textcolor
     // [197] phi from main::textcolor4 to vera_layer_set_textcolor [phi:main::textcolor4->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = YELLOW [phi:main::textcolor4->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #YELLOW
@@ -20425,7 +20425,7 @@ main: {
     // [91] phi from main::textcolor4 to main::@10 [phi:main::textcolor4->main::@10]
     // main::@10
     // printf("press a key ...")
-    // [92] call cputs 
+    // [92] call cputs
     // [344] phi from main::@10 to cputs [phi:main::@10->cputs]
     // [344] phi cputs::s#9 = main::s4 [phi:main::@10->cputs#0] -- pbuz1=pbuc1 
     lda #<s4
@@ -20443,7 +20443,7 @@ main: {
     // main::@3
   __b3:
     // kbhit()
-    // [94] call kbhit 
+    // [94] call kbhit
     jsr kbhit
     // [95] kbhit::return#3 = kbhit::return#1
     // main::@35
@@ -20455,13 +20455,13 @@ main: {
     // [98] phi from main::@35 to main::@5 [phi:main::@35->main::@5]
     // main::@5
     // screenlayer(1)
-    // [99] call screenlayer 
+    // [99] call screenlayer
     jsr screenlayer
     // main::textcolor5
     // vera_layer_set_textcolor(conio_screen_layer, color)
     // [100] vera_layer_set_textcolor::layer#5 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [101] call vera_layer_set_textcolor 
+    // [101] call vera_layer_set_textcolor
     // [197] phi from main::textcolor5 to vera_layer_set_textcolor [phi:main::textcolor5->vera_layer_set_textcolor]
     // [197] phi vera_layer_set_textcolor::color#6 = WHITE [phi:main::textcolor5->vera_layer_set_textcolor#0] -- vbuaa=vbuc1 
     lda #WHITE
@@ -20471,7 +20471,7 @@ main: {
     // vera_layer_set_backcolor(conio_screen_layer, color)
     // [102] vera_layer_set_backcolor::layer#3 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [103] call vera_layer_set_backcolor 
+    // [103] call vera_layer_set_backcolor
     // [200] phi from main::bgcolor3 to vera_layer_set_backcolor [phi:main::bgcolor3->vera_layer_set_backcolor]
     // [200] phi vera_layer_set_backcolor::color#4 = BLUE [phi:main::bgcolor3->vera_layer_set_backcolor#0] -- vbuaa=vbuc1 
     lda #BLUE
@@ -20480,7 +20480,7 @@ main: {
     // [104] phi from main::bgcolor3 to main::@11 [phi:main::bgcolor3->main::@11]
     // main::@11
     // clrscr()
-    // [105] call clrscr 
+    // [105] call clrscr
     jsr clrscr
     // main::@return
     // }
@@ -20497,7 +20497,7 @@ main: {
     sta.z bitmap_line.x1+1
     // [109] bitmap_line::c#1 = main::color#2 -- vbuxx=vbuz1 
     ldx.z color
-    // [110] call bitmap_line 
+    // [110] call bitmap_line
     // [461] phi from main::@4 to bitmap_line [phi:main::@4->bitmap_line]
     // [461] phi bitmap_line::c#10 = bitmap_line::c#1 [phi:main::@4->bitmap_line#0] -- register_copy 
     // [461] phi bitmap_line::y1#10 = $c7 [phi:main::@4->bitmap_line#1] -- vwuz1=vbuc1 
@@ -20548,7 +20548,7 @@ main: {
     // main::@2
   __b2:
     // rand()
-    // [116] call rand 
+    // [116] call rand
     // [532] phi from main::@2 to rand [phi:main::@2->rand]
     // [532] phi rand_state#13 = rand_state#23 [phi:main::@2->rand#0] -- register_copy 
     jsr rand
@@ -20557,7 +20557,7 @@ main: {
     // main::@23
     // modr16u(rand(),320,0)
     // [118] modr16u::dividend#0 = rand::return#2
-    // [119] call modr16u 
+    // [119] call modr16u
     // [541] phi from main::@23 to modr16u [phi:main::@23->modr16u]
     // [541] phi modr16u::divisor#4 = $140 [phi:main::@23->modr16u#0] -- vwuz1=vwuc1 
     lda #<$140
@@ -20576,7 +20576,7 @@ main: {
     lda.z modr16u.return+1
     sta.z bitmap_line.x0+1
     // rand()
-    // [122] call rand 
+    // [122] call rand
     // [532] phi from main::@24 to rand [phi:main::@24->rand]
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@24->rand#0] -- register_copy 
     jsr rand
@@ -20585,7 +20585,7 @@ main: {
     // main::@25
     // modr16u(rand(),320,0)
     // [124] modr16u::dividend#1 = rand::return#3
-    // [125] call modr16u 
+    // [125] call modr16u
     // [541] phi from main::@25 to modr16u [phi:main::@25->modr16u]
     // [541] phi modr16u::divisor#4 = $140 [phi:main::@25->modr16u#0] -- vwuz1=vwuc1 
     lda #<$140
@@ -20604,7 +20604,7 @@ main: {
     // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
     // [127] bitmap_line::x1#0 = modr16u::return#3
     // rand()
-    // [128] call rand 
+    // [128] call rand
     // [532] phi from main::@26 to rand [phi:main::@26->rand]
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@26->rand#0] -- register_copy 
     jsr rand
@@ -20613,7 +20613,7 @@ main: {
     // main::@27
     // modr16u(rand(),200,0)
     // [130] modr16u::dividend#2 = rand::return#10
-    // [131] call modr16u 
+    // [131] call modr16u
     // [541] phi from main::@27 to modr16u [phi:main::@27->modr16u]
     // [541] phi modr16u::divisor#4 = $c8 [phi:main::@27->modr16u#0] -- vwuz1=vbuc1 
     lda #<$c8
@@ -20632,7 +20632,7 @@ main: {
     // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
     // [133] bitmap_line::y0#0 = modr16u::return#4
     // rand()
-    // [134] call rand 
+    // [134] call rand
     // [532] phi from main::@28 to rand [phi:main::@28->rand]
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@28->rand#0] -- register_copy 
     jsr rand
@@ -20641,7 +20641,7 @@ main: {
     // main::@29
     // modr16u(rand(),200,0)
     // [136] modr16u::dividend#3 = rand::return#11
-    // [137] call modr16u 
+    // [137] call modr16u
     // [541] phi from main::@29 to modr16u [phi:main::@29->modr16u]
     // [541] phi modr16u::divisor#4 = $c8 [phi:main::@29->modr16u#0] -- vwuz1=vbuc1 
     lda #<$c8
@@ -20656,7 +20656,7 @@ main: {
     // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
     // [139] bitmap_line::y1#0 = modr16u::return#10
     // rand()
-    // [140] call rand 
+    // [140] call rand
     // [532] phi from main::@30 to rand [phi:main::@30->rand]
     // [532] phi rand_state#13 = rand_state#14 [phi:main::@30->rand#0] -- register_copy 
     jsr rand
@@ -20669,7 +20669,7 @@ main: {
     lda #$ff
     and.z __40
     tax
-    // [144] call bitmap_line 
+    // [144] call bitmap_line
     // [461] phi from main::@31 to bitmap_line [phi:main::@31->bitmap_line]
     // [461] phi bitmap_line::c#10 = bitmap_line::c#0 [phi:main::@31->bitmap_line#0] -- register_copy 
     // [461] phi bitmap_line::y1#10 = bitmap_line::y1#0 [phi:main::@31->bitmap_line#1] -- register_copy 
@@ -20722,7 +20722,7 @@ vera_layer_mode_text: {
     .const tileheight = 8
     .label layer = 1
     // vera_layer_mode_tile( layer, mapbase_address, tilebase_address, mapwidth, mapheight, tilewidth, tileheight, 1 )
-    // [146] call vera_layer_mode_tile 
+    // [146] call vera_layer_mode_tile
     // [240] phi from vera_layer_mode_text to vera_layer_mode_tile [phi:vera_layer_mode_text->vera_layer_mode_tile]
     // [240] phi vera_layer_mode_tile::tileheight#10 = vera_layer_mode_text::tileheight#0 [phi:vera_layer_mode_text->vera_layer_mode_tile#0] -- vbuz1=vbuc1 
     lda #tileheight
@@ -20765,7 +20765,7 @@ vera_layer_mode_text: {
     // [147] phi from vera_layer_mode_text to vera_layer_mode_text::@1 [phi:vera_layer_mode_text->vera_layer_mode_text::@1]
     // vera_layer_mode_text::@1
     // vera_layer_set_text_color_mode( layer, VERA_LAYER_CONFIG_16C )
-    // [148] call vera_layer_set_text_color_mode 
+    // [148] call vera_layer_set_text_color_mode
     jsr vera_layer_set_text_color_mode
     // vera_layer_mode_text::@return
     // }
@@ -20845,7 +20845,7 @@ screenlayer: {
     // vera_layer_get_mapbase_bank(conio_screen_layer)
     // [158] vera_layer_get_mapbase_bank::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     tax
-    // [159] call vera_layer_get_mapbase_bank 
+    // [159] call vera_layer_get_mapbase_bank
     jsr vera_layer_get_mapbase_bank
     // [160] vera_layer_get_mapbase_bank::return#2 = vera_layer_get_mapbase_bank::return#0
     // screenlayer::@3
@@ -20854,7 +20854,7 @@ screenlayer: {
     // vera_layer_get_mapbase_offset(conio_screen_layer)
     // [162] vera_layer_get_mapbase_offset::layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
-    // [163] call vera_layer_get_mapbase_offset 
+    // [163] call vera_layer_get_mapbase_offset
     jsr vera_layer_get_mapbase_offset
     // [164] vera_layer_get_mapbase_offset::return#2 = vera_layer_get_mapbase_offset::return#0
     // screenlayer::@4
@@ -20911,7 +20911,7 @@ screenlayer: {
     // vera_layer_get_rowshift(conio_screen_layer)
     // [176] vera_layer_get_rowshift::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [177] call vera_layer_get_rowshift 
+    // [177] call vera_layer_get_rowshift
     jsr vera_layer_get_rowshift
     // [178] vera_layer_get_rowshift::return#2 = vera_layer_get_rowshift::return#0
     // screenlayer::@5
@@ -20922,7 +20922,7 @@ screenlayer: {
     // vera_layer_get_rowskip(conio_screen_layer)
     // [181] vera_layer_get_rowskip::layer#0 = conio_screen_layer -- vbuaa=vbuz1 
     lda.z conio_screen_layer
-    // [182] call vera_layer_get_rowskip 
+    // [182] call vera_layer_get_rowskip
     jsr vera_layer_get_rowskip
     // [183] vera_layer_get_rowskip::return#2 = vera_layer_get_rowskip::return#0
     // screenlayer::@6
@@ -21389,7 +21389,7 @@ vera_layer_mode_tile: {
     // [255] vera_layer_set_config::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [256] vera_layer_set_config::config#0 = vera_layer_mode_tile::config#25
-    // [257] call vera_layer_set_config 
+    // [257] call vera_layer_set_config
     // [561] phi from vera_layer_mode_tile::@16 to vera_layer_set_config [phi:vera_layer_mode_tile::@16->vera_layer_set_config]
     // [561] phi vera_layer_set_config::config#2 = vera_layer_set_config::config#0 [phi:vera_layer_mode_tile::@16->vera_layer_set_config#0] -- register_copy 
     // [561] phi vera_layer_set_config::layer#2 = vera_layer_set_config::layer#0 [phi:vera_layer_mode_tile::@16->vera_layer_set_config#1] -- register_copy 
@@ -21449,7 +21449,7 @@ vera_layer_mode_tile: {
     // [267] vera_layer_set_mapbase::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [268] vera_layer_set_mapbase::mapbase#0 = vera_layer_mode_tile::mapbase#0
-    // [269] call vera_layer_set_mapbase 
+    // [269] call vera_layer_set_mapbase
     // [203] phi from vera_layer_mode_tile::@23 to vera_layer_set_mapbase [phi:vera_layer_mode_tile::@23->vera_layer_set_mapbase]
     // [203] phi vera_layer_set_mapbase::mapbase#3 = vera_layer_set_mapbase::mapbase#0 [phi:vera_layer_mode_tile::@23->vera_layer_set_mapbase#0] -- register_copy 
     // [203] phi vera_layer_set_mapbase::layer#3 = vera_layer_set_mapbase::layer#0 [phi:vera_layer_mode_tile::@23->vera_layer_set_mapbase#1] -- register_copy 
@@ -21554,7 +21554,7 @@ vera_layer_mode_tile: {
     // [286] vera_layer_set_tilebase::layer#0 = vera_layer_mode_tile::layer#10 -- vbuaa=vbuz1 
     lda.z layer
     // [287] vera_layer_set_tilebase::tilebase#0 = vera_layer_mode_tile::tilebase#10
-    // [288] call vera_layer_set_tilebase 
+    // [288] call vera_layer_set_tilebase
     // [566] phi from vera_layer_mode_tile::@22 to vera_layer_set_tilebase [phi:vera_layer_mode_tile::@22->vera_layer_set_tilebase]
     // [566] phi vera_layer_set_tilebase::tilebase#2 = vera_layer_set_tilebase::tilebase#0 [phi:vera_layer_mode_tile::@22->vera_layer_set_tilebase#0] -- register_copy 
     // [566] phi vera_layer_set_tilebase::layer#2 = vera_layer_set_tilebase::layer#0 [phi:vera_layer_mode_tile::@22->vera_layer_set_tilebase#1] -- register_copy 
@@ -21695,7 +21695,7 @@ vera_layer_mode_bitmap: {
     // [307] phi from vera_layer_mode_bitmap::vera_display_set_scale_double1 to vera_layer_mode_bitmap::@2 [phi:vera_layer_mode_bitmap::vera_display_set_scale_double1->vera_layer_mode_bitmap::@2]
     // vera_layer_mode_bitmap::@2
     // vera_layer_set_config(layer, config)
-    // [308] call vera_layer_set_config 
+    // [308] call vera_layer_set_config
     // [561] phi from vera_layer_mode_bitmap::@2 to vera_layer_set_config [phi:vera_layer_mode_bitmap::@2->vera_layer_set_config]
     // [561] phi vera_layer_set_config::config#2 = vera_layer_mode_bitmap::config#11 [phi:vera_layer_mode_bitmap::@2->vera_layer_set_config#0] -- vbuxx=vbuc1 
     ldx #config
@@ -21705,7 +21705,7 @@ vera_layer_mode_bitmap: {
     // [309] phi from vera_layer_mode_bitmap::@2 to vera_layer_mode_bitmap::@3 [phi:vera_layer_mode_bitmap::@2->vera_layer_mode_bitmap::@3]
     // vera_layer_mode_bitmap::@3
     // vera_layer_set_tilebase(layer,tilebase)
-    // [310] call vera_layer_set_tilebase 
+    // [310] call vera_layer_set_tilebase
     // [566] phi from vera_layer_mode_bitmap::@3 to vera_layer_set_tilebase [phi:vera_layer_mode_bitmap::@3->vera_layer_set_tilebase]
     // [566] phi vera_layer_set_tilebase::tilebase#2 = vera_layer_mode_bitmap::tilebase#1 [phi:vera_layer_mode_bitmap::@3->vera_layer_set_tilebase#0] -- vbuxx=vbuc1 
     ldx #tilebase
@@ -21732,7 +21732,7 @@ clrscr: {
     // vera_layer_get_backcolor(conio_screen_layer)
     // [313] vera_layer_get_backcolor::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [314] call vera_layer_get_backcolor 
+    // [314] call vera_layer_get_backcolor
     jsr vera_layer_get_backcolor
     // [315] vera_layer_get_backcolor::return#0 = vera_layer_get_backcolor::return#1
     // clrscr::@7
@@ -21747,7 +21747,7 @@ clrscr: {
     // vera_layer_get_textcolor(conio_screen_layer)
     // [318] vera_layer_get_textcolor::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [319] call vera_layer_get_textcolor 
+    // [319] call vera_layer_get_textcolor
     jsr vera_layer_get_textcolor
     // [320] vera_layer_get_textcolor::return#0 = vera_layer_get_textcolor::return#1
     // clrscr::@8
@@ -21893,7 +21893,7 @@ cputs: {
     // cputc(c)
     // [350] cputc::c#0 = cputs::c#1 -- vbuz1=vbuaa 
     sta.z cputc.c
-    // [351] call cputc 
+    // [351] call cputc
     jsr cputc
     jmp __b1
 }
@@ -21972,7 +21972,7 @@ bitmap_init: {
     // [361] __bitmap_color_depth = bitmap_init::$0 -- vbuz1=vbuaa 
     sta.z __bitmap_color_depth
     // vera_display_get_hscale()
-    // [362] call vera_display_get_hscale 
+    // [362] call vera_display_get_hscale
     // [606] phi from bitmap_init::@16 to vera_display_get_hscale [phi:bitmap_init::@16->vera_display_get_hscale]
     jsr vera_display_get_hscale
     // vera_display_get_hscale()
@@ -21983,7 +21983,7 @@ bitmap_init: {
     // [365] __bitmap_hscale = bitmap_init::$1 -- vbuz1=vbuxx 
     stx.z __bitmap_hscale
     // vera_display_get_vscale()
-    // [366] call vera_display_get_vscale 
+    // [366] call vera_display_get_vscale
     // [613] phi from bitmap_init::@17 to vera_display_get_vscale [phi:bitmap_init::@17->vera_display_get_vscale]
     jsr vera_display_get_vscale
     // vera_display_get_vscale()
@@ -22496,7 +22496,7 @@ bitmap_clear: {
     // dword count = mul16u(hdelta,vdelta)
     // [444] mul16u::a#0 = bitmap_clear::hdelta#0
     // [445] mul16u::b#0 = bitmap_clear::vdelta#0
-    // [446] call mul16u 
+    // [446] call mul16u
     jsr mul16u
     // [447] mul16u::return#0 = mul16u::res#2
     // bitmap_clear::@1
@@ -22514,7 +22514,7 @@ bitmap_clear: {
     // [451] memset_vram::vbank#0 = bitmap_clear::vbank#0
     // [452] memset_vram::vdest#0 = (void*)bitmap_clear::vdest#0
     // [453] memset_vram::num#0 = bitmap_clear::count#0
-    // [454] call memset_vram 
+    // [454] call memset_vram
     jsr memset_vram
     // bitmap_clear::@return
     // }
@@ -22650,7 +22650,7 @@ bitmap_line: {
     // [471] bitmap_line_ydxi::xd#0 = bitmap_line::xd#2
     // [472] bitmap_line_ydxi::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxi.c
-    // [473] call bitmap_line_ydxi 
+    // [473] call bitmap_line_ydxi
     // [642] phi from bitmap_line::@4 to bitmap_line_ydxi [phi:bitmap_line::@4->bitmap_line_ydxi]
     // [642] phi bitmap_line_ydxi::y1#6 = bitmap_line_ydxi::y1#0 [phi:bitmap_line::@4->bitmap_line_ydxi#0] -- register_copy 
     // [642] phi bitmap_line_ydxi::yd#5 = bitmap_line_ydxi::yd#0 [phi:bitmap_line::@4->bitmap_line_ydxi#1] -- register_copy 
@@ -22685,7 +22685,7 @@ bitmap_line: {
     // [479] bitmap_line_xdyi::yd#0 = bitmap_line::yd#2
     // [480] bitmap_line_xdyi::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyi.c
-    // [481] call bitmap_line_xdyi 
+    // [481] call bitmap_line_xdyi
     // [658] phi from bitmap_line::@8 to bitmap_line_xdyi [phi:bitmap_line::@8->bitmap_line_xdyi]
     // [658] phi bitmap_line_xdyi::x1#6 = bitmap_line_xdyi::x1#0 [phi:bitmap_line::@8->bitmap_line_xdyi#0] -- register_copy 
     // [658] phi bitmap_line_xdyi::xd#5 = bitmap_line_xdyi::xd#0 [phi:bitmap_line::@8->bitmap_line_xdyi#1] -- register_copy 
@@ -22736,7 +22736,7 @@ bitmap_line: {
     // [488] bitmap_line_ydxd::xd#0 = bitmap_line::xd#2
     // [489] bitmap_line_ydxd::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxd.c
-    // [490] call bitmap_line_ydxd 
+    // [490] call bitmap_line_ydxd
     // [674] phi from bitmap_line::@10 to bitmap_line_ydxd [phi:bitmap_line::@10->bitmap_line_ydxd]
     // [674] phi bitmap_line_ydxd::y1#6 = bitmap_line_ydxd::y1#0 [phi:bitmap_line::@10->bitmap_line_ydxd#0] -- register_copy 
     // [674] phi bitmap_line_ydxd::yd#5 = bitmap_line_ydxd::yd#0 [phi:bitmap_line::@10->bitmap_line_ydxd#1] -- register_copy 
@@ -22768,7 +22768,7 @@ bitmap_line: {
     // [495] bitmap_line_xdyd::yd#0 = bitmap_line::yd#1
     // [496] bitmap_line_xdyd::c#0 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyd.c
-    // [497] call bitmap_line_xdyd 
+    // [497] call bitmap_line_xdyd
     // [690] phi from bitmap_line::@9 to bitmap_line_xdyd [phi:bitmap_line::@9->bitmap_line_xdyd]
     // [690] phi bitmap_line_xdyd::x1#6 = bitmap_line_xdyd::x1#0 [phi:bitmap_line::@9->bitmap_line_xdyd#0] -- register_copy 
     // [690] phi bitmap_line_xdyd::xd#5 = bitmap_line_xdyd::xd#0 [phi:bitmap_line::@9->bitmap_line_xdyd#1] -- register_copy 
@@ -22831,7 +22831,7 @@ bitmap_line: {
     // [506] bitmap_line_ydxd::xd#1 = bitmap_line::xd#1
     // [507] bitmap_line_ydxd::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxd.c
-    // [508] call bitmap_line_ydxd 
+    // [508] call bitmap_line_ydxd
     // [674] phi from bitmap_line::@6 to bitmap_line_ydxd [phi:bitmap_line::@6->bitmap_line_ydxd]
     // [674] phi bitmap_line_ydxd::y1#6 = bitmap_line_ydxd::y1#1 [phi:bitmap_line::@6->bitmap_line_ydxd#0] -- register_copy 
     // [674] phi bitmap_line_ydxd::yd#5 = bitmap_line_ydxd::yd#1 [phi:bitmap_line::@6->bitmap_line_ydxd#1] -- register_copy 
@@ -22855,7 +22855,7 @@ bitmap_line: {
     // [513] bitmap_line_xdyd::yd#1 = bitmap_line::yd#10
     // [514] bitmap_line_xdyd::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyd.c
-    // [515] call bitmap_line_xdyd 
+    // [515] call bitmap_line_xdyd
     // [690] phi from bitmap_line::@12 to bitmap_line_xdyd [phi:bitmap_line::@12->bitmap_line_xdyd]
     // [690] phi bitmap_line_xdyd::x1#6 = bitmap_line_xdyd::x1#1 [phi:bitmap_line::@12->bitmap_line_xdyd#0] -- register_copy 
     // [690] phi bitmap_line_xdyd::xd#5 = bitmap_line_xdyd::xd#1 [phi:bitmap_line::@12->bitmap_line_xdyd#1] -- register_copy 
@@ -22906,7 +22906,7 @@ bitmap_line: {
     // [522] bitmap_line_ydxi::xd#1 = bitmap_line::xd#1
     // [523] bitmap_line_ydxi::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_ydxi.c
-    // [524] call bitmap_line_ydxi 
+    // [524] call bitmap_line_ydxi
     // [642] phi from bitmap_line::@14 to bitmap_line_ydxi [phi:bitmap_line::@14->bitmap_line_ydxi]
     // [642] phi bitmap_line_ydxi::y1#6 = bitmap_line_ydxi::y1#1 [phi:bitmap_line::@14->bitmap_line_ydxi#0] -- register_copy 
     // [642] phi bitmap_line_ydxi::yd#5 = bitmap_line_ydxi::yd#1 [phi:bitmap_line::@14->bitmap_line_ydxi#1] -- register_copy 
@@ -22930,7 +22930,7 @@ bitmap_line: {
     // [529] bitmap_line_xdyi::yd#1 = bitmap_line::yd#11
     // [530] bitmap_line_xdyi::c#1 = bitmap_line::c#10 -- vbuz1=vbuxx 
     stx.z bitmap_line_xdyi.c
-    // [531] call bitmap_line_xdyi 
+    // [531] call bitmap_line_xdyi
     // [658] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
     // [658] phi bitmap_line_xdyi::x1#6 = bitmap_line_xdyi::x1#1 [phi:bitmap_line::@13->bitmap_line_xdyi#0] -- register_copy 
     // [658] phi bitmap_line_xdyi::xd#5 = bitmap_line_xdyi::xd#1 [phi:bitmap_line::@13->bitmap_line_xdyi#1] -- register_copy 
@@ -23022,7 +23022,7 @@ modr16u: {
     // divr16u(dividend, divisor, rem)
     // [542] divr16u::dividend#1 = modr16u::dividend#4
     // [543] divr16u::divisor#0 = modr16u::divisor#4
-    // [544] call divr16u 
+    // [544] call divr16u
     // [706] phi from modr16u to divr16u [phi:modr16u->divr16u]
     jsr divr16u
     // modr16u::@1
@@ -23231,7 +23231,7 @@ cputc: {
     // char color = vera_layer_get_color( conio_screen_layer)
     // [575] vera_layer_get_color::layer#0 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [576] call vera_layer_get_color 
+    // [576] call vera_layer_get_color
     // [724] phi from cputc to vera_layer_get_color [phi:cputc->vera_layer_get_color]
     // [724] phi vera_layer_get_color::layer#2 = vera_layer_get_color::layer#0 [phi:cputc->vera_layer_get_color#0] -- register_copy 
     jsr vera_layer_get_color
@@ -23334,7 +23334,7 @@ cputc: {
     // [598] phi from cputc::@3 to cputc::@4 [phi:cputc::@3->cputc::@4]
     // cputc::@4
     // cputln()
-    // [599] call cputln 
+    // [599] call cputln
     jsr cputln
     // cputc::@return
   __breturn:
@@ -23352,14 +23352,14 @@ cputc: {
     // [602] phi from cputc::@5 to cputc::@6 [phi:cputc::@5->cputc::@6]
     // cputc::@6
     // cputln()
-    // [603] call cputln 
+    // [603] call cputln
     jsr cputln
     rts
     // [604] phi from cputc::@7 to cputc::@1 [phi:cputc::@7->cputc::@1]
     // cputc::@1
   __b1:
     // cputln()
-    // [605] call cputln 
+    // [605] call cputln
     jsr cputln
     rts
 }
@@ -23651,7 +23651,7 @@ bitmap_line_ydxi: {
     // [646] bitmap_plot::y#2 = bitmap_line_ydxi::y#3
     // [647] bitmap_plot::c#3 = bitmap_line_ydxi::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [648] call bitmap_plot 
+    // [648] call bitmap_plot
     // [743] phi from bitmap_line_ydxi::@1 to bitmap_plot [phi:bitmap_line_ydxi::@1->bitmap_plot]
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#3 [phi:bitmap_line_ydxi::@1->bitmap_plot#0] -- register_copy 
     // [743] phi bitmap_plot::y#4 = bitmap_plot::y#2 [phi:bitmap_line_ydxi::@1->bitmap_plot#1] -- register_copy 
@@ -23759,7 +23759,7 @@ bitmap_line_xdyi: {
     sta.z bitmap_plot.y+1
     // [663] bitmap_plot::c#1 = bitmap_line_xdyi::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [664] call bitmap_plot 
+    // [664] call bitmap_plot
     // [743] phi from bitmap_line_xdyi::@1 to bitmap_plot [phi:bitmap_line_xdyi::@1->bitmap_plot]
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#1 [phi:bitmap_line_xdyi::@1->bitmap_plot#0] -- register_copy 
     // [743] phi bitmap_plot::y#4 = bitmap_plot::y#0 [phi:bitmap_line_xdyi::@1->bitmap_plot#1] -- register_copy 
@@ -23867,7 +23867,7 @@ bitmap_line_ydxd: {
     // [678] bitmap_plot::y#3 = bitmap_line_ydxd::y#2
     // [679] bitmap_plot::c#4 = bitmap_line_ydxd::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [680] call bitmap_plot 
+    // [680] call bitmap_plot
     // [743] phi from bitmap_line_ydxd::@1 to bitmap_plot [phi:bitmap_line_ydxd::@1->bitmap_plot]
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#4 [phi:bitmap_line_ydxd::@1->bitmap_plot#0] -- register_copy 
     // [743] phi bitmap_plot::y#4 = bitmap_plot::y#3 [phi:bitmap_line_ydxd::@1->bitmap_plot#1] -- register_copy 
@@ -23976,7 +23976,7 @@ bitmap_line_xdyd: {
     sta.z bitmap_plot.y+1
     // [695] bitmap_plot::c#2 = bitmap_line_xdyd::c#3 -- vbuxx=vbuz1 
     ldx.z c
-    // [696] call bitmap_plot 
+    // [696] call bitmap_plot
     // [743] phi from bitmap_line_xdyd::@1 to bitmap_plot [phi:bitmap_line_xdyd::@1->bitmap_plot]
     // [743] phi bitmap_plot::c#5 = bitmap_plot::c#2 [phi:bitmap_line_xdyd::@1->bitmap_plot#0] -- register_copy 
     // [743] phi bitmap_plot::y#4 = bitmap_plot::y#1 [phi:bitmap_line_xdyd::@1->bitmap_plot#1] -- register_copy 
@@ -24258,7 +24258,7 @@ cputln: {
     ldx.z conio_screen_layer
     inc conio_cursor_y,x
     // cscroll()
-    // [741] call cscroll 
+    // [741] call cscroll
     jsr cscroll
     // cputln::@return
     // }
@@ -24471,14 +24471,14 @@ cscroll: {
     // cscroll::@4
   __b4:
     // insertup()
-    // [775] call insertup 
+    // [775] call insertup
     jsr insertup
     // cscroll::@5
     // gotoxy( 0, CONIO_HEIGHT-1)
     // [776] gotoxy::y#2 = conio_screen_height - 1 -- vbuxx=vbuz1_minus_1 
     ldx.z conio_screen_height
     dex
-    // [777] call gotoxy 
+    // [777] call gotoxy
     // [208] phi from cscroll::@5 to gotoxy [phi:cscroll::@5->gotoxy]
     // [208] phi gotoxy::y#7 = gotoxy::y#2 [phi:cscroll::@5->gotoxy#0] -- register_copy 
     jsr gotoxy
@@ -24515,7 +24515,7 @@ insertup: {
     // [782] phi from insertup::@1 to insertup::@3 [phi:insertup::@1->insertup::@3]
     // insertup::@3
     // clearline()
-    // [783] call clearline 
+    // [783] call clearline
     jsr clearline
     // insertup::@return
     // }
@@ -24569,7 +24569,7 @@ insertup: {
     sta.z memcpy_in_vram.num+1
     // [791] memcpy_in_vram::src#3 = (void*)memcpy_in_vram::src#0
     // memcpy_in_vram(0, start, VERA_INC_1,  0, start+conio_rowskip, VERA_INC_1, width)
-    // [792] call memcpy_in_vram 
+    // [792] call memcpy_in_vram
     // [221] phi from insertup::@2 to memcpy_in_vram [phi:insertup::@2->memcpy_in_vram]
     // [221] phi memcpy_in_vram::num#3 = memcpy_in_vram::num#0 [phi:insertup::@2->memcpy_in_vram#0] -- register_copy 
     // [221] phi memcpy_in_vram::dest_bank#2 = 0 [phi:insertup::@2->memcpy_in_vram#1] -- vbuyy=vbuc1 
@@ -24628,7 +24628,7 @@ clearline: {
     // char color = vera_layer_get_color( conio_screen_layer)
     // [802] vera_layer_get_color::layer#1 = conio_screen_layer -- vbuxx=vbuz1 
     ldx.z conio_screen_layer
-    // [803] call vera_layer_get_color 
+    // [803] call vera_layer_get_color
     // [724] phi from clearline to vera_layer_get_color [phi:clearline->vera_layer_get_color]
     // [724] phi vera_layer_get_color::layer#2 = vera_layer_get_color::layer#1 [phi:clearline->vera_layer_get_color#0] -- register_copy 
     jsr vera_layer_get_color

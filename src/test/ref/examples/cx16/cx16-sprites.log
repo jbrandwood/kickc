@@ -1,5 +1,5 @@
 Resolved forward reference irq_vsync to __interrupt(rom_sys_cx16) void irq_vsync()
-Setting struct to load/store in variable affected by address-of main::$6 = call memcpy_to_vram (byte)word1 VERA_SPRITE_ATTR main::vram_sprite_attr &SPRITE_ATTR main::$5 
+Setting struct to load/store in variable affected by address-of main::$6 = call memcpy_to_vram((byte)word1 VERA_SPRITE_ATTR, (void*)main::vram_sprite_attr, (void*)&SPRITE_ATTR, main::$5)
 Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
 Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -10,9 +10,9 @@ Setting inferred volatile on symbol affected by address-of: getin::ch in asm { j
 Resolving sizeof() main::$5 = sizeof  SPRITE_ATTR
 Resolving sizeof() main::$7 = sizeof  SPRITE_ATTR
 Resolving sizeof() irq_vsync::$6 = sizeof  SPRITE_ATTR
-Inlined call call SEI 
-Inlined call call CLI 
-Inlined call call __init 
+Inlined call call SEI
+Inlined call call CLI
+Inlined call call __init
 Eliminating unused variable with no statement memcpy_to_vram::$3
 
 CONTROL FLOW GRAPH SSA
@@ -56,14 +56,14 @@ main: scope:[main]  from __start::@1
   memcpy_to_vram::vdest#0 = (void*)(byte*)word0 SPRITE_PIXELS_VRAM
   memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
   memcpy_to_vram::num#0 = $40*$40
-  call memcpy_to_vram 
+  call memcpy_to_vram
   to:main::@5
 main::@5: scope:[main]  from main
   memcpy_to_vram::vbank#1 = byte2 VERA_PALETTE
   memcpy_to_vram::vdest#1 = (void*)(byte*)word0 VERA_PALETTE
   memcpy_to_vram::src#1 = (void*)SPRITE_PIXELS+$40*$40
   memcpy_to_vram::num#1 = $200
-  call memcpy_to_vram 
+  call memcpy_to_vram
   to:main::@6
 main::@6: scope:[main]  from main::@5
   main::vram_sprite_attr#0 = (byte*)word0 VERA_SPRITE_ATTR
@@ -85,7 +85,7 @@ main::@2: scope:[main]  from main::@1
   memcpy_to_vram::vdest#2 = (void*)main::vram_sprite_attr#2
   memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR
   memcpy_to_vram::num#2 = main::$5
-  call memcpy_to_vram 
+  call memcpy_to_vram
   to:main::@7
 main::@7: scope:[main]  from main::@2
   main::s#3 = phi( main::@2/main::s#4 )
@@ -158,7 +158,7 @@ irq_vsync::@6: scope:[irq_vsync]  from irq_vsync::@5
   memcpy_to_vram::vdest#3 = (void*)irq_vsync::vram_sprite_pos#2
   memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2
   memcpy_to_vram::num#3 = 4
-  call memcpy_to_vram 
+  call memcpy_to_vram
   to:irq_vsync::@12
 irq_vsync::@12: scope:[irq_vsync]  from irq_vsync::@6
   irq_vsync::s#7 = phi( irq_vsync::@6/irq_vsync::s#8 )
@@ -218,7 +218,7 @@ __start::__init1: scope:[__start]  from __start
   sin_idx_y = $4f
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -648,7 +648,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [3] phi()
-  [4] call main 
+  [4] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [5] return 
@@ -694,7 +694,7 @@ irq_vsync::@6: scope:[irq_vsync]  from irq_vsync::@5
   [22] irq_vsync::$14 = SINY + irq_vsync::$12
   [23] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14
   [24] memcpy_to_vram::vdest#3 = (void*)irq_vsync::vram_sprite_pos#2
-  [25] call memcpy_to_vram 
+  [25] call memcpy_to_vram
   to:irq_vsync::@12
 irq_vsync::@12: scope:[irq_vsync]  from irq_vsync::@6
   [26] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE
@@ -720,11 +720,11 @@ irq_vsync::@9: scope:[irq_vsync]  from irq_vsync::@11 irq_vsync::@8
 void main()
 main: scope:[main]  from __start::@1
   [36] phi()
-  [37] call memcpy_to_vram 
+  [37] call memcpy_to_vram
   to:main::@5
 main::@5: scope:[main]  from main
   [38] phi()
-  [39] call memcpy_to_vram 
+  [39] call memcpy_to_vram
   to:main::@1
 main::@1: scope:[main]  from main::@5 main::@6
   [40] main::vram_sprite_attr#2 = phi( main::@5/(byte*)word0 VERA_SPRITE_ATTR, main::@6/main::vram_sprite_attr#1 )
@@ -752,7 +752,7 @@ main::@2: scope:[main]  from main::@1
   [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a
   [50] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a
   [51] memcpy_to_vram::vdest#2 = (void*)main::vram_sprite_attr#2
-  [52] call memcpy_to_vram 
+  [52] call memcpy_to_vram
   to:main::@6
 main::@6: scope:[main]  from main::@2
   [53] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE
@@ -1156,7 +1156,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [4] call main 
+    // [4] call main
     // [36] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -1318,7 +1318,7 @@ irq_vsync: {
     sta.z memcpy_to_vram.vdest
     lda.z vram_sprite_pos+1
     sta.z memcpy_to_vram.vdest+1
-    // [25] call memcpy_to_vram 
+    // [25] call memcpy_to_vram
   // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
     // [55] phi from irq_vsync::@6 to memcpy_to_vram [phi:irq_vsync::@6->memcpy_to_vram]
   memcpy_to_vram_from___b6:
@@ -1428,7 +1428,7 @@ main: {
     // Copy 8* sprite attributes to VRAM    
     .label vram_sprite_attr = $a
     .label s = 9
-    // [37] call memcpy_to_vram 
+    // [37] call memcpy_to_vram
   // Copy sprite data to VRAM
     // [55] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
   memcpy_to_vram_from_main:
@@ -1455,7 +1455,7 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [39] call memcpy_to_vram 
+    // [39] call memcpy_to_vram
   // Copy sprite palette to VRAM
     // [55] phi from main::@5 to memcpy_to_vram [phi:main::@5->memcpy_to_vram]
   memcpy_to_vram_from___b5:
@@ -1555,7 +1555,7 @@ main: {
     sta.z memcpy_to_vram.vdest
     lda.z vram_sprite_attr+1
     sta.z memcpy_to_vram.vdest+1
-    // [52] call memcpy_to_vram 
+    // [52] call memcpy_to_vram
     // [55] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
   memcpy_to_vram_from___b2:
     // [55] phi memcpy_to_vram::num#4 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
@@ -2033,7 +2033,7 @@ __start: {
     sta.z sin_idx_y+1
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [4] call main 
+    // [4] call main
     // [36] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -2191,7 +2191,7 @@ irq_vsync: {
     sta.z memcpy_to_vram.vdest
     lda.z vram_sprite_pos+1
     sta.z memcpy_to_vram.vdest+1
-    // [25] call memcpy_to_vram 
+    // [25] call memcpy_to_vram
   // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
     // [55] phi from irq_vsync::@6 to memcpy_to_vram [phi:irq_vsync::@6->memcpy_to_vram]
     // [55] phi memcpy_to_vram::num#4 = 4 [phi:irq_vsync::@6->memcpy_to_vram#0] -- vwuz1=vbuc1 
@@ -2296,7 +2296,7 @@ main: {
     .label vram_sprite_attr = $a
     .label s = 9
     // memcpy_to_vram(BYTE2(SPRITE_PIXELS_VRAM), (char*)WORD0(SPRITE_PIXELS_VRAM), SPRITE_PIXELS, 64*64)
-    // [37] call memcpy_to_vram 
+    // [37] call memcpy_to_vram
   // Copy sprite data to VRAM
     // [55] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
     // [55] phi memcpy_to_vram::num#4 = (word)$40*$40 [phi:main->memcpy_to_vram#0] -- vwuz1=vwuc1 
@@ -2320,7 +2320,7 @@ main: {
     // [38] phi from main to main::@5 [phi:main->main::@5]
     // main::@5
     // memcpy_to_vram(BYTE2(VERA_PALETTE), (char*)WORD0(VERA_PALETTE), SPRITE_PIXELS+64*64, 0x200)
-    // [39] call memcpy_to_vram 
+    // [39] call memcpy_to_vram
   // Copy sprite palette to VRAM
     // [55] phi from main::@5 to memcpy_to_vram [phi:main::@5->memcpy_to_vram]
     // [55] phi memcpy_to_vram::num#4 = $200 [phi:main::@5->memcpy_to_vram#0] -- vwuz1=vwuc1 
@@ -2418,7 +2418,7 @@ main: {
     sta.z memcpy_to_vram.vdest
     lda.z vram_sprite_attr+1
     sta.z memcpy_to_vram.vdest+1
-    // [52] call memcpy_to_vram 
+    // [52] call memcpy_to_vram
     // [55] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
     // [55] phi memcpy_to_vram::num#4 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
     lda #<SIZEOF_STRUCT_VERA_SPRITE

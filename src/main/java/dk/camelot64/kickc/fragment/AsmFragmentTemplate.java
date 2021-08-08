@@ -160,6 +160,7 @@ public class AsmFragmentTemplate {
       if(signature.contains("c5")) bindings.put("c5", new ConstantInteger(350L));
       if(signature.contains("c6")) bindings.put("c6", new ConstantInteger(360L));
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
+      if(signature.startsWith("call_")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
       AsmProgram asm = new AsmProgram(targetCpu);
@@ -167,6 +168,7 @@ public class AsmFragmentTemplate {
       fragmentInstance.generate(asm);
       CpuClobber cpuClobber = asm.getClobber();
       this.clobber = new AsmFragmentClobber(cpuClobber);
+      asm.addStash();
       this.cycles = asm.getCycles();
    }
 

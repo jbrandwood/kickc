@@ -16,7 +16,7 @@ main::@2: scope:[main]  from main::@1
   main::i#2 = phi( main::@1/main::i#3 )
   main::i#1 = ++ main::i#2
   getfn::b#0 = main::i#1
-  call getfn 
+  call getfn
   getfn::return#0 = getfn::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -66,7 +66,7 @@ fn2::@return: scope:[fn2]  from fn2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -185,7 +185,7 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1
   [6] main::i#1 = ++ main::i#2
   [7] getfn::b#0 = main::i#1
-  [8] call getfn 
+  [8] call getfn
   [9] getfn::return#0 = getfn::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -332,20 +332,21 @@ main: {
     inc.z i
     // [7] getfn::b#0 = main::i#1 -- vbuaa=vbuz1 
     lda.z i
-    // [8] call getfn 
+    // [8] call getfn
     jsr getfn
     // [9] getfn::return#0 = getfn::return#3
     jmp __b3
     // main::@3
   __b3:
     // [10] main::$0 = getfn::return#0
-    // [11] callexecute *main::$0 
-    jsr bi___0
+    // [11] callexecute *main::$0  -- call__deref_pprz1 
+    jsr icall1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
     // [5] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
-  bi___0:
+    // Outside Flow
+  icall1:
     jmp (__0)
 }
   // getfn
@@ -492,18 +493,19 @@ main: {
     // getfn(++i)
     // [7] getfn::b#0 = main::i#1 -- vbuaa=vbuz1 
     lda.z i
-    // [8] call getfn 
+    // [8] call getfn
     jsr getfn
     // [9] getfn::return#0 = getfn::return#3
     // main::@3
     // [10] main::$0 = getfn::return#0
     // (*getfn(++i))()
-    // [11] callexecute *main::$0 
-    jsr bi___0
+    // [11] callexecute *main::$0  -- call__deref_pprz1 
+    jsr icall1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b2
-  bi___0:
+    // Outside Flow
+  icall1:
     jmp (__0)
 }
   // getfn

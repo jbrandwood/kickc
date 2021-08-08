@@ -27,9 +27,9 @@ main: {
     lda fns+1,y
     sta.z f+1
     // (*f)()
-    jsr bi_f
+    jsr icall1
     jmp __b2
-  bi_f:
+  icall1:
     jmp (f)
 }
 fn2: {

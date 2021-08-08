@@ -203,10 +203,10 @@ gotoxy: {
 f1: {
     .label fn = 4
     // (*fn)()
-    jsr bi_fn
+    jsr icall1
     // }
     rts
-  bi_fn:
+  icall1:
     jmp (fn)
 }
 // Output one character at the current cursor position

@@ -1,3 +1,3 @@
 jsr {la1}
-icall: @outside_flow
+{la1}: @outside_flow
 jmp ({z1})  @outside_flow

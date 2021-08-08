@@ -2381,38 +2381,40 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitExprSizeOf(KickCParser.ExprSizeOfContext ctx) {
-      if(ctx.typeName() != null) {
-         // sizeof(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeName());
-         return SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
-      } else {
-         // sizeof(expression) - add a unary expression to be resolved later
-         RValue child = (RValue) this.visit(ctx.expr());
-         Variable tmpVar = addIntermediateVar();
-         SymbolVariableRef tmpVarRef = tmpVar.getRef();
-         Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.SIZEOF, child, true, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-         addStatement(stmt);
-         consumeExpr(child);
-         return tmpVarRef;
-      }
+      // sizeof(expression) - add a unary expression to be resolved later
+      RValue child = (RValue) this.visit(ctx.expr());
+      Variable tmpVar = addIntermediateVar();
+      SymbolVariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.SIZEOF, child, true, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+      addStatement(stmt);
+      consumeExpr(child);
+      return tmpVarRef;
+   }
+
+   @Override
+   public Object visitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx) {
+      // sizeof(type) - add directly
+      SymbolType type = (SymbolType) this.visit(ctx.typeName());
+      return SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
    }
 
    @Override
    public Object visitExprTypeId(KickCParser.ExprTypeIdContext ctx) {
-      if(ctx.typeName() != null) {
-         // typeid(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeName());
-         return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
-      } else {
-         // typeid(expression) - add a unary expression to be resolved later
-         RValue child = (RValue) this.visit(ctx.expr());
-         Variable tmpVar = addIntermediateVar();
-         SymbolVariableRef tmpVarRef = tmpVar.getRef();
-         Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.TYPEID, child, true, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-         addStatement(stmt);
-         consumeExpr(child);
-         return tmpVarRef;
-      }
+      // typeid(expression) - add a unary expression to be resolved later
+      RValue child = (RValue) this.visit(ctx.expr());
+      Variable tmpVar = addIntermediateVar();
+      SymbolVariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.TYPEID, child, true, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+      addStatement(stmt);
+      consumeExpr(child);
+      return tmpVarRef;
+   }
+
+   @Override
+   public Object visitExprTypeIdType(KickCParser.ExprTypeIdTypeContext ctx) {
+      // typeid(type) - add directly
+      SymbolType type = (SymbolType) this.visit(ctx.typeName());
+      return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
    }
 
    @Override

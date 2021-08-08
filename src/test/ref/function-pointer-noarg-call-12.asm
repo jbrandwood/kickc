@@ -28,19 +28,19 @@ main: {
     lda addrtable+1
     sta.z fn+1
     // (*fn)()
-    jsr bi_fn
+    jsr icall1
     // fn = addrtable[1]
     lda addrtable+1*SIZEOF_POINTER
     sta.z fn_1
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
     // (*fn)()
-    jsr bi_fn_1
+    jsr icall2
     // }
     rts
-  bi_fn:
+  icall1:
     jmp (fn)
-  bi_fn_1:
+  icall2:
     jmp (fn_1)
 }
 myFunc2: {

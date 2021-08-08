@@ -29,6 +29,9 @@ public class AsmProgram {
     */
    private List<AsmChunk> chunks;
 
+   /**Stashed lines to be inserted outside the flow. */
+   private List<AsmLine> stash;
+
    /**
     * The index of the next chunk.
     */
@@ -47,6 +50,7 @@ public class AsmProgram {
       this.chunks = new ArrayList<>();
       this.nextLineIndex = 0;
       this.nextChunkIndex = 0;
+      this.stash = new ArrayList<>();
    }
 
    public TargetCpu getTargetCpu() {
@@ -70,6 +74,32 @@ public class AsmProgram {
    public void addLine(AsmLine line) {
       line.setIndex(nextLineIndex++);
       getCurrentChunk().addLine(line);
+   }
+
+   /**
+    * Put an ASM-line into the stash for being added to the program later.
+    * @param line The line
+    */
+   public void stashLine(AsmLine line) {
+      stash.add(line);
+   }
+
+   /**
+    * Are there any lines in the stash
+    * @return true if there are
+    */
+   public boolean hasStash() {
+      return stash.size()>0;
+   }
+
+   /**
+    * Add the stash lines to the program - and clear the stash
+    */
+   public void addStash() {
+      for(AsmLine asmLine : stash) {
+         addLine(asmLine);
+      }
+      stash = new ArrayList<>();
    }
 
    /**

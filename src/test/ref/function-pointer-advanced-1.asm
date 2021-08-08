@@ -212,7 +212,7 @@ exec: {
     ldy.z i
     lda INPUT,y
     pha
-    jsr bi_collect
+    jsr icall1
     pla
     // out = (*collect)(out,INPUT[i])
     pla
@@ -225,7 +225,7 @@ exec: {
     // for(char i=1;i<sizeof(INPUT);i++)
     inc.z i
     jmp __b1
-  bi_collect:
+  icall1:
     jmp (collect)
 }
 // print(byte zp(6) i)

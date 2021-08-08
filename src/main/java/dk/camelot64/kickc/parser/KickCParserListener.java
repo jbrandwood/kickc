@@ -1032,30 +1032,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitExprPtr(KickCParser.ExprPtrContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exprPreMod}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprPreMod(KickCParser.ExprPreModContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprPreMod}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprPreMod(KickCParser.ExprPreModContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code exprBinary}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprBinary(KickCParser.ExprBinaryContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprBinary}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprBinary(KickCParser.ExprBinaryContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code exprTypeId}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
@@ -1104,18 +1080,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitExprNumber(KickCParser.ExprNumberContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exprChar}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprChar(KickCParser.ExprCharContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprChar}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprChar(KickCParser.ExprCharContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code exprArrow}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
@@ -1127,30 +1091,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprArrow(KickCParser.ExprArrowContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code exprDot}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprDot(KickCParser.ExprDotContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprDot}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprDot(KickCParser.ExprDotContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code initList}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterInitList(KickCParser.InitListContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code initList}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitInitList(KickCParser.InitListContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprCast}
 	 * labeled alternative in {@link KickCParser#expr}.
@@ -1164,18 +1104,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitExprCast(KickCParser.ExprCastContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exprCall}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprCall(KickCParser.ExprCallContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprCall}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprCall(KickCParser.ExprCallContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code exprPar}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
@@ -1187,6 +1115,138 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprPar(KickCParser.ExprParContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprId}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprId(KickCParser.ExprIdContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprId}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprId(KickCParser.ExprIdContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprTernary}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprTernary(KickCParser.ExprTernaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprTernary}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprTernary(KickCParser.ExprTernaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprAssignment}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprAssignment(KickCParser.ExprAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprAssignment}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprAssignment(KickCParser.ExprAssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprPreMod}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprPreMod(KickCParser.ExprPreModContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprPreMod}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprPreMod(KickCParser.ExprPreModContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprBinary}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprBinary(KickCParser.ExprBinaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprBinary}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprBinary(KickCParser.ExprBinaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprTypeIdType}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprTypeIdType(KickCParser.ExprTypeIdTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprTypeIdType}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprTypeIdType(KickCParser.ExprTypeIdTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprChar}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprChar(KickCParser.ExprCharContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprChar}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprChar(KickCParser.ExprCharContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprDot(KickCParser.ExprDotContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprDot(KickCParser.ExprDotContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprSizeOfType}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprSizeOfType}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code initList}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterInitList(KickCParser.InitListContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code initList}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitInitList(KickCParser.InitListContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprCall}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprCall(KickCParser.ExprCallContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprCall}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprCall(KickCParser.ExprCallContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprSizeOf}
 	 * labeled alternative in {@link KickCParser#expr}.
@@ -1236,18 +1296,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitExprBool(KickCParser.ExprBoolContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exprId}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprId(KickCParser.ExprIdContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprId}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprId(KickCParser.ExprIdContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code exprDefined}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
@@ -1259,30 +1307,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprDefined(KickCParser.ExprDefinedContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code exprTernary}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprTernary(KickCParser.ExprTernaryContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprTernary}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprTernary(KickCParser.ExprTernaryContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code exprAssignment}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprAssignment(KickCParser.ExprAssignmentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprAssignment}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprAssignment(KickCParser.ExprAssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprArray}
 	 * labeled alternative in {@link KickCParser#expr}.
@@ -1417,6 +1441,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAsmLabelName(KickCParser.AsmLabelNameContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmLabelReplace}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmLabelReplace(KickCParser.AsmLabelReplaceContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmLabelReplace}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmLabelReplace(KickCParser.AsmLabelReplaceContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code asmLabelMulti}
 	 * labeled alternative in {@link KickCParser#asmLabel}.

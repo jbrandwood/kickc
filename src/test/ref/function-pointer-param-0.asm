@@ -97,9 +97,9 @@ main: {
     // (*f)(i)
     lda.z i
     pha
-    jsr bi_f
+    jsr icall2
     pla
     jmp __b4
-  bi_f:
+  icall2:
     jmp (f)
 }

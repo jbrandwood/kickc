@@ -222,8 +222,10 @@ expr
     | expr DOT NAME #exprDot
     | expr '->' NAME  #exprArrow
     | expr PAR_BEGIN parameterList? PAR_END #exprCall
-    | SIZEOF ( expr | PAR_BEGIN typeName PAR_END )  #exprSizeOf
-    | TYPEID ( expr | PAR_BEGIN typeName PAR_END )  #exprTypeId
+    | SIZEOF PAR_BEGIN typeName PAR_END  #exprSizeOfType
+    | SIZEOF expr #exprSizeOf
+    | TYPEID PAR_BEGIN typeName PAR_END  #exprTypeIdType
+    | TYPEID expr  #exprTypeId
     | DEFINED PAR_BEGIN? NAME PAR_END? #exprDefined
     | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
     | PAR_BEGIN typeName PAR_END expr #exprCast
@@ -283,6 +285,7 @@ asmLine
 
 asmLabel
     : ASM_NAME ASM_COLON ASM_TAG* #asmLabelName
+    | ASM_CURLY_BEGIN ASM_NAME ASM_CURLY_END ASM_COLON ASM_TAG* #asmLabelReplace
     | ASM_MULTI_NAME ASM_COLON ASM_TAG* #asmLabelMulti
     ;
 

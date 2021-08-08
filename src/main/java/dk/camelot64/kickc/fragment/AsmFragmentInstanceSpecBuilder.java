@@ -62,17 +62,19 @@ public class AsmFragmentInstanceSpecBuilder {
     * Create a fragment instance spec factory for an indirect call
     * @return the fragment instance spec factory
     */
-   public static AsmFragmentInstanceSpecBuilder call(StatementCallExecute call, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(call, program);
+   public static AsmFragmentInstanceSpecBuilder call(StatementCallExecute call, int indirectCallId, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(call, indirectCallId, program);
    }
 
-   private AsmFragmentInstanceSpecBuilder(StatementCallExecute call, Program program) {
+   private AsmFragmentInstanceSpecBuilder(StatementCallExecute call, int indirectCallId, Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
       StringBuilder signature = new StringBuilder();
       signature.append("call_");
-      signature.append(bind(call.getProcedureRVal()));
+      RValue procRVal = call.getProcedureRVal();
+      signature.append(bind(procRVal));
+      bind("la1", new LabelRef(codeScope.getFullName()+"::"+"icall"+indirectCallId));
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature.toString(), bindings, codeScope);
    }
 
@@ -483,6 +485,13 @@ public class AsmFragmentInstanceSpecBuilder {
       } else if(value instanceof ConstantValue) {
          if(castType == null) {
             castType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
+         }
+         String name = getTypePrefix(castType) + getConstName(value);
+         bind(name, value);
+         return name;
+      } else if(value instanceof ProcedureRef) {
+         if(castType == null) {
+            castType = SymbolTypeInference.inferType(program.getScope(), (ProcedureRef) value);
          }
          String name = getTypePrefix(castType) + getConstName(value);
          bind(name, value);

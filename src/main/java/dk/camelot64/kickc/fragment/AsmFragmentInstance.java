@@ -103,6 +103,12 @@ public class AsmFragmentInstance {
       } else if(boundValue instanceof Label) {
          String param = AsmFormat.asmFix(((Label) boundValue).getLocalName());
          return new AsmParameter(param, false);
+      } else if(boundValue instanceof LabelRef) {
+         String param = AsmFormat.asmFix(((LabelRef) boundValue).getLocalName());
+         return new AsmParameter(param, false);
+      } else if(boundValue instanceof ProcedureRef) {
+         String param = AsmFormat.asmFix(((ProcedureRef) boundValue).getFullName());
+         return new AsmParameter(param, false);
       } else {
          throw new InternalError("Bound Value Type not implemented " + boundValue);
       }
@@ -198,6 +204,16 @@ public class AsmFragmentInstance {
          this.visit(context);
       }
 
+      public void handleTags(AsmLine asmLine, List<TerminalNode> tags) {
+         AsmLine line = addTags(asmLine, tags);
+         if(line.getTags().has("outside_flow")) {
+            // Outside the normal ASM flow - stash them in the program for later
+            asmProgram.stashLine(line);
+         } else {
+            asmProgram.addLine(line);
+         }
+      }
+
       private static AsmLine addTags(AsmLine asmLine, List<TerminalNode> asmTags) {
          if(asmTags != null)
             for(TerminalNode asmTag : asmTags) {
@@ -209,13 +225,23 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-         asmProgram.addLine(addTags(new AsmLabel(ctx.ASM_NAME().getText()), ctx.ASM_TAG()));
+         AsmLabel label = new AsmLabel(ctx.ASM_NAME().getText());
+         handleTags(label, ctx.ASM_TAG());
          return null;
       }
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
-         asmProgram.addLine(addTags(new AsmLabel(ctx.ASM_MULTI_NAME().getText()), ctx.ASM_TAG()));
+         AsmLabel label = new AsmLabel(ctx.ASM_MULTI_NAME().getText());
+         handleTags(label, ctx.ASM_TAG());
+         return null;
+      }
+
+      @Override
+      public Object visitAsmLabelReplace(KickCParser.AsmLabelReplaceContext ctx) {
+         String replaceName = ctx.ASM_NAME().getText();
+         AsmParameter boundValue = fragmentInstance.getBoundValue(replaceName);
+         handleTags(new AsmLabel(boundValue.getParam()), ctx.ASM_TAG());
          return null;
       }
 
@@ -225,7 +251,8 @@ public class AsmFragmentInstance {
          for(int i = 1; i < ctx.getChildCount(); i = i + 2) {
             values.add(ctx.getChild(i).getText());
          }
-         asmProgram.addLine(addTags(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values), ctx.ASM_TAG()));
+         AsmDataNumeric data = new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values);
+         handleTags(data, ctx.ASM_TAG());
          return null;
       }
 
@@ -239,7 +266,7 @@ public class AsmFragmentInstance {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
          if(instruction != null) {
-            asmProgram.addLine(addTags(instruction, ctx.ASM_TAG()));
+            handleTags(instruction, ctx.ASM_TAG());
          } else {
             throw new RuntimeException("Error parsing ASM fragment line " + name + ".asm\n - Line: " + ctx.getText());
          }

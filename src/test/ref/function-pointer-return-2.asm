@@ -52,13 +52,13 @@ set_border: {
     .label fn = 2
     // fn()
     pha
-    jsr bi_fn
+    jsr icall1
     pla
     // *BORDER = fn()
     // Call pointer to a function without *
     sta BORDER
     // }
     rts
-  bi_fn:
+  icall1:
     jmp (fn)
 }

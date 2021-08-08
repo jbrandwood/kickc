@@ -40,7 +40,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -195,10 +195,10 @@ Uplift Scope [myFunc]
 Uplift Scope [myFunc2] 
 Uplift Scope [] 
 
-Uplifting [main] best 116 combination zp[2]:2 [ main::fn#0 ] zp[2]:4 [ main::fn#1 ] 
-Uplifting [myFunc] best 116 combination 
-Uplifting [myFunc2] best 116 combination 
-Uplifting [] best 116 combination 
+Uplifting [main] best 206 combination zp[2]:2 [ main::fn#0 ] zp[2]:4 [ main::fn#1 ] 
+Uplifting [myFunc] best 206 combination 
+Uplifting [myFunc2] best 206 combination 
+Uplifting [] best 206 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -234,8 +234,8 @@ main: {
     sta.z fn
     lda addrtable+1
     sta.z fn+1
-    // [3] callexecute *main::fn#0 
-    jsr bi_fn
+    // [3] callexecute *main::fn#0  -- call__deref_pprz1 
+    jsr icall1
     jmp __b1
     // main::@1
   __b1:
@@ -244,16 +244,17 @@ main: {
     sta.z fn_1
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
-    // [5] callexecute *main::fn#1 
-    jsr bi_fn_1
+    // [5] callexecute *main::fn#1  -- call__deref_pprz1 
+    jsr icall2
     jmp __breturn
     // main::@return
   __breturn:
     // [6] return 
     rts
-  bi_fn:
+    // Outside Flow
+  icall1:
     jmp (fn)
-  bi_fn_1:
+  icall2:
     jmp (fn_1)
 }
   // myFunc2
@@ -311,7 +312,7 @@ zp[2]:4 [ main::fn#1 ]
 
 
 FINAL ASSEMBLER
-Score: 104
+Score: 194
 
   // File Comments
 // Tests calling through pointers to non-args no-return functions
@@ -350,8 +351,8 @@ main: {
     lda addrtable+1
     sta.z fn+1
     // (*fn)()
-    // [3] callexecute *main::fn#0 
-    jsr bi_fn
+    // [3] callexecute *main::fn#0  -- call__deref_pprz1 
+    jsr icall1
     // main::@1
     // fn = addrtable[1]
     // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
@@ -360,15 +361,16 @@ main: {
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
     // (*fn)()
-    // [5] callexecute *main::fn#1 
-    jsr bi_fn_1
+    // [5] callexecute *main::fn#1  -- call__deref_pprz1 
+    jsr icall2
     // main::@return
     // }
     // [6] return 
     rts
-  bi_fn:
+    // Outside Flow
+  icall1:
     jmp (fn)
-  bi_fn_1:
+  icall2:
     jmp (fn_1)
 }
   // myFunc2

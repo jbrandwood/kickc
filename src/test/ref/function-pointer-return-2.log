@@ -230,11 +230,11 @@ Uplift Scope [fn2]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [set_border] best 200 combination reg byte a [ set_border::$0 ] zp[2]:2 [ set_border::fn#2 ] 
-Uplifting [fn1] best 194 combination reg byte a [ fn1::return#0 ] 
-Uplifting [fn2] best 194 combination 
-Uplifting [main] best 194 combination 
-Uplifting [] best 194 combination 
+Uplifting [set_border] best 245 combination reg byte a [ set_border::$0 ] zp[2]:2 [ set_border::fn#2 ] 
+Uplifting [fn1] best 239 combination reg byte a [ fn1::return#0 ] 
+Uplifting [fn2] best 239 combination 
+Uplifting [main] best 239 combination 
+Uplifting [] best 239 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -322,8 +322,8 @@ set_border: {
     .label fn = 2
     // sideeffect stackpushbytes(1) -- _stackpushbyte_1 
     pha
-    // [13] callexecute *set_border::fn#2 
-    jsr bi_fn
+    // [13] callexecute *set_border::fn#2  -- call__deref_pprz1 
+    jsr icall1
     // [14] set_border::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     jmp __b1
@@ -337,7 +337,8 @@ set_border: {
   __breturn:
     // [16] return 
     rts
-  bi_fn:
+    // Outside Flow
+  icall1:
     jmp (fn)
 }
   // File Data
@@ -388,7 +389,7 @@ reg byte a [ set_border::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 95
+Score: 140
 
   // File Comments
 // Calling a function pointer with return value
@@ -469,8 +470,8 @@ set_border: {
     // fn()
     // sideeffect stackpushbytes(1) -- _stackpushbyte_1 
     pha
-    // [13] callexecute *set_border::fn#2 
-    jsr bi_fn
+    // [13] callexecute *set_border::fn#2  -- call__deref_pprz1 
+    jsr icall1
     // [14] set_border::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // set_border::@1
@@ -482,7 +483,8 @@ set_border: {
     // }
     // [16] return 
     rts
-  bi_fn:
+    // Outside Flow
+  icall1:
     jmp (fn)
 }
   // File Data

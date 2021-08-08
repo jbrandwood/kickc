@@ -88,7 +88,7 @@ do10: {
     sta.z i
   __b1:
     // (*fn)()
-    jsr bi_fn
+    jsr icall1
     // for( byte i: 0..9)
     inc.z i
     lda #$a
@@ -96,6 +96,6 @@ do10: {
     bne __b1
     // }
     rts
-  bi_fn:
+  icall1:
     jmp (fn)
 }

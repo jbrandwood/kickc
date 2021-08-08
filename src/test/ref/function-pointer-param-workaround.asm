@@ -151,11 +151,11 @@ main: {
     lda fns+1,y
     sta.z f+1
     // (*f)()
-    jsr bi_f
+    jsr icall1
     // for(char j=0;j<2;j++)
     inc.z j
     jmp __b2
-  bi_f:
+  icall1:
     jmp (f)
   .segment Data
     fns: .word fn1, fn2

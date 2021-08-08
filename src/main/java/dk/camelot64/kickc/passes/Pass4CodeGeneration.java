@@ -192,11 +192,8 @@ public class Pass4CodeGeneration {
       }
    }
 
-   /**
-    * ASM names of variables being used for indirect calls in the current scope (procedure).
-    * These will all be added as indirect JMP's at the end of the procedure scope.
-    */
-   private List<String> indirectCallAsmNames = new ArrayList<>();
+   /** Counter used to separate indirect calls */
+   private int indirectCallCount = 1;
 
    /**
     * Generate the end of a scope
@@ -206,28 +203,13 @@ public class Pass4CodeGeneration {
     */
    private void generateScopeEnding(AsmProgram asm, ScopeRef currentScope) {
       if(!ScopeRef.ROOT.equals(currentScope)) {
-         // Generate any indirect calls pending
-         for(String indirectCallAsmName : indirectCallAsmNames) {
-            asm.addLabel("bi_" + indirectCallAsmName);
-            asm.addInstruction("jmp", CpuAddressingMode.IND, indirectCallAsmName, false);
-         }
-         indirectCallAsmNames = new ArrayList<>();
+         if(asm.hasStash())
+            asm.startChunk(currentScope, null, "Outside Flow");
+         // Generate all stashed ASM lines
+         asm.addStash();
          addData(asm, currentScope);
          asm.addScopeEnd();
       }
-   }
-
-   /**
-    * Add an indirect call to the assembler program. Also queues ASM for the indirect jump to be added at the end of the block.
-    *
-    * @param asm The ASM program being built
-    * @param procedureVariable The variable containing the function pointer
-    * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
-    */
-   private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
-      String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, codeScopeRef);
-      indirectCallAsmNames.add(varAsmName);
-      asm.addInstruction("jsr", CpuAddressingMode.ABS, "bi_" + varAsmName, false);
    }
 
    /**
@@ -913,52 +895,12 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             RValue procedureRVal = call.getProcedureRVal();
-            boolean supported = false;
-            if(procedureRVal instanceof ProcedureRef) {
-               asm.getCurrentChunk().setFragment("jsr");
-               asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
-               supported = true;
-            } else if(procedureRVal instanceof PointerDereferenceSimple) {
-               RValue pointer = ((PointerDereferenceSimple) procedureRVal).getPointer();
-               while(pointer instanceof CastValue)
-                  pointer = ((CastValue) pointer).getValue();
-               if(pointer instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) pointer);
-                  generateIndirectCall(asm, variable, block.getScope());
-                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                  supported = true;
-               } else {
-                  // Generate ASM for an indirect call
-                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.call(call, program);
-                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
-                  asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                  supported = true;
-               }
-            } else if(procedureRVal instanceof VariableRef) {
-               Variable procedureVariable = getScope().getVariable((VariableRef) procedureRVal);
-               SymbolType procedureVariableType = procedureVariable.getType();
-               if(procedureVariableType instanceof SymbolTypePointer) {
-                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     generateIndirectCall(asm, procedureVariable, block.getScope());
-                     supported = true;
-                     asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                  }
-               }
-            } else if(procedureRVal instanceof ConstantRef) {
-               Variable procedureVariable = getScope().getConstant((ConstantRef) procedureRVal);
-               SymbolType procedureVariableType = procedureVariable.getType();
-               if(procedureVariableType instanceof SymbolTypePointer) {
-                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, block.getScope());
-                     asm.addInstruction("jsr", CpuAddressingMode.ABS, varAsmName, false);
-                     asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                     supported = true;
-                  }
-               }
-            }
-            if(!supported) {
-               throw new InternalError("Call Pointer not supported " + statement);
+            // Generate ASM for a call
+            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++,  program);
+            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+            if(!(procedureRVal instanceof ProcedureRef)) {
+               asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
             }
          } else if(statement instanceof StatementExprSideEffect) {
             AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program);

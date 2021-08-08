@@ -61,12 +61,12 @@ main: {
   __b3:
     // (*f)()
     pha
-    jsr bi_f
+    jsr icall1
     // char v = (*f)()
     pla
     // SCREEN[0] = v
     sta SCREEN
     jmp __b1
-  bi_f:
+  icall1:
     jmp (f)
 }

@@ -34,9 +34,9 @@ main: {
     lda.z i
     jsr getfn
     // (*getfn(++i))()
-    jsr bi___0
+    jsr icall1
     jmp __b2
-  bi___0:
+  icall1:
     jmp (__0)
 }
 // declare getfn as function (char b) returning pointer to function (void) returning void

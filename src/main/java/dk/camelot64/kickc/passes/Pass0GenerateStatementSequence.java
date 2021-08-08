@@ -120,10 +120,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       final StatementSequence statementSequence = procedureCompilation.getStatementSequence();
       List<Statement> statements = statementSequence.getStatements();
-      if(statements.size()==0)
+      if(statements.size() == 0)
          return null;
       else
-         return statements.get(statements.size()-1);
+         return statements.get(statements.size() - 1);
    }
 
 
@@ -198,13 +198,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(initCompilation != null)
             startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          final Procedure mainProc = program.getScope().getLocalProcedure(SymbolRef.MAIN_PROC_NAME);
-         if(mainProc==null)
+         if(mainProc == null)
             throw new CompileError("Required main() not defined in program.");
          if(!SymbolType.VOID.equals(mainProc.getReturnType()) && !SymbolType.SWORD.equals(mainProc.getReturnType()))
             throw new CompileError("return of main() must be 'void' or of type 'int'.", mainProc.getDefinitionSource());
-         if(mainProc.getParameterNames().size()==0) {
+         if(mainProc.getParameterNames().size() == 0) {
             startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         } else if(mainProc.getParameterNames().size()==2) {
+         } else if(mainProc.getParameterNames().size() == 2) {
             final List<Variable> parameters = mainProc.getParameters();
             final Variable argc = parameters.get(0);
             if(!SymbolType.SWORD.equals(argc.getType()))
@@ -537,7 +537,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                throw new CompileError("Illegal void parameter.", statementSource);
 
             // Handle parameters without a name in the declaration
-            if(parameter.name==null)
+            if(parameter.name == null)
                throw new CompileError("Illegal unnamed parameter.", statementSource);
 
             VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, false, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
@@ -1051,7 +1051,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   }
 
                   Statement initStmt;
-                  if(previousAssignment!=null) {
+                  if(previousAssignment != null) {
                      previousAssignment.setlValue(variable.getVariableRef());
                      previousAssignment.setInitialAssignment(true);
                      previousAssignment.setSource(declSource);
@@ -1742,8 +1742,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitStmtLabel(KickCParser.StmtLabelContext ctx) {
       String labelName = ctx.NAME().getText();
-      if(getCurrentScope().getLocalLabel(labelName)!=null)
-         throw new CompileError("label already defined '"+labelName+"'.", new StatementSource(ctx));
+      if(getCurrentScope().getLocalLabel(labelName) != null)
+         throw new CompileError("label already defined '" + labelName + "'.", new StatementSource(ctx));
       Scope procedureScope = getCurrentProcedure();
       Label label = procedureScope.addLabel(labelName);
       addStatement(new StatementLabel(label.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
@@ -1915,13 +1915,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitTypeSimple(KickCParser.TypeSimpleContext ctx) {
       String typeName = "";
       for(TerminalNode simpleTypeNode : ctx.SIMPLETYPE()) {
-         if(typeName.length()>0)
+         if(typeName.length() > 0)
             typeName += " ";
          typeName += simpleTypeNode.getText();
       }
       final SymbolType typeSimple = SymbolType.get(typeName);
-      if(typeSimple==null)
-         throw new CompileError("Unknown type '" +typeName+"'" , new StatementSource(ctx));
+      if(typeSimple == null)
+         throw new CompileError("Unknown type '" + typeName + "'", new StatementSource(ctx));
       varDecl.setDeclType(typeSimple);
       return null;
    }
@@ -1929,7 +1929,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitStructDef(KickCParser.StructDefContext ctx) {
 
-      boolean isUnion = ctx.UNION()!=null;
+      boolean isUnion = ctx.UNION() != null;
 
       String structDefName;
       if(ctx.NAME() != null) {
@@ -1988,7 +1988,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.currentEnum = null;
          // Copy all members to upper-level scope
          Scope parentScope = getCurrentScope();
-         while(parentScope instanceof StructDefinition || parentScope instanceof TypeDefsScope) parentScope = parentScope.getScope();
+         while(parentScope instanceof StructDefinition || parentScope instanceof TypeDefsScope)
+            parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
             parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, member.getInitValue(), currentDataSegment));
          }
@@ -2150,7 +2151,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             varDeclPush();
             ParameterDecl paramDecl = (ParameterDecl) this.visit(parameterDeclContext);
             // Handle parameter list with "VOID"
-            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size()==1)
+            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size() == 1)
                ; // Ignore the void parameter
             else {
                paramTypes.add(paramDecl.type);
@@ -2174,7 +2175,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             varDeclPush();
             ParameterDecl paramDecl = (ParameterDecl) this.visit(parameterDeclContext);
             // Handle parameter list with "VOID"
-            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size()==1)
+            if(SymbolType.VOID.equals(paramDecl.type) && ctx.parameterListDecl().parameterDecl().size() == 1)
                ; // Ignore the void parameter
             else {
                paramTypes.add(paramDecl.type);
@@ -2424,44 +2425,81 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          parameters = new ArrayList<>();
       }
 
-      String procedureName;
-      RValue result;
-      if(ctx.expr() instanceof KickCParser.ExprIdContext) {
-         procedureName = ctx.expr().getText();
-         // Handle the special BYTE0/1/2/3/WORD0/1/MAKEWORD/MAKEDWORD calls
-         if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.BYTE1, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD0_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.WORD0, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size() == 1) {
-            result = addExprUnary(ctx, Operators.WORD1, parameters.get(0));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKEWORD.equals(procedureName) && parameters.size() == 2) {
-            result = addExprBinary(ctx, parameters.get(0), Operators.WORD, parameters.get(1));
-         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG.equals(procedureName) && parameters.size() == 2) {
-            result = addExprBinary(ctx, parameters.get(0), Operators.DWORD, parameters.get(1));
-         } else {
-            // A normal named call
-            result = addIntermediateVar().getRef();
-            addStatement(new StatementCall((LValue) result, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
-         }
-      } else {
-         RValue procedurePointer = (RValue) this.visit(ctx.expr());
-         result = addIntermediateVar().getRef();
-         addStatement(new StatementCallPointer((LValue) result, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
-         consumeExpr(procedurePointer);
-         Label afterCallLabel = getCurrentScope().addLabelIntermediate();
-         addStatement(new StatementLabel(afterCallLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
-      }
       for(RValue parameter : parameters) {
          consumeExpr(parameter);
       }
-      return result;
+
+      if(ctx.expr() instanceof KickCParser.ExprIdContext) {
+         String procedureName = ctx.expr().getText();
+         // Handle the special BYTE0/1/2/3/WORD0/1/MAKEWORD/MAKEDWORD calls
+         if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE0_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.BYTE0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE1_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.BYTE1, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE2_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.BYTE2, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_BYTE3_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.BYTE3, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD0_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.WORD0, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_WORD1_NAME.equals(procedureName) && parameters.size() == 1) {
+            return addExprUnary(ctx, Operators.WORD1, parameters.get(0));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKEWORD.equals(procedureName) && parameters.size() == 2) {
+            return addExprBinary(ctx, parameters.get(0), Operators.WORD, parameters.get(1));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG.equals(procedureName) && parameters.size() == 2) {
+            return addExprBinary(ctx, parameters.get(0), Operators.DWORD, parameters.get(1));
+         } else if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedureName)) {
+            // Handle the intrinsic MAKELONG4()
+            if(program.getScope().getGlobalSymbol(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4) == null) {
+               // Add the intrinsic MAKEWORD4() to the global scope
+               final Procedure makeword4 = new Procedure(
+                     Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4,
+                     new SymbolTypeProcedure(SymbolType.DWORD, Arrays.asList(new SymbolType[]{SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE})),
+                     program.getScope(),
+                     Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT,
+                     Procedure.CallingConvention.INTRINSIC_CALL);
+               makeword4.setDeclaredIntrinsic(true);
+               final Variable hihi = new Variable("hihi", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
+               makeword4.add(hihi);
+               final Variable hilo = new Variable("hilo", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
+               makeword4.add(hilo);
+               final Variable lohi = new Variable("lohi", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
+               makeword4.add(lohi);
+               final Variable lolo = new Variable("lolo", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
+               makeword4.add(lolo);
+               makeword4.setParameters(Arrays.asList(hihi, hilo, lohi, lolo));
+               program.getScope().add(makeword4);
+            }
+            // Add the call
+            LValue result = (LValue) addIntermediateVar().getRef();
+            addStatement(new StatementCall(result, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+            return result;
+         }
+      }
+
+      // Examine if the procedureName references a variable
+      RValue procedurePointer = (RValue) this.visit(ctx.expr());
+      if(procedurePointer instanceof ProcedureRef) {
+         // A normal named call
+         LValue result = (LValue) addIntermediateVar().getRef();
+         String procedureName = ((ProcedureRef) procedurePointer).getLocalName();
+         addStatement(new StatementCall(result, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         return result;
+      } else if(procedurePointer instanceof ForwardVariableRef) {
+         // TODO: Remove the need for forward references!
+         // Assume this is a named call to a yet undeclared function.
+         LValue result = (LValue) addIntermediateVar().getRef();
+         String procedureName = ((ForwardVariableRef) procedurePointer).getName();
+         addStatement(new StatementCall(result, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         return result;
+      } else {
+         LValue result = (LValue) addIntermediateVar().getRef();
+         addStatement(new StatementCallPointer(result, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         consumeExpr(procedurePointer);
+         Label afterCallLabel = getCurrentScope().addLabelIntermediate();
+         addStatement(new StatementLabel(afterCallLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+         return result;
+      }
    }
 
    @Override

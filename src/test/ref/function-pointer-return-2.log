@@ -263,6 +263,7 @@ main: {
     // main::@1
   __b1:
     // [2] call set_border
+  // Create pointer to function without &
     // [11] phi from main::@1 to set_border [phi:main::@1->set_border]
   set_border_from___b1:
     // [11] phi set_border::fn#2 = &fn1 [phi:main::@1->set_border#0] -- pprz1=pprc1 
@@ -329,6 +330,7 @@ set_border: {
     // set_border::@1
   __b1:
     // [15] *BORDER = set_border::$0 -- _deref_pbuc1=vbuaa 
+    // Call pointer to a function without *
     sta BORDER
     jmp __breturn
     // set_border::@return
@@ -351,10 +353,10 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b2 with __b1
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b2:
-Removing instruction set_border_from___b1:
 Removing instruction __b2_from___b1:
 Removing instruction set_border_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction set_border_from___b1:
 Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -412,6 +414,7 @@ main: {
   __b1:
     // set_border(fn1)
     // [2] call set_border
+  // Create pointer to function without &
     // [11] phi from main::@1 to set_border [phi:main::@1->set_border]
     // [11] phi set_border::fn#2 = &fn1 [phi:main::@1->set_border#0] -- pprz1=pprc1 
     lda #<fn1
@@ -463,7 +466,7 @@ fn1: {
 // set_border(byte()* zp(2) fn)
 set_border: {
     .label fn = 2
-    // (*fn)()
+    // fn()
     // sideeffect stackpushbytes(1) -- _stackpushbyte_1 
     pha
     // [13] callexecute *set_border::fn#2 
@@ -471,8 +474,9 @@ set_border: {
     // [14] set_border::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // set_border::@1
-    // *BORDER = (*fn)()
+    // *BORDER = fn()
     // [15] *BORDER = set_border::$0 -- _deref_pbuc1=vbuaa 
+    // Call pointer to a function without *
     sta BORDER
     // set_border::@return
     // }

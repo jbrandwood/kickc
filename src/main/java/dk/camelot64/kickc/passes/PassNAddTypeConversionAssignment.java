@@ -1,12 +1,16 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionBinary;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCallPointer;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
+import dk.camelot64.kickc.model.values.PointerDereferenceSimple;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
@@ -14,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Add a cast a variable is assigned something of a convertible type.
- * Also allows pointers to be assigned integer values.
  */
 public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
 
@@ -65,6 +68,24 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
             }
          }
       });
+
+      // Add dereference to call to pointer to function
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementCallPointer) {
+               RValue procedure = ((StatementCallPointer) statement).getProcedure();
+               SymbolType procType = SymbolTypeInference.inferType(getScope(), procedure);
+               if(procType instanceof SymbolTypePointer && ((SymbolTypePointer) procType).getElementType() instanceof SymbolTypeProcedure) {
+                  // Allow calling pointer to procedure directly
+                  // Add an automatic dereference to a pointer to procedure
+                  if(!pass1 || getLog().isVerbosePass1CreateSsa())
+                     getLog().append("Adding dereference to call function pointer " + procedure.toString() + " in " + statement.toString(getProgram(), false));
+                  ((StatementCallPointer) statement).setProcedure(new PointerDereferenceSimple(procedure));
+               }
+            }
+         }
+      }
+
       return modified.get();
    }
 

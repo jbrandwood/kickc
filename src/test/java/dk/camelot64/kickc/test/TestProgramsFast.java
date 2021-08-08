@@ -271,7 +271,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testLocalVarShadowingProcedure() throws IOException {
-      assertError("local-var-shadowing-procedure.c", "Called symbol is not a procedure. main::doit");
+      assertError("local-var-shadowing-procedure.c", "Called object is not a function or function pointer main::doit");
    }
 
    @Test

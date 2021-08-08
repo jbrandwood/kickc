@@ -15,6 +15,7 @@
 main: {
   __b1:
     // set_border(fn1)
+  // Create pointer to function without &
     lda #<fn1
     sta.z set_border.fn
     lda #>fn1
@@ -49,11 +50,12 @@ fn1: {
 // set_border(byte()* zp(2) fn)
 set_border: {
     .label fn = 2
-    // (*fn)()
+    // fn()
     pha
     jsr bi_fn
     pla
-    // *BORDER = (*fn)()
+    // *BORDER = fn()
+    // Call pointer to a function without *
     sta BORDER
     // }
     rts

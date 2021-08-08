@@ -22,6 +22,8 @@ public class Pass1AssertJumpLabels extends Pass1Base {
    @Override
    public boolean step() {
       for(Procedure procedure : getProgram().getScope().getAllProcedures(true)) {
+         if(procedure.isDeclaredIntrinsic())
+            continue;
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          StatementSequence statementSequence = procedureCompilation.getStatementSequence();
          for(Statement statement : statementSequence.getStatements()) {

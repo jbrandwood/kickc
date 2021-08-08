@@ -88,6 +88,9 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType procedureType = SymbolTypeInference.inferType(programScope, call.getProcedure());
+            if(procedureType instanceof SymbolTypePointer)
+               // Handle call to pointer to function
+               procedureType = ((SymbolTypePointer) procedureType).getElementType();
             if(procedureType instanceof SymbolTypeProcedure) {
                SymbolType returnType = ((SymbolTypeProcedure) procedureType).getReturnType();
                setInferedType(program, call, symbol, returnType);

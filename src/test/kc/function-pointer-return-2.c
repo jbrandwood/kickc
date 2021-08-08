@@ -13,11 +13,13 @@ char fn2() {
 }
 
 void set_border(char (*fn)(void)) {
-    *BORDER = (*fn)();
+    // Call pointer to a function without *
+    *BORDER = fn();
 }
 
 void main() {
     for(;;) {
+        // Create pointer to function without &
         set_border(fn1);
         set_border(fn2);
     }

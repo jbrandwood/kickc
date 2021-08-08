@@ -29,6 +29,8 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
       ProgramScope programScope = getScope();
       final Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
+         if(procedure.isDeclaredIntrinsic())
+            continue;
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          final StatementSequence sequence = procedureCompilation.getStatementSequence();
          if(sequence.getStatements().size()==0)

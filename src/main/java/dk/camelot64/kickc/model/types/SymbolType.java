@@ -8,10 +8,11 @@ public interface SymbolType extends Serializable {
    /** Specifies that the value of the variable may change at any time, so the optimizer must not make assumptions. The variable must always live in memory to be available for any multi-threaded access (eg. in interrupts). (volatile keyword) */
    boolean isVolatile();
 
-   /** Specifies that the variable is not allowed to be modified (const keyword). The compiler should try to detect modifications and generate compile-time errors if they occur.*/
+   /** Specifies that the variable is not allowed to be modified (const keyword). The compiler should try to detect modifications and generate compile-time errors if they occur. */
    boolean isNomodify();
 
-   /** Get the type with different type qualifiers.
+   /**
+    * Get the type with different type qualifiers.
     *
     * @param isVolatile Should the type be marked as volatile
     * @param isNomodify Should the type be marked as nomodify (keyword const)
@@ -20,17 +21,17 @@ public interface SymbolType extends Serializable {
    SymbolType getQualified(boolean isVolatile, boolean isNomodify);
 
    /** Unsigned byte (8 bits)). */
-   SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8, false, false);
+   SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", "char", 0, 255, false, 8, false, false);
    /** Signed byte (8 bits). */
-   SymbolTypeIntegerFixed SBYTE = new SymbolTypeIntegerFixed("signed byte", -128, 127, true, 8, false, false);
+   SymbolTypeIntegerFixed SBYTE = new SymbolTypeIntegerFixed("signed byte", "signed char", -128, 127, true, 8, false, false);
    /** Unsigned word (2 bytes, 16 bits). */
-   SymbolTypeIntegerFixed WORD = new SymbolTypeIntegerFixed("word", 0, 65_535, false, 16, false, false);
+   SymbolTypeIntegerFixed WORD = new SymbolTypeIntegerFixed("word", "unsigned int", 0, 65_535, false, 16, false, false);
    /** Signed word (2 bytes, 16 bits). */
-   SymbolTypeIntegerFixed SWORD = new SymbolTypeIntegerFixed("signed word", -32_768, 32_767, true, 16, false, false);
+   SymbolTypeIntegerFixed SWORD = new SymbolTypeIntegerFixed("signed word", "int", -32_768, 32_767, true, 16, false, false);
    /** Unsigned double word (4 bytes, 32 bits). */
-   SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", 0, 4_294_967_296L, false, 32, false, false);
+   SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", "unsigned long", 0, 4_294_967_296L, false, 32, false, false);
    /** Signed double word (4 bytes, 32 bits). */
-   SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", -2_147_483_648, 2_147_483_647, true, 32, false, false);
+   SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", "long", -2_147_483_648, 2_147_483_647, true, 32, false, false);
    /** Integer with unknown size and unknown signedness (used for constant expressions). */
    SymbolTypeIntegerAuto NUMBER = new SymbolTypeIntegerAuto("number");
    /** Unsigned integer with unknown size (used for constant expressions). */
@@ -113,12 +114,14 @@ public interface SymbolType extends Serializable {
 
    /**
     * Get the type base name (without const/volatile)
+    *
     * @return type base name
     */
    String getTypeBaseName();
 
    /**
     * Get the size of the type (in bytes).
+    *
     * @return The size. -1 if the type is compile-time only.
     */
    int getSizeBytes();
@@ -130,7 +133,17 @@ public interface SymbolType extends Serializable {
     * @return true if the type is integer
     */
    static boolean isInteger(SymbolType type) {
-      return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type)|| UNUMBER.equals(type)|| SNUMBER.equals(type);
+      return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type) || UNUMBER.equals(type) || SNUMBER.equals(type);
+   }
+
+   /**
+    * Get the C declaration formatted type.
+    *
+    * @return The C declaration string
+    * @param parentCDecl
+    */
+   default public String toCDecl(String parentCDecl) {
+      return "";
    }
 
 }

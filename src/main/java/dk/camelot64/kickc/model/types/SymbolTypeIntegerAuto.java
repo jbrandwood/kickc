@@ -53,4 +53,17 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
    public int hashCode() {
       return Objects.hash(typeName);
    }
+
+   @Override
+   public String toCDecl(String parentCDecl) {
+      StringBuilder cdecl = new StringBuilder();
+      if(isVolatile())
+         cdecl.append("volatile ");
+      if(isNomodify())
+         cdecl.append("const ");
+      cdecl.append(this.getTypeBaseName());
+      cdecl.append(" ");
+      cdecl.append(parentCDecl);
+      return cdecl.toString();
+   }
 }

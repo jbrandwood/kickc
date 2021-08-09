@@ -572,6 +572,12 @@ public class Variable implements Symbol {
       return print.toString();
    }
 
+   public String toCDecl() {
+      StringBuilder cdecl = new StringBuilder();
+      cdecl.append(getType().toCDecl(getLocalName()));
+      return cdecl.toString();
+   }
+
    @Override
    public boolean equals(Object o) {
       if(this == o) return true;

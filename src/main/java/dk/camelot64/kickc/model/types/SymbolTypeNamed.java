@@ -63,5 +63,18 @@ public class SymbolTypeNamed implements SymbolType {
       return getTypeName();
    }
 
+   @Override
+   public String toCDecl(String parentCDecl) {
+      StringBuilder cdecl = new StringBuilder();
+      if(isVolatile())
+         cdecl.append("volatile ");
+      if(isNomodify())
+         cdecl.append("const ");
+      cdecl.append(this.getTypeBaseName());
+      if(parentCDecl.length()>0)
+         cdecl.append(" ");
+      cdecl.append(parentCDecl);
+      return cdecl.toString();
+   }
 }
 

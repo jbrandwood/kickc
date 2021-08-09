@@ -94,4 +94,32 @@ public class SymbolTypePointer implements SymbolType {
       return getTypeName();
    }
 
+   @Override
+   public String toCDecl(String parentCDecl) {
+      if(getArraySpec() != null) {
+         // Array
+         StringBuilder cdecl = new StringBuilder();
+         if(parentCDecl.contains("*"))
+            cdecl.append("(");
+         cdecl.append(parentCDecl);
+         if(parentCDecl.contains("*"))
+            cdecl.append(")");
+         cdecl.append("[");
+         cdecl.append(getArraySpec().getArraySize().toString());
+         cdecl.append("]");
+         return this.getElementType().toCDecl(cdecl.toString());
+      } else {
+         // Normal pointer
+         StringBuilder cdecl = new StringBuilder();
+         cdecl.append("*");
+         if(isVolatile())
+            cdecl.append(" volatile");
+         if(isNomodify())
+            cdecl.append(" const");
+         if(isVolatile() || isNomodify())
+            cdecl.append(" ");
+         cdecl.append(parentCDecl);
+         return this.getElementType().toCDecl(cdecl.toString());
+      }
+   }
 }

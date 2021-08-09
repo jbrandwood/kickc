@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /** A function returning another type */
 public class SymbolTypeProcedure implements SymbolType {
@@ -81,4 +82,19 @@ public class SymbolTypeProcedure implements SymbolType {
       return Objects.hash(returnType, paramTypes);
    }
 
+   @Override
+   public String toCDecl(String parentCDecl) {
+      final StringBuilder cdecl = new StringBuilder();
+      if(parentCDecl.contains("*") || parentCDecl.contains("["))
+         cdecl.append("(");
+      cdecl.append(parentCDecl);
+      if(parentCDecl.contains("*") || parentCDecl.contains("["))
+         cdecl.append(")");
+      cdecl.append("(");
+      StringJoiner joiner = new StringJoiner(", ");
+      paramTypes.stream().forEach(symbolType -> joiner.add(symbolType.toCDecl("")));
+      cdecl.append(joiner);
+      cdecl.append(")");
+      return getReturnType().toCDecl(cdecl.toString());
+   }
 }

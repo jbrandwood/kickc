@@ -23,6 +23,12 @@ public class SymbolTypeEnum implements SymbolType {
       this.isNomodify = isNomodify;
    }
 
+   public SymbolTypeEnum(String enumName, boolean isVolatile, boolean isNomodify) {
+      this.enumName = enumName;
+      this.isVolatile = isVolatile;
+      this.isNomodify = isNomodify;
+   }
+
    @Override
    public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
       return new SymbolTypeEnum(this.definition, isVolatile, isNomodify);
@@ -68,6 +74,20 @@ public class SymbolTypeEnum implements SymbolType {
    @Override
    public int hashCode() {
       return Objects.hash(enumName);
+   }
+
+   @Override
+   public String toCDecl(String parentCDecl) {
+      StringBuilder cdecl = new StringBuilder();
+      if(isVolatile())
+         cdecl.append("volatile ");
+      if(isNomodify())
+         cdecl.append("const ");
+      cdecl.append("enum ");
+      cdecl.append(this.enumName);
+      cdecl.append(" ");
+      cdecl.append(parentCDecl);
+      return cdecl.toString();
    }
 
 }

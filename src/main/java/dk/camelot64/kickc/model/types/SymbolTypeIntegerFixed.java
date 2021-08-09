@@ -9,6 +9,8 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
 
    /** The basename of the the type (without any qualifiers). */
    private final String typeBaseName;
+   /** The basename of the the C type (without any qualifiers). */
+   private final String cTypeBaseName;
 
    private final long minValue;
    private final long maxValue;
@@ -18,8 +20,9 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    private final boolean isVolatile;
    private final boolean isNomodify;
 
-   SymbolTypeIntegerFixed(String typeBaseName, long minValue, long maxValue, boolean signed, int bits, boolean isVolatile, boolean isNomodify) {
+   SymbolTypeIntegerFixed(String typeBaseName, String cTypeBaseName, long minValue, long maxValue, boolean signed, int bits, boolean isVolatile, boolean isNomodify) {
       this.typeBaseName = typeBaseName;
+      this.cTypeBaseName = cTypeBaseName;
       this.minValue = minValue;
       this.maxValue = maxValue;
       this.signed = signed;
@@ -30,7 +33,7 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
 
    @Override
    public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
-      return new SymbolTypeIntegerFixed(this.typeBaseName, this.minValue, this.maxValue, this.signed, this.bits, isVolatile, isNomodify);
+      return new SymbolTypeIntegerFixed(this.typeBaseName, this.cTypeBaseName, this.minValue, this.maxValue, this.signed, this.bits, isVolatile, isNomodify);
    }
 
    /**
@@ -87,7 +90,7 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    /**
     * Determines if a value can be represented by the type without loss of information
     *
-    * @param value The value to examine
+    * @param number The value to examine
     * @return true if the type contains the value
     */
    public boolean contains(Long number) {
@@ -97,6 +100,10 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    @Override
    public String getTypeBaseName() {
       return typeBaseName;
+   }
+
+   public String getCTypeBaseName() {
+      return cTypeBaseName;
    }
 
    public long getMinValue() {
@@ -123,6 +130,20 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    @Override
    public String toString() {
       return getTypeName();
+   }
+
+   @Override
+   public String toCDecl(String parentCDecl) {
+      StringBuilder cdecl = new StringBuilder();
+      if(isVolatile())
+         cdecl.append("volatile ");
+      if(isNomodify())
+         cdecl.append("const ");
+      cdecl.append(this.getCTypeBaseName());
+      if(parentCDecl.length()>0)
+         cdecl.append(" ");
+      cdecl.append(parentCDecl);
+      return cdecl.toString();
    }
 
    @Override

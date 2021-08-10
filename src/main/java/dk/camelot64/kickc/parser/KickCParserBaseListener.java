@@ -1410,61 +1410,37 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx) { }
+	@Override public void enterAsmDirectiveString(KickCParser.AsmDirectiveStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx) { }
+	@Override public void exitAsmDirectiveString(KickCParser.AsmDirectiveStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) { }
+	@Override public void enterAsmDirectiveName(KickCParser.AsmDirectiveNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) { }
+	@Override public void exitAsmDirectiveName(KickCParser.AsmDirectiveNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) { }
+	@Override public void enterAsmDirectiveExpr(KickCParser.AsmDirectiveExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx) { }
+	@Override public void exitAsmDirectiveExpr(KickCParser.AsmDirectiveExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

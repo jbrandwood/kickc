@@ -831,35 +831,21 @@ public class KickCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAsmDirectiveString(KickCParser.AsmDirectiveStringContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAsmDirectiveName(KickCParser.AsmDirectiveNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAsmDirectiveExpr(KickCParser.AsmDirectiveExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

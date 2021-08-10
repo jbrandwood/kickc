@@ -648,35 +648,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return asmDirectives;
    }
 
-   /** KickAssembler directive specifying the number of bytes for generated code/data. */
-   public static class AsmDirectiveBytes implements AsmDirective {
-      /** bytes for the KickAssembler-code. */
-      private final RValue bytes;
-
-      AsmDirectiveBytes(RValue bytes) {
-         this.bytes = bytes;
-      }
-
-      public RValue getBytes() {
-         return bytes;
-      }
-
-      @Override
-      public String toString() {
-         return "bytes";
-      }
-   }
-
-   @Override
-   public AsmDirective visitAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx) {
-      if(ctx.expr() != null) {
-         RValue bytes = (RValue) this.visit(ctx.expr());
-         return new AsmDirectiveBytes(bytes);
-      } else {
-         return null;
-      }
-   }
-
    /** KickAssembler directive specifying a constant used by the kickasm code. */
    public static class AsmDirectiveUses implements AsmDirective {
       /** constant/variable used by the KickAssembler-code. */
@@ -702,19 +673,42 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) {
-      String varName = ctx.NAME().getText();
-      SymbolRef variableRef;
-      Symbol symbol = getCurrentScope().findSymbol(varName);
-      if(symbol != null) {
-         //Found an existing variable
-         variableRef = symbol.getRef();
-      } else {
-         // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
-         variableRef = new ForwardVariableRef(varName);
+   public Object visitAsmDirectiveName(KickCParser.AsmDirectiveNameContext ctx) {
+      if("uses".equals(ctx.NAME(0).getText())) {
+         String varName = ctx.NAME(1).getText();
+         SymbolRef variableRef;
+         Symbol symbol = getCurrentScope().findSymbol(varName);
+         if(symbol != null) {
+            //Found an existing variable
+            variableRef = symbol.getRef();
+         } else {
+            // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
+            variableRef = new ForwardVariableRef(varName);
+         }
+         return new AsmDirectiveUses(variableRef);
       }
-      return new AsmDirectiveUses(variableRef);
+      throw new CompileError("Unknown ASM directive '"+ctx.NAME(0).getText()+"'", new StatementSource(ctx));
    }
+
+   /** KickAssembler directive specifying the number of bytes for generated code/data. */
+   public static class AsmDirectiveBytes implements AsmDirective {
+      /** bytes for the KickAssembler-code. */
+      private final RValue bytes;
+
+      AsmDirectiveBytes(RValue bytes) {
+         this.bytes = bytes;
+      }
+
+      public RValue getBytes() {
+         return bytes;
+      }
+
+      @Override
+      public String toString() {
+         return "bytes";
+      }
+   }
+
 
    /** KickAssembler directive specifying the number of cycles for generated code/data. */
    public static class AsmDirectiveCycles implements AsmDirective {
@@ -737,30 +731,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public AsmDirective visitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx) {
-      if(ctx.expr() != null) {
-         RValue cycles = (RValue) this.visit(ctx.expr());
-         return new AsmDirectiveCycles(cycles);
-      } else {
-         return null;
+   public Object visitAsmDirectiveExpr(KickCParser.AsmDirectiveExprContext ctx) {
+      if("cycles".equals(ctx.NAME().getText())) {
+         if(ctx.expr() != null) {
+            RValue cycles = (RValue) this.visit(ctx.expr());
+            return new AsmDirectiveCycles(cycles);
+         }
+      } else if("bytes".equals(ctx.NAME().getText())) {
+         if(ctx.expr() != null) {
+            RValue bytes = (RValue) this.visit(ctx.expr());
+            return new AsmDirectiveBytes(bytes);
+         }
       }
-   }
-
-   @Override
-   public Object visitAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx) {
-      TerminalNode resource = ctx.STRING();
-      String resourceName = resource.getText();
-      resourceName = resourceName.substring(1, resourceName.length() - 1);
-      Path currentPath = cParser.getSourceFolderPath(ctx);
-      File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
-      if(resourceFile == null)
-         throw new CompileError("File  not found " + resourceName);
-      if(!program.getAsmResourceFiles().contains(resourceFile.toPath()))
-         program.addAsmResourceFile(resourceFile.toPath());
-      if(program.getLog().isVerboseParse()) {
-         program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
-      }
-      return null;
+      throw new CompileError("Unknown ASM directive '"+ctx.NAME().getText()+"'", new StatementSource(ctx));
    }
 
    /** ASM Directive specifying clobber registers. */
@@ -783,16 +766,32 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public AsmDirectiveClobber visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) {
-      String clobberString = ctx.STRING().getText().toUpperCase(Locale.ENGLISH);
-      clobberString = clobberString.substring(1, clobberString.length() - 1);
-      if(!clobberString.matches("[AXY]*")) {
-         throw new CompileError("Illegal clobber value " + clobberString, new StatementSource(ctx));
+   public Object visitAsmDirectiveString(KickCParser.AsmDirectiveStringContext ctx) {
+      if("clobbers".equals(ctx.NAME().getText())) {
+         String clobberString = ctx.STRING().getText().toUpperCase(Locale.ENGLISH);
+         clobberString = clobberString.substring(1, clobberString.length() - 1);
+         if(!clobberString.matches("[AXY]*")) {
+            throw new CompileError("Illegal clobber value " + clobberString, new StatementSource(ctx));
+         }
+         CpuClobber clobber = new CpuClobber(clobberString);
+         return new AsmDirectiveClobber(clobber);
+      } else if("resource".equals(ctx.NAME().getText())) {
+         TerminalNode resource = ctx.STRING();
+         String resourceName = resource.getText();
+         resourceName = resourceName.substring(1, resourceName.length() - 1);
+         Path currentPath = cParser.getSourceFolderPath(ctx);
+         File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
+         if(resourceFile == null)
+            throw new CompileError("File  not found " + resourceName);
+         if(!program.getAsmResourceFiles().contains(resourceFile.toPath()))
+            program.addAsmResourceFile(resourceFile.toPath());
+         if(program.getLog().isVerboseParse()) {
+            program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
+         }
+         return null;
       }
-      CpuClobber clobber = new CpuClobber(clobberString);
-      return new AsmDirectiveClobber(clobber);
+      throw new CompileError("Unknown ASM directive '"+ctx.NAME().getText()+"'", new StatementSource(ctx));
    }
-
 
    /** Information about a declared parameter. */
    static class ParameterDecl {

@@ -266,11 +266,9 @@ asmDirectives
     ;
 
 asmDirective
-    : RESOURCE STRING #asmDirectiveResource
-    | USES NAME #asmDirectiveUses
-    | CLOBBERS STRING #asmDirectiveClobber
-    | BYTES expr #asmDirectiveBytes
-    | CYCLES expr #asmDirectiveCycles
+    : NAME STRING #asmDirectiveString
+    | NAME NAME #asmDirectiveName
+    | NAME expr #asmDirectiveExpr
     ;
 
 asmLines

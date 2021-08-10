@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testOldKeywords() throws IOException {
+      compileAndCompare("old-keywords.c");
+   }
+
+   @Test
    public void testStrcmp0() throws IOException {
       compileAndCompare("strcmp-0.c");
    }
@@ -4020,7 +4025,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testKasmPcError() throws IOException {
-      assertError("test-kasm-pc-error.c", "mismatched input 'pc' expecting");
+      assertError("test-kasm-pc-error.c", "Unknown ASM directive 'pc'");
    }
 
    @Test

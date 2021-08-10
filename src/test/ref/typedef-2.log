@@ -1,11 +1,11 @@
-Setting inferred volatile on symbol affected by address-of main::w = (word)&ptr
-Inlined call call __init 
+Setting inferred volatile on symbol affected by address-of main::w = (unsigned int)&ptr
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  main::w#0 = (word)&ptr
+  main::w#0 = (unsigned int)&ptr
   main::w#1 = main::w#0 + $32
   main::$0 = byte0  main::w#1
   SCREEN[0] = main::$0
@@ -18,10 +18,10 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  ptr = (byte*)$1000
+  ptr = (char *)$1000
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -30,27 +30,27 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
-byte~ main::$0
-word main::w
-word main::w#0
-word main::w#1
-byte* volatile ptr loadstore
+char main::$0
+unsigned int main::w
+unsigned int main::w#0
+unsigned int main::w#1
+__loadstore char * volatile ptr
 
 Adding number conversion cast (unumber) $32 in main::w#1 = main::w#0 + $32
 Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $32
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 4096
+Simplifying constant pointer cast (char *) 4096
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $32
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) $32
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant main::w#0 = (word)&ptr
+Constant main::w#0 = (unsigned int)&ptr
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SCREEN in [3] SCREEN[0] = main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -64,9 +64,9 @@ Constant main::$0 = byte0 main::w#1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings main::w#0
 Inlining constant with different constant siblings main::w#1
-Constant inlined main::w#0 = (word)&ptr
-Constant inlined main::w#1 = (word)&ptr+$32
-Constant inlined main::$0 = byte0 (word)&ptr+$32
+Constant inlined main::w#0 = (unsigned int)&ptr
+Constant inlined main::w#1 = (unsigned int)&ptr+$32
+Constant inlined main::$0 = byte0 (unsigned int)&ptr+$32
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -87,11 +87,11 @@ __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] ptr = (byte*) 4096
+  [1] ptr = (char *) 4096
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
-  [3] call main 
+  [3] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [4] return 
@@ -99,7 +99,7 @@ __start::@return: scope:[__start]  from __start::@1
 
 void main()
 main: scope:[main]  from __start::@1
-  [5] *SCREEN = byte0 (word)&ptr+$32
+  [5] *SCREEN = byte0 (unsigned int)&ptr+$32
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -109,8 +109,8 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 void __start()
 void main()
-word main::w
-byte* volatile ptr loadstore 1.0
+unsigned int main::w
+__loadstore char * volatile ptr // 1.0
 
 Initial phi equivalence classes
 Added variable ptr to live range equivalence class [ ptr ]
@@ -118,8 +118,8 @@ Complete equivalence classes
 [ ptr ]
 Allocated zp[2]:2 [ ptr ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] ptr = (byte*) 4096 [ ptr ] (  [ ptr ] { }  ) always clobbers reg byte a 
-Statement [5] *SCREEN = byte0 (word)&ptr+$32 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [1] ptr = (char *) 4096 [ ptr ] (  [ ptr ] { }  ) always clobbers reg byte a 
+Statement [5] *SCREEN = byte0 (unsigned int)&ptr+$32 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ ptr ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -151,7 +151,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] ptr = (byte*) 4096 -- pbuz1=pbuc1 
+    // [1] ptr = (char *) 4096 -- pbuz1=pbuc1 
     lda #<$1000
     sta.z ptr
     lda #>$1000
@@ -161,7 +161,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [3] call main 
+    // [3] call main
     jsr main
     jmp __breturn
     // __start::@return
@@ -171,7 +171,7 @@ __start: {
 }
   // main
 main: {
-    // [5] *SCREEN = byte0 (word)&ptr+$32 -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = byte0 (unsigned int)&ptr+$32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     jmp __breturn
@@ -197,11 +197,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const SCREEN = (char *) 1024
 void __start()
 void main()
-word main::w
-byte* volatile ptr loadstore zp[2]:2 1.0
+unsigned int main::w
+__loadstore char * volatile ptr // zp[2]:2 1.0
 
 zp[2]:2 [ ptr ]
 
@@ -227,14 +227,14 @@ Score: 34
 __start: {
     // __start::__init1
     // char* ptr = (char*)0x1000
-    // [1] ptr = (byte*) 4096 -- pbuz1=pbuc1 
+    // [1] ptr = (char *) 4096 -- pbuz1=pbuc1 
     lda #<$1000
     sta.z ptr
     lda #>$1000
     sta.z ptr+1
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [3] call main 
+    // [3] call main
     jsr main
     // __start::@return
     // [4] return 
@@ -243,7 +243,7 @@ __start: {
   // main
 main: {
     // SCREEN[0] = BYTE0(w)
-    // [5] *SCREEN = byte0 (word)&ptr+$32 -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = byte0 (unsigned int)&ptr+$32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     // main::@return

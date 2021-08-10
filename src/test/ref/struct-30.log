@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *main::point1_initials = memcpy(*(&$0), byte, 3)
+  *main::point1_initials = memcpy(*(&$0), char, 3)
   SCREEN[0] = main::point1_x
   SCREEN[1] = main::point1_initials[0]
   SCREEN[2] = main::point1_initials[1]
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -27,12 +27,12 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* $0[3]  = "jg"
-constant byte* const SCREEN = (byte*)$400
+__constant char $0[3] = "jg"
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
-constant byte* main::point1_initials[3]  = { fill( 3, 0) }
-constant byte main::point1_x = 2
+__constant char main::point1_initials[3] = { fill( 3, 0) }
+__constant char main::point1_x = 2
 
 Adding number conversion cast (unumber) 0 in SCREEN[0] = main::point1_x
 Adding number conversion cast (unumber) 0 in SCREEN[1] = main::point1_initials[0]
@@ -40,18 +40,18 @@ Adding number conversion cast (unumber) 1 in SCREEN[1] = main::point1_initials[(
 Adding number conversion cast (unumber) 1 in SCREEN[2] = main::point1_initials[1]
 Adding number conversion cast (unumber) 2 in SCREEN[2] = main::point1_initials[(unumber)1]
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SCREEN in [1] SCREEN[0] = main::point1_x
 Simplifying expression containing zero main::point1_initials in [2] SCREEN[1] = main::point1_initials[0]
@@ -65,9 +65,9 @@ Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(main::point1_initials+1)
 Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -78,7 +78,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *main::point1_initials = memcpy(*(&$0), byte, 3)
+  [0] *main::point1_initials = memcpy(*(&$0), char, 3)
   [1] *SCREEN = main::point1_x
   [2] *(SCREEN+1) = *main::point1_initials
   [3] *(SCREEN+2) = *(main::point1_initials+1)
@@ -94,7 +94,7 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *main::point1_initials = memcpy(*(&$0), byte, 3) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] *main::point1_initials = memcpy(*(&$0), char, 3) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [1] *SCREEN = main::point1_x [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *(SCREEN+1) = *main::point1_initials [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *(SCREEN+2) = *(main::point1_initials+1) [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -126,7 +126,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .const point1_x = 2
-    // [0] *main::point1_initials = memcpy(*(&$0), byte, 3) -- _deref_pbuc1=_deref_qbuc2_memcpy_vbuc3 
+    // [0] *main::point1_initials = memcpy(*(&$0), char, 3) -- _deref_pbuc1=_deref_qbuc2_memcpy_vbuc3 
     ldy #3
   !:
     lda __0-1,y
@@ -161,11 +161,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* $0[3]  = "jg"
-constant byte* const SCREEN = (byte*) 1024
+__constant char $0[3] = "jg"
+__constant char * const SCREEN = (char *) 1024
 void main()
-constant byte* main::point1_initials[3]  = { fill( 3, 0) }
-constant byte main::point1_x = 2
+__constant char main::point1_initials[3] = { fill( 3, 0) }
+__constant char main::point1_x = 2
 
 
 
@@ -190,7 +190,7 @@ Score: 44
 main: {
     .const point1_x = 2
     // struct Point point1 = { 2, "jg" }
-    // [0] *main::point1_initials = memcpy(*(&$0), byte, 3) -- _deref_pbuc1=_deref_qbuc2_memcpy_vbuc3 
+    // [0] *main::point1_initials = memcpy(*(&$0), char, 3) -- _deref_pbuc1=_deref_qbuc2_memcpy_vbuc3 
     ldy #3
   !:
     lda __0-1,y

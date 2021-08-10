@@ -22,11 +22,6 @@ public class SymbolTypeTypeDefScope implements SymbolType {
    }
 
    @Override
-   public String getTypeBaseName() {
-      return "TYPEDEF";
-   }
-
-   @Override
    public int getSizeBytes() {
       return -1;
    }
@@ -43,7 +38,11 @@ public class SymbolTypeTypeDefScope implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
+   @Override
+   public String getConstantFriendlyName() {
+      return "TYPEDEF";
+   }
 }

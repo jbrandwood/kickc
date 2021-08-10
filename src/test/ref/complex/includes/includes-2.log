@@ -1,8 +1,8 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-word strlen(byte* strlen::str)
+unsigned int strlen(char *str)
 strlen: scope:[strlen]  from main
   strlen::return#0 = 'x'
   to:strlen::@return
@@ -15,13 +15,13 @@ strlen::@return: scope:[strlen]  from strlen
 void main()
 main: scope:[main]  from __start::@1
   strlen::str#0 = STR
-  call strlen 
+  call strlen
   strlen::return#2 = strlen::return#1
   to:main::@1
 main::@1: scope:[main]  from main
   strlen::return#4 = phi( main/strlen::return#2 )
   main::$0 = strlen::return#4
-  SCREEN[0] = (byte)main::$0
+  SCREEN[0] = (char)main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -33,7 +33,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -42,27 +42,27 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
-constant byte* STR = "camelot!"
+__constant char * const SCREEN = (char *)$400
+__constant char *STR = "camelot!"
 void __start()
 void main()
-word~ main::$0
-word strlen(byte* strlen::str)
-word strlen::return
-word strlen::return#0
-word strlen::return#1
-word strlen::return#2
-word strlen::return#3
-word strlen::return#4
-byte* strlen::str
-byte* strlen::str#0
+unsigned int main::$0
+unsigned int strlen(char *str)
+unsigned int strlen::return
+unsigned int strlen::return#0
+unsigned int strlen::return#1
+unsigned int strlen::return#2
+unsigned int strlen::return#3
+unsigned int strlen::return#4
+char *strlen::str
+char *strlen::str#0
 
-Adding number conversion cast (unumber) 0 in SCREEN[0] = (byte)main::$0
+Adding number conversion cast (unumber) 0 in SCREEN[0] = (char)main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias strlen::return#0 = strlen::return#3 strlen::return#1 
 Alias strlen::return#2 = strlen::return#4 
@@ -74,9 +74,9 @@ Constant strlen::return#2 = strlen::return#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant main::$0 = strlen::return#2
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$0 in [6] SCREEN[0] = (byte)main::$0
+Constant value identified (char)main::$0 in [6] SCREEN[0] = (char)main::$0
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero SCREEN in [6] SCREEN[0] = (byte)main::$0
+Simplifying expression containing zero SCREEN in [6] SCREEN[0] = (char)main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant strlen::str#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -108,16 +108,16 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call strlen 
+  [1] call strlen
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] *SCREEN = (byte)strlen::return#0
+  [2] *SCREEN = (char)strlen::return#0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 
-word strlen(byte* strlen::str)
+unsigned int strlen(char *str)
 strlen: scope:[strlen]  from main
   [4] phi()
   to:strlen::@return
@@ -128,14 +128,14 @@ strlen::@return: scope:[strlen]  from strlen
 
 VARIABLE REGISTER WEIGHTS
 void main()
-word strlen(byte* strlen::str)
-word strlen::return
-byte* strlen::str
+unsigned int strlen(char *str)
+unsigned int strlen::return
+char *strlen::str
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] *SCREEN = (byte)strlen::return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *SCREEN = (char)strlen::return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [strlen] 
@@ -163,14 +163,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call strlen 
+    // [1] call strlen
     // [4] phi from main to strlen [phi:main->strlen]
   strlen_from_main:
     jsr strlen
     jmp __b1
     // main::@1
   __b1:
-    // [2] *SCREEN = (byte)strlen::return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *SCREEN = (char)strlen::return#0 -- _deref_pbuc1=vbuc2 
     lda #strlen.return
     sta SCREEN
     jmp __breturn
@@ -181,6 +181,7 @@ main: {
 }
   // strlen
 // A local stdlib include file
+// unsigned int strlen(char *str)
 strlen: {
     .label return = 'x'
     jmp __breturn
@@ -203,12 +204,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const SCREEN = (char *) 1024
 void main()
-word strlen(byte* strlen::str)
-word strlen::return
-constant word strlen::return#0 return = 'x'
-byte* strlen::str
+unsigned int strlen(char *str)
+unsigned int strlen::return
+__constant unsigned int strlen::return#0 = 'x' // return
+char *strlen::str
 
 
 
@@ -232,12 +233,12 @@ Score: 24
   // main
 main: {
     // strlen(STR)
-    // [1] call strlen 
+    // [1] call strlen
     // [4] phi from main to strlen [phi:main->strlen]
     jsr strlen
     // main::@1
     // SCREEN [0] = (char) strlen(STR)
-    // [2] *SCREEN = (byte)strlen::return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *SCREEN = (char)strlen::return#0 -- _deref_pbuc1=vbuc2 
     lda #strlen.return
     sta SCREEN
     // main::@return
@@ -247,6 +248,7 @@ main: {
 }
   // strlen
 // A local stdlib include file
+// unsigned int strlen(char *str)
 strlen: {
     .label return = 'x'
     // strlen::@return

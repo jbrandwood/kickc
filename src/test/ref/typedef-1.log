@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::$2 = (byte*)main::SCREEN
+  main::$2 = (char *)main::SCREEN
   main::$0 = main::$2 + OFFSET_STRUCT_POINTDEF_X
   *main::$0 = main::p_x
-  main::$3 = (byte*)main::SCREEN
+  main::$3 = (char *)main::SCREEN
   main::$1 = main::$3 + OFFSET_STRUCT_POINTDEF_Y
   *main::$1 = main::p_y
   to:main::@return
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -25,25 +25,25 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_POINTDEF_X = 0
-constant byte OFFSET_STRUCT_POINTDEF_Y = 1
+__constant char OFFSET_STRUCT_POINTDEF_X = 0
+__constant char OFFSET_STRUCT_POINTDEF_Y = 1
 void __start()
 void main()
-byte*~ main::$0
-byte*~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-constant struct PointDef* main::SCREEN = (struct PointDef*)$400
-constant byte main::p_x = 4
-constant byte main::p_y = 7
+char *main::$0
+char *main::$1
+char *main::$2
+char *main::$3
+__constant struct PointDef *main::SCREEN = (struct PointDef *)$400
+__constant char main::p_x = 4
+__constant char main::p_y = 7
 
-Simplifying constant pointer cast (struct PointDef*) 1024
+Simplifying constant pointer cast (struct PointDef *) 1024
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [0] main::$2 = (byte*)main::SCREEN
-Constant right-side identified [3] main::$3 = (byte*)main::SCREEN
+Constant right-side identified [0] main::$2 = (char *)main::SCREEN
+Constant right-side identified [3] main::$3 = (char *)main::SCREEN
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$2 = (byte*)main::SCREEN
-Constant main::$3 = (byte*)main::SCREEN
+Constant main::$2 = (char *)main::SCREEN
+Constant main::$3 = (char *)main::SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [2] *main::$0 = main::p_x  -- main::$2[OFFSET_STRUCT_POINTDEF_X]
 Converting *(pointer+n) to pointer[n] [5] *main::$1 = main::p_y  -- main::$3[OFFSET_STRUCT_POINTDEF_Y]
@@ -60,10 +60,10 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$2 = (byte*)main::SCREEN
-Constant inlined main::$3 = (byte*)main::SCREEN
+Constant inlined main::$2 = (char *)main::SCREEN
+Constant inlined main::$3 = (char *)main::SCREEN
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y)
+Consolidated array index constant in *((char *)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y)
 Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
 
@@ -74,8 +74,8 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*)main::SCREEN) = main::p_x
-  [1] *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y
+  [0] *((char *)main::SCREEN) = main::p_x
+  [1] *((char *)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -88,8 +88,8 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)main::SCREEN) = main::p_x [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)main::SCREEN) = main::p_x [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((char *)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [PointDef] 
@@ -119,10 +119,10 @@ main: {
     .const p_x = 4
     .const p_y = 7
     .label SCREEN = $400
-    // [0] *((byte*)main::SCREEN) = main::p_x -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)main::SCREEN) = main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
-    // [1] *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y -- _deref_pbuc1=vbuc2 
+    // [1] *((char *)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+OFFSET_STRUCT_POINTDEF_Y
     jmp __breturn
@@ -140,11 +140,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_POINTDEF_Y = 1
+__constant char OFFSET_STRUCT_POINTDEF_Y = 1
 void main()
-constant struct PointDef* main::SCREEN = (struct PointDef*) 1024
-constant byte main::p_x = 4
-constant byte main::p_y = 7
+__constant struct PointDef *main::SCREEN = (struct PointDef *) 1024
+__constant char main::p_x = 4
+__constant char main::p_y = 7
 
 
 
@@ -170,10 +170,10 @@ main: {
     .const p_y = 7
     .label SCREEN = $400
     // *SCREEN = p
-    // [0] *((byte*)main::SCREEN) = main::p_x -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)main::SCREEN) = main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
-    // [1] *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y -- _deref_pbuc1=vbuc2 
+    // [1] *((char *)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y) = main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+OFFSET_STRUCT_POINTDEF_Y
     // main::@return

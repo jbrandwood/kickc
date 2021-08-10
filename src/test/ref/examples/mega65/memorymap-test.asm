@@ -128,7 +128,7 @@ main: {
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
-// memoryRemapBlock(byte register(X) blockPage)
+// void memoryRemapBlock(__register(X) char blockPage, unsigned int memoryPage)
 memoryRemapBlock: {
     .label pageOffset = 2
     // unsigned int pageOffset = memoryPage-blockPage
@@ -193,7 +193,7 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerPageOffset, word zp(4) upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = $a
     .label xVal = $b
@@ -273,7 +273,7 @@ memoryRemap: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap256M(byte register(Z) remapBlocks, dword zp(6) lowerPageOffset)
+// void memoryRemap256M(__register(Z) char remapBlocks, __zp(6) unsigned long lowerPageOffset, unsigned long upperPageOffset)
 memoryRemap256M: {
     .label lMb = $13
     .label __0 = $f

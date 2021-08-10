@@ -6,11 +6,11 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
 .segment Code
 main: {
-    .const i = $130*SIZEOF_BYTE
-    .const j = 3*SIZEOF_BYTE
+    .const i = $130*SIZEOF_CHAR
+    .const j = 3*SIZEOF_CHAR
     // ARR1[i-1] = 0
     lda #0
     sta ARR1+i-1

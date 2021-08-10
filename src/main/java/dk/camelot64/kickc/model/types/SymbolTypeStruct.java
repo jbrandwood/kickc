@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantValue;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /** A struct/union */
@@ -59,15 +60,6 @@ public class SymbolTypeStruct implements SymbolType {
    @Override
    public boolean isNomodify() {
       return isNomodify;
-   }
-
-   @Override
-   public String getTypeBaseName() {
-      if(isUnion) {
-         return "union " + this.structName;
-      }  else {
-         return "struct " + this.structName;
-      }
    }
 
    public String getStructTypeName() {
@@ -144,7 +136,7 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -160,8 +152,18 @@ public class SymbolTypeStruct implements SymbolType {
          cdecl.append("struct ");
       }
       cdecl.append(this.structName);
-      cdecl.append(" ");
+      if(parentCDecl.length()>0)
+         cdecl.append(" ");
       cdecl.append(parentCDecl);
       return cdecl.toString();
+   }
+
+   @Override
+   public String getConstantFriendlyName() {
+      if(isUnion) {
+         return "UNION_"+structName.toUpperCase(Locale.ENGLISH);
+      } else {
+         return "STRUCT_"+structName.toUpperCase(Locale.ENGLISH);
+      }
    }
 }

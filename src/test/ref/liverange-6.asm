@@ -24,7 +24,7 @@ main: {
     // }
     rts
 }
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // SCREEN[idx++] = c
     sta SCREEN,x

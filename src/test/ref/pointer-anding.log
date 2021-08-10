@@ -3,23 +3,23 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::pos_ptr#0 = (signed word*)$400
-  main::vram_ptr#0 = (byte*)$428
+  main::pos_ptr#0 = (int *)$400
+  main::vram_ptr#0 = (char *)$428
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   main::vram_ptr#3 = phi( main/main::vram_ptr#0, main::@1/main::vram_ptr#2 )
   main::pos_ptr#2 = phi( main/main::pos_ptr#0, main::@1/main::pos_ptr#1 )
-  *main::pos_ptr#2 = (signed word)$55aa
-  main::$0 = *main::pos_ptr#2 & (signed word)$aa55
+  *main::pos_ptr#2 = (int)$55aa
+  main::$0 = *main::pos_ptr#2 & (int)$aa55
   main::$1 = byte0  main::$0
   *main::vram_ptr#3 = main::$1
   main::vram_ptr#1 = ++ main::vram_ptr#3
   main::$2 = byte1  *main::pos_ptr#2
   *main::vram_ptr#1 = main::$2
   main::vram_ptr#2 = ++ main::vram_ptr#1
-  main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD
+  main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT
   main::i#1 = main::i#2 + rangenext(0,2)
   main::$3 = main::i#1 != rangelast(0,2)
   if(main::$3) goto main::@1
@@ -30,7 +30,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -39,36 +39,36 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_SIGNED_WORD = 2
+__constant char SIZEOF_INT = 2
 void __start()
 void main()
-signed word~ main::$0
-byte~ main::$1
-byte~ main::$2
-bool~ main::$3
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-signed word* main::pos_ptr
-signed word* main::pos_ptr#0
-signed word* main::pos_ptr#1
-signed word* main::pos_ptr#2
-byte* main::vram_ptr
-byte* main::vram_ptr#0
-byte* main::vram_ptr#1
-byte* main::vram_ptr#2
-byte* main::vram_ptr#3
+int main::$0
+char main::$1
+char main::$2
+bool main::$3
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+int *main::pos_ptr
+int *main::pos_ptr#0
+int *main::pos_ptr#1
+int *main::pos_ptr#2
+char *main::vram_ptr
+char *main::vram_ptr#0
+char *main::vram_ptr#1
+char *main::vram_ptr#2
+char *main::vram_ptr#3
 
-Simplifying constant pointer cast (signed word*) 1024
-Simplifying constant pointer cast (byte*) 1064
+Simplifying constant pointer cast (int *) 1024
+Simplifying constant pointer cast (char *) 1064
 Simplifying constant integer cast $55aa
 Simplifying constant integer cast $aa55
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$3 [15] if(main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant main::pos_ptr#0 = (signed word*) 1024
-Constant main::vram_ptr#0 = (byte*) 1064
+Constant main::pos_ptr#0 = (int *) 1024
+Constant main::vram_ptr#0 = (char *) 1064
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [13] main::i#1 = ++ main::i#2 to ++
@@ -82,14 +82,14 @@ Adding number conversion cast (unumber) 3 in [11] if(main::i#1!=3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::pos_ptr#0
 Inlining constant with var siblings main::vram_ptr#0
 Inlining constant with var siblings main::i#0
-Constant inlined main::vram_ptr#0 = (byte*) 1064
+Constant inlined main::vram_ptr#0 = (char *) 1064
 Constant inlined main::i#0 = 0
-Constant inlined main::pos_ptr#0 = (signed word*) 1024
+Constant inlined main::pos_ptr#0 = (int *) 1024
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -111,8 +111,8 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [1] main::vram_ptr#3 = phi( main/(byte*) 1064, main::@1/main::vram_ptr#2 )
-  [1] main::pos_ptr#2 = phi( main/(signed word*) 1024, main::@1/main::pos_ptr#1 )
+  [1] main::vram_ptr#3 = phi( main/(char *) 1064, main::@1/main::vram_ptr#2 )
+  [1] main::pos_ptr#2 = phi( main/(int *) 1024, main::@1/main::pos_ptr#1 )
   [2] *main::pos_ptr#2 = $55aa
   [3] main::$0 = *main::pos_ptr#2 & $aa55
   [4] main::$1 = byte0  main::$0
@@ -121,7 +121,7 @@ main::@1: scope:[main]  from main main::@1
   [7] main::$2 = byte1  *main::pos_ptr#2
   [8] *main::vram_ptr#1 = main::$2
   [9] main::vram_ptr#2 = ++ main::vram_ptr#1
-  [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD
+  [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT
   [11] main::i#1 = ++ main::i#2
   [12] if(main::i#1!=3) goto main::@1
   to:main::@return
@@ -132,19 +132,19 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-signed word~ main::$0 22.0
-byte~ main::$1 22.0
-byte~ main::$2 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 2.2
-signed word* main::pos_ptr
-signed word* main::pos_ptr#1 7.333333333333333
-signed word* main::pos_ptr#2 6.111111111111112
-byte* main::vram_ptr
-byte* main::vram_ptr#1 11.0
-byte* main::vram_ptr#2 5.5
-byte* main::vram_ptr#3 6.6000000000000005
+int main::$0 // 22.0
+char main::$1 // 22.0
+char main::$2 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 2.2
+int *main::pos_ptr
+int *main::pos_ptr#1 // 7.333333333333333
+int *main::pos_ptr#2 // 6.111111111111112
+char *main::vram_ptr
+char *main::vram_ptr#1 // 11.0
+char *main::vram_ptr#2 // 5.5
+char *main::vram_ptr#3 // 6.6000000000000005
 
 Initial phi equivalence classes
 [ main::pos_ptr#2 main::pos_ptr#1 ]
@@ -179,7 +179,7 @@ Statement [6] main::vram_ptr#1 = ++ main::vram_ptr#3 [ main::pos_ptr#2 main::i#2
 Statement [7] main::$2 = byte1  *main::pos_ptr#2 [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 main::$2 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [8] *main::vram_ptr#1 = main::$2 [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 ] { }  ) always clobbers reg byte y 
 Statement [9] main::vram_ptr#2 = ++ main::vram_ptr#1 [ main::pos_ptr#2 main::i#2 main::vram_ptr#2 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
-Statement [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] (  [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
+Statement [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] (  [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
 Statement [2] *main::pos_ptr#2 = $55aa [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 ] (  [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [3] main::$0 = *main::pos_ptr#2 & $aa55 [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 main::$0 ] (  [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 main::$0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [5] *main::vram_ptr#3 = main::$1 [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 ] (  [ main::pos_ptr#2 main::vram_ptr#3 main::i#2 ] { }  ) always clobbers reg byte y 
@@ -187,7 +187,7 @@ Statement [6] main::vram_ptr#1 = ++ main::vram_ptr#3 [ main::pos_ptr#2 main::i#2
 Statement [7] main::$2 = byte1  *main::pos_ptr#2 [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 main::$2 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [8] *main::vram_ptr#1 = main::$2 [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#1 ] { }  ) always clobbers reg byte y 
 Statement [9] main::vram_ptr#2 = ++ main::vram_ptr#1 [ main::pos_ptr#2 main::i#2 main::vram_ptr#2 ] (  [ main::pos_ptr#2 main::i#2 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
-Statement [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] (  [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
+Statement [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] (  [ main::i#2 main::pos_ptr#1 main::vram_ptr#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::pos_ptr#2 main::pos_ptr#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::vram_ptr#3 main::vram_ptr#2 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ main::i#2 main::i#1 ] : zp[1]:6 , reg byte x , 
@@ -218,7 +218,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
   // main
 main: {
@@ -229,12 +229,12 @@ main: {
   __b1_from_main:
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [1] phi main::vram_ptr#3 = (byte*) 1064 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::vram_ptr#3 = (char *) 1064 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$428
     sta.z vram_ptr
     lda #>$428
     sta.z vram_ptr+1
-    // [1] phi main::pos_ptr#2 = (signed word*) 1024 [phi:main->main::@1#2] -- pwsz1=pwsc1 
+    // [1] phi main::pos_ptr#2 = (int *) 1024 [phi:main->main::@1#2] -- pwsz1=pwsc1 
     lda #<$400
     sta.z pos_ptr
     lda #>$400
@@ -286,8 +286,8 @@ main: {
     bne !+
     inc.z vram_ptr+1
   !:
-    // [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
-    lda #SIZEOF_SIGNED_WORD
+    // [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_INT
     clc
     adc.z pos_ptr
     sta.z pos_ptr
@@ -321,21 +321,21 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_SIGNED_WORD = 2
+__constant char SIZEOF_INT = 2
 void main()
-signed word~ main::$0 zp[2]:6 22.0
-byte~ main::$1 reg byte a 22.0
-byte~ main::$2 reg byte a 22.0
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 2.2
-signed word* main::pos_ptr
-signed word* main::pos_ptr#1 pos_ptr zp[2]:2 7.333333333333333
-signed word* main::pos_ptr#2 pos_ptr zp[2]:2 6.111111111111112
-byte* main::vram_ptr
-byte* main::vram_ptr#1 vram_ptr zp[2]:4 11.0
-byte* main::vram_ptr#2 vram_ptr zp[2]:4 5.5
-byte* main::vram_ptr#3 vram_ptr zp[2]:4 6.6000000000000005
+int main::$0 // zp[2]:6 22.0
+char main::$1 // reg byte a 22.0
+char main::$2 // reg byte a 22.0
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 2.2
+int *main::pos_ptr
+int *main::pos_ptr#1 // pos_ptr zp[2]:2 7.333333333333333
+int *main::pos_ptr#2 // pos_ptr zp[2]:2 6.111111111111112
+char *main::vram_ptr
+char *main::vram_ptr#1 // vram_ptr zp[2]:4 11.0
+char *main::vram_ptr#2 // vram_ptr zp[2]:4 5.5
+char *main::vram_ptr#3 // vram_ptr zp[2]:4 6.6000000000000005
 
 zp[2]:2 [ main::pos_ptr#2 main::pos_ptr#1 ]
 zp[2]:4 [ main::vram_ptr#3 main::vram_ptr#2 main::vram_ptr#1 ]
@@ -360,7 +360,7 @@ Score: 1431
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
   // main
 main: {
@@ -370,12 +370,12 @@ main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [1] phi main::vram_ptr#3 = (byte*) 1064 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::vram_ptr#3 = (char *) 1064 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$428
     sta.z vram_ptr
     lda #>$428
     sta.z vram_ptr+1
-    // [1] phi main::pos_ptr#2 = (signed word*) 1024 [phi:main->main::@1#2] -- pwsz1=pwsc1 
+    // [1] phi main::pos_ptr#2 = (int *) 1024 [phi:main->main::@1#2] -- pwsz1=pwsc1 
     lda #<$400
     sta.z pos_ptr
     lda #>$400
@@ -433,8 +433,8 @@ main: {
     inc.z vram_ptr+1
   !:
     // pos_ptr++;
-    // [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
-    lda #SIZEOF_SIGNED_WORD
+    // [10] main::pos_ptr#1 = main::pos_ptr#2 + SIZEOF_INT -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_INT
     clc
     adc.z pos_ptr
     sta.z pos_ptr

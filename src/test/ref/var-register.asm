@@ -38,7 +38,7 @@ main: {
     // }
     rts
 }
-// print(byte register(X) idx, byte register(A) val)
+// void print(__register(X) char idx, __register(A) char val)
 print: {
     .label SCREEN = $400
     // SCREEN[idx] = val

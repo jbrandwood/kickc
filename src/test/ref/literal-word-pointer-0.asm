@@ -18,6 +18,7 @@ main: {
     .byte 0
 }
 .segment Code
+// void print(char *str)
 print: {
     // *(char**)0x80 = (char*)str
     lda #<main.str

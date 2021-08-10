@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   main::$1 = main::i#0 - 1
   ARR1[main::$1] = 0
   main::$2 = sizeof  ARR2
-  main::j#0 = (byte)main::$2
+  main::j#0 = (char)main::$2
   main::$3 = main::j#0 - 1
   ARR2[main::$3] = 0
   to:main::@return
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -27,17 +27,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* ARR1[$130]  = { fill( $130, 0) }
-constant byte* ARR2[]  = { 1, 2, 3 }
+__constant char ARR1[$130] = { fill( $130, 0) }
+__constant char ARR2[] = { 1, 2, 3 }
 void __start()
 void main()
-number~ main::$1
-word~ main::$2
-number~ main::$3
-word main::i
-word main::i#0
-byte main::j
-byte main::j#0
+number main::$1
+unsigned int main::$2
+number main::$3
+unsigned int main::i
+unsigned int main::i#0
+char main::j
+char main::j#0
 
 Adding number conversion cast (unumber) 1 in main::$1 = main::i#0 - 1
 Adding number conversion cast (unumber) main::$1 in main::$1 = main::i#0 - (unumber)1
@@ -54,20 +54,20 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in main::$1 = main::i#0 - 1
-Inferred type updated to byte in main::$3 = main::j#0 - 1
+Inferred type updated to unsigned int in main::$1 = main::i#0 - 1
+Inferred type updated to char in main::$3 = main::j#0 - 1
 Constant right-side identified [0] main::i#0 = sizeof  ARR1
 Constant right-side identified [3] main::$2 = sizeof  ARR2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::i#0 = sizeof ARR1
 Constant main::$2 = sizeof ARR2
 Successful SSA optimization Pass2ConstantIdentification
-Constant main::j#0 = (byte)main::$2
+Constant main::j#0 = (char)main::$2
 Successful SSA optimization Pass2ConstantIdentification
 De-inlining pointer[w] to *(pointer+w)   [2] ARR1[main::$1] = 0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
@@ -91,8 +91,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $130
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $130
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (unsigned int) $130
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] main::$4 = ARR1 + main::$1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -101,14 +101,14 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$3 = main::j#0-1
 Constant inlined main::$4 = ARR1+main::i#0-1
 Constant inlined main::$1 = main::i#0-1
-Constant inlined main::$2 = 3*SIZEOF_BYTE
+Constant inlined main::$2 = 3*SIZEOF_CHAR
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(ARR2+main::j#0-1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Simplifying constant integer cast 3*SIZEOF_BYTE
+Simplifying constant integer cast 3*SIZEOF_CHAR
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $130
-Finalized unsigned number type (word) $130
+Finalized unsigned number type (unsigned int) $130
+Finalized unsigned number type (unsigned int) $130
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -129,8 +129,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-word main::i
-byte main::j
+unsigned int main::i
+char main::j
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -157,12 +157,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
 .segment Code
   // main
 main: {
-    .const i = $130*SIZEOF_BYTE
-    .const j = 3*SIZEOF_BYTE
+    .const i = $130*SIZEOF_CHAR
+    .const j = 3*SIZEOF_CHAR
     // [0] *(ARR1+main::i#0-1) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta ARR1+i-1
@@ -189,14 +189,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* ARR1[$130]  = { fill( $130, 0) }
-constant byte* ARR2[]  = { 1, 2, 3 }
-constant byte SIZEOF_BYTE = 1
+__constant char ARR1[$130] = { fill( $130, 0) }
+__constant char ARR2[] = { 1, 2, 3 }
+__constant char SIZEOF_CHAR = 1
 void main()
-word main::i
-constant word main::i#0 i = $130*SIZEOF_BYTE
-byte main::j
-constant byte main::j#0 j = 3*SIZEOF_BYTE
+unsigned int main::i
+__constant unsigned int main::i#0 = $130*SIZEOF_CHAR // i
+char main::j
+__constant char main::j#0 = 3*SIZEOF_CHAR // j
 
 
 
@@ -214,12 +214,12 @@ Score: 16
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
 .segment Code
   // main
 main: {
-    .const i = $130*SIZEOF_BYTE
-    .const j = 3*SIZEOF_BYTE
+    .const i = $130*SIZEOF_CHAR
+    .const j = 3*SIZEOF_CHAR
     // ARR1[i-1] = 0
     // [0] *(ARR1+main::i#0-1) = 0 -- _deref_pbuc1=vbuc2 
     lda #0

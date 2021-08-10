@@ -21,14 +21,14 @@ main: {
     // }
     rts
 }
-// b(byte register(A) i)
+// void b(__register(A) char i)
 b: {
     // c(i)
     jsr c
     // }
     rts
 }
-// c(byte register(A) i)
+// void c(__register(A) char i)
 c: {
     ldx #0
   __b1:

@@ -132,7 +132,7 @@ init: {
     // }
     rts
 }
-// draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
+// void draw_block(__register(Y) char tileno, __register(X) char x, __zp(3) char y, char color)
 draw_block: {
     .label __6 = $a
     .label __8 = $e
@@ -309,7 +309,7 @@ init_sprites: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c)
+// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $14
     .label dst = 4
@@ -345,7 +345,7 @@ memset: {
     jmp __b2
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
+// __zp(4) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
     .const b = $28
     .label mb = 6

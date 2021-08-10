@@ -111,7 +111,7 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
             first = false;
             if(onlyTypes) {
                final SymbolType symbolType = SymbolTypeInference.inferType(program.getScope(), parameter);
-               res.append(symbolType.getTypeName());
+               res.append(symbolType.toCDecl());
             } else {
                res.append(parameter.toString(program));
             }

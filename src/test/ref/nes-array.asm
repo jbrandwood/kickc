@@ -8,7 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
 main: {
     .label SCREEN = $400
@@ -49,13 +49,13 @@ main: {
     // foo(2, &y2)
     // *SCREEN++ = foo(2, &y2)
     lda.z __1
-    sta SCREEN+SIZEOF_SIGNED_WORD
+    sta SCREEN+SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+SIZEOF_SIGNED_WORD+1
+    sta SCREEN+SIZEOF_INT+1
     // }
     rts
 }
-// foo(byte register(X) x, signed word* zp(2) y)
+// __zp(2) int foo(__register(X) char x, __zp(2) int *y)
 foo: {
     .label return = 2
     .label y = 2

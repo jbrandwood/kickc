@@ -140,6 +140,7 @@ print_cls: {
     // }
     rts
 }
+// void do_perspective(signed char x, signed char y, signed char z)
 do_perspective: {
     .label x = $39
     .label y = -$47
@@ -217,6 +218,7 @@ do_perspective: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -250,7 +252,7 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// void print_str(__zp(2) char *str)
 print_str: {
     .label str = 2
   __b1:
@@ -274,7 +276,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed char as HEX
-// print_schar(signed byte register(X) b)
+// void print_schar(__register(X) signed char b)
 print_schar: {
     // if(b<0)
     cpx #0
@@ -301,6 +303,7 @@ print_schar: {
 }
 // Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 // Implemented in assembler to utilize seriously fast multiplication 
+// void perspective(signed char x, signed char y, signed char z)
 perspective: {
     // xr = x
     lda #do_perspective.x
@@ -334,7 +337,7 @@ perspective: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -384,7 +387,7 @@ print_ln: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

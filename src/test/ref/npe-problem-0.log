@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -20,11 +20,11 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  bram_base#3 = (byte*)&bram
+  bram_base#3 = (char *)&bram
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   bram_base#10 = phi( __start::__init1/bram_base#3 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   bram_base#8 = phi( __start::@1/bram_base#2 )
@@ -37,32 +37,32 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-constant byte* bram[$64]  = { fill( $64, 0) }
-byte* bram_base
-byte* bram_base#0
-byte* bram_base#1
-byte* bram_base#10
-byte* bram_base#2
-byte* bram_base#3
-byte* bram_base#4
-byte* bram_base#5
-byte* bram_base#6
-byte* bram_base#7
-byte* bram_base#8
-byte* bram_base#9
+__constant char bram[$64] = { fill( $64, 0) }
+char *bram_base
+char *bram_base#0
+char *bram_base#1
+char *bram_base#10
+char *bram_base#2
+char *bram_base#3
+char *bram_base#4
+char *bram_base#5
+char *bram_base#6
+char *bram_base#7
+char *bram_base#8
+char *bram_base#9
 void main()
 
 Adding number conversion cast (unumber) 0 in SCREEN[0] = *bram_base#6
 Adding number conversion cast (unumber) 1 in SCREEN[1] = *bram_base#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias bram_base#1 = bram_base#7 bram_base#2 
 Alias bram_base#10 = bram_base#3 
@@ -71,7 +71,7 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values bram_base#6 bram_base#10
 Identical Phi Values bram_base#4 bram_base#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant bram_base#10 = (byte*)&bram
+Constant bram_base#10 = (char *)&bram
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SCREEN in [1] SCREEN[0] = *bram_base#10
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -90,13 +90,13 @@ Constant bram_base#0 = ++bram_base#10
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings bram_base#10
 Inlining constant with different constant siblings bram_base#0
-Constant inlined bram_base#10 = (byte*)&bram
-Constant inlined bram_base#0 = ++(byte*)&bram
+Constant inlined bram_base#10 = (char *)&bram
+Constant inlined bram_base#0 = ++(char *)&bram
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) $64
+Finalized unsigned number type (char) $64
+Finalized unsigned number type (char) $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -107,8 +107,8 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *SCREEN = *((byte*)&bram)
-  [1] *(SCREEN+1) = *(++(byte*)&bram)
+  [0] *SCREEN = *((char *)&bram)
+  [1] *(SCREEN+1) = *(++(char *)&bram)
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -116,14 +116,14 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-byte* bram_base
+char *bram_base
 void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *SCREEN = *((byte*)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *(SCREEN+1) = *(++(byte*)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = *((char *)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = *(++(char *)&bram) [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -148,10 +148,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *SCREEN = *((byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((char *)&bram) -- _deref_pbuc1=_deref_pbuc2 
     lda bram
     sta SCREEN
-    // [1] *(SCREEN+1) = *(++(byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(SCREEN+1) = *(++(char *)&bram) -- _deref_pbuc1=_deref_pbuc2 
     lda bram+1
     sta SCREEN+1
     jmp __breturn
@@ -171,9 +171,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-constant byte* bram[$64]  = { fill( $64, 0) }
-byte* bram_base
+__constant char * const SCREEN = (char *) 1024
+__constant char bram[$64] = { fill( $64, 0) }
+char *bram_base
 void main()
 
 
@@ -197,11 +197,11 @@ Score: 22
   // main
 main: {
     // SCREEN[0] = *bram_base++
-    // [0] *SCREEN = *((byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((char *)&bram) -- _deref_pbuc1=_deref_pbuc2 
     lda bram
     sta SCREEN
     // SCREEN[1] = *bram_base++
-    // [1] *(SCREEN+1) = *(++(byte*)&bram) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(SCREEN+1) = *(++(char *)&bram) -- _deref_pbuc1=_deref_pbuc2 
     lda bram+1
     sta SCREEN+1
     // main::@return

@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen#0 = (byte*)$400
+  main::screen#0 = (char *)$400
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   main::screen#2 = phi( main/main::screen#0, main::@2/main::screen#1 )
@@ -21,7 +21,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -32,22 +32,22 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-bool~ main::$0
-byte* main::screen
-byte* main::screen#0
-byte* main::screen#1
-byte* main::screen#2
-byte* main::screen#3
+bool main::$0
+char *main::screen
+char *main::screen#0
+char *main::screen#1
+char *main::screen#2
+char *main::screen#3
 
 Adding number conversion cast (unumber) $400+$3e8 in main::$0 = main::screen#2 < $400+$3e8
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias main::screen#2 = main::screen#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition main::$0 [3] if(main::screen#2<(word)$400+$3e8) goto main::@2
+Simple Condition main::$0 [3] if(main::screen#2<(unsigned int)$400+$3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant main::screen#0 = (byte*) 1024
+Constant main::screen#0 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -55,10 +55,10 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings main::screen#0
-Constant inlined main::screen#0 = (byte*) 1024
+Constant inlined main::screen#0 = (char *) 1024
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (unsigned int) $400
+Finalized unsigned number type (unsigned int) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying constant integer cast $400+$3e8
 Successful SSA optimization PassNCastSimplification
@@ -77,7 +77,7 @@ main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] main::screen#2 = phi( main/(byte*) 1024, main::@2/main::screen#1 )
+  [1] main::screen#2 = phi( main/(char *) 1024, main::@2/main::screen#1 )
   [2] if(main::screen#2<$400+$3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -91,9 +91,9 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* main::screen
-byte* main::screen#1 22.0
-byte* main::screen#2 14.666666666666666
+char *main::screen
+char *main::screen#1 // 22.0
+char *main::screen#2 // 14.666666666666666
 
 Initial phi equivalence classes
 [ main::screen#2 main::screen#1 ]
@@ -131,7 +131,7 @@ main: {
     .label screen = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -183,9 +183,9 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte* main::screen
-byte* main::screen#1 screen zp[2]:2 22.0
-byte* main::screen#2 screen zp[2]:2 14.666666666666666
+char *main::screen
+char *main::screen#1 // screen zp[2]:2 22.0
+char *main::screen#2 // screen zp[2]:2 14.666666666666666
 
 zp[2]:2 [ main::screen#2 main::screen#1 ]
 
@@ -210,7 +210,7 @@ Score: 536
 main: {
     .label screen = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

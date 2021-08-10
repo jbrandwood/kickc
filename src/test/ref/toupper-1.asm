@@ -103,7 +103,7 @@ main: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .label __5 = $10
     .label __6 = $c
@@ -248,7 +248,7 @@ clrscr: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -276,7 +276,7 @@ cputc: {
 }
 // Convert lowercase alphabet to uppercase
 // Returns uppercase equivalent to c, if such value exists, else c remains unchanged
-// toupper(byte register(A) ch)
+// __register(A) char toupper(__register(A) char ch)
 toupper: {
     // if(ch>='a' && ch<='z')
     cmp #'a'
@@ -385,7 +385,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(4) destination, void* zp($14) source)
+// void * memcpy(__zp(4) void *destination, __zp($14) void *source, unsigned int num)
 memcpy: {
     .label src_end = $12
     .label dst = 4
@@ -427,7 +427,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($12) str, byte register(X) c)
+// void * memset(__zp($12) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $14
     .label dst = $12

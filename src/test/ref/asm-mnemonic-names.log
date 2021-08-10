@@ -5,7 +5,7 @@ void main()
 main: scope:[main]  from __start
   *lda = main::jmp
   bne::jsr#0 = main::jmp
-  call bne 
+  call bne
   to:main::@1
 main::@1: scope:[main]  from main
   asm { ldaa jmpa bnea a:  }
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void bne(byte bne::jsr)
+void bne(char jsr)
 bne: scope:[bne]  from main
   bne::jsr#1 = phi( main/bne::jsr#0 )
   lda[1] = bne::jsr#1
@@ -25,7 +25,7 @@ bne::@return: scope:[bne]  from bne
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -35,20 +35,20 @@ __start::@return: scope:[__start]  from __start::@1
 
 SYMBOL TABLE SSA
 void __start()
-void bne(byte bne::jsr)
-byte bne::jsr
-byte bne::jsr#0
-byte bne::jsr#1
-constant byte* const lda = (byte*)$400
+void bne(char jsr)
+char bne::jsr
+char bne::jsr#0
+char bne::jsr#1
+__constant char * const lda = (char *)$400
 void main()
-constant byte main::jmp = 1
+__constant char main::jmp = 1
 
 Adding number conversion cast (unumber) 1 in lda[1] = bne::jsr#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values bne::jsr#1 bne::jsr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -74,7 +74,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] *lda = main::jmp
-  [1] call bne 
+  [1] call bne
   to:main::@1
 main::@1: scope:[main]  from main
   asm { ldaa jmpa bnea a:  }
@@ -83,7 +83,7 @@ main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 
-void bne(byte bne::jsr)
+void bne(char jsr)
 bne: scope:[bne]  from main
   [4] *(lda+1) = main::jmp
   to:bne::@return
@@ -93,8 +93,8 @@ bne::@return: scope:[bne]  from bne
 
 
 VARIABLE REGISTER WEIGHTS
-void bne(byte bne::jsr)
-byte bne::jsr
+void bne(char jsr)
+char bne::jsr
 void main()
 
 Initial phi equivalence classes
@@ -135,7 +135,7 @@ main: {
     // [0] *lda = main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
-    // [1] call bne 
+    // [1] call bne
     jsr bne
     jmp __b1
     // main::@1
@@ -153,6 +153,7 @@ main: {
     rts
 }
   // bne
+// void bne(char jsr)
 bne: {
     // [4] *(lda+1) = main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
@@ -180,11 +181,11 @@ Replacing jump to rts with rts in jmp a
 Succesful ASM optimization Pass5DoubleJumpElimination
 
 FINAL SYMBOL TABLE
-void bne(byte bne::jsr)
-byte bne::jsr
-constant byte* const lda = (byte*) 1024
+void bne(char jsr)
+char bne::jsr
+__constant char * const lda = (char *) 1024
 void main()
-constant byte main::jmp = 1
+__constant char main::jmp = 1
 
 
 
@@ -214,7 +215,7 @@ main: {
     lda #jmp
     sta lda
     // bne(jmp)
-    // [1] call bne 
+    // [1] call bne
     jsr bne
     // main::@1
     // asm
@@ -229,6 +230,7 @@ main: {
     rts
 }
   // bne
+// void bne(char jsr)
 bne: {
     // lda[1] = jsr
     // [4] *(lda+1) = main::jmp -- _deref_pbuc1=vbuc2 

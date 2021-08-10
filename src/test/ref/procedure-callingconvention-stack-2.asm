@@ -10,7 +10,7 @@
   .const STACK_BASE = $103
   .label SCREEN = $400
 .segment Code
-// plus(word zp(4) a, word zp(2) b)
+// __zp(4) unsigned int plus(__zp(4) unsigned int a, __zp(2) unsigned int b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0

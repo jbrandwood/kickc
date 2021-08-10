@@ -191,7 +191,7 @@ print_cls: {
     rts
 }
 // Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($b) w)
+// void print_ulong_decimal(__zp($b) unsigned long w)
 print_ulong_decimal: {
     .label w = $b
     // ultoa(w, decimal_digits_long, DECIMAL)
@@ -230,6 +230,7 @@ print_ln: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -267,7 +268,7 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($b) value, byte* zp($f) buffer)
+// void ultoa(__zp($b) unsigned long value, __zp($f) char *buffer, char radix)
 ultoa: {
     .const max_digits = $a
     .label value = $b
@@ -354,7 +355,7 @@ ultoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// print_str(byte* zp($f) str)
+// void print_str(__zp($f) char *str)
 print_str: {
     .label str = $f
     lda.z print_char_cursor_1
@@ -393,7 +394,7 @@ print_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($f) buffer, dword zp($b) value, dword zp($13) sub)
+// __zp($b) unsigned long ultoa_append(__zp($f) char *buffer, __zp($b) unsigned long value, __zp($13) unsigned long sub)
 ultoa_append: {
     .label buffer = $f
     .label value = $b
@@ -444,7 +445,7 @@ ultoa_append: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

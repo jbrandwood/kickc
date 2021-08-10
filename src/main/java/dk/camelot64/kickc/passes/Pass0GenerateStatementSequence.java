@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -1017,7 +1016,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
             Variable variable = varBuilder.build();
             if(isStructMember && (initializer != null))
-               throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), declSource);
+               throw new CompileError("Initializer not supported inside structs " + effectiveType.toCDecl(), declSource);
             if(variable.isDeclarationOnly()) {
                if(initializer != null) {
                   throw new CompileError("Initializer not allowed for extern variables " + varName, declSource);
@@ -1108,7 +1107,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementSource statementSource = new StatementSource(ctx);
       SymbolType effectiveType = this.varDecl.getEffectiveType();
       if(!(effectiveType instanceof SymbolTypePointer) || ((SymbolTypePointer) effectiveType).getArraySpec() == null) {
-         throw new CompileError("KickAsm initializers only supported for arrays " + varDecl.getEffectiveType().getTypeName(), statementSource);
+         throw new CompileError("KickAsm initializers only supported for arrays " + varDecl.getEffectiveType().toCDecl(), statementSource);
       }
       // Add KickAsm statement
       KickAsm kasm = (KickAsm) this.visit(ctx.kasmContent());
@@ -2662,7 +2661,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
          final Variable member = structDefinition.getMember(structMemberRef.getMemberName());
          if(member == null) {
-            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName(), source);
+            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.toCDecl(), source);
          }
          final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, structMemberRef.getMemberName());
          return new ConstantCastValue(new SymbolTypePointer(member.getType()), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
@@ -2673,7 +2672,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
          final Variable member = structDefinition.getMember(structMemberRef.getMemberName());
          if(member == null) {
-            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName(), source);
+            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.toCDecl(), source);
          }
          final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, structMemberRef.getMemberName());
          return new ConstantCastValue(new SymbolTypePointer(member.getType()), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));

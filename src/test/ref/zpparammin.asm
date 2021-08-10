@@ -45,7 +45,7 @@ main: {
     // }
     rts
 }
-// sum(byte register(Y) a, byte register(A) b, byte register(X) c)
+// __register(A) char sum(__register(Y) char a, __register(A) char b, __register(X) char c)
 sum: {
     // a+b
     sty.z $ff
@@ -58,7 +58,7 @@ sum: {
     // }
     rts
 }
-// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
+// __register(A) char sum2(__register(Y) char a, __register(A) char b, __register(X) char c)
 sum2: {
     // a+b
     sty.z $ff

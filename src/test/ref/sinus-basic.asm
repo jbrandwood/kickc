@@ -107,7 +107,7 @@ main: {
 .segment Code
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
-// setFAC(word zp(7) w)
+// void setFAC(__zp(7) unsigned int w)
 setFAC: {
     .label prepareMEM1_mem = 7
     .label w = 7
@@ -137,7 +137,7 @@ divFACby10: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zp(7) mem)
+// void setMEMtoFAC(__zp(7) char *mem)
 setMEMtoFAC: {
     .label mem = 7
     // BYTE0(mem)
@@ -158,7 +158,7 @@ setMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 chars from memory
-// mulFACbyMEM(byte* zp(7) mem)
+// void mulFACbyMEM(__zp(7) char *mem)
 mulFACbyMEM: {
     .label mem = 7
     // BYTE0(mem)
@@ -179,6 +179,7 @@ mulFACbyMEM: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 chars from memory
+// void divMEMbyFAC(char *mem)
 divMEMbyFAC: {
     .const prepareMEM1_mem = main.f_i
     // *memLo = BYTE0(mem)
@@ -206,6 +207,7 @@ sinFAC: {
 // FAC = MEM+FAC
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 chars from memory
+// void addMEMtoFAC(char *mem)
 addMEMtoFAC: {
     .const prepareMEM1_mem = main.f_127
     // *memLo = BYTE0(mem)
@@ -239,7 +241,7 @@ getFAC: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(7) w)
+// void print_uint(__zp(7) unsigned int w)
 print_uint: {
     .label w = 7
     // print_uchar(BYTE1(w))
@@ -275,7 +277,7 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -298,7 +300,7 @@ print_uchar: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

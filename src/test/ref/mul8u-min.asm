@@ -46,7 +46,7 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
+// __zp(4) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
     .label mb = 6
     .label res = 4

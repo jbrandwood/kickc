@@ -12,7 +12,7 @@ Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
-word strlen(byte* strlen::str)
+unsigned int strlen(char *str)
 strlen: scope:[strlen]  from setnam
   strlen::str#4 = phi( setnam/strlen::str#1 )
   strlen::len#0 = 0
@@ -44,7 +44,7 @@ main: scope:[main]  from __start
   loadFileToMemory::device#0 = 8
   loadFileToMemory::filename#0 = main::filename
   loadFileToMemory::address#0 = LOAD_SPRITE
-  call loadFileToMemory 
+  call loadFileToMemory
   loadFileToMemory::return#0 = loadFileToMemory::return#2
   to:main::@4
 main::@4: scope:[main]  from main
@@ -55,14 +55,14 @@ main::@4: scope:[main]  from main
   if(main::$2) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main::@4 main::@5
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
   main::toSpritePtr1_sprite#0 = LOAD_SPRITE
   to:main::toSpritePtr1
 main::toSpritePtr1: scope:[main]  from main::@1
   main::toSpritePtr1_sprite#1 = phi( main::@1/main::toSpritePtr1_sprite#0 )
-  main::toSpritePtr1_$1 = (word)main::toSpritePtr1_sprite#1
+  main::toSpritePtr1_$1 = (unsigned int)main::toSpritePtr1_sprite#1
   main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
-  main::toSpritePtr1_return#0 = (byte)main::toSpritePtr1_$0
+  main::toSpritePtr1_return#0 = (char)main::toSpritePtr1_$0
   to:main::toSpritePtr1_@return
 main::toSpritePtr1_@return: scope:[main]  from main::toSpritePtr1
   main::toSpritePtr1_return#2 = phi( main::toSpritePtr1/main::toSpritePtr1_return#0 )
@@ -78,9 +78,9 @@ main::@3: scope:[main]  from main::toSpritePtr1_@return
   to:main::@return
 main::@2: scope:[main]  from main::@4
   main::status#1 = phi( main::@4/main::status#0 )
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
   error::err = main::status#1
-  call error 
+  call error
   to:main::@5
 main::@5: scope:[main]  from main::@2
   to:main::@1
@@ -88,25 +88,25 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
+char loadFileToMemory(char device , char *filename , char *address)
 loadFileToMemory: scope:[loadFileToMemory]  from main
   loadFileToMemory::address#3 = phi( main/loadFileToMemory::address#0 )
   loadFileToMemory::device#2 = phi( main/loadFileToMemory::device#0 )
   loadFileToMemory::filename#1 = phi( main/loadFileToMemory::filename#0 )
   setnam::filename = loadFileToMemory::filename#1
-  call setnam 
+  call setnam
   to:loadFileToMemory::@1
 loadFileToMemory::@1: scope:[loadFileToMemory]  from loadFileToMemory
   loadFileToMemory::address#2 = phi( loadFileToMemory/loadFileToMemory::address#3 )
   loadFileToMemory::device#1 = phi( loadFileToMemory/loadFileToMemory::device#2 )
   setlfs::device = loadFileToMemory::device#1
-  call setlfs 
+  call setlfs
   to:loadFileToMemory::@2
 loadFileToMemory::@2: scope:[loadFileToMemory]  from loadFileToMemory::@1
   loadFileToMemory::address#1 = phi( loadFileToMemory::@1/loadFileToMemory::address#2 )
   load::address = loadFileToMemory::address#1
   load::verify = 0
-  call load 
+  call load
   load::return#0 = load::return#2
   to:loadFileToMemory::@3
 loadFileToMemory::@3: scope:[loadFileToMemory]  from loadFileToMemory::@2
@@ -120,7 +120,7 @@ loadFileToMemory::@return: scope:[loadFileToMemory]  from loadFileToMemory::@3
   return 
   to:@return
 
-void error(volatile byte error::err)
+void error(volatile char err)
 error: scope:[error]  from main::@2
   asm { ldxerr jsr$a437  }
   to:error::@return
@@ -128,23 +128,23 @@ error::@return: scope:[error]  from error
   return 
   to:@return
 
-void setnam(byte* volatile setnam::filename)
+void setnam(char * volatile filename)
 setnam: scope:[setnam]  from loadFileToMemory
   strlen::str#1 = setnam::filename
-  call strlen 
+  call strlen
   strlen::return#2 = strlen::return#1
   to:setnam::@1
 setnam::@1: scope:[setnam]  from setnam
   strlen::return#4 = phi( setnam/strlen::return#2 )
   setnam::$0 = strlen::return#4
-  setnam::filename_len = (byte)setnam::$0
+  setnam::filename_len = (char)setnam::$0
   asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
   to:setnam::@return
 setnam::@return: scope:[setnam]  from setnam::@1
   return 
   to:@return
 
-void setlfs(volatile byte setlfs::device)
+void setlfs(volatile char device)
 setlfs: scope:[setlfs]  from loadFileToMemory::@1
   asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
   to:setlfs::@return
@@ -152,7 +152,7 @@ setlfs::@return: scope:[setlfs]  from setlfs
   return 
   to:@return
 
-byte load(byte* volatile load::address , volatile byte load::verify)
+char load(char * volatile address , volatile char verify)
 load: scope:[load]  from loadFileToMemory::@2
   load::status = 0
   asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
@@ -166,7 +166,7 @@ load::@return: scope:[load]  from load
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -175,104 +175,104 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant const byte GREEN = 5
-constant byte* const LOAD_SPRITE = (byte*)$3000
-constant const word OFFSET_SPRITE_PTRS = $3f8
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
-constant byte* const SCREEN = (byte*)$400
-constant byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+__constant const char GREEN = 5
+__constant char * const LOAD_SPRITE = (char *)$3000
+__constant const unsigned int OFFSET_SPRITE_PTRS = $3f8
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+__constant char * const SCREEN = (char *)$400
+__constant char SPRITE[] = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_COLOR = (byte*)$d027
-constant byte* const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
-constant byte* const SPRITES_XPOS = (byte*)$d000
-constant byte* const SPRITES_YPOS = (byte*)$d001
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*)$d000
+__constant char * const SPRITES_COLOR = (char *)$d027
+__constant char * const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+__constant char * const SPRITES_XPOS = (char *)$d000
+__constant char * const SPRITES_YPOS = (char *)$d001
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *)$d000
 void __start()
-void error(volatile byte error::err)
-volatile byte error::err loadstore
-byte load(byte* volatile load::address , volatile byte load::verify)
-byte* volatile load::address loadstore
-byte load::return
-byte load::return#0
-byte load::return#1
-byte load::return#2
-byte load::return#3
-byte load::return#4
-volatile byte load::status loadstore
-volatile byte load::verify loadstore
-byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
-byte~ loadFileToMemory::$2
-byte* loadFileToMemory::address
-byte* loadFileToMemory::address#0
-byte* loadFileToMemory::address#1
-byte* loadFileToMemory::address#2
-byte* loadFileToMemory::address#3
-byte loadFileToMemory::device
-byte loadFileToMemory::device#0
-byte loadFileToMemory::device#1
-byte loadFileToMemory::device#2
-byte* loadFileToMemory::filename
-byte* loadFileToMemory::filename#0
-byte* loadFileToMemory::filename#1
-byte loadFileToMemory::return
-byte loadFileToMemory::return#0
-byte loadFileToMemory::return#1
-byte loadFileToMemory::return#2
-byte loadFileToMemory::return#3
-byte loadFileToMemory::return#4
+void error(volatile char err)
+__loadstore volatile char error::err
+char load(char * volatile address , volatile char verify)
+__loadstore char * volatile load::address
+char load::return
+char load::return#0
+char load::return#1
+char load::return#2
+char load::return#3
+char load::return#4
+__loadstore volatile char load::status
+__loadstore volatile char load::verify
+char loadFileToMemory(char device , char *filename , char *address)
+char loadFileToMemory::$2
+char *loadFileToMemory::address
+char *loadFileToMemory::address#0
+char *loadFileToMemory::address#1
+char *loadFileToMemory::address#2
+char *loadFileToMemory::address#3
+char loadFileToMemory::device
+char loadFileToMemory::device#0
+char loadFileToMemory::device#1
+char loadFileToMemory::device#2
+char *loadFileToMemory::filename
+char *loadFileToMemory::filename#0
+char *loadFileToMemory::filename#1
+char loadFileToMemory::return
+char loadFileToMemory::return#0
+char loadFileToMemory::return#1
+char loadFileToMemory::return#2
+char loadFileToMemory::return#3
+char loadFileToMemory::return#4
 void main()
-bool~ main::$1
-bool~ main::$2
-byte~ main::$3
-constant byte* main::filename[7]  = "SPRITE"
-byte main::status
-byte main::status#0
-byte main::status#1
-number~ main::toSpritePtr1_$0
-word~ main::toSpritePtr1_$1
-byte main::toSpritePtr1_return
-byte main::toSpritePtr1_return#0
-byte main::toSpritePtr1_return#1
-byte main::toSpritePtr1_return#2
-byte main::toSpritePtr1_return#3
-byte* main::toSpritePtr1_sprite
-byte* main::toSpritePtr1_sprite#0
-byte* main::toSpritePtr1_sprite#1
-void setlfs(volatile byte setlfs::device)
-volatile byte setlfs::device loadstore
-void setnam(byte* volatile setnam::filename)
-word~ setnam::$0
-byte* volatile setnam::filename loadstore
-volatile byte setnam::filename_len loadstore
-word strlen(byte* strlen::str)
-bool~ strlen::$0
-word strlen::len
-word strlen::len#0
-word strlen::len#1
-word strlen::len#2
-word strlen::len#3
-word strlen::len#4
-word strlen::return
-word strlen::return#0
-word strlen::return#1
-word strlen::return#2
-word strlen::return#3
-word strlen::return#4
-byte* strlen::str
-byte* strlen::str#0
-byte* strlen::str#1
-byte* strlen::str#2
-byte* strlen::str#3
-byte* strlen::str#4
+bool main::$1
+bool main::$2
+char main::$3
+__constant char main::filename[7] = "SPRITE"
+char main::status
+char main::status#0
+char main::status#1
+number main::toSpritePtr1_$0
+unsigned int main::toSpritePtr1_$1
+char main::toSpritePtr1_return
+char main::toSpritePtr1_return#0
+char main::toSpritePtr1_return#1
+char main::toSpritePtr1_return#2
+char main::toSpritePtr1_return#3
+char *main::toSpritePtr1_sprite
+char *main::toSpritePtr1_sprite#0
+char *main::toSpritePtr1_sprite#1
+void setlfs(volatile char device)
+__loadstore volatile char setlfs::device
+void setnam(char * volatile filename)
+unsigned int setnam::$0
+__loadstore char * volatile setnam::filename
+__loadstore volatile char setnam::filename_len
+unsigned int strlen(char *str)
+bool strlen::$0
+unsigned int strlen::len
+unsigned int strlen::len#0
+unsigned int strlen::len#1
+unsigned int strlen::len#2
+unsigned int strlen::len#3
+unsigned int strlen::len#4
+unsigned int strlen::return
+unsigned int strlen::return#0
+unsigned int strlen::return#1
+unsigned int strlen::return#2
+unsigned int strlen::return#3
+unsigned int strlen::return#4
+char *strlen::str
+char *strlen::str#0
+char *strlen::str#1
+char *strlen::str#2
+char *strlen::str#3
+char *strlen::str#4
 
 Adding number conversion cast (unumber) 0 in strlen::$0 = 0 != *strlen::str#2
 Adding number conversion cast (unumber) 8 in loadFileToMemory::device#0 = 8
 Adding number conversion cast (unumber) $ff in main::$1 = main::status#0 != $ff
-Adding number conversion cast (unumber) 1 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+Adding number conversion cast (unumber) 1 in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
 Adding number conversion cast (unumber) $40 in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
 Adding number conversion cast (unumber) main::toSpritePtr1_$0 in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / (unumber)$40
 Adding number conversion cast (unumber) 0 in SPRITES_PTR[0] = main::$3
@@ -281,22 +281,22 @@ Adding number conversion cast (unumber) $15 in SPRITES_XPOS[0] = $15
 Adding number conversion cast (unumber) 0 in SPRITES_XPOS[0] = ((unumber)) $15
 Adding number conversion cast (unumber) $33 in SPRITES_YPOS[0] = $33
 Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = ((unumber)) $33
-Adding number conversion cast (unumber) 2 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+Adding number conversion cast (unumber) 2 in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
 Adding number conversion cast (unumber) 0 in load::verify = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast loadFileToMemory::device#0 = (unumber)8
-Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = (unumber)1
+Inlining cast *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = (unumber)1
 Inlining cast SPRITES_XPOS[(unumber)0] = (unumber)$15
 Inlining cast SPRITES_YPOS[(unumber)0] = (unumber)$33
-Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = (unumber)2
+Inlining cast *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = (unumber)2
 Inlining cast load::verify = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53248
-Simplifying constant pointer cast (byte*) 53249
-Simplifying constant pointer cast (byte*) 53287
-Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
-Simplifying constant pointer cast (byte*) 12288
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 53248
+Simplifying constant pointer cast (char *) 53249
+Simplifying constant pointer cast (char *) 53287
+Simplifying constant pointer cast (struct MOS6569_VICII *) 53248
+Simplifying constant pointer cast (char *) 12288
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast $ff
@@ -311,21 +311,21 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $15
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $33
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $15
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $33
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
+Inferred type updated to unsigned int in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
 Inversing boolean not [21] main::$2 = main::status#0 == $ff from [20] main::$1 = main::status#0 != $ff
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)load::return#1 = load::status load::return#4 load::return#2 
@@ -357,7 +357,7 @@ Constant loadFileToMemory::filename#0 = main::filename
 Constant loadFileToMemory::address#0 = LOAD_SPRITE
 Constant main::toSpritePtr1_sprite#0 = LOAD_SPRITE
 Successful SSA optimization Pass2ConstantIdentification
-Constant main::toSpritePtr1_$1 = (word)main::toSpritePtr1_sprite#0
+Constant main::toSpritePtr1_$1 = (unsigned int)main::toSpritePtr1_sprite#0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SPRITES_PTR in [21] SPRITES_PTR[0] = main::toSpritePtr1_return#0
 Simplifying expression containing zero SPRITES_COLOR in [22] SPRITES_COLOR[0] = GREEN
@@ -374,15 +374,15 @@ Constant right-side identified [10] main::toSpritePtr1_$0 = main::toSpritePtr1_$
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::toSpritePtr1_$0 = main::toSpritePtr1_$1/$40
 Successful SSA optimization Pass2ConstantIdentification
-Constant main::toSpritePtr1_return#0 = (byte)main::toSpritePtr1_$0
+Constant main::toSpritePtr1_return#0 = (char)main::toSpritePtr1_$0
 Successful SSA optimization Pass2ConstantIdentification
 Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
 Inlining constant with var siblings strlen::len#0
 Constant inlined main::toSpritePtr1_sprite#0 = LOAD_SPRITE
 Constant inlined loadFileToMemory::address#0 = LOAD_SPRITE
-Constant inlined main::toSpritePtr1_$1 = (word)LOAD_SPRITE
+Constant inlined main::toSpritePtr1_$1 = (unsigned int)LOAD_SPRITE
 Constant inlined strlen::len#0 = 0
-Constant inlined main::toSpritePtr1_$0 = (word)LOAD_SPRITE/$40
+Constant inlined main::toSpritePtr1_$0 = (unsigned int)LOAD_SPRITE/$40
 Constant inlined loadFileToMemory::filename#0 = main::filename
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
@@ -415,7 +415,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call loadFileToMemory 
+  [1] call loadFileToMemory
   [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
   to:main::@4
 main::@4: scope:[main]  from main
@@ -423,12 +423,12 @@ main::@4: scope:[main]  from main
   [4] if(main::status#0==$ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@4
-  [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
   [6] error::err = main::status#0
-  [7] call error 
+  [7] call error
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@4
-  [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+  [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
   to:main::toSpritePtr1
 main::toSpritePtr1: scope:[main]  from main::@1
   [9] phi()
@@ -443,19 +443,19 @@ main::@return: scope:[main]  from main::@3
   [14] return 
   to:@return
 
-byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
+char loadFileToMemory(char device , char *filename , char *address)
 loadFileToMemory: scope:[loadFileToMemory]  from main
   [15] setnam::filename = main::filename
-  [16] call setnam 
+  [16] call setnam
   to:loadFileToMemory::@1
 loadFileToMemory::@1: scope:[loadFileToMemory]  from loadFileToMemory
   [17] setlfs::device = loadFileToMemory::device#0
-  [18] call setlfs 
+  [18] call setlfs
   to:loadFileToMemory::@2
 loadFileToMemory::@2: scope:[loadFileToMemory]  from loadFileToMemory::@1
   [19] load::address = LOAD_SPRITE
   [20] load::verify = 0
-  [21] call load 
+  [21] call load
   [22] load::return#0 = load::return#2
   to:loadFileToMemory::@3
 loadFileToMemory::@3: scope:[loadFileToMemory]  from loadFileToMemory::@2
@@ -465,7 +465,7 @@ loadFileToMemory::@return: scope:[loadFileToMemory]  from loadFileToMemory::@3
   [24] return 
   to:@return
 
-void error(volatile byte error::err)
+void error(volatile char err)
 error: scope:[error]  from main::@2
   asm { ldxerr jsr$a437  }
   to:error::@return
@@ -473,22 +473,22 @@ error::@return: scope:[error]  from error
   [26] return 
   to:@return
 
-void setnam(byte* volatile setnam::filename)
+void setnam(char * volatile filename)
 setnam: scope:[setnam]  from loadFileToMemory
   [27] strlen::str#1 = setnam::filename
-  [28] call strlen 
+  [28] call strlen
   [29] strlen::return#2 = strlen::len#2
   to:setnam::@1
 setnam::@1: scope:[setnam]  from setnam
   [30] setnam::$0 = strlen::return#2
-  [31] setnam::filename_len = (byte)setnam::$0
+  [31] setnam::filename_len = (char)setnam::$0
   asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
   to:setnam::@return
 setnam::@return: scope:[setnam]  from setnam::@1
   [33] return 
   to:@return
 
-void setlfs(volatile byte setlfs::device)
+void setlfs(volatile char device)
 setlfs: scope:[setlfs]  from loadFileToMemory::@1
   asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
   to:setlfs::@return
@@ -496,7 +496,7 @@ setlfs::@return: scope:[setlfs]  from setlfs
   [35] return 
   to:@return
 
-byte load(byte* volatile load::address , volatile byte load::verify)
+char load(char * volatile address , volatile char verify)
 load: scope:[load]  from loadFileToMemory::@2
   [36] load::status = 0
   asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
@@ -507,7 +507,7 @@ load::@return: scope:[load]  from load
   [40] return 
   to:@return
 
-word strlen(byte* strlen::str)
+unsigned int strlen(char *str)
 strlen: scope:[strlen]  from setnam
   [41] phi()
   to:strlen::@1
@@ -526,44 +526,44 @@ strlen::@2: scope:[strlen]  from strlen::@1
 
 
 VARIABLE REGISTER WEIGHTS
-void error(volatile byte error::err)
-volatile byte error::err loadstore 2.0
-byte load(byte* volatile load::address , volatile byte load::verify)
-byte* volatile load::address loadstore 3.6666666666666665
-byte load::return
-byte load::return#0 22.0
-byte load::return#1 202.0
-byte load::return#2 37.33333333333333
-volatile byte load::status loadstore 101.0
-volatile byte load::verify loadstore 5.5
-byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
-byte* loadFileToMemory::address
-byte loadFileToMemory::device
-byte* loadFileToMemory::filename
-byte loadFileToMemory::return
-byte loadFileToMemory::return#0 4.0
-byte loadFileToMemory::return#1 4.333333333333333
+void error(volatile char err)
+__loadstore volatile char error::err // 2.0
+char load(char * volatile address , volatile char verify)
+__loadstore char * volatile load::address // 3.6666666666666665
+char load::return
+char load::return#0 // 22.0
+char load::return#1 // 202.0
+char load::return#2 // 37.33333333333333
+__loadstore volatile char load::status // 101.0
+__loadstore volatile char load::verify // 5.5
+char loadFileToMemory(char device , char *filename , char *address)
+char *loadFileToMemory::address
+char loadFileToMemory::device
+char *loadFileToMemory::filename
+char loadFileToMemory::return
+char loadFileToMemory::return#0 // 4.0
+char loadFileToMemory::return#1 // 4.333333333333333
 void main()
-byte main::status
-byte main::status#0 2.0
-byte main::toSpritePtr1_return
-byte* main::toSpritePtr1_sprite
-void setlfs(volatile byte setlfs::device)
-volatile byte setlfs::device loadstore 11.0
-void setnam(byte* volatile setnam::filename)
-word~ setnam::$0 101.0
-byte* volatile setnam::filename loadstore 18.666666666666664
-volatile byte setnam::filename_len loadstore 101.0
-word strlen(byte* strlen::str)
-word strlen::len
-word strlen::len#1 10001.0
-word strlen::len#2 5025.75
-word strlen::return
-word strlen::return#2 202.0
-byte* strlen::str
-byte* strlen::str#0 20002.0
-byte* strlen::str#1 551.0
-byte* strlen::str#2 10334.666666666666
+char main::status
+char main::status#0 // 2.0
+char main::toSpritePtr1_return
+char *main::toSpritePtr1_sprite
+void setlfs(volatile char device)
+__loadstore volatile char setlfs::device // 11.0
+void setnam(char * volatile filename)
+unsigned int setnam::$0 // 101.0
+__loadstore char * volatile setnam::filename // 18.666666666666664
+__loadstore volatile char setnam::filename_len // 101.0
+unsigned int strlen(char *str)
+unsigned int strlen::len
+unsigned int strlen::len#1 // 10001.0
+unsigned int strlen::len#2 // 5025.75
+unsigned int strlen::return
+unsigned int strlen::return#2 // 202.0
+char *strlen::str
+char *strlen::str#0 // 20002.0
+char *strlen::str#1 // 551.0
+char *strlen::str#2 // 10334.666666666666
 
 Initial phi equivalence classes
 [ strlen::str#2 strlen::str#1 strlen::str#0 ]
@@ -619,9 +619,9 @@ Allocated zp[1]:22 [ load::status ]
 Allocated zp[1]:23 [ load::return#1 ]
 Allocated zp[1]:24 [ load::return#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
+Statement [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::status#0 ]
-Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *SPRITES_PTR = main::toSpritePtr1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *SPRITES_COLOR = GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] *SPRITES_XPOS = $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -634,14 +634,14 @@ Statement asm { ldxerr jsr$a437  } always clobbers reg byte a reg byte x reg byt
 Statement [27] strlen::str#1 = setnam::filename [ setnam::filename strlen::str#1 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::str#1 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [29] strlen::return#2 = strlen::len#2 [ setnam::filename strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [30] setnam::$0 = strlen::return#2 [ setnam::filename setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [31] setnam::filename_len = (byte)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [31] setnam::filename_len = (char)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
 Statement asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { ldxdevice lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
 Statement [36] load::status = 0 [ load::address load::verify load::status ] ( loadFileToMemory:1::load:21 [ load::address load::verify load::status ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
 Statement asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  } always clobbers reg byte a reg byte x reg byte y 
 Statement [43] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( loadFileToMemory:1::setnam:16::strlen:28 [ setnam::filename strlen::len#2 strlen::str#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
-Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
+Statement [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *SPRITES_PTR = main::toSpritePtr1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *SPRITES_COLOR = GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] *SPRITES_XPOS = $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -654,7 +654,7 @@ Statement asm { ldxerr jsr$a437  } always clobbers reg byte a reg byte x reg byt
 Statement [27] strlen::str#1 = setnam::filename [ setnam::filename strlen::str#1 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::str#1 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [29] strlen::return#2 = strlen::len#2 [ setnam::filename strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [30] setnam::$0 = strlen::return#2 [ setnam::filename setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [31] setnam::filename_len = (byte)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [31] setnam::filename_len = (char)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
 Statement asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { ldxdevice lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
 Statement [36] load::status = 0 [ load::address load::verify load::status ] ( loadFileToMemory:1::load:21 [ load::address load::verify load::status ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
@@ -763,7 +763,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
-    // [1] call loadFileToMemory 
+    // [1] call loadFileToMemory
     // Load sprite file into memory
     jsr loadFileToMemory
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
@@ -778,17 +778,17 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    // [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [6] error::err = main::status#0 -- vbuz1=vbuxx 
     stx.z error.err
-    // [7] call error 
+    // [7] call error
     jsr error
     jmp __b1
     // main::@1
   __b1:
-    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
     // Show the loaded sprite on screen
     lda #1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
@@ -827,6 +827,7 @@ main: {
 // Returns a status:
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// __register(A) char loadFileToMemory(char device, char *filename, char *address)
 loadFileToMemory: {
     .const device = 8
     // [15] setnam::filename = main::filename -- pbuz1=pbuc1 
@@ -834,7 +835,7 @@ loadFileToMemory: {
     sta.z setnam.filename
     lda #>main.filename
     sta.z setnam.filename+1
-    // [16] call setnam 
+    // [16] call setnam
     jsr setnam
     jmp __b1
     // loadFileToMemory::@1
@@ -842,7 +843,7 @@ loadFileToMemory: {
     // [17] setlfs::device = loadFileToMemory::device#0 -- vbuz1=vbuc1 
     lda #device
     sta.z setlfs.device
-    // [18] call setlfs 
+    // [18] call setlfs
     jsr setlfs
     jmp __b2
     // loadFileToMemory::@2
@@ -855,7 +856,7 @@ loadFileToMemory: {
     // [20] load::verify = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z load.verify
-    // [21] call load 
+    // [21] call load
     jsr load
     // [22] load::return#0 = load::return#2
     jmp __b3
@@ -871,7 +872,7 @@ loadFileToMemory: {
   // error
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte zp(6) err)
+// void error(__zp(6) volatile char err)
 error: {
     .label err = 6
     // asm { ldxerr jsr$a437  }
@@ -886,7 +887,7 @@ error: {
   // setnam
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
-// setnam(byte* zp(7) filename)
+// void setnam(__zp(7) char * volatile filename)
 setnam: {
     .label filename = 7
     .label filename_len = $d
@@ -896,7 +897,7 @@ setnam: {
     sta.z strlen.str
     lda.z filename+1
     sta.z strlen.str+1
-    // [28] call strlen 
+    // [28] call strlen
     // [41] phi from setnam to strlen [phi:setnam->strlen]
   strlen_from_setnam:
     jsr strlen
@@ -905,7 +906,7 @@ setnam: {
     // setnam::@1
   __b1:
     // [30] setnam::$0 = strlen::return#2
-    // [31] setnam::filename_len = (byte)setnam::$0 -- vbuz1=_byte_vwuz2 
+    // [31] setnam::filename_len = (char)setnam::$0 -- vbuz1=_byte_vwuz2 
     lda.z __0
     sta.z filename_len
     // asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
@@ -921,7 +922,7 @@ setnam: {
 }
   // setlfs
 // SETLFS. Set file parameters.
-// setlfs(byte zp(9) device)
+// void setlfs(__zp(9) volatile char device)
 setlfs: {
     .label device = 9
     // asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
@@ -940,7 +941,7 @@ setlfs: {
 // - verify: 0 = Load, 1-255 = Verify
 //
 // Returns a status, 0xff: Success other: Kernal Error Code
-// load(byte* zp($a) address, byte zp($c) verify)
+// __register(A) char load(__zp($a) char * volatile address, __zp($c) volatile char verify)
 load: {
     .label address = $a
     .label verify = $c
@@ -968,7 +969,7 @@ load: {
 }
   // strlen
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(2) str)
+// __zp(4) unsigned int strlen(__zp(2) char *str)
 strlen: {
     .label len = 4
     .label str = 2
@@ -1067,63 +1068,63 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant const byte GREEN = 5
-constant byte* const LOAD_SPRITE = (byte*) 12288
-constant const word OFFSET_SPRITE_PTRS = $3f8
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
-constant byte* const SCREEN = (byte*) 1024
-constant byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+__constant const char GREEN = 5
+__constant char * const LOAD_SPRITE = (char *) 12288
+__constant const unsigned int OFFSET_SPRITE_PTRS = $3f8
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+__constant char * const SCREEN = (char *) 1024
+__constant char SPRITE[] = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_COLOR = (byte*) 53287
-constant byte* const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
-constant byte* const SPRITES_XPOS = (byte*) 53248
-constant byte* const SPRITES_YPOS = (byte*) 53249
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*) 53248
-void error(volatile byte error::err)
-volatile byte error::err loadstore zp[1]:6 2.0
-byte load(byte* volatile load::address , volatile byte load::verify)
-byte* volatile load::address loadstore zp[2]:10 3.6666666666666665
-byte load::return
-byte load::return#0 reg byte a 22.0
-byte load::return#1 reg byte a 202.0
-byte load::return#2 reg byte a 37.33333333333333
-volatile byte load::status loadstore zp[1]:14 101.0
-volatile byte load::verify loadstore zp[1]:12 5.5
-byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
-byte* loadFileToMemory::address
-byte loadFileToMemory::device
-constant byte loadFileToMemory::device#0 device = 8
-byte* loadFileToMemory::filename
-byte loadFileToMemory::return
-byte loadFileToMemory::return#0 reg byte a 4.0
-byte loadFileToMemory::return#1 reg byte a 4.333333333333333
+__constant char * const SPRITES_COLOR = (char *) 53287
+__constant char * const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+__constant char * const SPRITES_XPOS = (char *) 53248
+__constant char * const SPRITES_YPOS = (char *) 53249
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *) 53248
+void error(volatile char err)
+__loadstore volatile char error::err // zp[1]:6 2.0
+char load(char * volatile address , volatile char verify)
+__loadstore char * volatile load::address // zp[2]:10 3.6666666666666665
+char load::return
+char load::return#0 // reg byte a 22.0
+char load::return#1 // reg byte a 202.0
+char load::return#2 // reg byte a 37.33333333333333
+__loadstore volatile char load::status // zp[1]:14 101.0
+__loadstore volatile char load::verify // zp[1]:12 5.5
+char loadFileToMemory(char device , char *filename , char *address)
+char *loadFileToMemory::address
+char loadFileToMemory::device
+__constant char loadFileToMemory::device#0 = 8 // device
+char *loadFileToMemory::filename
+char loadFileToMemory::return
+char loadFileToMemory::return#0 // reg byte a 4.0
+char loadFileToMemory::return#1 // reg byte a 4.333333333333333
 void main()
-constant byte* main::filename[7]  = "SPRITE"
-byte main::status
-byte main::status#0 reg byte x 2.0
-byte main::toSpritePtr1_return
-constant byte main::toSpritePtr1_return#0 toSpritePtr1_return = (byte)(word)LOAD_SPRITE/$40
-byte* main::toSpritePtr1_sprite
-void setlfs(volatile byte setlfs::device)
-volatile byte setlfs::device loadstore zp[1]:9 11.0
-void setnam(byte* volatile setnam::filename)
-word~ setnam::$0 zp[2]:4 101.0
-byte* volatile setnam::filename loadstore zp[2]:7 18.666666666666664
-volatile byte setnam::filename_len loadstore zp[1]:13 101.0
-word strlen(byte* strlen::str)
-word strlen::len
-word strlen::len#1 len zp[2]:4 10001.0
-word strlen::len#2 len zp[2]:4 5025.75
-word strlen::return
-word strlen::return#2 return zp[2]:4 202.0
-byte* strlen::str
-byte* strlen::str#0 str zp[2]:2 20002.0
-byte* strlen::str#1 str zp[2]:2 551.0
-byte* strlen::str#2 str zp[2]:2 10334.666666666666
+__constant char main::filename[7] = "SPRITE"
+char main::status
+char main::status#0 // reg byte x 2.0
+char main::toSpritePtr1_return
+__constant char main::toSpritePtr1_return#0 = (char)(unsigned int)LOAD_SPRITE/$40 // toSpritePtr1_return
+char *main::toSpritePtr1_sprite
+void setlfs(volatile char device)
+__loadstore volatile char setlfs::device // zp[1]:9 11.0
+void setnam(char * volatile filename)
+unsigned int setnam::$0 // zp[2]:4 101.0
+__loadstore char * volatile setnam::filename // zp[2]:7 18.666666666666664
+__loadstore volatile char setnam::filename_len // zp[1]:13 101.0
+unsigned int strlen(char *str)
+unsigned int strlen::len
+unsigned int strlen::len#1 // len zp[2]:4 10001.0
+unsigned int strlen::len#2 // len zp[2]:4 5025.75
+unsigned int strlen::return
+unsigned int strlen::return#2 // return zp[2]:4 202.0
+char *strlen::str
+char *strlen::str#0 // str zp[2]:2 20002.0
+char *strlen::str#1 // str zp[2]:2 551.0
+char *strlen::str#2 // str zp[2]:2 10334.666666666666
 
 zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ]
 zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 setnam::$0 ]
@@ -1186,7 +1187,7 @@ Score: 720
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
-    // [1] call loadFileToMemory 
+    // [1] call loadFileToMemory
     // Load sprite file into memory
     jsr loadFileToMemory
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
@@ -1199,18 +1200,18 @@ main: {
     beq __b1
     // main::@2
     // VICII->BORDER_COLOR = 0x02
-    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    // [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // error(status)
     // [6] error::err = main::status#0 -- vbuz1=vbuxx 
     stx.z error.err
-    // [7] call error 
+    // [7] call error
     jsr error
     // main::@1
   __b1:
     // VICII->SPRITES_ENABLE = %00000001
-    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
     // Show the loaded sprite on screen
     lda #1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
@@ -1247,6 +1248,7 @@ main: {
 // Returns a status:
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// __register(A) char loadFileToMemory(char device, char *filename, char *address)
 loadFileToMemory: {
     .const device = 8
     // setnam(filename)
@@ -1255,14 +1257,14 @@ loadFileToMemory: {
     sta.z setnam.filename
     lda #>main.filename
     sta.z setnam.filename+1
-    // [16] call setnam 
+    // [16] call setnam
     jsr setnam
     // loadFileToMemory::@1
     // setlfs(device)
     // [17] setlfs::device = loadFileToMemory::device#0 -- vbuz1=vbuc1 
     lda #device
     sta.z setlfs.device
-    // [18] call setlfs 
+    // [18] call setlfs
     jsr setlfs
     // loadFileToMemory::@2
     // load(address, 0)
@@ -1274,7 +1276,7 @@ loadFileToMemory: {
     // [20] load::verify = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z load.verify
-    // [21] call load 
+    // [21] call load
     jsr load
     // [22] load::return#0 = load::return#2
     // loadFileToMemory::@3
@@ -1287,7 +1289,7 @@ loadFileToMemory: {
   // error
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte zp(6) err)
+// void error(__zp(6) volatile char err)
 error: {
     .label err = 6
     // asm
@@ -1302,7 +1304,7 @@ error: {
   // setnam
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
-// setnam(byte* zp(7) filename)
+// void setnam(__zp(7) char * volatile filename)
 setnam: {
     .label filename = 7
     .label filename_len = $d
@@ -1313,7 +1315,7 @@ setnam: {
     sta.z strlen.str
     lda.z filename+1
     sta.z strlen.str+1
-    // [28] call strlen 
+    // [28] call strlen
     // [41] phi from setnam to strlen [phi:setnam->strlen]
     jsr strlen
     // strlen(filename)
@@ -1321,7 +1323,7 @@ setnam: {
     // setnam::@1
     // [30] setnam::$0 = strlen::return#2
     // char filename_len = (char)strlen(filename)
-    // [31] setnam::filename_len = (byte)setnam::$0 -- vbuz1=_byte_vwuz2 
+    // [31] setnam::filename_len = (char)setnam::$0 -- vbuz1=_byte_vwuz2 
     lda.z __0
     sta.z filename_len
     // asm
@@ -1336,7 +1338,7 @@ setnam: {
 }
   // setlfs
 // SETLFS. Set file parameters.
-// setlfs(byte zp(9) device)
+// void setlfs(__zp(9) volatile char device)
 setlfs: {
     .label device = 9
     // asm
@@ -1355,7 +1357,7 @@ setlfs: {
 // - verify: 0 = Load, 1-255 = Verify
 //
 // Returns a status, 0xff: Success other: Kernal Error Code
-// load(byte* zp($a) address, byte zp($c) verify)
+// __register(A) char load(__zp($a) char * volatile address, __zp($c) volatile char verify)
 load: {
     .label address = $a
     .label verify = $c
@@ -1384,7 +1386,7 @@ load: {
 }
   // strlen
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(2) str)
+// __zp(4) unsigned int strlen(__zp(2) char *str)
 strlen: {
     .label len = 4
     .label str = 2

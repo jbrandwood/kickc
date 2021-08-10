@@ -105,7 +105,7 @@ main: {
     jmp __b1
 }
 // Fill a screen (1000 chars) with a specific char
-// fillscreen(byte* zp(5) screen, byte register(X) fill)
+// void fillscreen(__zp(5) char *screen, __register(X) char fill)
 fillscreen: {
     .label screen = 5
     .label i = 7
@@ -137,6 +137,7 @@ fillscreen: {
     rts
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
+// void makecharset(char *charset)
 makecharset: {
     .label __13 = $d
     .label __15 = $b
@@ -301,6 +302,7 @@ makecharset: {
 }
 .segment Code
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
+// void fire(char *screenbase)
 fire: {
     .label screen = $b
     .label screen_1 = 7

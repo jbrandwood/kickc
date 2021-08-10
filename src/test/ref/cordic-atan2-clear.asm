@@ -60,7 +60,7 @@ main: {
     jmp __b2
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp(7) charset)
+// void init_font_hex(__zp(7) char *charset)
 init_font_hex: {
     .label __0 = $19
     .label idx = $a
@@ -167,6 +167,7 @@ init_font_hex: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
+// void init_angle_screen(char *screen)
 init_angle_screen: {
     .label __9 = $f
     .label xw = $15
@@ -284,7 +285,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($15) x, signed word zp($17) y)
+// __zp($f) unsigned int atan2_16(__zp($15) int x, __zp($17) int y)
 atan2_16: {
     .label __2 = $b
     .label __7 = $d

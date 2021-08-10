@@ -59,7 +59,7 @@ main: {
 }
 // Decrunch crunched data using ByteBoozer
 // - crunched: Pointer to the start of the crunched data
-// byteboozer_decrunch(byte* zp(2) crunched)
+// void byteboozer_decrunch(__zp(2) char * volatile crunched)
 byteboozer_decrunch: {
     .label crunched = 2
     // asm

@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   print::str#0 = main::str
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -12,10 +12,10 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void print(byte* print::str)
+void print(char *str)
 print: scope:[print]  from main
   print::str#1 = phi( main/print::str#0 )
-  *((word*)$80) = (word)print::str#1
+  *((unsigned int *)$80) = (unsigned int)print::str#1
   to:print::@return
 print::@return: scope:[print]  from print
   return 
@@ -23,7 +23,7 @@ print::@return: scope:[print]  from print
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -34,19 +34,19 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* main::str[4]  = "qwe"
-void print(byte* print::str)
-byte* print::str
-byte* print::str#0
-byte* print::str#1
+__constant char main::str[4] = "qwe"
+void print(char *str)
+char *print::str
+char *print::str#0
+char *print::str#1
 
-Simplifying constant pointer cast (word*) 128
+Simplifying constant pointer cast (unsigned int *) 128
 Successful SSA optimization PassNCastSimplification
 Identical Phi Values print::str#1 print::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant print::str#0 = main::str
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)print::str#0 in [4] *((word*) 128) = (word)print::str#0
+Constant value identified (unsigned int)print::str#0 in [4] *((unsigned int *) 128) = (unsigned int)print::str#0
 Successful SSA optimization Pass2ConstantValues
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -70,15 +70,15 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void print(byte* print::str)
+void print(char *str)
 print: scope:[print]  from main
-  [3] *((word*) 128) = (word)main::str
+  [3] *((unsigned int *) 128) = (unsigned int)main::str
   to:print::@return
 print::@return: scope:[print]  from print
   [4] return 
@@ -87,13 +87,13 @@ print::@return: scope:[print]  from print
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void print(byte* print::str)
-byte* print::str
+void print(char *str)
+char *print::str
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] *((word*) 128) = (word)main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((unsigned int *) 128) = (unsigned int)main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -120,7 +120,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call print 
+    // [1] call print
     jsr print
     jmp __breturn
     // main::@return
@@ -133,8 +133,9 @@ main: {
 }
 .segment Code
   // print
+// void print(char *str)
 print: {
-    // [3] *((word*) 128) = (word)main::str -- _deref_pwuc1=vwuc2 
+    // [3] *((unsigned int *) 128) = (unsigned int)main::str -- _deref_pwuc1=vwuc2 
     lda #<main.str
     sta $80
     lda #>main.str
@@ -157,9 +158,9 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* main::str[4]  = "qwe"
-void print(byte* print::str)
-byte* print::str
+__constant char main::str[4] = "qwe"
+void print(char *str)
+char *print::str
 
 
 
@@ -182,7 +183,7 @@ Score: 30
   // main
 main: {
     // print("qwe")
-    // [1] call print 
+    // [1] call print
     jsr print
     // main::@return
     // }
@@ -194,9 +195,10 @@ main: {
 }
 .segment Code
   // print
+// void print(char *str)
 print: {
     // *(word*)0x80 = (word)str
-    // [3] *((word*) 128) = (word)main::str -- _deref_pwuc1=vwuc2 
+    // [3] *((unsigned int *) 128) = (unsigned int)main::str -- _deref_pwuc1=vwuc2 
     lda #<main.str
     sta $80
     lda #>main.str

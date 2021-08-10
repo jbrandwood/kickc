@@ -44,7 +44,7 @@ main: {
     // }
     rts
 }
-// setscreen(byte* zp(2) val)
+// void setscreen(char **screen, __zp(2) char *val)
 setscreen: {
     .label val = 2
     // *screen = val

@@ -48,24 +48,8 @@ public class SymbolTypeProcedure implements SymbolType {
    }
 
    @Override
-   public String getTypeBaseName() {
-      final StringBuilder typeBaseName = new StringBuilder();
-      typeBaseName.append(returnType.getTypeBaseName());
-      typeBaseName.append("(");
-      boolean first = true;
-      for(SymbolType paramType : paramTypes) {
-         if(!first)
-            typeBaseName.append(",");
-         first = false;
-         typeBaseName.append(paramType.getTypeBaseName());
-      }
-      typeBaseName.append(")");
-      return typeBaseName.toString();
-   }
-
-   @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -92,9 +76,14 @@ public class SymbolTypeProcedure implements SymbolType {
          cdecl.append(")");
       cdecl.append("(");
       StringJoiner joiner = new StringJoiner(", ");
-      paramTypes.stream().forEach(symbolType -> joiner.add(symbolType.toCDecl("")));
+      paramTypes.stream().forEach(symbolType -> joiner.add(symbolType.toCDecl()));
       cdecl.append(joiner);
       cdecl.append(")");
       return getReturnType().toCDecl(cdecl.toString());
+   }
+
+   @Override
+   public String getConstantFriendlyName() {
+      return "PROCEDURE";
    }
 }

@@ -47,7 +47,7 @@ fn1: {
     sta STACK_BASE+OFFSET_STACK_RETURN_0,x
     rts
 }
-// set_border(byte()* zp(2) fn)
+// void set_border(__zp(2) char (*fn)())
 set_border: {
     .label fn = 2
     // fn()

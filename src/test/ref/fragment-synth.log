@@ -6,13 +6,13 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::z#0 = (byte*)$450
+  main::z#0 = (char *)$450
   main::z#0[2] = $f0
   main::z#0[3] = $f
   main::x#0 = $aa
   fct::x#0 = main::x#0
   fct::z#0 = main::z#0
-  call fct 
+  call fct
   fct::return#0 = fct::return#3
   to:main::@1
 main::@1: scope:[main]  from main
@@ -24,7 +24,7 @@ main::@1: scope:[main]  from main
   main::x#1 = $55
   fct::x#1 = main::x#1
   fct::z#1 = main::z#1
-  call fct 
+  call fct
   fct::return#1 = fct::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -36,7 +36,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-byte fct(byte fct::x , byte* fct::z)
+char fct(char x , char *z)
 fct: scope:[fct]  from main main::@1
   fct::z#2 = phi( main/fct::z#0, main::@1/fct::z#1 )
   fct::x#2 = phi( main/fct::x#0, main::@1/fct::x#1 )
@@ -51,7 +51,7 @@ fct::@return: scope:[fct]  from fct
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -61,38 +61,38 @@ __start::@return: scope:[__start]  from __start::@1
 
 SYMBOL TABLE SSA
 void __start()
-byte fct(byte fct::x , byte* fct::z)
-byte fct::a !reg byte a
-byte fct::a#0 !reg byte a
-byte fct::return
-byte fct::return#0
-byte fct::return#1
-byte fct::return#2
-byte fct::return#3
-byte fct::return#4
-byte fct::return#5
-byte fct::return#6
-byte fct::x
-byte fct::x#0
-byte fct::x#1
-byte fct::x#2
-byte* fct::z
-byte* fct::z#0
-byte* fct::z#1
-byte* fct::z#2
+char fct(char x , char *z)
+char fct::a // !reg byte a
+char fct::a#0 // !reg byte a
+char fct::return
+char fct::return#0
+char fct::return#1
+char fct::return#2
+char fct::return#3
+char fct::return#4
+char fct::return#5
+char fct::return#6
+char fct::x
+char fct::x#0
+char fct::x#1
+char fct::x#2
+char *fct::z
+char *fct::z#0
+char *fct::z#1
+char *fct::z#2
 void main()
-byte main::a1
-byte main::a1#0
-byte main::a2
-byte main::a2#0
-constant byte* main::screen = (byte*)$400
-byte main::x
-byte main::x#0
-byte main::x#1
-byte* main::z
-byte* main::z#0
-byte* main::z#1
-byte* main::z#2
+char main::a1
+char main::a1#0
+char main::a2
+char main::a2#0
+__constant char *main::screen = (char *)$400
+char main::x
+char main::x#0
+char main::x#1
+char *main::z
+char *main::z#0
+char *main::z#1
+char *main::z#2
 
 Adding number conversion cast (unumber) $f0 in main::z#0[2] = $f0
 Adding number conversion cast (unumber) 2 in main::z#0[2] = ((unumber)) $f0
@@ -107,8 +107,8 @@ Inlining cast main::z#0[(unumber)2] = (unumber)$f0
 Inlining cast main::z#0[(unumber)3] = (unumber)$f
 Inlining cast main::x#1 = (unumber)$55
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1104
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1104
 Simplifying constant integer cast $f0
 Simplifying constant integer cast 2
 Simplifying constant integer cast $f
@@ -118,21 +118,21 @@ Simplifying constant integer cast $55
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $f0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $55
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) $f0
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $55
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias fct::return#0 = fct::return#4 
 Alias main::z#0 = main::z#2 
 Alias fct::return#1 = fct::return#5 
 Alias fct::return#2 = fct::a#0 fct::return#6 fct::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant main::z#0 = (byte*) 1104
+Constant main::z#0 = (char *) 1104
 Constant main::x#0 = $aa
 Constant main::x#1 = $55
 Successful SSA optimization Pass2ConstantIdentification
@@ -161,17 +161,17 @@ Inlining constant with var siblings fct::x#0
 Inlining constant with var siblings fct::z#0
 Inlining constant with var siblings fct::x#1
 Inlining constant with var siblings fct::z#1
-Constant inlined fct::z#0 = (byte*) 1104
-Constant inlined fct::z#1 = ++(byte*) 1104
-Constant inlined main::z#0 = (byte*) 1104
-Constant inlined main::z#1 = ++(byte*) 1104
+Constant inlined fct::z#0 = (char *) 1104
+Constant inlined fct::z#1 = ++(char *) 1104
+Constant inlined main::z#0 = (char *) 1104
+Constant inlined main::z#1 = ++(char *) 1104
 Constant inlined main::x#0 = $aa
 Constant inlined main::x#1 = $55
 Constant inlined fct::x#0 = $aa
 Constant inlined fct::x#1 = $55
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *((byte*) 1104+2)
-Consolidated array index constant in *((byte*) 1104+3)
+Consolidated array index constant in *((char *) 1104+2)
+Consolidated array index constant in *((char *) 1104+3)
 Consolidated array index constant in *(main::screen+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
@@ -184,15 +184,15 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*) 1104+2) = $f0
-  [1] *((byte*) 1104+3) = $f
-  [2] call fct 
+  [0] *((char *) 1104+2) = $f0
+  [1] *((char *) 1104+3) = $f
+  [2] call fct
   [3] fct::return#0 = fct::return#2
   to:main::@1
 main::@1: scope:[main]  from main
   [4] main::a1#0 = fct::return#0
   [5] *main::screen = main::a1#0
-  [6] call fct 
+  [6] call fct
   [7] fct::return#1 = fct::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -203,9 +203,9 @@ main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 
-byte fct(byte fct::x , byte* fct::z)
+char fct(char x , char *z)
 fct: scope:[fct]  from main main::@1
-  [11] fct::z#2 = phi( main/(byte*) 1104, main::@1/++(byte*) 1104 )
+  [11] fct::z#2 = phi( main/(char *) 1104, main::@1/++(char *) 1104 )
   [11] fct::x#2 = phi( main/$aa, main::@1/$55 )
   [12] fct::return#2 = fct::x#2 & fct::z#2[2]
   to:fct::@return
@@ -215,23 +215,23 @@ fct::@return: scope:[fct]  from fct
 
 
 VARIABLE REGISTER WEIGHTS
-byte fct(byte fct::x , byte* fct::z)
-byte fct::a !reg byte a
-byte fct::return
-byte fct::return#0 4.0
-byte fct::return#1 4.0
-byte fct::return#2 3.75
-byte fct::x
-byte fct::x#2 11.0
-byte* fct::z
-byte* fct::z#2 11.0
+char fct(char x , char *z)
+char fct::a // !reg byte a
+char fct::return
+char fct::return#0 // 4.0
+char fct::return#1 // 4.0
+char fct::return#2 // 3.75
+char fct::x
+char fct::x#2 // 11.0
+char *fct::z
+char *fct::z#2 // 11.0
 void main()
-byte main::a1
-byte main::a1#0 4.0
-byte main::a2
-byte main::a2#0 4.0
-byte main::x
-byte* main::z
+char main::a1
+char main::a1#0 // 4.0
+char main::a2
+char main::a2#0 // 4.0
+char main::x
+char *main::z
 
 Initial phi equivalence classes
 [ fct::x#2 ]
@@ -257,8 +257,8 @@ Allocated zp[1]:7 [ fct::return#1 ]
 Allocated zp[1]:8 [ main::a2#0 ]
 Allocated zp[1]:9 [ fct::return#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*) 1104+2) = $f0 [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
-Statement [1] *((byte*) 1104+3) = $f [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
+Statement [0] *((char *) 1104+2) = $f0 [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
+Statement [1] *((char *) 1104+3) = $f [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
 Statement [12] fct::return#2 = fct::x#2 & fct::z#2[2] [ fct::return#2 ] ( fct:2 [ fct::return#2 ] { { fct::return#0 = fct::return#2 } }  fct:6 [ fct::return#2 ] { { fct::return#1 = fct::return#2 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ fct::x#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ fct::z#2 ] : zp[2]:3 , 
@@ -297,16 +297,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((byte*) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
     lda #$f0
     sta $450+2
-    // [1] *((byte*) 1104+3) = $f -- _deref_pbuc1=vbuc2 
+    // [1] *((char *) 1104+3) = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta $450+3
-    // [2] call fct 
+    // [2] call fct
     // [11] phi from main to fct [phi:main->fct]
   fct_from_main:
-    // [11] phi fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = (char *) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
     lda #<$450
     sta.z fct.z
     lda #>$450
@@ -321,10 +321,10 @@ main: {
     // [4] main::a1#0 = fct::return#0
     // [5] *main::screen = main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
-    // [6] call fct 
+    // [6] call fct
     // [11] phi from main::@1 to fct [phi:main::@1->fct]
   fct_from___b1:
-    // [11] phi fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = ++(char *) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
     lda #>$450+1
@@ -346,7 +346,7 @@ main: {
     rts
 }
   // fct
-// fct(byte register(X) x, byte* zp(2) z)
+// __register(A) char fct(__register(X) char x, __zp(2) char *z)
 fct: {
     .label z = 2
     // [12] fct::return#2 = fct::x#2 & fct::z#2[2] -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
@@ -376,24 +376,24 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-byte fct(byte fct::x , byte* fct::z)
-byte fct::a !reg byte a
-byte fct::return
-byte fct::return#0 reg byte a 4.0
-byte fct::return#1 reg byte a 4.0
-byte fct::return#2 reg byte a 3.75
-byte fct::x
-byte fct::x#2 reg byte x 11.0
-byte* fct::z
-byte* fct::z#2 z zp[2]:2 11.0
+char fct(char x , char *z)
+char fct::a // !reg byte a
+char fct::return
+char fct::return#0 // reg byte a 4.0
+char fct::return#1 // reg byte a 4.0
+char fct::return#2 // reg byte a 3.75
+char fct::x
+char fct::x#2 // reg byte x 11.0
+char *fct::z
+char *fct::z#2 // z zp[2]:2 11.0
 void main()
-byte main::a1
-byte main::a1#0 reg byte a 4.0
-byte main::a2
-byte main::a2#0 reg byte a 4.0
-constant byte* main::screen = (byte*) 1024
-byte main::x
-byte* main::z
+char main::a1
+char main::a1#0 // reg byte a 4.0
+char main::a2
+char main::a2#0 // reg byte a 4.0
+__constant char *main::screen = (char *) 1024
+char main::x
+char *main::z
 
 reg byte x [ fct::x#2 ]
 zp[2]:2 [ fct::z#2 ]
@@ -425,17 +425,17 @@ Score: 77
 main: {
     .label screen = $400
     // z[2] = $f0
-    // [0] *((byte*) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
     lda #$f0
     sta $450+2
     // z[3] = $0f
-    // [1] *((byte*) 1104+3) = $f -- _deref_pbuc1=vbuc2 
+    // [1] *((char *) 1104+3) = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta $450+3
     // byte a1 = fct(x, z)
-    // [2] call fct 
+    // [2] call fct
     // [11] phi from main to fct [phi:main->fct]
-    // [11] phi fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = (char *) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
     lda #<$450
     sta.z fct.z
     lda #>$450
@@ -451,9 +451,9 @@ main: {
     // [5] *main::screen = main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // byte a2 = fct(x, z)
-    // [6] call fct 
+    // [6] call fct
     // [11] phi from main::@1 to fct [phi:main::@1->fct]
-    // [11] phi fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = ++(char *) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
     lda #>$450+1
@@ -474,7 +474,7 @@ main: {
     rts
 }
   // fct
-// fct(byte register(X) x, byte* zp(2) z)
+// __register(A) char fct(__register(X) char x, __zp(2) char *z)
 fct: {
     .label z = 2
     // byte register(A) a = x & z[2]

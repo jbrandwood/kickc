@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.types;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /** Integer type that has not yet been fixed. This is used for constant expressions. The type is fixed when the constant meets a fixed type. */
@@ -27,7 +28,7 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
    }
 
    @Override
-   public String getTypeBaseName() {
+   public String getTypeName() {
       return typeName;
    }
 
@@ -38,7 +39,7 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -61,9 +62,16 @@ public class SymbolTypeIntegerAuto implements SymbolTypeInteger {
          cdecl.append("volatile ");
       if(isNomodify())
          cdecl.append("const ");
-      cdecl.append(this.getTypeBaseName());
-      cdecl.append(" ");
+      cdecl.append(this.typeName);
+      if(parentCDecl.length()>0)
+         cdecl.append(" ");
       cdecl.append(parentCDecl);
       return cdecl.toString();
    }
+
+   @Override
+   public String getConstantFriendlyName() {
+      return typeName.toUpperCase(Locale.ENGLISH).replace(" ", "_");
+   }
+
 }

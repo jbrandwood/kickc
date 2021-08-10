@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen#0 = (byte*)$400
+  main::screen#0 = (char *)$400
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -39,7 +39,7 @@ main::@return: scope:[main]  from main::@1 main::@4
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -50,33 +50,33 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-bool~ main::$0
-bool~ main::$1
-bool~ main::$2
-bool~ main::$3
-bool~ main::$4
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
-byte main::i#5
-byte* main::screen
-byte* main::screen#0
-byte* main::screen#1
-byte* main::screen#2
-byte* main::screen#3
-byte* main::screen#4
-byte* main::screen#5
-constant byte* main::str[]  = "hello brave new world"
+bool main::$0
+bool main::$1
+bool main::$2
+bool main::$3
+bool main::$4
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+char main::i#5
+char *main::screen
+char *main::screen#0
+char *main::screen#1
+char *main::screen#2
+char *main::screen#3
+char *main::screen#4
+char *main::screen#5
+__constant char main::str[] = "hello brave new world"
 
 Adding number conversion cast (unumber) 0 in main::$0 = main::str[main::i#2] == 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [4] main::$1 = main::str[main::i#2] != 0 from [3] main::$0 = main::str[main::i#2] == 0
 Inversing boolean not [8] main::$3 = main::str[main::i#3] != ' ' from [7] main::$2 = main::str[main::i#3] == ' '
@@ -93,7 +93,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [6] if(main::str[main::i#2]==' ') goto main::@4
 Negating conditional jump and destination [12] if(main::i#1==rangelast(0,$ff)) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant main::screen#0 = (byte*) 1024
+Constant main::screen#0 = (char *) 1024
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [10] main::i#1 = ++ main::i#2 to ++
@@ -107,11 +107,11 @@ Adding number conversion cast (unumber) 0 in [7] if(main::i#1==0) goto main::@re
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::screen#0
 Inlining constant with var siblings main::i#0
-Constant inlined main::screen#0 = (byte*) 1024
+Constant inlined main::screen#0 = (char *) 1024
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
@@ -136,7 +136,7 @@ main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  [1] main::screen#2 = phi( main/(byte*) 1024, main::@4/main::screen#5 )
+  [1] main::screen#2 = phi( main/(char *) 1024, main::@4/main::screen#5 )
   [1] main::i#2 = phi( main/0, main::@4/main::i#1 )
   [2] if(main::str[main::i#2]!=0) goto main::@2
   to:main::@return
@@ -159,13 +159,13 @@ main::@4: scope:[main]  from main::@2 main::@3
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 9.166666666666666
-byte* main::screen
-byte* main::screen#1 22.0
-byte* main::screen#2 11.0
-byte* main::screen#5 11.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 9.166666666666666
+char *main::screen
+char *main::screen#1 // 22.0
+char *main::screen#2 // 11.0
+char *main::screen#5 // 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -215,7 +215,7 @@ main: {
     .label screen = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -292,14 +292,14 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 9.166666666666666
-byte* main::screen
-byte* main::screen#1 screen zp[2]:2 22.0
-byte* main::screen#2 screen zp[2]:2 11.0
-byte* main::screen#5 screen zp[2]:2 11.0
-constant byte* main::str[]  = "hello brave new world"
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 9.166666666666666
+char *main::screen
+char *main::screen#1 // screen zp[2]:2 22.0
+char *main::screen#2 // screen zp[2]:2 11.0
+char *main::screen#5 // screen zp[2]:2 11.0
+__constant char main::str[] = "hello brave new world"
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::screen#2 main::screen#5 main::screen#1 ]
@@ -326,7 +326,7 @@ Score: 651
 main: {
     .label screen = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

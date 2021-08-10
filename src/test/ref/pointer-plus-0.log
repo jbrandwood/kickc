@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   first::msg#0 = msg1
-  call first 
+  call first
   first::return#0 = first::return#3
   to:main::@1
 main::@1: scope:[main]  from main
@@ -13,7 +13,7 @@ main::@1: scope:[main]  from main
   main::$1 = main::$0 + 0
   main::SCREEN[0] = *main::$1
   first::msg#1 = msg2
-  call first 
+  call first
   first::return#1 = first::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -26,11 +26,11 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-byte* first(byte* first::msg)
+char * first(char *msg)
 first: scope:[first]  from main main::@1
   first::msg#2 = phi( main/first::msg#0, main::@1/first::msg#1 )
   first::$0 = first::msg#2 + 0
-  first::return#2 = (byte*)first::$0
+  first::return#2 = (char *)first::$0
   to:first::@return
 first::@return: scope:[first]  from first
   first::return#6 = phi( first/first::return#2 )
@@ -40,7 +40,7 @@ first::@return: scope:[first]  from first
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -50,28 +50,28 @@ __start::@return: scope:[__start]  from __start::@1
 
 SYMBOL TABLE SSA
 void __start()
-byte* first(byte* first::msg)
-byte*~ first::$0
-byte* first::msg
-byte* first::msg#0
-byte* first::msg#1
-byte* first::msg#2
-byte* first::return
-byte* first::return#0
-byte* first::return#1
-byte* first::return#2
-byte* first::return#3
-byte* first::return#4
-byte* first::return#5
-byte* first::return#6
+char * first(char *msg)
+char *first::$0
+char *first::msg
+char *first::msg#0
+char *first::msg#1
+char *first::msg#2
+char *first::return
+char *first::return#0
+char *first::return#1
+char *first::return#2
+char *first::return#3
+char *first::return#4
+char *first::return#5
+char *first::return#6
 void main()
-byte*~ main::$0
-byte*~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-constant byte* const main::SCREEN = (byte*)$400
-constant byte* msg1[]  = "hello world!"
-constant byte* msg2[]  = "goodbye sky?"
+char *main::$0
+char *main::$1
+char *main::$2
+char *main::$3
+__constant char * const main::SCREEN = (char *)$400
+__constant char msg1[] = "hello world!"
+__constant char msg2[] = "goodbye sky?"
 
 Adding number conversion cast (unumber) 0 in main::$1 = main::$0 + 0
 Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *main::$1
@@ -79,7 +79,7 @@ Adding number conversion cast (unumber) 0 in main::$3 = main::$2 + 0
 Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *main::$3
 Adding number conversion cast (unumber) 0 in first::$0 = first::msg#2 + 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -87,11 +87,11 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast first::$0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias first::return#0 = first::return#4 
 Alias first::return#1 = first::return#5 
@@ -138,13 +138,13 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call first 
+  [1] call first
   [2] first::return#0 = first::return#2
   to:main::@1
 main::@1: scope:[main]  from main
   [3] main::$0 = first::return#0
   [4] *main::SCREEN = *main::$0
-  [5] call first 
+  [5] call first
   [6] first::return#1 = first::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -155,7 +155,7 @@ main::@return: scope:[main]  from main::@2
   [9] return 
   to:@return
 
-byte* first(byte* first::msg)
+char * first(char *msg)
 first: scope:[first]  from main main::@1
   [10] first::return#2 = phi( main/msg1, main::@1/msg2 )
   to:first::@return
@@ -165,15 +165,15 @@ first::@return: scope:[first]  from first
 
 
 VARIABLE REGISTER WEIGHTS
-byte* first(byte* first::msg)
-byte* first::msg
-byte* first::return
-byte* first::return#0 4.0
-byte* first::return#1 4.0
-byte* first::return#2 1.0
+char * first(char *msg)
+char *first::msg
+char *first::return
+char *first::return#0 // 4.0
+char *first::return#1 // 4.0
+char *first::return#2 // 1.0
 void main()
-byte*~ main::$0 4.0
-byte*~ main::$2 4.0
+char *main::$0 // 4.0
+char *main::$2 // 4.0
 
 Initial phi equivalence classes
 [ first::return#2 ]
@@ -237,7 +237,7 @@ main: {
     .label SCREEN = $400
     .label __0 = 2
     .label __2 = 2
-    // [1] call first 
+    // [1] call first
     // [10] phi from main to first [phi:main->first]
   first_from_main:
     // [10] phi first::return#2 = msg1 [phi:main->first#0] -- pbuz1=pbuc1 
@@ -255,7 +255,7 @@ main: {
     ldy #0
     lda (__0),y
     sta SCREEN
-    // [5] call first 
+    // [5] call first
     // [10] phi from main::@1 to first [phi:main::@1->first]
   first_from___b1:
     // [10] phi first::return#2 = msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
@@ -280,6 +280,7 @@ main: {
     rts
 }
   // first
+// __zp(2) char * first(char *msg)
 first: {
     .label return = 2
     jmp __breturn
@@ -310,18 +311,18 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-byte* first(byte* first::msg)
-byte* first::msg
-byte* first::return
-byte* first::return#0 return zp[2]:2 4.0
-byte* first::return#1 return zp[2]:2 4.0
-byte* first::return#2 return zp[2]:2 1.0
+char * first(char *msg)
+char *first::msg
+char *first::return
+char *first::return#0 // return zp[2]:2 4.0
+char *first::return#1 // return zp[2]:2 4.0
+char *first::return#2 // return zp[2]:2 1.0
 void main()
-byte*~ main::$0 zp[2]:2 4.0
-byte*~ main::$2 zp[2]:2 4.0
-constant byte* const main::SCREEN = (byte*) 1024
-constant byte* msg1[]  = "hello world!"
-constant byte* msg2[]  = "goodbye sky?"
+char *main::$0 // zp[2]:2 4.0
+char *main::$2 // zp[2]:2 4.0
+__constant char * const main::SCREEN = (char *) 1024
+__constant char msg1[] = "hello world!"
+__constant char msg2[] = "goodbye sky?"
 
 zp[2]:2 [ first::return#2 first::return#0 first::return#1 main::$0 main::$2 ]
 
@@ -348,7 +349,7 @@ main: {
     .label __0 = 2
     .label __2 = 2
     // first(msg1)
-    // [1] call first 
+    // [1] call first
     // [10] phi from main to first [phi:main->first]
     // [10] phi first::return#2 = msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
@@ -366,7 +367,7 @@ main: {
     lda (__0),y
     sta SCREEN
     // first(msg2)
-    // [5] call first 
+    // [5] call first
     // [10] phi from main::@1 to first [phi:main::@1->first]
     // [10] phi first::return#2 = msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
@@ -389,6 +390,7 @@ main: {
     rts
 }
   // first
+// __zp(2) char * first(char *msg)
 first: {
     .label return = 2
     // first::@return

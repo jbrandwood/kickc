@@ -123,6 +123,7 @@ main: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = $c
     .label xVal = $d
@@ -152,7 +153,7 @@ memoryRemap: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $14
@@ -225,7 +226,7 @@ gotoxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(2) s)
+// void cputs(__zp(2) const char *s)
 cputs: {
     .label s = 2
     lda #<main.s
@@ -248,7 +249,7 @@ cputs: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -367,7 +368,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($18) destination, void* zp(4) source)
+// void * memcpy(__zp($18) void *destination, __zp(4) void *source, unsigned int num)
 memcpy: {
     .label src_end = $16
     .label dst = $18
@@ -403,7 +404,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(Z) c)
+// void * memset(__zp(4) void *str, __register(Z) char c, unsigned int num)
 memset: {
     .label end = $18
     .label dst = 4

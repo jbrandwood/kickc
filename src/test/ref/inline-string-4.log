@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   output::dw#0 = main::dw
-  call output 
+  call output
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -12,7 +12,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void output(dword output::dw)
+void output(unsigned long dw)
 output: scope:[output]  from main
   output::dw#1 = phi( main/output::dw#0 )
   *screen = output::dw#1
@@ -23,7 +23,7 @@ output::@return: scope:[output]  from output
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -34,15 +34,15 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant dword main::dw = (dword)main::msg
-constant const byte* main::msg[]  = "camelot"
-void output(dword output::dw)
-dword output::dw
-dword output::dw#0
-dword output::dw#1
-constant dword* const screen = (byte*)$400
+__constant unsigned long main::dw = (unsigned long)main::msg
+__constant const char main::msg[] = "camelot"
+void output(unsigned long dw)
+unsigned long output::dw
+unsigned long output::dw#0
+unsigned long output::dw#1
+__constant unsigned long * const screen = (char *)$400
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Identical Phi Values output::dw#1 output::dw#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -70,13 +70,13 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call output 
+  [1] call output
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void output(dword output::dw)
+void output(unsigned long dw)
 output: scope:[output]  from main
   [3] *screen = main::dw
   to:output::@return
@@ -87,8 +87,8 @@ output::@return: scope:[output]  from output
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void output(dword output::dw)
-dword output::dw
+void output(unsigned long dw)
+unsigned long output::dw
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -122,7 +122,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label dw = msg
-    // [1] call output 
+    // [1] call output
     jsr output
     jmp __breturn
     // main::@return
@@ -135,6 +135,7 @@ main: {
 }
 .segment Code
   // output
+// void output(unsigned long dw)
 output: {
     // [3] *screen = main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
@@ -163,11 +164,11 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant dword main::dw = (dword)main::msg
-constant const byte* main::msg[]  = "camelot"
-void output(dword output::dw)
-dword output::dw
-constant dword* const screen = (byte*) 1024
+__constant unsigned long main::dw = (unsigned long)main::msg
+__constant const char main::msg[] = "camelot"
+void output(unsigned long dw)
+unsigned long output::dw
+__constant unsigned long * const screen = (char *) 1024
 
 
 
@@ -192,7 +193,7 @@ Score: 42
 main: {
     .label dw = msg
     // output(dw)
-    // [1] call output 
+    // [1] call output
     jsr output
     // main::@return
     // }
@@ -204,6 +205,7 @@ main: {
 }
 .segment Code
   // output
+// void output(unsigned long dw)
 output: {
     // *screen = dw
     // [3] *screen = main::dw -- _deref_pduc1=vduc2 

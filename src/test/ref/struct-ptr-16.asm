@@ -46,7 +46,7 @@ main: {
     // }
     rts
 }
-// get(byte register(A) i)
+// struct Point get(__register(A) char i)
 get: {
     // if(i==0)
     cmp #0

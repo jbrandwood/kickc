@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label SCREEN = $400
@@ -61,9 +61,9 @@ main: {
     cpx #0
     bne __b1
     // SCREEN[0] = words[(word)255]
-    lda words+$ff*SIZEOF_WORD
+    lda words+$ff*SIZEOF_UNSIGNED_INT
     sta SCREEN
-    lda words+$ff*SIZEOF_WORD+1
+    lda words+$ff*SIZEOF_UNSIGNED_INT+1
     sta SCREEN+1
     // }
     rts

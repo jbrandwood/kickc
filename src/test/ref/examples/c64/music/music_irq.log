@@ -12,10 +12,10 @@ main: scope:[main]  from __start::@1
   callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main
-  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
   *KERNEL_IRQ = &irq_play
   asm { cli  }
   to:main::@return
@@ -25,12 +25,12 @@ main::@return: scope:[main]  from main::@1
 
 __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   callexecute *musicPlay 
   to:irq_play::@1
 irq_play::@1: scope:[irq_play]  from irq_play
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
 irq_play::@return: scope:[irq_play]  from irq_play::@1
   return 
@@ -51,42 +51,42 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*)$dc00
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant const byte IRQ_RASTER = 1
-constant void()** const KERNEL_IRQ = (void()**)$314
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char IRQ_RASTER = 1
+__constant void (** const KERNEL_IRQ)() = (void (**)())$314
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*)$d000
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *)$d000
 void __start()
 __interrupt(rom_sys_c64) void irq_play()
 void main()
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
 
 Adding number conversion cast (unumber) 3 in 
-Adding number conversion cast (unumber) $7f in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-Adding number conversion cast (unumber) $fd in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
+Adding number conversion cast (unumber) $7f in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+Adding number conversion cast (unumber) $fd in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = (unumber)$fd
+Inlining cast *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = (unumber)$fd
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
-Simplifying constant pointer cast (void()**) 788
+Simplifying constant pointer cast (struct MOS6569_VICII *) 53248
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56320
+Simplifying constant pointer cast (void (**)()) 788
 Simplifying constant integer cast 3
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) $fd
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) $7f
+Finalized unsigned number type (char) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -95,7 +95,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Finalized unsigned number type (word) $1000
+Finalized unsigned number type (unsigned int) $1000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [irq_play] to null:1 
@@ -108,12 +108,12 @@ FINAL CONTROL FLOW GRAPH
 
 __interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
-  [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [1] callexecute *musicPlay 
   to:irq_play::@1
 irq_play::@1: scope:[irq_play]  from irq_play
-  [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
-  [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [2] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
+  [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq_play::@return
 irq_play::@return: scope:[irq_play]  from irq_play::@1
   [4] return 
@@ -125,10 +125,10 @@ main: scope:[main]  from
   [6] callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main
-  [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
-  [10] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
+  [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
   [11] *KERNEL_IRQ = &irq_play
   asm { cli  }
   to:main::@return
@@ -145,12 +145,12 @@ Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *KERNEL_IRQ = &irq_play [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -218,7 +218,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Raster IRQ Routine playing music
 irq_play: {
     // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
-    // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [1] callexecute *musicPlay  -- call__deref_pprc1 
     // Play SID
@@ -226,11 +226,11 @@ irq_play: {
     jmp __b1
     // irq_play::@1
   __b1:
-    // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [2] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq_play::@return
@@ -249,19 +249,19 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [10] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
@@ -301,24 +301,24 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant const byte IRQ_RASTER = 1
-constant void()** const KERNEL_IRQ = (void()**) 788
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char IRQ_RASTER = 1
+__constant void (** const KERNEL_IRQ)() = (void (**)()) 788
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*) 53248
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *) 53248
 __interrupt(rom_sys_c64) void irq_play()
 void main()
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
 
 
 
@@ -375,7 +375,7 @@ Score: 110
 irq_play: {
     // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // (VICII->BORDER_COLOR)++;
-    // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // (*musicPlay)()
     // [1] callexecute *musicPlay  -- call__deref_pprc1 
@@ -383,12 +383,12 @@ irq_play: {
     jsr musicPlay
     // irq_play::@1
     // VICII->IRQ_STATUS = IRQ_RASTER
-    // [2] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [2] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
     // (VICII->BORDER_COLOR)--;
-    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_play::@return
     // }
@@ -407,22 +407,22 @@ main: {
     jsr musicInit
     // main::@1
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [7] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->CONTROL1 &=$7f
-    // [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->RASTER = $fd
-    // [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->IRQ_ENABLE = IRQ_RASTER
-    // [10] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE

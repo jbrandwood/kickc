@@ -16,6 +16,7 @@ main: {
     // }
     rts
 }
+// void printneg(signed char c)
 printneg: {
     // SCREEN[0] = c
     lda #-(-4)

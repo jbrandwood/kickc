@@ -41,7 +41,7 @@ main: {
     inx
     jmp __b1
 }
-// chrout(byte zp(2) petscii)
+// void chrout(__zp(2) volatile char petscii)
 chrout: {
     .label petscii = 2
     // kickasm

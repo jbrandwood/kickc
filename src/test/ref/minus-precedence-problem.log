@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *((byte*)$400) = matrixSizeMask
+  *((char *)$400) = matrixSizeMask
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -11,7 +11,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -22,8 +22,8 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant const byte matrixSize = 8
-constant const byte matrixSizeMask = (byte)$ff-matrixSize-1
+__constant const char matrixSize = 8
+__constant const char matrixSizeMask = (char)$ff-matrixSize-1
 
 Adding number conversion cast (unumber) 1 in 
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -31,10 +31,10 @@ Adding number conversion cast (unumber) $ff in
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -52,7 +52,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*) 1024) = matrixSizeMask
+  [0] *((char *) 1024) = matrixSizeMask
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -65,7 +65,7 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*) 1024) = matrixSizeMask [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *) 1024) = matrixSizeMask [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -91,7 +91,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *((byte*) 1024) = matrixSizeMask -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 1024) = matrixSizeMask -- _deref_pbuc1=vbuc2 
     lda #matrixSizeMask
     sta $400
     jmp __breturn
@@ -110,8 +110,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant const byte matrixSize = 8
-constant const byte matrixSizeMask = $ff-matrixSize-1
+__constant const char matrixSize = 8
+__constant const char matrixSizeMask = $ff-matrixSize-1
 
 
 
@@ -135,7 +135,7 @@ Score: 12
   // main
 main: {
     // *((unsigned char *)0x400) = matrixSizeMask
-    // [0] *((byte*) 1024) = matrixSizeMask -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 1024) = matrixSizeMask -- _deref_pbuc1=vbuc2 
     lda #matrixSizeMask
     sta $400
     // main::@return

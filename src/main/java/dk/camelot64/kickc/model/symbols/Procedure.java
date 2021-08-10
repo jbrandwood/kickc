@@ -224,6 +224,7 @@ public class Procedure extends Scope {
 
    /**
     * Get references to all constructors needed for this procedure
+    *
     * @return The references
     */
    public List<ProcedureRef> getConstructorRefs() {
@@ -261,23 +262,23 @@ public class Procedure extends Scope {
       if(interruptType != null) {
          res.append("__interrupt(").append(interruptType).append(") ");
       }
-      res.append(getReturnType().getTypeName()).append(" ").append(getFullName()).append("(");
-      boolean first = true;
-      if(parameterNames != null) {
-         for(Variable parameter : getParameters()) {
-            if(!first) res.append(" , ");
-            first = false;
-            if(onlyTypes) {
-               res.append(parameter.getType().getTypeName());
-            }  else {
-               res.append(parameter.getType().getTypeName()+" "+parameter.toString(program));
+      if(onlyTypes) {
+         res.append(getType().toCDecl());
+      } else {
+         res.append(getReturnType().toCDecl()).append(" ").append(getFullName()).append("(");
+         boolean first = true;
+         if(parameterNames != null) {
+            for(Variable parameter : getParameters()) {
+               if(!first) res.append(" , ");
+               first = false;
+               res.append(parameter.toCDecl());
             }
          }
+         if(isVariableLengthParameterList()) {
+            res.append(", ...");
+         }
+         res.append(")");
       }
-      if(isVariableLengthParameterList()) {
-         res.append(", ...");
-      }
-      res.append(")");
       return res.toString();
    }
 

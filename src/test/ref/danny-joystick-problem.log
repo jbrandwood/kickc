@@ -4,9 +4,9 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
+  *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
   asm { lda#0  }
-  main::port4Value#0 = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
+  main::port4Value#0 = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   *SCREEN = main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -24,21 +24,21 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant struct MOS6526_CIA* const CIA2 = (struct MOS6526_CIA*)$dd00
-constant byte OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-constant byte* const SCREEN = (byte*)$400
+__constant struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *)$dd00
+__constant char OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
-byte main::port4Value
-byte main::port4Value#0
+char main::port4Value
+char main::port4Value#0
 
-Adding number conversion cast (unumber) $7f in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
+Adding number conversion cast (unumber) $7f in *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56576
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56576
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $7f
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (char) $7f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -54,9 +54,9 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
+  [0] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f
   asm { lda#0  }
-  [2] main::port4Value#0 = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
+  [2] main::port4Value#0 = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   [3] *SCREEN = main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -66,8 +66,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::port4Value
-byte main::port4Value#0 4.0
+char main::port4Value
+char main::port4Value#0 // 4.0
 
 Initial phi equivalence classes
 Added variable main::port4Value#0 to live range equivalence class [ main::port4Value#0 ]
@@ -75,7 +75,7 @@ Complete equivalence classes
 [ main::port4Value#0 ]
 Allocated zp[1]:2 [ main::port4Value#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::port4Value#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
@@ -113,13 +113,13 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [0] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // asm { lda#0  }
     lda #0
-    // [2] main::port4Value#0 = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [2] main::port4Value#0 = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // [3] *SCREEN = main::port4Value#0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
@@ -138,12 +138,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct MOS6526_CIA* const CIA2 = (struct MOS6526_CIA*) 56576
-constant byte OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-constant byte* const SCREEN = (byte*) 1024
+__constant struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *) 56576
+__constant char OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+__constant char * const SCREEN = (char *) 1024
 void main()
-byte main::port4Value
-byte main::port4Value#0 reg byte a 4.0
+char main::port4Value
+char main::port4Value#0 // reg byte a 4.0
 
 reg byte a [ main::port4Value#0 ]
 
@@ -172,7 +172,7 @@ Score: 26
   // main
 main: {
     // (CIA2->PORT_B) &= 0x7f
-    // [0] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [0] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
@@ -180,7 +180,7 @@ main: {
     // asm { lda#0  }
     lda #0
     // char port4Value = CIA2->PORT_B
-    // [2] main::port4Value#0 = *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [2] main::port4Value#0 = *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // *SCREEN = port4Value
     // [3] *SCREEN = main::port4Value#0 -- _deref_pbuc1=vbuaa 

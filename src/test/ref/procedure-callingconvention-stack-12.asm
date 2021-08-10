@@ -19,7 +19,7 @@ __start: {
     jsr main
     rts
 }
-// print(byte* zp(2) str, byte zp(5) spacing)
+// void print(__zp(2) char *str, __zp(5) char spacing)
 print: {
     .const OFFSET_STACK_STR = 1
     .const OFFSET_STACK_SPACING = 0

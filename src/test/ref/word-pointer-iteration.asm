@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label SCREEN = $400
@@ -29,7 +29,7 @@ main: {
     iny
     lda (wp),y
     sta.z w+1
-    lda #SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT
     clc
     adc.z wp
     sta.z wp

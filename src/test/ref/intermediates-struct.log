@@ -1,7 +1,7 @@
-Inlined call call __init 
+Inlined call call __init
 Eliminating unused variable with no statement main::$0
 Eliminating unused variable with no statement main::$1
-Removing C-classic struct-unwound assignment sum::d = struct-unwound {*((byte*)&sum::d+OFFSET_STRUCT_DATA_C), *((byte*)&sum::d+OFFSET_STRUCT_DATA_D)}
+Removing C-classic struct-unwound assignment sum::d = struct-unwound {*((char *)&sum::d+OFFSET_STRUCT_DATA_C), *((char *)&sum::d+OFFSET_STRUCT_DATA_D)}
 Removing C-classic struct-unwound assignment sum::return = struct-unwound {*(&sum::return)}
 
 CONTROL FLOW GRAPH SSA
@@ -11,23 +11,23 @@ main: scope:[main]  from __start::@1
   idx#11 = phi( __start::@1/idx#12 )
   sum::a#0 = 1
   sum::b#0 = 2
-  call sum 
+  call sum
   sum::return = sum::return
   to:main::@1
 main::@1: scope:[main]  from main
   idx#6 = phi( main/idx#11 )
   main::x = sum::return
-  SCREEN[idx#6] = *((byte*)&main::x+OFFSET_STRUCT_DATA_C)
+  SCREEN[idx#6] = *((char *)&main::x+OFFSET_STRUCT_DATA_C)
   idx#0 = ++ idx#6
   sum::a#1 = 3
   sum::b#1 = 4
-  call sum 
+  call sum
   sum::return = sum::return
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#7 = phi( main::@1/idx#0 )
   main::y = sum::return
-  SCREEN[idx#7] = *((byte*)&main::y+OFFSET_STRUCT_DATA_D)
+  SCREEN[idx#7] = *((char *)&main::y+OFFSET_STRUCT_DATA_D)
   idx#1 = ++ idx#7
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -36,13 +36,13 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-struct Data sum(byte sum::a , byte sum::b)
+struct Data sum(char a , char b)
 sum: scope:[sum]  from main main::@1
   sum::b#2 = phi( main/sum::b#0, main::@1/sum::b#1 )
   sum::a#2 = phi( main/sum::a#0, main::@1/sum::a#1 )
   sum::$0 = sum::a#2 + sum::b#2
-  *((byte*)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
-  *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
+  *((char *)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
+  *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
   *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA)
   to:sum::@return
 sum::@return: scope:[sum]  from sum
@@ -57,7 +57,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#12 = phi( __start::__init1/idx#3 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#9 = phi( __start::@1/idx#2 )
@@ -70,40 +70,40 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_DATA_C = 0
-constant byte OFFSET_STRUCT_DATA_D = 1
-constant byte* const SCREEN = (byte*)$400
-constant byte SIZEOF_STRUCT_DATA = 2
+__constant char OFFSET_STRUCT_DATA_C = 0
+__constant char OFFSET_STRUCT_DATA_D = 1
+__constant char * const SCREEN = (char *)$400
+__constant char SIZEOF_STRUCT_DATA = 2
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-struct Data main::x loadstore
-struct Data main::y loadstore
-struct Data sum(byte sum::a , byte sum::b)
-byte~ sum::$0
-byte sum::a
-byte sum::a#0
-byte sum::a#1
-byte sum::a#2
-byte sum::b
-byte sum::b#0
-byte sum::b#1
-byte sum::b#2
-struct Data sum::d loadstore
-struct Data sum::return loadstore
+__loadstore struct Data main::x
+__loadstore struct Data main::y
+struct Data sum(char a , char b)
+char sum::$0
+char sum::a
+char sum::a#0
+char sum::a#1
+char sum::a#2
+char sum::b
+char sum::b#0
+char sum::b#1
+char sum::b#2
+__loadstore struct Data sum::d
+__loadstore struct Data sum::return
 
 Adding number conversion cast (unumber) 1 in sum::a#0 = 1
 Adding number conversion cast (unumber) 2 in sum::b#0 = 2
@@ -115,16 +115,16 @@ Inlining cast sum::b#0 = (unumber)2
 Inlining cast sum::a#1 = (unumber)3
 Inlining cast sum::b#1 = (unumber)4
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#11 = idx#6 
 Alias idx#0 = idx#7 
@@ -141,9 +141,9 @@ Constant sum::a#1 = 3
 Constant sum::b#1 = 4
 Constant idx#12 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&main::x in [6] SCREEN[idx#12] = *((byte*)&main::x+OFFSET_STRUCT_DATA_C)
-Simplifying expression containing zero SCREEN in [6] SCREEN[idx#12] = *((byte*)&main::x)
-Simplifying expression containing zero (byte*)&sum::d in [18] *((byte*)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
+Simplifying expression containing zero (char *)&main::x in [6] SCREEN[idx#12] = *((char *)&main::x+OFFSET_STRUCT_DATA_C)
+Simplifying expression containing zero SCREEN in [6] SCREEN[idx#12] = *((char *)&main::x)
+Simplifying expression containing zero (char *)&sum::d in [18] *((char *)&sum::d+OFFSET_STRUCT_DATA_C) = sum::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable idx#1 and assignment [9] idx#1 = ++ idx#0
 Eliminating unused constant OFFSET_STRUCT_DATA_C
@@ -193,28 +193,28 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call sum 
+  [1] call sum
   to:main::@1
 main::@1: scope:[main]  from main
   [2] *(&main::x) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA)
-  [3] *SCREEN = *((byte*)&main::x)
-  [4] call sum 
+  [3] *SCREEN = *((char *)&main::x)
+  [4] call sum
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [5] *(&main::y) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA)
-  [6] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D)
+  [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [7] return 
   to:@return
 
-struct Data sum(byte sum::a , byte sum::b)
+struct Data sum(char a , char b)
 sum: scope:[sum]  from main main::@1
   [8] sum::b#2 = phi( main/2, main::@1/4 )
   [8] sum::a#2 = phi( main/1, main::@1/3 )
   [9] sum::$0 = sum::a#2 + sum::b#2
-  [10] *((byte*)&sum::d) = sum::$0
-  [11] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
+  [10] *((char *)&sum::d) = sum::$0
+  [11] *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2
   [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA)
   to:sum::@return
 sum::@return: scope:[sum]  from sum
@@ -223,18 +223,18 @@ sum::@return: scope:[sum]  from sum
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
+char idx
 void main()
-struct Data main::x loadstore
-struct Data main::y loadstore
-struct Data sum(byte sum::a , byte sum::b)
-byte~ sum::$0 22.0
-byte sum::a
-byte sum::a#2 11.0
-byte sum::b
-byte sum::b#2 7.333333333333333
-struct Data sum::d loadstore
-struct Data sum::return loadstore
+__loadstore struct Data main::x
+__loadstore struct Data main::y
+struct Data sum(char a , char b)
+char sum::$0 // 22.0
+char sum::a
+char sum::a#2 // 11.0
+char sum::b
+char sum::b#2 // 7.333333333333333
+__loadstore struct Data sum::d
+__loadstore struct Data sum::return
 
 Initial phi equivalence classes
 [ sum::a#2 ]
@@ -261,16 +261,16 @@ Allocated zp[2]:9 [ sum::return ]
 Allocated zp[2]:11 [ sum::d ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] *(&main::x) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::x sum::return main::y sum::d ] (  [ main::x sum::return main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *SCREEN = *((byte*)&main::x) [ sum::return main::y sum::d ] (  [ sum::return main::y sum::d ] { }  ) always clobbers reg byte a 
+Statement [3] *SCREEN = *((char *)&main::x) [ sum::return main::y sum::d ] (  [ sum::return main::y sum::d ] { }  ) always clobbers reg byte a 
 Statement [5] *(&main::y) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::y ] (  [ main::y ] { }  ) always clobbers reg byte a reg byte y 
-Statement [6] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] sum::$0 = sum::a#2 + sum::b#2 [ sum::return sum::b#2 sum::$0 sum::d ] ( sum:1 [ main::x main::y sum::return sum::b#2 sum::$0 sum::d ] { }  sum:4 [ main::y sum::return sum::b#2 sum::$0 sum::d ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ sum::b#2 ]
 Statement [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) [ sum::return sum::d ] ( sum:1 [ main::x main::y sum::return sum::d ] { }  sum:4 [ main::y sum::return sum::d ] { }  ) always clobbers reg byte a reg byte y 
 Statement [2] *(&main::x) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::x sum::return main::y sum::d ] (  [ main::x sum::return main::y sum::d ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *SCREEN = *((byte*)&main::x) [ sum::return main::y sum::d ] (  [ sum::return main::y sum::d ] { }  ) always clobbers reg byte a 
+Statement [3] *SCREEN = *((char *)&main::x) [ sum::return main::y sum::d ] (  [ sum::return main::y sum::d ] { }  ) always clobbers reg byte a 
 Statement [5] *(&main::y) = memcpy(*(&sum::return), struct Data, SIZEOF_STRUCT_DATA) [ main::y ] (  [ main::y ] { }  ) always clobbers reg byte a reg byte y 
-Statement [6] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] sum::$0 = sum::a#2 + sum::b#2 [ sum::return sum::b#2 sum::$0 sum::d ] ( sum:1 [ main::x main::y sum::return sum::b#2 sum::$0 sum::d ] { }  sum:4 [ main::y sum::return sum::b#2 sum::$0 sum::d ] { }  ) always clobbers reg byte a 
 Statement [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) [ sum::return sum::d ] ( sum:1 [ main::x main::y sum::return sum::d ] { }  sum:4 [ main::y sum::return sum::d ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ sum::a#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
@@ -317,7 +317,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label x = 2
     .label y = 4
-    // [1] call sum 
+    // [1] call sum
     // [8] phi from main to sum [phi:main->sum]
   sum_from_main:
     // [8] phi sum::b#2 = 2 [phi:main->sum#0] -- vbuxx=vbuc1 
@@ -335,10 +335,10 @@ main: {
     sta x-1,y
     dey
     bne !-
-    // [3] *SCREEN = *((byte*)&main::x) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *SCREEN = *((char *)&main::x) -- _deref_pbuc1=_deref_pbuc2 
     lda.z x
     sta SCREEN
-    // [4] call sum 
+    // [4] call sum
     // [8] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from___b1:
     // [8] phi sum::b#2 = 4 [phi:main::@1->sum#0] -- vbuxx=vbuc1 
@@ -356,7 +356,7 @@ main: {
     sta y-1,y
     dey
     bne !-
-    // [6] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
     lda y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     jmp __breturn
@@ -366,7 +366,7 @@ main: {
     rts
 }
   // sum
-// sum(byte register(A) a, byte register(X) b)
+// __zp(6) struct Data sum(__register(A) char a, __register(X) char b)
 sum: {
     .label return = 6
     .label d = 8
@@ -374,9 +374,9 @@ sum: {
     stx.z $ff
     clc
     adc.z $ff
-    // [10] *((byte*)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
+    // [10] *((char *)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
     sta.z d
-    // [11] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
+    // [11] *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
     stx d+OFFSET_STRUCT_DATA_D
     // [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_DATA
@@ -408,21 +408,21 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_DATA_D = 1
-constant byte* const SCREEN = (byte*) 1024
-constant byte SIZEOF_STRUCT_DATA = 2
-byte idx
+__constant char OFFSET_STRUCT_DATA_D = 1
+__constant char * const SCREEN = (char *) 1024
+__constant char SIZEOF_STRUCT_DATA = 2
+char idx
 void main()
-struct Data main::x loadstore zp[2]:2
-struct Data main::y loadstore zp[2]:4
-struct Data sum(byte sum::a , byte sum::b)
-byte~ sum::$0 reg byte a 22.0
-byte sum::a
-byte sum::a#2 reg byte a 11.0
-byte sum::b
-byte sum::b#2 reg byte x 7.333333333333333
-struct Data sum::d loadstore zp[2]:8
-struct Data sum::return loadstore zp[2]:6
+__loadstore struct Data main::x // zp[2]:2
+__loadstore struct Data main::y // zp[2]:4
+struct Data sum(char a , char b)
+char sum::$0 // reg byte a 22.0
+char sum::a
+char sum::a#2 // reg byte a 11.0
+char sum::b
+char sum::b#2 // reg byte x 7.333333333333333
+__loadstore struct Data sum::d // zp[2]:8
+__loadstore struct Data sum::return // zp[2]:6
 
 reg byte a [ sum::a#2 ]
 reg byte x [ sum::b#2 ]
@@ -457,7 +457,7 @@ main: {
     .label x = 2
     .label y = 4
     // struct Data x = sum(1,2)
-    // [1] call sum 
+    // [1] call sum
     // [8] phi from main to sum [phi:main->sum]
     // [8] phi sum::b#2 = 2 [phi:main->sum#0] -- vbuxx=vbuc1 
     ldx #2
@@ -474,11 +474,11 @@ main: {
     dey
     bne !-
     // SCREEN[idx++] = x.c
-    // [3] *SCREEN = *((byte*)&main::x) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *SCREEN = *((char *)&main::x) -- _deref_pbuc1=_deref_pbuc2 
     lda.z x
     sta SCREEN
     // struct Data y = sum(3, 4)
-    // [4] call sum 
+    // [4] call sum
     // [8] phi from main::@1 to sum [phi:main::@1->sum]
     // [8] phi sum::b#2 = 4 [phi:main::@1->sum#0] -- vbuxx=vbuc1 
     ldx #4
@@ -495,7 +495,7 @@ main: {
     dey
     bne !-
     // SCREEN[idx++] = y.d
-    // [6] *(SCREEN+1) = *((byte*)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
     lda y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     // main::@return
@@ -504,7 +504,7 @@ main: {
     rts
 }
   // sum
-// sum(byte register(A) a, byte register(X) b)
+// __zp(6) struct Data sum(__register(A) char a, __register(X) char b)
 sum: {
     .label return = 6
     .label d = 8
@@ -514,9 +514,9 @@ sum: {
     clc
     adc.z $ff
     // struct Data d = { a+b, b }
-    // [10] *((byte*)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
+    // [10] *((char *)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
     sta.z d
-    // [11] *((byte*)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
+    // [11] *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
     stx d+OFFSET_STRUCT_DATA_D
     // return d;
     // [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 

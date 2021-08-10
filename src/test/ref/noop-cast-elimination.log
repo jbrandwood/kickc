@@ -9,9 +9,9 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main main::@1
   main::sw#2 = phi( main/main::sw#0, main::@1/main::sw#1 )
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
-  main::$2 = (signed byte)main::i#2
+  main::$2 = (signed char)main::i#2
   main::sw#1 = main::sw#2 + main::$2
-  main::$1 = main::i#2 * SIZEOF_SIGNED_WORD
+  main::$1 = main::i#2 * SIZEOF_INT
   main::screen[main::$1] = main::sw#1
   main::i#1 = main::i#2 + rangenext(0,$a)
   main::$0 = main::i#1 != rangelast(0,$a)
@@ -23,7 +23,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -32,23 +32,23 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_SIGNED_WORD = 2
+__constant char SIZEOF_INT = 2
 void __start()
 void main()
-bool~ main::$0
-byte~ main::$1
-signed byte~ main::$2
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-constant signed word* const main::screen = (signed word*)$400
-signed word main::sw
-signed word main::sw#0
-signed word main::sw#1
-signed word main::sw#2
+bool main::$0
+char main::$1
+signed char main::$2
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+__constant int * const main::screen = (int *)$400
+int main::sw
+int main::sw#0
+int main::sw#1
+int main::sw#2
 
-Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant pointer cast (int *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$0 [9] if(main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -66,18 +66,18 @@ Adding number conversion cast (unumber) $b in [6] if(main::i#1!=$b) goto main::@
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type (char) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [1] main::$2 = (signed byte)main::i#2 keeping main::i#2
+Inlining Noop Cast [1] main::$2 = (signed char)main::i#2 keeping main::i#2
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [3] main::$1 = main::i#2 * SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [3] main::$1 = main::i#2 * SIZEOF_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::sw#0
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Constant inlined main::sw#0 = $1234
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_SIGNED_WORD
+Eliminating unused constant SIZEOF_INT
 Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -99,7 +99,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@1
   [1] main::sw#2 = phi( main/$1234, main::@1/main::sw#1 )
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2
+  [2] main::sw#1 = main::sw#2 + (signed char)main::i#2
   [3] main::$1 = main::i#2 << 1
   [4] main::screen[main::$1] = main::sw#1
   [5] main::i#1 = ++ main::i#2
@@ -112,13 +112,13 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$1 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 8.25
-signed word main::sw
-signed word main::sw#1 6.6000000000000005
-signed word main::sw#2 22.0
+char main::$1 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 8.25
+int main::sw
+int main::sw#1 // 6.6000000000000005
+int main::sw#2 // 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -132,11 +132,11 @@ Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:3 [ main::sw#2 main::sw#1 ]
 Allocated zp[1]:5 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
+Statement [2] main::sw#1 = main::sw#2 + (signed char)main::i#2 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [3] main::$1 = main::i#2 << 1 [ main::i#2 main::sw#1 main::$1 ] (  [ main::i#2 main::sw#1 main::$1 ] { }  ) always clobbers reg byte a 
 Statement [4] main::screen[main::$1] = main::sw#1 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
-Statement [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
+Statement [2] main::sw#1 = main::sw#2 + (signed char)main::i#2 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Statement [3] main::$1 = main::i#2 << 1 [ main::i#2 main::sw#1 main::$1 ] (  [ main::i#2 main::sw#1 main::$1 ] { }  ) always clobbers reg byte a 
 Statement [4] main::screen[main::$1] = main::sw#1 [ main::i#2 main::sw#1 ] (  [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
@@ -186,7 +186,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
+    // [2] main::sw#1 = main::sw#2 + (signed char)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
     sta.z $ff
     clc
@@ -236,14 +236,14 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$1 reg byte a 22.0
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 8.25
-constant signed word* const main::screen = (signed word*) 1024
-signed word main::sw
-signed word main::sw#1 sw zp[2]:2 6.6000000000000005
-signed word main::sw#2 sw zp[2]:2 22.0
+char main::$1 // reg byte a 22.0
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 8.25
+__constant int * const main::screen = (int *) 1024
+int main::sw
+int main::sw#1 // sw zp[2]:2 6.6000000000000005
+int main::sw#2 // sw zp[2]:2 22.0
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::sw#2 main::sw#1 ]
@@ -284,7 +284,7 @@ main: {
     // main::@1
   __b1:
     // sw += (signed byte)i
-    // [2] main::sw#1 = main::sw#2 + (signed byte)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
+    // [2] main::sw#1 = main::sw#2 + (signed char)main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
     sta.z $ff
     clc

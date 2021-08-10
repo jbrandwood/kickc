@@ -8,17 +8,17 @@ main: scope:[main]  from __start
   *SPRITES_ENABLE = 1
   SPRITES_YPOS[0] = $64
   SPRITES_XPOS[0] = $64
-  *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
-  call saveZeropage 
+  *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40
+  call saveZeropage
   to:main::@1
 main::@1: scope:[main]  from main
-  call sinZeropage 
+  call sinZeropage
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  call animSprite 
+  call animSprite
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  call restoreZeropage 
+  call restoreZeropage
   to:main::@4
 main::@4: scope:[main]  from main::@3
   to:main::@return
@@ -80,7 +80,7 @@ animSprite::@return: scope:[animSprite]  from animSprite
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -89,16 +89,16 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant const word OFFSET_SPRITE_PTRS = $3f8
-constant byte* const SCREEN = (byte*)$400
-constant const byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
+__constant const unsigned int OFFSET_SPRITE_PTRS = $3f8
+__constant char * const SCREEN = (char *)$400
+__constant const char SINTABLE[$100] = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
  }}
-constant const byte* SPRITE[$40]  = kickasm {{ .fill $40,$ff  }}
-constant byte* const SPRITES_ENABLE = (byte*)$d015
-constant byte* const SPRITES_XPOS = (byte*)$d000
-constant byte* const SPRITES_YPOS = (byte*)$d001
-constant const byte* ZP_STORAGE[$100]  = { fill( $100, 0) }
+__constant const char SPRITE[$40] = kickasm {{ .fill $40,$ff  }}
+__constant char * const SPRITES_ENABLE = (char *)$d015
+__constant char * const SPRITES_XPOS = (char *)$d000
+__constant char * const SPRITES_YPOS = (char *)$d001
+__constant const char ZP_STORAGE[$100] = { fill( $100, 0) }
 void __start()
 void animSprite()
 void main()
@@ -111,16 +111,16 @@ Adding number conversion cast (unumber) $64 in SPRITES_YPOS[0] = $64
 Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = ((unumber)) $64
 Adding number conversion cast (unumber) $64 in SPRITES_XPOS[0] = $64
 Adding number conversion cast (unumber) 0 in SPRITES_XPOS[0] = ((unumber)) $64
-Adding number conversion cast (unumber) $40 in *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
+Adding number conversion cast (unumber) $40 in *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *SPRITES_ENABLE = (unumber)1
 Inlining cast SPRITES_YPOS[(unumber)0] = (unumber)$64
 Inlining cast SPRITES_XPOS[(unumber)0] = (unumber)$64
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53248
-Simplifying constant pointer cast (byte*) 53249
-Simplifying constant pointer cast (byte*) 53269
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 53248
+Simplifying constant pointer cast (char *) 53249
+Simplifying constant pointer cast (char *) 53269
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast $64
 Simplifying constant integer cast 0
@@ -128,12 +128,12 @@ Simplifying constant integer cast $64
 Simplifying constant integer cast 0
 Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $40
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $64
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $64
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SPRITES_YPOS in [2] SPRITES_YPOS[0] = $64
 Simplifying expression containing zero SPRITES_XPOS in [3] SPRITES_XPOS[0] = $64
@@ -143,10 +143,10 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) $40
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -170,20 +170,20 @@ main: scope:[main]  from
   [1] *SPRITES_ENABLE = 1
   [2] *SPRITES_YPOS = $64
   [3] *SPRITES_XPOS = $64
-  [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
-  [5] call saveZeropage 
+  [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40
+  [5] call saveZeropage
   to:main::@1
 main::@1: scope:[main]  from main
   [6] phi()
-  [7] call sinZeropage 
+  [7] call sinZeropage
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [8] phi()
-  [9] call animSprite 
+  [9] call animSprite
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [10] phi()
-  [11] call restoreZeropage 
+  [11] call restoreZeropage
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [12] return 
@@ -255,7 +255,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] *SPRITES_ENABLE = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *SPRITES_YPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *SPRITES_XPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
@@ -320,31 +320,31 @@ main: {
     // [3] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+OFFSET_SPRITE_PTRS
-    // [5] call saveZeropage 
+    // [5] call saveZeropage
     jsr saveZeropage
     // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call sinZeropage 
+    // [7] call sinZeropage
     jsr sinZeropage
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [9] call animSprite 
+    // [9] call animSprite
     jsr animSprite
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [11] call restoreZeropage 
+    // [11] call restoreZeropage
     jsr restoreZeropage
     jmp __breturn
     // main::@return
@@ -474,16 +474,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant const word OFFSET_SPRITE_PTRS = $3f8
-constant byte* const SCREEN = (byte*) 1024
-constant const byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
+__constant const unsigned int OFFSET_SPRITE_PTRS = $3f8
+__constant char * const SCREEN = (char *) 1024
+__constant const char SINTABLE[$100] = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
  }}
-constant const byte* SPRITE[$40]  = kickasm {{ .fill $40,$ff  }}
-constant byte* const SPRITES_ENABLE = (byte*) 53269
-constant byte* const SPRITES_XPOS = (byte*) 53248
-constant byte* const SPRITES_YPOS = (byte*) 53249
-constant const byte* ZP_STORAGE[$100]  = { fill( $100, 0) }
+__constant const char SPRITE[$40] = kickasm {{ .fill $40,$ff  }}
+__constant char * const SPRITES_ENABLE = (char *) 53269
+__constant char * const SPRITES_XPOS = (char *) 53248
+__constant char * const SPRITES_YPOS = (char *) 53249
+__constant const char ZP_STORAGE[$100] = { fill( $100, 0) }
 void animSprite()
 void main()
 void restoreZeropage()
@@ -537,26 +537,26 @@ main: {
     // [3] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XPOS
     // *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)(SPRITE/0x40)
-    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (char)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+OFFSET_SPRITE_PTRS
     // saveZeropage()
-    // [5] call saveZeropage 
+    // [5] call saveZeropage
     jsr saveZeropage
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // sinZeropage()
-    // [7] call sinZeropage 
+    // [7] call sinZeropage
     jsr sinZeropage
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // animSprite()
-    // [9] call animSprite 
+    // [9] call animSprite
     jsr animSprite
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // restoreZeropage()
-    // [11] call restoreZeropage 
+    // [11] call restoreZeropage
     jsr restoreZeropage
     // main::@return
     // }

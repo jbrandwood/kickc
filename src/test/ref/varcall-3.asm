@@ -10,7 +10,7 @@
 :BasicUpstart(main)
   .label BGCOL = $d020
 .segment Code
-// plus(signed word zp(2) a, signed word zp(4) b)
+// __zp(2) int plus(__zp(2) int a, __zp(4) int b)
 plus: {
     .label a = 2
     .label b = 4

@@ -3,7 +3,7 @@ Calling convention STACK_CALL adding prepare/execute/finalize for call *do10::fn
 
 CONTROL FLOW GRAPH SSA
 
-void do10(void()* do10::fn)
+void do10(void (*fn)())
 do10: scope:[do10]  from main main::@1
   do10::fn#3 = phi( main/do10::fn#0, main::@1/do10::fn#1 )
   do10::i#0 = 0
@@ -61,7 +61,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void print(byte* print::msg)
+void print(char *msg)
 print: scope:[print]  from hello world
   print::msg#3 = phi( hello/print::msg#0, world/print::msg#1 )
   print::i#0 = 0
@@ -95,45 +95,45 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-void do10(void()* do10::fn)
-bool~ do10::$1
-void()* do10::fn
-void()* do10::fn#0
-void()* do10::fn#1
-void()* do10::fn#2
-void()* do10::fn#3
-void()* do10::fn#4
-byte do10::i
-byte do10::i#0
-byte do10::i#1
-byte do10::i#2
-byte do10::i#3
+void do10(void (*fn)())
+bool do10::$1
+void (*do10::fn)()
+void (*do10::fn#0)()
+void (*do10::fn#1)()
+void (*do10::fn#2)()
+void (*do10::fn#3)()
+void (*do10::fn#4)()
+char do10::i
+char do10::i#0
+char do10::i#1
+char do10::i#2
+char do10::i#3
 void hello()
-constant byte* hello::msg[7]  = "hello "
-volatile byte idx loadstore
+__constant char hello::msg[7] = "hello "
+__loadstore volatile char idx
 void main()
-void print(byte* print::msg)
-bool~ print::$0
-byte print::i
-byte print::i#0
-byte print::i#1
-byte print::i#2
-byte* print::msg
-byte* print::msg#0
-byte* print::msg#1
-byte* print::msg#2
-byte* print::msg#3
+void print(char *msg)
+bool print::$0
+char print::i
+char print::i#0
+char print::i#1
+char print::i#2
+char *print::msg
+char *print::msg#0
+char *print::msg#1
+char *print::msg#2
+char *print::msg#3
 void world()
-constant byte* world::msg[7]  = "world "
+__constant char world::msg[7] = "world "
 
 Adding number conversion cast (unumber) 0 in print::$0 = 0 != print::msg#2[print::i#1]
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias do10::i#2 = do10::i#3 
 Alias do10::fn#2 = do10::fn#4 
@@ -157,7 +157,7 @@ Adding number conversion cast (unumber) $a in if(do10::i#1!=$a) goto do10::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings do10::i#0
 Inlining constant with var siblings do10::fn#0
@@ -256,7 +256,7 @@ main::@return: scope:[main]  from main::@1
   [15] return 
   to:@return
 
-void print(byte* print::msg)
+void print(char *msg)
 print: scope:[print]  from hello world
   [16] print::msg#3 = phi( hello/hello::msg, world/world::msg )
   to:print::@1
@@ -271,7 +271,7 @@ print::@return: scope:[print]  from print::@1
   [22] return 
   to:@return
 
-void do10(void()* do10::fn)
+void do10(void (*fn)())
 do10: scope:[do10]  from main main::@1
   [23] do10::fn#3 = phi( main/&hello, main::@1/&world )
   to:do10::@1
@@ -290,21 +290,21 @@ do10::@return: scope:[do10]  from do10::@2
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-void do10(void()* do10::fn)
-void()* do10::fn
-void()* do10::fn#3
-byte do10::i
-byte do10::i#1 1501.5
-byte do10::i#2 2002.0
+void do10(void (*fn)())
+void (*do10::fn)()
+void (*do10::fn#3)()
+char do10::i
+char do10::i#1 // 1501.5
+char do10::i#2 // 2002.0
 void hello()
-volatile byte idx loadstore 38.125
+__loadstore volatile char idx // 38.125
 void main()
-void print(byte* print::msg)
-byte print::i
-byte print::i#1 151.5
-byte print::i#2 101.0
-byte* print::msg
-byte* print::msg#3 33.666666666666664
+void print(char *msg)
+char print::i
+char print::i#1 // 151.5
+char print::i#2 // 101.0
+char *print::msg
+char *print::msg#3 // 33.666666666666664
 void world()
 
 Initial phi equivalence classes
@@ -483,7 +483,7 @@ main: {
     rts
 }
   // print
-// print(byte* zp(2) msg)
+// void print(__zp(2) char *msg)
 print: {
     .label msg = 2
     // [17] phi from print to print::@1 [phi:print->print::@1]
@@ -516,7 +516,7 @@ print: {
     rts
 }
   // do10
-// do10(void()* zp(4) fn)
+// void do10(__zp(4) void (*fn)())
 do10: {
     .label i = 6
     .label fn = 4
@@ -598,26 +598,26 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const SCREEN = (char *) 1024
 void __start()
-void do10(void()* do10::fn)
-void()* do10::fn
-void()* do10::fn#3 fn zp[2]:4
-byte do10::i
-byte do10::i#1 i zp[1]:6 1501.5
-byte do10::i#2 i zp[1]:6 2002.0
+void do10(void (*fn)())
+void (*do10::fn)()
+void (*do10::fn#3)() // fn zp[2]:4
+char do10::i
+char do10::i#1 // i zp[1]:6 1501.5
+char do10::i#2 // i zp[1]:6 2002.0
 void hello()
-constant byte* hello::msg[7]  = "hello "
-volatile byte idx loadstore zp[1]:7 38.125
+__constant char hello::msg[7] = "hello "
+__loadstore volatile char idx // zp[1]:7 38.125
 void main()
-void print(byte* print::msg)
-byte print::i
-byte print::i#1 reg byte y 151.5
-byte print::i#2 reg byte y 101.0
-byte* print::msg
-byte* print::msg#3 msg zp[2]:2 33.666666666666664
+void print(char *msg)
+char print::i
+char print::i#1 // reg byte y 151.5
+char print::i#2 // reg byte y 101.0
+char *print::msg
+char *print::msg#3 // msg zp[2]:2 33.666666666666664
 void world()
-constant byte* world::msg[7]  = "world "
+__constant char world::msg[7] = "world "
 
 zp[2]:2 [ print::msg#3 ]
 reg byte y [ print::i#2 print::i#1 ]
@@ -728,7 +728,7 @@ main: {
     rts
 }
   // print
-// print(byte* zp(2) msg)
+// void print(__zp(2) char *msg)
 print: {
     .label msg = 2
     // [17] phi from print to print::@1 [phi:print->print::@1]
@@ -759,7 +759,7 @@ print: {
     rts
 }
   // do10
-// do10(void()* zp(4) fn)
+// void do10(__zp(4) void (*fn)())
 do10: {
     .label i = 6
     .label fn = 4

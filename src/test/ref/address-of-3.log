@@ -1,5 +1,5 @@
 Fixing constant pointer addition VALS+1
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -7,13 +7,13 @@ void main()
 main: scope:[main]  from __start::@1
   idx#17 = phi( __start::@1/idx#19 )
   print::p#0 = VALS
-  call print 
+  call print
   to:main::@2
 main::@2: scope:[main]  from main
   idx#9 = phi( main/idx#5 )
   idx#0 = idx#9
-  print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
-  call print 
+  print::p#1 = VALS+1*SIZEOF_INT
+  call print
   to:main::@3
 main::@3: scope:[main]  from main::@2
   idx#10 = phi( main::@2/idx#5 )
@@ -23,10 +23,10 @@ main::@3: scope:[main]  from main::@2
 main::@1: scope:[main]  from main::@3 main::@4
   idx#18 = phi( main::@3/idx#1, main::@4/idx#2 )
   main::i#2 = phi( main::@3/main::i#0, main::@4/main::i#1 )
-  main::$5 = main::i#2 * SIZEOF_SIGNED_WORD
+  main::$5 = main::i#2 * SIZEOF_INT
   main::$2 = & VALS[main::$5]
   print::p#2 = main::$2
-  call print 
+  call print
   to:main::@4
 main::@4: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
@@ -42,11 +42,11 @@ main::@return: scope:[main]  from main::@4
   return 
   to:@return
 
-void print(signed word* print::p)
+void print(int *p)
 print: scope:[print]  from main main::@1 main::@2
   print::p#3 = phi( main/print::p#0, main::@1/print::p#2, main::@2/print::p#1 )
   idx#13 = phi( main/idx#17, main::@1/idx#18, main::@2/idx#0 )
-  print::$0 = idx#13 * SIZEOF_SIGNED_WORD
+  print::$0 = idx#13 * SIZEOF_INT
   SCREEN[print::$0] = *print::p#3
   idx#4 = ++ idx#13
   to:print::@return
@@ -64,7 +64,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#19 = phi( __start::__init1/idx#6 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#15 = phi( __start::@1/idx#3 )
@@ -77,56 +77,56 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant signed word* const SCREEN = (signed word*)$400
-constant byte SIZEOF_SIGNED_WORD = 2
-constant signed word* VALS[]  = { 1, 2, 3, 4 }
+__constant int * const SCREEN = (int *)$400
+__constant char SIZEOF_INT = 2
+__constant int VALS[] = { 1, 2, 3, 4 }
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#17
-byte idx#18
-byte idx#19
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#17
+char idx#18
+char idx#19
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-signed word*~ main::$2
-bool~ main::$4
-byte~ main::$5
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-void print(signed word* print::p)
-byte~ print::$0
-signed word* print::p
-signed word* print::p#0
-signed word* print::p#1
-signed word* print::p#2
-signed word* print::p#3
+int *main::$2
+bool main::$4
+char main::$5
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+void print(int *p)
+char print::$0
+int *print::p
+int *print::p#0
+int *print::p#1
+int *print::p#2
+int *print::p#3
 
-Adding number conversion cast (unumber) 1*SIZEOF_SIGNED_WORD in print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) 1 in print::p#1 = VALS+(unumber)1*SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 1*SIZEOF_INT in print::p#1 = VALS+1*SIZEOF_INT
+Adding number conversion cast (unumber) 1 in print::p#1 = VALS+(unumber)1*SIZEOF_INT
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (signed word*) 1024
-Simplifying constant integer cast (unumber)1*SIZEOF_SIGNED_WORD
+Simplifying constant pointer cast (int *) 1024
+Simplifying constant integer cast (unumber)1*SIZEOF_INT
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#9 
 Alias idx#1 = idx#10 
@@ -150,7 +150,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting array member address-of to pointer addition [10] print::p#2 = VALS + main::$5
 Successful SSA optimization PassNArrayElementAddressOfRewriting
 Constant print::p#0 = VALS
-Constant print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
+Constant print::p#1 = VALS+1*SIZEOF_INT
 Constant main::i#0 = 2
 Constant idx#19 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -167,17 +167,17 @@ Adding number conversion cast (unumber) 4 in [7] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type (char) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting multiplication to use shift [3] main::$5 = main::i#2 * SIZEOF_SIGNED_WORD
-Rewriting multiplication to use shift [10] print::$0 = idx#13 * SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [3] main::$5 = main::i#2 * SIZEOF_INT
+Rewriting multiplication to use shift [10] print::$0 = idx#13 * SIZEOF_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings print::p#0
 Inlining constant with var siblings print::p#1
 Inlining constant with var siblings idx#19
 Constant inlined main::i#0 = 2
-Constant inlined print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
+Constant inlined print::p#1 = VALS+1*SIZEOF_INT
 Constant inlined print::p#0 = VALS
 Constant inlined idx#19 = 0
 Successful SSA optimization Pass2ConstantInlining
@@ -204,17 +204,17 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@2
 main::@2: scope:[main]  from main
   [2] phi()
-  [3] call print 
+  [3] call print
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@3
   [4] main::i#2 = phi( main::@2/2, main::@3/main::i#1 )
   [5] main::$5 = main::i#2 << 1
   [6] print::p#2 = VALS + main::$5
-  [7] call print 
+  [7] call print
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [8] main::i#1 = ++ main::i#2
@@ -224,9 +224,9 @@ main::@return: scope:[main]  from main::@3
   [10] return 
   to:@return
 
-void print(signed word* print::p)
+void print(int *p)
 print: scope:[print]  from main main::@1 main::@2
-  [11] print::p#3 = phi( main/VALS, main::@1/print::p#2, main::@2/VALS+1*SIZEOF_SIGNED_WORD )
+  [11] print::p#3 = phi( main/VALS, main::@1/print::p#2, main::@2/VALS+1*SIZEOF_INT )
   [11] idx#13 = phi( main/0, main::@1/idx#14, main::@2/idx#14 )
   [12] print::$0 = idx#13 << 1
   [13] SCREEN[print::$0] = *print::p#3
@@ -238,19 +238,19 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
-byte idx#13 71.66666666666666
-byte idx#14 10.363636363636363
+char idx
+char idx#13 // 71.66666666666666
+char idx#14 // 10.363636363636363
 void main()
-byte~ main::$5 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 8.25
-void print(signed word* print::p)
-byte~ print::$0 202.0
-signed word* print::p
-signed word* print::p#2 22.0
-signed word* print::p#3 56.0
+char main::$5 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 8.25
+void print(int *p)
+char print::$0 // 202.0
+int *print::p
+int *print::p#2 // 22.0
+int *print::p#3 // 56.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -314,14 +314,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .label SCREEN = $400
   .label idx = 3
 .segment Code
   // main
 main: {
     .label i = 2
-    // [1] call print 
+    // [1] call print
     // [11] phi from main to print [phi:main->print]
   print_from_main:
     // [11] phi print::p#3 = VALS [phi:main->print#0] -- pwsz1=pwsc1 
@@ -338,13 +338,13 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [3] call print 
+    // [3] call print
     // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [11] phi print::p#3 = VALS+1*SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
-    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    // [11] phi print::p#3 = VALS+1*SIZEOF_INT [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    lda #<VALS+1*SIZEOF_INT
     sta.z print.p
-    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    lda #>VALS+1*SIZEOF_INT
     sta.z print.p+1
     // [11] phi idx#13 = idx#14 [phi:main::@2->print#1] -- register_copy 
     jsr print
@@ -370,7 +370,7 @@ main: {
     lda #>VALS
     adc #0
     sta.z print.p+1
-    // [7] call print 
+    // [7] call print
     // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
     // [11] phi print::p#3 = print::p#2 [phi:main::@1->print#0] -- register_copy 
@@ -392,7 +392,7 @@ main: {
     rts
 }
   // print
-// print(signed word* zp(4) p)
+// void print(__zp(4) int *p)
 print: {
     .label p = 4
     // [12] print::$0 = idx#13 << 1 -- vbuaa=vbuz1_rol_1 
@@ -442,22 +442,22 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant signed word* const SCREEN = (signed word*) 1024
-constant byte SIZEOF_SIGNED_WORD = 2
-constant signed word* VALS[]  = { 1, 2, 3, 4 }
-byte idx
-byte idx#13 idx zp[1]:3 71.66666666666666
-byte idx#14 idx zp[1]:3 10.363636363636363
+__constant int * const SCREEN = (int *) 1024
+__constant char SIZEOF_INT = 2
+__constant int VALS[] = { 1, 2, 3, 4 }
+char idx
+char idx#13 // idx zp[1]:3 71.66666666666666
+char idx#14 // idx zp[1]:3 10.363636363636363
 void main()
-byte~ main::$5 reg byte a 22.0
-byte main::i
-byte main::i#1 i zp[1]:2 16.5
-byte main::i#2 i zp[1]:2 8.25
-void print(signed word* print::p)
-byte~ print::$0 reg byte a 202.0
-signed word* print::p
-signed word* print::p#2 p zp[2]:4 22.0
-signed word* print::p#3 p zp[2]:4 56.0
+char main::$5 // reg byte a 22.0
+char main::i
+char main::i#1 // i zp[1]:2 16.5
+char main::i#2 // i zp[1]:2 8.25
+void print(int *p)
+char print::$0 // reg byte a 202.0
+int *print::p
+int *print::p#2 // p zp[2]:4 22.0
+int *print::p#3 // p zp[2]:4 56.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[1]:3 [ idx#13 idx#14 ]
@@ -481,7 +481,7 @@ Score: 457
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -489,7 +489,7 @@ Score: 457
 main: {
     .label i = 2
     // print(VALS)
-    // [1] call print 
+    // [1] call print
     // [11] phi from main to print [phi:main->print]
     // [11] phi print::p#3 = VALS [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
@@ -503,12 +503,12 @@ main: {
     // [2] phi from main to main::@2 [phi:main->main::@2]
     // main::@2
     // print(&VALS[1])
-    // [3] call print 
+    // [3] call print
     // [11] phi from main::@2 to print [phi:main::@2->print]
-    // [11] phi print::p#3 = VALS+1*SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
-    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    // [11] phi print::p#3 = VALS+1*SIZEOF_INT [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    lda #<VALS+1*SIZEOF_INT
     sta.z print.p
-    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    lda #>VALS+1*SIZEOF_INT
     sta.z print.p+1
     // [11] phi idx#13 = idx#14 [phi:main::@2->print#1] -- register_copy 
     jsr print
@@ -532,7 +532,7 @@ main: {
     lda #>VALS
     adc #0
     sta.z print.p+1
-    // [7] call print 
+    // [7] call print
     // [11] phi from main::@1 to print [phi:main::@1->print]
     // [11] phi print::p#3 = print::p#2 [phi:main::@1->print#0] -- register_copy 
     // [11] phi idx#13 = idx#14 [phi:main::@1->print#1] -- register_copy 
@@ -551,7 +551,7 @@ main: {
     rts
 }
   // print
-// print(signed word* zp(4) p)
+// void print(__zp(4) int *p)
 print: {
     .label p = 4
     // SCREEN[idx++] = *p

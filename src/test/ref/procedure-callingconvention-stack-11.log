@@ -6,13 +6,13 @@ Eliminating unused variable with no statement main::$1
 Calling convention __stackcall adding prepare/execute/finalize for main::v = call get(main::i)
 Calling convention __stackcall adding prepare/execute/finalize for call print(main::v)
 Calling convention __stackcall adding prepare/execute/finalize for call main
-Calling convention STACK_CALL replacing param(get::i) with stackidx(byte,get::OFFSET_STACK_I)
+Calling convention STACK_CALL replacing param(get::i) with stackidx(char,get::OFFSET_STACK_I)
 Calling convention STACK_CALL replacing param(print::v) with stackidx(struct Vector,print::OFFSET_STACK_V)
 Calling convention STACK_CALL adding stack return stackidx(struct Vector,get::OFFSET_STACK_RETURN_0) = get::return
 Calling convention STACK_CALL adding stack pull main::v = stackpull(struct Vector)
-Calling convention STACK_CALL adding stack push stackpush(byte) = main::i
+Calling convention STACK_CALL adding stack push stackpush(char) = main::i
 Calling convention STACK_CALL adding stack push stackpush(struct Vector) = main::v
-Removing C-classic struct-unwound assignment get::v = struct-unwound {*((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X), *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y), *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X), *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)}
+Removing C-classic struct-unwound assignment get::v = struct-unwound {*((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X), *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y), *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X), *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)}
 Removing C-classic struct-unwound assignment get::return = struct-unwound {*(&get::return)}
 
 CONTROL FLOW GRAPH SSA
@@ -28,7 +28,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
-  stackpush(byte) = main::i#3
+  stackpush(char) = main::i#3
   sideeffect stackpushbytes(3)
   callexecute get 
   main::v = stackpull(struct Vector)
@@ -41,16 +41,16 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-__stackcall struct Vector get(byte get::i)
+__stackcall struct Vector get(char i)
 get: scope:[get]  from
-  get::i#0 = stackidx(byte,get::OFFSET_STACK_I)
+  get::i#0 = stackidx(char,get::OFFSET_STACK_I)
   get::$0 = get::i#0 / 2
   get::$1 = get::i#0 + 1
   get::$2 = get::i#0 * 2
-  *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X) = get::i#0
-  *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y) = get::$0
-  *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X) = get::$1
-  *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2
+  *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X) = get::i#0
+  *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y) = get::$0
+  *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X) = get::$1
+  *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2
   *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR)
   to:get::@return
 get::@return: scope:[get]  from get
@@ -58,16 +58,16 @@ get::@return: scope:[get]  from get
   return 
   to:@return
 
-__stackcall void print(struct Vector print::v)
+__stackcall void print(struct Vector v)
 print: scope:[print]  from
   print::v = stackidx(struct Vector,print::OFFSET_STACK_V)
-  SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X)
+  SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X)
   idx = ++ idx
-  SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y)
+  SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y)
   idx = ++ idx
-  SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X)
+  SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X)
   idx = ++ idx
-  SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)
+  SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)
   idx = ++ idx
   SCREEN[idx] = ' '
   idx = ++ idx
@@ -90,36 +90,36 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_POINT_X = 0
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte OFFSET_STRUCT_VECTOR_P1 = 0
-constant byte OFFSET_STRUCT_VECTOR_P2 = 2
-constant byte* const SCREEN = (byte*)$400
-constant byte SIZEOF_STRUCT_VECTOR = 4
-constant word STACK_BASE = $103
+__constant char OFFSET_STRUCT_POINT_X = 0
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char OFFSET_STRUCT_VECTOR_P1 = 0
+__constant char OFFSET_STRUCT_VECTOR_P2 = 2
+__constant char * const SCREEN = (char *)$400
+__constant char SIZEOF_STRUCT_VECTOR = 4
+__constant unsigned int STACK_BASE = $103
 void __start()
-__stackcall struct Vector get(byte get::i)
-number~ get::$0
-number~ get::$1
-number~ get::$2
-constant byte get::OFFSET_STACK_I = 0
-constant byte get::OFFSET_STACK_RETURN_0 = 0
-byte get::i
-byte get::i#0
-struct Vector get::return loadstore
-struct Vector get::v loadstore
-byte idx loadstore
+__stackcall struct Vector get(char i)
+number get::$0
+number get::$1
+number get::$2
+__constant char get::OFFSET_STACK_I = 0
+__constant char get::OFFSET_STACK_RETURN_0 = 0
+char get::i
+char get::i#0
+__loadstore struct Vector get::return
+__loadstore struct Vector get::v
+__loadstore char idx
 __stackcall void main()
-bool~ main::$0
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-struct Vector main::v loadstore
-__stackcall void print(struct Vector print::v)
-constant byte print::OFFSET_STACK_V = 0
-struct Vector print::v loadstore
+bool main::$0
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+__loadstore struct Vector main::v
+__stackcall void print(struct Vector v)
+__constant char print::OFFSET_STACK_V = 0
+__loadstore struct Vector print::v
 
 Adding number conversion cast (unumber) 5 in main::$0 = main::i#2 < 5
 Adding number conversion cast (unumber) 2 in get::$0 = get::i#0 / 2
@@ -129,34 +129,34 @@ Adding number conversion cast (unumber) get::$1 in get::$1 = get::i#0 + (unumber
 Adding number conversion cast (unumber) 2 in get::$2 = get::i#0 * 2
 Adding number conversion cast (unumber) get::$2 in get::$2 = get::i#0 * (unumber)2
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 5
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in get::$0 = get::i#0 / 2
-Inferred type updated to byte in get::$1 = get::i#0 + 1
-Inferred type updated to byte in get::$2 = get::i#0 * 2
+Inferred type updated to char in get::$0 = get::i#0 / 2
+Inferred type updated to char in get::$1 = get::i#0 + 1
+Inferred type updated to char in get::$2 = get::i#0 * 2
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$0 [3] if(main::i#2<5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1 in [17] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X) = get::i#0
-Simplifying expression containing zero (struct Point*)&get::v in [17] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1) = get::i#0
-Simplifying expression containing zero (struct Point*)&get::v in [18] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y) = get::$0
-Simplifying expression containing zero (byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2 in [19] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X) = get::$1
-Simplifying expression containing zero (byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1 in [25] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero (struct Point*)&print::v in [25] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1)
-Simplifying expression containing zero (struct Point*)&print::v in [27] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y)
-Simplifying expression containing zero (byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2 in [29] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1 in [17] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X) = get::i#0
+Simplifying expression containing zero (struct Point *)&get::v in [17] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1) = get::i#0
+Simplifying expression containing zero (struct Point *)&get::v in [18] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y) = get::$0
+Simplifying expression containing zero (char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2 in [19] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X) = get::$1
+Simplifying expression containing zero (char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1 in [25] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (struct Point *)&print::v in [25] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1)
+Simplifying expression containing zero (struct Point *)&print::v in [27] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P1+OFFSET_STRUCT_POINT_Y)
+Simplifying expression containing zero (char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2 in [29] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_VECTOR_P1
 Eliminating unused constant OFFSET_STRUCT_POINT_X
@@ -167,8 +167,8 @@ Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -201,16 +201,16 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-__stackcall void print(struct Vector print::v)
+__stackcall void print(struct Vector v)
 print: scope:[print]  from
   [5] print::v = stackidx(struct Vector,print::OFFSET_STACK_V)
-  [6] SCREEN[idx] = *((byte*)(struct Point*)&print::v)
+  [6] SCREEN[idx] = *((char *)(struct Point *)&print::v)
   [7] idx = ++ idx
-  [8] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_POINT_Y)
+  [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y)
   [9] idx = ++ idx
-  [10] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2)
+  [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2)
   [11] idx = ++ idx
-  [12] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)
+  [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y)
   [13] idx = ++ idx
   [14] SCREEN[idx] = ' '
   [15] idx = ++ idx
@@ -219,16 +219,16 @@ print::@return: scope:[print]  from print
   [16] return 
   to:@return
 
-__stackcall struct Vector get(byte get::i)
+__stackcall struct Vector get(char i)
 get: scope:[get]  from
-  [17] get::i#0 = stackidx(byte,get::OFFSET_STACK_I)
+  [17] get::i#0 = stackidx(char,get::OFFSET_STACK_I)
   [18] get::$0 = get::i#0 >> 1
   [19] get::$1 = get::i#0 + 1
   [20] get::$2 = get::i#0 << 1
-  [21] *((byte*)(struct Point*)&get::v) = get::i#0
-  [22] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0
-  [23] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1
-  [24] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2
+  [21] *((char *)(struct Point *)&get::v) = get::i#0
+  [22] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0
+  [23] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1
+  [24] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2
   [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR)
   to:get::@return
 get::@return: scope:[get]  from get
@@ -248,7 +248,7 @@ main::@return: scope:[main]  from main::@1
   [31] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [32] stackpush(byte) = main::i#2
+  [32] stackpush(char) = main::i#2
   sideeffect stackpushbytes(3)
   [34] callexecute get 
   [35] main::v = stackpull(struct Vector)
@@ -263,22 +263,22 @@ null depth in calling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-__stackcall struct Vector get(byte get::i)
-byte~ get::$0 500.5
-byte~ get::$1 500.5
-byte~ get::$2 500.5
-byte get::i
-byte get::i#0 1251.25
-struct Vector get::return loadstore 40.04
-struct Vector get::v loadstore
-byte idx loadstore 600.68
+__stackcall struct Vector get(char i)
+char get::$0 // 500.5
+char get::$1 // 500.5
+char get::$2 // 500.5
+char get::i
+char get::i#0 // 1251.25
+__loadstore struct Vector get::return // 40.04
+__loadstore struct Vector get::v
+__loadstore char idx // 600.68
 __stackcall void main()
-byte main::i
-byte main::i#1 202.0
-byte main::i#2 44.888888888888886
-struct Vector main::v loadstore 202.0
-__stackcall void print(struct Vector print::v)
-struct Vector print::v loadstore 143.0
+char main::i
+char main::i#1 // 202.0
+char main::i#2 // 44.888888888888886
+__loadstore struct Vector main::v // 202.0
+__stackcall void print(struct Vector v)
+__loadstore struct Vector print::v // 143.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -317,13 +317,13 @@ Statement [1] idx = 0 [ idx get::v get::return ] (  [ idx get::v get::return ] {
 Statement [5] print::v = stackidx(struct Vector,print::OFFSET_STACK_V) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [6] SCREEN[idx] = *((byte*)(struct Point*)&print::v) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] SCREEN[idx] = *((char *)(struct Point *)&print::v) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [8] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_POINT_Y) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
 Statement [14] SCREEN[idx] = ' ' [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [17] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::i#0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [17] get::i#0 = stackidx(char,get::OFFSET_STACK_I) [ get::i#0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
 Statement [18] get::$0 = get::i#0 >> 1 [ get::i#0 get::$0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::$0 get::v get::return ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ get::i#0 ]
 Statement [20] get::$2 = get::i#0 << 1 [ get::i#0 get::$0 get::$1 get::$2 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::$0 get::$1 get::$2 get::v get::return ] { }  ) always clobbers reg byte a 
@@ -332,24 +332,24 @@ Removing always clobbered register reg byte a as potential for zp[1]:10 [ get::$
 Statement [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR) [ get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::v get::return ] { }  ) always clobbers reg byte a reg byte y 
 Statement [26] stackidx(struct Vector,get::OFFSET_STACK_RETURN_0) = get::return [ get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
 Statement [30] if(main::i#2<5) goto main::@2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [32] stackpush(byte) = main::i#2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [32] stackpush(char) = main::i#2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [35] main::v = stackpull(struct Vector) [ idx get::v get::return main::i#2 main::v ] ( main:3 [ idx get::v get::return main::i#2 main::v ] { }  ) always clobbers reg byte a 
 Statement [36] stackpush(struct Vector) = main::v [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(4) always clobbers reg byte a reg byte x 
 Statement [1] idx = 0 [ idx get::v get::return ] (  [ idx get::v get::return ] { }  ) always clobbers reg byte a 
 Statement [5] print::v = stackidx(struct Vector,print::OFFSET_STACK_V) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte x 
-Statement [6] SCREEN[idx] = *((byte*)(struct Point*)&print::v) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_POINT_Y) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] SCREEN[idx] = *((char *)(struct Point *)&print::v) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) [ idx print::v ] ( main:3::print:37 [ get::v get::return main::i#2 idx print::v ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
 Statement [14] SCREEN[idx] = ' ' [ idx ] ( main:3::print:37 [ get::v get::return main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [17] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) [ get::i#0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
+Statement [17] get::i#0 = stackidx(char,get::OFFSET_STACK_I) [ get::i#0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
 Statement [18] get::$0 = get::i#0 >> 1 [ get::i#0 get::$0 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::$0 get::v get::return ] { }  ) always clobbers reg byte a 
 Statement [20] get::$2 = get::i#0 << 1 [ get::i#0 get::$0 get::$1 get::$2 get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::i#0 get::$0 get::$1 get::$2 get::v get::return ] { }  ) always clobbers reg byte a 
 Statement [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR) [ get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::v get::return ] { }  ) always clobbers reg byte a reg byte y 
 Statement [26] stackidx(struct Vector,get::OFFSET_STACK_RETURN_0) = get::return [ get::v get::return ] ( main:3::get:34 [ idx main::i#2 get::v get::return ] { }  ) always clobbers reg byte a reg byte x 
 Statement [30] if(main::i#2<5) goto main::@2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [32] stackpush(byte) = main::i#2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [32] stackpush(char) = main::i#2 [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [35] main::v = stackpull(struct Vector) [ idx get::v get::return main::i#2 main::v ] ( main:3 [ idx get::v get::return main::i#2 main::v ] { }  ) always clobbers reg byte a 
 Statement [36] stackpush(struct Vector) = main::v [ idx get::v get::return main::i#2 ] ( main:3 [ idx get::v get::return main::i#2 ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(4) always clobbers reg byte a reg byte x 
@@ -439,7 +439,7 @@ __start: {
     rts
 }
   // print
-// print(struct Vector zp(6) v)
+// void print(__zp(6) struct Vector v)
 print: {
     .const OFFSET_STACK_V = 0
     .label v = 6
@@ -453,25 +453,25 @@ print: {
     sta.z v+2
     lda STACK_BASE+OFFSET_STACK_V+3,x
     sta.z v+3
-    // [6] SCREEN[idx] = *((byte*)(struct Point*)&print::v) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [6] SCREEN[idx] = *((char *)(struct Point *)&print::v) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda.z v
     ldy.z idx
     sta SCREEN,y
     // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [8] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [10] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
     // [11] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [12] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
@@ -490,7 +490,7 @@ print: {
     rts
 }
   // get
-// get(byte register(Y) i)
+// __zp($a) struct Vector get(__register(Y) char i)
 get: {
     .const OFFSET_STACK_I = 0
     .const OFFSET_STACK_RETURN_0 = 0
@@ -498,7 +498,7 @@ get: {
     .label v = $e
     .label __0 = 4
     .label __2 = 5
-    // [17] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuyy=_stackidxbyte_vbuc1 
+    // [17] get::i#0 = stackidx(char,get::OFFSET_STACK_I) -- vbuyy=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tay
@@ -514,14 +514,14 @@ get: {
     tya
     asl
     sta.z __2
-    // [21] *((byte*)(struct Point*)&get::v) = get::i#0 -- _deref_pbuc1=vbuyy 
+    // [21] *((char *)(struct Point *)&get::v) = get::i#0 -- _deref_pbuc1=vbuyy 
     sty.z v
-    // [22] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
+    // [22] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta v+OFFSET_STRUCT_POINT_Y
-    // [23] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
+    // [23] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
     stx v+OFFSET_STRUCT_VECTOR_P2
-    // [24] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
+    // [24] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
     sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     // [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
@@ -570,7 +570,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [32] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
+    // [32] stackpush(char) = main::i#2 -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
     // sideeffect stackpushbytes(3) -- _stackpushbyte_3 
@@ -637,31 +637,31 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte OFFSET_STRUCT_VECTOR_P2 = 2
-constant byte* const SCREEN = (byte*) 1024
-constant byte SIZEOF_STRUCT_VECTOR = 4
-constant word STACK_BASE = $103
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char OFFSET_STRUCT_VECTOR_P2 = 2
+__constant char * const SCREEN = (char *) 1024
+__constant char SIZEOF_STRUCT_VECTOR = 4
+__constant unsigned int STACK_BASE = $103
 void __start()
-__stackcall struct Vector get(byte get::i)
-byte~ get::$0 zp[1]:4 500.5
-byte~ get::$1 reg byte x 500.5
-byte~ get::$2 zp[1]:5 500.5
-constant byte get::OFFSET_STACK_I = 0
-constant byte get::OFFSET_STACK_RETURN_0 = 0
-byte get::i
-byte get::i#0 reg byte y 1251.25
-struct Vector get::return loadstore zp[4]:10 40.04
-struct Vector get::v loadstore zp[4]:14
-byte idx loadstore zp[1]:3 600.68
+__stackcall struct Vector get(char i)
+char get::$0 // zp[1]:4 500.5
+char get::$1 // reg byte x 500.5
+char get::$2 // zp[1]:5 500.5
+__constant char get::OFFSET_STACK_I = 0
+__constant char get::OFFSET_STACK_RETURN_0 = 0
+char get::i
+char get::i#0 // reg byte y 1251.25
+__loadstore struct Vector get::return // zp[4]:10 40.04
+__loadstore struct Vector get::v // zp[4]:14
+__loadstore char idx // zp[1]:3 600.68
 __stackcall void main()
-byte main::i
-byte main::i#1 i zp[1]:2 202.0
-byte main::i#2 i zp[1]:2 44.888888888888886
-struct Vector main::v loadstore zp[4]:6 202.0
-__stackcall void print(struct Vector print::v)
-constant byte print::OFFSET_STACK_V = 0
-struct Vector print::v loadstore zp[4]:6 143.0
+char main::i
+char main::i#1 // i zp[1]:2 202.0
+char main::i#2 // i zp[1]:2 44.888888888888886
+__loadstore struct Vector main::v // zp[4]:6 202.0
+__stackcall void print(struct Vector v)
+__constant char print::OFFSET_STACK_V = 0
+__loadstore struct Vector print::v // zp[4]:6 143.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[1]:3 [ idx ]
@@ -713,7 +713,7 @@ __start: {
     rts
 }
   // print
-// print(struct Vector zp(6) v)
+// void print(__zp(6) struct Vector v)
 print: {
     .const OFFSET_STACK_V = 0
     .label v = 6
@@ -728,7 +728,7 @@ print: {
     lda STACK_BASE+OFFSET_STACK_V+3,x
     sta.z v+3
     // SCREEN[idx++] = v.p1.x
-    // [6] SCREEN[idx] = *((byte*)(struct Point*)&print::v) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [6] SCREEN[idx] = *((char *)(struct Point *)&print::v) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda.z v
     ldy.z idx
     sta SCREEN,y
@@ -736,7 +736,7 @@ print: {
     // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // SCREEN[idx++] = v.p1.y
-    // [8] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
@@ -744,7 +744,7 @@ print: {
     // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // SCREEN[idx++] = v.p2.x
-    // [10] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
@@ -752,7 +752,7 @@ print: {
     // [11] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // SCREEN[idx++] = v.p2.y
-    // [12] SCREEN[idx] = *((byte*)(struct Point*)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
@@ -773,7 +773,7 @@ print: {
     rts
 }
   // get
-// get(byte register(Y) i)
+// __zp($a) struct Vector get(__register(Y) char i)
 get: {
     .const OFFSET_STACK_I = 0
     .const OFFSET_STACK_RETURN_0 = 0
@@ -781,7 +781,7 @@ get: {
     .label v = $e
     .label __0 = 4
     .label __2 = 5
-    // [17] get::i#0 = stackidx(byte,get::OFFSET_STACK_I) -- vbuyy=_stackidxbyte_vbuc1 
+    // [17] get::i#0 = stackidx(char,get::OFFSET_STACK_I) -- vbuyy=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tay
@@ -801,14 +801,14 @@ get: {
     asl
     sta.z __2
     // struct Vector v = { {i, i/2}, {i+1, i*2} }
-    // [21] *((byte*)(struct Point*)&get::v) = get::i#0 -- _deref_pbuc1=vbuyy 
+    // [21] *((char *)(struct Point *)&get::v) = get::i#0 -- _deref_pbuc1=vbuyy 
     sty.z v
-    // [22] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
+    // [22] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta v+OFFSET_STRUCT_POINT_Y
-    // [23] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
+    // [23] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
     stx v+OFFSET_STRUCT_VECTOR_P2
-    // [24] *((byte*)(struct Point*)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
+    // [24] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
     sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     // return v;
@@ -856,7 +856,7 @@ main: {
     // main::@2
   __b2:
     // struct Vector v = get(i)
-    // [32] stackpush(byte) = main::i#2 -- _stackpushbyte_=vbuz1 
+    // [32] stackpush(char) = main::i#2 -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
     // sideeffect stackpushbytes(3) -- _stackpushbyte_3 

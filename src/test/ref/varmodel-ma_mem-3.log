@@ -4,10 +4,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  call model_ma_mem 
+  call model_ma_mem
   to:main::@1
 main::@1: scope:[main]  from main
-  call model_ssa_zp 
+  call model_ssa_zp
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -17,7 +17,7 @@ main::@return: scope:[main]  from main::@2
 
 void model_ma_mem()
 model_ma_mem: scope:[model_ma_mem]  from main
-  model_ma_mem::screen = (byte*)$400
+  model_ma_mem::screen = (char *)$400
   model_ma_mem::i = 0
   to:model_ma_mem::@1
 model_ma_mem::@1: scope:[model_ma_mem]  from model_ma_mem model_ma_mem::@1
@@ -33,7 +33,7 @@ model_ma_mem::@return: scope:[model_ma_mem]  from model_ma_mem::@1
 
 void model_ssa_zp()
 model_ssa_zp: scope:[model_ssa_zp]  from main::@1
-  model_ssa_zp::screen#0 = (byte*)$428
+  model_ssa_zp::screen#0 = (char *)$428
   model_ssa_zp::i#0 = 0
   to:model_ssa_zp::@1
 model_ssa_zp::@1: scope:[model_ssa_zp]  from model_ssa_zp model_ssa_zp::@1
@@ -51,7 +51,7 @@ model_ssa_zp::@return: scope:[model_ssa_zp]  from model_ssa_zp::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -63,27 +63,27 @@ SYMBOL TABLE SSA
 void __start()
 void main()
 void model_ma_mem()
-bool~ model_ma_mem::$0
-byte model_ma_mem::i loadstore
-byte* model_ma_mem::screen loadstore
+bool model_ma_mem::$0
+__loadstore char model_ma_mem::i
+__loadstore char *model_ma_mem::screen
 void model_ssa_zp()
-bool~ model_ssa_zp::$0
-byte model_ssa_zp::i
-byte model_ssa_zp::i#0
-byte model_ssa_zp::i#1
-byte model_ssa_zp::i#2
-byte* model_ssa_zp::screen
-byte* model_ssa_zp::screen#0
-byte* model_ssa_zp::screen#1
-byte* model_ssa_zp::screen#2
+bool model_ssa_zp::$0
+char model_ssa_zp::i
+char model_ssa_zp::i#0
+char model_ssa_zp::i#1
+char model_ssa_zp::i#2
+char *model_ssa_zp::screen
+char *model_ssa_zp::screen#0
+char *model_ssa_zp::screen#1
+char *model_ssa_zp::screen#2
 
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1064
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1064
 Successful SSA optimization PassNCastSimplification
 Simple Condition model_ma_mem::$0 [9] if(model_ma_mem::i!=rangelast(0,5)) goto model_ma_mem::@1
 Simple Condition model_ssa_zp::$0 [18] if(model_ssa_zp::i#1!=rangelast(0,5)) goto model_ssa_zp::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant model_ssa_zp::screen#0 = (byte*) 1064
+Constant model_ssa_zp::screen#0 = (char *) 1064
 Constant model_ssa_zp::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [7] model_ma_mem::i = ++ model_ma_mem::i to ++
@@ -101,12 +101,12 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 6
-Finalized unsigned number type (byte) 6
+Finalized unsigned number type (char) 6
+Finalized unsigned number type (char) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings model_ssa_zp::screen#0
 Inlining constant with var siblings model_ssa_zp::i#0
-Constant inlined model_ssa_zp::screen#0 = (byte*) 1064
+Constant inlined model_ssa_zp::screen#0 = (char *) 1064
 Constant inlined model_ssa_zp::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting model_ssa_zp::@2(between model_ssa_zp::@1 and model_ssa_zp::@1)
@@ -132,11 +132,11 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call model_ma_mem 
+  [1] call model_ma_mem
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call model_ssa_zp 
+  [3] call model_ssa_zp
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
@@ -144,7 +144,7 @@ main::@return: scope:[main]  from main::@1
 
 void model_ma_mem()
 model_ma_mem: scope:[model_ma_mem]  from main
-  [5] model_ma_mem::screen = (byte*) 1024
+  [5] model_ma_mem::screen = (char *) 1024
   [6] model_ma_mem::i = 0
   to:model_ma_mem::@1
 model_ma_mem::@1: scope:[model_ma_mem]  from model_ma_mem model_ma_mem::@1
@@ -163,7 +163,7 @@ model_ssa_zp: scope:[model_ssa_zp]  from main::@1
   to:model_ssa_zp::@1
 model_ssa_zp::@1: scope:[model_ssa_zp]  from model_ssa_zp model_ssa_zp::@1
   [13] model_ssa_zp::i#2 = phi( model_ssa_zp/0, model_ssa_zp::@1/model_ssa_zp::i#1 )
-  [13] model_ssa_zp::screen#2 = phi( model_ssa_zp/(byte*) 1064, model_ssa_zp::@1/model_ssa_zp::screen#1 )
+  [13] model_ssa_zp::screen#2 = phi( model_ssa_zp/(char *) 1064, model_ssa_zp::@1/model_ssa_zp::screen#1 )
   [14] *model_ssa_zp::screen#2 = 'b'
   [15] model_ssa_zp::screen#1 = ++ model_ssa_zp::screen#2
   [16] model_ssa_zp::i#1 = ++ model_ssa_zp::i#2
@@ -177,15 +177,15 @@ model_ssa_zp::@return: scope:[model_ssa_zp]  from model_ssa_zp::@1
 VARIABLE REGISTER WEIGHTS
 void main()
 void model_ma_mem()
-byte model_ma_mem::i loadstore 62.8
-byte* model_ma_mem::screen loadstore 52.33333333333333
+__loadstore char model_ma_mem::i // 62.8
+__loadstore char *model_ma_mem::screen // 52.33333333333333
 void model_ssa_zp()
-byte model_ssa_zp::i
-byte model_ssa_zp::i#1 151.5
-byte model_ssa_zp::i#2 67.33333333333333
-byte* model_ssa_zp::screen
-byte* model_ssa_zp::screen#1 67.33333333333333
-byte* model_ssa_zp::screen#2 151.5
+char model_ssa_zp::i
+char model_ssa_zp::i#1 // 151.5
+char model_ssa_zp::i#2 // 67.33333333333333
+char *model_ssa_zp::screen
+char *model_ssa_zp::screen#1 // 67.33333333333333
+char *model_ssa_zp::screen#2 // 151.5
 
 Initial phi equivalence classes
 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
@@ -202,14 +202,14 @@ Allocated zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
 Allocated mem[2] [ model_ma_mem::screen ]
 Allocated mem[1] [ model_ma_mem::i ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] model_ma_mem::screen = (byte*) 1024 [ model_ma_mem::screen ] ( model_ma_mem:1 [ model_ma_mem::screen ] { }  ) always clobbers reg byte a 
+Statement [5] model_ma_mem::screen = (char *) 1024 [ model_ma_mem::screen ] ( model_ma_mem:1 [ model_ma_mem::screen ] { }  ) always clobbers reg byte a 
 Statement [6] model_ma_mem::i = 0 [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a 
 Statement [7] *model_ma_mem::screen = 'a' [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(model_ma_mem::i!=6) goto model_ma_mem::@1 [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a 
 Statement [14] *model_ssa_zp::screen#2 = 'b' [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] ( model_ssa_zp:3 [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
-Statement [5] model_ma_mem::screen = (byte*) 1024 [ model_ma_mem::screen ] ( model_ma_mem:1 [ model_ma_mem::screen ] { }  ) always clobbers reg byte a 
+Statement [5] model_ma_mem::screen = (char *) 1024 [ model_ma_mem::screen ] ( model_ma_mem:1 [ model_ma_mem::screen ] { }  ) always clobbers reg byte a 
 Statement [6] model_ma_mem::i = 0 [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a 
 Statement [7] *model_ma_mem::screen = 'a' [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(model_ma_mem::i!=6) goto model_ma_mem::@1 [ model_ma_mem::screen model_ma_mem::i ] ( model_ma_mem:1 [ model_ma_mem::screen model_ma_mem::i ] { }  ) always clobbers reg byte a 
@@ -248,14 +248,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call model_ma_mem 
+    // [1] call model_ma_mem
     jsr model_ma_mem
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [3] call model_ssa_zp 
+    // [3] call model_ssa_zp
     // [12] phi from main::@1 to model_ssa_zp [phi:main::@1->model_ssa_zp]
   model_ssa_zp_from___b1:
     jsr model_ssa_zp
@@ -267,7 +267,7 @@ main: {
 }
   // model_ma_mem
 model_ma_mem: {
-    // [5] model_ma_mem::screen = (byte*) 1024 -- pbum1=pbuc1 
+    // [5] model_ma_mem::screen = (char *) 1024 -- pbum1=pbuc1 
     // A local pointer
     lda #<$400
     sta screen
@@ -317,7 +317,7 @@ model_ssa_zp: {
   __b1_from_model_ssa_zp:
     // [13] phi model_ssa_zp::i#2 = 0 [phi:model_ssa_zp->model_ssa_zp::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [13] phi model_ssa_zp::screen#2 = (byte*) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
+    // [13] phi model_ssa_zp::screen#2 = (char *) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
     lda #<$428
     sta.z screen
     lda #>$428
@@ -378,15 +378,15 @@ Succesful ASM optimization Pass5NextJumpElimination
 FINAL SYMBOL TABLE
 void main()
 void model_ma_mem()
-byte model_ma_mem::i loadstore mem[1] 62.8
-byte* model_ma_mem::screen loadstore mem[2] 52.33333333333333
+__loadstore char model_ma_mem::i // mem[1] 62.8
+__loadstore char *model_ma_mem::screen // mem[2] 52.33333333333333
 void model_ssa_zp()
-byte model_ssa_zp::i
-byte model_ssa_zp::i#1 reg byte x 151.5
-byte model_ssa_zp::i#2 reg byte x 67.33333333333333
-byte* model_ssa_zp::screen
-byte* model_ssa_zp::screen#1 screen zp[2]:2 67.33333333333333
-byte* model_ssa_zp::screen#2 screen zp[2]:2 151.5
+char model_ssa_zp::i
+char model_ssa_zp::i#1 // reg byte x 151.5
+char model_ssa_zp::i#2 // reg byte x 67.33333333333333
+char *model_ssa_zp::screen
+char *model_ssa_zp::screen#1 // screen zp[2]:2 67.33333333333333
+char *model_ssa_zp::screen#2 // screen zp[2]:2 151.5
 
 zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
 reg byte x [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
@@ -413,12 +413,12 @@ Score: 988
   // main
 main: {
     // model_ma_mem()
-    // [1] call model_ma_mem 
+    // [1] call model_ma_mem
     jsr model_ma_mem
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // model_ssa_zp()
-    // [3] call model_ssa_zp 
+    // [3] call model_ssa_zp
     // [12] phi from main::@1 to model_ssa_zp [phi:main::@1->model_ssa_zp]
     jsr model_ssa_zp
     // main::@return
@@ -429,7 +429,7 @@ main: {
   // model_ma_mem
 model_ma_mem: {
     // char* screen = (char*)0x0400
-    // [5] model_ma_mem::screen = (byte*) 1024 -- pbum1=pbuc1 
+    // [5] model_ma_mem::screen = (char *) 1024 -- pbum1=pbuc1 
     // A local pointer
     lda #<$400
     sta screen
@@ -480,7 +480,7 @@ model_ssa_zp: {
     // [13] phi from model_ssa_zp to model_ssa_zp::@1 [phi:model_ssa_zp->model_ssa_zp::@1]
     // [13] phi model_ssa_zp::i#2 = 0 [phi:model_ssa_zp->model_ssa_zp::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [13] phi model_ssa_zp::screen#2 = (byte*) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
+    // [13] phi model_ssa_zp::screen#2 = (char *) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
     lda #<$428
     sta.z screen
     lda #>$428

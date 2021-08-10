@@ -90,7 +90,7 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// void print_str(__zp(2) char *str)
 print_str: {
     .label str = 2
   __b1:
@@ -114,7 +114,7 @@ print_str: {
     jmp __b1
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -160,6 +160,7 @@ print_ln: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -193,7 +194,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 void fn1()
 fn1: scope:[fn1]  from
-  fn1::screen#0 = (byte*)$400
+  fn1::screen#0 = (char *)$400
   to:fn1::@1
 fn1::@1: scope:[fn1]  from fn1 fn1::@2
   fn1::screen#2 = phi( fn1/fn1::screen#0, fn1::@2/fn1::screen#1 )
@@ -22,7 +22,7 @@ fn1::@return: scope:[fn1]  from fn1::@1
 
 void main()
 main: scope:[main]  from __start
-  main::cols#0 = (byte*)$d800
+  main::cols#0 = (char *)$d800
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   main::cols#2 = phi( main/main::cols#0, main::@3/main::cols#1 )
@@ -55,36 +55,36 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void fn1()
-bool~ fn1::$0
-byte* fn1::screen
-byte* fn1::screen#0
-byte* fn1::screen#1
-byte* fn1::screen#2
-byte* fn1::screen#3
+bool fn1::$0
+char *fn1::screen
+char *fn1::screen#0
+char *fn1::screen#1
+char *fn1::screen#2
+char *fn1::screen#3
 void main()
-bool~ main::$0
-constant void()* main::cls = &fn1
-byte* main::cols
-byte* main::cols#0
-byte* main::cols#1
-byte* main::cols#2
-byte* main::cols#3
-byte* main::cols#4
+bool main::$0
+__constant void (*main::cls)() = &fn1
+char *main::cols
+char *main::cols#0
+char *main::cols#1
+char *main::cols#2
+char *main::cols#3
+char *main::cols#4
 
 Adding number conversion cast (unumber) $400+$3e8 in fn1::$0 = fn1::screen#2 < $400+$3e8
 Adding number conversion cast (unumber) $d800+$3e8 in main::$0 = main::cols#2 < $d800+$3e8
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 55296
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 55296
 Successful SSA optimization PassNCastSimplification
 Alias fn1::screen#2 = fn1::screen#3 
 Alias main::cols#2 = main::cols#4 main::cols#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition fn1::$0 [3] if(fn1::screen#2<(word)$400+$3e8) goto fn1::@2
-Simple Condition main::$0 [10] if(main::cols#2<(word)$d800+$3e8) goto main::@2
+Simple Condition fn1::$0 [3] if(fn1::screen#2<(unsigned int)$400+$3e8) goto fn1::@2
+Simple Condition main::$0 [10] if(main::cols#2<(unsigned int)$d800+$3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant fn1::screen#0 = (byte*) 1024
-Constant main::cols#0 = (byte*) 55296
+Constant fn1::screen#0 = (char *) 1024
+Constant main::cols#0 = (char *) 55296
 Successful SSA optimization Pass2ConstantIdentification
 Replacing constant pointer function [11] callexecute fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
@@ -97,13 +97,13 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings fn1::screen#0
 Inlining constant with var siblings main::cols#0
-Constant inlined fn1::screen#0 = (byte*) 1024
-Constant inlined main::cols#0 = (byte*) 55296
+Constant inlined fn1::screen#0 = (char *) 1024
+Constant inlined main::cols#0 = (char *) 55296
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (word) $d800
-Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (unsigned int) $400
+Finalized unsigned number type (unsigned int) $3e8
+Finalized unsigned number type (unsigned int) $d800
+Finalized unsigned number type (unsigned int) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying constant integer cast $400+$3e8
 Simplifying constant integer cast $d800+$3e8
@@ -129,7 +129,7 @@ main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [1] main::cols#2 = phi( main/(byte*) 55296, main::@3/main::cols#1 )
+  [1] main::cols#2 = phi( main/(char *) 55296, main::@3/main::cols#1 )
   [2] if(main::cols#2<$d800+$3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -149,7 +149,7 @@ fn1: scope:[fn1]  from main::@2
   [8] phi()
   to:fn1::@1
 fn1::@1: scope:[fn1]  from fn1 fn1::@2
-  [9] fn1::screen#2 = phi( fn1/(byte*) 1024, fn1::@2/fn1::screen#1 )
+  [9] fn1::screen#2 = phi( fn1/(char *) 1024, fn1::@2/fn1::screen#1 )
   [10] if(fn1::screen#2<$400+$3e8) goto fn1::@2
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1::@1
@@ -163,13 +163,13 @@ fn1::@2: scope:[fn1]  from fn1::@1
 
 VARIABLE REGISTER WEIGHTS
 __stackcall void fn1()
-byte* fn1::screen
-byte* fn1::screen#1 20002.0
-byte* fn1::screen#2 16668.333333333332
+char *fn1::screen
+char *fn1::screen#1 // 20002.0
+char *fn1::screen#2 // 16668.333333333332
 void main()
-byte* main::cols
-byte* main::cols#1 22.0
-byte* main::cols#2 11.0
+char *main::cols
+char *main::cols#1 // 22.0
+char *main::cols#2 // 11.0
 
 Initial phi equivalence classes
 [ main::cols#2 main::cols#1 ]
@@ -215,7 +215,7 @@ main: {
     .label cols = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cols#2 = (char *) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta.z cols
     lda #>$d800
@@ -269,7 +269,7 @@ fn1: {
     .label screen = 4
     // [9] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   __b1_from_fn1:
-    // [9] phi fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+    // [9] phi fn1::screen#2 = (char *) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -338,13 +338,13 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 __stackcall void fn1()
-byte* fn1::screen
-byte* fn1::screen#1 screen zp[2]:4 20002.0
-byte* fn1::screen#2 screen zp[2]:4 16668.333333333332
+char *fn1::screen
+char *fn1::screen#1 // screen zp[2]:4 20002.0
+char *fn1::screen#2 // screen zp[2]:4 16668.333333333332
 void main()
-byte* main::cols
-byte* main::cols#1 cols zp[2]:2 22.0
-byte* main::cols#2 cols zp[2]:2 11.0
+char *main::cols
+char *main::cols#1 // cols zp[2]:2 22.0
+char *main::cols#2 // cols zp[2]:2 11.0
 
 zp[2]:2 [ main::cols#2 main::cols#1 ]
 zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
@@ -370,7 +370,7 @@ Score: 6727
 main: {
     .label cols = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cols#2 = (char *) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta.z cols
     lda #>$d800
@@ -419,7 +419,7 @@ main: {
 fn1: {
     .label screen = 4
     // [9] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-    // [9] phi fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+    // [9] phi fn1::screen#2 = (char *) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

@@ -158,7 +158,7 @@ sum: {
     jmp __b1
 }
 // Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp($d) w)
+// void print_uint_decimal(__zp($d) unsigned int w)
 print_uint_decimal: {
     .label w = $d
     // utoa(w, decimal_digits, DECIMAL)
@@ -192,7 +192,7 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($d) w)
+// void print_uint(__zp($d) unsigned int w)
 print_uint: {
     .label w = $d
     // print_uchar(BYTE1(w))
@@ -209,7 +209,7 @@ print_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($d) value, byte* zp(5) buffer)
+// void utoa(__zp($d) unsigned int value, __zp(5) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
     .label value = $d
@@ -281,7 +281,7 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// print_str(byte* zp($f) str)
+// void print_str(__zp($f) char *str)
 print_str: {
     .label str = $f
     lda #<decimal_digits
@@ -309,7 +309,7 @@ print_str: {
     jmp __b1
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -339,7 +339,7 @@ print_uchar: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(5) buffer, word zp($d) value, word zp($f) sub)
+// __zp($d) unsigned int utoa_append(__zp(5) char *buffer, __zp($d) unsigned int value, __zp($f) unsigned int sub)
 utoa_append: {
     .label buffer = 5
     .label value = $d
@@ -376,7 +376,7 @@ utoa_append: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

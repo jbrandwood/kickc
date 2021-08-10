@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .label print_screen = $400
   .label print_char_cursor = $f
   // The number currently being tested for whether it is a prime
@@ -27,14 +27,14 @@ main: {
     .label __15 = $11
     // PRIMES[1] = 2
     lda #<2
-    sta PRIMES+1*SIZEOF_WORD
+    sta PRIMES+1*SIZEOF_UNSIGNED_INT
     lda #>2
-    sta PRIMES+1*SIZEOF_WORD+1
+    sta PRIMES+1*SIZEOF_UNSIGNED_INT+1
     // PRIMES[2] = 3
     lda #<3
-    sta PRIMES+2*SIZEOF_WORD
+    sta PRIMES+2*SIZEOF_UNSIGNED_INT
     lda #>3
-    sta PRIMES+2*SIZEOF_WORD+1
+    sta PRIMES+2*SIZEOF_UNSIGNED_INT+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen
@@ -155,7 +155,7 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
+// __zp(7) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
     .label mb = $11
     .label res = 7
@@ -199,7 +199,7 @@ mul8u: {
 }
 // Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
 // The 8-bit unsigned char remainder can be found in rem8u after the division
-// div16u8u(word zp(5) dividend, byte zp(9) divisor)
+// unsigned int div16u8u(__zp(5) unsigned int dividend, __zp(9) char divisor)
 div16u8u: {
     .label dividend = 5
     .label divisor = 9
@@ -216,7 +216,7 @@ div16u8u: {
     rts
 }
 // Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp(5) w)
+// void print_uint_decimal(__zp(5) unsigned int w)
 print_uint_decimal: {
     .label w = 5
     // utoa(w, decimal_digits, DECIMAL)
@@ -231,7 +231,7 @@ print_uint_decimal: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -248,7 +248,7 @@ print_char: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// divr8u(byte zp($a) dividend, byte zp(9) divisor, byte register(Y) rem)
+// __zp($b) char divr8u(__zp($a) char dividend, __zp(9) char divisor, __register(Y) char rem)
 divr8u: {
     .label dividend = $a
     .label quotient = $b
@@ -301,7 +301,7 @@ divr8u: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($11) value, byte* zp($d) buffer)
+// void utoa(__zp($11) unsigned int value, __zp($d) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
     .label value = $11
@@ -373,7 +373,7 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// print_str(byte* zp($d) str)
+// void print_str(__zp($d) char *str)
 print_str: {
     .label str = $d
     lda #<decimal_digits
@@ -408,7 +408,7 @@ print_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($d) buffer, word zp($11) value, word zp($13) sub)
+// __zp($11) unsigned int utoa_append(__zp($d) char *buffer, __zp($11) unsigned int value, __zp($13) unsigned int sub)
 utoa_append: {
     .label buffer = $d
     .label value = $11

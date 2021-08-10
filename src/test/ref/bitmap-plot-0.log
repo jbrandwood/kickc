@@ -4,13 +4,13 @@ Resolved forward reference frame_cnt to frame_cnt
 Resolved forward reference irq to __interrupt(hardware_clobber) void irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00(vicSelectGfxBank::gfx)
 Inlined call main::$2 = call toD018(SCREEN, BITMAP)
-Inlined call call __init 
+Inlined call call __init
 Eliminating unused variable with no statement bitmap_clear::$1
 Eliminating unused variable with no statement memset::$2
 
 CONTROL FLOW GRAPH SSA
 
-void bitmap_init(byte* bitmap_init::gfx , byte* bitmap_init::screen)
+void bitmap_init(char *gfx , char *screen)
 bitmap_init: scope:[bitmap_init]  from main
   bitmap_init::screen#1 = phi( main/bitmap_init::screen#0 )
   bitmap_init::gfx#1 = phi( main/bitmap_init::gfx#0 )
@@ -96,7 +96,7 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@6
   return 
   to:@return
 
-void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
+void bitmap_clear(char bgcol , char fgcol)
 bitmap_clear: scope:[bitmap_clear]  from main::@8
   bitmap_gfx#14 = phi( main::@8/bitmap_gfx#2 )
   bitmap_screen#8 = phi( main::@8/bitmap_screen#2 )
@@ -104,18 +104,18 @@ bitmap_clear: scope:[bitmap_clear]  from main::@8
   bitmap_clear::fgcol#1 = phi( main::@8/bitmap_clear::fgcol#0 )
   bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
   bitmap_clear::col#0 = bitmap_clear::$0 + bitmap_clear::bgcol#1
-  memset::str#0 = (void*)bitmap_screen#8
+  memset::str#0 = (void *)bitmap_screen#8
   memset::c#0 = bitmap_clear::col#0
   memset::num#0 = $3e8
-  call memset 
+  call memset
   memset::return#0 = memset::return#3
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
   bitmap_gfx#8 = phi( bitmap_clear/bitmap_gfx#14 )
-  memset::str#1 = (void*)bitmap_gfx#8
+  memset::str#1 = (void *)bitmap_gfx#8
   memset::c#1 = 0
   memset::num#1 = $1f40
-  call memset 
+  call memset
   memset::return#1 = memset::return#3
   to:bitmap_clear::@2
 bitmap_clear::@2: scope:[bitmap_clear]  from bitmap_clear::@1
@@ -124,12 +124,12 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@2
   return 
   to:@return
 
-void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
+void bitmap_plot(unsigned int x , char y)
 bitmap_plot: scope:[bitmap_plot]  from main::@2
   bitmap_plot::x#1 = phi( main::@2/bitmap_plot::x#0 )
   bitmap_plot::y#1 = phi( main::@2/bitmap_plot::y#0 )
   bitmap_plot::$0 = bitmap_plot_yhi[bitmap_plot::y#1] w= bitmap_plot_ylo[bitmap_plot::y#1]
-  bitmap_plot::plotter#0 = (byte*)bitmap_plot::$0
+  bitmap_plot::plotter#0 = (char *)bitmap_plot::$0
   bitmap_plot::$1 = bitmap_plot::x#1 & $fff8
   bitmap_plot::plotter#1 = bitmap_plot::plotter#0 + bitmap_plot::$1
   bitmap_plot::$2 = byte0  bitmap_plot::x#1
@@ -139,7 +139,7 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   memset::c#5 = phi( bitmap_clear/memset::c#0, bitmap_clear::@1/memset::c#1 )
   memset::str#4 = phi( bitmap_clear/memset::str#0, bitmap_clear::@1/memset::str#1 )
@@ -156,9 +156,9 @@ memset::@2: scope:[memset]  from memset
   memset::c#4 = phi( memset/memset::c#5 )
   memset::num#3 = phi( memset/memset::num#2 )
   memset::str#3 = phi( memset/memset::str#4 )
-  memset::$4 = (byte*)memset::str#3
+  memset::$4 = (char *)memset::str#3
   memset::end#0 = memset::$4 + memset::num#3
-  memset::dst#0 = ((byte*)) memset::str#3
+  memset::dst#0 = ((char *)) memset::str#3
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
   memset::c#3 = phi( memset::@2/memset::c#4, memset::@4/memset::c#2 )
@@ -188,7 +188,7 @@ main: scope:[main]  from __start::@1
   bitmap_gfx#15 = phi( __start::@1/bitmap_gfx#17 )
   bitmap_init::gfx#0 = BITMAP
   bitmap_init::screen#0 = SCREEN
-  call bitmap_init 
+  call bitmap_init
   to:main::@8
 main::@8: scope:[main]  from main
   bitmap_screen#9 = phi( main/bitmap_screen#1 )
@@ -197,7 +197,7 @@ main::@8: scope:[main]  from main
   bitmap_screen#2 = bitmap_screen#9
   bitmap_clear::bgcol#0 = BLACK
   bitmap_clear::fgcol#0 = WHITE
-  call bitmap_clear 
+  call bitmap_clear
   to:main::@9
 main::@9: scope:[main]  from main::@8
   bitmap_screen#33 = phi( main::@8/bitmap_screen#2 )
@@ -211,11 +211,11 @@ main::toD0181: scope:[main]  from main::@9
   bitmap_gfx#32 = phi( main::@9/bitmap_gfx#34 )
   main::toD0181_gfx#1 = phi( main::@9/main::toD0181_gfx#0 )
   main::toD0181_screen#1 = phi( main::@9/main::toD0181_screen#0 )
-  main::toD0181_$7 = (word)main::toD0181_screen#1
+  main::toD0181_$7 = (unsigned int)main::toD0181_screen#1
   main::toD0181_$0 = main::toD0181_$7 & $3fff
   main::toD0181_$1 = main::toD0181_$0 * 4
   main::toD0181_$2 = byte1  main::toD0181_$1
-  main::toD0181_$3 = byte1  (word)main::toD0181_gfx#1
+  main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#1
   main::toD0181_$4 = main::toD0181_$3 / 4
   main::toD0181_$5 = main::toD0181_$4 & $f
   main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
@@ -233,7 +233,7 @@ main::@7: scope:[main]  from main::toD0181_@return
   main::toD0181_return#3 = phi( main::toD0181_@return/main::toD0181_return#1 )
   main::$2 = main::toD0181_return#3
   *D018 = main::$2
-  call init_irq 
+  call init_irq
   to:main::@10
 main::@10: scope:[main]  from main::@7
   bitmap_screen#19 = phi( main::@7/bitmap_screen#22 )
@@ -261,7 +261,7 @@ main::@2: scope:[main]  from main::@1
   main::x#2 = phi( main::@1/main::x#4 )
   bitmap_plot::x#0 = main::x#2
   bitmap_plot::y#0 = main::y#2
-  call bitmap_plot 
+  call bitmap_plot
   to:main::@11
 main::@11: scope:[main]  from main::@2
   bitmap_screen#27 = phi( main::@2/bitmap_screen#32 )
@@ -333,7 +333,7 @@ init_irq: scope:[init_irq]  from main::@7
   asm { sei  }
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
-  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
@@ -366,14 +366,14 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  bitmap_screen#4 = (byte*) 0
-  bitmap_gfx#4 = (byte*) 0
+  bitmap_screen#4 = (char *) 0
+  bitmap_gfx#4 = (char *) 0
   frame_cnt = 1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   bitmap_screen#16 = phi( __start::__init1/bitmap_screen#4 )
   bitmap_gfx#17 = phi( __start::__init1/bitmap_gfx#4 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   bitmap_screen#11 = phi( __start::@1/bitmap_screen#3 )
@@ -390,291 +390,291 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BG_COLOR = (byte*)$d021
-constant byte* BITMAP = (byte*)$2000
-constant const byte BLACK = 0
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*)$dc00
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const D011 = (byte*)$d011
-constant byte* const D018 = (byte*)$d018
-constant void()** const HARDWARE_IRQ = (void()**)$fffe
-constant byte* const IRQ_ENABLE = (byte*)$d01a
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*)$d019
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte* const PROCPORT = (byte*)1
-constant byte* const PROCPORT_DDR = (byte*)0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant byte* const RASTER = (byte*)$d012
-constant byte* SCREEN = (byte*)$400
-constant const byte VICII_BMM = $20
-constant byte* const VICII_CONTROL1 = (byte*)$d011
-constant const byte VICII_DEN = $10
-constant const byte VICII_RSEL = 8
-constant const byte WHITE = 1
+__constant char * const BG_COLOR = (char *)$d021
+__constant char *BITMAP = (char *)$2000
+__constant const char BLACK = 0
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const D011 = (char *)$d011
+__constant char * const D018 = (char *)$d018
+__constant void (** const HARDWARE_IRQ)() = (void (**)())$fffe
+__constant char * const IRQ_ENABLE = (char *)$d01a
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *)$d019
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char * const PROCPORT = (char *)1
+__constant char * const PROCPORT_DDR = (char *)0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant char * const RASTER = (char *)$d012
+__constant char *SCREEN = (char *)$400
+__constant const char VICII_BMM = $20
+__constant char * const VICII_CONTROL1 = (char *)$d011
+__constant const char VICII_DEN = $10
+__constant const char VICII_RSEL = 8
+__constant const char WHITE = 1
 void __start()
-void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
-number~ bitmap_clear::$0
-byte bitmap_clear::bgcol
-byte bitmap_clear::bgcol#0
-byte bitmap_clear::bgcol#1
-byte bitmap_clear::col
-byte bitmap_clear::col#0
-byte bitmap_clear::fgcol
-byte bitmap_clear::fgcol#0
-byte bitmap_clear::fgcol#1
-byte* bitmap_gfx
-byte* bitmap_gfx#0
-byte* bitmap_gfx#1
-byte* bitmap_gfx#10
-byte* bitmap_gfx#11
-byte* bitmap_gfx#12
-byte* bitmap_gfx#13
-byte* bitmap_gfx#14
-byte* bitmap_gfx#15
-byte* bitmap_gfx#16
-byte* bitmap_gfx#17
-byte* bitmap_gfx#18
-byte* bitmap_gfx#19
-byte* bitmap_gfx#2
-byte* bitmap_gfx#20
-byte* bitmap_gfx#21
-byte* bitmap_gfx#22
-byte* bitmap_gfx#23
-byte* bitmap_gfx#24
-byte* bitmap_gfx#25
-byte* bitmap_gfx#26
-byte* bitmap_gfx#27
-byte* bitmap_gfx#28
-byte* bitmap_gfx#29
-byte* bitmap_gfx#3
-byte* bitmap_gfx#30
-byte* bitmap_gfx#31
-byte* bitmap_gfx#32
-byte* bitmap_gfx#33
-byte* bitmap_gfx#34
-byte* bitmap_gfx#4
-byte* bitmap_gfx#5
-byte* bitmap_gfx#6
-byte* bitmap_gfx#7
-byte* bitmap_gfx#8
-byte* bitmap_gfx#9
-void bitmap_init(byte* bitmap_init::gfx , byte* bitmap_init::screen)
-bool~ bitmap_init::$0
-bool~ bitmap_init::$1
-byte*~ bitmap_init::$10
-bool~ bitmap_init::$11
-bool~ bitmap_init::$2
-number~ bitmap_init::$3
-byte~ bitmap_init::$4
-number~ bitmap_init::$5
-byte~ bitmap_init::$6
-number~ bitmap_init::$7
-bool~ bitmap_init::$8
-bool~ bitmap_init::$9
-byte bitmap_init::bits
-byte bitmap_init::bits#0
-byte bitmap_init::bits#1
-byte bitmap_init::bits#2
-byte bitmap_init::bits#3
-byte bitmap_init::bits#4
-byte* bitmap_init::gfx
-byte* bitmap_init::gfx#0
-byte* bitmap_init::gfx#1
-byte* bitmap_init::gfx#2
-byte* bitmap_init::gfx#3
-byte* bitmap_init::gfx#4
-byte* bitmap_init::gfx#5
-byte* bitmap_init::screen
-byte* bitmap_init::screen#0
-byte* bitmap_init::screen#1
-byte bitmap_init::x
-byte bitmap_init::x#0
-byte bitmap_init::x#1
-byte bitmap_init::x#2
-byte bitmap_init::x#3
-byte bitmap_init::x#4
-byte bitmap_init::y
-byte bitmap_init::y#0
-byte bitmap_init::y#1
-byte bitmap_init::y#2
-byte bitmap_init::y#3
-byte bitmap_init::y#4
-byte* bitmap_init::yoffs
-byte* bitmap_init::yoffs#0
-byte* bitmap_init::yoffs#1
-byte* bitmap_init::yoffs#2
-byte* bitmap_init::yoffs#3
-byte* bitmap_init::yoffs#4
-void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-word~ bitmap_plot::$0
-number~ bitmap_plot::$1
-byte~ bitmap_plot::$2
-byte* bitmap_plot::plotter
-byte* bitmap_plot::plotter#0
-byte* bitmap_plot::plotter#1
-word bitmap_plot::x
-word bitmap_plot::x#0
-word bitmap_plot::x#1
-byte bitmap_plot::y
-byte bitmap_plot::y#0
-byte bitmap_plot::y#1
-constant const byte* bitmap_plot_bit[$100]  = { fill( $100, 0) }
-constant const byte* bitmap_plot_yhi[$100]  = { fill( $100, 0) }
-constant const byte* bitmap_plot_ylo[$100]  = { fill( $100, 0) }
-byte* bitmap_screen
-byte* bitmap_screen#0
-byte* bitmap_screen#1
-byte* bitmap_screen#10
-byte* bitmap_screen#11
-byte* bitmap_screen#12
-byte* bitmap_screen#13
-byte* bitmap_screen#14
-byte* bitmap_screen#15
-byte* bitmap_screen#16
-byte* bitmap_screen#17
-byte* bitmap_screen#18
-byte* bitmap_screen#19
-byte* bitmap_screen#2
-byte* bitmap_screen#20
-byte* bitmap_screen#21
-byte* bitmap_screen#22
-byte* bitmap_screen#23
-byte* bitmap_screen#24
-byte* bitmap_screen#25
-byte* bitmap_screen#26
-byte* bitmap_screen#27
-byte* bitmap_screen#28
-byte* bitmap_screen#29
-byte* bitmap_screen#3
-byte* bitmap_screen#30
-byte* bitmap_screen#31
-byte* bitmap_screen#32
-byte* bitmap_screen#33
-byte* bitmap_screen#4
-byte* bitmap_screen#5
-byte* bitmap_screen#6
-byte* bitmap_screen#7
-byte* bitmap_screen#8
-byte* bitmap_screen#9
-volatile byte frame_cnt loadstore
+void bitmap_clear(char bgcol , char fgcol)
+number bitmap_clear::$0
+char bitmap_clear::bgcol
+char bitmap_clear::bgcol#0
+char bitmap_clear::bgcol#1
+char bitmap_clear::col
+char bitmap_clear::col#0
+char bitmap_clear::fgcol
+char bitmap_clear::fgcol#0
+char bitmap_clear::fgcol#1
+char *bitmap_gfx
+char *bitmap_gfx#0
+char *bitmap_gfx#1
+char *bitmap_gfx#10
+char *bitmap_gfx#11
+char *bitmap_gfx#12
+char *bitmap_gfx#13
+char *bitmap_gfx#14
+char *bitmap_gfx#15
+char *bitmap_gfx#16
+char *bitmap_gfx#17
+char *bitmap_gfx#18
+char *bitmap_gfx#19
+char *bitmap_gfx#2
+char *bitmap_gfx#20
+char *bitmap_gfx#21
+char *bitmap_gfx#22
+char *bitmap_gfx#23
+char *bitmap_gfx#24
+char *bitmap_gfx#25
+char *bitmap_gfx#26
+char *bitmap_gfx#27
+char *bitmap_gfx#28
+char *bitmap_gfx#29
+char *bitmap_gfx#3
+char *bitmap_gfx#30
+char *bitmap_gfx#31
+char *bitmap_gfx#32
+char *bitmap_gfx#33
+char *bitmap_gfx#34
+char *bitmap_gfx#4
+char *bitmap_gfx#5
+char *bitmap_gfx#6
+char *bitmap_gfx#7
+char *bitmap_gfx#8
+char *bitmap_gfx#9
+void bitmap_init(char *gfx , char *screen)
+bool bitmap_init::$0
+bool bitmap_init::$1
+char *bitmap_init::$10
+bool bitmap_init::$11
+bool bitmap_init::$2
+number bitmap_init::$3
+char bitmap_init::$4
+number bitmap_init::$5
+char bitmap_init::$6
+number bitmap_init::$7
+bool bitmap_init::$8
+bool bitmap_init::$9
+char bitmap_init::bits
+char bitmap_init::bits#0
+char bitmap_init::bits#1
+char bitmap_init::bits#2
+char bitmap_init::bits#3
+char bitmap_init::bits#4
+char *bitmap_init::gfx
+char *bitmap_init::gfx#0
+char *bitmap_init::gfx#1
+char *bitmap_init::gfx#2
+char *bitmap_init::gfx#3
+char *bitmap_init::gfx#4
+char *bitmap_init::gfx#5
+char *bitmap_init::screen
+char *bitmap_init::screen#0
+char *bitmap_init::screen#1
+char bitmap_init::x
+char bitmap_init::x#0
+char bitmap_init::x#1
+char bitmap_init::x#2
+char bitmap_init::x#3
+char bitmap_init::x#4
+char bitmap_init::y
+char bitmap_init::y#0
+char bitmap_init::y#1
+char bitmap_init::y#2
+char bitmap_init::y#3
+char bitmap_init::y#4
+char *bitmap_init::yoffs
+char *bitmap_init::yoffs#0
+char *bitmap_init::yoffs#1
+char *bitmap_init::yoffs#2
+char *bitmap_init::yoffs#3
+char *bitmap_init::yoffs#4
+void bitmap_plot(unsigned int x , char y)
+unsigned int bitmap_plot::$0
+number bitmap_plot::$1
+char bitmap_plot::$2
+char *bitmap_plot::plotter
+char *bitmap_plot::plotter#0
+char *bitmap_plot::plotter#1
+unsigned int bitmap_plot::x
+unsigned int bitmap_plot::x#0
+unsigned int bitmap_plot::x#1
+char bitmap_plot::y
+char bitmap_plot::y#0
+char bitmap_plot::y#1
+__constant const char bitmap_plot_bit[$100] = { fill( $100, 0) }
+__constant const char bitmap_plot_yhi[$100] = { fill( $100, 0) }
+__constant const char bitmap_plot_ylo[$100] = { fill( $100, 0) }
+char *bitmap_screen
+char *bitmap_screen#0
+char *bitmap_screen#1
+char *bitmap_screen#10
+char *bitmap_screen#11
+char *bitmap_screen#12
+char *bitmap_screen#13
+char *bitmap_screen#14
+char *bitmap_screen#15
+char *bitmap_screen#16
+char *bitmap_screen#17
+char *bitmap_screen#18
+char *bitmap_screen#19
+char *bitmap_screen#2
+char *bitmap_screen#20
+char *bitmap_screen#21
+char *bitmap_screen#22
+char *bitmap_screen#23
+char *bitmap_screen#24
+char *bitmap_screen#25
+char *bitmap_screen#26
+char *bitmap_screen#27
+char *bitmap_screen#28
+char *bitmap_screen#29
+char *bitmap_screen#3
+char *bitmap_screen#30
+char *bitmap_screen#31
+char *bitmap_screen#32
+char *bitmap_screen#33
+char *bitmap_screen#4
+char *bitmap_screen#5
+char *bitmap_screen#6
+char *bitmap_screen#7
+char *bitmap_screen#8
+char *bitmap_screen#9
+__loadstore volatile char frame_cnt
 void init_irq()
 __interrupt(hardware_clobber) void irq()
-bool~ irq::$0
-bool~ irq::$1
+bool irq::$0
+bool irq::$1
 void main()
-bool~ main::$10
-bool~ main::$11
-bool~ main::$12
-bool~ main::$13
-byte~ main::$14
-byte~ main::$2
-bool~ main::$5
-bool~ main::$6
-bool~ main::$7
-bool~ main::$8
-word~ main::$9
-number~ main::toD0181_$0
-number~ main::toD0181_$1
-byte~ main::toD0181_$2
-byte~ main::toD0181_$3
-number~ main::toD0181_$4
-number~ main::toD0181_$5
-number~ main::toD0181_$6
-word~ main::toD0181_$7
-byte* main::toD0181_gfx
-byte* main::toD0181_gfx#0
-byte* main::toD0181_gfx#1
-byte main::toD0181_return
-byte main::toD0181_return#0
-byte main::toD0181_return#1
-byte main::toD0181_return#2
-byte main::toD0181_return#3
-byte* main::toD0181_screen
-byte* main::toD0181_screen#0
-byte* main::toD0181_screen#1
-word main::vx
-word main::vx#0
-word main::vx#1
-word main::vx#2
-word main::vx#3
-word main::vx#4
-word main::vx#5
-word main::vx#6
-word main::vx#7
-word main::vx#8
-byte main::vy
-byte main::vy#0
-byte main::vy#1
-byte main::vy#2
-byte main::vy#3
-byte main::vy#4
-byte main::vy#5
-byte main::vy#6
-byte main::vy#7
-byte main::vy#8
-word main::x
-word main::x#0
-word main::x#1
-word main::x#2
-word main::x#3
-word main::x#4
-word main::x#5
-word main::x#6
-word main::x#7
-word main::x#8
-byte main::y
-byte main::y#0
-byte main::y#1
-byte main::y#2
-byte main::y#3
-byte main::y#4
-byte main::y#5
-byte main::y#6
-byte main::y#7
-byte main::y#8
-void* memset(void* memset::str , byte memset::c , word memset::num)
-bool~ memset::$0
-bool~ memset::$1
-bool~ memset::$3
-byte*~ memset::$4
-byte memset::c
-byte memset::c#0
-byte memset::c#1
-byte memset::c#2
-byte memset::c#3
-byte memset::c#4
-byte memset::c#5
-byte* memset::dst
-byte* memset::dst#0
-byte* memset::dst#1
-byte* memset::dst#2
-byte* memset::dst#3
-byte* memset::end
-byte* memset::end#0
-byte* memset::end#1
-byte* memset::end#2
-word memset::num
-word memset::num#0
-word memset::num#1
-word memset::num#2
-word memset::num#3
-void* memset::return
-void* memset::return#0
-void* memset::return#1
-void* memset::return#2
-void* memset::return#3
-void* memset::return#4
-void* memset::str
-void* memset::str#0
-void* memset::str#1
-void* memset::str#2
-void* memset::str#3
-void* memset::str#4
-void* memset::str#5
-void* memset::str#6
-constant byte* plots_per_frame[$100]  = { fill( $100, 0) }
+bool main::$10
+bool main::$11
+bool main::$12
+bool main::$13
+char main::$14
+char main::$2
+bool main::$5
+bool main::$6
+bool main::$7
+bool main::$8
+unsigned int main::$9
+number main::toD0181_$0
+number main::toD0181_$1
+char main::toD0181_$2
+char main::toD0181_$3
+number main::toD0181_$4
+number main::toD0181_$5
+number main::toD0181_$6
+unsigned int main::toD0181_$7
+char *main::toD0181_gfx
+char *main::toD0181_gfx#0
+char *main::toD0181_gfx#1
+char main::toD0181_return
+char main::toD0181_return#0
+char main::toD0181_return#1
+char main::toD0181_return#2
+char main::toD0181_return#3
+char *main::toD0181_screen
+char *main::toD0181_screen#0
+char *main::toD0181_screen#1
+unsigned int main::vx
+unsigned int main::vx#0
+unsigned int main::vx#1
+unsigned int main::vx#2
+unsigned int main::vx#3
+unsigned int main::vx#4
+unsigned int main::vx#5
+unsigned int main::vx#6
+unsigned int main::vx#7
+unsigned int main::vx#8
+char main::vy
+char main::vy#0
+char main::vy#1
+char main::vy#2
+char main::vy#3
+char main::vy#4
+char main::vy#5
+char main::vy#6
+char main::vy#7
+char main::vy#8
+unsigned int main::x
+unsigned int main::x#0
+unsigned int main::x#1
+unsigned int main::x#2
+unsigned int main::x#3
+unsigned int main::x#4
+unsigned int main::x#5
+unsigned int main::x#6
+unsigned int main::x#7
+unsigned int main::x#8
+char main::y
+char main::y#0
+char main::y#1
+char main::y#2
+char main::y#3
+char main::y#4
+char main::y#5
+char main::y#6
+char main::y#7
+char main::y#8
+void * memset(void *str , char c , unsigned int num)
+bool memset::$0
+bool memset::$1
+bool memset::$3
+char *memset::$4
+char memset::c
+char memset::c#0
+char memset::c#1
+char memset::c#2
+char memset::c#3
+char memset::c#4
+char memset::c#5
+char *memset::dst
+char *memset::dst#0
+char *memset::dst#1
+char *memset::dst#2
+char *memset::dst#3
+char *memset::end
+char *memset::end#0
+char *memset::end#1
+char *memset::end#2
+unsigned int memset::num
+unsigned int memset::num#0
+unsigned int memset::num#1
+unsigned int memset::num#2
+unsigned int memset::num#3
+void *memset::return
+void *memset::return#0
+void *memset::return#1
+void *memset::return#2
+void *memset::return#3
+void *memset::return#4
+void *memset::str
+void *memset::str#0
+void *memset::str#1
+void *memset::str#2
+void *memset::str#3
+void *memset::str#4
+void *memset::str#5
+void *memset::str#6
+__constant char plots_per_frame[$100] = { fill( $100, 0) }
 
 Adding number conversion cast (unumber) 1 in bitmap_init::bits#1 = bitmap_init::bits#3 >> 1
 Adding number conversion cast (unumber) 0 in bitmap_init::$0 = bitmap_init::bits#1 == 0
@@ -713,23 +713,23 @@ Adding number conversion cast (unumber) 0 in irq::$1 = 0 != frame_cnt
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast bitmap_init::bits#2 = (unumber)$80
 Inlining cast memset::c#1 = (unumber)0
-Inlining cast memset::dst#0 = (byte*)memset::str#3
+Inlining cast memset::dst#0 = (char *)memset::str#3
 Inlining cast *D011 = (unumber)VICII_BMM|VICII_DEN|VICII_RSEL|(unumber)3
 Inlining cast *RASTER = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53281
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53272
-Simplifying constant pointer cast (byte*) 53273
-Simplifying constant pointer cast (byte*) 53274
-Simplifying constant pointer cast (byte*) 0
-Simplifying constant pointer cast (byte*) 1
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
-Simplifying constant pointer cast (void()**) 65534
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 53266
+Simplifying constant pointer cast (char *) 53281
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53272
+Simplifying constant pointer cast (char *) 53273
+Simplifying constant pointer cast (char *) 53274
+Simplifying constant pointer cast (char *) 0
+Simplifying constant pointer cast (char *) 1
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56320
+Simplifying constant pointer cast (void (**)()) 65534
+Simplifying constant pointer cast (char *) 8192
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
@@ -754,39 +754,39 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $fff8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (word) $3fff
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (word) $13f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $c7
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) $10
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (unsigned int) $fff8
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (unsigned int) $3fff
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (unsigned int) $13f
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $c7
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in bitmap_init::$3 = bitmap_init::y#2 & 7
-Inferred type updated to byte in bitmap_init::$5 = bitmap_init::$3 | bitmap_init::$4
-Inferred type updated to byte in bitmap_init::$7 = bitmap_init::y#2 & 7
-Inferred type updated to byte in bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
-Inferred type updated to word in bitmap_plot::$1 = bitmap_plot::x#1 & $fff8
-Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
-Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
-Inferred type updated to byte in main::toD0181_$4 = main::toD0181_$3 / 4
-Inferred type updated to byte in main::toD0181_$5 = main::toD0181_$4 & $f
-Inferred type updated to byte in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
+Inferred type updated to char in bitmap_init::$3 = bitmap_init::y#2 & 7
+Inferred type updated to char in bitmap_init::$5 = bitmap_init::$3 | bitmap_init::$4
+Inferred type updated to char in bitmap_init::$7 = bitmap_init::y#2 & 7
+Inferred type updated to char in bitmap_clear::$0 = bitmap_clear::fgcol#1 * $10
+Inferred type updated to unsigned int in bitmap_plot::$1 = bitmap_plot::x#1 & $fff8
+Inferred type updated to unsigned int in main::toD0181_$0 = main::toD0181_$7 & $3fff
+Inferred type updated to unsigned int in main::toD0181_$1 = main::toD0181_$0 * 4
+Inferred type updated to char in main::toD0181_$4 = main::toD0181_$3 / 4
+Inferred type updated to char in main::toD0181_$5 = main::toD0181_$4 & $f
+Inferred type updated to char in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
 Inversing boolean not [9] bitmap_init::$1 = bitmap_init::bits#1 != 0 from [8] bitmap_init::$0 = bitmap_init::bits#1 == 0
 Inversing boolean not [29] bitmap_init::$9 = bitmap_init::$7 != 7 from [28] bitmap_init::$8 = bitmap_init::$7 == 7
 Inversing boolean not [67] memset::$1 = memset::num#2 <= 0 from [66] memset::$0 = memset::num#2 > 0
@@ -914,17 +914,17 @@ Constant main::x#0 = 0
 Constant main::y#0 = 0
 Constant main::vx#0 = 1
 Constant main::vy#0 = 1
-Constant bitmap_screen#16 = (byte*) 0
-Constant bitmap_gfx#17 = (byte*) 0
+Constant bitmap_screen#16 = (char *) 0
+Constant bitmap_gfx#17 = (char *) 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant bitmap_gfx#0 = bitmap_init::gfx#0
 Constant bitmap_screen#0 = bitmap_init::screen#0
-Constant main::toD0181_$7 = (word)main::toD0181_screen#0
+Constant main::toD0181_$7 = (unsigned int)main::toD0181_screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant memset::str#0 = (void*)bitmap_screen#0
-Constant memset::str#1 = (void*)bitmap_gfx#0
+Constant memset::str#0 = (void *)bitmap_screen#0
+Constant memset::str#1 = (void *)bitmap_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_gfx#0 in [82] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
+Constant value identified (unsigned int)main::toD0181_gfx#0 in [82] main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [93] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -948,8 +948,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias bitmap_init::$7 = bitmap_init::$3 
 Alias bitmap_clear::col#0 = bitmap_clear::$0 
@@ -964,11 +964,11 @@ Negating conditional jump and destination [91] if(main::y#1!=0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [20] bitmap_clear::col#0 = bitmap_clear::fgcol#0 * $10
 Constant right-side identified [45] main::toD0181_$0 = main::toD0181_$7 & $3fff
-Constant right-side identified [48] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
+Constant right-side identified [48] main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant bitmap_clear::col#0 = bitmap_clear::fgcol#0*$10
 Constant main::toD0181_$0 = main::toD0181_$7&$3fff
-Constant main::toD0181_$3 = byte1 (word)main::toD0181_gfx#0
+Constant main::toD0181_$3 = byte1 (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -988,10 +988,10 @@ Constant right-side identified [43] main::toD0181_return#0 = main::toD0181_$2 | 
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::toD0181_return#0 = main::toD0181_$2|main::toD0181_$5
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [24] bitmap_plot::plotter#0 = (byte*)bitmap_plot::$0 keeping bitmap_plot::plotter#0
+Inlining Noop Cast [24] bitmap_plot::plotter#0 = (char *)bitmap_plot::$0 keeping bitmap_plot::plotter#0
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [32] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
-Inlining Noop Cast [34] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [32] memset::$4 = (char *)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [34] memset::dst#0 = (char *)memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings bitmap_init::bits#0
 Inlining constant with var siblings bitmap_init::x#0
@@ -1015,19 +1015,19 @@ Constant inlined memset::num#1 = $1f40
 Constant inlined bitmap_init::bits#0 = $80
 Constant inlined memset::num#0 = $3e8
 Constant inlined bitmap_init::bits#2 = $80
-Constant inlined memset::str#1 = (void*)BITMAP
-Constant inlined memset::str#0 = (void*)SCREEN
-Constant inlined main::toD0181_$7 = (word)SCREEN
-Constant inlined main::toD0181_$2 = byte1 (word)SCREEN&$3fff*4
-Constant inlined main::toD0181_$1 = (word)SCREEN&$3fff*4
-Constant inlined main::toD0181_$0 = (word)SCREEN&$3fff
+Constant inlined memset::str#1 = (void *)BITMAP
+Constant inlined memset::str#0 = (void *)SCREEN
+Constant inlined main::toD0181_$7 = (unsigned int)SCREEN
+Constant inlined main::toD0181_$2 = byte1 (unsigned int)SCREEN&$3fff*4
+Constant inlined main::toD0181_$1 = (unsigned int)SCREEN&$3fff*4
+Constant inlined main::toD0181_$0 = (unsigned int)SCREEN&$3fff
 Constant inlined main::x#0 = 0
 Constant inlined bitmap_clear::fgcol#0 = WHITE
 Constant inlined bitmap_gfx#0 = BITMAP
 Constant inlined main::y#0 = 0
-Constant inlined main::toD0181_$5 = byte1 (word)BITMAP/4&$f
-Constant inlined main::toD0181_$4 = byte1 (word)BITMAP/4
-Constant inlined main::toD0181_$3 = byte1 (word)BITMAP
+Constant inlined main::toD0181_$5 = byte1 (unsigned int)BITMAP/4&$f
+Constant inlined main::toD0181_$4 = byte1 (unsigned int)BITMAP/4
+Constant inlined main::toD0181_$3 = byte1 (unsigned int)BITMAP
 Constant inlined main::vy#0 = 1
 Constant inlined main::vx#0 = 1
 Constant inlined bitmap_screen#0 = SCREEN
@@ -1036,16 +1036,16 @@ Constant inlined memset::c#0 = bitmap_clear::col#0
 Constant inlined bitmap_init::x#0 = 0
 Constant inlined memset::c#1 = 0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting bitmap_init::@8(between bitmap_init::@2 and bitmap_init::@1)
 Added new block during phi lifting bitmap_init::@9(between bitmap_init::@1 and bitmap_init::@2)
@@ -1134,7 +1134,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
-  [3] call main 
+  [3] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [4] return 
@@ -1159,11 +1159,11 @@ irq::@return: scope:[irq]  from irq::@1
 void main()
 main: scope:[main]  from __start::@1
   [11] phi()
-  [12] call bitmap_init 
+  [12] call bitmap_init
   to:main::@8
 main::@8: scope:[main]  from main
   [13] phi()
-  [14] call bitmap_clear 
+  [14] call bitmap_clear
   to:main::@9
 main::@9: scope:[main]  from main::@8
   [15] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
@@ -1173,7 +1173,7 @@ main::toD0181: scope:[main]  from main::@9
   to:main::@7
 main::@7: scope:[main]  from main::toD0181
   [17] *D018 = main::toD0181_return#0
-  [18] call init_irq 
+  [18] call init_irq
   to:main::@1
 main::@1: scope:[main]  from main::@4 main::@7
   [19] main::vy#2 = phi( main::@7/1, main::@4/main::vy#8 )
@@ -1184,7 +1184,7 @@ main::@1: scope:[main]  from main::@4 main::@7
 main::@2: scope:[main]  from main::@1
   [20] bitmap_plot::x#0 = main::x#2
   [21] bitmap_plot::y#0 = main::y#2
-  [22] call bitmap_plot 
+  [22] call bitmap_plot
   to:main::@10
 main::@10: scope:[main]  from main::@2
   [23] main::x#1 = main::x#2 + main::vx#2
@@ -1212,7 +1212,7 @@ main::@4: scope:[main]  from main::@12 main::@6
   [33] plots_per_frame[frame_cnt] = ++ plots_per_frame[frame_cnt]
   to:main::@1
 
-void bitmap_init(byte* bitmap_init::gfx , byte* bitmap_init::screen)
+void bitmap_init(char *gfx , char *screen)
 bitmap_init: scope:[bitmap_init]  from main
   [34] phi()
   to:bitmap_init::@1
@@ -1243,7 +1243,7 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [50] if(bitmap_init::$7!=7) goto bitmap_init::@4
   to:bitmap_init::@5
 bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@3
-  [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8
+  [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8
   to:bitmap_init::@4
 bitmap_init::@4: scope:[bitmap_init]  from bitmap_init::@3 bitmap_init::@5
   [52] bitmap_init::yoffs#4 = phi( bitmap_init::@3/bitmap_init::yoffs#2, bitmap_init::@5/bitmap_init::yoffs#1 )
@@ -1254,14 +1254,14 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@4
   [55] return 
   to:@return
 
-void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
+void bitmap_clear(char bgcol , char fgcol)
 bitmap_clear: scope:[bitmap_clear]  from main::@8
   [56] phi()
-  [57] call memset 
+  [57] call memset
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
   [58] phi()
-  [59] call memset 
+  [59] call memset
   to:bitmap_clear::@return
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@1
   [60] return 
@@ -1272,7 +1272,7 @@ init_irq: scope:[init_irq]  from main::@7
   asm { sei  }
   [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [63] *PROCPORT = PROCPORT_RAM_IO
-  [64] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [66] *RASTER = 0
   [67] *IRQ_ENABLE = IRQ_RASTER
@@ -1283,11 +1283,11 @@ init_irq::@return: scope:[init_irq]  from init_irq
   [70] return 
   to:@return
 
-void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
+void bitmap_plot(unsigned int x , char y)
 bitmap_plot: scope:[bitmap_plot]  from main::@2
   [71] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#0] w= bitmap_plot_ylo[bitmap_plot::y#0]
   [72] bitmap_plot::$1 = bitmap_plot::x#0 & $fff8
-  [73] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1
+  [73] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1
   [74] bitmap_plot::$2 = byte0  bitmap_plot::x#0
   [75] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2]
   to:bitmap_plot::@return
@@ -1295,16 +1295,16 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [76] return 
   to:@return
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   [77] memset::c#4 = phi( bitmap_clear/bitmap_clear::col#0, bitmap_clear::@1/0 )
-  [77] memset::str#3 = phi( bitmap_clear/(void*)SCREEN, bitmap_clear::@1/(void*)BITMAP )
+  [77] memset::str#3 = phi( bitmap_clear/(void *)SCREEN, bitmap_clear::@1/(void *)BITMAP )
   [77] memset::num#2 = phi( bitmap_clear/$3e8, bitmap_clear::@1/$1f40 )
   [78] if(memset::num#2<=0) goto memset::@return
   to:memset::@1
 memset::@1: scope:[memset]  from memset
-  [79] memset::end#0 = (byte*)memset::str#3 + memset::num#2
-  [80] memset::dst#4 = (byte*)memset::str#3
+  [79] memset::end#0 = (char *)memset::str#3 + memset::num#2
+  [80] memset::dst#4 = (char *)memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
   [81] memset::dst#2 = phi( memset::@1/memset::dst#4, memset::@3/memset::dst#1 )
@@ -1321,78 +1321,78 @@ memset::@3: scope:[memset]  from memset::@2
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
-byte bitmap_clear::bgcol
-byte bitmap_clear::col
-byte bitmap_clear::fgcol
-byte* bitmap_gfx
-void bitmap_init(byte* bitmap_init::gfx , byte* bitmap_init::screen)
-byte~ bitmap_init::$4 2002.0
-byte~ bitmap_init::$5 2002.0
-byte~ bitmap_init::$6 2002.0
-byte~ bitmap_init::$7 500.5
-byte bitmap_init::bits
-byte bitmap_init::bits#1 1001.0
-byte bitmap_init::bits#3 1501.5
-byte bitmap_init::bits#4 667.3333333333334
-byte* bitmap_init::gfx
-byte* bitmap_init::screen
-byte bitmap_init::x
-byte bitmap_init::x#1 1501.5
-byte bitmap_init::x#2 500.5
-byte bitmap_init::y
-byte bitmap_init::y#1 1501.5
-byte bitmap_init::y#2 500.5
-byte* bitmap_init::yoffs
-byte* bitmap_init::yoffs#1 2002.0
-byte* bitmap_init::yoffs#2 625.625
-byte* bitmap_init::yoffs#4 1001.0
-void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-word~ bitmap_plot::$1 2002.0
-byte~ bitmap_plot::$2 2002.0
-byte* bitmap_plot::plotter
-word bitmap_plot::plotter#0 500.5
-byte* bitmap_plot::plotter#1 1501.5
-word bitmap_plot::x
-word bitmap_plot::x#0 420.59999999999997
-byte bitmap_plot::y
-byte bitmap_plot::y#0 2103.0
-byte* bitmap_screen
-volatile byte frame_cnt loadstore 7.777777777777779
+void bitmap_clear(char bgcol , char fgcol)
+char bitmap_clear::bgcol
+char bitmap_clear::col
+char bitmap_clear::fgcol
+char *bitmap_gfx
+void bitmap_init(char *gfx , char *screen)
+char bitmap_init::$4 // 2002.0
+char bitmap_init::$5 // 2002.0
+char bitmap_init::$6 // 2002.0
+char bitmap_init::$7 // 500.5
+char bitmap_init::bits
+char bitmap_init::bits#1 // 1001.0
+char bitmap_init::bits#3 // 1501.5
+char bitmap_init::bits#4 // 667.3333333333334
+char *bitmap_init::gfx
+char *bitmap_init::screen
+char bitmap_init::x
+char bitmap_init::x#1 // 1501.5
+char bitmap_init::x#2 // 500.5
+char bitmap_init::y
+char bitmap_init::y#1 // 1501.5
+char bitmap_init::y#2 // 500.5
+char *bitmap_init::yoffs
+char *bitmap_init::yoffs#1 // 2002.0
+char *bitmap_init::yoffs#2 // 625.625
+char *bitmap_init::yoffs#4 // 1001.0
+void bitmap_plot(unsigned int x , char y)
+unsigned int bitmap_plot::$1 // 2002.0
+char bitmap_plot::$2 // 2002.0
+char *bitmap_plot::plotter
+unsigned int bitmap_plot::plotter#0 // 500.5
+char *bitmap_plot::plotter#1 // 1501.5
+unsigned int bitmap_plot::x
+unsigned int bitmap_plot::x#0 // 420.59999999999997
+char bitmap_plot::y
+char bitmap_plot::y#0 // 2103.0
+char *bitmap_screen
+__loadstore volatile char frame_cnt // 7.777777777777779
 void init_irq()
 __interrupt(hardware_clobber) void irq()
 void main()
-byte* main::toD0181_gfx
-byte main::toD0181_return
-byte* main::toD0181_screen
-word main::vx
-word main::vx#1 202.0
-word main::vx#2 50.5
-word main::vx#6 50.5
-byte main::vy
-byte main::vy#1 202.0
-byte main::vy#2 33.666666666666664
-byte main::vy#8 151.5
-word main::x
-word main::x#1 36.72727272727273
-word main::x#2 75.75
-byte main::y
-byte main::y#1 40.4
-byte main::y#2 60.599999999999994
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-byte memset::c#4 1250.125
-byte* memset::dst
-byte* memset::dst#1 20002.0
-byte* memset::dst#2 13668.333333333332
-byte* memset::dst#4 2002.0
-byte* memset::end
-byte* memset::end#0 1833.6666666666665
-word memset::num
-word memset::num#2 1001.0
-void* memset::return
-void* memset::str
-void* memset::str#3
+char *main::toD0181_gfx
+char main::toD0181_return
+char *main::toD0181_screen
+unsigned int main::vx
+unsigned int main::vx#1 // 202.0
+unsigned int main::vx#2 // 50.5
+unsigned int main::vx#6 // 50.5
+char main::vy
+char main::vy#1 // 202.0
+char main::vy#2 // 33.666666666666664
+char main::vy#8 // 151.5
+unsigned int main::x
+unsigned int main::x#1 // 36.72727272727273
+unsigned int main::x#2 // 75.75
+char main::y
+char main::y#1 // 40.4
+char main::y#2 // 60.599999999999994
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+char memset::c#4 // 1250.125
+char *memset::dst
+char *memset::dst#1 // 20002.0
+char *memset::dst#2 // 13668.333333333332
+char *memset::dst#4 // 2002.0
+char *memset::end
+char *memset::end#0 // 1833.6666666666665
+unsigned int memset::num
+unsigned int memset::num#2 // 1001.0
+void *memset::return
+void *memset::str
+void *memset::str#3
 
 Initial phi equivalence classes
 [ main::x#2 main::x#1 ]
@@ -1490,25 +1490,25 @@ Statement [31] main::vy#1 = - main::vy#2 [ frame_cnt main::x#1 main::y#1 main::v
 Statement [33] plots_per_frame[frame_cnt] = ++ plots_per_frame[frame_cnt] [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#8 ] ( main:3 [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#8 ] { }  ) always clobbers reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:4 [ main::y#2 main::y#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:7 [ main::vy#2 main::vy#8 main::vy#1 ]
-Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#1 ] { }  ) always clobbers reg byte a 
+Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Statement [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [63] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [66] *RASTER = 0 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [67] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [68] *HARDWARE_IRQ = &irq [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [71] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#0] w= bitmap_plot_ylo[bitmap_plot::y#0] [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Statement [72] bitmap_plot::$1 = bitmap_plot::x#0 & $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [73] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [73] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Statement [75] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] [ ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::y#2 main::y#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:7 [ main::vy#2 main::vy#8 main::vy#1 ]
 Statement [78] if(memset::num#2<=0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::num#2 memset::str#3 memset::c#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ memset::c#4 ]
-Statement [79] memset::end#0 = (byte*)memset::str#3 + memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [80] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [79] memset::end#0 = (char *)memset::str#3 + memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [80] memset::dst#4 = (char *)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
 Statement [82] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [84] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:17 [ memset::c#4 ]
@@ -1531,21 +1531,21 @@ Statement [30] if(main::y#1!=0) goto main::@4 [ frame_cnt main::vy#2 main::x#1 m
 Statement [31] main::vy#1 = - main::vy#2 [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#1 ] ( main:3 [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#1 ] { }  ) always clobbers reg byte a 
 Statement [33] plots_per_frame[frame_cnt] = ++ plots_per_frame[frame_cnt] [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#8 ] ( main:3 [ frame_cnt main::x#1 main::y#1 main::vx#6 main::vy#8 ] { }  ) always clobbers reg byte x 
 Statement [44] bitmap_init::$7 = bitmap_init::y#2 & 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] { }  ) always clobbers reg byte a 
-Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#1 ] { }  ) always clobbers reg byte a 
+Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#1 ] { }  ) always clobbers reg byte a 
 Statement [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [63] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [66] *RASTER = 0 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [67] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [68] *HARDWARE_IRQ = &irq [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [71] bitmap_plot::plotter#0 = bitmap_plot_yhi[bitmap_plot::y#0] w= bitmap_plot_ylo[bitmap_plot::y#0] [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Statement [72] bitmap_plot::$1 = bitmap_plot::x#0 & $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [73] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [73] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Statement [75] *bitmap_plot::plotter#1 = *bitmap_plot::plotter#1 | bitmap_plot_bit[bitmap_plot::$2] [ ] ( main:3::bitmap_plot:22 [ frame_cnt main::x#2 main::y#2 main::vx#2 main::vy#2 ] { { bitmap_plot::x#0 = main::x#2 } { bitmap_plot::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [78] if(memset::num#2<=0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::num#2 memset::str#3 memset::c#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
-Statement [79] memset::end#0 = (byte*)memset::str#3 + memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [80] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [79] memset::end#0 = (char *)memset::str#3 + memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [80] memset::dst#4 = (char *)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
 Statement [82] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [84] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:14::memset:57 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::bitmap_clear:14::memset:59 [ frame_cnt memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::x#2 main::x#1 ] : zp[2]:2 , 
@@ -1726,7 +1726,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [3] call main 
+    // [3] call main
     // [11] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -1778,7 +1778,7 @@ main: {
     .label y = 4
     .label vx = 5
     .label vy = 7
-    // [12] call bitmap_init 
+    // [12] call bitmap_init
     // [34] phi from main to bitmap_init [phi:main->bitmap_init]
   bitmap_init_from_main:
     jsr bitmap_init
@@ -1787,7 +1787,7 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [14] call bitmap_clear 
+    // [14] call bitmap_clear
     // [56] phi from main::@8 to bitmap_clear [phi:main::@8->bitmap_clear]
   bitmap_clear_from___b8:
     jsr bitmap_clear
@@ -1808,7 +1808,7 @@ main: {
     // [17] *D018 = main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [18] call init_irq 
+    // [18] call init_irq
     jsr init_irq
     // [19] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   __b1_from___b7:
@@ -1837,7 +1837,7 @@ main: {
     // [20] bitmap_plot::x#0 = main::x#2
     // [21] bitmap_plot::y#0 = main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [22] call bitmap_plot 
+    // [22] call bitmap_plot
     jsr bitmap_plot
     jmp __b10
     // main::@10
@@ -1927,6 +1927,7 @@ main: {
 }
   // bitmap_init
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = 9
     .label yoffs = $c
@@ -2009,7 +2010,7 @@ bitmap_init: {
     jmp __b5
     // bitmap_init::@5
   __b5:
-    // [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
+    // [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
     lda.z yoffs
     clc
     adc #<$28*8
@@ -2039,14 +2040,15 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
-    // [57] call memset 
+    // [57] call memset
     // [77] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
   memset_from_bitmap_clear:
     // [77] phi memset::c#4 = bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
-    // [77] phi memset::str#3 = (void*)SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
+    // [77] phi memset::str#3 = (void *)SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -2062,12 +2064,12 @@ bitmap_clear: {
     jmp __b1
     // bitmap_clear::@1
   __b1:
-    // [59] call memset 
+    // [59] call memset
     // [77] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
   memset_from___b1:
     // [77] phi memset::c#4 = 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
-    // [77] phi memset::str#3 = (void*)BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
+    // [77] phi memset::str#3 = (void *)BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
     sta.z memset.str
     lda #>BITMAP
@@ -2096,7 +2098,7 @@ init_irq: {
     // [63] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [64] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
@@ -2128,7 +2130,7 @@ init_irq: {
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(2) x, byte register(X) y)
+// void bitmap_plot(__zp(2) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $c
     .label plotter = $a
@@ -2145,7 +2147,7 @@ bitmap_plot: {
     lda.z x+1
     and #>$fff8
     sta.z __1+1
-    // [73] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+    // [73] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     clc
     lda.z plotter
     adc.z __1
@@ -2168,7 +2170,7 @@ bitmap_plot: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c, word zp($c) num)
+// void * memset(__zp($a) void *str, __register(X) char c, __zp($c) unsigned int num)
 memset: {
     .label end = $c
     .label dst = $a
@@ -2183,7 +2185,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [79] memset::end#0 = (byte*)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [79] memset::end#0 = (char *)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     clc
     lda.z end
     adc.z str
@@ -2191,7 +2193,7 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [80] memset::dst#4 = (byte*)memset::str#3
+    // [80] memset::dst#4 = (char *)memset::str#3
     // [81] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
@@ -2335,108 +2337,108 @@ Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BG_COLOR = (byte*) 53281
-constant byte* BITMAP = (byte*) 8192
-constant const byte BLACK = 0
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const D011 = (byte*) 53265
-constant byte* const D018 = (byte*) 53272
-constant void()** const HARDWARE_IRQ = (void()**) 65534
-constant byte* const IRQ_ENABLE = (byte*) 53274
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*) 53273
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte* const PROCPORT = (byte*) 1
-constant byte* const PROCPORT_DDR = (byte*) 0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant byte* const RASTER = (byte*) 53266
-constant byte* SCREEN = (byte*) 1024
-constant const byte VICII_BMM = $20
-constant byte* const VICII_CONTROL1 = (byte*) 53265
-constant const byte VICII_DEN = $10
-constant const byte VICII_RSEL = 8
-constant const byte WHITE = 1
+__constant char * const BG_COLOR = (char *) 53281
+__constant char *BITMAP = (char *) 8192
+__constant const char BLACK = 0
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const D011 = (char *) 53265
+__constant char * const D018 = (char *) 53272
+__constant void (** const HARDWARE_IRQ)() = (void (**)()) 65534
+__constant char * const IRQ_ENABLE = (char *) 53274
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *) 53273
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char * const PROCPORT = (char *) 1
+__constant char * const PROCPORT_DDR = (char *) 0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant char * const RASTER = (char *) 53266
+__constant char *SCREEN = (char *) 1024
+__constant const char VICII_BMM = $20
+__constant char * const VICII_CONTROL1 = (char *) 53265
+__constant const char VICII_DEN = $10
+__constant const char VICII_RSEL = 8
+__constant const char WHITE = 1
 void __start()
-void bitmap_clear(byte bitmap_clear::bgcol , byte bitmap_clear::fgcol)
-byte bitmap_clear::bgcol
-byte bitmap_clear::col
-constant byte bitmap_clear::col#0 col = WHITE*$10
-byte bitmap_clear::fgcol
-byte* bitmap_gfx
-void bitmap_init(byte* bitmap_init::gfx , byte* bitmap_init::screen)
-byte~ bitmap_init::$4 reg byte a 2002.0
-byte~ bitmap_init::$5 reg byte a 2002.0
-byte~ bitmap_init::$6 reg byte a 2002.0
-byte~ bitmap_init::$7 zp[1]:9 500.5
-byte bitmap_init::bits
-byte bitmap_init::bits#1 reg byte a 1001.0
-byte bitmap_init::bits#3 reg byte a 1501.5
-byte bitmap_init::bits#4 reg byte a 667.3333333333334
-byte* bitmap_init::gfx
-byte* bitmap_init::screen
-byte bitmap_init::x
-byte bitmap_init::x#1 reg byte x 1501.5
-byte bitmap_init::x#2 reg byte x 500.5
-byte bitmap_init::y
-byte bitmap_init::y#1 reg byte x 1501.5
-byte bitmap_init::y#2 reg byte x 500.5
-byte* bitmap_init::yoffs
-byte* bitmap_init::yoffs#1 yoffs zp[2]:12 2002.0
-byte* bitmap_init::yoffs#2 yoffs zp[2]:12 625.625
-byte* bitmap_init::yoffs#4 yoffs zp[2]:12 1001.0
-void bitmap_plot(word bitmap_plot::x , byte bitmap_plot::y)
-word~ bitmap_plot::$1 zp[2]:12 2002.0
-byte~ bitmap_plot::$2 reg byte x 2002.0
-byte* bitmap_plot::plotter
-word bitmap_plot::plotter#0 plotter zp[2]:10 500.5
-byte* bitmap_plot::plotter#1 plotter zp[2]:10 1501.5
-word bitmap_plot::x
-word bitmap_plot::x#0 x zp[2]:2 420.59999999999997
-byte bitmap_plot::y
-byte bitmap_plot::y#0 reg byte x 2103.0
-constant const byte* bitmap_plot_bit[$100]  = { fill( $100, 0) }
-constant const byte* bitmap_plot_yhi[$100]  = { fill( $100, 0) }
-constant const byte* bitmap_plot_ylo[$100]  = { fill( $100, 0) }
-byte* bitmap_screen
-volatile byte frame_cnt loadstore zp[1]:8 7.777777777777779
+void bitmap_clear(char bgcol , char fgcol)
+char bitmap_clear::bgcol
+char bitmap_clear::col
+__constant char bitmap_clear::col#0 = WHITE*$10 // col
+char bitmap_clear::fgcol
+char *bitmap_gfx
+void bitmap_init(char *gfx , char *screen)
+char bitmap_init::$4 // reg byte a 2002.0
+char bitmap_init::$5 // reg byte a 2002.0
+char bitmap_init::$6 // reg byte a 2002.0
+char bitmap_init::$7 // zp[1]:9 500.5
+char bitmap_init::bits
+char bitmap_init::bits#1 // reg byte a 1001.0
+char bitmap_init::bits#3 // reg byte a 1501.5
+char bitmap_init::bits#4 // reg byte a 667.3333333333334
+char *bitmap_init::gfx
+char *bitmap_init::screen
+char bitmap_init::x
+char bitmap_init::x#1 // reg byte x 1501.5
+char bitmap_init::x#2 // reg byte x 500.5
+char bitmap_init::y
+char bitmap_init::y#1 // reg byte x 1501.5
+char bitmap_init::y#2 // reg byte x 500.5
+char *bitmap_init::yoffs
+char *bitmap_init::yoffs#1 // yoffs zp[2]:12 2002.0
+char *bitmap_init::yoffs#2 // yoffs zp[2]:12 625.625
+char *bitmap_init::yoffs#4 // yoffs zp[2]:12 1001.0
+void bitmap_plot(unsigned int x , char y)
+unsigned int bitmap_plot::$1 // zp[2]:12 2002.0
+char bitmap_plot::$2 // reg byte x 2002.0
+char *bitmap_plot::plotter
+unsigned int bitmap_plot::plotter#0 // plotter zp[2]:10 500.5
+char *bitmap_plot::plotter#1 // plotter zp[2]:10 1501.5
+unsigned int bitmap_plot::x
+unsigned int bitmap_plot::x#0 // x zp[2]:2 420.59999999999997
+char bitmap_plot::y
+char bitmap_plot::y#0 // reg byte x 2103.0
+__constant const char bitmap_plot_bit[$100] = { fill( $100, 0) }
+__constant const char bitmap_plot_yhi[$100] = { fill( $100, 0) }
+__constant const char bitmap_plot_ylo[$100] = { fill( $100, 0) }
+char *bitmap_screen
+__loadstore volatile char frame_cnt // zp[1]:8 7.777777777777779
 void init_irq()
 __interrupt(hardware_clobber) void irq()
 void main()
-byte* main::toD0181_gfx
-byte main::toD0181_return
-constant byte main::toD0181_return#0 toD0181_return = byte1 (word)SCREEN&$3fff*4|byte1 (word)BITMAP/4&$f
-byte* main::toD0181_screen
-word main::vx
-word main::vx#1 vx zp[2]:5 202.0
-word main::vx#2 vx zp[2]:5 50.5
-word main::vx#6 vx zp[2]:5 50.5
-byte main::vy
-byte main::vy#1 vy zp[1]:7 202.0
-byte main::vy#2 vy zp[1]:7 33.666666666666664
-byte main::vy#8 vy zp[1]:7 151.5
-word main::x
-word main::x#1 x zp[2]:2 36.72727272727273
-word main::x#2 x zp[2]:2 75.75
-byte main::y
-byte main::y#1 y zp[1]:4 40.4
-byte main::y#2 y zp[1]:4 60.599999999999994
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-byte memset::c#4 reg byte x 1250.125
-byte* memset::dst
-byte* memset::dst#1 dst zp[2]:10 20002.0
-byte* memset::dst#2 dst zp[2]:10 13668.333333333332
-byte* memset::dst#4 dst zp[2]:10 2002.0
-byte* memset::end
-byte* memset::end#0 end zp[2]:12 1833.6666666666665
-word memset::num
-word memset::num#2 num zp[2]:12 1001.0
-void* memset::return
-void* memset::str
-void* memset::str#3 str zp[2]:10
-constant byte* plots_per_frame[$100]  = { fill( $100, 0) }
+char *main::toD0181_gfx
+char main::toD0181_return
+__constant char main::toD0181_return#0 = byte1 (unsigned int)SCREEN&$3fff*4|byte1 (unsigned int)BITMAP/4&$f // toD0181_return
+char *main::toD0181_screen
+unsigned int main::vx
+unsigned int main::vx#1 // vx zp[2]:5 202.0
+unsigned int main::vx#2 // vx zp[2]:5 50.5
+unsigned int main::vx#6 // vx zp[2]:5 50.5
+char main::vy
+char main::vy#1 // vy zp[1]:7 202.0
+char main::vy#2 // vy zp[1]:7 33.666666666666664
+char main::vy#8 // vy zp[1]:7 151.5
+unsigned int main::x
+unsigned int main::x#1 // x zp[2]:2 36.72727272727273
+unsigned int main::x#2 // x zp[2]:2 75.75
+char main::y
+char main::y#1 // y zp[1]:4 40.4
+char main::y#2 // y zp[1]:4 60.599999999999994
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+char memset::c#4 // reg byte x 1250.125
+char *memset::dst
+char *memset::dst#1 // dst zp[2]:10 20002.0
+char *memset::dst#2 // dst zp[2]:10 13668.333333333332
+char *memset::dst#4 // dst zp[2]:10 2002.0
+char *memset::end
+char *memset::end#0 // end zp[2]:12 1833.6666666666665
+unsigned int memset::num
+unsigned int memset::num#2 // num zp[2]:12 1001.0
+void *memset::return
+void *memset::str
+void *memset::str#3 // str zp[2]:10
+__constant char plots_per_frame[$100] = { fill( $100, 0) }
 
 zp[2]:2 [ main::x#2 main::x#1 bitmap_plot::x#0 ]
 zp[1]:4 [ main::y#2 main::y#1 ]
@@ -2556,7 +2558,7 @@ __start: {
     sta.z frame_cnt
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [3] call main 
+    // [3] call main
     // [11] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -2607,13 +2609,13 @@ main: {
     .label vx = 5
     .label vy = 7
     // bitmap_init(BITMAP, SCREEN)
-    // [12] call bitmap_init 
+    // [12] call bitmap_init
     // [34] phi from main to bitmap_init [phi:main->bitmap_init]
     jsr bitmap_init
     // [13] phi from main to main::@8 [phi:main->main::@8]
     // main::@8
     // bitmap_clear(BLACK, WHITE)
-    // [14] call bitmap_clear 
+    // [14] call bitmap_clear
     // [56] phi from main::@8 to bitmap_clear [phi:main::@8->bitmap_clear]
     jsr bitmap_clear
     // main::@9
@@ -2629,7 +2631,7 @@ main: {
     lda #toD0181_return
     sta D018
     // init_irq()
-    // [18] call init_irq 
+    // [18] call init_irq
     jsr init_irq
     // [19] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
     // [19] phi main::vy#2 = 1 [phi:main::@7->main::@1#0] -- vbuz1=vbuc1 
@@ -2651,7 +2653,7 @@ main: {
     // [20] bitmap_plot::x#0 = main::x#2
     // [21] bitmap_plot::y#0 = main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [22] call bitmap_plot 
+    // [22] call bitmap_plot
     jsr bitmap_plot
     // main::@10
     // x += vx
@@ -2733,6 +2735,7 @@ main: {
 }
   // bitmap_init
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = 9
     .label yoffs = $c
@@ -2810,7 +2813,7 @@ bitmap_init: {
     bne __b4
     // bitmap_init::@5
     // yoffs = yoffs + 40*8
-    // [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (word)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
+    // [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
     lda.z yoffs
     clc
     adc #<$28*8
@@ -2837,14 +2840,15 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
-    // [57] call memset 
+    // [57] call memset
     // [77] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
     // [77] phi memset::c#4 = bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
-    // [77] phi memset::str#3 = (void*)SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
+    // [77] phi memset::str#3 = (void *)SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -2858,11 +2862,11 @@ bitmap_clear: {
     // [58] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
     // bitmap_clear::@1
     // memset(bitmap_gfx, 0, 8000uw)
-    // [59] call memset 
+    // [59] call memset
     // [77] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
     // [77] phi memset::c#4 = 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
-    // [77] phi memset::str#3 = (void*)BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
+    // [77] phi memset::str#3 = (void *)BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
     sta.z memset.str
     lda #>BITMAP
@@ -2894,7 +2898,7 @@ init_irq: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [64] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
@@ -2930,7 +2934,7 @@ init_irq: {
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(2) x, byte register(X) y)
+// void bitmap_plot(__zp(2) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $c
     .label plotter = $a
@@ -2950,7 +2954,7 @@ bitmap_plot: {
     and #>$fff8
     sta.z __1+1
     // plotter += ( x & $fff8 )
-    // [73] bitmap_plot::plotter#1 = (byte*)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+    // [73] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     clc
     lda.z plotter
     adc.z __1
@@ -2974,7 +2978,7 @@ bitmap_plot: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c, word zp($c) num)
+// void * memset(__zp($a) void *str, __register(X) char c, __zp($c) unsigned int num)
 memset: {
     .label end = $c
     .label dst = $a
@@ -2989,7 +2993,7 @@ memset: {
   !:
     // memset::@1
     // char* end = (char*)str + num
-    // [79] memset::end#0 = (byte*)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [79] memset::end#0 = (char *)memset::str#3 + memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     clc
     lda.z end
     adc.z str
@@ -2997,7 +3001,7 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [80] memset::dst#4 = (byte*)memset::str#3
+    // [80] memset::dst#4 = (char *)memset::str#3
     // [81] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
     // [81] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2

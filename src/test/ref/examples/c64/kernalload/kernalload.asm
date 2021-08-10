@@ -75,6 +75,7 @@ main: {
 // Returns a status:
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+// __register(A) char loadFileToMemory(char device, char *filename, char *address)
 loadFileToMemory: {
     .const device = 8
     // setnam(filename)
@@ -100,7 +101,7 @@ loadFileToMemory: {
 }
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte zp(6) err)
+// void error(__zp(6) volatile char err)
 error: {
     .label err = 6
     // asm
@@ -111,7 +112,7 @@ error: {
 }
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
-// setnam(byte* zp(7) filename)
+// void setnam(__zp(7) char * volatile filename)
 setnam: {
     .label filename = 7
     .label filename_len = $d
@@ -134,7 +135,7 @@ setnam: {
     rts
 }
 // SETLFS. Set file parameters.
-// setlfs(byte zp(9) device)
+// void setlfs(__zp(9) volatile char device)
 setlfs: {
     .label device = 9
     // asm
@@ -149,7 +150,7 @@ setlfs: {
 // - verify: 0 = Load, 1-255 = Verify
 //
 // Returns a status, 0xff: Success other: Kernal Error Code
-// load(byte* zp($a) address, byte zp($c) verify)
+// __register(A) char load(__zp($a) char * volatile address, __zp($c) volatile char verify)
 load: {
     .label address = $a
     .label verify = $c
@@ -171,7 +172,7 @@ load: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(2) str)
+// __zp(4) unsigned int strlen(__zp(2) char *str)
 strlen: {
     .label len = 4
     .label str = 2

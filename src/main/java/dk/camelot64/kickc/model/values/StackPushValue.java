@@ -19,6 +19,6 @@ public class StackPushValue implements LValue {
 
    @Override
    public String toString(Program program) {
-      return "stackpush(" + type.getTypeName()+ ")";
+      return "stackpush(" + type.toCDecl() + ")";
    }
 }

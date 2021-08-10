@@ -13,11 +13,11 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   main::$1 = main::i#3 * SIZEOF_STRUCT_BALL
-  ((byte*)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((byte*)balls+OFFSET_STRUCT_BALL_POS)[main::$1] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
+  ((char *)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((char *)balls+OFFSET_STRUCT_BALL_POS)[main::$1] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
   main::$2 = main::i#3 * SIZEOF_STRUCT_BALL
-  ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
+  ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
   main::$3 = main::i#3 * SIZEOF_STRUCT_BALL
-  ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$3] = '*'
+  ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$3] = '*'
   main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -26,7 +26,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -35,31 +35,31 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_BALL_POS = 0
-constant byte OFFSET_STRUCT_BALL_SYM = 2
-constant byte OFFSET_STRUCT_BALL_VEL = 1
-constant byte SIZEOF_STRUCT_BALL = 3
+__constant char OFFSET_STRUCT_BALL_POS = 0
+__constant char OFFSET_STRUCT_BALL_SYM = 2
+__constant char OFFSET_STRUCT_BALL_VEL = 1
+__constant char SIZEOF_STRUCT_BALL = 3
 void __start()
-constant struct Ball* balls[$19]  = { fill( $19, 0) }
+__constant struct Ball balls[$19] = { fill( $19, 0) }
 void main()
-bool~ main::$0
-byte~ main::$1
-byte~ main::$2
-byte~ main::$3
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
+bool main::$0
+char main::$1
+char main::$2
+char main::$3
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
 
 Adding number conversion cast (unumber) $19 in main::$0 = main::i#2 < $19
-Adding number conversion cast (unumber) $a in ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
+Adding number conversion cast (unumber) $a in ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $19
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $19
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
@@ -70,8 +70,8 @@ Simple Condition main::$0 [3] if(main::i#2<$19) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)balls in [5] ((byte*)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((byte*)balls+OFFSET_STRUCT_BALL_POS)[main::$1] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
-Simplifying expression containing zero (byte*)balls in [5] ((byte*)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((byte*)balls)[main::$1] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
+Simplifying expression containing zero (char *)balls in [5] ((char *)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((char *)balls+OFFSET_STRUCT_BALL_POS)[main::$1] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
+Simplifying expression containing zero (char *)balls in [5] ((char *)balls+OFFSET_STRUCT_BALL_POS)[main::$1] = ((char *)balls)[main::$1] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$1]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_BALL_POS
 Successful SSA optimization PassNEliminateUnusedVars
@@ -90,8 +90,8 @@ Alias main::$2 = main::$5
 Successful SSA optimization Pass2AliasElimination
 Eliminating unused constant SIZEOF_STRUCT_BALL
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) $19
-Finalized unsigned number type (byte) $19
+Finalized unsigned number type (char) $19
+Finalized unsigned number type (char) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -117,20 +117,20 @@ main::@return: scope:[main]  from main::@1
 main::@2: scope:[main]  from main::@1
   [4] main::$4 = main::i#2 << 1
   [5] main::$2 = main::$4 + main::i#2
-  [6] ((byte*)balls)[main::$2] = ((byte*)balls)[main::$2] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2]
-  [7] ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
-  [8] ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*'
+  [6] ((char *)balls)[main::$2] = ((char *)balls)[main::$2] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2]
+  [7] ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a
+  [8] ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*'
   [9] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$2 25.666666666666668
-byte~ main::$4 22.0
-byte main::i
-byte main::i#1 22.0
-byte main::i#2 7.857142857142857
+char main::$2 // 25.666666666666668
+char main::$4 // 22.0
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 7.857142857142857
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -147,15 +147,15 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] main::$4 = main::i#2 << 1 [ main::i#2 main::$4 ] (  [ main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [5] main::$2 = main::$4 + main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [6] ((byte*)balls)[main::$2] = ((byte*)balls)[main::$2] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] ((char *)balls)[main::$2] = ((char *)balls)[main::$2] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$2 ]
-Statement [7] ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [7] ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$4 = main::i#2 << 1 [ main::i#2 main::$4 ] (  [ main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [5] main::$2 = main::$4 + main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [6] ((byte*)balls)[main::$2] = ((byte*)balls)[main::$2] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [7] ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] ((char *)balls)[main::$2] = ((char *)balls)[main::$2] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [7] ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$4 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -213,17 +213,17 @@ main: {
     clc
     adc.z $ff
     tax
-    // [6] ((byte*)balls)[main::$2] = ((byte*)balls)[main::$2] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    // [6] ((char *)balls)[main::$2] = ((char *)balls)[main::$2] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda balls,x
     clc
     adc balls+OFFSET_STRUCT_BALL_VEL,x
     sta balls,x
-    // [7] ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
+    // [7] ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
     lda #$a
     clc
     adc balls+OFFSET_STRUCT_BALL_VEL,x
     sta balls+OFFSET_STRUCT_BALL_VEL,x
-    // [8] ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta balls+OFFSET_STRUCT_BALL_SYM,x
     // [9] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
@@ -247,15 +247,15 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_BALL_SYM = 2
-constant byte OFFSET_STRUCT_BALL_VEL = 1
-constant struct Ball* balls[$19]  = { fill( $19, 0) }
+__constant char OFFSET_STRUCT_BALL_SYM = 2
+__constant char OFFSET_STRUCT_BALL_VEL = 1
+__constant struct Ball balls[$19] = { fill( $19, 0) }
 void main()
-byte~ main::$2 reg byte x 25.666666666666668
-byte~ main::$4 reg byte a 22.0
-byte main::i
-byte main::i#1 reg byte y 22.0
-byte main::i#2 reg byte y 7.857142857142857
+char main::$2 // reg byte x 25.666666666666668
+char main::$4 // reg byte a 22.0
+char main::i
+char main::i#1 // reg byte y 22.0
+char main::i#2 // reg byte y 7.857142857142857
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte a [ main::$4 ]
@@ -307,19 +307,19 @@ main: {
     clc
     adc.z $ff
     tax
-    // [6] ((byte*)balls)[main::$2] = ((byte*)balls)[main::$2] + ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    // [6] ((char *)balls)[main::$2] = ((char *)balls)[main::$2] + ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda balls,x
     clc
     adc balls+OFFSET_STRUCT_BALL_VEL,x
     sta balls,x
     // balls[i].vel += 10
-    // [7] ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((byte*)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
+    // [7] ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] = ((char *)balls+OFFSET_STRUCT_BALL_VEL)[main::$2] + $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
     lda #$a
     clc
     adc balls+OFFSET_STRUCT_BALL_VEL,x
     sta balls+OFFSET_STRUCT_BALL_VEL,x
     // balls[i].sym ='*'
-    // [8] ((byte*)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] ((char *)balls+OFFSET_STRUCT_BALL_SYM)[main::$2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta balls+OFFSET_STRUCT_BALL_SYM,x
     // for(char i=0;i<NUM_BALLS;i++)

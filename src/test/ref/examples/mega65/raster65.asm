@@ -62,7 +62,7 @@
   .const OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR = $21
   .const OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO = $4c
   .const OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL = $5a
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// Processor port data direction register
   .label PROCPORT_DDR = 0
   /// Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -477,7 +477,7 @@ main: {
   // Put MEGA logo on screen
   __b2:
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
-    cpx #$bc*SIZEOF_BYTE
+    cpx #$bc*SIZEOF_CHAR
     bcc __b3
     ldx #0
   // Put '*' as default greeting
@@ -557,6 +557,7 @@ main: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $28*$19

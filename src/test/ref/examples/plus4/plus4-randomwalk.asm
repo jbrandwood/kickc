@@ -205,7 +205,7 @@ main: {
     jmp __b6
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(3) str, byte register(X) c)
+// void * memset(__zp(3) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $d
     .label dst = 3

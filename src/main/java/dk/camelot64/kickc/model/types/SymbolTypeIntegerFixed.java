@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 
 /** Integer type with a fixed size (byte, signed byte, word, ...). */
@@ -87,6 +88,11 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
       return isNomodify;
    }
 
+   @Override
+   public String getTypeName() {
+      return typeBaseName;
+   }
+
    /**
     * Determines if a value can be represented by the type without loss of information
     *
@@ -95,11 +101,6 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
     */
    public boolean contains(Long number) {
       return number >= getMinValue() && number <= getMaxValue();
-   }
-
-   @Override
-   public String getTypeBaseName() {
-      return typeBaseName;
    }
 
    public String getCTypeBaseName() {
@@ -129,7 +130,7 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -144,6 +145,11 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
          cdecl.append(" ");
       cdecl.append(parentCDecl);
       return cdecl.toString();
+   }
+
+   @Override
+   public String getConstantFriendlyName() {
+      return cTypeBaseName.toUpperCase(Locale.ENGLISH).replace(" ", "_");
    }
 
    @Override

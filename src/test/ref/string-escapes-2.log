@@ -13,7 +13,7 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   chrout::c#0 = MESSAGE[main::i#3]
-  call chrout 
+  call chrout
   to:main::@3
 main::@3: scope:[main]  from main::@2
   main::i#4 = phi( main::@2/main::i#3 )
@@ -23,7 +23,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void chrout(byte chrout::c)
+void chrout(char c)
 chrout: scope:[chrout]  from main::@2
   chrout::c#1 = phi( main::@2/chrout::c#0 )
   *memA = chrout::c#1
@@ -35,7 +35,7 @@ chrout::@return: scope:[chrout]  from chrout
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -44,29 +44,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* MESSAGE[]  = "hello
+__constant char MESSAGE[] = "hello
 world\"pm
 void __start()
-void chrout(byte chrout::c)
-byte chrout::c
-byte chrout::c#0
-byte chrout::c#1
+void chrout(char c)
+char chrout::c
+char chrout::c#0
+char chrout::c#1
 void main()
-bool~ main::$1
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
-constant byte* const memA = (byte*)$ff
+bool main::$1
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+__constant char * const memA = (char *)$ff
 
 Adding number conversion cast (unumber) 0 in main::$1 = 0 != MESSAGE[main::i#2]
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (char *) 255
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 main::i#4 
 Successful SSA optimization Pass2AliasElimination
@@ -108,13 +108,13 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] chrout::c#0 = MESSAGE[main::i#2]
-  [5] call chrout 
+  [5] call chrout
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [6] main::i#1 = ++ main::i#2
   to:main::@1
 
-void chrout(byte chrout::c)
+void chrout(char c)
 chrout: scope:[chrout]  from main::@2
   [7] *memA = chrout::c#0
   asm { ldamemA jsr$ffd2  }
@@ -125,13 +125,13 @@ chrout::@return: scope:[chrout]  from chrout
 
 
 VARIABLE REGISTER WEIGHTS
-void chrout(byte chrout::c)
-byte chrout::c
-byte chrout::c#0 112.0
+void chrout(char c)
+char chrout::c
+char chrout::c#0 // 112.0
 void main()
-byte main::i
-byte main::i#1 22.0
-byte main::i#2 11.0
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -205,7 +205,7 @@ main: {
     // [4] chrout::c#0 = MESSAGE[main::i#2] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
-    // [5] call chrout 
+    // [5] call chrout
     jsr chrout
     jmp __b3
     // main::@3
@@ -218,7 +218,7 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte register(A) c)
+// void chrout(__register(A) char c)
 chrout: {
     // [7] *memA = chrout::c#0 -- _deref_pbuc1=vbuaa 
     sta memA
@@ -253,16 +253,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* MESSAGE[]  = "hello
+__constant char MESSAGE[] = "hello
 world\"pm
-void chrout(byte chrout::c)
-byte chrout::c
-byte chrout::c#0 reg byte a 112.0
+void chrout(char c)
+char chrout::c
+char chrout::c#0 // reg byte a 112.0
 void main()
-byte main::i
-byte main::i#1 i zp[1]:2 22.0
-byte main::i#2 i zp[1]:2 11.0
-constant byte* const memA = (byte*) 255
+char main::i
+char main::i#1 // i zp[1]:2 22.0
+char main::i#2 // i zp[1]:2 11.0
+__constant char * const memA = (char *) 255
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 reg byte a [ chrout::c#0 ]
@@ -310,7 +310,7 @@ main: {
     // [4] chrout::c#0 = MESSAGE[main::i#2] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
-    // [5] call chrout 
+    // [5] call chrout
     jsr chrout
     // main::@3
     // chrout(MESSAGE[i++]);
@@ -321,7 +321,7 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte register(A) c)
+// void chrout(__register(A) char c)
 chrout: {
     // *memA = c
     // [7] *memA = chrout::c#0 -- _deref_pbuc1=vbuaa 

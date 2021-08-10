@@ -12,7 +12,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .const SIZEOF_UNION___0 = 2
   .label SCREEN = $400
   .label _b16 = 4
@@ -42,9 +42,9 @@ main: {
     jsr add_checksum
     // SCREEN[1] = chks.u
     lda chks
-    sta SCREEN+1*SIZEOF_WORD
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT
     lda chks+1
-    sta SCREEN+1*SIZEOF_WORD+1
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT+1
     // add_checksum(0x3456)
     lda #<$3456
     sta.z add_checksum.v
@@ -53,9 +53,9 @@ main: {
     jsr add_checksum
     // SCREEN[1] = chks.u
     lda chks
-    sta SCREEN+1*SIZEOF_WORD
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT
     lda chks+1
-    sta SCREEN+1*SIZEOF_WORD+1
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT+1
     // }
     rts
 }
@@ -65,7 +65,7 @@ main: {
  * The result is found in chks.
  * @param v Value to sum.
  */
-// add_checksum(word zp(2) v)
+// void add_checksum(__zp(2) unsigned int v)
 add_checksum: {
     .label __3 = 4
     .label __6 = 6

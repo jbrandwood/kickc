@@ -27,7 +27,7 @@ main: {
     .byte 0
 }
 .segment Code
-// print(byte* zp(4) string)
+// void print(__zp(4) char *string)
 print: {
     .label string = 4
     lda #<main.rex1

@@ -187,6 +187,7 @@ mulf_init: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
+// __zp($e) unsigned long mulf16u(unsigned int a, unsigned int b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -308,7 +309,7 @@ mulf16u: {
     rts
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp($e) dw)
+// void print_ulong(__zp($e) unsigned long dw)
 print_ulong: {
     .label dw = $e
     // print_uint(WORD1(dw))
@@ -327,7 +328,7 @@ print_ulong: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($a) w)
+// void print_uint(__zp($a) unsigned int w)
 print_uint: {
     .label w = $a
     // print_uchar(BYTE1(w))
@@ -340,7 +341,7 @@ print_uint: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -363,7 +364,7 @@ print_uchar: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

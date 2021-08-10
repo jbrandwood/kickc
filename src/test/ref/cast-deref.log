@@ -7,7 +7,7 @@ main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
-  main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2]
+  main::SCREEN[main::i#2] = (char)main::sbs[main::i#2]
   main::i#1 = main::i#2 + rangenext(0,3)
   main::$0 = main::i#1 != rangelast(0,3)
   if(main::$0) goto main::@1
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -29,15 +29,15 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-bool~ main::$0
-constant byte* main::SCREEN = (byte*)$400
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-constant signed byte* main::sbs[]  = { -1, -2, -3, -4 }
+bool main::$0
+__constant char *main::SCREEN = (char *)$400
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+__constant signed char main::sbs[] = { -1, -2, -3, -4 }
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$0 [5] if(main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -54,7 +54,7 @@ Adding number conversion cast (unumber) 4 in [3] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type (char) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
@@ -77,7 +77,7 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [2] main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2]
+  [2] main::SCREEN[main::i#2] = (char)main::sbs[main::i#2]
   [3] main::i#1 = ++ main::i#2
   [4] if(main::i#1!=4) goto main::@1
   to:main::@return
@@ -88,9 +88,9 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 16.5
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 16.5
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -98,9 +98,9 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] main::SCREEN[main::i#2] = (char)main::sbs[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [2] main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] main::SCREEN[main::i#2] = (char)main::sbs[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -138,7 +138,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [2] main::SCREEN[main::i#2] = (char)main::sbs[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda sbs,x
     sta SCREEN,x
     // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
@@ -171,11 +171,11 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* main::SCREEN = (byte*) 1024
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 16.5
-constant signed byte* main::sbs[]  = { -1, -2, -3, -4 }
+__constant char *main::SCREEN = (char *) 1024
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 16.5
+__constant signed char main::sbs[] = { -1, -2, -3, -4 }
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -207,7 +207,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = (byte) sbs[i]
-    // [2] main::SCREEN[main::i#2] = (byte)main::sbs[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [2] main::SCREEN[main::i#2] = (char)main::sbs[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda sbs,x
     sta SCREEN,x
     // for(byte i : 0..3)

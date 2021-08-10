@@ -33,7 +33,7 @@ main: {
     // }
     rts
 }
-// print(word zp(2) w)
+// void print(__zp(2) unsigned int w)
 print: {
     .label w = 2
     // SCREEN[idx++] = w

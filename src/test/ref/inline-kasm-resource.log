@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
+  *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40
   *SPRITES_ENABLE = 1
   *SPRITES_XPOS = $64
   *SPRITES_YPOS = $64
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -23,20 +23,20 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
-constant byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+__constant char * const SCREEN = (char *)$400
+__constant char SPRITE[] = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_ENABLE = (byte*)$d015
-constant byte* const SPRITES_XPOS = (byte*)$d000
-constant byte* const SPRITES_YPOS = (byte*)$d001
+__constant char * const SPRITES_ENABLE = (char *)$d015
+__constant char * const SPRITES_XPOS = (char *)$d000
+__constant char * const SPRITES_YPOS = (char *)$d001
 void __start()
 void main()
 
-Adding number conversion cast (unumber) $40 in *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
-Adding number conversion cast (unumber) $3f8 in *(SCREEN+$3f8) = (byte)(word)SPRITE/(unumber)$40
+Adding number conversion cast (unumber) $40 in *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40
+Adding number conversion cast (unumber) $3f8 in *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/(unumber)$40
 Adding number conversion cast (unumber) 1 in *SPRITES_ENABLE = 1
 Adding number conversion cast (unumber) $64 in *SPRITES_XPOS = $64
 Adding number conversion cast (unumber) $64 in *SPRITES_YPOS = $64
@@ -45,28 +45,28 @@ Inlining cast *SPRITES_ENABLE = (unumber)1
 Inlining cast *SPRITES_XPOS = (unumber)$64
 Inlining cast *SPRITES_YPOS = (unumber)$64
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 53269
-Simplifying constant pointer cast (byte*) 53248
-Simplifying constant pointer cast (byte*) 53249
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 53269
+Simplifying constant pointer cast (char *) 53248
+Simplifying constant pointer cast (char *) 53249
 Simplifying constant integer cast $40
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 1
 Simplifying constant integer cast $64
 Simplifying constant integer cast $64
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $3f8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) $64
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (unsigned int) $3f8
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $64
+Finalized unsigned number type (char) $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Finalized unsigned number type (word) $c00
+Finalized unsigned number type (unsigned int) $c00
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -77,7 +77,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
+  [0] *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40
   [1] *SPRITES_ENABLE = 1
   [2] *SPRITES_XPOS = $64
   [3] *SPRITES_YPOS = $64
@@ -93,7 +93,7 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *SPRITES_ENABLE = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *SPRITES_XPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *SPRITES_YPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -125,7 +125,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // [0] *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+$3f8
     // [1] *SPRITES_ENABLE = 1 -- _deref_pbuc1=vbuc2 
@@ -162,15 +162,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-constant byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+__constant char * const SCREEN = (char *) 1024
+__constant char SPRITE[] = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_ENABLE = (byte*) 53269
-constant byte* const SPRITES_XPOS = (byte*) 53248
-constant byte* const SPRITES_YPOS = (byte*) 53249
+__constant char * const SPRITES_ENABLE = (char *) 53269
+__constant char * const SPRITES_XPOS = (char *) 53248
+__constant char * const SPRITES_YPOS = (char *) 53249
 void main()
 
 
@@ -198,7 +198,7 @@ Score: 28
   // main
 main: {
     // *(SCREEN+0x3f8) = (char)((unsigned int)SPRITE/$40)
-    // [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // [0] *(SCREEN+$3f8) = (char)(unsigned int)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+$3f8
     // *SPRITES_ENABLE = 1

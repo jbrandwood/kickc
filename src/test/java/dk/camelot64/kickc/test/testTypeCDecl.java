@@ -15,6 +15,25 @@ import java.util.Arrays;
 public class testTypeCDecl {
 
    @Test
+   void testTypes() {
+      Assertions.assertEquals("char",SymbolType.BYTE.toCDecl());
+      Assertions.assertEquals("signed char",SymbolType.SBYTE.toCDecl());
+      Assertions.assertEquals("int",SymbolType.SWORD.toCDecl());
+      Assertions.assertEquals("unsigned int",SymbolType.WORD.toCDecl());
+      Assertions.assertEquals("long",SymbolType.SDWORD.toCDecl());
+      Assertions.assertEquals("unsigned long",SymbolType.DWORD.toCDecl());
+      Assertions.assertEquals("long",SymbolType.SDWORD.toCDecl());
+      Assertions.assertEquals("bool",SymbolType.BOOLEAN.toCDecl());
+      Assertions.assertEquals("number",SymbolType.NUMBER.toCDecl());
+      Assertions.assertEquals("snumber",SymbolType.SNUMBER.toCDecl());
+      Assertions.assertEquals("unumber",SymbolType.UNUMBER.toCDecl());
+      Assertions.assertEquals("volatile char", SymbolType.BYTE.getQualified(true, false).toCDecl());
+      Assertions.assertEquals("char *",new SymbolTypePointer(SymbolType.BYTE).toCDecl());
+      Assertions.assertEquals("int *",new SymbolTypePointer(SymbolType.SWORD).toCDecl());
+      Assertions.assertEquals("unsigned long **",new SymbolTypePointer(new SymbolTypePointer(SymbolType.DWORD)).toCDecl());
+   }
+
+   @Test
    void testSimple() {
       assertCDecl("char x", "x", SymbolType.BYTE);
       assertCDecl("signed char x", "x", SymbolType.SBYTE);

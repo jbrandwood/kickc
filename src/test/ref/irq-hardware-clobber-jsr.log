@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   asm { sei  }
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
-  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
@@ -27,7 +27,7 @@ main::@return: scope:[main]  from main::@1
 
 __interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
-  call do_irq 
+  call do_irq
   to:irq::@1
 irq::@1: scope:[irq]  from irq
   to:irq::@return
@@ -47,7 +47,7 @@ do_irq::@return: scope:[do_irq]  from do_irq
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -56,23 +56,23 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BG_COLOR = (byte*)$d021
-constant const byte BLACK = 0
-constant byte* const BORDER_COLOR = (byte*)$d020
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*)$dc00
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant void()** const HARDWARE_IRQ = (void()**)$fffe
-constant byte* const IRQ_ENABLE = (byte*)$d01a
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*)$d019
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte* const PROCPORT = (byte*)1
-constant byte* const PROCPORT_DDR = (byte*)0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant byte* const RASTER = (byte*)$d012
-constant byte* const VICII_CONTROL1 = (byte*)$d011
-constant const byte WHITE = 1
+__constant char * const BG_COLOR = (char *)$d021
+__constant const char BLACK = 0
+__constant char * const BORDER_COLOR = (char *)$d020
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant void (** const HARDWARE_IRQ)() = (void (**)())$fffe
+__constant char * const IRQ_ENABLE = (char *)$d01a
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *)$d019
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char * const PROCPORT = (char *)1
+__constant char * const PROCPORT_DDR = (char *)0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant char * const RASTER = (char *)$d012
+__constant char * const VICII_CONTROL1 = (char *)$d011
+__constant const char WHITE = 1
 void __start()
 void do_irq()
 __interrupt(hardware_clobber) void irq()
@@ -83,21 +83,21 @@ Adding number conversion cast (unumber) 0 in *RASTER = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53273
-Simplifying constant pointer cast (byte*) 53274
-Simplifying constant pointer cast (byte*) 0
-Simplifying constant pointer cast (byte*) 1
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
-Simplifying constant pointer cast (void()**) 65534
+Simplifying constant pointer cast (char *) 53266
+Simplifying constant pointer cast (char *) 53280
+Simplifying constant pointer cast (char *) 53281
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53273
+Simplifying constant pointer cast (char *) 53274
+Simplifying constant pointer cast (char *) 0
+Simplifying constant pointer cast (char *) 1
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56320
+Simplifying constant pointer cast (void (**)()) 65534
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -126,7 +126,7 @@ FINAL CONTROL FLOW GRAPH
 __interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   [0] phi()
-  [1] call do_irq 
+  [1] call do_irq
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [2] return 
@@ -137,7 +137,7 @@ main: scope:[main]  from
   asm { sei  }
   [4] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [5] *PROCPORT = PROCPORT_RAM_IO
-  [6] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [6] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   [7] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [8] *RASTER = 0
   [9] *IRQ_ENABLE = IRQ_RASTER
@@ -170,7 +170,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [4] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *PROCPORT = PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -271,7 +271,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 irq: {
     // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
-    // [1] call do_irq 
+    // [1] call do_irq
     jsr do_irq
     jmp __breturn
     // irq::@return
@@ -293,7 +293,7 @@ main: {
     // [5] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [6] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
@@ -355,23 +355,23 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BG_COLOR = (byte*) 53281
-constant const byte BLACK = 0
-constant byte* const BORDER_COLOR = (byte*) 53280
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant void()** const HARDWARE_IRQ = (void()**) 65534
-constant byte* const IRQ_ENABLE = (byte*) 53274
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*) 53273
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte* const PROCPORT = (byte*) 1
-constant byte* const PROCPORT_DDR = (byte*) 0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant byte* const RASTER = (byte*) 53266
-constant byte* const VICII_CONTROL1 = (byte*) 53265
-constant const byte WHITE = 1
+__constant char * const BG_COLOR = (char *) 53281
+__constant const char BLACK = 0
+__constant char * const BORDER_COLOR = (char *) 53280
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant void (** const HARDWARE_IRQ)() = (void (**)()) 65534
+__constant char * const IRQ_ENABLE = (char *) 53274
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *) 53273
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char * const PROCPORT = (char *) 1
+__constant char * const PROCPORT_DDR = (char *) 0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant char * const RASTER = (char *) 53266
+__constant char * const VICII_CONTROL1 = (char *) 53265
+__constant const char WHITE = 1
 void do_irq()
 __interrupt(hardware_clobber) void irq()
 void main()
@@ -455,7 +455,7 @@ irq: {
     // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
     // do_irq()
-    // [1] call do_irq 
+    // [1] call do_irq
     jsr do_irq
     // irq::@return
     // }
@@ -480,7 +480,7 @@ main: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [6] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT

@@ -19,6 +19,7 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(unsigned int size)
 malloc: {
     .const size = $100
     .label mem = HEAP_TOP-size

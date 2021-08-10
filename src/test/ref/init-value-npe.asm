@@ -15,6 +15,7 @@ main: {
     // }
     rts
 }
+// void memset(void *str)
 memset: {
     .label str = myscreen
     .label dst = str

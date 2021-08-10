@@ -161,6 +161,7 @@ main: {
     jmp __b4
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = 0
     .label str = sieve
@@ -193,7 +194,7 @@ memset: {
     jmp __b1
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(4) w)
+// void print_uint(__zp(4) unsigned int w)
 print_uint: {
     .label w = 4
     // print_uchar(BYTE1(w))
@@ -206,7 +207,7 @@ print_uint: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -220,7 +221,7 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa

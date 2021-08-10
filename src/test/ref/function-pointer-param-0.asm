@@ -11,7 +11,7 @@
   .const STACK_BASE = $103
   .label SCREEN = $400
 .segment Code
-// fn3(byte register(A) e)
+// void fn3(__register(A) char e)
 fn3: {
     .const OFFSET_STACK_E = 0
     tsx
@@ -23,7 +23,7 @@ fn3: {
     // }
     rts
 }
-// fn2(byte register(A) d)
+// void fn2(__register(A) char d)
 fn2: {
     .const OFFSET_STACK_D = 0
     tsx
@@ -35,7 +35,7 @@ fn2: {
     // }
     rts
 }
-// fn1(byte register(A) c)
+// void fn1(__register(A) char c)
 fn1: {
     .const OFFSET_STACK_C = 0
     tsx

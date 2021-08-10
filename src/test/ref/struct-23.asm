@@ -42,6 +42,7 @@ main: {
     // }
     rts
 }
+// struct Point getPoint(char x, char y)
 getPoint: {
     rts
 }

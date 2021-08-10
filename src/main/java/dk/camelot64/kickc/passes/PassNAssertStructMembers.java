@@ -31,11 +31,11 @@ public class PassNAssertStructMembers extends Pass2SsaOptimization {
                StructDefinition structDefinition = structType.getStructDefinition(getScope());
                Variable member = structDefinition.getMember(structMemberRef.getMemberName());
                if(member==null) {
-                  throw new CompileError("Unknown struct member "+structMemberRef.getMemberName()+" in struct "+structType.getTypeName(), currentStmt);
+                  throw new CompileError("Unknown struct member "+structMemberRef.getMemberName()+" in struct "+ structType.toCDecl(), currentStmt);
                }
             } else {
                if(type instanceof SymbolTypePointer)
-                  throw new CompileError("member '"+structMemberRef.getMemberName()+"' reference type '"+type.getTypeBaseName()+"' is a pointer; did you mean to use '->'?", currentStmt);
+                  throw new CompileError("member '"+structMemberRef.getMemberName()+"' reference type '"+type.toCDecl()+"' is a pointer; did you mean to use '->'?", currentStmt);
                else
                   throw new CompileError("member '"+structMemberRef.getMemberName()+"' reference operator '.'/'->' applied to a non-struct", currentStmt);
             }

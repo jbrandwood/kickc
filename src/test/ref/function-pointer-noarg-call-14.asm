@@ -104,7 +104,7 @@ main: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(2) s)
+// void cputs(__zp(2) const char *s)
 cputs: {
     .label s = 2
   __b1:
@@ -125,7 +125,7 @@ cputs: {
     jmp __b1
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $12
@@ -199,7 +199,7 @@ gotoxy: {
     // }
     rts
 }
-// f1(void()* zp(4) fn)
+// void f1(__zp(4) void (*fn)())
 f1: {
     .label fn = 4
     // (*fn)()
@@ -211,7 +211,7 @@ f1: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -329,7 +329,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($16) destination, void* zp(6) source)
+// void * memcpy(__zp($16) void *destination, __zp(6) void *source, unsigned int num)
 memcpy: {
     .label src_end = $14
     .label dst = $16
@@ -371,7 +371,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(6) str, byte register(X) c)
+// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $16
     .label dst = 6

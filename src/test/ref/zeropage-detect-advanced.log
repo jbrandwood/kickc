@@ -1,11 +1,11 @@
-Setting inferred volatile on symbol affected by address-of main::c = (byte*)&main::t
+Setting inferred volatile on symbol affected by address-of main::c = (char *)&main::t
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
   main::t = 0
-  *((byte*)$400) = main::c[0]
+  *((char *)$400) = main::c[0]
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -13,7 +13,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -24,17 +24,17 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* main::c = (byte*)&main::t
-volatile dword main::t loadstore
+__constant char *main::c = (char *)&main::t
+__loadstore volatile unsigned long main::t
 
-Adding number conversion cast (unumber) 0 in *((byte*)$400) = main::c[0]
+Adding number conversion cast (unumber) 0 in *((char *)$400) = main::c[0]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::c in [1] *((byte*) 1024) = main::c[0]
+Simplifying expression containing zero main::c in [1] *((char *) 1024) = main::c[0]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -51,7 +51,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] main::t = 0
-  [1] *((byte*) 1024) = *main::c
+  [1] *((char *) 1024) = *main::c
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -60,7 +60,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-volatile dword main::t loadstore 20.0
+__loadstore volatile unsigned long main::t // 20.0
 
 Initial phi equivalence classes
 Added variable main::t to live range equivalence class [ main::t ]
@@ -69,7 +69,7 @@ Complete equivalence classes
 Allocated zp[4]:2 [ main::t ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] main::t = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((byte*) 1024) = *main::c [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((char *) 1024) = *main::c [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::t ] : zp[4]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -107,7 +107,7 @@ main: {
     sta.z t+2
     lda #>0>>$10
     sta.z t+3
-    // [1] *((byte*) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((char *) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     jmp __breturn
@@ -128,8 +128,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* main::c = (byte*)&main::t
-volatile dword main::t loadstore zp[4]:2 20.0
+__constant char *main::c = (char *)&main::t
+__loadstore volatile unsigned long main::t // zp[4]:2 20.0
 
 zp[4]:2 [ main::t ]
 
@@ -165,7 +165,7 @@ main: {
     lda #>0>>$10
     sta.z t+3
     // *(unsigned char *)0x0400 = c[0]
-    // [1] *((byte*) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((char *) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     // main::@return

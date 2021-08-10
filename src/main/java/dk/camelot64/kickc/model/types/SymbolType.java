@@ -104,22 +104,6 @@ public interface SymbolType extends Serializable {
    }
 
    /**
-    * Get the name of the type
-    *
-    * @return The type name
-    */
-   default String getTypeName() {
-      return (isVolatile()?"volatile ":"") + (isNomodify()?"const ":"") + getTypeBaseName();
-   }
-
-   /**
-    * Get the type base name (without const/volatile)
-    *
-    * @return type base name
-    */
-   String getTypeBaseName();
-
-   /**
     * Get the size of the type (in bytes).
     *
     * @return The size. -1 if the type is compile-time only.
@@ -136,14 +120,24 @@ public interface SymbolType extends Serializable {
       return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type) || UNUMBER.equals(type) || SNUMBER.equals(type);
    }
 
+   default String toCDecl() {
+      return toCDecl("");
+   }
+
    /**
     * Get the C declaration formatted type.
     *
     * @return The C declaration string
     * @param parentCDecl
     */
-   default public String toCDecl(String parentCDecl) {
+   default String toCDecl(String parentCDecl) {
       return "";
    }
+
+   /** Get a name that can be used as part of a constant (such as SIZEOF_, INDEXOF, ...)
+    *
+    * @return The name
+    */
+   String getConstantFriendlyName();
 
 }

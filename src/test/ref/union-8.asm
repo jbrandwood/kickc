@@ -48,7 +48,7 @@ main: {
     // }
     rts
 }
-// data(word zp(2) i)
+// __zp(8) union Data data(__zp(2) unsigned int i)
 data: {
     .label return = 8
     .label i = 2

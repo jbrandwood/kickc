@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,7 +6,7 @@ void main()
 main: scope:[main]  from __start::@1
   main::a#0 = 0
   foo::x#0 = 1
-  call foo 
+  call foo
   foo::return#0 = foo::return#2
   to:main::@1
 main::@1: scope:[main]  from main
@@ -14,13 +14,13 @@ main::@1: scope:[main]  from main
   main::$0 = foo::return#3
   main::$1 = main::$0 & 3
   main::a#1 = main::$1
-  *SCREEN = (byte)main::a#1
+  *SCREEN = (char)main::a#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-byte foo(byte foo::x)
+char foo(char x)
 foo: scope:[foo]  from main
   foo::x#1 = phi( main/foo::x#0 )
   foo::return#1 = bar[foo::x#1]
@@ -37,7 +37,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -46,25 +46,25 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* SCREEN = (byte*)$400
+__constant char *SCREEN = (char *)$400
 void __start()
-constant byte* bar[$a]  = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-byte foo(byte foo::x)
-byte foo::return
-byte foo::return#0
-byte foo::return#1
-byte foo::return#2
-byte foo::return#3
-byte foo::return#4
-byte foo::x
-byte foo::x#0
-byte foo::x#1
+__constant char bar[$a] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+char foo(char x)
+char foo::return
+char foo::return#0
+char foo::return#1
+char foo::return#2
+char foo::return#3
+char foo::return#4
+char foo::x
+char foo::x#0
+char foo::x#1
 void main()
-byte~ main::$0
-number~ main::$1
-word main::a
-word main::a#0
-word main::a#1
+char main::$0
+number main::$1
+unsigned int main::a
+unsigned int main::a#0
+unsigned int main::a#1
 
 Adding number conversion cast (unumber) 1 in foo::x#0 = 1
 Adding number conversion cast (unumber) 3 in main::$1 = main::$0 & 3
@@ -72,14 +72,14 @@ Adding number conversion cast (unumber) main::$1 in main::$1 = main::$0 & (unumb
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast foo::x#0 = (unumber)1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$1 = main::$0 & 3
+Inferred type updated to char in main::$1 = main::$0 & 3
 Alias foo::return#0 = foo::return#3 
 Alias main::a#1 = main::$1 
 Alias foo::return#1 = foo::return#4 foo::return#2 
@@ -100,7 +100,7 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(bar+foo::x#0)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -115,19 +115,19 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call foo 
+  [1] call foo
   [2] foo::return#0 = foo::return#1
   to:main::@1
 main::@1: scope:[main]  from main
   [3] main::$0 = foo::return#0
   [4] main::a#1 = main::$0 & 3
-  [5] *SCREEN = (byte)main::a#1
+  [5] *SCREEN = (char)main::a#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
   to:@return
 
-byte foo(byte foo::x)
+char foo(char x)
 foo: scope:[foo]  from main
   [7] foo::return#1 = *(bar+foo::x#0)
   to:foo::@return
@@ -137,15 +137,15 @@ foo::@return: scope:[foo]  from foo
 
 
 VARIABLE REGISTER WEIGHTS
-byte foo(byte foo::x)
-byte foo::return
-byte foo::return#0 4.0
-byte foo::return#1 4.333333333333333
-byte foo::x
+char foo(char x)
+char foo::return
+char foo::return#0 // 4.0
+char foo::return#1 // 4.333333333333333
+char foo::x
 void main()
-byte~ main::$0 4.0
-word main::a
-word main::a#1 2.0
+char main::$0 // 4.0
+unsigned int main::a
+unsigned int main::a#1 // 2.0
 
 Initial phi equivalence classes
 Added variable foo::return#0 to live range equivalence class [ foo::return#0 ]
@@ -163,7 +163,7 @@ Allocated zp[2]:4 [ main::a#1 ]
 Allocated zp[1]:6 [ foo::return#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] main::a#1 = main::$0 & 3 [ main::a#1 ] (  [ main::a#1 ] { }  ) always clobbers reg byte a 
-Statement [5] *SCREEN = (byte)main::a#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *SCREEN = (char)main::a#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ foo::return#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:4 [ main::a#1 ] : zp[2]:4 , 
@@ -198,7 +198,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label a = 2
-    // [1] call foo 
+    // [1] call foo
     jsr foo
     // [2] foo::return#0 = foo::return#1
     jmp __b1
@@ -210,7 +210,7 @@ main: {
     sta.z a
     lda #0
     sta.z a+1
-    // [5] *SCREEN = (byte)main::a#1 -- _deref_pbuc1=_byte_vwuz1 
+    // [5] *SCREEN = (char)main::a#1 -- _deref_pbuc1=_byte_vwuz1 
     lda.z a
     sta SCREEN
     jmp __breturn
@@ -220,6 +220,7 @@ main: {
     rts
 }
   // foo
+// __register(A) char foo(char x)
 foo: {
     .const x = 1
     // [7] foo::return#1 = *(bar+foo::x#0) -- vbuaa=_deref_pbuc1 
@@ -245,18 +246,18 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* SCREEN = (byte*) 1024
-constant byte* bar[$a]  = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-byte foo(byte foo::x)
-byte foo::return
-byte foo::return#0 reg byte a 4.0
-byte foo::return#1 reg byte a 4.333333333333333
-byte foo::x
-constant byte foo::x#0 x = 1
+__constant char *SCREEN = (char *) 1024
+__constant char bar[$a] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+char foo(char x)
+char foo::return
+char foo::return#0 // reg byte a 4.0
+char foo::return#1 // reg byte a 4.333333333333333
+char foo::x
+__constant char foo::x#0 = 1 // x
 void main()
-byte~ main::$0 reg byte a 4.0
-word main::a
-word main::a#1 a zp[2]:2 2.0
+char main::$0 // reg byte a 4.0
+unsigned int main::a
+unsigned int main::a#1 // a zp[2]:2 2.0
 
 reg byte a [ foo::return#0 ]
 reg byte a [ main::$0 ]
@@ -286,7 +287,7 @@ Score: 39
 main: {
     .label a = 2
     // foo(1)
-    // [1] call foo 
+    // [1] call foo
     jsr foo
     // [2] foo::return#0 = foo::return#1
     // main::@1
@@ -298,7 +299,7 @@ main: {
     lda #0
     sta.z a+1
     // *SCREEN = (byte)a
-    // [5] *SCREEN = (byte)main::a#1 -- _deref_pbuc1=_byte_vwuz1 
+    // [5] *SCREEN = (char)main::a#1 -- _deref_pbuc1=_byte_vwuz1 
     lda.z a
     sta SCREEN
     // main::@return
@@ -307,6 +308,7 @@ main: {
     rts
 }
   // foo
+// __register(A) char foo(char x)
 foo: {
     .const x = 1
     // return bar[x];

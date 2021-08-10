@@ -20,6 +20,7 @@ main: {
     .byte 0
 }
 .segment Code
+// void output(unsigned long dw)
 output: {
     // *screen = dw
     lda #<main.dw

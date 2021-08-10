@@ -23,7 +23,7 @@ main: {
     // }
     rts
 }
-// outsw(byte register(Y) c)
+// void outsw(__register(Y) char c)
 outsw: {
     // out('-')
     lda #'-'
@@ -33,7 +33,7 @@ outsw: {
     // }
     rts
 }
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // idx++;
     inx
@@ -42,7 +42,7 @@ out: {
     // }
     rts
 }
-// outw(byte register(Y) c)
+// void outw(__register(Y) char c)
 outw: {
     // out(c<<4)
     tya

@@ -38,7 +38,7 @@ main: {
     // }
     rts
 }
-// plot(byte register(X) x)
+// void plot(__register(X) char x)
 plot: {
     // SCREEN[x] = '*'
     lda #'*'

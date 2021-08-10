@@ -8,7 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label z1 = 5
@@ -38,14 +38,14 @@ main: {
     jsr mul8u
     // word z2 = mul8u(y,40)
     // *screen++ = z2
-    ldy #SIZEOF_WORD
+    ldy #SIZEOF_UNSIGNED_INT
     lda.z z2
     sta (screen),y
     iny
     lda.z z2+1
     sta (screen),y
     // *screen++ = z2;
-    lda #SIZEOF_WORD+SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT+SIZEOF_UNSIGNED_INT
     clc
     adc.z screen
     sta.z screen
@@ -61,7 +61,7 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
+// __zp(5) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
     .label mb = 7
     .label res = 5

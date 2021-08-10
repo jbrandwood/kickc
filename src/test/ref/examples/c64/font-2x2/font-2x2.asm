@@ -79,6 +79,7 @@ main: {
     jmp __b4
 }
 // Create a 2x2-font by doubling all pixels of the 64 first chars
+// void font_2x2(char *font_original, char *font_2x2)
 font_2x2: {
     .label __5 = $f
     .label __7 = $f
@@ -244,6 +245,7 @@ font_2x2: {
 // The compressed font is put into font_compressed and the compress_mapping is updated
 // so that compress_mapping[c] points to the char in font_compressed that is identical to char c in font_original
 // Returns the size of the compressed font (in chars)
+// __register(X) char font_compress(char *font_original, char *font_compressed, char *compress_mapping)
 font_compress: {
     .label next_original = $11
     .label i = 8
@@ -317,7 +319,7 @@ font_compress: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(byte register(X) c)
+// void * memset(void *str, __register(X) char c, unsigned int num)
 memset: {
     .const num = $400
     .label str = SCREEN
@@ -350,7 +352,7 @@ memset: {
     jmp __b1
 }
 // Show a 2x2 char on the screen at 2x2-position (x, y) using a font compress mapping
-// show(byte zp(3) c, byte register(X) x, byte register(A) y)
+// void show(__zp(3) char c, __register(X) char x, __register(A) char y, char *font_mapping)
 show: {
     .label __0 = $f
     .label __1 = $f
@@ -435,7 +437,7 @@ show: {
 // Look for a glyph within a font
 // Only looks at the first font_size glyphs
 // Returns the index of the glyph within the font. Returns 0xff if the glyph is not found.
-// font_find(byte* zp($11) glyph, byte* zp($d) font, byte zp(7) font_size)
+// __register(X) char font_find(__zp($11) char *glyph, __zp($d) char *font, __zp(7) char font_size)
 font_find: {
     .label glyph = $11
     .label font_size = 7

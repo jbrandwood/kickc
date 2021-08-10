@@ -1,5 +1,5 @@
 Setting inferred volatile on symbol affected by address-of main::$0 = call setscreen(&screen, screen1)
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -7,13 +7,13 @@ void main()
 main: scope:[main]  from __start::@1
   setscreen::screen#0 = &screen
   setscreen::val#0 = screen1
-  call setscreen 
+  call setscreen
   to:main::@1
 main::@1: scope:[main]  from main
   screen[0] = 'a'
   setscreen::screen#1 = &screen
   setscreen::val#1 = screen2
-  call setscreen 
+  call setscreen
   to:main::@2
 main::@2: scope:[main]  from main::@1
   screen[0] = 'a'
@@ -22,7 +22,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void setscreen(byte** setscreen::screen , byte* setscreen::val)
+void setscreen(char **screen , char *val)
 setscreen: scope:[setscreen]  from main main::@1
   setscreen::screen#2 = phi( main/setscreen::screen#0, main::@1/setscreen::screen#1 )
   setscreen::val#2 = phi( main/setscreen::val#0, main::@1/setscreen::val#1 )
@@ -36,10 +36,10 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  screen = (byte*)$400
+  screen = (char *)$400
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -50,33 +50,33 @@ __start::@return: scope:[__start]  from __start::@2
 SYMBOL TABLE SSA
 void __start()
 void main()
-byte* volatile screen loadstore
-constant byte* screen1 = (byte*)$400
-constant byte* screen2 = (byte*)$400+$28
-void setscreen(byte** setscreen::screen , byte* setscreen::val)
-byte** setscreen::screen
-byte** setscreen::screen#0
-byte** setscreen::screen#1
-byte** setscreen::screen#2
-byte* setscreen::val
-byte* setscreen::val#0
-byte* setscreen::val#1
-byte* setscreen::val#2
+__loadstore char * volatile screen
+__constant char *screen1 = (char *)$400
+__constant char *screen2 = (char *)$400+$28
+void setscreen(char **screen , char *val)
+char **setscreen::screen
+char **setscreen::screen#0
+char **setscreen::screen#1
+char **setscreen::screen#2
+char *setscreen::val
+char *setscreen::val#0
+char *setscreen::val#1
+char *setscreen::val#2
 
 Adding number conversion cast (unumber) $28 in 
 Adding number conversion cast (unumber) 0 in screen[0] = 'a'
 Adding number conversion cast (unumber) 0 in screen[0] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant setscreen::screen#0 = &screen
 Constant setscreen::val#0 = screen1
@@ -119,11 +119,11 @@ __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] screen = (byte*) 1024
+  [1] screen = (char *) 1024
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
-  [3] call main 
+  [3] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [4] return 
@@ -132,11 +132,11 @@ __start::@return: scope:[__start]  from __start::@1
 void main()
 main: scope:[main]  from __start::@1
   [5] phi()
-  [6] call setscreen 
+  [6] call setscreen
   to:main::@1
 main::@1: scope:[main]  from main
   [7] *screen = 'a'
-  [8] call setscreen 
+  [8] call setscreen
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] *screen = 'a'
@@ -145,7 +145,7 @@ main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 
-void setscreen(byte** setscreen::screen , byte* setscreen::val)
+void setscreen(char **screen , char *val)
 setscreen: scope:[setscreen]  from main main::@1
   [11] setscreen::val#2 = phi( main/screen1, main::@1/screen2 )
   [12] *(&screen) = setscreen::val#2
@@ -158,11 +158,11 @@ setscreen::@return: scope:[setscreen]  from setscreen
 VARIABLE REGISTER WEIGHTS
 void __start()
 void main()
-byte* volatile screen loadstore 2.666666666666667
-void setscreen(byte** setscreen::screen , byte* setscreen::val)
-byte** setscreen::screen
-byte* setscreen::val
-byte* setscreen::val#2 101.0
+__loadstore char * volatile screen // 2.666666666666667
+void setscreen(char **screen , char *val)
+char **setscreen::screen
+char *setscreen::val
+char *setscreen::val#2 // 101.0
 
 Initial phi equivalence classes
 [ setscreen::val#2 ]
@@ -173,7 +173,7 @@ Complete equivalence classes
 Allocated zp[2]:2 [ setscreen::val#2 ]
 Allocated zp[2]:4 [ screen ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] screen = (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
+Statement [1] screen = (char *) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
 Statement [7] *screen = 'a' [ screen ] ( main:3 [ screen ] { }  ) always clobbers reg byte a reg byte y 
 Statement [9] *screen = 'a' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [12] *(&screen) = setscreen::val#2 [ screen ] ( main:3::setscreen:6 [ screen ] { }  main:3::setscreen:8 [ screen ] { }  ) always clobbers reg byte a 
@@ -213,7 +213,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [1] screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -223,7 +223,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [3] call main 
+    // [3] call main
     // [5] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -235,7 +235,7 @@ __start: {
 }
   // main
 main: {
-    // [6] call setscreen 
+    // [6] call setscreen
     // [11] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
     // [11] phi setscreen::val#2 = screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
@@ -251,7 +251,7 @@ main: {
     lda #'a'
     ldy #0
     sta (screen),y
-    // [8] call setscreen 
+    // [8] call setscreen
     // [11] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from___b1:
     // [11] phi setscreen::val#2 = screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
@@ -274,7 +274,7 @@ main: {
     rts
 }
   // setscreen
-// setscreen(byte* zp(2) val)
+// void setscreen(char **screen, __zp(2) char *val)
 setscreen: {
     .label val = 2
     // [12] *(&screen) = setscreen::val#2 -- _deref_qbuc1=pbuz1 
@@ -316,13 +316,13 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 void __start()
 void main()
-byte* volatile screen loadstore zp[2]:4 2.666666666666667
-constant byte* screen1 = (byte*) 1024
-constant byte* screen2 = (byte*) 1024+$28
-void setscreen(byte** setscreen::screen , byte* setscreen::val)
-byte** setscreen::screen
-byte* setscreen::val
-byte* setscreen::val#2 val zp[2]:2 101.0
+__loadstore char * volatile screen // zp[2]:4 2.666666666666667
+__constant char *screen1 = (char *) 1024
+__constant char *screen2 = (char *) 1024+$28
+void setscreen(char **screen , char *val)
+char **setscreen::screen
+char *setscreen::val
+char *setscreen::val#2 // val zp[2]:2 101.0
 
 zp[2]:2 [ setscreen::val#2 ]
 zp[2]:4 [ screen ]
@@ -351,14 +351,14 @@ Score: 98
 __start: {
     // __start::__init1
     // byte* screen = (char*)$400
-    // [1] screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [1] screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [3] call main 
+    // [3] call main
     // [5] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -368,7 +368,7 @@ __start: {
   // main
 main: {
     // setscreen(&screen, screen1)
-    // [6] call setscreen 
+    // [6] call setscreen
     // [11] phi from main to setscreen [phi:main->setscreen]
     // [11] phi setscreen::val#2 = screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
@@ -383,7 +383,7 @@ main: {
     ldy #0
     sta (screen),y
     // setscreen(&screen, screen2)
-    // [8] call setscreen 
+    // [8] call setscreen
     // [11] phi from main::@1 to setscreen [phi:main::@1->setscreen]
     // [11] phi setscreen::val#2 = screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
@@ -403,7 +403,7 @@ main: {
     rts
 }
   // setscreen
-// setscreen(byte* zp(2) val)
+// void setscreen(char **screen, __zp(2) char *val)
 setscreen: {
     .label val = 2
     // *screen = val

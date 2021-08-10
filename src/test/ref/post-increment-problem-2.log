@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -14,7 +14,7 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1
   main::x#4 = phi( main::@1/main::x#2 )
   incscreen::ptr#0 = main::offset
-  call incscreen 
+  call incscreen
   to:main::@3
 main::@3: scope:[main]  from main::@2
   main::x#3 = phi( main::@2/main::x#4 )
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void incscreen(word incscreen::ptr)
+void incscreen(unsigned int ptr)
 incscreen: scope:[incscreen]  from main::@2
   incscreen::ptr#1 = phi( main::@2/incscreen::ptr#0 )
   incscreen::$0 = screen + incscreen::ptr#1
@@ -48,7 +48,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -58,39 +58,39 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-void incscreen(word incscreen::ptr)
-byte*~ incscreen::$0
-byte*~ incscreen::$10
-byte*~ incscreen::$11
-byte*~ incscreen::$20
-byte*~ incscreen::$21
-byte*~ incscreen::$9
-word incscreen::ptr
-word incscreen::ptr#0
-word incscreen::ptr#1
+void incscreen(unsigned int ptr)
+char *incscreen::$0
+char *incscreen::$10
+char *incscreen::$11
+char *incscreen::$20
+char *incscreen::$21
+char *incscreen::$9
+unsigned int incscreen::ptr
+unsigned int incscreen::ptr#0
+unsigned int incscreen::ptr#1
 void main()
-bool~ main::$0
-constant word main::offset = (word)$28*$a
-byte main::x
-byte main::x#0
-byte main::x#1
-byte main::x#2
-byte main::x#3
-byte main::x#4
-constant byte* screen = (byte*)$400
+bool main::$0
+__constant unsigned int main::offset = (unsigned int)$28*$a
+char main::x
+char main::x#0
+char main::x#1
+char main::x#2
+char main::x#3
+char main::x#4
+__constant char *screen = (char *)$400
 
 Adding number conversion cast (unumber) $fe in main::$0 = main::x#2 < $fe
 Adding number conversion cast (unumber) 1 in incscreen::$10 = incscreen::$9 + 1
 Adding number conversion cast (unumber) 1 in incscreen::$21 = incscreen::$20 + 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $fe
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $fe
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) $fe
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::x#2 = main::x#4 main::x#3 
 Successful SSA optimization Pass2AliasElimination
@@ -136,8 +136,8 @@ Consolidated array index constant in *(screen+main::offset+1)
 Consolidated array index constant in *(screen+main::offset+1)
 Consolidated array index constant in *(screen+main::offset+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -165,13 +165,13 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] phi()
-  [5] call incscreen 
+  [5] call incscreen
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [6] main::x#1 = ++ main::x#2
   to:main::@1
 
-void incscreen(word incscreen::ptr)
+void incscreen(unsigned int ptr)
 incscreen: scope:[incscreen]  from main::@2
   [7] *(screen+main::offset) = -- *(screen+main::offset)
   [8] *(screen+main::offset+1) = -- *(screen+main::offset+1)
@@ -184,12 +184,12 @@ incscreen::@return: scope:[incscreen]  from incscreen
 
 
 VARIABLE REGISTER WEIGHTS
-void incscreen(word incscreen::ptr)
-word incscreen::ptr
+void incscreen(unsigned int ptr)
+unsigned int incscreen::ptr
 void main()
-byte main::x
-byte main::x#1 22.0
-byte main::x#2 8.25
+char main::x
+char main::x#1 // 22.0
+char main::x#2 // 8.25
 
 Initial phi equivalence classes
 [ main::x#2 main::x#1 ]
@@ -245,7 +245,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] call incscreen 
+    // [5] call incscreen
     jsr incscreen
     jmp __b3
     // main::@3
@@ -258,6 +258,7 @@ main: {
     jmp __b1
 }
   // incscreen
+// void incscreen(unsigned int ptr)
 incscreen: {
     // [7] *(screen+main::offset) = -- *(screen+main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset
@@ -293,14 +294,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-void incscreen(word incscreen::ptr)
-word incscreen::ptr
+void incscreen(unsigned int ptr)
+unsigned int incscreen::ptr
 void main()
-constant word main::offset = (word)$28*$a
-byte main::x
-byte main::x#1 reg byte x 22.0
-byte main::x#2 reg byte x 8.25
-constant byte* screen = (byte*) 1024
+__constant unsigned int main::offset = (unsigned int)$28*$a
+char main::x
+char main::x#1 // reg byte x 22.0
+char main::x#2 // reg byte x 8.25
+__constant char *screen = (char *) 1024
 
 reg byte x [ main::x#2 main::x#1 ]
 
@@ -341,7 +342,7 @@ main: {
     // main::@2
   __b2:
     // incscreen(offset)
-    // [5] call incscreen 
+    // [5] call incscreen
     jsr incscreen
     // main::@3
     // for (char x=0;x<254;x++)
@@ -352,6 +353,7 @@ main: {
     jmp __b1
 }
   // incscreen
+// void incscreen(unsigned int ptr)
 incscreen: {
     // --(*(screen+ptr));
     // [7] *(screen+main::offset) = -- *(screen+main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 

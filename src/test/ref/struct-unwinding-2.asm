@@ -51,7 +51,7 @@ main: {
     rts
 }
 // Function taking unwound struct as parameter
-// print1(byte register(Y) p_x, byte register(X) p_y, byte register(A) idx)
+// void print1(__register(Y) char p_x, __register(X) char p_y, __register(A) char idx)
 print1: {
     .label __0 = 2
     // SCREEN[idx] = p
@@ -66,7 +66,7 @@ print1: {
     rts
 }
 // Function taking classic struct as parameter
-// print2(byte register(Y) p_x, byte register(X) p_y, byte register(A) idx)
+// void print2(__register(Y) char p_x, __register(X) char p_y, __register(A) char idx)
 print2: {
     .label __0 = 2
     // SCREEN[idx] = p

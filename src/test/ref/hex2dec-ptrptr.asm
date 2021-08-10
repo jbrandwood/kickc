@@ -90,7 +90,7 @@ cls: {
     rts
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zp(2) value, byte* zp(4) dst)
+// void utoa16w(__zp(2) unsigned int value, __zp(4) char * volatile dst)
 utoa16w: {
     .label dst = 4
     .label value = 2
@@ -134,7 +134,7 @@ utoa16w: {
     rts
 }
 // Hexadecimal utoa() for a single nybble
-// utoa16n(byte register(A) nybble, byte register(X) started)
+// __register(X) char utoa16n(__register(A) char nybble, unsigned int **dst, __register(X) char started)
 utoa16n: {
     // if(nybble!=0)
     cmp #0

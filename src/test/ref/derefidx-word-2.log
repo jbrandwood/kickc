@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -30,20 +30,20 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-number~ main::$0
-bool~ main::$1
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-constant byte* const main::screen = (byte*)$400
+number main::$0
+bool main::$1
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+__constant char * const main::screen = (char *)$400
 
 Adding number conversion cast (unumber) $28*$a in main::$0 = $28*$a + main::i#2
 Adding number conversion cast (unumber) main::$0 in main::$0 = (unumber)$28*$a + main::i#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Inferred type updated to word in main::$0 = (word)$28*$a + main::i#2
+Inferred type updated to unsigned int in main::$0 = (unsigned int)$28*$a + main::i#2
 Simple Condition main::$1 [6] if(main::i#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::i#0 = 0
@@ -61,7 +61,7 @@ Adding number conversion cast (unumber) $28 in [5] if(main::i#1!=$28) goto main:
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type (char) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
@@ -70,12 +70,12 @@ Consolidated constant in assignment main::$2
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias main::i#2 = main::$0 
 Successful SSA optimization Pass2AliasElimination
-Converting *(pointer+n) to pointer[n] [2] *main::$2 = 'a'  -- (main::screen+(word)$28*$a)[main::i#2]
+Converting *(pointer+n) to pointer[n] [2] *main::$2 = 'a'  -- (main::screen+(unsigned int)$28*$a)[main::i#2]
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable main::$2 and assignment [1] main::$2 = main::screen+(word)$28*$a + main::i#2
+Eliminating unused variable main::$2 and assignment [1] main::$2 = main::screen+(unsigned int)$28*$a + main::i#2
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -95,7 +95,7 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [2] (main::screen+(word)$28*$a)[main::i#2] = 'a'
+  [2] (main::screen+(unsigned int)$28*$a)[main::i#2] = 'a'
   [3] main::i#1 = ++ main::i#2
   [4] if(main::i#1!=$28) goto main::@1
   to:main::@return
@@ -106,9 +106,9 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 16.5
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 16.5
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -116,9 +116,9 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] (main::screen+(word)$28*$a)[main::i#2] = 'a' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] (main::screen+(unsigned int)$28*$a)[main::i#2] = 'a' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [2] (main::screen+(word)$28*$a)[main::i#2] = 'a' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] (main::screen+(unsigned int)$28*$a)[main::i#2] = 'a' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -156,7 +156,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] (main::screen+(word)$28*$a)[main::i#2] = 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [2] (main::screen+(unsigned int)$28*$a)[main::i#2] = 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen+$28*$a,x
     // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
@@ -187,10 +187,10 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 16.5
-constant byte* const main::screen = (byte*) 1024
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 16.5
+__constant char * const main::screen = (char *) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -222,7 +222,7 @@ main: {
     // main::@1
   __b1:
     // screen[40*10+i] = 'a'
-    // [2] (main::screen+(word)$28*$a)[main::i#2] = 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [2] (main::screen+(unsigned int)$28*$a)[main::i#2] = 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen+$28*$a,x
     // for( byte i : 0..39)

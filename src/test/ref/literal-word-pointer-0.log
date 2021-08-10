@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   print::str#0 = main::str
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -12,10 +12,10 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void print(byte* print::str)
+void print(char *str)
 print: scope:[print]  from main
   print::str#1 = phi( main/print::str#0 )
-  *((byte**)$80) = (byte*)print::str#1
+  *((char **)$80) = (char *)print::str#1
   to:print::@return
 print::@return: scope:[print]  from print
   return 
@@ -23,7 +23,7 @@ print::@return: scope:[print]  from print
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -34,14 +34,14 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* main::str[4]  = "qwe"
-void print(byte* print::str)
-byte* print::str
-byte* print::str#0
-byte* print::str#1
+__constant char main::str[4] = "qwe"
+void print(char *str)
+char *print::str
+char *print::str#0
+char *print::str#1
 
 Simplifying constant integer cast print::str#1
-Simplifying constant pointer cast (byte**) 128
+Simplifying constant pointer cast (char **) 128
 Successful SSA optimization PassNCastSimplification
 Identical Phi Values print::str#1 print::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -69,15 +69,15 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void print(byte* print::str)
+void print(char *str)
 print: scope:[print]  from main
-  [3] *((byte**) 128) = main::str
+  [3] *((char **) 128) = main::str
   to:print::@return
 print::@return: scope:[print]  from print
   [4] return 
@@ -86,13 +86,13 @@ print::@return: scope:[print]  from print
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void print(byte* print::str)
-byte* print::str
+void print(char *str)
+char *print::str
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] *((byte**) 128) = main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((char **) 128) = main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -119,7 +119,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call print 
+    // [1] call print
     jsr print
     jmp __breturn
     // main::@return
@@ -132,8 +132,9 @@ main: {
 }
 .segment Code
   // print
+// void print(char *str)
 print: {
-    // [3] *((byte**) 128) = main::str -- _deref_qbuc1=pbuc2 
+    // [3] *((char **) 128) = main::str -- _deref_qbuc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str
@@ -156,9 +157,9 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* main::str[4]  = "qwe"
-void print(byte* print::str)
-byte* print::str
+__constant char main::str[4] = "qwe"
+void print(char *str)
+char *print::str
 
 
 
@@ -181,7 +182,7 @@ Score: 30
   // main
 main: {
     // print("qwe")
-    // [1] call print 
+    // [1] call print
     jsr print
     // main::@return
     // }
@@ -193,9 +194,10 @@ main: {
 }
 .segment Code
   // print
+// void print(char *str)
 print: {
     // *(char**)0x80 = (char*)str
-    // [3] *((byte**) 128) = main::str -- _deref_qbuc1=pbuc2 
+    // [3] *((char **) 128) = main::str -- _deref_qbuc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str

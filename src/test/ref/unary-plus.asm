@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
 main: {
     .const i = 3
@@ -27,9 +27,9 @@ main: {
     sta SCREEN2+1
     // SCREEN2[1] = +3
     lda #<3
-    sta SCREEN2+1*SIZEOF_SIGNED_WORD
+    sta SCREEN2+1*SIZEOF_INT
     lda #>3
-    sta SCREEN2+1*SIZEOF_SIGNED_WORD+1
+    sta SCREEN2+1*SIZEOF_INT+1
     // }
     rts
 }

@@ -59,7 +59,7 @@ main: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// void print_str(__zp(2) char *str)
 print_str: {
     .label str = 2
   __b1:
@@ -106,7 +106,7 @@ print_ln: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

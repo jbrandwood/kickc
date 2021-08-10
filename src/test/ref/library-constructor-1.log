@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -12,7 +12,7 @@ my_init::@return: scope:[my_init]  from my_init
 
 void main()
 main: scope:[main]  from __start::@1
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -33,12 +33,12 @@ __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
   my_value = 0
-  call my_init 
+  call my_init
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::@2
-  call main 
+  call main
   to:__start::@3
 __start::@3: scope:[__start]  from __start::@1
   to:__start::@return
@@ -47,14 +47,14 @@ __start::@return: scope:[__start]  from __start::@3
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
 void my_init()
-volatile byte my_value loadstore
+__loadstore volatile char my_value
 void print()
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@2
@@ -83,11 +83,11 @@ __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
   [1] my_value = 0
-  [2] call my_init 
+  [2] call my_init
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [3] phi()
-  [4] call main 
+  [4] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [5] return 
@@ -104,7 +104,7 @@ my_init::@return: scope:[my_init]  from my_init
 void main()
 main: scope:[main]  from __start::@1
   [8] phi()
-  [9] call print 
+  [9] call print
   to:main::@return
 main::@return: scope:[main]  from main
   [10] return 
@@ -123,7 +123,7 @@ VARIABLE REGISTER WEIGHTS
 void __start()
 void main()
 void my_init()
-volatile byte my_value loadstore 22.8
+__loadstore volatile char my_value // 22.8
 void print()
 
 Initial phi equivalence classes
@@ -177,14 +177,14 @@ __start: {
     // [1] my_value = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z my_value
-    // [2] call my_init 
+    // [2] call my_init
     jsr my_init
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
     jmp __b1
     // __start::@1
   __b1:
-    // [4] call main 
+    // [4] call main
     // [8] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
@@ -207,7 +207,7 @@ my_init: {
 }
   // main
 main: {
-    // [9] call print 
+    // [9] call print
     jsr print
     jmp __breturn
     // main::@return
@@ -248,11 +248,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const SCREEN = (char *) 1024
 void __start()
 void main()
 void my_init()
-volatile byte my_value loadstore zp[1]:2 22.8
+__loadstore volatile char my_value // zp[1]:2 22.8
 void print()
 
 zp[1]:2 [ my_value ]
@@ -285,11 +285,11 @@ __start: {
     lda #0
     sta.z my_value
     // #pragma constructor_for(my_init, print)
-    // [2] call my_init 
+    // [2] call my_init
     jsr my_init
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [4] call main 
+    // [4] call main
     // [8] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
@@ -310,7 +310,7 @@ my_init: {
   // main
 main: {
     // print()
-    // [9] call print 
+    // [9] call print
     jsr print
     // main::@return
     // }

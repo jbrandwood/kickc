@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
@@ -20,6 +20,7 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(unsigned int size)
 malloc: {
     .const size = $200
     .label mem = HEAP_TOP-size
@@ -43,7 +44,7 @@ main: {
     iny
     sta (w),y
     // *w++ = i;
-    lda #SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT
     clc
     adc.z w
     sta.z w

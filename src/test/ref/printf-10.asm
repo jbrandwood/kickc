@@ -40,7 +40,7 @@ main: {
     .byte 0
 }
 .segment Code
-// cputs(byte* zp(4) str)
+// void cputs(__zp(4) char *str)
 cputs: {
     .label str = 4
   __b1:
@@ -69,6 +69,7 @@ cputs: {
 }
 // Print a string value using a specific format
 // Handles justification and min length
+// void printf_string(char *str, char format_min_length, char format_justify_left)
 printf_string: {
     // cputs(str)
     lda #<main.name

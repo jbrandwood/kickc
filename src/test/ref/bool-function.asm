@@ -45,7 +45,7 @@ main: {
 }
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true
-// isSet(byte register(A) i, bool register(Y) b)
+// __register(A) bool isSet(__register(A) char i, __register(Y) bool b)
 isSet: {
     // i&8
     and #8

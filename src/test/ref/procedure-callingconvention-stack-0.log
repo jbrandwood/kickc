@@ -1,38 +1,38 @@
 Adding parameter assignment in __stackcall procedure plus::b = param(plus::b)
 Adding parameter assignment in __stackcall procedure plus::a = param(plus::a)
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call plus('0', 7)
-Calling convention STACK_CALL replacing param(plus::a) with stackidx(byte,plus::OFFSET_STACK_A)
-Calling convention STACK_CALL replacing param(plus::b) with stackidx(byte,plus::OFFSET_STACK_B)
-Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return
-Calling convention STACK_CALL adding stack pull main::$0 = stackpull(byte)
-Calling convention STACK_CALL adding stack push stackpush(byte) = '0'
-Calling convention STACK_CALL adding stack push stackpush(byte) = 7
+Calling convention STACK_CALL replacing param(plus::a) with stackidx(char,plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param(plus::b) with stackidx(char,plus::OFFSET_STACK_B)
+Calling convention STACK_CALL adding stack return stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return
+Calling convention STACK_CALL adding stack pull main::$0 = stackpull(char)
+Calling convention STACK_CALL adding stack push stackpush(char) = '0'
+Calling convention STACK_CALL adding stack push stackpush(char) = 7
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  stackpush(byte) = '0'
-  stackpush(byte) = 7
+  stackpush(char) = '0'
+  stackpush(char) = 7
   callexecute plus 
   sideeffect stackpullbytes(1)
-  main::$0 = stackpull(byte)
+  main::$0 = stackpull(char)
   SCREEN[0] = main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-__stackcall byte plus(byte plus::a , byte plus::b)
+__stackcall char plus(char a , char b)
 plus: scope:[plus]  from
-  plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A)
-  plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B)
+  plus::a#0 = stackidx(char,plus::OFFSET_STACK_A)
+  plus::b#0 = stackidx(char,plus::OFFSET_STACK_B)
   plus::$0 = plus::a#0 + plus::b#0
   plus::return#0 = plus::$0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
   plus::return#1 = phi( plus/plus::return#0 )
-  stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#1
+  stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#1
   return 
   to:@return
 
@@ -47,35 +47,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
-constant word STACK_BASE = $103
+__constant char * const SCREEN = (char *)$400
+__constant unsigned int STACK_BASE = $103
 void __start()
 void main()
-byte~ main::$0
-__stackcall byte plus(byte plus::a , byte plus::b)
-byte~ plus::$0
-constant byte plus::OFFSET_STACK_A = 1
-constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN_1 = 1
-byte plus::a
-byte plus::a#0
-byte plus::b
-byte plus::b#0
-byte plus::return
-byte plus::return#0
-byte plus::return#1
+char main::$0
+__stackcall char plus(char a , char b)
+char plus::$0
+__constant char plus::OFFSET_STACK_A = 1
+__constant char plus::OFFSET_STACK_B = 0
+__constant char plus::OFFSET_STACK_RETURN_1 = 1
+char plus::a
+char plus::a#0
+char plus::b
+char plus::b#0
+char plus::return
+char plus::return#0
+char plus::return#1
 
-Adding number conversion cast (unumber) 7 in stackpush(byte) = 7
+Adding number conversion cast (unumber) 7 in stackpush(char) = 7
 Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast stackpush(byte) = (unumber)7
+Inlining cast stackpush(char) = (unumber)7
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 7
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias plus::return#0 = plus::$0 plus::return#1 
 Successful SSA optimization Pass2AliasElimination
@@ -86,7 +86,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [main] to plus:7 
@@ -96,24 +96,24 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-__stackcall byte plus(byte plus::a , byte plus::b)
+__stackcall char plus(char a , char b)
 plus: scope:[plus]  from
-  [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A)
-  [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B)
+  [0] plus::a#0 = stackidx(char,plus::OFFSET_STACK_A)
+  [1] plus::b#0 = stackidx(char,plus::OFFSET_STACK_B)
   [2] plus::return#0 = plus::a#0 + plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0
+  [3] stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#0
   [4] return 
   to:@return
 
 void main()
 main: scope:[main]  from
-  [5] stackpush(byte) = '0'
-  [6] stackpush(byte) = 7
+  [5] stackpush(char) = '0'
+  [6] stackpush(char) = 7
   [7] callexecute plus 
   sideeffect stackpullbytes(1)
-  [9] main::$0 = stackpull(byte)
+  [9] main::$0 = stackpull(char)
   [10] *SCREEN = main::$0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -123,14 +123,14 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$0 4.0
-__stackcall byte plus(byte plus::a , byte plus::b)
-byte plus::a
-byte plus::a#0 11.0
-byte plus::b
-byte plus::b#0 22.0
-byte plus::return
-byte plus::return#0 22.0
+char main::$0 // 4.0
+__stackcall char plus(char a , char b)
+char plus::a
+char plus::a#0 // 11.0
+char plus::b
+char plus::b#0 // 22.0
+char plus::return
+char plus::return#0 // 22.0
 
 Initial phi equivalence classes
 Added variable plus::a#0 to live range equivalence class [ plus::a#0 ]
@@ -147,24 +147,24 @@ Allocated zp[1]:3 [ plus::b#0 ]
 Allocated zp[1]:4 [ plus::return#0 ]
 Allocated zp[1]:5 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [0] plus::a#0 = stackidx(char,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [1] plus::b#0 = stackidx(char,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ plus::a#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ plus::a#0 ]
 Statement [2] plus::return#0 = plus::a#0 + plus::b#0 [ plus::return#0 ] ( plus:7 [ plus::return#0 ] { }  ) always clobbers reg byte a 
-Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
-Statement [5] stackpush(byte) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] stackpush(byte) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
+Statement [5] stackpush(char) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] stackpush(char) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
-Statement [9] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [9] main::$0 = stackpull(char) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [0] plus::a#0 = stackidx(char,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [1] plus::b#0 = stackidx(char,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( plus:7 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [2] plus::return#0 = plus::a#0 + plus::b#0 [ plus::return#0 ] ( plus:7 [ plus::return#0 ] { }  ) always clobbers reg byte a 
-Statement [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
-Statement [5] stackpush(byte) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] stackpush(byte) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#0 [ ] ( plus:7 [ ] { }  ) always clobbers reg byte x 
+Statement [5] stackpush(char) = '0' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] stackpush(char) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
-Statement [9] main::$0 = stackpull(byte) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [9] main::$0 = stackpull(char) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ plus::a#0 ] : zp[1]:2 , reg byte y , 
 Potential registers zp[1]:3 [ plus::b#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ plus::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -198,17 +198,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
 .segment Code
   // plus
-// plus(byte zp(2) a, byte register(A) b)
+// __register(A) char plus(__zp(2) char a, __register(A) char b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
     .label a = 2
-    // [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
+    // [0] plus::a#0 = stackidx(char,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
+    // [1] plus::b#0 = stackidx(char,plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     // [2] plus::return#0 = plus::a#0 + plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
@@ -217,7 +217,7 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [3] stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [4] return 
@@ -225,17 +225,17 @@ plus: {
 }
   // main
 main: {
-    // [5] stackpush(byte) = '0' -- _stackpushbyte_=vbuc1 
+    // [5] stackpush(char) = '0' -- _stackpushbyte_=vbuc1 
     lda #'0'
     pha
-    // [6] stackpush(byte) = 7 -- _stackpushbyte_=vbuc1 
+    // [6] stackpush(char) = 7 -- _stackpushbyte_=vbuc1 
     lda #7
     pha
     // [7] callexecute plus  -- call_vprc1 
     jsr plus
     // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
     pla
-    // [9] main::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [9] main::$0 = stackpull(char) -- vbuaa=_stackpullbyte_ 
     pla
     // [10] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
@@ -256,20 +256,20 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-constant word STACK_BASE = $103
+__constant char * const SCREEN = (char *) 1024
+__constant unsigned int STACK_BASE = $103
 void main()
-byte~ main::$0 reg byte a 4.0
-__stackcall byte plus(byte plus::a , byte plus::b)
-constant byte plus::OFFSET_STACK_A = 1
-constant byte plus::OFFSET_STACK_B = 0
-constant byte plus::OFFSET_STACK_RETURN_1 = 1
-byte plus::a
-byte plus::a#0 a zp[1]:2 11.0
-byte plus::b
-byte plus::b#0 reg byte a 22.0
-byte plus::return
-byte plus::return#0 reg byte a 22.0
+char main::$0 // reg byte a 4.0
+__stackcall char plus(char a , char b)
+__constant char plus::OFFSET_STACK_A = 1
+__constant char plus::OFFSET_STACK_B = 0
+__constant char plus::OFFSET_STACK_RETURN_1 = 1
+char plus::a
+char plus::a#0 // a zp[1]:2 11.0
+char plus::b
+char plus::b#0 // reg byte a 22.0
+char plus::return
+char plus::return#0 // reg byte a 22.0
 
 zp[1]:2 [ plus::a#0 ]
 reg byte a [ plus::b#0 ]
@@ -296,17 +296,17 @@ Score: 67
   .label SCREEN = $400
 .segment Code
   // plus
-// plus(byte zp(2) a, byte register(A) b)
+// __register(A) char plus(__zp(2) char a, __register(A) char b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
     .label a = 2
-    // [0] plus::a#0 = stackidx(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
+    // [0] plus::a#0 = stackidx(char,plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [1] plus::b#0 = stackidx(byte,plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
+    // [1] plus::b#0 = stackidx(char,plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     // return a+b;
@@ -315,7 +315,7 @@ plus: {
     adc.z a
     // plus::@return
     // }
-    // [3] stackidx(byte,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [3] stackidx(char,plus::OFFSET_STACK_RETURN_1) = plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     // [4] return 
@@ -324,17 +324,17 @@ plus: {
   // main
 main: {
     // plus('0', 7)
-    // [5] stackpush(byte) = '0' -- _stackpushbyte_=vbuc1 
+    // [5] stackpush(char) = '0' -- _stackpushbyte_=vbuc1 
     lda #'0'
     pha
-    // [6] stackpush(byte) = 7 -- _stackpushbyte_=vbuc1 
+    // [6] stackpush(char) = 7 -- _stackpushbyte_=vbuc1 
     lda #7
     pha
     // [7] callexecute plus  -- call_vprc1 
     jsr plus
     // sideeffect stackpullbytes(1) -- _stackpullbyte_1 
     pla
-    // [9] main::$0 = stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [9] main::$0 = stackpull(char) -- vbuaa=_stackpullbyte_ 
     pla
     // SCREEN[0] = plus('0', 7)
     // [10] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 

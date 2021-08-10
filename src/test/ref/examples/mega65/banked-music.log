@@ -67,7 +67,7 @@ Calling convention STACK_CALL adding prepare/execute/finalize for call *musicPla
 
 CONTROL FLOW GRAPH SSA
 
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from irq::@1 main main::@1 memoryRemapBlock
   memoryRemap::upperPageOffset#4 = phi( irq::@1/memoryRemap::upperPageOffset#3, main/memoryRemap::upperPageOffset#1, main::@1/memoryRemap::upperPageOffset#2, memoryRemapBlock/memoryRemap::upperPageOffset#0 )
   memoryRemap::remapBlocks#4 = phi( irq::@1/memoryRemap::remapBlocks#3, main/memoryRemap::remapBlocks#1, main::@1/memoryRemap::remapBlocks#2, memoryRemapBlock/memoryRemap::remapBlocks#0 )
@@ -88,7 +88,7 @@ memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
   return 
   to:@return
 
-void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
+void memoryRemapBlock(char blockPage , unsigned int memoryPage)
 memoryRemapBlock: scope:[memoryRemapBlock]  from irq main::@6
   memoryRemapBlock::blockPage#2 = phi( irq/memoryRemapBlock::blockPage#1, main::@6/memoryRemapBlock::blockPage#0 )
   memoryRemapBlock::memoryPage#2 = phi( irq/memoryRemapBlock::memoryPage#1, main::@6/memoryRemapBlock::memoryPage#0 )
@@ -106,25 +106,25 @@ memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock::@1
   return 
   to:@return
 
-void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
+void memcpy_dma4(char dest_bank , void *dest , char src_bank , void *src , unsigned int num)
 memcpy_dma4: scope:[memcpy_dma4]  from main::@5
   memcpy_dma4::dest#1 = phi( main::@5/memcpy_dma4::dest#0 )
   memcpy_dma4::dest_bank#1 = phi( main::@5/memcpy_dma4::dest_bank#0 )
   memcpy_dma4::src#1 = phi( main::@5/memcpy_dma4::src#0 )
   memcpy_dma4::src_bank#1 = phi( main::@5/memcpy_dma4::src_bank#0 )
   memcpy_dma4::num#1 = phi( main::@5/memcpy_dma4::num#0 )
-  memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#1
-  *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#1
-  *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = ((byte*)) memcpy_dma4::src#1
-  *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#1
-  *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = ((byte*)) memcpy_dma4::dest#1
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
+  memcpy_dma4::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#1
+  *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#1
+  *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = ((char *)) memcpy_dma4::src#1
+  *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#1
+  *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = ((char *)) memcpy_dma4::dest#1
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
   to:memcpy_dma4::@return
 memcpy_dma4::@return: scope:[memcpy_dma4]  from memcpy_dma4
   return 
@@ -139,18 +139,18 @@ main: scope:[main]  from __start::@1
   call memoryRemap
   to:main::@5
 main::@5: scope:[main]  from main
-  *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
-  *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
-  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
-  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
+  *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
+  *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
+  *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
+  *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
-  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
+  *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
   main::$1 = MUSIC_END - MUSIC
   memcpy_dma4::dest_bank#0 = 1
-  memcpy_dma4::dest#0 = (void*)0
+  memcpy_dma4::dest#0 = (void *)0
   memcpy_dma4::src_bank#0 = 0
-  memcpy_dma4::src#0 = (void*)upperCodeData
+  memcpy_dma4::src#0 = (void *)upperCodeData
   memcpy_dma4::num#0 = main::$1
   call memcpy_dma4
   to:main::@6
@@ -170,10 +170,10 @@ main::@1: scope:[main]  from main::@7
   call memoryRemap
   to:main::@8
 main::@8: scope:[main]  from main::@1
-  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
   *HARDWARE_IRQ = &irq
   asm { cli  }
   main::mem_destroy_i#0 = 0
@@ -202,8 +202,8 @@ main::@return: scope:[main]  from
 
 __interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   memoryRemapBlock::blockPage#1 = $40
   memoryRemapBlock::memoryPage#1 = $100
   call memoryRemapBlock
@@ -218,15 +218,15 @@ irq::@1: scope:[irq]  from irq::@4
   call memoryRemap
   to:irq::@5
 irq::@5: scope:[irq]  from irq::@1
-  irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  irq::raster#0 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@2
 irq::@2: scope:[irq]  from irq::@2 irq::@5
   irq::raster#1 = phi( irq::@2/irq::raster#1, irq::@5/irq::raster#0 )
-  irq::$5 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) == irq::raster#1
+  irq::$5 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) == irq::raster#1
   if(irq::$5) goto irq::@2
   to:irq::@3
 irq::@3: scope:[irq]  from irq::@2
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@3
   return 
@@ -247,130 +247,130 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*)$dc00
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const DEFAULT_SCREEN = (byte*)$800
-constant struct F018_DMAGIC* const DMA = (struct F018_DMAGIC*)$d700
-constant const byte DMA_COMMAND_COPY = 0
-constant void()** const HARDWARE_IRQ = (void()**)$fffe
-constant const byte IRQ_RASTER = 1
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const DEFAULT_SCREEN = (char *)$800
+__constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *)$d700
+__constant const char DMA_COMMAND_COPY = 0
+__constant void (** const HARDWARE_IRQ)() = (void (**)())$fffe
+__constant const char IRQ_RASTER = 1
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte* const MUSIC_END = (byte*)$5200
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG = 0
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
-constant byte OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
-constant byte OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
-constant byte OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
-constant byte OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = $5c
-constant byte OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant byte* const PROCPORT = (byte*)1
-constant byte* const PROCPORT_DDR = (byte*)0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*)$d000
-constant struct MOS4569_VICIII* const VICIII = (struct MOS4569_VICIII*)$d000
-constant struct MEGA65_VICIV* const VICIV = (struct MEGA65_VICIV*)$d000
+__constant char * const MUSIC_END = (char *)$5200
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG = 0
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+__constant char OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+__constant char OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+__constant char OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
+__constant char OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = $5c
+__constant char OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant char * const PROCPORT = (char *)1
+__constant char * const PROCPORT_DDR = (char *)0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *)$d000
+__constant struct MOS4569_VICIII * const VICIII = (struct MOS4569_VICIII *)$d000
+__constant struct MEGA65_VICIV * const VICIV = (struct MEGA65_VICIV *)$d000
 void __start()
 __interrupt(hardware_clobber) void irq()
-bool~ irq::$5
-byte irq::raster
-byte irq::raster#0
-byte irq::raster#1
+bool irq::$5
+char irq::raster
+char irq::raster#0
+char irq::raster#1
 void main()
-word~ main::$1
-bool~ main::$7
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::mem_destroy_i
-byte main::mem_destroy_i#0
-byte main::mem_destroy_i#1
-byte main::mem_destroy_i#2
-byte main::mem_destroy_i#3
-byte main::mem_destroy_i#4
-void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
-void* memcpy_dma4::dest
-void* memcpy_dma4::dest#0
-void* memcpy_dma4::dest#1
-byte memcpy_dma4::dest_bank
-byte memcpy_dma4::dest_bank#0
-byte memcpy_dma4::dest_bank#1
-byte memcpy_dma4::dmaMode
-byte memcpy_dma4::dmaMode#0
-word memcpy_dma4::num
-word memcpy_dma4::num#0
-word memcpy_dma4::num#1
-void* memcpy_dma4::src
-void* memcpy_dma4::src#0
-void* memcpy_dma4::src#1
-byte memcpy_dma4::src_bank
-byte memcpy_dma4::src_bank#0
-byte memcpy_dma4::src_bank#1
-volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$1
-byte~ memoryRemap::$2
-number~ memoryRemap::$3
-number~ memoryRemap::$6
-byte~ memoryRemap::$7
-number~ memoryRemap::$8
-volatile byte memoryRemap::aVal loadstore
-word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#0
-word memoryRemap::lowerPageOffset#1
-word memoryRemap::lowerPageOffset#2
-word memoryRemap::lowerPageOffset#3
-word memoryRemap::lowerPageOffset#4
-byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#0
-byte memoryRemap::remapBlocks#1
-byte memoryRemap::remapBlocks#2
-byte memoryRemap::remapBlocks#3
-byte memoryRemap::remapBlocks#4
-word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#0
-word memoryRemap::upperPageOffset#1
-word memoryRemap::upperPageOffset#2
-word memoryRemap::upperPageOffset#3
-word memoryRemap::upperPageOffset#4
-volatile byte memoryRemap::xVal loadstore
-volatile byte memoryRemap::yVal loadstore
-volatile byte memoryRemap::zVal loadstore
-void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
-byte memoryRemapBlock::block
-byte memoryRemapBlock::block#0
-byte memoryRemapBlock::blockBits
-byte memoryRemapBlock::blockBits#0
-byte memoryRemapBlock::blockPage
-byte memoryRemapBlock::blockPage#0
-byte memoryRemapBlock::blockPage#1
-byte memoryRemapBlock::blockPage#2
-word memoryRemapBlock::memoryPage
-word memoryRemapBlock::memoryPage#0
-word memoryRemapBlock::memoryPage#1
-word memoryRemapBlock::memoryPage#2
-word memoryRemapBlock::pageOffset
-word memoryRemapBlock::pageOffset#0
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
-constant byte* upperCodeData[]  = kickasm {{ .segmentout [segments="Banked"]
+unsigned int main::$1
+bool main::$7
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::mem_destroy_i
+char main::mem_destroy_i#0
+char main::mem_destroy_i#1
+char main::mem_destroy_i#2
+char main::mem_destroy_i#3
+char main::mem_destroy_i#4
+void memcpy_dma4(char dest_bank , void *dest , char src_bank , void *src , unsigned int num)
+void *memcpy_dma4::dest
+void *memcpy_dma4::dest#0
+void *memcpy_dma4::dest#1
+char memcpy_dma4::dest_bank
+char memcpy_dma4::dest_bank#0
+char memcpy_dma4::dest_bank#1
+char memcpy_dma4::dmaMode
+char memcpy_dma4::dmaMode#0
+unsigned int memcpy_dma4::num
+unsigned int memcpy_dma4::num#0
+unsigned int memcpy_dma4::num#1
+void *memcpy_dma4::src
+void *memcpy_dma4::src#0
+void *memcpy_dma4::src#1
+char memcpy_dma4::src_bank
+char memcpy_dma4::src_bank#0
+char memcpy_dma4::src_bank#1
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command4 = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+char memoryRemap::$1
+char memoryRemap::$2
+number memoryRemap::$3
+number memoryRemap::$6
+char memoryRemap::$7
+number memoryRemap::$8
+__loadstore volatile char memoryRemap::aVal
+unsigned int memoryRemap::lowerPageOffset
+unsigned int memoryRemap::lowerPageOffset#0
+unsigned int memoryRemap::lowerPageOffset#1
+unsigned int memoryRemap::lowerPageOffset#2
+unsigned int memoryRemap::lowerPageOffset#3
+unsigned int memoryRemap::lowerPageOffset#4
+char memoryRemap::remapBlocks
+char memoryRemap::remapBlocks#0
+char memoryRemap::remapBlocks#1
+char memoryRemap::remapBlocks#2
+char memoryRemap::remapBlocks#3
+char memoryRemap::remapBlocks#4
+unsigned int memoryRemap::upperPageOffset
+unsigned int memoryRemap::upperPageOffset#0
+unsigned int memoryRemap::upperPageOffset#1
+unsigned int memoryRemap::upperPageOffset#2
+unsigned int memoryRemap::upperPageOffset#3
+unsigned int memoryRemap::upperPageOffset#4
+__loadstore volatile char memoryRemap::xVal
+__loadstore volatile char memoryRemap::yVal
+__loadstore volatile char memoryRemap::zVal
+void memoryRemapBlock(char blockPage , unsigned int memoryPage)
+char memoryRemapBlock::block
+char memoryRemapBlock::block#0
+char memoryRemapBlock::blockBits
+char memoryRemapBlock::blockBits#0
+char memoryRemapBlock::blockPage
+char memoryRemapBlock::blockPage#0
+char memoryRemapBlock::blockPage#1
+char memoryRemapBlock::blockPage#2
+unsigned int memoryRemapBlock::memoryPage
+unsigned int memoryRemapBlock::memoryPage#0
+unsigned int memoryRemapBlock::memoryPage#1
+unsigned int memoryRemapBlock::memoryPage#2
+unsigned int memoryRemapBlock::pageOffset
+unsigned int memoryRemapBlock::pageOffset#0
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
+__constant char upperCodeData[] = kickasm {{ .segmentout [segments="Banked"]
  }}
 
 Adding number conversion cast (unumber) 3 in 
@@ -383,17 +383,17 @@ Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 
 Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
 Adding number conversion cast (unumber) $20 in memoryRemapBlock::block#0 = memoryRemapBlock::blockPage#2 / $20
 Adding number conversion cast (unumber) 1 in memoryRemapBlock::blockBits#0 = 1 << memoryRemapBlock::block#0
-Adding number conversion cast (unumber) 1 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+Adding number conversion cast (unumber) 1 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+Adding number conversion cast (unumber) 0 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+Adding number conversion cast (unumber) 0 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#1 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#1 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#1 = 0
-Adding number conversion cast (unumber) $47 in *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
-Adding number conversion cast (unumber) $53 in *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
-Adding number conversion cast (unumber) $40 in *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
-Adding number conversion cast (unumber) $40 in *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
-Adding number conversion cast (unumber) 1 in *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
+Adding number conversion cast (unumber) $47 in *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
+Adding number conversion cast (unumber) $53 in *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
+Adding number conversion cast (unumber) $40 in *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
+Adding number conversion cast (unumber) $40 in *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
+Adding number conversion cast (unumber) 1 in *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
 Adding number conversion cast (unumber) 1 in memcpy_dma4::dest_bank#0 = 1
 Adding number conversion cast (unumber) 0 in memcpy_dma4::src_bank#0 = 0
 Adding number conversion cast (unumber) $40 in memoryRemapBlock::blockPage#0 = $40
@@ -401,8 +401,8 @@ Adding number conversion cast (unumber) $100 in memoryRemapBlock::memoryPage#0 =
 Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#2 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#2 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#2 = 0
-Adding number conversion cast (unumber) $ff in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
-Adding number conversion cast (unumber) $7f in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+Adding number conversion cast (unumber) $ff in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
+Adding number conversion cast (unumber) $7f in *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
 Adding number conversion cast (unumber) $f0 in main::$7 = main::i#2 < $f0
 Adding number conversion cast (unumber) $40 in memoryRemapBlock::blockPage#1 = $40
 Adding number conversion cast (unumber) $100 in memoryRemapBlock::memoryPage#1 = $100
@@ -410,17 +410,17 @@ Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#3 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#3 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#3 = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#1
-Inlining cast *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#1
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = (unumber)1
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = (unumber)0
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = (unumber)0
+Inlining cast *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#1
+Inlining cast *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#1
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = (unumber)1
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = (unumber)0
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = (unumber)0
 Inlining cast memoryRemap::remapBlocks#1 = (unumber)0
 Inlining cast memoryRemap::lowerPageOffset#1 = (unumber)0
 Inlining cast memoryRemap::upperPageOffset#1 = (unumber)0
-Inlining cast *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = (unumber)$47
-Inlining cast *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = (unumber)$53
-Inlining cast *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = (unumber)1
+Inlining cast *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = (unumber)$47
+Inlining cast *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = (unumber)$53
+Inlining cast *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = (unumber)1
 Inlining cast memcpy_dma4::dest_bank#0 = (unumber)1
 Inlining cast memcpy_dma4::src_bank#0 = (unumber)0
 Inlining cast memoryRemapBlock::blockPage#0 = (unumber)$40
@@ -428,23 +428,23 @@ Inlining cast memoryRemapBlock::memoryPage#0 = (unumber)$100
 Inlining cast memoryRemap::remapBlocks#2 = (unumber)0
 Inlining cast memoryRemap::lowerPageOffset#2 = (unumber)0
 Inlining cast memoryRemap::upperPageOffset#2 = (unumber)0
-Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = (unumber)$ff
+Inlining cast *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = (unumber)$ff
 Inlining cast memoryRemapBlock::blockPage#1 = (unumber)$40
 Inlining cast memoryRemapBlock::memoryPage#1 = (unumber)$100
 Inlining cast memoryRemap::remapBlocks#3 = (unumber)0
 Inlining cast memoryRemap::lowerPageOffset#3 = (unumber)0
 Inlining cast memoryRemap::upperPageOffset#3 = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 0
-Simplifying constant pointer cast (byte*) 1
-Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
-Simplifying constant pointer cast (struct MOS4569_VICIII*) 53248
-Simplifying constant pointer cast (struct MEGA65_VICIV*) 53248
-Simplifying constant pointer cast (struct F018_DMAGIC*) 55040
-Simplifying constant pointer cast (byte*) 2048
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
-Simplifying constant pointer cast (void()**) 65534
-Simplifying constant pointer cast (byte*) 20992
+Simplifying constant pointer cast (char *) 0
+Simplifying constant pointer cast (char *) 1
+Simplifying constant pointer cast (struct MOS6569_VICII *) 53248
+Simplifying constant pointer cast (struct MOS4569_VICIII *) 53248
+Simplifying constant pointer cast (struct MEGA65_VICIV *) 53248
+Simplifying constant pointer cast (struct F018_DMAGIC *) 55040
+Simplifying constant pointer cast (char *) 2048
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56320
+Simplifying constant pointer cast (void (**)()) 65534
+Simplifying constant pointer cast (char *) 20992
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
@@ -464,7 +464,7 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast $40
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (void*) 0
+Simplifying constant pointer cast (void *) 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $40
 Simplifying constant integer cast $100
@@ -480,43 +480,43 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) $f0
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $47
-Finalized unsigned number type (byte) $53
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) $f0
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (char) $f0
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (char) $20
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $47
+Finalized unsigned number type (char) $53
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) $7f
+Finalized unsigned number type (char) $f0
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
-Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
-Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
+Inferred type updated to char in memoryRemap::$3 = memoryRemap::$2 & $f
+Inferred type updated to char in memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0
+Inferred type updated to char in memoryRemap::$8 = memoryRemap::$7 & $f
 Alias memcpy_dma4::num#0 = main::$1 
 Alias main::i#2 = main::i#3 
 Alias main::mem_destroy_i#3 = main::mem_destroy_i#4 
@@ -530,7 +530,7 @@ Identical Phi Values main::mem_destroy_i#3 main::mem_destroy_i#1
 Identical Phi Values irq::raster#1 irq::raster#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition main::$7 [76] if(main::i#2<$f0) goto main::@4
-Simple Condition irq::$5 [93] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2
+Simple Condition irq::$5 [93] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [48] memcpy_dma4::num#0 = MUSIC_END - MUSIC
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -539,9 +539,9 @@ Constant memoryRemap::lowerPageOffset#1 = 0
 Constant memoryRemap::upperPageOffset#1 = 0
 Constant memcpy_dma4::num#0 = MUSIC_END-MUSIC
 Constant memcpy_dma4::dest_bank#0 = 1
-Constant memcpy_dma4::dest#0 = (void*) 0
+Constant memcpy_dma4::dest#0 = (void *) 0
 Constant memcpy_dma4::src_bank#0 = 0
-Constant memcpy_dma4::src#0 = (void*)upperCodeData
+Constant memcpy_dma4::src#0 = (void *)upperCodeData
 Constant memoryRemapBlock::blockPage#0 = $40
 Constant memoryRemapBlock::memoryPage#0 = $100
 Constant memoryRemap::remapBlocks#2 = 0
@@ -555,10 +555,10 @@ Constant memoryRemap::remapBlocks#3 = 0
 Constant memoryRemap::lowerPageOffset#3 = 0
 Constant memoryRemap::upperPageOffset#3 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memcpy_dma4::src#0 in [26] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
-Constant value identified (byte*)memcpy_dma4::dest#0 in [28] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
+Constant value identified (char *)memcpy_dma4::src#0 in [26] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0
+Constant value identified (char *)memcpy_dma4::dest#0 in [28] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero (byte*)DMA in [33] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
+Simplifying expression containing zero (char *)DMA in [33] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command4
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -630,11 +630,11 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings memoryRemap::remapBlocks#0
 Constant inlined memoryRemap::remapBlocks#0 = memoryRemapBlock::blockBits#0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $4000
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (unsigned int) $4000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@9(between main::@3 and main::@2)
 Adding NOP phi() at start of irq::@4
@@ -664,8 +664,8 @@ FINAL CONTROL FLOW GRAPH
 
 __interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
-  [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
-  [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER
+  [1] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [2] call memoryRemapBlock
   to:irq::@4
 irq::@4: scope:[irq]  from irq
@@ -677,13 +677,13 @@ irq::@1: scope:[irq]  from irq::@4
   [6] call memoryRemap
   to:irq::@5
 irq::@5: scope:[irq]  from irq::@1
-  [7] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  [7] irq::raster#0 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq::@2
 irq::@2: scope:[irq]  from irq::@2 irq::@5
-  [8] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2
+  [8] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2
   to:irq::@3
 irq::@3: scope:[irq]  from irq::@2
-  [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@3
   [10] return 
@@ -695,13 +695,13 @@ main: scope:[main]  from
   [12] call memoryRemap
   to:main::@5
 main::@5: scope:[main]  from main
-  [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
-  [14] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
-  [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
-  [16] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
+  [13] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47
+  [14] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53
+  [15] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40
+  [16] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40
   [17] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [18] *PROCPORT = PROCPORT_RAM_IO
-  [19] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
+  [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1
   [20] call memcpy_dma4
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -717,10 +717,10 @@ main::@1: scope:[main]  from main::@7
   [26] call memoryRemap
   to:main::@8
 main::@8: scope:[main]  from main::@1
-  [27] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
-  [29] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
-  [30] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
+  [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
+  [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
+  [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
   [31] *HARDWARE_IRQ = &irq
   asm { cli  }
   to:main::@2
@@ -738,7 +738,7 @@ main::@4: scope:[main]  from main::@3
   [39] main::i#1 = ++ main::i#2
   to:main::@3
 
-void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
+void memoryRemapBlock(char blockPage , unsigned int memoryPage)
 memoryRemapBlock: scope:[memoryRemapBlock]  from irq main::@6
   [40] phi()
   [41] call memoryRemap
@@ -747,7 +747,7 @@ memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock
   [42] return 
   to:@return
 
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from irq::@1 main main::@1 memoryRemapBlock
   [43] memoryRemap::upperPageOffset#4 = phi( irq::@1/0, main/0, main::@1/0, memoryRemapBlock/memoryRemapBlock::pageOffset#0 )
   [43] memoryRemap::remapBlocks#4 = phi( irq::@1/0, main/0, main::@1/0, memoryRemapBlock/memoryRemapBlock::blockBits#0 )
@@ -768,20 +768,20 @@ memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
   [55] return 
   to:@return
 
-void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
+void memcpy_dma4(char dest_bank , void *dest , char src_bank , void *src , unsigned int num)
 memcpy_dma4: scope:[memcpy_dma4]  from main::@5
-  [56] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  [57] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
-  [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
-  [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0
-  [60] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
-  [61] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0
-  [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
-  [66] *((byte*)DMA) = byte0 &memcpy_dma_command4
-  [67] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
+  [56] memcpy_dma4::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  [57] *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0
+  [58] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0
+  [59] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0
+  [60] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0
+  [61] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0
+  [62] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  [63] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  [64] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  [65] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4
+  [66] *((char *)DMA) = byte0 &memcpy_dma_command4
+  [67] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0
   to:memcpy_dma4::@return
 memcpy_dma4::@return: scope:[memcpy_dma4]  from memcpy_dma4
   [68] return 
@@ -790,47 +790,47 @@ memcpy_dma4::@return: scope:[memcpy_dma4]  from memcpy_dma4
 
 VARIABLE REGISTER WEIGHTS
 __interrupt(hardware_clobber) void irq()
-byte irq::raster
-byte irq::raster#0 6.5
+char irq::raster
+char irq::raster#0 // 6.5
 void main()
-byte main::i
-byte main::i#1 202.0
-byte main::i#2 168.33333333333331
-byte main::mem_destroy_i
-byte main::mem_destroy_i#1 22.4
-byte main::mem_destroy_i#2 67.0
-void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
-void* memcpy_dma4::dest
-byte memcpy_dma4::dest_bank
-byte memcpy_dma4::dmaMode
-byte memcpy_dma4::dmaMode#0 2.0
-word memcpy_dma4::num
-void* memcpy_dma4::src
-byte memcpy_dma4::src_bank
-volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$1 67.33333333333333
-byte~ memoryRemap::$2 202.0
-byte~ memoryRemap::$3 202.0
-byte~ memoryRemap::$6 67.33333333333333
-byte~ memoryRemap::$7 202.0
-byte~ memoryRemap::$8 202.0
-volatile byte memoryRemap::aVal loadstore 10.1
-word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#4 67.33333333333333
-byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#4 28.857142857142858
-word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#4 25.25
-volatile byte memoryRemap::xVal loadstore 16.833333333333332
-volatile byte memoryRemap::yVal loadstore 20.2
-volatile byte memoryRemap::zVal loadstore 101.0
-void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
-byte memoryRemapBlock::block
-byte memoryRemapBlock::blockBits
-byte memoryRemapBlock::blockPage
-word memoryRemapBlock::memoryPage
-word memoryRemapBlock::pageOffset
+char main::i
+char main::i#1 // 202.0
+char main::i#2 // 168.33333333333331
+char main::mem_destroy_i
+char main::mem_destroy_i#1 // 22.4
+char main::mem_destroy_i#2 // 67.0
+void memcpy_dma4(char dest_bank , void *dest , char src_bank , void *src , unsigned int num)
+void *memcpy_dma4::dest
+char memcpy_dma4::dest_bank
+char memcpy_dma4::dmaMode
+char memcpy_dma4::dmaMode#0 // 2.0
+unsigned int memcpy_dma4::num
+void *memcpy_dma4::src
+char memcpy_dma4::src_bank
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command4 = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+char memoryRemap::$1 // 67.33333333333333
+char memoryRemap::$2 // 202.0
+char memoryRemap::$3 // 202.0
+char memoryRemap::$6 // 67.33333333333333
+char memoryRemap::$7 // 202.0
+char memoryRemap::$8 // 202.0
+__loadstore volatile char memoryRemap::aVal // 10.1
+unsigned int memoryRemap::lowerPageOffset
+unsigned int memoryRemap::lowerPageOffset#4 // 67.33333333333333
+char memoryRemap::remapBlocks
+char memoryRemap::remapBlocks#4 // 28.857142857142858
+unsigned int memoryRemap::upperPageOffset
+unsigned int memoryRemap::upperPageOffset#4 // 25.25
+__loadstore volatile char memoryRemap::xVal // 16.833333333333332
+__loadstore volatile char memoryRemap::yVal // 20.2
+__loadstore volatile char memoryRemap::zVal // 101.0
+void memoryRemapBlock(char blockPage , unsigned int memoryPage)
+char memoryRemapBlock::block
+char memoryRemapBlock::blockBits
+char memoryRemapBlock::blockPage
+unsigned int memoryRemapBlock::memoryPage
+unsigned int memoryRemapBlock::pageOffset
 
 Initial phi equivalence classes
 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ]
@@ -889,22 +889,22 @@ Allocated zp[1]:19 [ memoryRemap::zVal ]
 Allocated zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
 Allocated mem[12] [ memcpy_dma_command4 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [10] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [13] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [14] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [15] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [16] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement [17] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement [18] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [24] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [27] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [29] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [30] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [31] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [38] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ]
@@ -919,33 +919,33 @@ Statement [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap:
 Statement [52] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:6 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:12 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:26 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:41 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:22::memoryRemap:41 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ memoryRemap::$6 ]
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [57] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [57] *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ memcpy_dma4::dmaMode#0 ]
-Statement [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [66] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
-Statement [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [58] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [65] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [66] *((char *)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [10] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [13] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [14] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [15] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [16] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement [17] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement [18] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [24] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [27] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [29] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [30] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [31] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [38] DEFAULT_SCREEN[main::i#2] = MUSIC[main::i#2] [ main::mem_destroy_i#1 main::i#2 ] (  [ main::mem_destroy_i#1 main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [44] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#4 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] ( memoryRemap:6 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:12 [ memcpy_dma_command4 memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemap:26 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:2::memoryRemap:41 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  memoryRemapBlock:22::memoryRemap:41 [ memoryRemap::lowerPageOffset#4 memoryRemap::remapBlocks#4 memoryRemap::upperPageOffset#4 memoryRemap::aVal ] { }  ) always clobbers reg byte a 
@@ -955,16 +955,16 @@ Statement [49] memoryRemap::yVal = byte0  memoryRemap::upperPageOffset#4 [ memor
 Statement [50] memoryRemap::$6 = memoryRemap::remapBlocks#4 & $f0 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] ( memoryRemap:6 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:12 [ memcpy_dma_command4 memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemap:26 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:2::memoryRemap:41 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  memoryRemapBlock:22::memoryRemap:41 [ memoryRemap::upperPageOffset#4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 ] { }  ) always clobbers reg byte a 
 Statement [52] memoryRemap::$8 = memoryRemap::$7 & $f [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:6 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:12 [ memcpy_dma_command4 memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:26 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:2::memoryRemap:41 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:22::memoryRemap:41 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [57] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
-Statement [66] *((byte*)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [57] *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [58] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [59] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [60] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [61] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [62] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [63] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [65] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 memcpy_dma_command4 ] { }  ) always clobbers reg byte a 
+Statement [66] *((char *)DMA) = byte0 &memcpy_dma_command4 [ memcpy_dma4::dmaMode#0 ] ( memcpy_dma4:20 [ memcpy_dma4::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::mem_destroy_i#2 main::mem_destroy_i#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:4 [ memoryRemap::lowerPageOffset#4 ] : zp[2]:4 , 
@@ -1131,11 +1131,11 @@ irq: {
     phx
     phy
     phz
-    // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [2] call memoryRemapBlock
   // Remap memory to put music at $4000
@@ -1175,19 +1175,19 @@ irq: {
     jmp __b5
     // irq::@5
   __b5:
-    // [7] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [7] irq::raster#0 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     jmp __b2
     // irq::@2
   __b2:
-    // [8] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2 -- _deref_pbuc1_eq_vbuaa_then_la1 
+    // [8] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2 -- _deref_pbuc1_eq_vbuaa_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b2
     jmp __b3
     // irq::@3
   __b3:
-    // [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq::@return
@@ -1225,19 +1225,19 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
+    // [13] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [14] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
+    // [14] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 48MHz fast mode
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
-    // [16] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [16] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
@@ -1248,7 +1248,7 @@ main: {
     // [18] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [19] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
@@ -1298,20 +1298,20 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [27] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
+    // [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
     // Set raster line to 0xff
     lda #$ff
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [29] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [30] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
@@ -1368,6 +1368,7 @@ main: {
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// void memoryRemapBlock(char blockPage, unsigned int memoryPage)
 memoryRemapBlock: {
     // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
@@ -1421,7 +1422,7 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerPageOffset, word zp(4) upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 6
     .label xVal = 8
@@ -1487,56 +1488,57 @@ memoryRemap: {
 // - src_bank The 64KB bank for the source (0-63)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
+// void memcpy_dma4(char dest_bank, void *dest, char src_bank, void *src, unsigned int num)
 memcpy_dma4: {
     .const num = MUSIC_END-MUSIC
     .const dest_bank = 1
     .const src_bank = 0
     .label dest = 0
     .label src = upperCodeData
-    // [56] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [56] memcpy_dma4::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [57] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [57] *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
-    // [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [58] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
-    // [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [59] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
-    // [60] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [60] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
-    // [61] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [61] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
-    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [62] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [63] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [64] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [65] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // [66] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [66] *((char *)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
-    // [67] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [67] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     jmp __breturn
@@ -1626,96 +1628,96 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const DEFAULT_SCREEN = (byte*) 2048
-constant struct F018_DMAGIC* const DMA = (struct F018_DMAGIC*) 55040
-constant const byte DMA_COMMAND_COPY = 0
-constant void()** const HARDWARE_IRQ = (void()**) 65534
-constant const byte IRQ_RASTER = 1
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const DEFAULT_SCREEN = (char *) 2048
+__constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *) 55040
+__constant const char DMA_COMMAND_COPY = 0
+__constant void (** const HARDWARE_IRQ)() = (void (**)()) 65534
+__constant const char IRQ_RASTER = 1
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte* const MUSIC_END = (byte*) 20992
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
-constant byte OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
-constant byte OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
-constant byte OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
-constant byte OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = $5c
-constant byte OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
-constant byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant byte* const PROCPORT = (byte*) 1
-constant byte* const PROCPORT_DDR = (byte*) 0
-constant const byte PROCPORT_DDR_MEMORY_MASK = 7
-constant const byte PROCPORT_RAM_IO = 5
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*) 53248
-constant struct MOS4569_VICIII* const VICIII = (struct MOS4569_VICIII*) 53248
-constant struct MEGA65_VICIV* const VICIV = (struct MEGA65_VICIV*) 53248
+__constant char * const MUSIC_END = (char *) 20992
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+__constant char OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+__constant char OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+__constant char OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
+__constant char OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = $5c
+__constant char OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+__constant char OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant char * const PROCPORT = (char *) 1
+__constant char * const PROCPORT_DDR = (char *) 0
+__constant const char PROCPORT_DDR_MEMORY_MASK = 7
+__constant const char PROCPORT_RAM_IO = 5
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *) 53248
+__constant struct MOS4569_VICIII * const VICIII = (struct MOS4569_VICIII *) 53248
+__constant struct MEGA65_VICIV * const VICIV = (struct MEGA65_VICIV *) 53248
 __interrupt(hardware_clobber) void irq()
-byte irq::raster
-byte irq::raster#0 reg byte a 6.5
+char irq::raster
+char irq::raster#0 // reg byte a 6.5
 void main()
-byte main::i
-byte main::i#1 reg byte y 202.0
-byte main::i#2 reg byte y 168.33333333333331
-byte main::mem_destroy_i
-byte main::mem_destroy_i#1 reg byte x 22.4
-byte main::mem_destroy_i#2 reg byte x 67.0
-void memcpy_dma4(byte memcpy_dma4::dest_bank , void* memcpy_dma4::dest , byte memcpy_dma4::src_bank , void* memcpy_dma4::src , word memcpy_dma4::num)
-void* memcpy_dma4::dest
-constant void* memcpy_dma4::dest#0 dest = (void*) 0
-byte memcpy_dma4::dest_bank
-constant byte memcpy_dma4::dest_bank#0 dest_bank = 1
-byte memcpy_dma4::dmaMode
-byte memcpy_dma4::dmaMode#0 reg byte x 2.0
-word memcpy_dma4::num
-constant word memcpy_dma4::num#0 num = MUSIC_END-MUSIC
-void* memcpy_dma4::src
-constant void* memcpy_dma4::src#0 src = (void*)upperCodeData
-byte memcpy_dma4::src_bank
-constant byte memcpy_dma4::src_bank#0 src_bank = 0
-volatile struct DMA_LIST_F018B memcpy_dma_command4 loadstore mem[12] = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$1 zp[1]:7 67.33333333333333
-byte~ memoryRemap::$2 reg byte a 202.0
-byte~ memoryRemap::$3 reg byte a 202.0
-byte~ memoryRemap::$6 zp[1]:10 67.33333333333333
-byte~ memoryRemap::$7 reg byte a 202.0
-byte~ memoryRemap::$8 reg byte a 202.0
-volatile byte memoryRemap::aVal loadstore zp[1]:6 10.1
-word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#4 lowerPageOffset zp[2]:2 67.33333333333333
-byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#4 reg byte z 28.857142857142858
-word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#4 upperPageOffset zp[2]:4 25.25
-volatile byte memoryRemap::xVal loadstore zp[1]:8 16.833333333333332
-volatile byte memoryRemap::yVal loadstore zp[1]:9 20.2
-volatile byte memoryRemap::zVal loadstore zp[1]:11 101.0
-void memoryRemapBlock(byte memoryRemapBlock::blockPage , word memoryRemapBlock::memoryPage)
-byte memoryRemapBlock::block
-constant byte memoryRemapBlock::block#0 block = $40>>5
-byte memoryRemapBlock::blockBits
-constant byte memoryRemapBlock::blockBits#0 blockBits = 1<<memoryRemapBlock::block#0
-byte memoryRemapBlock::blockPage
-word memoryRemapBlock::memoryPage
-word memoryRemapBlock::pageOffset
-constant word memoryRemapBlock::pageOffset#0 pageOffset = $100-$40
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
-constant byte* upperCodeData[]  = kickasm {{ .segmentout [segments="Banked"]
+char main::i
+char main::i#1 // reg byte y 202.0
+char main::i#2 // reg byte y 168.33333333333331
+char main::mem_destroy_i
+char main::mem_destroy_i#1 // reg byte x 22.4
+char main::mem_destroy_i#2 // reg byte x 67.0
+void memcpy_dma4(char dest_bank , void *dest , char src_bank , void *src , unsigned int num)
+void *memcpy_dma4::dest
+__constant void *memcpy_dma4::dest#0 = (void *) 0 // dest
+char memcpy_dma4::dest_bank
+__constant char memcpy_dma4::dest_bank#0 = 1 // dest_bank
+char memcpy_dma4::dmaMode
+char memcpy_dma4::dmaMode#0 // reg byte x 2.0
+unsigned int memcpy_dma4::num
+__constant unsigned int memcpy_dma4::num#0 = MUSIC_END-MUSIC // num
+void *memcpy_dma4::src
+__constant void *memcpy_dma4::src#0 = (void *)upperCodeData // src
+char memcpy_dma4::src_bank
+__constant char memcpy_dma4::src_bank#0 = 0 // src_bank
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command4 = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 } // mem[12]
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+char memoryRemap::$1 // zp[1]:7 67.33333333333333
+char memoryRemap::$2 // reg byte a 202.0
+char memoryRemap::$3 // reg byte a 202.0
+char memoryRemap::$6 // zp[1]:10 67.33333333333333
+char memoryRemap::$7 // reg byte a 202.0
+char memoryRemap::$8 // reg byte a 202.0
+__loadstore volatile char memoryRemap::aVal // zp[1]:6 10.1
+unsigned int memoryRemap::lowerPageOffset
+unsigned int memoryRemap::lowerPageOffset#4 // lowerPageOffset zp[2]:2 67.33333333333333
+char memoryRemap::remapBlocks
+char memoryRemap::remapBlocks#4 // reg byte z 28.857142857142858
+unsigned int memoryRemap::upperPageOffset
+unsigned int memoryRemap::upperPageOffset#4 // upperPageOffset zp[2]:4 25.25
+__loadstore volatile char memoryRemap::xVal // zp[1]:8 16.833333333333332
+__loadstore volatile char memoryRemap::yVal // zp[1]:9 20.2
+__loadstore volatile char memoryRemap::zVal // zp[1]:11 101.0
+void memoryRemapBlock(char blockPage , unsigned int memoryPage)
+char memoryRemapBlock::block
+__constant char memoryRemapBlock::block#0 = $40>>5 // block
+char memoryRemapBlock::blockBits
+__constant char memoryRemapBlock::blockBits#0 = 1<<memoryRemapBlock::block#0 // blockBits
+char memoryRemapBlock::blockPage
+unsigned int memoryRemapBlock::memoryPage
+unsigned int memoryRemapBlock::pageOffset
+__constant unsigned int memoryRemapBlock::pageOffset#0 = $100-$40 // pageOffset
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
+__constant char upperCodeData[] = kickasm {{ .segmentout [segments="Banked"]
  }}
 
 reg byte x [ main::mem_destroy_i#2 main::mem_destroy_i#1 ]
@@ -1831,12 +1833,12 @@ irq: {
     phy
     phz
     // VICII->IRQ_STATUS = IRQ_RASTER
-    // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
     // (VICII->BORDER_COLOR)++;
-    // [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // memoryRemapBlock(0x40, 0x100)
     // [2] call memoryRemapBlock
@@ -1867,18 +1869,18 @@ irq: {
     jsr memoryRemap
     // irq::@5
     // char raster = VICII->RASTER
-    // [7] irq::raster#0 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [7] irq::raster#0 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // irq::@2
   __b2:
     // while(VICII->RASTER==raster)
-    // [8] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2 -- _deref_pbuc1_eq_vbuaa_then_la1 
+    // [8] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)==irq::raster#0) goto irq::@2 -- _deref_pbuc1_eq_vbuaa_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b2
     // irq::@3
     // (VICII->BORDER_COLOR)--;
-    // [9] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq::@return
     // }
@@ -1912,22 +1914,22 @@ main: {
     jsr memoryRemap
     // main::@5
     // VICIII->KEY = 0x47
-    // [13] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
+    // [13] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIII->KEY = 0x53
-    // [14] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
+    // [14] *((char *)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIV->CONTROLB |= 0x40
-    // [15] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 48MHz fast mode
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     // VICIV->CONTROLC |= 0x40
-    // [16] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [16] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) = *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
@@ -1941,7 +1943,7 @@ main: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // VICIV->SIDBDRWD_LO = 1
-    // [19] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
+    // [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
@@ -1982,23 +1984,23 @@ main: {
     jsr memoryRemap
     // main::@8
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [27] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0xff
-    // [28] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
+    // [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
     // Set raster line to 0xff
     lda #$ff
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
-    // [29] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
-    // [30] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
@@ -2055,6 +2057,7 @@ main: {
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// void memoryRemapBlock(char blockPage, unsigned int memoryPage)
 memoryRemapBlock: {
     // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
@@ -2107,7 +2110,7 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerPageOffset, word zp(4) upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 6
     .label xVal = 8
@@ -2183,6 +2186,7 @@ memoryRemap: {
 // - src_bank The 64KB bank for the source (0-63)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
+// void memcpy_dma4(char dest_bank, void *dest, char src_bank, void *src, unsigned int num)
 memcpy_dma4: {
     .const num = MUSIC_END-MUSIC
     .const dest_bank = 1
@@ -2190,60 +2194,60 @@ memcpy_dma4: {
     .label dest = 0
     .label src = upperCodeData
     // char dmaMode = DMA->EN018B
-    // [56] memcpy_dma4::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [56] memcpy_dma4::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma_command4.count = num
-    // [57] *((word*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
+    // [57] *((unsigned int *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma4::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // memcpy_dma_command4.src_bank = src_bank
-    // [58] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
+    // [58] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK) = memcpy_dma4::src_bank#0 -- _deref_pbuc1=vbuc2 
     lda #src_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
     // memcpy_dma_command4.src = src
-    // [59] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
+    // [59] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma4::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // memcpy_dma_command4.dest_bank = dest_bank
-    // [60] *((byte*)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
+    // [60] *((char *)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK) = memcpy_dma4::dest_bank#0 -- _deref_pbuc1=vbuc2 
     lda #dest_bank
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // memcpy_dma_command4.dest = dest
-    // [61] *((byte**)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
+    // [61] *((char **)&memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma4::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
-    // [62] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [62] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
-    // [63] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [63] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    // [64] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [64] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4)
-    // [65] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [65] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command4
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4)
-    // [66] *((byte*)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
+    // [66] *((char *)DMA) = byte0 &memcpy_dma_command4 -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command4
     sta DMA
     // DMA->EN018B = dmaMode
-    // [67] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [67] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma4::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma4::@return

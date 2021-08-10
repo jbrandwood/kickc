@@ -11,17 +11,17 @@ main: scope:[main]  from __start
   main::b3 = 0
   setByte::ptr#0 = &main::b1
   setByte::b#0 = 'c'
-  call setByte 
+  call setByte
   to:main::@1
 main::@1: scope:[main]  from main
   setByte::ptr#1 = &main::b2
   setByte::b#1 = 'm'
-  call setByte 
+  call setByte
   to:main::@2
 main::@2: scope:[main]  from main::@1
   setByte::ptr#2 = &main::b3
   setByte::b#2 = 'l'
-  call setByte 
+  call setByte
   to:main::@3
 main::@3: scope:[main]  from main::@2
   main::SCREEN[0] = main::b1
@@ -32,7 +32,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void setByte(byte* setByte::ptr , byte setByte::b)
+void setByte(char *ptr , char b)
 setByte: scope:[setByte]  from main main::@1 main::@2
   setByte::ptr#3 = phi( main/setByte::ptr#0, main::@1/setByte::ptr#1, main::@2/setByte::ptr#2 )
   setByte::b#3 = phi( main/setByte::b#0, main::@1/setByte::b#1, main::@2/setByte::b#2 )
@@ -44,7 +44,7 @@ setByte::@return: scope:[setByte]  from setByte
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -55,34 +55,34 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* main::SCREEN = (byte*)$400
-volatile byte main::b1 loadstore
-volatile byte main::b2 loadstore
-volatile byte main::b3 loadstore
-void setByte(byte* setByte::ptr , byte setByte::b)
-byte setByte::b
-byte setByte::b#0
-byte setByte::b#1
-byte setByte::b#2
-byte setByte::b#3
-byte* setByte::ptr
-byte* setByte::ptr#0
-byte* setByte::ptr#1
-byte* setByte::ptr#2
-byte* setByte::ptr#3
+__constant char *main::SCREEN = (char *)$400
+__loadstore volatile char main::b1
+__loadstore volatile char main::b2
+__loadstore volatile char main::b3
+void setByte(char *ptr , char b)
+char setByte::b
+char setByte::b#0
+char setByte::b#1
+char setByte::b#2
+char setByte::b#3
+char *setByte::ptr
+char *setByte::ptr#0
+char *setByte::ptr#1
+char *setByte::ptr#2
+char *setByte::ptr#3
 
 Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::b1
 Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::b2
 Adding number conversion cast (unumber) 2 in main::SCREEN[2] = main::b3
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant setByte::ptr#0 = &main::b1
 Constant setByte::b#0 = 'c'
@@ -131,15 +131,15 @@ main: scope:[main]  from
   [0] main::b1 = 0
   [1] main::b2 = 0
   [2] main::b3 = 0
-  [3] call setByte 
+  [3] call setByte
   to:main::@1
 main::@1: scope:[main]  from main
   [4] phi()
-  [5] call setByte 
+  [5] call setByte
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] phi()
-  [7] call setByte 
+  [7] call setByte
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [8] *main::SCREEN = main::b1
@@ -150,7 +150,7 @@ main::@return: scope:[main]  from main::@3
   [11] return 
   to:@return
 
-void setByte(byte* setByte::ptr , byte setByte::b)
+void setByte(char *ptr , char b)
 setByte: scope:[setByte]  from main main::@1 main::@2
   [12] setByte::ptr#3 = phi( main/&main::b1, main::@1/&main::b2, main::@2/&main::b3 )
   [12] setByte::b#3 = phi( main/'c', main::@1/'m', main::@2/'l' )
@@ -163,14 +163,14 @@ setByte::@return: scope:[setByte]  from setByte
 
 VARIABLE REGISTER WEIGHTS
 void main()
-volatile byte main::b1 loadstore 0.36363636363636365
-volatile byte main::b2 loadstore 0.36363636363636365
-volatile byte main::b3 loadstore 0.36363636363636365
-void setByte(byte* setByte::ptr , byte setByte::b)
-byte setByte::b
-byte setByte::b#3 11.0
-byte* setByte::ptr
-byte* setByte::ptr#3 11.0
+__loadstore volatile char main::b1 // 0.36363636363636365
+__loadstore volatile char main::b2 // 0.36363636363636365
+__loadstore volatile char main::b3 // 0.36363636363636365
+void setByte(char *ptr , char b)
+char setByte::b
+char setByte::b#3 // 11.0
+char *setByte::ptr
+char *setByte::ptr#3 // 11.0
 
 Initial phi equivalence classes
 [ setByte::b#3 ]
@@ -251,7 +251,7 @@ main: {
     // [2] main::b3 = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b3
-    // [3] call setByte 
+    // [3] call setByte
     // [12] phi from main to setByte [phi:main->setByte]
   setByte_from_main:
     // [12] phi setByte::ptr#3 = &main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
@@ -267,7 +267,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] call setByte 
+    // [5] call setByte
     // [12] phi from main::@1 to setByte [phi:main::@1->setByte]
   setByte_from___b1:
     // [12] phi setByte::ptr#3 = &main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
@@ -283,7 +283,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] call setByte 
+    // [7] call setByte
     // [12] phi from main::@2 to setByte [phi:main::@2->setByte]
   setByte_from___b2:
     // [12] phi setByte::ptr#3 = &main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
@@ -313,7 +313,7 @@ main: {
     rts
 }
   // setByte
-// setByte(byte* zp(2) ptr, byte register(X) b)
+// void setByte(__zp(2) char *ptr, __register(X) char b)
 setByte: {
     .label ptr = 2
     // [13] *setByte::ptr#3 = setByte::b#3 -- _deref_pbuz1=vbuxx 
@@ -353,15 +353,15 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* main::SCREEN = (byte*) 1024
-volatile byte main::b1 loadstore zp[1]:4 0.36363636363636365
-volatile byte main::b2 loadstore zp[1]:5 0.36363636363636365
-volatile byte main::b3 loadstore zp[1]:6 0.36363636363636365
-void setByte(byte* setByte::ptr , byte setByte::b)
-byte setByte::b
-byte setByte::b#3 reg byte x 11.0
-byte* setByte::ptr
-byte* setByte::ptr#3 ptr zp[2]:2 11.0
+__constant char *main::SCREEN = (char *) 1024
+__loadstore volatile char main::b1 // zp[1]:4 0.36363636363636365
+__loadstore volatile char main::b2 // zp[1]:5 0.36363636363636365
+__loadstore volatile char main::b3 // zp[1]:6 0.36363636363636365
+void setByte(char *ptr , char b)
+char setByte::b
+char setByte::b#3 // reg byte x 11.0
+char *setByte::ptr
+char *setByte::ptr#3 // ptr zp[2]:2 11.0
 
 reg byte x [ setByte::b#3 ]
 zp[2]:2 [ setByte::ptr#3 ]
@@ -403,7 +403,7 @@ main: {
     // [2] main::b3 = 0 -- vbuz1=vbuc1 
     sta.z b3
     // setByte(&b1, 'c')
-    // [3] call setByte 
+    // [3] call setByte
     // [12] phi from main to setByte [phi:main->setByte]
     // [12] phi setByte::ptr#3 = &main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
     lda #<b1
@@ -416,7 +416,7 @@ main: {
     // [4] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // setByte(&b2, 'm')
-    // [5] call setByte 
+    // [5] call setByte
     // [12] phi from main::@1 to setByte [phi:main::@1->setByte]
     // [12] phi setByte::ptr#3 = &main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
@@ -429,7 +429,7 @@ main: {
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // setByte(&b3, 'l')
-    // [7] call setByte 
+    // [7] call setByte
     // [12] phi from main::@2 to setByte [phi:main::@2->setByte]
     // [12] phi setByte::ptr#3 = &main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
@@ -458,7 +458,7 @@ main: {
     rts
 }
   // setByte
-// setByte(byte* zp(2) ptr, byte register(X) b)
+// void setByte(__zp(2) char *ptr, __register(X) char b)
 setByte: {
     .label ptr = 2
     // *ptr = b

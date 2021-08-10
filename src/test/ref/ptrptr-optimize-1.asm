@@ -25,7 +25,7 @@ main: {
     // }
     rts
 }
-// sub(byte register(A) ch)
+// void sub(__register(A) char ch, char **dst)
 sub: {
     // *(*dst)++ = ch
     ldy.z main.pscreen

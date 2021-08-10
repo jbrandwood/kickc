@@ -27,7 +27,7 @@ main: {
     // }
     rts
 }
-// enableDLI(void* zp(2) dliptr)
+// void enableDLI(__zp(2) void * volatile dliptr)
 enableDLI: {
     .label dliptr = 2
     // asm

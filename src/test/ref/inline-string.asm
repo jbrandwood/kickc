@@ -41,7 +41,7 @@ main: {
     .byte 0
 }
 .segment Code
-// print(byte* zp(4) msg)
+// void print(__zp(4) char *msg)
 print: {
     .label msg = 4
   __b1:

@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 Eliminating unused variable with no statement main::$1
 
 CONTROL FLOW GRAPH SSA
@@ -13,13 +13,13 @@ main::@1: scope:[main]  from main main::@2
   if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  main::$2 = main::i * SIZEOF_SIGNED_WORD
+  main::$2 = main::i * SIZEOF_INT
   SCREEN[main::$2] = main::j
   main::i = ++ main::i
   main::j = ++ main::j
-  main::$4 = (signed word)main::i
+  main::$4 = (int)main::i
   main::k#0 = main::$4 * 2
-  main::$3 = main::i * SIZEOF_SIGNED_WORD
+  main::$3 = main::i * SIZEOF_INT
   SCREEN[main::$3] = main::k#0
   main::i = ++ main::i
   to:main::@1
@@ -33,7 +33,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -42,28 +42,28 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant signed word* SCREEN = (signed word*)$400
-constant byte SIZEOF_SIGNED_WORD = 2
+__constant int *SCREEN = (int *)$400
+__constant char SIZEOF_INT = 2
 void __start()
 void main()
-bool~ main::$0
-byte~ main::$2
-byte~ main::$3
-signed word~ main::$4
-byte main::i loadstore !zp[-1]:2
-signed word main::j loadstore !zp[-1]:4
-signed word main::k
-signed word main::k#0
+bool main::$0
+char main::$2
+char main::$3
+int main::$4
+__loadstore char main::i // !zp[-1]:2
+__loadstore int main::j // !zp[-1]:4
+int main::k
+int main::k#0
 
 Adding number conversion cast (unumber) 4 in main::$0 = main::i < 4
 Adding number conversion cast (snumber) 2 in main::k#0 = main::$4 * 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant pointer cast (int *) 1024
 Simplifying constant integer cast 4
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
-Finalized signed number type (signed byte) 2
+Finalized unsigned number type (char) 4
+Finalized signed number type (signed char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [3] if(main::i<4) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -74,11 +74,11 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting multiplication to use shift [3] main::$2 = main::i * SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [3] main::$2 = main::i * SIZEOF_INT
 Rewriting multiplication to use shift [8] main::k#0 = main::$4 * 2
-Rewriting multiplication to use shift [9] main::$3 = main::i * SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [9] main::$3 = main::i * SIZEOF_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Eliminating unused constant SIZEOF_SIGNED_WORD
+Eliminating unused constant SIZEOF_INT
 Successful SSA optimization PassNEliminateUnusedVars
 CALL GRAPH
 
@@ -103,7 +103,7 @@ main::@2: scope:[main]  from main::@1
   [5] SCREEN[main::$2] = main::j
   [6] main::i = ++ main::i
   [7] main::j = ++ main::j
-  [8] main::$4 = (signed word)main::i
+  [8] main::$4 = (int)main::i
   [9] main::k#0 = main::$4 << 1
   [10] main::$3 = main::i << 1
   [11] SCREEN[main::$3] = main::k#0
@@ -113,13 +113,13 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$2 22.0
-byte~ main::$3 22.0
-signed word~ main::$4 22.0
-byte main::i loadstore !zp[-1]:2 6.583333333333334
-signed word main::j loadstore !zp[-1]:4 3.1818181818181817
-signed word main::k
-signed word main::k#0 11.0
+char main::$2 // 22.0
+char main::$3 // 22.0
+int main::$4 // 22.0
+__loadstore char main::i // !zp[-1]:2 6.583333333333334
+__loadstore int main::j // !zp[-1]:4 3.1818181818181817
+int main::k
+int main::k#0 // 11.0
 
 Initial phi equivalence classes
 Added variable main::i to live range equivalence class [ main::i ]
@@ -145,7 +145,7 @@ Statement [1] main::j = 0 [ main::i main::j ] (  [ main::i main::j ] { }  ) alwa
 Statement [2] if(main::i<4) goto main::@2 [ main::i main::j ] (  [ main::i main::j ] { }  ) always clobbers reg byte a 
 Statement [4] main::$2 = main::i << 1 [ main::i main::j main::$2 ] (  [ main::i main::j main::$2 ] { }  ) always clobbers reg byte a 
 Statement [5] SCREEN[main::$2] = main::j [ main::i main::j ] (  [ main::i main::j ] { }  ) always clobbers reg byte a 
-Statement [8] main::$4 = (signed word)main::i [ main::i main::j main::$4 ] (  [ main::i main::j main::$4 ] { }  ) always clobbers reg byte a 
+Statement [8] main::$4 = (int)main::i [ main::i main::j main::$4 ] (  [ main::i main::j main::$4 ] { }  ) always clobbers reg byte a 
 Statement [9] main::k#0 = main::$4 << 1 [ main::i main::j main::k#0 ] (  [ main::i main::j main::k#0 ] { }  ) always clobbers reg byte a 
 Statement [10] main::$3 = main::i << 1 [ main::i main::j main::k#0 main::$3 ] (  [ main::i main::j main::k#0 main::$3 ] { }  ) always clobbers reg byte a 
 Statement [11] SCREEN[main::$3] = main::k#0 [ main::i main::j ] (  [ main::i main::j ] { }  ) always clobbers reg byte a 
@@ -225,7 +225,7 @@ main: {
     bne !+
     inc.z j+1
   !:
-    // [8] main::$4 = (signed word)main::i -- vwsz1=_sword_vbuz2 
+    // [8] main::$4 = (int)main::i -- vwsz1=_sword_vbuz2 
     lda.z i
     sta.z __4
     lda #0
@@ -259,15 +259,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant signed word* SCREEN = (signed word*) 1024
+__constant int *SCREEN = (int *) 1024
 void main()
-byte~ main::$2 reg byte a 22.0
-byte~ main::$3 reg byte a 22.0
-signed word~ main::$4 zp[2]:6 22.0
-byte main::i loadstore !zp[-1]:2 zp[1]:2 6.583333333333334
-signed word main::j loadstore !zp[-1]:4 zp[2]:4 3.1818181818181817
-signed word main::k
-signed word main::k#0 k zp[2]:6 11.0
+char main::$2 // reg byte a 22.0
+char main::$3 // reg byte a 22.0
+int main::$4 // zp[2]:6 22.0
+__loadstore char main::i // !zp[-1]:2 zp[1]:2 6.583333333333334
+__loadstore int main::j // !zp[-1]:4 zp[2]:4 3.1818181818181817
+int main::k
+int main::k#0 // k zp[2]:6 11.0
 
 zp[1]:2 [ main::i ]
 zp[2]:4 [ main::j ]
@@ -339,7 +339,7 @@ main: {
     inc.z j+1
   !:
     // int k = (int)i*2
-    // [8] main::$4 = (signed word)main::i -- vwsz1=_sword_vbuz2 
+    // [8] main::$4 = (int)main::i -- vwsz1=_sword_vbuz2 
     lda.z i
     sta.z __4
     lda #0

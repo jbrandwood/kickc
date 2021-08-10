@@ -22,7 +22,7 @@ __start: {
     jsr main
     rts
 }
-// print(struct Vector zp(6) v)
+// void print(__zp(6) struct Vector v)
 print: {
     .const OFFSET_STACK_V = 0
     .label v = 6
@@ -68,7 +68,7 @@ print: {
     // }
     rts
 }
-// get(byte register(Y) i)
+// __zp($a) struct Vector get(__register(Y) char i)
 get: {
     .const OFFSET_STACK_I = 0
     .const OFFSET_STACK_RETURN_0 = 0

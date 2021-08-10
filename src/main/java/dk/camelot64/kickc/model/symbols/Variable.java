@@ -557,21 +557,6 @@ public class Variable implements Symbol {
       return toString();
    }
 
-   /**
-    * Get a string describing the type of the variable
-    *
-    * @return The type as a string
-    */
-   public String typeString() {
-      final StringBuilder print = new StringBuilder();
-      print
-            .append(isKindConstant() ? "constant " : "")
-            .append(getType().getTypeName())
-            .append(isKindIntermediate() ? "~" : "")
-            ;
-      return print.toString();
-   }
-
    public String toCDecl() {
       StringBuilder cdecl = new StringBuilder();
       cdecl.append(getType().toCDecl(getLocalName()));

@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,13 +6,13 @@ void main()
 main: scope:[main]  from __start::@1
   idx#15 = phi( __start::@1/idx#16 )
   out::c#0 = 'c'
-  call out 
+  call out
   to:main::@1
 main::@1: scope:[main]  from main
   idx#8 = phi( main/idx#4 )
   idx#0 = idx#8
   out::c#1 = 'm'
-  call out 
+  call out
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#9 = phi( main::@1/idx#4 )
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void out(byte out::c)
+void out(char c)
 out: scope:[out]  from main main::@1
   idx#11 = phi( main/idx#15, main::@1/idx#0 )
   out::c#2 = phi( main/out::c#0, main::@1/out::c#1 )
@@ -45,7 +45,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#16 = phi( __start::__init1/idx#5 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#13 = phi( __start::@1/idx#2 )
@@ -58,34 +58,34 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-void out(byte out::c)
-byte out::c
-byte out::c#0
-byte out::c#1
-byte out::c#2
+void out(char c)
+char out::c
+char out::c#0
+char out::c#1
+char out::c#2
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias idx#0 = idx#8 
 Alias idx#1 = idx#9 idx#10 idx#2 
@@ -133,17 +133,17 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call out 
+  [1] call out
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call out 
+  [3] call out
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void out(byte out::c)
+void out(char c)
 out: scope:[out]  from main main::@1
   [5] idx#11 = phi( main/0, main::@1/idx#12 )
   [5] out::c#2 = phi( main/'c', main::@1/'m' )
@@ -156,13 +156,13 @@ out::@return: scope:[out]  from out
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
-byte idx#11 12.0
-byte idx#12 3.25
+char idx
+char idx#11 // 12.0
+char idx#12 // 3.25
 void main()
-void out(byte out::c)
-byte out::c
-byte out::c#2 11.0
+void out(char c)
+char out::c
+char out::c#2 // 11.0
 
 Initial phi equivalence classes
 [ out::c#2 ]
@@ -203,7 +203,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call out 
+    // [1] call out
     // [5] phi from main to out [phi:main->out]
   out_from_main:
     // [5] phi idx#11 = 0 [phi:main->out#0] -- vbuxx=vbuc1 
@@ -216,7 +216,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call out 
+    // [3] call out
     // [5] phi from main::@1 to out [phi:main::@1->out]
   out_from___b1:
     // [5] phi idx#11 = idx#12 [phi:main::@1->out#0] -- register_copy 
@@ -230,7 +230,7 @@ main: {
     rts
 }
   // out
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // [6] SCREEN[idx#11] = out::c#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -259,14 +259,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-byte idx
-byte idx#11 reg byte x 12.0
-byte idx#12 reg byte x 3.25
+__constant char * const SCREEN = (char *) 1024
+char idx
+char idx#11 // reg byte x 12.0
+char idx#12 // reg byte x 3.25
 void main()
-void out(byte out::c)
-byte out::c
-byte out::c#2 reg byte a 11.0
+void out(char c)
+char out::c
+char out::c#2 // reg byte a 11.0
 
 reg byte a [ out::c#2 ]
 reg byte x [ idx#11 idx#12 ]
@@ -293,7 +293,7 @@ Score: 37
   // main
 main: {
     // out('c')
-    // [1] call out 
+    // [1] call out
     // [5] phi from main to out [phi:main->out]
     // [5] phi idx#11 = 0 [phi:main->out#0] -- vbuxx=vbuc1 
     ldx #0
@@ -303,7 +303,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // out('m')
-    // [3] call out 
+    // [3] call out
     // [5] phi from main::@1 to out [phi:main::@1->out]
     // [5] phi idx#11 = idx#12 [phi:main::@1->out#0] -- register_copy 
     // [5] phi out::c#2 = 'm' [phi:main::@1->out#1] -- vbuaa=vbuc1 
@@ -315,7 +315,7 @@ main: {
     rts
 }
   // out
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // SCREEN[idx++] = c
     // [6] SCREEN[idx#11] = out::c#2 -- pbuc1_derefidx_vbuxx=vbuaa 

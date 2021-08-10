@@ -7,9 +7,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   .const SIZEOF_NUMBER = -1
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .const SIZEOF_POINTER = 2
   .label SCREEN = $400
 .segment Code
@@ -18,7 +18,7 @@ main: {
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
     // SCREEN[idx++] = '0'+(char)sizeof(idx)
-    lda #'0'+SIZEOF_BYTE
+    lda #'0'+SIZEOF_CHAR
     sta SCREEN+1
     // SCREEN[idx++] = '0'+(char)sizeof(b)
     sta SCREEN+2
@@ -28,7 +28,7 @@ main: {
     // SCREEN[idx++] = '0'+(char)sizeof($43ff)
     sta SCREEN+5
     // SCREEN[idx++] = '0'+(char)sizeof(w)
-    lda #'0'+SIZEOF_WORD
+    lda #'0'+SIZEOF_UNSIGNED_INT
     sta SCREEN+6
     // SCREEN[idx++] = '0'+(char)sizeof(bp)
     lda #'0'+SIZEOF_POINTER

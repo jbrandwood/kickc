@@ -548,7 +548,7 @@ main: {
 }
 .segment Code
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $17
@@ -628,6 +628,7 @@ gotoxy: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
+// __zp($1a) int strcmp(const char *str1, const char *str2)
 strcmp: {
     .label s1 = 4
     .label s2 = 6
@@ -674,7 +675,7 @@ strcmp: {
   !:
     jmp __b1
 }
-// assert_cmp(signed byte zp(2) expect, signed byte zp(3) actual, byte* zp(4) message)
+// void assert_cmp(__zp(2) signed char expect, __zp(3) signed char actual, __zp(4) char *message)
 assert_cmp: {
     .label actual = 3
     .label expect = 2
@@ -818,7 +819,7 @@ assert_cmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// strncmp(word zp(4) n)
+// __zp($a) int strncmp(const char *str1, const char *str2, __zp(4) unsigned int n)
 strncmp: {
     .label s1 = 6
     .label s2 = $1a
@@ -882,7 +883,7 @@ strncmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// memcmp(const void* zp(4) str1, const void* zp($a) str2, word zp(6) n)
+// __zp($1a) int memcmp(__zp(4) const void *str1, __zp($a) const void *str2, __zp(6) unsigned int n)
 memcmp: {
     .label n = 6
     .label s1 = 4
@@ -936,7 +937,7 @@ memcmp: {
     jmp __b1
 }
 // Set the color for text output. The old color setting is returned.
-// textcolor(byte register(A) color)
+// char textcolor(__register(A) char color)
 textcolor: {
     // conio_textcolor = color
     sta.z conio_textcolor
@@ -944,7 +945,7 @@ textcolor: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(6) s)
+// void cputs(__zp(6) const char *s)
 cputs: {
     .label s = 6
   __b1:
@@ -965,7 +966,7 @@ cputs: {
     jmp __b1
 }
 // Print a signed char using a specific format
-// printf_schar(signed byte register(X) value)
+// void printf_schar(__register(X) signed char value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_schar: {
     // printf_buffer.sign = 0
     // Handle any sign
@@ -997,7 +998,7 @@ printf_schar: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// printf_string(byte* zp(4) str)
+// void printf_string(__zp(4) char *str, char format_min_length, char format_justify_left)
 printf_string: {
     .label str = 4
     // cputs(str)
@@ -1011,7 +1012,7 @@ printf_string: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -1042,7 +1043,7 @@ cputc: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($1a) buffer)
+// void uctoa(__register(X) char value, __zp($1a) char *buffer, char radix)
 uctoa: {
     .label digit_value = $19
     .label buffer = $1a
@@ -1105,7 +1106,7 @@ uctoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
+// void printf_number_buffer(__register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     // if(buffer.sign)
@@ -1159,7 +1160,7 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($1a) buffer, byte register(X) value, byte zp($19) sub)
+// __register(X) char uctoa_append(__zp($1a) char *buffer, __register(X) char value, __zp($19) char sub)
 uctoa_append: {
     .label buffer = $1a
     .label sub = $19
@@ -1248,7 +1249,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($1c) destination, void* zp($a) source)
+// void * memcpy(__zp($1c) void *destination, __zp($a) void *source, unsigned int num)
 memcpy: {
     .label src_end = $1a
     .label dst = $1c
@@ -1290,7 +1291,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c)
+// void * memset(__zp($a) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $1c
     .label dst = $a

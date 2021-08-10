@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen = (byte*)$400
+  main::screen = (char *)$400
   *(*main::pscreen) = 'a'
   *main::pscreen = ++ *main::pscreen
   *(*main::pscreen) = 'b'
@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -26,10 +26,10 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte** main::pscreen = &main::screen
-byte* volatile main::screen loadstore
+__constant char **main::pscreen = &main::screen
+__loadstore char * volatile main::screen
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -45,7 +45,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] main::screen = (byte*) 1024
+  [0] main::screen = (char *) 1024
   [1] *(*main::pscreen) = 'a'
   [2] *main::pscreen = ++ *main::pscreen
   [3] *(*main::pscreen) = 'b'
@@ -57,7 +57,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* volatile main::screen loadstore 20.0
+__loadstore char * volatile main::screen // 20.0
 
 Initial phi equivalence classes
 Added variable main::screen to live range equivalence class [ main::screen ]
@@ -65,7 +65,7 @@ Complete equivalence classes
 [ main::screen ]
 Allocated zp[2]:2 [ main::screen ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] main::screen = (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::screen = (char *) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(*main::pscreen) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [3] *(*main::pscreen) = 'b' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::screen ] : zp[2]:2 , 
@@ -95,7 +95,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -137,8 +137,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte** main::pscreen = &main::screen
-byte* volatile main::screen loadstore zp[2]:2 20.0
+__constant char **main::pscreen = &main::screen
+__loadstore char * volatile main::screen // zp[2]:2 20.0
 
 zp[2]:2 [ main::screen ]
 
@@ -164,7 +164,7 @@ main: {
     .label pscreen = screen
     .label screen = 2
     // byte* screen = (char*)0x400
-    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

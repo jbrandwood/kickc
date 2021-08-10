@@ -19,7 +19,7 @@ main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   main::$1 = main::i#2 * SIZEOF_POINTER
   main::tile#0 = TileDB[main::$1]
-  main::$3 = (byte*)main::tile#0
+  main::$3 = (char *)main::tile#0
   main::$2 = main::$3 + OFFSET_STRUCT_TILE_COUNT
   main::SCREEN[main::i#2] = *main::$2
   main::i#1 = main::i#2 + rangenext(0,1)
@@ -32,7 +32,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -41,28 +41,28 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant dword* Enemy2Sprites[$c]  = { fill( $c, 0) }
-constant byte OFFSET_STRUCT_TILE_COUNT = 4
-constant dword* PlayerSprites[$c]  = { fill( $c, 0) }
-volatile struct Tile S1 loadstore = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" }
-volatile struct Tile S2 loadstore = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" }
-constant byte SIZEOF_POINTER = 2
-constant struct Tile** TileDB[2]  = { &S1, &S2 }
+__constant unsigned long Enemy2Sprites[$c] = { fill( $c, 0) }
+__constant char OFFSET_STRUCT_TILE_COUNT = 4
+__constant unsigned long PlayerSprites[$c] = { fill( $c, 0) }
+__loadstore volatile struct Tile S1 = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" }
+__loadstore volatile struct Tile S2 = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" }
+__constant char SIZEOF_POINTER = 2
+__constant struct Tile *TileDB[2] = { &S1, &S2 }
 void __start()
 void main()
-bool~ main::$0
-signed word~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-constant byte* const main::SCREEN = (byte*)$400
-signed word main::i
-signed word main::i#0
-signed word main::i#1
-signed word main::i#2
-struct Tile* main::tile
-struct Tile* main::tile#0
+bool main::$0
+int main::$1
+char *main::$2
+char *main::$3
+__constant char * const main::SCREEN = (char *)$400
+int main::i
+int main::i#0
+int main::i#1
+int main::i#2
+struct Tile *main::tile
+struct Tile *main::tile#0
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$0 [9] if(main::i#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -86,9 +86,9 @@ Adding number conversion cast (snumber) 2 in [8] if(main::i#1!=2) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) 2
+Finalized signed number type (signed char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [4] main::$3 = (byte*)main::tile#0 keeping main::tile#0
+Inlining Noop Cast [4] main::$3 = (char *)main::tile#0 keeping main::tile#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [1] main::$1 = main::i#2 * SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -97,13 +97,13 @@ Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_POINTER
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) $14
-Finalized unsigned number type (byte) $14
-Finalized unsigned number type (byte) $c
-Finalized unsigned number type (byte) $c
-Finalized unsigned number type (byte) $c
-Finalized unsigned number type (byte) $c
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) $14
+Finalized unsigned number type (char) $14
+Finalized unsigned number type (char) $c
+Finalized unsigned number type (char) $c
+Finalized unsigned number type (char) $c
+Finalized unsigned number type (char) $c
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -127,7 +127,7 @@ main::@1: scope:[main]  from main main::@1
   [3] main::$4 = TileDB + main::$1
   [4] main::tile#0 = *main::$4
   [5] main::$5 = main::SCREEN + main::i#2
-  [6] *main::$5 = ((byte*)main::tile#0)[OFFSET_STRUCT_TILE_COUNT]
+  [6] *main::$5 = ((char *)main::tile#0)[OFFSET_STRUCT_TILE_COUNT]
   [7] main::i#1 = ++ main::i#2
   [8] if(main::i#1!=2) goto main::@1
   to:main::@return
@@ -137,17 +137,17 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-volatile struct Tile S1 loadstore = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" }
-volatile struct Tile S2 loadstore = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" }
+__loadstore volatile struct Tile S1 = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" }
+__loadstore volatile struct Tile S2 = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" }
 void main()
-signed word~ main::$1 22.0
-struct Tile**~ main::$4 22.0
-byte*~ main::$5 22.0
-signed word main::i
-signed word main::i#1 16.5
-signed word main::i#2 7.333333333333333
-struct Tile* main::tile
-struct Tile* main::tile#0 5.5
+int main::$1 // 22.0
+struct Tile **main::$4 // 22.0
+char *main::$5 // 22.0
+int main::i
+int main::i#1 // 16.5
+int main::i#2 // 7.333333333333333
+struct Tile *main::tile
+struct Tile *main::tile#0 // 5.5
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -177,7 +177,7 @@ Statement [2] main::$1 = main::i#2 << 1 [ main::i#2 main::$1 ] (  [ main::i#2 ma
 Statement [3] main::$4 = TileDB + main::$1 [ main::i#2 main::$4 ] (  [ main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [4] main::tile#0 = *main::$4 [ main::i#2 main::tile#0 ] (  [ main::i#2 main::tile#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [5] main::$5 = main::SCREEN + main::i#2 [ main::i#2 main::tile#0 main::$5 ] (  [ main::i#2 main::tile#0 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [6] *main::$5 = ((byte*)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] *main::$5 = ((char *)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [8] if(main::i#1!=2) goto main::@1 [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::$1 ] : zp[2]:4 , 
@@ -267,7 +267,7 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z __5+1
-    // [6] *main::$5 = ((byte*)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] -- _deref_pbuz1=pbuz2_derefidx_vbuc1 
+    // [6] *main::$5 = ((char *)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] -- _deref_pbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_TILE_COUNT
     lda (tile),y
     ldy #0
@@ -323,22 +323,22 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant dword* Enemy2Sprites[$c]  = { fill( $c, 0) }
-constant byte OFFSET_STRUCT_TILE_COUNT = 4
-constant dword* PlayerSprites[$c]  = { fill( $c, 0) }
-volatile struct Tile S1 loadstore mem[25] = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" }
-volatile struct Tile S2 loadstore mem[25] = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" }
-constant struct Tile** TileDB[2]  = { &S1, &S2 }
+__constant unsigned long Enemy2Sprites[$c] = { fill( $c, 0) }
+__constant char OFFSET_STRUCT_TILE_COUNT = 4
+__constant unsigned long PlayerSprites[$c] = { fill( $c, 0) }
+__loadstore volatile struct Tile S1 = { Tiles: PlayerSprites, Offset: $14, Count: $40, Name: "Sven" } // mem[25]
+__loadstore volatile struct Tile S2 = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" } // mem[25]
+__constant struct Tile *TileDB[2] = { &S1, &S2 }
 void main()
-signed word~ main::$1 zp[2]:4 22.0
-struct Tile**~ main::$4 zp[2]:4 22.0
-byte*~ main::$5 zp[2]:6 22.0
-constant byte* const main::SCREEN = (byte*) 1024
-signed word main::i
-signed word main::i#1 i zp[2]:2 16.5
-signed word main::i#2 i zp[2]:2 7.333333333333333
-struct Tile* main::tile
-struct Tile* main::tile#0 tile zp[2]:4 5.5
+int main::$1 // zp[2]:4 22.0
+struct Tile **main::$4 // zp[2]:4 22.0
+char *main::$5 // zp[2]:6 22.0
+__constant char * const main::SCREEN = (char *) 1024
+int main::i
+int main::i#1 // i zp[2]:2 16.5
+int main::i#2 // i zp[2]:2 7.333333333333333
+struct Tile *main::tile
+struct Tile *main::tile#0 // tile zp[2]:4 5.5
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::$1 main::$4 main::tile#0 ]
@@ -414,7 +414,7 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z __5+1
-    // [6] *main::$5 = ((byte*)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] -- _deref_pbuz1=pbuz2_derefidx_vbuc1 
+    // [6] *main::$5 = ((char *)main::tile#0)[OFFSET_STRUCT_TILE_COUNT] -- _deref_pbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_TILE_COUNT
     lda (tile),y
     ldy #0

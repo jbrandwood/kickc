@@ -8,7 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
@@ -68,9 +68,9 @@ main: {
     sta.z __1+1
     // SCREEN[1] = next()
     lda.z __1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD
+    sta SCREEN+1*SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
+    sta SCREEN+1*SIZEOF_INT+1
     // }
     rts
 }

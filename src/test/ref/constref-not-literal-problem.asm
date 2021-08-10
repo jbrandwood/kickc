@@ -16,6 +16,7 @@ main: {
     rts
 }
 // Copy a byte if the destination is after the source
+// void copy(void *destination, void *source)
 copy: {
     .label destination = B
     .label source = A

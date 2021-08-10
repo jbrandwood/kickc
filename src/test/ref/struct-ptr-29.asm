@@ -28,7 +28,7 @@ main: {
     // }
     rts
 }
-// print_person(struct Person* zp(2) person)
+// void print_person(__zp(2) struct Person *person)
 print_person: {
     .label i = 4
     .label person = 2

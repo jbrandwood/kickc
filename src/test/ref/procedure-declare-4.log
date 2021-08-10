@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-byte sum(byte sum::q , byte sum::w)
+char sum(char q , char w)
 sum: scope:[sum]  from main main::@1
   sum::w#2 = phi( main/sum::w#0, main::@1/sum::w#1 )
   sum::q#2 = phi( main/sum::q#0, main::@1/sum::q#1 )
@@ -19,7 +19,7 @@ void main()
 main: scope:[main]  from __start
   sum::q#0 = 'a'
   sum::w#0 = 1
-  call sum 
+  call sum
   sum::return#2 = sum::return#1
   to:main::@1
 main::@1: scope:[main]  from main
@@ -28,7 +28,7 @@ main::@1: scope:[main]  from main
   main::SCREEN[0] = main::$0
   sum::q#1 = 'b'
   sum::w#1 = 2
-  call sum 
+  call sum
   sum::return#3 = sum::return#1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -42,7 +42,7 @@ main::@return: scope:[main]  from main::@2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -53,28 +53,28 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-byte~ main::$0
-byte~ main::$1
-constant byte* const main::SCREEN = (byte*)$400
-byte sum(byte sum::q , byte sum::w)
-byte~ sum::$0
-number~ sum::$1
-byte sum::q
-byte sum::q#0
-byte sum::q#1
-byte sum::q#2
-byte sum::return
-byte sum::return#0
-byte sum::return#1
-byte sum::return#2
-byte sum::return#3
-byte sum::return#4
-byte sum::return#5
-byte sum::return#6
-byte sum::w
-byte sum::w#0
-byte sum::w#1
-byte sum::w#2
+char main::$0
+char main::$1
+__constant char * const main::SCREEN = (char *)$400
+char sum(char q , char w)
+char sum::$0
+number sum::$1
+char sum::q
+char sum::q#0
+char sum::q#1
+char sum::q#2
+char sum::return
+char sum::return#0
+char sum::return#1
+char sum::return#2
+char sum::return#3
+char sum::return#4
+char sum::return#5
+char sum::return#6
+char sum::w
+char sum::w#0
+char sum::w#1
+char sum::w#2
 
 Adding number conversion cast (unumber) 1 in sum::$1 = sum::$0 + 1
 Adding number conversion cast (unumber) sum::$1 in sum::$1 = sum::$0 + (unumber)1
@@ -86,20 +86,20 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast sum::w#0 = (unumber)1
 Inlining cast sum::w#1 = (unumber)2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in sum::$1 = sum::$0 + 1
+Inferred type updated to char in sum::$1 = sum::$0 + 1
 Alias sum::return#0 = sum::$1 sum::return#4 sum::return#1 
 Alias sum::return#2 = sum::return#5 
 Alias sum::return#3 = sum::return#6 
@@ -140,13 +140,13 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call sum 
+  [1] call sum
   [2] sum::return#2 = sum::return#0
   to:main::@1
 main::@1: scope:[main]  from main
   [3] main::$0 = sum::return#2
   [4] *main::SCREEN = main::$0
-  [5] call sum 
+  [5] call sum
   [6] sum::return#3 = sum::return#0
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -157,7 +157,7 @@ main::@return: scope:[main]  from main::@2
   [9] return 
   to:@return
 
-byte sum(byte sum::q , byte sum::w)
+char sum(char q , char w)
 sum: scope:[sum]  from main main::@1
   [10] sum::w#2 = phi( main/1, main::@1/2 )
   [10] sum::q#2 = phi( main/'a', main::@1/'b' )
@@ -171,18 +171,18 @@ sum::@return: scope:[sum]  from sum
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$0 4.0
-byte~ main::$1 4.0
-byte sum(byte sum::q , byte sum::w)
-byte~ sum::$0 22.0
-byte sum::q
-byte sum::q#2 11.0
-byte sum::return
-byte sum::return#0 3.75
-byte sum::return#2 4.0
-byte sum::return#3 4.0
-byte sum::w
-byte sum::w#2 11.0
+char main::$0 // 4.0
+char main::$1 // 4.0
+char sum(char q , char w)
+char sum::$0 // 22.0
+char sum::q
+char sum::q#2 // 11.0
+char sum::return
+char sum::return#0 // 3.75
+char sum::return#2 // 4.0
+char sum::return#3 // 4.0
+char sum::w
+char sum::w#2 // 11.0
 
 Initial phi equivalence classes
 [ sum::q#2 ]
@@ -252,7 +252,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [1] call sum 
+    // [1] call sum
     // [10] phi from main to sum [phi:main->sum]
   sum_from_main:
     // [10] phi sum::w#2 = 1 [phi:main->sum#0] -- vbuaa=vbuc1 
@@ -267,7 +267,7 @@ main: {
     // [3] main::$0 = sum::return#2
     // [4] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [5] call sum 
+    // [5] call sum
     // [10] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from___b1:
     // [10] phi sum::w#2 = 2 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
@@ -290,7 +290,7 @@ main: {
 }
   // sum
 // Calculate sum of two integers plus 1
-// sum(byte register(X) q, byte register(A) w)
+// __register(A) char sum(__register(X) char q, __register(A) char w)
 sum: {
     // [11] sum::$0 = sum::q#2 + sum::w#2 -- vbuaa=vbuxx_plus_vbuaa 
     stx.z $ff
@@ -323,19 +323,19 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$0 reg byte a 4.0
-byte~ main::$1 reg byte a 4.0
-constant byte* const main::SCREEN = (byte*) 1024
-byte sum(byte sum::q , byte sum::w)
-byte~ sum::$0 reg byte a 22.0
-byte sum::q
-byte sum::q#2 reg byte x 11.0
-byte sum::return
-byte sum::return#0 reg byte a 3.75
-byte sum::return#2 reg byte a 4.0
-byte sum::return#3 reg byte a 4.0
-byte sum::w
-byte sum::w#2 reg byte a 11.0
+char main::$0 // reg byte a 4.0
+char main::$1 // reg byte a 4.0
+__constant char * const main::SCREEN = (char *) 1024
+char sum(char q , char w)
+char sum::$0 // reg byte a 22.0
+char sum::q
+char sum::q#2 // reg byte x 11.0
+char sum::return
+char sum::return#0 // reg byte a 3.75
+char sum::return#2 // reg byte a 4.0
+char sum::return#3 // reg byte a 4.0
+char sum::w
+char sum::w#2 // reg byte a 11.0
 
 reg byte x [ sum::q#2 ]
 reg byte a [ sum::w#2 ]
@@ -367,7 +367,7 @@ Score: 52
 main: {
     .label SCREEN = $400
     // sum('a', 1)
-    // [1] call sum 
+    // [1] call sum
     // [10] phi from main to sum [phi:main->sum]
     // [10] phi sum::w#2 = 1 [phi:main->sum#0] -- vbuaa=vbuc1 
     lda #1
@@ -382,7 +382,7 @@ main: {
     // [4] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // sum('b', 2)
-    // [5] call sum 
+    // [5] call sum
     // [10] phi from main::@1 to sum [phi:main::@1->sum]
     // [10] phi sum::w#2 = 2 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
     lda #2
@@ -403,7 +403,7 @@ main: {
 }
   // sum
 // Calculate sum of two integers plus 1
-// sum(byte register(X) q, byte register(A) w)
+// __register(A) char sum(__register(X) char q, __register(A) char w)
 sum: {
     // q+w
     // [11] sum::$0 = sum::q#2 + sum::w#2 -- vbuaa=vbuxx_plus_vbuaa 

@@ -38,7 +38,7 @@ main: {
     // }
     rts
 }
-// print(byte register(X) p_x, signed word zp(4) p_y)
+// void print(__register(X) char p_x, __zp(4) int p_y)
 print: {
     .label p_y = 4
     // SCREEN[idx++] = p.x

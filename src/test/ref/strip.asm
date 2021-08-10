@@ -43,7 +43,7 @@ main: {
     // }
     rts
 }
-// strip(byte* zp(8) p, byte register(X) c)
+// void strip(__zp(8) char *p, __register(X) char c)
 strip: {
     .label dest = 2
     .label p = 8
@@ -88,7 +88,7 @@ strip: {
     sta.z p_1+1
     jmp __b1
 }
-// print(byte* zp(4) msg)
+// void print(__zp(4) char *msg)
 print: {
     .label msg = 4
   __b1:

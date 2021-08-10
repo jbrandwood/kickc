@@ -22,11 +22,6 @@ public class SymbolTypeProgram implements SymbolType {
    }
 
    @Override
-   public String getTypeBaseName() {
-      return "PROGRAM";
-   }
-
-   @Override
    public int getSizeBytes() {
       return -1;
    }
@@ -43,7 +38,11 @@ public class SymbolTypeProgram implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return "program";
    }
 
+   @Override
+   public String getConstantFriendlyName() {
+      return "PROGRAM";
+   }
 }

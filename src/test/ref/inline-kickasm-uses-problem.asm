@@ -19,6 +19,7 @@ main: {
     a: .byte $80, $4f, 2, $d
 }
 .segment Code
+// void foo(char *x1, char *x2)
 foo: {
     .label v1 = $80
     .label v2 = $82

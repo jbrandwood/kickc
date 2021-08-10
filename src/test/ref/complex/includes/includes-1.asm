@@ -21,7 +21,7 @@ main: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(2) str)
+// __zp(4) unsigned int strlen(__zp(2) char *str)
 strlen: {
     .label len = 4
     .label str = 2

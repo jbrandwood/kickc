@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .label SCREEN = $400
   .label idx = 3
 .segment Code
@@ -22,9 +22,9 @@ main: {
     sta.z idx
     jsr print
     // print(&VALS[1])
-    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    lda #<VALS+1*SIZEOF_INT
     sta.z print.p
-    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    lda #>VALS+1*SIZEOF_INT
     sta.z print.p+1
     jsr print
     lda #2
@@ -49,7 +49,7 @@ main: {
     // }
     rts
 }
-// print(signed word* zp(4) p)
+// void print(__zp(4) int *p)
 print: {
     .label p = 4
     // SCREEN[idx++] = *p

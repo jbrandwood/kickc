@@ -1,9 +1,9 @@
-Inlined call call __init 
+Inlined call call __init
 Eliminating unused variable with no statement memset::$2
 
 CONTROL FLOW GRAPH SSA
 
-void print_str(byte* print_str::str)
+void print_str(char *str)
 print_str: scope:[print_str]  from print_ulong_decimal::@1
   print_char_cursor#40 = phi( print_ulong_decimal::@1/print_char_cursor#35 )
   print_str::str#5 = phi( print_ulong_decimal::@1/print_str::str#1 )
@@ -18,7 +18,7 @@ print_str::@2: scope:[print_str]  from print_str::@1
   print_char_cursor#32 = phi( print_str::@1/print_char_cursor#33 )
   print_str::str#3 = phi( print_str::@1/print_str::str#2 )
   print_char::ch#0 = *print_str::str#3
-  call print_char 
+  call print_char
   to:print_str::@3
 print_str::@3: scope:[print_str]  from print_str::@2
   print_str::str#4 = phi( print_str::@2/print_str::str#3 )
@@ -57,19 +57,19 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
 
-void print_ulong_decimal(dword print_ulong_decimal::w)
+void print_ulong_decimal(unsigned long w)
 print_ulong_decimal: scope:[print_ulong_decimal]  from main::@2
   print_char_cursor#41 = phi( main::@2/print_char_cursor#37 )
   print_ulong_decimal::w#1 = phi( main::@2/print_ulong_decimal::w#0 )
   ultoa::value#0 = print_ulong_decimal::w#1
   ultoa::buffer#0 = decimal_digits_long
   ultoa::radix#0 = DECIMAL
-  call ultoa 
+  call ultoa
   to:print_ulong_decimal::@1
 print_ulong_decimal::@1: scope:[print_ulong_decimal]  from print_ulong_decimal
   print_char_cursor#35 = phi( print_ulong_decimal/print_char_cursor#41 )
   print_str::str#1 = decimal_digits_long
-  call print_str 
+  call print_str
   to:print_ulong_decimal::@2
 print_ulong_decimal::@2: scope:[print_ulong_decimal]  from print_ulong_decimal::@1
   print_char_cursor#21 = phi( print_ulong_decimal::@1/print_char_cursor#1 )
@@ -81,7 +81,7 @@ print_ulong_decimal::@return: scope:[print_ulong_decimal]  from print_ulong_deci
   return 
   to:@return
 
-void print_char(byte print_char::ch)
+void print_char(char ch)
 print_char: scope:[print_char]  from print_str::@2
   print_char_cursor#23 = phi( print_str::@2/print_char_cursor#32 )
   print_char::ch#1 = phi( print_str::@2/print_char::ch#0 )
@@ -97,10 +97,10 @@ print_char::@return: scope:[print_char]  from print_char
 void print_cls()
 print_cls: scope:[print_cls]  from main
   print_screen#2 = phi( main/print_screen#5 )
-  memset::str#0 = (void*)print_screen#2
+  memset::str#0 = (void *)print_screen#2
   memset::c#0 = ' '
   memset::num#0 = $3e8
-  call memset 
+  call memset
   memset::return#0 = memset::return#2
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls
@@ -116,7 +116,7 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   return 
   to:@return
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from print_cls
   memset::c#4 = phi( print_cls/memset::c#0 )
   memset::str#3 = phi( print_cls/memset::str#0 )
@@ -133,9 +133,9 @@ memset::@2: scope:[memset]  from memset
   memset::c#3 = phi( memset/memset::c#4 )
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
-  memset::$4 = (byte*)memset::str#2
+  memset::$4 = (char *)memset::str#2
   memset::end#0 = memset::$4 + memset::num#2
-  memset::dst#0 = ((byte*)) memset::str#2
+  memset::dst#0 = ((char *)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
   memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
@@ -159,13 +159,13 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 
-void ultoa(dword ultoa::value , byte* ultoa::buffer , byte ultoa::radix)
+void ultoa(unsigned long value , char *buffer , char radix)
 ultoa: scope:[ultoa]  from print_ulong_decimal
   ultoa::buffer#21 = phi( print_ulong_decimal/ultoa::buffer#0 )
   ultoa::value#12 = phi( print_ulong_decimal/ultoa::value#0 )
   ultoa::radix#1 = phi( print_ulong_decimal/ultoa::radix#0 )
   ultoa::max_digits#0 = 0
-  ultoa::digit_values#0 = (dword*) 0
+  ultoa::digit_values#0 = (unsigned long *) 0
   ultoa::$0 = ultoa::radix#1 == DECIMAL
   if(ultoa::$0) goto ultoa::@1
   to:ultoa::@6
@@ -253,7 +253,7 @@ ultoa::@11: scope:[ultoa]  from ultoa::@10
   ultoa::value#2 = phi( ultoa::@10/ultoa::value#5 )
   ultoa::digit_values#5 = phi( ultoa::@10/ultoa::digit_values#6 )
   ultoa::digit#3 = phi( ultoa::@10/ultoa::digit#2 )
-  ultoa::$10 = ultoa::digit#3 * SIZEOF_DWORD
+  ultoa::$10 = ultoa::digit#3 * SIZEOF_UNSIGNED_LONG
   ultoa::digit_value#0 = ultoa::digit_values#5[ultoa::$10]
   ultoa::$6 = ultoa::value#2 >= ultoa::digit_value#0
   ultoa::$7 = ultoa::started#2 || ultoa::$6
@@ -263,7 +263,7 @@ ultoa::@11: scope:[ultoa]  from ultoa::@10
 ultoa::@12: scope:[ultoa]  from ultoa::@10
   ultoa::buffer#7 = phi( ultoa::@10/ultoa::buffer#11 )
   ultoa::value#3 = phi( ultoa::@10/ultoa::value#5 )
-  ultoa::$11 = (byte)ultoa::value#3
+  ultoa::$11 = (char)ultoa::value#3
   *ultoa::buffer#7 = DIGITS[ultoa::$11]
   ultoa::buffer#4 = ++ ultoa::buffer#7
   *ultoa::buffer#4 = 0
@@ -287,7 +287,7 @@ ultoa::@14: scope:[ultoa]  from ultoa::@11
   ultoa_append::buffer#0 = ultoa::buffer#8
   ultoa_append::value#0 = ultoa::value#4
   ultoa_append::sub#0 = ultoa::digit_value#1
-  call ultoa_append 
+  call ultoa_append
   ultoa_append::return#0 = ultoa_append::return#2
   to:ultoa::@15
 ultoa::@15: scope:[ultoa]  from ultoa::@14
@@ -302,7 +302,7 @@ ultoa::@15: scope:[ultoa]  from ultoa::@14
   ultoa::started#1 = 1
   to:ultoa::@13
 
-dword ultoa_append(byte* ultoa_append::buffer , dword ultoa_append::value , dword ultoa_append::sub)
+unsigned long ultoa_append(char *buffer , unsigned long value , unsigned long sub)
 ultoa_append: scope:[ultoa_append]  from ultoa::@14
   ultoa_append::buffer#3 = phi( ultoa::@14/ultoa_append::buffer#0 )
   ultoa_append::sub#3 = phi( ultoa::@14/ultoa_append::sub#0 )
@@ -343,7 +343,7 @@ main: scope:[main]  from __start::@1
   print_char_cursor#36 = phi( __start::@1/print_char_cursor#39 )
   print_line_cursor#20 = phi( __start::@1/print_line_cursor#23 )
   print_screen#5 = phi( __start::@1/print_screen#7 )
-  call print_cls 
+  call print_cls
   to:main::@3
 main::@3: scope:[main]  from main
   print_char_cursor#26 = phi( main/print_char_cursor#9 )
@@ -365,14 +365,14 @@ main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   main::$2 = main::i#3 * $22b
   print_ulong_decimal::w#0 = main::$2
-  call print_ulong_decimal 
+  call print_ulong_decimal
   to:main::@4
 main::@4: scope:[main]  from main::@2
   main::i#5 = phi( main::@2/main::i#3 )
   print_line_cursor#21 = phi( main::@2/print_line_cursor#24 )
   print_char_cursor#27 = phi( main::@2/print_char_cursor#5 )
   print_char_cursor#11 = print_char_cursor#27
-  call print_ln 
+  call print_ln
   to:main::@5
 main::@5: scope:[main]  from main::@4
   main::i#4 = phi( main::@4/main::i#5 )
@@ -394,7 +394,7 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  print_screen#0 = (byte*)$400
+  print_screen#0 = (char *)$400
   print_line_cursor#7 = print_screen#0
   print_char_cursor#14 = print_line_cursor#7
   to:__start::@1
@@ -402,7 +402,7 @@ __start::@1: scope:[__start]  from __start::__init1
   print_screen#7 = phi( __start::__init1/print_screen#0 )
   print_char_cursor#39 = phi( __start::__init1/print_char_cursor#14 )
   print_line_cursor#23 = phi( __start::__init1/print_line_cursor#7 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   print_screen#6 = phi( __start::@1/print_screen#7 )
@@ -422,299 +422,299 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte BINARY = 2
-constant byte DECIMAL = $a
-constant byte* DIGITS[]  = "0123456789abcdef"z
-constant byte HEXADECIMAL = $10
-constant byte OCTAL = 8
-constant byte RADIX::BINARY = 2
-constant byte RADIX::DECIMAL = $a
-constant byte RADIX::HEXADECIMAL = $10
-constant byte RADIX::OCTAL = 8
-constant dword* RADIX_BINARY_VALUES_LONG[]  = { $80000000, $40000000, $20000000, $10000000, $8000000, $4000000, $2000000, $1000000, $800000, $400000, $200000, $100000, $80000, $40000, $20000, $10000, $8000, $4000, $2000, $1000, $800, $400, $200, $100, $80, $40, $20, $10, 8, 4, 2 }
-constant dword* RADIX_DECIMAL_VALUES_LONG[]  = { $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a }
-constant dword* RADIX_HEXADECIMAL_VALUES_LONG[]  = { $10000000, $1000000, $100000, $10000, $1000, $100, $10 }
-constant dword* RADIX_OCTAL_VALUES_LONG[]  = { $40000000, $8000000, $1000000, $200000, $40000, $8000, $1000, $200, $40, 8 }
-constant byte SIZEOF_DWORD = 4
+__constant char BINARY = 2
+__constant char DECIMAL = $a
+__constant char DIGITS[] = "0123456789abcdef"z
+__constant char HEXADECIMAL = $10
+__constant char OCTAL = 8
+__constant char RADIX::BINARY = 2
+__constant char RADIX::DECIMAL = $a
+__constant char RADIX::HEXADECIMAL = $10
+__constant char RADIX::OCTAL = 8
+__constant unsigned long RADIX_BINARY_VALUES_LONG[] = { $80000000, $40000000, $20000000, $10000000, $8000000, $4000000, $2000000, $1000000, $800000, $400000, $200000, $100000, $80000, $40000, $20000, $10000, $8000, $4000, $2000, $1000, $800, $400, $200, $100, $80, $40, $20, $10, 8, 4, 2 }
+__constant unsigned long RADIX_DECIMAL_VALUES_LONG[] = { $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a }
+__constant unsigned long RADIX_HEXADECIMAL_VALUES_LONG[] = { $10000000, $1000000, $100000, $10000, $1000, $100, $10 }
+__constant unsigned long RADIX_OCTAL_VALUES_LONG[] = { $40000000, $8000000, $1000000, $200000, $40000, $8000, $1000, $200, $40, 8 }
+__constant char SIZEOF_UNSIGNED_LONG = 4
 void __start()
-constant byte* decimal_digits_long[$b]  = { fill( $b, 0) }
+__constant char decimal_digits_long[$b] = { fill( $b, 0) }
 void main()
-bool~ main::$1
-number~ main::$2
-dword main::i
-dword main::i#0
-dword main::i#1
-dword main::i#2
-dword main::i#3
-dword main::i#4
-dword main::i#5
-void* memset(void* memset::str , byte memset::c , word memset::num)
-bool~ memset::$0
-bool~ memset::$1
-bool~ memset::$3
-byte*~ memset::$4
-byte memset::c
-byte memset::c#0
-byte memset::c#1
-byte memset::c#2
-byte memset::c#3
-byte memset::c#4
-byte* memset::dst
-byte* memset::dst#0
-byte* memset::dst#1
-byte* memset::dst#2
-byte* memset::dst#3
-byte* memset::end
-byte* memset::end#0
-byte* memset::end#1
-byte* memset::end#2
-word memset::num
-word memset::num#0
-word memset::num#1
-word memset::num#2
-void* memset::return
-void* memset::return#0
-void* memset::return#1
-void* memset::return#2
-void* memset::return#3
-void* memset::str
-void* memset::str#0
-void* memset::str#1
-void* memset::str#2
-void* memset::str#3
-void* memset::str#4
-void* memset::str#5
-void print_char(byte print_char::ch)
-byte print_char::ch
-byte print_char::ch#0
-byte print_char::ch#1
-byte* print_char_cursor
-byte* print_char_cursor#0
-byte* print_char_cursor#1
-byte* print_char_cursor#10
-byte* print_char_cursor#11
-byte* print_char_cursor#12
-byte* print_char_cursor#13
-byte* print_char_cursor#14
-byte* print_char_cursor#15
-byte* print_char_cursor#16
-byte* print_char_cursor#17
-byte* print_char_cursor#18
-byte* print_char_cursor#19
-byte* print_char_cursor#2
-byte* print_char_cursor#20
-byte* print_char_cursor#21
-byte* print_char_cursor#22
-byte* print_char_cursor#23
-byte* print_char_cursor#24
-byte* print_char_cursor#25
-byte* print_char_cursor#26
-byte* print_char_cursor#27
-byte* print_char_cursor#28
-byte* print_char_cursor#29
-byte* print_char_cursor#3
-byte* print_char_cursor#30
-byte* print_char_cursor#31
-byte* print_char_cursor#32
-byte* print_char_cursor#33
-byte* print_char_cursor#34
-byte* print_char_cursor#35
-byte* print_char_cursor#36
-byte* print_char_cursor#37
-byte* print_char_cursor#38
-byte* print_char_cursor#39
-byte* print_char_cursor#4
-byte* print_char_cursor#40
-byte* print_char_cursor#41
-byte* print_char_cursor#5
-byte* print_char_cursor#6
-byte* print_char_cursor#7
-byte* print_char_cursor#8
-byte* print_char_cursor#9
+bool main::$1
+number main::$2
+unsigned long main::i
+unsigned long main::i#0
+unsigned long main::i#1
+unsigned long main::i#2
+unsigned long main::i#3
+unsigned long main::i#4
+unsigned long main::i#5
+void * memset(void *str , char c , unsigned int num)
+bool memset::$0
+bool memset::$1
+bool memset::$3
+char *memset::$4
+char memset::c
+char memset::c#0
+char memset::c#1
+char memset::c#2
+char memset::c#3
+char memset::c#4
+char *memset::dst
+char *memset::dst#0
+char *memset::dst#1
+char *memset::dst#2
+char *memset::dst#3
+char *memset::end
+char *memset::end#0
+char *memset::end#1
+char *memset::end#2
+unsigned int memset::num
+unsigned int memset::num#0
+unsigned int memset::num#1
+unsigned int memset::num#2
+void *memset::return
+void *memset::return#0
+void *memset::return#1
+void *memset::return#2
+void *memset::return#3
+void *memset::str
+void *memset::str#0
+void *memset::str#1
+void *memset::str#2
+void *memset::str#3
+void *memset::str#4
+void *memset::str#5
+void print_char(char ch)
+char print_char::ch
+char print_char::ch#0
+char print_char::ch#1
+char *print_char_cursor
+char *print_char_cursor#0
+char *print_char_cursor#1
+char *print_char_cursor#10
+char *print_char_cursor#11
+char *print_char_cursor#12
+char *print_char_cursor#13
+char *print_char_cursor#14
+char *print_char_cursor#15
+char *print_char_cursor#16
+char *print_char_cursor#17
+char *print_char_cursor#18
+char *print_char_cursor#19
+char *print_char_cursor#2
+char *print_char_cursor#20
+char *print_char_cursor#21
+char *print_char_cursor#22
+char *print_char_cursor#23
+char *print_char_cursor#24
+char *print_char_cursor#25
+char *print_char_cursor#26
+char *print_char_cursor#27
+char *print_char_cursor#28
+char *print_char_cursor#29
+char *print_char_cursor#3
+char *print_char_cursor#30
+char *print_char_cursor#31
+char *print_char_cursor#32
+char *print_char_cursor#33
+char *print_char_cursor#34
+char *print_char_cursor#35
+char *print_char_cursor#36
+char *print_char_cursor#37
+char *print_char_cursor#38
+char *print_char_cursor#39
+char *print_char_cursor#4
+char *print_char_cursor#40
+char *print_char_cursor#41
+char *print_char_cursor#5
+char *print_char_cursor#6
+char *print_char_cursor#7
+char *print_char_cursor#8
+char *print_char_cursor#9
 void print_cls()
-byte* print_line_cursor
-byte* print_line_cursor#0
-byte* print_line_cursor#1
-byte* print_line_cursor#10
-byte* print_line_cursor#11
-byte* print_line_cursor#12
-byte* print_line_cursor#13
-byte* print_line_cursor#14
-byte* print_line_cursor#15
-byte* print_line_cursor#16
-byte* print_line_cursor#17
-byte* print_line_cursor#18
-byte* print_line_cursor#19
-byte* print_line_cursor#2
-byte* print_line_cursor#20
-byte* print_line_cursor#21
-byte* print_line_cursor#22
-byte* print_line_cursor#23
-byte* print_line_cursor#24
-byte* print_line_cursor#3
-byte* print_line_cursor#4
-byte* print_line_cursor#5
-byte* print_line_cursor#6
-byte* print_line_cursor#7
-byte* print_line_cursor#8
-byte* print_line_cursor#9
+char *print_line_cursor
+char *print_line_cursor#0
+char *print_line_cursor#1
+char *print_line_cursor#10
+char *print_line_cursor#11
+char *print_line_cursor#12
+char *print_line_cursor#13
+char *print_line_cursor#14
+char *print_line_cursor#15
+char *print_line_cursor#16
+char *print_line_cursor#17
+char *print_line_cursor#18
+char *print_line_cursor#19
+char *print_line_cursor#2
+char *print_line_cursor#20
+char *print_line_cursor#21
+char *print_line_cursor#22
+char *print_line_cursor#23
+char *print_line_cursor#24
+char *print_line_cursor#3
+char *print_line_cursor#4
+char *print_line_cursor#5
+char *print_line_cursor#6
+char *print_line_cursor#7
+char *print_line_cursor#8
+char *print_line_cursor#9
 void print_ln()
-byte*~ print_ln::$0
-bool~ print_ln::$1
-byte* print_screen
-byte* print_screen#0
-byte* print_screen#1
-byte* print_screen#2
-byte* print_screen#3
-byte* print_screen#4
-byte* print_screen#5
-byte* print_screen#6
-byte* print_screen#7
-void print_str(byte* print_str::str)
-bool~ print_str::$1
-byte* print_str::str
-byte* print_str::str#0
-byte* print_str::str#1
-byte* print_str::str#2
-byte* print_str::str#3
-byte* print_str::str#4
-byte* print_str::str#5
-void print_ulong_decimal(dword print_ulong_decimal::w)
-dword print_ulong_decimal::w
-dword print_ulong_decimal::w#0
-dword print_ulong_decimal::w#1
-void ultoa(dword ultoa::value , byte* ultoa::buffer , byte ultoa::radix)
-bool~ ultoa::$0
-bool~ ultoa::$1
-byte~ ultoa::$10
-byte~ ultoa::$11
-bool~ ultoa::$2
-bool~ ultoa::$3
-number~ ultoa::$4
-bool~ ultoa::$5
-bool~ ultoa::$6
-bool~ ultoa::$7
-bool~ ultoa::$8
-dword~ ultoa::$9
-byte* ultoa::buffer
-byte* ultoa::buffer#0
-byte* ultoa::buffer#1
-byte* ultoa::buffer#10
-byte* ultoa::buffer#11
-byte* ultoa::buffer#12
-byte* ultoa::buffer#13
-byte* ultoa::buffer#14
-byte* ultoa::buffer#15
-byte* ultoa::buffer#16
-byte* ultoa::buffer#17
-byte* ultoa::buffer#18
-byte* ultoa::buffer#19
-byte* ultoa::buffer#2
-byte* ultoa::buffer#20
-byte* ultoa::buffer#21
-byte* ultoa::buffer#3
-byte* ultoa::buffer#4
-byte* ultoa::buffer#5
-byte* ultoa::buffer#6
-byte* ultoa::buffer#7
-byte* ultoa::buffer#8
-byte* ultoa::buffer#9
-byte ultoa::digit
-byte ultoa::digit#0
-byte ultoa::digit#1
-byte ultoa::digit#2
-byte ultoa::digit#3
-byte ultoa::digit#4
-byte ultoa::digit#5
-byte ultoa::digit#6
-dword ultoa::digit_value
-dword ultoa::digit_value#0
-dword ultoa::digit_value#1
-dword* ultoa::digit_values
-dword* ultoa::digit_values#0
-dword* ultoa::digit_values#1
-dword* ultoa::digit_values#10
-dword* ultoa::digit_values#2
-dword* ultoa::digit_values#3
-dword* ultoa::digit_values#4
-dword* ultoa::digit_values#5
-dword* ultoa::digit_values#6
-dword* ultoa::digit_values#7
-dword* ultoa::digit_values#8
-dword* ultoa::digit_values#9
-byte ultoa::max_digits
-byte ultoa::max_digits#0
-byte ultoa::max_digits#1
-byte ultoa::max_digits#10
-byte ultoa::max_digits#2
-byte ultoa::max_digits#3
-byte ultoa::max_digits#4
-byte ultoa::max_digits#5
-byte ultoa::max_digits#6
-byte ultoa::max_digits#7
-byte ultoa::max_digits#8
-byte ultoa::max_digits#9
-byte ultoa::radix
-byte ultoa::radix#0
-byte ultoa::radix#1
-byte ultoa::radix#2
-byte ultoa::radix#3
-byte ultoa::radix#4
-byte ultoa::started
-byte ultoa::started#0
-byte ultoa::started#1
-byte ultoa::started#2
-byte ultoa::started#3
-byte ultoa::started#4
-dword ultoa::value
-dword ultoa::value#0
-dword ultoa::value#1
-dword ultoa::value#10
-dword ultoa::value#11
-dword ultoa::value#12
-dword ultoa::value#13
-dword ultoa::value#14
-dword ultoa::value#15
-dword ultoa::value#2
-dword ultoa::value#3
-dword ultoa::value#4
-dword ultoa::value#5
-dword ultoa::value#6
-dword ultoa::value#7
-dword ultoa::value#8
-dword ultoa::value#9
-dword ultoa_append(byte* ultoa_append::buffer , dword ultoa_append::value , dword ultoa_append::sub)
-bool~ ultoa_append::$0
-byte* ultoa_append::buffer
-byte* ultoa_append::buffer#0
-byte* ultoa_append::buffer#1
-byte* ultoa_append::buffer#2
-byte* ultoa_append::buffer#3
-byte* ultoa_append::buffer#4
-byte ultoa_append::digit
-byte ultoa_append::digit#0
-byte ultoa_append::digit#1
-byte ultoa_append::digit#2
-byte ultoa_append::digit#3
-byte ultoa_append::digit#4
-dword ultoa_append::return
-dword ultoa_append::return#0
-dword ultoa_append::return#1
-dword ultoa_append::return#2
-dword ultoa_append::return#3
-dword ultoa_append::return#4
-dword ultoa_append::sub
-dword ultoa_append::sub#0
-dword ultoa_append::sub#1
-dword ultoa_append::sub#2
-dword ultoa_append::sub#3
-dword ultoa_append::value
-dword ultoa_append::value#0
-dword ultoa_append::value#1
-dword ultoa_append::value#2
-dword ultoa_append::value#3
-dword ultoa_append::value#4
-dword ultoa_append::value#5
+char *print_ln::$0
+bool print_ln::$1
+char *print_screen
+char *print_screen#0
+char *print_screen#1
+char *print_screen#2
+char *print_screen#3
+char *print_screen#4
+char *print_screen#5
+char *print_screen#6
+char *print_screen#7
+void print_str(char *str)
+bool print_str::$1
+char *print_str::str
+char *print_str::str#0
+char *print_str::str#1
+char *print_str::str#2
+char *print_str::str#3
+char *print_str::str#4
+char *print_str::str#5
+void print_ulong_decimal(unsigned long w)
+unsigned long print_ulong_decimal::w
+unsigned long print_ulong_decimal::w#0
+unsigned long print_ulong_decimal::w#1
+void ultoa(unsigned long value , char *buffer , char radix)
+bool ultoa::$0
+bool ultoa::$1
+char ultoa::$10
+char ultoa::$11
+bool ultoa::$2
+bool ultoa::$3
+number ultoa::$4
+bool ultoa::$5
+bool ultoa::$6
+bool ultoa::$7
+bool ultoa::$8
+unsigned long ultoa::$9
+char *ultoa::buffer
+char *ultoa::buffer#0
+char *ultoa::buffer#1
+char *ultoa::buffer#10
+char *ultoa::buffer#11
+char *ultoa::buffer#12
+char *ultoa::buffer#13
+char *ultoa::buffer#14
+char *ultoa::buffer#15
+char *ultoa::buffer#16
+char *ultoa::buffer#17
+char *ultoa::buffer#18
+char *ultoa::buffer#19
+char *ultoa::buffer#2
+char *ultoa::buffer#20
+char *ultoa::buffer#21
+char *ultoa::buffer#3
+char *ultoa::buffer#4
+char *ultoa::buffer#5
+char *ultoa::buffer#6
+char *ultoa::buffer#7
+char *ultoa::buffer#8
+char *ultoa::buffer#9
+char ultoa::digit
+char ultoa::digit#0
+char ultoa::digit#1
+char ultoa::digit#2
+char ultoa::digit#3
+char ultoa::digit#4
+char ultoa::digit#5
+char ultoa::digit#6
+unsigned long ultoa::digit_value
+unsigned long ultoa::digit_value#0
+unsigned long ultoa::digit_value#1
+unsigned long *ultoa::digit_values
+unsigned long *ultoa::digit_values#0
+unsigned long *ultoa::digit_values#1
+unsigned long *ultoa::digit_values#10
+unsigned long *ultoa::digit_values#2
+unsigned long *ultoa::digit_values#3
+unsigned long *ultoa::digit_values#4
+unsigned long *ultoa::digit_values#5
+unsigned long *ultoa::digit_values#6
+unsigned long *ultoa::digit_values#7
+unsigned long *ultoa::digit_values#8
+unsigned long *ultoa::digit_values#9
+char ultoa::max_digits
+char ultoa::max_digits#0
+char ultoa::max_digits#1
+char ultoa::max_digits#10
+char ultoa::max_digits#2
+char ultoa::max_digits#3
+char ultoa::max_digits#4
+char ultoa::max_digits#5
+char ultoa::max_digits#6
+char ultoa::max_digits#7
+char ultoa::max_digits#8
+char ultoa::max_digits#9
+char ultoa::radix
+char ultoa::radix#0
+char ultoa::radix#1
+char ultoa::radix#2
+char ultoa::radix#3
+char ultoa::radix#4
+char ultoa::started
+char ultoa::started#0
+char ultoa::started#1
+char ultoa::started#2
+char ultoa::started#3
+char ultoa::started#4
+unsigned long ultoa::value
+unsigned long ultoa::value#0
+unsigned long ultoa::value#1
+unsigned long ultoa::value#10
+unsigned long ultoa::value#11
+unsigned long ultoa::value#12
+unsigned long ultoa::value#13
+unsigned long ultoa::value#14
+unsigned long ultoa::value#15
+unsigned long ultoa::value#2
+unsigned long ultoa::value#3
+unsigned long ultoa::value#4
+unsigned long ultoa::value#5
+unsigned long ultoa::value#6
+unsigned long ultoa::value#7
+unsigned long ultoa::value#8
+unsigned long ultoa::value#9
+unsigned long ultoa_append(char *buffer , unsigned long value , unsigned long sub)
+bool ultoa_append::$0
+char *ultoa_append::buffer
+char *ultoa_append::buffer#0
+char *ultoa_append::buffer#1
+char *ultoa_append::buffer#2
+char *ultoa_append::buffer#3
+char *ultoa_append::buffer#4
+char ultoa_append::digit
+char ultoa_append::digit#0
+char ultoa_append::digit#1
+char ultoa_append::digit#2
+char ultoa_append::digit#3
+char ultoa_append::digit#4
+unsigned long ultoa_append::return
+unsigned long ultoa_append::return#0
+unsigned long ultoa_append::return#1
+unsigned long ultoa_append::return#2
+unsigned long ultoa_append::return#3
+unsigned long ultoa_append::return#4
+unsigned long ultoa_append::sub
+unsigned long ultoa_append::sub#0
+unsigned long ultoa_append::sub#1
+unsigned long ultoa_append::sub#2
+unsigned long ultoa_append::sub#3
+unsigned long ultoa_append::value
+unsigned long ultoa_append::value#0
+unsigned long ultoa_append::value#1
+unsigned long ultoa_append::value#2
+unsigned long ultoa_append::value#3
+unsigned long ultoa_append::value#4
+unsigned long ultoa_append::value#5
 
 Adding number conversion cast (unumber) 0 in print_str::$1 = 0 != *print_str::str#2
 Adding number conversion cast (unumber) $28 in print_ln::$0 = print_line_cursor#10 + $28
@@ -735,7 +735,7 @@ Adding number conversion cast (unumber) main::$2 in main::$2 = main::i#3 * (unum
 Adding number conversion cast (unumber) $14d in main::i#1 = main::i#4 + $14d
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memset::num#0 = (unumber)$3e8
-Inlining cast memset::dst#0 = (byte*)memset::str#2
+Inlining cast memset::dst#0 = (char *)memset::str#2
 Inlining cast ultoa::max_digits#1 = (unumber)$a
 Inlining cast ultoa::max_digits#2 = (unumber)8
 Inlining cast ultoa::max_digits#3 = (unumber)$b
@@ -759,26 +759,26 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast $d02
 Simplifying constant integer cast $22b
 Simplifying constant integer cast $14d
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $b
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (word) $d02
-Finalized unsigned number type (word) $22b
-Finalized unsigned number type (word) $14d
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (unsigned int) $3e8
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $a
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $b
+Finalized unsigned number type (char) $20
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (unsigned int) $d02
+Finalized unsigned number type (unsigned int) $22b
+Finalized unsigned number type (unsigned int) $14d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in ultoa::$4 = ultoa::max_digits#5 - 1
-Inferred type updated to dword in main::$2 = main::i#3 * $22b
+Inferred type updated to char in ultoa::$4 = ultoa::max_digits#5 - 1
+Inferred type updated to unsigned long in main::$2 = main::i#3 * $22b
 Inversing boolean not [59] memset::$1 = memset::num#1 <= 0 from [58] memset::$0 = memset::num#1 > 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias print_str::str#2 = print_str::str#3 print_str::str#4 
@@ -895,7 +895,7 @@ Constant print_str::str#1 = decimal_digits_long
 Constant memset::c#0 = ' '
 Constant memset::num#0 = $3e8
 Constant ultoa::max_digits#0 = 0
-Constant ultoa::digit_values#0 = (dword*) 0
+Constant ultoa::digit_values#0 = (unsigned long *) 0
 Constant ultoa::max_digits#1 = $a
 Constant ultoa::digit_values#1 = RADIX_DECIMAL_VALUES_LONG
 Constant ultoa::max_digits#2 = 8
@@ -909,13 +909,13 @@ Constant ultoa::digit#0 = 0
 Constant ultoa::started#1 = 1
 Constant ultoa_append::digit#0 = 0
 Constant main::i#0 = 0
-Constant print_screen#0 = (byte*) 1024
+Constant print_screen#0 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant memset::str#0 = (void*)print_screen#0
+Constant memset::str#0 = (void *)print_screen#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::return#0 = memset::str#0
-Constant memset::$4 = (byte*)memset::str#0
-Constant memset::dst#0 = (byte*)memset::str#0
+Constant memset::$4 = (char *)memset::str#0
+Constant memset::dst#0 = (char *)memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [37] if(memset::num#0<=0) goto memset::@1
 if() condition always true - replacing block destination [52] if(ultoa::radix#0==DECIMAL) goto ultoa::@1
@@ -970,7 +970,7 @@ Adding number conversion cast (unumber) 0 in [33] ultoa::$12 = 0 != ultoa::start
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values ultoa::max_digits#7 ultoa::max_digits#1
 Identical Phi Values ultoa::digit_values#8 ultoa::digit_values#1
@@ -984,7 +984,7 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memset::end#0 = memset::$4+memset::num#0
 Constant ultoa::$4 = ultoa::max_digits#1-1
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [27] ultoa::$10 = ultoa::digit#2 * SIZEOF_DWORD
+Rewriting multiplication to use shift [27] ultoa::$10 = ultoa::digit#2 * SIZEOF_UNSIGNED_LONG
 Rewriting multiplication to use shift and addition[52] print_ulong_decimal::w#0 = main::i#2 * $22b
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings print_str::str#1
@@ -995,11 +995,11 @@ Inlining constant with var siblings ultoa::digit#0
 Inlining constant with var siblings ultoa::started#1
 Inlining constant with var siblings ultoa_append::digit#0
 Inlining constant with var siblings main::i#0
-Constant inlined memset::$4 = (byte*)memset::str#0
+Constant inlined memset::$4 = (char *)memset::str#0
 Constant inlined ultoa::started#0 = 0
 Constant inlined ultoa::digit#0 = 0
 Constant inlined main::i#0 = 0
-Constant inlined memset::dst#0 = (byte*)memset::str#0
+Constant inlined memset::dst#0 = (char *)memset::str#0
 Constant inlined ultoa_append::digit#0 = 0
 Constant inlined print_str::str#1 = decimal_digits_long
 Constant inlined ultoa::digit_values#1 = RADIX_DECIMAL_VALUES_LONG
@@ -1009,14 +1009,14 @@ Constant inlined ultoa::buffer#0 = decimal_digits_long
 Successful SSA optimization Pass2ConstantInlining
 Alias print_ulong_decimal::w#0 = main::$12 
 Successful SSA optimization Pass2AliasElimination
-Eliminating unused constant SIZEOF_DWORD
+Eliminating unused constant SIZEOF_UNSIGNED_LONG
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) $b
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $a
+Finalized unsigned number type (char) $10
+Finalized unsigned number type (char) $b
+Finalized unsigned number type (char) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting ultoa::@17(between ultoa::@16 and ultoa::@13)
@@ -1099,7 +1099,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print_cls 
+  [1] call print_cls
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   [2] print_char_cursor#13 = phi( main/print_screen#0, main::@4/print_line_cursor#0 )
@@ -1119,11 +1119,11 @@ main::@2: scope:[main]  from main::@1
   [10] main::$10 = main::$9 + main::i#2
   [11] main::$11 = main::$10 << 1
   [12] print_ulong_decimal::w#0 = main::$11 + main::i#2
-  [13] call print_ulong_decimal 
+  [13] call print_ulong_decimal
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [14] phi()
-  [15] call print_ln 
+  [15] call print_ln
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [16] main::i#1 = main::i#2 + $14d
@@ -1133,20 +1133,20 @@ main::@4: scope:[main]  from main::@3
 void print_cls()
 print_cls: scope:[print_cls]  from main
   [18] phi()
-  [19] call memset 
+  [19] call memset
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls
   [20] return 
   to:@return
 
-void print_ulong_decimal(dword print_ulong_decimal::w)
+void print_ulong_decimal(unsigned long w)
 print_ulong_decimal: scope:[print_ulong_decimal]  from main::@2
   [21] ultoa::value#0 = print_ulong_decimal::w#0
-  [22] call ultoa 
+  [22] call ultoa
   to:print_ulong_decimal::@1
 print_ulong_decimal::@1: scope:[print_ulong_decimal]  from print_ulong_decimal
   [23] phi()
-  [24] call print_str 
+  [24] call print_str
   to:print_ulong_decimal::@return
 print_ulong_decimal::@return: scope:[print_ulong_decimal]  from print_ulong_decimal::@1
   [25] return 
@@ -1168,12 +1168,12 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
   [31] print_line_cursor#26 = print_line_cursor#0
   to:print_ln::@1
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from print_cls
   [32] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [33] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
+  [33] memset::dst#2 = phi( memset/(char *)memset::str#0, memset::@2/memset::dst#1 )
   [34] if(memset::dst#2!=memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
@@ -1184,7 +1184,7 @@ memset::@2: scope:[memset]  from memset::@1
   [37] memset::dst#1 = ++ memset::dst#2
   to:memset::@1
 
-void ultoa(dword ultoa::value , byte* ultoa::buffer , byte ultoa::radix)
+void ultoa(unsigned long value , char *buffer , char radix)
 ultoa: scope:[ultoa]  from print_ulong_decimal
   [38] phi()
   to:ultoa::@1
@@ -1196,7 +1196,7 @@ ultoa::@1: scope:[ultoa]  from ultoa ultoa::@4
   [40] if(ultoa::digit#2<ultoa::max_digits#1-1) goto ultoa::@2
   to:ultoa::@3
 ultoa::@3: scope:[ultoa]  from ultoa::@1
-  [41] ultoa::$11 = (byte)ultoa::value#2
+  [41] ultoa::$11 = (char)ultoa::value#2
   [42] *ultoa::buffer#11 = DIGITS[ultoa::$11]
   [43] ultoa::buffer#4 = ++ ultoa::buffer#11
   [44] *ultoa::buffer#4 = 0
@@ -1222,7 +1222,7 @@ ultoa::@5: scope:[ultoa]  from ultoa::@2 ultoa::@7
   [52] ultoa_append::buffer#0 = ultoa::buffer#11
   [53] ultoa_append::value#0 = ultoa::value#2
   [54] ultoa_append::sub#0 = ultoa::digit_value#0
-  [55] call ultoa_append 
+  [55] call ultoa_append
   [56] ultoa_append::return#0 = ultoa_append::value#2
   to:ultoa::@6
 ultoa::@6: scope:[ultoa]  from ultoa::@5
@@ -1230,7 +1230,7 @@ ultoa::@6: scope:[ultoa]  from ultoa::@5
   [58] ultoa::buffer#5 = ++ ultoa::buffer#11
   to:ultoa::@4
 
-void print_str(byte* print_str::str)
+void print_str(char *str)
 print_str: scope:[print_str]  from print_ulong_decimal::@1
   [59] print_char_cursor#42 = print_char_cursor#13
   to:print_str::@1
@@ -1244,13 +1244,13 @@ print_str::@return: scope:[print_str]  from print_str::@1
   to:@return
 print_str::@2: scope:[print_str]  from print_str::@1
   [63] print_char::ch#0 = *print_str::str#2
-  [64] call print_char 
+  [64] call print_char
   to:print_str::@3
 print_str::@3: scope:[print_str]  from print_str::@2
   [65] print_str::str#0 = ++ print_str::str#2
   to:print_str::@1
 
-dword ultoa_append(byte* ultoa_append::buffer , dword ultoa_append::value , dword ultoa_append::sub)
+unsigned long ultoa_append(char *buffer , unsigned long value , unsigned long sub)
 ultoa_append: scope:[ultoa_append]  from ultoa::@5
   [66] phi()
   to:ultoa_append::@1
@@ -1270,7 +1270,7 @@ ultoa_append::@2: scope:[ultoa_append]  from ultoa_append::@1
   [72] ultoa_append::value#1 = ultoa_append::value#2 - ultoa_append::sub#0
   to:ultoa_append::@1
 
-void print_char(byte print_char::ch)
+void print_char(char ch)
 print_char: scope:[print_char]  from print_str::@2
   [73] *print_char_cursor#1 = print_char::ch#0
   [74] print_char_cursor#24 = ++ print_char_cursor#1
@@ -1282,87 +1282,87 @@ print_char::@return: scope:[print_char]  from print_char
 
 VARIABLE REGISTER WEIGHTS
 void main()
-dword~ main::$10 22.0
-dword~ main::$11 22.0
-dword~ main::$5 22.0
-dword~ main::$6 22.0
-dword~ main::$7 22.0
-dword~ main::$8 22.0
-dword~ main::$9 22.0
-dword main::i
-dword main::i#1 11.0
-dword main::i#2 6.769230769230768
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-byte* memset::dst
-byte* memset::dst#1 2002.0
-byte* memset::dst#2 1334.6666666666667
-byte* memset::end
-word memset::num
-void* memset::return
-void* memset::str
-void print_char(byte print_char::ch)
-byte print_char::ch
-byte print_char::ch#0 1100002.0
-byte* print_char_cursor
-byte* print_char_cursor#1 150786.07142857142
-byte* print_char_cursor#13 77.84615384615384
-byte* print_char_cursor#24 275000.5
-byte* print_char_cursor#42 2002.0
+unsigned long main::$10 // 22.0
+unsigned long main::$11 // 22.0
+unsigned long main::$5 // 22.0
+unsigned long main::$6 // 22.0
+unsigned long main::$7 // 22.0
+unsigned long main::$8 // 22.0
+unsigned long main::$9 // 22.0
+unsigned long main::i
+unsigned long main::i#1 // 11.0
+unsigned long main::i#2 // 6.769230769230768
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+char *memset::dst
+char *memset::dst#1 // 2002.0
+char *memset::dst#2 // 1334.6666666666667
+char *memset::end
+unsigned int memset::num
+void *memset::return
+void *memset::str
+void print_char(char ch)
+char print_char::ch
+char print_char::ch#0 // 1100002.0
+char *print_char_cursor
+char *print_char_cursor#1 // 150786.07142857142
+char *print_char_cursor#13 // 77.84615384615384
+char *print_char_cursor#24 // 275000.5
+char *print_char_cursor#42 // 2002.0
 void print_cls()
-byte* print_line_cursor
-byte* print_line_cursor#0 5004.166666666666
-byte* print_line_cursor#10 20103.0
-byte* print_line_cursor#16 8.615384615384615
-byte* print_line_cursor#26 20002.0
-byte* print_line_cursor#27 22.0
+char *print_line_cursor
+char *print_line_cursor#0 // 5004.166666666666
+char *print_line_cursor#10 // 20103.0
+char *print_line_cursor#16 // 8.615384615384615
+char *print_line_cursor#26 // 20002.0
+char *print_line_cursor#27 // 22.0
 void print_ln()
-byte* print_screen
-void print_str(byte* print_str::str)
-byte* print_str::str
-byte* print_str::str#0 200002.0
-byte* print_str::str#2 100001.0
-void print_ulong_decimal(dword print_ulong_decimal::w)
-dword print_ulong_decimal::w
-dword print_ulong_decimal::w#0 112.0
-void ultoa(dword ultoa::value , byte* ultoa::buffer , byte ultoa::radix)
-byte~ ultoa::$10 200002.0
-byte~ ultoa::$11 2002.0
-byte* ultoa::buffer
-byte* ultoa::buffer#11 28714.714285714286
-byte* ultoa::buffer#14 150001.5
-byte* ultoa::buffer#4 2002.0
-byte* ultoa::buffer#5 200002.0
-byte ultoa::digit
-byte ultoa::digit#1 200002.0
-byte ultoa::digit#2 28571.714285714286
-dword ultoa::digit_value
-dword ultoa::digit_value#0 60000.600000000006
-dword* ultoa::digit_values
-byte ultoa::max_digits
-byte ultoa::radix
-byte ultoa::started
-byte ultoa::started#2 50000.5
-byte ultoa::started#4 100001.0
-dword ultoa::value
-dword ultoa::value#0 551.0
-dword ultoa::value#1 100001.0
-dword ultoa::value#2 57286.42857142857
-dword ultoa::value#6 150001.5
-dword ultoa_append(byte* ultoa_append::buffer , dword ultoa_append::value , dword ultoa_append::sub)
-byte* ultoa_append::buffer
-byte* ultoa_append::buffer#0 137500.25
-byte ultoa_append::digit
-byte ultoa_append::digit#1 1.000000001E9
-byte ultoa_append::digit#2 1.0005000015E9
-dword ultoa_append::return
-dword ultoa_append::return#0 200002.0
-dword ultoa_append::sub
-dword ultoa_append::sub#0 3.333500005E8
-dword ultoa_append::value
-dword ultoa_append::value#0 366667.3333333334
-dword ultoa_append::value#1 2.000000002E9
-dword ultoa_append::value#2 5.0018333416666675E8
+char *print_screen
+void print_str(char *str)
+char *print_str::str
+char *print_str::str#0 // 200002.0
+char *print_str::str#2 // 100001.0
+void print_ulong_decimal(unsigned long w)
+unsigned long print_ulong_decimal::w
+unsigned long print_ulong_decimal::w#0 // 112.0
+void ultoa(unsigned long value , char *buffer , char radix)
+char ultoa::$10 // 200002.0
+char ultoa::$11 // 2002.0
+char *ultoa::buffer
+char *ultoa::buffer#11 // 28714.714285714286
+char *ultoa::buffer#14 // 150001.5
+char *ultoa::buffer#4 // 2002.0
+char *ultoa::buffer#5 // 200002.0
+char ultoa::digit
+char ultoa::digit#1 // 200002.0
+char ultoa::digit#2 // 28571.714285714286
+unsigned long ultoa::digit_value
+unsigned long ultoa::digit_value#0 // 60000.600000000006
+unsigned long *ultoa::digit_values
+char ultoa::max_digits
+char ultoa::radix
+char ultoa::started
+char ultoa::started#2 // 50000.5
+char ultoa::started#4 // 100001.0
+unsigned long ultoa::value
+unsigned long ultoa::value#0 // 551.0
+unsigned long ultoa::value#1 // 100001.0
+unsigned long ultoa::value#2 // 57286.42857142857
+unsigned long ultoa::value#6 // 150001.5
+unsigned long ultoa_append(char *buffer , unsigned long value , unsigned long sub)
+char *ultoa_append::buffer
+char *ultoa_append::buffer#0 // 137500.25
+char ultoa_append::digit
+char ultoa_append::digit#1 // 1.000000001E9
+char ultoa_append::digit#2 // 1.0005000015E9
+unsigned long ultoa_append::return
+unsigned long ultoa_append::return#0 // 200002.0
+unsigned long ultoa_append::sub
+unsigned long ultoa_append::sub#0 // 3.333500005E8
+unsigned long ultoa_append::value
+unsigned long ultoa_append::value#0 // 366667.3333333334
+unsigned long ultoa_append::value#1 // 2.000000002E9
+unsigned long ultoa_append::value#2 // 5.0018333416666675E8
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -1468,7 +1468,7 @@ Statement [29] if(print_line_cursor#0<print_char_cursor#1) goto print_ln::@2 [ p
 Statement [31] print_line_cursor#26 = print_line_cursor#0 [ print_line_cursor#26 print_char_cursor#1 ] ( print_ln:15 [ main::i#2 print_line_cursor#26 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
 Statement [34] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:19 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [36] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:19 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [41] ultoa::$11 = (byte)ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [41] ultoa::$11 = (char)ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [42] *ultoa::buffer#11 = DIGITS[ultoa::$11] [ ultoa::buffer#11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [43] ultoa::buffer#4 = ++ ultoa::buffer#11 [ ultoa::buffer#4 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#4 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [44] *ultoa::buffer#4 = 0 [ ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
@@ -1508,7 +1508,7 @@ Statement [29] if(print_line_cursor#0<print_char_cursor#1) goto print_ln::@2 [ p
 Statement [31] print_line_cursor#26 = print_line_cursor#0 [ print_line_cursor#26 print_char_cursor#1 ] ( print_ln:15 [ main::i#2 print_line_cursor#26 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
 Statement [34] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:19 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [36] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:19 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [41] ultoa::$11 = (byte)ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [41] ultoa::$11 = (char)ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [42] *ultoa::buffer#11 = DIGITS[ultoa::$11] [ ultoa::buffer#11 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#11 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [43] ultoa::buffer#4 = ++ ultoa::buffer#11 [ ultoa::buffer#4 ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ultoa::buffer#4 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [44] *ultoa::buffer#4 = 0 [ ] ( print_ulong_decimal:13::ultoa:22 [ main::i#2 print_line_cursor#16 print_char_cursor#13 ] { { ultoa::value#0 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
@@ -1637,7 +1637,7 @@ main: {
     .label __9 = $b
     .label __10 = $b
     .label __11 = $b
-    // [1] call print_cls 
+    // [1] call print_cls
     // [18] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
@@ -1793,14 +1793,14 @@ main: {
     lda.z print_ulong_decimal.w+3
     adc.z i+3
     sta.z print_ulong_decimal.w+3
-    // [13] call print_ulong_decimal 
+    // [13] call print_ulong_decimal
     jsr print_ulong_decimal
     // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [15] call print_ln 
+    // [15] call print_ln
     // [26] phi from main::@3 to print_ln [phi:main::@3->print_ln]
   print_ln_from___b3:
     jsr print_ln
@@ -1836,7 +1836,7 @@ main: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    // [19] call memset 
+    // [19] call memset
     // [32] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
@@ -1848,11 +1848,11 @@ print_cls: {
 }
   // print_ulong_decimal
 // Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($b) w)
+// void print_ulong_decimal(__zp($b) unsigned long w)
 print_ulong_decimal: {
     .label w = $b
     // [21] ultoa::value#0 = print_ulong_decimal::w#0
-    // [22] call ultoa 
+    // [22] call ultoa
     // [38] phi from print_ulong_decimal to ultoa [phi:print_ulong_decimal->ultoa]
   ultoa_from_print_ulong_decimal:
     jsr ultoa
@@ -1861,7 +1861,7 @@ print_ulong_decimal: {
     jmp __b1
     // print_ulong_decimal::@1
   __b1:
-    // [24] call print_str 
+    // [24] call print_str
     jsr print_str
     jmp __breturn
     // print_ulong_decimal::@return
@@ -1912,6 +1912,7 @@ print_ln: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -1920,7 +1921,7 @@ memset: {
     .label dst = 8
     // [33] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [33] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [33] phi memset::dst#2 = (char *)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1962,7 +1963,7 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($b) value, byte* zp($f) buffer)
+// void ultoa(__zp($b) unsigned long value, __zp($f) char *buffer, char radix)
 ultoa: {
     .const max_digits = $a
     .label value = $b
@@ -1992,7 +1993,7 @@ ultoa: {
     jmp __b3
     // ultoa::@3
   __b3:
-    // [41] ultoa::$11 = (byte)ultoa::value#2 -- vbuaa=_byte_vduz1 
+    // [41] ultoa::$11 = (char)ultoa::value#2 -- vbuaa=_byte_vduz1 
     lda.z value
     // [42] *ultoa::buffer#11 = DIGITS[ultoa::$11] -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
@@ -2074,7 +2075,7 @@ ultoa: {
     // [52] ultoa_append::buffer#0 = ultoa::buffer#11
     // [53] ultoa_append::value#0 = ultoa::value#2
     // [54] ultoa_append::sub#0 = ultoa::digit_value#0
-    // [55] call ultoa_append 
+    // [55] call ultoa_append
     // [66] phi from ultoa::@5 to ultoa_append [phi:ultoa::@5->ultoa_append]
   ultoa_append_from___b5:
     jsr ultoa_append
@@ -2098,7 +2099,7 @@ ultoa: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp($f) str)
+// void print_str(__zp($f) char *str)
 print_str: {
     .label str = $f
     // [59] print_char_cursor#42 = print_char_cursor#13 -- pbuz1=pbuz2 
@@ -2132,7 +2133,7 @@ print_str: {
     // [63] print_char::ch#0 = *print_str::str#2 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (str),y
-    // [64] call print_char 
+    // [64] call print_char
     jsr print_char
     jmp __b3
     // print_str::@3
@@ -2157,7 +2158,7 @@ print_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($f) buffer, dword zp($b) value, dword zp($13) sub)
+// __zp($b) unsigned long ultoa_append(__zp($f) char *buffer, __zp($b) unsigned long value, __zp($13) unsigned long sub)
 ultoa_append: {
     .label buffer = $f
     .label value = $b
@@ -2226,7 +2227,7 @@ ultoa_append: {
 }
   // print_char
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // [73] *print_char_cursor#1 = print_char::ch#0 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -2325,101 +2326,101 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* DIGITS[]  = "0123456789abcdef"z
-constant byte RADIX::BINARY = 2
-constant byte RADIX::DECIMAL = $a
-constant byte RADIX::HEXADECIMAL = $10
-constant byte RADIX::OCTAL = 8
-constant dword* RADIX_DECIMAL_VALUES_LONG[]  = { $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a }
-constant byte* decimal_digits_long[$b]  = { fill( $b, 0) }
+__constant char DIGITS[] = "0123456789abcdef"z
+__constant char RADIX::BINARY = 2
+__constant char RADIX::DECIMAL = $a
+__constant char RADIX::HEXADECIMAL = $10
+__constant char RADIX::OCTAL = 8
+__constant unsigned long RADIX_DECIMAL_VALUES_LONG[] = { $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a }
+__constant char decimal_digits_long[$b] = { fill( $b, 0) }
 void main()
-dword~ main::$10 zp[4]:11 22.0
-dword~ main::$11 zp[4]:11 22.0
-dword~ main::$5 zp[4]:11 22.0
-dword~ main::$6 zp[4]:11 22.0
-dword~ main::$7 zp[4]:11 22.0
-dword~ main::$8 zp[4]:11 22.0
-dword~ main::$9 zp[4]:11 22.0
-dword main::i
-dword main::i#1 i zp[4]:2 11.0
-dword main::i#2 i zp[4]:2 6.769230769230768
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-constant byte memset::c#0 c = ' '
-byte* memset::dst
-byte* memset::dst#1 dst zp[2]:8 2002.0
-byte* memset::dst#2 dst zp[2]:8 1334.6666666666667
-byte* memset::end
-constant byte* memset::end#0 end = (byte*)memset::str#0+memset::num#0
-word memset::num
-constant word memset::num#0 num = $3e8
-void* memset::return
-void* memset::str
-constant void* memset::str#0 str = (void*)print_screen#0
-void print_char(byte print_char::ch)
-byte print_char::ch
-byte print_char::ch#0 reg byte a 1100002.0
-byte* print_char_cursor
-byte* print_char_cursor#1 print_char_cursor zp[2]:17 150786.07142857142
-byte* print_char_cursor#13 print_char_cursor_1 zp[2]:8 77.84615384615384
-byte* print_char_cursor#24 print_char_cursor zp[2]:17 275000.5
-byte* print_char_cursor#42 print_char_cursor zp[2]:17 2002.0
+unsigned long main::$10 // zp[4]:11 22.0
+unsigned long main::$11 // zp[4]:11 22.0
+unsigned long main::$5 // zp[4]:11 22.0
+unsigned long main::$6 // zp[4]:11 22.0
+unsigned long main::$7 // zp[4]:11 22.0
+unsigned long main::$8 // zp[4]:11 22.0
+unsigned long main::$9 // zp[4]:11 22.0
+unsigned long main::i
+unsigned long main::i#1 // i zp[4]:2 11.0
+unsigned long main::i#2 // i zp[4]:2 6.769230769230768
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+__constant char memset::c#0 = ' ' // c
+char *memset::dst
+char *memset::dst#1 // dst zp[2]:8 2002.0
+char *memset::dst#2 // dst zp[2]:8 1334.6666666666667
+char *memset::end
+__constant char *memset::end#0 = (char *)memset::str#0+memset::num#0 // end
+unsigned int memset::num
+__constant unsigned int memset::num#0 = $3e8 // num
+void *memset::return
+void *memset::str
+__constant void *memset::str#0 = (void *)print_screen#0 // str
+void print_char(char ch)
+char print_char::ch
+char print_char::ch#0 // reg byte a 1100002.0
+char *print_char_cursor
+char *print_char_cursor#1 // print_char_cursor zp[2]:17 150786.07142857142
+char *print_char_cursor#13 // print_char_cursor_1 zp[2]:8 77.84615384615384
+char *print_char_cursor#24 // print_char_cursor zp[2]:17 275000.5
+char *print_char_cursor#42 // print_char_cursor zp[2]:17 2002.0
 void print_cls()
-byte* print_line_cursor
-byte* print_line_cursor#0 print_line_cursor zp[2]:8 5004.166666666666
-byte* print_line_cursor#10 print_line_cursor_1 zp[2]:6 20103.0
-byte* print_line_cursor#16 print_line_cursor_1 zp[2]:6 8.615384615384615
-byte* print_line_cursor#26 print_line_cursor_1 zp[2]:6 20002.0
-byte* print_line_cursor#27 print_line_cursor_1 zp[2]:6 22.0
+char *print_line_cursor
+char *print_line_cursor#0 // print_line_cursor zp[2]:8 5004.166666666666
+char *print_line_cursor#10 // print_line_cursor_1 zp[2]:6 20103.0
+char *print_line_cursor#16 // print_line_cursor_1 zp[2]:6 8.615384615384615
+char *print_line_cursor#26 // print_line_cursor_1 zp[2]:6 20002.0
+char *print_line_cursor#27 // print_line_cursor_1 zp[2]:6 22.0
 void print_ln()
-byte* print_screen
-constant byte* print_screen#0 print_screen = (byte*) 1024
-void print_str(byte* print_str::str)
-byte* print_str::str
-byte* print_str::str#0 str zp[2]:15 200002.0
-byte* print_str::str#2 str zp[2]:15 100001.0
-void print_ulong_decimal(dword print_ulong_decimal::w)
-dword print_ulong_decimal::w
-dword print_ulong_decimal::w#0 w zp[4]:11 112.0
-void ultoa(dword ultoa::value , byte* ultoa::buffer , byte ultoa::radix)
-byte~ ultoa::$10 reg byte a 200002.0
-byte~ ultoa::$11 reg byte a 2002.0
-byte* ultoa::buffer
-byte* ultoa::buffer#11 buffer zp[2]:15 28714.714285714286
-byte* ultoa::buffer#14 buffer zp[2]:15 150001.5
-byte* ultoa::buffer#4 buffer zp[2]:15 2002.0
-byte* ultoa::buffer#5 buffer zp[2]:15 200002.0
-byte ultoa::digit
-byte ultoa::digit#1 digit zp[1]:10 200002.0
-byte ultoa::digit#2 digit zp[1]:10 28571.714285714286
-dword ultoa::digit_value
-dword ultoa::digit_value#0 digit_value zp[4]:19 60000.600000000006
-dword* ultoa::digit_values
-byte ultoa::max_digits
-constant byte ultoa::max_digits#1 max_digits = $a
-byte ultoa::radix
-byte ultoa::started
-byte ultoa::started#2 reg byte x 50000.5
-byte ultoa::started#4 reg byte x 100001.0
-dword ultoa::value
-dword ultoa::value#0 value zp[4]:11 551.0
-dword ultoa::value#1 value zp[4]:11 100001.0
-dword ultoa::value#2 value zp[4]:11 57286.42857142857
-dword ultoa::value#6 value zp[4]:11 150001.5
-dword ultoa_append(byte* ultoa_append::buffer , dword ultoa_append::value , dword ultoa_append::sub)
-byte* ultoa_append::buffer
-byte* ultoa_append::buffer#0 buffer zp[2]:15 137500.25
-byte ultoa_append::digit
-byte ultoa_append::digit#1 reg byte x 1.000000001E9
-byte ultoa_append::digit#2 reg byte x 1.0005000015E9
-dword ultoa_append::return
-dword ultoa_append::return#0 return zp[4]:11 200002.0
-dword ultoa_append::sub
-dword ultoa_append::sub#0 sub zp[4]:19 3.333500005E8
-dword ultoa_append::value
-dword ultoa_append::value#0 value zp[4]:11 366667.3333333334
-dword ultoa_append::value#1 value zp[4]:11 2.000000002E9
-dword ultoa_append::value#2 value zp[4]:11 5.0018333416666675E8
+char *print_screen
+__constant char *print_screen#0 = (char *) 1024 // print_screen
+void print_str(char *str)
+char *print_str::str
+char *print_str::str#0 // str zp[2]:15 200002.0
+char *print_str::str#2 // str zp[2]:15 100001.0
+void print_ulong_decimal(unsigned long w)
+unsigned long print_ulong_decimal::w
+unsigned long print_ulong_decimal::w#0 // w zp[4]:11 112.0
+void ultoa(unsigned long value , char *buffer , char radix)
+char ultoa::$10 // reg byte a 200002.0
+char ultoa::$11 // reg byte a 2002.0
+char *ultoa::buffer
+char *ultoa::buffer#11 // buffer zp[2]:15 28714.714285714286
+char *ultoa::buffer#14 // buffer zp[2]:15 150001.5
+char *ultoa::buffer#4 // buffer zp[2]:15 2002.0
+char *ultoa::buffer#5 // buffer zp[2]:15 200002.0
+char ultoa::digit
+char ultoa::digit#1 // digit zp[1]:10 200002.0
+char ultoa::digit#2 // digit zp[1]:10 28571.714285714286
+unsigned long ultoa::digit_value
+unsigned long ultoa::digit_value#0 // digit_value zp[4]:19 60000.600000000006
+unsigned long *ultoa::digit_values
+char ultoa::max_digits
+__constant char ultoa::max_digits#1 = $a // max_digits
+char ultoa::radix
+char ultoa::started
+char ultoa::started#2 // reg byte x 50000.5
+char ultoa::started#4 // reg byte x 100001.0
+unsigned long ultoa::value
+unsigned long ultoa::value#0 // value zp[4]:11 551.0
+unsigned long ultoa::value#1 // value zp[4]:11 100001.0
+unsigned long ultoa::value#2 // value zp[4]:11 57286.42857142857
+unsigned long ultoa::value#6 // value zp[4]:11 150001.5
+unsigned long ultoa_append(char *buffer , unsigned long value , unsigned long sub)
+char *ultoa_append::buffer
+char *ultoa_append::buffer#0 // buffer zp[2]:15 137500.25
+char ultoa_append::digit
+char ultoa_append::digit#1 // reg byte x 1.000000001E9
+char ultoa_append::digit#2 // reg byte x 1.0005000015E9
+unsigned long ultoa_append::return
+unsigned long ultoa_append::return#0 // return zp[4]:11 200002.0
+unsigned long ultoa_append::sub
+unsigned long ultoa_append::sub#0 // sub zp[4]:19 3.333500005E8
+unsigned long ultoa_append::value
+unsigned long ultoa_append::value#0 // value zp[4]:11 366667.3333333334
+unsigned long ultoa_append::value#1 // value zp[4]:11 2.000000002E9
+unsigned long ultoa_append::value#2 // value zp[4]:11 5.0018333416666675E8
 
 zp[4]:2 [ main::i#2 main::i#1 ]
 zp[2]:6 [ print_line_cursor#10 print_line_cursor#16 print_line_cursor#27 print_line_cursor#26 ]
@@ -2471,7 +2472,7 @@ main: {
     .label __10 = $b
     .label __11 = $b
     // print_cls()
-    // [1] call print_cls 
+    // [1] call print_cls
     // [18] phi from main to print_cls [phi:main->print_cls]
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -2624,12 +2625,12 @@ main: {
     lda.z print_ulong_decimal.w+3
     adc.z i+3
     sta.z print_ulong_decimal.w+3
-    // [13] call print_ulong_decimal 
+    // [13] call print_ulong_decimal
     jsr print_ulong_decimal
     // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // print_ln()
-    // [15] call print_ln 
+    // [15] call print_ln
     // [26] phi from main::@3 to print_ln [phi:main::@3->print_ln]
     jsr print_ln
     // main::@4
@@ -2663,7 +2664,7 @@ main: {
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
-    // [19] call memset 
+    // [19] call memset
     // [32] phi from print_cls to memset [phi:print_cls->memset]
     jsr memset
     // print_cls::@return
@@ -2673,18 +2674,18 @@ print_cls: {
 }
   // print_ulong_decimal
 // Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($b) w)
+// void print_ulong_decimal(__zp($b) unsigned long w)
 print_ulong_decimal: {
     .label w = $b
     // ultoa(w, decimal_digits_long, DECIMAL)
     // [21] ultoa::value#0 = print_ulong_decimal::w#0
-    // [22] call ultoa 
+    // [22] call ultoa
     // [38] phi from print_ulong_decimal to ultoa [phi:print_ulong_decimal->ultoa]
     jsr ultoa
     // [23] phi from print_ulong_decimal to print_ulong_decimal::@1 [phi:print_ulong_decimal->print_ulong_decimal::@1]
     // print_ulong_decimal::@1
     // print_str(decimal_digits_long)
-    // [24] call print_str 
+    // [24] call print_str
     jsr print_str
     // print_ulong_decimal::@return
     // }
@@ -2731,6 +2732,7 @@ print_ln: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -2738,7 +2740,7 @@ memset: {
     .label end = str+num
     .label dst = 8
     // [33] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [33] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [33] phi memset::dst#2 = (char *)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -2780,7 +2782,7 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($b) value, byte* zp($f) buffer)
+// void ultoa(__zp($b) unsigned long value, __zp($f) char *buffer, char radix)
 ultoa: {
     .const max_digits = $a
     .label value = $b
@@ -2808,7 +2810,7 @@ ultoa: {
     bcc __b2
     // ultoa::@3
     // *buffer++ = DIGITS[(char)value]
-    // [41] ultoa::$11 = (byte)ultoa::value#2 -- vbuaa=_byte_vduz1 
+    // [41] ultoa::$11 = (char)ultoa::value#2 -- vbuaa=_byte_vduz1 
     lda.z value
     // [42] *ultoa::buffer#11 = DIGITS[ultoa::$11] -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
@@ -2890,7 +2892,7 @@ ultoa: {
     // [52] ultoa_append::buffer#0 = ultoa::buffer#11
     // [53] ultoa_append::value#0 = ultoa::value#2
     // [54] ultoa_append::sub#0 = ultoa::digit_value#0
-    // [55] call ultoa_append 
+    // [55] call ultoa_append
     // [66] phi from ultoa::@5 to ultoa_append [phi:ultoa::@5->ultoa_append]
     jsr ultoa_append
     // ultoa_append(buffer++, value, digit_value)
@@ -2913,7 +2915,7 @@ ultoa: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp($f) str)
+// void print_str(__zp($f) char *str)
 print_str: {
     .label str = $f
     // [59] print_char_cursor#42 = print_char_cursor#13 -- pbuz1=pbuz2 
@@ -2946,7 +2948,7 @@ print_str: {
     // [63] print_char::ch#0 = *print_str::str#2 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (str),y
-    // [64] call print_char 
+    // [64] call print_char
     jsr print_char
     // print_str::@3
     // print_char(*(str++));
@@ -2969,7 +2971,7 @@ print_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($f) buffer, dword zp($b) value, dword zp($13) sub)
+// __zp($b) unsigned long ultoa_append(__zp($f) char *buffer, __zp($b) unsigned long value, __zp($13) unsigned long sub)
 ultoa_append: {
     .label buffer = $f
     .label value = $b
@@ -3036,7 +3038,7 @@ ultoa_append: {
 }
   // print_char
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     // [73] *print_char_cursor#1 = print_char::ch#0 -- _deref_pbuz1=vbuaa 

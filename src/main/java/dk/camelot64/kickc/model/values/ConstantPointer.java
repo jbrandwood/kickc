@@ -52,7 +52,7 @@ public class ConstantPointer implements ConstantEnumerable<Long> {
 
    @Override
    public String toString(Program program) {
-      return "(" + getType().getTypeName() + ") " + Long.toString(location);
+      return "(" + getType().toCDecl() + ") " + Long.toString(location);
    }
 
    @Override

@@ -28,7 +28,7 @@ main: {
     // }
     rts
 }
-// print(byte* zp(2) m)
+// void print(__zp(2) char *m)
 print: {
     .label m = 2
     // SCREEN[screen_idx++] = *(word*)(m+2)

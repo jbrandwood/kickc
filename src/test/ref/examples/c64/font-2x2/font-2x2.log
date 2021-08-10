@@ -8,7 +8,7 @@ Eliminating unused variable with no statement font_compress::$0
 
 CONTROL FLOW GRAPH SSA
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from main::@6
   memset::c#4 = phi( main::@6/memset::c#0 )
   memset::str#3 = phi( main::@6/memset::str#0 )
@@ -25,9 +25,9 @@ memset::@2: scope:[memset]  from memset
   memset::c#3 = phi( memset/memset::c#4 )
   memset::num#2 = phi( memset/memset::num#1 )
   memset::str#2 = phi( memset/memset::str#3 )
-  memset::$4 = (byte*)memset::str#2
+  memset::$4 = (char *)memset::str#2
   memset::end#0 = memset::$4 + memset::num#2
-  memset::dst#0 = ((byte*)) memset::str#2
+  memset::dst#0 = ((char *)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
   memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
@@ -57,7 +57,7 @@ main: scope:[main]  from __start
   *PROCPORT = PROCPORT_RAM_CHARROM
   font_2x2::font_original#0 = CHARGEN
   font_2x2::font_2x2#0 = FONT_ORIGINAL
-  call font_2x2 
+  call font_2x2
   to:main::@7
 main::@7: scope:[main]  from main
   *PROCPORT = PROCPORT_BASIC_KERNEL_IO
@@ -65,7 +65,7 @@ main::@7: scope:[main]  from main
   font_compress::font_original#0 = FONT_ORIGINAL
   font_compress::font_compressed#0 = FONT_COMPRESSED
   font_compress::compress_mapping#0 = FONT_COMPRESSED_MAP
-  call font_compress 
+  call font_compress
   font_compress::return#0 = font_compress::return#2
   to:main::@8
 main::@8: scope:[main]  from main::@7
@@ -75,11 +75,11 @@ main::@8: scope:[main]  from main::@7
 main::toD0181: scope:[main]  from main::@8
   main::toD0181_gfx#1 = phi( main::@8/main::toD0181_gfx#0 )
   main::toD0181_screen#1 = phi( main::@8/main::toD0181_screen#0 )
-  main::toD0181_$7 = (word)main::toD0181_screen#1
+  main::toD0181_$7 = (unsigned int)main::toD0181_screen#1
   main::toD0181_$0 = main::toD0181_$7 & $3fff
   main::toD0181_$1 = main::toD0181_$0 * 4
   main::toD0181_$2 = byte1  main::toD0181_$1
-  main::toD0181_$3 = byte1  (word)main::toD0181_gfx#1
+  main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#1
   main::toD0181_$4 = main::toD0181_$3 / 4
   main::toD0181_$5 = main::toD0181_$4 & $f
   main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
@@ -93,10 +93,10 @@ main::@6: scope:[main]  from main::toD0181_@return
   main::toD0181_return#3 = phi( main::toD0181_@return/main::toD0181_return#1 )
   main::$2 = main::toD0181_return#3
   *D018 = main::$2
-  memset::str#0 = (void*)SCREEN
+  memset::str#0 = (void *)SCREEN
   memset::c#0 = FONT_COMPRESSED_MAP[' ']
   memset::num#0 = $400
-  call memset 
+  call memset
   memset::return#2 = memset::return#1
   to:main::@9
 main::@9: scope:[main]  from main::@6
@@ -116,7 +116,7 @@ main::@2: scope:[main]  from main::@1 main::@10
   show::x#0 = main::x#2
   show::y#0 = main::y#2
   show::font_mapping#0 = FONT_COMPRESSED_MAP
-  call show 
+  call show
   to:main::@10
 main::@10: scope:[main]  from main::@2
   main::y#5 = phi( main::@2/main::y#2 )
@@ -144,13 +144,13 @@ main::@return: scope:[main]  from main::@4
   return 
   to:@return
 
-void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
+void show(char c , char x , char y , char *font_mapping)
 show: scope:[show]  from main::@2
   show::c#1 = phi( main::@2/show::c#0 )
   show::font_mapping#1 = phi( main::@2/show::font_mapping#0 )
   show::x#1 = phi( main::@2/show::x#0 )
   show::y#1 = phi( main::@2/show::y#0 )
-  show::$7 = (word)show::y#1
+  show::$7 = (unsigned int)show::y#1
   show::$0 = show::$7 * $50
   show::$1 = SCREEN + show::$0
   show::$2 = show::x#1 * 2
@@ -167,7 +167,7 @@ show::@return: scope:[show]  from show
   return 
   to:@return
 
-void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
+void font_2x2(char *font_original , char *font_2x2)
 font_2x2: scope:[font_2x2]  from main
   font_2x2::font_2x2#1 = phi( main/font_2x2::font_2x2#0 )
   font_2x2::font_original#1 = phi( main/font_2x2::font_original#0 )
@@ -322,7 +322,7 @@ font_2x2::@return: scope:[font_2x2]  from font_2x2::@10
   return 
   to:@return
 
-byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
+char font_compress(char *font_original , char *font_compressed , char *compress_mapping)
 font_compress: scope:[font_compress]  from main::@7
   font_compress::compress_mapping#6 = phi( main::@7/font_compress::compress_mapping#0 )
   font_compress::font_compressed#1 = phi( main::@7/font_compress::font_compressed#0 )
@@ -342,7 +342,7 @@ font_compress::@1: scope:[font_compress]  from font_compress font_compress::@2
   font_find::glyph#0 = font_compress::next_original#2
   font_find::font#0 = font_compress::font_compressed#2
   font_find::font_size#0 = font_compress::font_size#2
-  call font_find 
+  call font_find
   font_find::return#0 = font_find::return#3
   to:font_compress::@7
 font_compress::@7: scope:[font_compress]  from font_compress::@1
@@ -415,7 +415,7 @@ font_compress::@return: scope:[font_compress]  from font_compress::@6
   return 
   to:@return
 
-byte font_find(byte* font_find::glyph , byte* font_find::font , byte font_find::font_size)
+char font_find(char *glyph , char *font , char font_size)
 font_find: scope:[font_find]  from font_compress::@1
   font_find::font#9 = phi( font_compress::@1/font_find::font#0 )
   font_find::glyph#5 = phi( font_compress::@1/font_find::glyph#0 )
@@ -500,7 +500,7 @@ font_find::@return: scope:[font_find]  from font_find::@3 font_find::@8
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -509,394 +509,394 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const CHARGEN = (byte*)$d000
-constant byte* const D018 = (byte*)$d018
-constant byte* const FONT_COMPRESSED = (byte*)$2800
-constant byte* FONT_COMPRESSED_MAP[$100]  = { fill( $100, 0) }
-constant byte* const FONT_ORIGINAL = (byte*)$2000
-constant byte* const PROCPORT = (byte*)1
-constant const byte PROCPORT_BASIC_KERNEL_IO = 7
-constant const byte PROCPORT_RAM_CHARROM = 1
-constant byte* const SCREEN = (byte*)$400
+__constant char * const CHARGEN = (char *)$d000
+__constant char * const D018 = (char *)$d018
+__constant char * const FONT_COMPRESSED = (char *)$2800
+__constant char FONT_COMPRESSED_MAP[$100] = { fill( $100, 0) }
+__constant char * const FONT_ORIGINAL = (char *)$2000
+__constant char * const PROCPORT = (char *)1
+__constant const char PROCPORT_BASIC_KERNEL_IO = 7
+__constant const char PROCPORT_RAM_CHARROM = 1
+__constant char * const SCREEN = (char *)$400
 void __start()
-void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
-number~ font_2x2::$1
-byte~ font_2x2::$10
-number~ font_2x2::$11
-byte~ font_2x2::$12
-byte~ font_2x2::$13
-number~ font_2x2::$14
-byte~ font_2x2::$15
-bool~ font_2x2::$16
-bool~ font_2x2::$17
-byte*~ font_2x2::$18
-byte*~ font_2x2::$19
-byte~ font_2x2::$2
-bool~ font_2x2::$20
-bool~ font_2x2::$21
-bool~ font_2x2::$22
-byte~ font_2x2::$3
-byte~ font_2x2::$4
-word~ font_2x2::$5
-word~ font_2x2::$6
-word~ font_2x2::$7
-word~ font_2x2::$8
-bool~ font_2x2::$9
-byte font_2x2::b
-byte font_2x2::b#0
-byte font_2x2::b#1
-byte font_2x2::b#2
-byte font_2x2::b#3
-byte font_2x2::b#4
-byte font_2x2::b#5
-byte font_2x2::c
-byte font_2x2::c#0
-byte font_2x2::c#1
-byte font_2x2::c#10
-byte font_2x2::c#11
-byte font_2x2::c#2
-byte font_2x2::c#3
-byte font_2x2::c#4
-byte font_2x2::c#5
-byte font_2x2::c#6
-byte font_2x2::c#7
-byte font_2x2::c#8
-byte font_2x2::c#9
-byte* font_2x2::font_2x2
-byte* font_2x2::font_2x2#0
-byte* font_2x2::font_2x2#1
-byte* font_2x2::font_original
-byte* font_2x2::font_original#0
-byte* font_2x2::font_original#1
-byte font_2x2::glyph_bit
-byte font_2x2::glyph_bit#0
-byte font_2x2::glyph_bits
-byte font_2x2::glyph_bits#0
-byte font_2x2::glyph_bits#1
-byte font_2x2::glyph_bits#2
-byte font_2x2::glyph_bits#3
-byte font_2x2::glyph_bits#4
-byte font_2x2::glyph_bits#5
-word font_2x2::glyph_bits_2x2
-word font_2x2::glyph_bits_2x2#0
-word font_2x2::glyph_bits_2x2#1
-word font_2x2::glyph_bits_2x2#2
-word font_2x2::glyph_bits_2x2#3
-word font_2x2::glyph_bits_2x2#4
-word font_2x2::glyph_bits_2x2#5
-word font_2x2::glyph_bits_2x2#6
-word font_2x2::glyph_bits_2x2#7
-byte font_2x2::l
-byte font_2x2::l#0
-byte font_2x2::l#1
-byte font_2x2::l#2
-byte font_2x2::l#3
-byte font_2x2::l#4
-byte font_2x2::l#5
-byte font_2x2::l#6
-byte font_2x2::l#7
-byte font_2x2::l#8
-byte font_2x2::l#9
-byte font_2x2::l2
-byte font_2x2::l2#0
-byte font_2x2::l2#1
-byte font_2x2::l2#2
-byte font_2x2::l2#3
-byte font_2x2::l2#4
-byte font_2x2::l2#5
-byte font_2x2::l2#6
-byte font_2x2::l2#7
-byte font_2x2::l2#8
-byte font_2x2::l2#9
-byte* font_2x2::next_2x2
-byte* font_2x2::next_2x2#0
-byte* font_2x2::next_2x2#1
-byte* font_2x2::next_2x2#10
-byte* font_2x2::next_2x2#11
-byte* font_2x2::next_2x2#2
-byte* font_2x2::next_2x2#3
-byte* font_2x2::next_2x2#4
-byte* font_2x2::next_2x2#5
-byte* font_2x2::next_2x2#6
-byte* font_2x2::next_2x2#7
-byte* font_2x2::next_2x2#8
-byte* font_2x2::next_2x2#9
-byte* font_2x2::next_2x2_left
-byte* font_2x2::next_2x2_left#0
-byte* font_2x2::next_2x2_left#1
-byte* font_2x2::next_2x2_left#2
-byte* font_2x2::next_2x2_left#3
-byte* font_2x2::next_2x2_left#4
-byte* font_2x2::next_2x2_left#5
-byte* font_2x2::next_2x2_left#6
-byte* font_2x2::next_2x2_left#7
-byte* font_2x2::next_2x2_left#8
-byte* font_2x2::next_2x2_right
-byte* font_2x2::next_2x2_right#0
-byte* font_2x2::next_2x2_right#1
-byte* font_2x2::next_2x2_right#2
-byte* font_2x2::next_2x2_right#3
-byte* font_2x2::next_2x2_right#4
-byte* font_2x2::next_2x2_right#5
-byte* font_2x2::next_2x2_right#6
-byte* font_2x2::next_2x2_right#7
-byte* font_2x2::next_2x2_right#8
-byte* font_2x2::next_original
-byte* font_2x2::next_original#0
-byte* font_2x2::next_original#1
-byte* font_2x2::next_original#10
-byte* font_2x2::next_original#11
-byte* font_2x2::next_original#2
-byte* font_2x2::next_original#3
-byte* font_2x2::next_original#4
-byte* font_2x2::next_original#5
-byte* font_2x2::next_original#6
-byte* font_2x2::next_original#7
-byte* font_2x2::next_original#8
-byte* font_2x2::next_original#9
-byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
-bool~ font_compress::$1
-bool~ font_compress::$2
-bool~ font_compress::$3
-bool~ font_compress::$4
-byte* font_compress::compress_mapping
-byte* font_compress::compress_mapping#0
-byte* font_compress::compress_mapping#1
-byte* font_compress::compress_mapping#2
-byte* font_compress::compress_mapping#3
-byte* font_compress::compress_mapping#4
-byte* font_compress::compress_mapping#5
-byte* font_compress::compress_mapping#6
-byte* font_compress::compress_mapping#7
-byte* font_compress::font_compressed
-byte* font_compress::font_compressed#0
-byte* font_compress::font_compressed#1
-byte* font_compress::font_compressed#2
-byte* font_compress::font_compressed#3
-byte* font_compress::font_compressed#4
-byte* font_compress::font_compressed#5
-byte* font_compress::font_compressed#6
-byte* font_compress::font_compressed#7
-byte* font_compress::font_original
-byte* font_compress::font_original#0
-byte* font_compress::font_original#1
-byte font_compress::font_size
-byte font_compress::font_size#0
-byte font_compress::font_size#1
-byte font_compress::font_size#2
-byte font_compress::font_size#3
-byte font_compress::font_size#4
-byte font_compress::font_size#5
-byte font_compress::font_size#6
-byte font_compress::font_size#7
-byte font_compress::font_size#8
-byte font_compress::found
-byte font_compress::found#0
-byte font_compress::found#1
-byte font_compress::found#2
-byte font_compress::i
-byte font_compress::i#0
-byte font_compress::i#1
-byte font_compress::i#2
-byte font_compress::i#3
-byte font_compress::i#4
-byte font_compress::i#5
-byte font_compress::i#6
-byte font_compress::i#7
-byte font_compress::l
-byte font_compress::l#0
-byte font_compress::l#1
-byte font_compress::l#2
-byte* font_compress::next_compressed
-byte* font_compress::next_compressed#0
-byte* font_compress::next_compressed#1
-byte* font_compress::next_compressed#2
-byte* font_compress::next_compressed#3
-byte* font_compress::next_compressed#4
-byte* font_compress::next_compressed#5
-byte* font_compress::next_compressed#6
-byte* font_compress::next_compressed#7
-byte* font_compress::next_original
-byte* font_compress::next_original#0
-byte* font_compress::next_original#1
-byte* font_compress::next_original#2
-byte* font_compress::next_original#3
-byte* font_compress::next_original#4
-byte* font_compress::next_original#5
-byte* font_compress::next_original#6
-byte* font_compress::next_original#7
-byte font_compress::return
-byte font_compress::return#0
-byte font_compress::return#1
-byte font_compress::return#2
-byte font_compress::return#3
-byte font_find(byte* font_find::glyph , byte* font_find::font , byte font_find::font_size)
-bool~ font_find::$0
-bool~ font_find::$1
-bool~ font_find::$2
-bool~ font_find::$3
-bool~ font_find::$4
-bool~ font_find::$5
-byte* font_find::font
-byte* font_find::font#0
-byte* font_find::font#1
-byte* font_find::font#2
-byte* font_find::font#3
-byte* font_find::font#4
-byte* font_find::font#5
-byte* font_find::font#6
-byte* font_find::font#7
-byte* font_find::font#8
-byte* font_find::font#9
-byte font_find::font_size
-byte font_find::font_size#0
-byte font_find::font_size#1
-byte font_find::font_size#2
-byte font_find::font_size#3
-byte font_find::font_size#4
-byte font_find::font_size#5
-byte font_find::font_size#6
-byte font_find::font_size#7
-byte font_find::font_size#8
-byte font_find::found
-byte font_find::found#0
-byte font_find::found#1
-byte font_find::found#2
-byte font_find::found#3
-byte font_find::found#4
-byte* font_find::glyph
-byte* font_find::glyph#0
-byte* font_find::glyph#1
-byte* font_find::glyph#2
-byte* font_find::glyph#3
-byte* font_find::glyph#4
-byte* font_find::glyph#5
-byte* font_find::glyph#6
-byte* font_find::glyph#7
-byte* font_find::glyph#8
-byte font_find::i
-byte font_find::i#0
-byte font_find::i#1
-byte font_find::i#2
-byte font_find::i#3
-byte font_find::i#4
-byte font_find::i#5
-byte font_find::i#6
-byte font_find::i#7
-byte font_find::i#8
-byte font_find::i#9
-byte font_find::l
-byte font_find::l#0
-byte font_find::l#1
-byte font_find::l#2
-byte font_find::l#3
-byte font_find::return
-byte font_find::return#0
-byte font_find::return#1
-byte font_find::return#2
-byte font_find::return#3
-byte font_find::return#4
-byte font_find::return#5
+void font_2x2(char *font_original , char *font_2x2)
+number font_2x2::$1
+char font_2x2::$10
+number font_2x2::$11
+char font_2x2::$12
+char font_2x2::$13
+number font_2x2::$14
+char font_2x2::$15
+bool font_2x2::$16
+bool font_2x2::$17
+char *font_2x2::$18
+char *font_2x2::$19
+char font_2x2::$2
+bool font_2x2::$20
+bool font_2x2::$21
+bool font_2x2::$22
+char font_2x2::$3
+char font_2x2::$4
+unsigned int font_2x2::$5
+unsigned int font_2x2::$6
+unsigned int font_2x2::$7
+unsigned int font_2x2::$8
+bool font_2x2::$9
+char font_2x2::b
+char font_2x2::b#0
+char font_2x2::b#1
+char font_2x2::b#2
+char font_2x2::b#3
+char font_2x2::b#4
+char font_2x2::b#5
+char font_2x2::c
+char font_2x2::c#0
+char font_2x2::c#1
+char font_2x2::c#10
+char font_2x2::c#11
+char font_2x2::c#2
+char font_2x2::c#3
+char font_2x2::c#4
+char font_2x2::c#5
+char font_2x2::c#6
+char font_2x2::c#7
+char font_2x2::c#8
+char font_2x2::c#9
+char *font_2x2::font_2x2
+char *font_2x2::font_2x2#0
+char *font_2x2::font_2x2#1
+char *font_2x2::font_original
+char *font_2x2::font_original#0
+char *font_2x2::font_original#1
+char font_2x2::glyph_bit
+char font_2x2::glyph_bit#0
+char font_2x2::glyph_bits
+char font_2x2::glyph_bits#0
+char font_2x2::glyph_bits#1
+char font_2x2::glyph_bits#2
+char font_2x2::glyph_bits#3
+char font_2x2::glyph_bits#4
+char font_2x2::glyph_bits#5
+unsigned int font_2x2::glyph_bits_2x2
+unsigned int font_2x2::glyph_bits_2x2#0
+unsigned int font_2x2::glyph_bits_2x2#1
+unsigned int font_2x2::glyph_bits_2x2#2
+unsigned int font_2x2::glyph_bits_2x2#3
+unsigned int font_2x2::glyph_bits_2x2#4
+unsigned int font_2x2::glyph_bits_2x2#5
+unsigned int font_2x2::glyph_bits_2x2#6
+unsigned int font_2x2::glyph_bits_2x2#7
+char font_2x2::l
+char font_2x2::l#0
+char font_2x2::l#1
+char font_2x2::l#2
+char font_2x2::l#3
+char font_2x2::l#4
+char font_2x2::l#5
+char font_2x2::l#6
+char font_2x2::l#7
+char font_2x2::l#8
+char font_2x2::l#9
+char font_2x2::l2
+char font_2x2::l2#0
+char font_2x2::l2#1
+char font_2x2::l2#2
+char font_2x2::l2#3
+char font_2x2::l2#4
+char font_2x2::l2#5
+char font_2x2::l2#6
+char font_2x2::l2#7
+char font_2x2::l2#8
+char font_2x2::l2#9
+char *font_2x2::next_2x2
+char *font_2x2::next_2x2#0
+char *font_2x2::next_2x2#1
+char *font_2x2::next_2x2#10
+char *font_2x2::next_2x2#11
+char *font_2x2::next_2x2#2
+char *font_2x2::next_2x2#3
+char *font_2x2::next_2x2#4
+char *font_2x2::next_2x2#5
+char *font_2x2::next_2x2#6
+char *font_2x2::next_2x2#7
+char *font_2x2::next_2x2#8
+char *font_2x2::next_2x2#9
+char *font_2x2::next_2x2_left
+char *font_2x2::next_2x2_left#0
+char *font_2x2::next_2x2_left#1
+char *font_2x2::next_2x2_left#2
+char *font_2x2::next_2x2_left#3
+char *font_2x2::next_2x2_left#4
+char *font_2x2::next_2x2_left#5
+char *font_2x2::next_2x2_left#6
+char *font_2x2::next_2x2_left#7
+char *font_2x2::next_2x2_left#8
+char *font_2x2::next_2x2_right
+char *font_2x2::next_2x2_right#0
+char *font_2x2::next_2x2_right#1
+char *font_2x2::next_2x2_right#2
+char *font_2x2::next_2x2_right#3
+char *font_2x2::next_2x2_right#4
+char *font_2x2::next_2x2_right#5
+char *font_2x2::next_2x2_right#6
+char *font_2x2::next_2x2_right#7
+char *font_2x2::next_2x2_right#8
+char *font_2x2::next_original
+char *font_2x2::next_original#0
+char *font_2x2::next_original#1
+char *font_2x2::next_original#10
+char *font_2x2::next_original#11
+char *font_2x2::next_original#2
+char *font_2x2::next_original#3
+char *font_2x2::next_original#4
+char *font_2x2::next_original#5
+char *font_2x2::next_original#6
+char *font_2x2::next_original#7
+char *font_2x2::next_original#8
+char *font_2x2::next_original#9
+char font_compress(char *font_original , char *font_compressed , char *compress_mapping)
+bool font_compress::$1
+bool font_compress::$2
+bool font_compress::$3
+bool font_compress::$4
+char *font_compress::compress_mapping
+char *font_compress::compress_mapping#0
+char *font_compress::compress_mapping#1
+char *font_compress::compress_mapping#2
+char *font_compress::compress_mapping#3
+char *font_compress::compress_mapping#4
+char *font_compress::compress_mapping#5
+char *font_compress::compress_mapping#6
+char *font_compress::compress_mapping#7
+char *font_compress::font_compressed
+char *font_compress::font_compressed#0
+char *font_compress::font_compressed#1
+char *font_compress::font_compressed#2
+char *font_compress::font_compressed#3
+char *font_compress::font_compressed#4
+char *font_compress::font_compressed#5
+char *font_compress::font_compressed#6
+char *font_compress::font_compressed#7
+char *font_compress::font_original
+char *font_compress::font_original#0
+char *font_compress::font_original#1
+char font_compress::font_size
+char font_compress::font_size#0
+char font_compress::font_size#1
+char font_compress::font_size#2
+char font_compress::font_size#3
+char font_compress::font_size#4
+char font_compress::font_size#5
+char font_compress::font_size#6
+char font_compress::font_size#7
+char font_compress::font_size#8
+char font_compress::found
+char font_compress::found#0
+char font_compress::found#1
+char font_compress::found#2
+char font_compress::i
+char font_compress::i#0
+char font_compress::i#1
+char font_compress::i#2
+char font_compress::i#3
+char font_compress::i#4
+char font_compress::i#5
+char font_compress::i#6
+char font_compress::i#7
+char font_compress::l
+char font_compress::l#0
+char font_compress::l#1
+char font_compress::l#2
+char *font_compress::next_compressed
+char *font_compress::next_compressed#0
+char *font_compress::next_compressed#1
+char *font_compress::next_compressed#2
+char *font_compress::next_compressed#3
+char *font_compress::next_compressed#4
+char *font_compress::next_compressed#5
+char *font_compress::next_compressed#6
+char *font_compress::next_compressed#7
+char *font_compress::next_original
+char *font_compress::next_original#0
+char *font_compress::next_original#1
+char *font_compress::next_original#2
+char *font_compress::next_original#3
+char *font_compress::next_original#4
+char *font_compress::next_original#5
+char *font_compress::next_original#6
+char *font_compress::next_original#7
+char font_compress::return
+char font_compress::return#0
+char font_compress::return#1
+char font_compress::return#2
+char font_compress::return#3
+char font_find(char *glyph , char *font , char font_size)
+bool font_find::$0
+bool font_find::$1
+bool font_find::$2
+bool font_find::$3
+bool font_find::$4
+bool font_find::$5
+char *font_find::font
+char *font_find::font#0
+char *font_find::font#1
+char *font_find::font#2
+char *font_find::font#3
+char *font_find::font#4
+char *font_find::font#5
+char *font_find::font#6
+char *font_find::font#7
+char *font_find::font#8
+char *font_find::font#9
+char font_find::font_size
+char font_find::font_size#0
+char font_find::font_size#1
+char font_find::font_size#2
+char font_find::font_size#3
+char font_find::font_size#4
+char font_find::font_size#5
+char font_find::font_size#6
+char font_find::font_size#7
+char font_find::font_size#8
+char font_find::found
+char font_find::found#0
+char font_find::found#1
+char font_find::found#2
+char font_find::found#3
+char font_find::found#4
+char *font_find::glyph
+char *font_find::glyph#0
+char *font_find::glyph#1
+char *font_find::glyph#2
+char *font_find::glyph#3
+char *font_find::glyph#4
+char *font_find::glyph#5
+char *font_find::glyph#6
+char *font_find::glyph#7
+char *font_find::glyph#8
+char font_find::i
+char font_find::i#0
+char font_find::i#1
+char font_find::i#2
+char font_find::i#3
+char font_find::i#4
+char font_find::i#5
+char font_find::i#6
+char font_find::i#7
+char font_find::i#8
+char font_find::i#9
+char font_find::l
+char font_find::l#0
+char font_find::l#1
+char font_find::l#2
+char font_find::l#3
+char font_find::return
+char font_find::return#0
+char font_find::return#1
+char font_find::return#2
+char font_find::return#3
+char font_find::return#4
+char font_find::return#5
 void main()
-byte~ main::$2
-bool~ main::$5
-bool~ main::$6
-byte main::c
-byte main::c#0
-byte main::c#1
-byte main::c#2
-byte main::c#3
-byte main::c#4
-byte main::c#5
-number~ main::toD0181_$0
-number~ main::toD0181_$1
-byte~ main::toD0181_$2
-byte~ main::toD0181_$3
-number~ main::toD0181_$4
-number~ main::toD0181_$5
-number~ main::toD0181_$6
-word~ main::toD0181_$7
-byte* main::toD0181_gfx
-byte* main::toD0181_gfx#0
-byte* main::toD0181_gfx#1
-byte main::toD0181_return
-byte main::toD0181_return#0
-byte main::toD0181_return#1
-byte main::toD0181_return#2
-byte main::toD0181_return#3
-byte* main::toD0181_screen
-byte* main::toD0181_screen#0
-byte* main::toD0181_screen#1
-byte main::x
-byte main::x#0
-byte main::x#1
-byte main::x#2
-byte main::x#3
-byte main::y
-byte main::y#0
-byte main::y#1
-byte main::y#2
-byte main::y#3
-byte main::y#4
-byte main::y#5
-void* memset(void* memset::str , byte memset::c , word memset::num)
-bool~ memset::$0
-bool~ memset::$1
-bool~ memset::$3
-byte*~ memset::$4
-byte memset::c
-byte memset::c#0
-byte memset::c#1
-byte memset::c#2
-byte memset::c#3
-byte memset::c#4
-byte* memset::dst
-byte* memset::dst#0
-byte* memset::dst#1
-byte* memset::dst#2
-byte* memset::dst#3
-byte* memset::end
-byte* memset::end#0
-byte* memset::end#1
-byte* memset::end#2
-word memset::num
-word memset::num#0
-word memset::num#1
-word memset::num#2
-void* memset::return
-void* memset::return#0
-void* memset::return#1
-void* memset::return#2
-void* memset::return#3
-void* memset::str
-void* memset::str#0
-void* memset::str#1
-void* memset::str#2
-void* memset::str#3
-void* memset::str#4
-void* memset::str#5
-void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
-number~ show::$0
-byte*~ show::$1
-number~ show::$2
-number~ show::$4
-number~ show::$5
-number~ show::$6
-word~ show::$7
-byte show::c
-byte show::c#0
-byte show::c#1
-byte* show::font_mapping
-byte* show::font_mapping#0
-byte* show::font_mapping#1
-byte* show::ptr
-byte* show::ptr#0
-byte show::x
-byte show::x#0
-byte show::x#1
-byte show::y
-byte show::y#0
-byte show::y#1
+char main::$2
+bool main::$5
+bool main::$6
+char main::c
+char main::c#0
+char main::c#1
+char main::c#2
+char main::c#3
+char main::c#4
+char main::c#5
+number main::toD0181_$0
+number main::toD0181_$1
+char main::toD0181_$2
+char main::toD0181_$3
+number main::toD0181_$4
+number main::toD0181_$5
+number main::toD0181_$6
+unsigned int main::toD0181_$7
+char *main::toD0181_gfx
+char *main::toD0181_gfx#0
+char *main::toD0181_gfx#1
+char main::toD0181_return
+char main::toD0181_return#0
+char main::toD0181_return#1
+char main::toD0181_return#2
+char main::toD0181_return#3
+char *main::toD0181_screen
+char *main::toD0181_screen#0
+char *main::toD0181_screen#1
+char main::x
+char main::x#0
+char main::x#1
+char main::x#2
+char main::x#3
+char main::y
+char main::y#0
+char main::y#1
+char main::y#2
+char main::y#3
+char main::y#4
+char main::y#5
+void * memset(void *str , char c , unsigned int num)
+bool memset::$0
+bool memset::$1
+bool memset::$3
+char *memset::$4
+char memset::c
+char memset::c#0
+char memset::c#1
+char memset::c#2
+char memset::c#3
+char memset::c#4
+char *memset::dst
+char *memset::dst#0
+char *memset::dst#1
+char *memset::dst#2
+char *memset::dst#3
+char *memset::end
+char *memset::end#0
+char *memset::end#1
+char *memset::end#2
+unsigned int memset::num
+unsigned int memset::num#0
+unsigned int memset::num#1
+unsigned int memset::num#2
+void *memset::return
+void *memset::return#0
+void *memset::return#1
+void *memset::return#2
+void *memset::return#3
+void *memset::str
+void *memset::str#0
+void *memset::str#1
+void *memset::str#2
+void *memset::str#3
+void *memset::str#4
+void *memset::str#5
+void show(char c , char x , char y , char *font_mapping)
+number show::$0
+char *show::$1
+number show::$2
+number show::$4
+number show::$5
+number show::$6
+unsigned int show::$7
+char show::c
+char show::c#0
+char show::c#1
+char *show::font_mapping
+char *show::font_mapping#0
+char *show::font_mapping#1
+char *show::ptr
+char *show::ptr#0
+char show::x
+char show::x#0
+char show::x#1
+char show::y
+char show::y#0
+char show::y#1
 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
 Adding number conversion cast (unumber) $3fff in main::toD0181_$0 = main::toD0181_$7 & $3fff
@@ -950,18 +950,18 @@ Adding number conversion cast (unumber) 0 in font_find::found#1 = 0
 Adding number conversion cast (unumber) 0 in font_find::$5 = 0 != font_find::found#2
 Adding number conversion cast (unumber) 8 in font_find::font#1 = font_find::font#3 + 8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast memset::dst#0 = (byte*)memset::str#2
+Inlining cast memset::dst#0 = (char *)memset::str#2
 Inlining cast memset::num#0 = (unumber)$400
 Inlining cast font_2x2::l2#2 = (unumber)0
 Inlining cast font_find::return#1 = (unumber)$ff
 Inlining cast font_find::found#1 = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53272
-Simplifying constant pointer cast (byte*) 1
-Simplifying constant pointer cast (byte*) 53248
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant pointer cast (byte*) 10240
+Simplifying constant pointer cast (char *) 53272
+Simplifying constant pointer cast (char *) 1
+Simplifying constant pointer cast (char *) 53248
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 8192
+Simplifying constant pointer cast (char *) 10240
 Simplifying constant integer cast 0
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -998,55 +998,55 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $3fff
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (word) $3e7
-Finalized unsigned number type (byte) $50
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $c0
-Finalized unsigned number type (byte) $29
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (unsigned int) $3fff
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (unsigned int) $400
+Finalized unsigned number type (unsigned int) $3e7
+Finalized unsigned number type (char) $50
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $c0
+Finalized unsigned number type (char) $29
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
-Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
-Inferred type updated to byte in main::toD0181_$4 = main::toD0181_$3 / 4
-Inferred type updated to byte in main::toD0181_$5 = main::toD0181_$4 & $f
-Inferred type updated to byte in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
-Inferred type updated to word in show::$0 = show::$7 * $50
-Inferred type updated to byte in show::$2 = show::x#1 * 2
-Inferred type updated to byte in show::$4 = show::c#1 + $40
-Inferred type updated to byte in show::$5 = show::c#1 + $80
-Inferred type updated to byte in show::$6 = show::c#1 + $c0
-Inferred type updated to byte in font_2x2::$1 = font_2x2::glyph_bits#2 & $80
-Inferred type updated to byte in font_2x2::$11 = font_2x2::l2#3 + 1
-Inferred type updated to byte in font_2x2::$14 = font_2x2::l2#3 + 1
+Inferred type updated to unsigned int in main::toD0181_$0 = main::toD0181_$7 & $3fff
+Inferred type updated to unsigned int in main::toD0181_$1 = main::toD0181_$0 * 4
+Inferred type updated to char in main::toD0181_$4 = main::toD0181_$3 / 4
+Inferred type updated to char in main::toD0181_$5 = main::toD0181_$4 & $f
+Inferred type updated to char in main::toD0181_$6 = main::toD0181_$2 | main::toD0181_$5
+Inferred type updated to unsigned int in show::$0 = show::$7 * $50
+Inferred type updated to char in show::$2 = show::x#1 * 2
+Inferred type updated to char in show::$4 = show::c#1 + $40
+Inferred type updated to char in show::$5 = show::c#1 + $80
+Inferred type updated to char in show::$6 = show::c#1 + $c0
+Inferred type updated to char in font_2x2::$1 = font_2x2::glyph_bits#2 & $80
+Inferred type updated to char in font_2x2::$11 = font_2x2::l2#3 + 1
+Inferred type updated to char in font_2x2::$14 = font_2x2::l2#3 + 1
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
 Inversing boolean not [135] font_2x2::$17 = font_2x2::l2#1 != 8 from [134] font_2x2::$16 = font_2x2::l2#1 == 8
 Inversing boolean not [168] font_compress::$2 = font_compress::found#0 != $ff from [167] font_compress::$1 = font_compress::found#0 == $ff
@@ -1219,7 +1219,7 @@ Constant font_compress::font_compressed#0 = FONT_COMPRESSED
 Constant font_compress::compress_mapping#0 = FONT_COMPRESSED_MAP
 Constant main::toD0181_screen#0 = SCREEN
 Constant main::toD0181_gfx#0 = FONT_COMPRESSED
-Constant memset::str#0 = (void*)SCREEN
+Constant memset::str#0 = (void *)SCREEN
 Constant memset::num#0 = $400
 Constant main::c#0 = 0
 Constant main::y#0 = 0
@@ -1242,13 +1242,13 @@ Constant font_find::l#0 = 0
 Constant font_find::return#1 = $ff
 Constant font_find::found#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant memset::$4 = (byte*)memset::str#0
-Constant memset::dst#0 = (byte*)memset::str#0
-Constant main::toD0181_$7 = (word)main::toD0181_screen#0
+Constant memset::$4 = (char *)memset::str#0
+Constant memset::dst#0 = (char *)memset::str#0
+Constant main::toD0181_$7 = (unsigned int)main::toD0181_screen#0
 Constant memset::return#2 = memset::str#0
 Constant font_find::font#0 = font_compress::font_compressed#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_gfx#0 in [31] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
+Constant value identified (unsigned int)main::toD0181_gfx#0 in [31] main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [2] if(memset::num#0<=0) goto memset::@1
 if() condition always true - replacing block destination [58] if(true) goto main::@5
@@ -1299,22 +1299,22 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Constant right-side identified [12] main::toD0181_$0 = main::toD0181_$7 & $3fff
-Constant right-side identified [15] main::toD0181_$3 = byte1  (word)main::toD0181_gfx#0
+Constant right-side identified [15] main::toD0181_$3 = byte1  (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memset::end#0 = memset::$4+memset::num#0
 Constant main::toD0181_$0 = main::toD0181_$7&$3fff
-Constant main::toD0181_$3 = byte1 (word)main::toD0181_gfx#0
+Constant main::toD0181_$3 = byte1 (unsigned int)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [11] main::toD0181_$1 = main::toD0181_$0 * 4
 Constant right-side identified [13] main::toD0181_$4 = main::toD0181_$3 / 4
@@ -1364,31 +1364,31 @@ Constant inlined font_2x2::font_2x2#0 = FONT_ORIGINAL
 Constant inlined main::c#0 = 0
 Constant inlined font_2x2::l2#2 = 0
 Constant inlined font_compress::font_compressed#0 = FONT_COMPRESSED
-Constant inlined memset::$4 = (byte*)memset::str#0
+Constant inlined memset::$4 = (char *)memset::str#0
 Constant inlined show::font_mapping#0 = FONT_COMPRESSED_MAP
 Constant inlined font_find::font#0 = FONT_COMPRESSED
 Constant inlined font_2x2::$2 = 0
 Constant inlined font_2x2::$3 = 1
 Constant inlined font_2x2::b#0 = 0
 Constant inlined font_find::found#0 = 1
-Constant inlined main::toD0181_$7 = (word)SCREEN
+Constant inlined main::toD0181_$7 = (unsigned int)SCREEN
 Constant inlined font_find::found#1 = 0
 Constant inlined font_2x2::c#0 = 0
-Constant inlined main::toD0181_$2 = byte1 (word)SCREEN&$3fff*4
-Constant inlined main::toD0181_$1 = (word)SCREEN&$3fff*4
+Constant inlined main::toD0181_$2 = byte1 (unsigned int)SCREEN&$3fff*4
+Constant inlined main::toD0181_$1 = (unsigned int)SCREEN&$3fff*4
 Constant inlined font_find::i#0 = 0
-Constant inlined main::toD0181_$0 = (word)SCREEN&$3fff
+Constant inlined main::toD0181_$0 = (unsigned int)SCREEN&$3fff
 Constant inlined main::x#0 = 0
 Constant inlined font_compress::font_size#0 = 0
 Constant inlined main::y#0 = 0
-Constant inlined main::toD0181_$5 = byte1 (word)FONT_COMPRESSED/4&$f
+Constant inlined main::toD0181_$5 = byte1 (unsigned int)FONT_COMPRESSED/4&$f
 Constant inlined font_compress::i#0 = 0
-Constant inlined main::toD0181_$4 = byte1 (word)FONT_COMPRESSED/4
+Constant inlined main::toD0181_$4 = byte1 (unsigned int)FONT_COMPRESSED/4
 Constant inlined font_compress::l#0 = 0
-Constant inlined main::toD0181_$3 = byte1 (word)FONT_COMPRESSED
+Constant inlined main::toD0181_$3 = byte1 (unsigned int)FONT_COMPRESSED
 Constant inlined font_2x2::l#0 = 0
 Constant inlined font_find::l#0 = 0
-Constant inlined memset::dst#0 = (byte*)memset::str#0
+Constant inlined memset::dst#0 = (char *)memset::str#0
 Constant inlined font_compress::font_original#0 = FONT_ORIGINAL
 Constant inlined font_2x2::font_original#0 = CHARGEN
 Successful SSA optimization Pass2ConstantInlining
@@ -1399,14 +1399,14 @@ Consolidated array index constant in assignment (FONT_COMPRESSED_MAP+$c0)[show::
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias show::$0 = show::$10 
 Successful SSA optimization Pass2AliasElimination
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $c0
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $c0
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@11(between main::@3 and main::@1)
 Added new block during phi lifting main::@12(between main::@10 and main::@2)
@@ -1533,12 +1533,12 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [1] *PROCPORT = PROCPORT_RAM_CHARROM
-  [2] call font_2x2 
+  [2] call font_2x2
   to:main::@6
 main::@6: scope:[main]  from main
   [3] *PROCPORT = PROCPORT_BASIC_KERNEL_IO
   asm { cli  }
-  [5] call font_compress 
+  [5] call font_compress
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@6
   [6] phi()
@@ -1546,7 +1546,7 @@ main::toD0181: scope:[main]  from main::@6
 main::@5: scope:[main]  from main::toD0181
   [7] *D018 = main::toD0181_return#0
   [8] memset::c#0 = *(FONT_COMPRESSED_MAP+' ')
-  [9] call memset 
+  [9] call memset
   to:main::@1
 main::@1: scope:[main]  from main::@3 main::@5
   [10] main::y#4 = phi( main::@3/main::y#1, main::@5/0 )
@@ -1558,7 +1558,7 @@ main::@2: scope:[main]  from main::@1 main::@7
   [12] show::c#0 = main::c#2
   [13] show::x#0 = main::x#2
   [14] show::y#0 = main::y#4
-  [15] call show 
+  [15] call show
   to:main::@7
 main::@7: scope:[main]  from main::@2
   [16] main::c#1 = ++ main::c#2
@@ -1573,7 +1573,7 @@ main::@4: scope:[main]  from main::@3 main::@4
   [21] *(SCREEN+$3e7) = ++ *(SCREEN+$3e7)
   to:main::@4
 
-void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
+void font_2x2(char *font_original , char *font_2x2)
 font_2x2: scope:[font_2x2]  from main
   [22] phi()
   to:font_2x2::@1
@@ -1581,7 +1581,7 @@ font_2x2::@1: scope:[font_2x2]  from font_2x2 font_2x2::@9
   [23] font_2x2::c#11 = phi( font_2x2/0, font_2x2::@9/font_2x2::c#1 )
   [23] font_2x2::next_original#4 = phi( font_2x2/CHARGEN, font_2x2::@9/font_2x2::next_original#1 )
   [23] font_2x2::next_2x2_left#0 = phi( font_2x2/FONT_ORIGINAL, font_2x2::@9/font_2x2::next_2x2#1 )
-  [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (word)$40*8
+  [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (unsigned int)$40*8
   [25] font_2x2::next_2x2_left#10 = font_2x2::next_2x2_left#0
   to:font_2x2::@2
 font_2x2::@2: scope:[font_2x2]  from font_2x2::@1 font_2x2::@8
@@ -1626,8 +1626,8 @@ font_2x2::@6: scope:[font_2x2]  from font_2x2::@5
   [51] if(font_2x2::l2#1!=8) goto font_2x2::@8
   to:font_2x2::@7
 font_2x2::@7: scope:[font_2x2]  from font_2x2::@6
-  [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (word)$80*8
-  [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (word)$c0*8
+  [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (unsigned int)$80*8
+  [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (unsigned int)$c0*8
   to:font_2x2::@8
 font_2x2::@8: scope:[font_2x2]  from font_2x2::@6 font_2x2::@7
   [54] font_2x2::next_2x2_right#8 = phi( font_2x2::@6/font_2x2::next_2x2_right#7, font_2x2::@7/font_2x2::next_2x2_right#1 )
@@ -1646,7 +1646,7 @@ font_2x2::@return: scope:[font_2x2]  from font_2x2::@9
   [61] return 
   to:@return
 
-byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
+char font_compress(char *font_original , char *font_compressed , char *compress_mapping)
 font_compress: scope:[font_compress]  from main::@6
   [62] phi()
   to:font_compress::@1
@@ -1657,7 +1657,7 @@ font_compress::@1: scope:[font_compress]  from font_compress font_compress::@6
   [63] font_compress::next_original#2 = phi( font_compress/FONT_ORIGINAL, font_compress::@6/font_compress::next_original#1 )
   [64] font_find::glyph#0 = font_compress::next_original#2
   [65] font_find::font_size#0 = font_compress::font_size#2
-  [66] call font_find 
+  [66] call font_find
   [67] font_find::return#0 = font_find::return#3
   to:font_compress::@5
 font_compress::@5: scope:[font_compress]  from font_compress::@1
@@ -1694,12 +1694,12 @@ font_compress::@7: scope:[font_compress]  from font_compress::@5
   [84] font_compress::return#5 = font_compress::font_size#2
   to:font_compress::@2
 
-void* memset(void* memset::str , byte memset::c , word memset::num)
+void * memset(void *str , char c , unsigned int num)
 memset: scope:[memset]  from main::@5
   [85] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [86] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
+  [86] memset::dst#2 = phi( memset/(char *)memset::str#0, memset::@2/memset::dst#1 )
   [87] if(memset::dst#2!=memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
@@ -1710,9 +1710,9 @@ memset::@2: scope:[memset]  from memset::@1
   [90] memset::dst#1 = ++ memset::dst#2
   to:memset::@1
 
-void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
+void show(char c , char x , char y , char *font_mapping)
 show: scope:[show]  from main::@2
-  [91] show::$7 = (word)show::y#0
+  [91] show::$7 = (unsigned int)show::y#0
   [92] show::$8 = show::$7 << 2
   [93] show::$9 = show::$8 + show::$7
   [94] show::$0 = show::$9 << 4
@@ -1731,7 +1731,7 @@ show::@return: scope:[show]  from show
   [105] return 
   to:@return
 
-byte font_find(byte* font_find::glyph , byte* font_find::font , byte font_find::font_size)
+char font_find(char *glyph , char *font , char font_size)
 font_find: scope:[font_find]  from font_compress::@1
   [106] phi()
   to:font_find::@1
@@ -1763,147 +1763,147 @@ font_find::@5: scope:[font_find]  from font_find::@4
 
 
 VARIABLE REGISTER WEIGHTS
-void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
-byte~ font_2x2::$1 20002.0
-byte~ font_2x2::$10 2002.0
-byte~ font_2x2::$11 1001.0
-byte~ font_2x2::$12 2002.0
-byte~ font_2x2::$13 2002.0
-byte~ font_2x2::$14 1001.0
-byte~ font_2x2::$15 2002.0
-word~ font_2x2::$5 20002.0
-word~ font_2x2::$7 20002.0
-byte font_2x2::b
-byte font_2x2::b#1 15001.5
-byte font_2x2::b#2 2000.2
-byte font_2x2::c
-byte font_2x2::c#1 151.5
-byte font_2x2::c#11 5.611111111111111
-byte* font_2x2::font_2x2
-byte* font_2x2::font_original
-byte font_2x2::glyph_bit
-byte font_2x2::glyph_bit#0 5000.5
-byte font_2x2::glyph_bits
-byte font_2x2::glyph_bits#0 2002.0
-byte font_2x2::glyph_bits#1 6667.333333333333
-byte font_2x2::glyph_bits#2 3444.8888888888887
-word font_2x2::glyph_bits_2x2
-word font_2x2::glyph_bits_2x2#1 20002.0
-word font_2x2::glyph_bits_2x2#2 2000.5000000000002
-word font_2x2::glyph_bits_2x2#3 4000.4
-byte font_2x2::l
-byte font_2x2::l#1 1501.5
-byte font_2x2::l#2 103.55172413793102
-byte font_2x2::l2
-byte font_2x2::l2#1 1501.5
-byte font_2x2::l2#8 250.25000000000003
-byte font_2x2::l2#9 667.3333333333334
-byte* font_2x2::next_2x2
-byte* font_2x2::next_2x2#1 50.5
-byte* font_2x2::next_2x2_left
-byte* font_2x2::next_2x2_left#0 70.76470588235294
-byte* font_2x2::next_2x2_left#1 1001.0
-byte* font_2x2::next_2x2_left#10 202.0
-byte* font_2x2::next_2x2_left#7 157.8846153846154
-byte* font_2x2::next_2x2_left#8 1001.0
-byte* font_2x2::next_2x2_right
-byte* font_2x2::next_2x2_right#0 101.0
-byte* font_2x2::next_2x2_right#1 2002.0
-byte* font_2x2::next_2x2_right#7 157.8846153846154
-byte* font_2x2::next_2x2_right#8 1001.0
-byte* font_2x2::next_original
-byte* font_2x2::next_original#1 67.33333333333333
-byte* font_2x2::next_original#4 34.371428571428574
-byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
-byte* font_compress::compress_mapping
-byte* font_compress::font_compressed
-byte* font_compress::font_original
-byte font_compress::font_size
-byte font_compress::font_size#1 101.0
-byte font_compress::font_size#2 38.84615384615385
-byte font_compress::font_size#9 202.0
-byte font_compress::found
-byte font_compress::found#0 101.0
-byte font_compress::found#2 303.0
-byte font_compress::found#3 202.0
-byte font_compress::i
-byte font_compress::i#1 101.0
-byte font_compress::i#4 16.833333333333332
-byte font_compress::l
-byte font_compress::l#1 1501.5
-byte font_compress::l#2 2002.0
-byte* font_compress::next_compressed
-byte* font_compress::next_compressed#1 67.33333333333333
-byte* font_compress::next_compressed#4 108.66666666666669
-byte* font_compress::next_compressed#7 50.5
-byte* font_compress::next_original
-byte* font_compress::next_original#1 50.5
-byte* font_compress::next_original#2 76.70588235294117
-byte font_compress::return
-byte font_compress::return#1 60.599999999999994
-byte font_compress::return#5 202.0
-byte font_find(byte* font_find::glyph , byte* font_find::font , byte font_find::font_size)
-byte* font_find::font
-byte* font_find::font#1 100001.0
-byte* font_find::font#4 150000.375
-byte font_find::font_size
-byte font_find::font_size#0 8341.833333333332
-byte font_find::found
-byte font_find::found#2 100001.0
-byte* font_find::glyph
-byte* font_find::glyph#0 76930.92307692308
-byte font_find::i
-byte font_find::i#1 200002.0
-byte font_find::i#2 44444.88888888889
-byte font_find::l
-byte font_find::l#1 1500001.5
-byte font_find::l#2 2000002.0
-byte font_find::return
-byte font_find::return#0 202.0
-byte font_find::return#3 33367.33333333333
+void font_2x2(char *font_original , char *font_2x2)
+char font_2x2::$1 // 20002.0
+char font_2x2::$10 // 2002.0
+char font_2x2::$11 // 1001.0
+char font_2x2::$12 // 2002.0
+char font_2x2::$13 // 2002.0
+char font_2x2::$14 // 1001.0
+char font_2x2::$15 // 2002.0
+unsigned int font_2x2::$5 // 20002.0
+unsigned int font_2x2::$7 // 20002.0
+char font_2x2::b
+char font_2x2::b#1 // 15001.5
+char font_2x2::b#2 // 2000.2
+char font_2x2::c
+char font_2x2::c#1 // 151.5
+char font_2x2::c#11 // 5.611111111111111
+char *font_2x2::font_2x2
+char *font_2x2::font_original
+char font_2x2::glyph_bit
+char font_2x2::glyph_bit#0 // 5000.5
+char font_2x2::glyph_bits
+char font_2x2::glyph_bits#0 // 2002.0
+char font_2x2::glyph_bits#1 // 6667.333333333333
+char font_2x2::glyph_bits#2 // 3444.8888888888887
+unsigned int font_2x2::glyph_bits_2x2
+unsigned int font_2x2::glyph_bits_2x2#1 // 20002.0
+unsigned int font_2x2::glyph_bits_2x2#2 // 2000.5000000000002
+unsigned int font_2x2::glyph_bits_2x2#3 // 4000.4
+char font_2x2::l
+char font_2x2::l#1 // 1501.5
+char font_2x2::l#2 // 103.55172413793102
+char font_2x2::l2
+char font_2x2::l2#1 // 1501.5
+char font_2x2::l2#8 // 250.25000000000003
+char font_2x2::l2#9 // 667.3333333333334
+char *font_2x2::next_2x2
+char *font_2x2::next_2x2#1 // 50.5
+char *font_2x2::next_2x2_left
+char *font_2x2::next_2x2_left#0 // 70.76470588235294
+char *font_2x2::next_2x2_left#1 // 1001.0
+char *font_2x2::next_2x2_left#10 // 202.0
+char *font_2x2::next_2x2_left#7 // 157.8846153846154
+char *font_2x2::next_2x2_left#8 // 1001.0
+char *font_2x2::next_2x2_right
+char *font_2x2::next_2x2_right#0 // 101.0
+char *font_2x2::next_2x2_right#1 // 2002.0
+char *font_2x2::next_2x2_right#7 // 157.8846153846154
+char *font_2x2::next_2x2_right#8 // 1001.0
+char *font_2x2::next_original
+char *font_2x2::next_original#1 // 67.33333333333333
+char *font_2x2::next_original#4 // 34.371428571428574
+char font_compress(char *font_original , char *font_compressed , char *compress_mapping)
+char *font_compress::compress_mapping
+char *font_compress::font_compressed
+char *font_compress::font_original
+char font_compress::font_size
+char font_compress::font_size#1 // 101.0
+char font_compress::font_size#2 // 38.84615384615385
+char font_compress::font_size#9 // 202.0
+char font_compress::found
+char font_compress::found#0 // 101.0
+char font_compress::found#2 // 303.0
+char font_compress::found#3 // 202.0
+char font_compress::i
+char font_compress::i#1 // 101.0
+char font_compress::i#4 // 16.833333333333332
+char font_compress::l
+char font_compress::l#1 // 1501.5
+char font_compress::l#2 // 2002.0
+char *font_compress::next_compressed
+char *font_compress::next_compressed#1 // 67.33333333333333
+char *font_compress::next_compressed#4 // 108.66666666666669
+char *font_compress::next_compressed#7 // 50.5
+char *font_compress::next_original
+char *font_compress::next_original#1 // 50.5
+char *font_compress::next_original#2 // 76.70588235294117
+char font_compress::return
+char font_compress::return#1 // 60.599999999999994
+char font_compress::return#5 // 202.0
+char font_find(char *glyph , char *font , char font_size)
+char *font_find::font
+char *font_find::font#1 // 100001.0
+char *font_find::font#4 // 150000.375
+char font_find::font_size
+char font_find::font_size#0 // 8341.833333333332
+char font_find::found
+char font_find::found#2 // 100001.0
+char *font_find::glyph
+char *font_find::glyph#0 // 76930.92307692308
+char font_find::i
+char font_find::i#1 // 200002.0
+char font_find::i#2 // 44444.88888888889
+char font_find::l
+char font_find::l#1 // 1500001.5
+char font_find::l#2 // 2000002.0
+char font_find::return
+char font_find::return#0 // 202.0
+char font_find::return#3 // 33367.33333333333
 void main()
-byte main::c
-byte main::c#1 42.599999999999994
-byte main::c#2 62.8
-byte main::c#4 22.0
-byte* main::toD0181_gfx
-byte main::toD0181_return
-byte* main::toD0181_screen
-byte main::x
-byte main::x#1 151.5
-byte main::x#2 50.5
-byte main::y
-byte main::y#1 16.5
-byte main::y#4 13.666666666666664
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-byte memset::c#0 17.166666666666664
-byte* memset::dst
-byte* memset::dst#1 202.0
-byte* memset::dst#2 134.66666666666666
-byte* memset::end
-word memset::num
-void* memset::return
-void* memset::str
-void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
-word~ show::$0 2002.0
-byte*~ show::$1 1001.0
-byte~ show::$2 2002.0
-byte~ show::$4 2002.0
-byte~ show::$5 2002.0
-byte~ show::$6 2002.0
-word~ show::$7 1501.5
-word~ show::$8 2002.0
-word~ show::$9 2002.0
-byte show::c
-byte show::c#0 273.6666666666667
-byte* show::font_mapping
-byte* show::ptr
-byte* show::ptr#0 715.0
-byte show::x
-byte show::x#0 157.42857142857142
-byte show::y
-byte show::y#0 101.0
+char main::c
+char main::c#1 // 42.599999999999994
+char main::c#2 // 62.8
+char main::c#4 // 22.0
+char *main::toD0181_gfx
+char main::toD0181_return
+char *main::toD0181_screen
+char main::x
+char main::x#1 // 151.5
+char main::x#2 // 50.5
+char main::y
+char main::y#1 // 16.5
+char main::y#4 // 13.666666666666664
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+char memset::c#0 // 17.166666666666664
+char *memset::dst
+char *memset::dst#1 // 202.0
+char *memset::dst#2 // 134.66666666666666
+char *memset::end
+unsigned int memset::num
+void *memset::return
+void *memset::str
+void show(char c , char x , char y , char *font_mapping)
+unsigned int show::$0 // 2002.0
+char *show::$1 // 1001.0
+char show::$2 // 2002.0
+char show::$4 // 2002.0
+char show::$5 // 2002.0
+char show::$6 // 2002.0
+unsigned int show::$7 // 1501.5
+unsigned int show::$8 // 2002.0
+unsigned int show::$9 // 2002.0
+char show::c
+char show::c#0 // 273.6666666666667
+char *show::font_mapping
+char *show::ptr
+char *show::ptr#0 // 715.0
+char show::x
+char show::x#0 // 157.42857142857142
+char show::y
+char show::y#0 // 101.0
 
 Initial phi equivalence classes
 [ main::y#4 main::y#1 ]
@@ -2070,7 +2070,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] *PROCPORT = PROCPORT_RAM_CHARROM [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *PROCPORT = PROCPORT_BASIC_KERNEL_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *D018 = main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (word)$40*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] { }  ) always clobbers reg byte a 
+Statement [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (unsigned int)$40*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ font_2x2::c#11 font_2x2::c#1 ]
 Statement [25] font_2x2::next_2x2_left#10 = font_2x2::next_2x2_left#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 font_2x2::next_2x2_left#10 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 font_2x2::next_2x2_left#10 ] { }  ) always clobbers reg byte a 
 Statement [27] font_2x2::glyph_bits#0 = font_2x2::next_original#4[font_2x2::l#2] [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#0 ] { }  ) always clobbers reg byte a 
@@ -2083,8 +2083,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:20 [ font_2
 Statement [34] font_2x2::glyph_bits_2x2#1 = font_2x2::$5 | font_2x2::glyph_bit#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::glyph_bits_2x2#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::glyph_bits_2x2#1 ] { }  ) always clobbers reg byte a 
 Statement [35] font_2x2::$7 = font_2x2::glyph_bits_2x2#1 << 1 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::$7 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::$7 ] { }  ) always clobbers reg byte a 
 Statement [36] font_2x2::glyph_bits_2x2#2 = font_2x2::$7 | font_2x2::glyph_bit#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bits_2x2#2 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bits_2x2#2 ] { }  ) always clobbers reg byte a 
-Statement [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (word)$80*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] { }  ) always clobbers reg byte a 
-Statement [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (word)$c0*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] { }  ) always clobbers reg byte a 
+Statement [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (unsigned int)$80*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] { }  ) always clobbers reg byte a 
+Statement [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (unsigned int)$c0*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] { }  ) always clobbers reg byte a 
 Statement [57] font_2x2::next_2x2#1 = font_2x2::next_2x2_left#0 + 8 [ font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2#1 ] ( font_2x2:2 [ font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2#1 ] { }  ) always clobbers reg byte a 
 Statement [58] font_2x2::next_original#1 = font_2x2::next_original#4 + 8 [ font_2x2::c#11 font_2x2::next_2x2#1 font_2x2::next_original#1 ] ( font_2x2:2 [ font_2x2::c#11 font_2x2::next_2x2#1 font_2x2::next_original#1 ] { }  ) always clobbers reg byte a 
 Statement [64] font_find::glyph#0 = font_compress::next_original#2 [ font_compress::next_original#2 font_compress::font_size#2 font_compress::i#4 font_compress::next_compressed#4 font_find::glyph#0 ] ( font_compress:5 [ font_compress::next_original#2 font_compress::font_size#2 font_compress::i#4 font_compress::next_compressed#4 font_find::glyph#0 ] { { font_find::glyph#0 = font_compress::next_original#2 } { font_find::font_size#0 = font_compress::font_size#2 } { font_find::return#0 = font_find::return#3 } }  ) always clobbers reg byte a 
@@ -2099,7 +2099,7 @@ Statement [87] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::c#0 me
 Removing always clobbered register reg byte a as potential for zp[1]:37 [ memset::c#0 ]
 Statement [89] *memset::dst#2 = memset::c#0 [ memset::c#0 memset::dst#2 ] ( memset:9 [ memset::c#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:37 [ memset::c#0 ]
-Statement [91] show::$7 = (word)show::y#0 [ show::c#0 show::x#0 show::$7 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$7 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
+Statement [91] show::$7 = (unsigned int)show::y#0 [ show::c#0 show::x#0 show::$7 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$7 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::c#2 main::c#4 main::c#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::x#2 main::x#1 ]
@@ -2127,7 +2127,7 @@ Statement [117] font_find::font#1 = font_find::font#4 + 8 [ font_find::glyph#0 f
 Statement [1] *PROCPORT = PROCPORT_RAM_CHARROM [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *PROCPORT = PROCPORT_BASIC_KERNEL_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *D018 = main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (word)$40*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] { }  ) always clobbers reg byte a 
+Statement [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (unsigned int)$40*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 ] { }  ) always clobbers reg byte a 
 Statement [25] font_2x2::next_2x2_left#10 = font_2x2::next_2x2_left#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 font_2x2::next_2x2_left#10 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2_right#0 font_2x2::next_2x2_left#10 ] { }  ) always clobbers reg byte a 
 Statement [27] font_2x2::glyph_bits#0 = font_2x2::next_original#4[font_2x2::l#2] [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#0 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#0 ] { }  ) always clobbers reg byte a 
 Statement [29] font_2x2::$1 = font_2x2::glyph_bits#2 & $80 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::glyph_bits_2x2#3 font_2x2::b#2 font_2x2::$1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::glyph_bits_2x2#3 font_2x2::b#2 font_2x2::$1 ] { }  ) always clobbers reg byte a 
@@ -2135,8 +2135,8 @@ Statement [33] font_2x2::$5 = font_2x2::glyph_bits_2x2#3 << 1 [ font_2x2::next_2
 Statement [34] font_2x2::glyph_bits_2x2#1 = font_2x2::$5 | font_2x2::glyph_bit#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::glyph_bits_2x2#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::glyph_bits_2x2#1 ] { }  ) always clobbers reg byte a 
 Statement [35] font_2x2::$7 = font_2x2::glyph_bits_2x2#1 << 1 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::$7 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bit#0 font_2x2::$7 ] { }  ) always clobbers reg byte a 
 Statement [36] font_2x2::glyph_bits_2x2#2 = font_2x2::$7 | font_2x2::glyph_bit#0 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bits_2x2#2 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#7 font_2x2::l2#8 font_2x2::next_2x2_right#7 font_2x2::glyph_bits#2 font_2x2::b#2 font_2x2::glyph_bits_2x2#2 ] { }  ) always clobbers reg byte a 
-Statement [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (word)$80*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] { }  ) always clobbers reg byte a 
-Statement [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (word)$c0*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] { }  ) always clobbers reg byte a 
+Statement [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (unsigned int)$80*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 ] { }  ) always clobbers reg byte a 
+Statement [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (unsigned int)$c0*8 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] ( font_2x2:2 [ font_2x2::next_2x2_left#0 font_2x2::next_original#4 font_2x2::c#11 font_2x2::l#2 font_2x2::next_2x2_left#1 font_2x2::next_2x2_right#1 ] { }  ) always clobbers reg byte a 
 Statement [57] font_2x2::next_2x2#1 = font_2x2::next_2x2_left#0 + 8 [ font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2#1 ] ( font_2x2:2 [ font_2x2::next_original#4 font_2x2::c#11 font_2x2::next_2x2#1 ] { }  ) always clobbers reg byte a 
 Statement [58] font_2x2::next_original#1 = font_2x2::next_original#4 + 8 [ font_2x2::c#11 font_2x2::next_2x2#1 font_2x2::next_original#1 ] ( font_2x2:2 [ font_2x2::c#11 font_2x2::next_2x2#1 font_2x2::next_original#1 ] { }  ) always clobbers reg byte a 
 Statement [64] font_find::glyph#0 = font_compress::next_original#2 [ font_compress::next_original#2 font_compress::font_size#2 font_compress::i#4 font_compress::next_compressed#4 font_find::glyph#0 ] ( font_compress:5 [ font_compress::next_original#2 font_compress::font_size#2 font_compress::i#4 font_compress::next_compressed#4 font_find::glyph#0 ] { { font_find::glyph#0 = font_compress::next_original#2 } { font_find::font_size#0 = font_compress::font_size#2 } { font_find::return#0 = font_find::return#3 } }  ) always clobbers reg byte a 
@@ -2145,7 +2145,7 @@ Statement [74] font_compress::next_compressed#1 = font_compress::next_compressed
 Statement [79] font_compress::next_original#1 = font_compress::next_original#2 + 8 [ font_compress::i#4 font_compress::next_original#1 font_compress::next_compressed#7 font_compress::return#1 ] ( font_compress:5 [ font_compress::i#4 font_compress::next_original#1 font_compress::next_compressed#7 font_compress::return#1 ] { }  ) always clobbers reg byte a 
 Statement [87] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::c#0 memset::dst#2 ] ( memset:9 [ memset::c#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [89] *memset::dst#2 = memset::c#0 [ memset::c#0 memset::dst#2 ] ( memset:9 [ memset::c#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [91] show::$7 = (word)show::y#0 [ show::c#0 show::x#0 show::$7 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$7 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
+Statement [91] show::$7 = (unsigned int)show::y#0 [ show::c#0 show::x#0 show::$7 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$7 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
 Statement [92] show::$8 = show::$7 << 2 [ show::c#0 show::x#0 show::$7 show::$8 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$7 show::$8 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
 Statement [93] show::$9 = show::$8 + show::$7 [ show::c#0 show::x#0 show::$9 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$9 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
 Statement [94] show::$0 = show::$9 << 4 [ show::c#0 show::x#0 show::$0 ] ( show:15 [ main::y#4 main::c#2 main::x#2 show::c#0 show::x#0 show::$0 ] { { show::c#0 = main::c#2 } { show::x#0 = main::x#2 } { show::y#0 = main::y#4 } }  ) always clobbers reg byte a 
@@ -2346,7 +2346,7 @@ main: {
     // [1] *PROCPORT = PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-    // [2] call font_2x2 
+    // [2] call font_2x2
     // [22] phi from main to font_2x2 [phi:main->font_2x2]
   font_2x2_from_main:
     jsr font_2x2
@@ -2358,7 +2358,7 @@ main: {
     sta PROCPORT
     // asm { cli  }
     cli
-    // [5] call font_compress 
+    // [5] call font_compress
   // Compress the font finding identical characters
     // [62] phi from main::@6 to font_compress [phi:main::@6->font_compress]
   font_compress_from___b6:
@@ -2377,7 +2377,7 @@ main: {
     sta D018
     // [8] memset::c#0 = *(FONT_COMPRESSED_MAP+' ') -- vbuxx=_deref_pbuc1 
     ldx FONT_COMPRESSED_MAP+' '
-    // [9] call memset 
+    // [9] call memset
   // Clear the screen
     // [85] phi from main::@5 to memset [phi:main::@5->memset]
   memset_from___b5:
@@ -2417,7 +2417,7 @@ main: {
     ldx.z x
     // [14] show::y#0 = main::y#4 -- vbuaa=vbuz1 
     lda.z y
-    // [15] call show 
+    // [15] call show
     jsr show
     jmp __b7
     // main::@7
@@ -2448,6 +2448,7 @@ main: {
 }
   // font_2x2
 // Create a 2x2-font by doubling all pixels of the 64 first chars
+// void font_2x2(char *font_original, char *font_2x2)
 font_2x2: {
     .label __5 = $f
     .label __7 = $f
@@ -2485,7 +2486,7 @@ font_2x2: {
     jmp __b1
     // font_2x2::@1
   __b1:
-    // [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (word)$40*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (unsigned int)$40*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$40*8
@@ -2626,7 +2627,7 @@ font_2x2: {
     jmp __b7
     // font_2x2::@7
   __b7:
-    // [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (word)$80*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (unsigned int)$80*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$80*8
@@ -2634,7 +2635,7 @@ font_2x2: {
     lda.z next_2x2_left+1
     adc #>$80*8
     sta.z next_2x2_left_1+1
-    // [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (word)$c0*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (unsigned int)$c0*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$c0*8
@@ -2700,6 +2701,7 @@ font_2x2: {
 // The compressed font is put into font_compressed and the compress_mapping is updated
 // so that compress_mapping[c] points to the char in font_compressed that is identical to char c in font_original
 // Returns the size of the compressed font (in chars)
+// __register(X) char font_compress(char *font_original, char *font_compressed, char *compress_mapping)
 font_compress: {
     .label next_original = $11
     .label i = 8
@@ -2728,7 +2730,7 @@ font_compress: {
   __b1:
     // [64] font_find::glyph#0 = font_compress::next_original#2
     // [65] font_find::font_size#0 = font_compress::font_size#2
-    // [66] call font_find 
+    // [66] call font_find
   // Look for the char in font_compressed
     // [106] phi from font_compress::@1 to font_find [phi:font_compress::@1->font_find]
   font_find_from___b1:
@@ -2827,7 +2829,7 @@ font_compress: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(byte register(X) c)
+// void * memset(void *str, __register(X) char c, unsigned int num)
 memset: {
     .const num = $400
     .label str = SCREEN
@@ -2835,7 +2837,7 @@ memset: {
     .label dst = $b
     // [86] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [86] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [86] phi memset::dst#2 = (char *)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -2873,7 +2875,7 @@ memset: {
 }
   // show
 // Show a 2x2 char on the screen at 2x2-position (x, y) using a font compress mapping
-// show(byte zp(3) c, byte register(X) x, byte register(A) y)
+// void show(__zp(3) char c, __register(X) char x, __register(A) char y, char *font_mapping)
 show: {
     .label __0 = $f
     .label __1 = $f
@@ -2882,7 +2884,7 @@ show: {
     .label ptr = $f
     .label __8 = $11
     .label __9 = $f
-    // [91] show::$7 = (word)show::y#0 -- vwuz1=_word_vbuaa 
+    // [91] show::$7 = (unsigned int)show::y#0 -- vwuz1=_word_vbuaa 
     sta.z __7
     lda #0
     sta.z __7+1
@@ -2965,7 +2967,7 @@ show: {
 // Look for a glyph within a font
 // Only looks at the first font_size glyphs
 // Returns the index of the glyph within the font. Returns 0xff if the glyph is not found.
-// font_find(byte* zp($11) glyph, byte* zp($d) font, byte zp(7) font_size)
+// __register(X) char font_find(__zp($11) char *glyph, __zp($d) char *font, __zp(7) char font_size)
 font_find: {
     .label glyph = $11
     .label font_size = 7
@@ -3182,163 +3184,163 @@ Removing instruction lda #8
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [194] bne __b1 to beq
+Fixing long branch [195] bne __b1 to beq
 
 FINAL SYMBOL TABLE
-constant byte* const CHARGEN = (byte*) 53248
-constant byte* const D018 = (byte*) 53272
-constant byte* const FONT_COMPRESSED = (byte*) 10240
-constant byte* FONT_COMPRESSED_MAP[$100]  = { fill( $100, 0) }
-constant byte* const FONT_ORIGINAL = (byte*) 8192
-constant byte* const PROCPORT = (byte*) 1
-constant const byte PROCPORT_BASIC_KERNEL_IO = 7
-constant const byte PROCPORT_RAM_CHARROM = 1
-constant byte* const SCREEN = (byte*) 1024
-void font_2x2(byte* font_2x2::font_original , byte* font_2x2::font_2x2)
-byte~ font_2x2::$1 reg byte a 20002.0
-byte~ font_2x2::$10 reg byte a 2002.0
-byte~ font_2x2::$11 reg byte y 1001.0
-byte~ font_2x2::$12 reg byte a 2002.0
-byte~ font_2x2::$13 reg byte a 2002.0
-byte~ font_2x2::$14 reg byte y 1001.0
-byte~ font_2x2::$15 reg byte a 2002.0
-word~ font_2x2::$5 zp[2]:15 20002.0
-word~ font_2x2::$7 zp[2]:15 20002.0
-byte font_2x2::b
-byte font_2x2::b#1 reg byte y 15001.5
-byte font_2x2::b#2 reg byte y 2000.2
-byte font_2x2::c
-byte font_2x2::c#1 c zp[1]:7 151.5
-byte font_2x2::c#11 c zp[1]:7 5.611111111111111
-byte* font_2x2::font_2x2
-byte* font_2x2::font_original
-byte font_2x2::glyph_bit
-byte font_2x2::glyph_bit#0 reg byte x 5000.5
-byte font_2x2::glyph_bits
-byte font_2x2::glyph_bits#0 glyph_bits zp[1]:6 2002.0
-byte font_2x2::glyph_bits#1 glyph_bits zp[1]:6 6667.333333333333
-byte font_2x2::glyph_bits#2 glyph_bits zp[1]:6 3444.8888888888887
-word font_2x2::glyph_bits_2x2
-word font_2x2::glyph_bits_2x2#1 glyph_bits_2x2 zp[2]:15 20002.0
-word font_2x2::glyph_bits_2x2#2 glyph_bits_2x2 zp[2]:15 2000.5000000000002
-word font_2x2::glyph_bits_2x2#3 glyph_bits_2x2 zp[2]:15 4000.4
-byte font_2x2::l
-byte font_2x2::l#1 l zp[1]:8 1501.5
-byte font_2x2::l#2 l zp[1]:8 103.55172413793102
-byte font_2x2::l2
-byte font_2x2::l2#1 l2 zp[1]:5 1501.5
-byte font_2x2::l2#8 l2 zp[1]:5 250.25000000000003
-byte font_2x2::l2#9 l2 zp[1]:5 667.3333333333334
-byte* font_2x2::next_2x2
-byte* font_2x2::next_2x2#1 next_2x2 zp[2]:17 50.5
-byte* font_2x2::next_2x2_left
-byte* font_2x2::next_2x2_left#0 next_2x2_left zp[2]:17 70.76470588235294
-byte* font_2x2::next_2x2_left#1 next_2x2_left_1 zp[2]:11 1001.0
-byte* font_2x2::next_2x2_left#10 next_2x2_left_1 zp[2]:11 202.0
-byte* font_2x2::next_2x2_left#7 next_2x2_left_1 zp[2]:11 157.8846153846154
-byte* font_2x2::next_2x2_left#8 next_2x2_left_1 zp[2]:11 1001.0
-byte* font_2x2::next_2x2_right
-byte* font_2x2::next_2x2_right#0 next_2x2_right zp[2]:13 101.0
-byte* font_2x2::next_2x2_right#1 next_2x2_right zp[2]:13 2002.0
-byte* font_2x2::next_2x2_right#7 next_2x2_right zp[2]:13 157.8846153846154
-byte* font_2x2::next_2x2_right#8 next_2x2_right zp[2]:13 1001.0
-byte* font_2x2::next_original
-byte* font_2x2::next_original#1 next_original zp[2]:9 67.33333333333333
-byte* font_2x2::next_original#4 next_original zp[2]:9 34.371428571428574
-byte font_compress(byte* font_compress::font_original , byte* font_compress::font_compressed , byte* font_compress::compress_mapping)
-byte* font_compress::compress_mapping
-byte* font_compress::font_compressed
-byte* font_compress::font_original
-byte font_compress::font_size
-byte font_compress::font_size#1 reg byte x 101.0
-byte font_compress::font_size#2 font_size zp[1]:7 38.84615384615385
-byte font_compress::font_size#9 font_size zp[1]:7 202.0
-byte font_compress::found
-byte font_compress::found#0 reg byte a 101.0
-byte font_compress::found#2 reg byte a 303.0
-byte font_compress::found#3 reg byte a 202.0
-byte font_compress::i
-byte font_compress::i#1 i zp[1]:8 101.0
-byte font_compress::i#4 i zp[1]:8 16.833333333333332
-byte font_compress::l
-byte font_compress::l#1 reg byte y 1501.5
-byte font_compress::l#2 reg byte y 2002.0
-byte* font_compress::next_compressed
-byte* font_compress::next_compressed#1 next_compressed zp[2]:9 67.33333333333333
-byte* font_compress::next_compressed#4 next_compressed zp[2]:9 108.66666666666669
-byte* font_compress::next_compressed#7 next_compressed zp[2]:9 50.5
-byte* font_compress::next_original
-byte* font_compress::next_original#1 next_original zp[2]:17 50.5
-byte* font_compress::next_original#2 next_original zp[2]:17 76.70588235294117
-byte font_compress::return
-byte font_compress::return#1 reg byte x 60.599999999999994
-byte font_compress::return#5 reg byte x 202.0
-byte font_find(byte* font_find::glyph , byte* font_find::font , byte font_find::font_size)
-byte* font_find::font
-byte* font_find::font#1 font zp[2]:13 100001.0
-byte* font_find::font#4 font zp[2]:13 150000.375
-byte font_find::font_size
-byte font_find::font_size#0 font_size zp[1]:7 8341.833333333332
-byte font_find::found
-byte font_find::found#2 reg byte a 100001.0
-byte* font_find::glyph
-byte* font_find::glyph#0 glyph zp[2]:17 76930.92307692308
-byte font_find::i
-byte font_find::i#1 reg byte x 200002.0
-byte font_find::i#2 reg byte x 44444.88888888889
-byte font_find::l
-byte font_find::l#1 reg byte y 1500001.5
-byte font_find::l#2 reg byte y 2000002.0
-byte font_find::return
-byte font_find::return#0 reg byte a 202.0
-byte font_find::return#3 reg byte x 33367.33333333333
+__constant char * const CHARGEN = (char *) 53248
+__constant char * const D018 = (char *) 53272
+__constant char * const FONT_COMPRESSED = (char *) 10240
+__constant char FONT_COMPRESSED_MAP[$100] = { fill( $100, 0) }
+__constant char * const FONT_ORIGINAL = (char *) 8192
+__constant char * const PROCPORT = (char *) 1
+__constant const char PROCPORT_BASIC_KERNEL_IO = 7
+__constant const char PROCPORT_RAM_CHARROM = 1
+__constant char * const SCREEN = (char *) 1024
+void font_2x2(char *font_original , char *font_2x2)
+char font_2x2::$1 // reg byte a 20002.0
+char font_2x2::$10 // reg byte a 2002.0
+char font_2x2::$11 // reg byte y 1001.0
+char font_2x2::$12 // reg byte a 2002.0
+char font_2x2::$13 // reg byte a 2002.0
+char font_2x2::$14 // reg byte y 1001.0
+char font_2x2::$15 // reg byte a 2002.0
+unsigned int font_2x2::$5 // zp[2]:15 20002.0
+unsigned int font_2x2::$7 // zp[2]:15 20002.0
+char font_2x2::b
+char font_2x2::b#1 // reg byte y 15001.5
+char font_2x2::b#2 // reg byte y 2000.2
+char font_2x2::c
+char font_2x2::c#1 // c zp[1]:7 151.5
+char font_2x2::c#11 // c zp[1]:7 5.611111111111111
+char *font_2x2::font_2x2
+char *font_2x2::font_original
+char font_2x2::glyph_bit
+char font_2x2::glyph_bit#0 // reg byte x 5000.5
+char font_2x2::glyph_bits
+char font_2x2::glyph_bits#0 // glyph_bits zp[1]:6 2002.0
+char font_2x2::glyph_bits#1 // glyph_bits zp[1]:6 6667.333333333333
+char font_2x2::glyph_bits#2 // glyph_bits zp[1]:6 3444.8888888888887
+unsigned int font_2x2::glyph_bits_2x2
+unsigned int font_2x2::glyph_bits_2x2#1 // glyph_bits_2x2 zp[2]:15 20002.0
+unsigned int font_2x2::glyph_bits_2x2#2 // glyph_bits_2x2 zp[2]:15 2000.5000000000002
+unsigned int font_2x2::glyph_bits_2x2#3 // glyph_bits_2x2 zp[2]:15 4000.4
+char font_2x2::l
+char font_2x2::l#1 // l zp[1]:8 1501.5
+char font_2x2::l#2 // l zp[1]:8 103.55172413793102
+char font_2x2::l2
+char font_2x2::l2#1 // l2 zp[1]:5 1501.5
+char font_2x2::l2#8 // l2 zp[1]:5 250.25000000000003
+char font_2x2::l2#9 // l2 zp[1]:5 667.3333333333334
+char *font_2x2::next_2x2
+char *font_2x2::next_2x2#1 // next_2x2 zp[2]:17 50.5
+char *font_2x2::next_2x2_left
+char *font_2x2::next_2x2_left#0 // next_2x2_left zp[2]:17 70.76470588235294
+char *font_2x2::next_2x2_left#1 // next_2x2_left_1 zp[2]:11 1001.0
+char *font_2x2::next_2x2_left#10 // next_2x2_left_1 zp[2]:11 202.0
+char *font_2x2::next_2x2_left#7 // next_2x2_left_1 zp[2]:11 157.8846153846154
+char *font_2x2::next_2x2_left#8 // next_2x2_left_1 zp[2]:11 1001.0
+char *font_2x2::next_2x2_right
+char *font_2x2::next_2x2_right#0 // next_2x2_right zp[2]:13 101.0
+char *font_2x2::next_2x2_right#1 // next_2x2_right zp[2]:13 2002.0
+char *font_2x2::next_2x2_right#7 // next_2x2_right zp[2]:13 157.8846153846154
+char *font_2x2::next_2x2_right#8 // next_2x2_right zp[2]:13 1001.0
+char *font_2x2::next_original
+char *font_2x2::next_original#1 // next_original zp[2]:9 67.33333333333333
+char *font_2x2::next_original#4 // next_original zp[2]:9 34.371428571428574
+char font_compress(char *font_original , char *font_compressed , char *compress_mapping)
+char *font_compress::compress_mapping
+char *font_compress::font_compressed
+char *font_compress::font_original
+char font_compress::font_size
+char font_compress::font_size#1 // reg byte x 101.0
+char font_compress::font_size#2 // font_size zp[1]:7 38.84615384615385
+char font_compress::font_size#9 // font_size zp[1]:7 202.0
+char font_compress::found
+char font_compress::found#0 // reg byte a 101.0
+char font_compress::found#2 // reg byte a 303.0
+char font_compress::found#3 // reg byte a 202.0
+char font_compress::i
+char font_compress::i#1 // i zp[1]:8 101.0
+char font_compress::i#4 // i zp[1]:8 16.833333333333332
+char font_compress::l
+char font_compress::l#1 // reg byte y 1501.5
+char font_compress::l#2 // reg byte y 2002.0
+char *font_compress::next_compressed
+char *font_compress::next_compressed#1 // next_compressed zp[2]:9 67.33333333333333
+char *font_compress::next_compressed#4 // next_compressed zp[2]:9 108.66666666666669
+char *font_compress::next_compressed#7 // next_compressed zp[2]:9 50.5
+char *font_compress::next_original
+char *font_compress::next_original#1 // next_original zp[2]:17 50.5
+char *font_compress::next_original#2 // next_original zp[2]:17 76.70588235294117
+char font_compress::return
+char font_compress::return#1 // reg byte x 60.599999999999994
+char font_compress::return#5 // reg byte x 202.0
+char font_find(char *glyph , char *font , char font_size)
+char *font_find::font
+char *font_find::font#1 // font zp[2]:13 100001.0
+char *font_find::font#4 // font zp[2]:13 150000.375
+char font_find::font_size
+char font_find::font_size#0 // font_size zp[1]:7 8341.833333333332
+char font_find::found
+char font_find::found#2 // reg byte a 100001.0
+char *font_find::glyph
+char *font_find::glyph#0 // glyph zp[2]:17 76930.92307692308
+char font_find::i
+char font_find::i#1 // reg byte x 200002.0
+char font_find::i#2 // reg byte x 44444.88888888889
+char font_find::l
+char font_find::l#1 // reg byte y 1500001.5
+char font_find::l#2 // reg byte y 2000002.0
+char font_find::return
+char font_find::return#0 // reg byte a 202.0
+char font_find::return#3 // reg byte x 33367.33333333333
 void main()
-byte main::c
-byte main::c#1 c zp[1]:3 42.599999999999994
-byte main::c#2 c zp[1]:3 62.8
-byte main::c#4 c zp[1]:3 22.0
-byte* main::toD0181_gfx
-byte main::toD0181_return
-constant byte main::toD0181_return#0 toD0181_return = byte1 (word)SCREEN&$3fff*4|byte1 (word)FONT_COMPRESSED/4&$f
-byte* main::toD0181_screen
-byte main::x
-byte main::x#1 x zp[1]:4 151.5
-byte main::x#2 x zp[1]:4 50.5
-byte main::y
-byte main::y#1 y zp[1]:2 16.5
-byte main::y#4 y zp[1]:2 13.666666666666664
-void* memset(void* memset::str , byte memset::c , word memset::num)
-byte memset::c
-byte memset::c#0 reg byte x 17.166666666666664
-byte* memset::dst
-byte* memset::dst#1 dst zp[2]:11 202.0
-byte* memset::dst#2 dst zp[2]:11 134.66666666666666
-byte* memset::end
-constant byte* memset::end#0 end = (byte*)memset::str#0+memset::num#0
-word memset::num
-constant word memset::num#0 num = $400
-void* memset::return
-void* memset::str
-constant void* memset::str#0 str = (void*)SCREEN
-void show(byte show::c , byte show::x , byte show::y , byte* show::font_mapping)
-word~ show::$0 zp[2]:15 2002.0
-byte*~ show::$1 zp[2]:15 1001.0
-byte~ show::$2 reg byte a 2002.0
-byte~ show::$4 reg byte x 2002.0
-byte~ show::$5 reg byte a 2002.0
-byte~ show::$6 reg byte a 2002.0
-word~ show::$7 zp[2]:15 1501.5
-word~ show::$8 zp[2]:17 2002.0
-word~ show::$9 zp[2]:15 2002.0
-byte show::c
-byte show::c#0 c zp[1]:3 273.6666666666667
-byte* show::font_mapping
-byte* show::ptr
-byte* show::ptr#0 ptr zp[2]:15 715.0
-byte show::x
-byte show::x#0 reg byte x 157.42857142857142
-byte show::y
-byte show::y#0 reg byte a 101.0
+char main::c
+char main::c#1 // c zp[1]:3 42.599999999999994
+char main::c#2 // c zp[1]:3 62.8
+char main::c#4 // c zp[1]:3 22.0
+char *main::toD0181_gfx
+char main::toD0181_return
+__constant char main::toD0181_return#0 = byte1 (unsigned int)SCREEN&$3fff*4|byte1 (unsigned int)FONT_COMPRESSED/4&$f // toD0181_return
+char *main::toD0181_screen
+char main::x
+char main::x#1 // x zp[1]:4 151.5
+char main::x#2 // x zp[1]:4 50.5
+char main::y
+char main::y#1 // y zp[1]:2 16.5
+char main::y#4 // y zp[1]:2 13.666666666666664
+void * memset(void *str , char c , unsigned int num)
+char memset::c
+char memset::c#0 // reg byte x 17.166666666666664
+char *memset::dst
+char *memset::dst#1 // dst zp[2]:11 202.0
+char *memset::dst#2 // dst zp[2]:11 134.66666666666666
+char *memset::end
+__constant char *memset::end#0 = (char *)memset::str#0+memset::num#0 // end
+unsigned int memset::num
+__constant unsigned int memset::num#0 = $400 // num
+void *memset::return
+void *memset::str
+__constant void *memset::str#0 = (void *)SCREEN // str
+void show(char c , char x , char y , char *font_mapping)
+unsigned int show::$0 // zp[2]:15 2002.0
+char *show::$1 // zp[2]:15 1001.0
+char show::$2 // reg byte a 2002.0
+char show::$4 // reg byte x 2002.0
+char show::$5 // reg byte a 2002.0
+char show::$6 // reg byte a 2002.0
+unsigned int show::$7 // zp[2]:15 1501.5
+unsigned int show::$8 // zp[2]:17 2002.0
+unsigned int show::$9 // zp[2]:15 2002.0
+char show::c
+char show::c#0 // c zp[1]:3 273.6666666666667
+char *show::font_mapping
+char *show::ptr
+char *show::ptr#0 // ptr zp[2]:15 715.0
+char show::x
+char show::x#0 // reg byte x 157.42857142857142
+char show::y
+char show::y#0 // reg byte a 101.0
 
 zp[1]:2 [ main::y#4 main::y#1 ]
 zp[1]:3 [ main::c#2 main::c#4 main::c#1 show::c#0 ]
@@ -3422,7 +3424,7 @@ main: {
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     // font_2x2(CHARGEN, FONT_ORIGINAL)
-    // [2] call font_2x2 
+    // [2] call font_2x2
     // [22] phi from main to font_2x2 [phi:main->font_2x2]
     jsr font_2x2
     // main::@6
@@ -3434,7 +3436,7 @@ main: {
     // asm { cli  }
     cli
     // char size = font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)
-    // [5] call font_compress 
+    // [5] call font_compress
   // Compress the font finding identical characters
     // [62] phi from main::@6 to font_compress [phi:main::@6->font_compress]
     jsr font_compress
@@ -3449,7 +3451,7 @@ main: {
     // memset(SCREEN, FONT_COMPRESSED_MAP[' '], 0x0400)
     // [8] memset::c#0 = *(FONT_COMPRESSED_MAP+' ') -- vbuxx=_deref_pbuc1 
     ldx FONT_COMPRESSED_MAP+' '
-    // [9] call memset 
+    // [9] call memset
   // Clear the screen
     // [85] phi from main::@5 to memset [phi:main::@5->memset]
     jsr memset
@@ -3480,7 +3482,7 @@ main: {
     ldx.z x
     // [14] show::y#0 = main::y#4 -- vbuaa=vbuz1 
     lda.z y
-    // [15] call show 
+    // [15] call show
     jsr show
     // main::@7
     // show(c++, x, y, FONT_COMPRESSED_MAP);
@@ -3509,6 +3511,7 @@ main: {
 }
   // font_2x2
 // Create a 2x2-font by doubling all pixels of the 64 first chars
+// void font_2x2(char *font_original, char *font_2x2)
 font_2x2: {
     .label __5 = $f
     .label __7 = $f
@@ -3543,7 +3546,7 @@ font_2x2: {
     // font_2x2::@1
   __b1:
     // char* next_2x2_right = next_2x2 + 0x40*8
-    // [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (word)$40*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [24] font_2x2::next_2x2_right#0 = font_2x2::next_2x2_left#0 + (unsigned int)$40*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$40*8
@@ -3684,7 +3687,7 @@ font_2x2: {
     bne __b8
     // font_2x2::@7
     // next_2x2_left = next_2x2 + 0x80*8
-    // [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (word)$80*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [52] font_2x2::next_2x2_left#1 = font_2x2::next_2x2_left#0 + (unsigned int)$80*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$80*8
@@ -3693,7 +3696,7 @@ font_2x2: {
     adc #>$80*8
     sta.z next_2x2_left_1+1
     // next_2x2_right = next_2x2 + 0xc0*8
-    // [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (word)$c0*8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [53] font_2x2::next_2x2_right#1 = font_2x2::next_2x2_left#0 + (unsigned int)$c0*8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z next_2x2_left
     clc
     adc #<$c0*8
@@ -3757,6 +3760,7 @@ font_2x2: {
 // The compressed font is put into font_compressed and the compress_mapping is updated
 // so that compress_mapping[c] points to the char in font_compressed that is identical to char c in font_original
 // Returns the size of the compressed font (in chars)
+// __register(X) char font_compress(char *font_original, char *font_compressed, char *compress_mapping)
 font_compress: {
     .label next_original = $11
     .label i = 8
@@ -3783,7 +3787,7 @@ font_compress: {
     // char found = font_find(next_original, font_compressed, font_size)
     // [64] font_find::glyph#0 = font_compress::next_original#2
     // [65] font_find::font_size#0 = font_compress::font_size#2
-    // [66] call font_find 
+    // [66] call font_find
   // Look for the char in font_compressed
     // [106] phi from font_compress::@1 to font_find [phi:font_compress::@1->font_find]
     jsr font_find
@@ -3877,14 +3881,14 @@ font_compress: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(byte register(X) c)
+// void * memset(void *str, __register(X) char c, unsigned int num)
 memset: {
     .const num = $400
     .label str = SCREEN
     .label end = str+num
     .label dst = $b
     // [86] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [86] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [86] phi memset::dst#2 = (char *)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -3922,7 +3926,7 @@ memset: {
 }
   // show
 // Show a 2x2 char on the screen at 2x2-position (x, y) using a font compress mapping
-// show(byte zp(3) c, byte register(X) x, byte register(A) y)
+// void show(__zp(3) char c, __register(X) char x, __register(A) char y, char *font_mapping)
 show: {
     .label __0 = $f
     .label __1 = $f
@@ -3932,7 +3936,7 @@ show: {
     .label __8 = $11
     .label __9 = $f
     // (unsigned int)y*80
-    // [91] show::$7 = (word)show::y#0 -- vwuz1=_word_vbuaa 
+    // [91] show::$7 = (unsigned int)show::y#0 -- vwuz1=_word_vbuaa 
     sta.z __7
     lda #0
     sta.z __7+1
@@ -4024,7 +4028,7 @@ show: {
 // Look for a glyph within a font
 // Only looks at the first font_size glyphs
 // Returns the index of the glyph within the font. Returns 0xff if the glyph is not found.
-// font_find(byte* zp($11) glyph, byte* zp($d) font, byte zp(7) font_size)
+// __register(X) char font_find(__zp($11) char *glyph, __zp($d) char *font, __zp(7) char font_size)
 font_find: {
     .label glyph = $11
     .label font_size = 7

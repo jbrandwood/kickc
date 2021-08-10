@@ -40,7 +40,7 @@ main: {
     // }
     rts
 }
-// fct(byte register(X) x, byte* zp(2) z)
+// __register(A) char fct(__register(X) char x, __zp(2) char *z)
 fct: {
     .label z = 2
     // byte register(A) a = x & z[2]

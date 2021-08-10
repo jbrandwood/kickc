@@ -57,21 +57,6 @@ public class SymbolTypePointer implements SymbolType {
    }
 
    @Override
-   public String getTypeName() {
-      String name = elementType.getTypeName() + "*";
-      if(isVolatile)
-         name += " volatile";
-      if(isNomodify)
-         name += " const";
-      return name;
-   }
-
-   @Override
-   public String getTypeBaseName() {
-      return elementType.getTypeName() + "*";
-   }
-
-   @Override
    public int getSizeBytes() {
       return SIZE_POINTER_BYTES;
    }
@@ -91,7 +76,7 @@ public class SymbolTypePointer implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -105,7 +90,8 @@ public class SymbolTypePointer implements SymbolType {
          if(parentCDecl.contains("*"))
             cdecl.append(")");
          cdecl.append("[");
-         cdecl.append(getArraySpec().getArraySize().toString());
+         if(getArraySpec().getArraySize()!=null)
+            cdecl.append(getArraySpec().getArraySize().toString());
          cdecl.append("]");
          return this.getElementType().toCDecl(cdecl.toString());
       } else {
@@ -122,4 +108,10 @@ public class SymbolTypePointer implements SymbolType {
          return this.getElementType().toCDecl(cdecl.toString());
       }
    }
+
+   @Override
+   public String getConstantFriendlyName() {
+      return "POINTER_"+elementType.getConstantFriendlyName();
+   }
+
 }

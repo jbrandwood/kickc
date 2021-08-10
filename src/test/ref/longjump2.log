@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  call long1 
+  call long1
   to:main::@1
 main::@1: scope:[main]  from main
-  call long2 
+  call long2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -48,7 +48,7 @@ long2::@return: scope:[long2]  from long2::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -59,23 +59,23 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void long1()
-bool~ long1::$0
-constant byte* long1::SCREEN = (byte*)$400
-byte long1::i
-byte long1::i#0
-byte long1::i#1
-byte long1::i#2
+bool long1::$0
+__constant char *long1::SCREEN = (char *)$400
+char long1::i
+char long1::i#0
+char long1::i#1
+char long1::i#2
 void long2()
-bool~ long2::$0
-constant byte* long2::SCREEN = (byte*)$400
-byte long2::i
-byte long2::i#0
-byte long2::i#1
-byte long2::i#2
+bool long2::$0
+__constant char *long2::SCREEN = (char *)$400
+char long2::i
+char long2::i#0
+char long2::i#1
+char long2::i#2
 void main()
 
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition long1::$0 [9] if(long1::i#1!=rangelast(0,$a)) goto long1::@1
 Simple Condition long2::$0 [17] if(long2::i#1!=rangelast(0,$a)) goto long2::@1
@@ -98,8 +98,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $b
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type (char) $b
+Finalized unsigned number type (char) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings long1::i#0
 Inlining constant with var siblings long2::i#0
@@ -133,11 +133,11 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call long1 
+  [1] call long1
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call long2 
+  [3] call long2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
@@ -176,13 +176,13 @@ long2::@return: scope:[long2]  from long2::@1
 
 VARIABLE REGISTER WEIGHTS
 void long1()
-byte long1::i
-byte long1::i#1 151.5
-byte long1::i#2 134.66666666666666
+char long1::i
+char long1::i#1 // 151.5
+char long1::i#2 // 134.66666666666666
 void long2()
-byte long2::i
-byte long2::i#1 151.5
-byte long2::i#2 134.66666666666666
+char long2::i
+char long2::i#1 // 151.5
+char long2::i#2 // 134.66666666666666
 void main()
 
 Initial phi equivalence classes
@@ -224,7 +224,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call long1 
+    // [1] call long1
     // [5] phi from main to long1 [phi:main->long1]
   long1_from_main:
     jsr long1
@@ -233,7 +233,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call long2 
+    // [3] call long2
     // [12] phi from main::@1 to long2 [phi:main::@1->long2]
   long2_from___b1:
     jsr long2
@@ -846,15 +846,15 @@ Fixing long branch [548] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 void long1()
-constant byte* long1::SCREEN = (byte*) 1024
-byte long1::i
-byte long1::i#1 reg byte x 151.5
-byte long1::i#2 reg byte x 134.66666666666666
+__constant char *long1::SCREEN = (char *) 1024
+char long1::i
+char long1::i#1 // reg byte x 151.5
+char long1::i#2 // reg byte x 134.66666666666666
 void long2()
-constant byte* long2::SCREEN = (byte*) 1024
-byte long2::i
-byte long2::i#1 reg byte x 151.5
-byte long2::i#2 reg byte x 134.66666666666666
+__constant char *long2::SCREEN = (char *) 1024
+char long2::i
+char long2::i#1 // reg byte x 151.5
+char long2::i#2 // reg byte x 134.66666666666666
 void main()
 
 reg byte x [ long1::i#2 long1::i#1 ]
@@ -880,13 +880,13 @@ Score: 10640
   // main
 main: {
     // long1()
-    // [1] call long1 
+    // [1] call long1
     // [5] phi from main to long1 [phi:main->long1]
     jsr long1
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // long2()
-    // [3] call long2 
+    // [3] call long2
     // [12] phi from main::@1 to long2 [phi:main::@1->long2]
     jsr long2
     // main::@return

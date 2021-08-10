@@ -8,7 +8,7 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main main::@2
   main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
   b::i#0 = main::i#2
-  call b 
+  call b
   to:main::@2
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
@@ -20,11 +20,11 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void b(byte b::i)
+void b(char i)
 b: scope:[b]  from main::@1
   b::i#1 = phi( main::@1/b::i#0 )
   c::i#0 = b::i#1
-  call c 
+  call c
   to:b::@1
 b::@1: scope:[b]  from b
   to:b::@return
@@ -32,7 +32,7 @@ b::@return: scope:[b]  from b::@1
   return 
   to:@return
 
-void c(byte c::i)
+void c(char i)
 c: scope:[c]  from b
   c::i#2 = phi( b/c::i#0 )
   c::j#0 = 0
@@ -51,7 +51,7 @@ c::@return: scope:[c]  from c::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -60,31 +60,31 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-void b(byte b::i)
-byte b::i
-byte b::i#0
-byte b::i#1
-void c(byte c::i)
-bool~ c::$0
-byte c::i
-byte c::i#0
-byte c::i#1
-byte c::i#2
-byte c::j
-byte c::j#0
-byte c::j#1
-byte c::j#2
+void b(char i)
+char b::i
+char b::i#0
+char b::i#1
+void c(char i)
+bool c::$0
+char c::i
+char c::i#0
+char c::i#1
+char c::i#2
+char c::j
+char c::j#0
+char c::j#1
+char c::j#2
 void main()
-bool~ main::$1
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
+bool main::$1
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
@@ -113,8 +113,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $65
 Simplifying constant integer cast $65
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $65
-Finalized unsigned number type (byte) $65
+Finalized unsigned number type (char) $65
+Finalized unsigned number type (char) $65
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings c::j#0
@@ -149,7 +149,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@2
   [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
   [2] b::i#0 = main::i#2
-  [3] call b 
+  [3] call b
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] main::i#1 = ++ main::i#2
@@ -159,16 +159,16 @@ main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void b(byte b::i)
+void b(char i)
 b: scope:[b]  from main::@1
   [7] c::i#0 = b::i#0
-  [8] call c 
+  [8] call c
   to:b::@return
 b::@return: scope:[b]  from b
   [9] return 
   to:@return
 
-void c(byte c::i)
+void c(char i)
 c: scope:[c]  from b
   [10] phi()
   to:c::@1
@@ -184,19 +184,19 @@ c::@return: scope:[c]  from c::@1
 
 
 VARIABLE REGISTER WEIGHTS
-void b(byte b::i)
-byte b::i
-byte b::i#0 112.0
-void c(byte c::i)
-byte c::i
-byte c::i#0 16683.666666666664
-byte c::j
-byte c::j#1 150001.5
-byte c::j#2 150001.5
+void b(char i)
+char b::i
+char b::i#0 // 112.0
+void c(char i)
+char c::i
+char c::i#0 // 16683.666666666664
+char c::j
+char c::j#1 // 150001.5
+char c::j#2 // 150001.5
 void main()
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 11.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -257,7 +257,7 @@ main: {
     // main::@1
   __b1:
     // [2] b::i#0 = main::i#2
-    // [3] call b 
+    // [3] call b
     jsr b
     jmp __b2
     // main::@2
@@ -275,10 +275,10 @@ main: {
     rts
 }
   // b
-// b(byte register(A) i)
+// void b(__register(A) char i)
 b: {
     // [7] c::i#0 = b::i#0
-    // [8] call c 
+    // [8] call c
     // [10] phi from b to c [phi:b->c]
   c_from_b:
     jsr c
@@ -289,7 +289,7 @@ b: {
     rts
 }
   // c
-// c(byte register(A) i)
+// void c(__register(A) char i)
 c: {
     // [11] phi from c to c::@1 [phi:c->c::@1]
   __b1_from_c:
@@ -343,20 +343,20 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-void b(byte b::i)
-byte b::i
-byte b::i#0 reg byte a 112.0
-void c(byte c::i)
-byte c::i
-byte c::i#0 reg byte a 16683.666666666664
-byte c::j
-byte c::j#1 reg byte x 150001.5
-byte c::j#2 reg byte x 150001.5
+__constant char * const SCREEN = (char *) 1024
+void b(char i)
+char b::i
+char b::i#0 // reg byte a 112.0
+void c(char i)
+char c::i
+char c::i#0 // reg byte a 16683.666666666664
+char c::j
+char c::j#1 // reg byte x 150001.5
+char c::j#2 // reg byte x 150001.5
 void main()
-byte main::i
-byte main::i#1 reg byte a 16.5
-byte main::i#2 reg byte a 11.0
+char main::i
+char main::i#1 // reg byte a 16.5
+char main::i#2 // reg byte a 11.0
 
 reg byte a [ main::i#2 main::i#1 ]
 reg byte x [ c::j#2 c::j#1 ]
@@ -391,7 +391,7 @@ main: {
   __b1:
     // b(i)
     // [2] b::i#0 = main::i#2
-    // [3] call b 
+    // [3] call b
     jsr b
     // main::@2
     // for(byte i:0..100)
@@ -407,11 +407,11 @@ main: {
     rts
 }
   // b
-// b(byte register(A) i)
+// void b(__register(A) char i)
 b: {
     // c(i)
     // [7] c::i#0 = b::i#0
-    // [8] call c 
+    // [8] call c
     // [10] phi from b to c [phi:b->c]
     jsr c
     // b::@return
@@ -420,7 +420,7 @@ b: {
     rts
 }
   // c
-// c(byte register(A) i)
+// void c(__register(A) char i)
 c: {
     // [11] phi from c to c::@1 [phi:c->c::@1]
     // [11] phi c::j#2 = 0 [phi:c->c::@1#0] -- vbuxx=vbuc1 

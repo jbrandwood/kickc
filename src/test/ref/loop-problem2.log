@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  call print_cls 
+  call print_cls
   to:main::@1
 main::@1: scope:[main]  from main
-  call mode_ctrl 
+  call mode_ctrl
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -55,7 +55,7 @@ mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -64,21 +64,21 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BORDER_COLOR = (byte*)$d020
-constant byte* const SCREEN = (byte*)$400
+__constant char * const BORDER_COLOR = (char *)$d020
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
 void mode_ctrl()
-bool~ mode_ctrl::$0
-byte mode_ctrl::before
-byte mode_ctrl::before#0
+bool mode_ctrl::$0
+char mode_ctrl::before
+char mode_ctrl::before#0
 void print_cls()
-bool~ print_cls::$0
-byte* print_cls::sc
-byte* print_cls::sc#0
-byte* print_cls::sc#1
-byte* print_cls::sc#2
-byte* print_cls::sc#3
+bool print_cls::$0
+char *print_cls::sc
+char *print_cls::sc#0
+char *print_cls::sc#1
+char *print_cls::sc#2
+char *print_cls::sc#3
 
 Adding number conversion cast (unumber) $3e8 in print_cls::$0 = print_cls::sc#2 != SCREEN+$3e8
 Adding number conversion cast (unumber) $ff in mode_ctrl::$0 = mode_ctrl::before#0 == $ff
@@ -88,17 +88,17 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *BORDER_COLOR = (unumber)2
 Inlining cast *BORDER_COLOR = (unumber)3
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 53280
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (unsigned int) $3e8
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias print_cls::sc#2 = print_cls::sc#3 
 Successful SSA optimization Pass2AliasElimination
@@ -146,11 +146,11 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print_cls 
+  [1] call print_cls
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call mode_ctrl 
+  [3] call mode_ctrl
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
@@ -191,12 +191,12 @@ mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
 VARIABLE REGISTER WEIGHTS
 void main()
 void mode_ctrl()
-byte mode_ctrl::before
-byte mode_ctrl::before#0 202.0
+char mode_ctrl::before
+char mode_ctrl::before#0 // 202.0
 void print_cls()
-byte* print_cls::sc
-byte* print_cls::sc#1 202.0
-byte* print_cls::sc#2 134.66666666666666
+char *print_cls::sc
+char *print_cls::sc#1 // 202.0
+char *print_cls::sc#2 // 134.66666666666666
 
 Initial phi equivalence classes
 [ print_cls::sc#2 print_cls::sc#1 ]
@@ -242,7 +242,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call print_cls 
+    // [1] call print_cls
     // [5] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
@@ -251,7 +251,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call mode_ctrl 
+    // [3] call mode_ctrl
     // [11] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
   mode_ctrl_from___b1:
     jsr mode_ctrl
@@ -349,16 +349,16 @@ Removing instruction __b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BORDER_COLOR = (byte*) 53280
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const BORDER_COLOR = (char *) 53280
+__constant char * const SCREEN = (char *) 1024
 void main()
 void mode_ctrl()
-byte mode_ctrl::before
-byte mode_ctrl::before#0 reg byte a 202.0
+char mode_ctrl::before
+char mode_ctrl::before#0 // reg byte a 202.0
 void print_cls()
-byte* print_cls::sc
-byte* print_cls::sc#1 sc zp[2]:2 202.0
-byte* print_cls::sc#2 sc zp[2]:2 134.66666666666666
+char *print_cls::sc
+char *print_cls::sc#1 // sc zp[2]:2 202.0
+char *print_cls::sc#2 // sc zp[2]:2 134.66666666666666
 
 zp[2]:2 [ print_cls::sc#2 print_cls::sc#1 ]
 reg byte a [ mode_ctrl::before#0 ]
@@ -384,13 +384,13 @@ Score: 794
   // main
 main: {
     // print_cls()
-    // [1] call print_cls 
+    // [1] call print_cls
     // [5] phi from main to print_cls [phi:main->print_cls]
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // mode_ctrl()
-    // [3] call mode_ctrl 
+    // [3] call mode_ctrl
     // [11] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
     jsr mode_ctrl
     // main::@return

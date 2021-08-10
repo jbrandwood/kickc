@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.symbols.EnumDefinition;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /** An enum */
@@ -44,9 +45,8 @@ public class SymbolTypeEnum implements SymbolType {
       return isNomodify;
    }
 
-   @Override
-   public String getTypeBaseName() {
-      return  "enum  " + this.enumName;
+   public String getEnumName() {
+      return enumName;
    }
 
    @Override
@@ -60,7 +60,7 @@ public class SymbolTypeEnum implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -85,9 +85,14 @@ public class SymbolTypeEnum implements SymbolType {
          cdecl.append("const ");
       cdecl.append("enum ");
       cdecl.append(this.enumName);
-      cdecl.append(" ");
+      if(parentCDecl.length()>0)
+         cdecl.append(" ");
       cdecl.append(parentCDecl);
       return cdecl.toString();
    }
 
+   @Override
+   public String getConstantFriendlyName() {
+      return "ENUM_"+enumName.toUpperCase(Locale.ENGLISH);
+   }
 }

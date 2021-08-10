@@ -32,6 +32,7 @@ main: {
     // }
     rts
 }
+// void set(struct Point *ptr)
 set: {
     // ptr->x = 4
     lda #4

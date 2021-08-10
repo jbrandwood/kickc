@@ -72,7 +72,7 @@ main: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $12
@@ -217,6 +217,7 @@ clrscr: {
     jmp __b3
 }
 // Print an unsigned char using a specific format
+// void printf_uchar(char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
@@ -237,7 +238,7 @@ printf_uchar: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp(6) buffer)
+// void uctoa(__register(X) char value, __zp(6) char *buffer, char radix)
 uctoa: {
     .const max_digits = 3
     .label digit_value = $14
@@ -302,7 +303,7 @@ uctoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
+// void printf_number_buffer(__register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     // if(buffer.sign)
@@ -324,7 +325,7 @@ printf_number_buffer: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp(6) buffer, byte register(X) value, byte zp($14) sub)
+// __register(X) char uctoa_append(__zp(6) char *buffer, __register(X) char value, __zp($14) char sub)
 uctoa_append: {
     .label buffer = 6
     .label sub = $14
@@ -351,7 +352,7 @@ uctoa_append: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -378,7 +379,7 @@ cputc: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(4) s)
+// void cputs(__zp(4) const char *s)
 cputs: {
     .label s = 4
     lda #<printf_number_buffer.buffer_digits
@@ -494,7 +495,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($17) destination, void* zp(6) source)
+// void * memcpy(__zp($17) void *destination, __zp(6) void *source, unsigned int num)
 memcpy: {
     .label src_end = $15
     .label dst = $17
@@ -536,7 +537,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(6) str, byte register(X) c)
+// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $17
     .label dst = 6

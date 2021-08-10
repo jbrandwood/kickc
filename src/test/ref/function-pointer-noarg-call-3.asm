@@ -40,7 +40,7 @@ main: {
     jmp (__0)
 }
 // declare getfn as function (char b) returning pointer to function (void) returning void
-// getfn(byte register(A) b)
+// __zp(3) void (*)() getfn(__register(A) char b)
 getfn: {
     .label return = 3
     // b&1

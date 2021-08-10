@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__varcall void setbg(byte setbg::col)
+__varcall void setbg(char col)
 setbg: scope:[setbg]  from
   *BGCOL = setbg::col
   to:setbg::@return
@@ -34,11 +34,11 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BGCOL = (byte*)$d021
+__constant char * const BGCOL = (char *)$d021
 void __start()
 void main()
-__varcall void setbg(byte setbg::col)
-byte setbg::col loadstore
+__varcall void setbg(char col)
+__loadstore char setbg::col
 
 Adding number conversion cast (unumber) 0 in setbg::col = 0
 Adding number conversion cast (unumber) $b in setbg::col = $b
@@ -46,12 +46,12 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast setbg::col = (unumber)0
 Inlining cast setbg::col = (unumber)$b
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (char *) 53281
 Simplifying constant integer cast 0
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -66,7 +66,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-__varcall void setbg(byte setbg::col)
+__varcall void setbg(char col)
 setbg: scope:[setbg]  from
   [0] *BGCOL = setbg::col
   to:setbg::@return
@@ -88,8 +88,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-__varcall void setbg(byte setbg::col)
-byte setbg::col loadstore 7.5
+__varcall void setbg(char col)
+__loadstore char setbg::col // 7.5
 
 Initial phi equivalence classes
 Added variable setbg::col to live range equivalence class [ setbg::col ]
@@ -130,7 +130,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
 .segment Code
   // setbg
-// setbg(byte zp(2) col)
+// void setbg(__zp(2) char col)
 setbg: {
     .label col = 2
     // [0] *BGCOL = setbg::col -- _deref_pbuc1=vbuz1 
@@ -171,10 +171,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BGCOL = (byte*) 53281
+__constant char * const BGCOL = (char *) 53281
 void main()
-__varcall void setbg(byte setbg::col)
-byte setbg::col loadstore zp[1]:2 7.5
+__varcall void setbg(char col)
+__loadstore char setbg::col // zp[1]:2 7.5
 
 zp[1]:2 [ setbg::col ]
 
@@ -198,7 +198,7 @@ Score: 41
   .label BGCOL = $d021
 .segment Code
   // setbg
-// setbg(byte zp(2) col)
+// void setbg(__zp(2) char col)
 setbg: {
     .label col = 2
     // *BGCOL = col

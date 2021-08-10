@@ -1,15 +1,17 @@
 package dk.camelot64.kickc.model.types;
 
+import java.util.Locale;
+
 /** Basic named (string, char, ...) Symbol Types */
 public class SymbolTypeNamed implements SymbolType {
 
-   private String typeBaseName;
+   private String typeName;
    private int sizeBytes;
    private final boolean isVolatile;
    private final boolean isNomodify;
 
-   SymbolTypeNamed(String typeBaseName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
-      this.typeBaseName = typeBaseName;
+   SymbolTypeNamed(String typeName, int sizeBytes, boolean isVolatile, boolean isNomodify) {
+      this.typeName = typeName;
       this.sizeBytes = sizeBytes;
       this.isVolatile = isVolatile;
       this.isNomodify = isNomodify;
@@ -17,7 +19,7 @@ public class SymbolTypeNamed implements SymbolType {
 
    @Override
    public SymbolType getQualified(boolean isVolatile, boolean isNomodify) {
-      return new SymbolTypeNamed(this.typeBaseName, this.sizeBytes, isVolatile, isNomodify);
+      return new SymbolTypeNamed(this.typeName, this.sizeBytes, isVolatile, isNomodify);
    }
 
    @Override
@@ -30,8 +32,8 @@ public class SymbolTypeNamed implements SymbolType {
       return isNomodify;
    }
 
-   public String getTypeBaseName() {
-      return typeBaseName;
+   public String getTypeName() {
+      return typeName;
    }
 
    @Override
@@ -50,17 +52,17 @@ public class SymbolTypeNamed implements SymbolType {
 
       SymbolTypeNamed that = (SymbolTypeNamed) o;
 
-      return typeBaseName != null ? typeBaseName.equals(that.typeBaseName) : that.typeBaseName == null;
+      return typeName != null ? typeName.equals(that.typeName) : that.typeName == null;
    }
 
    @Override
    public int hashCode() {
-      return typeBaseName != null ? typeBaseName.hashCode() : 0;
+      return typeName != null ? typeName.hashCode() : 0;
    }
 
    @Override
    public String toString() {
-      return getTypeName();
+      return toCDecl();
    }
 
    @Override
@@ -70,11 +72,17 @@ public class SymbolTypeNamed implements SymbolType {
          cdecl.append("volatile ");
       if(isNomodify())
          cdecl.append("const ");
-      cdecl.append(this.getTypeBaseName());
+      cdecl.append(this.typeName);
       if(parentCDecl.length()>0)
          cdecl.append(" ");
       cdecl.append(parentCDecl);
       return cdecl.toString();
    }
+
+   @Override
+   public String getConstantFriendlyName() {
+         return typeName.toUpperCase(Locale.ENGLISH).replace(" ", "_");
+   }
+
 }
 

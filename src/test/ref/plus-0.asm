@@ -26,7 +26,7 @@ main: {
     // }
     rts
 }
-// fill(byte* zp(2) screen, byte register(X) ch)
+// void fill(__zp(2) char *screen, __register(X) char ch)
 fill: {
     .label screen = 2
     .label __5 = 4

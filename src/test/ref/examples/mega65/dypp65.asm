@@ -22,7 +22,7 @@
   /// $81 $xx = Set MB of destination address
   .const DMA_OPTION_DEST_MB = $81
   .const WHITE = 1
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .const OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
   .const OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
   .const OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
@@ -256,7 +256,7 @@ main: {
     cpz #$2d
     bcc __b4
     // erow += 45
-    lda #$2d*SIZEOF_WORD
+    lda #$2d*SIZEOF_UNSIGNED_INT
     clc
     adc.z erow
     sta.z erow
@@ -312,6 +312,7 @@ main: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = $e
     .label xVal = $f
@@ -345,7 +346,7 @@ memoryRemap: {
 // - dest The destination address (within the MB and bank)
 // - fill The char to fill with
 // - num The number of bytes to copy
-// memset_dma(void* zp($c) dest, byte register(Z) fill, word zp($a) num)
+// void memset_dma(__zp($c) void *dest, __register(Z) char fill, __zp($a) unsigned int num)
 memset_dma: {
     .label num = $a
     .label dest = $c
@@ -397,6 +398,7 @@ memset_dma: {
 // - dest_bank The 64KB bank for the destination (0-15)
 // - dest The destination address (within the MB and bank)
 // - num The number of bytes to copy
+// void memset_dma256(char dest_mb, char dest_bank, void *dest, char fill, unsigned int num)
 memset_dma256: {
     .const dest_mb = $ff
     .const dest_bank = 8

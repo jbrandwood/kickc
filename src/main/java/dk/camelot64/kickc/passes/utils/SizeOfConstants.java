@@ -36,6 +36,7 @@ public class SizeOfConstants {
    /**
     * Fix the size value of the constant variable if needed.
     * Sizes for structs and other complex types is not known until late in Pass1, so they may need fixing.
+    *
     * @param programScope The program scope (used for finding/adding the constant).
     * @param type The type to get the variable for
     */
@@ -59,10 +60,10 @@ public class SizeOfConstants {
     */
    public static String getSizeofConstantName(SymbolType type) {
       if(type instanceof SymbolTypePointer) {
+         // All pointers are the same size
          return "SIZEOF_POINTER";
-      } else {
-         return "SIZEOF_" + type.getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
-      }
+      } else
+         return "SIZEOF_"+type.getConstantFriendlyName();
    }
 
    /**
@@ -95,6 +96,6 @@ public class SizeOfConstants {
     * @return The name of the constant
     */
    private static String getStructMemberOffsetConstantName(StructDefinition structDefinition, String memberName) {
-      return "OFFSET_" + structDefinition.getType().getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_") + "_" + memberName.toUpperCase();
+      return "OFFSET_" + structDefinition.getType().getConstantFriendlyName()+ "_" + memberName.toUpperCase(Locale.ENGLISH);
    }
 }

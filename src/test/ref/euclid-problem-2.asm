@@ -51,7 +51,7 @@ main: {
     rts
 }
 // Calculate least common denominator using euclids subtraction method
-// euclid(byte zp(2) a, byte register(X) b)
+// __register(A) char euclid(__zp(2) char a, __register(X) char b)
 euclid: {
     .label a = 2
   __b1:

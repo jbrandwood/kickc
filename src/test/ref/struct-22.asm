@@ -39,7 +39,7 @@ main: {
     // }
     rts
 }
-// print(byte register(X) p_x, byte register(A) p_y)
+// void print(__register(X) char p_x, __register(A) char p_y)
 print: {
     // SCREEN[0] = p.x
     stx SCREEN

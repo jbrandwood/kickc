@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  }
-  *((byte*)$400) = 'c'
+  *((char *)$400) = 'c'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -12,7 +12,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -24,7 +24,7 @@ SYMBOL TABLE SSA
 void __start()
 void main()
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -41,7 +41,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  }
-  [1] *((byte*) 1024) = 'c'
+  [1] *((char *) 1024) = 'c'
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -55,7 +55,7 @@ Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  } always clobbers reg byte a 
-Statement [1] *((byte*) 1024) = 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((char *) 1024) = 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -86,7 +86,7 @@ main: {
     .byte 0, 25, 51, 76, 102, 128, 153, 179, 204, 230
   qwe:
     lda #$32
-    // [1] *((byte*) 1024) = 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((char *) 1024) = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta $400
     jmp __breturn
@@ -134,7 +134,7 @@ main: {
   qwe:
     lda #$32
     // *((char*)0x0400) = 'c'
-    // [1] *((byte*) 1024) = 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((char *) 1024) = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta $400
     // main::@return

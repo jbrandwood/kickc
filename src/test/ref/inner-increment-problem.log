@@ -3,13 +3,13 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen#0 = (byte*)$400
+  main::screen#0 = (char *)$400
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   main::screen#2 = phi( main/main::screen#0, main::@1/main::screen#1 )
-  main::$3 = *main::screen#2 * SIZEOF_WORD
+  main::$3 = *main::screen#2 * SIZEOF_UNSIGNED_INT
   CHAR_COUNTS[main::$3] = ++ CHAR_COUNTS[main::$3]
   main::screen#1 = ++ main::screen#2
   main::i#1 = main::i#2 + rangenext(0,$3e7)
@@ -22,7 +22,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -31,26 +31,26 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant const word* CHAR_COUNTS[$100]  = { fill( $100, 0) }
-constant byte SIZEOF_WORD = 2
+__constant const unsigned int CHAR_COUNTS[$100] = { fill( $100, 0) }
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-bool~ main::$1
-byte~ main::$3
-word main::i
-word main::i#0
-word main::i#1
-word main::i#2
-byte* main::screen
-byte* main::screen#0
-byte* main::screen#1
-byte* main::screen#2
+bool main::$1
+char main::$3
+unsigned int main::i
+unsigned int main::i#0
+unsigned int main::i#1
+unsigned int main::i#2
+char *main::screen
+char *main::screen#0
+char *main::screen#1
+char *main::screen#2
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$1 [8] if(main::i#1!=rangelast(0,$3e7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant main::screen#0 = (byte*) 1024
+Constant main::screen#0 = (char *) 1024
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [6] main::i#1 = ++ main::i#2 to ++
@@ -64,19 +64,19 @@ Adding number conversion cast (unumber) $3e8 in [5] if(main::i#1!=$3e8) goto mai
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (unsigned int) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting multiplication to use shift [1] main::$3 = *main::screen#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [1] main::$3 = *main::screen#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::screen#0
 Inlining constant with var siblings main::i#0
-Constant inlined main::screen#0 = (byte*) 1024
+Constant inlined main::screen#0 = (char *) 1024
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -97,7 +97,7 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [1] main::screen#2 = phi( main/(byte*) 1024, main::@1/main::screen#1 )
+  [1] main::screen#2 = phi( main/(char *) 1024, main::@1/main::screen#1 )
   [2] main::$3 = *main::screen#2 << 1
   [3] CHAR_COUNTS[main::$3] = ++ CHAR_COUNTS[main::$3]
   [4] main::screen#1 = ++ main::screen#2
@@ -111,13 +111,13 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$3 33.0
-word main::i
-word main::i#1 16.5
-word main::i#2 5.5
-byte* main::screen
-byte* main::screen#1 7.333333333333333
-byte* main::screen#2 11.0
+char main::$3 // 33.0
+unsigned int main::i
+unsigned int main::i#1 // 16.5
+unsigned int main::i#2 // 5.5
+char *main::screen
+char *main::screen#1 // 7.333333333333333
+char *main::screen#2 // 11.0
 
 Initial phi equivalence classes
 [ main::screen#2 main::screen#1 ]
@@ -170,7 +170,7 @@ main: {
     sta.z i
     lda #>0
     sta.z i+1
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -237,15 +237,15 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant const word* CHAR_COUNTS[$100]  = { fill( $100, 0) }
+__constant const unsigned int CHAR_COUNTS[$100] = { fill( $100, 0) }
 void main()
-byte~ main::$3 reg byte a 33.0
-word main::i
-word main::i#1 i zp[2]:4 16.5
-word main::i#2 i zp[2]:4 5.5
-byte* main::screen
-byte* main::screen#1 screen zp[2]:2 7.333333333333333
-byte* main::screen#2 screen zp[2]:2 11.0
+char main::$3 // reg byte a 33.0
+unsigned int main::i
+unsigned int main::i#1 // i zp[2]:4 16.5
+unsigned int main::i#2 // i zp[2]:4 5.5
+char *main::screen
+char *main::screen#1 // screen zp[2]:2 7.333333333333333
+char *main::screen#2 // screen zp[2]:2 11.0
 
 zp[2]:2 [ main::screen#2 main::screen#1 ]
 zp[2]:4 [ main::i#2 main::i#1 ]
@@ -278,7 +278,7 @@ main: {
     lda #<0
     sta.z i
     sta.z i+1
-    // [1] phi main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi main::screen#2 = (char *) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

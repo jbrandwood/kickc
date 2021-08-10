@@ -3,12 +3,12 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *((byte*)&point1+OFFSET_STRUCT_POINT_X) = 2
-  *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3
-  *((byte*)&point2+OFFSET_STRUCT_POINT_X) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y)
-  *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1+OFFSET_STRUCT_POINT_X)
-  main::SCREEN[0] = *((byte*)&point2+OFFSET_STRUCT_POINT_X)
-  main::SCREEN[1] = *((byte*)&point2+OFFSET_STRUCT_POINT_Y)
+  *((char *)&point1+OFFSET_STRUCT_POINT_X) = 2
+  *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3
+  *((char *)&point2+OFFSET_STRUCT_POINT_X) = *((char *)&point1+OFFSET_STRUCT_POINT_Y)
+  *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1+OFFSET_STRUCT_POINT_X)
+  main::SCREEN[0] = *((char *)&point2+OFFSET_STRUCT_POINT_X)
+  main::SCREEN[1] = *((char *)&point2+OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -25,38 +25,38 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_POINT_X = 0
-constant byte OFFSET_STRUCT_POINT_Y = 1
+__constant char OFFSET_STRUCT_POINT_X = 0
+__constant char OFFSET_STRUCT_POINT_Y = 1
 void __start()
 void main()
-constant byte* const main::SCREEN = (byte*)$400
-struct Point point1 loadstore = {}
-struct Point point2 loadstore = {}
+__constant char * const main::SCREEN = (char *)$400
+__loadstore struct Point point1 = {}
+__loadstore struct Point point2 = {}
 
-Adding number conversion cast (unumber) 2 in *((byte*)&point1+OFFSET_STRUCT_POINT_X) = 2
-Adding number conversion cast (unumber) 3 in *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3
-Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *((byte*)&point2+OFFSET_STRUCT_POINT_X)
-Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *((byte*)&point2+OFFSET_STRUCT_POINT_Y)
+Adding number conversion cast (unumber) 2 in *((char *)&point1+OFFSET_STRUCT_POINT_X) = 2
+Adding number conversion cast (unumber) 3 in *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *((char *)&point2+OFFSET_STRUCT_POINT_X)
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *((char *)&point2+OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte*)&point1+OFFSET_STRUCT_POINT_X) = (unumber)2
-Inlining cast *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = (unumber)3
+Inlining cast *((char *)&point1+OFFSET_STRUCT_POINT_X) = (unumber)2
+Inlining cast *((char *)&point1+OFFSET_STRUCT_POINT_Y) = (unumber)3
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&point1 in [0] *((byte*)&point1+OFFSET_STRUCT_POINT_X) = 2
-Simplifying expression containing zero (byte*)&point2 in [2] *((byte*)&point2+OFFSET_STRUCT_POINT_X) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y)
-Simplifying expression containing zero (byte*)&point1 in [3] *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1+OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero (byte*)&point2 in [4] main::SCREEN[0] = *((byte*)&point2+OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero main::SCREEN in [4] main::SCREEN[0] = *((byte*)&point2)
+Simplifying expression containing zero (char *)&point1 in [0] *((char *)&point1+OFFSET_STRUCT_POINT_X) = 2
+Simplifying expression containing zero (char *)&point2 in [2] *((char *)&point2+OFFSET_STRUCT_POINT_X) = *((char *)&point1+OFFSET_STRUCT_POINT_Y)
+Simplifying expression containing zero (char *)&point1 in [3] *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (char *)&point2 in [4] main::SCREEN[0] = *((char *)&point2+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::SCREEN in [4] main::SCREEN[0] = *((char *)&point2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -76,12 +76,12 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*)&point1) = 2
-  [1] *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3
-  [2] *((byte*)&point2) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y)
-  [3] *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1)
-  [4] *main::SCREEN = *((byte*)&point2)
-  [5] *(main::SCREEN+1) = *((byte*)&point2+OFFSET_STRUCT_POINT_Y)
+  [0] *((char *)&point1) = 2
+  [1] *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3
+  [2] *((char *)&point2) = *((char *)&point1+OFFSET_STRUCT_POINT_Y)
+  [3] *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1)
+  [4] *main::SCREEN = *((char *)&point2)
+  [5] *(main::SCREEN+1) = *((char *)&point2+OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -90,8 +90,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-struct Point point1 loadstore = {}
-struct Point point2 loadstore = {}
+__loadstore struct Point point1 = {}
+__loadstore struct Point point2 = {}
 
 Initial phi equivalence classes
 Added variable point1 to live range equivalence class [ point1 ]
@@ -102,12 +102,12 @@ Complete equivalence classes
 Allocated mem[2] [ point1 ]
 Allocated mem[2] [ point2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)&point1) = 2 [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
-Statement [1] *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3 [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
-Statement [2] *((byte*)&point2) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y) [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
-Statement [3] *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1) [ point2 ] (  [ point2 ] { }  ) always clobbers reg byte a 
-Statement [4] *main::SCREEN = *((byte*)&point2) [ point2 ] (  [ point2 ] { }  ) always clobbers reg byte a 
-Statement [5] *(main::SCREEN+1) = *((byte*)&point2+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)&point1) = 2 [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
+Statement [1] *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3 [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
+Statement [2] *((char *)&point2) = *((char *)&point1+OFFSET_STRUCT_POINT_Y) [ point1 point2 ] (  [ point1 point2 ] { }  ) always clobbers reg byte a 
+Statement [3] *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1) [ point2 ] (  [ point2 ] { }  ) always clobbers reg byte a 
+Statement [4] *main::SCREEN = *((char *)&point2) [ point2 ] (  [ point2 ] { }  ) always clobbers reg byte a 
+Statement [5] *(main::SCREEN+1) = *((char *)&point2+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ point1 ] : mem[2] , 
 Potential registers mem[2] [ point2 ] : mem[2] , 
 
@@ -139,22 +139,22 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((byte*)&point1) = 2 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)&point1) = 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta point1
-    // [1] *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta point1+OFFSET_STRUCT_POINT_Y
-    // [2] *((byte*)&point2) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((char *)&point2) = *((char *)&point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_Y
     sta point2
-    // [3] *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1
     sta point2+OFFSET_STRUCT_POINT_Y
-    // [4] *main::SCREEN = *((byte*)&point2) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *main::SCREEN = *((char *)&point2) -- _deref_pbuc1=_deref_pbuc2 
     lda point2
     sta SCREEN
-    // [5] *(main::SCREEN+1) = *((byte*)&point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *(main::SCREEN+1) = *((char *)&point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -177,12 +177,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte SIZEOF_STRUCT_POINT = 2
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char SIZEOF_STRUCT_POINT = 2
 void main()
-constant byte* const main::SCREEN = (byte*) 1024
-struct Point point1 loadstore mem[2] = {}
-struct Point point2 loadstore mem[2] = {}
+__constant char * const main::SCREEN = (char *) 1024
+__loadstore struct Point point1 = {} // mem[2]
+__loadstore struct Point point2 = {} // mem[2]
 
 mem[2] [ point1 ]
 mem[2] [ point2 ]
@@ -210,26 +210,26 @@ Score: 46
 main: {
     .label SCREEN = $400
     // point1.x = 2
-    // [0] *((byte*)&point1) = 2 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)&point1) = 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta point1
     // point1.y = 3
-    // [1] *((byte*)&point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((char *)&point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta point1+OFFSET_STRUCT_POINT_Y
     // point2.x = point1.y
-    // [2] *((byte*)&point2) = *((byte*)&point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((char *)&point2) = *((char *)&point1+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     sta point2
     // point2.y = point1.x
-    // [3] *((byte*)&point2+OFFSET_STRUCT_POINT_Y) = *((byte*)&point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((char *)&point2+OFFSET_STRUCT_POINT_Y) = *((char *)&point1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1
     sta point2+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = point2.x
-    // [4] *main::SCREEN = *((byte*)&point2) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *main::SCREEN = *((char *)&point2) -- _deref_pbuc1=_deref_pbuc2 
     lda point2
     sta SCREEN
     // SCREEN[1] = point2.y
-    // [5] *(main::SCREEN+1) = *((byte*)&point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *(main::SCREEN+1) = *((char *)&point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return

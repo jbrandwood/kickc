@@ -51,7 +51,7 @@ main: {
     henriette_name: .fill $40, 0
 }
 .segment Code
-// print_person(byte register(X) person_id, byte* zp(3) person_name)
+// void print_person(__register(X) char person_id, __zp(3) char *person_name)
 print_person: {
     .label person_name = 3
     // SCREEN[idx++] = DIGIT[person.id]

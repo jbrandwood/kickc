@@ -35,7 +35,7 @@ public class StackIdxValue implements LValue {
 
    @Override
    public String toString(Program program) {
-      return "stackidx("+valueType.getTypeName()+","+stackOffset.toString(program)+")";
+      return "stackidx("+ valueType.toCDecl() +","+stackOffset.toString(program)+")";
    }
 
 

@@ -83,7 +83,7 @@ main: {
     // }
     rts
 }
-// test(byte register(X) i, byte zp(2) a)
+// void test(__register(X) char i, __zp(2) char a)
 test: {
     .label a = 2
     // screen1[i] = a

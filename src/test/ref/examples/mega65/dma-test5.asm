@@ -68,6 +68,7 @@ main: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 2
     .label xVal = 3
@@ -101,6 +102,7 @@ memoryRemap: {
 // - dest The destination address (within the MB and bank)
 // - fill The char to fill with
 // - num The number of bytes to copy
+// void memset_dma(void *dest, char fill, unsigned int num)
 memset_dma: {
     .const fill = '*'
     .const num = $50*$a

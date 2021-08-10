@@ -8,7 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_DWORD = 4
+  .const SIZEOF_UNSIGNED_LONG = 4
 .segment Code
 main: {
     .label screen = $400
@@ -47,17 +47,17 @@ main: {
     // mul16u(w, w)
     // screen[1] = mul16u(w, w)
     lda.z __1
-    sta screen+1*SIZEOF_DWORD
+    sta screen+1*SIZEOF_UNSIGNED_LONG
     lda.z __1+1
-    sta screen+1*SIZEOF_DWORD+1
+    sta screen+1*SIZEOF_UNSIGNED_LONG+1
     lda.z __1+2
-    sta screen+1*SIZEOF_DWORD+2
+    sta screen+1*SIZEOF_UNSIGNED_LONG+2
     lda.z __1+3
-    sta screen+1*SIZEOF_DWORD+3
+    sta screen+1*SIZEOF_UNSIGNED_LONG+3
     // }
     rts
 }
-// mul16u(word zp(2) b, word zp(4) a)
+// __zp(6) unsigned long mul16u(__zp(2) unsigned int b, __zp(4) unsigned int a)
 mul16u: {
     .label return = 6
     .label mb = 6

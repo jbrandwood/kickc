@@ -20,7 +20,7 @@ main: {
     // }
     rts
 }
-// puta(byte register(X) ph, byte register(A) pl)
+// void puta(__register(X) char ph, __register(A) char pl)
 puta: {
     .label screen = 2
     // MAKEWORD( ph, pl )

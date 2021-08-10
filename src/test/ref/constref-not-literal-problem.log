@@ -1,12 +1,12 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  copy::destination#0 = (void*)B
-  copy::source#0 = (void*)A
-  call copy 
+  copy::destination#0 = (void *)B
+  copy::source#0 = (void *)A
+  call copy
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -14,12 +14,12 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void copy(void* copy::destination , void* copy::source)
+void copy(void *destination , void *source)
 copy: scope:[copy]  from main
   copy::source#1 = phi( main/copy::source#0 )
   copy::destination#1 = phi( main/copy::destination#0 )
-  copy::$2 = (word)copy::destination#1
-  copy::$3 = (word)copy::source#1
+  copy::$2 = (unsigned int)copy::destination#1
+  copy::$3 = (unsigned int)copy::source#1
   copy::$0 = copy::$2 > copy::$3
   copy::$1 = ! copy::$0
   if(copy::$1) goto copy::@return
@@ -27,8 +27,8 @@ copy: scope:[copy]  from main
 copy::@1: scope:[copy]  from copy
   copy::destination#2 = phi( copy/copy::destination#1 )
   copy::source#2 = phi( copy/copy::source#1 )
-  copy::src#0 = ((byte*)) copy::source#2
-  copy::dst#0 = ((byte*)) copy::destination#2
+  copy::src#0 = ((char *)) copy::source#2
+  copy::dst#0 = ((char *)) copy::destination#2
   *copy::dst#0 = *copy::src#0
   to:copy::@return
 copy::@return: scope:[copy]  from copy copy::@1
@@ -41,7 +41,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -50,32 +50,32 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* A[]  = "qwe"
-constant byte* B = (byte*)$8000
+__constant char A[] = "qwe"
+__constant char *B = (char *)$8000
 void __start()
-void copy(void* copy::destination , void* copy::source)
-bool~ copy::$0
-bool~ copy::$1
-word~ copy::$2
-word~ copy::$3
-void* copy::destination
-void* copy::destination#0
-void* copy::destination#1
-void* copy::destination#2
-byte* copy::dst
-byte* copy::dst#0
-void* copy::source
-void* copy::source#0
-void* copy::source#1
-void* copy::source#2
-byte* copy::src
-byte* copy::src#0
+void copy(void *destination , void *source)
+bool copy::$0
+bool copy::$1
+unsigned int copy::$2
+unsigned int copy::$3
+void *copy::destination
+void *copy::destination#0
+void *copy::destination#1
+void *copy::destination#2
+char *copy::dst
+char *copy::dst#0
+void *copy::source
+void *copy::source#0
+void *copy::source#1
+void *copy::source#2
+char *copy::src
+char *copy::src#0
 void main()
 
-Inlining cast copy::src#0 = (byte*)copy::source#2
-Inlining cast copy::dst#0 = (byte*)copy::destination#2
+Inlining cast copy::src#0 = (char *)copy::source#2
+Inlining cast copy::dst#0 = (char *)copy::destination#2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 32768
+Simplifying constant pointer cast (char *) 32768
 Successful SSA optimization PassNCastSimplification
 Inversing boolean not [8] copy::$1 = copy::$2 <= copy::$3 from [7] copy::$0 = copy::$2 > copy::$3
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -87,15 +87,15 @@ Identical Phi Values copy::source#1 copy::source#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition copy::$1 [8] if(copy::$2<=copy::$3) goto copy::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] copy::destination#0 = (void*)B
+Constant right-side identified [0] copy::destination#0 = (void *)B
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant copy::destination#0 = (void*)B
-Constant copy::source#0 = (void*)A
+Constant copy::destination#0 = (void *)B
+Constant copy::source#0 = (void *)A
 Successful SSA optimization Pass2ConstantIdentification
-Constant copy::$2 = (word)copy::destination#0
-Constant copy::$3 = (word)copy::source#0
-Constant copy::src#0 = (byte*)copy::source#0
-Constant copy::dst#0 = (byte*)copy::destination#0
+Constant copy::$2 = (unsigned int)copy::destination#0
+Constant copy::$3 = (unsigned int)copy::source#0
+Constant copy::src#0 = (char *)copy::source#0
+Constant copy::dst#0 = (char *)copy::destination#0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -104,8 +104,8 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined copy::$2 = (word)copy::destination#0
-Constant inlined copy::$3 = (word)copy::source#0
+Constant inlined copy::$2 = (unsigned int)copy::destination#0
+Constant inlined copy::$3 = (unsigned int)copy::source#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -122,15 +122,15 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call copy 
+  [1] call copy
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void copy(void* copy::destination , void* copy::source)
+void copy(void *destination , void *source)
 copy: scope:[copy]  from main
-  [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return
+  [3] if((unsigned int)copy::destination#0<=(unsigned int)copy::source#0) goto copy::@return
   to:copy::@1
 copy::@1: scope:[copy]  from copy
   [4] *copy::dst#0 = *copy::src#0
@@ -141,17 +141,17 @@ copy::@return: scope:[copy]  from copy copy::@1
 
 
 VARIABLE REGISTER WEIGHTS
-void copy(void* copy::destination , void* copy::source)
-void* copy::destination
-byte* copy::dst
-void* copy::source
-byte* copy::src
+void copy(void *destination , void *source)
+void *copy::destination
+char *copy::dst
+void *copy::source
+char *copy::src
 void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return [ ] ( copy:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] if((unsigned int)copy::destination#0<=(unsigned int)copy::source#0) goto copy::@return [ ] ( copy:1 [ ] { }  ) always clobbers reg byte a 
 Statement [4] *copy::dst#0 = *copy::src#0 [ ] ( copy:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -180,7 +180,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call copy 
+    // [1] call copy
     jsr copy
     jmp __breturn
     // main::@return
@@ -190,12 +190,13 @@ main: {
 }
   // copy
 // Copy a byte if the destination is after the source
+// void copy(void *destination, void *source)
 copy: {
     .label destination = B
     .label source = A
     .label src = source
     .label dst = destination
-    // [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
+    // [3] if((unsigned int)copy::destination#0<=(unsigned int)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
     lda #>destination
     cmp #>source
     bne !+
@@ -231,17 +232,17 @@ Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* A[]  = "qwe"
-constant byte* B = (byte*) 32768
-void copy(void* copy::destination , void* copy::source)
-void* copy::destination
-constant void* copy::destination#0 destination = (void*)B
-byte* copy::dst
-constant byte* copy::dst#0 dst = (byte*)copy::destination#0
-void* copy::source
-constant void* copy::source#0 source = (void*)A
-byte* copy::src
-constant byte* copy::src#0 src = (byte*)copy::source#0
+__constant char A[] = "qwe"
+__constant char *B = (char *) 32768
+void copy(void *destination , void *source)
+void *copy::destination
+__constant void *copy::destination#0 = (void *)B // destination
+char *copy::dst
+__constant char *copy::dst#0 = (char *)copy::destination#0 // dst
+void *copy::source
+__constant void *copy::source#0 = (void *)A // source
+char *copy::src
+__constant char *copy::src#0 = (char *)copy::source#0 // src
 void main()
 
 
@@ -266,7 +267,7 @@ Score: 41
   // main
 main: {
     // copy(B, A)
-    // [1] call copy 
+    // [1] call copy
     jsr copy
     // main::@return
     // }
@@ -275,13 +276,14 @@ main: {
 }
   // copy
 // Copy a byte if the destination is after the source
+// void copy(void *destination, void *source)
 copy: {
     .label destination = B
     .label source = A
     .label src = source
     .label dst = destination
     // if((unsigned int)destination>(unsigned int)source)
-    // [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
+    // [3] if((unsigned int)copy::destination#0<=(unsigned int)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
     lda #>destination
     cmp #>source
     bne !+

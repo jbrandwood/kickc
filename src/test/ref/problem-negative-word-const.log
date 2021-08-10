@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -8,7 +8,7 @@ main: scope:[main]  from __start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
-  main::w#0 = (word)main::i#2
+  main::w#0 = (unsigned int)main::i#2
   main::$0 = main::i#2 & 1
   main::$4 = 0 != main::$0
   main::$1 = ! main::$4
@@ -17,7 +17,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   main::w#2 = phi( main::@1/main::w#0, main::@3/main::w#1 )
   main::i#3 = phi( main::@1/main::i#2, main::@3/main::i#4 )
-  main::$3 = main::i#3 * SIZEOF_WORD
+  main::$3 = main::i#3 * SIZEOF_UNSIGNED_INT
   screen[main::$3] = main::w#2
   main::i#1 = main::i#3 + rangenext(0,7)
   main::$2 = main::i#1 != rangelast(0,7)
@@ -37,7 +37,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -46,25 +46,25 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-number~ main::$0
-bool~ main::$1
-bool~ main::$2
-byte~ main::$3
-bool~ main::$4
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
-word main::w
-word main::w#0
-word main::w#1
-word main::w#2
-constant word* screen = (byte*)$400
+number main::$0
+bool main::$1
+bool main::$2
+char main::$3
+bool main::$4
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+unsigned int main::w
+unsigned int main::w#0
+unsigned int main::w#1
+unsigned int main::w#2
+__constant unsigned int *screen = (char *)$400
 
 Adding number conversion cast (unumber) 1 in main::$0 = main::i#2 & 1
 Adding number conversion cast (unumber) main::$0 in main::$0 = main::i#2 & (unumber)1
@@ -73,16 +73,16 @@ Adding number conversion cast (unumber) -1 in main::w#1 = -1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast main::w#1 = (unumber)-1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast -1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) -1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) -1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$0 = main::i#2 & 1
+Inferred type updated to char in main::$0 = main::i#2 & 1
 Inversing boolean not [5] main::$1 = 0 == main::$0 from [4] main::$4 = 0 != main::$0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::i#2 = main::i#4 
@@ -108,16 +108,16 @@ Adding number conversion cast (unumber) 8 in [8] if(main::i#1!=8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting multiplication to use shift [5] main::$3 = main::i#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [5] main::$3 = main::i#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings main::w#1
 Constant inlined main::i#0 = 0
 Constant inlined main::w#1 = -1
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting main::@4(between main::@2 and main::@1)
 Added new block during phi lifting main::@5(between main::@1 and main::@2)
@@ -143,7 +143,7 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
-  [2] main::w#0 = (word)main::i#2
+  [2] main::w#0 = (unsigned int)main::i#2
   [3] main::$0 = main::i#2 & 1
   [4] if(0==main::$0) goto main::@3
   to:main::@2
@@ -164,14 +164,14 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$0 22.0
-byte~ main::$3 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 5.5
-word main::w
-word main::w#0 5.5
-word main::w#2 11.0
+char main::$0 // 22.0
+char main::$3 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 5.5
+unsigned int main::w
+unsigned int main::w#0 // 5.5
+unsigned int main::w#2 // 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -188,12 +188,12 @@ Allocated zp[2]:3 [ main::w#2 main::w#0 ]
 Allocated zp[1]:5 [ main::$0 ]
 Allocated zp[1]:6 [ main::$3 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::w#0 = (word)main::i#2 [ main::i#2 main::w#0 ] (  [ main::i#2 main::w#0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::w#0 = (unsigned int)main::i#2 [ main::i#2 main::w#0 ] (  [ main::i#2 main::w#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [3] main::$0 = main::i#2 & 1 [ main::i#2 main::w#0 main::$0 ] (  [ main::i#2 main::w#0 main::$0 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$3 = main::i#2 << 1 [ main::i#2 main::w#2 main::$3 ] (  [ main::i#2 main::w#2 main::$3 ] { }  ) always clobbers reg byte a 
 Statement [8] screen[main::$3] = main::w#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [2] main::w#0 = (word)main::i#2 [ main::i#2 main::w#0 ] (  [ main::i#2 main::w#0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::w#0 = (unsigned int)main::i#2 [ main::i#2 main::w#0 ] (  [ main::i#2 main::w#0 ] { }  ) always clobbers reg byte a 
 Statement [3] main::$0 = main::i#2 & 1 [ main::i#2 main::w#0 main::$0 ] (  [ main::i#2 main::w#0 main::$0 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$3 = main::i#2 << 1 [ main::i#2 main::w#2 main::$3 ] (  [ main::i#2 main::w#2 main::$3 ] { }  ) always clobbers reg byte a 
 Statement [8] screen[main::$3] = main::w#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
@@ -239,7 +239,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] main::w#0 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [2] main::w#0 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z w
     lda #0
@@ -316,15 +316,15 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$0 reg byte a 22.0
-byte~ main::$3 reg byte a 22.0
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 5.5
-word main::w
-word main::w#0 w zp[2]:2 5.5
-word main::w#2 w zp[2]:2 11.0
-constant word* screen = (byte*) 1024
+char main::$0 // reg byte a 22.0
+char main::$3 // reg byte a 22.0
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 5.5
+unsigned int main::w
+unsigned int main::w#0 // w zp[2]:2 5.5
+unsigned int main::w#2 // w zp[2]:2 11.0
+__constant unsigned int *screen = (char *) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::w#2 main::w#0 ]
@@ -360,7 +360,7 @@ main: {
     // main::@1
   __b1:
     // word w = i
-    // [2] main::w#0 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [2] main::w#0 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z w
     lda #0

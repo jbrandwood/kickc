@@ -66,7 +66,7 @@ main: {
 }
 .segment RomCode
 // A stack based ROM function that will transfer all parameters and return values through the stack.
-// call1(byte zp(2) param1, byte register(A) param2)
+// __register(A) char call1(__zp(2) char param1, __register(A) char param2)
 call1: {
     .const OFFSET_STACK_PARAM1 = 1
     .const OFFSET_STACK_PARAM2 = 0
@@ -86,7 +86,7 @@ call1: {
     rts
 }
 // A memory based ROM function that will transfer all parameters and return values through zeropage.
-// call2(byte register(X) param1, byte register(A) param2)
+// __zp(2) char call2(__register(X) char param1, __register(A) char param2)
 call2: {
     .label return = 2
     // param1+param2
@@ -99,7 +99,7 @@ call2: {
     rts
 }
 // A "normal" optimized ROM function that will transfer parameters and return value through registers or zeropage.
-// call3(byte register(X) param1, byte register(A) param2)
+// __register(A) char call3(__register(X) char param1, __register(A) char param2)
 call3: {
     // param1+param2
     stx.z $ff

@@ -40,7 +40,7 @@ main: {
     // }
     rts
 }
-// enableDLI(void* zp($80) dliptr)
+// void enableDLI(__zp($80) void * volatile dliptr)
 enableDLI: {
     .label dliptr = $80
     // asm

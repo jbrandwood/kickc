@@ -38,7 +38,7 @@ main: {
   !:
     jmp __b1
 }
-// PrintName(struct fileentry* zp(2) file)
+// void PrintName(__zp(2) struct fileentry *file)
 PrintName: {
     .label file = 2
     // if (file == dir)

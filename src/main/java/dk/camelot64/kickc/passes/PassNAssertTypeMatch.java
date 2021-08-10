@@ -48,8 +48,8 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
       SymbolType rValueType = variable.getInitValue().getType(getScope());
       if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match
-      getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In initialization of " + variable.toString(getProgram()));
-      throw new CompileError("Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In initialization of " + variable.toString(getProgram()));
+      getLog().append("ERROR! Type mismatch (" + lValueType.toCDecl() + ") cannot be assigned from (" + rValueType.toCDecl() + "). In initialization of " + variable.toString(getProgram()));
+      throw new CompileError("Type mismatch (" + lValueType.toCDecl() + ") cannot be assigned from (" + rValueType.toCDecl() + "). In initialization of " + variable.toString(getProgram()));
    }
 
    private void checkAssignment(StatementAssignment statement) {
@@ -66,8 +66,8 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
       SymbolType rValueType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(statement));
       if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match
-      getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
-      throw new CompileError("Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
+      getLog().append("ERROR! Type mismatch (" + lValueType.toCDecl() + ") cannot be assigned from (" + rValueType.toCDecl() + "). In " + statement.toString(getProgram(), false));
+      throw new CompileError("Type mismatch (" + lValueType.toCDecl() + ") cannot be assigned from (" + rValueType.toCDecl() + "). In " + statement.toString(getProgram(), false), statement.getSource());
    }
 
 }

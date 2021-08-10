@@ -37,6 +37,7 @@ main: {
     // }
     rts
 }
+// __zp(2) char * first(char *msg)
 first: {
     .label return = 2
     rts

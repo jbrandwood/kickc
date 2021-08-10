@@ -220,44 +220,63 @@ public class Pass4CodeGeneration {
     */
    private void generateSignatureComments(AsmProgram asm, Procedure procedure) {
       StringBuilder signature = new StringBuilder();
+      signature.append(" ");
+      generateSignatureVar(procedure.getLocalVar("return"), procedure, signature);
+      signature.append(procedure.getReturnType().toCDecl());
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
       for(Variable parameter : procedure.getParameters()) {
-         Variable param = parameter;
-         if(param.isKindPhiMaster()) {
-            List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
-            if(versions.size() > 0)
-               param = versions.get(0);
-            else
-               // Parameter optimized away to a constant or unused
-               continue;
-         }
-
-         Registers.Register allocation = param.getAllocation();
          if(i++ > 0) signature.append(", ");
-         signature.append(param.getType().getTypeBaseName()).append(" ");
-         if(allocation instanceof Registers.RegisterZpMem) {
-            Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
-            signature.append("zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
-         } else if(allocation instanceof Registers.RegisterMainMem) {
-            Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
-            signature.append("mem(").append(registerMainMem.getAddress() == null ? "" : AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(")");
-         } else if(allocation instanceof Registers.RegisterAByte) {
-            signature.append("register(A)");
-         } else if(allocation instanceof Registers.RegisterXByte) {
-            signature.append("register(X)");
-         } else if(allocation instanceof Registers.RegisterYByte) {
-            signature.append("register(Y)");
-         } else if(allocation instanceof Registers.RegisterZByte) {
-            signature.append("register(Z)");
-         }
-         signature.append(" ");
-         signature.append(parameter.getLocalName());
+         Variable param = generateSignatureVar(parameter, procedure, signature);
+         signature.append(param.getType().toCDecl(parameter.getLocalName()));
       }
       signature.append(")");
       if(i > 0) {
          asm.addComment(signature.toString(), false);
       }
+   }
+
+   /**
+    * Generate part of a comment that describes a returnvalue/parameter
+    * @param param The variable to describe
+    * @param scope The scope (procedure)
+    * @param signature The signature to append to
+    * @return The version of the variable chosen
+    */
+   Variable generateSignatureVar(Variable param, Scope scope, StringBuilder signature) {
+      if(param==null) return param;
+      if(param.isKindPhiMaster()) {
+         List<Variable> versions = new ArrayList<>(scope.getVersions(param));
+         if(versions.size() > 0)
+            if(param.getLocalName().equals("return")) {
+               // Choose the last version for return values
+               param = versions.get(versions.size()-1);
+            } else {
+               // Choose the first version for parameters
+               param = versions.get(0);
+            }
+         else
+            // Parameter optimized away to a constant or unused
+            return param;
+      }
+
+      Registers.Register allocation = param.getAllocation();
+      if(allocation instanceof Registers.RegisterZpMem) {
+         Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
+         signature.append("__zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(") ");
+      } else if(allocation instanceof Registers.RegisterMainMem) {
+         Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+         signature.append("__mem(").append(registerMainMem.getAddress() == null ? "" : AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(") ");
+      } else if(allocation instanceof Registers.RegisterAByte) {
+         signature.append("__register(A) ");
+      } else if(allocation instanceof Registers.RegisterXByte) {
+         signature.append("__register(X) ");
+      } else if(allocation instanceof Registers.RegisterYByte) {
+         signature.append("__register(Y) ");
+      } else if(allocation instanceof Registers.RegisterZByte) {
+         signature.append("__register(Z) ");
+      }
+      return param;
    }
 
    /**

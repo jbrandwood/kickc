@@ -8,6 +8,7 @@
 .segment Basic
 :BasicUpstart(main)
 .segment Code
+// int main(int argc, char **argv)
 main: {
     .label SCREEN = $400
     // SCREEN[0] = (char)argc

@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::$3 = (byte*)main::a
+  main::$3 = (char *)main::a
   main::$2 = main::$3 + OFFSET_STRUCT_A_B
   main::$4 = 0 != *main::$2
   main::$0 = ! main::$4
@@ -23,7 +23,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -32,33 +32,33 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_A_B = 0
+__constant char OFFSET_STRUCT_A_B = 0
 void __start()
-volatile struct A aa loadstore = { b: 1 }
+__loadstore volatile struct A aa = { b: 1 }
 void main()
-bool~ main::$0
-bool~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-bool~ main::$4
-constant byte* const main::SCREEN = (byte*)$400
-constant struct A* main::a = &aa
+bool main::$0
+bool main::$1
+char *main::$2
+char *main::$3
+bool main::$4
+__constant char * const main::SCREEN = (char *)$400
+__constant struct A *main::a = &aa
 
 Adding number conversion cast (unumber) 0 in main::$4 = 0 != *main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [3] main::$0 = 0 == *main::$2 from [2] main::$4 = 0 != *main::$2
 Inversing boolean not [4] main::$1 = 0 != *main::$2 from [3] main::$0 = 0 == *main::$2
 Successful SSA optimization Pass2UnaryNotSimplification
 Simple Condition main::$1 [3] if(0!=*main::$2) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] main::$3 = (byte*)main::a
+Constant right-side identified [0] main::$3 = (char *)main::a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$3 = (byte*)main::a
+Constant main::$3 = (char *)main::a
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [3] if(0!=*main::$2) goto main::@1  -- main::$3[OFFSET_STRUCT_A_B]
 Successful SSA optimization Pass2InlineDerefIdx
@@ -73,7 +73,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$3 = (byte*)main::a
+Constant inlined main::$3 = (char *)main::a
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -84,7 +84,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] if(0!=*((byte*)main::a)) goto main::@1
+  [0] if(0!=*((char *)main::a)) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main
   [1] *main::SCREEN = 'a'
@@ -98,7 +98,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-volatile struct A aa loadstore = { b: 1 }
+__loadstore volatile struct A aa = { b: 1 }
 void main()
 
 Initial phi equivalence classes
@@ -107,7 +107,7 @@ Complete equivalence classes
 [ aa ]
 Allocated mem[1] [ aa ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] if(0!=*((byte*)main::a)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] if(0!=*((char *)main::a)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *main::SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[1] [ aa ] : mem[1] , 
 
@@ -141,7 +141,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label SCREEN = $400
     .label a = aa
-    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
+    // [0] if(0!=*((char *)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
     lda a
     bne __b1
     jmp __b2
@@ -181,10 +181,10 @@ Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-volatile struct A aa loadstore mem[1] = { b: 1 }
+__loadstore volatile struct A aa = { b: 1 } // mem[1]
 void main()
-constant byte* const main::SCREEN = (byte*) 1024
-constant struct A* main::a = &aa
+__constant char * const main::SCREEN = (char *) 1024
+__constant struct A *main::a = &aa
 
 mem[1] [ aa ]
 
@@ -211,7 +211,7 @@ main: {
     .label SCREEN = $400
     .label a = aa
     // if(!a->b)
-    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
+    // [0] if(0!=*((char *)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
     lda a
     bne !a+
     // main::@2

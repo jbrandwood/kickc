@@ -6,7 +6,7 @@ main: scope:[main]  from __start
   *main::PTR = byte0 main::STRING
   *(main::PTR+1) = byte1 main::STRING
   main::$0 = *(main::PTR+1) w= *main::PTR
-  main::ptr#0 = (byte*)main::$0
+  main::ptr#0 = (char *)main::$0
   *main::SCREEN = *main::ptr#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -26,30 +26,30 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-word~ main::$0
-constant byte* const main::PTR = (byte*)$9ffe
-constant byte* const main::SCREEN = (byte*)$400
-constant const byte* main::STRING[]  = "camelot"z
-byte* main::ptr
-byte* main::ptr#0
+unsigned int main::$0
+__constant char * const main::PTR = (char *)$9ffe
+__constant char * const main::SCREEN = (char *)$400
+__constant const char main::STRING[] = "camelot"z
+char *main::ptr
+char *main::ptr#0
 
 Adding number conversion cast (unumber) 1 in *(main::PTR+1) = byte1 main::STRING
 Adding number conversion cast (unumber) 1 in main::$0 = *(main::PTR+1) w= *main::PTR
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 40958
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 40958
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining Noop Cast [3] main::ptr#0 = (byte*)main::$0 keeping main::ptr#0
+Inlining Noop Cast [3] main::ptr#0 = (char *)main::$0 keeping main::ptr#0
 Successful SSA optimization Pass2NopCastInlining
 CALL GRAPH
 
@@ -63,7 +63,7 @@ main: scope:[main]  from
   [0] *main::PTR = byte0 main::STRING
   [1] *(main::PTR+1) = byte1 main::STRING
   [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR
-  [3] *main::SCREEN = *((byte*)main::ptr#0)
+  [3] *main::SCREEN = *((char *)main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -72,8 +72,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* main::ptr
-word main::ptr#0 2.0
+char *main::ptr
+unsigned int main::ptr#0 // 2.0
 
 Initial phi equivalence classes
 Added variable main::ptr#0 to live range equivalence class [ main::ptr#0 ]
@@ -84,7 +84,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *main::PTR = byte0 main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *(main::PTR+1) = byte1 main::STRING [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] main::ptr#0 = *(main::PTR+1) w= *main::PTR [ main::ptr#0 ] (  [ main::ptr#0 ] { }  ) always clobbers reg byte a 
-Statement [3] *main::SCREEN = *((byte*)main::ptr#0) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *main::SCREEN = *((char *)main::ptr#0) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::ptr#0 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -126,7 +126,7 @@ main: {
     sta.z ptr+1
     lda PTR
     sta.z ptr
-    // [3] *main::SCREEN = *((byte*)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [3] *main::SCREEN = *((char *)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN
@@ -150,11 +150,11 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* const main::PTR = (byte*) 40958
-constant byte* const main::SCREEN = (byte*) 1024
-constant const byte* main::STRING[]  = "camelot"z
-byte* main::ptr
-word main::ptr#0 ptr zp[2]:2 2.0
+__constant char * const main::PTR = (char *) 40958
+__constant char * const main::SCREEN = (char *) 1024
+__constant const char main::STRING[] = "camelot"z
+char *main::ptr
+unsigned int main::ptr#0 // ptr zp[2]:2 2.0
 
 zp[2]:2 [ main::ptr#0 ]
 
@@ -196,7 +196,7 @@ main: {
     lda PTR
     sta.z ptr
     // *SCREEN = *ptr
-    // [3] *main::SCREEN = *((byte*)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [3] *main::SCREEN = *((char *)main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN

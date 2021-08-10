@@ -2,9 +2,9 @@ Converting variable modified inside __stackcall procedure next() to load/store c
 Inlined call call __init
 Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call next
 Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call next
-Calling convention STACK_CALL adding stack return stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return
-Calling convention STACK_CALL adding stack pull main::$0 = stackpull(signed word)
-Calling convention STACK_CALL adding stack pull main::$1 = stackpull(signed word)
+Calling convention STACK_CALL adding stack return stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return
+Calling convention STACK_CALL adding stack pull main::$0 = stackpull(int)
+Calling convention STACK_CALL adding stack pull main::$1 = stackpull(int)
 
 CONTROL FLOW GRAPH SSA
 
@@ -12,27 +12,27 @@ void main()
 main: scope:[main]  from __start::@1
   sideeffect stackpushbytes(2)
   callexecute next 
-  main::$0 = stackpull(signed word)
-  main::$2 = 0 * SIZEOF_SIGNED_WORD
+  main::$0 = stackpull(int)
+  main::$2 = 0 * SIZEOF_INT
   SCREEN[main::$2] = main::$0
   sideeffect stackpushbytes(2)
   callexecute next 
-  main::$1 = stackpull(signed word)
-  main::$3 = 1 * SIZEOF_SIGNED_WORD
+  main::$1 = stackpull(int)
+  main::$3 = 1 * SIZEOF_INT
   SCREEN[main::$3] = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-__stackcall signed word next()
+__stackcall int next()
 next: scope:[next]  from
   next::return#0 = current
   current = ++ current
   to:next::@return
 next::@return: scope:[next]  from next
   next::return#1 = phi( next/next::return#0 )
-  stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#1
+  stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return#1
   return 
   to:@return
 
@@ -52,56 +52,56 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant signed word* const SCREEN = (signed word*)$400
-constant byte SIZEOF_SIGNED_WORD = 2
-constant word STACK_BASE = $103
+__constant int * const SCREEN = (int *)$400
+__constant char SIZEOF_INT = 2
+__constant unsigned int STACK_BASE = $103
 void __start()
-signed word current loadstore
+__loadstore int current
 void main()
-signed word~ main::$0
-signed word~ main::$1
-number~ main::$2
-number~ main::$3
-__stackcall signed word next()
-constant byte next::OFFSET_STACK_RETURN_0 = 0
-signed word next::return
-signed word next::return#0
-signed word next::return#1
+int main::$0
+int main::$1
+number main::$2
+number main::$3
+__stackcall int next()
+__constant char next::OFFSET_STACK_RETURN_0 = 0
+int next::return
+int next::return#0
+int next::return#1
 
-Adding number conversion cast (unumber) 0 in main::$2 = 0 * SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) main::$2 in main::$2 = (unumber)0 * SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) 1 in main::$3 = 1 * SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) main::$3 in main::$3 = (unumber)1 * SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 0 in main::$2 = 0 * SIZEOF_INT
+Adding number conversion cast (unumber) main::$2 in main::$2 = (unumber)0 * SIZEOF_INT
+Adding number conversion cast (unumber) 1 in main::$3 = 1 * SIZEOF_INT
+Adding number conversion cast (unumber) main::$3 in main::$3 = (unumber)1 * SIZEOF_INT
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant pointer cast (int *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$2 = 0 * SIZEOF_SIGNED_WORD
-Inferred type updated to byte in main::$3 = 1 * SIZEOF_SIGNED_WORD
+Inferred type updated to char in main::$2 = 0 * SIZEOF_INT
+Inferred type updated to char in main::$3 = 1 * SIZEOF_INT
 Alias next::return#0 = next::return#1 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [3] main::$2 = 0 * SIZEOF_SIGNED_WORD
-Constant right-side identified [8] main::$3 = 1 * SIZEOF_SIGNED_WORD
+Constant right-side identified [3] main::$2 = 0 * SIZEOF_INT
+Constant right-side identified [8] main::$3 = 1 * SIZEOF_INT
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$2 = 0*SIZEOF_SIGNED_WORD
-Constant main::$3 = 1*SIZEOF_SIGNED_WORD
+Constant main::$2 = 0*SIZEOF_INT
+Constant main::$3 = 1*SIZEOF_INT
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero 0*SIZEOF_SIGNED_WORD in 
+Simplifying constant evaluating to zero 0*SIZEOF_INT in 
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero SCREEN in [4] SCREEN[main::$2] = main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant main::$2
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$3 = 1*SIZEOF_SIGNED_WORD
+Constant inlined main::$3 = 1*SIZEOF_INT
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN+1*SIZEOF_SIGNED_WORD)
+Consolidated array index constant in *(SCREEN+1*SIZEOF_INT)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -133,13 +133,13 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-__stackcall signed word next()
+__stackcall int next()
 next: scope:[next]  from
   [5] next::return#0 = current
   [6] current = ++ current
   to:next::@return
 next::@return: scope:[next]  from next
-  [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0
+  [7] stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return#0
   [8] return 
   to:@return
 
@@ -147,12 +147,12 @@ void main()
 main: scope:[main]  from __start::@1
   sideeffect stackpushbytes(2)
   [10] callexecute next 
-  [11] main::$0 = stackpull(signed word)
+  [11] main::$0 = stackpull(int)
   [12] *SCREEN = main::$0
   sideeffect stackpushbytes(2)
   [14] callexecute next 
-  [15] main::$1 = stackpull(signed word)
-  [16] *(SCREEN+1*SIZEOF_SIGNED_WORD) = main::$1
+  [15] main::$1 = stackpull(int)
+  [16] *(SCREEN+1*SIZEOF_INT) = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   [17] return 
@@ -161,13 +161,13 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-signed word current loadstore 27.727272727272727
+__loadstore int current // 27.727272727272727
 void main()
-signed word~ main::$0 22.0
-signed word~ main::$1 22.0
-__stackcall signed word next()
-signed word next::return
-signed word next::return#0 101.0
+int main::$0 // 22.0
+int main::$1 // 22.0
+__stackcall int next()
+int next::return
+int next::return#0 // 101.0
 
 Initial phi equivalence classes
 Added variable current to live range equivalence class [ current ]
@@ -186,11 +186,11 @@ Allocated zp[2]:8 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] current = $30 [ current ] (  [ current ] { }  ) always clobbers reg byte a 
 Statement [5] next::return#0 = current [ current next::return#0 ] ( main:3::next:10 [ current next::return#0 ] { }  main:3::next:14 [ current next::return#0 ] { }  ) always clobbers reg byte a 
-Statement [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 [ current ] ( main:3::next:10 [ current ] { }  main:3::next:14 [ current ] { }  ) always clobbers reg byte a reg byte x 
-Statement [11] main::$0 = stackpull(signed word) [ current main::$0 ] ( main:3 [ current main::$0 ] { }  ) always clobbers reg byte a 
+Statement [7] stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return#0 [ current ] ( main:3::next:10 [ current ] { }  main:3::next:14 [ current ] { }  ) always clobbers reg byte a reg byte x 
+Statement [11] main::$0 = stackpull(int) [ current main::$0 ] ( main:3 [ current main::$0 ] { }  ) always clobbers reg byte a 
 Statement [12] *SCREEN = main::$0 [ current ] ( main:3 [ current ] { }  ) always clobbers reg byte a 
-Statement [15] main::$1 = stackpull(signed word) [ main::$1 ] ( main:3 [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [16] *(SCREEN+1*SIZEOF_SIGNED_WORD) = main::$1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [15] main::$1 = stackpull(int) [ main::$1 ] ( main:3 [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [16] *(SCREEN+1*SIZEOF_INT) = main::$1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ current ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ next::return#0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ main::$0 ] : zp[2]:6 , 
@@ -225,7 +225,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
@@ -270,7 +270,7 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN_0,x
@@ -288,7 +288,7 @@ main: {
     pha
     // [10] callexecute next  -- call_vprc1 
     jsr next
-    // [11] main::$0 = stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [11] main::$0 = stackpull(int) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
@@ -303,16 +303,16 @@ main: {
     pha
     // [14] callexecute next  -- call_vprc1 
     jsr next
-    // [15] main::$1 = stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [15] main::$1 = stackpull(int) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
     sta.z __1+1
-    // [16] *(SCREEN+1*SIZEOF_SIGNED_WORD) = main::$1 -- _deref_pwsc1=vwsz1 
+    // [16] *(SCREEN+1*SIZEOF_INT) = main::$1 -- _deref_pwsc1=vwsz1 
     lda.z __1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD
+    sta SCREEN+1*SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
+    sta SCREEN+1*SIZEOF_INT+1
     jmp __breturn
     // main::@return
   __breturn:
@@ -338,18 +338,18 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant signed word* const SCREEN = (signed word*) 1024
-constant byte SIZEOF_SIGNED_WORD = 2
-constant word STACK_BASE = $103
+__constant int * const SCREEN = (int *) 1024
+__constant char SIZEOF_INT = 2
+__constant unsigned int STACK_BASE = $103
 void __start()
-signed word current loadstore zp[2]:4 27.727272727272727
+__loadstore int current // zp[2]:4 27.727272727272727
 void main()
-signed word~ main::$0 zp[2]:2 22.0
-signed word~ main::$1 zp[2]:4 22.0
-__stackcall signed word next()
-constant byte next::OFFSET_STACK_RETURN_0 = 0
-signed word next::return
-signed word next::return#0 return zp[2]:2 101.0
+int main::$0 // zp[2]:2 22.0
+int main::$1 // zp[2]:4 22.0
+__stackcall int next()
+__constant char next::OFFSET_STACK_RETURN_0 = 0
+int next::return
+int next::return#0 // return zp[2]:2 101.0
 
 zp[2]:2 [ main::$0 next::return#0 ]
 zp[2]:4 [ main::$1 current ]
@@ -371,7 +371,7 @@ Score: 156
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
@@ -410,7 +410,7 @@ next: {
   !:
     // next::@return
     // }
-    // [7] stackidx(signed word,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(int,next::OFFSET_STACK_RETURN_0) = next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN_0,x
@@ -429,7 +429,7 @@ main: {
     pha
     // [10] callexecute next  -- call_vprc1 
     jsr next
-    // [11] main::$0 = stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [11] main::$0 = stackpull(int) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
@@ -446,17 +446,17 @@ main: {
     pha
     // [14] callexecute next  -- call_vprc1 
     jsr next
-    // [15] main::$1 = stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [15] main::$1 = stackpull(int) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
     sta.z __1+1
     // SCREEN[1] = next()
-    // [16] *(SCREEN+1*SIZEOF_SIGNED_WORD) = main::$1 -- _deref_pwsc1=vwsz1 
+    // [16] *(SCREEN+1*SIZEOF_INT) = main::$1 -- _deref_pwsc1=vwsz1 
     lda.z __1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD
+    sta SCREEN+1*SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
+    sta SCREEN+1*SIZEOF_INT+1
     // main::@return
     // }
     // [17] return 

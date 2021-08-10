@@ -108,7 +108,7 @@ main: {
 .segment Code
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($c) destination, void* zp($a) source, word zp($e) num)
+// void * memcpy(__zp($c) void *destination, __zp($a) void *source, __zp($e) unsigned int num)
 memcpy: {
     .label src_end = $e
     .label dst = $c

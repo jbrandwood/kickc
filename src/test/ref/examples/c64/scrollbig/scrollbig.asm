@@ -62,6 +62,7 @@ main: {
     jmp __b1
 }
 // Fill the screen with one char
+// void fillscreen(char *screen, char fill)
 fillscreen: {
     .const fill = $20
     .label cursor = 3

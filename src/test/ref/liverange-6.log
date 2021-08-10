@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -11,7 +11,7 @@ main::@1: scope:[main]  from main main::@2
   idx#13 = phi( main/idx#15, main::@2/idx#0 )
   main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
   out::c#0 = msg[main::i#2]
-  call out 
+  call out
   to:main::@2
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
@@ -27,7 +27,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void out(byte out::c)
+void out(char c)
 out: scope:[out]  from main::@1
   idx#9 = phi( main::@1/idx#13 )
   out::c#1 = phi( main::@1/out::c#0 )
@@ -48,7 +48,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#14 = phi( __start::__init1/idx#4 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#11 = phi( __start::@1/idx#1 )
@@ -61,39 +61,39 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-bool~ main::$1
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-constant byte* msg[]  = "hello world!"
-void out(byte out::c)
-byte out::c
-byte out::c#0
-byte out::c#1
+bool main::$1
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+__constant char msg[] = "hello world!"
+void out(char c)
+char out::c
+char out::c#0
+char out::c#1
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias main::i#2 = main::i#3 
 Alias idx#0 = idx#7 idx#8 idx#1 
@@ -125,7 +125,7 @@ Adding number conversion cast (unumber) $c in [4] if(main::i#1!=$c) goto main::@
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $c
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $c
+Finalized unsigned number type (char) $c
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings idx#14
@@ -154,7 +154,7 @@ main::@1: scope:[main]  from main main::@2
   [1] idx#13 = phi( main/0, main::@2/idx#10 )
   [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
   [2] out::c#0 = msg[main::i#2]
-  [3] call out 
+  [3] call out
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] main::i#1 = ++ main::i#2
@@ -164,7 +164,7 @@ main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void out(byte out::c)
+void out(char c)
 out: scope:[out]  from main::@1
   [7] SCREEN[idx#13] = out::c#0
   [8] idx#10 = ++ idx#13
@@ -175,16 +175,16 @@ out::@return: scope:[out]  from out
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
-byte idx#10 22.4
-byte idx#13 71.0
+char idx
+char idx#10 // 22.4
+char idx#13 // 71.0
 void main()
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 11.0
-void out(byte out::c)
-byte out::c
-byte out::c#0 112.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 11.0
+void out(char c)
+char out::c
+char out::c#0 // 112.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -245,7 +245,7 @@ main: {
   __b1:
     // [2] out::c#0 = msg[main::i#2] -- vbuaa=pbuc1_derefidx_vbuyy 
     lda msg,y
-    // [3] call out 
+    // [3] call out
     jsr out
     jmp __b2
     // main::@2
@@ -262,7 +262,7 @@ main: {
     rts
 }
   // out
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // [7] SCREEN[idx#13] = out::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -297,18 +297,18 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-byte idx
-byte idx#10 reg byte x 22.4
-byte idx#13 reg byte x 71.0
+__constant char * const SCREEN = (char *) 1024
+char idx
+char idx#10 // reg byte x 22.4
+char idx#13 // reg byte x 71.0
 void main()
-byte main::i
-byte main::i#1 reg byte y 16.5
-byte main::i#2 reg byte y 11.0
-constant byte* msg[]  = "hello world!"
-void out(byte out::c)
-byte out::c
-byte out::c#0 reg byte a 112.0
+char main::i
+char main::i#1 // reg byte y 16.5
+char main::i#2 // reg byte y 11.0
+__constant char msg[] = "hello world!"
+void out(char c)
+char out::c
+char out::c#0 // reg byte a 112.0
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte x [ idx#13 idx#10 ]
@@ -348,7 +348,7 @@ main: {
     // out(msg[i])
     // [2] out::c#0 = msg[main::i#2] -- vbuaa=pbuc1_derefidx_vbuyy 
     lda msg,y
-    // [3] call out 
+    // [3] call out
     jsr out
     // main::@2
     // for( byte i: 0..11)
@@ -363,7 +363,7 @@ main: {
     rts
 }
   // out
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // SCREEN[idx++] = c
     // [7] SCREEN[idx#13] = out::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 

@@ -5,10 +5,10 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT)
-  main::$2 = (byte*)main::q
+  main::$2 = (char *)main::q
   main::$0 = main::$2 + OFFSET_STRUCT_POINT_X
   main::SCREEN[0] = *main::$0
-  main::$3 = (byte*)main::q
+  main::$3 = (char *)main::q
   main::$1 = main::$3 + OFFSET_STRUCT_POINT_Y
   main::SCREEN[1] = *main::$1
   to:main::@return
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -27,35 +27,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant struct Point $0 = { x: 2, y: 3 }
-constant byte OFFSET_STRUCT_POINT_X = 0
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte SIZEOF_STRUCT_POINT = 2
+__constant struct Point $0 = { x: 2, y: 3 }
+__constant char OFFSET_STRUCT_POINT_X = 0
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char SIZEOF_STRUCT_POINT = 2
 void __start()
 void main()
-byte*~ main::$0
-byte*~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-constant byte* const main::SCREEN = (byte*)$400
-volatile struct Point main::p loadstore
-constant struct Point* main::q = &main::p
+char *main::$0
+char *main::$1
+char *main::$2
+char *main::$3
+__constant char * const main::SCREEN = (char *)$400
+__loadstore volatile struct Point main::p
+__constant struct Point *main::q = &main::p
 
 Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *main::$0
 Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] main::$2 = (byte*)main::q
-Constant right-side identified [4] main::$3 = (byte*)main::q
+Constant right-side identified [1] main::$2 = (char *)main::q
+Constant right-side identified [4] main::$3 = (char *)main::q
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$2 = (byte*)main::q
-Constant main::$3 = (byte*)main::q
+Constant main::$2 = (char *)main::q
+Constant main::$3 = (char *)main::q
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [3] main::SCREEN[0] = *main::$0  -- main::$2[OFFSET_STRUCT_POINT_X]
 Converting *(pointer+n) to pointer[n] [6] main::SCREEN[1] = *main::$1  -- main::$3[OFFSET_STRUCT_POINT_Y]
@@ -73,10 +73,10 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$2 = (byte*)main::q
-Constant inlined main::$3 = (byte*)main::q
+Constant inlined main::$2 = (char *)main::q
+Constant inlined main::$3 = (char *)main::q
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *((byte*)main::q+OFFSET_STRUCT_POINT_Y)
+Consolidated array index constant in *((char *)main::q+OFFSET_STRUCT_POINT_Y)
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
@@ -89,8 +89,8 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT)
-  [1] *main::SCREEN = *((byte*)main::q)
-  [2] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y)
+  [1] *main::SCREEN = *((char *)main::q)
+  [2] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -99,7 +99,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-volatile struct Point main::p loadstore
+__loadstore volatile struct Point main::p
 
 Initial phi equivalence classes
 Added variable main::p to live range equivalence class [ main::p ]
@@ -108,8 +108,8 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::p ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [1] *main::SCREEN = *((byte*)main::q) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::SCREEN = *((char *)main::q) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -149,10 +149,10 @@ main: {
     sta p-1,y
     dey
     bne !-
-    // [1] *main::SCREEN = *((byte*)main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *main::SCREEN = *((char *)main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
-    // [2] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -172,13 +172,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct Point $0 = { x: 2, y: 3 }
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte SIZEOF_STRUCT_POINT = 2
+__constant struct Point $0 = { x: 2, y: 3 }
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char SIZEOF_STRUCT_POINT = 2
 void main()
-constant byte* const main::SCREEN = (byte*) 1024
-volatile struct Point main::p loadstore zp[2]:2
-constant struct Point* main::q = &main::p
+__constant char * const main::SCREEN = (char *) 1024
+__loadstore volatile struct Point main::p // zp[2]:2
+__constant struct Point *main::q = &main::p
 
 zp[2]:2 [ main::p ]
 
@@ -215,11 +215,11 @@ main: {
     dey
     bne !-
     // SCREEN[0] = q->x
-    // [1] *main::SCREEN = *((byte*)main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *main::SCREEN = *((char *)main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
     // SCREEN[1] = q->y
-    // [2] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return

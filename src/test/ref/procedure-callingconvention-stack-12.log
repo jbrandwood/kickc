@@ -5,23 +5,23 @@ Inlined call call __init
 Calling convention __stackcall adding prepare/execute/finalize for call print(main::str, 1)
 Calling convention __stackcall adding prepare/execute/finalize for call print(main::str1, 2)
 Calling convention __stackcall adding prepare/execute/finalize for call main
-Calling convention STACK_CALL replacing param(print::str) with stackidx(byte*,print::OFFSET_STACK_STR)
-Calling convention STACK_CALL replacing param(print::spacing) with stackidx(byte,print::OFFSET_STACK_SPACING)
-Calling convention STACK_CALL adding stack push stackpush(byte*) = main::str
-Calling convention STACK_CALL adding stack push stackpush(byte) = 1
-Calling convention STACK_CALL adding stack push stackpush(byte*) = main::str1
-Calling convention STACK_CALL adding stack push stackpush(byte) = 2
+Calling convention STACK_CALL replacing param(print::str) with stackidx(char *,print::OFFSET_STACK_STR)
+Calling convention STACK_CALL replacing param(print::spacing) with stackidx(char,print::OFFSET_STACK_SPACING)
+Calling convention STACK_CALL adding stack push stackpush(char *) = main::str
+Calling convention STACK_CALL adding stack push stackpush(char) = 1
+Calling convention STACK_CALL adding stack push stackpush(char *) = main::str1
+Calling convention STACK_CALL adding stack push stackpush(char) = 2
 
 CONTROL FLOW GRAPH SSA
 
 __stackcall void main()
 main: scope:[main]  from
-  stackpush(byte*) = main::str
-  stackpush(byte) = 1
+  stackpush(char *) = main::str
+  stackpush(char) = 1
   callexecute print 
   sideeffect stackpullbytes(3)
-  stackpush(byte*) = main::str1
-  stackpush(byte) = 2
+  stackpush(char *) = main::str1
+  stackpush(char) = 2
   callexecute print 
   sideeffect stackpullbytes(3)
   to:main::@return
@@ -29,10 +29,10 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__stackcall void print(byte* print::str , byte print::spacing)
+__stackcall void print(char *str , char spacing)
 print: scope:[print]  from
-  print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR)
-  print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING)
+  print::str#0 = stackidx(char *,print::OFFSET_STACK_STR)
+  print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING)
   to:print::@1
 print::@1: scope:[print]  from print print::@3
   print::spacing#4 = phi( print/print::spacing#0, print::@3/print::spacing#1 )
@@ -81,52 +81,52 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
-constant word STACK_BASE = $103
+__constant char * const SCREEN = (char *)$400
+__constant unsigned int STACK_BASE = $103
 void __start()
-byte idx loadstore
+__loadstore char idx
 __stackcall void main()
-constant byte* main::str[6]  = "hello"
-constant byte* main::str1[6]  = "world"
-__stackcall void print(byte* print::str , byte print::spacing)
-bool~ print::$0
-bool~ print::$1
-constant byte print::OFFSET_STACK_SPACING = 0
-constant byte print::OFFSET_STACK_STR = 1
-byte print::c
-byte print::c#0
-byte print::c#1
-byte print::c#2
-byte print::c#3
-byte print::spacing
-byte print::spacing#0
-byte print::spacing#1
-byte print::spacing#2
-byte print::spacing#3
-byte print::spacing#4
-byte* print::str
-byte* print::str#0
-byte* print::str#1
-byte* print::str#2
-byte* print::str#3
-byte* print::str#4
-byte* print::str#5
+__constant char main::str[6] = "hello"
+__constant char main::str1[6] = "world"
+__stackcall void print(char *str , char spacing)
+bool print::$0
+bool print::$1
+__constant char print::OFFSET_STACK_SPACING = 0
+__constant char print::OFFSET_STACK_STR = 1
+char print::c
+char print::c#0
+char print::c#1
+char print::c#2
+char print::c#3
+char print::spacing
+char print::spacing#0
+char print::spacing#1
+char print::spacing#2
+char print::spacing#3
+char print::spacing#4
+char *print::str
+char *print::str#0
+char *print::str#1
+char *print::str#2
+char *print::str#3
+char *print::str#4
+char *print::str#5
 
-Adding number conversion cast (unumber) 1 in stackpush(byte) = 1
-Adding number conversion cast (unumber) 2 in stackpush(byte) = 2
+Adding number conversion cast (unumber) 1 in stackpush(char) = 1
+Adding number conversion cast (unumber) 2 in stackpush(char) = 2
 Adding number conversion cast (unumber) 0 in print::$1 = 0 != *print::str#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast stackpush(byte) = (unumber)1
-Inlining cast stackpush(byte) = (unumber)2
+Inlining cast stackpush(char) = (unumber)1
+Inlining cast stackpush(char) = (unumber)2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias print::str#2 = print::str#3 
 Alias print::spacing#2 = print::spacing#4 
@@ -147,8 +147,8 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings print::c#0
 Constant inlined print::c#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print::@5(between print::@3 and print::@1)
 Adding NOP phi() at start of __start
@@ -183,10 +183,10 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-__stackcall void print(byte* print::str , byte print::spacing)
+__stackcall void print(char *str , char spacing)
 print: scope:[print]  from
-  [5] print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR)
-  [6] print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING)
+  [5] print::str#0 = stackidx(char *,print::OFFSET_STACK_STR)
+  [6] print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING)
   to:print::@1
 print::@1: scope:[print]  from print print::@3
   [7] print::str#2 = phi( print/print::str#0, print::@3/print::str#1 )
@@ -212,12 +212,12 @@ print::@4: scope:[print]  from print::@3
 
 __stackcall void main()
 main: scope:[main]  from
-  [18] stackpush(byte*) = main::str
-  [19] stackpush(byte) = 1
+  [18] stackpush(char *) = main::str
+  [19] stackpush(char) = 1
   [20] callexecute print 
   sideeffect stackpullbytes(3)
-  [22] stackpush(byte*) = main::str1
-  [23] stackpush(byte) = 2
+  [22] stackpush(char *) = main::str1
+  [23] stackpush(char) = 2
   [24] callexecute print 
   sideeffect stackpullbytes(3)
   to:main::@return
@@ -228,18 +228,18 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-byte idx loadstore 1571.8095238095236
+__loadstore char idx // 1571.8095238095236
 __stackcall void main()
-__stackcall void print(byte* print::str , byte print::spacing)
-byte print::c
-byte print::c#1 20002.0
-byte print::c#2 7500.75
-byte print::spacing
-byte print::spacing#0 918.3636363636363
-byte* print::str
-byte* print::str#0 101.0
-byte* print::str#1 1833.6666666666665
-byte* print::str#2 3276.25
+__stackcall void print(char *str , char spacing)
+char print::c
+char print::c#1 // 20002.0
+char print::c#2 // 7500.75
+char print::spacing
+char print::spacing#0 // 918.3636363636363
+char *print::str
+char *print::str#0 // 101.0
+char *print::str#1 // 1833.6666666666665
+char *print::str#2 // 3276.25
 
 Initial phi equivalence classes
 [ print::str#2 print::str#0 print::str#1 ]
@@ -257,8 +257,8 @@ Allocated zp[1]:5 [ idx ]
 Allocated zp[1]:6 [ print::spacing#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [5] print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR) [ idx print::str#0 ] ( main:3::print:20 [ idx print::str#0 ] { }  main:3::print:24 [ idx print::str#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [6] print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING) [ idx print::str#0 print::spacing#0 ] ( main:3::print:20 [ idx print::str#0 print::spacing#0 ] { }  main:3::print:24 [ idx print::str#0 print::spacing#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [5] print::str#0 = stackidx(char *,print::OFFSET_STACK_STR) [ idx print::str#0 ] ( main:3::print:20 [ idx print::str#0 ] { }  main:3::print:24 [ idx print::str#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [6] print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING) [ idx print::str#0 print::spacing#0 ] ( main:3::print:20 [ idx print::str#0 print::spacing#0 ] { }  main:3::print:24 [ idx print::str#0 print::spacing#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [8] if(0!=*print::str#2) goto print::@2 [ idx print::spacing#0 print::str#2 ] ( main:3::print:20 [ idx print::spacing#0 print::str#2 ] { }  main:3::print:24 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ print::spacing#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ print::spacing#0 ]
@@ -266,23 +266,23 @@ Statement [10] SCREEN[idx] = *print::str#2 [ idx print::spacing#0 print::str#2 ]
 Statement [15] SCREEN[idx] = ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:3::print:20 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:3::print:24 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::c#2 print::c#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ print::c#2 print::c#1 ]
-Statement [18] stackpush(byte*) = main::str [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
-Statement [19] stackpush(byte) = 1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [18] stackpush(char *) = main::str [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [19] stackpush(char) = 1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(3) always clobbers reg byte a reg byte x 
-Statement [22] stackpush(byte*) = main::str1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
-Statement [23] stackpush(byte) = 2 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [22] stackpush(char *) = main::str1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [23] stackpush(char) = 2 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(3) always clobbers reg byte a reg byte x 
 Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [5] print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR) [ idx print::str#0 ] ( main:3::print:20 [ idx print::str#0 ] { }  main:3::print:24 [ idx print::str#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [6] print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING) [ idx print::str#0 print::spacing#0 ] ( main:3::print:20 [ idx print::str#0 print::spacing#0 ] { }  main:3::print:24 [ idx print::str#0 print::spacing#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [5] print::str#0 = stackidx(char *,print::OFFSET_STACK_STR) [ idx print::str#0 ] ( main:3::print:20 [ idx print::str#0 ] { }  main:3::print:24 [ idx print::str#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [6] print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING) [ idx print::str#0 print::spacing#0 ] ( main:3::print:20 [ idx print::str#0 print::spacing#0 ] { }  main:3::print:24 [ idx print::str#0 print::spacing#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [8] if(0!=*print::str#2) goto print::@2 [ idx print::spacing#0 print::str#2 ] ( main:3::print:20 [ idx print::spacing#0 print::str#2 ] { }  main:3::print:24 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] SCREEN[idx] = *print::str#2 [ idx print::spacing#0 print::str#2 ] ( main:3::print:20 [ idx print::spacing#0 print::str#2 ] { }  main:3::print:24 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [15] SCREEN[idx] = ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:3::print:20 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:3::print:24 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [18] stackpush(byte*) = main::str [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
-Statement [19] stackpush(byte) = 1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [18] stackpush(char *) = main::str [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [19] stackpush(char) = 1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(3) always clobbers reg byte a reg byte x 
-Statement [22] stackpush(byte*) = main::str1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
-Statement [23] stackpush(byte) = 2 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [22] stackpush(char *) = main::str1 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
+Statement [23] stackpush(char) = 2 [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes(3) always clobbers reg byte a reg byte x 
 Potential registers zp[2]:2 [ print::str#2 print::str#0 print::str#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ print::c#2 print::c#1 ] : zp[1]:4 , reg byte x , 
@@ -346,19 +346,19 @@ __start: {
     rts
 }
   // print
-// print(byte* zp(2) str, byte zp(5) spacing)
+// void print(__zp(2) char *str, __zp(5) char spacing)
 print: {
     .const OFFSET_STACK_STR = 1
     .const OFFSET_STACK_SPACING = 0
     .label str = 2
     .label spacing = 5
-    // [5] print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR) -- pbuz1=_stackidxptr_vbuc1 
+    // [5] print::str#0 = stackidx(char *,print::OFFSET_STACK_STR) -- pbuz1=_stackidxptr_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_STR,x
     sta.z str
     lda STACK_BASE+OFFSET_STACK_STR+1,x
     sta.z str+1
-    // [6] print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING) -- vbuz1=_stackidxbyte_vbuc1 
+    // [6] print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_SPACING,x
     sta.z spacing
@@ -421,13 +421,13 @@ print: {
 }
   // main
 main: {
-    // [18] stackpush(byte*) = main::str -- _stackpushptr_=pbuc1 
+    // [18] stackpush(char *) = main::str -- _stackpushptr_=pbuc1 
     // Print "hello"
     lda #>str
     pha
     lda #<str
     pha
-    // [19] stackpush(byte) = 1 -- _stackpushbyte_=vbuc1 
+    // [19] stackpush(char) = 1 -- _stackpushbyte_=vbuc1 
     lda #1
     pha
     // [20] callexecute print  -- call_vprc1 
@@ -437,13 +437,13 @@ main: {
     txa
     axs #-3
     txs
-    // [22] stackpush(byte*) = main::str1 -- _stackpushptr_=pbuc1 
+    // [22] stackpush(char *) = main::str1 -- _stackpushptr_=pbuc1 
     // Print "world"
     lda #>str1
     pha
     lda #<str1
     pha
-    // [23] stackpush(byte) = 2 -- _stackpushbyte_=vbuc1 
+    // [23] stackpush(char) = 2 -- _stackpushbyte_=vbuc1 
     lda #2
     pha
     // [24] callexecute print  -- call_vprc1 
@@ -490,25 +490,25 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-constant word STACK_BASE = $103
+__constant char * const SCREEN = (char *) 1024
+__constant unsigned int STACK_BASE = $103
 void __start()
-byte idx loadstore zp[1]:4 1571.8095238095236
+__loadstore char idx // zp[1]:4 1571.8095238095236
 __stackcall void main()
-constant byte* main::str[6]  = "hello"
-constant byte* main::str1[6]  = "world"
-__stackcall void print(byte* print::str , byte print::spacing)
-constant byte print::OFFSET_STACK_SPACING = 0
-constant byte print::OFFSET_STACK_STR = 1
-byte print::c
-byte print::c#1 reg byte x 20002.0
-byte print::c#2 reg byte x 7500.75
-byte print::spacing
-byte print::spacing#0 spacing zp[1]:5 918.3636363636363
-byte* print::str
-byte* print::str#0 str zp[2]:2 101.0
-byte* print::str#1 str zp[2]:2 1833.6666666666665
-byte* print::str#2 str zp[2]:2 3276.25
+__constant char main::str[6] = "hello"
+__constant char main::str1[6] = "world"
+__stackcall void print(char *str , char spacing)
+__constant char print::OFFSET_STACK_SPACING = 0
+__constant char print::OFFSET_STACK_STR = 1
+char print::c
+char print::c#1 // reg byte x 20002.0
+char print::c#2 // reg byte x 7500.75
+char print::spacing
+char print::spacing#0 // spacing zp[1]:5 918.3636363636363
+char *print::str
+char *print::str#0 // str zp[2]:2 101.0
+char *print::str#1 // str zp[2]:2 1833.6666666666665
+char *print::str#2 // str zp[2]:2 3276.25
 
 zp[2]:2 [ print::str#2 print::str#0 print::str#1 ]
 reg byte x [ print::c#2 print::c#1 ]
@@ -552,19 +552,19 @@ __start: {
     rts
 }
   // print
-// print(byte* zp(2) str, byte zp(5) spacing)
+// void print(__zp(2) char *str, __zp(5) char spacing)
 print: {
     .const OFFSET_STACK_STR = 1
     .const OFFSET_STACK_SPACING = 0
     .label str = 2
     .label spacing = 5
-    // [5] print::str#0 = stackidx(byte*,print::OFFSET_STACK_STR) -- pbuz1=_stackidxptr_vbuc1 
+    // [5] print::str#0 = stackidx(char *,print::OFFSET_STACK_STR) -- pbuz1=_stackidxptr_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_STR,x
     sta.z str
     lda STACK_BASE+OFFSET_STACK_STR+1,x
     sta.z str+1
-    // [6] print::spacing#0 = stackidx(byte,print::OFFSET_STACK_SPACING) -- vbuz1=_stackidxbyte_vbuc1 
+    // [6] print::spacing#0 = stackidx(char,print::OFFSET_STACK_SPACING) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_SPACING,x
     sta.z spacing
@@ -628,13 +628,13 @@ print: {
   // main
 main: {
     // print("hello", 1)
-    // [18] stackpush(byte*) = main::str -- _stackpushptr_=pbuc1 
+    // [18] stackpush(char *) = main::str -- _stackpushptr_=pbuc1 
     // Print "hello"
     lda #>str
     pha
     lda #<str
     pha
-    // [19] stackpush(byte) = 1 -- _stackpushbyte_=vbuc1 
+    // [19] stackpush(char) = 1 -- _stackpushbyte_=vbuc1 
     lda #1
     pha
     // [20] callexecute print  -- call_vprc1 
@@ -645,13 +645,13 @@ main: {
     axs #-3
     txs
     // print("world", 2)
-    // [22] stackpush(byte*) = main::str1 -- _stackpushptr_=pbuc1 
+    // [22] stackpush(char *) = main::str1 -- _stackpushptr_=pbuc1 
     // Print "world"
     lda #>str1
     pha
     lda #<str1
     pha
-    // [23] stackpush(byte) = 2 -- _stackpushbyte_=vbuc1 
+    // [23] stackpush(char) = 2 -- _stackpushbyte_=vbuc1 
     lda #2
     pha
     // [24] callexecute print  -- call_vprc1 

@@ -29,7 +29,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__varcall byte plus(byte plus::a , byte plus::b)
+__varcall char plus(char a , char b)
 plus: scope:[plus]  from
   plus::$0 = plus::a + plus::b
   plus::return = plus::$0
@@ -49,29 +49,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BGCOL = (byte*)$d021
+__constant char * const BGCOL = (char *)$d021
 void __start()
 void main()
-byte~ main::$0
-byte~ main::$1
-byte main::a
-byte main::a#0
-byte main::a#1
-byte main::a#2
-__varcall byte plus(byte plus::a , byte plus::b)
-byte~ plus::$0
-byte plus::a loadstore
-byte plus::b loadstore
-byte plus::return loadstore
+char main::$0
+char main::$1
+char main::a
+char main::a#0
+char main::a#1
+char main::a#2
+__varcall char plus(char a , char b)
+char plus::$0
+__loadstore char plus::a
+__loadstore char plus::b
+__loadstore char plus::return
 
 Adding number conversion cast (unumber) 1 in plus::b = 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast plus::b = (unumber)1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (char *) 53281
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)plus::return = plus::$0 
 Alias main::a#1 = main::$0 
@@ -100,7 +100,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-__varcall byte plus(byte plus::a , byte plus::b)
+__varcall char plus(char a , char b)
 plus: scope:[plus]  from
   [0] plus::$0 = plus::a + plus::b
   [1] plus::return = plus::$0
@@ -130,14 +130,14 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::a
-byte main::a#1 2.6666666666666665
-byte main::a#2 4.0
-__varcall byte plus(byte plus::a , byte plus::b)
-byte~ plus::$0 22.0
-byte plus::a loadstore 3.75
-byte plus::b loadstore 7.5
-byte plus::return loadstore 3.75
+char main::a
+char main::a#1 // 2.6666666666666665
+char main::a#2 // 4.0
+__varcall char plus(char a , char b)
+char plus::$0 // 22.0
+__loadstore char plus::a // 3.75
+__loadstore char plus::b // 7.5
+__loadstore char plus::return // 3.75
 
 Initial phi equivalence classes
 Added variable plus::$0 to live range equivalence class [ plus::$0 ]
@@ -206,7 +206,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
 .segment Code
   // plus
-// plus(byte zp(3) a, byte zp(4) b)
+// __zp(2) char plus(__zp(3) char a, __zp(4) char b)
 plus: {
     .label a = 3
     .label b = 4
@@ -270,16 +270,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BGCOL = (byte*) 53281
+__constant char * const BGCOL = (char *) 53281
 void main()
-byte main::a
-byte main::a#1 reg byte a 2.6666666666666665
-byte main::a#2 reg byte a 4.0
-__varcall byte plus(byte plus::a , byte plus::b)
-byte~ plus::$0 reg byte a 22.0
-byte plus::a loadstore zp[1]:3 3.75
-byte plus::b loadstore zp[1]:4 7.5
-byte plus::return loadstore zp[1]:2 3.75
+char main::a
+char main::a#1 // reg byte a 2.6666666666666665
+char main::a#2 // reg byte a 4.0
+__varcall char plus(char a , char b)
+char plus::$0 // reg byte a 22.0
+__loadstore char plus::a // zp[1]:3 3.75
+__loadstore char plus::b // zp[1]:4 7.5
+__loadstore char plus::return // zp[1]:2 3.75
 
 reg byte a [ plus::$0 ]
 zp[1]:2 [ plus::return ]
@@ -308,7 +308,7 @@ Score: 67
   .label BGCOL = $d021
 .segment Code
   // plus
-// plus(byte zp(3) a, byte zp(4) b)
+// __zp(2) char plus(__zp(3) char a, __zp(4) char b)
 plus: {
     .label a = 3
     .label b = 4

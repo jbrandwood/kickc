@@ -28,7 +28,7 @@ main: {
     rts
 }
 // This must be volatile because is used in an interrupt routine...
-// test(byte* zp(4) videoMem)
+// void test(__zp(4) char *videoMem, char *colorMem, char *other)
 test: {
     .label colorMem = $d800
     .label other = $c000

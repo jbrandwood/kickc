@@ -1,5 +1,5 @@
 Resolved forward reference irq to __interrupt(rom_min_c64) void irq()
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -33,7 +33,7 @@ __start::__init1: scope:[__start]  from __start
   col = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -42,15 +42,15 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BG_COLOR = (byte*)$d020
-constant void()** const KERNEL_IRQ = (void()**)$314
+__constant char * const BG_COLOR = (char *)$d020
+__constant void (** const KERNEL_IRQ)() = (void (**)())$314
 void __start()
-volatile byte col loadstore
+__loadstore volatile char col
 __interrupt(rom_min_c64) void irq()
 void main()
 
-Simplifying constant pointer cast (void()**) 788
-Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (void (**)()) 788
+Simplifying constant pointer cast (char *) 53280
 Successful SSA optimization PassNCastSimplification
 if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -82,7 +82,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
-  [3] call main 
+  [3] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [4] return 
@@ -108,7 +108,7 @@ main::@1: scope:[main]  from main main::@1
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-volatile byte col loadstore 41.2
+__loadstore volatile char col // 41.2
 __interrupt(rom_min_c64) void irq()
 void main()
 
@@ -166,7 +166,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [3] call main 
+    // [3] call main
     jsr main
     jmp __breturn
     // __start::@return
@@ -221,10 +221,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BG_COLOR = (byte*) 53280
-constant void()** const KERNEL_IRQ = (void()**) 788
+__constant char * const BG_COLOR = (char *) 53280
+__constant void (** const KERNEL_IRQ)() = (void (**)()) 788
 void __start()
-volatile byte col loadstore zp[1]:2 41.2
+__loadstore volatile char col // zp[1]:2 41.2
 __interrupt(rom_min_c64) void irq()
 void main()
 
@@ -258,7 +258,7 @@ __start: {
     sta.z col
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [3] call main 
+    // [3] call main
     jsr main
     // __start::@return
     // [4] return 

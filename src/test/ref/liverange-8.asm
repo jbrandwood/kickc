@@ -24,7 +24,7 @@ main: {
     // }
     rts
 }
-// out2(byte register(A) c)
+// void out2(__register(A) char c)
 out2: {
     // out(c)
     jsr out
@@ -33,7 +33,7 @@ out2: {
     // }
     rts
 }
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // idx++;
     inx

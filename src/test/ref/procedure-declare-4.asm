@@ -28,7 +28,7 @@ main: {
     rts
 }
 // Calculate sum of two integers plus 1
-// sum(byte register(X) q, byte register(A) w)
+// __register(A) char sum(__register(X) char q, __register(A) char w)
 sum: {
     // q+w
     stx.z $ff

@@ -65,7 +65,7 @@ print2: {
     // }
     rts
 }
-// print(byte* zp(4) s)
+// void print(__zp(4) char *s)
 print: {
     .label s = 4
   __b1:

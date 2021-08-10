@@ -83,7 +83,7 @@ start: {
     // }
     rts
 }
-// prepend(word zp(8) x)
+// void prepend(__zp(8) unsigned int x)
 prepend: {
     .label new = $c
     .label x = 8
@@ -153,7 +153,7 @@ sum: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -222,7 +222,7 @@ alloc: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($e) w)
+// void print_uint(__zp($e) unsigned int w)
 print_uint: {
     .label w = $e
     // print_uchar(BYTE1(w))
@@ -262,7 +262,7 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa

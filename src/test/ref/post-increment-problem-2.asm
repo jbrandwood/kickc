@@ -24,6 +24,7 @@ main: {
     inx
     jmp __b1
 }
+// void incscreen(unsigned int ptr)
 incscreen: {
     // --(*(screen+ptr));
     dec screen+main.offset

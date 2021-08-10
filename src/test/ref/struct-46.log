@@ -3,7 +3,7 @@ Fixing struct type size struct netconfig to 96
 Fixing struct type size struct netconfig to 96
 Fixing struct type SIZE_OF struct netconfig to 96
 Fixing struct type SIZE_OF struct netconfig to 96
-Inlined call call __init 
+Inlined call call __init
 Removing C-classic struct-unwound assignment main::x = struct-unwound {*(&main::x)}
 Removing C-classic struct-unwound assignment main::a = struct-unwound {*(&main::a)}
 Removing C-classic struct-unwound assignment main::b = struct-unwound {*(&main::b)}
@@ -15,7 +15,7 @@ main: scope:[main]  from __start::@1
   *(&main::x) = memset(struct other, SIZEOF_STRUCT_OTHER)
   *(&main::a) = memcpy(*(&$0), struct netconfig, SIZEOF_STRUCT_NETCONFIG)
   main::$0 = OUT + 0
-  *main::$0 = ((byte*)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
+  *main::$0 = ((char *)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
   *(&main::b) = memset(struct netconfig, SIZEOF_STRUCT_NETCONFIG)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -28,7 +28,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -37,35 +37,35 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant struct netconfig $0 = { ssid: "123", password: "abc" }
-constant byte OFFSET_STRUCT_NETCONFIG_SSID = 0
-constant const byte* OUT = (byte*)$8000
-constant byte SIZEOF_STRUCT_NETCONFIG = $60
-constant byte SIZEOF_STRUCT_OTHER = 2
+__constant struct netconfig $0 = { ssid: "123", password: "abc" }
+__constant char OFFSET_STRUCT_NETCONFIG_SSID = 0
+__constant const char *OUT = (char *)$8000
+__constant char SIZEOF_STRUCT_NETCONFIG = $60
+__constant char SIZEOF_STRUCT_OTHER = 2
 void __start()
 void main()
-const byte*~ main::$0
-struct netconfig main::a loadstore
-struct netconfig main::b loadstore
-struct other main::x loadstore
+const char *main::$0
+__loadstore struct netconfig main::a
+__loadstore struct netconfig main::b
+__loadstore struct other main::x
 
 Adding number conversion cast (unumber) 0 in main::$0 = OUT + 0
-Adding number conversion cast (unumber) 0 in *main::$0 = ((byte*)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
+Adding number conversion cast (unumber) 0 in *main::$0 = ((char *)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 32768
+Simplifying constant pointer cast (char *) 32768
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [2] main::$0 = OUT + 0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::$0 = OUT+0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero OUT in 
-Simplifying expression containing zero (byte*)&main::a+OFFSET_STRUCT_NETCONFIG_SSID in [3] *main::$0 = ((byte*)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
-Simplifying expression containing zero (byte*)&main::a in [3] *main::$0 = *((byte*)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)
+Simplifying expression containing zero (char *)&main::a+OFFSET_STRUCT_NETCONFIG_SSID in [3] *main::$0 = ((char *)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)[0]
+Simplifying expression containing zero (char *)&main::a in [3] *main::$0 = *((char *)&main::a+OFFSET_STRUCT_NETCONFIG_SSID)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_NETCONFIG_SSID
 Successful SSA optimization PassNEliminateUnusedVars
@@ -78,10 +78,10 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Constant inlined main::$0 = OUT
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) $40
+Finalized unsigned number type (char) $20
+Finalized unsigned number type (char) $20
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -94,7 +94,7 @@ void main()
 main: scope:[main]  from
   [0] *(&main::x) = memset(struct other, SIZEOF_STRUCT_OTHER)
   [1] *(&main::a) = memcpy(*(&$0), struct netconfig, SIZEOF_STRUCT_NETCONFIG)
-  [2] *OUT = *((byte*)&main::a)
+  [2] *OUT = *((char *)&main::a)
   [3] *(&main::b) = memset(struct netconfig, SIZEOF_STRUCT_NETCONFIG)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -104,9 +104,9 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-struct netconfig main::a loadstore
-struct netconfig main::b loadstore
-struct other main::x loadstore
+__loadstore struct netconfig main::a
+__loadstore struct netconfig main::b
+__loadstore struct other main::x
 
 Initial phi equivalence classes
 Added variable main::x to live range equivalence class [ main::x ]
@@ -122,7 +122,7 @@ Allocated mem[96] [ main::b ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *(&main::x) = memset(struct other, SIZEOF_STRUCT_OTHER) [ main::a main::b ] (  [ main::a main::b ] { }  ) always clobbers reg byte a reg byte y 
 Statement [1] *(&main::a) = memcpy(*(&$0), struct netconfig, SIZEOF_STRUCT_NETCONFIG) [ main::a main::b ] (  [ main::a main::b ] { }  ) always clobbers reg byte a reg byte y 
-Statement [2] *OUT = *((byte*)&main::a) [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
+Statement [2] *OUT = *((char *)&main::a) [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
 Statement [3] *(&main::b) = memset(struct netconfig, SIZEOF_STRUCT_NETCONFIG) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers mem[2] [ main::x ] : mem[2] , 
 Potential registers mem[96] [ main::a ] : mem[96] , 
@@ -173,7 +173,7 @@ main: {
     sta a-1,y
     dey
     bne !-
-    // [2] *OUT = *((byte*)&main::a) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *OUT = *((char *)&main::a) -- _deref_pbuc1=_deref_pbuc2 
     lda a
     sta OUT
     // [3] *(&main::b) = memset(struct netconfig, SIZEOF_STRUCT_NETCONFIG) -- _deref_pssc1=_memset_vbuc2 
@@ -208,14 +208,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct netconfig $0 = { ssid: "123", password: "abc" }
-constant const byte* OUT = (byte*) 32768
-constant byte SIZEOF_STRUCT_NETCONFIG = $60
-constant byte SIZEOF_STRUCT_OTHER = 2
+__constant struct netconfig $0 = { ssid: "123", password: "abc" }
+__constant const char *OUT = (char *) 32768
+__constant char SIZEOF_STRUCT_NETCONFIG = $60
+__constant char SIZEOF_STRUCT_OTHER = 2
 void main()
-struct netconfig main::a loadstore mem[96]
-struct netconfig main::b loadstore mem[96]
-struct other main::x loadstore mem[2]
+__loadstore struct netconfig main::a // mem[96]
+__loadstore struct netconfig main::b // mem[96]
+__loadstore struct other main::x // mem[2]
 
 mem[2] [ main::x ]
 mem[96] [ main::a ]
@@ -261,7 +261,7 @@ main: {
     dey
     bne !-
     // *(OUT + 0) = a.ssid[0]
-    // [2] *OUT = *((byte*)&main::a) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *OUT = *((char *)&main::a) -- _deref_pbuc1=_deref_pbuc2 
     lda a
     sta OUT
     // NetConfig b

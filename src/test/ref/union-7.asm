@@ -31,7 +31,7 @@ main: {
     // }
     rts
 }
-// print(union Data zp(2) data)
+// void print(__zp(2) union Data data)
 print: {
     .label data = 2
     // BYTE1(data.w)

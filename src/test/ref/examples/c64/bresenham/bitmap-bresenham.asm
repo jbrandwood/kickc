@@ -64,6 +64,7 @@ main: {
     jmp __b1
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = $e
     .label yoffs = 2
@@ -125,6 +126,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
@@ -216,7 +218,7 @@ lines: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c, word zp(2) num)
+// void * memset(__zp(4) void *str, __register(X) char c, __zp(2) unsigned int num)
 memset: {
     .label end = 2
     .label dst = 4
@@ -260,7 +262,7 @@ memset: {
     jmp __b2
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp(4) x1, word zp(6) y1, word zp($f) x2, word zp($11) y2)
+// void bitmap_line(__zp(4) unsigned int x1, __zp(6) unsigned int y1, __zp($f) unsigned int x2, __zp($11) unsigned int y2)
 bitmap_line: {
     .label dx = $13
     .label dy = $a
@@ -476,7 +478,7 @@ bitmap_line: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp($a) w)
+// __zp($a) unsigned int abs_u16(__zp($a) unsigned int w)
 abs_u16: {
     .label w = $a
     .label return = $a
@@ -502,7 +504,7 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp($17) w)
+// __zp($c) unsigned int sgn_u16(__zp($17) unsigned int w)
 sgn_u16: {
     .label w = $17
     .label return = $c
@@ -526,7 +528,7 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(4) x, byte register(X) y)
+// void bitmap_plot(__zp(4) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $19
     .label plotter = $17

@@ -5,8 +5,8 @@ Eliminating unused variable with no statement main::$0
 Eliminating unused variable with no statement main::$1
 Eliminating unused variable with no statement fg_sum::a
 Eliminating unused variable with no statement fg_sum::b
-Calling convention __varcall adding prepare/execute/finalize for main::sum1 = call fg_sum(*((byte*)&a+OFFSET_STRUCT_COLS_BORDER), *((byte*)&a+OFFSET_STRUCT_COLS_BG), *((byte*)&a+OFFSET_STRUCT_COLS_FG), *((byte*)&b+OFFSET_STRUCT_COLS_BORDER), *((byte*)&b+OFFSET_STRUCT_COLS_BG), *((byte*)&b+OFFSET_STRUCT_COLS_FG))
-Calling convention __varcall adding prepare/execute/finalize for main::sum2 = call fg_sum(*((byte*)&c+OFFSET_STRUCT_COLS_BORDER), *((byte*)&c+OFFSET_STRUCT_COLS_BG), *((byte*)&c+OFFSET_STRUCT_COLS_FG), *((byte*)&d+OFFSET_STRUCT_COLS_BORDER), *((byte*)&d+OFFSET_STRUCT_COLS_BG), *((byte*)&d+OFFSET_STRUCT_COLS_FG))
+Calling convention __varcall adding prepare/execute/finalize for main::sum1 = call fg_sum(*((char *)&a+OFFSET_STRUCT_COLS_BORDER), *((char *)&a+OFFSET_STRUCT_COLS_BG), *((char *)&a+OFFSET_STRUCT_COLS_FG), *((char *)&b+OFFSET_STRUCT_COLS_BORDER), *((char *)&b+OFFSET_STRUCT_COLS_BG), *((char *)&b+OFFSET_STRUCT_COLS_FG))
+Calling convention __varcall adding prepare/execute/finalize for main::sum2 = call fg_sum(*((char *)&c+OFFSET_STRUCT_COLS_BORDER), *((char *)&c+OFFSET_STRUCT_COLS_BG), *((char *)&c+OFFSET_STRUCT_COLS_FG), *((char *)&d+OFFSET_STRUCT_COLS_BORDER), *((char *)&d+OFFSET_STRUCT_COLS_BG), *((char *)&d+OFFSET_STRUCT_COLS_FG))
 Calling convention VAR_CALL adding return value assignment main::sum1 = fg_sum::return
 Calling convention VAR_CALL adding return value assignment main::sum2 = fg_sum::return
 Removing C-classic struct-unwound assignment d = struct-unwound {*(&d)}
@@ -15,22 +15,22 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  fg_sum::a_border = *((byte*)&a+OFFSET_STRUCT_COLS_BORDER)
-  fg_sum::a_bg = *((byte*)&a+OFFSET_STRUCT_COLS_BG)
-  fg_sum::a_fg = *((byte*)&a+OFFSET_STRUCT_COLS_FG)
-  fg_sum::b_border = *((byte*)&b+OFFSET_STRUCT_COLS_BORDER)
-  fg_sum::b_bg = *((byte*)&b+OFFSET_STRUCT_COLS_BG)
-  fg_sum::b_fg = *((byte*)&b+OFFSET_STRUCT_COLS_FG)
+  fg_sum::a_border = *((char *)&a+OFFSET_STRUCT_COLS_BORDER)
+  fg_sum::a_bg = *((char *)&a+OFFSET_STRUCT_COLS_BG)
+  fg_sum::a_fg = *((char *)&a+OFFSET_STRUCT_COLS_FG)
+  fg_sum::b_border = *((char *)&b+OFFSET_STRUCT_COLS_BORDER)
+  fg_sum::b_bg = *((char *)&b+OFFSET_STRUCT_COLS_BG)
+  fg_sum::b_fg = *((char *)&b+OFFSET_STRUCT_COLS_FG)
   callexecute fg_sum 
   main::sum1#0 = fg_sum::return
   *COLS = main::sum1#0
   *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
-  fg_sum::a_border = *((byte*)&c+OFFSET_STRUCT_COLS_BORDER)
-  fg_sum::a_bg = *((byte*)&c+OFFSET_STRUCT_COLS_BG)
-  fg_sum::a_fg = *((byte*)&c+OFFSET_STRUCT_COLS_FG)
-  fg_sum::b_border = *((byte*)&d+OFFSET_STRUCT_COLS_BORDER)
-  fg_sum::b_bg = *((byte*)&d+OFFSET_STRUCT_COLS_BG)
-  fg_sum::b_fg = *((byte*)&d+OFFSET_STRUCT_COLS_FG)
+  fg_sum::a_border = *((char *)&c+OFFSET_STRUCT_COLS_BORDER)
+  fg_sum::a_bg = *((char *)&c+OFFSET_STRUCT_COLS_BG)
+  fg_sum::a_fg = *((char *)&c+OFFSET_STRUCT_COLS_FG)
+  fg_sum::b_border = *((char *)&d+OFFSET_STRUCT_COLS_BORDER)
+  fg_sum::b_bg = *((char *)&d+OFFSET_STRUCT_COLS_BG)
+  fg_sum::b_fg = *((char *)&d+OFFSET_STRUCT_COLS_FG)
   callexecute fg_sum 
   main::sum2#0 = fg_sum::return
   *COLS = main::sum2#0
@@ -39,7 +39,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
+__varcall char fg_sum(char a_border , char a_bg , char a_fg , char b_border , char b_bg , char b_fg)
 fg_sum: scope:[fg_sum]  from
   fg_sum::$0 = fg_sum::a_fg + fg_sum::b_fg
   fg_sum::return = fg_sum::$0
@@ -59,38 +59,38 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const COLS = (byte*)$d020
-constant byte OFFSET_STRUCT_COLS_BG = 1
-constant byte OFFSET_STRUCT_COLS_BORDER = 0
-constant byte OFFSET_STRUCT_COLS_FG = 2
-constant byte SIZEOF_STRUCT_COLS = 3
+__constant char * const COLS = (char *)$d020
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char OFFSET_STRUCT_COLS_BORDER = 0
+__constant char OFFSET_STRUCT_COLS_FG = 2
+__constant char SIZEOF_STRUCT_COLS = 3
 void __start()
-struct Cols a loadstore = { border: 1, bg: 2, fg: 3 }
-struct Cols b loadstore = { border: 3, bg: 4, fg: 6 }
-struct Cols c loadstore = { border: 5, bg: 6, fg: 7 }
-struct Cols d loadstore = {}
-__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
-byte~ fg_sum::$0
-byte fg_sum::a_bg loadstore
-byte fg_sum::a_border loadstore
-byte fg_sum::a_fg loadstore
-byte fg_sum::b_bg loadstore
-byte fg_sum::b_border loadstore
-byte fg_sum::b_fg loadstore
-byte fg_sum::return loadstore
+__loadstore struct Cols a = { border: 1, bg: 2, fg: 3 }
+__loadstore struct Cols b = { border: 3, bg: 4, fg: 6 }
+__loadstore struct Cols c = { border: 5, bg: 6, fg: 7 }
+__loadstore struct Cols d = {}
+__varcall char fg_sum(char a_border , char a_bg , char a_fg , char b_border , char b_bg , char b_fg)
+char fg_sum::$0
+__loadstore char fg_sum::a_bg
+__loadstore char fg_sum::a_border
+__loadstore char fg_sum::a_fg
+__loadstore char fg_sum::b_bg
+__loadstore char fg_sum::b_border
+__loadstore char fg_sum::b_fg
+__loadstore char fg_sum::return
 void main()
-byte main::sum1
-byte main::sum1#0
-byte main::sum2
-byte main::sum2#0
+char main::sum1
+char main::sum1#0
+char main::sum2
+char main::sum2#0
 
-Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (char *) 53280
 Successful SSA optimization PassNCastSimplification
 Alias candidate removed (volatile)fg_sum::return = fg_sum::$0 
-Simplifying expression containing zero (byte*)&a in [0] fg_sum::a_border = *((byte*)&a+OFFSET_STRUCT_COLS_BORDER)
-Simplifying expression containing zero (byte*)&b in [3] fg_sum::b_border = *((byte*)&b+OFFSET_STRUCT_COLS_BORDER)
-Simplifying expression containing zero (byte*)&c in [10] fg_sum::a_border = *((byte*)&c+OFFSET_STRUCT_COLS_BORDER)
-Simplifying expression containing zero (byte*)&d in [13] fg_sum::b_border = *((byte*)&d+OFFSET_STRUCT_COLS_BORDER)
+Simplifying expression containing zero (char *)&a in [0] fg_sum::a_border = *((char *)&a+OFFSET_STRUCT_COLS_BORDER)
+Simplifying expression containing zero (char *)&b in [3] fg_sum::b_border = *((char *)&b+OFFSET_STRUCT_COLS_BORDER)
+Simplifying expression containing zero (char *)&c in [10] fg_sum::a_border = *((char *)&c+OFFSET_STRUCT_COLS_BORDER)
+Simplifying expression containing zero (char *)&d in [13] fg_sum::b_border = *((char *)&d+OFFSET_STRUCT_COLS_BORDER)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_COLS_BORDER
 Successful SSA optimization PassNEliminateUnusedVars
@@ -110,7 +110,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
+__varcall char fg_sum(char a_border , char a_bg , char a_fg , char b_border , char b_bg , char b_fg)
 fg_sum: scope:[fg_sum]  from
   [0] fg_sum::$0 = fg_sum::a_fg + fg_sum::b_fg
   [1] fg_sum::return = fg_sum::$0
@@ -121,22 +121,22 @@ fg_sum::@return: scope:[fg_sum]  from fg_sum
 
 void main()
 main: scope:[main]  from
-  [3] fg_sum::a_border = *((byte*)&a)
-  [4] fg_sum::a_bg = *((byte*)&a+OFFSET_STRUCT_COLS_BG)
-  [5] fg_sum::a_fg = *((byte*)&a+OFFSET_STRUCT_COLS_FG)
-  [6] fg_sum::b_border = *((byte*)&b)
-  [7] fg_sum::b_bg = *((byte*)&b+OFFSET_STRUCT_COLS_BG)
-  [8] fg_sum::b_fg = *((byte*)&b+OFFSET_STRUCT_COLS_FG)
+  [3] fg_sum::a_border = *((char *)&a)
+  [4] fg_sum::a_bg = *((char *)&a+OFFSET_STRUCT_COLS_BG)
+  [5] fg_sum::a_fg = *((char *)&a+OFFSET_STRUCT_COLS_FG)
+  [6] fg_sum::b_border = *((char *)&b)
+  [7] fg_sum::b_bg = *((char *)&b+OFFSET_STRUCT_COLS_BG)
+  [8] fg_sum::b_fg = *((char *)&b+OFFSET_STRUCT_COLS_FG)
   [9] callexecute fg_sum 
   [10] main::sum1#0 = fg_sum::return
   [11] *COLS = main::sum1#0
   [12] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS)
-  [13] fg_sum::a_border = *((byte*)&c)
-  [14] fg_sum::a_bg = *((byte*)&c+OFFSET_STRUCT_COLS_BG)
-  [15] fg_sum::a_fg = *((byte*)&c+OFFSET_STRUCT_COLS_FG)
-  [16] fg_sum::b_border = *((byte*)&d)
-  [17] fg_sum::b_bg = *((byte*)&d+OFFSET_STRUCT_COLS_BG)
-  [18] fg_sum::b_fg = *((byte*)&d+OFFSET_STRUCT_COLS_FG)
+  [13] fg_sum::a_border = *((char *)&c)
+  [14] fg_sum::a_bg = *((char *)&c+OFFSET_STRUCT_COLS_BG)
+  [15] fg_sum::a_fg = *((char *)&c+OFFSET_STRUCT_COLS_FG)
+  [16] fg_sum::b_border = *((char *)&d)
+  [17] fg_sum::b_bg = *((char *)&d+OFFSET_STRUCT_COLS_BG)
+  [18] fg_sum::b_fg = *((char *)&d+OFFSET_STRUCT_COLS_FG)
   [19] callexecute fg_sum 
   [20] main::sum2#0 = fg_sum::return
   [21] *COLS = main::sum2#0
@@ -147,24 +147,24 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-struct Cols a loadstore = { border: 1, bg: 2, fg: 3 }
-struct Cols b loadstore = { border: 3, bg: 4, fg: 6 }
-struct Cols c loadstore = { border: 5, bg: 6, fg: 7 }
-struct Cols d loadstore = {}
-__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
-byte~ fg_sum::$0 22.0
-byte fg_sum::a_bg loadstore 40.0
-byte fg_sum::a_border loadstore 40.0
-byte fg_sum::a_fg loadstore 1.875
-byte fg_sum::b_bg loadstore 40.0
-byte fg_sum::b_border loadstore 40.0
-byte fg_sum::b_fg loadstore 7.5
-byte fg_sum::return loadstore 3.75
+__loadstore struct Cols a = { border: 1, bg: 2, fg: 3 }
+__loadstore struct Cols b = { border: 3, bg: 4, fg: 6 }
+__loadstore struct Cols c = { border: 5, bg: 6, fg: 7 }
+__loadstore struct Cols d = {}
+__varcall char fg_sum(char a_border , char a_bg , char a_fg , char b_border , char b_bg , char b_fg)
+char fg_sum::$0 // 22.0
+__loadstore char fg_sum::a_bg // 40.0
+__loadstore char fg_sum::a_border // 40.0
+__loadstore char fg_sum::a_fg // 1.875
+__loadstore char fg_sum::b_bg // 40.0
+__loadstore char fg_sum::b_border // 40.0
+__loadstore char fg_sum::b_fg // 7.5
+__loadstore char fg_sum::return // 3.75
 void main()
-byte main::sum1
-byte main::sum1#0 4.0
-byte main::sum2
-byte main::sum2#0 4.0
+char main::sum1
+char main::sum1#0 // 4.0
+char main::sum2
+char main::sum2#0 // 4.0
 
 Initial phi equivalence classes
 Added variable fg_sum::$0 to live range equivalence class [ fg_sum::$0 ]
@@ -212,19 +212,19 @@ Allocated mem[3] [ c ]
 Allocated mem[3] [ d ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] fg_sum::$0 = fg_sum::a_fg + fg_sum::b_fg [ fg_sum::$0 ] ( fg_sum:9 [ b d c fg_sum::$0 ] { }  fg_sum:19 [ fg_sum::$0 ] { }  ) always clobbers reg byte a 
-Statement [3] fg_sum::a_border = *((byte*)&a) [ a b d c ] (  [ a b d c ] { }  ) always clobbers reg byte a 
-Statement [4] fg_sum::a_bg = *((byte*)&a+OFFSET_STRUCT_COLS_BG) [ a b d c ] (  [ a b d c ] { }  ) always clobbers reg byte a 
-Statement [5] fg_sum::a_fg = *((byte*)&a+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
-Statement [6] fg_sum::b_border = *((byte*)&b) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
-Statement [7] fg_sum::b_bg = *((byte*)&b+OFFSET_STRUCT_COLS_BG) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
-Statement [8] fg_sum::b_fg = *((byte*)&b+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg fg_sum::b_fg b d c ] (  [ fg_sum::a_fg fg_sum::b_fg b d c ] { }  ) always clobbers reg byte a 
+Statement [3] fg_sum::a_border = *((char *)&a) [ a b d c ] (  [ a b d c ] { }  ) always clobbers reg byte a 
+Statement [4] fg_sum::a_bg = *((char *)&a+OFFSET_STRUCT_COLS_BG) [ a b d c ] (  [ a b d c ] { }  ) always clobbers reg byte a 
+Statement [5] fg_sum::a_fg = *((char *)&a+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
+Statement [6] fg_sum::b_border = *((char *)&b) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
+Statement [7] fg_sum::b_bg = *((char *)&b+OFFSET_STRUCT_COLS_BG) [ fg_sum::a_fg b d c ] (  [ fg_sum::a_fg b d c ] { }  ) always clobbers reg byte a 
+Statement [8] fg_sum::b_fg = *((char *)&b+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg fg_sum::b_fg b d c ] (  [ fg_sum::a_fg fg_sum::b_fg b d c ] { }  ) always clobbers reg byte a 
 Statement [12] *(&d) = memcpy(*(&b), struct Cols, SIZEOF_STRUCT_COLS) [ d c ] (  [ d c ] { }  ) always clobbers reg byte a reg byte y 
-Statement [13] fg_sum::a_border = *((byte*)&c) [ d c ] (  [ d c ] { }  ) always clobbers reg byte a 
-Statement [14] fg_sum::a_bg = *((byte*)&c+OFFSET_STRUCT_COLS_BG) [ d c ] (  [ d c ] { }  ) always clobbers reg byte a 
-Statement [15] fg_sum::a_fg = *((byte*)&c+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
-Statement [16] fg_sum::b_border = *((byte*)&d) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
-Statement [17] fg_sum::b_bg = *((byte*)&d+OFFSET_STRUCT_COLS_BG) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
-Statement [18] fg_sum::b_fg = *((byte*)&d+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg fg_sum::b_fg ] (  [ fg_sum::a_fg fg_sum::b_fg ] { }  ) always clobbers reg byte a 
+Statement [13] fg_sum::a_border = *((char *)&c) [ d c ] (  [ d c ] { }  ) always clobbers reg byte a 
+Statement [14] fg_sum::a_bg = *((char *)&c+OFFSET_STRUCT_COLS_BG) [ d c ] (  [ d c ] { }  ) always clobbers reg byte a 
+Statement [15] fg_sum::a_fg = *((char *)&c+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
+Statement [16] fg_sum::b_border = *((char *)&d) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
+Statement [17] fg_sum::b_bg = *((char *)&d+OFFSET_STRUCT_COLS_BG) [ fg_sum::a_fg d ] (  [ fg_sum::a_fg d ] { }  ) always clobbers reg byte a 
+Statement [18] fg_sum::b_fg = *((char *)&d+OFFSET_STRUCT_COLS_FG) [ fg_sum::a_fg fg_sum::b_fg ] (  [ fg_sum::a_fg fg_sum::b_fg ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ fg_sum::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ fg_sum::return ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ fg_sum::a_border ] : zp[1]:4 , 
@@ -292,7 +292,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label COLS = $d020
 .segment Code
   // fg_sum
-// fg_sum(byte zp(3) a_border, byte zp(4) a_bg, byte zp(5) a_fg, byte zp(6) b_border, byte zp(7) b_bg, byte zp(8) b_fg)
+// __zp(2) char fg_sum(__zp(3) char a_border, __zp(4) char a_bg, __zp(5) char a_fg, __zp(6) char b_border, __zp(7) char b_bg, __zp(8) char b_fg)
 fg_sum: {
     .label return = 2
     .label a_border = 3
@@ -315,22 +315,22 @@ fg_sum: {
 }
   // main
 main: {
-    // [3] fg_sum::a_border = *((byte*)&a) -- vbuz1=_deref_pbuc1 
+    // [3] fg_sum::a_border = *((char *)&a) -- vbuz1=_deref_pbuc1 
     lda a
     sta.z fg_sum.a_border
-    // [4] fg_sum::a_bg = *((byte*)&a+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [4] fg_sum::a_bg = *((char *)&a+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda a+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.a_bg
-    // [5] fg_sum::a_fg = *((byte*)&a+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [5] fg_sum::a_fg = *((char *)&a+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda a+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.a_fg
-    // [6] fg_sum::b_border = *((byte*)&b) -- vbuz1=_deref_pbuc1 
+    // [6] fg_sum::b_border = *((char *)&b) -- vbuz1=_deref_pbuc1 
     lda b
     sta.z fg_sum.b_border
-    // [7] fg_sum::b_bg = *((byte*)&b+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [7] fg_sum::b_bg = *((char *)&b+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda b+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.b_bg
-    // [8] fg_sum::b_fg = *((byte*)&b+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [8] fg_sum::b_fg = *((char *)&b+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda b+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     // [9] callexecute fg_sum  -- call_vprc1 
@@ -346,22 +346,22 @@ main: {
     sta d-1,y
     dey
     bne !-
-    // [13] fg_sum::a_border = *((byte*)&c) -- vbuz1=_deref_pbuc1 
+    // [13] fg_sum::a_border = *((char *)&c) -- vbuz1=_deref_pbuc1 
     lda c
     sta.z fg_sum.a_border
-    // [14] fg_sum::a_bg = *((byte*)&c+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [14] fg_sum::a_bg = *((char *)&c+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda c+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.a_bg
-    // [15] fg_sum::a_fg = *((byte*)&c+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [15] fg_sum::a_fg = *((char *)&c+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda c+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.a_fg
-    // [16] fg_sum::b_border = *((byte*)&d) -- vbuz1=_deref_pbuc1 
+    // [16] fg_sum::b_border = *((char *)&d) -- vbuz1=_deref_pbuc1 
     lda d
     sta.z fg_sum.b_border
-    // [17] fg_sum::b_bg = *((byte*)&d+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [17] fg_sum::b_bg = *((char *)&d+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda d+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.b_bg
-    // [18] fg_sum::b_fg = *((byte*)&d+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [18] fg_sum::b_fg = *((char *)&d+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda d+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     // [19] callexecute fg_sum  -- call_vprc1 
@@ -392,28 +392,28 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const COLS = (byte*) 53280
-constant byte OFFSET_STRUCT_COLS_BG = 1
-constant byte OFFSET_STRUCT_COLS_FG = 2
-constant byte SIZEOF_STRUCT_COLS = 3
-struct Cols a loadstore mem[3] = { border: 1, bg: 2, fg: 3 }
-struct Cols b loadstore mem[3] = { border: 3, bg: 4, fg: 6 }
-struct Cols c loadstore mem[3] = { border: 5, bg: 6, fg: 7 }
-struct Cols d loadstore mem[3] = {}
-__varcall byte fg_sum(byte fg_sum::a_border , byte fg_sum::a_bg , byte fg_sum::a_fg , byte fg_sum::b_border , byte fg_sum::b_bg , byte fg_sum::b_fg)
-byte~ fg_sum::$0 reg byte a 22.0
-byte fg_sum::a_bg loadstore zp[1]:4 40.0
-byte fg_sum::a_border loadstore zp[1]:3 40.0
-byte fg_sum::a_fg loadstore zp[1]:5 1.875
-byte fg_sum::b_bg loadstore zp[1]:7 40.0
-byte fg_sum::b_border loadstore zp[1]:6 40.0
-byte fg_sum::b_fg loadstore zp[1]:8 7.5
-byte fg_sum::return loadstore zp[1]:2 3.75
+__constant char * const COLS = (char *) 53280
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char OFFSET_STRUCT_COLS_FG = 2
+__constant char SIZEOF_STRUCT_COLS = 3
+__loadstore struct Cols a = { border: 1, bg: 2, fg: 3 } // mem[3]
+__loadstore struct Cols b = { border: 3, bg: 4, fg: 6 } // mem[3]
+__loadstore struct Cols c = { border: 5, bg: 6, fg: 7 } // mem[3]
+__loadstore struct Cols d = {} // mem[3]
+__varcall char fg_sum(char a_border , char a_bg , char a_fg , char b_border , char b_bg , char b_fg)
+char fg_sum::$0 // reg byte a 22.0
+__loadstore char fg_sum::a_bg // zp[1]:4 40.0
+__loadstore char fg_sum::a_border // zp[1]:3 40.0
+__loadstore char fg_sum::a_fg // zp[1]:5 1.875
+__loadstore char fg_sum::b_bg // zp[1]:7 40.0
+__loadstore char fg_sum::b_border // zp[1]:6 40.0
+__loadstore char fg_sum::b_fg // zp[1]:8 7.5
+__loadstore char fg_sum::return // zp[1]:2 3.75
 void main()
-byte main::sum1
-byte main::sum1#0 reg byte a 4.0
-byte main::sum2
-byte main::sum2#0 reg byte a 4.0
+char main::sum1
+char main::sum1#0 // reg byte a 4.0
+char main::sum2
+char main::sum2#0 // reg byte a 4.0
 
 reg byte a [ fg_sum::$0 ]
 zp[1]:2 [ fg_sum::return ]
@@ -453,7 +453,7 @@ Score: 149
   .label COLS = $d020
 .segment Code
   // fg_sum
-// fg_sum(byte zp(3) a_border, byte zp(4) a_bg, byte zp(5) a_fg, byte zp(6) b_border, byte zp(7) b_bg, byte zp(8) b_fg)
+// __zp(2) char fg_sum(__zp(3) char a_border, __zp(4) char a_bg, __zp(5) char a_fg, __zp(6) char b_border, __zp(7) char b_bg, __zp(8) char b_fg)
 fg_sum: {
     .label return = 2
     .label a_border = 3
@@ -478,22 +478,22 @@ fg_sum: {
   // main
 main: {
     // char sum1 = fg_sum(a, b)
-    // [3] fg_sum::a_border = *((byte*)&a) -- vbuz1=_deref_pbuc1 
+    // [3] fg_sum::a_border = *((char *)&a) -- vbuz1=_deref_pbuc1 
     lda a
     sta.z fg_sum.a_border
-    // [4] fg_sum::a_bg = *((byte*)&a+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [4] fg_sum::a_bg = *((char *)&a+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda a+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.a_bg
-    // [5] fg_sum::a_fg = *((byte*)&a+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [5] fg_sum::a_fg = *((char *)&a+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda a+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.a_fg
-    // [6] fg_sum::b_border = *((byte*)&b) -- vbuz1=_deref_pbuc1 
+    // [6] fg_sum::b_border = *((char *)&b) -- vbuz1=_deref_pbuc1 
     lda b
     sta.z fg_sum.b_border
-    // [7] fg_sum::b_bg = *((byte*)&b+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [7] fg_sum::b_bg = *((char *)&b+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda b+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.b_bg
-    // [8] fg_sum::b_fg = *((byte*)&b+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [8] fg_sum::b_fg = *((char *)&b+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda b+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     // [9] callexecute fg_sum  -- call_vprc1 
@@ -512,22 +512,22 @@ main: {
     dey
     bne !-
     // char sum2 = fg_sum(c, d)
-    // [13] fg_sum::a_border = *((byte*)&c) -- vbuz1=_deref_pbuc1 
+    // [13] fg_sum::a_border = *((char *)&c) -- vbuz1=_deref_pbuc1 
     lda c
     sta.z fg_sum.a_border
-    // [14] fg_sum::a_bg = *((byte*)&c+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [14] fg_sum::a_bg = *((char *)&c+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda c+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.a_bg
-    // [15] fg_sum::a_fg = *((byte*)&c+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [15] fg_sum::a_fg = *((char *)&c+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda c+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.a_fg
-    // [16] fg_sum::b_border = *((byte*)&d) -- vbuz1=_deref_pbuc1 
+    // [16] fg_sum::b_border = *((char *)&d) -- vbuz1=_deref_pbuc1 
     lda d
     sta.z fg_sum.b_border
-    // [17] fg_sum::b_bg = *((byte*)&d+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
+    // [17] fg_sum::b_bg = *((char *)&d+OFFSET_STRUCT_COLS_BG) -- vbuz1=_deref_pbuc1 
     lda d+OFFSET_STRUCT_COLS_BG
     sta.z fg_sum.b_bg
-    // [18] fg_sum::b_fg = *((byte*)&d+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
+    // [18] fg_sum::b_fg = *((char *)&d+OFFSET_STRUCT_COLS_FG) -- vbuz1=_deref_pbuc1 
     lda d+OFFSET_STRUCT_COLS_FG
     sta.z fg_sum.b_fg
     // [19] callexecute fg_sum  -- call_vprc1 

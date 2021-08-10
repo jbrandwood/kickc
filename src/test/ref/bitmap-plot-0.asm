@@ -197,6 +197,7 @@ main: {
     jmp __b2
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = 9
     .label yoffs = $c
@@ -258,6 +259,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
@@ -324,7 +326,7 @@ init_irq: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(2) x, byte register(X) y)
+// void bitmap_plot(__zp(2) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $c
     .label plotter = $a
@@ -360,7 +362,7 @@ bitmap_plot: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c, word zp($c) num)
+// void * memset(__zp($a) void *str, __register(X) char c, __zp($c) unsigned int num)
 memset: {
     .label end = $c
     .label dst = $a

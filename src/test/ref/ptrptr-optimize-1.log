@@ -4,15 +4,15 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen = (byte*)$400
+  main::screen = (char *)$400
   sub::ch#0 = 'a'
   sub::dst#0 = main::pscreen
-  call sub 
+  call sub
   to:main::@1
 main::@1: scope:[main]  from main
   sub::ch#1 = 'b'
   sub::dst#1 = main::pscreen
-  call sub 
+  call sub
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -20,7 +20,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void sub(byte sub::ch , byte** sub::dst)
+void sub(char ch , char **dst)
 sub: scope:[sub]  from main main::@1
   sub::dst#2 = phi( main/sub::dst#0, main::@1/sub::dst#1 )
   sub::ch#2 = phi( main/sub::ch#0, main::@1/sub::ch#1 )
@@ -33,7 +33,7 @@ sub::@return: scope:[sub]  from sub
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -44,19 +44,19 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte** main::pscreen = &main::screen
-byte* volatile main::screen loadstore
-void sub(byte sub::ch , byte** sub::dst)
-byte sub::ch
-byte sub::ch#0
-byte sub::ch#1
-byte sub::ch#2
-byte** sub::dst
-byte** sub::dst#0
-byte** sub::dst#1
-byte** sub::dst#2
+__constant char **main::pscreen = &main::screen
+__loadstore char * volatile main::screen
+void sub(char ch , char **dst)
+char sub::ch
+char sub::ch#0
+char sub::ch#1
+char sub::ch#2
+char **sub::dst
+char **sub::dst#0
+char **sub::dst#1
+char **sub::dst#2
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Constant sub::ch#0 = 'a'
 Constant sub::dst#0 = main::pscreen
@@ -93,18 +93,18 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] main::screen = (byte*) 1024
-  [1] call sub 
+  [0] main::screen = (char *) 1024
+  [1] call sub
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call sub 
+  [3] call sub
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void sub(byte sub::ch , byte** sub::dst)
+void sub(char ch , char **dst)
 sub: scope:[sub]  from main main::@1
   [5] sub::ch#2 = phi( main/'a', main::@1/'b' )
   [6] *(*main::pscreen) = sub::ch#2
@@ -117,11 +117,11 @@ sub::@return: scope:[sub]  from sub
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* volatile main::screen loadstore 20.0
-void sub(byte sub::ch , byte** sub::dst)
-byte sub::ch
-byte sub::ch#2 11.0
-byte** sub::dst
+__loadstore char * volatile main::screen // 20.0
+void sub(char ch , char **dst)
+char sub::ch
+char sub::ch#2 // 11.0
+char **sub::dst
 
 Initial phi equivalence classes
 [ sub::ch#2 ]
@@ -132,7 +132,7 @@ Complete equivalence classes
 Allocated zp[1]:2 [ sub::ch#2 ]
 Allocated zp[2]:3 [ main::screen ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] main::screen = (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::screen = (char *) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *(*main::pscreen) = sub::ch#2 [ ] ( sub:1 [ ] { }  sub:3 [ ] { }  ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ sub::ch#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::screen ] : zp[2]:3 , 
@@ -165,12 +165,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [1] call sub 
+    // [1] call sub
     // [5] phi from main to sub [phi:main->sub]
   sub_from_main:
     // [5] phi sub::ch#2 = 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
@@ -181,7 +181,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call sub 
+    // [3] call sub
     // [5] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from___b1:
     // [5] phi sub::ch#2 = 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
@@ -194,7 +194,7 @@ main: {
     rts
 }
   // sub
-// sub(byte register(A) ch)
+// void sub(__register(A) char ch, char **dst)
 sub: {
     // [6] *(*main::pscreen) = sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 
     ldy.z main.pscreen
@@ -232,12 +232,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte** main::pscreen = &main::screen
-byte* volatile main::screen loadstore zp[2]:2 20.0
-void sub(byte sub::ch , byte** sub::dst)
-byte sub::ch
-byte sub::ch#2 reg byte a 11.0
-byte** sub::dst
+__constant char **main::pscreen = &main::screen
+__loadstore char * volatile main::screen // zp[2]:2 20.0
+void sub(char ch , char **dst)
+char sub::ch
+char sub::ch#2 // reg byte a 11.0
+char **sub::dst
 
 reg byte a [ sub::ch#2 ]
 zp[2]:2 [ main::screen ]
@@ -264,13 +264,13 @@ main: {
     .label pscreen = screen
     .label screen = 2
     // byte* screen = (char*)0x400
-    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
     // sub('a',pscreen)
-    // [1] call sub 
+    // [1] call sub
     // [5] phi from main to sub [phi:main->sub]
     // [5] phi sub::ch#2 = 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
@@ -278,7 +278,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // sub('b',pscreen)
-    // [3] call sub 
+    // [3] call sub
     // [5] phi from main::@1 to sub [phi:main::@1->sub]
     // [5] phi sub::ch#2 = 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
@@ -289,7 +289,7 @@ main: {
     rts
 }
   // sub
-// sub(byte register(A) ch)
+// void sub(__register(A) char ch, char **dst)
 sub: {
     // *(*dst)++ = ch
     // [6] *(*main::pscreen) = sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 

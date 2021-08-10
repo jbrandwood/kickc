@@ -25,6 +25,7 @@ main: {
     // }
     rts
 }
+// __register(A) char foo(char x)
 foo: {
     .const x = 1
     // return bar[x];

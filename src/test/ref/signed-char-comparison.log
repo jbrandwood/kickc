@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -9,7 +9,7 @@ main: scope:[main]  from __start::@1
 main::@1: scope:[main]  from main main::@2
   main::dy#2 = phi( main/main::dy#0, main::@2/main::dy#1 )
   debug::dy#0 = main::dy#2
-  call debug 
+  call debug
   to:main::@2
 main::@2: scope:[main]  from main::@1
   main::dy#3 = phi( main::@1/main::dy#2 )
@@ -21,10 +21,10 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void debug(signed byte debug::dy)
+void debug(signed char dy)
 debug: scope:[debug]  from main::@1
   debug::dy#1 = phi( main::@1/debug::dy#0 )
-  debug::i#0 = (byte)debug::dy#1
+  debug::i#0 = (char)debug::dy#1
   debug::$0 = debug::dy#1 > -$78
   debug::$1 = ! debug::$0
   if(debug::$1) goto debug::@return
@@ -43,7 +43,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -52,36 +52,36 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* SCREEN = (byte*)$400
+__constant char *SCREEN = (char *)$400
 void __start()
-void debug(signed byte debug::dy)
-bool~ debug::$0
-bool~ debug::$1
-signed byte debug::dy
-signed byte debug::dy#0
-signed byte debug::dy#1
-byte debug::i
-byte debug::i#0
-byte debug::i#1
+void debug(signed char dy)
+bool debug::$0
+bool debug::$1
+signed char debug::dy
+signed char debug::dy#0
+signed char debug::dy#1
+char debug::i
+char debug::i#0
+char debug::i#1
 void main()
-bool~ main::$1
-signed byte main::dy
-signed byte main::dy#0
-signed byte main::dy#1
-signed byte main::dy#2
-signed byte main::dy#3
+bool main::$1
+signed char main::dy
+signed char main::dy#0
+signed char main::dy#1
+signed char main::dy#2
+signed char main::dy#3
 
 Adding number conversion cast (snumber) -$78 in debug::$0 = debug::dy#1 > -$78
 Adding number conversion cast (unumber) $a in SCREEN[debug::i#1] = $a
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast SCREEN[debug::i#1] = (unumber)$a
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast -$78
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) -$78
-Finalized unsigned number type (byte) $a
+Finalized signed number type (signed char) -$78
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [12] debug::$1 = debug::dy#1 <= -$78 from [11] debug::$0 = debug::dy#1 > -$78
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -108,9 +108,9 @@ Adding number conversion cast (snumber) -$80 in [4] if(main::dy#1!=-$80) goto ma
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast -$80
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) -$80
+Finalized signed number type (signed char) -$80
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [6] debug::i#0 = (byte)debug::dy#0 keeping debug::dy#0
+Inlining Noop Cast [6] debug::i#0 = (char)debug::dy#0 keeping debug::dy#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings main::dy#0
 Constant inlined main::dy#0 = -$80
@@ -135,7 +135,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@2
   [1] main::dy#2 = phi( main/-$80, main::@2/main::dy#1 )
   [2] debug::dy#0 = main::dy#2
-  [3] call debug 
+  [3] call debug
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] main::dy#1 = ++ main::dy#2
@@ -145,12 +145,12 @@ main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void debug(signed byte debug::dy)
+void debug(signed char dy)
 debug: scope:[debug]  from main::@1
   [7] if(debug::dy#0<=-$78) goto debug::@return
   to:debug::@1
 debug::@1: scope:[debug]  from debug
-  [8] SCREEN[(byte)debug::dy#0] = $a
+  [8] SCREEN[(char)debug::dy#0] = $a
   to:debug::@return
 debug::@return: scope:[debug]  from debug debug::@1
   [9] return 
@@ -158,14 +158,14 @@ debug::@return: scope:[debug]  from debug debug::@1
 
 
 VARIABLE REGISTER WEIGHTS
-void debug(signed byte debug::dy)
-signed byte debug::dy
-signed byte debug::dy#0 56.0
-byte debug::i
+void debug(signed char dy)
+signed char debug::dy
+signed char debug::dy#0 // 56.0
+char debug::i
 void main()
-signed byte main::dy
-signed byte main::dy#1 16.5
-signed byte main::dy#2 11.0
+signed char main::dy
+signed char main::dy#1 // 16.5
+signed char main::dy#2 // 11.0
 
 Initial phi equivalence classes
 [ main::dy#2 main::dy#1 ]
@@ -179,9 +179,9 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(debug::dy#0<=-$78) goto debug::@return [ debug::dy#0 ] ( debug:3 [ main::dy#2 debug::dy#0 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::dy#2 main::dy#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ debug::dy#0 ]
-Statement [8] SCREEN[(byte)debug::dy#0] = $a [ ] ( debug:3 [ main::dy#2 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
+Statement [8] SCREEN[(char)debug::dy#0] = $a [ ] ( debug:3 [ main::dy#2 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
 Statement [7] if(debug::dy#0<=-$78) goto debug::@return [ debug::dy#0 ] ( debug:3 [ main::dy#2 debug::dy#0 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
-Statement [8] SCREEN[(byte)debug::dy#0] = $a [ ] ( debug:3 [ main::dy#2 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
+Statement [8] SCREEN[(char)debug::dy#0] = $a [ ] ( debug:3 [ main::dy#2 ] { { debug::dy#0 = main::dy#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::dy#2 main::dy#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ debug::dy#0 ] : zp[1]:3 , reg byte x , reg byte y , 
 
@@ -224,7 +224,7 @@ main: {
     // main::@1
   __b1:
     // [2] debug::dy#0 = main::dy#2
-    // [3] call debug 
+    // [3] call debug
     jsr debug
     jmp __b2
     // main::@2
@@ -241,7 +241,7 @@ main: {
     rts
 }
   // debug
-// debug(signed byte register(X) dy)
+// void debug(__register(X) signed char dy)
 debug: {
     // [7] if(debug::dy#0<=-$78) goto debug::@return -- vbsxx_le_vbsc1_then_la1 
     txa
@@ -255,7 +255,7 @@ debug: {
     jmp __b1
     // debug::@1
   __b1:
-    // [8] SCREEN[(byte)debug::dy#0] = $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] SCREEN[(char)debug::dy#0] = $a -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$a
     sta SCREEN,x
     jmp __breturn
@@ -285,15 +285,15 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte* SCREEN = (byte*) 1024
-void debug(signed byte debug::dy)
-signed byte debug::dy
-signed byte debug::dy#0 reg byte x 56.0
-byte debug::i
+__constant char *SCREEN = (char *) 1024
+void debug(signed char dy)
+signed char debug::dy
+signed char debug::dy#0 // reg byte x 56.0
+char debug::i
 void main()
-signed byte main::dy
-signed byte main::dy#1 reg byte x 16.5
-signed byte main::dy#2 reg byte x 11.0
+signed char main::dy
+signed char main::dy#1 // reg byte x 16.5
+signed char main::dy#2 // reg byte x 11.0
 
 reg byte x [ main::dy#2 main::dy#1 ]
 reg byte x [ debug::dy#0 ]
@@ -328,7 +328,7 @@ main: {
   __b1:
     // debug(dy)
     // [2] debug::dy#0 = main::dy#2
-    // [3] call debug 
+    // [3] call debug
     jsr debug
     // main::@2
     // for(signed char dy:-128..127)
@@ -343,7 +343,7 @@ main: {
     rts
 }
   // debug
-// debug(signed byte register(X) dy)
+// void debug(__register(X) signed char dy)
 debug: {
     // if (dy > -120)
     // [7] if(debug::dy#0<=-$78) goto debug::@return -- vbsxx_le_vbsc1_then_la1 
@@ -357,7 +357,7 @@ debug: {
     bmi __breturn
     // debug::@1
     // SCREEN[i] = 10
-    // [8] SCREEN[(byte)debug::dy#0] = $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] SCREEN[(char)debug::dy#0] = $a -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$a
     sta SCREEN,x
     // debug::@return

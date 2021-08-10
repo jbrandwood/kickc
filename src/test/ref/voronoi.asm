@@ -179,7 +179,7 @@ animate: {
     // }
     rts
 }
-// findcol(byte zp(5) x, byte zp(2) y)
+// __register(X) char findcol(__zp(5) char x, __zp(2) char y)
 findcol: {
     .label x = 5
     .label y = 2

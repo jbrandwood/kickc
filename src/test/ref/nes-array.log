@@ -3,11 +3,11 @@ Setting inferred volatile on symbol affected by address-of main::$1 = call foo(2
 
 CONTROL FLOW GRAPH SSA
 
-signed word foo(byte foo::x , signed word* foo::y)
+int foo(char x , int *y)
 foo: scope:[foo]  from main main::@1
   foo::y#2 = phi( main/foo::y#0, main::@1/foo::y#1 )
   foo::x#2 = phi( main/foo::x#0, main::@1/foo::x#1 )
-  foo::$1 = foo::x#2 * SIZEOF_SIGNED_WORD
+  foo::$1 = foo::x#2 * SIZEOF_INT
   foo::$0 = wow[foo::$1] + *foo::y#2
   foo::return#0 = foo::$0
   to:foo::@return
@@ -19,12 +19,12 @@ foo::@return: scope:[foo]  from foo
 
 void main()
 main: scope:[main]  from __start
-  main::SCREEN#0 = (signed word*)$400
+  main::SCREEN#0 = (int *)$400
   main::y1 = $1234
   main::y2 = $1234
   foo::x#0 = 1
   foo::y#0 = &main::y1
-  call foo 
+  call foo
   foo::return#2 = foo::return#1
   to:main::@1
 main::@1: scope:[main]  from main
@@ -32,10 +32,10 @@ main::@1: scope:[main]  from main
   foo::return#5 = phi( main/foo::return#2 )
   main::$0 = foo::return#5
   *main::SCREEN#3 = main::$0
-  main::SCREEN#1 = main::SCREEN#3 + SIZEOF_SIGNED_WORD
+  main::SCREEN#1 = main::SCREEN#3 + SIZEOF_INT
   foo::x#1 = 2
   foo::y#1 = &main::y2
-  call foo 
+  call foo
   foo::return#3 = foo::return#1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -43,7 +43,7 @@ main::@2: scope:[main]  from main::@1
   foo::return#6 = phi( main::@1/foo::return#3 )
   main::$1 = foo::return#6
   *main::SCREEN#4 = main::$1
-  main::SCREEN#2 = main::SCREEN#4 + SIZEOF_SIGNED_WORD
+  main::SCREEN#2 = main::SCREEN#4 + SIZEOF_INT
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -51,7 +51,7 @@ main::@return: scope:[main]  from main::@2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -60,39 +60,39 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_SIGNED_WORD = 2
+__constant char SIZEOF_INT = 2
 void __start()
-signed word foo(byte foo::x , signed word* foo::y)
-signed word~ foo::$0
-byte~ foo::$1
-signed word foo::return
-signed word foo::return#0
-signed word foo::return#1
-signed word foo::return#2
-signed word foo::return#3
-signed word foo::return#4
-signed word foo::return#5
-signed word foo::return#6
-byte foo::x
-byte foo::x#0
-byte foo::x#1
-byte foo::x#2
-signed word* foo::y
-signed word* foo::y#0
-signed word* foo::y#1
-signed word* foo::y#2
+int foo(char x , int *y)
+int foo::$0
+char foo::$1
+int foo::return
+int foo::return#0
+int foo::return#1
+int foo::return#2
+int foo::return#3
+int foo::return#4
+int foo::return#5
+int foo::return#6
+char foo::x
+char foo::x#0
+char foo::x#1
+char foo::x#2
+int *foo::y
+int *foo::y#0
+int *foo::y#1
+int *foo::y#2
 void main()
-signed word~ main::$0
-signed word~ main::$1
-signed word* main::SCREEN
-signed word* main::SCREEN#0
-signed word* main::SCREEN#1
-signed word* main::SCREEN#2
-signed word* main::SCREEN#3
-signed word* main::SCREEN#4
-volatile signed word main::y1 loadstore
-volatile signed word main::y2 loadstore
-constant signed word* wow[4]  = { (signed word)$cafe, (signed word)$babe, $1234, $5678 }
+int main::$0
+int main::$1
+int *main::SCREEN
+int *main::SCREEN#0
+int *main::SCREEN#1
+int *main::SCREEN#2
+int *main::SCREEN#3
+int *main::SCREEN#4
+__loadstore volatile int main::y1
+__loadstore volatile int main::y2
+__constant int wow[4] = { (int)$cafe, (int)$babe, $1234, $5678 }
 
 Adding number conversion cast (unumber) 1 in foo::x#0 = 1
 Adding number conversion cast (unumber) 2 in foo::x#1 = 2
@@ -102,12 +102,12 @@ Inlining cast foo::x#1 = (unumber)2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $cafe
 Simplifying constant integer cast $babe
-Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant pointer cast (int *) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias foo::return#0 = foo::$0 foo::return#4 foo::return#1 
 Alias foo::return#2 = foo::return#5 
@@ -115,24 +115,24 @@ Alias main::SCREEN#0 = main::SCREEN#3
 Alias foo::return#3 = foo::return#6 
 Alias main::SCREEN#1 = main::SCREEN#4 
 Successful SSA optimization Pass2AliasElimination
-Constant main::SCREEN#0 = (signed word*) 1024
+Constant main::SCREEN#0 = (int *) 1024
 Constant foo::x#0 = 1
 Constant foo::y#0 = &main::y1
 Constant foo::x#1 = 2
 Constant foo::y#1 = &main::y2
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [19] *main::SCREEN#1 = main::$1  -- main::SCREEN#0[SIZEOF_SIGNED_WORD]
+Converting *(pointer+n) to pointer[n] [19] *main::SCREEN#1 = main::$1  -- main::SCREEN#0[SIZEOF_INT]
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable main::SCREEN#2 and assignment [15] main::SCREEN#2 = main::SCREEN#1 + SIZEOF_SIGNED_WORD
+Eliminating unused variable main::SCREEN#2 and assignment [15] main::SCREEN#2 = main::SCREEN#1 + SIZEOF_INT
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable main::SCREEN#1 and assignment [10] main::SCREEN#1 = main::SCREEN#0 + SIZEOF_SIGNED_WORD
+Eliminating unused variable main::SCREEN#1 and assignment [10] main::SCREEN#1 = main::SCREEN#0 + SIZEOF_INT
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting multiplication to use shift [1] foo::$1 = foo::x#2 * SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [1] foo::$1 = foo::x#2 * SIZEOF_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings foo::x#0
 Inlining constant with var siblings foo::y#0
@@ -143,9 +143,9 @@ Constant inlined foo::x#1 = 2
 Constant inlined foo::y#1 = &main::y2
 Constant inlined foo::x#0 = 1
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN#0+SIZEOF_SIGNED_WORD)
+Consolidated array index constant in *(main::SCREEN#0+SIZEOF_INT)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type (char) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [main] to foo:2 foo:6 
@@ -159,24 +159,24 @@ void main()
 main: scope:[main]  from
   [0] main::y1 = $1234
   [1] main::y2 = $1234
-  [2] call foo 
+  [2] call foo
   [3] foo::return#2 = foo::return#0
   to:main::@1
 main::@1: scope:[main]  from main
   [4] main::$0 = foo::return#2
   [5] *main::SCREEN#0 = main::$0
-  [6] call foo 
+  [6] call foo
   [7] foo::return#3 = foo::return#0
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [8] main::$1 = foo::return#3
-  [9] *(main::SCREEN#0+SIZEOF_SIGNED_WORD) = main::$1
+  [9] *(main::SCREEN#0+SIZEOF_INT) = main::$1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 
-signed word foo(byte foo::x , signed word* foo::y)
+int foo(char x , int *y)
 foo: scope:[foo]  from main main::@1
   [11] foo::y#2 = phi( main/&main::y1, main::@1/&main::y2 )
   [11] foo::x#2 = phi( main/1, main::@1/2 )
@@ -189,22 +189,22 @@ foo::@return: scope:[foo]  from foo
 
 
 VARIABLE REGISTER WEIGHTS
-signed word foo(byte foo::x , signed word* foo::y)
-byte~ foo::$1 22.0
-signed word foo::return
-signed word foo::return#0 3.75
-signed word foo::return#2 4.0
-signed word foo::return#3 4.0
-byte foo::x
-byte foo::x#2 11.0
-signed word* foo::y
-signed word* foo::y#2 5.5
+int foo(char x , int *y)
+char foo::$1 // 22.0
+int foo::return
+int foo::return#0 // 3.75
+int foo::return#2 // 4.0
+int foo::return#3 // 4.0
+char foo::x
+char foo::x#2 // 11.0
+int *foo::y
+int *foo::y#2 // 5.5
 void main()
-signed word~ main::$0 4.0
-signed word~ main::$1 4.0
-signed word* main::SCREEN
-volatile signed word main::y1 loadstore 20.0
-volatile signed word main::y2 loadstore 20.0
+int main::$0 // 4.0
+int main::$1 // 4.0
+int *main::SCREEN
+__loadstore volatile int main::y1 // 20.0
+__loadstore volatile int main::y2 // 20.0
 
 Initial phi equivalence classes
 [ foo::x#2 ]
@@ -246,7 +246,7 @@ Statement [4] main::$0 = foo::return#2 [ main::$0 ] (  [ main::$0 ] { { foo::ret
 Statement [5] *main::SCREEN#0 = main::$0 [ ] (  [ ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
 Statement [7] foo::return#3 = foo::return#0 [ foo::return#3 ] (  [ foo::return#3 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
 Statement [8] main::$1 = foo::return#3 [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [9] *(main::SCREEN#0+SIZEOF_SIGNED_WORD) = main::$1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *(main::SCREEN#0+SIZEOF_INT) = main::$1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] foo::$1 = foo::x#2 << 1 [ foo::y#2 foo::$1 ] ( foo:2 [ foo::y#2 foo::$1 ] { { foo::return#0 = foo::return#2 } }  foo:6 [ foo::y#2 foo::$1 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
 Statement [13] foo::return#0 = wow[foo::$1] + *foo::y#2 [ foo::return#0 ] ( foo:2 [ foo::return#0 ] { { foo::return#0 = foo::return#2 } }  foo:6 [ foo::return#0 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ foo::x#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
@@ -291,7 +291,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
   // main
 main: {
@@ -310,7 +310,7 @@ main: {
     sta.z y2
     lda #>$1234
     sta.z y2+1
-    // [2] call foo 
+    // [2] call foo
     // [11] phi from main to foo [phi:main->foo]
   foo_from_main:
     // [11] phi foo::y#2 = &main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
@@ -331,7 +331,7 @@ main: {
     sta SCREEN
     lda.z __0+1
     sta SCREEN+1
-    // [6] call foo 
+    // [6] call foo
     // [11] phi from main::@1 to foo [phi:main::@1->foo]
   foo_from___b1:
     // [11] phi foo::y#2 = &main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
@@ -347,11 +347,11 @@ main: {
     // main::@2
   __b2:
     // [8] main::$1 = foo::return#3
-    // [9] *(main::SCREEN#0+SIZEOF_SIGNED_WORD) = main::$1 -- _deref_pwsc1=vwsz1 
+    // [9] *(main::SCREEN#0+SIZEOF_INT) = main::$1 -- _deref_pwsc1=vwsz1 
     lda.z __1
-    sta SCREEN+SIZEOF_SIGNED_WORD
+    sta SCREEN+SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+SIZEOF_SIGNED_WORD+1
+    sta SCREEN+SIZEOF_INT+1
     jmp __breturn
     // main::@return
   __breturn:
@@ -359,7 +359,7 @@ main: {
     rts
 }
   // foo
-// foo(byte register(X) x, signed word* zp(2) y)
+// __zp(2) int foo(__register(X) char x, __zp(2) int *y)
 foo: {
     .label return = 2
     .label y = 2
@@ -404,25 +404,25 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_SIGNED_WORD = 2
-signed word foo(byte foo::x , signed word* foo::y)
-byte~ foo::$1 reg byte a 22.0
-signed word foo::return
-signed word foo::return#0 return zp[2]:2 3.75
-signed word foo::return#2 return zp[2]:2 4.0
-signed word foo::return#3 return zp[2]:2 4.0
-byte foo::x
-byte foo::x#2 reg byte x 11.0
-signed word* foo::y
-signed word* foo::y#2 y zp[2]:2 5.5
+__constant char SIZEOF_INT = 2
+int foo(char x , int *y)
+char foo::$1 // reg byte a 22.0
+int foo::return
+int foo::return#0 // return zp[2]:2 3.75
+int foo::return#2 // return zp[2]:2 4.0
+int foo::return#3 // return zp[2]:2 4.0
+char foo::x
+char foo::x#2 // reg byte x 11.0
+int *foo::y
+int *foo::y#2 // y zp[2]:2 5.5
 void main()
-signed word~ main::$0 zp[2]:2 4.0
-signed word~ main::$1 zp[2]:2 4.0
-signed word* main::SCREEN
-constant signed word* main::SCREEN#0 SCREEN = (signed word*) 1024
-volatile signed word main::y1 loadstore zp[2]:4 20.0
-volatile signed word main::y2 loadstore zp[2]:6 20.0
-constant signed word* wow[4]  = { $cafe, $babe, $1234, $5678 }
+int main::$0 // zp[2]:2 4.0
+int main::$1 // zp[2]:2 4.0
+int *main::SCREEN
+__constant int *main::SCREEN#0 = (int *) 1024 // SCREEN
+__loadstore volatile int main::y1 // zp[2]:4 20.0
+__loadstore volatile int main::y2 // zp[2]:6 20.0
+__constant int wow[4] = { $cafe, $babe, $1234, $5678 }
 
 reg byte x [ foo::x#2 ]
 zp[2]:2 [ foo::y#2 foo::return#0 foo::return#2 main::$0 foo::return#3 main::$1 ]
@@ -447,7 +447,7 @@ Score: 141
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
   // main
 main: {
@@ -469,7 +469,7 @@ main: {
     lda #>$1234
     sta.z y2+1
     // foo(1, &y1)
-    // [2] call foo 
+    // [2] call foo
     // [11] phi from main to foo [phi:main->foo]
     // [11] phi foo::y#2 = &main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
@@ -490,7 +490,7 @@ main: {
     lda.z __0+1
     sta SCREEN+1
     // foo(2, &y2)
-    // [6] call foo 
+    // [6] call foo
     // [11] phi from main::@1 to foo [phi:main::@1->foo]
     // [11] phi foo::y#2 = &main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
@@ -505,18 +505,18 @@ main: {
     // main::@2
     // [8] main::$1 = foo::return#3
     // *SCREEN++ = foo(2, &y2)
-    // [9] *(main::SCREEN#0+SIZEOF_SIGNED_WORD) = main::$1 -- _deref_pwsc1=vwsz1 
+    // [9] *(main::SCREEN#0+SIZEOF_INT) = main::$1 -- _deref_pwsc1=vwsz1 
     lda.z __1
-    sta SCREEN+SIZEOF_SIGNED_WORD
+    sta SCREEN+SIZEOF_INT
     lda.z __1+1
-    sta SCREEN+SIZEOF_SIGNED_WORD+1
+    sta SCREEN+SIZEOF_INT+1
     // main::@return
     // }
     // [10] return 
     rts
 }
   // foo
-// foo(byte register(X) x, signed word* zp(2) y)
+// __zp(2) int foo(__register(X) char x, __zp(2) int *y)
 foo: {
     .label return = 2
     .label y = 2

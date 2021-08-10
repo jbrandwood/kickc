@@ -1,18 +1,18 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
   cnt#17 = phi( __start::@1/cnt#18 )
-  call inccnt 
+  call inccnt
   to:main::@1
 main::@1: scope:[main]  from main
   cnt#10 = phi( main/cnt#6 )
   cnt#0 = cnt#10
   SCREEN[0] = cnt#0
   cnt#1 = ++ cnt#0
-  call inccnt 
+  call inccnt
   to:main::@2
 main::@2: scope:[main]  from main::@1
   cnt#11 = phi( main::@1/cnt#6 )
@@ -45,7 +45,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   cnt#18 = phi( __start::__init1/cnt#7 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   cnt#15 = phi( __start::@1/cnt#4 )
@@ -58,40 +58,40 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* SCREEN[$100]  = (byte*)$400
+__constant char SCREEN[$100] = (char *)$400
 void __start()
-byte cnt
-byte cnt#0
-byte cnt#1
-byte cnt#10
-byte cnt#11
-byte cnt#12
-byte cnt#13
-byte cnt#14
-byte cnt#15
-byte cnt#16
-byte cnt#17
-byte cnt#18
-byte cnt#2
-byte cnt#3
-byte cnt#4
-byte cnt#5
-byte cnt#6
-byte cnt#7
-byte cnt#8
-byte cnt#9
+char cnt
+char cnt#0
+char cnt#1
+char cnt#10
+char cnt#11
+char cnt#12
+char cnt#13
+char cnt#14
+char cnt#15
+char cnt#16
+char cnt#17
+char cnt#18
+char cnt#2
+char cnt#3
+char cnt#4
+char cnt#5
+char cnt#6
+char cnt#7
+char cnt#8
+char cnt#9
 void inccnt()
 void main()
 
 Adding number conversion cast (unumber) 0 in SCREEN[0] = cnt#0
 Adding number conversion cast (unumber) 1 in SCREEN[1] = cnt#3
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias cnt#0 = cnt#10 
 Alias cnt#11 = cnt#2 
@@ -121,7 +121,7 @@ Constant inlined cnt#18 = 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (unsigned int) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -137,12 +137,12 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call inccnt 
+  [1] call inccnt
   to:main::@1
 main::@1: scope:[main]  from main
   [2] *SCREEN = cnt#14
   [3] cnt#1 = ++ cnt#14
-  [4] call inccnt 
+  [4] call inccnt
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [5] cnt#12 = ++ cnt#14
@@ -163,11 +163,11 @@ inccnt::@return: scope:[inccnt]  from inccnt
 
 
 VARIABLE REGISTER WEIGHTS
-byte cnt
-byte cnt#1 4.0
-byte cnt#12 4.0
-byte cnt#13 13.0
-byte cnt#14 3.4000000000000004
+char cnt
+char cnt#1 // 4.0
+char cnt#12 // 4.0
+char cnt#13 // 13.0
+char cnt#14 // 3.4000000000000004
 void inccnt()
 void main()
 
@@ -212,7 +212,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call inccnt 
+    // [1] call inccnt
     // [8] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
     // [8] phi cnt#13 = 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
@@ -225,7 +225,7 @@ main: {
     stx SCREEN
     // [3] cnt#1 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
-    // [4] call inccnt 
+    // [4] call inccnt
     // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from___b1:
     // [8] phi cnt#13 = cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
@@ -270,12 +270,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* SCREEN[$100]  = (byte*) 1024
-byte cnt
-byte cnt#1 reg byte x 4.0
-byte cnt#12 reg byte x 4.0
-byte cnt#13 reg byte x 13.0
-byte cnt#14 reg byte x 3.4000000000000004
+__constant char SCREEN[$100] = (char *) 1024
+char cnt
+char cnt#1 // reg byte x 4.0
+char cnt#12 // reg byte x 4.0
+char cnt#13 // reg byte x 13.0
+char cnt#14 // reg byte x 3.4000000000000004
 void inccnt()
 void main()
 
@@ -303,7 +303,7 @@ Score: 40
   // main
 main: {
     // inccnt()
-    // [1] call inccnt 
+    // [1] call inccnt
     // [8] phi from main to inccnt [phi:main->inccnt]
     // [8] phi cnt#13 = 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
@@ -316,7 +316,7 @@ main: {
     // [3] cnt#1 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // inccnt()
-    // [4] call inccnt 
+    // [4] call inccnt
     // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
     // [8] phi cnt#13 = cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt

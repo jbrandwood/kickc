@@ -1,5 +1,5 @@
-Setting inferred volatile on symbol affected by address-of main::sb_ptr = (signed byte*)&main::ub
-Setting inferred volatile on symbol affected by address-of main::ub_ptr = (byte*)&main::sb
+Setting inferred volatile on symbol affected by address-of main::sb_ptr = (signed char *)&main::ub
+Setting inferred volatile on symbol affected by address-of main::ub_ptr = (char *)&main::sb
 
 CONTROL FLOW GRAPH SSA
 
@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   main::ub = $ff
   *main::sb_ptr = 1
   *main::ub_screen = main::ub
-  main::sb = (signed byte)$7f
+  main::sb = (signed char)$7f
   *main::ub_ptr = 1
   *main::sb_screen = main::sb
   to:main::@return
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -29,12 +29,12 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-volatile signed byte main::sb loadstore
-constant signed byte* main::sb_ptr = (signed byte*)&main::ub
-constant signed byte* const main::sb_screen = (signed byte*)$428
-volatile byte main::ub loadstore
-constant byte* main::ub_ptr = (byte*)&main::sb
-constant byte* const main::ub_screen = (byte*)$400
+__loadstore volatile signed char main::sb
+__constant signed char *main::sb_ptr = (signed char *)&main::ub
+__constant signed char * const main::sb_screen = (signed char *)$428
+__loadstore volatile char main::ub
+__constant char *main::ub_ptr = (char *)&main::sb
+__constant char * const main::ub_screen = (char *)$400
 
 Adding number conversion cast (snumber) 1 in *main::sb_ptr = 1
 Adding number conversion cast (unumber) 1 in *main::ub_ptr = 1
@@ -42,14 +42,14 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *main::sb_ptr = (snumber)1
 Inlining cast *main::ub_ptr = (unumber)1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (signed byte*) 1064
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (signed char *) 1064
 Simplifying constant integer cast 1
 Simplifying constant integer cast $7f
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) 1
-Finalized unsigned number type (byte) 1
+Finalized signed number type (signed char) 1
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -79,8 +79,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-volatile signed byte main::sb loadstore 2.0
-volatile byte main::ub loadstore 2.0
+__loadstore volatile signed char main::sb // 2.0
+__loadstore volatile char main::ub // 2.0
 
 Initial phi equivalence classes
 Added variable main::ub to live range equivalence class [ main::ub ]
@@ -167,12 +167,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-volatile signed byte main::sb loadstore zp[1]:3 2.0
-constant signed byte* main::sb_ptr = (signed byte*)&main::ub
-constant signed byte* const main::sb_screen = (signed byte*) 1064
-volatile byte main::ub loadstore zp[1]:2 2.0
-constant byte* main::ub_ptr = (byte*)&main::sb
-constant byte* const main::ub_screen = (byte*) 1024
+__loadstore volatile signed char main::sb // zp[1]:3 2.0
+__constant signed char *main::sb_ptr = (signed char *)&main::ub
+__constant signed char * const main::sb_screen = (signed char *) 1064
+__loadstore volatile char main::ub // zp[1]:2 2.0
+__constant char *main::ub_ptr = (char *)&main::sb
+__constant char * const main::ub_screen = (char *) 1024
 
 zp[1]:2 [ main::ub ]
 zp[1]:3 [ main::sb ]

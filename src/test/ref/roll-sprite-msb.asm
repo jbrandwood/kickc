@@ -40,7 +40,7 @@ main: {
     // }
     rts
 }
-// position_sprite(byte zp(4) spriteno, word zp(2) x)
+// void position_sprite(__zp(4) char spriteno, __zp(2) unsigned int x, char y)
 position_sprite: {
     .const y = $32
     .label spriteno = 4

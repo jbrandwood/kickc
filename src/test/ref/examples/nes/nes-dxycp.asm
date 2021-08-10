@@ -52,7 +52,7 @@
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
   .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $2000-$23bf	$03c0	Name table 0
   .label PPU_NAME_TABLE_0 = $2000
   /// $23c0-$23ff	$0040	Attribute table 0
@@ -398,8 +398,9 @@ readJoy1: {
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
+// void ppuDataTransfer(void * const ppuData, void * const cpuData, unsigned int size)
 ppuDataTransfer: {
-    .const size = $20*SIZEOF_BYTE
+    .const size = $20*SIZEOF_CHAR
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
@@ -451,7 +452,7 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp(8) size)
+// void ppuDataFill(void * const ppuData, __register(X) char val, __zp(8) unsigned int size)
 ppuDataFill: {
     .label ppuDataPrepare1_ppuData = 6
     .label i = $a

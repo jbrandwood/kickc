@@ -7,19 +7,19 @@ main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
-  main::$6 = (word)main::i#2
+  main::$6 = (unsigned int)main::i#2
   main::$0 = main::$6 * $100
   main::$1 = main::$0 + main::i#2
-  main::$7 = (word)main::i#2
-  main::$3 = main::$7 * SIZEOF_WORD
+  main::$7 = (unsigned int)main::i#2
+  main::$3 = main::$7 * SIZEOF_UNSIGNED_INT
   words[main::$3] = main::$1
   main::i#1 = main::i#2 + rangenext(0,$ff)
   main::$2 = main::i#1 != rangelast(0,$ff)
   if(main::$2) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  main::$4 = (word)$ff * SIZEOF_WORD
-  main::$5 = 0 * SIZEOF_WORD
+  main::$4 = (unsigned int)$ff * SIZEOF_UNSIGNED_INT
+  main::$5 = 0 * SIZEOF_UNSIGNED_INT
   main::SCREEN[main::$5] = words[main::$4]
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -28,7 +28,7 @@ main::@return: scope:[main]  from main::@2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -37,56 +37,56 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-number~ main::$0
-number~ main::$1
-bool~ main::$2
-word~ main::$3
-word~ main::$4
-number~ main::$5
-word~ main::$6
-word~ main::$7
-constant word* const main::SCREEN = (word*)$400
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-constant word* words[$100]  = { fill( $100, 0) }
+number main::$0
+number main::$1
+bool main::$2
+unsigned int main::$3
+unsigned int main::$4
+number main::$5
+unsigned int main::$6
+unsigned int main::$7
+__constant unsigned int * const main::SCREEN = (unsigned int *)$400
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+__constant unsigned int words[$100] = { fill( $100, 0) }
 
 Adding number conversion cast (unumber) $100 in main::$0 = main::$6 * $100
 Adding number conversion cast (unumber) main::$0 in main::$0 = main::$6 * (unumber)$100
 Adding number conversion cast (unumber) main::$1 in main::$1 = main::$0 + main::i#2
-Adding number conversion cast (unumber) 0 in main::$5 = 0 * SIZEOF_WORD
-Adding number conversion cast (unumber) main::$5 in main::$5 = (unumber)0 * SIZEOF_WORD
+Adding number conversion cast (unumber) 0 in main::$5 = 0 * SIZEOF_UNSIGNED_INT
+Adding number conversion cast (unumber) main::$5 in main::$5 = (unumber)0 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (word*) 1024
+Simplifying constant pointer cast (unsigned int *) 1024
 Simplifying constant integer cast $100
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in main::$0 = main::$6 * $100
-Inferred type updated to word in main::$1 = main::$0 + main::i#2
-Inferred type updated to byte in main::$5 = 0 * SIZEOF_WORD
+Inferred type updated to unsigned int in main::$0 = main::$6 * $100
+Inferred type updated to unsigned int in main::$1 = main::$0 + main::i#2
+Inferred type updated to char in main::$5 = 0 * SIZEOF_UNSIGNED_INT
 Simple Condition main::$2 [10] if(main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [11] main::$4 = $ff * SIZEOF_WORD
-Constant right-side identified [12] main::$5 = 0 * SIZEOF_WORD
+Constant right-side identified [11] main::$4 = $ff * SIZEOF_UNSIGNED_INT
+Constant right-side identified [12] main::$5 = 0 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::i#0 = 0
-Constant main::$4 = $ff*SIZEOF_WORD
-Constant main::$5 = 0*SIZEOF_WORD
+Constant main::$4 = $ff*SIZEOF_UNSIGNED_INT
+Constant main::$5 = 0*SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [8] main::i#1 = ++ main::i#2 to ++
 Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to 0
 De-inlining pointer[w] to *(pointer+w)   [7] words[main::$3] = main::$1
 De-inlining pointer[w] to *(pointer+w)   [13] main::SCREEN[main::$5] = words[main::$4]
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying constant evaluating to zero 0*SIZEOF_WORD in 
+Simplifying constant evaluating to zero 0*SIZEOF_UNSIGNED_INT in 
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero main::SCREEN in [13] main::SCREEN[main::$5] = *main::$9
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -101,22 +101,22 @@ Adding number conversion cast (unumber) 0 in [9] if(main::i#1!=0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [10] main::$9 = words + main::$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::$9 = words+main::$4
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [2] main::$0 = main::$6 * $100
-Rewriting multiplication to use shift [5] main::$3 = main::$7 * SIZEOF_WORD
+Rewriting multiplication to use shift [5] main::$3 = main::$7 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
-Constant inlined main::$9 = words+$ff*SIZEOF_WORD
+Constant inlined main::$9 = words+$ff*SIZEOF_UNSIGNED_INT
 Constant inlined main::i#0 = 0
-Constant inlined main::$4 = $ff*SIZEOF_WORD
+Constant inlined main::$4 = $ff*SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (word) $100
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (unsigned int) $100
+Finalized unsigned number type (unsigned int) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -136,10 +136,10 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
-  [2] main::$6 = (word)main::i#2
+  [2] main::$6 = (unsigned int)main::i#2
   [3] main::$0 = main::$6 << 8
   [4] main::$1 = main::$0 + main::i#2
-  [5] main::$7 = (word)main::i#2
+  [5] main::$7 = (unsigned int)main::i#2
   [6] main::$3 = main::$7 << 1
   [7] main::$8 = words + main::$3
   [8] *main::$8 = main::$1
@@ -147,7 +147,7 @@ main::@1: scope:[main]  from main main::@1
   [10] if(main::i#1!=0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [11] *main::SCREEN = *(words+$ff*SIZEOF_WORD)
+  [11] *main::SCREEN = *(words+$ff*SIZEOF_UNSIGNED_INT)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [12] return 
@@ -156,15 +156,15 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 void main()
-word~ main::$0 22.0
-word~ main::$1 5.5
-word~ main::$3 22.0
-word~ main::$6 22.0
-word~ main::$7 22.0
-word*~ main::$8 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 4.125
+unsigned int main::$0 // 22.0
+unsigned int main::$1 // 5.5
+unsigned int main::$3 // 22.0
+unsigned int main::$6 // 22.0
+unsigned int main::$7 // 22.0
+unsigned int *main::$8 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 4.125
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -190,24 +190,24 @@ Allocated zp[2]:9 [ main::$7 ]
 Allocated zp[2]:11 [ main::$3 ]
 Allocated zp[2]:13 [ main::$8 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::$6 = (word)main::i#2 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [2] main::$6 = (unsigned int)main::i#2 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [3] main::$0 = main::$6 << 8 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$1 = main::$0 + main::i#2 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [5] main::$7 = (word)main::i#2 [ main::i#2 main::$1 main::$7 ] (  [ main::i#2 main::$1 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$7 = (unsigned int)main::i#2 [ main::i#2 main::$1 main::$7 ] (  [ main::i#2 main::$1 main::$7 ] { }  ) always clobbers reg byte a 
 Statement [6] main::$3 = main::$7 << 1 [ main::i#2 main::$1 main::$3 ] (  [ main::i#2 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$8 = words + main::$3 [ main::i#2 main::$1 main::$8 ] (  [ main::i#2 main::$1 main::$8 ] { }  ) always clobbers reg byte a 
 Statement [8] *main::$8 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [11] *main::SCREEN = *(words+$ff*SIZEOF_WORD) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] main::$6 = (word)main::i#2 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [11] *main::SCREEN = *(words+$ff*SIZEOF_UNSIGNED_INT) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] main::$6 = (unsigned int)main::i#2 [ main::i#2 main::$6 ] (  [ main::i#2 main::$6 ] { }  ) always clobbers reg byte a 
 Statement [3] main::$0 = main::$6 << 8 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$1 = main::$0 + main::i#2 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [5] main::$7 = (word)main::i#2 [ main::i#2 main::$1 main::$7 ] (  [ main::i#2 main::$1 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$7 = (unsigned int)main::i#2 [ main::i#2 main::$1 main::$7 ] (  [ main::i#2 main::$1 main::$7 ] { }  ) always clobbers reg byte a 
 Statement [6] main::$3 = main::$7 << 1 [ main::i#2 main::$1 main::$3 ] (  [ main::i#2 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
 Statement [7] main::$8 = words + main::$3 [ main::i#2 main::$1 main::$8 ] (  [ main::i#2 main::$1 main::$8 ] { }  ) always clobbers reg byte a 
 Statement [8] *main::$8 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [11] *main::SCREEN = *(words+$ff*SIZEOF_WORD) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *main::SCREEN = *(words+$ff*SIZEOF_UNSIGNED_INT) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::$6 ] : zp[2]:3 , 
 Potential registers zp[2]:5 [ main::$0 ] : zp[2]:5 , 
@@ -242,7 +242,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
   // main
 main: {
@@ -264,7 +264,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] main::$6 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [2] main::$6 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z __6
     lda #0
@@ -282,7 +282,7 @@ main: {
     bcc !+
     inc.z __1+1
   !:
-    // [5] main::$7 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [5] main::$7 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
@@ -313,10 +313,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [11] *main::SCREEN = *(words+$ff*SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
-    lda words+$ff*SIZEOF_WORD
+    // [11] *main::SCREEN = *(words+$ff*SIZEOF_UNSIGNED_INT) -- _deref_pwuc1=_deref_pwuc2 
+    lda words+$ff*SIZEOF_UNSIGNED_INT
     sta SCREEN
-    lda words+$ff*SIZEOF_WORD+1
+    lda words+$ff*SIZEOF_UNSIGNED_INT+1
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -344,19 +344,19 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void main()
-word~ main::$0 zp[2]:2 22.0
-word~ main::$1 zp[2]:2 5.5
-word~ main::$3 zp[2]:4 22.0
-word~ main::$6 zp[2]:2 22.0
-word~ main::$7 zp[2]:4 22.0
-word*~ main::$8 zp[2]:4 22.0
-constant word* const main::SCREEN = (word*) 1024
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 4.125
-constant word* words[$100]  = { fill( $100, 0) }
+unsigned int main::$0 // zp[2]:2 22.0
+unsigned int main::$1 // zp[2]:2 5.5
+unsigned int main::$3 // zp[2]:4 22.0
+unsigned int main::$6 // zp[2]:2 22.0
+unsigned int main::$7 // zp[2]:4 22.0
+unsigned int *main::$8 // zp[2]:4 22.0
+__constant unsigned int * const main::SCREEN = (unsigned int *) 1024
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 4.125
+__constant unsigned int words[$100] = { fill( $100, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::$6 main::$0 main::$1 ]
@@ -378,7 +378,7 @@ Score: 1092
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
   // main
 main: {
@@ -397,7 +397,7 @@ main: {
     // main::@1
   __b1:
     // ((word)i)*0x100
-    // [2] main::$6 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [2] main::$6 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z __6
     lda #0
@@ -417,7 +417,7 @@ main: {
     inc.z __1+1
   !:
     // words[(word)i] = ((word)i)*0x100+i
-    // [5] main::$7 = (word)main::i#2 -- vwuz1=_word_vbuxx 
+    // [5] main::$7 = (unsigned int)main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
@@ -448,10 +448,10 @@ main: {
     bne __b1
     // main::@2
     // SCREEN[0] = words[(word)255]
-    // [11] *main::SCREEN = *(words+$ff*SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
-    lda words+$ff*SIZEOF_WORD
+    // [11] *main::SCREEN = *(words+$ff*SIZEOF_UNSIGNED_INT) -- _deref_pwuc1=_deref_pwuc2 
+    lda words+$ff*SIZEOF_UNSIGNED_INT
     sta SCREEN
-    lda words+$ff*SIZEOF_WORD+1
+    lda words+$ff*SIZEOF_UNSIGNED_INT+1
     sta SCREEN+1
     // main::@return
     // }

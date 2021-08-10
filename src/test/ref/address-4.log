@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -11,10 +11,10 @@ main::@1: scope:[main]  from main main::@2
   if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  main::$1 = main::i * SIZEOF_WORD
+  main::$1 = main::i * SIZEOF_UNSIGNED_INT
   SCREEN[main::$1] = main::ch
   main::i = ++ main::i
-  main::$2 = main::i * SIZEOF_WORD
+  main::$2 = main::i * SIZEOF_UNSIGNED_INT
   SCREEN[main::$2] = main::ch
   main::i = ++ main::i
   to:main::@1
@@ -28,7 +28,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -37,22 +37,22 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant word* SCREEN = (byte*)$400
-constant byte SIZEOF_WORD = 2
+__constant unsigned int *SCREEN = (char *)$400
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-bool~ main::$0
-byte~ main::$1
-byte~ main::$2
-constant const word main::ch = $102
-byte main::i loadstore !zp[-1]:2
+bool main::$0
+char main::$1
+char main::$2
+__constant const unsigned int main::ch = $102
+__loadstore char main::i // !zp[-1]:2
 
 Adding number conversion cast (unumber) 8 in main::$0 = main::i < 8
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [2] if(main::i<8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -63,10 +63,10 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting multiplication to use shift [2] main::$1 = main::i * SIZEOF_WORD
-Rewriting multiplication to use shift [5] main::$2 = main::i * SIZEOF_WORD
+Rewriting multiplication to use shift [2] main::$1 = main::i * SIZEOF_UNSIGNED_INT
+Rewriting multiplication to use shift [5] main::$2 = main::i * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
 CALL GRAPH
 
@@ -97,9 +97,9 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$1 22.0
-byte~ main::$2 22.0
-byte main::i loadstore !zp[-1]:2 9.875
+char main::$1 // 22.0
+char main::$2 // 22.0
+__loadstore char main::i // !zp[-1]:2 9.875
 
 Initial phi equivalence classes
 Added variable main::i to live range equivalence class [ main::i ]
@@ -202,12 +202,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant word* SCREEN = (byte*) 1024
+__constant unsigned int *SCREEN = (char *) 1024
 void main()
-byte~ main::$1 reg byte a 22.0
-byte~ main::$2 reg byte a 22.0
-constant const word main::ch = $102
-byte main::i loadstore !zp[-1]:2 zp[1]:2 9.875
+char main::$1 // reg byte a 22.0
+char main::$2 // reg byte a 22.0
+__constant const unsigned int main::ch = $102
+__loadstore char main::i // !zp[-1]:2 zp[1]:2 9.875
 
 zp[1]:2 [ main::i ]
 reg byte a [ main::$1 ]

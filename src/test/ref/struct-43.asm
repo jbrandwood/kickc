@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .const OFFSET_STRUCT_POINT_ID = 5
   .const OFFSET_STRUCT_POINT_POS = 1
   .label SCREEN = $400
@@ -20,14 +20,14 @@ main: {
     sta SCREEN+1
     // SCREEN[1] = point1.pos[0]
     lda point1+OFFSET_STRUCT_POINT_POS
-    sta SCREEN+1*SIZEOF_WORD
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT
     lda point1+OFFSET_STRUCT_POINT_POS+1
-    sta SCREEN+1*SIZEOF_WORD+1
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT+1
     // SCREEN[2] = point1.pos[1]
-    lda point1+OFFSET_STRUCT_POINT_POS+1*SIZEOF_WORD
-    sta SCREEN+2*SIZEOF_WORD
-    lda point1+OFFSET_STRUCT_POINT_POS+1*SIZEOF_WORD+1
-    sta SCREEN+2*SIZEOF_WORD+1
+    lda point1+OFFSET_STRUCT_POINT_POS+1*SIZEOF_UNSIGNED_INT
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT
+    lda point1+OFFSET_STRUCT_POINT_POS+1*SIZEOF_UNSIGNED_INT+1
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT+1
     // }
     rts
 }

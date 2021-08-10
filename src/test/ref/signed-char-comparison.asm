@@ -22,7 +22,7 @@ main: {
     // }
     rts
 }
-// debug(signed byte register(X) dy)
+// void debug(__register(X) signed char dy)
 debug: {
     // if (dy > -120)
     txa

@@ -45,7 +45,7 @@ main: {
     inc.z i
     jmp __b1
 }
-// set_bg(byte register(A) col)
+// void set_bg(__register(A) char col)
 set_bg: {
     .const OFFSET_STACK_COL = 0
     tsx
@@ -55,7 +55,7 @@ set_bg: {
     // }
     rts
 }
-// set_border(byte register(A) col)
+// void set_border(__register(A) char col)
 set_border: {
     .const OFFSET_STACK_COL = 0
     tsx
@@ -65,7 +65,7 @@ set_border: {
     // }
     rts
 }
-// run(struct Task* zp(3) task)
+// void run(__zp(3) struct Task *task)
 run: {
     .label task = 3
     // task->handler(task->param)

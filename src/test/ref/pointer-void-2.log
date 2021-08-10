@@ -1,6 +1,6 @@
-Setting inferred volatile on symbol affected by address-of main::$0 = call print((void*)&main::b)
-Setting inferred volatile on symbol affected by address-of main::$1 = call print((void*)&main::w)
-Setting inferred volatile on symbol affected by address-of main::$2 = call print((void*)&main::d)
+Setting inferred volatile on symbol affected by address-of main::$0 = call print((void *)&main::b)
+Setting inferred volatile on symbol affected by address-of main::$1 = call print((void *)&main::w)
+Setting inferred volatile on symbol affected by address-of main::$2 = call print((void *)&main::d)
 Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
@@ -11,19 +11,19 @@ main: scope:[main]  from __start::@1
   main::d = $12345678
   main::w = $1234
   main::b = $12
-  print::ptr#0 = (void*)&main::b
+  print::ptr#0 = (void *)&main::b
   call print
   to:main::@1
 main::@1: scope:[main]  from main
   idx#9 = phi( main/idx#5 )
   idx#0 = idx#9
-  print::ptr#1 = (void*)&main::w
+  print::ptr#1 = (void *)&main::w
   call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#10 = phi( main::@1/idx#5 )
   idx#1 = idx#10
-  print::ptr#2 = (void*)&main::d
+  print::ptr#2 = (void *)&main::d
   call print
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -36,11 +36,11 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void print(void* print::ptr)
+void print(void *ptr)
 print: scope:[print]  from main main::@1 main::@2
   idx#13 = phi( main/idx#17, main::@1/idx#0, main::@2/idx#1 )
   print::ptr#3 = phi( main/print::ptr#0, main::@1/print::ptr#1, main::@2/print::ptr#2 )
-  SCREEN[idx#13] = *((byte*)print::ptr#3)
+  SCREEN[idx#13] = *((char *)print::ptr#3)
   idx#4 = ++ idx#13
   to:print::@return
 print::@return: scope:[print]  from print
@@ -70,40 +70,40 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#17
-byte idx#18
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#17
+char idx#18
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-volatile byte main::b loadstore
-volatile dword main::d loadstore
-volatile word main::w loadstore
-void print(void* print::ptr)
-void* print::ptr
-void* print::ptr#0
-void* print::ptr#1
-void* print::ptr#2
-void* print::ptr#3
+__loadstore volatile char main::b
+__loadstore volatile unsigned long main::d
+__loadstore volatile unsigned int main::w
+void print(void *ptr)
+void *print::ptr
+void *print::ptr#0
+void *print::ptr#1
+void *print::ptr#2
+void *print::ptr#3
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias idx#0 = idx#9 
 Alias idx#1 = idx#10 
@@ -118,9 +118,9 @@ Identical Phi Values idx#1 idx#14
 Identical Phi Values idx#11 idx#14
 Identical Phi Values idx#15 idx#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant print::ptr#0 = (void*)&main::b
-Constant print::ptr#1 = (void*)&main::w
-Constant print::ptr#2 = (void*)&main::d
+Constant print::ptr#0 = (void *)&main::b
+Constant print::ptr#1 = (void *)&main::w
+Constant print::ptr#2 = (void *)&main::d
 Constant idx#18 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
@@ -135,9 +135,9 @@ Inlining constant with var siblings print::ptr#1
 Inlining constant with var siblings print::ptr#2
 Inlining constant with var siblings idx#18
 Constant inlined idx#18 = 0
-Constant inlined print::ptr#2 = (void*)&main::d
-Constant inlined print::ptr#0 = (void*)&main::b
-Constant inlined print::ptr#1 = (void*)&main::w
+Constant inlined print::ptr#2 = (void *)&main::d
+Constant inlined print::ptr#0 = (void *)&main::b
+Constant inlined print::ptr#1 = (void *)&main::w
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@3
 CALL GRAPH
@@ -172,11 +172,11 @@ main::@return: scope:[main]  from main::@2
   [8] return 
   to:@return
 
-void print(void* print::ptr)
+void print(void *ptr)
 print: scope:[print]  from main main::@1 main::@2
   [9] idx#13 = phi( main/0, main::@1/idx#14, main::@2/idx#14 )
-  [9] print::ptr#3 = phi( main/(void*)&main::b, main::@1/(void*)&main::w, main::@2/(void*)&main::d )
-  [10] SCREEN[idx#13] = *((byte*)print::ptr#3)
+  [9] print::ptr#3 = phi( main/(void *)&main::b, main::@1/(void *)&main::w, main::@2/(void *)&main::d )
+  [10] SCREEN[idx#13] = *((char *)print::ptr#3)
   [11] idx#14 = ++ idx#13
   to:print::@return
 print::@return: scope:[print]  from print
@@ -185,16 +185,16 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
-byte idx#13 13.0
-byte idx#14 2.5
+char idx
+char idx#13 // 13.0
+char idx#14 // 2.5
 void main()
-volatile byte main::b loadstore 20.0
-volatile dword main::d loadstore 20.0
-volatile word main::w loadstore 20.0
-void print(void* print::ptr)
-void* print::ptr
-void* print::ptr#3
+__loadstore volatile char main::b // 20.0
+__loadstore volatile unsigned long main::d // 20.0
+__loadstore volatile unsigned int main::w // 20.0
+void print(void *ptr)
+void *print::ptr
+void *print::ptr#3
 
 Initial phi equivalence classes
 [ print::ptr#3 ]
@@ -217,13 +217,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] main::d = $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] main::w = $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] main::b = $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] SCREEN[idx#13] = *((byte*)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
+Statement [10] SCREEN[idx#13] = *((char *)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#13 idx#14 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#13 idx#14 ]
 Statement [0] main::d = $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] main::w = $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] main::b = $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] SCREEN[idx#13] = *((byte*)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
+Statement [10] SCREEN[idx#13] = *((char *)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print::ptr#3 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ idx#13 idx#14 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[4]:5 [ main::d ] : zp[4]:5 , 
@@ -286,7 +286,7 @@ main: {
   print_from_main:
     // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi print::ptr#3 = (void*)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta.z print.ptr
     lda #>b
@@ -301,7 +301,7 @@ main: {
     // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
     // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi print::ptr#3 = (void*)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta.z print.ptr
     lda #>w
@@ -316,7 +316,7 @@ main: {
     // [9] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
     // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
-    // [9] phi print::ptr#3 = (void*)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta.z print.ptr
     lda #>d
@@ -329,10 +329,10 @@ main: {
     rts
 }
   // print
-// print(void* zp(2) ptr)
+// void print(__zp(2) void *ptr)
 print: {
     .label ptr = 2
-    // [10] SCREEN[idx#13] = *((byte*)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [10] SCREEN[idx#13] = *((char *)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
@@ -365,17 +365,17 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-byte idx
-byte idx#13 reg byte x 13.0
-byte idx#14 reg byte x 2.5
+__constant char * const SCREEN = (char *) 1024
+char idx
+char idx#13 // reg byte x 13.0
+char idx#14 // reg byte x 2.5
 void main()
-volatile byte main::b loadstore zp[1]:10 20.0
-volatile dword main::d loadstore zp[4]:4 20.0
-volatile word main::w loadstore zp[2]:8 20.0
-void print(void* print::ptr)
-void* print::ptr
-void* print::ptr#3 ptr zp[2]:2
+__loadstore volatile char main::b // zp[1]:10 20.0
+__loadstore volatile unsigned long main::d // zp[4]:4 20.0
+__loadstore volatile unsigned int main::w // zp[2]:8 20.0
+void print(void *ptr)
+void *print::ptr
+void *print::ptr#3 // ptr zp[2]:2
 
 zp[2]:2 [ print::ptr#3 ]
 reg byte x [ idx#13 idx#14 ]
@@ -431,7 +431,7 @@ main: {
     // [9] phi from main to print [phi:main->print]
     // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi print::ptr#3 = (void*)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta.z print.ptr
     lda #>b
@@ -443,7 +443,7 @@ main: {
     // [5] call print
     // [9] phi from main::@1 to print [phi:main::@1->print]
     // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi print::ptr#3 = (void*)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta.z print.ptr
     lda #>w
@@ -455,7 +455,7 @@ main: {
     // [7] call print
     // [9] phi from main::@2 to print [phi:main::@2->print]
     // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
-    // [9] phi print::ptr#3 = (void*)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void *)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta.z print.ptr
     lda #>d
@@ -467,11 +467,11 @@ main: {
     rts
 }
   // print
-// print(void* zp(2) ptr)
+// void print(__zp(2) void *ptr)
 print: {
     .label ptr = 2
     // SCREEN[idx++] = *((byte*)ptr)
-    // [10] SCREEN[idx#13] = *((byte*)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [10] SCREEN[idx#13] = *((char *)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x

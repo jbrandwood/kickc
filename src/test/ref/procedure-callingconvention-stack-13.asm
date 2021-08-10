@@ -11,7 +11,7 @@
   .const STACK_BASE = $103
   .label SCREEN = $400
 .segment Code
-// pow2(byte register(A) n)
+// __register(A) char pow2(__register(A) char n)
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN_0 = 0

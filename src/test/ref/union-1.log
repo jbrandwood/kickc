@@ -3,10 +3,10 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  *((byte*)&jig+OFFSET_STRUCT_JIG_TYPE) = WORD
-  *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
-  SCREEN[0] = *((byte*)&jig+OFFSET_STRUCT_JIG_TYPE)
-  SCREEN[0] = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
+  *((char *)&jig+OFFSET_STRUCT_JIG_TYPE) = WORD
+  *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
+  SCREEN[0] = *((char *)&jig+OFFSET_STRUCT_JIG_TYPE)
+  SCREEN[0] = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -23,37 +23,37 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_JIG_DATA = 1
-constant byte OFFSET_STRUCT_JIG_TYPE = 0
-constant byte OFFSET_UNION_DATA_B = 0
-constant byte OFFSET_UNION_DATA_W = 0
-constant byte* const SCREEN = (byte*)$400
-constant byte WORD = 1
+__constant char OFFSET_STRUCT_JIG_DATA = 1
+__constant char OFFSET_STRUCT_JIG_TYPE = 0
+__constant char OFFSET_UNION_DATA_B = 0
+__constant char OFFSET_UNION_DATA_W = 0
+__constant char * const SCREEN = (char *)$400
+__constant char WORD = 1
 void __start()
-struct Jig jig loadstore = {}
+__loadstore struct Jig jig = {}
 void main()
 
-Adding number conversion cast (unumber) $4d2 in *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
-Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)&jig+OFFSET_STRUCT_JIG_TYPE)
-Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
+Adding number conversion cast (unumber) $4d2 in *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((char *)&jig+OFFSET_STRUCT_JIG_TYPE)
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = (unumber)$4d2
+Inlining cast *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = (unumber)$4d2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $4d2
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $4d2
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (unsigned int) $4d2
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&jig in [0] *((byte*)&jig+OFFSET_STRUCT_JIG_TYPE) = WORD
-Simplifying expression containing zero (word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA in [1] *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
-Simplifying expression containing zero (byte*)&jig in [2] SCREEN[0] = *((byte*)&jig+OFFSET_STRUCT_JIG_TYPE)
-Simplifying expression containing zero SCREEN in [2] SCREEN[0] = *((byte*)&jig)
-Simplifying expression containing zero (byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA in [3] SCREEN[0] = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
-Simplifying expression containing zero SCREEN in [3] SCREEN[0] = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA)
+Simplifying expression containing zero (char *)&jig in [0] *((char *)&jig+OFFSET_STRUCT_JIG_TYPE) = WORD
+Simplifying expression containing zero (unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA in [1] *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_W) = $4d2
+Simplifying expression containing zero (char *)&jig in [2] SCREEN[0] = *((char *)&jig+OFFSET_STRUCT_JIG_TYPE)
+Simplifying expression containing zero SCREEN in [2] SCREEN[0] = *((char *)&jig)
+Simplifying expression containing zero (char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA in [3] SCREEN[0] = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA+OFFSET_UNION_DATA_B)
+Simplifying expression containing zero SCREEN in [3] SCREEN[0] = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_JIG_TYPE
 Eliminating unused constant OFFSET_UNION_DATA_W
@@ -73,10 +73,10 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*)&jig) = WORD
-  [1] *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2
-  [2] *SCREEN = *((byte*)&jig)
-  [3] *SCREEN = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA)
+  [0] *((char *)&jig) = WORD
+  [1] *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2
+  [2] *SCREEN = *((char *)&jig)
+  [3] *SCREEN = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA)
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -84,7 +84,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-struct Jig jig loadstore = {}
+__loadstore struct Jig jig = {}
 void main()
 
 Initial phi equivalence classes
@@ -93,10 +93,10 @@ Complete equivalence classes
 [ jig ]
 Allocated mem[3] [ jig ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)&jig) = WORD [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
-Statement [1] *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
-Statement [2] *SCREEN = *((byte*)&jig) [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
-Statement [3] *SCREEN = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *)&jig) = WORD [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
+Statement [1] *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
+Statement [2] *SCREEN = *((char *)&jig) [ jig ] (  [ jig ] { }  ) always clobbers reg byte a 
+Statement [3] *SCREEN = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[3] [ jig ] : mem[3] , 
 
 REGISTER UPLIFT SCOPES
@@ -132,18 +132,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *((byte*)&jig) = WORD -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)&jig) = WORD -- _deref_pbuc1=vbuc2 
     lda #WORD
     sta jig
-    // [1] *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 -- _deref_pwuc1=vwuc2 
+    // [1] *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 -- _deref_pwuc1=vwuc2 
     lda #<$4d2
     sta jig+OFFSET_STRUCT_JIG_DATA
     lda #>$4d2
     sta jig+OFFSET_STRUCT_JIG_DATA+1
-    // [2] *SCREEN = *((byte*)&jig) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *SCREEN = *((char *)&jig) -- _deref_pbuc1=_deref_pbuc2 
     lda jig
     sta SCREEN
-    // [3] *SCREEN = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *SCREEN = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) -- _deref_pbuc1=_deref_pbuc2 
     lda jig+OFFSET_STRUCT_JIG_DATA
     sta SCREEN
     jmp __breturn
@@ -163,11 +163,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte OFFSET_STRUCT_JIG_DATA = 1
-constant byte* const SCREEN = (byte*) 1024
-constant byte SIZEOF_STRUCT_JIG = 3
-constant byte WORD = 1
-struct Jig jig loadstore mem[3] = {}
+__constant char OFFSET_STRUCT_JIG_DATA = 1
+__constant char * const SCREEN = (char *) 1024
+__constant char SIZEOF_STRUCT_JIG = 3
+__constant char WORD = 1
+__loadstore struct Jig jig = {} // mem[3]
 void main()
 
 mem[3] [ jig ]
@@ -196,21 +196,21 @@ Score: 40
   // main
 main: {
     // jig.type = WORD
-    // [0] *((byte*)&jig) = WORD -- _deref_pbuc1=vbuc2 
+    // [0] *((char *)&jig) = WORD -- _deref_pbuc1=vbuc2 
     lda #WORD
     sta jig
     // jig.data.w = 1234
-    // [1] *((word*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 -- _deref_pwuc1=vwuc2 
+    // [1] *((unsigned int *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) = $4d2 -- _deref_pwuc1=vwuc2 
     lda #<$4d2
     sta jig+OFFSET_STRUCT_JIG_DATA
     lda #>$4d2
     sta jig+OFFSET_STRUCT_JIG_DATA+1
     // SCREEN[0] = jig.type
-    // [2] *SCREEN = *((byte*)&jig) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *SCREEN = *((char *)&jig) -- _deref_pbuc1=_deref_pbuc2 
     lda jig
     sta SCREEN
     // SCREEN[0] = jig.data.b
-    // [3] *SCREEN = *((byte*)(union Data*)&jig+OFFSET_STRUCT_JIG_DATA) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *SCREEN = *((char *)(union Data *)&jig+OFFSET_STRUCT_JIG_DATA) -- _deref_pbuc1=_deref_pbuc2 
     lda jig+OFFSET_STRUCT_JIG_DATA
     sta SCREEN
     // main::@return

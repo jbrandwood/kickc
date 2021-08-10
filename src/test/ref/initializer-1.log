@@ -9,11 +9,11 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main main::@1
   main::idx#3 = phi( main/main::idx#0, main::@1/main::idx#2 )
   main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
-  main::$3 = main::i#2 * SIZEOF_WORD
+  main::$3 = main::i#2 * SIZEOF_UNSIGNED_INT
   main::$0 = byte0  words[main::$3]
   main::SCREEN[main::idx#3] = main::$0
   main::idx#1 = ++ main::idx#3
-  main::$4 = main::i#2 * SIZEOF_WORD
+  main::$4 = main::i#2 * SIZEOF_UNSIGNED_INT
   main::$1 = byte1  words[main::$4]
   main::SCREEN[main::idx#1] = main::$1
   main::idx#2 = ++ main::idx#1
@@ -27,7 +27,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -36,29 +36,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-byte~ main::$0
-byte~ main::$1
-bool~ main::$2
-byte~ main::$3
-byte~ main::$4
-constant byte* const main::SCREEN = (byte*)$400
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::idx
-byte main::idx#0
-byte main::idx#1
-byte main::idx#2
-byte main::idx#3
-constant word* words[]  = { 1, 2, 3 }
+char main::$0
+char main::$1
+bool main::$2
+char main::$3
+char main::$4
+__constant char * const main::SCREEN = (char *)$400
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::idx
+char main::idx#0
+char main::idx#1
+char main::idx#2
+char main::idx#3
+__constant unsigned int words[] = { 1, 2, 3 }
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Identified duplicate assignment right side [7] main::$4 = main::i#2 * SIZEOF_WORD
+Identified duplicate assignment right side [7] main::$4 = main::i#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition main::$2 [13] if(main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -76,18 +76,18 @@ Adding number conversion cast (unumber) 3 in [10] if(main::i#1!=3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type (char) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::$4 = main::$3 
 Successful SSA optimization Pass2AliasElimination
-Rewriting multiplication to use shift [1] main::$4 = main::i#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [1] main::$4 = main::i#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::idx#0
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Constant inlined main::idx#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -126,16 +126,16 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$0 22.0
-byte~ main::$1 22.0
-byte~ main::$4 8.25
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 4.125
-byte main::idx
-byte main::idx#1 11.0
-byte main::idx#2 7.333333333333333
-byte main::idx#3 8.25
+char main::$0 // 22.0
+char main::$1 // 22.0
+char main::$4 // 8.25
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 4.125
+char main::idx
+char main::idx#1 // 11.0
+char main::idx#2 // 7.333333333333333
+char main::idx#3 // 8.25
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -271,18 +271,18 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$0 reg byte a 22.0
-byte~ main::$1 reg byte a 22.0
-byte~ main::$4 reg byte y 8.25
-constant byte* const main::SCREEN = (byte*) 1024
-byte main::i
-byte main::i#1 i zp[1]:2 16.5
-byte main::i#2 i zp[1]:2 4.125
-byte main::idx
-byte main::idx#1 reg byte x 11.0
-byte main::idx#2 reg byte x 7.333333333333333
-byte main::idx#3 reg byte x 8.25
-constant word* words[]  = { 1, 2, 3 }
+char main::$0 // reg byte a 22.0
+char main::$1 // reg byte a 22.0
+char main::$4 // reg byte y 8.25
+__constant char * const main::SCREEN = (char *) 1024
+char main::i
+char main::i#1 // i zp[1]:2 16.5
+char main::i#2 // i zp[1]:2 4.125
+char main::idx
+char main::idx#1 // reg byte x 11.0
+char main::idx#2 // reg byte x 7.333333333333333
+char main::idx#3 // reg byte x 8.25
+__constant unsigned int words[] = { 1, 2, 3 }
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 reg byte x [ main::idx#3 main::idx#2 ]

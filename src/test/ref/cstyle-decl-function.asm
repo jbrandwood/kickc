@@ -29,7 +29,7 @@ main: {
     rts
 }
 // Definition of sum()
-// sum(byte register(X) a, byte register(A) b)
+// __register(A) char sum(__register(X) char a, __register(A) char b)
 sum: {
     // a+b
     stx.z $ff

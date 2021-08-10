@@ -3,14 +3,14 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  fill::screen#0 = (byte*)$400
+  fill::screen#0 = (char *)$400
   fill::ch#0 = 'a'
-  call fill 
+  call fill
   to:main::@1
 main::@1: scope:[main]  from main
-  fill::screen#1 = (byte*)$2000
+  fill::screen#1 = (char *)$2000
   fill::ch#1 = 'b'
-  call fill 
+  call fill
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -18,7 +18,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void fill(byte* fill::screen , byte fill::ch)
+void fill(char *screen , char ch)
 fill: scope:[fill]  from main main::@1
   fill::ch#4 = phi( main/fill::ch#0, main::@1/fill::ch#1 )
   fill::screen#4 = phi( main/fill::screen#0, main::@1/fill::screen#1 )
@@ -56,7 +56,7 @@ fill::@return: scope:[fill]  from fill::@3
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -66,47 +66,47 @@ __start::@return: scope:[__start]  from __start::@1
 
 SYMBOL TABLE SSA
 void __start()
-void fill(byte* fill::screen , byte fill::ch)
-number~ fill::$0
-byte*~ fill::$1
-bool~ fill::$2
-bool~ fill::$3
-byte fill::ch
-byte fill::ch#0
-byte fill::ch#1
-byte fill::ch#2
-byte fill::ch#3
-byte fill::ch#4
-byte fill::ch#5
-byte fill::i
-byte fill::i#0
-byte fill::i#1
-byte fill::i#2
-byte fill::i#3
-byte fill::i#4
-byte fill::j
-byte fill::j#0
-byte fill::j#1
-byte fill::j#2
-byte* fill::screen
-byte* fill::screen#0
-byte* fill::screen#1
-byte* fill::screen#2
-byte* fill::screen#3
-byte* fill::screen#4
-byte* fill::screen#5
+void fill(char *screen , char ch)
+number fill::$0
+char *fill::$1
+bool fill::$2
+bool fill::$3
+char fill::ch
+char fill::ch#0
+char fill::ch#1
+char fill::ch#2
+char fill::ch#3
+char fill::ch#4
+char fill::ch#5
+char fill::i
+char fill::i#0
+char fill::i#1
+char fill::i#2
+char fill::i#3
+char fill::i#4
+char fill::j
+char fill::j#0
+char fill::j#1
+char fill::j#2
+char *fill::screen
+char *fill::screen#0
+char *fill::screen#1
+char *fill::screen#2
+char *fill::screen#3
+char *fill::screen#4
+char *fill::screen#5
 void main()
 
 Adding number conversion cast (unumber) $28 in fill::$0 = fill::j#2 * $28
 Adding number conversion cast (unumber) fill::$0 in fill::$0 = fill::j#2 * (unumber)$28
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 8192
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type (char) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in fill::$0 = fill::j#2 * $28
+Inferred type updated to char in fill::$0 = fill::j#2 * $28
 Alias fill::i#2 = fill::i#3 
 Alias fill::screen#2 = fill::screen#5 
 Alias fill::ch#2 = fill::ch#5 
@@ -121,9 +121,9 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition fill::$2 [17] unroll if(fill::j#1!=rangelast(0,2)) goto fill::@2
 Simple Condition fill::$3 [20] if(fill::i#1!=rangelast(0,$27)) goto fill::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant fill::screen#0 = (byte*) 1024
+Constant fill::screen#0 = (char *) 1024
 Constant fill::ch#0 = 'a'
-Constant fill::screen#1 = (byte*) 8192
+Constant fill::screen#1 = (char *) 8192
 Constant fill::ch#1 = 'b'
 Constant fill::i#0 = 0
 Constant fill::j#0 = 0
@@ -143,8 +143,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Unrolling loop Loop head: fill::@2 tails: fill::@2 blocks: fill::@2 
 Successful SSA optimization Pass2LoopUnroll
@@ -215,8 +215,8 @@ Inlining constant with different constant siblings fill::j#1
 Inlining constant with different constant siblings fill::j#4
 Constant inlined fill::j#4 = ++++0
 Constant inlined fill::ch#0 = 'a'
-Constant inlined fill::screen#1 = (byte*) 8192
-Constant inlined fill::screen#0 = (byte*) 1024
+Constant inlined fill::screen#1 = (char *) 8192
+Constant inlined fill::screen#0 = (char *) 1024
 Constant inlined fill::i#0 = 0
 Constant inlined fill::$6 = ++++0*$28
 Constant inlined fill::ch#1 = 'b'
@@ -249,20 +249,20 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call fill 
+  [1] call fill
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call fill 
+  [3] call fill
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void fill(byte* fill::screen , byte fill::ch)
+void fill(char *screen , char ch)
 fill: scope:[fill]  from main main::@1
   [5] fill::ch#4 = phi( main/'a', main::@1/'b' )
-  [5] fill::screen#4 = phi( main/(byte*) 1024, main::@1/(byte*) 8192 )
+  [5] fill::screen#4 = phi( main/(char *) 1024, main::@1/(char *) 8192 )
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@3
   [6] fill::i#4 = phi( fill/0, fill::@3/fill::i#1 )
@@ -288,17 +288,17 @@ fill::@return: scope:[fill]  from fill::@3
 
 
 VARIABLE REGISTER WEIGHTS
-void fill(byte* fill::screen , byte fill::ch)
-byte*~ fill::$5 202.0
-byte*~ fill::$7 202.0
-byte fill::ch
-byte fill::ch#4 33.666666666666664
-byte fill::i
-byte fill::i#1 151.5
-byte fill::i#4 84.16666666666666
-byte fill::j
-byte* fill::screen
-byte* fill::screen#4 33.666666666666664
+void fill(char *screen , char ch)
+char *fill::$5 // 202.0
+char *fill::$7 // 202.0
+char fill::ch
+char fill::ch#4 // 33.666666666666664
+char fill::i
+char fill::i#1 // 151.5
+char fill::i#4 // 84.16666666666666
+char fill::j
+char *fill::screen
+char *fill::screen#4 // 33.666666666666664
 void main()
 
 Initial phi equivalence classes
@@ -363,12 +363,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call fill 
+    // [1] call fill
     // [5] phi from main to fill [phi:main->fill]
   fill_from_main:
     // [5] phi fill::ch#4 = 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-    // [5] phi fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+    // [5] phi fill::screen#4 = (char *) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z fill.screen
     lda #>$400
@@ -379,12 +379,12 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call fill 
+    // [3] call fill
     // [5] phi from main::@1 to fill [phi:main::@1->fill]
   fill_from___b1:
     // [5] phi fill::ch#4 = 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-    // [5] phi fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+    // [5] phi fill::screen#4 = (char *) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta.z fill.screen
     lda #>$2000
@@ -397,7 +397,7 @@ main: {
     rts
 }
   // fill
-// fill(byte* zp(2) screen, byte register(X) ch)
+// void fill(__zp(2) char *screen, __register(X) char ch)
 fill: {
     .label screen = 2
     .label __5 = 4
@@ -493,17 +493,17 @@ Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-void fill(byte* fill::screen , byte fill::ch)
-byte*~ fill::$5 zp[2]:4 202.0
-byte*~ fill::$7 zp[2]:6 202.0
-byte fill::ch
-byte fill::ch#4 reg byte x 33.666666666666664
-byte fill::i
-byte fill::i#1 reg byte y 151.5
-byte fill::i#4 reg byte y 84.16666666666666
-byte fill::j
-byte* fill::screen
-byte* fill::screen#4 screen zp[2]:2 33.666666666666664
+void fill(char *screen , char ch)
+char *fill::$5 // zp[2]:4 202.0
+char *fill::$7 // zp[2]:6 202.0
+char fill::ch
+char fill::ch#4 // reg byte x 33.666666666666664
+char fill::i
+char fill::i#1 // reg byte y 151.5
+char fill::i#4 // reg byte y 84.16666666666666
+char fill::j
+char *fill::screen
+char *fill::screen#4 // screen zp[2]:2 33.666666666666664
 void main()
 
 zp[2]:2 [ fill::screen#4 ]
@@ -532,11 +532,11 @@ Score: 733
   // main
 main: {
     // fill((byte*)$400,'a')
-    // [1] call fill 
+    // [1] call fill
     // [5] phi from main to fill [phi:main->fill]
     // [5] phi fill::ch#4 = 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-    // [5] phi fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+    // [5] phi fill::screen#4 = (char *) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z fill.screen
     lda #>$400
@@ -545,11 +545,11 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // fill((byte*)$2000,'b')
-    // [3] call fill 
+    // [3] call fill
     // [5] phi from main::@1 to fill [phi:main::@1->fill]
     // [5] phi fill::ch#4 = 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-    // [5] phi fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+    // [5] phi fill::screen#4 = (char *) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta.z fill.screen
     lda #>$2000
@@ -561,7 +561,7 @@ main: {
     rts
 }
   // fill
-// fill(byte* zp(2) screen, byte register(X) ch)
+// void fill(__zp(2) char *screen, __register(X) char ch)
 fill: {
     .label screen = 2
     .label __5 = 4

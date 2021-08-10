@@ -102,7 +102,7 @@ md5: {
     sta.z a
     jmp __b1
 }
-// print(byte register(X) i, byte zp(6) a, byte zp(7) b, byte zp(8) c)
+// void print(__register(X) char i, __zp(6) char a, __zp(7) char b, __zp(8) char c)
 print: {
     .label a = 6
     .label b = 7

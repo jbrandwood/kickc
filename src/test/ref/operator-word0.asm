@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label SCREEN = $400
@@ -69,9 +69,9 @@ main: {
     sta SCREEN+1
     // SCREEN[i++] = WORD0(377)
     lda #<$179&$ffff
-    sta SCREEN+1*SIZEOF_WORD
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT
     lda #>$179&$ffff
-    sta SCREEN+1*SIZEOF_WORD+1
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT+1
     // WORD0(bu)
     lda.z bu
     sta.z __0
@@ -79,9 +79,9 @@ main: {
     sta.z __0+1
     // SCREEN[i++] = WORD0(bu)
     lda.z __0
-    sta SCREEN+2*SIZEOF_WORD
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT
     lda.z __0+1
-    sta SCREEN+2*SIZEOF_WORD+1
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT+1
     // WORD0(bs)
     lda.z bs
     sta.z __1
@@ -92,9 +92,9 @@ main: {
     sta.z __1+1
     // SCREEN[i++] = WORD0(bs)
     lda.z __1
-    sta SCREEN+3*SIZEOF_WORD
+    sta SCREEN+3*SIZEOF_UNSIGNED_INT
     lda.z __1+1
-    sta SCREEN+3*SIZEOF_WORD+1
+    sta SCREEN+3*SIZEOF_UNSIGNED_INT+1
     // WORD0(wu)
     lda.z wu
     sta.z __2
@@ -102,9 +102,9 @@ main: {
     sta.z __2+1
     // SCREEN[i++] = WORD0(wu)
     lda.z __2
-    sta SCREEN+4*SIZEOF_WORD
+    sta SCREEN+4*SIZEOF_UNSIGNED_INT
     lda.z __2+1
-    sta SCREEN+4*SIZEOF_WORD+1
+    sta SCREEN+4*SIZEOF_UNSIGNED_INT+1
     // WORD0(ws)
     lda.z ws
     sta.z __3
@@ -112,9 +112,9 @@ main: {
     sta.z __3+1
     // SCREEN[i++] = WORD0(ws)
     lda.z __3
-    sta SCREEN+5*SIZEOF_WORD
+    sta SCREEN+5*SIZEOF_UNSIGNED_INT
     lda.z __3+1
-    sta SCREEN+5*SIZEOF_WORD+1
+    sta SCREEN+5*SIZEOF_UNSIGNED_INT+1
     // WORD0(du)
     lda.z du
     sta.z __4
@@ -122,9 +122,9 @@ main: {
     sta.z __4+1
     // SCREEN[i++] = WORD0(du)
     lda.z __4
-    sta SCREEN+6*SIZEOF_WORD
+    sta SCREEN+6*SIZEOF_UNSIGNED_INT
     lda.z __4+1
-    sta SCREEN+6*SIZEOF_WORD+1
+    sta SCREEN+6*SIZEOF_UNSIGNED_INT+1
     // WORD0(ds)
     lda.z ds
     sta.z __5
@@ -132,9 +132,9 @@ main: {
     sta.z __5+1
     // SCREEN[i++] = WORD0(ds)
     lda.z __5
-    sta SCREEN+7*SIZEOF_WORD
+    sta SCREEN+7*SIZEOF_UNSIGNED_INT
     lda.z __5+1
-    sta SCREEN+7*SIZEOF_WORD+1
+    sta SCREEN+7*SIZEOF_UNSIGNED_INT+1
     // WORD0(ptr)
     lda.z ptr
     sta.z __6
@@ -142,9 +142,9 @@ main: {
     sta.z __6+1
     // SCREEN[i++] = WORD0(ptr)
     lda.z __6
-    sta SCREEN+8*SIZEOF_WORD
+    sta SCREEN+8*SIZEOF_UNSIGNED_INT
     lda.z __6+1
-    sta SCREEN+8*SIZEOF_WORD+1
+    sta SCREEN+8*SIZEOF_UNSIGNED_INT+1
     // }
     rts
 }

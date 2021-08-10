@@ -25,6 +25,7 @@ main: {
     // }
     rts
 }
+// void bne(char jsr)
 bne: {
     // lda[1] = jsr
     lda #main.jmp

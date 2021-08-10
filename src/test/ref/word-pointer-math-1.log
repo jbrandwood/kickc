@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   main::$1 = main::w2 - main::w1
-  main::wd#0 = main::$1 / SIZEOF_WORD
+  main::wd#0 = main::$1 / SIZEOF_UNSIGNED_INT
   *main::SCREEN = main::wd#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -23,19 +23,19 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-word~ main::$1
-constant word* const main::SCREEN = (word*)$400
-constant word* main::w1 = (word*)$1000
-constant word* main::w2 = (word*)$1140
-word main::wd
-word main::wd#0
+unsigned int main::$1
+__constant unsigned int * const main::SCREEN = (unsigned int *)$400
+__constant unsigned int *main::w1 = (unsigned int *)$1000
+__constant unsigned int *main::w2 = (unsigned int *)$1140
+unsigned int main::wd
+unsigned int main::wd#0
 
-Simplifying constant pointer cast (word*) 1024
-Simplifying constant pointer cast (word*) 4096
-Simplifying constant pointer cast (word*) 4416
+Simplifying constant pointer cast (unsigned int *) 1024
+Simplifying constant pointer cast (unsigned int *) 4096
+Simplifying constant pointer cast (unsigned int *) 4416
 Successful SSA optimization PassNCastSimplification
 Constant right-side identified [0] main::$1 = main::w2 - main::w1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -46,9 +46,9 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] main::wd#0 = main::$1 / SIZEOF_WORD
+Constant right-side identified [0] main::wd#0 = main::$1 / SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::wd#0 = main::$1/SIZEOF_WORD
+Constant main::wd#0 = main::$1/SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$1 = main::w2-main::w1
 Successful SSA optimization Pass2ConstantInlining
@@ -70,7 +70,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-word main::wd
+unsigned int main::wd
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -97,11 +97,11 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
   // main
 main: {
-    .const wd = (w2-w1)/SIZEOF_WORD
+    .const wd = (w2-w1)/SIZEOF_UNSIGNED_INT
     .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140
@@ -125,13 +125,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void main()
-constant word* const main::SCREEN = (word*) 1024
-constant word* main::w1 = (word*) 4096
-constant word* main::w2 = (word*) 4416
-word main::wd
-constant word main::wd#0 wd = main::w2-main::w1/SIZEOF_WORD
+__constant unsigned int * const main::SCREEN = (unsigned int *) 1024
+__constant unsigned int *main::w1 = (unsigned int *) 4096
+__constant unsigned int *main::w2 = (unsigned int *) 4416
+unsigned int main::wd
+__constant unsigned int main::wd#0 = main::w2-main::w1/SIZEOF_UNSIGNED_INT // wd
 
 
 
@@ -150,11 +150,11 @@ Score: 18
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
   // main
 main: {
-    .const wd = (w2-w1)/SIZEOF_WORD
+    .const wd = (w2-w1)/SIZEOF_UNSIGNED_INT
     .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140

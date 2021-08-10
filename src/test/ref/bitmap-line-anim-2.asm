@@ -77,6 +77,7 @@ main: {
     jmp __b1
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = $10
     .label yoffs = 2
@@ -138,6 +139,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10+PURPLE
     // memset(bitmap_screen, col, 1000uw)
@@ -166,7 +168,7 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp(2) x2)
+// void bitmap_line(unsigned int x1, unsigned int y1, __zp(2) unsigned int x2, unsigned int y2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -390,7 +392,7 @@ bitmap_line: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c, word zp(8) num)
+// void * memset(__zp($a) void *str, __register(X) char c, __zp(8) unsigned int num)
 memset: {
     .label end = 8
     .label dst = $a
@@ -434,7 +436,7 @@ memset: {
     jmp __b2
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp($c) w)
+// __zp($c) unsigned int abs_u16(__zp($c) unsigned int w)
 abs_u16: {
     .label w = $c
     .label return = $c
@@ -460,7 +462,7 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp($15) w)
+// __zp($e) unsigned int sgn_u16(__zp($15) unsigned int w)
 sgn_u16: {
     .label w = $15
     .label return = $e
@@ -484,7 +486,7 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($a) x, byte register(X) y)
+// void bitmap_plot(__zp($a) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $17
     .label plotter = $15

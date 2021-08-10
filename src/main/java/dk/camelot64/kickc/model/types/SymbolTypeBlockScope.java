@@ -22,11 +22,6 @@ public class SymbolTypeBlockScope implements SymbolType {
    }
 
    @Override
-   public String getTypeBaseName() {
-      return "BLOCK";
-   }
-
-   @Override
    public int getSizeBytes() {
       return -1;
    }
@@ -43,7 +38,11 @@ public class SymbolTypeBlockScope implements SymbolType {
 
    @Override
    public String toString() {
-      return getTypeName();
+      return "block";
    }
 
+   @Override
+   public String getConstantFriendlyName() {
+      return "BLOCK";
+   }
 }

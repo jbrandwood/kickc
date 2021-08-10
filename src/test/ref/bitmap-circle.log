@@ -9,22 +9,22 @@ main: scope:[main]  from __start
   fill::start#0 = BITMAP
   fill::size#0 = $28*$19*8
   fill::val#0 = 0
-  call fill 
+  call fill
   to:main::@2
 main::@2: scope:[main]  from main
   fill::start#1 = SCREEN
   fill::size#1 = $28*$19
   fill::val#1 = $16
-  call fill 
+  call fill
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *BORDER_COLOR = BLUE
   *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
-  *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400
+  *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400
   circle::xc#0 = $64
   circle::yc#0 = $64
   circle::r#0 = $32
-  call circle 
+  call circle
   to:main::@4
 main::@4: scope:[main]  from main::@3
   to:main::@1
@@ -35,7 +35,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void circle(signed word circle::xc , signed word circle::yc , signed word circle::r)
+void circle(int xc , int yc , int r)
 circle: scope:[circle]  from main::@3
   circle::yc#13 = phi( main::@3/circle::yc#0 )
   circle::xc#13 = phi( main::@3/circle::xc#0 )
@@ -98,7 +98,7 @@ circle::@4: scope:[circle]  from circle::@3 circle::@5
   circle::$13 = circle::yc#1 - circle::y#4
   plot::x#0 = circle::$12
   plot::y#0 = circle::$13
-  call plot 
+  call plot
   to:circle::@6
 circle::@6: scope:[circle]  from circle::@4
   circle::p#14 = phi( circle::@4/circle::p#15 )
@@ -110,7 +110,7 @@ circle::@6: scope:[circle]  from circle::@4
   circle::$16 = circle::yc#2 - circle::y#5
   plot::x#1 = circle::$15
   plot::y#1 = circle::$16
-  call plot 
+  call plot
   to:circle::@7
 circle::@7: scope:[circle]  from circle::@6
   circle::p#13 = phi( circle::@6/circle::p#14 )
@@ -122,7 +122,7 @@ circle::@7: scope:[circle]  from circle::@6
   circle::$19 = circle::yc#3 + circle::y#6
   plot::x#2 = circle::$18
   plot::y#2 = circle::$19
-  call plot 
+  call plot
   to:circle::@8
 circle::@8: scope:[circle]  from circle::@7
   circle::p#12 = phi( circle::@7/circle::p#13 )
@@ -134,7 +134,7 @@ circle::@8: scope:[circle]  from circle::@7
   circle::$22 = circle::yc#4 + circle::y#7
   plot::x#3 = circle::$21
   plot::y#3 = circle::$22
-  call plot 
+  call plot
   to:circle::@9
 circle::@9: scope:[circle]  from circle::@8
   circle::p#11 = phi( circle::@8/circle::p#12 )
@@ -146,7 +146,7 @@ circle::@9: scope:[circle]  from circle::@8
   circle::$25 = circle::yc#5 - circle::x1#9
   plot::x#4 = circle::$24
   plot::y#4 = circle::$25
-  call plot 
+  call plot
   to:circle::@10
 circle::@10: scope:[circle]  from circle::@9
   circle::p#10 = phi( circle::@9/circle::p#11 )
@@ -158,7 +158,7 @@ circle::@10: scope:[circle]  from circle::@9
   circle::$28 = circle::yc#6 - circle::x1#10
   plot::x#5 = circle::$27
   plot::y#5 = circle::$28
-  call plot 
+  call plot
   to:circle::@11
 circle::@11: scope:[circle]  from circle::@10
   circle::p#9 = phi( circle::@10/circle::p#10 )
@@ -170,7 +170,7 @@ circle::@11: scope:[circle]  from circle::@10
   circle::$31 = circle::yc#7 + circle::x1#11
   plot::x#6 = circle::$30
   plot::y#6 = circle::$31
-  call plot 
+  call plot
   to:circle::@12
 circle::@12: scope:[circle]  from circle::@11
   circle::p#8 = phi( circle::@11/circle::p#9 )
@@ -182,7 +182,7 @@ circle::@12: scope:[circle]  from circle::@11
   circle::$34 = circle::yc#8 + circle::x1#12
   plot::x#7 = circle::$33
   plot::y#7 = circle::$34
-  call plot 
+  call plot
   to:circle::@13
 circle::@13: scope:[circle]  from circle::@12
   circle::yc#14 = phi( circle::@12/circle::yc#8 )
@@ -196,14 +196,14 @@ circle::@return: scope:[circle]  from circle::@1
   return 
   to:@return
 
-void plot(signed word plot::x , signed word plot::y)
+void plot(int x , int y)
 plot: scope:[plot]  from circle::@10 circle::@11 circle::@12 circle::@4 circle::@6 circle::@7 circle::@8 circle::@9
   plot::y#8 = phi( circle::@10/plot::y#5, circle::@11/plot::y#6, circle::@12/plot::y#7, circle::@4/plot::y#0, circle::@6/plot::y#1, circle::@7/plot::y#2, circle::@8/plot::y#3, circle::@9/plot::y#4 )
   plot::x#8 = phi( circle::@10/plot::x#5, circle::@11/plot::x#6, circle::@12/plot::x#7, circle::@4/plot::x#0, circle::@6/plot::x#1, circle::@7/plot::x#2, circle::@8/plot::x#3, circle::@9/plot::x#4 )
   plot::location#0 = BITMAP
   plot::$0 = plot::x#8 & $fff8
   plot::location#1 = plot::location#0 + plot::$0
-  plot::$6 = (byte)plot::y#8
+  plot::$6 = (char)plot::y#8
   plot::$1 = plot::$6 & 7
   plot::location#2 = plot::location#1 + plot::$1
   plot::$2 = plot::y#8 >> 3
@@ -217,7 +217,7 @@ plot::@return: scope:[plot]  from plot
   return 
   to:@return
 
-void fill(byte* fill::start , signed word fill::size , byte fill::val)
+void fill(char *start , int size , char val)
 fill: scope:[fill]  from main main::@2
   fill::val#4 = phi( main/fill::val#0, main::@2/fill::val#1 )
   fill::size#2 = phi( main/fill::size#0, main::@2/fill::size#1 )
@@ -245,7 +245,7 @@ fill::@return: scope:[fill]  from fill::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -254,188 +254,188 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BITMAP = (byte*)$2000
-constant const byte BLUE = 6
-constant byte* const BORDER_COLOR = (byte*)$d020
-constant byte* const D011 = (byte*)$d011
-constant byte* const SCREEN = (byte*)$400
-constant const byte VICII_BMM = $20
-constant const byte VICII_DEN = $10
-constant byte* const VICII_MEMORY = (byte*)$d018
-constant const byte VICII_RSEL = 8
+__constant char * const BITMAP = (char *)$2000
+__constant const char BLUE = 6
+__constant char * const BORDER_COLOR = (char *)$d020
+__constant char * const D011 = (char *)$d011
+__constant char * const SCREEN = (char *)$400
+__constant const char VICII_BMM = $20
+__constant const char VICII_DEN = $10
+__constant char * const VICII_MEMORY = (char *)$d018
+__constant const char VICII_RSEL = 8
 void __start()
-constant byte* bitmask[]  = { $80, $40, $20, $10, 8, 4, 2, 1 }
-void circle(signed word circle::xc , signed word circle::yc , signed word circle::r)
-signed word~ circle::$0
-signed word~ circle::$10
-number~ circle::$11
-signed word~ circle::$12
-signed word~ circle::$13
-signed word~ circle::$15
-signed word~ circle::$16
-signed word~ circle::$18
-signed word~ circle::$19
-bool~ circle::$2
-signed word~ circle::$21
-signed word~ circle::$22
-signed word~ circle::$24
-signed word~ circle::$25
-signed word~ circle::$27
-signed word~ circle::$28
-bool~ circle::$3
-signed word~ circle::$30
-signed word~ circle::$31
-signed word~ circle::$33
-signed word~ circle::$34
-number~ circle::$4
-signed word~ circle::$5
-signed word~ circle::$6
-signed word~ circle::$7
-number~ circle::$8
-signed word~ circle::$9
-signed word circle::p
-signed word circle::p#0
-signed word circle::p#1
-signed word circle::p#10
-signed word circle::p#11
-signed word circle::p#12
-signed word circle::p#13
-signed word circle::p#14
-signed word circle::p#15
-signed word circle::p#2
-signed word circle::p#3
-signed word circle::p#4
-signed word circle::p#5
-signed word circle::p#6
-signed word circle::p#7
-signed word circle::p#8
-signed word circle::p#9
-signed word circle::r
-signed word circle::r#0
-signed word circle::r#1
-signed word circle::x1
-signed word circle::x1#0
-signed word circle::x1#1
-signed word circle::x1#10
-signed word circle::x1#11
-signed word circle::x1#12
-signed word circle::x1#13
-signed word circle::x1#14
-signed word circle::x1#2
-signed word circle::x1#3
-signed word circle::x1#4
-signed word circle::x1#5
-signed word circle::x1#6
-signed word circle::x1#7
-signed word circle::x1#8
-signed word circle::x1#9
-signed word circle::xc
-signed word circle::xc#0
-signed word circle::xc#1
-signed word circle::xc#10
-signed word circle::xc#11
-signed word circle::xc#12
-signed word circle::xc#13
-signed word circle::xc#14
-signed word circle::xc#2
-signed word circle::xc#3
-signed word circle::xc#4
-signed word circle::xc#5
-signed word circle::xc#6
-signed word circle::xc#7
-signed word circle::xc#8
-signed word circle::xc#9
-signed word circle::y
-signed word circle::y#0
-signed word circle::y#1
-signed word circle::y#10
-signed word circle::y#11
-signed word circle::y#12
-signed word circle::y#13
-signed word circle::y#14
-signed word circle::y#2
-signed word circle::y#3
-signed word circle::y#4
-signed word circle::y#5
-signed word circle::y#6
-signed word circle::y#7
-signed word circle::y#8
-signed word circle::y#9
-signed word circle::yc
-signed word circle::yc#0
-signed word circle::yc#1
-signed word circle::yc#10
-signed word circle::yc#11
-signed word circle::yc#12
-signed word circle::yc#13
-signed word circle::yc#14
-signed word circle::yc#2
-signed word circle::yc#3
-signed word circle::yc#4
-signed word circle::yc#5
-signed word circle::yc#6
-signed word circle::yc#7
-signed word circle::yc#8
-signed word circle::yc#9
-void fill(byte* fill::start , signed word fill::size , byte fill::val)
-bool~ fill::$1
-byte* fill::addr
-byte* fill::addr#0
-byte* fill::addr#1
-byte* fill::addr#2
-byte* fill::addr#3
-byte* fill::end
-byte* fill::end#0
-byte* fill::end#1
-byte* fill::end#2
-signed word fill::size
-signed word fill::size#0
-signed word fill::size#1
-signed word fill::size#2
-byte* fill::start
-byte* fill::start#0
-byte* fill::start#1
-byte* fill::start#2
-byte fill::val
-byte fill::val#0
-byte fill::val#1
-byte fill::val#2
-byte fill::val#3
-byte fill::val#4
+__constant char bitmask[] = { $80, $40, $20, $10, 8, 4, 2, 1 }
+void circle(int xc , int yc , int r)
+int circle::$0
+int circle::$10
+number circle::$11
+int circle::$12
+int circle::$13
+int circle::$15
+int circle::$16
+int circle::$18
+int circle::$19
+bool circle::$2
+int circle::$21
+int circle::$22
+int circle::$24
+int circle::$25
+int circle::$27
+int circle::$28
+bool circle::$3
+int circle::$30
+int circle::$31
+int circle::$33
+int circle::$34
+number circle::$4
+int circle::$5
+int circle::$6
+int circle::$7
+number circle::$8
+int circle::$9
+int circle::p
+int circle::p#0
+int circle::p#1
+int circle::p#10
+int circle::p#11
+int circle::p#12
+int circle::p#13
+int circle::p#14
+int circle::p#15
+int circle::p#2
+int circle::p#3
+int circle::p#4
+int circle::p#5
+int circle::p#6
+int circle::p#7
+int circle::p#8
+int circle::p#9
+int circle::r
+int circle::r#0
+int circle::r#1
+int circle::x1
+int circle::x1#0
+int circle::x1#1
+int circle::x1#10
+int circle::x1#11
+int circle::x1#12
+int circle::x1#13
+int circle::x1#14
+int circle::x1#2
+int circle::x1#3
+int circle::x1#4
+int circle::x1#5
+int circle::x1#6
+int circle::x1#7
+int circle::x1#8
+int circle::x1#9
+int circle::xc
+int circle::xc#0
+int circle::xc#1
+int circle::xc#10
+int circle::xc#11
+int circle::xc#12
+int circle::xc#13
+int circle::xc#14
+int circle::xc#2
+int circle::xc#3
+int circle::xc#4
+int circle::xc#5
+int circle::xc#6
+int circle::xc#7
+int circle::xc#8
+int circle::xc#9
+int circle::y
+int circle::y#0
+int circle::y#1
+int circle::y#10
+int circle::y#11
+int circle::y#12
+int circle::y#13
+int circle::y#14
+int circle::y#2
+int circle::y#3
+int circle::y#4
+int circle::y#5
+int circle::y#6
+int circle::y#7
+int circle::y#8
+int circle::y#9
+int circle::yc
+int circle::yc#0
+int circle::yc#1
+int circle::yc#10
+int circle::yc#11
+int circle::yc#12
+int circle::yc#13
+int circle::yc#14
+int circle::yc#2
+int circle::yc#3
+int circle::yc#4
+int circle::yc#5
+int circle::yc#6
+int circle::yc#7
+int circle::yc#8
+int circle::yc#9
+void fill(char *start , int size , char val)
+bool fill::$1
+char *fill::addr
+char *fill::addr#0
+char *fill::addr#1
+char *fill::addr#2
+char *fill::addr#3
+char *fill::end
+char *fill::end#0
+char *fill::end#1
+char *fill::end#2
+int fill::size
+int fill::size#0
+int fill::size#1
+int fill::size#2
+char *fill::start
+char *fill::start#0
+char *fill::start#1
+char *fill::start#2
+char fill::val
+char fill::val#0
+char fill::val#1
+char fill::val#2
+char fill::val#3
+char fill::val#4
 void main()
-void plot(signed word plot::x , signed word plot::y)
-number~ plot::$0
-number~ plot::$1
-signed word~ plot::$2
-number~ plot::$3
-number~ plot::$4
-byte~ plot::$5
-byte~ plot::$6
-byte* plot::location
-byte* plot::location#0
-byte* plot::location#1
-byte* plot::location#2
-byte* plot::location#3
-signed word plot::x
-signed word plot::x#0
-signed word plot::x#1
-signed word plot::x#2
-signed word plot::x#3
-signed word plot::x#4
-signed word plot::x#5
-signed word plot::x#6
-signed word plot::x#7
-signed word plot::x#8
-signed word plot::y
-signed word plot::y#0
-signed word plot::y#1
-signed word plot::y#2
-signed word plot::y#3
-signed word plot::y#4
-signed word plot::y#5
-signed word plot::y#6
-signed word plot::y#7
-signed word plot::y#8
+void plot(int x , int y)
+number plot::$0
+number plot::$1
+int plot::$2
+number plot::$3
+number plot::$4
+char plot::$5
+char plot::$6
+char *plot::location
+char *plot::location#0
+char *plot::location#1
+char *plot::location#2
+char *plot::location#3
+int plot::x
+int plot::x#0
+int plot::x#1
+int plot::x#2
+int plot::x#3
+int plot::x#4
+int plot::x#5
+int plot::x#6
+int plot::x#7
+int plot::x#8
+int plot::y
+int plot::y#0
+int plot::y#1
+int plot::y#2
+int plot::y#3
+int plot::y#4
+int plot::y#5
+int plot::y#6
+int plot::y#7
+int plot::y#8
 
 Adding number conversion cast (snumber) $28*$19*8 in fill::size#0 = $28*$19*8
 Adding number conversion cast (unumber) 0 in fill::val#0 = 0
@@ -443,8 +443,8 @@ Adding number conversion cast (snumber) $28*$19 in fill::size#1 = $28*$19
 Adding number conversion cast (unumber) $16 in fill::val#1 = $16
 Adding number conversion cast (unumber) VICII_BMM|VICII_DEN|VICII_RSEL|3 in *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
 Adding number conversion cast (unumber) 3 in *D011 = ((unumber)) VICII_BMM|VICII_DEN|VICII_RSEL|3
-Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400
-Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = (byte)(word)SCREEN&(unumber)$3fff/$40|(word)BITMAP&$3fff/$400
+Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400
+Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = (char)(unsigned int)SCREEN&(unumber)$3fff/$40|(unsigned int)BITMAP&$3fff/$400
 Adding number conversion cast (snumber) $64 in circle::xc#0 = $64
 Adding number conversion cast (snumber) $64 in circle::yc#0 = $64
 Adding number conversion cast (snumber) $32 in circle::r#0 = $32
@@ -469,8 +469,8 @@ Adding number conversion cast (snumber) plot::$3 in plot::$3 = plot::$2 * (snumb
 Adding number conversion cast (snumber) 7 in plot::$4 = plot::x#8 & 7
 Adding number conversion cast (snumber) plot::$4 in plot::$4 = plot::x#8 & (snumber)7
 Successful SSA optimization PassNAddNumberTypeConversions
-Adding number conversion cast (unumber) $40 in *VICII_MEMORY = (byte)(word)SCREEN&(unumber)$3fff/$40|(word)BITMAP&(unumber)$3fff/$400
-Adding number conversion cast (unumber) $400 in *VICII_MEMORY = (byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(word)BITMAP&(unumber)$3fff/$400
+Adding number conversion cast (unumber) $40 in *VICII_MEMORY = (char)(unsigned int)SCREEN&(unumber)$3fff/$40|(unsigned int)BITMAP&(unumber)$3fff/$400
+Adding number conversion cast (unumber) $400 in *VICII_MEMORY = (char)(unsigned int)SCREEN&(unumber)$3fff/(unumber)$40|(unsigned int)BITMAP&(unumber)$3fff/$400
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast fill::size#0 = (snumber)$28*$19*8
 Inlining cast fill::val#0 = (unumber)0
@@ -481,11 +481,11 @@ Inlining cast circle::xc#0 = (snumber)$64
 Inlining cast circle::yc#0 = (snumber)$64
 Inlining cast circle::r#0 = (snumber)$32
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53272
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
+Simplifying constant pointer cast (char *) 53280
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53272
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast $16
 Simplifying constant integer cast VICII_BMM|VICII_DEN|VICII_RSEL|(unumber)3
@@ -511,37 +511,37 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $140
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $16
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (word) $3fff
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $3fff
-Finalized unsigned number type (word) $400
-Finalized signed number type (signed byte) $64
-Finalized signed number type (signed byte) $64
-Finalized signed number type (signed byte) $32
-Finalized signed number type (signed byte) 1
-Finalized signed number type (signed byte) 3
-Finalized signed number type (signed byte) 0
-Finalized signed number type (signed byte) 2
-Finalized signed number type (signed byte) 6
-Finalized signed number type (signed byte) 1
-Finalized signed number type (signed byte) 2
-Finalized signed number type (signed byte) $a
-Finalized signed number type (signed dword) $fff8
-Finalized unsigned number type (byte) 7
-Finalized signed number type (signed byte) 3
-Finalized signed number type (signed word) $140
-Finalized signed number type (signed byte) 7
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $16
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (unsigned int) $3fff
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (unsigned int) $3fff
+Finalized unsigned number type (unsigned int) $400
+Finalized signed number type (signed char) $64
+Finalized signed number type (signed char) $64
+Finalized signed number type (signed char) $32
+Finalized signed number type (signed char) 1
+Finalized signed number type (signed char) 3
+Finalized signed number type (signed char) 0
+Finalized signed number type (signed char) 2
+Finalized signed number type (signed char) 6
+Finalized signed number type (signed char) 1
+Finalized signed number type (signed char) 2
+Finalized signed number type (signed char) $a
+Finalized signed number type (long) $fff8
+Finalized unsigned number type (char) 7
+Finalized signed number type (signed char) 3
+Finalized signed number type (int) $140
+Finalized signed number type (signed char) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to signed word in circle::$11 = circle::$10 + 6
-Inferred type updated to signed word in circle::$4 = circle::y#3 - 1
-Inferred type updated to signed word in circle::$8 = circle::$7 + $a
-Inferred type updated to signed word in plot::$0 = plot::x#8 & $fff8
-Inferred type updated to byte in plot::$1 = plot::$6 & 7
-Inferred type updated to signed word in plot::$3 = plot::$2 * $140
-Inferred type updated to signed byte in plot::$4 = plot::x#8 & 7
+Inferred type updated to int in circle::$11 = circle::$10 + 6
+Inferred type updated to int in circle::$4 = circle::y#3 - 1
+Inferred type updated to int in circle::$8 = circle::$7 + $a
+Inferred type updated to int in plot::$0 = plot::x#8 & $fff8
+Inferred type updated to char in plot::$1 = plot::$6 & 7
+Inferred type updated to int in plot::$3 = plot::$2 * $140
+Inferred type updated to signed char in plot::$4 = plot::x#8 & 7
 Alias circle::y#0 = circle::r#1 
 Alias circle::p#3 = circle::p#6 circle::p#4 circle::p#5 
 Alias circle::x1#14 = circle::x1#2 circle::x1#3 circle::x1#4 
@@ -640,17 +640,17 @@ Constant inlined fill::start#1 = SCREEN
 Constant inlined fill::start#0 = BITMAP
 Constant inlined circle::x1#0 = 0
 Constant inlined fill::val#1 = $16
-Constant inlined fill::size#1 = (signed word)$28*$19
-Constant inlined fill::size#0 = (signed word)$28*$19*8
+Constant inlined fill::size#1 = (int)$28*$19
+Constant inlined fill::size#0 = (int)$28*$19*8
 Constant inlined circle::p#0 = 3-circle::r#0<<1
 Successful SSA optimization Pass2ConstantInlining
 Alias plot::$3 = plot::$9 
 Successful SSA optimization Pass2AliasElimination
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $19
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $19
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $19
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -699,26 +699,26 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call fill 
+  [1] call fill
   to:main::@2
 main::@2: scope:[main]  from main
   [2] phi()
-  [3] call fill 
+  [3] call fill
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [4] *BORDER_COLOR = BLUE
   [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
-  [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400
-  [7] call circle 
+  [6] *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400
+  [7] call circle
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@3
   [8] phi()
   to:main::@1
 
-void fill(byte* fill::start , signed word fill::size , byte fill::val)
+void fill(char *start , int size , char val)
 fill: scope:[fill]  from main main::@2
   [9] fill::val#4 = phi( main/0, main::@2/$16 )
-  [9] fill::size#2 = phi( main/(signed word)$28*$19*8, main::@2/(signed word)$28*$19 )
+  [9] fill::size#2 = phi( main/(int)$28*$19*8, main::@2/(int)$28*$19 )
   [9] fill::addr#0 = phi( main/BITMAP, main::@2/SCREEN )
   [10] fill::end#0 = fill::addr#0 + fill::size#2
   to:fill::@1
@@ -734,7 +734,7 @@ fill::@2: scope:[fill]  from fill::@1
   [15] fill::addr#1 = ++ fill::addr#2
   to:fill::@1
 
-void circle(signed word circle::xc , signed word circle::yc , signed word circle::r)
+void circle(int xc , int yc , int r)
 circle: scope:[circle]  from main::@3
   [16] phi()
   to:circle::@1
@@ -762,42 +762,42 @@ circle::@4: scope:[circle]  from circle::@3 circle::@5
   [26] circle::y#10 = phi( circle::@3/circle::y#13, circle::@5/circle::y#1 )
   [27] plot::x#0 = circle::xc#0 + circle::x1#10
   [28] plot::y#0 = circle::yc#0 - circle::y#10
-  [29] call plot 
+  [29] call plot
   to:circle::@6
 circle::@6: scope:[circle]  from circle::@4
   [30] plot::x#1 = circle::xc#0 - circle::x1#10
   [31] plot::y#1 = circle::yc#0 - circle::y#10
-  [32] call plot 
+  [32] call plot
   to:circle::@7
 circle::@7: scope:[circle]  from circle::@6
   [33] plot::x#2 = circle::xc#0 + circle::x1#10
   [34] plot::y#2 = circle::yc#0 + circle::y#10
-  [35] call plot 
+  [35] call plot
   to:circle::@8
 circle::@8: scope:[circle]  from circle::@7
   [36] plot::x#3 = circle::xc#0 - circle::x1#10
   [37] plot::y#3 = circle::yc#0 + circle::y#10
-  [38] call plot 
+  [38] call plot
   to:circle::@9
 circle::@9: scope:[circle]  from circle::@8
   [39] plot::x#4 = circle::xc#0 + circle::y#10
   [40] plot::y#4 = circle::yc#0 - circle::x1#10
-  [41] call plot 
+  [41] call plot
   to:circle::@10
 circle::@10: scope:[circle]  from circle::@9
   [42] plot::x#5 = circle::xc#0 - circle::y#10
   [43] plot::y#5 = circle::yc#0 - circle::x1#10
-  [44] call plot 
+  [44] call plot
   to:circle::@11
 circle::@11: scope:[circle]  from circle::@10
   [45] plot::x#6 = circle::xc#0 + circle::y#10
   [46] plot::y#6 = circle::yc#0 + circle::x1#10
-  [47] call plot 
+  [47] call plot
   to:circle::@12
 circle::@12: scope:[circle]  from circle::@11
   [48] plot::x#7 = circle::xc#0 - circle::y#10
   [49] plot::y#7 = circle::yc#0 + circle::x1#10
-  [50] call plot 
+  [50] call plot
   to:circle::@13
 circle::@13: scope:[circle]  from circle::@12
   [51] circle::x1#1 = ++ circle::x1#10
@@ -808,13 +808,13 @@ circle::@3: scope:[circle]  from circle::@2
   [54] circle::p#1 = circle::$10 + 6
   to:circle::@4
 
-void plot(signed word plot::x , signed word plot::y)
+void plot(int x , int y)
 plot: scope:[plot]  from circle::@10 circle::@11 circle::@12 circle::@4 circle::@6 circle::@7 circle::@8 circle::@9
   [55] plot::y#8 = phi( circle::@10/plot::y#5, circle::@11/plot::y#6, circle::@12/plot::y#7, circle::@4/plot::y#0, circle::@6/plot::y#1, circle::@7/plot::y#2, circle::@8/plot::y#3, circle::@9/plot::y#4 )
   [55] plot::x#8 = phi( circle::@10/plot::x#5, circle::@11/plot::x#6, circle::@12/plot::x#7, circle::@4/plot::x#0, circle::@6/plot::x#1, circle::@7/plot::x#2, circle::@8/plot::x#3, circle::@9/plot::x#4 )
   [56] plot::$0 = plot::x#8 & $fff8
   [57] plot::location#1 = BITMAP + plot::$0
-  [58] plot::$6 = (byte)plot::y#8
+  [58] plot::$6 = (char)plot::y#8
   [59] plot::$1 = plot::$6 & 7
   [60] plot::location#2 = plot::location#1 + plot::$1
   [61] plot::$2 = plot::y#8 >> 3
@@ -832,74 +832,74 @@ plot::@return: scope:[plot]  from plot
 
 
 VARIABLE REGISTER WEIGHTS
-void circle(signed word circle::xc , signed word circle::yc , signed word circle::r)
-signed word~ circle::$10 202.0
-signed word~ circle::$5 202.0
-signed word~ circle::$6 202.0
-signed word~ circle::$7 202.0
-signed word~ circle::$9 202.0
-signed word circle::p
-signed word circle::p#1 202.0
-signed word circle::p#10 11.653846153846153
-signed word circle::p#2 202.0
-signed word circle::p#3 57.714285714285715
-signed word circle::r
-signed word circle::x1
-signed word circle::x1#1 202.0
-signed word circle::x1#10 36.47222222222223
-signed word circle::xc
-signed word circle::y
-signed word circle::y#1 60.599999999999994
-signed word circle::y#10 42.73076923076923
-signed word circle::y#13 67.33333333333333
-signed word circle::yc
-void fill(byte* fill::start , signed word fill::size , byte fill::val)
-byte* fill::addr
-byte* fill::addr#0 11.0
-byte* fill::addr#1 202.0
-byte* fill::addr#2 138.33333333333331
-byte* fill::end
-byte* fill::end#0 22.4
-signed word fill::size
-signed word fill::size#2 11.0
-byte* fill::start
-byte fill::val
-byte fill::val#4 16.833333333333332
+void circle(int xc , int yc , int r)
+int circle::$10 // 202.0
+int circle::$5 // 202.0
+int circle::$6 // 202.0
+int circle::$7 // 202.0
+int circle::$9 // 202.0
+int circle::p
+int circle::p#1 // 202.0
+int circle::p#10 // 11.653846153846153
+int circle::p#2 // 202.0
+int circle::p#3 // 57.714285714285715
+int circle::r
+int circle::x1
+int circle::x1#1 // 202.0
+int circle::x1#10 // 36.47222222222223
+int circle::xc
+int circle::y
+int circle::y#1 // 60.599999999999994
+int circle::y#10 // 42.73076923076923
+int circle::y#13 // 67.33333333333333
+int circle::yc
+void fill(char *start , int size , char val)
+char *fill::addr
+char *fill::addr#0 // 11.0
+char *fill::addr#1 // 202.0
+char *fill::addr#2 // 138.33333333333331
+char *fill::end
+char *fill::end#0 // 22.4
+int fill::size
+int fill::size#2 // 11.0
+char *fill::start
+char fill::val
+char fill::val#4 // 16.833333333333332
 void main()
-void plot(signed word plot::x , signed word plot::y)
-signed word~ plot::$0 2002.0
-byte~ plot::$1 2002.0
-signed word~ plot::$2 1501.5
-signed word~ plot::$3 2002.0
-signed byte~ plot::$4 2002.0
-byte~ plot::$5 2002.0
-byte~ plot::$6 2002.0
-signed word~ plot::$7 2002.0
-signed word~ plot::$8 2002.0
-byte* plot::location
-byte* plot::location#1 667.3333333333334
-byte* plot::location#2 400.4
-byte* plot::location#3 1001.0
-signed word plot::x
-signed word plot::x#0 101.0
-signed word plot::x#1 101.0
-signed word plot::x#2 101.0
-signed word plot::x#3 101.0
-signed word plot::x#4 101.0
-signed word plot::x#5 101.0
-signed word plot::x#6 101.0
-signed word plot::x#7 101.0
-signed word plot::x#8 255.45454545454544
-signed word plot::y
-signed word plot::y#0 202.0
-signed word plot::y#1 202.0
-signed word plot::y#2 202.0
-signed word plot::y#3 202.0
-signed word plot::y#4 202.0
-signed word plot::y#5 202.0
-signed word plot::y#6 202.0
-signed word plot::y#7 202.0
-signed word plot::y#8 301.5
+void plot(int x , int y)
+int plot::$0 // 2002.0
+char plot::$1 // 2002.0
+int plot::$2 // 1501.5
+int plot::$3 // 2002.0
+signed char plot::$4 // 2002.0
+char plot::$5 // 2002.0
+char plot::$6 // 2002.0
+int plot::$7 // 2002.0
+int plot::$8 // 2002.0
+char *plot::location
+char *plot::location#1 // 667.3333333333334
+char *plot::location#2 // 400.4
+char *plot::location#3 // 1001.0
+int plot::x
+int plot::x#0 // 101.0
+int plot::x#1 // 101.0
+int plot::x#2 // 101.0
+int plot::x#3 // 101.0
+int plot::x#4 // 101.0
+int plot::x#5 // 101.0
+int plot::x#6 // 101.0
+int plot::x#7 // 101.0
+int plot::x#8 // 255.45454545454544
+int plot::y
+int plot::y#0 // 202.0
+int plot::y#1 // 202.0
+int plot::y#2 // 202.0
+int plot::y#3 // 202.0
+int plot::y#4 // 202.0
+int plot::y#5 // 202.0
+int plot::y#6 // 202.0
+int plot::y#7 // 202.0
+int plot::y#8 // 301.5
 
 Initial phi equivalence classes
 [ fill::size#2 ]
@@ -984,7 +984,7 @@ Allocated zp[1]:48 [ plot::$5 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *BORDER_COLOR = BLUE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] fill::end#0 = fill::addr#0 + fill::size#2 [ fill::addr#0 fill::val#4 fill::end#0 ] ( fill:1 [ fill::addr#0 fill::val#4 fill::end#0 ] { }  fill:3 [ fill::addr#0 fill::val#4 fill::end#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ fill::val#4 ]
 Statement [12] if(fill::addr#2!=fill::end#0) goto fill::@2 [ fill::val#4 fill::end#0 fill::addr#2 ] ( fill:1 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  fill:3 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  ) always clobbers reg byte a 
@@ -1018,7 +1018,7 @@ Statement [53] circle::$10 = circle::p#3 + circle::$9 [ circle::x1#10 circle::y#
 Statement [54] circle::p#1 = circle::$10 + 6 [ circle::x1#10 circle::y#13 circle::p#1 ] ( circle:7 [ circle::x1#10 circle::y#13 circle::p#1 ] { }  ) always clobbers reg byte a 
 Statement [56] plot::$0 = plot::x#8 & $fff8 [ plot::x#8 plot::y#8 plot::$0 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [57] plot::location#1 = BITMAP + plot::$0 [ plot::x#8 plot::y#8 plot::location#1 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [58] plot::$6 = (byte)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [58] plot::$6 = (char)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [60] plot::location#2 = plot::location#1 + plot::$1 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [61] plot::$2 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [62] plot::$7 = plot::$2 << 2 [ plot::x#8 plot::location#2 plot::$2 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
@@ -1030,7 +1030,7 @@ Statement [67] plot::$5 = *plot::location#3 | bitmask[plot::$4] [ plot::location
 Statement [68] *plot::location#3 = plot::$5 [ ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte y 
 Statement [4] *BORDER_COLOR = BLUE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] fill::end#0 = fill::addr#0 + fill::size#2 [ fill::addr#0 fill::val#4 fill::end#0 ] ( fill:1 [ fill::addr#0 fill::val#4 fill::end#0 ] { }  fill:3 [ fill::addr#0 fill::val#4 fill::end#0 ] { }  ) always clobbers reg byte a 
 Statement [12] if(fill::addr#2!=fill::end#0) goto fill::@2 [ fill::val#4 fill::end#0 fill::addr#2 ] ( fill:1 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  fill:3 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  ) always clobbers reg byte a 
 Statement [14] *fill::addr#2 = fill::val#4 [ fill::val#4 fill::end#0 fill::addr#2 ] ( fill:1 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  fill:3 [ fill::val#4 fill::end#0 fill::addr#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -1062,7 +1062,7 @@ Statement [53] circle::$10 = circle::p#3 + circle::$9 [ circle::x1#10 circle::y#
 Statement [54] circle::p#1 = circle::$10 + 6 [ circle::x1#10 circle::y#13 circle::p#1 ] ( circle:7 [ circle::x1#10 circle::y#13 circle::p#1 ] { }  ) always clobbers reg byte a 
 Statement [56] plot::$0 = plot::x#8 & $fff8 [ plot::x#8 plot::y#8 plot::$0 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::$0 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [57] plot::location#1 = BITMAP + plot::$0 [ plot::x#8 plot::y#8 plot::location#1 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
-Statement [58] plot::$6 = (byte)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
+Statement [58] plot::$6 = (char)plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$6 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$6 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [60] plot::location#2 = plot::location#1 + plot::$1 [ plot::x#8 plot::y#8 plot::location#2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [61] plot::$2 = plot::y#8 >> 3 [ plot::x#8 plot::location#2 plot::$2 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
 Statement [62] plot::$7 = plot::$2 << 2 [ plot::x#8 plot::location#2 plot::$2 plot::$7 ] ( circle:7::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#0 = plot::x#8 } { plot::y#0 = plot::y#8 } }  circle:7::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#1 = plot::x#8 } { plot::y#1 = plot::y#8 } }  circle:7::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#2 = plot::x#8 } { plot::y#2 = plot::y#8 } }  circle:7::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#3 = plot::x#8 } { plot::y#3 = plot::y#8 } }  circle:7::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#4 = plot::x#8 } { plot::y#4 = plot::y#8 } }  circle:7::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#5 = plot::x#8 } { plot::y#5 = plot::y#8 } }  circle:7::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#6 = plot::x#8 } { plot::y#6 = plot::y#8 } }  circle:7::plot:50 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$2 plot::$7 ] { { plot::x#7 = plot::x#8 } { plot::y#7 = plot::y#8 } }  ) always clobbers reg byte a 
@@ -1182,12 +1182,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call fill 
+    // [1] call fill
     // [9] phi from main to fill [phi:main->fill]
   fill_from_main:
     // [9] phi fill::val#4 = 0 [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi fill::size#2 = (signed word)$28*$19*8 [phi:main->fill#1] -- vwsz1=vwsc1 
+    // [9] phi fill::size#2 = (int)$28*$19*8 [phi:main->fill#1] -- vwsz1=vwsc1 
     lda #<$28*$19*8
     sta.z fill.size
     lda #>$28*$19*8
@@ -1203,12 +1203,12 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [3] call fill 
+    // [3] call fill
     // [9] phi from main::@2 to fill [phi:main::@2->fill]
   fill_from___b2:
     // [9] phi fill::val#4 = $16 [phi:main::@2->fill#0] -- vbuxx=vbuc1 
     ldx #$16
-    // [9] phi fill::size#2 = (signed word)$28*$19 [phi:main::@2->fill#1] -- vwsz1=vwsc1 
+    // [9] phi fill::size#2 = (int)$28*$19 [phi:main::@2->fill#1] -- vwsz1=vwsc1 
     lda #<$28*$19
     sta.z fill.size
     lda #>$28*$19
@@ -1228,10 +1228,10 @@ main: {
     // [5] *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
     lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
-    // [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400 -- _deref_pbuc1=vbuc2 
+    // [6] *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400 -- _deref_pbuc1=vbuc2 
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VICII_MEMORY
-    // [7] call circle 
+    // [7] call circle
     // [16] phi from main::@3 to circle [phi:main::@3->circle]
   circle_from___b3:
     jsr circle
@@ -1245,7 +1245,7 @@ main: {
 }
   // fill
 // Fill some memory with a value
-// fill(signed word zp(2) size, byte register(X) val)
+// void fill(char *start, __zp(2) int size, __register(X) char val)
 fill: {
     .label end = 2
     .label addr = 4
@@ -1291,6 +1291,7 @@ fill: {
     jmp __b1_from___b2
 }
   // circle
+// void circle(int xc, int yc, int r)
 circle: {
     .const xc = $64
     .const yc = $64
@@ -1406,7 +1407,7 @@ circle: {
     lda #>yc
     sbc.z y+1
     sta.z plot.y+1
-    // [29] call plot 
+    // [29] call plot
     // [55] phi from circle::@4 to plot [phi:circle::@4->plot]
   plot_from___b4:
     // [55] phi plot::y#8 = plot::y#0 [phi:circle::@4->plot#0] -- register_copy 
@@ -1431,7 +1432,7 @@ circle: {
     lda #>yc
     sbc.z y+1
     sta.z plot.y+1
-    // [32] call plot 
+    // [32] call plot
     // [55] phi from circle::@6 to plot [phi:circle::@6->plot]
   plot_from___b6:
     // [55] phi plot::y#8 = plot::y#1 [phi:circle::@6->plot#0] -- register_copy 
@@ -1456,7 +1457,7 @@ circle: {
     lda.z y+1
     adc #>yc
     sta.z plot.y+1
-    // [35] call plot 
+    // [35] call plot
     // [55] phi from circle::@7 to plot [phi:circle::@7->plot]
   plot_from___b7:
     // [55] phi plot::y#8 = plot::y#2 [phi:circle::@7->plot#0] -- register_copy 
@@ -1481,7 +1482,7 @@ circle: {
     lda.z y+1
     adc #>yc
     sta.z plot.y+1
-    // [38] call plot 
+    // [38] call plot
     // [55] phi from circle::@8 to plot [phi:circle::@8->plot]
   plot_from___b8:
     // [55] phi plot::y#8 = plot::y#3 [phi:circle::@8->plot#0] -- register_copy 
@@ -1506,7 +1507,7 @@ circle: {
     lda #>yc
     sbc.z x1+1
     sta.z plot.y+1
-    // [41] call plot 
+    // [41] call plot
     // [55] phi from circle::@9 to plot [phi:circle::@9->plot]
   plot_from___b9:
     // [55] phi plot::y#8 = plot::y#4 [phi:circle::@9->plot#0] -- register_copy 
@@ -1531,7 +1532,7 @@ circle: {
     lda #>yc
     sbc.z x1+1
     sta.z plot.y+1
-    // [44] call plot 
+    // [44] call plot
     // [55] phi from circle::@10 to plot [phi:circle::@10->plot]
   plot_from___b10:
     // [55] phi plot::y#8 = plot::y#5 [phi:circle::@10->plot#0] -- register_copy 
@@ -1556,7 +1557,7 @@ circle: {
     lda.z x1+1
     adc #>yc
     sta.z plot.y+1
-    // [47] call plot 
+    // [47] call plot
     // [55] phi from circle::@11 to plot [phi:circle::@11->plot]
   plot_from___b11:
     // [55] phi plot::y#8 = plot::y#6 [phi:circle::@11->plot#0] -- register_copy 
@@ -1581,7 +1582,7 @@ circle: {
     lda.z x1+1
     adc #>yc
     sta.z plot.y+1
-    // [50] call plot 
+    // [50] call plot
     // [55] phi from circle::@12 to plot [phi:circle::@12->plot]
   plot_from___b12:
     // [55] phi plot::y#8 = plot::y#7 [phi:circle::@12->plot#0] -- register_copy 
@@ -1631,7 +1632,7 @@ circle: {
     jmp __b4_from___b3
 }
   // plot
-// plot(signed word zp(8) x, signed word zp($a) y)
+// void plot(__zp(8) int x, __zp($a) int y)
 plot: {
     .label __0 = $c
     .label __2 = $a
@@ -1656,7 +1657,7 @@ plot: {
     lda #>BITMAP
     adc.z location+1
     sta.z location+1
-    // [58] plot::$6 = (byte)plot::y#8 -- vbuaa=_byte_vwsz1 
+    // [58] plot::$6 = (char)plot::y#8 -- vbuaa=_byte_vwsz1 
     lda.z y
     // [59] plot::$1 = plot::$6 & 7 -- vbuaa=vbuaa_band_vbuc1 
     and #7
@@ -1801,90 +1802,90 @@ Removing instruction __b13:
 Removing instruction __b1_from___b13:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [133] bmi __b3 to bpl
+Fixing long branch [134] bmi __b3 to bpl
 
 FINAL SYMBOL TABLE
-constant byte* const BITMAP = (byte*) 8192
-constant const byte BLUE = 6
-constant byte* const BORDER_COLOR = (byte*) 53280
-constant byte* const D011 = (byte*) 53265
-constant byte* const SCREEN = (byte*) 1024
-constant const byte VICII_BMM = $20
-constant const byte VICII_DEN = $10
-constant byte* const VICII_MEMORY = (byte*) 53272
-constant const byte VICII_RSEL = 8
-constant byte* bitmask[]  = { $80, $40, $20, $10, 8, 4, 2, 1 }
-void circle(signed word circle::xc , signed word circle::yc , signed word circle::r)
-signed word~ circle::$10 zp[2]:6 202.0
-signed word~ circle::$5 zp[2]:8 202.0
-signed word~ circle::$6 zp[2]:8 202.0
-signed word~ circle::$7 zp[2]:6 202.0
-signed word~ circle::$9 zp[2]:10 202.0
-signed word circle::p
-signed word circle::p#1 p zp[2]:6 202.0
-signed word circle::p#10 p zp[2]:6 11.653846153846153
-signed word circle::p#2 p zp[2]:6 202.0
-signed word circle::p#3 p zp[2]:6 57.714285714285715
-signed word circle::r
-constant signed word circle::r#0 r = $32
-signed word circle::x1
-signed word circle::x1#1 x1 zp[2]:2 202.0
-signed word circle::x1#10 x1 zp[2]:2 36.47222222222223
-signed word circle::xc
-constant signed word circle::xc#0 xc = $64
-signed word circle::y
-signed word circle::y#1 y zp[2]:4 60.599999999999994
-signed word circle::y#10 y zp[2]:4 42.73076923076923
-signed word circle::y#13 y zp[2]:4 67.33333333333333
-signed word circle::yc
-constant signed word circle::yc#0 yc = $64
-void fill(byte* fill::start , signed word fill::size , byte fill::val)
-byte* fill::addr
-byte* fill::addr#0 addr zp[2]:4 11.0
-byte* fill::addr#1 addr zp[2]:4 202.0
-byte* fill::addr#2 addr zp[2]:4 138.33333333333331
-byte* fill::end
-byte* fill::end#0 end zp[2]:2 22.4
-signed word fill::size
-signed word fill::size#2 size zp[2]:2 11.0
-byte* fill::start
-byte fill::val
-byte fill::val#4 reg byte x 16.833333333333332
+__constant char * const BITMAP = (char *) 8192
+__constant const char BLUE = 6
+__constant char * const BORDER_COLOR = (char *) 53280
+__constant char * const D011 = (char *) 53265
+__constant char * const SCREEN = (char *) 1024
+__constant const char VICII_BMM = $20
+__constant const char VICII_DEN = $10
+__constant char * const VICII_MEMORY = (char *) 53272
+__constant const char VICII_RSEL = 8
+__constant char bitmask[] = { $80, $40, $20, $10, 8, 4, 2, 1 }
+void circle(int xc , int yc , int r)
+int circle::$10 // zp[2]:6 202.0
+int circle::$5 // zp[2]:8 202.0
+int circle::$6 // zp[2]:8 202.0
+int circle::$7 // zp[2]:6 202.0
+int circle::$9 // zp[2]:10 202.0
+int circle::p
+int circle::p#1 // p zp[2]:6 202.0
+int circle::p#10 // p zp[2]:6 11.653846153846153
+int circle::p#2 // p zp[2]:6 202.0
+int circle::p#3 // p zp[2]:6 57.714285714285715
+int circle::r
+__constant int circle::r#0 = $32 // r
+int circle::x1
+int circle::x1#1 // x1 zp[2]:2 202.0
+int circle::x1#10 // x1 zp[2]:2 36.47222222222223
+int circle::xc
+__constant int circle::xc#0 = $64 // xc
+int circle::y
+int circle::y#1 // y zp[2]:4 60.599999999999994
+int circle::y#10 // y zp[2]:4 42.73076923076923
+int circle::y#13 // y zp[2]:4 67.33333333333333
+int circle::yc
+__constant int circle::yc#0 = $64 // yc
+void fill(char *start , int size , char val)
+char *fill::addr
+char *fill::addr#0 // addr zp[2]:4 11.0
+char *fill::addr#1 // addr zp[2]:4 202.0
+char *fill::addr#2 // addr zp[2]:4 138.33333333333331
+char *fill::end
+char *fill::end#0 // end zp[2]:2 22.4
+int fill::size
+int fill::size#2 // size zp[2]:2 11.0
+char *fill::start
+char fill::val
+char fill::val#4 // reg byte x 16.833333333333332
 void main()
-void plot(signed word plot::x , signed word plot::y)
-signed word~ plot::$0 zp[2]:12 2002.0
-byte~ plot::$1 reg byte a 2002.0
-signed word~ plot::$2 zp[2]:10 1501.5
-signed word~ plot::$3 zp[2]:14 2002.0
-signed byte~ plot::$4 reg byte a 2002.0
-byte~ plot::$5 reg byte a 2002.0
-byte~ plot::$6 reg byte a 2002.0
-signed word~ plot::$7 zp[2]:14 2002.0
-signed word~ plot::$8 zp[2]:14 2002.0
-byte* plot::location
-byte* plot::location#1 location zp[2]:12 667.3333333333334
-byte* plot::location#2 location zp[2]:12 400.4
-byte* plot::location#3 location zp[2]:12 1001.0
-signed word plot::x
-signed word plot::x#0 x zp[2]:8 101.0
-signed word plot::x#1 x zp[2]:8 101.0
-signed word plot::x#2 x zp[2]:8 101.0
-signed word plot::x#3 x zp[2]:8 101.0
-signed word plot::x#4 x zp[2]:8 101.0
-signed word plot::x#5 x zp[2]:8 101.0
-signed word plot::x#6 x zp[2]:8 101.0
-signed word plot::x#7 x zp[2]:8 101.0
-signed word plot::x#8 x zp[2]:8 255.45454545454544
-signed word plot::y
-signed word plot::y#0 y zp[2]:10 202.0
-signed word plot::y#1 y zp[2]:10 202.0
-signed word plot::y#2 y zp[2]:10 202.0
-signed word plot::y#3 y zp[2]:10 202.0
-signed word plot::y#4 y zp[2]:10 202.0
-signed word plot::y#5 y zp[2]:10 202.0
-signed word plot::y#6 y zp[2]:10 202.0
-signed word plot::y#7 y zp[2]:10 202.0
-signed word plot::y#8 y zp[2]:10 301.5
+void plot(int x , int y)
+int plot::$0 // zp[2]:12 2002.0
+char plot::$1 // reg byte a 2002.0
+int plot::$2 // zp[2]:10 1501.5
+int plot::$3 // zp[2]:14 2002.0
+signed char plot::$4 // reg byte a 2002.0
+char plot::$5 // reg byte a 2002.0
+char plot::$6 // reg byte a 2002.0
+int plot::$7 // zp[2]:14 2002.0
+int plot::$8 // zp[2]:14 2002.0
+char *plot::location
+char *plot::location#1 // location zp[2]:12 667.3333333333334
+char *plot::location#2 // location zp[2]:12 400.4
+char *plot::location#3 // location zp[2]:12 1001.0
+int plot::x
+int plot::x#0 // x zp[2]:8 101.0
+int plot::x#1 // x zp[2]:8 101.0
+int plot::x#2 // x zp[2]:8 101.0
+int plot::x#3 // x zp[2]:8 101.0
+int plot::x#4 // x zp[2]:8 101.0
+int plot::x#5 // x zp[2]:8 101.0
+int plot::x#6 // x zp[2]:8 101.0
+int plot::x#7 // x zp[2]:8 101.0
+int plot::x#8 // x zp[2]:8 255.45454545454544
+int plot::y
+int plot::y#0 // y zp[2]:10 202.0
+int plot::y#1 // y zp[2]:10 202.0
+int plot::y#2 // y zp[2]:10 202.0
+int plot::y#3 // y zp[2]:10 202.0
+int plot::y#4 // y zp[2]:10 202.0
+int plot::y#5 // y zp[2]:10 202.0
+int plot::y#6 // y zp[2]:10 202.0
+int plot::y#7 // y zp[2]:10 202.0
+int plot::y#8 // y zp[2]:10 301.5
 
 reg byte x [ fill::val#4 ]
 zp[2]:2 [ circle::x1#10 circle::x1#1 fill::size#2 fill::end#0 ]
@@ -1945,11 +1946,11 @@ Score: 6073
   // main
 main: {
     // fill(BITMAP,40*25*8,0)
-    // [1] call fill 
+    // [1] call fill
     // [9] phi from main to fill [phi:main->fill]
     // [9] phi fill::val#4 = 0 [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi fill::size#2 = (signed word)$28*$19*8 [phi:main->fill#1] -- vwsz1=vwsc1 
+    // [9] phi fill::size#2 = (int)$28*$19*8 [phi:main->fill#1] -- vwsz1=vwsc1 
     lda #<$28*$19*8
     sta.z fill.size
     lda #>$28*$19*8
@@ -1963,11 +1964,11 @@ main: {
     // [2] phi from main to main::@2 [phi:main->main::@2]
     // main::@2
     // fill(SCREEN,40*25,$16)
-    // [3] call fill 
+    // [3] call fill
     // [9] phi from main::@2 to fill [phi:main::@2->fill]
     // [9] phi fill::val#4 = $16 [phi:main::@2->fill#0] -- vbuxx=vbuc1 
     ldx #$16
-    // [9] phi fill::size#2 = (signed word)$28*$19 [phi:main::@2->fill#1] -- vwsz1=vwsc1 
+    // [9] phi fill::size#2 = (int)$28*$19 [phi:main::@2->fill#1] -- vwsz1=vwsc1 
     lda #<$28*$19
     sta.z fill.size
     lda #>$28*$19
@@ -1988,11 +1989,11 @@ main: {
     lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
     // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
-    // [6] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|(word)BITMAP&$3fff/$400 -- _deref_pbuc1=vbuc2 
+    // [6] *VICII_MEMORY = (char)(unsigned int)SCREEN&$3fff/$40|(unsigned int)BITMAP&$3fff/$400 -- _deref_pbuc1=vbuc2 
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VICII_MEMORY
     // circle(100,100,50)
-    // [7] call circle 
+    // [7] call circle
     // [16] phi from main::@3 to circle [phi:main::@3->circle]
     jsr circle
     // [8] phi from main::@1 main::@3 to main::@1 [phi:main::@1/main::@3->main::@1]
@@ -2002,7 +2003,7 @@ main: {
 }
   // fill
 // Fill some memory with a value
-// fill(signed word zp(2) size, byte register(X) val)
+// void fill(char *start, __zp(2) int size, __register(X) char val)
 fill: {
     .label end = 2
     .label addr = 4
@@ -2048,6 +2049,7 @@ fill: {
     jmp __b1
 }
   // circle
+// void circle(int xc, int yc, int r)
 circle: {
     .const xc = $64
     .const yc = $64
@@ -2164,7 +2166,7 @@ circle: {
     lda #>yc
     sbc.z y+1
     sta.z plot.y+1
-    // [29] call plot 
+    // [29] call plot
     // [55] phi from circle::@4 to plot [phi:circle::@4->plot]
     // [55] phi plot::y#8 = plot::y#0 [phi:circle::@4->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#0 [phi:circle::@4->plot#1] -- register_copy 
@@ -2187,7 +2189,7 @@ circle: {
     lda #>yc
     sbc.z y+1
     sta.z plot.y+1
-    // [32] call plot 
+    // [32] call plot
     // [55] phi from circle::@6 to plot [phi:circle::@6->plot]
     // [55] phi plot::y#8 = plot::y#1 [phi:circle::@6->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#1 [phi:circle::@6->plot#1] -- register_copy 
@@ -2210,7 +2212,7 @@ circle: {
     lda.z y+1
     adc #>yc
     sta.z plot.y+1
-    // [35] call plot 
+    // [35] call plot
     // [55] phi from circle::@7 to plot [phi:circle::@7->plot]
     // [55] phi plot::y#8 = plot::y#2 [phi:circle::@7->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#2 [phi:circle::@7->plot#1] -- register_copy 
@@ -2233,7 +2235,7 @@ circle: {
     lda.z y+1
     adc #>yc
     sta.z plot.y+1
-    // [38] call plot 
+    // [38] call plot
     // [55] phi from circle::@8 to plot [phi:circle::@8->plot]
     // [55] phi plot::y#8 = plot::y#3 [phi:circle::@8->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#3 [phi:circle::@8->plot#1] -- register_copy 
@@ -2256,7 +2258,7 @@ circle: {
     lda #>yc
     sbc.z x1+1
     sta.z plot.y+1
-    // [41] call plot 
+    // [41] call plot
     // [55] phi from circle::@9 to plot [phi:circle::@9->plot]
     // [55] phi plot::y#8 = plot::y#4 [phi:circle::@9->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#4 [phi:circle::@9->plot#1] -- register_copy 
@@ -2279,7 +2281,7 @@ circle: {
     lda #>yc
     sbc.z x1+1
     sta.z plot.y+1
-    // [44] call plot 
+    // [44] call plot
     // [55] phi from circle::@10 to plot [phi:circle::@10->plot]
     // [55] phi plot::y#8 = plot::y#5 [phi:circle::@10->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#5 [phi:circle::@10->plot#1] -- register_copy 
@@ -2302,7 +2304,7 @@ circle: {
     lda.z x1+1
     adc #>yc
     sta.z plot.y+1
-    // [47] call plot 
+    // [47] call plot
     // [55] phi from circle::@11 to plot [phi:circle::@11->plot]
     // [55] phi plot::y#8 = plot::y#6 [phi:circle::@11->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#6 [phi:circle::@11->plot#1] -- register_copy 
@@ -2325,7 +2327,7 @@ circle: {
     lda.z x1+1
     adc #>yc
     sta.z plot.y+1
-    // [50] call plot 
+    // [50] call plot
     // [55] phi from circle::@12 to plot [phi:circle::@12->plot]
     // [55] phi plot::y#8 = plot::y#7 [phi:circle::@12->plot#0] -- register_copy 
     // [55] phi plot::x#8 = plot::x#7 [phi:circle::@12->plot#1] -- register_copy 
@@ -2375,7 +2377,7 @@ circle: {
     jmp __b4
 }
   // plot
-// plot(signed word zp(8) x, signed word zp($a) y)
+// void plot(__zp(8) int x, __zp($a) int y)
 plot: {
     .label __0 = $c
     .label __2 = $a
@@ -2403,7 +2405,7 @@ plot: {
     adc.z location+1
     sta.z location+1
     // (char)y & 7
-    // [58] plot::$6 = (byte)plot::y#8 -- vbuaa=_byte_vwsz1 
+    // [58] plot::$6 = (char)plot::y#8 -- vbuaa=_byte_vwsz1 
     lda.z y
     // [59] plot::$1 = plot::$6 & 7 -- vbuaa=vbuaa_band_vbuc1 
     and #7

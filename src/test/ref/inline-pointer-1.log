@@ -5,12 +5,12 @@ void main()
 main: scope:[main]  from __start
   puta::ph#0 = 4
   puta::pl#0 = 0
-  call puta 
+  call puta
   to:main::@1
 main::@1: scope:[main]  from main
   puta::ph#1 = 5
   puta::pl#1 = $18
-  call puta 
+  call puta
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -18,12 +18,12 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void puta(byte puta::ph , byte puta::pl)
+void puta(char ph , char pl)
 puta: scope:[puta]  from main main::@1
   puta::pl#2 = phi( main/puta::pl#0, main::@1/puta::pl#1 )
   puta::ph#2 = phi( main/puta::ph#0, main::@1/puta::ph#1 )
   puta::$0 = puta::ph#2 w= puta::pl#2
-  puta::screen#0 = (byte*)puta::$0
+  puta::screen#0 = (char *)puta::$0
   *puta::screen#0 = 'a'
   to:puta::@return
 puta::@return: scope:[puta]  from puta
@@ -32,7 +32,7 @@ puta::@return: scope:[puta]  from puta
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -43,18 +43,18 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-void puta(byte puta::ph , byte puta::pl)
-word~ puta::$0
-byte puta::ph
-byte puta::ph#0
-byte puta::ph#1
-byte puta::ph#2
-byte puta::pl
-byte puta::pl#0
-byte puta::pl#1
-byte puta::pl#2
-byte* puta::screen
-byte* puta::screen#0
+void puta(char ph , char pl)
+unsigned int puta::$0
+char puta::ph
+char puta::ph#0
+char puta::ph#1
+char puta::ph#2
+char puta::pl
+char puta::pl#0
+char puta::pl#1
+char puta::pl#2
+char *puta::screen
+char *puta::screen#0
 
 Adding number conversion cast (unumber) 4 in puta::ph#0 = 4
 Adding number conversion cast (unumber) 0 in puta::pl#0 = 0
@@ -71,10 +71,10 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 5
 Simplifying constant integer cast $18
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $18
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) $18
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant puta::ph#0 = 4
 Constant puta::pl#0 = 0
@@ -86,7 +86,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining Noop Cast [5] puta::screen#0 = (byte*)puta::$0 keeping puta::screen#0
+Inlining Noop Cast [5] puta::screen#0 = (char *)puta::$0 keeping puta::screen#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings puta::ph#0
 Inlining constant with var siblings puta::pl#0
@@ -114,22 +114,22 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call puta 
+  [1] call puta
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call puta 
+  [3] call puta
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void puta(byte puta::ph , byte puta::pl)
+void puta(char ph , char pl)
 puta: scope:[puta]  from main main::@1
   [5] puta::pl#2 = phi( main/0, main::@1/$18 )
   [5] puta::ph#2 = phi( main/4, main::@1/5 )
   [6] puta::screen#0 = puta::ph#2 w= puta::pl#2
-  [7] *((byte*)puta::screen#0) = 'a'
+  [7] *((char *)puta::screen#0) = 'a'
   to:puta::@return
 puta::@return: scope:[puta]  from puta
   [8] return 
@@ -138,13 +138,13 @@ puta::@return: scope:[puta]  from puta
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void puta(byte puta::ph , byte puta::pl)
-byte puta::ph
-byte puta::ph#2 11.0
-byte puta::pl
-byte puta::pl#2 11.0
-byte* puta::screen
-word puta::screen#0 11.0
+void puta(char ph , char pl)
+char puta::ph
+char puta::ph#2 // 11.0
+char puta::pl
+char puta::pl#2 // 11.0
+char *puta::screen
+unsigned int puta::screen#0 // 11.0
 
 Initial phi equivalence classes
 [ puta::ph#2 ]
@@ -158,7 +158,7 @@ Allocated zp[1]:2 [ puta::ph#2 ]
 Allocated zp[1]:3 [ puta::pl#2 ]
 Allocated zp[2]:4 [ puta::screen#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((byte*)puta::screen#0) = 'a' [ ] ( puta:1 [ ] { }  puta:3 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *((char *)puta::screen#0) = 'a' [ ] ( puta:1 [ ] { }  puta:3 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ puta::ph#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ puta::pl#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:4 [ puta::screen#0 ] : zp[2]:4 , 
@@ -189,7 +189,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call puta 
+    // [1] call puta
     // [5] phi from main to puta [phi:main->puta]
   puta_from_main:
     // [5] phi puta::pl#2 = 0 [phi:main->puta#0] -- vbuaa=vbuc1 
@@ -202,7 +202,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call puta 
+    // [3] call puta
     // [5] phi from main::@1 to puta [phi:main::@1->puta]
   puta_from___b1:
     // [5] phi puta::pl#2 = $18 [phi:main::@1->puta#0] -- vbuaa=vbuc1 
@@ -217,13 +217,13 @@ main: {
     rts
 }
   // puta
-// puta(byte register(X) ph, byte register(A) pl)
+// void puta(__register(X) char ph, __register(A) char pl)
 puta: {
     .label screen = 2
     // [6] puta::screen#0 = puta::ph#2 w= puta::pl#2 -- vwuz1=vbuxx_word_vbuaa 
     stx.z screen+1
     sta.z screen
-    // [7] *((byte*)puta::screen#0) = 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((char *)puta::screen#0) = 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -251,13 +251,13 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-void puta(byte puta::ph , byte puta::pl)
-byte puta::ph
-byte puta::ph#2 reg byte x 11.0
-byte puta::pl
-byte puta::pl#2 reg byte a 11.0
-byte* puta::screen
-word puta::screen#0 screen zp[2]:2 11.0
+void puta(char ph , char pl)
+char puta::ph
+char puta::ph#2 // reg byte x 11.0
+char puta::pl
+char puta::pl#2 // reg byte a 11.0
+char *puta::screen
+unsigned int puta::screen#0 // screen zp[2]:2 11.0
 
 reg byte x [ puta::ph#2 ]
 reg byte a [ puta::pl#2 ]
@@ -283,7 +283,7 @@ Score: 48
   // main
 main: {
     // puta(4, 0x00)
-    // [1] call puta 
+    // [1] call puta
     // [5] phi from main to puta [phi:main->puta]
     // [5] phi puta::pl#2 = 0 [phi:main->puta#0] -- vbuaa=vbuc1 
     lda #0
@@ -293,7 +293,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // puta(5, 0x18)
-    // [3] call puta 
+    // [3] call puta
     // [5] phi from main::@1 to puta [phi:main::@1->puta]
     // [5] phi puta::pl#2 = $18 [phi:main::@1->puta#0] -- vbuaa=vbuc1 
     lda #$18
@@ -306,7 +306,7 @@ main: {
     rts
 }
   // puta
-// puta(byte register(X) ph, byte register(A) pl)
+// void puta(__register(X) char ph, __register(A) char pl)
 puta: {
     .label screen = 2
     // MAKEWORD( ph, pl )
@@ -314,7 +314,7 @@ puta: {
     stx.z screen+1
     sta.z screen
     // *screen = 'a'
-    // [7] *((byte*)puta::screen#0) = 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((char *)puta::screen#0) = 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y

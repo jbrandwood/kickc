@@ -38,7 +38,7 @@ main: {
 // a - the first byte
 // b - the second byte
 // Returns the sum pf the two bytes
-// sum(byte register(A) b)
+// __register(A) char sum(char a, __register(A) char b)
 sum: {
     // byte r = a+b
     // calculate the sum

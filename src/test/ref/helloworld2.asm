@@ -28,7 +28,7 @@ main: {
     .byte 0
 }
 .segment Code
-// print2(byte* zp(2) at)
+// void print2(__zp(2) char *at, char *msg)
 print2: {
     .label at = 2
     ldy #0

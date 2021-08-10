@@ -29,7 +29,7 @@ main: {
     // }
     rts
 }
-// print_person(byte register(X) person_id, byte* zp(2) person_name)
+// void print_person(__register(X) char person_id, __zp(2) char *person_name)
 print_person: {
     .label person_name = 2
     // SCREEN[idx++] = DIGIT[person.id]

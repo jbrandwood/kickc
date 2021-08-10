@@ -55,6 +55,7 @@ main: {
     jmp __b2
 }
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
+// void nexttext(char **textp)
 nexttext: {
     .label textp = main.text
     // textid++&1

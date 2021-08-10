@@ -40,6 +40,7 @@ main: {
     // }
     rts
 }
+// void do10(void (*fn)())
 do10: {
     .label i = 2
     lda #0

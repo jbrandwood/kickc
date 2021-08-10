@@ -230,6 +230,7 @@ main: {
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// void memoryRemapBlock(char blockPage, unsigned int memoryPage)
 memoryRemapBlock: {
     // Find the page offset (the number of pages to offset the block)
     .const pageOffset = $100-$40
@@ -274,7 +275,7 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerPageOffset, word zp(4) upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 6
     .label xVal = 8
@@ -336,6 +337,7 @@ memoryRemap: {
 // - src_bank The 64KB bank for the source (0-63)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
+// void memcpy_dma4(char dest_bank, void *dest, char src_bank, void *src, unsigned int num)
 memcpy_dma4: {
     .const num = MUSIC_END-MUSIC
     .const dest_bank = 1

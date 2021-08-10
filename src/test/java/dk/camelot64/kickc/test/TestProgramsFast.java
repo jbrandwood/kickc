@@ -1588,7 +1588,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException {
-      assertError("function-as-array.c", "Dereferencing a non-pointer type void(byte)");
+      assertError("function-as-array.c", "Dereferencing a non-pointer type void (char)");
    }
 
    //@Test
@@ -2306,7 +2306,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testStructError7() throws IOException {
-      assertError("struct-err-7.c", "Type mismatch (signed word) cannot be assigned from '*main::per.qwe'");
+      assertError("struct-err-7.c", "Type mismatch (int) cannot be assigned from '*main::per.qwe'");
    }
 
    @Test

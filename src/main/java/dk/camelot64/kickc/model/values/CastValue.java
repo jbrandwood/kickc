@@ -38,7 +38,7 @@ public class CastValue implements RValue {
 
    @Override
    public String toString(Program program) {
-      return "("+ toType.toString()+")"+ value.toString(program);
+      return "("+ toType.toCDecl()+")"+ value.toString(program);
    }
 
    @Override

@@ -55,7 +55,7 @@ main: {
     // }
     rts
 }
-// outsw(signed word zp(4) sw)
+// void outsw(__zp(4) int sw)
 outsw: {
     .label sw = 4
     // if(sw<0)
@@ -78,7 +78,7 @@ outsw: {
     // }
     rts
 }
-// outw(word zp(4) w)
+// void outw(__zp(4) unsigned int w)
 outw: {
     .label w = 4
     // BYTE1(w)
@@ -122,7 +122,7 @@ outw: {
     // }
     rts
 }
-// out(byte register(A) c)
+// void out(__register(A) char c)
 out: {
     // idx++;
     inx

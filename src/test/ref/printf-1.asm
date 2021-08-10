@@ -111,7 +111,7 @@ main: {
 }
 .segment Code
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $17
@@ -257,7 +257,7 @@ clrscr: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// printf_string(byte* zp(3) str, byte zp(2) format_justify_left)
+// void printf_string(__zp(3) char *str, char format_min_length, __zp(2) char format_justify_left)
 printf_string: {
     .label __9 = 6
     .label padding = 5
@@ -347,7 +347,7 @@ cputln: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($b) str)
+// __zp(6) unsigned int strlen(__zp($b) char *str)
 strlen: {
     .label len = 6
     .label str = $b
@@ -377,7 +377,7 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// printf_padding(byte zp(9) pad, byte zp(8) length)
+// void printf_padding(__zp(9) char pad, __zp(8) char length)
 printf_padding: {
     .label i = $a
     .label length = 8
@@ -400,7 +400,7 @@ printf_padding: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(3) s)
+// void cputs(__zp(3) const char *s)
 cputs: {
     .label s = 3
   __b1:
@@ -484,7 +484,7 @@ cscroll: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -512,7 +512,7 @@ cputc: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($1b) destination, void* zp($b) source)
+// void * memcpy(__zp($1b) void *destination, __zp($b) void *source, unsigned int num)
 memcpy: {
     .label src_end = $19
     .label dst = $1b
@@ -554,7 +554,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c)
+// void * memset(__zp($b) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $1b
     .label dst = $b

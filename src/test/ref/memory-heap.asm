@@ -58,6 +58,7 @@ main: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(unsigned int size)
 malloc: {
     .label mem = 6
     // unsigned char* mem = heap_head-size

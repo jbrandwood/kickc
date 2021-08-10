@@ -24,6 +24,7 @@ main: {
     // }
     rts
 }
+// void update(struct myStruct *s, unsigned int size)
 update: {
     .const size = $3e8
     .label s = main.s

@@ -169,7 +169,7 @@ init_screen: {
     rts
 }
 // Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp($d) b, byte* zp($b) at)
+// void print_schar_at(__zp($d) signed char b, __zp($b) char *at)
 print_schar_at: {
     .label b = $d
     .label at = $b
@@ -200,7 +200,7 @@ print_schar_at: {
     sta.z b
     jmp __b2
 }
-// fmul8(signed byte zp($10) aa, signed byte zp($11) bb)
+// __register(A) signed char fmul8(__zp($10) volatile signed char aa, __zp($11) volatile signed char bb)
 fmul8: {
     .label aa = $10
     .label bb = $11
@@ -232,7 +232,7 @@ print_cls: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp($b) at)
+// void print_char_at(__register(X) char ch, __zp($b) char *at)
 print_char_at: {
     .label at = $b
     // *(at) = ch
@@ -243,7 +243,7 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp($d) b, byte* zp($b) at)
+// void print_uchar_at(__zp($d) char b, __zp($b) char *at)
 print_uchar_at: {
     .label b = $d
     .label at = $b
@@ -273,6 +273,7 @@ print_uchar_at: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8

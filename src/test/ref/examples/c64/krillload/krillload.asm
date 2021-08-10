@@ -101,6 +101,7 @@ krill_install: {
 // zero-length filename
 // - filename - The name of the file to load (zero-terminated in petscii encoding)
 // Returns the status of the load
+// __register(A) char krill_loadraw(char *filename)
 krill_loadraw: {
     .label status = $ff
     .label fname = $fe

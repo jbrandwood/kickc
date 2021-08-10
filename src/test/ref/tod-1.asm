@@ -105,7 +105,7 @@ main: {
     jmp __b1
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .label __5 = $12
     .label __6 = $e
@@ -180,7 +180,7 @@ gotoxy: {
 }
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// tod_init(byte zp($c) tod_TENTHS, byte zp($d) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+// void tod_init(__zp($c) char tod_TENTHS, __zp($d) char tod_SEC, __register(X) char tod_MIN, __register(Y) char tod_HOURS)
 tod_init: {
     .label tod_TENTHS = $c
     .label tod_SEC = $d
@@ -227,7 +227,7 @@ tod_read: {
     rts
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($d) tod_TENTHS, byte zp($14) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// char * tod_str(__zp($d) char tod_TENTHS, __zp($14) char tod_SEC, __register(Y) char tod_MIN, __register(X) char tod_HOURS)
 tod_str: {
     .label tod_TENTHS = $d
     .label tod_SEC = $14
@@ -311,7 +311,7 @@ tod_str: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(2) s)
+// void cputs(__zp(2) const char *s)
 cputs: {
     .label s = 2
     lda #<tod_buffer
@@ -337,7 +337,7 @@ cputs: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -455,7 +455,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($17) destination, void* zp(4) source)
+// void * memcpy(__zp($17) void *destination, __zp(4) void *source, unsigned int num)
 memcpy: {
     .label src_end = $15
     .label dst = $17
@@ -497,7 +497,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c)
+// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $17
     .label dst = 4

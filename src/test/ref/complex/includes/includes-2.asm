@@ -19,6 +19,7 @@ main: {
     rts
 }
 // A local stdlib include file
+// unsigned int strlen(char *str)
 strlen: {
     .label return = 'x'
     rts

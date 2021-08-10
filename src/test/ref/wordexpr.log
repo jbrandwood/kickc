@@ -21,7 +21,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -32,21 +32,21 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-number~ main::$0
-bool~ main::$1
-word main::b
-word main::b#0
-word main::b#1
-word main::b#2
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
+number main::$0
+bool main::$1
+unsigned int main::b
+unsigned int main::b#0
+unsigned int main::b#1
+unsigned int main::b#2
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
 
 Adding number conversion cast (unumber) $28*8 in main::$0 = main::b#2 + $28*8
 Adding number conversion cast (unumber) main::$0 in main::$0 = main::b#2 + (unumber)$28*8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inferred type updated to word in main::$0 = main::b#2 + (word)$28*8
+Inferred type updated to unsigned int in main::$0 = main::b#2 + (unsigned int)$28*8
 Alias main::b#1 = main::$0 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition main::$1 [6] if(main::i#1!=rangelast(0,$a)) goto main::@1
@@ -65,15 +65,15 @@ Adding number conversion cast (unumber) $b in [3] if(main::i#1!=$b) goto main::@
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type (char) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::b#0
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Constant inlined main::b#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
@@ -95,7 +95,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
   [1] main::b#2 = phi( main/0, main::@1/main::b#1 )
-  [2] main::b#1 = main::b#2 + (word)$28*8
+  [2] main::b#1 = main::b#2 + (unsigned int)$28*8
   [3] main::i#1 = ++ main::i#2
   [4] if(main::i#1!=$b) goto main::@1
   to:main::@return
@@ -106,12 +106,12 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-word main::b
-word main::b#1 7.333333333333333
-word main::b#2 22.0
-byte main::i
-byte main::i#1 16.5
-byte main::i#2 11.0
+unsigned int main::b
+unsigned int main::b#1 // 7.333333333333333
+unsigned int main::b#2 // 22.0
+char main::i
+char main::i#1 // 16.5
+char main::i#2 // 11.0
 
 Initial phi equivalence classes
 [ main::b#2 main::b#1 ]
@@ -122,9 +122,9 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::b#2 main::b#1 ]
 Allocated zp[1]:4 [ main::i#2 main::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] main::b#1 = main::b#2 + (word)$28*8 [ main::i#2 main::b#1 ] (  [ main::i#2 main::b#1 ] { }  ) always clobbers reg byte a 
+Statement [2] main::b#1 = main::b#2 + (unsigned int)$28*8 [ main::i#2 main::b#1 ] (  [ main::i#2 main::b#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i#2 main::i#1 ]
-Statement [2] main::b#1 = main::b#2 + (word)$28*8 [ main::i#2 main::b#1 ] (  [ main::i#2 main::b#1 ] { }  ) always clobbers reg byte a 
+Statement [2] main::b#1 = main::b#2 + (unsigned int)$28*8 [ main::i#2 main::b#1 ] (  [ main::i#2 main::b#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::b#2 main::b#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::i#2 main::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 
@@ -169,7 +169,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] main::b#1 = main::b#2 + (word)$28*8 -- vwuz1=vwuz1_plus_vwuc1 
+    // [2] main::b#1 = main::b#2 + (unsigned int)$28*8 -- vwuz1=vwuz1_plus_vwuc1 
     lda.z b
     clc
     adc #<$28*8
@@ -208,12 +208,12 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 void main()
-word main::b
-word main::b#1 b zp[2]:2 7.333333333333333
-word main::b#2 b zp[2]:2 22.0
-byte main::i
-byte main::i#1 reg byte x 16.5
-byte main::i#2 reg byte x 11.0
+unsigned int main::b
+unsigned int main::b#1 // b zp[2]:2 7.333333333333333
+unsigned int main::b#2 // b zp[2]:2 22.0
+char main::i
+char main::i#1 // reg byte x 16.5
+char main::i#2 // reg byte x 11.0
 
 zp[2]:2 [ main::b#2 main::b#1 ]
 reg byte x [ main::i#2 main::i#1 ]
@@ -251,7 +251,7 @@ main: {
     // main::@1
   __b1:
     // b = b + 40*8
-    // [2] main::b#1 = main::b#2 + (word)$28*8 -- vwuz1=vwuz1_plus_vwuc1 
+    // [2] main::b#1 = main::b#2 + (unsigned int)$28*8 -- vwuz1=vwuz1_plus_vwuc1 
     lda.z b
     clc
     adc #<$28*8

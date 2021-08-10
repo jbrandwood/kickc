@@ -1,5 +1,5 @@
 Setting inferred volatile on symbol affected by address-of main::ptr = &val
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -22,7 +22,7 @@ main: scope:[main]  from __start::@1
   main::SCREEN2[main::idx#3] = *main::ptr
   main::idx#4 = ++ main::idx#3
   setv::v#0 = 4
-  call setv 
+  call setv
   to:main::@1
 main::@1: scope:[main]  from main
   main::idx#7 = phi( main/main::idx#4 )
@@ -31,7 +31,7 @@ main::@1: scope:[main]  from main
   main::idx#5 = ++ main::idx#7
   setp::p#0 = main::ptr
   setp::v#0 = 5
-  call setp 
+  call setp
   to:main::@2
 main::@2: scope:[main]  from main::@1
   main::idx#8 = phi( main::@1/main::idx#5 )
@@ -43,7 +43,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void setv(byte setv::v)
+void setv(char v)
 setv: scope:[setv]  from main
   setv::v#1 = phi( main/setv::v#0 )
   val = setv::v#1
@@ -52,7 +52,7 @@ setv::@return: scope:[setv]  from setv
   return 
   to:@return
 
-void setp(byte* setp::p , byte setp::v)
+void setp(char *p , char v)
 setp: scope:[setp]  from main::@1
   setp::p#1 = phi( main::@1/setp::p#0 )
   setp::v#1 = phi( main::@1/setp::v#0 )
@@ -69,7 +69,7 @@ __start::__init1: scope:[__start]  from __start
   val = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -80,31 +80,31 @@ __start::@return: scope:[__start]  from __start::@2
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* const main::SCREEN1 = (byte*)$400
-constant byte* const main::SCREEN2 = main::SCREEN1+$28
-byte main::idx
-byte main::idx#0
-byte main::idx#1
-byte main::idx#2
-byte main::idx#3
-byte main::idx#4
-byte main::idx#5
-byte main::idx#6
-byte main::idx#7
-byte main::idx#8
-constant byte* main::ptr = &val
-void setp(byte* setp::p , byte setp::v)
-byte* setp::p
-byte* setp::p#0
-byte* setp::p#1
-byte setp::v
-byte setp::v#0
-byte setp::v#1
-void setv(byte setv::v)
-byte setv::v
-byte setv::v#0
-byte setv::v#1
-volatile byte val loadstore
+__constant char * const main::SCREEN1 = (char *)$400
+__constant char * const main::SCREEN2 = main::SCREEN1+$28
+char main::idx
+char main::idx#0
+char main::idx#1
+char main::idx#2
+char main::idx#3
+char main::idx#4
+char main::idx#5
+char main::idx#6
+char main::idx#7
+char main::idx#8
+__constant char *main::ptr = &val
+void setp(char *p , char v)
+char *setp::p
+char *setp::p#0
+char *setp::p#1
+char setp::v
+char setp::v#0
+char setp::v#1
+void setv(char v)
+char setv::v
+char setv::v#0
+char setv::v#1
+__loadstore volatile char val
 
 Adding number conversion cast (unumber) $28 in 
 Adding number conversion cast (unumber) 1 in val = 1
@@ -119,7 +119,7 @@ Inlining cast *main::ptr = (unumber)3
 Inlining cast setv::v#0 = (unumber)4
 Inlining cast setp::v#0 = (unumber)5
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -127,12 +127,12 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::idx#4 = main::idx#7 
 Alias main::idx#5 = main::idx#8 
@@ -236,7 +236,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
-  [3] call main 
+  [3] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [4] return 
@@ -255,12 +255,12 @@ main: scope:[main]  from __start::@1
   [13] *main::ptr = 3
   [14] *(main::SCREEN1+3) = val
   [15] *(main::SCREEN2+3) = *main::ptr
-  [16] call setv 
+  [16] call setv
   to:main::@1
 main::@1: scope:[main]  from main
   [17] *(main::SCREEN1+4) = val
   [18] *(main::SCREEN2+4) = *main::ptr
-  [19] call setp 
+  [19] call setp
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [20] *(main::SCREEN1+5) = val
@@ -270,7 +270,7 @@ main::@return: scope:[main]  from main::@2
   [22] return 
   to:@return
 
-void setv(byte setv::v)
+void setv(char v)
 setv: scope:[setv]  from main
   [23] val = setv::v#0
   to:setv::@return
@@ -278,7 +278,7 @@ setv::@return: scope:[setv]  from setv
   [24] return 
   to:@return
 
-void setp(byte* setp::p , byte setp::v)
+void setp(char *p , char v)
 setp: scope:[setp]  from main::@1
   [25] *main::ptr = setp::v#0
   to:setp::@return
@@ -290,13 +290,13 @@ setp::@return: scope:[setp]  from setp
 VARIABLE REGISTER WEIGHTS
 void __start()
 void main()
-byte main::idx
-void setp(byte* setp::p , byte setp::v)
-byte* setp::p
-byte setp::v
-void setv(byte setv::v)
-byte setv::v
-volatile byte val loadstore 14.692307692307692
+char main::idx
+void setp(char *p , char v)
+char *setp::p
+char setp::v
+void setv(char v)
+char setv::v
+__loadstore volatile char val // 14.692307692307692
 
 Initial phi equivalence classes
 Added variable val to live range equivalence class [ val ]
@@ -367,7 +367,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [3] call main 
+    // [3] call main
     jsr main
     jmp __breturn
     // __start::@return
@@ -417,7 +417,7 @@ main: {
     // [15] *(main::SCREEN2+3) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+3
-    // [16] call setv 
+    // [16] call setv
     // Set value directly in a call
     jsr setv
     jmp __b1
@@ -429,7 +429,7 @@ main: {
     // [18] *(main::SCREEN2+4) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+4
-    // [19] call setp 
+    // [19] call setp
     // Set value through pointer in a call
     jsr setp
     jmp __b2
@@ -448,6 +448,7 @@ main: {
     rts
 }
   // setv
+// void setv(char v)
 setv: {
     .const v = 4
     // [23] val = setv::v#0 -- vbuz1=vbuc1 
@@ -460,6 +461,7 @@ setv: {
     rts
 }
   // setp
+// void setp(char *p, char v)
 setp: {
     .const v = 5
     // [25] *main::ptr = setp::v#0 -- _deref_pbuc1=vbuc2 
@@ -501,18 +503,18 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 void __start()
 void main()
-constant byte* const main::SCREEN1 = (byte*) 1024
-constant byte* const main::SCREEN2 = main::SCREEN1+$28
-byte main::idx
-constant byte* main::ptr = &val
-void setp(byte* setp::p , byte setp::v)
-byte* setp::p
-byte setp::v
-constant byte setp::v#0 v = 5
-void setv(byte setv::v)
-byte setv::v
-constant byte setv::v#0 v = 4
-volatile byte val loadstore zp[1]:2 14.692307692307692
+__constant char * const main::SCREEN1 = (char *) 1024
+__constant char * const main::SCREEN2 = main::SCREEN1+$28
+char main::idx
+__constant char *main::ptr = &val
+void setp(char *p , char v)
+char *setp::p
+char setp::v
+__constant char setp::v#0 = 5 // v
+void setv(char v)
+char setv::v
+__constant char setv::v#0 = 4 // v
+__loadstore volatile char val // zp[1]:2 14.692307692307692
 
 zp[1]:2 [ val ]
 
@@ -543,7 +545,7 @@ __start: {
     sta.z val
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [3] call main 
+    // [3] call main
     jsr main
     // __start::@return
     // [4] return 
@@ -601,7 +603,7 @@ main: {
     lda.z ptr
     sta SCREEN2+3
     // setv(4)
-    // [16] call setv 
+    // [16] call setv
     // Set value directly in a call
     jsr setv
     // main::@1
@@ -614,7 +616,7 @@ main: {
     lda.z ptr
     sta SCREEN2+4
     // setp(ptr, 5)
-    // [19] call setp 
+    // [19] call setp
     // Set value through pointer in a call
     jsr setp
     // main::@2
@@ -632,6 +634,7 @@ main: {
     rts
 }
   // setv
+// void setv(char v)
 setv: {
     .const v = 4
     // val = v
@@ -644,6 +647,7 @@ setv: {
     rts
 }
   // setp
+// void setp(char *p, char v)
 setp: {
     .const v = 5
     // *p = v

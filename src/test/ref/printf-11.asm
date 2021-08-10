@@ -39,7 +39,7 @@ main: {
     .byte 0
 }
 .segment Code
-// cputs(byte* zp(2) str)
+// void cputs(__zp(2) char *str)
 cputs: {
     .label str = 2
   __b1:
@@ -68,6 +68,7 @@ cputs: {
 }
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
+// void printf_uint(unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     // *screen++ = printf_hextab[BYTE1(uvalue)>>4]
     lda printf_hextab

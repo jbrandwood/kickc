@@ -26,12 +26,14 @@ main: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(unsigned int size)
 malloc: {
     .const size = main.width*main.height
     .label mem = HEAP_TOP-size
     .label return = mem
     rts
 }
+// void SolveMaze(char *maze, unsigned int width, unsigned int height)
 SolveMaze: {
     .const x = 3
     .const y = 2

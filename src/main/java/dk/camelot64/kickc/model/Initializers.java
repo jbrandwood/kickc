@@ -42,7 +42,7 @@ public class Initializers {
             return new ConstantArrayFilled(typePointer.getElementType(), typePointer.getArraySpec().getArraySize());
          }
       } else {
-         throw new CompileError("Default initializer not implemented for type " + typeSpec.getType().getTypeName(), statementSource);
+         throw new CompileError("Default initializer not implemented for type " + typeSpec.getType().toCDecl(), statementSource);
       }
    }
 
@@ -120,7 +120,7 @@ public class Initializers {
                if(SymbolTypeConversion.assignmentTypeMatch(typeSpec.getType(), inferredType))
                   initValue = new CastValue(typeSpec.getType(), initValue);
                else
-                  throw new CompileError("Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from '" + initValue + "'.", source);
+                  throw new CompileError("Type mismatch (" + typeSpec.getType().toCDecl() + ") cannot be assigned from '" + initValue + "'.", source);
             }
          }
       }
@@ -150,7 +150,7 @@ public class Initializers {
          } else {
             throw new CompileError(
                   "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
-                        "which does not match the number of members in " + structType.getTypeName() + " (" + structInitNeedSize + " members).\n" +
+                        "which does not match the number of members in " + structType.toCDecl() + " (" + structInitNeedSize + " members).\n" +
                         " Struct initializer: " + valueList.toString(program),
                   source);
 

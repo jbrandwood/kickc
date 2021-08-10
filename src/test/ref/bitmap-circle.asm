@@ -72,7 +72,7 @@ main: {
     jmp __b1
 }
 // Fill some memory with a value
-// fill(signed word zp(2) size, byte register(X) val)
+// void fill(char *start, __zp(2) int size, __register(X) char val)
 fill: {
     .label end = 2
     .label addr = 4
@@ -107,6 +107,7 @@ fill: {
   !:
     jmp __b1
 }
+// void circle(int xc, int yc, int r)
 circle: {
     .const xc = $64
     .const yc = $64
@@ -348,7 +349,7 @@ circle: {
     sta.z p+1
     jmp __b4
 }
-// plot(signed word zp(8) x, signed word zp($a) y)
+// void plot(__zp(8) int x, __zp($a) int y)
 plot: {
     .label __0 = $c
     .label __2 = $a

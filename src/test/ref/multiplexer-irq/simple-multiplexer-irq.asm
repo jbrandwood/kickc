@@ -381,6 +381,7 @@ loop: {
     jmp __b2
 }
 // Initialize the multiplexer data structures
+// void plexInit(char *screen)
 plexInit: {
     // PLEX_SCREEN_PTR = screen+0x3f8
     lda #<SCREEN+$3f8

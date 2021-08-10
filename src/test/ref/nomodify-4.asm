@@ -19,7 +19,7 @@ main: {
     // }
     rts
 }
-// print(byte register(A) c)
+// void print(__register(A) const char c)
 print: {
     // *SCREEN = c
     sta SCREEN

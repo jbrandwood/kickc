@@ -21,7 +21,7 @@ main: {
     // }
     rts
 }
-// print(byte register(A) p_x)
+// void print(__register(A) char p_x, char p_y)
 print: {
     // SCREEN[idx++] = p.x
     sta SCREEN,x

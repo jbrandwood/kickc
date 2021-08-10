@@ -33,7 +33,7 @@ main: {
     // }
     rts
 }
-// line(byte register(X) l)
+// void line(__register(X) char l)
 line: {
     // plot(l)
     jsr plot
@@ -44,7 +44,7 @@ line: {
     // }
     rts
 }
-// plot(byte register(X) x)
+// void plot(__register(X) char x)
 plot: {
     // SCREEN[x] = '*'
     lda #'*'

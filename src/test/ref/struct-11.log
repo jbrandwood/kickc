@@ -5,23 +5,23 @@ Fixing struct type size struct Person to 65
 Fixing struct type size struct Person to 65
 Fixing struct type SIZE_OF struct Person to 65
 Fixing struct type SIZE_OF struct Person to 65
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
   idx#20 = phi( __start::@1/idx#22 )
-  print_person::person_id#0 = *((byte*)&jesper+OFFSET_STRUCT_PERSON_ID)
-  print_person::person_name#0 = (byte*)&jesper+OFFSET_STRUCT_PERSON_NAME
-  call print_person 
+  print_person::person_id#0 = *((char *)&jesper+OFFSET_STRUCT_PERSON_ID)
+  print_person::person_name#0 = (char *)&jesper+OFFSET_STRUCT_PERSON_NAME
+  call print_person
   to:main::@1
 main::@1: scope:[main]  from main
   idx#11 = phi( main/idx#7 )
   idx#0 = idx#11
-  print_person::person_id#1 = *((byte*)&henriette+OFFSET_STRUCT_PERSON_ID)
-  print_person::person_name#1 = (byte*)&henriette+OFFSET_STRUCT_PERSON_NAME
-  call print_person 
+  print_person::person_id#1 = *((char *)&henriette+OFFSET_STRUCT_PERSON_ID)
+  print_person::person_name#1 = (char *)&henriette+OFFSET_STRUCT_PERSON_NAME
+  call print_person
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#12 = phi( main::@1/idx#7 )
@@ -33,7 +33,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void print_person(byte print_person::person_id , byte* print_person::person_name)
+void print_person(char person_id , char *person_name)
 print_person: scope:[print_person]  from main main::@1
   print_person::person_name#4 = phi( main/print_person::person_name#0, main::@1/print_person::person_name#1 )
   idx#14 = phi( main/idx#20, main::@1/idx#0 )
@@ -78,7 +78,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#22 = phi( __start::__init1/idx#8 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#18 = phi( __start::@1/idx#2 )
@@ -91,63 +91,63 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* DIGIT[]  = "0123456789"
-constant byte OFFSET_STRUCT_PERSON_ID = 0
-constant byte OFFSET_STRUCT_PERSON_NAME = 1
-constant byte* const SCREEN = (byte*)$400
+__constant char DIGIT[] = "0123456789"
+__constant char OFFSET_STRUCT_PERSON_ID = 0
+__constant char OFFSET_STRUCT_PERSON_NAME = 1
+__constant char * const SCREEN = (char *)$400
 void __start()
-struct Person henriette loadstore = { id: 7, name: "henriette" }
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#17
-byte idx#18
-byte idx#19
-byte idx#2
-byte idx#20
-byte idx#21
-byte idx#22
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
-struct Person jesper loadstore = { id: 4, name: "jesper" }
+__loadstore struct Person henriette = { id: 7, name: "henriette" }
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#17
+char idx#18
+char idx#19
+char idx#2
+char idx#20
+char idx#21
+char idx#22
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
+__loadstore struct Person jesper = { id: 4, name: "jesper" }
 void main()
-void print_person(byte print_person::person_id , byte* print_person::person_name)
-bool~ print_person::$0
-byte print_person::i
-byte print_person::i#0
-byte print_person::i#1
-byte print_person::i#2
-byte print_person::i#3
+void print_person(char person_id , char *person_name)
+bool print_person::$0
+char print_person::i
+char print_person::i#0
+char print_person::i#1
+char print_person::i#2
+char print_person::i#3
 struct Person print_person::person
-byte print_person::person_id
-byte print_person::person_id#0
-byte print_person::person_id#1
-byte print_person::person_id#2
-byte* print_person::person_name
-byte* print_person::person_name#0
-byte* print_person::person_name#1
-byte* print_person::person_name#2
-byte* print_person::person_name#3
-byte* print_person::person_name#4
+char print_person::person_id
+char print_person::person_id#0
+char print_person::person_id#1
+char print_person::person_id#2
+char *print_person::person_name
+char *print_person::person_name#0
+char *print_person::person_name#1
+char *print_person::person_name#2
+char *print_person::person_name#3
+char *print_person::person_name#4
 
 Adding number conversion cast (unumber) 0 in print_person::$0 = 0 != print_person::person_name#2[print_person::i#2]
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#11 
 Alias idx#1 = idx#12 idx#13 idx#2 
@@ -166,13 +166,13 @@ Identical Phi Values idx#10 idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition print_person::$0 [18] if(0!=print_person::person_name#4[print_person::i#2]) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant print_person::person_name#0 = (byte*)&jesper+OFFSET_STRUCT_PERSON_NAME
-Constant print_person::person_name#1 = (byte*)&henriette+OFFSET_STRUCT_PERSON_NAME
+Constant print_person::person_name#0 = (char *)&jesper+OFFSET_STRUCT_PERSON_NAME
+Constant print_person::person_name#1 = (char *)&henriette+OFFSET_STRUCT_PERSON_NAME
 Constant print_person::i#0 = 0
 Constant idx#22 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&jesper in [1] print_person::person_id#0 = *((byte*)&jesper+OFFSET_STRUCT_PERSON_ID)
-Simplifying expression containing zero (byte*)&henriette in [5] print_person::person_id#1 = *((byte*)&henriette+OFFSET_STRUCT_PERSON_ID)
+Simplifying expression containing zero (char *)&jesper in [1] print_person::person_id#0 = *((char *)&jesper+OFFSET_STRUCT_PERSON_ID)
+Simplifying expression containing zero (char *)&henriette in [5] print_person::person_id#1 = *((char *)&henriette+OFFSET_STRUCT_PERSON_ID)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_PERSON_ID
 Successful SSA optimization PassNEliminateUnusedVars
@@ -187,13 +187,13 @@ Inlining constant with var siblings print_person::person_name#0
 Inlining constant with var siblings print_person::person_name#1
 Inlining constant with var siblings print_person::i#0
 Inlining constant with var siblings idx#22
-Constant inlined print_person::person_name#1 = (byte*)&henriette+OFFSET_STRUCT_PERSON_NAME
+Constant inlined print_person::person_name#1 = (char *)&henriette+OFFSET_STRUCT_PERSON_NAME
 Constant inlined idx#22 = 0
 Constant inlined print_person::i#0 = 0
-Constant inlined print_person::person_name#0 = (byte*)&jesper+OFFSET_STRUCT_PERSON_NAME
+Constant inlined print_person::person_name#0 = (char *)&jesper+OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) $40
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@2
 CALL GRAPH
@@ -213,20 +213,20 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] print_person::person_id#0 = *((byte*)&jesper)
-  [1] call print_person 
+  [0] print_person::person_id#0 = *((char *)&jesper)
+  [1] call print_person
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] print_person::person_id#1 = *((byte*)&henriette)
-  [3] call print_person 
+  [2] print_person::person_id#1 = *((char *)&henriette)
+  [3] call print_person
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void print_person(byte print_person::person_id , byte* print_person::person_name)
+void print_person(char person_id , char *person_name)
 print_person: scope:[print_person]  from main main::@1
-  [5] print_person::person_name#4 = phi( main/(byte*)&jesper+OFFSET_STRUCT_PERSON_NAME, main::@1/(byte*)&henriette+OFFSET_STRUCT_PERSON_NAME )
+  [5] print_person::person_name#4 = phi( main/(char *)&jesper+OFFSET_STRUCT_PERSON_NAME, main::@1/(char *)&henriette+OFFSET_STRUCT_PERSON_NAME )
   [5] idx#14 = phi( main/0, main::@1/idx#17 )
   [5] print_person::person_id#2 = phi( main/print_person::person_id#0, main::@1/print_person::person_id#1 )
   [6] SCREEN[idx#14] = DIGIT[print_person::person_id#2]
@@ -254,27 +254,27 @@ print_person::@2: scope:[print_person]  from print_person::@1
 
 
 VARIABLE REGISTER WEIGHTS
-struct Person henriette loadstore = { id: 7, name: "henriette" }
-byte idx
-byte idx#14 12.0
-byte idx#15 84.0
-byte idx#17 3.25
-byte idx#3 16.5
-byte idx#4 22.0
-byte idx#5 101.0
-struct Person jesper loadstore = { id: 4, name: "jesper" }
+__loadstore struct Person henriette = { id: 7, name: "henriette" }
+char idx
+char idx#14 // 12.0
+char idx#15 // 84.0
+char idx#17 // 3.25
+char idx#3 // 16.5
+char idx#4 // 22.0
+char idx#5 // 101.0
+__loadstore struct Person jesper = { id: 4, name: "jesper" }
 void main()
-void print_person(byte print_person::person_id , byte* print_person::person_name)
-byte print_person::i
-byte print_person::i#1 202.0
-byte print_person::i#2 101.0
+void print_person(char person_id , char *person_name)
+char print_person::i
+char print_person::i#1 // 202.0
+char print_person::i#2 // 101.0
 struct Person print_person::person
-byte print_person::person_id
-byte print_person::person_id#0 4.0
-byte print_person::person_id#1 4.0
-byte print_person::person_id#2 15.0
-byte* print_person::person_name
-byte* print_person::person_name#4 20.2
+char print_person::person_id
+char print_person::person_id#0 // 4.0
+char print_person::person_id#1 // 4.0
+char print_person::person_id#2 // 15.0
+char *print_person::person_name
+char *print_person::person_name#4 // 20.2
 
 Initial phi equivalence classes
 [ print_person::person_id#2 print_person::person_id#0 print_person::person_id#1 ]
@@ -356,12 +356,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] print_person::person_id#0 = *((byte*)&jesper) -- vbuxx=_deref_pbuc1 
+    // [0] print_person::person_id#0 = *((char *)&jesper) -- vbuxx=_deref_pbuc1 
     ldx jesper
-    // [1] call print_person 
+    // [1] call print_person
     // [5] phi from main to print_person [phi:main->print_person]
   print_person_from_main:
-    // [5] phi print_person::person_name#4 = (byte*)&jesper+OFFSET_STRUCT_PERSON_NAME [phi:main->print_person#0] -- pbuz1=pbuc1 
+    // [5] phi print_person::person_name#4 = (char *)&jesper+OFFSET_STRUCT_PERSON_NAME [phi:main->print_person#0] -- pbuz1=pbuc1 
     lda #<jesper+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
     lda #>jesper+OFFSET_STRUCT_PERSON_NAME
@@ -373,12 +373,12 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] print_person::person_id#1 = *((byte*)&henriette) -- vbuxx=_deref_pbuc1 
+    // [2] print_person::person_id#1 = *((char *)&henriette) -- vbuxx=_deref_pbuc1 
     ldx henriette
-    // [3] call print_person 
+    // [3] call print_person
     // [5] phi from main::@1 to print_person [phi:main::@1->print_person]
   print_person_from___b1:
-    // [5] phi print_person::person_name#4 = (byte*)&henriette+OFFSET_STRUCT_PERSON_NAME [phi:main::@1->print_person#0] -- pbuz1=pbuc1 
+    // [5] phi print_person::person_name#4 = (char *)&henriette+OFFSET_STRUCT_PERSON_NAME [phi:main::@1->print_person#0] -- pbuz1=pbuc1 
     lda #<henriette+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
     lda #>henriette+OFFSET_STRUCT_PERSON_NAME
@@ -393,7 +393,7 @@ main: {
     rts
 }
   // print_person
-// print_person(byte register(X) person_id, byte* zp(2) person_name)
+// void print_person(__register(X) char person_id, __zp(2) char *person_name)
 print_person: {
     .label person_name = 2
     // [6] SCREEN[idx#14] = DIGIT[print_person::person_id#2] -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
@@ -481,30 +481,30 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* DIGIT[]  = "0123456789"
-constant byte OFFSET_STRUCT_PERSON_NAME = 1
-constant byte* const SCREEN = (byte*) 1024
-struct Person henriette loadstore mem[65] = { id: 7, name: "henriette" }
-byte idx
-byte idx#14 reg byte y 12.0
-byte idx#15 reg byte x 84.0
-byte idx#17 reg byte y 3.25
-byte idx#3 reg byte x 16.5
-byte idx#4 reg byte x 22.0
-byte idx#5 reg byte x 101.0
-struct Person jesper loadstore mem[65] = { id: 4, name: "jesper" }
+__constant char DIGIT[] = "0123456789"
+__constant char OFFSET_STRUCT_PERSON_NAME = 1
+__constant char * const SCREEN = (char *) 1024
+__loadstore struct Person henriette = { id: 7, name: "henriette" } // mem[65]
+char idx
+char idx#14 // reg byte y 12.0
+char idx#15 // reg byte x 84.0
+char idx#17 // reg byte y 3.25
+char idx#3 // reg byte x 16.5
+char idx#4 // reg byte x 22.0
+char idx#5 // reg byte x 101.0
+__loadstore struct Person jesper = { id: 4, name: "jesper" } // mem[65]
 void main()
-void print_person(byte print_person::person_id , byte* print_person::person_name)
-byte print_person::i
-byte print_person::i#1 reg byte y 202.0
-byte print_person::i#2 reg byte y 101.0
+void print_person(char person_id , char *person_name)
+char print_person::i
+char print_person::i#1 // reg byte y 202.0
+char print_person::i#2 // reg byte y 101.0
 struct Person print_person::person
-byte print_person::person_id
-byte print_person::person_id#0 reg byte x 4.0
-byte print_person::person_id#1 reg byte x 4.0
-byte print_person::person_id#2 reg byte x 15.0
-byte* print_person::person_name
-byte* print_person::person_name#4 person_name zp[2]:2 20.2
+char print_person::person_id
+char print_person::person_id#0 // reg byte x 4.0
+char print_person::person_id#1 // reg byte x 4.0
+char print_person::person_id#2 // reg byte x 15.0
+char *print_person::person_name
+char *print_person::person_name#4 // person_name zp[2]:2 20.2
 
 reg byte x [ print_person::person_id#2 print_person::person_id#0 print_person::person_id#1 ]
 reg byte y [ idx#14 idx#17 ]
@@ -537,11 +537,11 @@ Score: 386
   // main
 main: {
     // print_person(jesper)
-    // [0] print_person::person_id#0 = *((byte*)&jesper) -- vbuxx=_deref_pbuc1 
+    // [0] print_person::person_id#0 = *((char *)&jesper) -- vbuxx=_deref_pbuc1 
     ldx jesper
-    // [1] call print_person 
+    // [1] call print_person
     // [5] phi from main to print_person [phi:main->print_person]
-    // [5] phi print_person::person_name#4 = (byte*)&jesper+OFFSET_STRUCT_PERSON_NAME [phi:main->print_person#0] -- pbuz1=pbuc1 
+    // [5] phi print_person::person_name#4 = (char *)&jesper+OFFSET_STRUCT_PERSON_NAME [phi:main->print_person#0] -- pbuz1=pbuc1 
     lda #<jesper+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
     lda #>jesper+OFFSET_STRUCT_PERSON_NAME
@@ -552,11 +552,11 @@ main: {
     jsr print_person
     // main::@1
     // print_person(henriette)
-    // [2] print_person::person_id#1 = *((byte*)&henriette) -- vbuxx=_deref_pbuc1 
+    // [2] print_person::person_id#1 = *((char *)&henriette) -- vbuxx=_deref_pbuc1 
     ldx henriette
-    // [3] call print_person 
+    // [3] call print_person
     // [5] phi from main::@1 to print_person [phi:main::@1->print_person]
-    // [5] phi print_person::person_name#4 = (byte*)&henriette+OFFSET_STRUCT_PERSON_NAME [phi:main::@1->print_person#0] -- pbuz1=pbuc1 
+    // [5] phi print_person::person_name#4 = (char *)&henriette+OFFSET_STRUCT_PERSON_NAME [phi:main::@1->print_person#0] -- pbuz1=pbuc1 
     lda #<henriette+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
     lda #>henriette+OFFSET_STRUCT_PERSON_NAME
@@ -570,7 +570,7 @@ main: {
     rts
 }
   // print_person
-// print_person(byte register(X) person_id, byte* zp(2) person_name)
+// void print_person(__register(X) char person_id, __zp(2) char *person_name)
 print_person: {
     .label person_name = 2
     // SCREEN[idx++] = DIGIT[person.id]

@@ -7,8 +7,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
+  .const SIZEOF_INT = 2
   .const ub = $29
   .const sb = -$29
   .const uw = $3000
@@ -27,14 +27,14 @@ main: {
     sta ub_screen+1
     // *((word*)ub_screen+1)= uw
     lda #<uw
-    sta ub_screen+1*SIZEOF_WORD
+    sta ub_screen+1*SIZEOF_UNSIGNED_INT
     lda #>uw
-    sta ub_screen+1*SIZEOF_WORD+1
+    sta ub_screen+1*SIZEOF_UNSIGNED_INT+1
     // *((signed word*)ub_screen+2) = sw
     lda #<sw
-    sta ub_screen+2*SIZEOF_SIGNED_WORD
+    sta ub_screen+2*SIZEOF_INT
     lda #>sw
-    sta ub_screen+2*SIZEOF_SIGNED_WORD+1
+    sta ub_screen+2*SIZEOF_INT+1
     // *((byte*)sb_screen) = ub
     lda #ub
     sta sb_screen
@@ -43,14 +43,14 @@ main: {
     sta sb_screen+1
     // *((word*)sb_screen+1)= uw
     lda #<uw
-    sta sb_screen+1*SIZEOF_WORD
+    sta sb_screen+1*SIZEOF_UNSIGNED_INT
     lda #>uw
-    sta sb_screen+1*SIZEOF_WORD+1
+    sta sb_screen+1*SIZEOF_UNSIGNED_INT+1
     // *((signed word*)sb_screen+2) = sw
     lda #<sw
-    sta sb_screen+2*SIZEOF_SIGNED_WORD
+    sta sb_screen+2*SIZEOF_INT
     lda #>sw
-    sta sb_screen+2*SIZEOF_SIGNED_WORD+1
+    sta sb_screen+2*SIZEOF_INT+1
     // *((byte*)uw_screen) = ub
     lda #ub
     sta uw_screen
@@ -59,14 +59,14 @@ main: {
     sta uw_screen+1
     // *((word*)uw_screen+1)= uw
     lda #<uw
-    sta uw_screen+1*SIZEOF_WORD
+    sta uw_screen+1*SIZEOF_UNSIGNED_INT
     lda #>uw
-    sta uw_screen+1*SIZEOF_WORD+1
+    sta uw_screen+1*SIZEOF_UNSIGNED_INT+1
     // *((signed word*)uw_screen+2) = sw
     lda #<sw
-    sta uw_screen+2*SIZEOF_SIGNED_WORD
+    sta uw_screen+2*SIZEOF_INT
     lda #>sw
-    sta uw_screen+2*SIZEOF_SIGNED_WORD+1
+    sta uw_screen+2*SIZEOF_INT+1
     // *((byte*)sw_screen) = ub
     lda #ub
     sta sw_screen
@@ -75,14 +75,14 @@ main: {
     sta sw_screen+1
     // *((word*)sw_screen+1)= uw
     lda #<uw
-    sta sw_screen+1*SIZEOF_WORD
+    sta sw_screen+1*SIZEOF_UNSIGNED_INT
     lda #>uw
-    sta sw_screen+1*SIZEOF_WORD+1
+    sta sw_screen+1*SIZEOF_UNSIGNED_INT+1
     // *((signed word*)sw_screen+2) = sw
     lda #<sw
-    sta sw_screen+2*SIZEOF_SIGNED_WORD
+    sta sw_screen+2*SIZEOF_INT
     lda #>sw
-    sta sw_screen+2*SIZEOF_SIGNED_WORD+1
+    sta sw_screen+2*SIZEOF_INT+1
     // }
     rts
 }

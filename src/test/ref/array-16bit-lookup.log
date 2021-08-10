@@ -8,14 +8,14 @@ main: scope:[main]  from __start
 main::@1: scope:[main]  from main main::@2
   main::idx#2 = phi( main/main::idx#0, main::@2/main::idx#1 )
   getValue::index#0 = main::idx#2
-  call getValue 
+  call getValue
   getValue::return#0 = getValue::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   main::idx#3 = phi( main::@1/main::idx#2 )
   getValue::return#3 = phi( main::@1/getValue::return#0 )
   main::$0 = getValue::return#3
-  main::$2 = main::idx#3 * SIZEOF_WORD
+  main::$2 = main::idx#3 * SIZEOF_UNSIGNED_INT
   main::SCREEN[main::$2] = main::$0
   main::idx#1 = main::idx#3 + rangenext(0,$80)
   main::$1 = main::idx#1 != rangelast(0,$80)
@@ -25,14 +25,14 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-word getValue(word getValue::index)
+unsigned int getValue(unsigned int index)
 getValue: scope:[getValue]  from main::@1
   getValue::index#1 = phi( main::@1/getValue::index#0 )
   getValue::$0 = getValue::index#1 & $7f
-  getValue::$3 = getValue::$0 * SIZEOF_WORD
+  getValue::$3 = getValue::$0 * SIZEOF_UNSIGNED_INT
   getValue::$1 = arr16[getValue::$3] & $ff
   getValue::$2 = getValue::$1 >> 1
-  getValue::return#1 = (word)getValue::$2
+  getValue::return#1 = (unsigned int)getValue::$2
   to:getValue::@return
 getValue::@return: scope:[getValue]  from getValue
   getValue::return#4 = phi( getValue/getValue::return#1 )
@@ -42,7 +42,7 @@ getValue::@return: scope:[getValue]  from getValue
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -51,55 +51,55 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
-constant word* arr16[$80]  = { fill( $80, 0) }
-word getValue(word getValue::index)
-number~ getValue::$0
-number~ getValue::$1
-number~ getValue::$2
-number~ getValue::$3
-word getValue::index
-word getValue::index#0
-word getValue::index#1
-word getValue::return
-word getValue::return#0
-word getValue::return#1
-word getValue::return#2
-word getValue::return#3
-word getValue::return#4
+__constant unsigned int arr16[$80] = { fill( $80, 0) }
+unsigned int getValue(unsigned int index)
+number getValue::$0
+number getValue::$1
+number getValue::$2
+number getValue::$3
+unsigned int getValue::index
+unsigned int getValue::index#0
+unsigned int getValue::index#1
+unsigned int getValue::return
+unsigned int getValue::return#0
+unsigned int getValue::return#1
+unsigned int getValue::return#2
+unsigned int getValue::return#3
+unsigned int getValue::return#4
 void main()
-word~ main::$0
-bool~ main::$1
-byte~ main::$2
-constant word* main::SCREEN = (word*)$400
-byte main::idx
-byte main::idx#0
-byte main::idx#1
-byte main::idx#2
-byte main::idx#3
+unsigned int main::$0
+bool main::$1
+char main::$2
+__constant unsigned int *main::SCREEN = (unsigned int *)$400
+char main::idx
+char main::idx#0
+char main::idx#1
+char main::idx#2
+char main::idx#3
 
 Adding number conversion cast (unumber) $7f in getValue::$0 = getValue::index#1 & $7f
 Adding number conversion cast (unumber) getValue::$0 in getValue::$0 = getValue::index#1 & (unumber)$7f
-Adding number conversion cast (unumber) getValue::$3 in getValue::$3 = getValue::$0 * SIZEOF_WORD
+Adding number conversion cast (unumber) getValue::$3 in getValue::$3 = getValue::$0 * SIZEOF_UNSIGNED_INT
 Adding number conversion cast (unumber) $ff in getValue::$1 = arr16[getValue::$3] & $ff
 Adding number conversion cast (unumber) getValue::$1 in getValue::$1 = arr16[getValue::$3] & (unumber)$ff
 Adding number conversion cast (unumber) 1 in getValue::$2 = getValue::$1 >> 1
 Adding number conversion cast (unumber) getValue::$2 in getValue::$2 = getValue::$1 >> (unumber)1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (word*) 1024
+Simplifying constant pointer cast (unsigned int *) 1024
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) $7f
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in getValue::$0 = getValue::index#1 & $7f
-Inferred type updated to byte in getValue::$3 = getValue::$0 * SIZEOF_WORD
-Inferred type updated to byte in getValue::$1 = arr16[getValue::$3] & $ff
-Inferred type updated to byte in getValue::$2 = getValue::$1 >> 1
+Inferred type updated to char in getValue::$0 = getValue::index#1 & $7f
+Inferred type updated to char in getValue::$3 = getValue::$0 * SIZEOF_UNSIGNED_INT
+Inferred type updated to char in getValue::$1 = arr16[getValue::$3] & $ff
+Inferred type updated to char in getValue::$2 = getValue::$1 >> 1
 Alias getValue::return#0 = getValue::return#3 
 Alias main::idx#2 = main::idx#3 
 Alias getValue::return#1 = getValue::return#4 getValue::return#2 
@@ -121,18 +121,18 @@ Adding number conversion cast (unumber) $81 in [8] if(main::idx#1!=$81) goto mai
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $81
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $81
+Finalized unsigned number type (char) $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting multiplication to use shift [5] main::$2 = main::idx#2 * SIZEOF_WORD
-Rewriting multiplication to use shift [11] getValue::$3 = getValue::$0 * SIZEOF_WORD
+Rewriting multiplication to use shift [5] main::$2 = main::idx#2 * SIZEOF_UNSIGNED_INT
+Rewriting multiplication to use shift [11] getValue::$3 = getValue::$0 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::idx#0
 Constant inlined main::idx#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) $80
+Finalized unsigned number type (char) $80
+Finalized unsigned number type (char) $80
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of main
@@ -154,7 +154,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@2
   [1] main::idx#2 = phi( main/0, main::@2/main::idx#1 )
   [2] getValue::index#0 = main::idx#2
-  [3] call getValue 
+  [3] call getValue
   [4] getValue::return#0 = getValue::return#1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -168,13 +168,13 @@ main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 
-word getValue(word getValue::index)
+unsigned int getValue(unsigned int index)
 getValue: scope:[getValue]  from main::@1
   [11] getValue::$0 = getValue::index#0 & $7f
   [12] getValue::$3 = getValue::$0 << 1
   [13] getValue::$1 = arr16[getValue::$3] & $ff
   [14] getValue::$2 = getValue::$1 >> 1
-  [15] getValue::return#1 = (word)getValue::$2
+  [15] getValue::return#1 = (unsigned int)getValue::$2
   to:getValue::@return
 getValue::@return: scope:[getValue]  from getValue
   [16] return 
@@ -182,22 +182,22 @@ getValue::@return: scope:[getValue]  from getValue
 
 
 VARIABLE REGISTER WEIGHTS
-word getValue(word getValue::index)
-byte~ getValue::$0 202.0
-byte~ getValue::$1 202.0
-byte~ getValue::$2 101.0
-byte~ getValue::$3 202.0
-word getValue::index
-word getValue::index#0 112.0
-word getValue::return
-word getValue::return#0 22.0
-word getValue::return#1 37.33333333333333
+unsigned int getValue(unsigned int index)
+char getValue::$0 // 202.0
+char getValue::$1 // 202.0
+char getValue::$2 // 101.0
+char getValue::$3 // 202.0
+unsigned int getValue::index
+unsigned int getValue::index#0 // 112.0
+unsigned int getValue::return
+unsigned int getValue::return#0 // 22.0
+unsigned int getValue::return#1 // 37.33333333333333
 void main()
-word~ main::$0 11.0
-byte~ main::$2 22.0
-byte main::idx
-byte main::idx#1 16.5
-byte main::idx#2 6.285714285714286
+unsigned int main::$0 // 11.0
+char main::$2 // 22.0
+char main::idx
+char main::idx#1 // 16.5
+char main::idx#2 // 6.285714285714286
 
 Initial phi equivalence classes
 [ main::idx#2 main::idx#1 ]
@@ -242,7 +242,7 @@ Statement [11] getValue::$0 = getValue::index#0 & $7f [ getValue::$0 ] ( getValu
 Statement [12] getValue::$3 = getValue::$0 << 1 [ getValue::$3 ] ( getValue:3 [ main::idx#2 getValue::$3 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [13] getValue::$1 = arr16[getValue::$3] & $ff [ getValue::$1 ] ( getValue:3 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [14] getValue::$2 = getValue::$1 >> 1 [ getValue::$2 ] ( getValue:3 [ main::idx#2 getValue::$2 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [15] getValue::return#1 = (word)getValue::$2 [ getValue::return#1 ] ( getValue:3 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [15] getValue::return#1 = (unsigned int)getValue::$2 [ getValue::return#1 ] ( getValue:3 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [2] getValue::index#0 = main::idx#2 [ main::idx#2 getValue::index#0 ] (  [ main::idx#2 getValue::index#0 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [4] getValue::return#0 = getValue::return#1 [ main::idx#2 getValue::return#0 ] (  [ main::idx#2 getValue::return#0 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [5] main::$0 = getValue::return#0 [ main::idx#2 main::$0 ] (  [ main::idx#2 main::$0 ] { }  ) always clobbers reg byte a 
@@ -252,7 +252,7 @@ Statement [11] getValue::$0 = getValue::index#0 & $7f [ getValue::$0 ] ( getValu
 Statement [12] getValue::$3 = getValue::$0 << 1 [ getValue::$3 ] ( getValue:3 [ main::idx#2 getValue::$3 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [13] getValue::$1 = arr16[getValue::$3] & $ff [ getValue::$1 ] ( getValue:3 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [14] getValue::$2 = getValue::$1 >> 1 [ getValue::$2 ] ( getValue:3 [ main::idx#2 getValue::$2 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [15] getValue::return#1 = (word)getValue::$2 [ getValue::return#1 ] ( getValue:3 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [15] getValue::return#1 = (unsigned int)getValue::$2 [ getValue::return#1 ] ( getValue:3 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::idx#2 main::idx#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ getValue::index#0 ] : zp[2]:3 , 
 Potential registers zp[2]:5 [ getValue::return#0 ] : zp[2]:5 , 
@@ -313,7 +313,7 @@ main: {
     sta.z getValue.index
     lda #0
     sta.z getValue.index+1
-    // [3] call getValue 
+    // [3] call getValue
     jsr getValue
     // [4] getValue::return#0 = getValue::return#1
     jmp __b2
@@ -341,7 +341,7 @@ main: {
     rts
 }
   // getValue
-// getValue(word zp(2) index)
+// __zp(4) unsigned int getValue(__zp(2) unsigned int index)
 getValue: {
     .label index = 2
     .label return = 4
@@ -356,7 +356,7 @@ getValue: {
     and arr16,y
     // [14] getValue::$2 = getValue::$1 >> 1 -- vbuaa=vbuaa_ror_1 
     lsr
-    // [15] getValue::return#1 = (word)getValue::$2 -- vwuz1=_word_vbuaa 
+    // [15] getValue::return#1 = (unsigned int)getValue::$2 -- vwuz1=_word_vbuaa 
     sta.z return
     lda #0
     sta.z return+1
@@ -388,24 +388,24 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant word* arr16[$80]  = { fill( $80, 0) }
-word getValue(word getValue::index)
-byte~ getValue::$0 reg byte a 202.0
-byte~ getValue::$1 reg byte a 202.0
-byte~ getValue::$2 reg byte a 101.0
-byte~ getValue::$3 reg byte a 202.0
-word getValue::index
-word getValue::index#0 index zp[2]:2 112.0
-word getValue::return
-word getValue::return#0 return zp[2]:4 22.0
-word getValue::return#1 return zp[2]:4 37.33333333333333
+__constant unsigned int arr16[$80] = { fill( $80, 0) }
+unsigned int getValue(unsigned int index)
+char getValue::$0 // reg byte a 202.0
+char getValue::$1 // reg byte a 202.0
+char getValue::$2 // reg byte a 101.0
+char getValue::$3 // reg byte a 202.0
+unsigned int getValue::index
+unsigned int getValue::index#0 // index zp[2]:2 112.0
+unsigned int getValue::return
+unsigned int getValue::return#0 // return zp[2]:4 22.0
+unsigned int getValue::return#1 // return zp[2]:4 37.33333333333333
 void main()
-word~ main::$0 zp[2]:4 11.0
-byte~ main::$2 reg byte a 22.0
-constant word* main::SCREEN = (word*) 1024
-byte main::idx
-byte main::idx#1 reg byte x 16.5
-byte main::idx#2 reg byte x 6.285714285714286
+unsigned int main::$0 // zp[2]:4 11.0
+char main::$2 // reg byte a 22.0
+__constant unsigned int *main::SCREEN = (unsigned int *) 1024
+char main::idx
+char main::idx#1 // reg byte x 16.5
+char main::idx#2 // reg byte x 6.285714285714286
 
 reg byte x [ main::idx#2 main::idx#1 ]
 zp[2]:2 [ getValue::index#0 ]
@@ -451,7 +451,7 @@ main: {
     sta.z getValue.index
     lda #0
     sta.z getValue.index+1
-    // [3] call getValue 
+    // [3] call getValue
     jsr getValue
     // [4] getValue::return#0 = getValue::return#1
     // main::@2
@@ -478,7 +478,7 @@ main: {
     rts
 }
   // getValue
-// getValue(word zp(2) index)
+// __zp(4) unsigned int getValue(__zp(2) unsigned int index)
 getValue: {
     .label index = 2
     .label return = 4
@@ -497,7 +497,7 @@ getValue: {
     // [14] getValue::$2 = getValue::$1 >> 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // return (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1);
-    // [15] getValue::return#1 = (word)getValue::$2 -- vwuz1=_word_vbuaa 
+    // [15] getValue::return#1 = (unsigned int)getValue::$2 -- vwuz1=_word_vbuaa 
     sta.z return
     lda #0
     sta.z return+1

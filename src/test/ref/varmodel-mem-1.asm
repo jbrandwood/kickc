@@ -38,7 +38,7 @@ main: {
     __1: .byte 0
 }
 .segment Code
-// sum(byte register(A) a, byte register(X) b)
+// __register(A) char sum(__register(A) char a, __register(X) char b)
 sum: {
     // a+b
     stx.z $ff

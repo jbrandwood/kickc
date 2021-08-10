@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::f = (void()*) 0
+  main::f = (void (*)()) 0
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -57,7 +57,7 @@ fn2::@return: scope:[fn2]  from fn2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -67,38 +67,38 @@ __start::@return: scope:[__start]  from __start::@1
 
 SYMBOL TABLE SSA
 void __start()
-constant byte* ff[]  = kickasm {{ jmp (main.f)
+__constant char ff[] = kickasm {{ jmp (main.f)
  }}
 void fn1()
-constant byte* const fn1::BORDER_COLOR = (byte*)$d020
+__constant char * const fn1::BORDER_COLOR = (char *)$d020
 void fn2()
-constant byte* const fn2::BG_COLOR = (byte*)$d021
+__constant char * const fn2::BG_COLOR = (char *)$d021
 void main()
-number~ main::$0
-bool~ main::$1
-void()* volatile main::f loadstore
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
-byte main::i#5
-byte main::i#6
+number main::$0
+bool main::$1
+__loadstore void (* volatile main::f)()
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+char main::i#5
+char main::i#6
 
 Adding number conversion cast (unumber) 1 in main::$0 = main::i#1 & 1
 Adding number conversion cast (unumber) main::$0 in main::$0 = main::i#1 & (unumber)1
 Adding number conversion cast (unumber) 0 in main::$1 = main::$0 == 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (char *) 53280
+Simplifying constant pointer cast (char *) 53281
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in main::$0 = main::i#1 & 1
+Inferred type updated to char in main::$0 = main::i#1 & 1
 Alias main::i#2 = main::i#3 
 Alias main::i#1 = main::i#5 main::i#6 
 Successful SSA optimization Pass2AliasElimination
@@ -146,7 +146,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 void main()
 main: scope:[main]  from
-  [4] main::f = (void()*) 0
+  [4] main::f = (void (*)()) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   [5] main::i#2 = phi( main/0, main::@4/main::i#1 )
@@ -172,11 +172,11 @@ VARIABLE REGISTER WEIGHTS
 void fn1()
 void fn2()
 void main()
-byte~ main::$0 22.0
-void()* volatile main::f loadstore 12.0
-byte main::i
-byte main::i#1 5.5
-byte main::i#2 22.0
+char main::$0 // 22.0
+__loadstore void (* volatile main::f)() // 12.0
+char main::i
+char main::i#1 // 5.5
+char main::i#2 // 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -190,11 +190,11 @@ Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:3 [ main::f ]
 Allocated zp[1]:5 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] main::f = (void()*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] main::f = (void (*)()) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] main::f = &fn2 [ main::f main::i#1 ] (  [ main::f main::i#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [11] main::f = &fn1 [ main::f main::i#1 ] (  [ main::f main::i#1 ] { }  ) always clobbers reg byte a 
-Statement [4] main::f = (void()*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] main::f = (void (*)()) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] main::$0 = main::i#1 & 1 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
 Statement [9] main::f = &fn2 [ main::f main::i#1 ] (  [ main::f main::i#1 ] { }  ) always clobbers reg byte a 
 Statement [11] main::f = &fn1 [ main::f main::i#1 ] (  [ main::f main::i#1 ] { }  ) always clobbers reg byte a 
@@ -253,7 +253,7 @@ fn1: {
   // main
 main: {
     .label f = 2
-    // [4] main::f = (void()*) 0 -- pprz1=pprc1 
+    // [4] main::f = (void (*)()) 0 -- pprz1=pprc1 
     lda #<0
     sta.z f
     lda #>0
@@ -332,18 +332,18 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Replacing instruction ldx #0 with TAX
 
 FINAL SYMBOL TABLE
-constant byte* ff[]  = kickasm {{ jmp (main.f)
+__constant char ff[] = kickasm {{ jmp (main.f)
  }}
 void fn1()
-constant byte* const fn1::BORDER_COLOR = (byte*) 53280
+__constant char * const fn1::BORDER_COLOR = (char *) 53280
 void fn2()
-constant byte* const fn2::BG_COLOR = (byte*) 53281
+__constant char * const fn2::BG_COLOR = (char *) 53281
 void main()
-byte~ main::$0 reg byte a 22.0
-void()* volatile main::f loadstore zp[2]:2 12.0
-byte main::i
-byte main::i#1 reg byte x 5.5
-byte main::i#2 reg byte x 22.0
+char main::$0 // reg byte a 22.0
+__loadstore void (* volatile main::f)() // zp[2]:2 12.0
+char main::i
+char main::i#1 // reg byte x 5.5
+char main::i#2 // reg byte x 22.0
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::f ]
@@ -392,7 +392,7 @@ fn1: {
 main: {
     .label f = 2
     // void (*f)()
-    // [4] main::f = (void()*) 0 -- pprz1=pprc1 
+    // [4] main::f = (void (*)()) 0 -- pprz1=pprc1 
     lda #<0
     sta.z f
     sta.z f+1

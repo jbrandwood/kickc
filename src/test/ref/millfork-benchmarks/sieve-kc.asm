@@ -172,7 +172,7 @@ end: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($a) w)
+// void print_uint(__zp($a) unsigned int w)
 print_uint: {
     .label w = $a
     // print_uchar(BYTE1(w))
@@ -216,7 +216,7 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -239,7 +239,7 @@ print_uchar: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  main::screen = (byte*)$400
+  main::screen = (char *)$400
   main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -30,11 +30,11 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-bool~ main::$0
-byte main::i loadstore
-byte* main::screen loadstore
+bool main::$0
+__loadstore char main::i
+__loadstore char *main::screen
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition main::$0 [6] if(main::i!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -49,7 +49,7 @@ Adding number conversion cast (unumber) 6 in [5] if(main::i!=6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 6
+Finalized unsigned number type (char) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -60,7 +60,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] main::screen = (byte*) 1024
+  [0] main::screen = (char *) 1024
   [1] main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -76,8 +76,8 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i loadstore 7.000000000000001
-byte* main::screen loadstore 5.833333333333333
+__loadstore char main::i // 7.000000000000001
+__loadstore char *main::screen // 5.833333333333333
 
 Initial phi equivalence classes
 Added variable main::screen to live range equivalence class [ main::screen ]
@@ -88,7 +88,7 @@ Complete equivalence classes
 Allocated mem[2] [ main::screen ]
 Allocated mem[1] [ main::i ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] main::screen = (byte*) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
+Statement [0] main::screen = (char *) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
 Statement [1] main::i = 0 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
 Statement [2] *main::screen = 'a' [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a reg byte y 
 Statement [5] if(main::i!=6) goto main::@1 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
@@ -120,7 +120,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] main::screen = (byte*) 1024 -- pbum1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbum1=pbuc1 
     // A local pointer 
     lda #<$400
     sta screen
@@ -172,8 +172,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte main::i loadstore mem[1] 7.000000000000001
-byte* main::screen loadstore mem[2] 5.833333333333333
+__loadstore char main::i // mem[1] 7.000000000000001
+__loadstore char *main::screen // mem[2] 5.833333333333333
 
 mem[2] [ main::screen ]
 mem[1] [ main::i ]
@@ -198,7 +198,7 @@ Score: 554
   // main
 main: {
     // char* screen = (char*)0x0400
-    // [0] main::screen = (byte*) 1024 -- pbum1=pbuc1 
+    // [0] main::screen = (char *) 1024 -- pbum1=pbuc1 
     // A local pointer 
     lda #<$400
     sta screen

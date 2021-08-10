@@ -55,7 +55,7 @@ main: {
     // }
     rts
 }
-// print(void* zp(2) ptr)
+// void print(__zp(2) void *ptr)
 print: {
     .label ptr = 2
     // SCREEN[idx++] = *((byte*)ptr)

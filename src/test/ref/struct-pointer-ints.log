@@ -3,13 +3,13 @@ Removing C-classic struct-unwound assignment main::s = struct-unwound {*(&main::
 
 CONTROL FLOW GRAPH SSA
 
-void update(struct myStruct* update::s , word update::size)
+void update(struct myStruct *s , unsigned int size)
 update: scope:[update]  from main
   update::size#1 = phi( main/update::size#0 )
   update::s#1 = phi( main/update::s#0 )
-  update::$2 = (word*)update::s#1
+  update::$2 = (unsigned int *)update::s#1
   update::$0 = update::$2 + OFFSET_STRUCT_MYSTRUCT_A
-  update::$3 = (word*)update::s#1
+  update::$3 = (unsigned int *)update::s#1
   update::$1 = update::$3 + OFFSET_STRUCT_MYSTRUCT_A
   *update::$1 = *update::$0 + update::size#1
   to:update::@return
@@ -17,12 +17,12 @@ update::@return: scope:[update]  from update
   return 
   to:@return
 
-signed word main()
+int main()
 main: scope:[main]  from __start
   *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT)
   update::s#0 = &main::s
   update::size#0 = $3e8
-  call update 
+  call update
   to:main::@1
 main::@1: scope:[main]  from main
   main::return#0 = 0
@@ -35,7 +35,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   main::return#2 = main::return#1
   to:__start::@1
 __start::@1: scope:[__start]  from __start
@@ -45,27 +45,27 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte OFFSET_STRUCT_MYSTRUCT_A = 0
-constant byte SIZEOF_STRUCT_MYSTRUCT = 4
+__constant char OFFSET_STRUCT_MYSTRUCT_A = 0
+__constant char SIZEOF_STRUCT_MYSTRUCT = 4
 void __start()
-signed word main()
-signed word main::return
-signed word main::return#0
-signed word main::return#1
-signed word main::return#2
-signed word main::return#3
-volatile struct myStruct main::s loadstore
-void update(struct myStruct* update::s , word update::size)
-word*~ update::$0
-word*~ update::$1
-word*~ update::$2
-word*~ update::$3
-struct myStruct* update::s
-struct myStruct* update::s#0
-struct myStruct* update::s#1
-word update::size
-word update::size#0
-word update::size#1
+int main()
+int main::return
+int main::return#0
+int main::return#1
+int main::return#2
+int main::return#3
+__loadstore volatile struct myStruct main::s
+void update(struct myStruct *s , unsigned int size)
+unsigned int *update::$0
+unsigned int *update::$1
+unsigned int *update::$2
+unsigned int *update::$3
+struct myStruct *update::s
+struct myStruct *update::s#0
+struct myStruct *update::s#1
+unsigned int update::size
+unsigned int update::size#0
+unsigned int update::size#1
 
 Adding number conversion cast (unumber) $3e8 in update::size#0 = $3e8
 Adding number conversion cast (snumber) 0 in main::return#0 = 0
@@ -76,8 +76,8 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3e8
-Finalized signed number type (signed byte) 0
+Finalized unsigned number type (unsigned int) $3e8
+Finalized signed number type (signed char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::return#0 = main::return#3 main::return#1 
 Successful SSA optimization Pass2AliasElimination
@@ -88,8 +88,8 @@ Constant update::s#0 = &main::s
 Constant update::size#0 = $3e8
 Constant main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant update::$2 = (word*)update::s#0
-Constant update::$3 = (word*)update::s#0
+Constant update::$2 = (unsigned int *)update::s#0
+Constant update::$3 = (unsigned int *)update::s#0
 Constant main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [5] *update::$1 = *update::$0 + update::size#0  -- update::$2[OFFSET_STRUCT_MYSTRUCT_A]
@@ -112,8 +112,8 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined update::$2 = (word*)update::s#0
-Constant inlined update::$3 = (word*)update::s#0
+Constant inlined update::$2 = (unsigned int *)update::s#0
+Constant inlined update::$3 = (unsigned int *)update::s#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -125,18 +125,18 @@ Culled Empty Block label main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-signed word main()
+int main()
 main: scope:[main]  from
   [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT)
-  [1] call update 
+  [1] call update
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void update(struct myStruct* update::s , word update::size)
+void update(struct myStruct *s , unsigned int size)
 update: scope:[update]  from main
-  [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0
+  [3] *((unsigned int *)update::s#0) = *((unsigned int *)update::s#0) + update::size#0
   to:update::@return
 update::@return: scope:[update]  from update
   [4] return 
@@ -144,12 +144,12 @@ update::@return: scope:[update]  from update
 
 
 VARIABLE REGISTER WEIGHTS
-signed word main()
-signed word main::return
-volatile struct myStruct main::s loadstore
-void update(struct myStruct* update::s , word update::size)
-struct myStruct* update::s
-word update::size
+int main()
+int main::return
+__loadstore volatile struct myStruct main::s
+void update(struct myStruct *s , unsigned int size)
+struct myStruct *update::s
+unsigned int update::size
 
 Initial phi equivalence classes
 Added variable main::s to live range equivalence class [ main::s ]
@@ -158,7 +158,7 @@ Complete equivalence classes
 Allocated zp[4]:2 [ main::s ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 [ ] ( update:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((unsigned int *)update::s#0) = *((unsigned int *)update::s#0) + update::size#0 [ ] ( update:1 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::s ] : zp[4]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -198,7 +198,7 @@ main: {
     dey
     sta s,y
     bne !-
-    // [1] call update 
+    // [1] call update
     jsr update
     jmp __breturn
     // main::@return
@@ -207,10 +207,11 @@ main: {
     rts
 }
   // update
+// void update(struct myStruct *s, unsigned int size)
 update: {
     .const size = $3e8
     .label s = main.s
-    // [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    // [3] *((unsigned int *)update::s#0) = *((unsigned int *)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
     lda.z s
     clc
     adc #<size
@@ -235,15 +236,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_STRUCT_MYSTRUCT = 4
-signed word main()
-signed word main::return
-volatile struct myStruct main::s loadstore zp[4]:2
-void update(struct myStruct* update::s , word update::size)
-struct myStruct* update::s
-constant struct myStruct* update::s#0 s = &main::s
-word update::size
-constant word update::size#0 size = $3e8
+__constant char SIZEOF_STRUCT_MYSTRUCT = 4
+int main()
+int main::return
+__loadstore volatile struct myStruct main::s // zp[4]:2
+void update(struct myStruct *s , unsigned int size)
+struct myStruct *update::s
+__constant struct myStruct *update::s#0 = &main::s // s
+unsigned int update::size
+__constant unsigned int update::size#0 = $3e8 // size
 
 zp[4]:2 [ main::s ]
 
@@ -278,7 +279,7 @@ main: {
     sta s,y
     bne !-
     // update(&s, 1000)
-    // [1] call update 
+    // [1] call update
     jsr update
     // main::@return
     // }
@@ -286,11 +287,12 @@ main: {
     rts
 }
   // update
+// void update(struct myStruct *s, unsigned int size)
 update: {
     .const size = $3e8
     .label s = main.s
     // s->a += size
-    // [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    // [3] *((unsigned int *)update::s#0) = *((unsigned int *)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
     lda.z s
     clc
     adc #<size

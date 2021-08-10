@@ -29,7 +29,7 @@ main: {
     // }
     rts
 }
-// line(byte zp(2) x1)
+// void line(char x0, __zp(2) char x1)
 line: {
     .label x1 = 2
   __b1:

@@ -10,15 +10,15 @@ main: scope:[main]  from __start::@1
   callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3
-  main::$1 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
+  main::$1 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
   if(main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   callexecute *musicPlay 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   if(true) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -40,29 +40,29 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*)$d000
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *)$d000
 void __start()
 void main()
-bool~ main::$1
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
+bool main::$1
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
 
 Adding number conversion cast (unumber) 3 in 
-Adding number conversion cast (unumber) $fd in main::$1 = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
+Adding number conversion cast (unumber) $fd in main::$1 = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) != $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
+Simplifying constant pointer cast (struct MOS6569_VICII *) 53248
 Simplifying constant integer cast 3
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $fd
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition main::$1 [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
+Simple Condition main::$1 [2] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [6] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
@@ -75,7 +75,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Finalized unsigned number type (word) $1000
+Finalized unsigned number type (unsigned int) $1000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -93,14 +93,14 @@ main: scope:[main]  from
   [1] callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3
-  [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
+  [2] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [4] callexecute *musicPlay 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:main::@1
 
 
@@ -111,7 +111,7 @@ Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -165,14 +165,14 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [2] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [4] callexecute *musicPlay  -- call__deref_pprc1 
     // Play the music
@@ -180,7 +180,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
@@ -203,15 +203,15 @@ Removing instruction __b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* MUSIC[]  = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
+__constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
     .fill music.size, music.getData(i)
  }}
-constant byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-constant byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-constant struct MOS6569_VICII* const VICII = (struct MOS6569_VICII*) 53248
+__constant char OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+__constant char OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+__constant struct MOS6569_VICII * const VICII = (struct MOS6569_VICII *) 53248
 void main()
-constant void()* musicInit = (void()*)MUSIC
-constant void()* musicPlay = (void()*)MUSIC+3
+__constant void (*musicInit)() = (void (*)())MUSIC
+__constant void (*musicPlay)() = (void (*)())MUSIC+3
 
 
 
@@ -256,13 +256,13 @@ main: {
     // main::@1
   __b1:
     // while (VICII->RASTER != $fd)
-    // [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [2] if(*((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     // main::@2
     // (VICII->BORDER_COLOR)++;
-    // [3] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // (*musicPlay)()
     // [4] callexecute *musicPlay  -- call__deref_pprc1 
@@ -270,7 +270,7 @@ main: {
     jsr musicPlay
     // main::@3
     // (VICII->BORDER_COLOR)--;
-    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [5] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }

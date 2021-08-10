@@ -38,7 +38,7 @@ main: {
     // cond(i)?m1(i):m2(i)
     jmp __b4
 }
-// cond(byte register(A) b)
+// __register(A) bool cond(__register(A) char b)
 cond: {
     // b<5
     cmp #5
@@ -48,7 +48,7 @@ cond: {
     // }
     rts
 }
-// m2(byte register(A) i)
+// __register(A) char m2(__register(A) char i)
 m2: {
     // 10+i
     clc
@@ -56,7 +56,7 @@ m2: {
     // }
     rts
 }
-// m1(byte register(A) i)
+// __register(A) char m1(__register(A) char i)
 m1: {
     // 5+i
     clc

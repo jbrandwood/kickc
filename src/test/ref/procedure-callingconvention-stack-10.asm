@@ -21,7 +21,7 @@ __start: {
     jsr main
     rts
 }
-// print(struct Point zp(4) p)
+// void print(__zp(4) struct Point p)
 print: {
     .const OFFSET_STACK_P = 0
     .label p = 4
@@ -45,7 +45,7 @@ print: {
     // }
     rts
 }
-// get(byte register(X) i)
+// __zp(6) struct Point get(__register(X) char i)
 get: {
     .const OFFSET_STACK_I = 0
     .const OFFSET_STACK_RETURN_0 = 0

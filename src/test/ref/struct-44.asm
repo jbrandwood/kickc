@@ -56,7 +56,7 @@ main: {
     // }
     rts
 }
-// print_circle(word zp(2) c_radius, word zp(4) c_center_x, word zp(6) c_center_y, byte zp(8) c_color)
+// void print_circle(__zp(2) unsigned int c_radius, __zp(4) unsigned int c_center_x, __zp(6) unsigned int c_center_y, __zp(8) char c_color)
 print_circle: {
     .label c_radius = 2
     .label c_center_x = 4
@@ -128,7 +128,7 @@ print_ln: {
     // }
     rts
 }
-// print_str(byte* zp(9) str)
+// void print_str(__zp(9) char *str)
 print_str: {
     .label str = 9
   __b1:
@@ -151,7 +151,7 @@ print_str: {
   !:
     jmp __b1
 }
-// print_uint(word zp(2) i)
+// void print_uint(__zp(2) unsigned int i)
 print_uint: {
     .label i = 2
     // BYTE1(i)
@@ -195,7 +195,7 @@ print_uint: {
     // }
     rts
 }
-// print_uchar(byte zp(8) c)
+// void print_uchar(__zp(8) char c)
 print_uchar: {
     .label c = 8
     // c>>4
@@ -218,7 +218,7 @@ print_uchar: {
     // }
     rts
 }
-// print_char(byte register(A) c)
+// void print_char(__register(A) char c)
 print_char: {
     // screen_line[screen_idx++] = c
     stx.z $ff

@@ -53,7 +53,7 @@ main: {
     // }
     rts
 }
-// setByte(byte* zp(2) ptr, byte register(X) b)
+// void setByte(__zp(2) char *ptr, __register(X) char b)
 setByte: {
     .label ptr = 2
     // *ptr = b

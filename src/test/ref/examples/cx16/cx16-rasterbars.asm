@@ -11,7 +11,7 @@
 :BasicUpstart(__start)
   .const VERA_DCSEL = 2
   .const VERA_LINE = 2
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $9F25	CTRL Control
   /// Bit 7: Reset
   /// Bit 1: DCSEL
@@ -167,7 +167,7 @@ irq_line: {
     ldy #0
   __b16:
     // for(char i=0;i<sizeof(BAR);i++)
-    cpy #$20*SIZEOF_BYTE
+    cpy #$20*SIZEOF_CHAR
     bcc __b17
     // idx += 13
     lda #$d
@@ -237,8 +237,9 @@ main: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
-    .const num = $e6*SIZEOF_BYTE
+    .const num = $e6*SIZEOF_CHAR
     .const c = 0
     .label str = BARS
     .label end = str+num

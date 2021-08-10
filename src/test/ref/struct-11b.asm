@@ -26,7 +26,7 @@ main: {
     // }
     rts
 }
-// print_person(byte* zp(2) person_initials)
+// void print_person(unsigned long person_id, __zp(2) char *person_initials)
 print_person: {
     .label person_initials = 2
     ldy #0

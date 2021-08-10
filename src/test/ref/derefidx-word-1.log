@@ -11,7 +11,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -22,27 +22,27 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* const main::screen = (byte*)$400
+__constant char * const main::screen = (char *)$400
 
 Adding number conversion cast (unumber) $28*$a in main::screen[$28*$a] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-De-inlining pointer[w] to *(pointer+w)   [0] main::screen[(word)$28*$a] = 'a'
+De-inlining pointer[w] to *(pointer+w)   [0] main::screen[(unsigned int)$28*$a] = 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] main::$0 = main::screen + (word)$28*$a
+Constant right-side identified [0] main::$0 = main::screen + (unsigned int)$28*$a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::$0 = main::screen+(word)$28*$a
+Constant main::$0 = main::screen+(unsigned int)$28*$a
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = main::screen+(word)$28*$a
+Constant inlined main::$0 = main::screen+(unsigned int)$28*$a
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $a
+Finalized unsigned number type (char) $28
+Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -53,7 +53,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *(main::screen+(word)$28*$a) = 'a'
+  [0] *(main::screen+(unsigned int)$28*$a) = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -66,7 +66,7 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *(main::screen+(word)$28*$a) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(main::screen+(unsigned int)$28*$a) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -92,7 +92,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *(main::screen+(word)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *(main::screen+(unsigned int)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     jmp __breturn
@@ -111,7 +111,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* const main::screen = (byte*) 1024
+__constant char * const main::screen = (char *) 1024
 
 
 
@@ -135,7 +135,7 @@ Score: 12
 main: {
     .label screen = $400
     // screen[40*10] = 'a'
-    // [0] *(main::screen+(word)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *(main::screen+(unsigned int)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     // main::@return

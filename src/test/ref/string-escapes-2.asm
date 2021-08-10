@@ -30,7 +30,7 @@ main: {
     inc.z i
     jmp __b1
 }
-// chrout(byte register(A) c)
+// void chrout(__register(A) char c)
 chrout: {
     // *memA = c
     sta memA

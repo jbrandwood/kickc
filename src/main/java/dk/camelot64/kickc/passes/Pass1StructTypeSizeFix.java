@@ -52,7 +52,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
             StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
             int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
             if(sizeBytes != typeStruct.getSizeBytes()) {
-               getLog().append("Fixing struct type SIZE_OF " + typeStruct.getTypeName() + " to " + sizeBytes);
+               getLog().append("Fixing struct type SIZE_OF " + typeStruct.toCDecl() + " to " + sizeBytes);
                typeStruct.setSizeBytes(sizeBytes);
                SizeOfConstants.fixSizeOfConstantVar(getScope(), typeStruct);
             }
@@ -74,7 +74,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
          StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
          int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
          if(sizeBytes != typeStruct.getSizeBytes()) {
-            getLog().append("Fixing struct type size " + type.getTypeName() + " to " + sizeBytes);
+            getLog().append("Fixing struct type size " + type.toCDecl() + " to " + sizeBytes);
             typeStruct.setSizeBytes(sizeBytes);
             return true;
          } else {

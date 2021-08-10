@@ -15,6 +15,7 @@ main: {
     // }
     rts
 }
+// void print(char c, char fmt_prefix, char fmt_postfix)
 print: {
     .const c = 'c'
     .const fmt_prefix = '-'

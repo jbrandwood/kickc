@@ -66,7 +66,7 @@ main: {
     jmp __b4
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp(8) charset)
+// void init_font_hex(__zp(8) char *charset)
 init_font_hex: {
     .label __0 = $f
     .label idx = $e
@@ -174,7 +174,7 @@ init_font_hex: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// atan2_8(signed byte zp(3) x, signed byte zp(2) y)
+// __register(A) char atan2_8(__zp(3) signed char x, __zp(2) signed char y)
 atan2_8: {
     .label __7 = $c
     .label xi = $c

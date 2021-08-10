@@ -186,7 +186,7 @@ plots: {
     inx
     jmp __b1
 }
-// plot(byte zp(2) x, byte zp(3) y)
+// void plot(__zp(2) char x, __zp(3) char y)
 plot: {
     .label x = 2
     .label y = 3

@@ -96,7 +96,7 @@ public class Label implements Symbol {
       if(program == null) {
          return getFullName();
       } else {
-         return getType().getTypeName() + " " + getFullName();
+         return getType().toCDecl(getFullName());
       }
    }
 

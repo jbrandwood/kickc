@@ -27,6 +27,7 @@ main: {
     jsr line
     jmp __b2
 }
+// void line(char x0, char x1)
 line: {
     .const x0 = 0
     .const x1 = $a
@@ -44,7 +45,7 @@ line: {
     inx
     jmp __b1
 }
-// plot(byte register(X) x)
+// void plot(__register(X) char x)
 plot: {
     // byte idx = plots[x]
     ldy plots,x

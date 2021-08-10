@@ -1,4 +1,4 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,19 +6,19 @@ void main()
 main: scope:[main]  from __start::@1
   idx#17 = phi( __start::@1/idx#18 )
   print::w#0 = $1234
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   idx#9 = phi( main/idx#5 )
   idx#0 = idx#9
   print::w#1 = main::w
-  call print 
+  call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   idx#10 = phi( main::@1/idx#5 )
   idx#1 = idx#10
   print::w#2 = $12w=$34
-  call print 
+  call print
   to:main::@3
 main::@3: scope:[main]  from main::@2
   idx#11 = phi( main::@2/idx#5 )
@@ -30,11 +30,11 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void print(word print::w)
+void print(unsigned int w)
 print: scope:[print]  from main main::@1 main::@2
   print::w#3 = phi( main/print::w#0, main::@1/print::w#1, main::@2/print::w#2 )
   idx#13 = phi( main/idx#17, main::@1/idx#0, main::@2/idx#1 )
-  print::$0 = idx#13 * SIZEOF_WORD
+  print::$0 = idx#13 * SIZEOF_UNSIGNED_INT
   SCREEN[print::$0] = print::w#3
   idx#4 = ++ idx#13
   to:print::@return
@@ -52,7 +52,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#18 = phi( __start::__init1/idx#6 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#15 = phi( __start::@1/idx#3 )
@@ -65,47 +65,47 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant word* const SCREEN = (word*)$400
-constant byte SIZEOF_WORD = 2
+__constant unsigned int * const SCREEN = (unsigned int *)$400
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#17
-byte idx#18
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#17
+char idx#18
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-constant word main::w = $1234
-void print(word print::w)
-byte~ print::$0
-word print::w
-word print::w#0
-word print::w#1
-word print::w#2
-word print::w#3
+__constant unsigned int main::w = $1234
+void print(unsigned int w)
+char print::$0
+unsigned int print::w
+unsigned int print::w#0
+unsigned int print::w#1
+unsigned int print::w#2
+unsigned int print::w#3
 
 Adding number conversion cast (unumber) $1234 in print::w#0 = $1234
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast print::w#0 = (unumber)$1234
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (word*) 1024
+Simplifying constant pointer cast (unsigned int *) 1024
 Simplifying constant integer cast $1234
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $1234
+Finalized unsigned number type (unsigned int) $1234
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#9 
 Alias idx#1 = idx#10 
@@ -132,7 +132,7 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting multiplication to use shift [5] print::$0 = idx#13 * SIZEOF_WORD
+Rewriting multiplication to use shift [5] print::$0 = idx#13 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings print::w#0
 Inlining constant with var siblings print::w#1
@@ -143,10 +143,10 @@ Constant inlined print::w#2 = $12w=$34
 Constant inlined print::w#1 = main::w
 Constant inlined print::w#0 = $1234
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) $12
-Finalized unsigned number type (byte) $34
+Finalized unsigned number type (char) $12
+Finalized unsigned number type (char) $34
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -167,21 +167,21 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call print 
+  [3] call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] phi()
-  [5] call print 
+  [5] call print
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void print(word print::w)
+void print(unsigned int w)
 print: scope:[print]  from main main::@1 main::@2
   [7] print::w#3 = phi( main/$1234, main::@1/main::w, main::@2/$12w=$34 )
   [7] idx#13 = phi( main/0, main::@1/idx#14, main::@2/idx#14 )
@@ -195,14 +195,14 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
-byte idx#13 8.666666666666666
-byte idx#14 2.5
+char idx
+char idx#13 // 8.666666666666666
+char idx#14 // 2.5
 void main()
-void print(word print::w)
-byte~ print::$0 22.0
-word print::w
-word print::w#3 5.5
+void print(unsigned int w)
+char print::$0 // 22.0
+unsigned int print::w
+unsigned int print::w#3 // 5.5
 
 Initial phi equivalence classes
 [ idx#13 idx#14 ]
@@ -253,7 +253,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .const w = $1234
-    // [1] call print 
+    // [1] call print
     // [7] phi from main to print [phi:main->print]
   print_from_main:
     // [7] phi print::w#3 = $1234 [phi:main->print#0] -- vwuz1=vwuc1 
@@ -269,7 +269,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call print 
+    // [3] call print
     // [7] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
     // [7] phi print::w#3 = main::w [phi:main::@1->print#0] -- vwuz1=vwuc1 
@@ -284,7 +284,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] call print 
+    // [5] call print
     // [7] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
     // [7] phi print::w#3 = $12w=$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
@@ -301,7 +301,7 @@ main: {
     rts
 }
   // print
-// print(word zp(2) w)
+// void print(__zp(2) unsigned int w)
 print: {
     .label w = 2
     // [8] print::$0 = idx#13 << 1 -- vbuaa=vbuxx_rol_1 
@@ -342,16 +342,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant word* const SCREEN = (word*) 1024
-byte idx
-byte idx#13 reg byte x 8.666666666666666
-byte idx#14 reg byte x 2.5
+__constant unsigned int * const SCREEN = (unsigned int *) 1024
+char idx
+char idx#13 // reg byte x 8.666666666666666
+char idx#14 // reg byte x 2.5
 void main()
-constant word main::w = $1234
-void print(word print::w)
-byte~ print::$0 reg byte a 22.0
-word print::w
-word print::w#3 w zp[2]:2 5.5
+__constant unsigned int main::w = $1234
+void print(unsigned int w)
+char print::$0 // reg byte a 22.0
+unsigned int print::w
+unsigned int print::w#3 // w zp[2]:2 5.5
 
 reg byte x [ idx#13 idx#14 ]
 zp[2]:2 [ print::w#3 ]
@@ -379,7 +379,7 @@ Score: 86
 main: {
     .const w = $1234
     // print(0x1234)
-    // [1] call print 
+    // [1] call print
     // [7] phi from main to print [phi:main->print]
     // [7] phi print::w#3 = $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
@@ -392,7 +392,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print(w)
-    // [3] call print 
+    // [3] call print
     // [7] phi from main::@1 to print [phi:main::@1->print]
     // [7] phi print::w#3 = main::w [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
@@ -404,7 +404,7 @@ main: {
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // print( MAKEWORD(0x12,0x34) )
-    // [5] call print 
+    // [5] call print
     // [7] phi from main::@2 to print [phi:main::@2->print]
     // [7] phi print::w#3 = $12w=$34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
@@ -419,7 +419,7 @@ main: {
     rts
 }
   // print
-// print(word zp(2) w)
+// void print(__zp(2) unsigned int w)
 print: {
     .label w = 2
     // SCREEN[idx++] = w

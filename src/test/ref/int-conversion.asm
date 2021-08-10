@@ -9,12 +9,12 @@
 :BasicUpstart(main)
   .const RED = 2
   .const GREEN = 5
-  .const TYPEID_BYTE = 1
-  .const TYPEID_SIGNED_BYTE = 2
-  .const TYPEID_WORD = 3
-  .const TYPEID_SIGNED_WORD = 4
-  .const TYPEID_DWORD = 5
-  .const TYPEID_SIGNED_DWORD = 6
+  .const TYPEID_CHAR = 1
+  .const TYPEID_SIGNED_CHAR = 2
+  .const TYPEID_UNSIGNED_INT = 3
+  .const TYPEID_INT = 4
+  .const TYPEID_UNSIGNED_LONG = 5
+  .const TYPEID_LONG = 6
   .label SCREEN = $400
   .label COLS = $d800
 .segment Code
@@ -56,32 +56,32 @@ testUnaryOperator: {
     // assertType(typeid(-12ub), typeid(unsigned byte))
   // Unary Operations
     ldx #0
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(-12sb), typeid(signed byte))
-    lda #TYPEID_SIGNED_BYTE
+    lda #TYPEID_SIGNED_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(-12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(-12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(-12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(-12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -92,32 +92,32 @@ testBinaryOperator: {
     // assertType(typeid(12ub+12ub), typeid(unsigned byte))
   // Binary Operations between unsigned byte & other types
     ldx #$28
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ub+12sb), typeid(unsigned byte))
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ub+12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ub+12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ub+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ub+12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -125,32 +125,32 @@ testBinaryOperator: {
     inx
     // assertType(typeid(12sb+12ub), typeid(unsigned byte))
   // Binary Operations between signed byte & other types
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sb+12sb), typeid(signed byte))
-    lda #TYPEID_SIGNED_BYTE
+    lda #TYPEID_SIGNED_CHAR
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sb+12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sb+12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sb+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sb+12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -158,64 +158,64 @@ testBinaryOperator: {
     inx
     // assertType(typeid(12uw+12ub), typeid(unsigned word))
   // Binary Operations between unsigned word & other types
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12uw+12sb), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12uw+12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12uw+12sw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12uw+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12uw+12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12ub), typeid(signed word))
   // Binary Operations between signed word & other types
     ldx #$50
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12sb), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
+    lda #TYPEID_UNSIGNED_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
+    lda #TYPEID_INT
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sw+12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -223,32 +223,32 @@ testBinaryOperator: {
     inx
     // assertType(typeid(12ud+12ub), typeid(unsigned dword))
   // Binary Operations between unsigned dword & other types
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ud+12sb), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ud+12uw), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ud+12sw), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ud+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12ud+12sd), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -256,32 +256,32 @@ testBinaryOperator: {
     inx
     // assertType(typeid(12sd+12ub), typeid(signed dword))
   // Binary Operations between signed dword & other types
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sd+12sb), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sd+12uw), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sd+12sw), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sd+12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
+    lda #TYPEID_UNSIGNED_LONG
     sta.z assertType.t2
     tay
     jsr assertType
     // assertType(typeid(12sd+12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
+    lda #TYPEID_LONG
     sta.z assertType.t2
     tay
     jsr assertType
@@ -291,7 +291,7 @@ testBinaryOperator: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zp(4) t2)
+// void assertType(__register(Y) char t1, __zp(4) char t2)
 assertType: {
     .label t2 = 4
     // if(t1==t2)

@@ -1,18 +1,18 @@
 Resolved forward reference fn1 to void fn1()
 Resolved forward reference fn2 to void fn2()
 Setting inferred volatile on symbol affected by address-of: enableDLI::dliptr in asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  enableDLI::dliptr = (void*)&fn1
-  call enableDLI 
+  enableDLI::dliptr = (void *)&fn1
+  call enableDLI
   to:main::@1
 main::@1: scope:[main]  from main
-  enableDLI::dliptr = (void*)&fn2
-  call enableDLI 
+  enableDLI::dliptr = (void *)&fn2
+  call enableDLI
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -36,7 +36,7 @@ fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
 
-void enableDLI(void* volatile enableDLI::dliptr)
+void enableDLI(void * volatile dliptr)
 enableDLI: scope:[enableDLI]  from main main::@1
   asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
@@ -50,7 +50,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -60,12 +60,12 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-void enableDLI(void* volatile enableDLI::dliptr)
-void* volatile enableDLI::dliptr loadstore
+void enableDLI(void * volatile dliptr)
+__loadstore void * volatile enableDLI::dliptr
 void fn1()
 void fn2()
 void main()
-constant const byte* r = (byte*)$8000
+__constant const char *r = (char *)$8000
 
 Adding number conversion cast (unumber) 1 in *r = 1
 Adding number conversion cast (unumber) 2 in *r = 2
@@ -73,12 +73,12 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *r = (unumber)1
 Inlining cast *r = (unumber)2
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 32768
+Simplifying constant pointer cast (char *) 32768
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -115,18 +115,18 @@ fn1::@return: scope:[fn1]  from fn1
 
 void main()
 main: scope:[main]  from
-  [4] enableDLI::dliptr = (void*)&fn1
-  [5] call enableDLI 
+  [4] enableDLI::dliptr = (void *)&fn1
+  [5] call enableDLI
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] enableDLI::dliptr = (void*)&fn2
-  [7] call enableDLI 
+  [6] enableDLI::dliptr = (void *)&fn2
+  [7] call enableDLI
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 
-void enableDLI(void* volatile enableDLI::dliptr)
+void enableDLI(void * volatile dliptr)
 enableDLI: scope:[enableDLI]  from main main::@1
   asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
@@ -136,8 +136,8 @@ enableDLI::@return: scope:[enableDLI]  from enableDLI
 
 
 VARIABLE REGISTER WEIGHTS
-void enableDLI(void* volatile enableDLI::dliptr)
-void* volatile enableDLI::dliptr loadstore 2.0
+void enableDLI(void * volatile dliptr)
+__loadstore void * volatile enableDLI::dliptr // 2.0
 void fn1()
 void fn2()
 void main()
@@ -150,8 +150,8 @@ Allocated zp[2]:128 [ enableDLI::dliptr ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *r = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *r = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] enableDLI::dliptr = (void*)&fn1 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
-Statement [6] enableDLI::dliptr = (void*)&fn2 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
+Statement [4] enableDLI::dliptr = (void *)&fn1 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
+Statement [6] enableDLI::dliptr = (void *)&fn2 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
 Statement asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
 Potential registers zp[2]:128 [ enableDLI::dliptr ] : zp[2]:128 , 
 
@@ -208,22 +208,22 @@ fn1: {
 }
   // main
 main: {
-    // [4] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    // [4] enableDLI::dliptr = (void *)&fn1 -- pvoz1=pvoc1 
     lda #<fn1
     sta.z enableDLI.dliptr
     lda #>fn1
     sta.z enableDLI.dliptr+1
-    // [5] call enableDLI 
+    // [5] call enableDLI
     jsr enableDLI
     jmp __b1
     // main::@1
   __b1:
-    // [6] enableDLI::dliptr = (void*)&fn2 -- pvoz1=pvoc1 
+    // [6] enableDLI::dliptr = (void *)&fn2 -- pvoz1=pvoc1 
     lda #<fn2
     sta.z enableDLI.dliptr
     lda #>fn2
     sta.z enableDLI.dliptr+1
-    // [7] call enableDLI 
+    // [7] call enableDLI
     jsr enableDLI
     jmp __breturn
     // main::@return
@@ -232,7 +232,7 @@ main: {
     rts
 }
   // enableDLI
-// enableDLI(void* zp($80) dliptr)
+// void enableDLI(__zp($80) void * volatile dliptr)
 enableDLI: {
     .label dliptr = $80
     // asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
@@ -267,12 +267,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-void enableDLI(void* volatile enableDLI::dliptr)
-void* volatile enableDLI::dliptr loadstore zp[2]:128 2.0
+void enableDLI(void * volatile dliptr)
+__loadstore void * volatile enableDLI::dliptr // zp[2]:128 2.0
 void fn1()
 void fn2()
 void main()
-constant const byte* r = (byte*) 32768
+__constant const char *r = (char *) 32768
 
 zp[2]:128 [ enableDLI::dliptr ]
 
@@ -320,21 +320,21 @@ fn1: {
   // main
 main: {
     // enableDLI(&fn1)
-    // [4] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    // [4] enableDLI::dliptr = (void *)&fn1 -- pvoz1=pvoc1 
     lda #<fn1
     sta.z enableDLI.dliptr
     lda #>fn1
     sta.z enableDLI.dliptr+1
-    // [5] call enableDLI 
+    // [5] call enableDLI
     jsr enableDLI
     // main::@1
     // enableDLI(&fn2)
-    // [6] enableDLI::dliptr = (void*)&fn2 -- pvoz1=pvoc1 
+    // [6] enableDLI::dliptr = (void *)&fn2 -- pvoz1=pvoc1 
     lda #<fn2
     sta.z enableDLI.dliptr
     lda #>fn2
     sta.z enableDLI.dliptr+1
-    // [7] call enableDLI 
+    // [7] call enableDLI
     jsr enableDLI
     // main::@return
     // }
@@ -342,7 +342,7 @@ main: {
     rts
 }
   // enableDLI
-// enableDLI(void* zp($80) dliptr)
+// void enableDLI(__zp($80) void * volatile dliptr)
 enableDLI: {
     .label dliptr = $80
     // asm

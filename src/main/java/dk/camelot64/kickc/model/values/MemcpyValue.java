@@ -43,7 +43,7 @@ public class MemcpyValue implements RValue {
 
    @Override
    public String toString(Program program) {
-      return "memcpy("+source.toString(program)+", "+type.getTypeName()+", "+size.toString(program)+")";
+      return "memcpy("+source.toString(program)+", "+ type.toCDecl() +", "+size.toString(program)+")";
    }
 
 

@@ -42,7 +42,7 @@ public class OperatorTypeId extends OperatorUnary {
     * @return The constant variable
     */
    public static ConstantRef getTypeIdConstantVar(ProgramScope programScope, SymbolType type) {
-      String typeConstName = "TYPEID_" + getTypeIdConstantName(type);
+      String typeConstName = getTypeIdConstantName(type);
       Variable typeIdConstant = programScope.getLocalConstant(typeConstName);
       if(typeIdConstant == null) {
          // Constant not found - create it
@@ -60,13 +60,7 @@ public class OperatorTypeId extends OperatorUnary {
     * @return The name of the constant
     */
    private static String getTypeIdConstantName(SymbolType type) {
-      if(type instanceof SymbolTypeProcedure) {
-         return "PROCEDURE";
-      } else if(type instanceof SymbolTypePointer) {
-         return "POINTER_" + getTypeIdConstantName(((SymbolTypePointer) type).getElementType());
-      } else {
-         return type.getTypeBaseName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
-      }
+      return "TYPEID_" + type.getConstantFriendlyName();
    }
 
    /**

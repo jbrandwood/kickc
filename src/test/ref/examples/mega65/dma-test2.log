@@ -50,7 +50,7 @@ Eliminating unused variable with no statement memset_dma_command
 
 CONTROL FLOW GRAPH SSA
 
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from main
   memoryRemap::upperPageOffset#1 = phi( main/memoryRemap::upperPageOffset#0 )
   memoryRemap::remapBlocks#1 = phi( main/memoryRemap::remapBlocks#0 )
@@ -71,21 +71,21 @@ memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
   return 
   to:@return
 
-void memcpy_dma(void* memcpy_dma::dest , void* memcpy_dma::src , word memcpy_dma::num)
+void memcpy_dma(void *dest , void *src , unsigned int num)
 memcpy_dma: scope:[memcpy_dma]  from main::@1
   memcpy_dma::dest#1 = phi( main::@1/memcpy_dma::dest#0 )
   memcpy_dma::src#1 = phi( main::@1/memcpy_dma::src#0 )
   memcpy_dma::num#1 = phi( main::@1/memcpy_dma::num#0 )
-  memcpy_dma::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#1
-  *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = ((byte*)) memcpy_dma::src#1
-  *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = ((byte*)) memcpy_dma::dest#1
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command
-  *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0
+  memcpy_dma::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#1
+  *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = ((char *)) memcpy_dma::src#1
+  *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = ((char *)) memcpy_dma::dest#1
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command
+  *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0
   to:memcpy_dma::@return
 memcpy_dma::@return: scope:[memcpy_dma]  from memcpy_dma
   return 
@@ -96,13 +96,13 @@ main: scope:[main]  from __start
   memoryRemap::remapBlocks#0 = 0
   memoryRemap::lowerPageOffset#0 = 0
   memoryRemap::upperPageOffset#0 = 0
-  call memoryRemap 
+  call memoryRemap
   to:main::@1
 main::@1: scope:[main]  from main
-  memcpy_dma::dest#0 = (void*)DEFAULT_SCREEN
-  memcpy_dma::src#0 = (void*)DEFAULT_SCREEN+$50
+  memcpy_dma::dest#0 = (void *)DEFAULT_SCREEN
+  memcpy_dma::src#0 = (void *)DEFAULT_SCREEN+$50
   memcpy_dma::num#0 = $18*$50
-  call memcpy_dma 
+  call memcpy_dma
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -112,7 +112,7 @@ main::@return: scope:[main]  from main::@2
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -121,52 +121,52 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const DEFAULT_SCREEN = (byte*)$800
-constant struct F018_DMAGIC* const DMA = (struct F018_DMAGIC*)$d700
-constant const byte DMA_COMMAND_COPY = 0
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG = 0
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
-constant byte OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+__constant char * const DEFAULT_SCREEN = (char *)$800
+__constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *)$d700
+__constant const char DMA_COMMAND_COPY = 0
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG = 0
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+__constant char OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
 void __start()
 void main()
-void memcpy_dma(void* memcpy_dma::dest , void* memcpy_dma::src , word memcpy_dma::num)
-void* memcpy_dma::dest
-void* memcpy_dma::dest#0
-void* memcpy_dma::dest#1
-byte memcpy_dma::dmaMode
-byte memcpy_dma::dmaMode#0
-word memcpy_dma::num
-word memcpy_dma::num#0
-word memcpy_dma::num#1
-void* memcpy_dma::src
-void* memcpy_dma::src#0
-void* memcpy_dma::src#1
-volatile struct DMA_LIST_F018B memcpy_dma_command loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-byte~ memoryRemap::$1
-byte~ memoryRemap::$2
-number~ memoryRemap::$3
-number~ memoryRemap::$6
-byte~ memoryRemap::$7
-number~ memoryRemap::$8
-volatile byte memoryRemap::aVal loadstore
-word memoryRemap::lowerPageOffset
-word memoryRemap::lowerPageOffset#0
-word memoryRemap::lowerPageOffset#1
-byte memoryRemap::remapBlocks
-byte memoryRemap::remapBlocks#0
-byte memoryRemap::remapBlocks#1
-word memoryRemap::upperPageOffset
-word memoryRemap::upperPageOffset#0
-word memoryRemap::upperPageOffset#1
-volatile byte memoryRemap::xVal loadstore
-volatile byte memoryRemap::yVal loadstore
-volatile byte memoryRemap::zVal loadstore
+void memcpy_dma(void *dest , void *src , unsigned int num)
+void *memcpy_dma::dest
+void *memcpy_dma::dest#0
+void *memcpy_dma::dest#1
+char memcpy_dma::dmaMode
+char memcpy_dma::dmaMode#0
+unsigned int memcpy_dma::num
+unsigned int memcpy_dma::num#0
+unsigned int memcpy_dma::num#1
+void *memcpy_dma::src
+void *memcpy_dma::src#0
+void *memcpy_dma::src#1
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+char memoryRemap::$1
+char memoryRemap::$2
+number memoryRemap::$3
+number memoryRemap::$6
+char memoryRemap::$7
+number memoryRemap::$8
+__loadstore volatile char memoryRemap::aVal
+unsigned int memoryRemap::lowerPageOffset
+unsigned int memoryRemap::lowerPageOffset#0
+unsigned int memoryRemap::lowerPageOffset#1
+char memoryRemap::remapBlocks
+char memoryRemap::remapBlocks#0
+char memoryRemap::remapBlocks#1
+unsigned int memoryRemap::upperPageOffset
+unsigned int memoryRemap::upperPageOffset#0
+unsigned int memoryRemap::upperPageOffset#1
+__loadstore volatile char memoryRemap::xVal
+__loadstore volatile char memoryRemap::yVal
+__loadstore volatile char memoryRemap::zVal
 
 Adding number conversion cast (unumber) 4 in memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
 Adding number conversion cast (unumber) $f in memoryRemap::$3 = memoryRemap::$2 & $f
@@ -175,27 +175,27 @@ Adding number conversion cast (unumber) $f0 in memoryRemap::$6 = memoryRemap::re
 Adding number conversion cast (unumber) memoryRemap::$6 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & (unumber)$f0
 Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 & $f
 Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
-Adding number conversion cast (unumber) 1 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-Adding number conversion cast (unumber) 0 in *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+Adding number conversion cast (unumber) 1 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+Adding number conversion cast (unumber) 0 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+Adding number conversion cast (unumber) 0 in *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#0 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#0 = 0
 Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#0 = 0
-Adding number conversion cast (unumber) $50 in memcpy_dma::src#0 = (void*)DEFAULT_SCREEN+$50
+Adding number conversion cast (unumber) $50 in memcpy_dma::src#0 = (void *)DEFAULT_SCREEN+$50
 Adding number conversion cast (unumber) $18*$50 in memcpy_dma::num#0 = $18*$50
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#1
-Inlining cast *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#1
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = (unumber)1
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = (unumber)0
-Inlining cast *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = (unumber)0
+Inlining cast *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#1
+Inlining cast *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#1
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = (unumber)1
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = (unumber)0
+Inlining cast *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = (unumber)0
 Inlining cast memoryRemap::remapBlocks#0 = (unumber)0
 Inlining cast memoryRemap::lowerPageOffset#0 = (unumber)0
 Inlining cast memoryRemap::upperPageOffset#0 = (unumber)0
 Inlining cast memcpy_dma::num#0 = (unumber)$18*$50
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (struct F018_DMAGIC*) 55040
-Simplifying constant pointer cast (byte*) 2048
+Simplifying constant pointer cast (struct F018_DMAGIC *) 55040
+Simplifying constant pointer cast (char *) 2048
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast $f0
@@ -208,21 +208,21 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $50
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) $f0
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $50
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (char) $f0
+Finalized unsigned number type (char) $f
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $50
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
-Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
-Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
+Inferred type updated to char in memoryRemap::$3 = memoryRemap::$2 & $f
+Inferred type updated to char in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
+Inferred type updated to char in memoryRemap::$8 = memoryRemap::$7 & $f
 Identical Phi Values memoryRemap::lowerPageOffset#1 memoryRemap::lowerPageOffset#0
 Identical Phi Values memoryRemap::remapBlocks#1 memoryRemap::remapBlocks#0
 Identical Phi Values memoryRemap::upperPageOffset#1 memoryRemap::upperPageOffset#0
@@ -235,14 +235,14 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memoryRemap::remapBlocks#0 = 0
 Constant memoryRemap::lowerPageOffset#0 = 0
 Constant memoryRemap::upperPageOffset#0 = 0
-Constant memcpy_dma::dest#0 = (void*)DEFAULT_SCREEN
-Constant memcpy_dma::src#0 = (void*)DEFAULT_SCREEN+$50
+Constant memcpy_dma::dest#0 = (void *)DEFAULT_SCREEN
+Constant memcpy_dma::src#0 = (void *)DEFAULT_SCREEN+$50
 Constant memcpy_dma::num#0 = (unumber)$18*$50
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memcpy_dma::src#0 in [16] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0
-Constant value identified (byte*)memcpy_dma::dest#0 in [17] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0
+Constant value identified (char *)memcpy_dma::src#0 in [16] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0
+Constant value identified (char *)memcpy_dma::dest#0 in [17] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero (byte*)DMA in [22] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command
+Simplifying expression containing zero (char *)DMA in [22] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG) = byte0 &memcpy_dma_command
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG
 Successful SSA optimization PassNEliminateUnusedVars
@@ -296,12 +296,12 @@ Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined memoryRemap::$8 = 0
 Constant inlined memoryRemap::$3 = 0
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $18
-Finalized unsigned number type (byte) $50
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $18
+Finalized unsigned number type (char) $50
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -320,17 +320,17 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call memoryRemap 
+  [1] call memoryRemap
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call memcpy_dma 
+  [3] call memcpy_dma
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from main
   [5] memoryRemap::aVal = 0
   [6] memoryRemap::xVal = 0
@@ -342,18 +342,18 @@ memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
   [10] return 
   to:@return
 
-void memcpy_dma(void* memcpy_dma::dest , void* memcpy_dma::src , word memcpy_dma::num)
+void memcpy_dma(void *dest , void *src , unsigned int num)
 memcpy_dma: scope:[memcpy_dma]  from main::@1
-  [11] memcpy_dma::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
-  [12] *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0
-  [13] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0
-  [14] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0
-  [15] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
-  [16] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
-  [17] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
-  [18] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command
-  [19] *((byte*)DMA) = byte0 &memcpy_dma_command
-  [20] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0
+  [11] memcpy_dma::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B)
+  [12] *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0
+  [13] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0
+  [14] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0
+  [15] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1
+  [16] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0
+  [17] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0
+  [18] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command
+  [19] *((char *)DMA) = byte0 &memcpy_dma_command
+  [20] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0
   to:memcpy_dma::@return
 memcpy_dma::@return: scope:[memcpy_dma]  from memcpy_dma
   [21] return 
@@ -362,21 +362,21 @@ memcpy_dma::@return: scope:[memcpy_dma]  from memcpy_dma
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void memcpy_dma(void* memcpy_dma::dest , void* memcpy_dma::src , word memcpy_dma::num)
-void* memcpy_dma::dest
-byte memcpy_dma::dmaMode
-byte memcpy_dma::dmaMode#0 2.4444444444444446
-word memcpy_dma::num
-void* memcpy_dma::src
-volatile struct DMA_LIST_F018B memcpy_dma_command loadstore = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-volatile byte memoryRemap::aVal loadstore 2.75
-word memoryRemap::lowerPageOffset
-byte memoryRemap::remapBlocks
-word memoryRemap::upperPageOffset
-volatile byte memoryRemap::xVal loadstore 3.6666666666666665
-volatile byte memoryRemap::yVal loadstore 5.5
-volatile byte memoryRemap::zVal loadstore 11.0
+void memcpy_dma(void *dest , void *src , unsigned int num)
+void *memcpy_dma::dest
+char memcpy_dma::dmaMode
+char memcpy_dma::dmaMode#0 // 2.4444444444444446
+unsigned int memcpy_dma::num
+void *memcpy_dma::src
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+__loadstore volatile char memoryRemap::aVal // 2.75
+unsigned int memoryRemap::lowerPageOffset
+char memoryRemap::remapBlocks
+unsigned int memoryRemap::upperPageOffset
+__loadstore volatile char memoryRemap::xVal // 3.6666666666666665
+__loadstore volatile char memoryRemap::yVal // 5.5
+__loadstore volatile char memoryRemap::zVal // 11.0
 
 Initial phi equivalence classes
 Added variable memoryRemap::aVal to live range equivalence class [ memoryRemap::aVal ]
@@ -404,28 +404,28 @@ Statement [6] memoryRemap::xVal = 0 [ memoryRemap::aVal memoryRemap::xVal ] ( me
 Statement [7] memoryRemap::yVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
 Statement [8] memoryRemap::zVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [12] *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [12] *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ memcpy_dma::dmaMode#0 ]
-Statement [13] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [18] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)DMA) = byte0 &memcpy_dma_command [ memcpy_dma::dmaMode#0 ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [13] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [14] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [15] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [16] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [17] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [18] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [19] *((char *)DMA) = byte0 &memcpy_dma_command [ memcpy_dma::dmaMode#0 ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Statement [5] memoryRemap::aVal = 0 [ memoryRemap::aVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal ] { }  ) always clobbers reg byte a 
 Statement [6] memoryRemap::xVal = 0 [ memoryRemap::aVal memoryRemap::xVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal memoryRemap::xVal ] { }  ) always clobbers reg byte a 
 Statement [7] memoryRemap::yVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal ] { }  ) always clobbers reg byte a 
 Statement [8] memoryRemap::zVal = 0 [ memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] ( memoryRemap:1 [ memcpy_dma_command memoryRemap::aVal memoryRemap::xVal memoryRemap::yVal memoryRemap::zVal ] { }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [12] *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [18] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)DMA) = byte0 &memcpy_dma_command [ memcpy_dma::dmaMode#0 ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 ] { }  ) always clobbers reg byte a 
+Statement [12] *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [13] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [14] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [15] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [16] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [17] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [18] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command [ memcpy_dma::dmaMode#0 memcpy_dma_command ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 memcpy_dma_command ] { }  ) always clobbers reg byte a 
+Statement [19] *((char *)DMA) = byte0 &memcpy_dma_command [ memcpy_dma::dmaMode#0 ] ( memcpy_dma:3 [ memcpy_dma::dmaMode#0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ memoryRemap::aVal ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ memoryRemap::xVal ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ memoryRemap::yVal ] : zp[1]:4 , 
@@ -510,7 +510,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call memoryRemap 
+    // [1] call memoryRemap
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
     jsr memoryRemap
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -518,7 +518,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call memcpy_dma 
+    // [3] call memcpy_dma
     // Move screen up using DMA
     jsr memcpy_dma
     jmp __breturn
@@ -552,6 +552,7 @@ main: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 2
     .label xVal = 3
@@ -592,48 +593,49 @@ memoryRemap: {
 // - dest The destination address (within the MB and bank)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
+// void memcpy_dma(void *dest, void *src, unsigned int num)
 memcpy_dma: {
     .const num = $18*$50
     .label dest = DEFAULT_SCREEN
     .label src = DEFAULT_SCREEN+$50
-    // [11] memcpy_dma::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [11] memcpy_dma::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [12] *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 -- _deref_pwuc1=vwuc2 
+    // [12] *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
-    // [13] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0 -- _deref_qbuc1=pbuc2 
+    // [13] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
-    // [14] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0 -- _deref_qbuc1=pbuc2 
+    // [14] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
-    // [15] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [15] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // [16] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [16] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
-    // [17] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [17] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // [18] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
+    // [18] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // [19] *((byte*)DMA) = byte0 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
+    // [19] *((char *)DMA) = byte0 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command
     sta DMA
-    // [20] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [20] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     jmp __breturn
@@ -672,35 +674,35 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const DEFAULT_SCREEN = (byte*) 2048
-constant struct F018_DMAGIC* const DMA = (struct F018_DMAGIC*) 55040
-constant const byte DMA_COMMAND_COPY = 0
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
-constant byte OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
-constant byte OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
-constant byte OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+__constant char * const DEFAULT_SCREEN = (char *) 2048
+__constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *) 55040
+__constant const char DMA_COMMAND_COPY = 0
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
+__constant char OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
+__constant char OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+__constant char OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
 void main()
-void memcpy_dma(void* memcpy_dma::dest , void* memcpy_dma::src , word memcpy_dma::num)
-void* memcpy_dma::dest
-constant void* memcpy_dma::dest#0 dest = (void*)DEFAULT_SCREEN
-byte memcpy_dma::dmaMode
-byte memcpy_dma::dmaMode#0 reg byte x 2.4444444444444446
-word memcpy_dma::num
-constant word memcpy_dma::num#0 num = (word)$18*$50
-void* memcpy_dma::src
-constant void* memcpy_dma::src#0 src = (void*)DEFAULT_SCREEN+$50
-volatile struct DMA_LIST_F018B memcpy_dma_command loadstore mem[12] = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 }
-void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
-volatile byte memoryRemap::aVal loadstore zp[1]:2 2.75
-word memoryRemap::lowerPageOffset
-byte memoryRemap::remapBlocks
-word memoryRemap::upperPageOffset
-volatile byte memoryRemap::xVal loadstore zp[1]:3 3.6666666666666665
-volatile byte memoryRemap::yVal loadstore zp[1]:4 5.5
-volatile byte memoryRemap::zVal loadstore zp[1]:5 11.0
+void memcpy_dma(void *dest , void *src , unsigned int num)
+void *memcpy_dma::dest
+__constant void *memcpy_dma::dest#0 = (void *)DEFAULT_SCREEN // dest
+char memcpy_dma::dmaMode
+char memcpy_dma::dmaMode#0 // reg byte x 2.4444444444444446
+unsigned int memcpy_dma::num
+__constant unsigned int memcpy_dma::num#0 = (unsigned int)$18*$50 // num
+void *memcpy_dma::src
+__constant void *memcpy_dma::src#0 = (void *)DEFAULT_SCREEN+$50 // src
+__loadstore volatile struct DMA_LIST_F018B memcpy_dma_command = { command: DMA_COMMAND_COPY, count: 0, src: 0, src_bank: 0, dest: 0, dest_bank: 0, sub_command: 0, modulo: 0 } // mem[12]
+void memoryRemap(char remapBlocks , unsigned int lowerPageOffset , unsigned int upperPageOffset)
+__loadstore volatile char memoryRemap::aVal // zp[1]:2 2.75
+unsigned int memoryRemap::lowerPageOffset
+char memoryRemap::remapBlocks
+unsigned int memoryRemap::upperPageOffset
+__loadstore volatile char memoryRemap::xVal // zp[1]:3 3.6666666666666665
+__loadstore volatile char memoryRemap::yVal // zp[1]:4 5.5
+__loadstore volatile char memoryRemap::zVal // zp[1]:5 11.0
 
 zp[1]:2 [ memoryRemap::aVal ]
 zp[1]:3 [ memoryRemap::xVal ]
@@ -755,13 +757,13 @@ Score: 135
   // main
 main: {
     // memoryRemap(0,0,0)
-    // [1] call memoryRemap 
+    // [1] call memoryRemap
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
     jsr memoryRemap
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // memcpy_dma(DEFAULT_SCREEN, DEFAULT_SCREEN+80, 24*80)
-    // [3] call memcpy_dma 
+    // [3] call memcpy_dma
     // Move screen up using DMA
     jsr memcpy_dma
     // main::@return
@@ -794,6 +796,7 @@ main: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
     .label aVal = 2
     .label xVal = 3
@@ -835,57 +838,58 @@ memoryRemap: {
 // - dest The destination address (within the MB and bank)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
+// void memcpy_dma(void *dest, void *src, unsigned int num)
 memcpy_dma: {
     .const num = $18*$50
     .label dest = DEFAULT_SCREEN
     .label src = DEFAULT_SCREEN+$50
     // char dmaMode = DMA->EN018B
-    // [11] memcpy_dma::dmaMode#0 = *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
+    // [11] memcpy_dma::dmaMode#0 = *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) -- vbuxx=_deref_pbuc1 
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma_command.count = num
-    // [12] *((word*)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 -- _deref_pwuc1=vwuc2 
+    // [12] *((unsigned int *)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT) = memcpy_dma::num#0 -- _deref_pwuc1=vwuc2 
     // Set up command
     lda #<num
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // memcpy_dma_command.src = src
-    // [13] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (byte*)memcpy_dma::src#0 -- _deref_qbuc1=pbuc2 
+    // [13] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC) = (char *)memcpy_dma::src#0 -- _deref_qbuc1=pbuc2 
     lda #<src
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // memcpy_dma_command.dest = dest
-    // [14] *((byte**)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (byte*)memcpy_dma::dest#0 -- _deref_qbuc1=pbuc2 
+    // [14] *((char **)&memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST) = (char *)memcpy_dma::dest#0 -- _deref_qbuc1=pbuc2 
     lda #<dest
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST
     lda #>dest
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
-    // [15] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
+    // [15] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = 1 -- _deref_pbuc1=vbuc2 
     // Set F018B mode
     lda #1
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
-    // [16] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
+    // [16] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB) = 0 -- _deref_pbuc1=vbuc2 
     // Set address of DMA list
     lda #0
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    // [17] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
+    // [17] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK) = 0 -- _deref_pbuc1=vbuc2 
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command)
-    // [18] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
+    // [18] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB) = byte1 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
     lda #>memcpy_dma_command
     sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command)
-    // [19] *((byte*)DMA) = byte0 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
+    // [19] *((char *)DMA) = byte0 &memcpy_dma_command -- _deref_pbuc1=vbuc2 
     // Trigger the DMA (without option lists)
     lda #<memcpy_dma_command
     sta DMA
     // DMA->EN018B = dmaMode
-    // [20] *((byte*)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0 -- _deref_pbuc1=vbuxx 
+    // [20] *((char *)DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B) = memcpy_dma::dmaMode#0 -- _deref_pbuc1=vbuxx 
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memcpy_dma::@return

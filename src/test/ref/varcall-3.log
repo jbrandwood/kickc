@@ -29,7 +29,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__varcall signed word plus(signed word plus::a , signed word plus::b)
+__varcall int plus(int a , int b)
 plus: scope:[plus]  from
   plus::$0 = plus::a + plus::b
   plus::return = plus::$0
@@ -49,29 +49,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant signed word* const BGCOL = (signed word*)$d020
+__constant int * const BGCOL = (int *)$d020
 void __start()
 void main()
-signed word~ main::$0
-signed word~ main::$1
-signed word main::a
-signed word main::a#0
-signed word main::a#1
-signed word main::a#2
-__varcall signed word plus(signed word plus::a , signed word plus::b)
-signed word~ plus::$0
-signed word plus::a loadstore
-signed word plus::b loadstore
-signed word plus::return loadstore
+int main::$0
+int main::$1
+int main::a
+int main::a#0
+int main::a#1
+int main::a#2
+__varcall int plus(int a , int b)
+int plus::$0
+__loadstore int plus::a
+__loadstore int plus::b
+__loadstore int plus::return
 
 Adding number conversion cast (snumber) $203 in plus::b = $203
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast plus::b = (snumber)$203
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (signed word*) 53280
+Simplifying constant pointer cast (int *) 53280
 Simplifying constant integer cast $203
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed word) $203
+Finalized signed number type (int) $203
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)plus::return = plus::$0 
 Alias main::a#1 = main::$0 
@@ -100,7 +100,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-__varcall signed word plus(signed word plus::a , signed word plus::b)
+__varcall int plus(int a , int b)
 plus: scope:[plus]  from
   [0] plus::$0 = plus::a + plus::b
   [1] plus::return = plus::$0
@@ -130,14 +130,14 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-signed word main::a
-signed word main::a#1 2.6666666666666665
-signed word main::a#2 4.0
-__varcall signed word plus(signed word plus::a , signed word plus::b)
-signed word~ plus::$0 22.0
-signed word plus::a loadstore 3.75
-signed word plus::b loadstore 7.5
-signed word plus::return loadstore 3.75
+int main::a
+int main::a#1 // 2.6666666666666665
+int main::a#2 // 4.0
+__varcall int plus(int a , int b)
+int plus::$0 // 22.0
+__loadstore int plus::a // 3.75
+__loadstore int plus::b // 7.5
+__loadstore int plus::return // 3.75
 
 Initial phi equivalence classes
 Added variable plus::$0 to live range equivalence class [ plus::$0 ]
@@ -209,7 +209,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d020
 .segment Code
   // plus
-// plus(signed word zp(2) a, signed word zp(4) b)
+// __zp(2) int plus(__zp(2) int a, __zp(4) int b)
 plus: {
     .label a = 2
     .label b = 4
@@ -292,16 +292,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant signed word* const BGCOL = (signed word*) 53280
+__constant int * const BGCOL = (int *) 53280
 void main()
-signed word main::a
-signed word main::a#1 a zp[2]:4 2.6666666666666665
-signed word main::a#2 a_1 zp[2]:2 4.0
-__varcall signed word plus(signed word plus::a , signed word plus::b)
-signed word~ plus::$0 zp[2]:2 22.0
-signed word plus::a loadstore zp[2]:2 3.75
-signed word plus::b loadstore zp[2]:4 7.5
-signed word plus::return loadstore zp[2]:2 3.75
+int main::a
+int main::a#1 // a zp[2]:4 2.6666666666666665
+int main::a#2 // a_1 zp[2]:2 4.0
+__varcall int plus(int a , int b)
+int plus::$0 // zp[2]:2 22.0
+__loadstore int plus::a // zp[2]:2 3.75
+__loadstore int plus::b // zp[2]:4 7.5
+__loadstore int plus::return // zp[2]:2 3.75
 
 zp[2]:2 [ plus::$0 plus::return plus::a main::a#2 ]
 zp[2]:4 [ plus::b main::a#1 ]
@@ -326,7 +326,7 @@ Score: 128
   .label BGCOL = $d020
 .segment Code
   // plus
-// plus(signed word zp(2) a, signed word zp(4) b)
+// __zp(2) int plus(__zp(2) int a, __zp(4) int b)
 plus: {
     .label a = 2
     .label b = 4

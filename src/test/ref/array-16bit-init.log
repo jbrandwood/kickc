@@ -15,7 +15,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   main::c#3 = phi( main::@1/main::c#2 )
   main::$3 = main::c#3 * SIZEOF_POINTER
-  levelRowOff[main::$3] = (byte*)$3039
+  levelRowOff[main::$3] = (char *)$3039
   main::c#1 = ++ main::c#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -33,21 +33,21 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_POINTER = 2
+__constant char SIZEOF_POINTER = 2
 void __start()
-constant byte** levelRowOff[$1f]  = { 1, 2, 3 }
+__constant char *levelRowOff[$1f] = { 1, 2, 3 }
 void main()
-word~ main::$0
-word~ main::$1
-bool~ main::$2
-byte~ main::$3
-byte main::c
-byte main::c#0
-byte main::c#1
-byte main::c#2
-byte main::c#3
+unsigned int main::$0
+unsigned int main::$1
+bool main::$2
+char main::$3
+char main::c
+char main::c#0
+char main::c#1
+char main::c#2
+char main::c#3
 
-Simplifying constant pointer cast (byte*) 12345
+Simplifying constant pointer cast (char *) 12345
 Successful SSA optimization PassNCastSimplification
 Alias main::c#2 = main::c#3 
 Successful SSA optimization Pass2AliasElimination
@@ -73,7 +73,7 @@ Adding number conversion cast (unumber) $1f in
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $1f
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $1f
+Finalized unsigned number type (char) $1f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [2] main::$3 = main::c#2 * SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -82,10 +82,10 @@ Constant inlined main::$1 = $1f*SIZEOF_POINTER/SIZEOF_POINTER
 Constant inlined main::c#0 = 0
 Constant inlined main::$0 = $1f*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantInlining
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $1f
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) $1f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -110,17 +110,17 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] main::$3 = main::c#2 << 1
-  [5] levelRowOff[main::$3] = (byte*) 12345
+  [5] levelRowOff[main::$3] = (char *) 12345
   [6] main::c#1 = ++ main::c#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$3 22.0
-byte main::c
-byte main::c#1 22.0
-byte main::c#2 11.0
+char main::$3 // 22.0
+char main::c
+char main::c#1 // 22.0
+char main::c#2 // 11.0
 
 Initial phi equivalence classes
 [ main::c#2 main::c#1 ]
@@ -133,9 +133,9 @@ Allocated zp[1]:3 [ main::$3 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] main::$3 = main::c#2 << 1 [ main::c#2 main::$3 ] (  [ main::c#2 main::$3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#2 main::c#1 ]
-Statement [5] levelRowOff[main::$3] = (byte*) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
+Statement [5] levelRowOff[main::$3] = (char *) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$3 = main::c#2 << 1 [ main::c#2 main::$3 ] (  [ main::c#2 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [5] levelRowOff[main::$3] = (byte*) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
+Statement [5] levelRowOff[main::$3] = (char *) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$3 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -184,7 +184,7 @@ main: {
     // [4] main::$3 = main::c#2 << 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [5] levelRowOff[main::$3] = (byte*) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
+    // [5] levelRowOff[main::$3] = (char *) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
     tay
     lda #<$3039
     sta levelRowOff,y
@@ -212,13 +212,13 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte SIZEOF_POINTER = 2
-constant byte** levelRowOff[$1f]  = { 1, 2, 3 }
+__constant char SIZEOF_POINTER = 2
+__constant char *levelRowOff[$1f] = { 1, 2, 3 }
 void main()
-byte~ main::$3 reg byte a 22.0
-byte main::c
-byte main::c#1 reg byte x 22.0
-byte main::c#2 reg byte x 11.0
+char main::$3 // reg byte a 22.0
+char main::c
+char main::c#1 // reg byte x 22.0
+char main::c#2 // reg byte x 11.0
 
 reg byte x [ main::c#2 main::c#1 ]
 reg byte a [ main::$3 ]
@@ -263,7 +263,7 @@ main: {
     // [4] main::$3 = main::c#2 << 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [5] levelRowOff[main::$3] = (byte*) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
+    // [5] levelRowOff[main::$3] = (char *) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
     tay
     lda #<$3039
     sta levelRowOff,y

@@ -31,7 +31,7 @@ public class MemsetValue implements RValue {
 
    @Override
    public String toString(Program program) {
-      return "memset("+type.getTypeName()+", "+size.toString(program)+")";
+      return "memset("+ type.toCDecl() +", "+size.toString(program)+")";
    }
 
 

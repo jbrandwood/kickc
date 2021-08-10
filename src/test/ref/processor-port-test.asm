@@ -259,7 +259,7 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// void print_str(__zp(6) char *str)
 print_str: {
     .label str = 6
   __b1:
@@ -305,7 +305,7 @@ print_ln: {
     // }
     rts
 }
-// testProcport(byte register(X) ddr, byte zp(4) port, byte zp(5) ddr2)
+// void testProcport(__register(X) char ddr, __zp(4) char port, __zp(5) char ddr2)
 testProcport: {
     .label port = 4
     .label ddr2 = 5
@@ -414,6 +414,7 @@ testProcport: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -447,7 +448,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -461,7 +462,7 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa

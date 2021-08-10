@@ -1,12 +1,12 @@
 Setting inferred volatile on symbol affected by address-of: chrout::petscii in kickasm( uses chrout::petscii) {{ jsr $ffd2
      }}
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  *((byte*)$d018) = $17
+  *((char *)$d018) = $17
   main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -17,7 +17,7 @@ main::@1: scope:[main]  from main main::@4
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   chrout::petscii = MSG1[main::i#3]
-  call chrout 
+  call chrout
   to:main::@4
 main::@4: scope:[main]  from main::@2
   main::i#4 = phi( main::@2/main::i#3 )
@@ -31,7 +31,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void chrout(volatile byte chrout::petscii)
+void chrout(volatile char petscii)
 chrout: scope:[chrout]  from main::@2
   kickasm( uses chrout::petscii) {{ jsr $ffd2
      }}
@@ -46,7 +46,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -55,39 +55,39 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte CH = ''su
-constant byte* MSG1[]  = "cAmElot"pm
-constant byte* MSG2[]  = "CAMELOT"su
-constant byte* SCREEN1 = (byte*)$400
-constant byte* SCREEN2 = (byte*)$428
+__constant char CH = ''su
+__constant char MSG1[] = "cAmElot"pm
+__constant char MSG2[] = "CAMELOT"su
+__constant char *SCREEN1 = (char *)$400
+__constant char *SCREEN2 = (char *)$428
 void __start()
-void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore
+void chrout(volatile char petscii)
+__loadstore volatile char chrout::petscii
 void main()
-bool~ main::$1
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
+bool main::$1
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
 
-Adding number conversion cast (unumber) $17 in *((byte*)$d018) = $17
+Adding number conversion cast (unumber) $17 in *((char *)$d018) = $17
 Adding number conversion cast (unumber) 0 in main::$1 = 0 != MSG1[main::i#2]
 Adding number conversion cast (unumber) 0 in SCREEN2[0] = CH
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte*)$d018) = (unumber)$17
+Inlining cast *((char *)$d018) = (unumber)$17
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1064
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1064
 Simplifying constant integer cast $17
-Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (char *) 53272
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $17
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) $17
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 main::i#4 
 Successful SSA optimization Pass2AliasElimination
@@ -118,7 +118,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *((byte*) 53272) = $17
+  [0] *((char *) 53272) = $17
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   [1] main::i#2 = phi( main/0, main::@4/main::i#1 )
@@ -132,14 +132,14 @@ main::@return: scope:[main]  from main::@3
   to:@return
 main::@2: scope:[main]  from main::@1
   [5] chrout::petscii = MSG1[main::i#2]
-  [6] call chrout 
+  [6] call chrout
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [7] SCREEN1[main::i#2] = MSG2[main::i#2]
   [8] main::i#1 = ++ main::i#2
   to:main::@1
 
-void chrout(volatile byte chrout::petscii)
+void chrout(volatile char petscii)
 chrout: scope:[chrout]  from main::@2
   kickasm( uses chrout::petscii) {{ jsr $ffd2
      }}
@@ -150,12 +150,12 @@ chrout::@return: scope:[chrout]  from chrout
 
 
 VARIABLE REGISTER WEIGHTS
-void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore 11.0
+void chrout(volatile char petscii)
+__loadstore volatile char chrout::petscii // 11.0
 void main()
-byte main::i
-byte main::i#1 22.0
-byte main::i#2 13.2
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 13.2
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -166,13 +166,13 @@ Complete equivalence classes
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ chrout::petscii ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(0!=MSG1[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [3] *SCREEN2 = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] chrout::petscii = MSG1[main::i#2] [ main::i#2 chrout::petscii ] (  [ main::i#2 chrout::petscii ] { }  ) always clobbers reg byte a 
 Statement [7] SCREEN1[main::i#2] = MSG2[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [0] *((byte*) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((char *) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(0!=MSG1[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [3] *SCREEN2 = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] chrout::petscii = MSG1[main::i#2] [ main::i#2 chrout::petscii ] (  [ main::i#2 chrout::petscii ] { }  ) always clobbers reg byte a 
@@ -213,7 +213,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [0] *((byte*) 53272) = $17 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 53272) = $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
@@ -244,7 +244,7 @@ main: {
     // [5] chrout::petscii = MSG1[main::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda MSG1,x
     sta.z chrout.petscii
-    // [6] call chrout 
+    // [6] call chrout
     jsr chrout
     jmp __b4
     // main::@4
@@ -260,7 +260,7 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte zp(2) petscii)
+// void chrout(__zp(2) volatile char petscii)
 chrout: {
     .label petscii = 2
     // kickasm( uses chrout::petscii) {{ jsr $ffd2      }}
@@ -297,17 +297,17 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte CH = ''su
-constant byte* MSG1[]  = "cAmElot"pm
-constant byte* MSG2[]  = "CAMELOT"su
-constant byte* SCREEN1 = (byte*) 1024
-constant byte* SCREEN2 = (byte*) 1064
-void chrout(volatile byte chrout::petscii)
-volatile byte chrout::petscii loadstore zp[1]:2 11.0
+__constant char CH = ''su
+__constant char MSG1[] = "cAmElot"pm
+__constant char MSG2[] = "CAMELOT"su
+__constant char *SCREEN1 = (char *) 1024
+__constant char *SCREEN2 = (char *) 1064
+void chrout(volatile char petscii)
+__loadstore volatile char chrout::petscii // zp[1]:2 11.0
 void main()
-byte main::i
-byte main::i#1 reg byte x 22.0
-byte main::i#2 reg byte x 13.2
+char main::i
+char main::i#1 // reg byte x 22.0
+char main::i#2 // reg byte x 13.2
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[1]:2 [ chrout::petscii ]
@@ -337,7 +337,7 @@ Score: 670
   // main
 main: {
     // *((char*)0xd018) = 0x17
-    // [0] *((byte*) 53272) = $17 -- _deref_pbuc1=vbuc2 
+    // [0] *((char *) 53272) = $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
@@ -366,7 +366,7 @@ main: {
     // [5] chrout::petscii = MSG1[main::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda MSG1,x
     sta.z chrout.petscii
-    // [6] call chrout 
+    // [6] call chrout
     jsr chrout
     // main::@4
     // SCREEN1[i] = MSG2[i]
@@ -381,7 +381,7 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte zp(2) petscii)
+// void chrout(__zp(2) volatile char petscii)
 chrout: {
     .label petscii = 2
     // kickasm

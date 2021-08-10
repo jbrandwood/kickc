@@ -41,14 +41,14 @@ main: {
     // }
     rts
 }
-// print(byte register(X) b, byte register(A) ca)
+// void print(__register(X) char b, __register(A) char ca)
 print: {
     // out(b, ca)
     jsr out
     // }
     rts
 }
-// out(byte register(X) b, byte register(A) ca)
+// void out(__register(X) char b, __register(A) char ca)
 out: {
     // (*(SCREEN+999))++;
     inc SCREEN+$3e7

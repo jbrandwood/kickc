@@ -22,7 +22,7 @@ main: {
     // }
     rts
 }
-// fgetc(byte zp(2) channel)
+// __register(A) char fgetc(__zp(2) volatile char channel)
 fgetc: {
     .label channel = 2
     .label ret = 3

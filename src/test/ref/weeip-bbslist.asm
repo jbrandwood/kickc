@@ -147,7 +147,7 @@ main: {
 }
 .segment Code
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $13
@@ -223,7 +223,7 @@ gotoxy: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// printf_string(byte* zp(5) str)
+// void printf_string(__zp(5) char *str, char format_min_length, char format_justify_left)
 printf_string: {
     .label str = 5
     // cputs(str)
@@ -232,7 +232,7 @@ printf_string: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(5) s)
+// void cputs(__zp(5) const char *s)
 cputs: {
     .label s = 5
   __b1:
@@ -253,7 +253,7 @@ cputs: {
     jmp __b1
 }
 // Print an unsigned int using a specific format
-// printf_uint(word zp(5) uvalue)
+// void printf_uint(__zp(5) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     .label uvalue = 5
     // printf_buffer.sign = format.sign_always?'+':0
@@ -272,7 +272,7 @@ printf_uint: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -303,7 +303,7 @@ cputc: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(5) value, byte* zp($17) buffer)
+// void utoa(__zp(5) unsigned int value, __zp($17) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
     .label digit_value = $15
@@ -376,7 +376,7 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
+// void printf_number_buffer(__register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     // if(buffer.sign)
@@ -430,7 +430,7 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($17) buffer, word zp(5) value, word zp($15) sub)
+// __zp(5) unsigned int utoa_append(__zp($17) char *buffer, __zp(5) unsigned int value, __zp($15) unsigned int sub)
 utoa_append: {
     .label buffer = $17
     .label value = 5
@@ -530,7 +530,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(7) destination, void* zp($17) source)
+// void * memcpy(__zp(7) void *destination, __zp($17) void *source, unsigned int num)
 memcpy: {
     .label src_end = $15
     .label dst = 7
@@ -572,7 +572,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(7) str, byte register(X) c)
+// void * memset(__zp(7) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $17
     .label dst = 7

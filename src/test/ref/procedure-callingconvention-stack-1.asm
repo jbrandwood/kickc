@@ -10,7 +10,7 @@
   .const STACK_BASE = $103
   .label SCREEN = $400
 .segment Code
-// plus(byte zp(2) a, byte register(A) b)
+// __register(A) char plus(__zp(2) char a, __register(A) char b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0

@@ -61,7 +61,7 @@ main: {
     // }
     rts
 }
-// print(byte* zp(2) msg)
+// void print(__zp(2) char *msg)
 print: {
     .label msg = 2
     ldy #0
@@ -80,7 +80,7 @@ print: {
     // }
     rts
 }
-// do10(void()* zp(4) fn)
+// void do10(__zp(4) void (*fn)())
 do10: {
     .label i = 6
     .label fn = 4

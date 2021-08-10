@@ -448,7 +448,7 @@ gfx_init_plane_charset8: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
-// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
+// void dtvSetCpuBankSegment1(__register(A) char cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff

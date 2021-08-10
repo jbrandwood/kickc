@@ -35,7 +35,7 @@ main: {
     // }
     rts
 }
-// getValue(word zp(2) index)
+// __zp(4) unsigned int getValue(__zp(2) unsigned int index)
 getValue: {
     .label index = 2
     .label return = 4

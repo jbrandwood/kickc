@@ -19,7 +19,7 @@ __start: {
     jsr main
     rts
 }
-// plus(byte zp(4) a, byte register(A) b)
+// __register(A) char plus(__zp(4) char a, __register(A) char b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0

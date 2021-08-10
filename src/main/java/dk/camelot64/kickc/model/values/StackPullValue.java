@@ -19,6 +19,6 @@ public class StackPullValue implements RValue {
 
    @Override
    public String toString(Program program) {
-      return "stackpull(" + type.getTypeName()+ ")";
+      return "stackpull(" + type.toCDecl() + ")";
    }
 }

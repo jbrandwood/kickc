@@ -23,7 +23,7 @@ main: {
     // }
     rts
 }
-// print_msg(byte register(X) idx)
+// void print_msg(__register(X) char idx)
 print_msg: {
     .label msg = 4
     // if(idx==1)
@@ -51,7 +51,7 @@ print_msg: {
     .byte 0
 }
 .segment Code
-// print(byte* zp(4) msg)
+// void print(__zp(4) char *msg)
 print: {
     .label msg = 4
   __b1:

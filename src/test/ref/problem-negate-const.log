@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   printneg::c#0 = -4
-  call printneg 
+  call printneg
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -12,7 +12,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void printneg(signed byte printneg::c)
+void printneg(signed char c)
 printneg: scope:[printneg]  from main
   printneg::c#2 = phi( main/printneg::c#0 )
   printneg::$0 = - printneg::c#2
@@ -25,7 +25,7 @@ printneg::@return: scope:[printneg]  from printneg
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -34,27 +34,27 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant signed byte* const SCREEN = (signed byte*)$400
+__constant signed char * const SCREEN = (signed char *)$400
 void __start()
 void main()
-void printneg(signed byte printneg::c)
-signed byte~ printneg::$0
-signed byte printneg::c
-signed byte printneg::c#0
-signed byte printneg::c#1
-signed byte printneg::c#2
+void printneg(signed char c)
+signed char printneg::$0
+signed char printneg::c
+signed char printneg::c#0
+signed char printneg::c#1
+signed char printneg::c#2
 
 Adding number conversion cast (snumber) -4 in printneg::c#0 = -4
 Adding number conversion cast (unumber) 0 in SCREEN[0] = printneg::c#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast printneg::c#0 = (snumber)-4
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (signed byte*) 1024
+Simplifying constant pointer cast (signed char *) 1024
 Simplifying constant integer cast -4
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) -4
-Finalized unsigned number type (byte) 0
+Finalized signed number type (signed char) -4
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias printneg::c#1 = printneg::$0 
 Successful SSA optimization Pass2AliasElimination
@@ -93,13 +93,13 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call printneg 
+  [1] call printneg
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void printneg(signed byte printneg::c)
+void printneg(signed char c)
 printneg: scope:[printneg]  from main
   [3] *SCREEN = --4
   to:printneg::@return
@@ -110,8 +110,8 @@ printneg::@return: scope:[printneg]  from printneg
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void printneg(signed byte printneg::c)
-signed byte printneg::c
+void printneg(signed char c)
+signed char printneg::c
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -145,7 +145,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call printneg 
+    // [1] call printneg
     jsr printneg
     jmp __breturn
     // main::@return
@@ -154,6 +154,7 @@ main: {
     rts
 }
   // printneg
+// void printneg(signed char c)
 printneg: {
     // [3] *SCREEN = --4 -- _deref_pbsc1=vbsc2 
     lda #-(-4)
@@ -175,10 +176,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant signed byte* const SCREEN = (signed byte*) 1024
+__constant signed char * const SCREEN = (signed char *) 1024
 void main()
-void printneg(signed byte printneg::c)
-signed byte printneg::c
+void printneg(signed char c)
+signed char printneg::c
 
 
 
@@ -203,7 +204,7 @@ Score: 24
   // main
 main: {
     // printneg(-4)
-    // [1] call printneg 
+    // [1] call printneg
     jsr printneg
     // main::@return
     // }
@@ -211,6 +212,7 @@ main: {
     rts
 }
   // printneg
+// void printneg(signed char c)
 printneg: {
     // SCREEN[0] = c
     // [3] *SCREEN = --4 -- _deref_pbsc1=vbsc2 

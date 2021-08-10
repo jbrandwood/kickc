@@ -7,8 +7,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const TYPEID_BYTE = 1
-  .const TYPEID_SIGNED_BYTE = 2
+  .const TYPEID_CHAR = 1
+  .const TYPEID_SIGNED_CHAR = 2
   .label SCREEN = $400
   .label SSCREEN = $400
 .segment Code
@@ -29,7 +29,7 @@ testUnsigned: {
     lda #0
     sta SCREEN
     // SCREEN[idx++] = typeid(ubc1)
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta SCREEN+1
     // SCREEN[idx++] = typeid(ubv1)
     sta SCREEN+2
@@ -37,7 +37,7 @@ testUnsigned: {
     lda #0
     sta SCREEN+3
     // SCREEN[idx++] = typeid(ubc1+250)
-    lda #TYPEID_BYTE
+    lda #TYPEID_CHAR
     sta SCREEN+4
     // SCREEN[idx++] = typeid(250+ubc1)
     sta SCREEN+5
@@ -112,7 +112,7 @@ testSigned: {
     lda #0
     sta SCREEN+$28*2
     // SCREEN[idx++] = typeid(sbc1)
-    lda #TYPEID_SIGNED_BYTE
+    lda #TYPEID_SIGNED_CHAR
     sta SCREEN+$28*2+1
     // SCREEN[idx++] = typeid(sbv1)
     sta SCREEN+$28*2+1+1
@@ -120,7 +120,7 @@ testSigned: {
     lda #0
     sta SCREEN+$28*2+1+1+1
     // SCREEN[idx++] = typeid(sbc1+-120)
-    lda #TYPEID_SIGNED_BYTE
+    lda #TYPEID_SIGNED_CHAR
     sta SCREEN+$28*2+1+1+1+1
     // SCREEN[idx++] = typeid(-120+sbc1)
     sta SCREEN+$28*2+1+1+1+1+1

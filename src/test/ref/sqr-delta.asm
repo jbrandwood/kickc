@@ -25,6 +25,7 @@ main: {
     // }
     rts
 }
+// __zp(6) unsigned long ifunc(unsigned long a)
 ifunc: {
     .const a = 8
     .label x = 6

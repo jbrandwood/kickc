@@ -32,7 +32,7 @@ main: {
     // }
     rts
 }
-// sum(byte register(A) b)
+// __register(A) char sum(char a, __register(A) char b)
 sum: {
     // a+b
     clc

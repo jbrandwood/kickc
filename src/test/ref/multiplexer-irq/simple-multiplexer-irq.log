@@ -1,15 +1,15 @@
 Resolved forward reference plex_irq to __interrupt(rom_min_c64) void plex_irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00(vicSelectGfxBank::gfx)
 Inlined call call plexSetScreen(plexInit::screen)
-Inlined call call plexFreePrepare 
+Inlined call call plexFreePrepare
 Inlined call call plexFreeAdd(plexShowSprite::ypos)
-Inlined call plex_irq::$2 = call plexFreeNextYpos 
-Inlined call call __init 
+Inlined call plex_irq::$2 = call plexFreeNextYpos
+Inlined call call __init
 Eliminating unused variable with no statement plexShowSprite::$0
 
 CONTROL FLOW GRAPH SSA
 
-void plexInit(byte* plexInit::screen)
+void plexInit(char *screen)
 plexInit: scope:[plexInit]  from init
   plexInit::screen#1 = phi( init/plexInit::screen#0 )
   plexInit::plexSetScreen1_screen#0 = plexInit::screen#1
@@ -120,9 +120,9 @@ plexShowSprite::@5: scope:[plexShowSprite]  from plexShowSprite::plexFreeAdd1
   plexShowSprite::plex_sprite_idx2#1 = phi( plexShowSprite::plexFreeAdd1/plexShowSprite::plex_sprite_idx2#2 )
   PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
   plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx]
-  plexShowSprite::$9 = plexShowSprite::xpos_idx#0 * SIZEOF_WORD
-  SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#1] = (byte)PLEX_XPOS[plexShowSprite::$9]
-  plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_WORD
+  plexShowSprite::$9 = plexShowSprite::xpos_idx#0 * SIZEOF_UNSIGNED_INT
+  SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#1] = (char)PLEX_XPOS[plexShowSprite::$9]
+  plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_UNSIGNED_INT
   plexShowSprite::$2 = byte1  PLEX_XPOS[plexShowSprite::$10]
   plexShowSprite::$3 = plexShowSprite::$2 != 0
   if(plexShowSprite::$3) goto plexShowSprite::@1
@@ -154,10 +154,10 @@ plexShowSprite::@return: scope:[plexShowSprite]  from plexShowSprite::@2 plexSho
 void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
-  call init 
+  call init
   to:main::@1
 main::@1: scope:[main]  from main
-  call loop 
+  call loop
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -169,7 +169,7 @@ void init()
 init: scope:[init]  from main
   *D011 = VICII_DEN|VICII_RSEL|3
   plexInit::screen#0 = SCREEN
-  call plexInit 
+  call plexInit
   to:init::@5
 init::@5: scope:[init]  from init
   init::xp#0 = $20
@@ -178,8 +178,8 @@ init::@5: scope:[init]  from init
 init::@1: scope:[init]  from init::@1 init::@5
   init::xp#2 = phi( init::@1/init::xp#1, init::@5/init::xp#0 )
   init::sx#2 = phi( init::@1/init::sx#1, init::@5/init::sx#0 )
-  PLEX_PTR[init::sx#2] = (byte)SPRITE/$40
-  init::$3 = init::sx#2 * SIZEOF_WORD
+  PLEX_PTR[init::sx#2] = (char)SPRITE/$40
+  init::$3 = init::sx#2 * SIZEOF_UNSIGNED_INT
   PLEX_XPOS[init::$3] = init::xp#2
   init::xp#1 = init::xp#2 + 9
   init::sx#1 = init::sx#2 + rangenext(0,PLEX_COUNT-1)
@@ -199,7 +199,7 @@ init::@3: scope:[init]  from init::@2 init::@3
   to:init::@4
 init::@4: scope:[init]  from init::@3
   asm { sei  }
-  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   *IRQ_ENABLE = IRQ_RASTER
   *IRQ_STATUS = IRQ_RASTER
   *KERNEL_IRQ = &plex_irq
@@ -218,7 +218,7 @@ plex_irq: scope:[plex_irq]  from
   plex_irq::rasterY#0 = 0
   to:plex_irq::@3
 plex_irq::@3: scope:[plex_irq]  from plex_irq plex_irq::@6
-  call plexShowSprite 
+  call plexShowSprite
   to:plex_irq::@7
 plex_irq::@7: scope:[plex_irq]  from plex_irq::@3
   to:plex_irq::plexFreeNextYpos1
@@ -294,7 +294,7 @@ loop::@5: scope:[loop]  from loop::@4
   loop::sin_idx#3 = phi( loop::@4/loop::sin_idx#5 )
   loop::sin_idx#1 = loop::sin_idx#3 + 1
   *BORDER_COLOR = ++ *BORDER_COLOR
-  call plexSort 
+  call plexSort
   to:loop::@6
 loop::@6: scope:[loop]  from loop::@5
   loop::sin_idx#7 = phi( loop::@5/loop::sin_idx#1 )
@@ -309,7 +309,7 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  PLEX_SCREEN_PTR = (byte*)$400+$3f8
+  PLEX_SCREEN_PTR = (char *)$400+$3f8
   plex_show_idx = 0
   plex_sprite_idx = 0
   plex_sprite_msb = 1
@@ -317,7 +317,7 @@ __start::__init1: scope:[__start]  from __start
   framedone = true
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -326,177 +326,177 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const BORDER_COLOR = (byte*)$d020
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*)$dc00
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const D011 = (byte*)$d011
-constant const byte GREEN = 5
-constant byte* const IRQ_ENABLE = (byte*)$d01a
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*)$d019
-constant void()** const KERNEL_IRQ = (void()**)$314
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant const byte PLEX_COUNT = $20
-constant byte* PLEX_FREE_YPOS[8]  = { fill( 8, 0) }
-constant byte* PLEX_PTR[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-byte* volatile PLEX_SCREEN_PTR loadstore
-constant byte* PLEX_SORTED_IDX[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant word* PLEX_XPOS[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant byte* PLEX_YPOS[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant byte* const RASTER = (byte*)$d012
-constant const byte RED = 2
-constant byte* SCREEN = (byte*)$400
-constant byte SIZEOF_WORD = 2
-constant byte* SPRITE[$40]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+__constant char * const BORDER_COLOR = (char *)$d020
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const D011 = (char *)$d011
+__constant const char GREEN = 5
+__constant char * const IRQ_ENABLE = (char *)$d01a
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *)$d019
+__constant void (** const KERNEL_IRQ)() = (void (**)())$314
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant const char PLEX_COUNT = $20
+__constant char PLEX_FREE_YPOS[8] = { fill( 8, 0) }
+__constant char PLEX_PTR[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__loadstore char * volatile PLEX_SCREEN_PTR
+__constant char PLEX_SORTED_IDX[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant unsigned int PLEX_XPOS[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant char PLEX_YPOS[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant char * const RASTER = (char *)$d012
+__constant const char RED = 2
+__constant char *SCREEN = (char *)$400
+__constant char SIZEOF_UNSIGNED_INT = 2
+__constant char SPRITE[$40] = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_COLOR = (byte*)$d027
-constant byte* const SPRITES_ENABLE = (byte*)$d015
-constant byte* const SPRITES_XMSB = (byte*)$d010
-constant byte* const SPRITES_XPOS = (byte*)$d000
-constant byte* const SPRITES_YPOS = (byte*)$d001
-constant byte* const VICII_CONTROL1 = (byte*)$d011
-constant const byte VICII_DEN = $10
-constant const byte VICII_RSEL = 8
-constant const byte WHITE = 1
-constant byte* YSIN[$100]  = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
+__constant char * const SPRITES_COLOR = (char *)$d027
+__constant char * const SPRITES_ENABLE = (char *)$d015
+__constant char * const SPRITES_XMSB = (char *)$d010
+__constant char * const SPRITES_XPOS = (char *)$d000
+__constant char * const SPRITES_YPOS = (char *)$d001
+__constant char * const VICII_CONTROL1 = (char *)$d011
+__constant const char VICII_DEN = $10
+__constant const char VICII_RSEL = 8
+__constant const char WHITE = 1
+__constant char YSIN[$100] = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
  }}
 void __start()
-volatile bool framedone loadstore
+__loadstore volatile bool framedone
 void init()
-bool~ init::$1
-bool~ init::$2
-byte~ init::$3
-byte init::ss
-byte init::ss#0
-byte init::ss#1
-byte init::ss#2
-byte init::sx
-byte init::sx#0
-byte init::sx#1
-byte init::sx#2
-word init::xp
-word init::xp#0
-word init::xp#1
-word init::xp#2
+bool init::$1
+bool init::$2
+char init::$3
+char init::ss
+char init::ss#0
+char init::ss#1
+char init::ss#2
+char init::sx
+char init::sx#0
+char init::sx#1
+char init::sx#2
+unsigned int init::xp
+unsigned int init::xp#0
+unsigned int init::xp#1
+unsigned int init::xp#2
 void loop()
-bool~ loop::$0
-bool~ loop::$1
-byte loop::sin_idx
-byte loop::sin_idx#0
-byte loop::sin_idx#1
-byte loop::sin_idx#2
-byte loop::sin_idx#3
-byte loop::sin_idx#4
-byte loop::sin_idx#5
-byte loop::sin_idx#6
-byte loop::sin_idx#7
-byte loop::sy
-byte loop::sy#0
-byte loop::sy#1
-byte loop::sy#2
-byte loop::y_idx
-byte loop::y_idx#0
-byte loop::y_idx#1
-byte loop::y_idx#2
+bool loop::$0
+bool loop::$1
+char loop::sin_idx
+char loop::sin_idx#0
+char loop::sin_idx#1
+char loop::sin_idx#2
+char loop::sin_idx#3
+char loop::sin_idx#4
+char loop::sin_idx#5
+char loop::sin_idx#6
+char loop::sin_idx#7
+char loop::sy
+char loop::sy#0
+char loop::sy#1
+char loop::sy#2
+char loop::y_idx
+char loop::y_idx#0
+char loop::y_idx#1
+char loop::y_idx#2
 void main()
-void plexInit(byte* plexInit::screen)
-bool~ plexInit::$1
-byte plexInit::i
-byte plexInit::i#0
-byte plexInit::i#1
-byte plexInit::i#2
-byte*~ plexInit::plexSetScreen1_$0
-byte* plexInit::plexSetScreen1_screen
-byte* plexInit::plexSetScreen1_screen#0
-byte* plexInit::plexSetScreen1_screen#1
-byte* plexInit::screen
-byte* plexInit::screen#0
-byte* plexInit::screen#1
+void plexInit(char *screen)
+bool plexInit::$1
+char plexInit::i
+char plexInit::i#0
+char plexInit::i#1
+char plexInit::i#2
+char *plexInit::plexSetScreen1_$0
+char *plexInit::plexSetScreen1_screen
+char *plexInit::plexSetScreen1_screen#0
+char *plexInit::plexSetScreen1_screen#1
+char *plexInit::screen
+char *plexInit::screen#0
+char *plexInit::screen#1
 void plexShowSprite()
-byte~ plexShowSprite::$10
-byte~ plexShowSprite::$2
-bool~ plexShowSprite::$3
-number~ plexShowSprite::$4
-number~ plexShowSprite::$5
-bool~ plexShowSprite::$6
-bool~ plexShowSprite::$7
-number~ plexShowSprite::$8
-byte~ plexShowSprite::$9
-number~ plexShowSprite::plexFreeAdd1_$0
-number~ plexShowSprite::plexFreeAdd1_$1
-number~ plexShowSprite::plexFreeAdd1_$2
-byte plexShowSprite::plexFreeAdd1_ypos
-byte plexShowSprite::plexFreeAdd1_ypos#0
-byte plexShowSprite::plexFreeAdd1_ypos#1
-byte plexShowSprite::plex_sprite_idx2
-byte plexShowSprite::plex_sprite_idx2#0
-byte plexShowSprite::plex_sprite_idx2#1
-byte plexShowSprite::plex_sprite_idx2#2
-byte plexShowSprite::xpos_idx
-byte plexShowSprite::xpos_idx#0
-byte plexShowSprite::ypos
-byte plexShowSprite::ypos#0
+char plexShowSprite::$10
+char plexShowSprite::$2
+bool plexShowSprite::$3
+number plexShowSprite::$4
+number plexShowSprite::$5
+bool plexShowSprite::$6
+bool plexShowSprite::$7
+number plexShowSprite::$8
+char plexShowSprite::$9
+number plexShowSprite::plexFreeAdd1_$0
+number plexShowSprite::plexFreeAdd1_$1
+number plexShowSprite::plexFreeAdd1_$2
+char plexShowSprite::plexFreeAdd1_ypos
+char plexShowSprite::plexFreeAdd1_ypos#0
+char plexShowSprite::plexFreeAdd1_ypos#1
+char plexShowSprite::plex_sprite_idx2
+char plexShowSprite::plex_sprite_idx2#0
+char plexShowSprite::plex_sprite_idx2#1
+char plexShowSprite::plex_sprite_idx2#2
+char plexShowSprite::xpos_idx
+char plexShowSprite::xpos_idx#0
+char plexShowSprite::ypos
+char plexShowSprite::ypos#0
 void plexSort()
-number~ plexSort::$1
-bool~ plexSort::$2
-bool~ plexSort::$3
-number~ plexSort::$4
-bool~ plexSort::$5
-bool~ plexSort::$6
-bool~ plexSort::$7
-bool~ plexSort::$8
-byte plexSort::m
-byte plexSort::m#0
-byte plexSort::m#1
-byte plexSort::m#2
-byte plexSort::m#3
-byte plexSort::m#4
-byte plexSort::m#5
-byte plexSort::m#6
-byte plexSort::nxt_idx
-byte plexSort::nxt_idx#0
-byte plexSort::nxt_idx#1
-byte plexSort::nxt_idx#2
-byte plexSort::nxt_idx#3
-byte plexSort::nxt_y
-byte plexSort::nxt_y#0
-byte plexSort::nxt_y#1
-byte plexSort::nxt_y#2
-bool~ plexSort::plexFreePrepare1_$0
-byte plexSort::plexFreePrepare1_s
-byte plexSort::plexFreePrepare1_s#0
-byte plexSort::plexFreePrepare1_s#1
-byte plexSort::plexFreePrepare1_s#2
-byte plexSort::s
-byte plexSort::s#0
-byte plexSort::s#1
-byte plexSort::s#2
-byte plexSort::s#3
-byte plexSort::s#4
-volatile byte plex_free_next loadstore
+number plexSort::$1
+bool plexSort::$2
+bool plexSort::$3
+number plexSort::$4
+bool plexSort::$5
+bool plexSort::$6
+bool plexSort::$7
+bool plexSort::$8
+char plexSort::m
+char plexSort::m#0
+char plexSort::m#1
+char plexSort::m#2
+char plexSort::m#3
+char plexSort::m#4
+char plexSort::m#5
+char plexSort::m#6
+char plexSort::nxt_idx
+char plexSort::nxt_idx#0
+char plexSort::nxt_idx#1
+char plexSort::nxt_idx#2
+char plexSort::nxt_idx#3
+char plexSort::nxt_y
+char plexSort::nxt_y#0
+char plexSort::nxt_y#1
+char plexSort::nxt_y#2
+bool plexSort::plexFreePrepare1_$0
+char plexSort::plexFreePrepare1_s
+char plexSort::plexFreePrepare1_s#0
+char plexSort::plexFreePrepare1_s#1
+char plexSort::plexFreePrepare1_s#2
+char plexSort::s
+char plexSort::s#0
+char plexSort::s#1
+char plexSort::s#2
+char plexSort::s#3
+char plexSort::s#4
+__loadstore volatile char plex_free_next
 __interrupt(rom_min_c64) void plex_irq()
-bool~ plex_irq::$0
-byte~ plex_irq::$2
-bool~ plex_irq::$3
-number~ plex_irq::$4
-bool~ plex_irq::$5
-bool~ plex_irq::$6
-byte plex_irq::plexFreeNextYpos1_return
-byte plex_irq::plexFreeNextYpos1_return#0
-byte plex_irq::plexFreeNextYpos1_return#1
-byte plex_irq::plexFreeNextYpos1_return#2
-byte plex_irq::plexFreeNextYpos1_return#3
-byte plex_irq::rasterY
-byte plex_irq::rasterY#0
-byte plex_irq::rasterY#1
-byte plex_irq::rasterY#2
-byte plex_irq::rasterY#3
-volatile byte plex_show_idx loadstore
-volatile byte plex_sprite_idx loadstore
-volatile byte plex_sprite_msb loadstore
+bool plex_irq::$0
+char plex_irq::$2
+bool plex_irq::$3
+number plex_irq::$4
+bool plex_irq::$5
+bool plex_irq::$6
+char plex_irq::plexFreeNextYpos1_return
+char plex_irq::plexFreeNextYpos1_return#0
+char plex_irq::plexFreeNextYpos1_return#1
+char plex_irq::plexFreeNextYpos1_return#2
+char plex_irq::plexFreeNextYpos1_return#3
+char plex_irq::rasterY
+char plex_irq::rasterY#0
+char plex_irq::rasterY#1
+char plex_irq::rasterY#2
+char plex_irq::rasterY#3
+__loadstore volatile char plex_show_idx
+__loadstore volatile char plex_sprite_idx
+__loadstore volatile char plex_sprite_msb
 
 Adding number conversion cast (unumber) $3f8 in plexInit::plexSetScreen1_$0 = plexInit::plexSetScreen1_screen#1 + $3f8
 Adding number conversion cast (unumber) 1 in plexInit::i#1 = plexInit::i#2 + rangenext(0,PLEX_COUNT-1)
@@ -530,7 +530,7 @@ Adding number conversion cast (unumber) 0 in plexShowSprite::$6 = plex_sprite_ms
 Adding number conversion cast (unumber) 1 in plex_sprite_msb = 1
 Adding number conversion cast (unumber) VICII_DEN|VICII_RSEL|3 in *D011 = VICII_DEN|VICII_RSEL|3
 Adding number conversion cast (unumber) 3 in *D011 = ((unumber)) VICII_DEN|VICII_RSEL|3
-Adding number conversion cast (unumber) $40 in PLEX_PTR[init::sx#2] = (byte)SPRITE/$40
+Adding number conversion cast (unumber) $40 in PLEX_PTR[init::sx#2] = (char)SPRITE/$40
 Adding number conversion cast (unumber) 9 in init::xp#1 = init::xp#2 + 9
 Adding number conversion cast (unumber) 1 in init::sx#1 = init::sx#2 + rangenext(0,PLEX_COUNT-1)
 Adding number conversion cast (unumber) $ff in *SPRITES_ENABLE = $ff
@@ -543,7 +543,7 @@ Adding number conversion cast (unumber) 0 in *BORDER_COLOR = 0
 Adding number conversion cast (unumber) 8 in loop::y_idx#1 = loop::y_idx#2 + 8
 Adding number conversion cast (unumber) 1 in loop::sy#1 = loop::sy#2 + rangenext(0,PLEX_COUNT-1)
 Adding number conversion cast (unumber) 1 in loop::sin_idx#1 = loop::sin_idx#3 + 1
-Adding number conversion cast (unumber) $3f8 in PLEX_SCREEN_PTR = (byte*)$400+$3f8
+Adding number conversion cast (unumber) $3f8 in PLEX_SCREEN_PTR = (char *)$400+$3f8
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast plex_show_idx = (unumber)0
 Inlining cast plex_sprite_idx = (unumber)0
@@ -557,20 +557,20 @@ Inlining cast *RASTER = (unumber)0
 Inlining cast *RASTER = (unumber)0
 Inlining cast *BORDER_COLOR = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53248
-Simplifying constant pointer cast (byte*) 53249
-Simplifying constant pointer cast (byte*) 53264
-Simplifying constant pointer cast (byte*) 53287
-Simplifying constant pointer cast (byte*) 53269
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53273
-Simplifying constant pointer cast (byte*) 53274
-Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
-Simplifying constant pointer cast (void()**) 788
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 53248
+Simplifying constant pointer cast (char *) 53249
+Simplifying constant pointer cast (char *) 53264
+Simplifying constant pointer cast (char *) 53287
+Simplifying constant pointer cast (char *) 53269
+Simplifying constant pointer cast (char *) 53266
+Simplifying constant pointer cast (char *) 53280
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53265
+Simplifying constant pointer cast (char *) 53273
+Simplifying constant pointer cast (char *) 53274
+Simplifying constant pointer cast (struct MOS6526_CIA *) 56320
+Simplifying constant pointer cast (void (**)()) 788
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
@@ -607,55 +607,55 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $3f8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3f8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) $16
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 9
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (word) $3f8
+Finalized unsigned number type (unsigned int) $3f8
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) $16
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (char) 9
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $ff
+Finalized unsigned number type (char) $7f
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (unsigned int) $3f8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in plexSort::$1 = plexSort::m#2 + 1
-Inferred type updated to byte in plexSort::$4 = plexSort::s#3 + 1
-Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $16
-Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
-Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
-Inferred type updated to byte in plexShowSprite::$8 = $ff ^ plex_sprite_msb
-Inferred type updated to byte in plexShowSprite::$4 = plex_sprite_idx + 1
-Inferred type updated to byte in plexShowSprite::$5 = plexShowSprite::$4 & 7
-Inferred type updated to byte in plex_irq::$4 = *RASTER + 2
+Inferred type updated to char in plexSort::$1 = plexSort::m#2 + 1
+Inferred type updated to char in plexSort::$4 = plexSort::s#3 + 1
+Inferred type updated to char in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $16
+Inferred type updated to char in plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
+Inferred type updated to char in plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
+Inferred type updated to char in plexShowSprite::$8 = $ff ^ plex_sprite_msb
+Inferred type updated to char in plexShowSprite::$4 = plex_sprite_idx + 1
+Inferred type updated to char in plexShowSprite::$5 = plexShowSprite::$4 & 7
+Inferred type updated to char in plex_irq::$4 = *RASTER + 2
 Inversing boolean not [18] plexSort::$3 = plexSort::nxt_y#0 >= PLEX_YPOS[PLEX_SORTED_IDX[plexSort::m#2]] from [17] plexSort::$2 = plexSort::nxt_y#0 < PLEX_YPOS[PLEX_SORTED_IDX[plexSort::m#2]]
 Inversing boolean not [76] plexShowSprite::$7 = plex_sprite_msb != 0 from [75] plexShowSprite::$6 = plex_sprite_msb == 0
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -688,7 +688,7 @@ Identical Phi Values loop::sin_idx#3 loop::sin_idx#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values plexSort::m#3 plexSort::m#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [63] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_WORD
+Identified duplicate assignment right side [63] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition plexInit::$1 [8] if(plexInit::i#1!=rangelast(0,PLEX_COUNT-1)) goto plexInit::@1
 Simple Condition plexSort::$3 [16] if(plexSort::nxt_y#0>=PLEX_YPOS[PLEX_SORTED_IDX[plexSort::m#2]]) goto plexSort::@2
@@ -756,12 +756,12 @@ Simplifying constant integer cast 8
 Simplifying constant integer cast PLEX_COUNT-1+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)PLEX_SCREEN_PTR = plexInit::plexSetScreen1_$0 
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
@@ -786,8 +786,8 @@ Successful SSA optimization Pass2ConstantIdentification
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$5 
 Rewriting multiplication to use shift [29] plexShowSprite::plex_sprite_idx2#0 = plex_sprite_idx * 2
-Rewriting multiplication to use shift [39] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_WORD
-Rewriting multiplication to use shift [62] init::$3 = init::sx#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [39] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 * SIZEOF_UNSIGNED_INT
+Rewriting multiplication to use shift [62] init::$3 = init::sx#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings plexInit::i#0
 Inlining constant with var siblings plexSort::m#0
@@ -818,14 +818,14 @@ Alias plexSort::s#3 = plexSort::$4
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$5 
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$5 
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) 8
+Finalized unsigned number type (char) $40
+Finalized unsigned number type (unsigned int) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$5 
@@ -903,7 +903,7 @@ __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8
+  [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8
   [2] plex_show_idx = 0
   [3] plex_sprite_idx = 0
   [4] plex_sprite_msb = 1
@@ -912,7 +912,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [7] phi()
-  [8] call main 
+  [8] call main
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@1
   [9] return 
@@ -925,7 +925,7 @@ plex_irq: scope:[plex_irq]  from
   to:plex_irq::@3
 plex_irq::@3: scope:[plex_irq]  from plex_irq plex_irq::@7
   [12] phi()
-  [13] call plexShowSprite 
+  [13] call plexShowSprite
   to:plex_irq::plexFreeNextYpos1
 plex_irq::plexFreeNextYpos1: scope:[plex_irq]  from plex_irq::@3
   [14] plex_irq::plexFreeNextYpos1_return#0 = PLEX_FREE_YPOS[plex_free_next]
@@ -959,11 +959,11 @@ plex_irq::@1: scope:[plex_irq]  from plex_irq::@4
 void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
-  [27] call init 
+  [27] call init
   to:main::@1
 main::@1: scope:[main]  from main
   [28] phi()
-  [29] call loop 
+  [29] call loop
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [30] return 
@@ -986,7 +986,7 @@ plexShowSprite::@5: scope:[plexShowSprite]  from plexShowSprite::plexFreeAdd1
   [39] PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
   [40] plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx]
   [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1
-  [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10]
+  [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10]
   [43] plexShowSprite::$2 = byte1  PLEX_XPOS[plexShowSprite::$10]
   [44] if(plexShowSprite::$2!=0) goto plexShowSprite::@1
   to:plexShowSprite::@3
@@ -1015,12 +1015,12 @@ plexShowSprite::@1: scope:[plexShowSprite]  from plexShowSprite::@5
 void init()
 init: scope:[init]  from main
   [56] *D011 = VICII_DEN|VICII_RSEL|3
-  [57] call plexInit 
+  [57] call plexInit
   to:init::@1
 init::@1: scope:[init]  from init init::@1
   [58] init::xp#2 = phi( init::@1/init::xp#1, init/$20 )
   [58] init::sx#2 = phi( init::@1/init::sx#1, init/0 )
-  [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40
+  [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40
   [60] init::$3 = init::sx#2 << 1
   [61] PLEX_XPOS[init::$3] = init::xp#2
   [62] init::xp#1 = init::xp#2 + 9
@@ -1038,7 +1038,7 @@ init::@3: scope:[init]  from init::@2 init::@3
   to:init::@4
 init::@4: scope:[init]  from init::@3
   asm { sei  }
-  [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   [72] *IRQ_ENABLE = IRQ_RASTER
   [73] *IRQ_STATUS = IRQ_RASTER
   [74] *KERNEL_IRQ = &plex_irq
@@ -1075,14 +1075,14 @@ loop::@4: scope:[loop]  from loop::@3 loop::@4
 loop::@5: scope:[loop]  from loop::@4
   [89] loop::sin_idx#1 = loop::sin_idx#6 + 1
   [90] *BORDER_COLOR = ++ *BORDER_COLOR
-  [91] call plexSort 
+  [91] call plexSort
   to:loop::@6
 loop::@6: scope:[loop]  from loop::@5
   [92] *BORDER_COLOR = GREEN
   [93] framedone = false
   to:loop::@1
 
-void plexInit(byte* plexInit::screen)
+void plexInit(char *screen)
 plexInit: scope:[plexInit]  from init
   [94] phi()
   to:plexInit::plexSetScreen1
@@ -1152,79 +1152,79 @@ plexSort::@return: scope:[plexSort]  from plexSort::plexFreePrepare1_@2
 
 
 VARIABLE REGISTER WEIGHTS
-byte* volatile PLEX_SCREEN_PTR loadstore 33.45454545454545
+__loadstore char * volatile PLEX_SCREEN_PTR // 33.45454545454545
 void __start()
-volatile bool framedone loadstore 1222.8888888888887
+__loadstore volatile bool framedone // 1222.8888888888887
 void init()
-byte~ init::$3 2002.0
-byte init::ss
-byte init::ss#1 1501.5
-byte init::ss#2 1501.5
-byte init::sx
-byte init::sx#1 1501.5
-byte init::sx#2 800.8
-word init::xp
-word init::xp#1 667.3333333333334
-word init::xp#2 750.75
+char init::$3 // 2002.0
+char init::ss
+char init::ss#1 // 1501.5
+char init::ss#2 // 1501.5
+char init::sx
+char init::sx#1 // 1501.5
+char init::sx#2 // 800.8
+unsigned int init::xp
+unsigned int init::xp#1 // 667.3333333333334
+unsigned int init::xp#2 // 750.75
 void loop()
-byte loop::sin_idx
-byte loop::sin_idx#1 400.4
-byte loop::sin_idx#6 333.6666666666667
-byte loop::sy
-byte loop::sy#1 15001.5
-byte loop::sy#2 10001.0
-byte loop::y_idx
-byte loop::y_idx#1 6667.333333333333
-byte loop::y_idx#2 15502.0
-byte loop::y_idx#3 2002.0
+char loop::sin_idx
+char loop::sin_idx#1 // 400.4
+char loop::sin_idx#6 // 333.6666666666667
+char loop::sy
+char loop::sy#1 // 15001.5
+char loop::sy#2 // 10001.0
+char loop::y_idx
+char loop::y_idx#1 // 6667.333333333333
+char loop::y_idx#2 // 15502.0
+char loop::y_idx#3 // 2002.0
 void main()
-void plexInit(byte* plexInit::screen)
-byte plexInit::i
-byte plexInit::i#1 15001.5
-byte plexInit::i#2 20002.0
-byte* plexInit::plexSetScreen1_screen
-byte* plexInit::screen
+void plexInit(char *screen)
+char plexInit::i
+char plexInit::i#1 // 15001.5
+char plexInit::i#2 // 20002.0
+char *plexInit::plexSetScreen1_screen
+char *plexInit::screen
 void plexShowSprite()
-byte~ plexShowSprite::$10 101.0
-byte~ plexShowSprite::$2 202.0
-byte~ plexShowSprite::$4 202.0
-byte~ plexShowSprite::$5 202.0
-byte~ plexShowSprite::$8 202.0
-byte~ plexShowSprite::plexFreeAdd1_$0 202.0
-byte~ plexShowSprite::plexFreeAdd1_$1 202.0
-byte~ plexShowSprite::plexFreeAdd1_$2 202.0
-byte plexShowSprite::plexFreeAdd1_ypos
-byte plexShowSprite::plexFreeAdd1_ypos#0 151.5
-byte plexShowSprite::plex_sprite_idx2
-byte plexShowSprite::plex_sprite_idx2#0 27.545454545454547
-byte plexShowSprite::xpos_idx
-byte plexShowSprite::xpos_idx#0 202.0
-byte plexShowSprite::ypos
+char plexShowSprite::$10 // 101.0
+char plexShowSprite::$2 // 202.0
+char plexShowSprite::$4 // 202.0
+char plexShowSprite::$5 // 202.0
+char plexShowSprite::$8 // 202.0
+char plexShowSprite::plexFreeAdd1_$0 // 202.0
+char plexShowSprite::plexFreeAdd1_$1 // 202.0
+char plexShowSprite::plexFreeAdd1_$2 // 202.0
+char plexShowSprite::plexFreeAdd1_ypos
+char plexShowSprite::plexFreeAdd1_ypos#0 // 151.5
+char plexShowSprite::plex_sprite_idx2
+char plexShowSprite::plex_sprite_idx2#0 // 27.545454545454547
+char plexShowSprite::xpos_idx
+char plexShowSprite::xpos_idx#0 // 202.0
+char plexShowSprite::ypos
 void plexSort()
-byte plexSort::m
-byte plexSort::m#1 1500001.5
-byte plexSort::m#2 416667.0833333334
-byte plexSort::nxt_idx
-byte plexSort::nxt_idx#0 300000.30000000005
-byte plexSort::nxt_y
-byte plexSort::nxt_y#0 1500000.375
-byte plexSort::plexFreePrepare1_s
-byte plexSort::plexFreePrepare1_s#1 1500001.5
-byte plexSort::plexFreePrepare1_s#2 1500001.5
-byte plexSort::s
-byte plexSort::s#1 1.3666668333333332E7
-byte plexSort::s#2 2000002.0
-byte plexSort::s#3 2.05000025E7
-byte plexSort::s#6 2000002.0
-volatile byte plex_free_next loadstore 332.80645161290323
+char plexSort::m
+char plexSort::m#1 // 1500001.5
+char plexSort::m#2 // 416667.0833333334
+char plexSort::nxt_idx
+char plexSort::nxt_idx#0 // 300000.30000000005
+char plexSort::nxt_y
+char plexSort::nxt_y#0 // 1500000.375
+char plexSort::plexFreePrepare1_s
+char plexSort::plexFreePrepare1_s#1 // 1500001.5
+char plexSort::plexFreePrepare1_s#2 // 1500001.5
+char plexSort::s
+char plexSort::s#1 // 1.3666668333333332E7
+char plexSort::s#2 // 2000002.0
+char plexSort::s#3 // 2.05000025E7
+char plexSort::s#6 // 2000002.0
+__loadstore volatile char plex_free_next // 332.80645161290323
 __interrupt(rom_min_c64) void plex_irq()
-byte~ plex_irq::$4 11.0
-byte plex_irq::plexFreeNextYpos1_return
-byte plex_irq::plexFreeNextYpos1_return#0 4.0
-byte plex_irq::rasterY
-volatile byte plex_show_idx loadstore 309.44117647058823
-volatile byte plex_sprite_idx loadstore 335.7096774193549
-volatile byte plex_sprite_msb loadstore 321.4848484848485
+char plex_irq::$4 // 11.0
+char plex_irq::plexFreeNextYpos1_return
+char plex_irq::plexFreeNextYpos1_return#0 // 4.0
+char plex_irq::rasterY
+__loadstore volatile char plex_show_idx // 309.44117647058823
+__loadstore volatile char plex_sprite_idx // 335.7096774193549
+__loadstore volatile char plex_sprite_msb // 321.4848484848485
 
 Initial phi equivalence classes
 [ init::sx#2 init::sx#1 ]
@@ -1328,7 +1328,7 @@ Allocated zp[1]:34 [ plexSort::nxt_idx#0 ]
 Allocated zp[1]:35 [ plexSort::nxt_y#0 ]
 Allocated zp[1]:36 [ plexSort::s#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] plex_show_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] plex_sprite_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] plex_sprite_msb = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1353,7 +1353,7 @@ Statement [39] PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ]
 Statement [40] plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] { }  ) always clobbers reg byte y 
 Statement [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
-Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
+Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:28 [ plexShowSprite::$10 ]
 Statement [43] plexShowSprite::$2 = byte1  PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] { }  ) always clobbers reg byte a 
 Statement [45] plexShowSprite::$8 = $ff ^ plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] { }  ) always clobbers reg byte a 
@@ -1362,7 +1362,7 @@ Statement [52] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN
 Statement [53] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [55] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ init::sx#2 init::sx#1 ]
 Statement [60] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
 Statement [61] PLEX_XPOS[init::$3] = init::xp#2 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
@@ -1370,7 +1370,7 @@ Statement [62] init::xp#1 = init::xp#2 + 9 [ init::sx#2 init::xp#1 ] ( main:8::i
 Statement [65] *SPRITES_ENABLE = $ff [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [67] SPRITES_COLOR[init::ss#2] = GREEN [ init::ss#2 ] ( main:8::init:27 [ framedone init::ss#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ init::ss#2 init::ss#1 ]
-Statement [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [72] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [73] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
@@ -1399,7 +1399,7 @@ Statement [118] plex_sprite_msb = 1 [ ] ( main:8::loop:29::plexSort:91 [ loop::s
 Statement [121] PLEX_FREE_YPOS[plexSort::plexFreePrepare1_s#2] = 0 [ plexSort::plexFreePrepare1_s#2 ] ( main:8::loop:29::plexSort:91 [ loop::sin_idx#1 plexSort::plexFreePrepare1_s#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:12 [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ]
 Statement [124] plex_free_next = 0 [ ] ( main:8::loop:29::plexSort:91 [ loop::sin_idx#1 ] { }  ) always clobbers reg byte a 
-Statement [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] plex_show_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] plex_sprite_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] plex_sprite_msb = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1421,7 +1421,7 @@ Statement [35] PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0 
 Statement [39] PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [40] plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] { }  ) always clobbers reg byte y 
 Statement [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
-Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
+Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
 Statement [43] plexShowSprite::$2 = byte1  PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] { }  ) always clobbers reg byte a 
 Statement [45] plexShowSprite::$8 = $ff ^ plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] { }  ) always clobbers reg byte a 
 Statement [46] *SPRITES_XMSB = *SPRITES_XMSB & plexShowSprite::$8 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
@@ -1429,13 +1429,13 @@ Statement [52] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN
 Statement [53] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [55] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [60] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
 Statement [61] PLEX_XPOS[init::$3] = init::xp#2 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [62] init::xp#1 = init::xp#2 + 9 [ init::sx#2 init::xp#1 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#1 ] { }  ) always clobbers reg byte a 
 Statement [65] *SPRITES_ENABLE = $ff [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [67] SPRITES_COLOR[init::ss#2] = GREEN [ init::ss#2 ] ( main:8::init:27 [ framedone init::ss#2 ] { }  ) always clobbers reg byte a 
-Statement [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [72] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [73] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
@@ -1457,7 +1457,7 @@ Statement [117] plex_sprite_idx = 0 [ ] ( main:8::loop:29::plexSort:91 [ loop::s
 Statement [118] plex_sprite_msb = 1 [ ] ( main:8::loop:29::plexSort:91 [ loop::sin_idx#1 ] { }  ) always clobbers reg byte a 
 Statement [121] PLEX_FREE_YPOS[plexSort::plexFreePrepare1_s#2] = 0 [ plexSort::plexFreePrepare1_s#2 ] ( main:8::loop:29::plexSort:91 [ loop::sin_idx#1 plexSort::plexFreePrepare1_s#2 ] { }  ) always clobbers reg byte a 
 Statement [124] plex_free_next = 0 [ ] ( main:8::loop:29::plexSort:91 [ loop::sin_idx#1 ] { }  ) always clobbers reg byte a 
-Statement [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] plex_show_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] plex_sprite_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] plex_sprite_msb = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1478,7 +1478,7 @@ Statement [35] PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0 
 Statement [39] PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [40] plexShowSprite::xpos_idx#0 = PLEX_SORTED_IDX[plex_show_idx] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] { }  ) always clobbers reg byte y 
 Statement [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::plex_sprite_idx2#0 plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
-Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
+Statement [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$10 ] { }  ) always clobbers reg byte a 
 Statement [43] plexShowSprite::$2 = byte1  PLEX_XPOS[plexShowSprite::$10] [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$2 ] { }  ) always clobbers reg byte a 
 Statement [45] plexShowSprite::$8 = $ff ^ plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next plexShowSprite::$8 ] { }  ) always clobbers reg byte a 
 Statement [46] *SPRITES_XMSB = *SPRITES_XMSB & plexShowSprite::$8 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
@@ -1486,13 +1486,13 @@ Statement [52] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN
 Statement [53] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [55] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [60] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
 Statement [61] PLEX_XPOS[init::$3] = init::xp#2 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [62] init::xp#1 = init::xp#2 + 9 [ init::sx#2 init::xp#1 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#1 ] { }  ) always clobbers reg byte a 
 Statement [65] *SPRITES_ENABLE = $ff [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [67] SPRITES_COLOR[init::ss#2] = GREEN [ init::ss#2 ] ( main:8::init:27 [ framedone init::ss#2 ] { }  ) always clobbers reg byte a 
-Statement [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [72] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [73] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
@@ -1734,7 +1734,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8 -- pbuz1=pbuc1 
+    // [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8 -- pbuz1=pbuc1 
     lda #<$400+$3f8
     sta.z PLEX_SCREEN_PTR
     lda #>$400+$3f8
@@ -1759,7 +1759,7 @@ __start: {
     jmp __b1
     // __start::@1
   __b1:
-    // [8] call main 
+    // [8] call main
     jsr main
     jmp __breturn
     // __start::@return
@@ -1782,7 +1782,7 @@ plex_irq: {
     jmp __b3
     // plex_irq::@3
   __b3:
-    // [13] call plexShowSprite 
+    // [13] call plexShowSprite
     jsr plexShowSprite
     jmp plexFreeNextYpos1
     // plex_irq::plexFreeNextYpos1
@@ -1851,14 +1851,14 @@ plex_irq: {
 main: {
     // asm { sei  }
     sei
-    // [27] call init 
+    // [27] call init
     jsr init
     // [28] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [29] call loop 
+    // [29] call loop
     // [79] phi from main::@1 to loop [phi:main::@1->loop]
   loop_from___b1:
     jsr loop
@@ -1916,7 +1916,7 @@ plexShowSprite: {
     // [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-    // [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10] -- pbuc1_derefidx_vbuz1=_byte_pwuc2_derefidx_vbuxx 
+    // [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10] -- pbuc1_derefidx_vbuz1=_byte_pwuc2_derefidx_vbuxx 
     ldy.z plex_sprite_idx2
     lda PLEX_XPOS,x
     sta SPRITES_XPOS,y
@@ -1979,7 +1979,7 @@ init: {
     // [56] *D011 = VICII_DEN|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
     lda #VICII_DEN|VICII_RSEL|3
     sta D011
-    // [57] call plexInit 
+    // [57] call plexInit
   // Initialize the multiplexer
     // [94] phi from init to plexInit [phi:init->plexInit]
   plexInit_from_init:
@@ -2001,7 +2001,7 @@ init: {
     jmp __b1
     // init::@1
   __b1:
-    // [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff&SPRITE/$40
     sta PLEX_PTR,x
     // [60] init::$3 = init::sx#2 << 1 -- vbuaa=vbuxx_rol_1 
@@ -2058,7 +2058,7 @@ init: {
     // asm { sei  }
     // enable the interrupt
     sei
-    // [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [72] *IRQ_ENABLE = IRQ_RASTER -- _deref_pbuc1=vbuc2 
@@ -2146,7 +2146,7 @@ loop: {
     inc.z sin_idx
     // [90] *BORDER_COLOR = ++ *BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [91] call plexSort 
+    // [91] call plexSort
     // [101] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
   plexSort_from___b5:
     jsr plexSort
@@ -2166,6 +2166,7 @@ loop: {
 }
   // plexInit
 // Initialize the multiplexer data structures
+// void plexInit(char *screen)
 plexInit: {
     jmp plexSetScreen1
     // plexInit::plexSetScreen1
@@ -2484,114 +2485,114 @@ Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-constant byte* const BORDER_COLOR = (byte*) 53280
-constant struct MOS6526_CIA* const CIA1 = (struct MOS6526_CIA*) 56320
-constant const byte CIA_INTERRUPT_CLEAR = $7f
-constant byte* const D011 = (byte*) 53265
-constant const byte GREEN = 5
-constant byte* const IRQ_ENABLE = (byte*) 53274
-constant const byte IRQ_RASTER = 1
-constant byte* const IRQ_STATUS = (byte*) 53273
-constant void()** const KERNEL_IRQ = (void()**) 788
-constant byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-constant const byte PLEX_COUNT = $20
-constant byte* PLEX_FREE_YPOS[8]  = { fill( 8, 0) }
-constant byte* PLEX_PTR[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-byte* volatile PLEX_SCREEN_PTR loadstore zp[2]:6 33.45454545454545
-constant byte* PLEX_SORTED_IDX[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant word* PLEX_XPOS[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant byte* PLEX_YPOS[PLEX_COUNT]  = { fill( PLEX_COUNT, 0) }
-constant byte* const RASTER = (byte*) 53266
-constant const byte RED = 2
-constant byte* SCREEN = (byte*) 1024
-constant byte* SPRITE[$40]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+__constant char * const BORDER_COLOR = (char *) 53280
+__constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
+__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant char * const D011 = (char *) 53265
+__constant const char GREEN = 5
+__constant char * const IRQ_ENABLE = (char *) 53274
+__constant const char IRQ_RASTER = 1
+__constant char * const IRQ_STATUS = (char *) 53273
+__constant void (** const KERNEL_IRQ)() = (void (**)()) 788
+__constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+__constant const char PLEX_COUNT = $20
+__constant char PLEX_FREE_YPOS[8] = { fill( 8, 0) }
+__constant char PLEX_PTR[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__loadstore char * volatile PLEX_SCREEN_PTR // zp[2]:6 33.45454545454545
+__constant char PLEX_SORTED_IDX[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant unsigned int PLEX_XPOS[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant char PLEX_YPOS[PLEX_COUNT] = { fill( PLEX_COUNT, 0) }
+__constant char * const RASTER = (char *) 53266
+__constant const char RED = 2
+__constant char *SCREEN = (char *) 1024
+__constant char SPRITE[$40] = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-constant byte* const SPRITES_COLOR = (byte*) 53287
-constant byte* const SPRITES_ENABLE = (byte*) 53269
-constant byte* const SPRITES_XMSB = (byte*) 53264
-constant byte* const SPRITES_XPOS = (byte*) 53248
-constant byte* const SPRITES_YPOS = (byte*) 53249
-constant byte* const VICII_CONTROL1 = (byte*) 53265
-constant const byte VICII_DEN = $10
-constant const byte VICII_RSEL = 8
-constant const byte WHITE = 1
-constant byte* YSIN[$100]  = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
+__constant char * const SPRITES_COLOR = (char *) 53287
+__constant char * const SPRITES_ENABLE = (char *) 53269
+__constant char * const SPRITES_XMSB = (char *) 53264
+__constant char * const SPRITES_XPOS = (char *) 53248
+__constant char * const SPRITES_YPOS = (char *) 53249
+__constant char * const VICII_CONTROL1 = (char *) 53265
+__constant const char VICII_DEN = $10
+__constant const char VICII_RSEL = 8
+__constant const char WHITE = 1
+__constant char YSIN[$100] = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
  }}
 void __start()
-volatile bool framedone loadstore zp[1]:12 1222.8888888888887
+__loadstore volatile bool framedone // zp[1]:12 1222.8888888888887
 void init()
-byte~ init::$3 reg byte a 2002.0
-byte init::ss
-byte init::ss#1 reg byte x 1501.5
-byte init::ss#2 reg byte x 1501.5
-byte init::sx
-byte init::sx#1 reg byte x 1501.5
-byte init::sx#2 reg byte x 800.8
-word init::xp
-word init::xp#1 xp zp[2]:2 667.3333333333334
-word init::xp#2 xp zp[2]:2 750.75
+char init::$3 // reg byte a 2002.0
+char init::ss
+char init::ss#1 // reg byte x 1501.5
+char init::ss#2 // reg byte x 1501.5
+char init::sx
+char init::sx#1 // reg byte x 1501.5
+char init::sx#2 // reg byte x 800.8
+unsigned int init::xp
+unsigned int init::xp#1 // xp zp[2]:2 667.3333333333334
+unsigned int init::xp#2 // xp zp[2]:2 750.75
 void loop()
-byte loop::sin_idx
-byte loop::sin_idx#1 sin_idx zp[1]:4 400.4
-byte loop::sin_idx#6 sin_idx zp[1]:4 333.6666666666667
-byte loop::sy
-byte loop::sy#1 reg byte y 15001.5
-byte loop::sy#2 reg byte y 10001.0
-byte loop::y_idx
-byte loop::y_idx#1 reg byte x 6667.333333333333
-byte loop::y_idx#2 reg byte x 15502.0
-byte loop::y_idx#3 reg byte x 2002.0
+char loop::sin_idx
+char loop::sin_idx#1 // sin_idx zp[1]:4 400.4
+char loop::sin_idx#6 // sin_idx zp[1]:4 333.6666666666667
+char loop::sy
+char loop::sy#1 // reg byte y 15001.5
+char loop::sy#2 // reg byte y 10001.0
+char loop::y_idx
+char loop::y_idx#1 // reg byte x 6667.333333333333
+char loop::y_idx#2 // reg byte x 15502.0
+char loop::y_idx#3 // reg byte x 2002.0
 void main()
-void plexInit(byte* plexInit::screen)
-byte plexInit::i
-byte plexInit::i#1 reg byte x 15001.5
-byte plexInit::i#2 reg byte x 20002.0
-byte* plexInit::plexSetScreen1_screen
-byte* plexInit::screen
+void plexInit(char *screen)
+char plexInit::i
+char plexInit::i#1 // reg byte x 15001.5
+char plexInit::i#2 // reg byte x 20002.0
+char *plexInit::plexSetScreen1_screen
+char *plexInit::screen
 void plexShowSprite()
-byte~ plexShowSprite::$10 reg byte x 101.0
-byte~ plexShowSprite::$2 reg byte a 202.0
-byte~ plexShowSprite::$4 reg byte x 202.0
-byte~ plexShowSprite::$5 reg byte a 202.0
-byte~ plexShowSprite::$8 reg byte a 202.0
-byte~ plexShowSprite::plexFreeAdd1_$0 reg byte a 202.0
-byte~ plexShowSprite::plexFreeAdd1_$1 reg byte x 202.0
-byte~ plexShowSprite::plexFreeAdd1_$2 reg byte a 202.0
-byte plexShowSprite::plexFreeAdd1_ypos
-byte plexShowSprite::plexFreeAdd1_ypos#0 reg byte a 151.5
-byte plexShowSprite::plex_sprite_idx2
-byte plexShowSprite::plex_sprite_idx2#0 plex_sprite_idx2 zp[1]:14 27.545454545454547
-byte plexShowSprite::xpos_idx
-byte plexShowSprite::xpos_idx#0 reg byte a 202.0
-byte plexShowSprite::ypos
+char plexShowSprite::$10 // reg byte x 101.0
+char plexShowSprite::$2 // reg byte a 202.0
+char plexShowSprite::$4 // reg byte x 202.0
+char plexShowSprite::$5 // reg byte a 202.0
+char plexShowSprite::$8 // reg byte a 202.0
+char plexShowSprite::plexFreeAdd1_$0 // reg byte a 202.0
+char plexShowSprite::plexFreeAdd1_$1 // reg byte x 202.0
+char plexShowSprite::plexFreeAdd1_$2 // reg byte a 202.0
+char plexShowSprite::plexFreeAdd1_ypos
+char plexShowSprite::plexFreeAdd1_ypos#0 // reg byte a 151.5
+char plexShowSprite::plex_sprite_idx2
+char plexShowSprite::plex_sprite_idx2#0 // plex_sprite_idx2 zp[1]:14 27.545454545454547
+char plexShowSprite::xpos_idx
+char plexShowSprite::xpos_idx#0 // reg byte a 202.0
+char plexShowSprite::ypos
 void plexSort()
-byte plexSort::m
-byte plexSort::m#1 m zp[1]:5 1500001.5
-byte plexSort::m#2 m zp[1]:5 416667.0833333334
-byte plexSort::nxt_idx
-byte plexSort::nxt_idx#0 nxt_idx zp[1]:15 300000.30000000005
-byte plexSort::nxt_y
-byte plexSort::nxt_y#0 nxt_y zp[1]:16 1500000.375
-byte plexSort::plexFreePrepare1_s
-byte plexSort::plexFreePrepare1_s#1 reg byte x 1500001.5
-byte plexSort::plexFreePrepare1_s#2 reg byte x 1500001.5
-byte plexSort::s
-byte plexSort::s#1 reg byte x 1.3666668333333332E7
-byte plexSort::s#2 reg byte x 2000002.0
-byte plexSort::s#3 reg byte x 2.05000025E7
-byte plexSort::s#6 reg byte x 2000002.0
-volatile byte plex_free_next loadstore zp[1]:11 332.80645161290323
+char plexSort::m
+char plexSort::m#1 // m zp[1]:5 1500001.5
+char plexSort::m#2 // m zp[1]:5 416667.0833333334
+char plexSort::nxt_idx
+char plexSort::nxt_idx#0 // nxt_idx zp[1]:15 300000.30000000005
+char plexSort::nxt_y
+char plexSort::nxt_y#0 // nxt_y zp[1]:16 1500000.375
+char plexSort::plexFreePrepare1_s
+char plexSort::plexFreePrepare1_s#1 // reg byte x 1500001.5
+char plexSort::plexFreePrepare1_s#2 // reg byte x 1500001.5
+char plexSort::s
+char plexSort::s#1 // reg byte x 1.3666668333333332E7
+char plexSort::s#2 // reg byte x 2000002.0
+char plexSort::s#3 // reg byte x 2.05000025E7
+char plexSort::s#6 // reg byte x 2000002.0
+__loadstore volatile char plex_free_next // zp[1]:11 332.80645161290323
 __interrupt(rom_min_c64) void plex_irq()
-byte~ plex_irq::$4 zp[1]:13 11.0
-byte plex_irq::plexFreeNextYpos1_return
-byte plex_irq::plexFreeNextYpos1_return#0 reg byte x 4.0
-byte plex_irq::rasterY
-volatile byte plex_show_idx loadstore zp[1]:8 309.44117647058823
-volatile byte plex_sprite_idx loadstore zp[1]:9 335.7096774193549
-volatile byte plex_sprite_msb loadstore zp[1]:10 321.4848484848485
+char plex_irq::$4 // zp[1]:13 11.0
+char plex_irq::plexFreeNextYpos1_return
+char plex_irq::plexFreeNextYpos1_return#0 // reg byte x 4.0
+char plex_irq::rasterY
+__loadstore volatile char plex_show_idx // zp[1]:8 309.44117647058823
+__loadstore volatile char plex_sprite_idx // zp[1]:9 335.7096774193549
+__loadstore volatile char plex_sprite_msb // zp[1]:10 321.4848484848485
 
 reg byte x [ init::sx#2 init::sx#1 ]
 zp[2]:2 [ init::xp#2 init::xp#1 ]
@@ -2729,7 +2730,7 @@ Score: 43652
 __start: {
     // __start::__init1
     // char* volatile PLEX_SCREEN_PTR = (char*)0x400+0x3f8
-    // [1] PLEX_SCREEN_PTR = (byte*) 1024+$3f8 -- pbuz1=pbuc1 
+    // [1] PLEX_SCREEN_PTR = (char *) 1024+$3f8 -- pbuz1=pbuc1 
     lda #<$400+$3f8
     sta.z PLEX_SCREEN_PTR
     lda #>$400+$3f8
@@ -2755,7 +2756,7 @@ __start: {
     sta.z framedone
     // [7] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [8] call main 
+    // [8] call main
     jsr main
     // __start::@return
     // [9] return 
@@ -2776,7 +2777,7 @@ plex_irq: {
     // plex_irq::@3
   __b3:
     // plexShowSprite()
-    // [13] call plexShowSprite 
+    // [13] call plexShowSprite
     jsr plexShowSprite
     // plex_irq::plexFreeNextYpos1
     // return PLEX_FREE_YPOS[plex_free_next];
@@ -2846,12 +2847,12 @@ main: {
     // asm { sei  }
     sei
     // init()
-    // [27] call init 
+    // [27] call init
     jsr init
     // [28] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // loop()
-    // [29] call loop 
+    // [29] call loop
     // [79] phi from main::@1 to loop [phi:main::@1->loop]
     jsr loop
     // main::@return
@@ -2914,7 +2915,7 @@ plexShowSprite: {
     // [41] plexShowSprite::$10 = plexShowSprite::xpos_idx#0 << 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-    // [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (byte)PLEX_XPOS[plexShowSprite::$10] -- pbuc1_derefidx_vbuz1=_byte_pwuc2_derefidx_vbuxx 
+    // [42] SPRITES_XPOS[plexShowSprite::plex_sprite_idx2#0] = (char)PLEX_XPOS[plexShowSprite::$10] -- pbuc1_derefidx_vbuz1=_byte_pwuc2_derefidx_vbuxx 
     ldy.z plex_sprite_idx2
     lda PLEX_XPOS,x
     sta SPRITES_XPOS,y
@@ -2986,7 +2987,7 @@ init: {
     lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
-    // [57] call plexInit 
+    // [57] call plexInit
   // Initialize the multiplexer
     // [94] phi from init to plexInit [phi:init->plexInit]
     jsr plexInit
@@ -3004,7 +3005,7 @@ init: {
     // init::@1
   __b1:
     // PLEX_PTR[sx] = (char)(SPRITE/0x40)
-    // [59] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [59] PLEX_PTR[init::sx#2] = (char)SPRITE/$40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff&SPRITE/$40
     sta PLEX_PTR,x
     // PLEX_XPOS[sx] = xp
@@ -3061,7 +3062,7 @@ init: {
     // enable the interrupt
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [71] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [71] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *IRQ_ENABLE = IRQ_RASTER
@@ -3151,7 +3152,7 @@ loop: {
     // [90] *BORDER_COLOR = ++ *BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // plexSort()
-    // [91] call plexSort 
+    // [91] call plexSort
     // [101] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
     jsr plexSort
     // loop::@6
@@ -3169,6 +3170,7 @@ loop: {
 }
   // plexInit
 // Initialize the multiplexer data structures
+// void plexInit(char *screen)
 plexInit: {
     // plexInit::plexSetScreen1
     // PLEX_SCREEN_PTR = screen+0x3f8

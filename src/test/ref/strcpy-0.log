@@ -1,8 +1,8 @@
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-void str_cpy(byte* str_cpy::dst , const byte* str_cpy::src)
+void str_cpy(char *dst , const char *src)
 str_cpy: scope:[str_cpy]  from main main::@1
   str_cpy::dst#4 = phi( main/str_cpy::dst#1, main::@1/str_cpy::dst#2 )
   str_cpy::src#4 = phi( main/str_cpy::src#1, main::@1/str_cpy::src#2 )
@@ -25,12 +25,12 @@ void main()
 main: scope:[main]  from __start::@1
   str_cpy::dst#1 = dst1
   str_cpy::src#1 = main::src
-  call str_cpy 
+  call str_cpy
   to:main::@1
 main::@1: scope:[main]  from main
   str_cpy::dst#2 = dst2
   str_cpy::src#2 = main::src1
-  call str_cpy 
+  call str_cpy
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -44,7 +44,7 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   to:__start::@return
@@ -54,34 +54,34 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-constant byte* dst1 = (byte*)$400
-constant byte* dst2 = (byte*)$428
+__constant char *dst1 = (char *)$400
+__constant char *dst2 = (char *)$428
 void main()
-constant byte* main::src[6]  = "hello"
-constant byte* main::src1[6]  = "world"
-void str_cpy(byte* str_cpy::dst , const byte* str_cpy::src)
-byte~ str_cpy::$0
-bool~ str_cpy::$1
-byte* str_cpy::dst
-byte* str_cpy::dst#0
-byte* str_cpy::dst#1
-byte* str_cpy::dst#2
-byte* str_cpy::dst#3
-byte* str_cpy::dst#4
-const byte* str_cpy::src
-const byte* str_cpy::src#0
-const byte* str_cpy::src#1
-const byte* str_cpy::src#2
-const byte* str_cpy::src#3
-const byte* str_cpy::src#4
+__constant char main::src[6] = "hello"
+__constant char main::src1[6] = "world"
+void str_cpy(char *dst , const char *src)
+char str_cpy::$0
+bool str_cpy::$1
+char *str_cpy::dst
+char *str_cpy::dst#0
+char *str_cpy::dst#1
+char *str_cpy::dst#2
+char *str_cpy::dst#3
+char *str_cpy::dst#4
+const char *str_cpy::src
+const char *str_cpy::src#0
+const char *str_cpy::src#1
+const char *str_cpy::src#2
+const char *str_cpy::src#3
+const char *str_cpy::src#4
 
 Adding number conversion cast (unumber) 0 in str_cpy::$1 = 0 != str_cpy::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1064
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1064
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition str_cpy::$1 [7] if(0!=str_cpy::$0) goto str_cpy::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -129,17 +129,17 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call str_cpy 
+  [1] call str_cpy
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call str_cpy 
+  [3] call str_cpy
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void str_cpy(byte* str_cpy::dst , const byte* str_cpy::src)
+void str_cpy(char *dst , const char *src)
 str_cpy: scope:[str_cpy]  from main main::@1
   [5] str_cpy::dst#4 = phi( main/dst1, main::@1/dst2 )
   [5] str_cpy::src#4 = phi( main/main::src, main::@1/main::src1 )
@@ -160,16 +160,16 @@ str_cpy::@return: scope:[str_cpy]  from str_cpy::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void str_cpy(byte* str_cpy::dst , const byte* str_cpy::src)
-byte~ str_cpy::$0 67.33333333333333
-byte* str_cpy::dst
-byte* str_cpy::dst#0 67.33333333333333
-byte* str_cpy::dst#3 138.33333333333331
-byte* str_cpy::dst#4 11.0
-const byte* str_cpy::src
-const byte* str_cpy::src#0 101.0
-const byte* str_cpy::src#3 78.5
-const byte* str_cpy::src#4 11.0
+void str_cpy(char *dst , const char *src)
+char str_cpy::$0 // 67.33333333333333
+char *str_cpy::dst
+char *str_cpy::dst#0 // 67.33333333333333
+char *str_cpy::dst#3 // 138.33333333333331
+char *str_cpy::dst#4 // 11.0
+const char *str_cpy::src
+const char *str_cpy::src#0 // 101.0
+const char *str_cpy::src#3 // 78.5
+const char *str_cpy::src#4 // 11.0
 
 Initial phi equivalence classes
 [ str_cpy::src#3 str_cpy::src#4 str_cpy::src#0 ]
@@ -215,7 +215,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call str_cpy 
+    // [1] call str_cpy
     // [5] phi from main to str_cpy [phi:main->str_cpy]
   str_cpy_from_main:
     // [5] phi str_cpy::dst#4 = dst1 [phi:main->str_cpy#0] -- pbuz1=pbuc1 
@@ -234,7 +234,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call str_cpy 
+    // [3] call str_cpy
     // [5] phi from main::@1 to str_cpy [phi:main::@1->str_cpy]
   str_cpy_from___b1:
     // [5] phi str_cpy::dst#4 = dst2 [phi:main::@1->str_cpy#0] -- pbuz1=pbuc1 
@@ -261,7 +261,7 @@ main: {
 }
 .segment Code
   // str_cpy
-// str_cpy(byte* zp(4) dst, const byte* zp(2) src)
+// void str_cpy(__zp(4) char *dst, __zp(2) const char *src)
 str_cpy: {
     .label dst = 4
     .label src = 2
@@ -324,21 +324,21 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* dst1 = (byte*) 1024
-constant byte* dst2 = (byte*) 1064
+__constant char *dst1 = (char *) 1024
+__constant char *dst2 = (char *) 1064
 void main()
-constant byte* main::src[6]  = "hello"
-constant byte* main::src1[6]  = "world"
-void str_cpy(byte* str_cpy::dst , const byte* str_cpy::src)
-byte~ str_cpy::$0 reg byte a 67.33333333333333
-byte* str_cpy::dst
-byte* str_cpy::dst#0 dst zp[2]:4 67.33333333333333
-byte* str_cpy::dst#3 dst zp[2]:4 138.33333333333331
-byte* str_cpy::dst#4 dst zp[2]:4 11.0
-const byte* str_cpy::src
-const byte* str_cpy::src#0 src zp[2]:2 101.0
-const byte* str_cpy::src#3 src zp[2]:2 78.5
-const byte* str_cpy::src#4 src zp[2]:2 11.0
+__constant char main::src[6] = "hello"
+__constant char main::src1[6] = "world"
+void str_cpy(char *dst , const char *src)
+char str_cpy::$0 // reg byte a 67.33333333333333
+char *str_cpy::dst
+char *str_cpy::dst#0 // dst zp[2]:4 67.33333333333333
+char *str_cpy::dst#3 // dst zp[2]:4 138.33333333333331
+char *str_cpy::dst#4 // dst zp[2]:4 11.0
+const char *str_cpy::src
+const char *str_cpy::src#0 // src zp[2]:2 101.0
+const char *str_cpy::src#3 // src zp[2]:2 78.5
+const char *str_cpy::src#4 // src zp[2]:2 11.0
 
 zp[2]:2 [ str_cpy::src#3 str_cpy::src#4 str_cpy::src#0 ]
 zp[2]:4 [ str_cpy::dst#3 str_cpy::dst#4 str_cpy::dst#0 ]
@@ -365,7 +365,7 @@ Score: 549
   // main
 main: {
     // str_cpy(dst1, "hello")
-    // [1] call str_cpy 
+    // [1] call str_cpy
     // [5] phi from main to str_cpy [phi:main->str_cpy]
     // [5] phi str_cpy::dst#4 = dst1 [phi:main->str_cpy#0] -- pbuz1=pbuc1 
     lda #<dst1
@@ -381,7 +381,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // str_cpy(dst2, "world")
-    // [3] call str_cpy 
+    // [3] call str_cpy
     // [5] phi from main::@1 to str_cpy [phi:main::@1->str_cpy]
     // [5] phi str_cpy::dst#4 = dst2 [phi:main::@1->str_cpy#0] -- pbuz1=pbuc1 
     lda #<dst2
@@ -406,7 +406,7 @@ main: {
 }
 .segment Code
   // str_cpy
-// str_cpy(byte* zp(4) dst, const byte* zp(2) src)
+// void str_cpy(__zp(4) char *dst, __zp(2) const char *src)
 str_cpy: {
     .label dst = 4
     .label src = 2

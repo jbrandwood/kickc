@@ -5,8 +5,8 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   main::w = $4d2
-  main::vp#0 = ((void*)) main::wp
-  main::bp#0 = ((byte*)) main::vp#0
+  main::vp#0 = ((void *)) main::wp
+  main::bp#0 = ((char *)) main::vp#0
   *main::SCREEN = *main::bp#0
   to:main::@return
 main::@return: scope:[main]  from main
@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -26,24 +26,24 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte* const main::SCREEN = (byte*)$400
-byte* main::bp
-byte* main::bp#0
-void* main::vp
-void* main::vp#0
-volatile word main::w loadstore
-constant word* main::wp = &main::w
+__constant char * const main::SCREEN = (char *)$400
+char *main::bp
+char *main::bp#0
+void *main::vp
+void *main::vp#0
+__loadstore volatile unsigned int main::w
+__constant unsigned int *main::wp = &main::w
 
-Inlining cast main::vp#0 = (void*)main::wp
-Inlining cast main::bp#0 = (byte*)main::vp#0
+Inlining cast main::vp#0 = (void *)main::wp
+Inlining cast main::bp#0 = (char *)main::vp#0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [1] main::vp#0 = (void*)main::wp
+Constant right-side identified [1] main::vp#0 = (void *)main::wp
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant main::vp#0 = (void*)main::wp
+Constant main::vp#0 = (void *)main::wp
 Successful SSA optimization Pass2ConstantIdentification
-Constant main::bp#0 = (byte*)main::vp#0
+Constant main::bp#0 = (char *)main::vp#0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -69,9 +69,9 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte* main::bp
-void* main::vp
-volatile word main::w loadstore 20.0
+char *main::bp
+void *main::vp
+__loadstore volatile unsigned int main::w // 20.0
 
 Initial phi equivalence classes
 Added variable main::w to live range equivalence class [ main::w ]
@@ -135,13 +135,13 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte* const main::SCREEN = (byte*) 1024
-byte* main::bp
-constant byte* main::bp#0 bp = (byte*)main::vp#0
-void* main::vp
-constant void* main::vp#0 vp = (void*)main::wp
-volatile word main::w loadstore zp[2]:2 20.0
-constant word* main::wp = &main::w
+__constant char * const main::SCREEN = (char *) 1024
+char *main::bp
+__constant char *main::bp#0 = (char *)main::vp#0 // bp
+void *main::vp
+__constant void *main::vp#0 = (void *)main::wp // vp
+__loadstore volatile unsigned int main::w // zp[2]:2 20.0
+__constant unsigned int *main::wp = &main::w
 
 zp[2]:2 [ main::w ]
 

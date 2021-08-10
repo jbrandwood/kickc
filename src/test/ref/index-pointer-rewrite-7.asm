@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label __1 = 4
@@ -28,9 +28,9 @@ main: {
     sta fibs+1
     // fibs[1] = 1
     lda #<1
-    sta fibs+1*SIZEOF_WORD
+    sta fibs+1*SIZEOF_UNSIGNED_INT
     lda #>1
-    sta fibs+1*SIZEOF_WORD+1
+    sta fibs+1*SIZEOF_UNSIGNED_INT+1
     sta.z i
     sta.z i+1
   __b1:

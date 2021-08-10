@@ -63,7 +63,7 @@ main: {
     // }
     rts
 }
-// out(byte register(X) c)
+// void out(__register(X) char c)
 out: {
     // SCREEN[i++] = c
     txa

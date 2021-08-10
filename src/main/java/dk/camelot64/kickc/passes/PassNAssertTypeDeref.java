@@ -25,7 +25,7 @@ public class PassNAssertTypeDeref extends Pass2SsaAssertion {
             RValue pointer = ((PointerDereference) programValue.get()).getPointer();
             SymbolType pointertype = SymbolTypeInference.inferType(getProgram().getScope(), pointer);
             if(!SymbolType.VAR.equals(pointertype) && !(pointertype instanceof SymbolTypePointer))
-               throw new CompileError("Dereferencing a non-pointer type "+pointertype.getTypeName(), currentStmt);
+               throw new CompileError("Dereferencing a non-pointer type "+ pointertype.toCDecl(), currentStmt);
          }
       });
    }

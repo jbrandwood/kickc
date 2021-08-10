@@ -186,7 +186,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable findVariable(String name) {
       final Symbol symbol = findSymbol(name);
-      if(symbol!=null && !(symbol instanceof Variable))
+      if(symbol != null && !(symbol instanceof Variable))
          throw new InternalError("Symbol is not a variable! " + symbol.toString());
       return (Variable) symbol;
    }
@@ -286,7 +286,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable getLocalVar(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof Variable))
+      if(symbol != null && !(symbol instanceof Variable))
          throw new InternalError("Symbol is not a variable! " + symbol.toString());
       return (Variable) symbol;
    }
@@ -307,35 +307,35 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Label getLocalLabel(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof Label))
+      if(symbol != null && !(symbol instanceof Label))
          throw new InternalError("Symbol is not a label! " + symbol.toString());
       return (Label) getLocalSymbol(name);
    }
 
    public BlockScope getLocalBlockScope(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof BlockScope))
+      if(symbol != null && !(symbol instanceof BlockScope))
          throw new InternalError("Symbol is not a block scope! " + symbol.toString());
       return (BlockScope) symbol;
    }
 
    public StructDefinition getLocalStructDefinition(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof StructDefinition))
+      if(symbol != null && !(symbol instanceof StructDefinition))
          throw new InternalError("Symbol is not a struct definition! " + symbol.toString());
       return (StructDefinition) symbol;
    }
 
    public EnumDefinition getLocalEnumDefinition(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof EnumDefinition))
+      if(symbol != null && !(symbol instanceof EnumDefinition))
          throw new InternalError("Symbol is not an enum definition! " + symbol.toString());
       return (EnumDefinition) symbol;
    }
 
    public Scope getLocalScope(String name) {
       final Symbol symbol = getLocalSymbol(name);
-      if(symbol!=null && !(symbol instanceof Scope))
+      if(symbol != null && !(symbol instanceof Scope))
          throw new InternalError("Symbol is not a scope! " + symbol.toString());
       return (Scope) symbol;
    }
@@ -350,46 +350,43 @@ public abstract class Scope implements Symbol, Serializable {
          Symbol symbol = symbols.get(name);
          if(symbol instanceof Scope) {
             // Do not output struct definitions
-            if(symbol instanceof StructDefinition )
+            if(symbol instanceof StructDefinition)
                continue;
-            if(!onlyVars || symbol instanceof Procedure ||  symbol instanceof BlockScope||  symbol instanceof ProgramScope)
+            if(!onlyVars || symbol instanceof Procedure || symbol instanceof BlockScope || symbol instanceof ProgramScope)
                res.append(((Scope) symbol).toStringVars(program, onlyVars));
          } else if(symbol instanceof Variable) {
             Variable symVar = (Variable) symbol;
             if(!onlyVars || symVar.isVariable()) {
                // Output if not instructed to only output variables - or if it is a variable
-               res.append(symVar.typeString() + " " + symVar.toString());
-               if(symVar.isArray()) {
-                  res.append("[");
-                  if(symVar.getArraySize() != null) {
-                     res.append(symVar.getArraySize().toString(program));
-                  }
-                  res.append("] ");
+               if(symVar.isKindLoadStore()) res.append("__loadstore ");
+               if(symVar.isKindConstant()) res.append("__constant ");
+               res.append(symVar.getType().toCDecl(symVar.getFullName()));
+               if(symVar.getInitValue() != null) {
+                  res.append(" = " + symVar.getInitValue().toString(program));
                }
+               boolean extra = false;
                if(symVar.getAsmName() != null && !symVar.getName().equals(symVar.getAsmName())) {
+                  if(!extra) { res.append(" //"); extra = true; }
                   res.append(" " + symVar.getAsmName());
-               }
-               if(symVar.isKindLoadStore()) {
-                  res.append(" loadstore");
                }
                Registers.Register declRegister = symVar.getRegister();
                if(declRegister != null) {
+                  if(!extra) { res.append(" //"); extra = true; }
                   res.append(" !" + declRegister);
                }
                if(symVar.isVariable()) {
                   Registers.Register register = symVar.getAllocation();
                   if(register != null && !register.equals(declRegister)) {
+                     if(!extra) { res.append(" //"); extra = true; }
                      res.append(" " + register);
                   }
                   if(registerWeights != null) {
                      Double weight = registerWeights.getWeight(symVar.getVariableRef());
                      if(weight != null) {
+                        if(!extra) { res.append(" //"); extra = true; }
                         res.append(" " + weight);
                      }
                   }
-               }
-               if(symVar.getInitValue() != null) {
-                  res.append(" = " + symVar.getInitValue().toString(program));
                }
                res.append("\n");
             }

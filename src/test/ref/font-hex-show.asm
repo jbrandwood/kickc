@@ -40,7 +40,7 @@ main: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp(5) charset)
+// void init_font_hex(__zp(5) char *charset)
 init_font_hex: {
     .label __0 = $b
     .label idx = $a

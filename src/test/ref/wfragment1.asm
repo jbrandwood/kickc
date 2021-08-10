@@ -22,7 +22,7 @@ main: {
     // }
     rts
 }
-// move_enemy(byte register(A) obj_slot)
+// bool move_enemy(__register(A) char obj_slot)
 move_enemy: {
     // OBJ_WORLD_X[obj_slot] -= 1
     asl

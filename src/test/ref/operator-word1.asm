@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
     .label SCREEN = $400
@@ -38,20 +38,20 @@ main: {
     sta SCREEN
     sta SCREEN+1
     // SCREEN[i++] = WORD1(377)
-    sta SCREEN+1*SIZEOF_WORD
-    sta SCREEN+1*SIZEOF_WORD+1
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT
+    sta SCREEN+1*SIZEOF_UNSIGNED_INT+1
     // SCREEN[i++] = WORD1(bu)
-    sta SCREEN+2*SIZEOF_WORD
-    sta SCREEN+2*SIZEOF_WORD+1
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT
+    sta SCREEN+2*SIZEOF_UNSIGNED_INT+1
     // SCREEN[i++] = WORD1(bs)
-    sta SCREEN+3*SIZEOF_WORD
-    sta SCREEN+3*SIZEOF_WORD+1
+    sta SCREEN+3*SIZEOF_UNSIGNED_INT
+    sta SCREEN+3*SIZEOF_UNSIGNED_INT+1
     // SCREEN[i++] = WORD1(wu)
-    sta SCREEN+4*SIZEOF_WORD
-    sta SCREEN+4*SIZEOF_WORD+1
+    sta SCREEN+4*SIZEOF_UNSIGNED_INT
+    sta SCREEN+4*SIZEOF_UNSIGNED_INT+1
     // SCREEN[i++] = WORD1(ws)
-    sta SCREEN+5*SIZEOF_WORD
-    sta SCREEN+5*SIZEOF_WORD+1
+    sta SCREEN+5*SIZEOF_UNSIGNED_INT
+    sta SCREEN+5*SIZEOF_UNSIGNED_INT+1
     // WORD1(du)
     lda.z du+2
     sta.z __4
@@ -59,9 +59,9 @@ main: {
     sta.z __4+1
     // SCREEN[i++] = WORD1(du)
     lda.z __4
-    sta SCREEN+6*SIZEOF_WORD
+    sta SCREEN+6*SIZEOF_UNSIGNED_INT
     lda.z __4+1
-    sta SCREEN+6*SIZEOF_WORD+1
+    sta SCREEN+6*SIZEOF_UNSIGNED_INT+1
     // WORD1(ds)
     lda.z ds+2
     sta.z __5
@@ -69,13 +69,13 @@ main: {
     sta.z __5+1
     // SCREEN[i++] = WORD1(ds)
     lda.z __5
-    sta SCREEN+7*SIZEOF_WORD
+    sta SCREEN+7*SIZEOF_UNSIGNED_INT
     lda.z __5+1
-    sta SCREEN+7*SIZEOF_WORD+1
+    sta SCREEN+7*SIZEOF_UNSIGNED_INT+1
     // SCREEN[i++] = WORD1(ptr)
     lda #<0
-    sta SCREEN+8*SIZEOF_WORD
-    sta SCREEN+8*SIZEOF_WORD+1
+    sta SCREEN+8*SIZEOF_UNSIGNED_INT
+    sta SCREEN+8*SIZEOF_UNSIGNED_INT+1
     // }
     rts
 }

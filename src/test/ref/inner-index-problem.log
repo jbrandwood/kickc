@@ -12,9 +12,9 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
-  main::$1 = main::i#3 * SIZEOF_WORD
+  main::$1 = main::i#3 * SIZEOF_UNSIGNED_INT
   v[main::$1] = v[main::$1] + 5
-  main::$2 = main::i#3 * SIZEOF_WORD
+  main::$2 = main::i#3 * SIZEOF_UNSIGNED_INT
   x[main::$2] = x[main::$2] + v[main::$2]
   main::i#1 = ++ main::i#3
   to:main::@1
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -33,19 +33,19 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte SIZEOF_WORD = 2
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 void main()
-bool~ main::$0
-byte~ main::$1
-byte~ main::$2
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-constant word* v[5]  = { fill( 5, 0) }
-constant word* x[5]  = { fill( 5, 0) }
+bool main::$0
+char main::$1
+char main::$2
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+__constant unsigned int v[5] = { fill( 5, 0) }
+__constant unsigned int x[5] = { fill( 5, 0) }
 
 Adding number conversion cast (unumber) 5 in main::$0 = main::i#2 < 5
 Adding number conversion cast (unumber) 5 in v[main::$1] = v[main::$1] + 5
@@ -53,12 +53,12 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 5
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Identified duplicate assignment right side [7] main::$2 = main::i#2 * SIZEOF_WORD
+Identified duplicate assignment right side [7] main::$2 = main::i#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition main::$0 [3] if(main::i#2<5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -71,17 +71,17 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Alias main::$2 = main::$1 
 Successful SSA optimization Pass2AliasElimination
-Rewriting multiplication to use shift [2] main::$2 = main::i#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [2] main::$2 = main::i#2 * SIZEOF_UNSIGNED_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant SIZEOF_WORD
+Eliminating unused constant SIZEOF_UNSIGNED_INT
 Successful SSA optimization PassNEliminateUnusedVars
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -114,10 +114,10 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte~ main::$2 33.0
-byte main::i
-byte main::i#1 22.0
-byte main::i#2 8.8
+char main::$2 // 33.0
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 8.8
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -222,12 +222,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte~ main::$2 reg byte y 33.0
-byte main::i
-byte main::i#1 reg byte x 22.0
-byte main::i#2 reg byte x 8.8
-constant word* v[5]  = { fill( 5, 0) }
-constant word* x[5]  = { fill( 5, 0) }
+char main::$2 // reg byte y 33.0
+char main::i
+char main::i#1 // reg byte x 22.0
+char main::i#2 // reg byte x 8.8
+__constant unsigned int v[5] = { fill( 5, 0) }
+__constant unsigned int x[5] = { fill( 5, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::$2 ]

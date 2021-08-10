@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   *main::SCREEN = main::state
-  call test 
+  call test
   to:main::@1
 main::@1: scope:[main]  from main
   to:main::@return
@@ -22,7 +22,7 @@ test::@return: scope:[test]  from test
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -33,16 +33,16 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-constant byte main::ON = 1
-constant byte* const main::SCREEN = (byte*)$400
-constant byte main::state = main::ON
+__constant char main::ON = 1
+__constant char * const main::SCREEN = (char *)$400
+__constant char main::state = main::ON
 void test()
-constant byte test::ON = 8
-constant byte* const test::SCREEN = (byte*)$428
-constant byte test::state = test::ON
+__constant char test::ON = 8
+__constant char * const test::SCREEN = (char *)$428
+__constant char test::state = test::ON
 
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1064
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant pointer cast (char *) 1064
 Successful SSA optimization PassNCastSimplification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -65,7 +65,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] *main::SCREEN = main::ON
-  [1] call test 
+  [1] call test
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -120,7 +120,7 @@ main: {
     // [0] *main::SCREEN = main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-    // [1] call test 
+    // [1] call test
     jsr test
     jmp __breturn
     // main::@return
@@ -153,11 +153,11 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-constant byte main::ON = 1
-constant byte* const main::SCREEN = (byte*) 1024
+__constant char main::ON = 1
+__constant char * const main::SCREEN = (char *) 1024
 void test()
-constant byte test::ON = 8
-constant byte* const test::SCREEN = (byte*) 1064
+__constant char test::ON = 8
+__constant char * const test::SCREEN = (char *) 1064
 
 
 
@@ -186,7 +186,7 @@ main: {
     lda #ON
     sta SCREEN
     // test()
-    // [1] call test 
+    // [1] call test
     jsr test
     // main::@return
     // }

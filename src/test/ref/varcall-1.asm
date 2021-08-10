@@ -10,7 +10,7 @@
 :BasicUpstart(main)
   .label BGCOL = $d021
 .segment Code
-// setbg(byte zp(2) col)
+// void setbg(__zp(2) char col)
 setbg: {
     .label col = 2
     // *BGCOL = col

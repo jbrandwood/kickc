@@ -46,7 +46,7 @@ main: {
 }
 // Appends the first num characters of source to destination, plus a terminating null-character.
 // If the length of the C string in source is less than num, only the content up to the terminating null-character is copied.
-// strncat(const byte* zp(2) source, word zp(6) num)
+// char * strncat(char *destination, __zp(2) const char *source, __zp(6) unsigned int num)
 strncat: {
     .label dst = 4
     .label source = 2

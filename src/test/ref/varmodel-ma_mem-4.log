@@ -1,5 +1,5 @@
 Updating intermediate variable memory area to MAIN_MEMORY main::$0
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -30,11 +30,11 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  screen#4 = (byte*)$400
+  screen#4 = (char *)$400
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   screen#12 = phi( __start::__init1/screen#4 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   screen#9 = phi( __start::@1/screen#3 )
@@ -48,27 +48,27 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-constant byte a = 'a'
+__constant char a = 'a'
 void main()
-bool~ main::$0
-constant byte main::b = 'b'
-byte main::i loadstore
-byte* screen
-byte* screen#0
-byte* screen#1
-byte* screen#10
-byte* screen#11
-byte* screen#12
-byte* screen#2
-byte* screen#3
-byte* screen#4
-byte* screen#5
-byte* screen#6
-byte* screen#7
-byte* screen#8
-byte* screen#9
+bool main::$0
+__constant char main::b = 'b'
+__loadstore char main::i
+char *screen
+char *screen#0
+char *screen#1
+char *screen#10
+char *screen#11
+char *screen#12
+char *screen#2
+char *screen#3
+char *screen#4
+char *screen#5
+char *screen#6
+char *screen#7
+char *screen#8
+char *screen#9
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias screen#2 = screen#8 screen#3 
 Alias screen#12 = screen#4 
@@ -79,7 +79,7 @@ Identical Phi Values screen#10 screen#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition main::$0 [11] if(main::i!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant screen#12 = (byte*) 1024
+Constant screen#12 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::i = ++ main::i to ++
 Resolved ranged comparison value [11] if(main::i!=rangelast(0,5)) goto main::@1 to 6
@@ -94,10 +94,10 @@ Adding number conversion cast (unumber) 6 in [9] if(main::i!=6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 6
+Finalized unsigned number type (char) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings screen#12
-Constant inlined screen#12 = (byte*) 1024
+Constant inlined screen#12 = (char *) 1024
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 CALL GRAPH
@@ -114,7 +114,7 @@ main: scope:[main]  from
   [0] main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] screen#7 = phi( main/(byte*) 1024, main::@1/screen#2 )
+  [1] screen#7 = phi( main/(char *) 1024, main::@1/screen#2 )
   [2] *screen#7 = a
   [3] screen#0 = ++ screen#7
   [4] *screen#0 = main::b
@@ -131,12 +131,12 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i loadstore 4.6000000000000005
-byte* screen
-byte* screen#0 16.5
-byte* screen#1 16.5
-byte* screen#2 7.333333333333333
-byte* screen#7 16.5
+__loadstore char main::i // 4.6000000000000005
+char *screen
+char *screen#0 // 16.5
+char *screen#1 // 16.5
+char *screen#2 // 7.333333333333333
+char *screen#7 // 16.5
 
 Initial phi equivalence classes
 [ screen#7 screen#2 ]
@@ -202,7 +202,7 @@ main: {
     sta i
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi screen#7 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi screen#7 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -271,15 +271,15 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-constant byte a = 'a'
+__constant char a = 'a'
 void main()
-constant byte main::b = 'b'
-byte main::i loadstore mem[1] 4.6000000000000005
-byte* screen
-byte* screen#0 screen zp[2]:2 16.5
-byte* screen#1 screen zp[2]:2 16.5
-byte* screen#2 screen zp[2]:2 7.333333333333333
-byte* screen#7 screen zp[2]:2 16.5
+__constant char main::b = 'b'
+__loadstore char main::i // mem[1] 4.6000000000000005
+char *screen
+char *screen#0 // screen zp[2]:2 16.5
+char *screen#1 // screen zp[2]:2 16.5
+char *screen#2 // screen zp[2]:2 7.333333333333333
+char *screen#7 // screen zp[2]:2 16.5
 
 zp[2]:2 [ screen#7 screen#2 screen#0 screen#1 ]
 mem[1] [ main::i ]
@@ -312,7 +312,7 @@ main: {
     lda #0
     sta i
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi screen#7 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi screen#7 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

@@ -1,5 +1,5 @@
 Added struct type cast to parameter value list main::$0 = call print('c', (struct format){ '-', '-' })
-Inlined call call __init 
+Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
@@ -9,7 +9,7 @@ main: scope:[main]  from __start::@1
   print::c#0 = 'c'
   print::fmt_prefix#0 = '-'
   print::fmt_postfix#0 = '-'
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   idx#9 = phi( main/idx#5 )
@@ -21,7 +21,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void print(byte print::c , byte print::fmt_prefix , byte print::fmt_postfix)
+void print(char c , char fmt_prefix , char fmt_postfix)
 print: scope:[print]  from main
   print::fmt_postfix#1 = phi( main/print::fmt_postfix#0 )
   print::c#1 = phi( main/print::c#0 )
@@ -48,7 +48,7 @@ __start::__init1: scope:[__start]  from __start
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   idx#16 = phi( __start::__init1/idx#6 )
-  call main 
+  call main
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
   idx#13 = phi( __start::@1/idx#1 )
@@ -61,40 +61,40 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
-byte idx
-byte idx#0
-byte idx#1
-byte idx#10
-byte idx#11
-byte idx#12
-byte idx#13
-byte idx#14
-byte idx#15
-byte idx#16
-byte idx#2
-byte idx#3
-byte idx#4
-byte idx#5
-byte idx#6
-byte idx#7
-byte idx#8
-byte idx#9
+char idx
+char idx#0
+char idx#1
+char idx#10
+char idx#11
+char idx#12
+char idx#13
+char idx#14
+char idx#15
+char idx#16
+char idx#2
+char idx#3
+char idx#4
+char idx#5
+char idx#6
+char idx#7
+char idx#8
+char idx#9
 void main()
-void print(byte print::c , byte print::fmt_prefix , byte print::fmt_postfix)
-byte print::c
-byte print::c#0
-byte print::c#1
+void print(char c , char fmt_prefix , char fmt_postfix)
+char print::c
+char print::c#0
+char print::c#1
 struct format print::fmt
-byte print::fmt_postfix
-byte print::fmt_postfix#0
-byte print::fmt_postfix#1
-byte print::fmt_prefix
-byte print::fmt_prefix#0
-byte print::fmt_prefix#1
+char print::fmt_postfix
+char print::fmt_postfix#0
+char print::fmt_postfix#1
+char print::fmt_prefix
+char print::fmt_prefix#0
+char print::fmt_prefix#1
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Alias idx#0 = idx#9 idx#10 idx#1 
 Alias idx#12 = idx#4 idx#5 
@@ -163,13 +163,13 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-void print(byte print::c , byte print::fmt_prefix , byte print::fmt_postfix)
+void print(char c , char fmt_prefix , char fmt_postfix)
 print: scope:[print]  from main
   [3] *SCREEN = print::fmt_prefix#0
   [4] *(SCREEN+1) = print::c#0
@@ -181,13 +181,13 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-byte idx
+char idx
 void main()
-void print(byte print::c , byte print::fmt_prefix , byte print::fmt_postfix)
-byte print::c
+void print(char c , char fmt_prefix , char fmt_postfix)
+char print::c
 struct format print::fmt
-byte print::fmt_postfix
-byte print::fmt_prefix
+char print::fmt_postfix
+char print::fmt_prefix
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -224,7 +224,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call print 
+    // [1] call print
     jsr print
     jmp __breturn
     // main::@return
@@ -233,6 +233,7 @@ main: {
     rts
 }
   // print
+// void print(char c, char fmt_prefix, char fmt_postfix)
 print: {
     .const c = 'c'
     .const fmt_prefix = '-'
@@ -263,17 +264,17 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
-byte idx
+__constant char * const SCREEN = (char *) 1024
+char idx
 void main()
-void print(byte print::c , byte print::fmt_prefix , byte print::fmt_postfix)
-byte print::c
-constant byte print::c#0 c = 'c'
+void print(char c , char fmt_prefix , char fmt_postfix)
+char print::c
+__constant char print::c#0 = 'c' // c
 struct format print::fmt
-byte print::fmt_postfix
-constant byte print::fmt_postfix#0 fmt_postfix = '-'
-byte print::fmt_prefix
-constant byte print::fmt_prefix#0 fmt_prefix = '-'
+char print::fmt_postfix
+__constant char print::fmt_postfix#0 = '-' // fmt_postfix
+char print::fmt_prefix
+__constant char print::fmt_prefix#0 = '-' // fmt_prefix
 
 
 
@@ -297,7 +298,7 @@ Score: 36
   // main
 main: {
     // print('c', { '-', '-' } )
-    // [1] call print 
+    // [1] call print
     jsr print
     // main::@return
     // }
@@ -305,6 +306,7 @@ main: {
     rts
 }
   // print
+// void print(char c, char fmt_prefix, char fmt_postfix)
 print: {
     .const c = 'c'
     .const fmt_prefix = '-'

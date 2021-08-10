@@ -154,7 +154,7 @@ cls: {
     rts
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zp(2) value, byte* zp(8) dst)
+// void utoa16w(__zp(2) unsigned int value, __zp(8) char * volatile dst)
 utoa16w: {
     .label dst = 8
     .label value = 2
@@ -198,7 +198,7 @@ utoa16w: {
     rts
 }
 // Decimal utoa() without using multiply or divide
-// utoa10w(word zp(2) value, byte* zp(4) dst)
+// void utoa10w(__zp(2) unsigned int value, __zp(4) char *dst)
 utoa10w: {
     .label value = 2
     .label digit = 6
@@ -288,7 +288,7 @@ utoa10w: {
     jmp __b1
 }
 // Hexadecimal utoa() for a single nybble
-// utoa16n(byte register(A) nybble, byte register(X) started)
+// __register(X) char utoa16n(__register(A) char nybble, unsigned int **dst, __register(X) char started)
 utoa16n: {
     // if(nybble!=0)
     cmp #0

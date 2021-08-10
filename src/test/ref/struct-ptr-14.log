@@ -6,13 +6,13 @@ void main()
 main: scope:[main]  from __start
   *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT)
   set::ptr#0 = main::q
-  call set 
+  call set
   to:main::@1
 main::@1: scope:[main]  from main
-  main::$3 = (byte*)main::q
+  main::$3 = (char *)main::q
   main::$1 = main::$3 + OFFSET_STRUCT_POINT_X
   main::SCREEN[0] = *main::$1
-  main::$4 = (byte*)main::q
+  main::$4 = (char *)main::q
   main::$2 = main::$4 + OFFSET_STRUCT_POINT_Y
   main::SCREEN[1] = *main::$2
   to:main::@return
@@ -20,13 +20,13 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-void set(struct Point* set::ptr)
+void set(struct Point *ptr)
 set: scope:[set]  from main
   set::ptr#1 = phi( main/set::ptr#0 )
-  set::$2 = (byte*)set::ptr#1
+  set::$2 = (char *)set::ptr#1
   set::$0 = set::$2 + OFFSET_STRUCT_POINT_X
   *set::$0 = 4
-  set::$3 = (byte*)set::ptr#1
+  set::$3 = (char *)set::ptr#1
   set::$1 = set::$3 + OFFSET_STRUCT_POINT_Y
   *set::$1 = 5
   to:set::@return
@@ -36,7 +36,7 @@ set::@return: scope:[set]  from set
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -45,27 +45,27 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant struct Point $0 = { x: 2, y: 3 }
-constant byte OFFSET_STRUCT_POINT_X = 0
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte SIZEOF_STRUCT_POINT = 2
+__constant struct Point $0 = { x: 2, y: 3 }
+__constant char OFFSET_STRUCT_POINT_X = 0
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char SIZEOF_STRUCT_POINT = 2
 void __start()
 void main()
-byte*~ main::$1
-byte*~ main::$2
-byte*~ main::$3
-byte*~ main::$4
-constant byte* const main::SCREEN = (byte*)$400
-volatile struct Point main::p loadstore
-constant struct Point* main::q = &main::p
-void set(struct Point* set::ptr)
-byte*~ set::$0
-byte*~ set::$1
-byte*~ set::$2
-byte*~ set::$3
-struct Point* set::ptr
-struct Point* set::ptr#0
-struct Point* set::ptr#1
+char *main::$1
+char *main::$2
+char *main::$3
+char *main::$4
+__constant char * const main::SCREEN = (char *)$400
+__loadstore volatile struct Point main::p
+__constant struct Point *main::q = &main::p
+void set(struct Point *ptr)
+char *set::$0
+char *set::$1
+char *set::$2
+char *set::$3
+struct Point *set::ptr
+struct Point *set::ptr#0
+struct Point *set::ptr#1
 
 Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *main::$1
 Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *main::$2
@@ -75,28 +75,28 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *set::$0 = (unumber)4
 Inlining cast *set::$1 = (unumber)5
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values set::ptr#1 set::ptr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] main::$3 = (byte*)main::q
-Constant right-side identified [6] main::$4 = (byte*)main::q
+Constant right-side identified [3] main::$3 = (char *)main::q
+Constant right-side identified [6] main::$4 = (char *)main::q
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant set::ptr#0 = main::q
-Constant main::$3 = (byte*)main::q
-Constant main::$4 = (byte*)main::q
+Constant main::$3 = (char *)main::q
+Constant main::$4 = (char *)main::q
 Successful SSA optimization Pass2ConstantIdentification
-Constant set::$2 = (byte*)set::ptr#0
-Constant set::$3 = (byte*)set::ptr#0
+Constant set::$2 = (char *)set::ptr#0
+Constant set::$3 = (char *)set::ptr#0
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [5] main::SCREEN[0] = *main::$1  -- main::$3[OFFSET_STRUCT_POINT_X]
 Converting *(pointer+n) to pointer[n] [8] main::SCREEN[1] = *main::$2  -- main::$4[OFFSET_STRUCT_POINT_Y]
@@ -121,14 +121,14 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Constant inlined set::ptr#0 = main::q
-Constant inlined set::$3 = (byte*)main::q
-Constant inlined main::$3 = (byte*)main::q
-Constant inlined set::$2 = (byte*)main::q
-Constant inlined main::$4 = (byte*)main::q
+Constant inlined set::$3 = (char *)main::q
+Constant inlined main::$3 = (char *)main::q
+Constant inlined set::$2 = (char *)main::q
+Constant inlined main::$4 = (char *)main::q
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *((byte*)main::q+OFFSET_STRUCT_POINT_Y)
+Consolidated array index constant in *((char *)main::q+OFFSET_STRUCT_POINT_Y)
 Consolidated array index constant in *(main::SCREEN+1)
-Consolidated array index constant in *((byte*)main::q+OFFSET_STRUCT_POINT_Y)
+Consolidated array index constant in *((char *)main::q+OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
 Calls in [main] to set:1 
@@ -141,20 +141,20 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT)
-  [1] call set 
+  [1] call set
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] *main::SCREEN = *((byte*)main::q)
-  [3] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y)
+  [2] *main::SCREEN = *((char *)main::q)
+  [3] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void set(struct Point* set::ptr)
+void set(struct Point *ptr)
 set: scope:[set]  from main
-  [5] *((byte*)main::q) = 4
-  [6] *((byte*)main::q+OFFSET_STRUCT_POINT_Y) = 5
+  [5] *((char *)main::q) = 4
+  [6] *((char *)main::q+OFFSET_STRUCT_POINT_Y) = 5
   to:set::@return
 set::@return: scope:[set]  from set
   [7] return 
@@ -163,9 +163,9 @@ set::@return: scope:[set]  from set
 
 VARIABLE REGISTER WEIGHTS
 void main()
-volatile struct Point main::p loadstore
-void set(struct Point* set::ptr)
-struct Point* set::ptr
+__loadstore volatile struct Point main::p
+void set(struct Point *ptr)
+struct Point *set::ptr
 
 Initial phi equivalence classes
 Added variable main::p to live range equivalence class [ main::p ]
@@ -174,10 +174,10 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::p ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *(&main::p) = memcpy(*(&$0), struct Point, SIZEOF_STRUCT_POINT) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [2] *main::SCREEN = *((byte*)main::q) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*)main::q) = 4 [ ] ( set:1 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)main::q+OFFSET_STRUCT_POINT_Y) = 5 [ ] ( set:1 [ ] { }  ) always clobbers reg byte a 
+Statement [2] *main::SCREEN = *((char *)main::q) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((char *)main::q) = 4 [ ] ( set:1 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((char *)main::q+OFFSET_STRUCT_POINT_Y) = 5 [ ] ( set:1 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -219,15 +219,15 @@ main: {
     sta p-1,y
     dey
     bne !-
-    // [1] call set 
+    // [1] call set
     jsr set
     jmp __b1
     // main::@1
   __b1:
-    // [2] *main::SCREEN = *((byte*)main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *main::SCREEN = *((char *)main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
-    // [3] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -237,11 +237,12 @@ main: {
     rts
 }
   // set
+// void set(struct Point *ptr)
 set: {
-    // [5] *((byte*)main::q) = 4 -- _deref_pbuc1=vbuc2 
+    // [5] *((char *)main::q) = 4 -- _deref_pbuc1=vbuc2 
     lda #4
     sta.z main.q
-    // [6] *((byte*)main::q+OFFSET_STRUCT_POINT_Y) = 5 -- _deref_pbuc1=vbuc2 
+    // [6] *((char *)main::q+OFFSET_STRUCT_POINT_Y) = 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta main.q+OFFSET_STRUCT_POINT_Y
     jmp __breturn
@@ -265,15 +266,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant struct Point $0 = { x: 2, y: 3 }
-constant byte OFFSET_STRUCT_POINT_Y = 1
-constant byte SIZEOF_STRUCT_POINT = 2
+__constant struct Point $0 = { x: 2, y: 3 }
+__constant char OFFSET_STRUCT_POINT_Y = 1
+__constant char SIZEOF_STRUCT_POINT = 2
 void main()
-constant byte* const main::SCREEN = (byte*) 1024
-volatile struct Point main::p loadstore zp[2]:2
-constant struct Point* main::q = &main::p
-void set(struct Point* set::ptr)
-struct Point* set::ptr
+__constant char * const main::SCREEN = (char *) 1024
+__loadstore volatile struct Point main::p // zp[2]:2
+__constant struct Point *main::q = &main::p
+void set(struct Point *ptr)
+struct Point *set::ptr
 
 zp[2]:2 [ main::p ]
 
@@ -310,15 +311,15 @@ main: {
     dey
     bne !-
     // set(q)
-    // [1] call set 
+    // [1] call set
     jsr set
     // main::@1
     // SCREEN[0] = q->x
-    // [2] *main::SCREEN = *((byte*)main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *main::SCREEN = *((char *)main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
     // SCREEN[1] = q->y
-    // [3] *(main::SCREEN+1) = *((byte*)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *(main::SCREEN+1) = *((char *)main::q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return
@@ -327,13 +328,14 @@ main: {
     rts
 }
   // set
+// void set(struct Point *ptr)
 set: {
     // ptr->x = 4
-    // [5] *((byte*)main::q) = 4 -- _deref_pbuc1=vbuc2 
+    // [5] *((char *)main::q) = 4 -- _deref_pbuc1=vbuc2 
     lda #4
     sta.z main.q
     // ptr->y = 5
-    // [6] *((byte*)main::q+OFFSET_STRUCT_POINT_Y) = 5 -- _deref_pbuc1=vbuc2 
+    // [6] *((char *)main::q+OFFSET_STRUCT_POINT_Y) = 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta main.q+OFFSET_STRUCT_POINT_Y
     // set::@return

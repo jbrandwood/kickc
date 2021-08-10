@@ -20,6 +20,7 @@ main: {
     .byte 0
 }
 .segment Code
+// void set_process_name(char *name)
 set_process_name: {
     .label j = 2
     .label __1 = 4

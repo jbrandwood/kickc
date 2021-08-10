@@ -29,7 +29,7 @@ main: {
     // }
     rts
 }
-// sub1(byte register(A) i)
+// __register(A) char sub1(__register(A) char i)
 sub1: {
     // i+i
     asl

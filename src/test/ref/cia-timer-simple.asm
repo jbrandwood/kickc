@@ -88,7 +88,7 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp(9) dw)
+// void print_ulong_at(__zp(9) unsigned long dw, char *at)
 print_ulong_at: {
     .label dw = 9
     // print_uint_at(WORD1(dw), at)
@@ -115,7 +115,7 @@ print_ulong_at: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp(2) w, byte* zp(4) at)
+// void print_uint_at(__zp(2) unsigned int w, __zp(4) char *at)
 print_uint_at: {
     .label w = 2
     .label at = 4
@@ -138,7 +138,7 @@ print_uint_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp(6) b, byte* zp(4) at)
+// void print_uchar_at(__zp(6) char b, __zp(4) char *at)
 print_uchar_at: {
     .label b = 6
     .label at = 4
@@ -175,7 +175,7 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(7) at)
+// void print_char_at(__register(X) char ch, __zp(7) char *at)
 print_char_at: {
     .label at = 7
     // *(at) = ch

@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
 .segment Code
 main: {
     .label __0 = 6
@@ -62,7 +62,7 @@ main: {
     inc.z vram_ptr+1
   !:
     // pos_ptr++;
-    lda #SIZEOF_SIGNED_WORD
+    lda #SIZEOF_INT
     clc
     adc.z pos_ptr
     sta.z pos_ptr

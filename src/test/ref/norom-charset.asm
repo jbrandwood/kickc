@@ -54,7 +54,7 @@ main: {
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
-// gen_char3(byte* zp(3) dst, word zp(6) spec)
+// void gen_char3(__zp(3) char *dst, __zp(6) unsigned int spec)
 gen_char3: {
     .label dst = 3
     .label spec = 6

@@ -7,10 +7,10 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
-    .const wd = (w2-w1)/SIZEOF_WORD
+    .const wd = (w2-w1)/SIZEOF_UNSIGNED_INT
     .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140

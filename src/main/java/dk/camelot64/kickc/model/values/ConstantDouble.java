@@ -39,7 +39,7 @@ public class ConstantDouble implements ConstantLiteral<Double> {
       if(program == null) {
          return Double.toString(number);
       } else {
-         return "(" + SymbolType.VOID.getTypeName() + ") " + Double.toString(number);
+         return "(" + SymbolType.VOID.toCDecl() + ") " + Double.toString(number);
       }
    }
 

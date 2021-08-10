@@ -92,7 +92,7 @@ print_cls: {
     // }
     rts
 }
-// print_euclid(byte zp(2) a, byte zp(3) b)
+// void print_euclid(__zp(2) char a, __zp(3) char b)
 print_euclid: {
     .label b = 3
     .label a = 2
@@ -122,6 +122,7 @@ print_euclid: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -155,7 +156,7 @@ memset: {
     jmp __b1
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -178,7 +179,7 @@ print_uchar: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -191,7 +192,7 @@ print_char: {
     // }
     rts
 }
-// euclid(byte zp(2) a, byte register(X) b)
+// __register(A) char euclid(__zp(2) char a, __register(X) char b)
 euclid: {
     .label a = 2
   __b1:

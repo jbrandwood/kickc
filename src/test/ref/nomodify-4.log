@@ -4,11 +4,11 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   print::c#0 = 'a'
-  call print 
+  call print
   to:main::@1
 main::@1: scope:[main]  from main
   print::c#1 = 'b'
-  call print 
+  call print
   to:main::@2
 main::@2: scope:[main]  from main::@1
   to:main::@return
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-void print(const byte print::c)
+void print(const char c)
 print: scope:[print]  from main main::@1
   print::c#2 = phi( main/print::c#0, main::@1/print::c#1 )
   *SCREEN = print::c#2
@@ -27,7 +27,7 @@ print::@return: scope:[print]  from print
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -36,16 +36,16 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const SCREEN = (byte*)$400
+__constant char * const SCREEN = (char *)$400
 void __start()
 void main()
-void print(const byte print::c)
-const byte print::c
-const byte print::c#0
-const byte print::c#1
-const byte print::c#2
+void print(const char c)
+const char print::c
+const char print::c#0
+const char print::c#1
+const char print::c#2
 
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Constant print::c#0 = 'a'
 Constant print::c#1 = 'b'
@@ -77,17 +77,17 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call print 
+  [1] call print
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
-  [3] call print 
+  [3] call print
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-void print(const byte print::c)
+void print(const char c)
 print: scope:[print]  from main main::@1
   [5] print::c#2 = phi( main/'a', main::@1/'b' )
   [6] *SCREEN = print::c#2
@@ -99,9 +99,9 @@ print::@return: scope:[print]  from print
 
 VARIABLE REGISTER WEIGHTS
 void main()
-void print(const byte print::c)
-const byte print::c
-const byte print::c#2 11.0
+void print(const char c)
+const char print::c
+const char print::c#2 // 11.0
 
 Initial phi equivalence classes
 [ print::c#2 ]
@@ -137,7 +137,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call print 
+    // [1] call print
     // [5] phi from main to print [phi:main->print]
   print_from_main:
     // [5] phi print::c#2 = 'a' [phi:main->print#0] -- vbuaa=vbuc1 
@@ -148,7 +148,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call print 
+    // [3] call print
     // [5] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
     // [5] phi print::c#2 = 'b' [phi:main::@1->print#0] -- vbuaa=vbuc1 
@@ -161,7 +161,7 @@ main: {
     rts
 }
   // print
-// print(byte register(A) c)
+// void print(__register(A) const char c)
 print: {
     // [6] *SCREEN = print::c#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
@@ -188,11 +188,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const SCREEN = (byte*) 1024
+__constant char * const SCREEN = (char *) 1024
 void main()
-void print(const byte print::c)
-const byte print::c
-const byte print::c#2 reg byte a 11.0
+void print(const char c)
+const char print::c
+const char print::c#2 // reg byte a 11.0
 
 reg byte a [ print::c#2 ]
 
@@ -217,7 +217,7 @@ Score: 32
   // main
 main: {
     // print('a')
-    // [1] call print 
+    // [1] call print
     // [5] phi from main to print [phi:main->print]
     // [5] phi print::c#2 = 'a' [phi:main->print#0] -- vbuaa=vbuc1 
     lda #'a'
@@ -225,7 +225,7 @@ main: {
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print('b')
-    // [3] call print 
+    // [3] call print
     // [5] phi from main::@1 to print [phi:main::@1->print]
     // [5] phi print::c#2 = 'b' [phi:main::@1->print#0] -- vbuaa=vbuc1 
     lda #'b'
@@ -236,7 +236,7 @@ main: {
     rts
 }
   // print
-// print(byte register(A) c)
+// void print(__register(A) const char c)
 print: {
     // *SCREEN = c
     // [6] *SCREEN = print::c#2 -- _deref_pbuc1=vbuaa 

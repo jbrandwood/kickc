@@ -42,7 +42,7 @@ main: {
     // }
     rts
 }
-// get(byte register(A) i)
+// struct Point get(__register(A) char i)
 get: {
     .label p_y = 7
     rts

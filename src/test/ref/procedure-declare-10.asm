@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   .label SCREEN = $400
 .segment Code
 main: {
@@ -18,8 +18,9 @@ main: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// void * memcpy(void *destination, void *source, unsigned int num)
 memcpy: {
-    .const num = $c*SIZEOF_BYTE
+    .const num = $c*SIZEOF_CHAR
     .label destination = SCREEN
     .label source = STRING
     .label src_end = source+num

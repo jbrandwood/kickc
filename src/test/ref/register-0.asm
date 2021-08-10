@@ -34,7 +34,7 @@ main: {
     // }
     rts
 }
-// print(byte zp(2) ch)
+// void print(__zp(2) volatile char ch)
 print: {
     .label ch = 2
     // kickasm

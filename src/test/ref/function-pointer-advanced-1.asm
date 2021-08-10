@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(__start)
   .const STACK_BASE = $103
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   .label line = 8
   .label idx = 7
 .segment Code
@@ -21,7 +21,7 @@ __start: {
     jsr main
     rts
 }
-// xor(byte zp($a) a, byte register(A) b)
+// __register(A) char xor(__zp($a) char a, __register(A) char b)
 xor: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
@@ -39,7 +39,7 @@ xor: {
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
-// min(byte register(Y) a, byte register(A) b)
+// __register(A) char min(__register(Y) char a, __register(A) char b)
 min: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
@@ -64,7 +64,7 @@ min: {
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
-// max(byte zp($b) a, byte register(A) b)
+// __register(A) char max(__zp($b) char a, __register(A) char b)
 max: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
@@ -89,7 +89,7 @@ max: {
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
-// sum(byte zp($c) a, byte register(A) b)
+// __register(A) char sum(__zp($c) char a, __register(A) char b)
 sum: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
@@ -116,7 +116,7 @@ main: {
   __b1:
     // for(char i=0;i<sizeof(INPUT);i++)
     lda.z i
-    cmp #6*SIZEOF_BYTE
+    cmp #6*SIZEOF_CHAR
     bcc __b2
     // ln()
     jsr ln
@@ -177,7 +177,7 @@ ln: {
     // }
     rts
 }
-// exec(byte(byte,byte)* zp(3) collect)
+// void exec(__zp(3) char (*collect)(char, char))
 exec: {
     .label out = 6
     .label i = 5
@@ -201,7 +201,7 @@ exec: {
   __b1:
     // for(char i=1;i<sizeof(INPUT);i++)
     lda.z i
-    cmp #6*SIZEOF_BYTE
+    cmp #6*SIZEOF_CHAR
     bcc __b2
     // }
     rts
@@ -228,7 +228,7 @@ exec: {
   icall1:
     jmp (collect)
 }
-// print(byte zp(6) i)
+// void print(__zp(6) char i)
 print: {
     .label i = 6
     // i>>4
@@ -251,7 +251,7 @@ print: {
     // }
     rts
 }
-// cout(byte register(X) c)
+// void cout(__register(X) char c)
 cout: {
     // line[idx++] = c
     ldy.z idx

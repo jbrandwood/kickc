@@ -39,7 +39,7 @@ main: {
     .byte 0
 }
 .segment Code
-// print2(byte* zp(4) at, byte* zp(2) msg)
+// void print2(__zp(4) char *at, __zp(2) char *msg)
 print2: {
     .label i = 6
     .label msg = 2
@@ -67,7 +67,7 @@ print2: {
     inc.z i
     jmp __b1
 }
-// print_char(byte* zp(4) at, byte register(X) idx, byte register(A) ch)
+// void print_char(__zp(4) char *at, __register(X) char idx, __register(A) char ch)
 print_char: {
     .label at = 4
     // at[idx] = ch

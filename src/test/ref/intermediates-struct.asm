@@ -45,7 +45,7 @@ main: {
     // }
     rts
 }
-// sum(byte register(A) a, byte register(X) b)
+// __zp(6) struct Data sum(__register(A) char a, __register(X) char b)
 sum: {
     .label return = 6
     .label d = 8

@@ -15,7 +15,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
   main::lasti#2 = phi( main::@1/main::lasti#3 )
-  main::screen[main::i#3] = (byte)main::lasti#2
+  main::screen[main::i#3] = (char)main::lasti#2
   main::lasti#1 = main::i#3
   main::i#1 = ++ main::i#3
   to:main::@1
@@ -25,7 +25,7 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -36,25 +36,25 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 void __start()
 void main()
-bool~ main::$0
-signed word main::i
-signed word main::i#0
-signed word main::i#1
-signed word main::i#2
-signed word main::i#3
-signed word main::lasti
-signed word main::lasti#0
-signed word main::lasti#1
-signed word main::lasti#2
-signed word main::lasti#3
-constant byte* main::screen = (byte*)$400
+bool main::$0
+int main::i
+int main::i#0
+int main::i#1
+int main::i#2
+int main::i#3
+int main::lasti
+int main::lasti#0
+int main::lasti#1
+int main::lasti#2
+int main::lasti#3
+__constant char *main::screen = (char *)$400
 
 Adding number conversion cast (snumber) $a in main::$0 = main::i#2 < $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (char *) 1024
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) $a
+Finalized signed number type (signed char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (phi-usage) main::i#2 = main::i#3 main::lasti#1 
 Alias main::lasti#2 = main::lasti#3 
@@ -67,7 +67,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::lasti#0 = -1
 Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [6] main::screen[main::i#2] = (byte)main::lasti#2
+De-inlining pointer[w] to *(pointer+w)   [6] main::screen[main::i#2] = (char)main::lasti#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -108,7 +108,7 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] main::$1 = main::screen + main::i#2
-  [5] *main::$1 = (byte)main::lasti#2
+  [5] *main::$1 = (char)main::lasti#2
   [6] main::lasti#1 = main::i#2
   [7] main::i#1 = ++ main::i#2
   to:main::@1
@@ -116,13 +116,13 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte*~ main::$1 22.0
-signed word main::i
-signed word main::i#1 22.0
-signed word main::i#2 11.0
-signed word main::lasti
-signed word main::lasti#1 11.0
-signed word main::lasti#2 3.6666666666666665
+char *main::$1 // 22.0
+int main::i
+int main::i#1 // 22.0
+int main::i#2 // 11.0
+int main::lasti
+int main::lasti#1 // 11.0
+int main::lasti#2 // 3.6666666666666665
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -138,7 +138,7 @@ Allocated zp[2]:6 [ main::$1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if(main::i#2<$a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$1 = main::screen + main::i#2 [ main::i#2 main::lasti#2 main::$1 ] (  [ main::i#2 main::lasti#2 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [5] *main::$1 = (byte)main::lasti#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] *main::$1 = (char)main::lasti#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [6] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::lasti#2 main::lasti#1 ] : zp[2]:4 , 
@@ -212,7 +212,7 @@ main: {
     lda #>screen
     adc.z i+1
     sta.z __1+1
-    // [5] *main::$1 = (byte)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
+    // [5] *main::$1 = (char)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
     lda.z lasti
     ldy #0
     sta (__1),y
@@ -248,14 +248,14 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-byte*~ main::$1 zp[2]:6 22.0
-signed word main::i
-signed word main::i#1 i zp[2]:2 22.0
-signed word main::i#2 i zp[2]:2 11.0
-signed word main::lasti
-signed word main::lasti#1 lasti zp[2]:4 11.0
-signed word main::lasti#2 lasti zp[2]:4 3.6666666666666665
-constant byte* main::screen = (byte*) 1024
+char *main::$1 // zp[2]:6 22.0
+int main::i
+int main::i#1 // i zp[2]:2 22.0
+int main::i#2 // i zp[2]:2 11.0
+int main::lasti
+int main::lasti#1 // lasti zp[2]:4 11.0
+int main::lasti#2 // lasti zp[2]:4 3.6666666666666665
+__constant char *main::screen = (char *) 1024
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::lasti#2 main::lasti#1 ]
@@ -322,7 +322,7 @@ main: {
     lda #>screen
     adc.z i+1
     sta.z __1+1
-    // [5] *main::$1 = (byte)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
+    // [5] *main::$1 = (char)main::lasti#2 -- _deref_pbuz1=_byte_vwsz2 
     lda.z lasti
     ldy #0
     sta (__1),y

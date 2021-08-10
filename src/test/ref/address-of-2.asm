@@ -76,6 +76,7 @@ main: {
     // }
     rts
 }
+// void setv(char v)
 setv: {
     .const v = 4
     // val = v
@@ -84,6 +85,7 @@ setv: {
     // }
     rts
 }
+// void setp(char *p, char v)
 setp: {
     .const v = 5
     // *p = v

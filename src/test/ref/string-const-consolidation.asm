@@ -23,7 +23,7 @@ main: {
     // }
     rts
 }
-// print(byte* zp(4) string)
+// void print(__zp(4) char *string)
 print: {
     .label string = 4
     lda #<rex1

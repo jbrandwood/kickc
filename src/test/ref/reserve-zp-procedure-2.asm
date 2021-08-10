@@ -35,14 +35,14 @@ main: {
     // }
     rts
 }
-// sub1(byte register(A) i)
+// __register(A) char sub1(__register(A) char i)
 sub1: {
     // i+i
     asl
     // }
     rts
 }
-// sub2(byte register(X) i)
+// __register(A) char sub2(__register(X) char i)
 sub2: {
     // i+i
     txa

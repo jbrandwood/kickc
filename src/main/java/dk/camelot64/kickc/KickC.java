@@ -176,6 +176,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-var_model"}, description = "Configure variable optimization/memory area. Default is ssa_zp. See #pragma var_model")
    private String varModel = null;
 
+   @CommandLine.Option(names = {"-struct_model"}, description = "Configure struct model (Values: 'unwind' or 'classic'). Default is unwind. See #pragma struct_model")
+   private String structModel = null;
+
    @CommandLine.Option(names = {"-calling"}, description = "Configure calling convention. Default is __phicall. See #pragma calling")
    private String calling = null;
 
@@ -325,6 +328,11 @@ public class KickC implements Callable<Integer> {
                System.err.println(e.getMessage());
                return COMPILE_ERROR;
             }
+         }
+
+         if(structModel != null) {
+            boolean isClassic = structModel.equalsIgnoreCase("classic");
+            program.getTargetPlatform().getVariableBuilderConfig().setStructModelClassic(isClassic);
          }
 
          if(calling != null) {

@@ -1,6 +1,11 @@
-Added struct type cast to parameter value list call printf_uint((void (*)(char)) 0, main::pct, (struct printf_format_number){ 0, 0, 0, 0, 0, HEXADECIMAL })
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_str(&cputc, "Commodore is ")
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_uint(&cputc, main::pct, { 0, 0, 0, 0, 0, HEXADECIMAL })
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_str(&cputc, " cool")
+Adding parameter assignment in __stackcall procedure cputc::x = param(cputc::x)
+Added struct type cast to parameter value list call printf_uint(&cputc, main::pct, (struct printf_format_number){ 0, 0, 0, 0, 0, HEXADECIMAL })
 Inlined call call __init
 Eliminating unused variable with no statement main::$0
+Calling convention STACK_CALL replacing param(cputc::x) with stackidx(char,cputc::OFFSET_STACK_X)
 
 CONTROL FLOW GRAPH SSA
 
@@ -55,17 +60,25 @@ printf_uint::@return: scope:[printf_uint]  from printf_uint
   return 
   to:@return
 
+__stackcall void cputc(char x)
+cputc: scope:[cputc]  from
+  cputc::x#0 = stackidx(char,cputc::OFFSET_STACK_X)
+  to:cputc::@return
+cputc::@return: scope:[cputc]  from cputc
+  return 
+  to:@return
+
 void main()
 main: scope:[main]  from __start::@1
   screen#25 = phi( __start::@1/screen#26 )
-  printf_str::putc#0 = (void (*)(char)) 0
+  printf_str::putc#0 = &cputc
   printf_str::str#1 = main::str
   call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   screen#18 = phi( main/screen#1 )
   screen#7 = screen#18
-  printf_uint::putc#0 = (void (*)(char)) 0
+  printf_uint::putc#0 = &cputc
   printf_uint::uvalue#0 = main::pct
   printf_uint::format_min_length#0 = 0
   printf_uint::format_justify_left#0 = 0
@@ -78,7 +91,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   screen#19 = phi( main::@1/screen#6 )
   screen#8 = screen#19
-  printf_str::putc#1 = (void (*)(char)) 0
+  printf_str::putc#1 = &cputc
   printf_str::str#2 = main::str1
   call printf_str
   to:main::@3
@@ -118,7 +131,12 @@ __constant char RADIX::BINARY = 2
 __constant char RADIX::DECIMAL = $a
 __constant char RADIX::HEXADECIMAL = $10
 __constant char RADIX::OCTAL = 8
+__constant unsigned int STACK_BASE = $103
 void __start()
+__stackcall void cputc(char x)
+__constant char cputc::OFFSET_STACK_X = 0
+char cputc::x
+char cputc::x#0
 void main()
 __constant unsigned int main::pct = $156
 __constant char main::str[$e] = "Commodore is "
@@ -235,9 +253,9 @@ Identical Phi Values screen#12 screen#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition printf_str::$0 [3] if(0!=*printf_str::str#3) goto printf_str::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant printf_str::putc#0 = (void (*)(char)) 0
+Constant printf_str::putc#0 = &cputc
 Constant printf_str::str#1 = main::str
-Constant printf_uint::putc#0 = (void (*)(char)) 0
+Constant printf_uint::putc#0 = &cputc
 Constant printf_uint::uvalue#0 = main::pct
 Constant printf_uint::format_min_length#0 = 0
 Constant printf_uint::format_justify_left#0 = 0
@@ -245,10 +263,11 @@ Constant printf_uint::format_sign_always#0 = 0
 Constant printf_uint::format_zero_padding#0 = 0
 Constant printf_uint::format_upper_case#0 = 0
 Constant printf_uint::format_radix#0 = HEXADECIMAL
-Constant printf_str::putc#1 = (void (*)(char)) 0
+Constant printf_str::putc#1 = &cputc
 Constant printf_str::str#2 = main::str1
 Constant screen#11 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable cputc::x#0 and assignment [24] cputc::x#0 = stackidx(char,cputc::OFFSET_STACK_X)
 Eliminating unused constant printf_str::putc#0
 Eliminating unused constant printf_str::putc#1
 Eliminating unused constant printf_uint::putc#0
@@ -260,7 +279,12 @@ Eliminating unused constant printf_uint::format_upper_case#0
 Eliminating unused constant printf_uint::format_radix#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant HEXADECIMAL
+Eliminating unused constant cputc::OFFSET_STACK_X
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure cputc
+Removing unused procedure block cputc
+Removing unused procedure block cputc::@return
+Successful SSA optimization PassNEliminateEmptyProcedure
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::__init1
@@ -483,6 +507,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const STACK_BASE = $103
   .label screen = 4
 .segment Code
   // main
@@ -658,6 +683,7 @@ __constant char RADIX::BINARY = 2
 __constant char RADIX::DECIMAL = $a
 __constant char RADIX::HEXADECIMAL = $10
 __constant char RADIX::OCTAL = 8
+__constant unsigned int STACK_BASE = $103
 void main()
 __constant unsigned int main::pct = $156
 __constant char main::str[$e] = "Commodore is "
@@ -708,6 +734,7 @@ Score: 697
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const STACK_BASE = $103
   .label screen = 4
 .segment Code
   // main

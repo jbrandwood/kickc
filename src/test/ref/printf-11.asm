@@ -8,6 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  .const STACK_BASE = $103
   .label screen = 4
 .segment Code
 main: {

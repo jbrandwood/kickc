@@ -1168,6 +1168,18 @@ stz {c1}
 lda {c1}
 inc
 sta {z1}
+//FRAGMENT vbuz1=_stackidxbyte_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+sta {z1}
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuz3
+lda {z3}
+ldz {z2}
+sta ({z1}),z
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuc1
+lda #{c1}
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT vwuz1=_word_vbuz2
 lda {z2}
 sta {z1}
@@ -1216,17 +1228,6 @@ lda {z2}
 sta {z1}
 lda {z2}+1
 sta {z1}+1
-//FRAGMENT 0_neq_vbuz1_then_la1
-lda {z1}
-bne {la1}
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuz3
-lda {z3}
-ldz {z2}
-sta ({z1}),z
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuc1
-lda #{c1}
-ldz {z2}
-sta ({z1}),z
 //FRAGMENT pbuz1=pbuz1_plus_vbuc1
 lda #{c1}
 clc
@@ -1235,6 +1236,16 @@ sta {z1}
 bcc !+
 inc {z1}+1
 !:
+//FRAGMENT 0_neq_vbuz1_then_la1
+lda {z1}
+bne {la1}
+//FRAGMENT _stackpushbyte_=vbuz1
+lda {z1}
+pha
+//FRAGMENT call_vprc1
+jsr {c1}
+//FRAGMENT _stackpullbyte_1
+pla
 //FRAGMENT pvoz1=pvoc1
 lda #<{c1}
 sta {z1}
@@ -1286,6 +1297,36 @@ inc
 //FRAGMENT vbuxx=_deref_pbuc1_plus_1
 ldx {c1}
 inx
+//FRAGMENT vbuaa=_stackidxbyte_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+//FRAGMENT vbuxx=_stackidxbyte_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+tax
+//FRAGMENT vbuyy=_stackidxbyte_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+tay
+//FRAGMENT vbuzz=_stackidxbyte_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+taz
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuaa
+ldz {z2}
+sta ({z1}),z
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuxx
+txa
+ldz {z2}
+sta ({z1}),z
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
+tya
+ldz {z2}
+sta ({z1}),z
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuzz
+tza
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT vbuz1=vbuxx
 stx {z1}
 //FRAGMENT vwuz1=_word_vbuxx
@@ -1306,23 +1347,8 @@ sta {z1}+1
 //FRAGMENT 0_neq_vbuaa_then_la1
 cmp #0
 bne {la1}
-//FRAGMENT vbuz1=vbuaa
-sta {z1}
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuaa
-ldz {z2}
-sta ({z1}),z
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuxx
-txa
-ldz {z2}
-sta ({z1}),z
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
-tya
-ldz {z2}
-sta ({z1}),z
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuzz
-tza
-ldz {z2}
-sta ({z1}),z
+//FRAGMENT _stackpushbyte_=vbuaa
+pha
 //FRAGMENT _deref_pbuz1=vbuxx
 txa
 ldy #0
@@ -1338,18 +1364,21 @@ sta ({z1}),y
 //FRAGMENT 0_neq_vbuxx_then_la1
 cpx #0
 bne {la1}
-//FRAGMENT vbuaa=vbuxx
+//FRAGMENT _stackpushbyte_=vbuxx
 txa
+pha
 //FRAGMENT 0_neq_vbuyy_then_la1
 cpy #0
 bne {la1}
-//FRAGMENT vbuaa=vbuyy
+//FRAGMENT _stackpushbyte_=vbuyy
 tya
+pha
 //FRAGMENT 0_neq_vbuzz_then_la1
 cpz #0
 bne {la1}
-//FRAGMENT vbuaa=vbuzz
+//FRAGMENT _stackpushbyte_=vbuzz
 tza
+pha
 //FRAGMENT vbuz1=vbuyy
 sty {z1}
 //FRAGMENT vbuz1=vbuzz
@@ -2363,6 +2392,8 @@ taz
 lda {z1}+1
 //FRAGMENT vbuxx=_byte1_vduz1
 ldx {z1}+1
+//FRAGMENT vbuz1=vbuaa
+sta {z1}
 //FRAGMENT vbuyy=_byte1_vduz1
 ldy {z1}+1
 //FRAGMENT vbuzz=_byte1_vduz1
@@ -2457,40 +2488,3 @@ sta {z1}+3
 NO_SYNTHESIS
 //FRAGMENT vduz1=vwsc1
 NO_SYNTHESIS
-//FRAGMENT vbuz1=_stackidxbyte_vbuc1
-tsx
-lda STACK_BASE+{c1},x
-sta {z1}
-//FRAGMENT _stackpushbyte_=vbuz1
-lda {z1}
-pha
-//FRAGMENT call_vprc1
-jsr {c1}
-//FRAGMENT _stackpullbyte_1
-pla
-//FRAGMENT vbuaa=_stackidxbyte_vbuc1
-tsx
-lda STACK_BASE+{c1},x
-//FRAGMENT vbuxx=_stackidxbyte_vbuc1
-tsx
-lda STACK_BASE+{c1},x
-tax
-//FRAGMENT vbuyy=_stackidxbyte_vbuc1
-tsx
-lda STACK_BASE+{c1},x
-tay
-//FRAGMENT vbuzz=_stackidxbyte_vbuc1
-tsx
-lda STACK_BASE+{c1},x
-taz
-//FRAGMENT _stackpushbyte_=vbuaa
-pha
-//FRAGMENT _stackpushbyte_=vbuxx
-txa
-pha
-//FRAGMENT _stackpushbyte_=vbuyy
-tya
-pha
-//FRAGMENT _stackpushbyte_=vbuzz
-tza
-pha

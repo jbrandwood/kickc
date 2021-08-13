@@ -1,6 +1,11 @@
-Added struct type cast to parameter value list call printf_string((void (*)(char)) 0, main::name, (struct printf_format_string){ 0, 0 })
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_str(&cputc, "Hello, I am ")
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_string(&cputc, main::name, { 0, 0 })
+Setting inferred __stackcall on procedure affected by address-of __stackcall void cputc(char x) caused by statement call printf_str(&cputc, ". who are you?")
+Adding parameter assignment in __stackcall procedure cputc::x = param(cputc::x)
+Added struct type cast to parameter value list call printf_string(&cputc, main::name, (struct printf_format_string){ 0, 0 })
 Inlined call call __init
 Eliminating unused variable with no statement main::$0
+Calling convention STACK_CALL replacing param(cputc::x) with stackidx(char,cputc::OFFSET_STACK_X)
 
 CONTROL FLOW GRAPH SSA
 
@@ -28,6 +33,14 @@ printf_str::@return: scope:[printf_str]  from printf_str::@1
   return 
   to:@return
 
+__stackcall void cputc(char x)
+cputc: scope:[cputc]  from
+  cputc::x#0 = stackidx(char,cputc::OFFSET_STACK_X)
+  to:cputc::@return
+cputc::@return: scope:[cputc]  from cputc
+  return 
+  to:@return
+
 void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 printf_string: scope:[printf_string]  from main::@1
   screen#22 = phi( main::@1/screen#4 )
@@ -50,14 +63,14 @@ printf_string::@return: scope:[printf_string]  from printf_string::@1
 void main()
 main: scope:[main]  from __start::@1
   screen#23 = phi( __start::@1/screen#24 )
-  printf_str::putc#1 = (void (*)(char)) 0
+  printf_str::putc#1 = &cputc
   printf_str::str#2 = main::str
   call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   screen#15 = phi( main/screen#1 )
   screen#4 = screen#15
-  printf_string::putc#0 = (void (*)(char)) 0
+  printf_string::putc#0 = &cputc
   printf_string::str#0 = main::name
   printf_string::format_min_length#0 = 0
   printf_string::format_justify_left#0 = 0
@@ -66,7 +79,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   screen#16 = phi( main::@1/screen#3 )
   screen#5 = screen#16
-  printf_str::putc#2 = (void (*)(char)) 0
+  printf_str::putc#2 = &cputc
   printf_str::str#3 = main::str1
   call printf_str
   to:main::@3
@@ -101,7 +114,12 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
+__constant unsigned int STACK_BASE = $103
 void __start()
+__stackcall void cputc(char x)
+__constant char cputc::OFFSET_STACK_X = 0
+char cputc::x
+char cputc::x#0
 void main()
 __constant char *main::name = "Jesper"
 __constant char main::str[$d] = "Hello, I am "
@@ -188,27 +206,33 @@ Identical Phi Values screen#10 screen#17
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition printf_str::$0 [3] if(0!=*printf_str::str#4) goto printf_str::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant printf_str::putc#1 = (void (*)(char)) 0
+Constant printf_str::putc#1 = &cputc
 Constant printf_str::str#2 = main::str
-Constant printf_string::putc#0 = (void (*)(char)) 0
+Constant printf_string::putc#0 = &cputc
 Constant printf_string::str#0 = main::name
 Constant printf_string::format_min_length#0 = 0
 Constant printf_string::format_justify_left#0 = 0
-Constant printf_str::putc#2 = (void (*)(char)) 0
+Constant printf_str::putc#2 = &cputc
 Constant printf_str::str#3 = main::str1
 Constant screen#24 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant printf_str::putc#0 = printf_string::putc#0
 Constant printf_str::str#1 = printf_string::str#0
 Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable cputc::x#0 and assignment [7] cputc::x#0 = stackidx(char,cputc::OFFSET_STACK_X)
 Eliminating unused constant printf_str::putc#1
 Eliminating unused constant printf_str::putc#2
 Eliminating unused constant printf_str::putc#0
 Eliminating unused constant printf_string::format_min_length#0
 Eliminating unused constant printf_string::format_justify_left#0
 Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant cputc::OFFSET_STACK_X
 Eliminating unused constant printf_string::putc#0
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure cputc
+Removing unused procedure block cputc
+Removing unused procedure block cputc::@return
+Successful SSA optimization PassNEliminateEmptyProcedure
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::__init1
@@ -357,6 +381,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const STACK_BASE = $103
   .label screen = 2
 .segment Code
   // main
@@ -505,6 +530,7 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
+__constant unsigned int STACK_BASE = $103
 void main()
 __constant char *main::name = "Jesper"
 __constant char main::str[$d] = "Hello, I am "
@@ -546,6 +572,7 @@ Score: 617
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const STACK_BASE = $103
   .label screen = 2
 .segment Code
   // main

@@ -293,13 +293,14 @@ bitmap_line: {
     adc.z dx+1
     sta.z e+1
     // if(dy<e)
-    cmp.z dy+1
-    bne !+
-    lda.z e
-    cmp.z dy
-    beq __b7
+    lda.z dy+1
+    cmp.z e+1
+    bcc !+
+    bne __b7
+    lda.z dy
+    cmp.z e
+    bcs __b7
   !:
-    bcc __b7
     // x += sx
     clc
     lda.z x
@@ -368,13 +369,14 @@ bitmap_line: {
     adc.z dy+1
     sta.z e1+1
     // if(dx < e)
-    cmp.z dx+1
-    bne !+
-    lda.z e1
-    cmp.z dx
-    beq __b10
+    lda.z dx+1
+    cmp.z e1+1
+    bcc !+
+    bne __b10
+    lda.z dx
+    cmp.z e1
+    bcs __b10
   !:
-    bcc __b10
     // y += sy
     clc
     lda.z y

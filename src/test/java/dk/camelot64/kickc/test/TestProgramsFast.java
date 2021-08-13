@@ -880,6 +880,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testPrintf17() throws IOException {
+      compileAndCompare("printf-17.c");
+   }
+
+   @Test
    public void testPrintf15() throws IOException {
       compileAndCompare("printf-15.c");
    }
@@ -887,6 +892,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testPrintf14() throws IOException {
       compileAndCompare("printf-14.c");
+   }
+
+   @Test
+   public void testPrintf12() throws IOException {
+      compileAndCompare("printf-12.c");
    }
 
    @Test

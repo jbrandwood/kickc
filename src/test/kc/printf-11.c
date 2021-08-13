@@ -42,6 +42,9 @@ void printf_uint(void (*putc)(char), unsigned int uvalue, struct printf_format_n
     *screen++ = printf_hextab[BYTE0(uvalue)&0xf];
 }
 
+void cputc(char x) {}
+
+
 void main() {
     unsigned int pct = 342;
     printf("Commodore is %x cool", pct);

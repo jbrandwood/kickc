@@ -12,6 +12,8 @@ void printf_str(void (*putc)(char), char* str) {
     }
 }
 
+void cputc(char x) {}
+
 // Format specifying how to format a printed string
 struct printf_format_string {
     // The minimal number of chars to output (used for padding with spaces or 0).

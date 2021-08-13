@@ -230,14 +230,14 @@ compare: {
     jmp __b6
   __b3:
     // if(w1>w2)
-    lda.z w1+1
-    cmp.z w2+1
-    bne !+
-    lda.z w1
-    cmp.z w2
-    beq __b11
+    lda.z w2+1
+    cmp.z w1+1
+    bcc !+
+    bne __b11
+    lda.z w2
+    cmp.z w1
+    bcs __b11
   !:
-    bcc __b11
     lda #TT
     sta.z r
     jmp __b22
@@ -274,14 +274,14 @@ compare: {
     jmp __b6
   __b1:
     // if(w1<w2)
-    lda.z w2+1
-    cmp.z w1+1
-    bne !+
-    lda.z w2
-    cmp.z w1
-    beq __b13
+    lda.z w1+1
+    cmp.z w2+1
+    bcc !+
+    bne __b13
+    lda.z w1
+    cmp.z w2
+    bcs __b13
   !:
-    bcc __b13
     lda #TT
     sta.z r
     jmp __b24

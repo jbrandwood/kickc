@@ -11,7 +11,7 @@
 :BasicUpstart(main)
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   /// $9F21 VRAM Address (15:8)
@@ -85,8 +85,9 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
+// void memcpy_to_vram(char vbank, void *vdest, void *src, unsigned int num)
 memcpy_to_vram: {
-    .const num = $19*SIZEOF_BYTE
+    .const num = $19*SIZEOF_CHAR
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     // Transfer the data
@@ -138,7 +139,7 @@ memcpy_to_vram: {
 // - bank: Which 64K VRAM bank to put data into (0/1)
 // - addr: The address in VRAM
 // - data: The data to put into VRAM
-// vpoke(byte* zp(2) vaddr, byte register(X) data)
+// void vpoke(char vbank, __zp(2) char *vaddr, __register(X) char data)
 vpoke: {
     .label vaddr = 2
     // *VERA_CTRL &= ~VERA_ADDRSEL

@@ -55,14 +55,14 @@ snputc: {
     inc.z __snprintf_size+1
   !:
     // if(__snprintf_size > __snprintf_capacity)
-    lda.z __snprintf_capacity+1
-    cmp.z __snprintf_size+1
-    bcc !+
-    bne __b1
-    lda.z __snprintf_capacity
-    cmp.z __snprintf_size
-    bcs __b1
+    lda.z __snprintf_size+1
+    cmp.z __snprintf_capacity+1
+    bne !+
+    lda.z __snprintf_size
+    cmp.z __snprintf_capacity
+    beq __b1
   !:
+    bcc __b1
     // }
     rts
   __b1:
@@ -560,14 +560,13 @@ utoa: {
     // if (started || value >= digit_value)
     cpx #0
     bne __b10
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b10
-    lda.z value
-    cmp.z digit_value
-    bcs __b10
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b10
   !:
+    bcc __b10
   __b9:
     // for( char digit=0; digit<max_digits-1; digit++ )
     inc.z digit
@@ -715,14 +714,14 @@ utoa_append: {
     ldx #0
   __b1:
     // while (value >= sub)
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     // *buffer = DIGITS[digit]
     lda DIGITS,x
     ldy #0

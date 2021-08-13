@@ -123,7 +123,7 @@ main: {
     jmp __b5
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp($d) charset)
+// void init_font_hex(__zp($d) char *charset)
 init_font_hex: {
     .label __0 = $1b
     .label idx = $a
@@ -231,7 +231,7 @@ init_font_hex: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($17) x, signed word zp($19) y)
+// __zp($f) unsigned int atan2_16(__zp($17) int x, __zp($19) int y)
 atan2_16: {
     .label __2 = $b
     .label __7 = $d
@@ -442,7 +442,7 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
-// diff(byte register(X) bb1, byte register(A) bb2)
+// __register(A) char diff(__register(X) char bb1, __register(A) char bb2)
 diff: {
     // (bb1<bb2)?(bb2-bb1):bb1-bb2
     sta.z $ff
@@ -462,7 +462,7 @@ diff: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(4) w)
+// void print_uint(__zp(4) unsigned int w)
 print_uint: {
     .label w = 4
     // print_uchar(BYTE1(w))
@@ -479,7 +479,7 @@ print_uint: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -502,7 +502,7 @@ print_uchar: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0

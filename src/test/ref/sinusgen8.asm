@@ -61,7 +61,7 @@ main: {
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// sin8s_gen(signed byte* zp(8) sintab)
+// void sin8s_gen(__zp(8) signed char *sintab, unsigned int wavelength)
 sin8s_gen: {
     .label step = $c
     .label sintab = 8
@@ -133,7 +133,7 @@ print_cls: {
     rts
 }
 // Print a signed char as HEX
-// print_schar(signed byte register(X) b)
+// void print_schar(__register(X) signed char b)
 print_schar: {
     // if(b<0)
     cpx #0
@@ -159,7 +159,7 @@ print_schar: {
     jmp __b2
 }
 // Print a zero-terminated string
-// print_str(byte* zp(3) str)
+// void print_str(__zp(3) char *str)
 print_str: {
     .label str = 3
     lda #<main.str
@@ -190,6 +190,7 @@ print_str: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// __zp($c) unsigned int div16u(unsigned int dividend, unsigned int divisor)
 div16u: {
     .label return = $c
     // divr16u(dividend, divisor, 0)
@@ -201,7 +202,7 @@ div16u: {
 // Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($a) x)
+// __register(A) signed char sin8s(__zp($a) unsigned int x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -343,6 +344,7 @@ sin8s: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -376,7 +378,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -390,7 +392,7 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -416,7 +418,7 @@ print_uchar: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($f) dividend, word zp($a) rem)
+// __zp($c) unsigned int divr16u(__zp($f) unsigned int dividend, unsigned int divisor, __zp($a) unsigned int rem)
 divr16u: {
     .label rem = $a
     .label dividend = $f
@@ -487,7 +489,7 @@ divr16u: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($e) select)
+// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($e) char select)
 mulu8_sel: {
     .label __0 = $f
     .label __1 = $f
@@ -510,7 +512,7 @@ mulu8_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
+// __zp($f) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
     .label return = $f
     .label mb = $11

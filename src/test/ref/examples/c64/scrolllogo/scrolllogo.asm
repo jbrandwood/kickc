@@ -25,7 +25,7 @@
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .const XSIN_SIZE = $200
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
@@ -98,7 +98,7 @@ main: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($24) str, byte register(X) c)
+// void * memset(__zp($24) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $22
     .label dst = $24
@@ -136,7 +136,7 @@ memset: {
 // Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// sin16s_gen2(signed word* zp(6) sintab)
+// void sin16s_gen2(__zp(6) int *sintab, unsigned int wavelength, int min, int max)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -207,7 +207,7 @@ sin16s_gen2: {
     lda.z __8+1
     sta (sintab),y
     // *sintab++ = offs + (signed int)WORD1(mul16s(sin16s(x), ampl));
-    lda #SIZEOF_SIGNED_WORD
+    lda #SIZEOF_INT
     clc
     adc.z sintab
     sta.z sintab
@@ -297,6 +297,7 @@ loop: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
+// __zp($16) unsigned long div32u16u(unsigned long dividend, unsigned int divisor)
 div32u16u: {
     .label return = $16
     .label quotient_hi = $20
@@ -337,7 +338,7 @@ div32u16u: {
 // Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp(8) x)
+// __zp($1a) int sin16s(__zp(8) unsigned long x)
 sin16s: {
     .label __4 = $1c
     .label x = 8
@@ -551,7 +552,7 @@ sin16s: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($1a) a)
+// __zp($c) long mul16s(__zp($1a) int a, int b)
 mul16s: {
     .label __6 = $22
     .label __11 = $22
@@ -594,7 +595,7 @@ mul16s: {
     // }
     rts
 }
-// render_logo(signed word zp($1a) xpos)
+// void render_logo(__zp($1a) int xpos)
 render_logo: {
     .label __2 = $24
     .label xpos = $1a
@@ -768,7 +769,7 @@ render_logo: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($12) dividend, word zp($1a) rem)
+// __zp($14) unsigned int divr16u(__zp($12) unsigned int dividend, unsigned int divisor, __zp($1a) unsigned int rem)
 divr16u: {
     .label rem = $1a
     .label dividend = $12
@@ -833,7 +834,7 @@ divr16u: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($12) v1, word zp($14) v2, byte register(X) select)
+// __zp($22) unsigned int mulu16_sel(__zp($12) unsigned int v1, __zp($14) unsigned int v2, __register(X) char select)
 mulu16_sel: {
     .label __0 = $c
     .label __1 = $c
@@ -868,7 +869,7 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($22) a, word zp($14) b)
+// __zp($c) unsigned long mul16u(__zp($22) unsigned int a, __zp($14) unsigned int b)
 mul16u: {
     .label a = $22
     .label b = $14

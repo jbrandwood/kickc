@@ -9,7 +9,7 @@ Eliminating unused variable with no statement memcpy_to_vram::$3
 
 CONTROL FLOW GRAPH SSA
 
-void vpoke(byte vpoke::vbank , byte* vpoke::vaddr , byte vpoke::data)
+void vpoke(char vbank , char *vaddr , char data)
 vpoke: scope:[vpoke]  from main::@2 main::@4
   vpoke::data#2 = phi( main::@2/vpoke::data#0, main::@4/vpoke::data#1 )
   vpoke::vbank#2 = phi( main::@2/vpoke::vbank#0, main::@4/vpoke::vbank#1 )
@@ -27,7 +27,7 @@ vpoke::@return: scope:[vpoke]  from vpoke
   return 
   to:@return
 
-void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
+void memcpy_to_vram(char vbank , void *vdest , void *src , unsigned int num)
 memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   memcpy_to_vram::num#1 = phi( main::@3/memcpy_to_vram::num#0 )
   memcpy_to_vram::src#1 = phi( main::@3/memcpy_to_vram::src#0 )
@@ -40,9 +40,9 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   *VERA_ADDRX_M = memcpy_to_vram::$1
   memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#1
   *VERA_ADDRX_H = memcpy_to_vram::$2
-  memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#1
+  memcpy_to_vram::$5 = (char *)memcpy_to_vram::src#1
   memcpy_to_vram::end#0 = memcpy_to_vram::$5 + memcpy_to_vram::num#1
-  memcpy_to_vram::s#0 = ((byte*)) memcpy_to_vram::src#1
+  memcpy_to_vram::s#0 = ((char *)) memcpy_to_vram::src#1
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
   memcpy_to_vram::end#1 = phi( memcpy_to_vram/memcpy_to_vram::end#0, memcpy_to_vram::@2/memcpy_to_vram::end#2 )
@@ -77,7 +77,7 @@ main::@2: scope:[main]  from main::@1
   vpoke::vbank#0 = 0
   vpoke::vaddr#0 = main::vaddr#3
   vpoke::data#0 = main::MSG[main::i#3]
-  call vpoke 
+  call vpoke
   to:main::@4
 main::@4: scope:[main]  from main::@2
   main::i#5 = phi( main::@2/main::i#3 )
@@ -86,7 +86,7 @@ main::@4: scope:[main]  from main::@2
   vpoke::vbank#1 = 0
   vpoke::vaddr#1 = main::vaddr#1
   vpoke::data#1 = $21
-  call vpoke 
+  call vpoke
   to:main::@5
 main::@5: scope:[main]  from main::@4
   main::i#4 = phi( main::@4/main::i#5 )
@@ -97,10 +97,10 @@ main::@5: scope:[main]  from main::@4
 main::@3: scope:[main]  from main::@1
   main::$0 = sizeof  main::MSG2
   memcpy_to_vram::vbank#0 = 0
-  memcpy_to_vram::vdest#0 = (void*)DEFAULT_SCREEN+$100
-  memcpy_to_vram::src#0 = (void*)main::MSG2
+  memcpy_to_vram::vdest#0 = (void *)DEFAULT_SCREEN+$100
+  memcpy_to_vram::src#0 = (void *)main::MSG2
   memcpy_to_vram::num#0 = main::$0
-  call memcpy_to_vram 
+  call memcpy_to_vram
   to:main::@6
 main::@6: scope:[main]  from main::@3
   to:main::@return
@@ -110,7 +110,7 @@ main::@return: scope:[main]  from main::@6
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  call main
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -119,99 +119,99 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-constant byte* const DEFAULT_SCREEN = (byte*)0
-constant const byte VERA_ADDRSEL = 1
-constant byte* const VERA_ADDRX_H = (byte*)$9f22
-constant byte* const VERA_ADDRX_L = (byte*)$9f20
-constant byte* const VERA_ADDRX_M = (byte*)$9f21
-constant byte* const VERA_CTRL = (byte*)$9f25
-constant byte* const VERA_DATA0 = (byte*)$9f23
-constant const byte VERA_INC_0 = 0
-constant const byte VERA_INC_1 = $10
+__constant char * const DEFAULT_SCREEN = (char *)0
+__constant const char VERA_ADDRSEL = 1
+__constant char * const VERA_ADDRX_H = (char *)$9f22
+__constant char * const VERA_ADDRX_L = (char *)$9f20
+__constant char * const VERA_ADDRX_M = (char *)$9f21
+__constant char * const VERA_CTRL = (char *)$9f25
+__constant char * const VERA_DATA0 = (char *)$9f23
+__constant const char VERA_INC_0 = 0
+__constant const char VERA_INC_1 = $10
 void __start()
 void main()
-word~ main::$0
-bool~ main::$4
-constant byte* main::MSG[]  = "hello world!"
-constant byte* main::MSG2[]  = "h e l l o   w o r l d ! "
-byte main::i
-byte main::i#0
-byte main::i#1
-byte main::i#2
-byte main::i#3
-byte main::i#4
-byte main::i#5
-byte* main::vaddr
-byte* main::vaddr#0
-byte* main::vaddr#1
-byte* main::vaddr#2
-byte* main::vaddr#3
-byte* main::vaddr#4
-byte* main::vaddr#5
-byte* main::vaddr#6
-void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-byte~ memcpy_to_vram::$0
-byte~ memcpy_to_vram::$1
-byte~ memcpy_to_vram::$2
-bool~ memcpy_to_vram::$4
-byte*~ memcpy_to_vram::$5
-byte* memcpy_to_vram::end
-byte* memcpy_to_vram::end#0
-byte* memcpy_to_vram::end#1
-byte* memcpy_to_vram::end#2
-word memcpy_to_vram::num
-word memcpy_to_vram::num#0
-word memcpy_to_vram::num#1
-byte* memcpy_to_vram::s
-byte* memcpy_to_vram::s#0
-byte* memcpy_to_vram::s#1
-byte* memcpy_to_vram::s#2
-byte* memcpy_to_vram::s#3
-void* memcpy_to_vram::src
-void* memcpy_to_vram::src#0
-void* memcpy_to_vram::src#1
-byte memcpy_to_vram::vbank
-byte memcpy_to_vram::vbank#0
-byte memcpy_to_vram::vbank#1
-void* memcpy_to_vram::vdest
-void* memcpy_to_vram::vdest#0
-void* memcpy_to_vram::vdest#1
-void vpoke(byte vpoke::vbank , byte* vpoke::vaddr , byte vpoke::data)
-byte~ vpoke::$0
-byte~ vpoke::$1
-byte~ vpoke::$2
-byte vpoke::data
-byte vpoke::data#0
-byte vpoke::data#1
-byte vpoke::data#2
-byte* vpoke::vaddr
-byte* vpoke::vaddr#0
-byte* vpoke::vaddr#1
-byte* vpoke::vaddr#2
-byte vpoke::vbank
-byte vpoke::vbank#0
-byte vpoke::vbank#1
-byte vpoke::vbank#2
+unsigned int main::$0
+bool main::$4
+__constant char main::MSG[] = "hello world!"
+__constant char main::MSG2[] = "h e l l o   w o r l d ! "
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+char main::i#5
+char *main::vaddr
+char *main::vaddr#0
+char *main::vaddr#1
+char *main::vaddr#2
+char *main::vaddr#3
+char *main::vaddr#4
+char *main::vaddr#5
+char *main::vaddr#6
+void memcpy_to_vram(char vbank , void *vdest , void *src , unsigned int num)
+char memcpy_to_vram::$0
+char memcpy_to_vram::$1
+char memcpy_to_vram::$2
+bool memcpy_to_vram::$4
+char *memcpy_to_vram::$5
+char *memcpy_to_vram::end
+char *memcpy_to_vram::end#0
+char *memcpy_to_vram::end#1
+char *memcpy_to_vram::end#2
+unsigned int memcpy_to_vram::num
+unsigned int memcpy_to_vram::num#0
+unsigned int memcpy_to_vram::num#1
+char *memcpy_to_vram::s
+char *memcpy_to_vram::s#0
+char *memcpy_to_vram::s#1
+char *memcpy_to_vram::s#2
+char *memcpy_to_vram::s#3
+void *memcpy_to_vram::src
+void *memcpy_to_vram::src#0
+void *memcpy_to_vram::src#1
+char memcpy_to_vram::vbank
+char memcpy_to_vram::vbank#0
+char memcpy_to_vram::vbank#1
+void *memcpy_to_vram::vdest
+void *memcpy_to_vram::vdest#0
+void *memcpy_to_vram::vdest#1
+void vpoke(char vbank , char *vaddr , char data)
+char vpoke::$0
+char vpoke::$1
+char vpoke::$2
+char vpoke::data
+char vpoke::data#0
+char vpoke::data#1
+char vpoke::data#2
+char *vpoke::vaddr
+char *vpoke::vaddr#0
+char *vpoke::vaddr#1
+char *vpoke::vaddr#2
+char vpoke::vbank
+char vpoke::vbank#0
+char vpoke::vbank#1
+char vpoke::vbank#2
 
 Adding number conversion cast (unumber) 0 in main::$4 = 0 != main::MSG[main::i#2]
 Adding number conversion cast (unumber) 0 in vpoke::vbank#0 = 0
 Adding number conversion cast (unumber) 0 in vpoke::vbank#1 = 0
 Adding number conversion cast (unumber) $21 in vpoke::data#1 = $21
 Adding number conversion cast (unumber) 0 in memcpy_to_vram::vbank#0 = 0
-Adding number conversion cast (unumber) $100 in memcpy_to_vram::vdest#0 = (void*)DEFAULT_SCREEN+$100
+Adding number conversion cast (unumber) $100 in memcpy_to_vram::vdest#0 = (void *)DEFAULT_SCREEN+$100
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#1
+Inlining cast memcpy_to_vram::s#0 = (char *)memcpy_to_vram::src#1
 Inlining cast vpoke::vbank#0 = (unumber)0
 Inlining cast vpoke::vbank#1 = (unumber)0
 Inlining cast vpoke::data#1 = (unumber)$21
 Inlining cast memcpy_to_vram::vbank#0 = (unumber)0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 40736
-Simplifying constant pointer cast (byte*) 40737
-Simplifying constant pointer cast (byte*) 40738
-Simplifying constant pointer cast (byte*) 40739
-Simplifying constant pointer cast (byte*) 40741
-Simplifying constant pointer cast (byte*) 0
+Simplifying constant pointer cast (char *) 40736
+Simplifying constant pointer cast (char *) 40737
+Simplifying constant pointer cast (char *) 40738
+Simplifying constant pointer cast (char *) 40739
+Simplifying constant pointer cast (char *) 40741
+Simplifying constant pointer cast (char *) 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -219,12 +219,12 @@ Simplifying constant integer cast $21
 Simplifying constant integer cast 0
 Simplifying constant integer cast $100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $21
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $100
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) $21
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (unsigned int) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias memcpy_to_vram::s#2 = memcpy_to_vram::s#3 
 Alias memcpy_to_vram::end#1 = memcpy_to_vram::end#2 
@@ -251,11 +251,11 @@ Constant vpoke::vbank#1 = 0
 Constant vpoke::data#1 = $21
 Constant memcpy_to_vram::num#0 = sizeof main::MSG2
 Constant memcpy_to_vram::vbank#0 = 0
-Constant memcpy_to_vram::vdest#0 = (void*)DEFAULT_SCREEN+$100
-Constant memcpy_to_vram::src#0 = (void*)main::MSG2
+Constant memcpy_to_vram::vdest#0 = (void *)DEFAULT_SCREEN+$100
+Constant memcpy_to_vram::src#0 = (void *)main::MSG2
 Successful SSA optimization Pass2ConstantIdentification
-Constant memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#0
-Constant memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#0
+Constant memcpy_to_vram::$5 = (char *)memcpy_to_vram::src#0
+Constant memcpy_to_vram::s#0 = (char *)memcpy_to_vram::src#0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero vpoke::vbank#2 in [6] vpoke::$2 = VERA_INC_0 | vpoke::vbank#2
 Simplifying expression containing zero VERA_INC_1 in [16] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#0
@@ -287,7 +287,7 @@ Adding number conversion cast (unumber) $19 in
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $19
+Finalized unsigned number type (char) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings vpoke::vbank#0
 Inlining constant with var siblings vpoke::vbank#1
@@ -295,14 +295,14 @@ Inlining constant with var siblings vpoke::data#1
 Inlining constant with var siblings memcpy_to_vram::s#0
 Inlining constant with var siblings main::vaddr#0
 Inlining constant with var siblings main::i#0
-Constant inlined memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#0
+Constant inlined memcpy_to_vram::s#0 = (char *)memcpy_to_vram::src#0
 Constant inlined memcpy_to_vram::$2 = VERA_INC_1
 Constant inlined main::i#0 = 0
 Constant inlined memcpy_to_vram::$0 = 0
 Constant inlined main::vaddr#0 = DEFAULT_SCREEN
 Constant inlined memcpy_to_vram::$1 = byte1 memcpy_to_vram::vdest#0
 Constant inlined vpoke::vbank#0 = 0
-Constant inlined memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#0
+Constant inlined memcpy_to_vram::$5 = (char *)memcpy_to_vram::src#0
 Constant inlined vpoke::vbank#1 = 0
 Constant inlined vpoke::data#1 = $21
 Successful SSA optimization Pass2ConstantInlining
@@ -339,7 +339,7 @@ main::@1: scope:[main]  from main main::@5
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [3] phi()
-  [4] call memcpy_to_vram 
+  [4] call memcpy_to_vram
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [5] return 
@@ -347,19 +347,19 @@ main::@return: scope:[main]  from main::@3
 main::@2: scope:[main]  from main::@1
   [6] vpoke::vaddr#0 = main::vaddr#3
   [7] vpoke::data#0 = main::MSG[main::i#2]
-  [8] call vpoke 
+  [8] call vpoke
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [9] main::vaddr#1 = ++ main::vaddr#3
   [10] vpoke::vaddr#1 = main::vaddr#1
-  [11] call vpoke 
+  [11] call vpoke
   to:main::@5
 main::@5: scope:[main]  from main::@4
   [12] main::vaddr#2 = ++ main::vaddr#1
   [13] main::i#1 = ++ main::i#2
   to:main::@1
 
-void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
+void memcpy_to_vram(char vbank , void *vdest , void *src , unsigned int num)
 memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   [14] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
   [15] *VERA_ADDRX_L = 0
@@ -367,7 +367,7 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   [17] *VERA_ADDRX_H = VERA_INC_1
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
-  [18] memcpy_to_vram::s#2 = phi( memcpy_to_vram/(byte*)memcpy_to_vram::src#0, memcpy_to_vram::@2/memcpy_to_vram::s#1 )
+  [18] memcpy_to_vram::s#2 = phi( memcpy_to_vram/(char *)memcpy_to_vram::src#0, memcpy_to_vram::@2/memcpy_to_vram::s#1 )
   [19] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2
   to:memcpy_to_vram::@return
 memcpy_to_vram::@return: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
@@ -378,7 +378,7 @@ memcpy_to_vram::@2: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
   [22] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2
   to:memcpy_to_vram::@1
 
-void vpoke(byte vpoke::vbank , byte* vpoke::vaddr , byte vpoke::data)
+void vpoke(char vbank , char *vaddr , char data)
 vpoke: scope:[vpoke]  from main::@2 main::@4
   [23] vpoke::data#2 = phi( main::@2/vpoke::data#0, main::@4/$21 )
   [23] vpoke::vaddr#2 = phi( main::@2/vpoke::vaddr#0, main::@4/vpoke::vaddr#1 )
@@ -397,33 +397,33 @@ vpoke::@return: scope:[vpoke]  from vpoke
 
 VARIABLE REGISTER WEIGHTS
 void main()
-byte main::i
-byte main::i#1 22.0
-byte main::i#2 4.888888888888889
-byte* main::vaddr
-byte* main::vaddr#1 11.0
-byte* main::vaddr#2 11.0
-byte* main::vaddr#3 6.6000000000000005
-void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-byte* memcpy_to_vram::end
-word memcpy_to_vram::num
-byte* memcpy_to_vram::s
-byte* memcpy_to_vram::s#1 202.0
-byte* memcpy_to_vram::s#2 134.66666666666666
-void* memcpy_to_vram::src
-byte memcpy_to_vram::vbank
-void* memcpy_to_vram::vdest
-void vpoke(byte vpoke::vbank , byte* vpoke::vaddr , byte vpoke::data)
-byte~ vpoke::$0 202.0
-byte~ vpoke::$1 202.0
-byte vpoke::data
-byte vpoke::data#0 22.0
-byte vpoke::data#2 16.0
-byte* vpoke::vaddr
-byte* vpoke::vaddr#0 11.0
-byte* vpoke::vaddr#1 22.0
-byte* vpoke::vaddr#2 56.0
-byte vpoke::vbank
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 4.888888888888889
+char *main::vaddr
+char *main::vaddr#1 // 11.0
+char *main::vaddr#2 // 11.0
+char *main::vaddr#3 // 6.6000000000000005
+void memcpy_to_vram(char vbank , void *vdest , void *src , unsigned int num)
+char *memcpy_to_vram::end
+unsigned int memcpy_to_vram::num
+char *memcpy_to_vram::s
+char *memcpy_to_vram::s#1 // 202.0
+char *memcpy_to_vram::s#2 // 134.66666666666666
+void *memcpy_to_vram::src
+char memcpy_to_vram::vbank
+void *memcpy_to_vram::vdest
+void vpoke(char vbank , char *vaddr , char data)
+char vpoke::$0 // 202.0
+char vpoke::$1 // 202.0
+char vpoke::data
+char vpoke::data#0 // 22.0
+char vpoke::data#2 // 16.0
+char *vpoke::vaddr
+char *vpoke::vaddr#0 // 11.0
+char *vpoke::vaddr#1 // 22.0
+char *vpoke::vaddr#2 // 56.0
+char vpoke::vbank
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -525,7 +525,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   /// $9F21 VRAM Address (15:8)
@@ -570,7 +570,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [4] call memcpy_to_vram 
+    // [4] call memcpy_to_vram
     // Space is 0x20, red background black foreground
     jsr memcpy_to_vram
     jmp __breturn
@@ -583,7 +583,7 @@ main: {
     // [6] vpoke::vaddr#0 = main::vaddr#3
     // [7] vpoke::data#0 = main::MSG[main::i#2] -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx MSG,y
-    // [8] call vpoke 
+    // [8] call vpoke
     // [23] phi from main::@2 to vpoke [phi:main::@2->vpoke]
   vpoke_from___b2:
     // [23] phi vpoke::data#2 = vpoke::data#0 [phi:main::@2->vpoke#0] -- register_copy 
@@ -598,7 +598,7 @@ main: {
     inc.z vaddr+1
   !:
     // [10] vpoke::vaddr#1 = main::vaddr#1
-    // [11] call vpoke 
+    // [11] call vpoke
   // Message
     // [23] phi from main::@4 to vpoke [phi:main::@4->vpoke]
   vpoke_from___b4:
@@ -637,8 +637,9 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
+// void memcpy_to_vram(char vbank, void *vdest, void *src, unsigned int num)
 memcpy_to_vram: {
-    .const num = $19*SIZEOF_BYTE
+    .const num = $19*SIZEOF_CHAR
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     // Transfer the data
@@ -661,7 +662,7 @@ memcpy_to_vram: {
     sta VERA_ADDRX_H
     // [18] phi from memcpy_to_vram to memcpy_to_vram::@1 [phi:memcpy_to_vram->memcpy_to_vram::@1]
   __b1_from_memcpy_to_vram:
-    // [18] phi memcpy_to_vram::s#2 = (byte*)memcpy_to_vram::src#0 [phi:memcpy_to_vram->memcpy_to_vram::@1#0] -- pbuz1=pbuc1 
+    // [18] phi memcpy_to_vram::s#2 = (char *)memcpy_to_vram::src#0 [phi:memcpy_to_vram->memcpy_to_vram::@1#0] -- pbuz1=pbuc1 
     lda #<src
     sta.z s
     lda #>src
@@ -703,7 +704,7 @@ memcpy_to_vram: {
 // - bank: Which 64K VRAM bank to put data into (0/1)
 // - addr: The address in VRAM
 // - data: The data to put into VRAM
-// vpoke(byte* zp(2) vaddr, byte register(X) data)
+// void vpoke(char vbank, __zp(2) char *vaddr, __register(X) char data)
 vpoke: {
     .label vaddr = 2
     // [24] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
@@ -761,49 +762,49 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-constant byte* const DEFAULT_SCREEN = (byte*) 0
-constant byte SIZEOF_BYTE = 1
-constant const byte VERA_ADDRSEL = 1
-constant byte* const VERA_ADDRX_H = (byte*) 40738
-constant byte* const VERA_ADDRX_L = (byte*) 40736
-constant byte* const VERA_ADDRX_M = (byte*) 40737
-constant byte* const VERA_CTRL = (byte*) 40741
-constant byte* const VERA_DATA0 = (byte*) 40739
-constant const byte VERA_INC_1 = $10
+__constant char * const DEFAULT_SCREEN = (char *) 0
+__constant char SIZEOF_CHAR = 1
+__constant const char VERA_ADDRSEL = 1
+__constant char * const VERA_ADDRX_H = (char *) 40738
+__constant char * const VERA_ADDRX_L = (char *) 40736
+__constant char * const VERA_ADDRX_M = (char *) 40737
+__constant char * const VERA_CTRL = (char *) 40741
+__constant char * const VERA_DATA0 = (char *) 40739
+__constant const char VERA_INC_1 = $10
 void main()
-constant byte* main::MSG[]  = "hello world!"
-constant byte* main::MSG2[]  = "h e l l o   w o r l d ! "
-byte main::i
-byte main::i#1 reg byte y 22.0
-byte main::i#2 reg byte y 4.888888888888889
-byte* main::vaddr
-byte* main::vaddr#1 vaddr zp[2]:2 11.0
-byte* main::vaddr#2 vaddr zp[2]:2 11.0
-byte* main::vaddr#3 vaddr zp[2]:2 6.6000000000000005
-void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-byte* memcpy_to_vram::end
-constant byte* memcpy_to_vram::end#0 end = (byte*)memcpy_to_vram::src#0+memcpy_to_vram::num#0
-word memcpy_to_vram::num
-constant word memcpy_to_vram::num#0 num = $19*SIZEOF_BYTE
-byte* memcpy_to_vram::s
-byte* memcpy_to_vram::s#1 s zp[2]:4 202.0
-byte* memcpy_to_vram::s#2 s zp[2]:4 134.66666666666666
-void* memcpy_to_vram::src
-constant void* memcpy_to_vram::src#0 src = (void*)main::MSG2
-byte memcpy_to_vram::vbank
-void* memcpy_to_vram::vdest
-constant void* memcpy_to_vram::vdest#0 vdest = (void*)DEFAULT_SCREEN+$100
-void vpoke(byte vpoke::vbank , byte* vpoke::vaddr , byte vpoke::data)
-byte~ vpoke::$0 reg byte a 202.0
-byte~ vpoke::$1 reg byte a 202.0
-byte vpoke::data
-byte vpoke::data#0 reg byte x 22.0
-byte vpoke::data#2 reg byte x 16.0
-byte* vpoke::vaddr
-byte* vpoke::vaddr#0 vaddr zp[2]:2 11.0
-byte* vpoke::vaddr#1 vaddr zp[2]:2 22.0
-byte* vpoke::vaddr#2 vaddr zp[2]:2 56.0
-byte vpoke::vbank
+__constant char main::MSG[] = "hello world!"
+__constant char main::MSG2[] = "h e l l o   w o r l d ! "
+char main::i
+char main::i#1 // reg byte y 22.0
+char main::i#2 // reg byte y 4.888888888888889
+char *main::vaddr
+char *main::vaddr#1 // vaddr zp[2]:2 11.0
+char *main::vaddr#2 // vaddr zp[2]:2 11.0
+char *main::vaddr#3 // vaddr zp[2]:2 6.6000000000000005
+void memcpy_to_vram(char vbank , void *vdest , void *src , unsigned int num)
+char *memcpy_to_vram::end
+__constant char *memcpy_to_vram::end#0 = (char *)memcpy_to_vram::src#0+memcpy_to_vram::num#0 // end
+unsigned int memcpy_to_vram::num
+__constant unsigned int memcpy_to_vram::num#0 = $19*SIZEOF_CHAR // num
+char *memcpy_to_vram::s
+char *memcpy_to_vram::s#1 // s zp[2]:4 202.0
+char *memcpy_to_vram::s#2 // s zp[2]:4 134.66666666666666
+void *memcpy_to_vram::src
+__constant void *memcpy_to_vram::src#0 = (void *)main::MSG2 // src
+char memcpy_to_vram::vbank
+void *memcpy_to_vram::vdest
+__constant void *memcpy_to_vram::vdest#0 = (void *)DEFAULT_SCREEN+$100 // vdest
+void vpoke(char vbank , char *vaddr , char data)
+char vpoke::$0 // reg byte a 202.0
+char vpoke::$1 // reg byte a 202.0
+char vpoke::data
+char vpoke::data#0 // reg byte x 22.0
+char vpoke::data#2 // reg byte x 16.0
+char *vpoke::vaddr
+char *vpoke::vaddr#0 // vaddr zp[2]:2 11.0
+char *vpoke::vaddr#1 // vaddr zp[2]:2 22.0
+char *vpoke::vaddr#2 // vaddr zp[2]:2 56.0
+char vpoke::vbank
 
 reg byte y [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::vaddr#3 main::vaddr#2 main::vaddr#1 vpoke::vaddr#2 vpoke::vaddr#0 vpoke::vaddr#1 ]
@@ -832,7 +833,7 @@ Score: 1175
   // Global Constants & labels
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   /// $9F21 VRAM Address (15:8)
@@ -874,7 +875,7 @@ main: {
     // [3] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // main::@3
     // memcpy_to_vram(0, DEFAULT_SCREEN+0x100, MSG2, sizeof(MSG2))
-    // [4] call memcpy_to_vram 
+    // [4] call memcpy_to_vram
     // Space is 0x20, red background black foreground
     jsr memcpy_to_vram
     // main::@return
@@ -887,7 +888,7 @@ main: {
     // [6] vpoke::vaddr#0 = main::vaddr#3
     // [7] vpoke::data#0 = main::MSG[main::i#2] -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx MSG,y
-    // [8] call vpoke 
+    // [8] call vpoke
     // [23] phi from main::@2 to vpoke [phi:main::@2->vpoke]
     // [23] phi vpoke::data#2 = vpoke::data#0 [phi:main::@2->vpoke#0] -- register_copy 
     // [23] phi vpoke::vaddr#2 = vpoke::vaddr#0 [phi:main::@2->vpoke#1] -- register_copy 
@@ -901,7 +902,7 @@ main: {
   !:
     // vpoke(0, vaddr++, 0x21)
     // [10] vpoke::vaddr#1 = main::vaddr#1
-    // [11] call vpoke 
+    // [11] call vpoke
   // Message
     // [23] phi from main::@4 to vpoke [phi:main::@4->vpoke]
     // [23] phi vpoke::data#2 = $21 [phi:main::@4->vpoke#0] -- vbuxx=vbuc1 
@@ -938,8 +939,9 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
+// void memcpy_to_vram(char vbank, void *vdest, void *src, unsigned int num)
 memcpy_to_vram: {
-    .const num = $19*SIZEOF_BYTE
+    .const num = $19*SIZEOF_CHAR
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     // Transfer the data
@@ -965,7 +967,7 @@ memcpy_to_vram: {
     lda #VERA_INC_1
     sta VERA_ADDRX_H
     // [18] phi from memcpy_to_vram to memcpy_to_vram::@1 [phi:memcpy_to_vram->memcpy_to_vram::@1]
-    // [18] phi memcpy_to_vram::s#2 = (byte*)memcpy_to_vram::src#0 [phi:memcpy_to_vram->memcpy_to_vram::@1#0] -- pbuz1=pbuc1 
+    // [18] phi memcpy_to_vram::s#2 = (char *)memcpy_to_vram::src#0 [phi:memcpy_to_vram->memcpy_to_vram::@1#0] -- pbuz1=pbuc1 
     lda #<src
     sta.z s
     lda #>src
@@ -1007,7 +1009,7 @@ memcpy_to_vram: {
 // - bank: Which 64K VRAM bank to put data into (0/1)
 // - addr: The address in VRAM
 // - data: The data to put into VRAM
-// vpoke(byte* zp(2) vaddr, byte register(X) data)
+// void vpoke(char vbank, __zp(2) char *vaddr, __register(X) char data)
 vpoke: {
     .label vaddr = 2
     // *VERA_CTRL &= ~VERA_ADDRSEL

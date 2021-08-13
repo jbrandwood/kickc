@@ -444,6 +444,7 @@ mul16s_compare: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -477,7 +478,7 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// print_str(byte* zp($1c) str)
+// void print_str(__zp($1c) char *str)
 print_str: {
     .label str = $1c
   __b1:
@@ -502,7 +503,7 @@ print_str: {
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
-// muls16u(word zp($18) a, word zp($1a) b)
+// __zp(8) unsigned long muls16u(__zp($18) unsigned int a, __zp($1a) unsigned int b)
 muls16u: {
     .label return = 8
     .label m = 8
@@ -565,7 +566,7 @@ muls16u: {
     jmp __b2
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($1c) a, word zp($1a) b)
+// __zp($c) unsigned long mul16u(__zp($1c) unsigned int a, __zp($1a) unsigned int b)
 mul16u: {
     .label mb = $12
     .label a = $1c
@@ -627,7 +628,7 @@ mul16u: {
 }
 // Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zp($18) a, word zp($1a) b)
+// __zp($12) unsigned long mulf16u(__zp($18) unsigned int a, __zp($1a) unsigned int b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -750,7 +751,7 @@ mulf16u: {
     // }
     rts
 }
-// mul16u_error(word zp($18) a, word zp($1a) b, dword zp(8) ms, dword zp($c) mn, dword zp($12) mf)
+// void mul16u_error(__zp($18) unsigned int a, __zp($1a) unsigned int b, __zp(8) unsigned long ms, __zp($c) unsigned long mn, __zp($12) unsigned long mf)
 mul16u_error: {
     .label a = $18
     .label b = $1a
@@ -855,7 +856,7 @@ print_ln: {
 }
 // Slow multiplication of signed words
 // Perform a signed multiplication by repeated addition/subtraction
-// muls16s(signed word zp(4) a, signed word zp(6) b)
+// __zp(8) long muls16s(__zp(4) int a, __zp(6) int b)
 muls16s: {
     .label m = 8
     .label j = $1c
@@ -978,7 +979,7 @@ muls16s: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp(4) a, signed word zp(6) b)
+// __zp($c) long mul16s(__zp(4) int a, __zp(6) int b)
 mul16s: {
     .label __6 = $18
     .label __9 = $1a
@@ -1047,7 +1048,7 @@ mul16s: {
 }
 // Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zp(4) a, signed word zp(6) b)
+// __zp($12) long mulf16s(__zp(4) int a, __zp(6) int b)
 mulf16s: {
     .label __6 = $1a
     .label __9 = $1c
@@ -1114,7 +1115,7 @@ mulf16s: {
     // }
     rts
 }
-// mul16s_error(signed word zp(4) a, signed word zp(6) b, signed dword zp(8) ms, signed dword zp($c) mn, signed dword zp($12) mf)
+// void mul16s_error(__zp(4) int a, __zp(6) int b, __zp(8) long ms, __zp($c) long mn, __zp($12) long mf)
 mul16s_error: {
     .label a = 4
     .label b = 6
@@ -1195,7 +1196,7 @@ mul16s_error: {
 }
 .segment Code
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -1209,7 +1210,7 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($18) w)
+// void print_uint(__zp($18) unsigned int w)
 print_uint: {
     .label w = $18
     // print_uchar(BYTE1(w))
@@ -1222,7 +1223,7 @@ print_uint: {
     rts
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp(8) dw)
+// void print_ulong(__zp(8) unsigned long dw)
 print_ulong: {
     .label dw = 8
     // print_uint(WORD1(dw))
@@ -1241,7 +1242,7 @@ print_ulong: {
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp($18) w)
+// void print_sint(__zp($18) int w)
 print_sint: {
     .label w = $18
     // if(w<0)
@@ -1270,7 +1271,7 @@ print_sint: {
     jmp __b2
 }
 // Print a signed long as HEX
-// print_slong(signed dword zp(8) dw)
+// void print_slong(__zp(8) long dw)
 print_slong: {
     .label dw = 8
     // if(dw<0)
@@ -1309,7 +1310,7 @@ print_slong: {
     jmp __b2
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa

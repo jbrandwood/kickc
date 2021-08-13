@@ -11,7 +11,7 @@
   .const SID_CONTROL_NOISE = $80
   /// The colors of the C64
   .const BLACK = 0
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
@@ -81,7 +81,7 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp(2) size)
+// void * malloc(__zp(2) unsigned int size)
 malloc: {
     .label mem = 2
     .label size = 2
@@ -152,7 +152,7 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zp(4) screen)
+// void init_dist_screen(__zp(4) char *screen)
 init_dist_screen: {
     .label screen = 4
     .label screen_bottomline = 7
@@ -276,7 +276,7 @@ init_dist_screen: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zp(4) screen)
+// void init_angle_screen(__zp(4) char *screen)
 init_angle_screen: {
     .label __9 = $11
     .label screen = 4
@@ -395,6 +395,7 @@ init_angle_screen: {
     jmp __b2
 }
 // Make a plasma-friendly charset where the chars are randomly filled
+// void make_plasma_charset(char *charset)
 make_plasma_charset: {
     .label __7 = $15
     .label __10 = $1a
@@ -523,7 +524,7 @@ make_plasma_charset: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c)
+// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $1c
     .label dst = 4
@@ -559,7 +560,7 @@ memset: {
     jmp __b2
 }
 // Render plasma to the passed screen
-// doplasma(byte* zp($f) screen)
+// void doplasma(__zp($f) char *screen)
 doplasma: {
     .label angle = 7
     .label dist = 9
@@ -663,9 +664,9 @@ init_squares: {
     .label squares = $f
     .label sqr = 9
     // malloc(NUM_SQUARES*sizeof(unsigned int))
-    lda #<NUM_SQUARES*SIZEOF_WORD
+    lda #<NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size
-    lda #>NUM_SQUARES*SIZEOF_WORD
+    lda #>NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size+1
     jsr malloc
     // malloc(NUM_SQUARES*sizeof(unsigned int))
@@ -693,7 +694,7 @@ init_squares: {
     lda.z sqr+1
     sta (squares),y
     // *squares++ = sqr;
-    lda #SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT
     clc
     adc.z squares
     sta.z squares
@@ -719,7 +720,7 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
+// __zp($11) unsigned int sqr(__register(A) char val)
 sqr: {
     .label return = $11
     .label return_1 = $f
@@ -737,7 +738,7 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($11) val)
+// __register(A) char sqrt(__zp($11) unsigned int val)
 sqrt: {
     .label __1 = 9
     .label __2 = 9
@@ -768,7 +769,7 @@ sqrt: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($16) x, signed word zp($18) y)
+// __zp($11) unsigned int atan2_16(__zp($16) int x, __zp($18) int y)
 atan2_16: {
     .label __2 = 9
     .label __7 = $f
@@ -992,6 +993,7 @@ print_cls: {
     rts
 }
 // Print a single char
+// void print_char(char ch)
 print_char: {
     .const ch = '.'
     // *(print_char_cursor++) = ch
@@ -1011,7 +1013,7 @@ print_char: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($11) key, word* zp(9) items, byte register(X) num)
+// __zp(9) unsigned int * bsearch16u(__zp($11) unsigned int key, __zp(9) unsigned int *items, __register(X) char num)
 bsearch16u: {
     .label __2 = 9
     .label pivot = $1a
@@ -1037,7 +1039,7 @@ bsearch16u: {
     bcc __b2
     sec
     lda.z __2
-    sbc #1*SIZEOF_WORD
+    sbc #1*SIZEOF_UNSIGNED_INT
     sta.z __2
     lda.z __2+1
     sbc #0
@@ -1084,7 +1086,7 @@ bsearch16u: {
     beq __b7
   !:
     // items = pivot+1
-    lda #1*SIZEOF_WORD
+    lda #1*SIZEOF_UNSIGNED_INT
     clc
     adc.z pivot
     sta.z items

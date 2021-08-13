@@ -37,6 +37,7 @@
   .const VERA_TILEBASE_HEIGHT_16 = 2
   .const VERA_LAYER_TILEBASE_MASK = $fc
   .const SIZEOF_POINTER = 2
+  .const STACK_BASE = $103
   /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   /// $9F21 VRAM Address (15:8)
@@ -118,22 +119,24 @@
   /// $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // Variable holding the screen width;
-  .label conio_screen_width = $20
+  .label conio_screen_width = $23
   // Variable holding the screen height;
-  .label conio_screen_height = $21
+  .label conio_screen_height = $24
   // Variable holding the screen layer on the VERA card with which conio interacts;
-  .label conio_screen_layer = $22
+  .label conio_screen_layer = $25
   // Variables holding the current map width and map height of the layer.
-  .label conio_width = $23
-  .label conio_height = $25
-  .label conio_rowshift = $27
-  .label conio_rowskip = $28
+  .label conio_width = $26
+  .label conio_height = $28
+  .label conio_rowshift = $2a
+  .label conio_rowskip = $2b
   // X sine index
-  .label scroll_x = $2a
-  .label scroll_y = $2c
-  .label delta_x = $2e
-  .label delta_y = $30
-  .label speed = $32
+  .label scroll_x = $2d
+  .label scroll_y = $2f
+  .label delta_x = $31
+  .label delta_y = $33
+  .label speed = $35
+  .label CONIO_SCREEN_BANK = 5
+  .label CONIO_SCREEN_BANK_1 = $47
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -148,8 +151,22 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT = $41
-  .label CONIO_SCREEN_BANK = $40
+  .label CONIO_SCREEN_TEXT = 3
+  // The screen width
+  // The screen height
+  // The text screen base address, which is a 16:0 bit value in VERA VRAM.
+  // That is 128KB addressable space, thus 17 bits in total.
+  // CONIO_SCREEN_TEXT contains bits 15:0 of the address.
+  // CONIO_SCREEN_BANK contains bit 16, the the 64K memory bank in VERA VRAM (the upper 17th bit).
+  // !!! note that these values are not const for the cx16!
+  // This conio implements the two layers of VERA, which can be layer 0 or layer 1.
+  // Configuring conio to output to a different layer, will change these fields to the address base
+  // configured using VERA_L0_MAPBASE = 0x9f2e or VERA_L1_MAPBASE = 0x9f35.
+  // Using the function setscreenlayer(layer) will re-calculate using CONIO_SCREEN_TEXT and CONIO_SCREEN_BASE
+  // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
+  // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
+  // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
+  .label CONIO_SCREEN_TEXT_1 = $48
 .segment Code
 __start: {
     // __ma unsigned byte conio_screen_width = 0
@@ -198,10 +215,10 @@ __start: {
 }
 // VSYNC Interrupt Routine
 irq_vsync: {
-    .label __10 = $34
-    .label __11 = $36
-    .label vera_layer_set_horizontal_scroll1_scroll = $38
-    .label vera_layer_set_vertical_scroll1_scroll = $3a
+    .label __10 = $37
+    .label __11 = $39
+    .label vera_layer_set_horizontal_scroll1_scroll = $3b
+    .label vera_layer_set_vertical_scroll1_scroll = $3d
     // scroll_x += delta_x
     clc
     lda.z scroll_x
@@ -413,8 +430,113 @@ conio_x16_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__zp($50) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    .label __16 = $41
+    .label c = $50
+    .label conio_addr = $3f
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    sta.z c
+    // char color = vera_layer_get_color( conio_screen_layer)
+    ldx.z conio_screen_layer
+    jsr vera_layer_get_color
+    // char color = vera_layer_get_color( conio_screen_layer)
+    tax
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    lda.z conio_screen_layer
+    asl
+    tay
+    clc
+    lda.z CONIO_SCREEN_TEXT
+    adc conio_line_text,y
+    sta.z conio_addr
+    lda.z CONIO_SCREEN_TEXT+1
+    adc conio_line_text+1,y
+    sta.z conio_addr+1
+    // conio_cursor_x[conio_screen_layer] << 1
+    ldy.z conio_screen_layer
+    lda conio_cursor_x,y
+    asl
+    // conio_addr += conio_cursor_x[conio_screen_layer] << 1
+    clc
+    adc.z conio_addr
+    sta.z conio_addr
+    bcc !+
+    inc.z conio_addr+1
+  !:
+    // if(c=='\n')
+    lda #'\n'
+    cmp.z c
+    beq __b1
+    // *VERA_CTRL &= ~VERA_ADDRSEL
+    // Select DATA0
+    lda #VERA_ADDRSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // BYTE0(conio_addr)
+    lda.z conio_addr
+    // *VERA_ADDRX_L = BYTE0(conio_addr)
+    // Set address
+    sta VERA_ADDRX_L
+    // BYTE1(conio_addr)
+    lda.z conio_addr+1
+    // *VERA_ADDRX_M = BYTE1(conio_addr)
+    sta VERA_ADDRX_M
+    // CONIO_SCREEN_BANK | VERA_INC_1
+    lda #VERA_INC_1
+    ora.z CONIO_SCREEN_BANK
+    // *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1
+    sta VERA_ADDRX_H
+    // *VERA_DATA0 = c
+    lda.z c
+    sta VERA_DATA0
+    // *VERA_DATA0 = color
+    stx VERA_DATA0
+    // conio_cursor_x[conio_screen_layer]++;
+    ldx.z conio_screen_layer
+    inc conio_cursor_x,x
+    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
+    ldy.z conio_screen_layer
+    lda conio_scroll_enable,y
+    // if(scroll_enable)
+    cmp #0
+    bne __b5
+    // (unsigned int)conio_cursor_x[conio_screen_layer] == conio_width
+    lda conio_cursor_x,y
+    sta.z __16
+    lda #0
+    sta.z __16+1
+    // if((unsigned int)conio_cursor_x[conio_screen_layer] == conio_width)
+    cmp.z conio_width+1
+    bne __breturn
+    lda.z __16
+    cmp.z conio_width
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b5:
+    // if(conio_cursor_x[conio_screen_layer] == CONIO_WIDTH)
+    lda.z conio_screen_width
+    ldy.z conio_screen_layer
+    cmp conio_cursor_x,y
+    bne __breturn
+    // cputln()
+    jsr cputln
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
-    .label tilebase = $3c
+    .label tilebase = $43
     // vera_layer_set_textcolor(conio_screen_layer, color)
     ldx.z conio_screen_layer
     lda #WHITE
@@ -544,62 +666,62 @@ main: {
     jsr vera_layer_set_backcolor
     // printf("\n\nthis demo displays the design of the standard x16 commander\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("character set on the vera layer 0. it's the character set i grew up with :-).\n")
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("\nthe smooth scrolling is implemented by manipulating the scrolling \n")
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("registers of layer 0. at each raster line interrupt, \n")
     lda #<s3
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("the x and y scrolling registers are manipulated. the cx16 terminal \n")
     lda #<s4
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("works on layer 1. when layer 0 is enabled with the scrolling, \n")
     lda #<s5
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s5
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("it gives a nice background effect. this technique can be used to implement\n")
     lda #<s6
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s6
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("smooth scrolling backgrounds using tile layouts in games or demos.\n")
     lda #<s7
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s7
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // vera_layer_set_textcolor(conio_screen_layer, color)
     ldx.z conio_screen_layer
     lda #YELLOW
     jsr vera_layer_set_textcolor
     // printf("\npress a key to continue ...")
     lda #<s8
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s8
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
   __b2:
     // kbhit()
     jsr kbhit
@@ -683,6 +805,7 @@ main: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_mode: The color mode, which can be 16 or 256.
+// void vera_layer_mode_text(char layer, unsigned long mapbase_address, unsigned long tilebase_address, unsigned int mapwidth, unsigned int mapheight, char tilewidth, char tileheight, unsigned int color_mode)
 vera_layer_mode_text: {
     .const mapbase_address = 0
     .const tilebase_address = $f800
@@ -729,6 +852,7 @@ vera_layer_mode_text: {
     rts
 }
 // Return the current screen size.
+// void screensize(char *x, char *y)
 screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
@@ -776,28 +900,28 @@ screensize: {
 }
 // Set the layer with which the conio will interact.
 // - layer: value of 0 or 1.
-// screenlayer(byte register(A) layer)
+// void screenlayer(__register(A) char layer)
 screenlayer: {
-    .label __2 = $50
-    .label __4 = $45
-    .label __5 = $4c
-    .label vera_layer_get_width1_config = $43
-    .label vera_layer_get_width1_return = $50
-    .label vera_layer_get_height1_config = $48
-    .label vera_layer_get_height1_return = $4c
+    .label __2 = $59
+    .label __4 = $4c
+    .label __5 = $55
+    .label vera_layer_get_width1_config = $4a
+    .label vera_layer_get_width1_return = $59
+    .label vera_layer_get_height1_config = $51
+    .label vera_layer_get_height1_return = $55
     // conio_screen_layer = layer
     sta.z conio_screen_layer
     // vera_layer_get_mapbase_bank(conio_screen_layer)
     tax
     jsr vera_layer_get_mapbase_bank
-    sta.z CONIO_SCREEN_BANK
+    sta.z CONIO_SCREEN_BANK_1
     // vera_layer_get_mapbase_offset(conio_screen_layer)
     lda.z conio_screen_layer
     jsr vera_layer_get_mapbase_offset
     lda.z vera_layer_get_mapbase_offset.return
-    sta.z CONIO_SCREEN_TEXT
+    sta.z CONIO_SCREEN_TEXT_1
     lda.z vera_layer_get_mapbase_offset.return+1
-    sta.z CONIO_SCREEN_TEXT+1
+    sta.z CONIO_SCREEN_TEXT_1+1
     // vera_layer_get_width(conio_screen_layer)
     lda.z conio_screen_layer
     // byte* config = vera_layer_config[layer]
@@ -883,7 +1007,7 @@ screenlayer: {
 // - color: a 4 bit value ( decimal between 0 and 15) when the VERA works in 16x16 color text mode.
 //   An 8 bit value (decimal between 0 and 255) when the VERA works in 256 text mode.
 //   Note that on the VERA, the transparent color has value 0.
-// vera_layer_set_textcolor(byte register(X) layer, byte register(A) color)
+// char vera_layer_set_textcolor(__register(X) char layer, __register(A) char color)
 vera_layer_set_textcolor: {
     // vera_layer_textcolor[layer] = color
     sta vera_layer_textcolor,x
@@ -895,7 +1019,7 @@ vera_layer_set_textcolor: {
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-// vera_layer_set_backcolor(byte register(X) layer, byte register(A) color)
+// char vera_layer_set_backcolor(__register(X) char layer, __register(A) char color)
 vera_layer_set_backcolor: {
     // vera_layer_backcolor[layer] = color
     sta vera_layer_backcolor,x
@@ -907,9 +1031,9 @@ vera_layer_set_backcolor: {
 // - mapbase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-// vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
+// void vera_layer_set_mapbase(__register(A) char layer, __register(X) char mapbase)
 vera_layer_set_mapbase: {
-    .label addr = $50
+    .label addr = $59
     // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
@@ -925,10 +1049,10 @@ vera_layer_set_mapbase: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __6 = $45
-    .label line_offset = $45
+    .label __6 = $4c
+    .label line_offset = $4c
     // if(y>CONIO_HEIGHT)
     lda.z conio_screen_height
     stx.z $ff
@@ -969,15 +1093,93 @@ gotoxy: {
     // }
     rts
 }
+// Get the text and back color for text output in 16 color mode.
+// - layer: Value of 0 or 1.
+// - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
+//   This will only work when the VERA is in 16 color mode!
+//   Note that on the VERA, the transparent color has value 0.
+// __register(A) char vera_layer_get_color(__register(X) char layer)
+vera_layer_get_color: {
+    .label addr = $4e
+    // byte* addr = vera_layer_config[layer]
+    txa
+    asl
+    tay
+    lda vera_layer_config,y
+    sta.z addr
+    lda vera_layer_config+1,y
+    sta.z addr+1
+    // *addr & VERA_LAYER_CONFIG_256C
+    lda #VERA_LAYER_CONFIG_256C
+    ldy #0
+    and (addr),y
+    // if( *addr & VERA_LAYER_CONFIG_256C )
+    cmp #0
+    bne __b1
+    // vera_layer_backcolor[layer] << 4
+    lda vera_layer_backcolor,x
+    asl
+    asl
+    asl
+    asl
+    // return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
+    ora vera_layer_textcolor,x
+    // }
+    rts
+  __b1:
+    // return (vera_layer_textcolor[layer]);
+    lda vera_layer_textcolor,x
+    rts
+}
+// Print a newline
+cputln: {
+    .label temp = $4e
+    // word temp = conio_line_text[conio_screen_layer]
+    lda.z conio_screen_layer
+    asl
+    // TODO: This needs to be optimized! other variations don't compile because of sections not available!
+    tay
+    lda conio_line_text,y
+    sta.z temp
+    lda conio_line_text+1,y
+    sta.z temp+1
+    // temp += conio_rowskip
+    clc
+    lda.z temp
+    adc.z conio_rowskip
+    sta.z temp
+    lda.z temp+1
+    adc.z conio_rowskip+1
+    sta.z temp+1
+    // conio_line_text[conio_screen_layer] = temp
+    lda.z conio_screen_layer
+    asl
+    tay
+    lda.z temp
+    sta conio_line_text,y
+    lda.z temp+1
+    sta conio_line_text+1,y
+    // conio_cursor_x[conio_screen_layer] = 0
+    lda #0
+    ldy.z conio_screen_layer
+    sta conio_cursor_x,y
+    // conio_cursor_y[conio_screen_layer]++;
+    ldx.z conio_screen_layer
+    inc conio_cursor_y,x
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label __1 = $47
-    .label line_text = $1e
-    .label color = $47
+    .label __1 = $50
+    .label line_text = $21
+    .label color = $50
     // char* line_text = CONIO_SCREEN_TEXT
-    lda.z CONIO_SCREEN_TEXT
+    lda.z CONIO_SCREEN_TEXT_1
     sta.z line_text
-    lda.z CONIO_SCREEN_TEXT+1
+    lda.z CONIO_SCREEN_TEXT_1+1
     sta.z line_text+1
     // vera_layer_get_backcolor(conio_screen_layer)
     ldx.z conio_screen_layer
@@ -1033,7 +1235,7 @@ clrscr: {
     sta VERA_ADDRX_M
     // CONIO_SCREEN_BANK | VERA_INC_1
     lda #VERA_INC_1
-    ora.z CONIO_SCREEN_BANK
+    ora.z CONIO_SCREEN_BANK_1
     // *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1
     sta VERA_ADDRX_H
     ldy #0
@@ -1070,10 +1272,11 @@ clrscr: {
 // - return: Specifies the base address of the tile map, which is calculated as an unsigned long int.
 //   Note that the register only specifies bits 16:11 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// __zp($43) unsigned long vera_layer_get_tilebase_address(char layer)
 vera_layer_get_tilebase_address: {
     .const layer = 1
-    .label address = $3c
-    .label return = $3c
+    .label address = $43
+    .label return = $43
     // byte tilebase = *vera_layer_tilebase[layer]
     ldy vera_layer_tilebase+layer*SIZEOF_POINTER
     sty.z $fe
@@ -1134,19 +1337,19 @@ vera_layer_get_tilebase_address: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
-// vera_layer_mode_tile(byte zp(3) layer, dword zp(4) mapbase_address, dword zp(8) tilebase_address, word zp($45) mapwidth, word zp($43) mapheight, byte zp($c) tilewidth, byte zp($d) tileheight)
+// void vera_layer_mode_tile(__zp(6) char layer, __zp(7) unsigned long mapbase_address, __zp($b) unsigned long tilebase_address, __zp($4c) unsigned int mapwidth, __zp($4a) unsigned int mapheight, __zp($f) char tilewidth, __zp($10) char tileheight, char color_depth)
 vera_layer_mode_tile: {
-    .label __1 = $48
-    .label __6 = $4c
-    .label __17 = $4a
-    .label __18 = $4b
-    .label mapbase_address = 4
-    .label tilebase_address = 8
-    .label mapwidth = $45
-    .label layer = 3
-    .label mapheight = $43
-    .label tilewidth = $c
-    .label tileheight = $d
+    .label __1 = $51
+    .label __6 = $55
+    .label __17 = $53
+    .label __18 = $54
+    .label mapbase_address = 7
+    .label tilebase_address = $b
+    .label mapwidth = $4c
+    .label layer = 6
+    .label mapheight = $4a
+    .label tilewidth = $f
+    .label tileheight = $10
     // case 32:
     //             config |= VERA_LAYER_WIDTH_32;
     //             vera_layer_rowshift[layer] = 6;
@@ -1442,6 +1645,7 @@ vera_layer_mode_tile: {
 // If onoff is 1, scrolling is enabled when outputting past the end of the screen
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
+// char scroll(char onoff)
 scroll: {
     .const onoff = 0
     // conio_scroll_enable[conio_screen_layer] = onoff
@@ -1451,18 +1655,18 @@ scroll: {
     // }
     rts
 }
-// draw_characters(dword zp($e) tilebase)
+// void draw_characters(__zp($11) unsigned long tilebase)
 draw_characters: {
-    .label tilebase = $e
-    .label tilerow = $e
-    .label tilecolumn = $13
-    .label bit = $4e
-    .label b = $1d
-    .label tilecolumn_1 = $18
-    .label x = $1c
-    .label tilerow_1 = $13
-    .label r = $17
-    .label y = $12
+    .label tilebase = $11
+    .label tilerow = $11
+    .label tilecolumn = $16
+    .label bit = $57
+    .label b = $20
+    .label tilecolumn_1 = $1b
+    .label x = $1f
+    .label tilerow_1 = $16
+    .label r = $1a
+    .label y = $15
     // clrscr()
     jsr clrscr
     lda #0
@@ -1530,15 +1734,15 @@ draw_characters: {
     cmp #0
     bne __b5
     lda #'.'
-    sta.z cputc.c
     jmp __b6
   __b5:
     // (bit)?'*':'.'
     lda #'*'
-    sta.z cputc.c
   __b6:
     // printf("%c", (char)((bit)?'*':'.'))
+    pha
     jsr cputc
+    pla
     // for(byte b:8..1)
     dec.z b
     lda.z b
@@ -1610,7 +1814,7 @@ kbhit: {
     .label IN_DEV = $28a
     // Current input device number
     .label GETIN = $ffe4
-    .label ch = $4f
+    .label ch = $58
     // char ch = 0
     lda #0
     sta.z ch
@@ -1649,10 +1853,10 @@ kbhit: {
     // }
     rts
 }
-// Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($1e) s)
-cputs: {
-    .label s = $1e
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp($21) const char *s)
+printf_str: {
+    .label s = $21
   __b1:
     // while(c=*s++)
     ldy #0
@@ -1666,16 +1870,18 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
-    sta.z cputc.c
+    // putc(c)
+    pha
     jsr cputc
+    pla
     jmp __b1
 }
 // Set the configuration of the layer text color mode.
 // - layer: Value of 0 or 1.
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
+// void vera_layer_set_text_color_mode(char layer, char color_mode)
 vera_layer_set_text_color_mode: {
-    .label addr = $50
+    .label addr = $59
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -1695,7 +1901,7 @@ vera_layer_set_text_color_mode: {
 // Get the map base bank of the tiles for the layer.
 // - layer: Value of 0 or 1.
 // - return: Bank in vera vram.
-// vera_layer_get_mapbase_bank(byte register(X) layer)
+// __register(A) char vera_layer_get_mapbase_bank(__register(X) char layer)
 vera_layer_get_mapbase_bank: {
     // return vera_mapbase_bank[layer];
     lda vera_mapbase_bank,x
@@ -1705,9 +1911,9 @@ vera_layer_get_mapbase_bank: {
 // Get the map base lower 16-bit address (offset) of the tiles for the layer.
 // - layer: Value of 0 or 1.
 // - return: Offset in vera vram of the specified bank.
-// vera_layer_get_mapbase_offset(byte register(A) layer)
+// __zp($4c) unsigned int vera_layer_get_mapbase_offset(__register(A) char layer)
 vera_layer_get_mapbase_offset: {
-    .label return = $45
+    .label return = $4c
     // return vera_mapbase_offset[layer];
     asl
     tay
@@ -1721,7 +1927,7 @@ vera_layer_get_mapbase_offset: {
 // Get the bit shift value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Rowshift value to calculate fast from a y value to line offset in tile mode.
-// vera_layer_get_rowshift(byte register(X) layer)
+// __register(A) char vera_layer_get_rowshift(__register(X) char layer)
 vera_layer_get_rowshift: {
     // return vera_layer_rowshift[layer];
     lda vera_layer_rowshift,x
@@ -1731,9 +1937,9 @@ vera_layer_get_rowshift: {
 // Get the value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Skip value to calculate fast from a y value to line offset in tile mode.
-// vera_layer_get_rowskip(byte register(A) layer)
+// __zp($4c) unsigned int vera_layer_get_rowskip(__register(A) char layer)
 vera_layer_get_rowskip: {
-    .label return = $45
+    .label return = $4c
     // return vera_layer_rowskip[layer];
     asl
     tay
@@ -1741,251 +1947,6 @@ vera_layer_get_rowskip: {
     sta.z return
     lda vera_layer_rowskip+1,y
     sta.z return+1
-    // }
-    rts
-}
-// Get the back color for text output. The old back text color setting is returned.
-// - layer: Value of 0 or 1.
-// - return: a 4 bit value ( decimal between 0 and 15).
-//   This will only work when the VERA is in 16 color mode!
-//   Note that on the VERA, the transparent color has value 0.
-// vera_layer_get_backcolor(byte register(X) layer)
-vera_layer_get_backcolor: {
-    // return vera_layer_backcolor[layer];
-    lda vera_layer_backcolor,x
-    // }
-    rts
-}
-// Get the front color for text output. The old front text color setting is returned.
-// - layer: Value of 0 or 1.
-// - return: a 4 bit value ( decimal between 0 and 15).
-//   This will only work when the VERA is in 16 color mode!
-//   Note that on the VERA, the transparent color has value 0.
-// vera_layer_get_textcolor(byte register(X) layer)
-vera_layer_get_textcolor: {
-    // return vera_layer_textcolor[layer];
-    lda vera_layer_textcolor,x
-    // }
-    rts
-}
-// Set the configuration of the layer.
-// - layer: Value of 0 or 1.
-// - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
-// vera_layer_set_config(byte register(A) layer, byte register(X) config)
-vera_layer_set_config: {
-    .label addr = $50
-    // byte* addr = vera_layer_config[layer]
-    asl
-    tay
-    lda vera_layer_config,y
-    sta.z addr
-    lda vera_layer_config+1,y
-    sta.z addr+1
-    // *addr = config
-    txa
-    ldy #0
-    sta (addr),y
-    // }
-    rts
-}
-// Set the base of the tiles for the layer with which the conio will interact.
-// - layer: Value of 0 or 1.
-// - tilebase: Specifies the base address of the tile map.
-//   Note that the register only specifies bits 16:11 of the address,
-//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
-// vera_layer_set_tilebase(byte register(A) layer, byte register(X) tilebase)
-vera_layer_set_tilebase: {
-    .label addr = $50
-    // byte* addr = vera_layer_tilebase[layer]
-    asl
-    tay
-    lda vera_layer_tilebase,y
-    sta.z addr
-    lda vera_layer_tilebase+1,y
-    sta.z addr+1
-    // *addr = tilebase
-    txa
-    ldy #0
-    sta (addr),y
-    // }
-    rts
-}
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($47) c)
-cputc: {
-    .label __16 = $54
-    .label conio_addr = $52
-    .label c = $47
-    // char color = vera_layer_get_color( conio_screen_layer)
-    ldx.z conio_screen_layer
-    jsr vera_layer_get_color
-    // char color = vera_layer_get_color( conio_screen_layer)
-    tax
-    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
-    lda.z conio_screen_layer
-    asl
-    tay
-    clc
-    lda.z CONIO_SCREEN_TEXT
-    adc conio_line_text,y
-    sta.z conio_addr
-    lda.z CONIO_SCREEN_TEXT+1
-    adc conio_line_text+1,y
-    sta.z conio_addr+1
-    // conio_cursor_x[conio_screen_layer] << 1
-    ldy.z conio_screen_layer
-    lda conio_cursor_x,y
-    asl
-    // conio_addr += conio_cursor_x[conio_screen_layer] << 1
-    clc
-    adc.z conio_addr
-    sta.z conio_addr
-    bcc !+
-    inc.z conio_addr+1
-  !:
-    // if(c=='\n')
-    lda #'\n'
-    cmp.z c
-    beq __b1
-    // *VERA_CTRL &= ~VERA_ADDRSEL
-    // Select DATA0
-    lda #VERA_ADDRSEL^$ff
-    and VERA_CTRL
-    sta VERA_CTRL
-    // BYTE0(conio_addr)
-    lda.z conio_addr
-    // *VERA_ADDRX_L = BYTE0(conio_addr)
-    // Set address
-    sta VERA_ADDRX_L
-    // BYTE1(conio_addr)
-    lda.z conio_addr+1
-    // *VERA_ADDRX_M = BYTE1(conio_addr)
-    sta VERA_ADDRX_M
-    // CONIO_SCREEN_BANK | VERA_INC_1
-    lda #VERA_INC_1
-    ora.z CONIO_SCREEN_BANK
-    // *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1
-    sta VERA_ADDRX_H
-    // *VERA_DATA0 = c
-    lda.z c
-    sta VERA_DATA0
-    // *VERA_DATA0 = color
-    stx VERA_DATA0
-    // conio_cursor_x[conio_screen_layer]++;
-    ldx.z conio_screen_layer
-    inc conio_cursor_x,x
-    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
-    ldy.z conio_screen_layer
-    lda conio_scroll_enable,y
-    // if(scroll_enable)
-    cmp #0
-    bne __b5
-    // (unsigned int)conio_cursor_x[conio_screen_layer] == conio_width
-    lda conio_cursor_x,y
-    sta.z __16
-    lda #0
-    sta.z __16+1
-    // if((unsigned int)conio_cursor_x[conio_screen_layer] == conio_width)
-    cmp.z conio_width+1
-    bne __breturn
-    lda.z __16
-    cmp.z conio_width
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
-    // }
-    rts
-  __b5:
-    // if(conio_cursor_x[conio_screen_layer] == CONIO_WIDTH)
-    lda.z conio_screen_width
-    ldy.z conio_screen_layer
-    cmp conio_cursor_x,y
-    bne __breturn
-    // cputln()
-    jsr cputln
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
-    rts
-}
-// Get the text and back color for text output in 16 color mode.
-// - layer: Value of 0 or 1.
-// - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
-//   This will only work when the VERA is in 16 color mode!
-//   Note that on the VERA, the transparent color has value 0.
-// vera_layer_get_color(byte register(X) layer)
-vera_layer_get_color: {
-    .label addr = $56
-    // byte* addr = vera_layer_config[layer]
-    txa
-    asl
-    tay
-    lda vera_layer_config,y
-    sta.z addr
-    lda vera_layer_config+1,y
-    sta.z addr+1
-    // *addr & VERA_LAYER_CONFIG_256C
-    lda #VERA_LAYER_CONFIG_256C
-    ldy #0
-    and (addr),y
-    // if( *addr & VERA_LAYER_CONFIG_256C )
-    cmp #0
-    bne __b1
-    // vera_layer_backcolor[layer] << 4
-    lda vera_layer_backcolor,x
-    asl
-    asl
-    asl
-    asl
-    // return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
-    ora vera_layer_textcolor,x
-    // }
-    rts
-  __b1:
-    // return (vera_layer_textcolor[layer]);
-    lda vera_layer_textcolor,x
-    rts
-}
-// Print a newline
-cputln: {
-    .label temp = $56
-    // word temp = conio_line_text[conio_screen_layer]
-    lda.z conio_screen_layer
-    asl
-    // TODO: This needs to be optimized! other variations don't compile because of sections not available!
-    tay
-    lda conio_line_text,y
-    sta.z temp
-    lda conio_line_text+1,y
-    sta.z temp+1
-    // temp += conio_rowskip
-    clc
-    lda.z temp
-    adc.z conio_rowskip
-    sta.z temp
-    lda.z temp+1
-    adc.z conio_rowskip+1
-    sta.z temp+1
-    // conio_line_text[conio_screen_layer] = temp
-    lda.z conio_screen_layer
-    asl
-    tay
-    lda.z temp
-    sta conio_line_text,y
-    lda.z temp+1
-    sta conio_line_text+1,y
-    // conio_cursor_x[conio_screen_layer] = 0
-    lda #0
-    ldy.z conio_screen_layer
-    sta conio_cursor_x,y
-    // conio_cursor_y[conio_screen_layer]++;
-    ldx.z conio_screen_layer
-    inc conio_cursor_y,x
-    // cscroll()
-    jsr cscroll
     // }
     rts
 }
@@ -2017,12 +1978,78 @@ cscroll: {
     jsr gotoxy
     rts
 }
+// Get the back color for text output. The old back text color setting is returned.
+// - layer: Value of 0 or 1.
+// - return: a 4 bit value ( decimal between 0 and 15).
+//   This will only work when the VERA is in 16 color mode!
+//   Note that on the VERA, the transparent color has value 0.
+// __register(A) char vera_layer_get_backcolor(__register(X) char layer)
+vera_layer_get_backcolor: {
+    // return vera_layer_backcolor[layer];
+    lda vera_layer_backcolor,x
+    // }
+    rts
+}
+// Get the front color for text output. The old front text color setting is returned.
+// - layer: Value of 0 or 1.
+// - return: a 4 bit value ( decimal between 0 and 15).
+//   This will only work when the VERA is in 16 color mode!
+//   Note that on the VERA, the transparent color has value 0.
+// __register(A) char vera_layer_get_textcolor(__register(X) char layer)
+vera_layer_get_textcolor: {
+    // return vera_layer_textcolor[layer];
+    lda vera_layer_textcolor,x
+    // }
+    rts
+}
+// Set the configuration of the layer.
+// - layer: Value of 0 or 1.
+// - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
+// void vera_layer_set_config(__register(A) char layer, __register(X) char config)
+vera_layer_set_config: {
+    .label addr = $59
+    // byte* addr = vera_layer_config[layer]
+    asl
+    tay
+    lda vera_layer_config,y
+    sta.z addr
+    lda vera_layer_config+1,y
+    sta.z addr+1
+    // *addr = config
+    txa
+    ldy #0
+    sta (addr),y
+    // }
+    rts
+}
+// Set the base of the tiles for the layer with which the conio will interact.
+// - layer: Value of 0 or 1.
+// - tilebase: Specifies the base address of the tile map.
+//   Note that the register only specifies bits 16:11 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// void vera_layer_set_tilebase(__register(A) char layer, __register(X) char tilebase)
+vera_layer_set_tilebase: {
+    .label addr = $59
+    // byte* addr = vera_layer_tilebase[layer]
+    asl
+    tay
+    lda vera_layer_tilebase,y
+    sta.z addr
+    lda vera_layer_tilebase+1,y
+    sta.z addr+1
+    // *addr = tilebase
+    txa
+    ldy #0
+    sta (addr),y
+    // }
+    rts
+}
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $58
-    .label width = $59
-    .label line = $5a
-    .label start = $5a
+    .label cy = $5b
+    .label width = $5c
+    .label line = $5d
+    .label start = $5d
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
@@ -2087,8 +2114,8 @@ insertup: {
     jmp __b1
 }
 clearline: {
-    .label addr = $5e
-    .label c = $52
+    .label addr = $61
+    .label c = $3f
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -2163,12 +2190,12 @@ clearline: {
 // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
 // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 // - num: The number of bytes to copy
-// memcpy_in_vram(void* zp($5a) dest, byte* zp($5e) src, word zp($5c) num)
+// void memcpy_in_vram(char dest_bank, __zp($5d) void *dest, char dest_increment, char src_bank, __zp($61) char *src, char src_increment, __zp($5f) unsigned int num)
 memcpy_in_vram: {
-    .label i = $52
-    .label dest = $5a
-    .label src = $5e
-    .label num = $5c
+    .label i = $3f
+    .label dest = $5d
+    .label src = $61
+    .label num = $5f
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

@@ -520,6 +520,7 @@ mul8s_compare: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -553,7 +554,7 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// void print_str(__zp(6) char *str)
 print_str: {
     .label str = 6
   __b1:
@@ -600,7 +601,7 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(2) w)
+// void print_uint(__zp(2) unsigned int w)
 print_uint: {
     .label w = 2
     // print_uchar(BYTE1(w))
@@ -614,7 +615,7 @@ print_uint: {
 }
 // Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
-// muls8u(byte zp(4) a, byte register(X) b)
+// __zp(2) unsigned int muls8u(__zp(4) char a, __register(X) char b)
 muls8u: {
     .label return = 2
     .label m = 2
@@ -651,7 +652,7 @@ muls8u: {
     jmp __b2
 }
 // Fast multiply two unsigned chars to a unsigned int result
-// mulf8u(byte register(A) a, byte register(X) b)
+// __zp($10) unsigned int mulf8u(__register(A) char a, __register(X) char b)
 mulf8u: {
     .label return = $10
     // mulf8u_prepare(a)
@@ -664,7 +665,7 @@ mulf8u: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
+// __zp($a) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
     .label mb = $c
     .label res = $a
@@ -706,7 +707,7 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
-// mul8u_error(byte register(X) a, byte zp(5) b, word zp(2) ms, word zp($a) mn, word zp($10) mf)
+// void mul8u_error(__register(X) char a, __zp(5) char b, __zp(2) unsigned int ms, __zp($a) unsigned int mn, __zp($10) unsigned int mf)
 mul8u_error: {
     .label b = 5
     .label ms = 2
@@ -772,7 +773,7 @@ mul8u_error: {
 .segment Code
 // Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/subtraction
-// muls8s(signed byte zp(4) a, signed byte register(X) b)
+// __zp(2) int muls8s(__zp(4) signed char a, __register(X) signed char b)
 muls8s: {
     .label m = 2
     .label return = 2
@@ -846,7 +847,7 @@ muls8s: {
     jmp __b5
 }
 // Fast multiply two signed chars to a unsigned int result
-// mulf8s(signed byte register(A) a, signed byte register(X) b)
+// __zp($10) int mulf8s(__register(A) signed char a, __register(X) signed char b)
 mulf8s: {
     .label return = $10
     // mulf8u_prepare((char)a)
@@ -859,7 +860,7 @@ mulf8s: {
 }
 // Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
-// mul8s(signed byte zp(4) a, signed byte register(Y) b)
+// int mul8s(__zp(4) signed char a, __register(Y) signed char b)
 mul8s: {
     .label m = $a
     .label a = 4
@@ -893,7 +894,7 @@ mul8s: {
     // }
     rts
 }
-// mul8s_error(signed byte register(X) a, signed byte zp(5) b, signed word zp(2) ms, signed word zp($a) mn, signed word zp($10) mf)
+// void mul8s_error(__register(X) signed char a, __zp(5) signed char b, __zp(2) int ms, __zp($a) int mn, __zp($10) int mf)
 mul8s_error: {
     .label b = 5
     .label ms = 2
@@ -962,7 +963,7 @@ mul8s_error: {
 }
 .segment Code
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -976,7 +977,7 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -999,7 +1000,7 @@ print_uchar: {
     rts
 }
 // Prepare for fast multiply with an unsigned char to a unsigned int result
-// mulf8u_prepare(byte register(A) a)
+// void mulf8u_prepare(__register(A) char a)
 mulf8u_prepare: {
     .label memA = $fd
     // *memA = a
@@ -1015,7 +1016,7 @@ mulf8u_prepare: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8u_prepare(char a)
-// mulf8u_prepared(byte register(A) b)
+// __zp($10) unsigned int mulf8u_prepared(__register(A) char b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -1044,7 +1045,7 @@ mulf8u_prepared: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
-// mulf8s_prepared(signed byte zp($12) b)
+// int mulf8s_prepared(__zp($12) signed char b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = $10
@@ -1079,7 +1080,7 @@ mulf8s_prepared: {
     rts
 }
 // Print a signed char as HEX
-// print_schar(signed byte register(X) b)
+// void print_schar(__register(X) signed char b)
 print_schar: {
     // if(b<0)
     cpx #0
@@ -1105,7 +1106,7 @@ print_schar: {
     jmp __b2
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(2) w)
+// void print_sint(__zp(2) int w)
 print_sint: {
     .label w = 2
     // if(w<0)

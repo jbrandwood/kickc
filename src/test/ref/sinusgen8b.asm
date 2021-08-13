@@ -25,7 +25,7 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .label print_screen = $400
   .label print_char_cursor = $f
   // Remainder after unsigned 16-bit division
@@ -107,7 +107,7 @@ main: {
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// sin8s_gen(signed byte* zp($28) sintab)
+// void sin8s_gen(__zp($28) signed char *sintab, unsigned int wavelength)
 sin8s_gen: {
     .label step = $2a
     .label sintab = $28
@@ -174,7 +174,7 @@ sin8s_gen: {
 // Generate signed (large) unsigned int sine table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// sin16s_gen(signed word* zp(7) sintab)
+// void sin16s_gen(__zp(7) int *sintab, unsigned int wavelength)
 sin16s_gen: {
     .label __2 = $d
     .label step = $1b
@@ -233,7 +233,7 @@ sin16s_gen: {
     lda.z __2+1
     sta (sintab),y
     // *sintab++ = sin16s(x);
-    lda #SIZEOF_SIGNED_WORD
+    lda #SIZEOF_INT
     clc
     adc.z sintab
     sta.z sintab
@@ -269,7 +269,7 @@ print_cls: {
     rts
 }
 // Print a signed char as HEX
-// print_schar(signed byte register(X) b)
+// void print_schar(__register(X) signed char b)
 print_schar: {
     // if(b<0)
     cpx #0
@@ -295,7 +295,7 @@ print_schar: {
     jmp __b2
 }
 // Print a zero-terminated string
-// print_str(byte* zp($28) str)
+// void print_str(__zp($28) char *str)
 print_str: {
     .label str = $28
     lda #<main.str
@@ -326,6 +326,7 @@ print_str: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// __zp($2a) unsigned int div16u(unsigned int dividend, unsigned int divisor)
 div16u: {
     .label return = $2a
     // divr16u(dividend, divisor, 0)
@@ -344,7 +345,7 @@ div16u: {
 // Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($d) x)
+// __register(A) signed char sin8s(__zp($d) unsigned int x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -487,6 +488,7 @@ sin8s: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
+// __zp($1b) unsigned long div32u16u(unsigned long dividend, unsigned int divisor)
 div32u16u: {
     .label return = $1b
     .label quotient_hi = $22
@@ -527,7 +529,7 @@ div32u16u: {
 // Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp(9) x)
+// __zp($d) int sin16s(__zp(9) unsigned long x)
 sin16s: {
     .label __4 = $24
     .label x = 9
@@ -740,6 +742,7 @@ sin16s: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -773,7 +776,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -787,7 +790,7 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -813,7 +816,7 @@ print_uchar: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($12) dividend, word zp($19) rem)
+// __zp($2a) unsigned int divr16u(__zp($12) unsigned int dividend, unsigned int divisor, __zp($19) unsigned int rem)
 divr16u: {
     .label rem = $19
     .label dividend = $12
@@ -878,7 +881,7 @@ divr16u: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($11) select)
+// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($11) char select)
 mulu8_sel: {
     .label __0 = $19
     .label __1 = $19
@@ -902,7 +905,7 @@ mulu8_sel: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($19) v1, word zp($12) v2, byte register(X) select)
+// __zp($2a) unsigned int mulu16_sel(__zp($19) unsigned int v1, __zp($12) unsigned int v2, __register(X) char select)
 mulu16_sel: {
     .label __0 = $24
     .label __1 = $24
@@ -936,7 +939,7 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
+// __zp($19) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
     .label return = $19
     .label mb = $22
@@ -979,7 +982,7 @@ mul8u: {
     jmp __b1
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($2a) a, word zp($12) b)
+// __zp($24) unsigned long mul16u(__zp($2a) unsigned int a, __zp($12) unsigned int b)
 mul16u: {
     .label a = $2a
     .label b = $12

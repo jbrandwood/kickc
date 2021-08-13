@@ -421,7 +421,7 @@ clock_start: {
     rts
 }
 // Prepare for fast multiply with an unsigned char to a unsigned int result
-// mulf8u_prepare(byte register(A) a)
+// void mulf8u_prepare(__register(A) char a)
 mulf8u_prepare: {
     .label memA = $fd
     // *memA = a
@@ -437,7 +437,7 @@ mulf8u_prepare: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
-// mulf8s_prepared(signed byte register(Y) b)
+// int mulf8s_prepared(__register(Y) signed char b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -499,7 +499,7 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($11) dw)
+// void print_ulong_at(__zp($11) unsigned long dw, char *at)
 print_ulong_at: {
     .label dw = $11
     // print_uint_at(WORD1(dw), at)
@@ -527,7 +527,7 @@ print_ulong_at: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8u_prepare(char a)
-// mulf8u_prepared(byte register(A) b)
+// __zp(5) unsigned int mulf8u_prepared(__register(A) char b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -555,7 +555,7 @@ mulf8u_prepared: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp($d) w, byte* zp($f) at)
+// void print_uint_at(__zp($d) unsigned int w, __zp($f) char *at)
 print_uint_at: {
     .label w = $d
     .label at = $f
@@ -578,7 +578,7 @@ print_uint_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp(9) b, byte* zp($f) at)
+// void print_uchar_at(__zp(9) char b, __zp($f) char *at)
 print_uchar_at: {
     .label b = 9
     .label at = $f
@@ -615,7 +615,7 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(7) at)
+// void print_char_at(__register(X) char ch, __zp(7) char *at)
 print_char_at: {
     .label at = 7
     // *(at) = ch

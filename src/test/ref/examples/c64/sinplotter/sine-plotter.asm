@@ -35,7 +35,7 @@
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .const SIN_SIZE = $200
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   /// $D011 Control Register #1
@@ -102,6 +102,7 @@ main: {
     jmp __b1
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = $16
     .label yoffs = 8
@@ -163,6 +164,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
@@ -193,7 +195,7 @@ bitmap_clear: {
 // Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// sin16s_gen2(signed word* zp(6) sintab)
+// void sin16s_gen2(__zp(6) int *sintab, unsigned int wavelength, int min, int max)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -264,7 +266,7 @@ sin16s_gen2: {
     lda.z __8+1
     sta (sintab),y
     // *sintab++ = offs + (signed int)WORD1(mul16s(sin16s(x), ampl));
-    lda #SIZEOF_SIGNED_WORD
+    lda #SIZEOF_INT
     clc
     adc.z sintab
     sta.z sintab
@@ -399,7 +401,7 @@ render_sine: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($12) str, byte register(X) c, word zp(8) num)
+// void * memset(__zp($12) void *str, __register(X) char c, __zp(8) unsigned int num)
 memset: {
     .label end = 8
     .label dst = $12
@@ -444,6 +446,7 @@ memset: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
+// __zp($17) unsigned long div32u16u(unsigned long dividend, unsigned int divisor)
 div32u16u: {
     .label return = $17
     .label quotient_hi = $21
@@ -484,7 +487,7 @@ div32u16u: {
 // Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp($a) x)
+// __zp($12) int sin16s(__zp($a) unsigned long x)
 sin16s: {
     .label __4 = $1d
     .label x = $a
@@ -698,7 +701,7 @@ sin16s: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($12) a)
+// __zp($e) long mul16s(__zp($12) int a, int b)
 mul16s: {
     .label __6 = $21
     .label __11 = $21
@@ -741,7 +744,7 @@ mul16s: {
     // }
     rts
 }
-// wrap_y(signed word zp($12) y)
+// __register(A) char wrap_y(__zp($12) int y)
 wrap_y: {
     .label y = $12
   __b1:
@@ -784,7 +787,7 @@ wrap_y: {
     jmp __b1
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(8) x, byte register(X) y)
+// void bitmap_plot(__zp(8) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $25
     .label plotter = $23
@@ -823,7 +826,7 @@ bitmap_plot: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($25) dividend, word zp($12) rem)
+// __zp($14) unsigned int divr16u(__zp($25) unsigned int dividend, unsigned int divisor, __zp($12) unsigned int rem)
 divr16u: {
     .label rem = $12
     .label dividend = $25
@@ -888,7 +891,7 @@ divr16u: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($25) v1, word zp($14) v2, byte register(X) select)
+// __zp($23) unsigned int mulu16_sel(__zp($25) unsigned int v1, __zp($14) unsigned int v2, __register(X) char select)
 mulu16_sel: {
     .label __0 = $e
     .label __1 = $e
@@ -923,7 +926,7 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($1b) a, word zp($14) b)
+// __zp($e) unsigned long mul16u(__zp($1b) unsigned int a, __zp($14) unsigned int b)
 mul16u: {
     .label a = $1b
     .label b = $14

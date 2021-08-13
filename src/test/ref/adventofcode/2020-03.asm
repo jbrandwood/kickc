@@ -8,6 +8,7 @@
 .segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
+  .const STACK_BASE = $103
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// 2-byte saved memory scan counter
   .label SAVMSC = $58
@@ -34,19 +35,27 @@ main: {
     jsr test_slope
     // test_slope(3,1)
     // printf("1: encountered %u trees\n",test_slope(3,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("1: encountered %u trees\n",test_slope(3,1))
     jsr printf_uint
     // printf("1: encountered %u trees\n",test_slope(3,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // test_slope(1,1)
     lda #1
     sta.z test_slope.y_inc
@@ -54,19 +63,27 @@ main: {
     jsr test_slope
     // test_slope(1,1)
     // printf("2a: encountered %u trees\n",test_slope(1,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("2a: encountered %u trees\n",test_slope(1,1))
     jsr printf_uint
     // printf("2a: encountered %u trees\n",test_slope(1,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // test_slope(3,1)
     lda #1
     sta.z test_slope.y_inc
@@ -75,19 +92,27 @@ main: {
     jsr test_slope
     // test_slope(3,1)
     // printf("2b: encountered %u trees\n",test_slope(3,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s4
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("2b: encountered %u trees\n",test_slope(3,1))
     jsr printf_uint
     // printf("2b: encountered %u trees\n",test_slope(3,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // test_slope(5,1)
     lda #1
     sta.z test_slope.y_inc
@@ -96,19 +121,27 @@ main: {
     jsr test_slope
     // test_slope(5,1)
     // printf("2c: encountered %u trees\n",test_slope(5,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s6
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s6
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("2c: encountered %u trees\n",test_slope(5,1))
     jsr printf_uint
     // printf("2c: encountered %u trees\n",test_slope(5,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // test_slope(7,1)
     lda #1
     sta.z test_slope.y_inc
@@ -117,19 +150,27 @@ main: {
     jsr test_slope
     // test_slope(7,1)
     // printf("2d: encountered %u trees\n",test_slope(7,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s8
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s8
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("2d: encountered %u trees\n",test_slope(7,1))
     jsr printf_uint
     // printf("2d: encountered %u trees\n",test_slope(7,1))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // test_slope(1,2)
     lda #2
     sta.z test_slope.y_inc
@@ -138,19 +179,27 @@ main: {
     jsr test_slope
     // test_slope(1,2)
     // printf("2e: encountered %u trees\n",test_slope(1,2))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s10
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s10
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("2e: encountered %u trees\n",test_slope(1,2))
     jsr printf_uint
     // printf("2e: encountered %u trees\n",test_slope(1,2))
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
   __b1:
     jmp __b1
   .segment Data
@@ -171,6 +220,75 @@ main: {
     .byte 0
 }
 .segment Code
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__zp($8a) volatile char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    .label convertToScreenCode1_v = c
+    .label c = $8a
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    sta.z c
+    // if (c == '\r')
+    lda #'\r'
+    cmp.z c
+    beq __b1
+    // if(c == '\n' || c == 0x9b)
+    lda #'\$9b'
+    cmp.z c
+    beq __b2
+    lda #$9b
+    cmp.z c
+    beq __b2
+    // return rawmap[*v];
+    ldy.z convertToScreenCode1_v
+    ldx rawmap,y
+    // putchar(convertToScreenCode(&c))
+    jsr putchar
+    // (*COLCRS)++;
+    inc COLCRS
+    bne !+
+    inc COLCRS+1
+  !:
+    // if (*COLCRS == CONIO_WIDTH)
+    lda COLCRS+1
+    bne !+
+    lda COLCRS
+    cmp #$28
+    beq __b5
+  !:
+    // setcursor()
+    jsr setcursor
+    // }
+    rts
+  __b5:
+    // *COLCRS = 0
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // newline()
+    jsr newline
+    rts
+  __b2:
+    // *COLCRS = 0
+    // 0x0a LF, or atascii EOL
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // newline()
+    jsr newline
+    rts
+  __b1:
+    // *COLCRS = 0
+    // 0x0d, CR = just set the cursor x value to 0
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // setcursor()
+    jsr setcursor
+    rts
+}
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     lda SAVMSC
@@ -195,12 +313,12 @@ clrscr: {
     rts
 }
 // Count the number of trees on a specific slope
-// test_slope(byte zp($85) x_inc, byte zp($80) y_inc)
+// __zp($81) unsigned int test_slope(__zp($85) char x_inc, __zp($80) char y_inc)
 test_slope: {
     .label return = $81
     .label trees = $81
-    .label mapline = $89
-    .label y = $83
+    .label mapline = $8d
+    .label y = $86
     .label x_inc = $85
     .label y_inc = $80
     lda #<0
@@ -282,12 +400,13 @@ test_slope: {
   !:
     jmp __b1
 }
-// Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($83) s)
-cputs: {
-    .label s = $83
+/// Print a NUL-terminated string
+// void printf_str(__zp($86) void (*putc)(char), __zp($8d) const char *s)
+printf_str: {
+    .label s = $8d
+    .label putc = $86
   __b1:
-    // while (c = *s++)
+    // while(c=*s++)
     ldy #0
     lda (s),y
     inc.z s
@@ -299,13 +418,16 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
-    sta.z cputc.c
-    jsr cputc
+    // putc(c)
+    pha
+    jsr icall1
+    pla
     jmp __b1
+  icall1:
+    jmp (putc)
 }
 // Print an unsigned int using a specific format
-// printf_uint(word zp($81) uvalue)
+// void printf_uint(void (*putc)(char), __zp($81) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     .label uvalue = $81
     // printf_buffer.sign = format.sign_always?'+':0
@@ -315,20 +437,148 @@ printf_uint: {
     // utoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr utoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
   // Print using format
     jsr printf_number_buffer
     // }
     rts
 }
+// Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
+// void putchar(char code)
+putchar: {
+    .label loc = $8b
+    // **OLDADR = *OLDCHR
+    lda OLDCHR
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // char * loc = cursorLocation()
+    jsr cursorLocation
+    // char newChar = code | conio_reverse_value
+    txa
+    // *loc = newChar
+    ldy #0
+    sta (loc),y
+    // *OLDCHR = newChar
+    sta OLDCHR
+    // setcursor()
+    jsr setcursor
+    // }
+    rts
+}
+// Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
+setcursor: {
+    .label loc = $8b
+    // **OLDADR = *OLDCHR
+    // save the current oldchr into oldadr
+    lda OLDCHR
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // char * loc = cursorLocation()
+    // work out the new location for oldadr based on new column/row
+    jsr cursorLocation
+    // char c = *loc
+    ldy #0
+    lda (loc),y
+    tax
+    // *OLDCHR = c
+    stx OLDCHR
+    // *OLDADR = loc
+    lda.z loc
+    sta OLDADR
+    lda.z loc+1
+    sta OLDADR+1
+    // *CRSINH = 0
+    // cursor is on, so invert the inverse bit and turn cursor on
+    tya
+    sta CRSINH
+    // c = c ^ 0x80
+    txa
+    eor #$80
+    // **OLDADR = c
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // }
+    rts
+}
+newline: {
+    .label start = $83
+    // if ((*ROWCRS)++ == CONIO_HEIGHT)
+    inc ROWCRS
+    lda #$18
+    cmp ROWCRS
+    bne __b1
+    // **OLDADR ^= 0x80
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    lda ($fe),y
+    eor #$80
+    sta ($fe),y
+    // char * start = *SAVMSC
+    // move screen up 1 line
+    lda SAVMSC
+    sta.z start
+    lda SAVMSC+1
+    sta.z start+1
+    // start + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z start
+    sta.z memcpy.source
+    tya
+    adc.z start+1
+    sta.z memcpy.source+1
+    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
+    lda.z start
+    sta.z memcpy.destination
+    lda.z start+1
+    sta.z memcpy.destination+1
+    jsr memcpy
+    // start + CONIO_WIDTH * 23
+    lda.z memset.str
+    clc
+    adc #<$28*$17
+    sta.z memset.str
+    lda.z memset.str+1
+    adc #>$28*$17
+    sta.z memset.str+1
+    // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
+    lda #<$28
+    sta.z memset.num
+    lda #>$28
+    sta.z memset.num+1
+    jsr memset
+    // *ROWCRS = CONIO_HEIGHT - 1
+    lda #$18-1
+    sta ROWCRS
+  __b1:
+    // setcursor()
+    jsr setcursor
+    // }
+    rts
+}
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(byte* zp($86) str, word zp($89) num)
+// void * memset(__zp($83) char *str, char c, __zp($88) unsigned int num)
 memset: {
-    .label end = $89
-    .label dst = $86
-    .label str = $86
-    .label num = $89
+    .label end = $88
+    .label dst = $83
+    .label str = $83
+    .label num = $88
     // if(num>0)
     lda.z num
     bne !+
@@ -367,6 +617,7 @@ memset: {
     jmp __b2
 }
 // Set the cursor to the specified position
+// void gotoxy(char x, char y)
 gotoxy: {
     .const x = 0
     .const y = 0
@@ -383,79 +634,14 @@ gotoxy: {
     // }
     rts
 }
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($88) c)
-cputc: {
-    .label convertToScreenCode1_v = c
-    .label c = $88
-    // if (c == '\r')
-    lda #'\r'
-    cmp.z c
-    beq __b1
-    // if(c == '\n' || c == 0x9b)
-    lda #'\$9b'
-    cmp.z c
-    beq __b2
-    lda #$9b
-    cmp.z c
-    beq __b2
-    // return rawmap[*v];
-    ldy.z convertToScreenCode1_v
-    ldx rawmap,y
-    // putchar(convertToScreenCode(&c))
-    jsr putchar
-    // (*COLCRS)++;
-    inc COLCRS
-    bne !+
-    inc COLCRS+1
-  !:
-    // if (*COLCRS == CONIO_WIDTH)
-    lda COLCRS+1
-    bne !+
-    lda COLCRS
-    cmp #$28
-    beq __b5
-  !:
-    // setcursor()
-    jsr setcursor
-    // }
-    rts
-  __b5:
-    // *COLCRS = 0
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
-    // newline()
-    jsr newline
-    rts
-  __b2:
-    // *COLCRS = 0
-    // 0x0a LF, or atascii EOL
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
-    // newline()
-    jsr newline
-    rts
-  __b1:
-    // *COLCRS = 0
-    // 0x0d, CR = just set the cursor x value to 0
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
-    // setcursor()
-    jsr setcursor
-    rts
-}
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($81) value, byte* zp($86) buffer)
+// void utoa(__zp($81) unsigned int value, __zp($86) char *buffer, char radix)
 utoa: {
-    .label digit_value = $89
+    .label digit_value = $8d
     .label buffer = $86
     .label digit = $85
     .label value = $81
@@ -525,195 +711,30 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
+// void printf_number_buffer(void (*putc)(char), __register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    .label putc = cputc
     // if(buffer.sign)
     cmp #0
     beq __b2
-    // cputc(buffer.sign)
-    sta.z cputc.c
+    // putc(buffer.sign)
+    pha
     jsr cputc
+    pla
   __b2:
-    // cputs(buffer.digits)
+    // printf_str(putc, buffer.digits)
+    lda #<putc
+    sta.z printf_str.putc
+    lda #>putc
+    sta.z printf_str.putc+1
     lda #<buffer_digits
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>buffer_digits
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
-}
-// Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
-setcursor: {
-    .label loc = $8b
-    // **OLDADR = *OLDCHR
-    // save the current oldchr into oldadr
-    lda OLDCHR
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // char * loc = cursorLocation()
-    // work out the new location for oldadr based on new column/row
-    jsr cursorLocation
-    // char c = *loc
-    ldy #0
-    lda (loc),y
-    tax
-    // *OLDCHR = c
-    stx OLDCHR
-    // *OLDADR = loc
-    lda.z loc
-    sta OLDADR
-    lda.z loc+1
-    sta OLDADR+1
-    // *CRSINH = 0
-    // cursor is on, so invert the inverse bit and turn cursor on
-    tya
-    sta CRSINH
-    // c = c ^ 0x80
-    txa
-    eor #$80
-    // **OLDADR = c
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // }
-    rts
-}
-// Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
-putchar: {
-    .label loc = $8b
-    // **OLDADR = *OLDCHR
-    lda OLDCHR
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // char * loc = cursorLocation()
-    jsr cursorLocation
-    // char newChar = code | conio_reverse_value
-    txa
-    // *loc = newChar
-    ldy #0
-    sta (loc),y
-    // *OLDCHR = newChar
-    sta OLDCHR
-    // setcursor()
-    jsr setcursor
-    // }
-    rts
-}
-newline: {
-    .label start = $86
-    // if ((*ROWCRS)++ == CONIO_HEIGHT)
-    inc ROWCRS
-    lda #$18
-    cmp ROWCRS
-    bne __b1
-    // **OLDADR ^= 0x80
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    lda ($fe),y
-    eor #$80
-    sta ($fe),y
-    // char * start = *SAVMSC
-    // move screen up 1 line
-    lda SAVMSC
-    sta.z start
-    lda SAVMSC+1
-    sta.z start+1
-    // start + CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z start
-    sta.z memcpy.source
-    tya
-    adc.z start+1
-    sta.z memcpy.source+1
-    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
-    lda.z start
-    sta.z memcpy.destination
-    lda.z start+1
-    sta.z memcpy.destination+1
-    jsr memcpy
-    // start + CONIO_WIDTH * 23
-    lda.z memset.str
-    clc
-    adc #<$28*$17
-    sta.z memset.str
-    lda.z memset.str+1
-    adc #>$28*$17
-    sta.z memset.str+1
-    // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
-    lda #<$28
-    sta.z memset.num
-    lda #>$28
-    sta.z memset.num+1
-    jsr memset
-    // *ROWCRS = CONIO_HEIGHT - 1
-    lda #$18-1
-    sta ROWCRS
-  __b1:
-    // setcursor()
-    jsr setcursor
-    // }
-    rts
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($86) buffer, word zp($81) value, word zp($89) sub)
-utoa_append: {
-    .label buffer = $86
-    .label value = $81
-    .label sub = $89
-    .label return = $81
-    ldx #0
-  __b1:
-    // while (value >= sub)
-    lda.z sub+1
-    cmp.z value+1
-    bne !+
-    lda.z sub
-    cmp.z value
-    beq __b2
-  !:
-    bcc __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    inx
-    // value -= sub
-    lda.z value
-    sec
-    sbc.z sub
-    sta.z value
-    lda.z value+1
-    sbc.z sub+1
-    sta.z value+1
-    jmp __b1
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
@@ -721,7 +742,7 @@ cursorLocation: {
     .label __1 = $8b
     .label __3 = $8b
     .label return = $8b
-    .label __4 = $8d
+    .label __4 = $8f
     .label __5 = $8b
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
@@ -770,14 +791,14 @@ cursorLocation: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($8b) destination, byte* zp($89) source)
+// void * memcpy(__zp($8b) void *destination, __zp($88) char *source, unsigned int num)
 memcpy: {
     .const num = $28*$17
-    .label src_end = $8d
+    .label src_end = $8f
     .label dst = $8b
-    .label src = $89
+    .label src = $88
     .label destination = $8b
-    .label source = $89
+    .label source = $88
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -810,6 +831,50 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
+    jmp __b1
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// __zp($81) unsigned int utoa_append(__zp($86) char *buffer, __zp($81) unsigned int value, __zp($8d) unsigned int sub)
+utoa_append: {
+    .label buffer = $86
+    .label value = $81
+    .label sub = $8d
+    .label return = $81
+    ldx #0
+  __b1:
+    // while (value >= sub)
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
+  !:
+    bcc __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
     jmp __b1
 }
 .segment Data

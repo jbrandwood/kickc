@@ -8,6 +8,7 @@
 .segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
+  .const STACK_BASE = $103
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// 2-byte saved memory scan counter
   .label SAVMSC = $58
@@ -31,11 +32,15 @@
 .segment Code
 main: {
     // printf("Calculating MD5\n")
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // strlen(message)
     lda #<message
     sta.z strlen.str
@@ -55,12 +60,82 @@ main: {
     .byte 0
 }
 .segment Code
-// Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($b6) s)
-cputs: {
-    .label s = $b6
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__zp($b3) volatile char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    .label convertToScreenCode1_v = c
+    .label c = $b3
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    sta.z c
+    // if (c == '\r')
+    lda #'\r'
+    cmp.z c
+    beq __b1
+    // if(c == '\n' || c == 0x9b)
+    lda #'\$9b'
+    cmp.z c
+    beq __b2
+    lda #$9b
+    cmp.z c
+    beq __b2
+    // return rawmap[*v];
+    ldy.z convertToScreenCode1_v
+    ldx rawmap,y
+    // putchar(convertToScreenCode(&c))
+    jsr putchar
+    // (*COLCRS)++;
+    inc COLCRS
+    bne !+
+    inc COLCRS+1
+  !:
+    // if (*COLCRS == CONIO_WIDTH)
+    lda COLCRS+1
+    bne !+
+    lda COLCRS
+    cmp #$28
+    beq __b5
+  !:
+    // setcursor()
+    jsr setcursor
+    // }
+    rts
+  __b5:
+    // *COLCRS = 0
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // newline()
+    jsr newline
+    rts
+  __b2:
+    // *COLCRS = 0
+    // 0x0a LF, or atascii EOL
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // newline()
+    jsr newline
+    rts
   __b1:
-    // while (c = *s++)
+    // *COLCRS = 0
+    // 0x0d, CR = just set the cursor x value to 0
+    lda #<0
+    sta COLCRS
+    sta COLCRS+1
+    // setcursor()
+    jsr setcursor
+    rts
+}
+/// Print a NUL-terminated string
+// void printf_str(__zp($aa) void (*putc)(char), __zp($80) const char *s)
+printf_str: {
+    .label s = $80
+    .label putc = $aa
+  __b1:
+    // while(c=*s++)
     ldy #0
     lda (s),y
     inc.z s
@@ -72,16 +147,19 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
-    sta.z cputc.c
-    jsr cputc
+    // putc(c)
+    pha
+    jsr icall1
+    pla
     jmp __b1
+  icall1:
+    jmp (putc)
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($b6) str)
+// __zp($80) unsigned int strlen(__zp($aa) char *str)
 strlen: {
     .label len = $80
-    .label str = $b6
+    .label str = $aa
     .label return = $80
     lda #<0
     sta.z len
@@ -107,19 +185,19 @@ strlen: {
   !:
     jmp __b1
 }
-// md5(word zp($80) initial_len)
+// void md5(char *initial_msg, __zp($80) unsigned int initial_len)
 md5: {
-    .label __0 = $b2
-    .label __1 = $b2
-    .label __2 = $b2
-    .label __3 = $b2
-    .label bits_len = $b8
+    .label __0 = $b4
+    .label __1 = $b4
+    .label __2 = $b4
+    .label __3 = $b4
+    .label bits_len = $ba
     .label __26 = $a5
-    .label __27 = $d0
-    .label __28 = $d0
+    .label __27 = $d2
+    .label __28 = $d2
     .label __30 = $a5
-    .label __31 = $cc
-    .label __32 = $cc
+    .label __31 = $ce
+    .label __32 = $ce
     .label __34 = $aa
     .label __37 = $a5
     .label __39 = $aa
@@ -129,11 +207,11 @@ md5: {
     .label __66 = $95
     .label __67 = $95
     .label __71 = $a9
-    .label __72 = $c2
+    .label __72 = $c4
     .label initial_len = $80
-    .label new_len = $b2
-    .label msg = $b4
-    .label w = $bc
+    .label new_len = $b4
+    .label msg = $b6
+    .label w = $be
     .label a = $95
     .label b = $99
     .label c = $9d
@@ -142,10 +220,10 @@ md5: {
     .label f = $a5
     .label g = $a9
     .label temp = $a1
-    .label lr = $c8
-    .label b_1 = $c8
+    .label lr = $ca
+    .label b_1 = $ca
     .label i = $94
-    .label __74 = $b6
+    .label __74 = $b8
     // initial_len + 8
     lda #8
     clc
@@ -207,6 +285,10 @@ md5: {
     sta.z memcpy.destination
     lda.z msg+1
     sta.z memcpy.destination+1
+    lda.z initial_len
+    sta.z memcpy.num
+    lda.z initial_len+1
+    sta.z memcpy.num+1
     lda #<main.message
     sta.z memcpy.source
     lda #>main.message
@@ -432,11 +514,15 @@ md5: {
     sta.z printf_uchar.format_zero_padding
     jsr printf_uchar
     // printf("%2x: ", i)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // print32(a)
     lda.z a
     sta.z print32.l
@@ -449,8 +535,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(b)
     lda.z b
     sta.z print32.l
@@ -463,8 +550,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(c)
     lda.z c
     sta.z print32.l
@@ -477,8 +565,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(d)
     lda.z temp
     sta.z print32.l
@@ -543,11 +632,15 @@ md5: {
     sta.z f+3
   __b10:
     // printf("f: ")
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // print32(f)
     lda.z f
     sta.z print32.l
@@ -560,25 +653,34 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // printf("g:%2x w[g]:", g)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("g:%2x w[g]:", g)
     ldx.z g
     lda #0
     sta.z printf_uchar.format_zero_padding
     jsr printf_uchar
     // printf("g:%2x w[g]:", g)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s3
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // print32(w[g])
     lda.z __71
     asl
@@ -602,10 +704,6 @@ md5: {
     // kickasm
     .break 
     // cputs("L ")
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
     jsr cputs
     // print32(a)
     lda.z a
@@ -619,8 +717,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(f)
     lda.z f
     sta.z print32.l
@@ -633,8 +732,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(k[i])
     lda.z i
     asl
@@ -652,8 +752,9 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // print32(w[g])
     ldy.z __71
     lda (w),y
@@ -670,14 +771,19 @@ md5: {
     jsr print32
     // cputc(' ')
     lda #' '
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // printf("r: %2x\n", r[i])
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s5
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s5
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("r: %2x\n", r[i])
     ldy.z i
     ldx r,y
@@ -685,11 +791,15 @@ md5: {
     sta.z printf_uchar.format_zero_padding
     jsr printf_uchar
     // printf("r: %2x\n", r[i])
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s6
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s6
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // kickasm
     .break 
     // a + f
@@ -1035,85 +1145,153 @@ md5: {
     .byte 0
 }
 .segment Code
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($b1) c)
-cputc: {
-    .label convertToScreenCode1_v = c
-    .label c = $b1
-    // if (c == '\r')
-    lda #'\r'
-    cmp.z c
-    beq __b1
-    // if(c == '\n' || c == 0x9b)
-    lda #'\$9b'
-    cmp.z c
-    beq __b2
-    lda #$9b
-    cmp.z c
-    beq __b2
-    // return rawmap[*v];
-    ldy.z convertToScreenCode1_v
-    ldx rawmap,y
-    // putchar(convertToScreenCode(&c))
-    jsr putchar
-    // (*COLCRS)++;
-    inc COLCRS
-    bne !+
-    inc COLCRS+1
-  !:
-    // if (*COLCRS == CONIO_WIDTH)
-    lda COLCRS+1
-    bne !+
-    lda COLCRS
-    cmp #$28
-    beq __b5
-  !:
+// Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
+// void putchar(char code)
+putchar: {
+    .label loc = $d6
+    // **OLDADR = *OLDCHR
+    lda OLDCHR
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // char * loc = cursorLocation()
+    jsr cursorLocation
+    // char newChar = code | conio_reverse_value
+    txa
+    // *loc = newChar
+    ldy #0
+    sta (loc),y
+    // *OLDCHR = newChar
+    sta OLDCHR
     // setcursor()
     jsr setcursor
     // }
     rts
-  __b5:
-    // *COLCRS = 0
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
-    // newline()
-    jsr newline
+}
+// Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
+setcursor: {
+    .label loc = $d6
+    // **OLDADR = *OLDCHR
+    // save the current oldchr into oldadr
+    lda OLDCHR
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // char * loc = cursorLocation()
+    // work out the new location for oldadr based on new column/row
+    jsr cursorLocation
+    // char c = *loc
+    ldy #0
+    lda (loc),y
+    tax
+    // *OLDCHR = c
+    stx OLDCHR
+    // *OLDADR = loc
+    lda.z loc
+    sta OLDADR
+    lda.z loc+1
+    sta OLDADR+1
+    // *CRSINH = 0
+    // cursor is on, so invert the inverse bit and turn cursor on
+    tya
+    sta CRSINH
+    // c = c ^ 0x80
+    txa
+    eor #$80
+    // **OLDADR = c
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // }
     rts
-  __b2:
-    // *COLCRS = 0
-    // 0x0a LF, or atascii EOL
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
-    // newline()
-    jsr newline
-    rts
+}
+newline: {
+    .label start = $ae
+    // if ((*ROWCRS)++ == CONIO_HEIGHT)
+    inc ROWCRS
+    lda #$18
+    cmp ROWCRS
+    bne __b1
+    // **OLDADR ^= 0x80
+    ldy OLDADR
+    sty.z $fe
+    ldy OLDADR+1
+    sty.z $ff
+    ldy #0
+    lda ($fe),y
+    eor #$80
+    sta ($fe),y
+    // char * start = *SAVMSC
+    // move screen up 1 line
+    lda SAVMSC
+    sta.z start
+    lda SAVMSC+1
+    sta.z start+1
+    // start + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z start
+    sta.z memcpy.source
+    tya
+    adc.z start+1
+    sta.z memcpy.source+1
+    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
+    lda.z start
+    sta.z memcpy.destination
+    lda.z start+1
+    sta.z memcpy.destination+1
+    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
+    lda #<$28*$17
+    sta.z memcpy.num
+    lda #>$28*$17
+    sta.z memcpy.num+1
+    jsr memcpy
+    // start + CONIO_WIDTH * 23
+    lda.z memset.str
+    clc
+    adc #<$28*$17
+    sta.z memset.str
+    lda.z memset.str+1
+    adc #>$28*$17
+    sta.z memset.str+1
+    // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
+    lda #<$28
+    sta.z memset.num
+    lda #>$28
+    sta.z memset.num+1
+    jsr memset
+    // *ROWCRS = CONIO_HEIGHT - 1
+    lda #$18-1
+    sta ROWCRS
   __b1:
-    // *COLCRS = 0
-    // 0x0d, CR = just set the cursor x value to 0
-    lda #<0
-    sta COLCRS
-    sta COLCRS+1
     // setcursor()
     jsr setcursor
+    // }
     rts
 }
 // Allocates memory and returns a pointer to it. Sets allocated memory to zero.
 // - nitems − This is the number of elements to be allocated.
 // - size − This is the size of elements.
-// calloc(word zp($db) nitems)
+// __zp($b6) void * calloc(__zp($b8) unsigned int nitems, unsigned int size)
 calloc: {
-    .label return = $b4
-    .label nitems = $db
+    .label return = $b6
+    .label nitems = $b8
     // void* mem = malloc(nitems*size)
-    lda.z nitems
-    sta.z malloc.size
-    lda.z nitems+1
-    sta.z malloc.size+1
     jsr malloc
     // memset(mem, 0, nitems*size)
+    lda.z nitems
+    sta.z memset.num
+    lda.z nitems+1
+    sta.z memset.num+1
     lda.z return
     sta.z memset.str
     lda.z return+1
@@ -1124,21 +1302,21 @@ calloc: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($db) destination, byte* zp($aa) source, word zp($80) num)
+// void * memcpy(__zp($d6) void *destination, __zp($ac) char *source, __zp($de) unsigned int num)
 memcpy: {
-    .label src_end = $d8
-    .label dst = $db
-    .label src = $aa
-    .label destination = $db
-    .label source = $aa
-    .label num = $80
+    .label src_end = $de
+    .label dst = $d6
+    .label src = $ac
+    .label destination = $d6
+    .label source = $ac
+    .label num = $de
     // char* src_end = (char*)source+num
-    lda.z source
     clc
-    adc.z num
+    lda.z src_end
+    adc.z source
     sta.z src_end
-    lda.z source+1
-    adc.z num+1
+    lda.z src_end+1
+    adc.z source+1
     sta.z src_end+1
   __b1:
     // while(src!=src_end)
@@ -1167,9 +1345,9 @@ memcpy: {
     jmp __b1
 }
 // Print an unsigned char using a specific format
-// printf_uchar(byte register(X) uvalue, byte zp($c7) format_zero_padding)
+// void printf_uchar(void (*putc)(char), __register(X) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, __zp($c9) char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
-    .label format_zero_padding = $c7
+    .label format_zero_padding = $c9
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -1177,7 +1355,7 @@ printf_uchar: {
     // uctoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
@@ -1185,10 +1363,10 @@ printf_uchar: {
     // }
     rts
 }
-// print32(dword zp($be) l)
+// void print32(__zp($c0) volatile unsigned long l)
 print32: {
     .label dp = l
-    .label l = $be
+    .label l = $c0
     // printf("%02x%02x%02x%02x", dp[0], dp[1], dp[2], dp[3])
     ldx.z dp
     lda #1
@@ -1223,13 +1401,40 @@ cputln: {
     // }
     rts
 }
-// leftRotate(dword zp($c3) a, byte zp($c7) r)
+// Output a NUL-terminated string at the current cursor position
+// void cputs(__zp($aa) const char *s)
+cputs: {
+    .label s = $aa
+    lda #<md5.s4
+    sta.z s
+    lda #>md5.s4
+    sta.z s+1
+  __b1:
+    // while (c = *s++)
+    ldy #0
+    lda (s),y
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // cputc(c)
+    pha
+    jsr cputc
+    pla
+    jmp __b1
+}
+// __zp($ca) unsigned long leftRotate(__zp($c5) volatile unsigned long a, __zp($c9) char r)
 leftRotate: {
     .label p = a
     .label result = p
-    .label a = $c3
-    .label return = $c8
-    .label r = $c7
+    .label a = $c5
+    .label return = $ca
+    .label r = $c9
     // if (r < 8)
     lda.z r
     cmp #8
@@ -1304,13 +1509,13 @@ leftRotate: {
     jsr rotateLeft
     jmp __b5
 }
-// mul7(byte register(A) a)
+// __zp($aa) unsigned int mul7(__register(A) char a)
 mul7: {
     .label __1 = $aa
     .label return = $aa
-    .label __2 = $d8
-    .label __3 = $d8
-    .label __4 = $d8
+    .label __2 = $dc
+    .label __3 = $dc
+    .label __4 = $dc
     // ((uint16_t) a) * 7
     sta.z __1
     lda #0
@@ -1340,7 +1545,7 @@ mul7: {
     // }
     rts
 }
-// mod16(word zp($aa) a)
+// __register(A) char mod16(__zp($aa) unsigned int a)
 mod16: {
     .label t = $aa
     .label a = $aa
@@ -1356,11 +1561,11 @@ mod16: {
     // }
     rts
 }
-// mul3(byte register(A) a)
+// __zp($aa) unsigned int mul3(__register(A) char a)
 mul3: {
     .label __1 = $aa
     .label return = $aa
-    .label __2 = $db
+    .label __2 = $dc
     // ((uint16_t) a) * 3
     sta.z __1
     lda #0
@@ -1381,11 +1586,11 @@ mul3: {
     // }
     rts
 }
-// mul5(byte register(A) a)
+// __zp($aa) unsigned int mul5(__register(A) char a)
 mul5: {
     .label __1 = $aa
     .label return = $aa
-    .label __2 = $db
+    .label __2 = $dc
     // ((uint16_t) a) * 5
     sta.z __1
     lda #0
@@ -1408,162 +1613,66 @@ mul5: {
     // }
     rts
 }
-// Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
-putchar: {
-    .label loc = $d8
-    // **OLDADR = *OLDCHR
-    lda OLDCHR
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // char * loc = cursorLocation()
-    jsr cursorLocation
-    // char newChar = code | conio_reverse_value
-    txa
-    // *loc = newChar
-    ldy #0
-    sta (loc),y
-    // *OLDCHR = newChar
-    sta OLDCHR
-    // setcursor()
-    jsr setcursor
-    // }
-    rts
-}
-// Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
-setcursor: {
-    .label loc = $d8
-    // **OLDADR = *OLDCHR
-    // save the current oldchr into oldadr
-    lda OLDCHR
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // char * loc = cursorLocation()
-    // work out the new location for oldadr based on new column/row
-    jsr cursorLocation
-    // char c = *loc
-    ldy #0
-    lda (loc),y
-    tax
-    // *OLDCHR = c
-    stx OLDCHR
-    // *OLDADR = loc
-    lda.z loc
-    sta OLDADR
-    lda.z loc+1
-    sta OLDADR+1
-    // *CRSINH = 0
-    // cursor is on, so invert the inverse bit and turn cursor on
-    tya
-    sta CRSINH
-    // c = c ^ 0x80
-    txa
-    eor #$80
-    // **OLDADR = c
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // }
-    rts
-}
-newline: {
-    .label start = $ac
-    // if ((*ROWCRS)++ == CONIO_HEIGHT)
-    inc ROWCRS
-    lda #$18
-    cmp ROWCRS
-    bne __b1
-    // **OLDADR ^= 0x80
-    ldy OLDADR
-    sty.z $fe
-    ldy OLDADR+1
-    sty.z $ff
-    ldy #0
-    lda ($fe),y
-    eor #$80
-    sta ($fe),y
-    // char * start = *SAVMSC
-    // move screen up 1 line
-    lda SAVMSC
-    sta.z start
-    lda SAVMSC+1
-    sta.z start+1
-    // start + CONIO_WIDTH
-    lda #$28
+// Return a pointer to the location of the cursor
+cursorLocation: {
+    .label __0 = $d6
+    .label __1 = $d6
+    .label __3 = $d6
+    .label return = $d6
+    .label __4 = $de
+    .label __5 = $d6
+    // (word)(*ROWCRS)*CONIO_WIDTH
+    lda ROWCRS
+    sta.z __3
+    lda #0
+    sta.z __3+1
+    lda.z __3
+    asl
+    sta.z __4
+    lda.z __3+1
+    rol
+    sta.z __4+1
+    asl.z __4
+    rol.z __4+1
     clc
-    adc.z start
-    sta.z memcpy.source
-    tya
-    adc.z start+1
-    sta.z memcpy.source+1
-    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
-    lda.z start
-    sta.z memcpy.destination
-    lda.z start+1
-    sta.z memcpy.destination+1
-    // memcpy(start, start + CONIO_WIDTH, CONIO_WIDTH * 23)
-    lda #<$28*$17
-    sta.z memcpy.num
-    lda #>$28*$17
-    sta.z memcpy.num+1
-    jsr memcpy
-    // start + CONIO_WIDTH * 23
-    lda.z memset.str
+    lda.z __5
+    adc.z __4
+    sta.z __5
+    lda.z __5+1
+    adc.z __4+1
+    sta.z __5+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH
     clc
-    adc #<$28*$17
-    sta.z memset.str
-    lda.z memset.str+1
-    adc #>$28*$17
-    sta.z memset.str+1
-    // memset(start + CONIO_WIDTH * 23, 0x00, CONIO_WIDTH)
-    lda #<$28
-    sta.z memset.num
-    lda #>$28
-    sta.z memset.num+1
-    jsr memset
-    // *ROWCRS = CONIO_HEIGHT - 1
-    lda #$18-1
-    sta ROWCRS
-  __b1:
-    // setcursor()
-    jsr setcursor
-    // }
-    rts
-}
-// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
-// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp($b4) size)
-malloc: {
-    .label mem = $b4
-    .label size = $b4
-    // unsigned char* mem = heap_head-size
-    lda #<HEAP_TOP
-    sec
-    sbc.z mem
-    sta.z mem
-    lda #>HEAP_TOP
-    sbc.z mem+1
-    sta.z mem+1
+    lda.z __1
+    adc SAVMSC
+    sta.z __1
+    lda.z __1+1
+    adc SAVMSC+1
+    sta.z __1+1
+    // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
+    clc
+    lda.z return
+    adc COLCRS
+    sta.z return
+    lda.z return+1
+    adc COLCRS+1
+    sta.z return+1
     // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($ac) str, word zp($db) num)
+// void * memset(__zp($ae) void *str, char c, __zp($ac) unsigned int num)
 memset: {
-    .label end = $db
-    .label dst = $ac
-    .label str = $ac
-    .label num = $db
+    .label end = $ac
+    .label dst = $ae
+    .label str = $ae
+    .label num = $ac
     // if(num>0)
     lda.z num
     bne !+
@@ -1601,17 +1710,34 @@ memset: {
   !:
     jmp __b2
 }
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
+// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(__zp($b8) unsigned int size)
+malloc: {
+    .label mem = $b6
+    .label size = $b8
+    // unsigned char* mem = heap_head-size
+    sec
+    lda #<HEAP_TOP
+    sbc.z size
+    sta.z mem
+    lda #>HEAP_TOP
+    sbc.z size+1
+    sta.z mem+1
+    // }
+    rts
+}
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($ac) buffer)
+// void uctoa(__register(X) char value, __zp($b8) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $da
-    .label buffer = $ac
-    .label digit = $ae
-    .label started = $af
+    .label digit_value = $e0
+    .label buffer = $b8
+    .label digit = $b0
+    .label started = $b1
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1669,14 +1795,15 @@ uctoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($d4) buffer_sign, byte zp($c7) format_zero_padding)
+// void printf_number_buffer(void (*putc)(char), __zp($d8) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, __zp($c9) char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .const format_min_length = 2
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    .label putc = cputc
     .label __19 = $80
-    .label buffer_sign = $d4
-    .label format_zero_padding = $c7
-    .label padding = $ae
+    .label buffer_sign = $d8
+    .label format_zero_padding = $c9
+    .label padding = $b0
     // strlen(buffer.digits)
     lda #<buffer_digits
     sta.z strlen.str
@@ -1713,7 +1840,7 @@ printf_number_buffer: {
     bne __b7
     jmp __b2
   __b7:
-    // printf_padding(' ',(char)padding)
+    // printf_padding(putc, ' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #' '
@@ -1723,9 +1850,10 @@ printf_number_buffer: {
     // if(buffer.sign)
     lda.z buffer_sign
     beq __b3
-    // cputc(buffer.sign)
-    sta.z cputc.c
+    // putc(buffer.sign)
+    pha
     jsr cputc
+    pla
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
@@ -1735,22 +1863,27 @@ printf_number_buffer: {
     bne __b9
     jmp __b4
   __b9:
-    // printf_padding('0',(char)padding)
+    // printf_padding(putc, '0',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #'0'
     sta.z printf_padding.pad
     jsr printf_padding
   __b4:
-    // cputs(buffer.digits)
+    // printf_str(putc, buffer.digits)
+    lda #<putc
+    sta.z printf_str.putc
+    lda #>putc
+    sta.z printf_str.putc+1
     lda #<buffer_digits
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>buffer_digits
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
 }
+// void move16Left(char *p)
 move16Left: {
     // uint8_t s = *p
     ldy.z leftRotate.p
@@ -1769,10 +1902,10 @@ move16Left: {
     // }
     rts
 }
-// rotateLeft(byte* zp($d5) p, byte zp($d7) r)
+// void rotateLeft(__zp($d9) char * volatile const p, __zp($db) volatile char r)
 rotateLeft: {
-    .label p = $d5
-    .label r = $d7
+    .label p = $d9
+    .label r = $db
     // kickasm
     ldx #r
 		!s:
@@ -1790,6 +1923,7 @@ rotateLeft: {
     // }
     rts
 }
+// void move8Left(char *p)
 move8Left: {
     // uint8_t t = *p
     ldx.z leftRotate.p
@@ -1807,59 +1941,6 @@ move8Left: {
     // }
     rts
 }
-// Return a pointer to the location of the cursor
-cursorLocation: {
-    .label __0 = $d8
-    .label __1 = $d8
-    .label __3 = $d8
-    .label return = $d8
-    .label __4 = $db
-    .label __5 = $d8
-    // (word)(*ROWCRS)*CONIO_WIDTH
-    lda ROWCRS
-    sta.z __3
-    lda #0
-    sta.z __3+1
-    lda.z __3
-    asl
-    sta.z __4
-    lda.z __3+1
-    rol
-    sta.z __4+1
-    asl.z __4
-    rol.z __4+1
-    clc
-    lda.z __5
-    adc.z __4
-    sta.z __5
-    lda.z __5+1
-    adc.z __4+1
-    sta.z __5+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH
-    clc
-    lda.z __1
-    adc SAVMSC
-    sta.z __1
-    lda.z __1+1
-    adc SAVMSC+1
-    sta.z __1+1
-    // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
-    clc
-    lda.z return
-    adc COLCRS
-    sta.z return
-    lda.z return+1
-    adc COLCRS+1
-    sta.z return+1
-    // }
-    rts
-}
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
 // Each time the digit is increased sub is subtracted from value.
@@ -1868,10 +1949,10 @@ cursorLocation: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($ac) buffer, byte register(X) value, byte zp($da) sub)
+// __register(X) char uctoa_append(__zp($b8) char *buffer, __register(X) char value, __zp($e0) char sub)
 uctoa_append: {
-    .label buffer = $ac
-    .label sub = $da
+    .label buffer = $b8
+    .label sub = $e0
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1894,11 +1975,11 @@ uctoa_append: {
     jmp __b1
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($da) pad, byte zp($af) length)
+// void printf_padding(void (*putc)(char), __zp($e0) char pad, __zp($b1) char length)
 printf_padding: {
-    .label i = $b0
-    .label length = $af
-    .label pad = $da
+    .label i = $b2
+    .label length = $b1
+    .label pad = $e0
     lda #0
     sta.z i
   __b1:
@@ -1909,10 +1990,11 @@ printf_padding: {
     // }
     rts
   __b2:
-    // cputc(pad)
+    // putc(pad)
     lda.z pad
-    sta.z cputc.c
+    pha
     jsr cputc
+    pla
     // for(char i=0;i<length; i++)
     inc.z i
     jmp __b1

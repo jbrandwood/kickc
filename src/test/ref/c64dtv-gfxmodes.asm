@@ -434,7 +434,7 @@ print_cls: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp($d) str)
+// void print_str_lines(__zp($d) char *str)
 print_str_lines: {
     .label str = $d
     lda #<menu.SCREEN
@@ -486,7 +486,7 @@ print_str_lines: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte register(Y) key)
+// __register(A) char keyboard_key_pressed(__register(Y) char key)
 keyboard_key_pressed: {
     .label colidx = $1c
     // char colidx = key&7
@@ -2406,7 +2406,7 @@ mode_8bppchunkybmm: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(9) str, byte register(X) c, word zp($f) num)
+// void * memset(__zp(9) void *str, __register(X) char c, __zp($f) unsigned int num)
 memset: {
     .label end = $f
     .label dst = 9
@@ -2450,7 +2450,7 @@ memset: {
     jmp __b2
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -2491,7 +2491,7 @@ print_ln: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(Y) rowid)
+// __register(A) char keyboard_matrix_read(__register(Y) char rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,y
@@ -2622,6 +2622,7 @@ mode_ctrl: {
     jmp __b1
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = $1c
     .label yoffs = $b
@@ -2683,6 +2684,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
@@ -2711,7 +2713,7 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp(9) x1, word zp($b) y1, word zp($13) x2, word zp($15) y2)
+// void bitmap_line(__zp(9) unsigned int x1, __zp($b) unsigned int y1, __zp($13) unsigned int x2, __zp($15) unsigned int y2)
 bitmap_line: {
     .label dx = $1d
     .label dy = $f
@@ -2929,7 +2931,7 @@ bitmap_line: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
-// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
+// void dtvSetCpuBankSegment1(__register(A) char cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -2943,7 +2945,7 @@ dtvSetCpuBankSegment1: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp($f) w)
+// __zp($f) unsigned int abs_u16(__zp($f) unsigned int w)
 abs_u16: {
     .label w = $f
     .label return = $f
@@ -2969,7 +2971,7 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp($21) w)
+// __zp($11) unsigned int sgn_u16(__zp($21) unsigned int w)
 sgn_u16: {
     .label w = $21
     .label return = $11
@@ -2993,7 +2995,7 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(9) x, byte register(X) y)
+// void bitmap_plot(__zp(9) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $23
     .label plotter = $21

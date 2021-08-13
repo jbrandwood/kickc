@@ -2743,14 +2743,14 @@ bitmap_line: {
     adc.z dx+1
     sta.z e+1
     // [70] if(bitmap_line::dy#0>=bitmap_line::e#1) goto bitmap_line::@7 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z dy+1
-    cmp.z e+1
-    bcc !+
-    bne __b7_from___b16
-    lda.z dy
-    cmp.z e
-    bcs __b7_from___b16
+    lda.z e+1
+    cmp.z dy+1
+    bne !+
+    lda.z e
+    cmp.z dy
+    beq __b7_from___b16
   !:
+    bcc __b7_from___b16
     jmp __b8
     // bitmap_line::@8
   __b8:
@@ -2868,14 +2868,14 @@ bitmap_line: {
     adc.z dy+1
     sta.z e1+1
     // [87] if(bitmap_line::dx#0>=bitmap_line::e1#1) goto bitmap_line::@10 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z dx+1
-    cmp.z e1+1
-    bcc !+
-    bne __b10_from___b17
-    lda.z dx
-    cmp.z e1
-    bcs __b10_from___b17
+    lda.z e1+1
+    cmp.z dx+1
+    bne !+
+    lda.z e1
+    cmp.z dx
+    beq __b10_from___b17
   !:
+    bcc __b10_from___b17
     jmp __b11
     // bitmap_line::@11
   __b11:
@@ -3150,6 +3150,8 @@ Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
+Removing instruction lda.z e+1
+Removing instruction lda.z e1+1
 Removing instruction lda #>-1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b6_from___b1 with __b2
@@ -3431,7 +3433,7 @@ reg byte x [ bitmap_plot::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 30670
+Score: 30070
 
   // File Comments
 // Illustrates problem with bitmap-draw.kc line()
@@ -3878,14 +3880,13 @@ bitmap_line: {
     sta.z e+1
     // if(dy<e)
     // [70] if(bitmap_line::dy#0>=bitmap_line::e#1) goto bitmap_line::@7 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z dy+1
-    cmp.z e+1
-    bcc !+
-    bne __b7
-    lda.z dy
-    cmp.z e
-    bcs __b7
+    cmp.z dy+1
+    bne !+
+    lda.z e
+    cmp.z dy
+    beq __b7
   !:
+    bcc __b7
     // bitmap_line::@8
     // x += sx
     // [71] bitmap_line::x#1 = bitmap_line::x#13 + bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
@@ -3995,14 +3996,13 @@ bitmap_line: {
     sta.z e1+1
     // if(dx < e)
     // [87] if(bitmap_line::dx#0>=bitmap_line::e1#1) goto bitmap_line::@10 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z dx+1
-    cmp.z e1+1
-    bcc !+
-    bne __b10
-    lda.z dx
-    cmp.z e1
-    bcs __b10
+    cmp.z dx+1
+    bne !+
+    lda.z e1
+    cmp.z dx
+    beq __b10
   !:
+    bcc __b10
     // bitmap_line::@11
     // y += sy
     // [88] bitmap_line::y#2 = bitmap_line::y#15 + bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 

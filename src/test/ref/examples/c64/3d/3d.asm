@@ -553,7 +553,7 @@ print_cls: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp($f) str, byte* zp($11) at)
+// void print_str_at(__zp($f) char *str, __zp($11) char *at)
 print_str_at: {
     .label at = $11
     .label str = $f
@@ -582,7 +582,7 @@ print_str_at: {
     jmp __b1
 }
 // Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp($22) b, byte* zp($f) at)
+// void print_schar_at(__zp($22) signed char b, __zp($f) char *at)
 print_schar_at: {
     .label b = $22
     .label at = $f
@@ -616,7 +616,7 @@ print_schar_at: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
+// void calculate_matrix(__register(X) signed char sx, __zp(3) signed char sy, signed char sz)
 calculate_matrix: {
     .label sy = 3
     .label t1 = $21
@@ -858,7 +858,7 @@ store_matrix: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zp($22) y, signed byte zp($23) z)
+// void rotate_matrix(__register(X) signed char x, __zp($22) signed char y, __zp($23) signed char z)
 rotate_matrix: {
     .label y = $22
     .label z = $23
@@ -1186,6 +1186,7 @@ debug_print: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -1219,7 +1220,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp($f) at)
+// void print_char_at(__register(X) char ch, __zp($f) char *at)
 print_char_at: {
     .label at = $f
     // *(at) = ch
@@ -1230,7 +1231,7 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp($22) b, byte* zp($f) at)
+// void print_uchar_at(__zp($22) char b, __zp($f) char *at)
 print_uchar_at: {
     .label b = $22
     .label at = $f

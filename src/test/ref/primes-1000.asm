@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_SIGNED_WORD = 2
+  .const SIZEOF_INT = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $19
@@ -33,14 +33,14 @@ main: {
     .label __18 = $19
     // primenum[1] = 2
     lda #<2
-    sta primenum+1*SIZEOF_SIGNED_WORD
+    sta primenum+1*SIZEOF_INT
     lda #>2
-    sta primenum+1*SIZEOF_SIGNED_WORD+1
+    sta primenum+1*SIZEOF_INT+1
     // primenum[2] = 3
     lda #<3
-    sta primenum+2*SIZEOF_SIGNED_WORD
+    sta primenum+2*SIZEOF_INT
     lda #>3
-    sta primenum+2*SIZEOF_SIGNED_WORD+1
+    sta primenum+2*SIZEOF_INT+1
     lda #<print_screen
     sta.z print_char_cursor
     lda #>print_screen
@@ -219,7 +219,7 @@ main: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($15) a, signed word zp($15) b)
+// __zp(8) long mul16s(__zp($15) int a, __zp($15) int b)
 mul16s: {
     .label __6 = $1b
     .label __9 = $1d
@@ -291,7 +291,7 @@ mul16s: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(6) dividend, signed word zp($12) divisor)
+// int div16s(__zp(6) int dividend, __zp($12) int divisor)
 div16s: {
     .label dividend = 6
     .label divisor = $12
@@ -305,7 +305,7 @@ div16s: {
     rts
 }
 // Print a signed int as DECIMAL
-// print_sint_decimal(signed word zp($15) w)
+// void print_sint_decimal(__zp($15) int w)
 print_sint_decimal: {
     .label w = $15
     // if(w<0)
@@ -336,7 +336,7 @@ print_sint_decimal: {
     jmp __b2
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -350,7 +350,7 @@ print_char: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($17) a, word zp($1b) b)
+// __zp(8) unsigned long mul16u(__zp($17) unsigned int a, __zp($1b) unsigned int b)
 mul16u: {
     .label mb = $e
     .label a = $17
@@ -415,7 +415,7 @@ mul16u: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp($17) dividend, signed word zp($12) divisor)
+// int divr16s(__zp($17) int dividend, __zp($12) int divisor, int rem)
 divr16s: {
     .label dividendu = $17
     .label divisoru = $12
@@ -477,7 +477,7 @@ divr16s: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($15) value, byte* zp($19) buffer)
+// void utoa(__zp($15) unsigned int value, __zp($19) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
     .label value = $15
@@ -549,7 +549,7 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// print_str(byte* zp($1b) str)
+// void print_str(__zp($1b) char *str)
 print_str: {
     .label str = $1b
     lda #<decimal_digits
@@ -580,7 +580,7 @@ print_str: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($17) dividend, word zp($12) divisor, word zp($19) rem)
+// __zp($1b) unsigned int divr16u(__zp($17) unsigned int dividend, __zp($12) unsigned int divisor, __zp($19) unsigned int rem)
 divr16u: {
     .label rem = $19
     .label dividend = $17
@@ -654,7 +654,7 @@ divr16u: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($19) buffer, word zp($15) value, word zp($1d) sub)
+// __zp($15) unsigned int utoa_append(__zp($19) char *buffer, __zp($15) unsigned int value, __zp($1d) unsigned int sub)
 utoa_append: {
     .label buffer = $19
     .label value = $15

@@ -354,6 +354,7 @@ test_16s: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -390,7 +391,7 @@ memset: {
 // Returns dividend/divisor.
 // The remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// div8u(byte register(X) dividend, byte register(A) divisor)
+// __register(A) char div8u(__register(X) char dividend, __register(A) char divisor)
 div8u: {
     // divr8u(dividend, divisor, 0)
     stx.z divr8u.dividend
@@ -402,7 +403,7 @@ div8u: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte zp(3) b)
+// void print_uchar(__zp(3) char b)
 print_uchar: {
     .label b = 3
     // b>>4
@@ -427,7 +428,7 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// void print_str(__zp(6) char *str)
 print_str: {
     .label str = 6
   __b1:
@@ -477,7 +478,7 @@ print_ln: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// div16u(word zp($c) dividend, word zp(8) divisor)
+// __zp($e) unsigned int div16u(__zp($c) unsigned int dividend, __zp(8) unsigned int divisor)
 div16u: {
     .label return = $e
     .label dividend = $c
@@ -489,7 +490,7 @@ div16u: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(6) w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
     .label w = 6
     // print_uchar(BYTE1(w))
@@ -509,7 +510,7 @@ print_uint: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div8s(signed byte register(X) dividend, signed byte register(Y) divisor)
+// __register(A) signed char div8s(__register(X) signed char dividend, __register(Y) signed char divisor)
 div8s: {
     .label neg = $10
     // if(dividend<0)
@@ -571,7 +572,7 @@ div8s: {
     jmp __b2
 }
 // Print a signed char as HEX
-// print_schar(signed byte zp(3) b)
+// void print_schar(__zp(3) signed char b)
 print_schar: {
     .label b = 3
     // if(b<0)
@@ -603,7 +604,7 @@ print_schar: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(6) dividend, signed word zp($14) divisor)
+// __zp($e) int div16s(__zp(6) int dividend, __zp($14) int divisor)
 div16s: {
     .label return = $e
     .label dividend = 6
@@ -622,7 +623,7 @@ div16s: {
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(6) w)
+// void print_sint(__zp(6) int w)
 print_sint: {
     .label w = 6
     // if(w<0)
@@ -654,7 +655,7 @@ print_sint: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// divr8u(byte zp($11) dividend, byte zp($16) divisor, byte register(Y) rem)
+// __zp($13) char divr8u(__zp($11) char dividend, __zp($16) char divisor, __register(Y) char rem)
 divr8u: {
     .label dividend = $11
     .label divisor = $16
@@ -706,7 +707,7 @@ divr8u: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -723,7 +724,7 @@ print_char: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($c) dividend, word zp(8) divisor, word zp($a) rem)
+// __zp($e) unsigned int divr16u(__zp($c) unsigned int dividend, __zp(8) unsigned int divisor, __zp($a) unsigned int rem)
 divr16u: {
     .label rem = $a
     .label dividend = $c
@@ -794,7 +795,7 @@ divr16u: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp($c) dividend, signed word zp(8) divisor)
+// __zp($e) int divr16s(__zp($c) int dividend, __zp(8) int divisor, int rem)
 divr16s: {
     .label dividendu = $c
     .label divisoru = 8

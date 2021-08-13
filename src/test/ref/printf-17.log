@@ -4524,14 +4524,14 @@ snputc: {
     inc.z __snprintf_size+1
   !:
     // [9] if(__snprintf_size<=__snprintf_capacity) goto snputc::@1 -- vwuz1_le_vwuz2_then_la1 
-    lda.z __snprintf_capacity+1
-    cmp.z __snprintf_size+1
-    bcc !+
-    bne __b1
-    lda.z __snprintf_capacity
-    cmp.z __snprintf_size
-    bcs __b1
+    lda.z __snprintf_size+1
+    cmp.z __snprintf_capacity+1
+    bne !+
+    lda.z __snprintf_size
+    cmp.z __snprintf_capacity
+    beq __b1
   !:
+    bcc __b1
     jmp __breturn
     // snputc::@return
   __breturn:
@@ -5366,14 +5366,14 @@ utoa: {
     // utoa::@12
   __b12:
     // [130] if(utoa::value#3>=utoa::digit_value#0) goto utoa::@10 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b10
-    lda.z value
-    cmp.z digit_value
-    bcs __b10
+    lda.z digit_value+1
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b10
   !:
+    bcc __b10
     // [131] phi from utoa::@12 to utoa::@9 [phi:utoa::@12->utoa::@9]
   __b9_from___b12:
     // [131] phi utoa::buffer#15 = utoa::buffer#10 [phi:utoa::@12->utoa::@9#0] -- register_copy 
@@ -5667,14 +5667,14 @@ utoa_append: {
     // utoa_append::@1
   __b1:
     // [183] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     jmp __b3
     // utoa_append::@3
   __b3:
@@ -6168,6 +6168,7 @@ Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda.z digit_value+1
 Removing instruction lda.z buffer_sign
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
@@ -6418,7 +6419,7 @@ mem[12] [ printf_buffer ]
 
 
 FINAL ASSEMBLER
-Score: 9682
+Score: 9652
 
   // File Comments
 // Tests snprintf function call rewriting
@@ -6495,14 +6496,14 @@ snputc: {
   !:
     // if(__snprintf_size > __snprintf_capacity)
     // [9] if(__snprintf_size<=__snprintf_capacity) goto snputc::@1 -- vwuz1_le_vwuz2_then_la1 
-    lda.z __snprintf_capacity+1
-    cmp.z __snprintf_size+1
-    bcc !+
-    bne __b1
-    lda.z __snprintf_capacity
-    cmp.z __snprintf_size
-    bcs __b1
+    lda.z __snprintf_size+1
+    cmp.z __snprintf_capacity+1
+    bne !+
+    lda.z __snprintf_size
+    cmp.z __snprintf_capacity
+    beq __b1
   !:
+    bcc __b1
     // snputc::@return
     // }
     // [10] return 
@@ -7266,14 +7267,13 @@ utoa: {
     bne __b10
     // utoa::@12
     // [130] if(utoa::value#3>=utoa::digit_value#0) goto utoa::@10 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b10
-    lda.z value
-    cmp.z digit_value
-    bcs __b10
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b10
   !:
+    bcc __b10
     // [131] phi from utoa::@12 to utoa::@9 [phi:utoa::@12->utoa::@9]
     // [131] phi utoa::buffer#15 = utoa::buffer#10 [phi:utoa::@12->utoa::@9#0] -- register_copy 
     // [131] phi utoa::started#4 = utoa::started#2 [phi:utoa::@12->utoa::@9#1] -- register_copy 
@@ -7537,14 +7537,14 @@ utoa_append: {
   __b1:
     // while (value >= sub)
     // [183] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     // utoa_append::@3
     // *buffer = DIGITS[digit]
     // [184] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] -- _deref_pbuz1=pbuc1_derefidx_vbuxx 

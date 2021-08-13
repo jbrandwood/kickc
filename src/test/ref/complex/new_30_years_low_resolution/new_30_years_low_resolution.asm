@@ -81,7 +81,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   .const OFFSET_STRUCT_BUCKETSPRITE_PLEX_ID = 1
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
   /// Sprite Y position register for sprite #0
@@ -559,7 +559,7 @@ irq_swing_plex: {
     jsr plex_scroller_move
     // if(++sprite_color_idx == sizeof(SPRITE_COLOR_SEQUENCE))
     inc.z sprite_color_idx
-    lda #$30*SIZEOF_BYTE
+    lda #$30*SIZEOF_CHAR
     cmp.z sprite_color_idx
     bne __b3
     // sprite_color_idx = 0
@@ -1191,7 +1191,7 @@ demo_work: {
 .segment CodePart2
 // Show the sprites in a specific bucket
 // - bucket: The bucket to show
-// plexBucketShow(struct BucketSprite* zp(2) bucket)
+// void plexBucketShow(__zp(2) struct BucketSprite *bucket)
 plexBucketShow: {
     .label i = $3b
     .label bucket = 2
@@ -1270,7 +1270,7 @@ plexBucketShow: {
 }
 .segment CodePart2
 // Update the plex_id's of a multiplexer frame to reflect a specific plex_id_offset
-// update_frame_plex_id_offset(byte register(A) plex_frame_id)
+// void update_frame_plex_id_offset(__register(A) char plex_frame_id)
 update_frame_plex_id_offset: {
     .label jmp_table = PLEX_ID_UPDATERS
     .label jmp_address = $3c
@@ -1293,7 +1293,7 @@ update_frame_plex_id_offset: {
 }
 // Update screen, colors and bitmap with a single column of new data
 // - x_offset is the offset of the column to update (0-79)
-// vsp_update_screen(byte zp($31) x_offset)
+// void vsp_update_screen(__zp($31) volatile char x_offset)
 vsp_update_screen: {
     .label x_offset = $31
     .label x_offset8 = $40
@@ -1464,7 +1464,7 @@ plexFrameStart: {
 // Waits until at the exact start of raster line 
 // Excepts to start at a line divisible by 8 (0x00, 0x08, x010, ...). 
 // Waits line_offset (0-7) additional lines.
-// raster_fine(byte zp($32) line_offset)
+// void raster_fine(__zp($32) volatile char line_offset)
 raster_fine: {
     .label line_offset = $32
     // kickasm
@@ -1535,7 +1535,7 @@ demo_init: {
 }
 // Decrunch crunched data using ByteBoozer
 // - crunched: Pointer to the start of the crunched data
-// byteboozer_decrunch(byte* zp($39) crunched)
+// void byteboozer_decrunch(__zp($39) char * volatile crunched)
 byteboozer_decrunch: {
     .label crunched = $39
     // asm
@@ -2119,11 +2119,11 @@ init_rasters: {
   __b1:
     // for(unsigned int i=0;i<sizeof(RASTER_BADLINES);i++)
     lda.z i+1
-    cmp #>$130*SIZEOF_BYTE
+    cmp #>$130*SIZEOF_CHAR
     bcc __b2
     bne !+
     lda.z i
-    cmp #<$130*SIZEOF_BYTE
+    cmp #<$130*SIZEOF_CHAR
     bcc __b2
   !:
     ldx #$32
@@ -2162,7 +2162,7 @@ init_rasters: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($48) str, byte register(X) c, word zp($4c) num)
+// void * memset(__zp($48) void *str, __register(X) char c, __zp($4c) unsigned int num)
 memset: {
     .label end = $4c
     .label dst = $48
@@ -2207,7 +2207,7 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($48) destination, void* zp($4c) source, word zp($4a) num)
+// void * memcpy(__zp($48) void *destination, __zp($4c) void *source, __zp($4a) unsigned int num)
 memcpy: {
     .label src_end = $4a
     .label dst = $48
@@ -2330,7 +2330,7 @@ plexPrepareInit: {
 }
 // Performs run-time bucket sort of the sprites in the PLEX_ arrays into struct BucketSprite[]
 // Starts by performing a true sorting of the sprites based on Y-position (unsing insertion sort)
-// plexPrepareFrame(struct BucketSprite* zp($4c) frame)
+// void plexPrepareFrame(__zp($4c) struct BucketSprite *frame)
 plexPrepareFrame: {
     .label nxt_idx = $44
     .label nxt_y = $45

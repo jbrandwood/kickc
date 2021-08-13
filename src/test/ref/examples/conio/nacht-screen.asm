@@ -124,7 +124,7 @@ main: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) x, byte register(A) y)
+// void gotoxy(__register(X) char x, __register(A) char y)
 gotoxy: {
     .label __5 = $1b
     .label __6 = $17
@@ -201,6 +201,7 @@ gotoxy: {
     rts
 }
 // Return the current screen size.
+// void screensize(char *x, char *y)
 screensize: {
     .label x = XSize
     .label y = YSize
@@ -466,6 +467,7 @@ clrscr: {
 // If onoff is 1, scrolling is enabled when outputting past the end of the screen
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
+// char scroll(char onoff)
 scroll: {
     .const onoff = 0
     // conio_scroll_enable = onoff
@@ -475,6 +477,7 @@ scroll: {
     rts
 }
 // Set the color for text output. The old color setting is returned.
+// char textcolor(char color)
 textcolor: {
     // conio_textcolor = color
     lda #COLOR_GRAY3
@@ -483,6 +486,7 @@ textcolor: {
     rts
 }
 // Set the color for the border. The old color setting is returned.
+// char bordercolor(char color)
 bordercolor: {
     // The border color register address
     .label CONIO_BORDERCOLOR = $d020
@@ -493,6 +497,7 @@ bordercolor: {
     rts
 }
 // Set the color for the background. The old color setting is returned.
+// char bgcolor(char color)
 bgcolor: {
     // The background color register address
     .label CONIO_BGCOLOR = $d021
@@ -504,7 +509,7 @@ bgcolor: {
 }
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
-// cputcxy(byte register(A) y, byte register(Y) c)
+// void cputcxy(char x, __register(A) char y, __register(Y) char c)
 cputcxy: {
     // gotoxy(x, y)
     ldx #0
@@ -516,7 +521,7 @@ cputcxy: {
     rts
 }
 // Output a horizontal line with the given length starting at the current cursor position.
-// chline(byte zp(7) length)
+// void chline(__zp(7) char length)
 chline: {
     .label i = 8
     .label length = 7
@@ -539,7 +544,7 @@ chline: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
+// void cputc(__register(A) char c)
 cputc: {
     // if(c=='\n')
     cmp #'\n'
@@ -567,7 +572,7 @@ cputc: {
 }
 // Move cursor and output a vertical line with the given length
 // Same as "gotoxy (x, y); cvline (length);"
-// cvlinexy(byte register(X) x)
+// void cvlinexy(__register(X) char x, char y, char length)
 cvlinexy: {
     // gotoxy(x,y)
     lda #1
@@ -577,7 +582,7 @@ cvlinexy: {
     // }
     rts
 }
-// MakeTeeLine(byte register(A) Y)
+// void MakeTeeLine(__register(A) char Y)
 MakeTeeLine: {
     // cputcxy (0, Y, CH_LTEE)
     ldy #CH_LTEE
@@ -595,7 +600,7 @@ MakeTeeLine: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(9) str)
+// __zp(5) unsigned int strlen(__zp(9) char *str)
 strlen: {
     .label len = 5
     .label str = 9
@@ -626,7 +631,7 @@ strlen: {
 }
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-// cputsxy(byte register(X) x, byte register(A) y, const byte* zp(9) s)
+// void cputsxy(__register(X) char x, __register(A) char y, __zp(9) const char *s)
 cputsxy: {
     .label s = 9
     // gotoxy(x, y)
@@ -665,6 +670,7 @@ cputln: {
     rts
 }
 // Output a vertical line with the given length at the current cursor position.
+// void cvline(char length)
 cvline: {
     .const length = $17
     .label x = $1d
@@ -700,7 +706,7 @@ cvline: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp(9) s)
+// void cputs(__zp(9) const char *s)
 cputs: {
     .label s = 9
   __b1:
@@ -793,7 +799,7 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($20) destination, void* zp($b) source)
+// void * memcpy(__zp($20) void *destination, __zp($b) void *source, unsigned int num)
 memcpy: {
     .label src_end = $1e
     .label dst = $20
@@ -835,7 +841,7 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c)
+// void * memset(__zp($b) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = $20
     .label dst = $b

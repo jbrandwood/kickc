@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Char to fill with
@@ -60,7 +60,7 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp(4) size)
+// void * malloc(__zp(4) unsigned int size)
 malloc: {
     .label mem = 4
     .label size = 4
@@ -210,7 +210,7 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zp($f) screen)
+// void init_dist_screen(__zp($f) char *screen)
 init_dist_screen: {
     .label screen = $f
     .label screen_bottomline = $11
@@ -334,7 +334,7 @@ init_dist_screen: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zp($11) screen)
+// void init_angle_screen(__zp($11) char *screen)
 init_angle_screen: {
     .label __9 = $19
     .label screen = $11
@@ -458,9 +458,9 @@ init_squares: {
     .label squares = $17
     .label sqr = $15
     // malloc(NUM_SQUARES*sizeof(unsigned int))
-    lda #<NUM_SQUARES*SIZEOF_WORD
+    lda #<NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size
-    lda #>NUM_SQUARES*SIZEOF_WORD
+    lda #>NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size+1
     jsr malloc
     // malloc(NUM_SQUARES*sizeof(unsigned int))
@@ -488,7 +488,7 @@ init_squares: {
     lda.z sqr+1
     sta (squares),y
     // *squares++ = sqr;
-    lda #SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT
     clc
     adc.z squares
     sta.z squares
@@ -514,7 +514,7 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
+// __zp($21) unsigned int sqr(__register(A) char val)
 sqr: {
     .label return = $21
     .label return_1 = $1f
@@ -532,7 +532,7 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($21) val)
+// __register(A) char sqrt(__zp($21) unsigned int val)
 sqrt: {
     .label __1 = $19
     .label __2 = $19
@@ -563,7 +563,7 @@ sqrt: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($24) x, signed word zp($26) y)
+// __zp($19) unsigned int atan2_16(__zp($24) int x, __zp($26) int y)
 atan2_16: {
     .label __2 = $15
     .label __7 = $17
@@ -779,7 +779,7 @@ atan2_16: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($21) key, word* zp($19) items, byte register(X) num)
+// __zp($19) unsigned int * bsearch16u(__zp($21) unsigned int key, __zp($19) unsigned int *items, __register(X) char num)
 bsearch16u: {
     .label __2 = $19
     .label pivot = $24
@@ -805,7 +805,7 @@ bsearch16u: {
     bcc __b2
     sec
     lda.z __2
-    sbc #1*SIZEOF_WORD
+    sbc #1*SIZEOF_UNSIGNED_INT
     sta.z __2
     lda.z __2+1
     sbc #0
@@ -852,7 +852,7 @@ bsearch16u: {
     beq __b7
   !:
     // items = pivot+1
-    lda #1*SIZEOF_WORD
+    lda #1*SIZEOF_UNSIGNED_INT
     clc
     adc.z pivot
     sta.z items

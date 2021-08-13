@@ -330,7 +330,7 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($e) str)
+// void print_str(__zp($e) char *str)
 print_str: {
     .label str = $e
   __b1:
@@ -381,7 +381,7 @@ print_ln: {
     rts
 }
 // Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp(4) w)
+// void print_uint_decimal(__zp(4) unsigned int w)
 print_uint_decimal: {
     .label w = 4
     // utoa(w, decimal_digits, DECIMAL)
@@ -400,7 +400,7 @@ print_uint_decimal: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($15) str, byte register(X) c, word zp($e) num)
+// void * memset(__zp($15) void *str, __register(X) char c, __zp($e) unsigned int num)
 memset: {
     .label end = $e
     .label dst = $15
@@ -502,7 +502,7 @@ clock: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
-// div32u16u(dword zp($11) dividend)
+// __zp($17) unsigned long div32u16u(__zp($11) unsigned long dividend, unsigned int divisor)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
     .label quotient_hi = $1d
@@ -543,7 +543,7 @@ div32u16u: {
     rts
 }
 // Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($11) w)
+// void print_ulong_decimal(__zp($11) unsigned long w)
 print_ulong_decimal: {
     .label w = $11
     // ultoa(w, decimal_digits_long, DECIMAL)
@@ -558,7 +558,7 @@ print_ulong_decimal: {
     rts
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -579,7 +579,7 @@ print_char: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($15) value, byte* zp($e) buffer)
+// void utoa(__zp($15) unsigned int value, __zp($e) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
     .label value = $15
@@ -654,7 +654,7 @@ utoa: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($15) dividend, word zp($e) rem)
+// __zp($1b) unsigned int divr16u(__zp($15) unsigned int dividend, unsigned int divisor, __zp($e) unsigned int rem)
 divr16u: {
     .label rem = $e
     .label dividend = $15
@@ -722,7 +722,7 @@ divr16u: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($11) value, byte* zp($15) buffer)
+// void ultoa(__zp($11) unsigned long value, __zp($15) char *buffer, char radix)
 ultoa: {
     .const max_digits = $a
     .label value = $11
@@ -816,7 +816,7 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($e) buffer, word zp($15) value, word zp($1d) sub)
+// __zp($15) unsigned int utoa_append(__zp($e) char *buffer, __zp($15) unsigned int value, __zp($1d) unsigned int sub)
 utoa_append: {
     .label buffer = $e
     .label value = $15
@@ -860,7 +860,7 @@ utoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($15) buffer, dword zp($11) value, dword zp($1f) sub)
+// __zp($11) unsigned long ultoa_append(__zp($15) char *buffer, __zp($11) unsigned long value, __zp($1f) unsigned long sub)
 ultoa_append: {
     .label buffer = $15
     .label value = $11

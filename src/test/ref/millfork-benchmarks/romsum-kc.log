@@ -2475,14 +2475,14 @@ utoa: {
     // utoa::@7
   __b7:
     // [69] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b5
-    lda.z value
-    cmp.z digit_value
-    bcs __b5
+    lda.z digit_value+1
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b5
   !:
+    bcc __b5
     // [70] phi from utoa::@7 to utoa::@4 [phi:utoa::@7->utoa::@4]
   __b4_from___b7:
     // [70] phi utoa::buffer#14 = utoa::buffer#11 [phi:utoa::@7->utoa::@4#0] -- register_copy 
@@ -2642,14 +2642,14 @@ utoa_append: {
     // utoa_append::@1
   __b1:
     // [96] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     jmp __b3
     // utoa_append::@3
   __b3:
@@ -2828,6 +2828,8 @@ Relabelling long label __b2_from___b1 to __b3
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda.z digit_value+1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
 __constant char DIGITS[] = "0123456789abcdef"z
@@ -2969,7 +2971,7 @@ reg byte x [ print_uchar::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 99634
+Score: 99334
 
   // File Comments
 /// @file
@@ -3373,14 +3375,13 @@ utoa: {
     bne __b5
     // utoa::@7
     // [69] if(utoa::value#2>=utoa::digit_value#0) goto utoa::@5 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b5
-    lda.z value
-    cmp.z digit_value
-    bcs __b5
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b5
   !:
+    bcc __b5
     // [70] phi from utoa::@7 to utoa::@4 [phi:utoa::@7->utoa::@4]
     // [70] phi utoa::buffer#14 = utoa::buffer#11 [phi:utoa::@7->utoa::@4#0] -- register_copy 
     // [70] phi utoa::started#4 = utoa::started#2 [phi:utoa::@7->utoa::@4#1] -- register_copy 
@@ -3532,14 +3533,14 @@ utoa_append: {
   __b1:
     // while (value >= sub)
     // [96] if(utoa_append::value#2>=utoa_append::sub#0) goto utoa_append::@2 -- vwuz1_ge_vwuz2_then_la1 
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     // utoa_append::@3
     // *buffer = DIGITS[digit]
     // [97] *utoa_append::buffer#0 = DIGITS[utoa_append::digit#2] -- _deref_pbuz1=pbuc1_derefidx_vbuxx 

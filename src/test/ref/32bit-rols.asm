@@ -11,7 +11,8 @@
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
-  .const SIZEOF_BYTE = 1
+  .const STACK_BASE = $103
+  .const SIZEOF_CHAR = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// Color Ram
   .label COLORRAM = $d800
@@ -19,13 +20,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $13
+  .label conio_cursor_x = $11
   // The current cursor y-position
-  .label conio_cursor_y = $14
+  .label conio_cursor_y = $12
   // The current text cursor line start
-  .label conio_line_text = $15
+  .label conio_line_text = $13
   // The current color cursor line start
-  .label conio_line_color = $17
+  .label conio_line_color = $15
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -64,8 +65,39 @@ conio_c64_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda #LIGHT_BLUE
+    sta (conio_line_color),y
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
-    .label __19 = $19
+    .label __19 = $17
     .label i = 2
     lda #0
     sta.z i
@@ -162,15 +194,15 @@ main: {
 }
 .segment Code
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $22
-    .label __6 = $1e
-    .label __7 = $1e
-    .label line_offset = $1e
-    .label __8 = $20
-    .label __9 = $1e
+    .label __5 = $20
+    .label __6 = $1c
+    .label __7 = $1c
+    .label line_offset = $1c
+    .label __8 = $1e
+    .label __9 = $1c
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -236,9 +268,37 @@ gotoxy: {
     // }
     rts
 }
+// Print a newline
+cputln: {
+    // conio_line_text +=  CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = $c
+    .label line_text = $d
     .label line_cols = 4
     lda #<COLORRAM
     sta.z line_cols
@@ -306,15 +366,15 @@ clrscr: {
     iny
     jmp __b3
 }
-// rol_fixed(dword zp($1a) val)
+// void rol_fixed(__zp($18) unsigned long val)
 rol_fixed: {
-    .label val = $1a
+    .label val = $18
     // printf("rol fixed\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 0, val<<0)
     lda.z val
     sta.z printf_ulong.uvalue
@@ -330,18 +390,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 0, val<<0)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 0, val<<0)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 0, val<<0)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 1, val<<1)
     lda.z val
     asl
@@ -362,18 +422,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 1, val<<1)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 1, val<<1)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 1, val<<1)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 2, val<<2)
     lda.z val
     asl
@@ -398,18 +458,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 2, val<<2)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 2, val<<2)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 2, val<<2)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 3, val<<3)
     lda.z val
     asl
@@ -438,18 +498,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 3, val<<3)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 3, val<<3)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 3, val<<3)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 4, val<<4)
     lda.z val
     asl
@@ -482,18 +542,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 4, val<<4)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 4, val<<4)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 4, val<<4)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 5, val<<5)
     lda.z val
     asl
@@ -530,18 +590,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 5, val<<5)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 5, val<<5)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 5, val<<5)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 6, val<<6)
     lda.z val+3
     lsr
@@ -570,18 +630,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 6, val<<6)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 6, val<<6)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 6, val<<6)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 7, val<<7)
     lda.z val+3
     lsr
@@ -604,18 +664,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 7, val<<7)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 7, val<<7)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 7, val<<7)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 8, val<<8)
     lda #0
     sta.z printf_ulong.uvalue
@@ -632,18 +692,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 8, val<<8)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 8, val<<8)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 8, val<<8)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 9, val<<9)
     lda #0
     sta.z printf_ulong.uvalue
@@ -663,18 +723,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 9, val<<9)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 9, val<<9)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 9, val<<9)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 12, val<<12)
     ldy #$c
     lda.z val
@@ -702,18 +762,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 12, val<<12)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 12, val<<12)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 12, val<<12)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 15, val<<15)
     ldy #$f
     lda.z val
@@ -741,18 +801,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 15, val<<15)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 15, val<<15)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 15, val<<15)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 16, val<<16)
     lda #0
     sta.z printf_ulong.uvalue
@@ -768,18 +828,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 16, val<<16)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 16, val<<16)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 16, val<<16)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 17, val<<17)
     ldy #$11
     lda.z val
@@ -807,18 +867,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 17, val<<17)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 17, val<<17)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 17, val<<17)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 20, val<<20)
     ldy #$14
     lda.z val
@@ -846,18 +906,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 20, val<<20)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 20, val<<20)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 20, val<<20)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 23, val<<23)
     ldy #$17
     lda.z val
@@ -885,18 +945,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 23, val<<23)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 23, val<<23)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 23, val<<23)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 24, val<<24)
     lda #0
     sta.z printf_ulong.uvalue
@@ -911,18 +971,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 24, val<<24)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 24, val<<24)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 24, val<<24)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 25, val<<25)
     ldy #$19
     lda.z val
@@ -950,18 +1010,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 25, val<<25)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 25, val<<25)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 25, val<<25)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 28, val<<28)
     ldy #$1c
     lda.z val
@@ -989,18 +1049,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 28, val<<28)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 28, val<<28)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 28, val<<28)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 31, val<<31)
     ldy #$1f
     lda.z val
@@ -1028,18 +1088,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 31, val<<31)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 31, val<<31)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 31, val<<31)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 32, val<<32)
     lda #0
     sta.z printf_ulong.uvalue
@@ -1053,18 +1113,18 @@ rol_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 32, val<<32)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 32, val<<32)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 32, val<<32)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -1087,15 +1147,15 @@ kbhit: {
     // }
     rts
 }
-// ror_fixed(dword zp($1a) val)
+// void ror_fixed(__zp($18) unsigned long val)
 ror_fixed: {
-    .label val = $1a
+    .label val = $18
     // printf("ror fixed\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 0, val>>0)
     lda.z val
     sta.z printf_ulong.uvalue
@@ -1111,18 +1171,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 0, val>>0)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 0, val>>0)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 0, val>>0)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 1, val>>1)
     lda.z val+3
     lsr
@@ -1143,18 +1203,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 1, val>>1)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 1, val>>1)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 1, val>>1)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 2, val>>2)
     lda.z val+3
     lsr
@@ -1179,18 +1239,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 2, val>>2)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 2, val>>2)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 2, val>>2)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 3, val>>3)
     lda.z val+3
     lsr
@@ -1219,18 +1279,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 3, val>>3)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 3, val>>3)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 3, val>>3)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 4, val>>4)
     lda.z val+3
     lsr
@@ -1263,18 +1323,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 4, val>>4)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 4, val>>4)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 4, val>>4)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 5, val>>5)
     lda.z val+3
     lsr
@@ -1311,18 +1371,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 5, val>>5)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 5, val>>5)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 5, val>>5)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 6, val>>6)
     lda.z val
     asl
@@ -1351,18 +1411,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 6, val>>6)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 6, val>>6)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 6, val>>6)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 7, val>>7)
     lda.z val
     asl
@@ -1385,18 +1445,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 7, val>>7)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 7, val>>7)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 7, val>>7)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 8, val>>8)
     lda #0
     sta.z printf_ulong.uvalue+3
@@ -1413,18 +1473,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 8, val>>8)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 8, val>>8)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 8, val>>8)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 9, val>>9)
     lda #0
     sta.z printf_ulong.uvalue+3
@@ -1444,18 +1504,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 9, val>>9)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 9, val>>9)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 9, val>>9)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 12, val>>12)
     ldx #$c
     lda.z val
@@ -1483,18 +1543,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 12, val>>12)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 12, val>>12)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 12, val>>12)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 15, val>>15)
     ldx #$f
     lda.z val
@@ -1522,18 +1582,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 15, val>>15)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 15, val>>15)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 15, val>>15)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 16, val>>16)
     lda #0
     sta.z printf_ulong.uvalue+3
@@ -1549,18 +1609,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 16, val>>16)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 16, val>>16)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 16, val>>16)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 17, val>>17)
     ldx #$11
     lda.z val
@@ -1588,18 +1648,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 17, val>>17)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 17, val>>17)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 17, val>>17)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 20, val>>20)
     ldx #$14
     lda.z val
@@ -1627,18 +1687,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 20, val>>20)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 20, val>>20)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 20, val>>20)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 23, val>>23)
     ldx #$17
     lda.z val
@@ -1666,18 +1726,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 23, val>>23)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 23, val>>23)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 23, val>>23)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 24, val>>24)
     lda #0
     sta.z printf_ulong.uvalue+3
@@ -1692,18 +1752,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 24, val>>24)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 24, val>>24)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 24, val>>24)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 25, val>>25)
     ldx #$19
     lda.z val
@@ -1731,18 +1791,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 25, val>>25)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 25, val>>25)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 25, val>>25)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 28, val>>28)
     ldx #$1c
     lda.z val
@@ -1770,18 +1830,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 28, val>>28)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 28, val>>28)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 28, val>>28)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 31, val>>31)
     ldx #$1f
     lda.z val
@@ -1809,18 +1869,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 31, val>>31)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 31, val>>31)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 31, val>>31)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 32, val>>32)
     lda #0
     sta.z printf_ulong.uvalue+3
@@ -1834,18 +1894,18 @@ ror_fixed: {
     jsr printf_sint
     // printf("%2d: %08lx\n", 32, val>>32)
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2d: %08lx\n", 32, val>>32)
     jsr printf_ulong
     // printf("%2d: %08lx\n", 32, val>>32)
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -1853,22 +1913,22 @@ ror_fixed: {
     .byte 0
 }
 .segment Code
-// rol_var(dword zp($1a) val)
+// void rol_var(__zp($18) unsigned long val)
 rol_var: {
-    .label val = $1a
+    .label val = $18
     .label i = 3
     // printf("rol var\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     lda #0
     sta.z i
   __b1:
     // for(char i=0;i<sizeof(rols);i++)
     lda.z i
-    cmp #$15*SIZEOF_BYTE
+    cmp #$15*SIZEOF_CHAR
     bcc __b2
     // }
     rts
@@ -1899,18 +1959,18 @@ rol_var: {
     jsr printf_uchar
     // printf("%2u: %08lx\n", rols[i], val<<rols[i])
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2u: %08lx\n", rols[i], val<<rols[i])
     jsr printf_ulong
     // printf("%2u: %08lx\n", rols[i], val<<rols[i])
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // for(char i=0;i<sizeof(rols);i++)
     inc.z i
     jmp __b1
@@ -1919,22 +1979,22 @@ rol_var: {
     .byte 0
 }
 .segment Code
-// ror_var(dword zp($1a) val)
+// void ror_var(__zp($18) unsigned long val)
 ror_var: {
-    .label val = $1a
+    .label val = $18
     .label i = 3
     // printf("ror var\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     lda #0
     sta.z i
   __b1:
     // for(char i=0;i<sizeof(rols);i++)
     lda.z i
-    cmp #$15*SIZEOF_BYTE
+    cmp #$15*SIZEOF_CHAR
     bcc __b2
     // }
     rts
@@ -1965,18 +2025,18 @@ ror_var: {
     jsr printf_uchar
     // printf("%2u: %08lx\n", rols[i], val>>rols[i])
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("%2u: %08lx\n", rols[i], val>>rols[i])
     jsr printf_ulong
     // printf("%2u: %08lx\n", rols[i], val>>rols[i])
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // for(char i=0;i<sizeof(rols);i++)
     inc.z i
     jmp __b1
@@ -1985,10 +2045,72 @@ ror_var: {
     .byte 0
 }
 .segment Code
-// Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($c) s)
-cputs: {
-    .label s = $c
+// Scroll the entire screen if the cursor is beyond the last line
+cscroll: {
+    // if(conio_cursor_y==CONIO_HEIGHT)
+    lda #$19
+    cmp.z conio_cursor_y
+    bne __breturn
+    // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<DEFAULT_SCREEN
+    sta.z memcpy.destination
+    lda #>DEFAULT_SCREEN
+    sta.z memcpy.destination+1
+    lda #<DEFAULT_SCREEN+$28
+    sta.z memcpy.source
+    lda #>DEFAULT_SCREEN+$28
+    sta.z memcpy.source+1
+    jsr memcpy
+    // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<COLORRAM
+    sta.z memcpy.destination
+    lda #>COLORRAM
+    sta.z memcpy.destination+1
+    lda #<COLORRAM+$28
+    sta.z memcpy.source
+    lda #>COLORRAM+$28
+    sta.z memcpy.source+1
+    jsr memcpy
+    // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
+    ldx #' '
+    lda #<DEFAULT_SCREEN+$19*$28-$28
+    sta.z memset.str
+    lda #>DEFAULT_SCREEN+$19*$28-$28
+    sta.z memset.str+1
+    jsr memset
+    // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
+    ldx #LIGHT_BLUE
+    lda #<COLORRAM+$19*$28-$28
+    sta.z memset.str
+    lda #>COLORRAM+$19*$28-$28
+    sta.z memset.str+1
+    jsr memset
+    // conio_line_text -= CONIO_WIDTH
+    sec
+    lda.z conio_line_text
+    sbc #$28
+    sta.z conio_line_text
+    lda.z conio_line_text+1
+    sbc #0
+    sta.z conio_line_text+1
+    // conio_line_color -= CONIO_WIDTH
+    sec
+    lda.z conio_line_color
+    sbc #$28
+    sta.z conio_line_color
+    lda.z conio_line_color+1
+    sbc #0
+    sta.z conio_line_color+1
+    // conio_cursor_y--;
+    dec.z conio_cursor_y
+  __breturn:
+    // }
+    rts
+}
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp($d) const char *s)
+printf_str: {
+    .label s = $d
   __b1:
     // while(c=*s++)
     ldy #0
@@ -2002,12 +2124,14 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
+    // putc(c)
+    pha
     jsr cputc
+    pla
     jmp __b1
 }
 // Print a signed integer using a specific format
-// printf_sint(signed word zp(4) value)
+// void printf_sint(void (*putc)(char), __zp(4) int value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_sint: {
     .label value = 4
     // printf_buffer.sign = 0
@@ -2033,7 +2157,7 @@ printf_sint: {
   __b2:
     // utoa(uvalue, printf_buffer.digits, format.radix)
     jsr utoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
@@ -2045,7 +2169,7 @@ printf_sint: {
     rts
 }
 // Print an unsigned int using a specific format
-// printf_ulong(dword zp(6) uvalue)
+// void printf_ulong(void (*putc)(char), __zp(6) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_ulong: {
     .label uvalue = 6
     // printf_buffer.sign = format.sign_always?'+':0
@@ -2055,7 +2179,7 @@ printf_ulong: {
     // ultoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr ultoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
@@ -2067,7 +2191,7 @@ printf_ulong: {
     rts
 }
 // Print an unsigned char using a specific format
-// printf_uchar(byte register(X) uvalue)
+// void printf_uchar(void (*putc)(char), __register(X) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
@@ -2076,7 +2200,7 @@ printf_uchar: {
     // uctoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
@@ -2087,43 +2211,94 @@ printf_uchar: {
     // }
     rts
 }
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(A) c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldy.z conio_cursor_x
-    sta (conio_line_text),y
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #LIGHT_BLUE
-    sta (conio_line_color),y
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$28
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
+// Copy block of memory (forwards)
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// void * memcpy(__zp($24) void *destination, __zp($26) void *source, unsigned int num)
+memcpy: {
+    .label src_end = $22
+    .label dst = $24
+    .label src = $26
+    .label source = $26
+    .label destination = $24
+    // char* src_end = (char*)source+num
+    lda.z source
+    clc
+    adc #<$19*$28-$28
+    sta.z src_end
+    lda.z source+1
+    adc #>$19*$28-$28
+    sta.z src_end+1
+  __b1:
+    // while(src!=src_end)
+    lda.z src+1
+    cmp.z src_end+1
+    bne __b2
+    lda.z src
+    cmp.z src_end
+    bne __b2
     // }
     rts
-  __b1:
-    // cputln()
-    jsr cputln
+  __b2:
+    // *dst++ = *src++
+    ldy #0
+    lda (src),y
+    sta (dst),y
+    // *dst++ = *src++;
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    inc.z src
+    bne !+
+    inc.z src+1
+  !:
+    jmp __b1
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(__zp($26) void *str, __register(X) char c, unsigned int num)
+memset: {
+    .label end = $24
+    .label dst = $26
+    .label str = $26
+    // char* end = (char*)str + num
+    lda #$28
+    clc
+    adc.z str
+    sta.z end
+    lda #0
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
     rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(4) value, byte* zp($c) buffer)
+// void utoa(__zp(4) unsigned int value, __zp($24) char *buffer, char radix)
 utoa: {
-    .label digit_value = $24
-    .label buffer = $c
+    .label digit_value = $26
+    .label buffer = $24
     .label digit = $a
     .label value = 4
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -2192,11 +2367,11 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($b) buffer_sign, byte register(X) format_min_length, byte zp($a) format_zero_padding)
+// void printf_number_buffer(void (*putc)(char), __zp($b) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, char format_justify_left, char format_sign_always, __zp($a) char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
-    .label __19 = $24
+    .label __19 = $26
     .label buffer_sign = $b
-    .label padding = $e
+    .label padding = $c
     .label format_zero_padding = $a
     // if(format.min_length)
     cpx #0
@@ -2234,7 +2409,7 @@ printf_number_buffer: {
     bne __b7
     jmp __b2
   __b7:
-    // printf_padding(' ',(char)padding)
+    // printf_padding(putc, ' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #' '
@@ -2244,8 +2419,10 @@ printf_number_buffer: {
     // if(buffer.sign)
     lda.z buffer_sign
     beq __b3
-    // cputc(buffer.sign)
+    // putc(buffer.sign)
+    pha
     jsr cputc
+    pla
   __b3:
     // if(format.zero_padding && padding)
     lda.z format_zero_padding
@@ -2255,19 +2432,19 @@ printf_number_buffer: {
     bne __b9
     jmp __b4
   __b9:
-    // printf_padding('0',(char)padding)
+    // printf_padding(putc, '0',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #'0'
     sta.z printf_padding.pad
     jsr printf_padding
   __b4:
-    // cputs(buffer.digits)
+    // printf_str(putc, buffer.digits)
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
 }
@@ -2276,10 +2453,10 @@ printf_number_buffer: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(6) value, byte* zp($c) buffer)
+// void ultoa(__zp(6) unsigned long value, __zp($d) char *buffer, char radix)
 ultoa: {
-    .label digit_value = $26
-    .label buffer = $c
+    .label digit_value = $28
+    .label buffer = $d
     .label digit = $b
     .label value = 6
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -2366,11 +2543,11 @@ ultoa: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($11) buffer)
+// void uctoa(__register(X) char value, __zp($d) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $2a
-    .label buffer = $11
-    .label digit = $e
+    .label digit_value = $2c
+    .label buffer = $d
+    .label digit = $c
     .label started = $f
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
@@ -2427,34 +2604,6 @@ uctoa: {
     sta.z started
     jmp __b4
 }
-// Print a newline
-cputln: {
-    // conio_line_text +=  CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_text
-    sta.z conio_line_text
-    bcc !+
-    inc.z conio_line_text+1
-  !:
-    // conio_line_color += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_color
-    sta.z conio_line_color
-    bcc !+
-    inc.z conio_line_color+1
-  !:
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y++;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
-    // }
-    rts
-}
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
 // Each time the digit is increased sub is subtracted from value.
@@ -2463,11 +2612,11 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($c) buffer, word zp(4) value, word zp($24) sub)
+// __zp(4) unsigned int utoa_append(__zp($24) char *buffer, __zp(4) unsigned int value, __zp($26) unsigned int sub)
 utoa_append: {
-    .label buffer = $c
+    .label buffer = $24
     .label value = 4
-    .label sub = $24
+    .label sub = $26
     .label return = 4
     ldx #0
   __b1:
@@ -2500,11 +2649,11 @@ utoa_append: {
     jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($11) str)
+// __zp($26) unsigned int strlen(__zp($22) char *str)
 strlen: {
-    .label len = $24
-    .label str = $11
-    .label return = $24
+    .label len = $26
+    .label str = $22
+    .label return = $26
     lda #<0
     sta.z len
     sta.z len+1
@@ -2534,11 +2683,11 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($2a) pad, byte zp($f) length)
+// void printf_padding(void (*putc)(char), __zp($2c) char pad, __zp($f) char length)
 printf_padding: {
     .label i = $10
     .label length = $f
-    .label pad = $2a
+    .label pad = $2c
     lda #0
     sta.z i
   __b1:
@@ -2549,9 +2698,11 @@ printf_padding: {
     // }
     rts
   __b2:
-    // cputc(pad)
+    // putc(pad)
     lda.z pad
+    pha
     jsr cputc
+    pla
     // for(char i=0;i<length; i++)
     inc.z i
     jmp __b1
@@ -2564,11 +2715,11 @@ printf_padding: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($c) buffer, dword zp(6) value, dword zp($26) sub)
+// __zp(6) unsigned long ultoa_append(__zp($d) char *buffer, __zp(6) unsigned long value, __zp($28) unsigned long sub)
 ultoa_append: {
-    .label buffer = $c
+    .label buffer = $d
     .label value = 6
-    .label sub = $26
+    .label sub = $28
     .label return = 6
     ldx #0
   __b1:
@@ -2622,10 +2773,10 @@ ultoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($11) buffer, byte register(X) value, byte zp($2a) sub)
+// __register(X) char uctoa_append(__zp($d) char *buffer, __register(X) char value, __zp($2c) char sub)
 uctoa_append: {
-    .label buffer = $11
-    .label sub = $2a
+    .label buffer = $d
+    .label sub = $2c
     ldy #0
   __b1:
     // while (value >= sub)
@@ -2646,147 +2797,6 @@ uctoa_append: {
     sbc.z sub
     tax
     jmp __b1
-}
-// Scroll the entire screen if the cursor is beyond the last line
-cscroll: {
-    // if(conio_cursor_y==CONIO_HEIGHT)
-    lda #$19
-    cmp.z conio_cursor_y
-    bne __breturn
-    // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<DEFAULT_SCREEN
-    sta.z memcpy.destination
-    lda #>DEFAULT_SCREEN
-    sta.z memcpy.destination+1
-    lda #<DEFAULT_SCREEN+$28
-    sta.z memcpy.source
-    lda #>DEFAULT_SCREEN+$28
-    sta.z memcpy.source+1
-    jsr memcpy
-    // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<COLORRAM
-    sta.z memcpy.destination
-    lda #>COLORRAM
-    sta.z memcpy.destination+1
-    lda #<COLORRAM+$28
-    sta.z memcpy.source
-    lda #>COLORRAM+$28
-    sta.z memcpy.source+1
-    jsr memcpy
-    // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
-    ldx #' '
-    lda #<DEFAULT_SCREEN+$19*$28-$28
-    sta.z memset.str
-    lda #>DEFAULT_SCREEN+$19*$28-$28
-    sta.z memset.str+1
-    jsr memset
-    // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
-    ldx #LIGHT_BLUE
-    lda #<COLORRAM+$19*$28-$28
-    sta.z memset.str
-    lda #>COLORRAM+$19*$28-$28
-    sta.z memset.str+1
-    jsr memset
-    // conio_line_text -= CONIO_WIDTH
-    sec
-    lda.z conio_line_text
-    sbc #$28
-    sta.z conio_line_text
-    lda.z conio_line_text+1
-    sbc #0
-    sta.z conio_line_text+1
-    // conio_line_color -= CONIO_WIDTH
-    sec
-    lda.z conio_line_color
-    sbc #$28
-    sta.z conio_line_color
-    lda.z conio_line_color+1
-    sbc #0
-    sta.z conio_line_color+1
-    // conio_cursor_y--;
-    dec.z conio_cursor_y
-  __breturn:
-    // }
-    rts
-}
-// Copy block of memory (forwards)
-// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($2d) destination, void* zp($11) source)
-memcpy: {
-    .label src_end = $2b
-    .label dst = $2d
-    .label src = $11
-    .label source = $11
-    .label destination = $2d
-    // char* src_end = (char*)source+num
-    lda.z source
-    clc
-    adc #<$19*$28-$28
-    sta.z src_end
-    lda.z source+1
-    adc #>$19*$28-$28
-    sta.z src_end+1
-  __b1:
-    // while(src!=src_end)
-    lda.z src+1
-    cmp.z src_end+1
-    bne __b2
-    lda.z src
-    cmp.z src_end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst++ = *src++
-    ldy #0
-    lda (src),y
-    sta (dst),y
-    // *dst++ = *src++;
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    inc.z src
-    bne !+
-    inc.z src+1
-  !:
-    jmp __b1
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($11) str, byte register(X) c)
-memset: {
-    .label end = $2d
-    .label dst = $11
-    .label str = $11
-    // char* end = (char*)str + num
-    lda #$28
-    clc
-    adc.z str
-    sta.z end
-    lda #0
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
 }
 .segment Data
   // The digits used for numbers

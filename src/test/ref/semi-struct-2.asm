@@ -233,7 +233,7 @@ keyboard_init: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
+// __zp(2) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
     .label mb = 4
     .label res = 2
@@ -278,7 +278,7 @@ mul8u: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zp(4) entry, byte register(X) n)
+// void initEntry(__zp(4) char *entry, __register(X) char n)
 initEntry: {
     .label __1 = 8
     .label __3 = $10
@@ -428,7 +428,7 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(4) str)
+// void print_str(__zp(4) char *str)
 print_str: {
     .label str = 4
   __b1:
@@ -480,7 +480,7 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(6) entry)
+// void printEntry(__zp(6) char *entry)
 printEntry: {
     .label entry = 6
     lda.z print_line_cursor
@@ -806,6 +806,7 @@ printEntry: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// __register(A) char keyboard_key_pressed(char key)
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
@@ -817,6 +818,7 @@ keyboard_key_pressed: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -850,7 +852,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -864,7 +866,7 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(8) w)
+// void print_uint(__zp(8) unsigned int w)
 print_uint: {
     .label w = 8
     // print_uchar(BYTE1(w))
@@ -877,7 +879,7 @@ print_uint: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -904,6 +906,7 @@ print_uchar: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// __register(A) char keyboard_matrix_read(char rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx

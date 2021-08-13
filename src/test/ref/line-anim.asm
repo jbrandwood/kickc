@@ -113,6 +113,7 @@ main: {
     inc BORDER_COLOR
     jmp __b2
 }
+// void bitmap_init(char *bitmap)
 bitmap_init: {
     .label __7 = 9
     .label yoffs = 3
@@ -207,7 +208,7 @@ bitmap_clear: {
     rts
 }
 // Fill the screen with a specific char
-// screen_fill(byte* zp(3) screen)
+// void screen_fill(__zp(3) char *screen, char ch)
 screen_fill: {
     .const ch = $10
     .label screen = 3
@@ -243,7 +244,7 @@ screen_fill: {
     rts
 }
 // Initialize the points to be animated
-// point_init(byte zp(2) point_idx)
+// void point_init(__zp(2) char point_idx)
 point_init: {
     .label __5 = $c
     .label __6 = $e
@@ -415,7 +416,7 @@ point_init: {
     jmp abs16s2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(7) x, byte register(X) y)
+// void bitmap_plot(__zp(7) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $12
     .label x = 7
@@ -455,7 +456,7 @@ bitmap_plot: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp($12) divisor, signed word zp($10) rem)
+// __zp(5) int divr16s(int dividend, __zp($12) int divisor, __zp($10) int rem)
 divr16s: {
     .label remu = $10
     .label divisoru = $12
@@ -519,7 +520,7 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($a) dividend, word zp($12) divisor, word zp($10) rem)
+// __zp(5) unsigned int divr16u(__zp($a) unsigned int dividend, __zp($12) unsigned int divisor, __zp($10) unsigned int rem)
 divr16u: {
     .label rem = $10
     .label dividend = $a

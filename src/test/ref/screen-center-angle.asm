@@ -75,7 +75,7 @@ main: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp(5) charset)
+// void init_font_hex(__zp(5) char *charset)
 init_font_hex: {
     .label __0 = $1b
     .label idx = 8
@@ -210,6 +210,7 @@ clock_start: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
+// void init_angle_screen(char *screen)
 init_angle_screen: {
     .label __9 = $f
     .label xw = $17
@@ -352,7 +353,7 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($13) dw)
+// void print_ulong_at(__zp($13) unsigned long dw, char *at)
 print_ulong_at: {
     .label dw = $13
     // print_uint_at(WORD1(dw), at)
@@ -381,7 +382,7 @@ print_ulong_at: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($17) x, signed word zp($19) y)
+// __zp($f) unsigned int atan2_16(__zp($17) int x, __zp($19) int y)
 atan2_16: {
     .label __2 = 9
     .label __7 = $d
@@ -593,7 +594,7 @@ atan2_16: {
     jmp __b3
 }
 // Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp($d) w, byte* zp($f) at)
+// void print_uint_at(__zp($d) unsigned int w, __zp($f) char *at)
 print_uint_at: {
     .label w = $d
     .label at = $f
@@ -616,7 +617,7 @@ print_uint_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp($1b) b, byte* zp($f) at)
+// void print_uchar_at(__zp($1b) char b, __zp($f) char *at)
 print_uchar_at: {
     .label b = $1b
     .label at = $f
@@ -653,7 +654,7 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp($11) at)
+// void print_char_at(__register(X) char ch, __zp($11) char *at)
 print_char_at: {
     .label at = $11
     // *(at) = ch

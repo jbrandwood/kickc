@@ -466,14 +466,13 @@ utoa: {
     // if (started || value >= digit_value)
     cpx #0
     bne __b5
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne __b5
-    lda.z value
-    cmp.z digit_value
-    bcs __b5
+    cmp.z value+1
+    bne !+
+    lda.z digit_value
+    cmp.z value
+    beq __b5
   !:
+    bcc __b5
   __b4:
     // for( char digit=0; digit<max_digits-1; digit++ )
     inc.z digit
@@ -613,14 +612,14 @@ utoa_append: {
     ldx #0
   __b1:
     // while (value >= sub)
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
   !:
+    bcc __b2
     // *buffer = DIGITS[digit]
     lda DIGITS,x
     ldy #0

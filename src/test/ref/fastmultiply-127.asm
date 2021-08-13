@@ -158,7 +158,7 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// void print_str(__zp(6) char *str)
 print_str: {
     .label str = 6
   __b1:
@@ -204,7 +204,7 @@ print_ln: {
     // }
     rts
 }
-// print_mulf8u127(byte register(Y) a, byte zp(4) b)
+// void print_mulf8u127(__register(Y) char a, __zp(4) char b)
 print_mulf8u127: {
     .label c = 6
     .label b = 4
@@ -239,7 +239,7 @@ print_mulf8u127: {
     // }
     rts
 }
-// print_mulf8s127(signed byte zp(4) a, signed byte zp(5) b)
+// void print_mulf8s127(__zp(4) signed char a, __zp(5) signed char b)
 print_mulf8s127: {
     .label c = 6
     .label a = 4
@@ -272,6 +272,7 @@ print_mulf8s127: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -305,7 +306,7 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -318,7 +319,7 @@ print_char: {
     // }
     rts
 }
-// mulf8u127(byte register(X) a, byte register(A) b)
+// __zp(6) unsigned int mulf8u127(__register(X) char a, __register(A) char b)
 mulf8u127: {
     .label memA = $fc
     .label memB = $fd
@@ -358,7 +359,7 @@ mulf8u127: {
     rts
 }
 // Print a char as HEX
-// print_uchar(byte register(X) b)
+// void print_uchar(__register(X) char b)
 print_uchar: {
     // b>>4
     txa
@@ -381,7 +382,7 @@ print_uchar: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(6) w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
     .label w = 6
     // print_uchar(BYTE1(w))
@@ -393,7 +394,7 @@ print_uint: {
     // }
     rts
 }
-// mulf8s127(signed byte zp(4) a, signed byte register(Y) b)
+// __zp(6) int mulf8s127(__zp(4) signed char a, __register(Y) signed char b)
 mulf8s127: {
     .label __9 = 8
     .label __10 = $a
@@ -472,7 +473,7 @@ mulf8s127: {
     rts
 }
 // Print a signed char as HEX
-// print_schar(signed byte register(X) b)
+// void print_schar(__register(X) signed char b)
 print_schar: {
     // if(b<0)
     cpx #0
@@ -498,7 +499,7 @@ print_schar: {
     jmp __b2
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(6) w)
+// void print_sint(__zp(6) int w)
 print_sint: {
     .label w = 6
     // if(w<0)

@@ -1530,7 +1530,7 @@ gfx_init_plane_full: {
     rts
 }
 // Set the screen to print on. Also resets current line/char cursor.
-// print_set_screen(byte* zp($11) screen)
+// void print_set_screen(__zp($11) char *screen)
 print_set_screen: {
     .label screen = $11
     // print_screen = screen
@@ -1555,7 +1555,7 @@ print_cls: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp($b) str)
+// void print_str_lines(__zp($b) char *str)
 print_str_lines: {
     .label str = $b
     lda.z print_screen
@@ -1597,6 +1597,7 @@ print_str_lines: {
 }
 // Set the screen to use for the form.
 // screen is the start address of the screen to use
+// void form_set_screen(char *screen)
 form_set_screen: {
     .label line = $11
     ldx #0
@@ -1651,7 +1652,7 @@ form_render_values: {
 }
 // Render form preset name in the form
 // idx is the ID of the preset
-// render_preset_name(byte register(A) idx)
+// void render_preset_name(__register(A) char idx)
 render_preset_name: {
     .label name = $b
     // if(idx==0)
@@ -1919,7 +1920,7 @@ form_control: {
 }
 // Apply a form value preset to the form values
 // idx is the ID of the preset
-// apply_preset(byte register(A) idx)
+// void apply_preset(__register(A) char idx)
 apply_preset: {
     .label preset = $d
     // if(idx==0)
@@ -2038,7 +2039,7 @@ apply_preset: {
     jmp __b13
 }
 // Get plane address from a plane index (from the form)
-// get_plane(byte register(A) idx)
+// __zp(5) unsigned long get_plane(__register(A) char idx)
 get_plane: {
     .label return = 5
     // if(idx==0)
@@ -2241,7 +2242,7 @@ get_plane: {
     rts
 }
 // Get the VIC screen address from the screen index
-// get_VICII_screen(byte register(A) idx)
+// __zp($b) char * get_VICII_screen(__register(A) char idx)
 get_VICII_screen: {
     .label return = $b
     // if(idx==0)
@@ -2291,7 +2292,7 @@ get_VICII_screen: {
     rts
 }
 // Get the VIC charset/bitmap address from the index
-// get_VICII_charset(byte register(A) idx)
+// __zp($11) char * get_VICII_charset(__register(A) char idx)
 get_VICII_charset: {
     .label return = $11
     // if(idx==0)
@@ -2471,6 +2472,7 @@ keyboard_event_get: {
     rts
 }
 // Initialize bitmap plotting tables
+// void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = $25
     .label yoffs = $11
@@ -2532,6 +2534,7 @@ bitmap_init: {
 // Clear all graphics on the bitmap
 // bgcol - the background color to fill the screen with
 // fgcol - the foreground color to fill the screen with
+// void bitmap_clear(char bgcol, char fgcol)
 bitmap_clear: {
     .const col = WHITE*$10
     // memset(bitmap_screen, col, 1000uw)
@@ -2560,7 +2563,7 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($d) x1, word zp($f) y1, word zp($15) x2, word zp($17) y2)
+// void bitmap_line(__zp($d) unsigned int x1, __zp($f) unsigned int y1, __zp($15) unsigned int x2, __zp($17) unsigned int y2)
 bitmap_line: {
     .label dx = $1b
     .label dy = $19
@@ -2778,7 +2781,7 @@ bitmap_line: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
-// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
+// void dtvSetCpuBankSegment1(__register(A) char cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -2792,7 +2795,7 @@ dtvSetCpuBankSegment1: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zp(5) plane_addr, byte zp(9) fill)
+// void gfx_init_plane_fill(__zp(5) unsigned long plane_addr, __zp(9) char fill)
 gfx_init_plane_fill: {
     .label __0 = $1f
     .label __3 = $b
@@ -2873,7 +2876,7 @@ gfx_init_plane_fill: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($f) str, byte register(X) c, word zp($d) num)
+// void * memset(__zp($f) void *str, __register(X) char c, __zp($d) unsigned int num)
 memset: {
     .label str = $f
     .label end = $d
@@ -2917,7 +2920,7 @@ memset: {
     jmp __b2
 }
 // Print a single char
-// print_char(byte register(A) ch)
+// void print_char(__register(A) char ch)
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
@@ -2955,7 +2958,7 @@ print_ln: {
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
-// form_field_ptr(byte register(X) field_idx)
+// __zp($27) char * form_field_ptr(__register(X) char field_idx)
 form_field_ptr: {
     .label line = $23
     .label x = $25
@@ -2981,7 +2984,7 @@ form_field_ptr: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp($b) str, byte* zp($11) at)
+// void print_str_at(__zp($b) char *str, __zp($11) char *at)
 print_str_at: {
     .label at = $11
     .label str = $b
@@ -3018,7 +3021,7 @@ print_str_at: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(X) rowid)
+// __register(A) char keyboard_matrix_read(__register(X) char rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
@@ -3031,7 +3034,7 @@ keyboard_matrix_read: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zp($13) keycode)
+// __register(A) char keyboard_event_pressed(__zp($13) char keycode)
 keyboard_event_pressed: {
     .label row_bits = $26
     .label keycode = $13
@@ -3055,7 +3058,7 @@ keyboard_event_pressed: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp($19) w)
+// __zp($19) unsigned int abs_u16(__zp($19) unsigned int w)
 abs_u16: {
     .label w = $19
     .label return = $19
@@ -3081,7 +3084,7 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp($27) w)
+// __zp($23) unsigned int sgn_u16(__zp($27) unsigned int w)
 sgn_u16: {
     .label w = $27
     .label return = $23
@@ -3105,7 +3108,7 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($d) x, byte register(X) y)
+// void bitmap_plot(__zp($d) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $29
     .label plotter = $27

@@ -403,7 +403,7 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
-// memcpy_to_vram(byte register(X) vbank, void* zp($c) vdest, void* zp($e) src, word zp($10) num)
+// void memcpy_to_vram(__register(X) char vbank, __zp($c) void *vdest, __zp($e) void *src, __zp($10) unsigned int num)
 memcpy_to_vram: {
     .label end = $10
     .label s = $e

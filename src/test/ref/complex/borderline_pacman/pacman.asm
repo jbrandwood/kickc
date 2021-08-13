@@ -100,7 +100,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITE0_COLOR = $27
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITE1_COLOR = $28
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// Sprite X position register for sprite #0
   .label SPRITES_XPOS = $d000
   /// Sprite Y position register for sprite #0
@@ -2065,7 +2065,7 @@ pacman_sound_play: {
     sta SID+OFFSET_STRUCT_MOS6581_SID_CH1_CONTROL
     // if(++pacman_ch1_idx==sizeof(PACMAN_CH1_FREQ_HI))
     inc.z pacman_ch1_idx
-    lda #$16*SIZEOF_BYTE
+    lda #$16*SIZEOF_CHAR
     cmp.z pacman_ch1_idx
     bne __breturn
     // pacman_ch1_idx = 0
@@ -2815,7 +2815,7 @@ spawn_all: {
 // Get the open directions at a given (xtile, ytile) position
 // Returns the open DIRECTIONs as bits
 // If xtile of ytile is outside the legal range the empty tile (0) is returned
-// level_tile_directions(byte register(X) xtile, byte register(A) ytile)
+// __register(A) char level_tile_directions(__register(X) char xtile, __register(A) char ytile)
 level_tile_directions: {
     .label ytiles = $5b
     // if(xtile>49 || ytile>36)
@@ -2845,7 +2845,7 @@ level_tile_directions: {
 }
 // Choose the open direction that brings the ghost closest to the target
 // Uses Manhattan distance calculation
-// choose_direction(byte zp($4f) open_directions, byte register(Y) ghost_xtile, byte zp(4) ghost_ytile, byte register(X) target_xtile, byte zp(3) target_ytile)
+// __zp($53) char choose_direction(__zp($4f) char open_directions, __register(Y) char ghost_xtile, __zp(4) char ghost_ytile, __register(X) char target_xtile, __zp(3) char target_ytile)
 choose_direction: {
     .label open_directions = $4f
     .label ghost_ytile = 4
@@ -2968,7 +2968,7 @@ choose_direction: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($63) str, word zp($59) num)
+// void * memset(__zp($63) void *str, char c, __zp($59) unsigned int num)
 memset: {
     .label end = $59
     .label dst = $63
@@ -3013,7 +3013,7 @@ memset: {
 }
 // Decrunch crunched data using ByteBoozer
 // - crunched: Pointer to the start of the crunched data
-// byteboozer_decrunch(byte* zp($57) crunched)
+// void byteboozer_decrunch(__zp($57) char * volatile crunched)
 byteboozer_decrunch: {
     .label crunched = $57
     // asm
@@ -3049,7 +3049,7 @@ byteboozer_decrunch: {
 //         If <cc> is non-zero it holds the number of cycles used by the block of code.
 // <nn>* : some bytes of code. any number of bytes are allowed. This code uses exactly the number of cycles specified by <cc>
 // 0xff  : signals the end of a block.
-// merge_code(byte* zp($b) dest_code, byte* zp($63) raster_code, byte* zp($59) logic_code)
+// void merge_code(__zp($b) char *dest_code, __zp($63) char *raster_code, __zp($59) char *logic_code)
 merge_code: {
     // Cycle-count signalling the last block of the logic-code
     .const LOGIC_EXIT = 0
@@ -3603,6 +3603,7 @@ init_sprite_pointers: {
 .segment Code
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// void * memcpy(void *destination, void *source, unsigned int num)
 memcpy: {
     .label destination = INTRO_MUSIC_CRUNCHED_UPPER
     .label source = INTRO_MUSIC_CRUNCHED
@@ -3894,7 +3895,7 @@ pacman_sound_init: {
 // - xcol: x column (0-24). The x-column represents 8 bits of data, 4 mc pixels, 16 on-screen pixels (due to x-expanded sprites)
 // - ypos: y position (0-145). The y-position is a line on the screen. Since every second line is black each ypos represents a 2 pixel distance.
 // - pixels: The pixel data to set 
-// render(byte zp(5) xcol, byte zp(6) ypos, byte zp(8) pixels)
+// void render(__zp(5) char xcol, __zp(6) char ypos, __zp(8) char pixels)
 render: {
     .label render_index_xcol = $61
     .label canvas_offset = $b
@@ -3989,7 +3990,7 @@ render: {
 // Get the level tile at a given (xtile, ytile) position
 // Returns the TILE ID
 // If xtile of ytile is outside the legal range the empty tile (0) is returned
-// level_tile_get(byte register(X) xtile, byte register(A) ytile)
+// __register(A) char level_tile_get(__register(X) char xtile, __register(A) char ytile)
 level_tile_get: {
     .label ytiles = $61
     // if(xtile>49 || ytile>36)
@@ -4023,7 +4024,7 @@ level_tile_get: {
 // - ytile: The y tile position (0-37). Tile y position 0 is a special half-tile at the top of the screen.
 // - tile_left:  The left tile ID.
 // - tile_right:  The right tile ID.
-// render_tiles(byte zp(7) xcol, byte zp(6) ytile, byte register(X) tile_left, byte register(Y) tile_right)
+// void render_tiles(__zp(7) char xcol, __zp(6) char ytile, __register(X) char tile_left, __register(Y) char tile_right)
 render_tiles: {
     .label tile_left_pixels = $61
     .label tile_right_pixels = $63

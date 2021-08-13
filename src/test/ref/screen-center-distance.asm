@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   /// Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
   /// Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
@@ -75,7 +75,7 @@ main: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp(5) charset)
+// void init_font_hex(__zp(5) char *charset)
 init_font_hex: {
     .label __0 = $10
     .label idx = 9
@@ -210,6 +210,7 @@ clock_start: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
+// void init_dist_screen(char *screen)
 init_dist_screen: {
     .label yds = $11
     .label screen_topline = 3
@@ -360,7 +361,7 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($c) dw)
+// void print_ulong_at(__zp($c) unsigned long dw, char *at)
 print_ulong_at: {
     .label dw = $c
     // print_uint_at(WORD1(dw), at)
@@ -416,7 +417,7 @@ init_squares: {
     lda.z sqr+1
     sta (squares),y
     // *squares++ = sqr;
-    lda #SIZEOF_WORD
+    lda #SIZEOF_UNSIGNED_INT
     clc
     adc.z squares
     sta.z squares
@@ -442,7 +443,7 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
+// __zp($13) unsigned int sqr(__register(A) char val)
 sqr: {
     .label return = $13
     .label return_1 = $11
@@ -459,7 +460,7 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($13) val)
+// __register(A) char sqrt(__zp($13) unsigned int val)
 sqrt: {
     .label __1 = $a
     .label __2 = $a
@@ -484,7 +485,7 @@ sqrt: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp($13) w, byte* zp($a) at)
+// void print_uint_at(__zp($13) unsigned int w, __zp($a) char *at)
 print_uint_at: {
     .label w = $13
     .label at = $a
@@ -508,8 +509,9 @@ print_uint_at: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// void * malloc(unsigned int size)
 malloc: {
-    .const size = NUM_SQUARES*SIZEOF_WORD
+    .const size = NUM_SQUARES*SIZEOF_UNSIGNED_INT
     .label mem = HEAP_TOP-size
     .label return = mem
     rts
@@ -519,7 +521,7 @@ malloc: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($13) key, word* zp($a) items, byte register(X) num)
+// __zp($a) unsigned int * bsearch16u(__zp($13) unsigned int key, __zp($a) unsigned int *items, __register(X) char num)
 bsearch16u: {
     .label __2 = $a
     .label pivot = $15
@@ -549,7 +551,7 @@ bsearch16u: {
     bcc __b2
     sec
     lda.z __2
-    sbc #1*SIZEOF_WORD
+    sbc #1*SIZEOF_UNSIGNED_INT
     sta.z __2
     lda.z __2+1
     sbc #0
@@ -596,7 +598,7 @@ bsearch16u: {
     beq __b7
   !:
     // items = pivot+1
-    lda #1*SIZEOF_WORD
+    lda #1*SIZEOF_UNSIGNED_INT
     clc
     adc.z pivot
     sta.z items
@@ -613,7 +615,7 @@ bsearch16u: {
     jmp __b3
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp($10) b, byte* zp($a) at)
+// void print_uchar_at(__zp($10) char b, __zp($a) char *at)
 print_uchar_at: {
     .label b = $10
     .label at = $a
@@ -650,7 +652,7 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp($11) at)
+// void print_char_at(__register(X) char ch, __zp($11) char *at)
 print_char_at: {
     .label at = $11
     // *(at) = ch

@@ -189,7 +189,7 @@ main: {
     .byte 0
 }
 .segment Code
-// myprintf(byte* zp($15) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
+// char myprintf(char *dst, __zp($15) char *str, __zp(2) unsigned int w1, __zp(4) unsigned int w2, __zp(6) unsigned int w3)
 myprintf: {
     .label str = $15
     .label bDigits = $d
@@ -513,7 +513,7 @@ Print: {
     // }
     rts
 }
-// div10(word zp($13) val)
+// __zp(4) unsigned int div10(__zp($13) unsigned int val)
 div10: {
     .label __0 = $13
     .label __2 = $15
@@ -600,7 +600,7 @@ div10: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// div16u(word zp(2) dividend)
+// __zp(4) unsigned int div16u(__zp(2) unsigned int dividend, unsigned int divisor)
 div16u: {
     .label divisor = $a
     .label return = 4
@@ -615,7 +615,7 @@ div16u: {
     // }
     rts
 }
-// utoa(word zp($f) value, byte* zp($11) dst)
+// void utoa(__zp($f) unsigned int value, __zp($11) char *dst)
 utoa: {
     .label value = $f
     .label dst = $11
@@ -759,7 +759,7 @@ utoa: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($17) dividend, word zp($15) rem)
+// __zp(4) unsigned int divr16u(__zp($17) unsigned int dividend, unsigned int divisor, __zp($15) unsigned int rem)
 divr16u: {
     .label rem = $15
     .label dividend = $17
@@ -824,7 +824,7 @@ divr16u: {
     rts
 }
 // simple 'utoa' without using multiply or divide
-// append(byte* zp($11) dst, word zp($f) value, word zp($13) sub)
+// __zp($f) unsigned int append(__zp($11) char *dst, __zp($f) unsigned int value, __zp($13) unsigned int sub)
 append: {
     .label value = $f
     .label return = $f

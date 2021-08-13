@@ -19,10 +19,11 @@
   .const VERA_LAYER_HEIGHT_MASK = $c0
   .const VERA_LAYER_CONFIG_256C = 8
   .const VERA_LAYER_TILEBASE_MASK = $fc
-  .const SIZEOF_WORD = 2
+  .const SIZEOF_UNSIGNED_INT = 2
   .const SIZEOF_POINTER = 2
-  .const SIZEOF_DWORD = 4
+  .const SIZEOF_UNSIGNED_LONG = 4
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
+  .const STACK_BASE = $103
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
@@ -63,17 +64,16 @@
   /// Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
   .label VERA_L1_TILEBASE = $9f36
   // Variable holding the screen width;
-  .label conio_screen_width = $14
+  .label conio_screen_width = $16
   // Variable holding the screen height;
-  .label conio_screen_height = $15
+  .label conio_screen_height = $17
   // Variable holding the screen layer on the VERA card with which conio interacts;
-  .label conio_screen_layer = $16
+  .label conio_screen_layer = $18
   // Variables holding the current map width and map height of the layer.
-  .label conio_width = $17
-  .label conio_height = $19
-  .label conio_rowshift = $1b
-  .label conio_rowskip = $1c
-  .label CONIO_SCREEN_BANK = $26
+  .label conio_width = $19
+  .label conio_height = $1b
+  .label conio_rowshift = $1d
+  .label conio_rowskip = $1e
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -88,7 +88,8 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT = $27
+  .label CONIO_SCREEN_TEXT = 3
+  .label CONIO_SCREEN_BANK = 5
 .segment Code
 __start: {
     // __ma unsigned byte conio_screen_width = 0
@@ -157,24 +158,129 @@ conio_x16_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__zp($34) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    .label __16 = $20
+    .label c = $34
+    .label conio_addr = $35
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    sta.z c
+    // char color = vera_layer_get_color( conio_screen_layer)
+    ldx.z conio_screen_layer
+    jsr vera_layer_get_color
+    // char color = vera_layer_get_color( conio_screen_layer)
+    tax
+    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
+    lda.z conio_screen_layer
+    asl
+    tay
+    clc
+    lda.z CONIO_SCREEN_TEXT
+    adc conio_line_text,y
+    sta.z conio_addr
+    lda.z CONIO_SCREEN_TEXT+1
+    adc conio_line_text+1,y
+    sta.z conio_addr+1
+    // conio_cursor_x[conio_screen_layer] << 1
+    ldy.z conio_screen_layer
+    lda conio_cursor_x,y
+    asl
+    // conio_addr += conio_cursor_x[conio_screen_layer] << 1
+    clc
+    adc.z conio_addr
+    sta.z conio_addr
+    bcc !+
+    inc.z conio_addr+1
+  !:
+    // if(c=='\n')
+    lda #'\n'
+    cmp.z c
+    beq __b1
+    // *VERA_CTRL &= ~VERA_ADDRSEL
+    // Select DATA0
+    lda #VERA_ADDRSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // BYTE0(conio_addr)
+    lda.z conio_addr
+    // *VERA_ADDRX_L = BYTE0(conio_addr)
+    // Set address
+    sta VERA_ADDRX_L
+    // BYTE1(conio_addr)
+    lda.z conio_addr+1
+    // *VERA_ADDRX_M = BYTE1(conio_addr)
+    sta VERA_ADDRX_M
+    // CONIO_SCREEN_BANK | VERA_INC_1
+    lda #VERA_INC_1
+    ora.z CONIO_SCREEN_BANK
+    // *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1
+    sta VERA_ADDRX_H
+    // *VERA_DATA0 = c
+    lda.z c
+    sta VERA_DATA0
+    // *VERA_DATA0 = color
+    stx VERA_DATA0
+    // conio_cursor_x[conio_screen_layer]++;
+    ldx.z conio_screen_layer
+    inc conio_cursor_x,x
+    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
+    ldy.z conio_screen_layer
+    lda conio_scroll_enable,y
+    // if(scroll_enable)
+    cmp #0
+    bne __b5
+    // (unsigned int)conio_cursor_x[conio_screen_layer] == conio_width
+    lda conio_cursor_x,y
+    sta.z __16
+    lda #0
+    sta.z __16+1
+    // if((unsigned int)conio_cursor_x[conio_screen_layer] == conio_width)
+    cmp.z conio_width+1
+    bne __breturn
+    lda.z __16
+    cmp.z conio_width
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b5:
+    // if(conio_cursor_x[conio_screen_layer] == CONIO_WIDTH)
+    lda.z conio_screen_width
+    ldy.z conio_screen_layer
+    cmp conio_cursor_x,y
+    bne __breturn
+    // cputln()
+    jsr cputln
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 /// @file
 /// Functions for performing input and output.
 main: {
     //(byte)(((((word)<(>calcend)<<8)|>(<calcend))>>5)+((word)<(>calcend)<<3));
     .const borderbeg = $a000
     .const inc = $123
-    .label __1 = $1e
-    .label __4 = $22
-    .label __9 = $23
-    .label __13 = $f
-    .label __15 = $24
-    .label calcend = $1e
-    .label bankbeg = $22
-    .label bankend = $23
-    .label beg = $f
-    .label end = $24
-    .label num = 7
-    .label src1 = 3
+    .label __1 = $22
+    .label __4 = $26
+    .label __9 = $27
+    .label __13 = $12
+    .label __15 = $28
+    .label calcend = $22
+    .label bankbeg = $26
+    .label bankend = $27
+    .label beg = $12
+    .label end = $28
+    .label num = $a
+    .label src1 = 6
     lda #<$40*$40*2
     sta.z num
     lda #>$40*$40*2
@@ -318,10 +424,10 @@ main: {
     sta.z end+1
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda.z src1
     sta.z printf_ulong.uvalue
@@ -334,10 +440,10 @@ main: {
     jsr printf_ulong
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda.z num
     sta.z printf_ulong.uvalue
@@ -350,10 +456,10 @@ main: {
     jsr printf_ulong
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda.z calcend
     sta.z printf_ulong.uvalue
@@ -366,36 +472,36 @@ main: {
     jsr printf_ulong
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s3
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     ldx.z bankbeg
     jsr printf_uchar
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s4
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     ldx.z bankend
     jsr printf_uchar
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s5
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s5
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     jsr printf_uint
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s6
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s6
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda.z end
     sta.z printf_uint.uvalue
@@ -404,10 +510,10 @@ main: {
     jsr printf_uint
     // printf("cbeg=%x, add=%x, cend=%x, bbeg=%x, bend=%x, beg=%x, end=%x\n", calcbeg, num, calcend, bankbeg, bankend, beg, end )
     lda #<s7
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s7
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // num+=inc
     clc
     lda.z num
@@ -473,6 +579,7 @@ main: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_mode: The color mode, which can be 16 or 256.
+// void vera_layer_mode_text(char layer, unsigned long mapbase_address, unsigned long tilebase_address, unsigned int mapwidth, unsigned int mapheight, char tilewidth, char tileheight, unsigned int color_mode)
 vera_layer_mode_text: {
     .label layer = 1
     .label mapbase_address = 0
@@ -485,6 +592,7 @@ vera_layer_mode_text: {
     rts
 }
 // Return the current screen size.
+// void screensize(char *x, char *y)
 screensize: {
     .label x = conio_screen_width
     .label y = conio_screen_height
@@ -532,31 +640,20 @@ screensize: {
 }
 // Set the layer with which the conio will interact.
 // - layer: value of 0 or 1.
+// void screenlayer(char layer)
 screenlayer: {
     .const layer = 1
-    .label __2 = $29
-    .label __4 = $2b
-    .label __5 = $37
-    .label vera_layer_get_width1_config = $39
-    .label vera_layer_get_width1_return = $29
-    .label vera_layer_get_height1_config = $2d
-    .label vera_layer_get_height1_return = $37
+    .label __2 = $2c
+    .label __4 = $2e
+    .label __5 = $39
+    .label vera_layer_get_width1_config = $2a
+    .label vera_layer_get_width1_return = $2c
+    .label vera_layer_get_height1_config = $37
+    .label vera_layer_get_height1_return = $39
     // conio_screen_layer = layer
     lda #layer
     sta.z conio_screen_layer
-    // vera_layer_get_mapbase_bank(conio_screen_layer)
-    tax
-    jsr vera_layer_get_mapbase_bank
-    sta.z CONIO_SCREEN_BANK
-    // vera_layer_get_mapbase_offset(conio_screen_layer)
-    lda.z conio_screen_layer
-    jsr vera_layer_get_mapbase_offset
-    lda.z vera_layer_get_mapbase_offset.return
-    sta.z CONIO_SCREEN_TEXT
-    lda.z vera_layer_get_mapbase_offset.return+1
-    sta.z CONIO_SCREEN_TEXT+1
     // vera_layer_get_width(conio_screen_layer)
-    lda.z conio_screen_layer
     // byte* config = vera_layer_config[layer]
     asl
     tay
@@ -640,6 +737,7 @@ screenlayer: {
 // - color: a 4 bit value ( decimal between 0 and 15) when the VERA works in 16x16 color text mode.
 //   An 8 bit value (decimal between 0 and 255) when the VERA works in 256 text mode.
 //   Note that on the VERA, the transparent color has value 0.
+// char vera_layer_set_textcolor(char layer, char color)
 vera_layer_set_textcolor: {
     .const layer = 1
     // vera_layer_textcolor[layer] = color
@@ -653,6 +751,7 @@ vera_layer_set_textcolor: {
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
+// char vera_layer_set_backcolor(char layer, char color)
 vera_layer_set_backcolor: {
     .const layer = 1
     // vera_layer_backcolor[layer] = color
@@ -666,9 +765,9 @@ vera_layer_set_backcolor: {
 // - mapbase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-// vera_layer_set_mapbase(byte register(A) layer, byte register(X) mapbase)
+// void vera_layer_set_mapbase(__register(A) char layer, __register(X) char mapbase)
 vera_layer_set_mapbase: {
-    .label addr = $29
+    .label addr = $2a
     // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
@@ -684,10 +783,10 @@ vera_layer_set_mapbase: {
     rts
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) y)
+// void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __6 = $2b
-    .label line_offset = $2b
+    .label __6 = $2c
+    .label line_offset = $2c
     // if(y>CONIO_HEIGHT)
     lda.z conio_screen_height
     stx.z $ff
@@ -728,10 +827,88 @@ gotoxy: {
     // }
     rts
 }
-// Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($12) s)
-cputs: {
-    .label s = $12
+// Get the text and back color for text output in 16 color mode.
+// - layer: Value of 0 or 1.
+// - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
+//   This will only work when the VERA is in 16 color mode!
+//   Note that on the VERA, the transparent color has value 0.
+// __register(A) char vera_layer_get_color(__register(X) char layer)
+vera_layer_get_color: {
+    .label addr = $35
+    // byte* addr = vera_layer_config[layer]
+    txa
+    asl
+    tay
+    lda vera_layer_config,y
+    sta.z addr
+    lda vera_layer_config+1,y
+    sta.z addr+1
+    // *addr & VERA_LAYER_CONFIG_256C
+    lda #VERA_LAYER_CONFIG_256C
+    ldy #0
+    and (addr),y
+    // if( *addr & VERA_LAYER_CONFIG_256C )
+    cmp #0
+    bne __b1
+    // vera_layer_backcolor[layer] << 4
+    lda vera_layer_backcolor,x
+    asl
+    asl
+    asl
+    asl
+    // return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
+    ora vera_layer_textcolor,x
+    // }
+    rts
+  __b1:
+    // return (vera_layer_textcolor[layer]);
+    lda vera_layer_textcolor,x
+    rts
+}
+// Print a newline
+cputln: {
+    .label temp = $35
+    // word temp = conio_line_text[conio_screen_layer]
+    lda.z conio_screen_layer
+    asl
+    // TODO: This needs to be optimized! other variations don't compile because of sections not available!
+    tay
+    lda conio_line_text,y
+    sta.z temp
+    lda conio_line_text+1,y
+    sta.z temp+1
+    // temp += conio_rowskip
+    clc
+    lda.z temp
+    adc.z conio_rowskip
+    sta.z temp
+    lda.z temp+1
+    adc.z conio_rowskip+1
+    sta.z temp+1
+    // conio_line_text[conio_screen_layer] = temp
+    lda.z conio_screen_layer
+    asl
+    tay
+    lda.z temp
+    sta conio_line_text,y
+    lda.z temp+1
+    sta conio_line_text+1,y
+    // conio_cursor_x[conio_screen_layer] = 0
+    lda #0
+    ldy.z conio_screen_layer
+    sta conio_cursor_x,y
+    // conio_cursor_y[conio_screen_layer]++;
+    ldx.z conio_screen_layer
+    inc conio_cursor_y,x
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp($14) const char *s)
+printf_str: {
+    .label s = $14
   __b1:
     // while(c=*s++)
     ldy #0
@@ -745,15 +922,16 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
-    sta.z cputc.c
+    // putc(c)
+    pha
     jsr cputc
+    pla
     jmp __b1
 }
 // Print an unsigned int using a specific format
-// printf_ulong(dword zp($b) uvalue)
+// void printf_ulong(void (*putc)(char), __zp($e) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_ulong: {
-    .label uvalue = $b
+    .label uvalue = $e
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -761,7 +939,7 @@ printf_ulong: {
     // ultoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr ultoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
   // Print using format
     jsr printf_number_buffer
@@ -769,7 +947,7 @@ printf_ulong: {
     rts
 }
 // Print an unsigned char using a specific format
-// printf_uchar(byte register(X) uvalue)
+// void printf_uchar(void (*putc)(char), __register(X) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
@@ -778,7 +956,7 @@ printf_uchar: {
     // uctoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
   // Print using format
     jsr printf_number_buffer
@@ -786,9 +964,9 @@ printf_uchar: {
     rts
 }
 // Print an unsigned int using a specific format
-// printf_uint(word zp($f) uvalue)
+// void printf_uint(void (*putc)(char), __zp($12) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
-    .label uvalue = $f
+    .label uvalue = $12
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -796,7 +974,7 @@ printf_uint: {
     // utoa(uvalue, printf_buffer.digits, format.radix)
   // Format number into buffer
     jsr utoa
-    // printf_number_buffer(printf_buffer, format)
+    // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
   // Print using format
     jsr printf_number_buffer
@@ -820,6 +998,7 @@ printf_uint: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
+// void vera_layer_mode_tile(char layer, unsigned long mapbase_address, unsigned long tilebase_address, unsigned int mapwidth, unsigned int mapheight, char tilewidth, char tileheight, char color_depth)
 vera_layer_mode_tile: {
     .const mapbase = 0
     .label tilebase_address = vera_layer_mode_text.tilebase_address>>1
@@ -830,27 +1009,27 @@ vera_layer_mode_tile: {
     sta vera_layer_rowshift+vera_layer_mode_text.layer
     // vera_layer_rowskip[layer] = 256
     lda #<$100
-    sta vera_layer_rowskip+vera_layer_mode_text.layer*SIZEOF_WORD
+    sta vera_layer_rowskip+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT
     lda #>$100
-    sta vera_layer_rowskip+vera_layer_mode_text.layer*SIZEOF_WORD+1
+    sta vera_layer_rowskip+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT+1
     // vera_layer_set_config(layer, config)
     jsr vera_layer_set_config
     // vera_mapbase_offset[layer] = WORD0(mapbase_address)
     // mapbase
     lda #<0
-    sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
-    sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
+    sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT
+    sta vera_mapbase_offset+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT+1
     // vera_mapbase_bank[layer] = BYTE2(mapbase_address)
     sta vera_mapbase_bank+vera_layer_mode_text.layer
     // vera_mapbase_address[layer] = mapbase_address
     lda #<vera_layer_mode_text.mapbase_address
-    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_DWORD
+    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG
     lda #>vera_layer_mode_text.mapbase_address
-    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+1
+    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+1
     lda #<vera_layer_mode_text.mapbase_address>>$10
-    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+2
+    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+2
     lda #>vera_layer_mode_text.mapbase_address>>$10
-    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+3
+    sta vera_mapbase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+3
     // vera_layer_set_mapbase(layer,mapbase)
     ldx #mapbase
     lda #vera_layer_mode_text.layer
@@ -858,21 +1037,21 @@ vera_layer_mode_tile: {
     // vera_tilebase_offset[layer] = WORD0(tilebase_address)
     // tilebase
     lda #<vera_layer_mode_text.tilebase_address&$ffff
-    sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD
+    sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT
     lda #>vera_layer_mode_text.tilebase_address&$ffff
-    sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_WORD+1
+    sta vera_tilebase_offset+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_INT+1
     // vera_tilebase_bank[layer] = BYTE2(tilebase_address)
     lda #0
     sta vera_tilebase_bank+vera_layer_mode_text.layer
     // vera_tilebase_address[layer] = tilebase_address
     lda #<vera_layer_mode_text.tilebase_address
-    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_DWORD
+    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG
     lda #>vera_layer_mode_text.tilebase_address
-    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+1
+    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+1
     lda #<vera_layer_mode_text.tilebase_address>>$10
-    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+2
+    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+2
     lda #>vera_layer_mode_text.tilebase_address>>$10
-    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_DWORD+3
+    sta vera_tilebase_address+vera_layer_mode_text.layer*SIZEOF_UNSIGNED_LONG+3
     // vera_layer_set_tilebase(layer,tilebase)
     jsr vera_layer_set_tilebase
     // }
@@ -881,8 +1060,9 @@ vera_layer_mode_tile: {
 // Set the configuration of the layer text color mode.
 // - layer: Value of 0 or 1.
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
+// void vera_layer_set_text_color_mode(char layer, char color_mode)
 vera_layer_set_text_color_mode: {
-    .label addr = $2d
+    .label addr = $2e
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -899,36 +1079,10 @@ vera_layer_set_text_color_mode: {
     // }
     rts
 }
-// Get the map base bank of the tiles for the layer.
-// - layer: Value of 0 or 1.
-// - return: Bank in vera vram.
-// vera_layer_get_mapbase_bank(byte register(X) layer)
-vera_layer_get_mapbase_bank: {
-    // return vera_mapbase_bank[layer];
-    lda vera_mapbase_bank,x
-    // }
-    rts
-}
-// Get the map base lower 16-bit address (offset) of the tiles for the layer.
-// - layer: Value of 0 or 1.
-// - return: Offset in vera vram of the specified bank.
-// vera_layer_get_mapbase_offset(byte register(A) layer)
-vera_layer_get_mapbase_offset: {
-    .label return = $39
-    // return vera_mapbase_offset[layer];
-    asl
-    tay
-    lda vera_mapbase_offset,y
-    sta.z return
-    lda vera_mapbase_offset+1,y
-    sta.z return+1
-    // }
-    rts
-}
 // Get the bit shift value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Rowshift value to calculate fast from a y value to line offset in tile mode.
-// vera_layer_get_rowshift(byte register(X) layer)
+// __register(A) char vera_layer_get_rowshift(__register(X) char layer)
 vera_layer_get_rowshift: {
     // return vera_layer_rowshift[layer];
     lda vera_layer_rowshift,x
@@ -938,9 +1092,9 @@ vera_layer_get_rowshift: {
 // Get the value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Skip value to calculate fast from a y value to line offset in tile mode.
-// vera_layer_get_rowskip(byte register(A) layer)
+// __zp($2e) unsigned int vera_layer_get_rowskip(__register(A) char layer)
 vera_layer_get_rowskip: {
-    .label return = $2b
+    .label return = $2e
     // return vera_layer_rowskip[layer];
     asl
     tay
@@ -951,105 +1105,32 @@ vera_layer_get_rowskip: {
     // }
     rts
 }
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($11) c)
-cputc: {
-    .label __16 = $2f
-    .label conio_addr = $35
-    .label c = $11
-    // char color = vera_layer_get_color( conio_screen_layer)
-    ldx.z conio_screen_layer
-    jsr vera_layer_get_color
-    // char color = vera_layer_get_color( conio_screen_layer)
-    tax
-    // char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer]
-    lda.z conio_screen_layer
-    asl
-    tay
-    clc
-    lda.z CONIO_SCREEN_TEXT
-    adc conio_line_text,y
-    sta.z conio_addr
-    lda.z CONIO_SCREEN_TEXT+1
-    adc conio_line_text+1,y
-    sta.z conio_addr+1
-    // conio_cursor_x[conio_screen_layer] << 1
+// Scroll the entire screen if the cursor is beyond the last line
+cscroll: {
+    // if(conio_cursor_y[conio_screen_layer]>=CONIO_HEIGHT)
     ldy.z conio_screen_layer
-    lda conio_cursor_x,y
-    asl
-    // conio_addr += conio_cursor_x[conio_screen_layer] << 1
-    clc
-    adc.z conio_addr
-    sta.z conio_addr
-    bcc !+
-    inc.z conio_addr+1
-  !:
-    // if(c=='\n')
-    lda #'\n'
-    cmp.z c
-    beq __b1
-    // *VERA_CTRL &= ~VERA_ADDRSEL
-    // Select DATA0
-    lda #VERA_ADDRSEL^$ff
-    and VERA_CTRL
-    sta VERA_CTRL
-    // BYTE0(conio_addr)
-    lda.z conio_addr
-    // *VERA_ADDRX_L = BYTE0(conio_addr)
-    // Set address
-    sta VERA_ADDRX_L
-    // BYTE1(conio_addr)
-    lda.z conio_addr+1
-    // *VERA_ADDRX_M = BYTE1(conio_addr)
-    sta VERA_ADDRX_M
-    // CONIO_SCREEN_BANK | VERA_INC_1
-    lda #VERA_INC_1
-    ora.z CONIO_SCREEN_BANK
-    // *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1
-    sta VERA_ADDRX_H
-    // *VERA_DATA0 = c
-    lda.z c
-    sta VERA_DATA0
-    // *VERA_DATA0 = color
-    stx VERA_DATA0
-    // conio_cursor_x[conio_screen_layer]++;
-    ldx.z conio_screen_layer
-    inc conio_cursor_x,x
-    // byte scroll_enable = conio_scroll_enable[conio_screen_layer]
-    ldy.z conio_screen_layer
+    lda conio_cursor_y,y
+    cmp.z conio_screen_height
+    bcc __b3
+    // if(conio_scroll_enable[conio_screen_layer])
     lda conio_scroll_enable,y
-    // if(scroll_enable)
     cmp #0
-    bne __b5
-    // (unsigned int)conio_cursor_x[conio_screen_layer] == conio_width
-    lda conio_cursor_x,y
-    sta.z __16
-    lda #0
-    sta.z __16+1
-    // if((unsigned int)conio_cursor_x[conio_screen_layer] == conio_width)
-    cmp.z conio_width+1
-    bne __breturn
-    lda.z __16
-    cmp.z conio_width
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
+    bne __b4
+    // if(conio_cursor_y[conio_screen_layer]>=conio_height)
+    lda conio_cursor_y,y
+    ldy.z conio_height+1
+    bne __b3
+    cmp.z conio_height
+  __b3:
     // }
     rts
-  __b5:
-    // if(conio_cursor_x[conio_screen_layer] == CONIO_WIDTH)
-    lda.z conio_screen_width
-    ldy.z conio_screen_layer
-    cmp conio_cursor_x,y
-    bne __breturn
-    // cputln()
-    jsr cputln
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
+  __b4:
+    // insertup()
+    jsr insertup
+    // gotoxy( 0, CONIO_HEIGHT-1)
+    ldx.z conio_screen_height
+    dex
+    jsr gotoxy
     rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
@@ -1057,12 +1138,12 @@ cputc: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($b) value, byte* zp($12) buffer)
+// void ultoa(__zp($e) unsigned long value, __zp($14) char *buffer, char radix)
 ultoa: {
-    .label digit_value = $31
-    .label buffer = $12
-    .label digit = $11
-    .label value = $b
+    .label digit_value = $30
+    .label buffer = $14
+    .label digit = $3b
+    .label value = $e
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1144,21 +1225,22 @@ ultoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
+// void printf_number_buffer(void (*putc)(char), __register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     // if(buffer.sign)
     cmp #0
     beq __b2
-    // cputc(buffer.sign)
-    sta.z cputc.c
+    // putc(buffer.sign)
+    pha
     jsr cputc
+    pla
   __b2:
-    // cputs(buffer.digits)
+    // printf_str(putc, buffer.digits)
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
 }
@@ -1167,12 +1249,12 @@ printf_number_buffer: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($12) buffer)
+// void uctoa(__register(X) char value, __zp($14) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $3d
-    .label buffer = $12
-    .label digit = $11
-    .label started = $22
+    .label digit_value = $34
+    .label buffer = $14
+    .label digit = $3b
+    .label started = $26
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1233,12 +1315,12 @@ uctoa: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($f) value, byte* zp($12) buffer)
+// void utoa(__zp($12) unsigned int value, __zp($14) char *buffer, char radix)
 utoa: {
     .label digit_value = $35
-    .label buffer = $12
-    .label digit = $11
-    .label value = $f
+    .label buffer = $14
+    .label digit = $26
+    .label value = $12
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1306,6 +1388,7 @@ utoa: {
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
+// void vera_layer_set_config(char layer, char config)
 vera_layer_set_config: {
     .label addr = $37
     // byte* addr = vera_layer_config[layer]
@@ -1325,6 +1408,7 @@ vera_layer_set_config: {
 // - tilebase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:11 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// void vera_layer_set_tilebase(char layer, char tilebase)
 vera_layer_set_tilebase: {
     .label addr = $39
     // byte* addr = vera_layer_tilebase[layer]
@@ -1339,253 +1423,12 @@ vera_layer_set_tilebase: {
     // }
     rts
 }
-// Get the text and back color for text output in 16 color mode.
-// - layer: Value of 0 or 1.
-// - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
-//   This will only work when the VERA is in 16 color mode!
-//   Note that on the VERA, the transparent color has value 0.
-// vera_layer_get_color(byte register(X) layer)
-vera_layer_get_color: {
-    .label addr = $3b
-    // byte* addr = vera_layer_config[layer]
-    txa
-    asl
-    tay
-    lda vera_layer_config,y
-    sta.z addr
-    lda vera_layer_config+1,y
-    sta.z addr+1
-    // *addr & VERA_LAYER_CONFIG_256C
-    lda #VERA_LAYER_CONFIG_256C
-    ldy #0
-    and (addr),y
-    // if( *addr & VERA_LAYER_CONFIG_256C )
-    cmp #0
-    bne __b1
-    // vera_layer_backcolor[layer] << 4
-    lda vera_layer_backcolor,x
-    asl
-    asl
-    asl
-    asl
-    // return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
-    ora vera_layer_textcolor,x
-    // }
-    rts
-  __b1:
-    // return (vera_layer_textcolor[layer]);
-    lda vera_layer_textcolor,x
-    rts
-}
-// Print a newline
-cputln: {
-    .label temp = $3b
-    // word temp = conio_line_text[conio_screen_layer]
-    lda.z conio_screen_layer
-    asl
-    // TODO: This needs to be optimized! other variations don't compile because of sections not available!
-    tay
-    lda conio_line_text,y
-    sta.z temp
-    lda conio_line_text+1,y
-    sta.z temp+1
-    // temp += conio_rowskip
-    clc
-    lda.z temp
-    adc.z conio_rowskip
-    sta.z temp
-    lda.z temp+1
-    adc.z conio_rowskip+1
-    sta.z temp+1
-    // conio_line_text[conio_screen_layer] = temp
-    lda.z conio_screen_layer
-    asl
-    tay
-    lda.z temp
-    sta conio_line_text,y
-    lda.z temp+1
-    sta conio_line_text+1,y
-    // conio_cursor_x[conio_screen_layer] = 0
-    lda #0
-    ldy.z conio_screen_layer
-    sta conio_cursor_x,y
-    // conio_cursor_y[conio_screen_layer]++;
-    ldx.z conio_screen_layer
-    inc conio_cursor_y,x
-    // cscroll()
-    jsr cscroll
-    // }
-    rts
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($12) buffer, dword zp($b) value, dword zp($31) sub)
-ultoa_append: {
-    .label buffer = $12
-    .label value = $b
-    .label sub = $31
-    .label return = $b
-    ldx #0
-  __b1:
-    // while (value >= sub)
-    lda.z value+3
-    cmp.z sub+3
-    bcc !+
-    bne __b2
-    lda.z value+2
-    cmp.z sub+2
-    bcc !+
-    bne __b2
-    lda.z value+1
-    cmp.z sub+1
-    bcc !+
-    bne __b2
-    lda.z value
-    cmp.z sub
-    bcs __b2
-  !:
-    // *buffer = DIGITS[digit]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    inx
-    // value -= sub
-    lda.z value
-    sec
-    sbc.z sub
-    sta.z value
-    lda.z value+1
-    sbc.z sub+1
-    sta.z value+1
-    lda.z value+2
-    sbc.z sub+2
-    sta.z value+2
-    lda.z value+3
-    sbc.z sub+3
-    sta.z value+3
-    jmp __b1
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($12) buffer, byte register(X) value, byte zp($3d) sub)
-uctoa_append: {
-    .label buffer = $12
-    .label sub = $3d
-    ldy #0
-  __b1:
-    // while (value >= sub)
-    cpx.z sub
-    bcs __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,y
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    iny
-    // value -= sub
-    txa
-    sec
-    sbc.z sub
-    tax
-    jmp __b1
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($12) buffer, word zp($f) value, word zp($35) sub)
-utoa_append: {
-    .label buffer = $12
-    .label value = $f
-    .label sub = $35
-    .label return = $f
-    ldx #0
-  __b1:
-    // while (value >= sub)
-    lda.z sub+1
-    cmp.z value+1
-    bne !+
-    lda.z sub
-    cmp.z value
-    beq __b2
-  !:
-    bcc __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    inx
-    // value -= sub
-    lda.z value
-    sec
-    sbc.z sub
-    sta.z value
-    lda.z value+1
-    sbc.z sub+1
-    sta.z value+1
-    jmp __b1
-}
-// Scroll the entire screen if the cursor is beyond the last line
-cscroll: {
-    // if(conio_cursor_y[conio_screen_layer]>=CONIO_HEIGHT)
-    ldy.z conio_screen_layer
-    lda conio_cursor_y,y
-    cmp.z conio_screen_height
-    bcc __b3
-    // if(conio_scroll_enable[conio_screen_layer])
-    lda conio_scroll_enable,y
-    cmp #0
-    bne __b4
-    // if(conio_cursor_y[conio_screen_layer]>=conio_height)
-    lda conio_cursor_y,y
-    ldy.z conio_height+1
-    bne __b3
-    cmp.z conio_height
-  __b3:
-    // }
-    rts
-  __b4:
-    // insertup()
-    jsr insertup
-    // gotoxy( 0, CONIO_HEIGHT-1)
-    ldx.z conio_screen_height
-    dex
-    jsr gotoxy
-    rts
-}
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $3d
-    .label width = $3e
-    .label line = $3f
-    .label start = $3f
+    .label cy = $3b
+    .label width = $3c
+    .label line = $3d
+    .label start = $3d
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
@@ -1649,9 +1492,144 @@ insertup: {
     inx
     jmp __b1
 }
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// __zp($e) unsigned long ultoa_append(__zp($14) char *buffer, __zp($e) unsigned long value, __zp($30) unsigned long sub)
+ultoa_append: {
+    .label buffer = $14
+    .label value = $e
+    .label sub = $30
+    .label return = $e
+    ldx #0
+  __b1:
+    // while (value >= sub)
+    lda.z value+3
+    cmp.z sub+3
+    bcc !+
+    bne __b2
+    lda.z value+2
+    cmp.z sub+2
+    bcc !+
+    bne __b2
+    lda.z value+1
+    cmp.z sub+1
+    bcc !+
+    bne __b2
+    lda.z value
+    cmp.z sub
+    bcs __b2
+  !:
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
+    lda.z value+2
+    sbc.z sub+2
+    sta.z value+2
+    lda.z value+3
+    sbc.z sub+3
+    sta.z value+3
+    jmp __b1
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// __register(X) char uctoa_append(__zp($14) char *buffer, __register(X) char value, __zp($34) char sub)
+uctoa_append: {
+    .label buffer = $14
+    .label sub = $34
+    ldy #0
+  __b1:
+    // while (value >= sub)
+    cpx.z sub
+    bcs __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,y
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    iny
+    // value -= sub
+    txa
+    sec
+    sbc.z sub
+    tax
+    jmp __b1
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// __zp($12) unsigned int utoa_append(__zp($14) char *buffer, __zp($12) unsigned int value, __zp($35) unsigned int sub)
+utoa_append: {
+    .label buffer = $14
+    .label value = $12
+    .label sub = $35
+    .label return = $12
+    ldx #0
+  __b1:
+    // while (value >= sub)
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
+  !:
+    bcc __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
+    jmp __b1
+}
 clearline: {
-    .label addr = $43
-    .label c = $2f
+    .label addr = $41
+    .label c = $20
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -1726,12 +1704,12 @@ clearline: {
 // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
 // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 // - num: The number of bytes to copy
-// memcpy_in_vram(void* zp($3f) dest, byte* zp($43) src, word zp($41) num)
+// void memcpy_in_vram(char dest_bank, __zp($3d) void *dest, char dest_increment, char src_bank, __zp($41) char *src, char src_increment, __zp($3f) unsigned int num)
 memcpy_in_vram: {
-    .label i = $2f
-    .label dest = $3f
-    .label src = $43
-    .label num = $41
+    .label i = $20
+    .label dest = $3d
+    .label src = $41
+    .label num = $3f
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

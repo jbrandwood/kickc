@@ -89,6 +89,7 @@ main: {
     jmp __b4
 }
 // Make a plasma-friendly charset where the chars are randomly filled
+// void makecharset(char *charset)
 makecharset: {
     .label __7 = $11
     .label __10 = $f
@@ -217,6 +218,7 @@ makecharset: {
 }
 .segment Code
 // Render plasma to the passed screen
+// void doplasma(char *screen)
 doplasma: {
     .label c1a = 9
     .label c1b = $a
@@ -475,6 +477,7 @@ print_cls: {
     rts
 }
 // Print a single char
+// void print_char(char ch)
 print_char: {
     .const ch = '.'
     // *(print_char_cursor++) = ch
@@ -490,6 +493,7 @@ print_char: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// void * memset(void *str, char c, unsigned int num)
 memset: {
     .const c = ' '
     .const num = $3e8

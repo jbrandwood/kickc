@@ -356,7 +356,7 @@ gen_sprites: {
 }
 .segment Code
 // Initialize the PETSCII progress bar
-// progress_init(byte* zp($a) line)
+// void progress_init(__zp($a) char *line)
 progress_init: {
     .label line = $a
     // progress_cursor = line
@@ -368,7 +368,7 @@ progress_init: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sine
 // - max is the maximum value of the generated sine
-// gen_sintab(byte* zp($13) sintab, byte zp(4) length, byte zp(3) min, byte register(X) max)
+// void gen_sintab(__zp($13) char *sintab, __zp(4) char length, __zp(3) char min, __register(X) char max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -524,7 +524,7 @@ gen_sintab: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(X) ch, byte* zp($a) sprite)
+// void gen_chargen_sprite(__register(X) char ch, __zp($a) char *sprite)
 gen_chargen_sprite: {
     .label __0 = $15
     .label __14 = $15
@@ -653,7 +653,7 @@ gen_chargen_sprite: {
 }
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
-// setFAC(word zp($f) w)
+// void setFAC(__zp($f) unsigned int w)
 setFAC: {
     .label prepareMEM1_mem = $f
     .label w = $f
@@ -683,7 +683,7 @@ setARGtoFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zp($f) mem)
+// void setMEMtoFAC(__zp($f) char *mem)
 setMEMtoFAC: {
     .label mem = $f
     // BYTE0(mem)
@@ -712,7 +712,7 @@ subFACfromARG: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 chars from memory
-// divMEMbyFAC(byte* zp($15) mem)
+// void divMEMbyFAC(__zp($15) char *mem)
 divMEMbyFAC: {
     .label mem = $15
     // BYTE0(mem)
@@ -733,6 +733,7 @@ divMEMbyFAC: {
 // FAC = MEM+FAC
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 chars from memory
+// void addMEMtoFAC(char *mem)
 addMEMtoFAC: {
     // *memLo = BYTE0(mem)
     lda #<gen_sintab.f_min
@@ -750,7 +751,7 @@ addMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 chars from memory
-// mulFACbyMEM(byte* zp($15) mem)
+// void mulFACbyMEM(__zp($15) char *mem)
 mulFACbyMEM: {
     .label mem = $15
     // BYTE0(mem)

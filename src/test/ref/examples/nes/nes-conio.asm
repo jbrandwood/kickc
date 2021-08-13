@@ -55,7 +55,7 @@
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
   .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $2000-$23bf	$03c0	Name table 0
   .label PPU_NAME_TABLE_0 = $2000
   /// $23c0-$23ff	$0040	Attribute table 0
@@ -255,9 +255,9 @@ main: {
     lda PPU_PPUSTATUS
     // ppuDataTransfer(PPU_PALETTE, PALETTE, sizeof(PALETTE))
   // Transfer the palette
-    lda #<$20*SIZEOF_BYTE
+    lda #<$20*SIZEOF_CHAR
     sta.z ppuDataTransfer.size
-    lda #>$20*SIZEOF_BYTE
+    lda #>$20*SIZEOF_CHAR
     sta.z ppuDataTransfer.size+1
     lda #<PALETTE
     sta.z ppuDataTransfer.cpuData
@@ -415,7 +415,7 @@ readJoy1: {
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
-// ppuDataTransfer(void* zp($b) ppuData, void* zp($d) cpuData, word zp($1b) size)
+// void ppuDataTransfer(__zp($b) void * const ppuData, __zp($d) void * const cpuData, __zp($1b) unsigned int size)
 ppuDataTransfer: {
     .label ppuDataPrepare1_ppuData = $b
     .label cpuSrc = $d
@@ -467,7 +467,7 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp($d) size)
+// void ppuDataFill(void * const ppuData, __register(X) char val, __zp($d) unsigned int size)
 ppuDataFill: {
     .label ppuDataPrepare1_ppuData = $b
     .label i = $1b
@@ -537,7 +537,7 @@ clrscr: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp(7) buffer)
+// void uctoa(__register(X) char value, __zp(7) char *buffer, char radix)
 uctoa: {
     .const max_digits = 2
     .label digit_value = $16
@@ -601,7 +601,7 @@ uctoa: {
 }
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-// cputsxy(byte register(X) x, byte register(A) y)
+// void cputsxy(__register(X) char x, __register(A) char y, const char *s)
 cputsxy: {
     // gotoxy(x, y)
     jsr gotoxy
@@ -612,7 +612,7 @@ cputsxy: {
 }
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
-// cputcxy(byte register(X) x, byte register(A) y, byte register(Y) c)
+// void cputcxy(__register(X) char x, __register(A) char y, __register(Y) char c)
 cputcxy: {
     // gotoxy(x, y)
     jsr gotoxy
@@ -631,7 +631,7 @@ cputcxy: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp(7) buffer, byte register(X) value, byte zp($16) sub)
+// __register(X) char uctoa_append(__zp(7) char *buffer, __register(X) char value, __zp($16) char sub)
 uctoa_append: {
     .label buffer = 7
     .label sub = $16
@@ -657,7 +657,7 @@ uctoa_append: {
     jmp __b1
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) x, byte register(A) y)
+// void gotoxy(__register(X) char x, __register(A) char y)
 gotoxy: {
     .label __5 = $17
     .label __6 = $17
@@ -707,7 +707,7 @@ gotoxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(const byte* zp($17) s)
+// void cputs(__zp($17) const char *s)
 cputs: {
     .label s = $17
     lda #<num_buffer
@@ -734,7 +734,7 @@ cputs: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte register(X) c)
+// void cputc(__register(X) char c)
 cputc: {
     // if(c=='\n')
     cpx #'\n'
@@ -768,7 +768,7 @@ cputc: {
 // Set one byte in PPU memory
 // - ppuData : Pointer in the PPU memory
 // - val : The value to set
-// ppuDataSet(byte* zp($19) ppuData, byte register(A) val)
+// void ppuDataSet(__zp($19) char * const ppuData, __register(A) char val)
 ppuDataSet: {
     .label ppuData = $19
     // BYTE1(ppuData)
@@ -896,7 +896,7 @@ cscroll: {
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFetch(void* zp($1b) ppuData)
+// void ppuDataFetch(void * const cpuData, __zp($1b) void * const ppuData, unsigned int size)
 ppuDataFetch: {
     .const size = $20
     .label cpuData = conio_cscroll_buffer

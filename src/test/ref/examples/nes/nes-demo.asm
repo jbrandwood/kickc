@@ -60,7 +60,7 @@
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
   .const OFFSET_STRUCT_SPRITEDATA_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
-  .const SIZEOF_BYTE = 1
+  .const SIZEOF_CHAR = 1
   /// $2000-$23bf	$03c0	Name table 0
   .label PPU_NAME_TABLE_0 = $2000
   /// $23c0-$23ff	$0040	Attribute table 0
@@ -357,8 +357,9 @@ readJoy1: {
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
+// void ppuDataTransfer(void * const ppuData, void * const cpuData, unsigned int size)
 ppuDataTransfer: {
-    .const size = $20*SIZEOF_BYTE
+    .const size = $20*SIZEOF_CHAR
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
@@ -410,7 +411,7 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp(6) size)
+// void ppuDataFill(void * const ppuData, __register(X) char val, __zp(6) unsigned int size)
 ppuDataFill: {
     .label ppuDataPrepare1_ppuData = 4
     .label i = 2
@@ -452,7 +453,7 @@ ppuDataFill: {
 // Transfer a 2x2 tile into the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - tile : The tile to transfer
-// ppuDataPutTile(byte* zp(2) ppuData, byte* zp(4) tile)
+// void ppuDataPutTile(__zp(2) char * const ppuData, __zp(4) char *tile)
 ppuDataPutTile: {
     .label ppuDataPrepare2_ppuData = 2
     .label ppuData = 2
@@ -506,6 +507,7 @@ ppuDataPutTile: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// void * memcpy(void *destination, void *source, unsigned int num)
 memcpy: {
     .const num = 8*SIZEOF_STRUCT_SPRITEDATA
     .label destination = SPRITE_BUFFER

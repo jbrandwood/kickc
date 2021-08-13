@@ -113,7 +113,7 @@ main: {
   !:
     jmp __b4
 }
-// textbox(byte zp(2) x1, byte zp(5) y1, byte zp(6) x2, byte zp(7) y2, byte* zp(8) text)
+// void textbox(__zp(2) char x1, __zp(5) char y1, __zp(6) char x2, __zp(7) char y2, __zp(8) char *text)
 textbox: {
     .label __8 = $10
     .label __17 = $12
@@ -307,7 +307,7 @@ textbox: {
     inx
     jmp __b3
 }
-// draw_window(byte zp(2) x1, byte zp(5) y1, byte zp(6) x2, byte zp(7) y2)
+// void draw_window(__zp(2) char x1, __zp(5) char y1, __zp(6) char x2, __zp(7) char y2)
 draw_window: {
     .label __2 = $17
     .label __3 = $13

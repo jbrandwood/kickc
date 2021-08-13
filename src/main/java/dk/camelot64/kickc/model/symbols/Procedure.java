@@ -46,6 +46,7 @@ public class Procedure extends Scope {
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
          Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME,
          Pass1PrintfIntrinsicRewrite.INTRINSIC_SNPRINTF_NAME,
+         Pass1PrintfIntrinsicRewrite.INTRINSIC_SPRINTF_NAME,
          Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 

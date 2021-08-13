@@ -3,4 +3,4 @@
 
 #include <stddef.h>
 #include <printf.h>
-#include <snprintf.h>
+#include <sprintf.h>

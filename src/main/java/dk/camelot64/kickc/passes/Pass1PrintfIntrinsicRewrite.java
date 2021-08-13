@@ -26,8 +26,11 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    /** The printf procedure name. */
    public static final String INTRINSIC_PRINTF_NAME = "printf";
 
-   /** The printf procedure name. */
+   /** The snprintf procedure name. */
    public static final String INTRINSIC_SNPRINTF_NAME = "snprintf";
+
+   /** The sprintf procedure name. */
+   public static final String INTRINSIC_SPRINTF_NAME = "sprintf";
 
    /** The printf routine used to print a raw char */
    private static final String CPUTC = "cputc";
@@ -89,6 +92,16 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   final RValue format = getParameterValue(callParameters, 2, call);
                   List<RValue> formatParameters = callParameters.subList(3, callParameters.size());
                   addPrintfCall(SNPRINTF_INIT, Arrays.asList(buffer, capacity), stmtIt, call);
+                  addPrintfFormatStatements(stmtIt, call, format, formatParameters, SNPUTC);
+                  addPrintfCall(SNPUTC, Arrays.asList(new ConstantInteger(0L, SymbolType.BYTE)), stmtIt, call);
+               } else if(((StatementCall) statement).getProcedureName().equals(INTRINSIC_SPRINTF_NAME)) {
+                  StatementCall call = (StatementCall) statement;
+                  stmtIt.remove();
+                  List<RValue> callParameters = call.getParameters();
+                  final RValue buffer = getParameterValue(callParameters, 0, call);
+                  final RValue format = getParameterValue(callParameters, 1, call);
+                  List<RValue> formatParameters = callParameters.subList(2, callParameters.size());
+                  addPrintfCall(SNPRINTF_INIT, Arrays.asList(buffer, new ConstantInteger(65535L, SymbolType.WORD)), stmtIt, call);
                   addPrintfFormatStatements(stmtIt, call, format, formatParameters, SNPUTC);
                   addPrintfCall(SNPUTC, Arrays.asList(new ConstantInteger(0L, SymbolType.BYTE)), stmtIt, call);
                }

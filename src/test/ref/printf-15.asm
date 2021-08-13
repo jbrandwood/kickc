@@ -9,6 +9,7 @@
 .segment Basic
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
+  .const STACK_BASE = $103
   /// Color Ram
   .label COLORRAM = $d800
   /// Default address of screen character matrix
@@ -60,21 +61,52 @@ conio_c64_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda #LIGHT_BLUE
+    sta (conio_line_color),y
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
     // clrscr()
     jsr clrscr
     // printf("Lone 1\n")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("Lone 2\n")
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -159,6 +191,34 @@ gotoxy: {
     // }
     rts
 }
+// Print a newline
+cputln: {
+    // conio_line_text +=  CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     .label line_text = 2
@@ -229,9 +289,9 @@ clrscr: {
     iny
     jmp __b3
 }
-// Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(2) const char *s)
-cputs: {
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp(2) const char *s)
+printf_str: {
     .label s = 2
   __b1:
     // while(c=*s++)
@@ -246,65 +306,11 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
+    // putc(c)
+    pha
     jsr cputc
+    pla
     jmp __b1
-}
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__register(A) char c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldy.z conio_cursor_x
-    sta (conio_line_text),y
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #LIGHT_BLUE
-    sta (conio_line_color),y
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$28
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
-    // }
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
-    rts
-}
-// Print a newline
-cputln: {
-    // conio_line_text +=  CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_text
-    sta.z conio_line_text
-    bcc !+
-    inc.z conio_line_text+1
-  !:
-    // conio_line_color += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_color
-    sta.z conio_line_color
-    bcc !+
-    inc.z conio_line_color+1
-  !:
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y++;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
-    // }
-    rts
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {

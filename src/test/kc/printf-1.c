@@ -7,12 +7,13 @@ void main() {
 
     clrscr();
 
-    printf_string( "cml", { 10, 0 } );
+    printf_string(&cputc, "cml", { 10, 0 } );
     cputln();
-    printf_string( "rules", { 10, 0 } );
+    printf_string(&cputc, "rules", { 10, 0 } );
     cputln();
     
-    printf_string( "cml", { 10, 1 } );
+    printf_string(&cputc, "cml", { 10, 1 } );
     cputln();
-    printf_string( "rules", { 10, 1 } );
+    printf_string(&cputc, "rules", { 10, 1 } );
+
 }

@@ -11,14 +11,21 @@ struct printf_buffer_number printf_buffer;
 // This implementation supports decimal, octal and hexadecimal radix. It supports min length, left/right justify, zero-padding and always-sign.
 __intrinsic void printf(char* format, ...);
 
+/// Print a NUL-terminated string
+void printf_str(void (*putc)(char), const char* s) {
+    char c;
+    while(c=*s++)
+        putc(c);
+}
+
 // Print a padding char a number of times
-void printf_padding(char pad, char length) {
+void printf_padding(void (*putc)(char), char pad, char length) {
     for(char i=0;i<length; i++)
-        cputc(pad);
+        putc(pad);
 }
 
 // Print a signed long using a specific format
-void printf_slong(signed long value, struct printf_format_number format) {
+void printf_slong(void (*putc)(char), signed long value, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = 0;
     if(value<0) {
@@ -34,21 +41,21 @@ void printf_slong(signed long value, struct printf_format_number format) {
     unsigned long uvalue = (unsigned long)value;
     ultoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print an unsigned int using a specific format
-void printf_ulong(unsigned long uvalue, struct printf_format_number format) {
+void printf_ulong(void (*putc)(char), unsigned long uvalue, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = format.sign_always?'+':0;
     // Format number into buffer
     ultoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print a signed integer using a specific format
-void printf_sint(signed int value, struct printf_format_number format) {
+void printf_sint(void (*putc)(char), signed int value, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = 0;
     if(value<0) {
@@ -64,21 +71,21 @@ void printf_sint(signed int value, struct printf_format_number format) {
     unsigned int uvalue = (unsigned int)value;
     utoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print an unsigned int using a specific format
-void printf_uint(unsigned int uvalue, struct printf_format_number format) {
+void printf_uint(void (*putc)(char), unsigned int uvalue, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = format.sign_always?'+':0;
     // Format number into buffer
     utoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print a signed char using a specific format
-void printf_schar(signed char value, struct printf_format_number format) {
+void printf_schar(void (*putc)(char), signed char value, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = 0;
     if(value<0) {
@@ -94,22 +101,22 @@ void printf_schar(signed char value, struct printf_format_number format) {
     unsigned char uvalue = (unsigned char)value;
     uctoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print an unsigned char using a specific format
-void printf_uchar(unsigned char uvalue, struct printf_format_number format) {
+void printf_uchar(void (*putc)(char), unsigned char uvalue, struct printf_format_number format) {
     // Handle any sign
     printf_buffer.sign = format.sign_always?'+':0;
     // Format number into buffer
     uctoa(uvalue, printf_buffer.digits, format.radix);
     // Print using format
-    printf_number_buffer(printf_buffer, format);
+    printf_number_buffer(putc, printf_buffer, format);
 }
 
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-void printf_number_buffer(struct printf_buffer_number buffer, struct printf_format_number format) {
+void printf_number_buffer(void (*putc)(char), struct printf_buffer_number buffer, struct printf_format_number format) {
     signed char padding = 0;
     if(format.min_length) {
         // There is a minimum length - work out the padding
@@ -119,22 +126,22 @@ void printf_number_buffer(struct printf_buffer_number buffer, struct printf_form
         if(padding<0) padding = 0;
     }
     if(!format.justify_left && !format.zero_padding && padding)
-        printf_padding(' ',(char)padding);
+        printf_padding(putc, ' ',(char)padding);
     if(buffer.sign)
-        cputc(buffer.sign);
+        putc(buffer.sign);
     if(format.zero_padding && padding)
-        printf_padding('0',(char)padding);
+        printf_padding(putc, '0',(char)padding);
     if(format.upper_case) {
         strupr(buffer.digits);
     }
-    cputs(buffer.digits);
+    printf_str(putc, buffer.digits);
     if(format.justify_left && !format.zero_padding && padding)
-        printf_padding(' ',(char)padding);
+        printf_padding(putc, ' ',(char)padding);
 }
 
 // Print a string value using a specific format
 // Handles justification and min length 
-void printf_string(char* str, struct printf_format_string format) {
+void printf_string(void (*putc)(char), char* str, struct printf_format_string format) {
     signed char padding = 0;
     if(format.min_length) {
         signed char len = (signed char)strlen(str);
@@ -142,9 +149,8 @@ void printf_string(char* str, struct printf_format_string format) {
         if(padding<0) padding = 0;
     }
     if(!format.justify_left && padding)
-        printf_padding(' ',(char)padding);
-    cputs(str);
+        printf_padding(putc, ' ',(char)padding);
+    printf_str(putc, str);
     if(format.justify_left && padding)
-        printf_padding(' ',(char)padding);
+        printf_padding(putc, ' ',(char)padding);
 }
-

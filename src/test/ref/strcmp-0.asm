@@ -11,6 +11,7 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
+  .const STACK_BASE = $103
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// Color Ram
   .label COLORRAM = $d800
@@ -18,15 +19,15 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $c
+  .label conio_cursor_x = $10
   // The current cursor y-position
-  .label conio_cursor_y = $d
+  .label conio_cursor_y = $11
   // The current text cursor line start
-  .label conio_line_text = $e
+  .label conio_line_text = $12
   // The current color cursor line start
-  .label conio_line_color = $10
+  .label conio_line_color = $14
   // The current text color
-  .label conio_textcolor = $12
+  .label conio_textcolor = $16
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -66,6 +67,37 @@ conio_c64_init: {
     // gotoxy(0, line)
     jsr gotoxy
     // }
+    rts
+}
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda.z conio_textcolor
+    sta (conio_line_color),y
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
     rts
 }
 main: {
@@ -551,12 +583,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $17
-    .label __6 = $13
-    .label __7 = $13
-    .label line_offset = $13
-    .label __8 = $15
-    .label __9 = $13
+    .label __5 = $1b
+    .label __6 = $17
+    .label __7 = $17
+    .label line_offset = $17
+    .label __8 = $19
+    .label __9 = $17
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -622,17 +654,45 @@ gotoxy: {
     // }
     rts
 }
+// Print a newline
+cputln: {
+    // conio_line_text +=  CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
 /// compares the string pointed to, by str1 to the string pointed to by str2.
 /// @param str1 This is the first string to be compared.
 /// @param str2 This is the second string to be compared.
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp($1a) int strcmp(const char *str1, const char *str2)
+// __zp(8) int strcmp(const char *str1, const char *str2)
 strcmp: {
     .label s1 = 4
     .label s2 = 6
-    .label return = $1a
+    .label return = 8
   __b1:
     // while(*s1==*s2)
     ldy #0
@@ -693,7 +753,9 @@ assert_cmp: {
     //             break;
     lda.z expect
     cmp #0
-    beq __b5
+    bne !__b5+
+    jmp __b5
+  !__b5:
     // case GREATER_THAN:
     //             ok = (char)(actual>0);
     //             break;
@@ -724,37 +786,53 @@ assert_cmp: {
     lda #RED
     jsr textcolor
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s2
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
     ldx.z expect
     jsr printf_schar
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s3
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
     ldx.z actual
     jsr printf_schar
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s4
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
     jsr printf_string
     // printf("Assert failed. expected:%d actual:%d. %s\n", expect, actual, message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   __b1:
@@ -762,19 +840,27 @@ assert_cmp: {
     lda #GREEN
     jsr textcolor
     // printf("ok! %s\n", message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // printf("ok! %s\n", message)
     jsr printf_string
     // printf("ok! %s\n", message)
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
     lda #<s1
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     rts
   __b5:
     // actual==0
@@ -819,12 +905,12 @@ assert_cmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp($a) int strncmp(const char *str1, const char *str2, __zp(4) unsigned int n)
+// __zp($e) int strncmp(const char *str1, const char *str2, __zp(4) unsigned int n)
 strncmp: {
     .label s1 = 6
-    .label s2 = $1a
+    .label s2 = 8
     .label n = 4
-    .label return = $a
+    .label return = $e
   __b1:
     // while(*s1==*s2)
     ldy #0
@@ -883,14 +969,14 @@ strncmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp($1a) int memcmp(__zp(4) const void *str1, __zp($a) const void *str2, __zp(6) unsigned int n)
+// __zp(8) int memcmp(__zp(4) const void *str1, __zp($e) const void *str2, __zp(6) unsigned int n)
 memcmp: {
     .label n = 6
     .label s1 = 4
-    .label s2 = $a
-    .label return = $1a
+    .label s2 = $e
+    .label return = 8
     .label str1 = 4
-    .label str2 = $a
+    .label str2 = $e
   __b1:
     // for(char *s1 = str1, *s2 = str2; n!=0; n--,s1++,s2++)
     lda.z n
@@ -934,255 +1020,6 @@ memcmp: {
     bne !+
     inc.z s2+1
   !:
-    jmp __b1
-}
-// Set the color for text output. The old color setting is returned.
-// char textcolor(__register(A) char color)
-textcolor: {
-    // conio_textcolor = color
-    sta.z conio_textcolor
-    // }
-    rts
-}
-// Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(6) const char *s)
-cputs: {
-    .label s = 6
-  __b1:
-    // while(c=*s++)
-    ldy #0
-    lda (s),y
-    inc.z s
-    bne !+
-    inc.z s+1
-  !:
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // cputc(c)
-    jsr cputc
-    jmp __b1
-}
-// Print a signed char using a specific format
-// void printf_schar(__register(X) signed char value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
-printf_schar: {
-    // printf_buffer.sign = 0
-    // Handle any sign
-    lda #0
-    sta printf_buffer
-    // if(value<0)
-    cpx #0
-    bmi __b1
-    jmp __b2
-  __b1:
-    // value = -value
-    txa
-    eor #$ff
-    clc
-    adc #1
-    tax
-    // printf_buffer.sign = '-'
-    lda #'-'
-    sta printf_buffer
-  __b2:
-    // uctoa(uvalue, printf_buffer.digits, format.radix)
-    jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
-    lda printf_buffer
-  // Print using format
-    jsr printf_number_buffer
-    // }
-    rts
-}
-// Print a string value using a specific format
-// Handles justification and min length 
-// void printf_string(__zp(4) char *str, char format_min_length, char format_justify_left)
-printf_string: {
-    .label str = 4
-    // cputs(str)
-    lda.z str
-    sta.z cputs.s
-    lda.z str+1
-    sta.z cputs.s+1
-    jsr cputs
-    // }
-    rts
-}
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__register(A) char c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldy.z conio_cursor_x
-    sta (conio_line_text),y
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda.z conio_textcolor
-    sta (conio_line_color),y
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$28
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
-    // }
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
-    rts
-}
-// Converts unsigned number value to a string representing it in RADIX format.
-// If the leading digits are zero they are not included in the string.
-// - value : The number to be converted to RADIX
-// - buffer : receives the string representing the number and zero-termination.
-// - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp($1a) char *buffer, char radix)
-uctoa: {
-    .label digit_value = $19
-    .label buffer = $1a
-    .label digit = 8
-    .label started = 9
-    lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z buffer
-    lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z buffer+1
-    lda #0
-    sta.z started
-    sta.z digit
-  __b1:
-    // for( char digit=0; digit<max_digits-1; digit++ )
-    lda.z digit
-    cmp #3-1
-    bcc __b2
-    // *buffer++ = DIGITS[(char)value]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // *buffer++ = DIGITS[(char)value];
-    inc.z buffer
-    bne !+
-    inc.z buffer+1
-  !:
-    // *buffer = 0
-    lda #0
-    tay
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // unsigned char digit_value = digit_values[digit]
-    ldy.z digit
-    lda RADIX_DECIMAL_VALUES_CHAR,y
-    sta.z digit_value
-    // if (started || value >= digit_value)
-    lda.z started
-    bne __b5
-    cpx.z digit_value
-    bcs __b5
-  __b4:
-    // for( char digit=0; digit<max_digits-1; digit++ )
-    inc.z digit
-    jmp __b1
-  __b5:
-    // uctoa_append(buffer++, value, digit_value)
-    jsr uctoa_append
-    // uctoa_append(buffer++, value, digit_value)
-    // value = uctoa_append(buffer++, value, digit_value)
-    // value = uctoa_append(buffer++, value, digit_value);
-    inc.z buffer
-    bne !+
-    inc.z buffer+1
-  !:
-    lda #1
-    sta.z started
-    jmp __b4
-}
-// Print the contents of the number buffer using a specific format.
-// This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
-printf_number_buffer: {
-    .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    // if(buffer.sign)
-    cmp #0
-    beq __b2
-    // cputc(buffer.sign)
-    jsr cputc
-  __b2:
-    // cputs(buffer.digits)
-    lda #<buffer_digits
-    sta.z cputs.s
-    lda #>buffer_digits
-    sta.z cputs.s+1
-    jsr cputs
-    // }
-    rts
-}
-// Print a newline
-cputln: {
-    // conio_line_text +=  CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_text
-    sta.z conio_line_text
-    bcc !+
-    inc.z conio_line_text+1
-  !:
-    // conio_line_color += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_color
-    sta.z conio_line_color
-    bcc !+
-    inc.z conio_line_color+1
-  !:
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y++;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
-    // }
-    rts
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($1a) char *buffer, __register(X) char value, __zp($19) char sub)
-uctoa_append: {
-    .label buffer = $1a
-    .label sub = $19
-    ldy #0
-  __b1:
-    // while (value >= sub)
-    cpx.z sub
-    bcs __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,y
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    iny
-    // value -= sub
-    txa
-    sec
-    sbc.z sub
-    tax
     jmp __b1
 }
 // Scroll the entire screen if the cursor is beyond the last line
@@ -1247,15 +1084,98 @@ cscroll: {
     // }
     rts
 }
+// Set the color for text output. The old color setting is returned.
+// char textcolor(__register(A) char color)
+textcolor: {
+    // conio_textcolor = color
+    sta.z conio_textcolor
+    // }
+    rts
+}
+/// Print a NUL-terminated string
+// void printf_str(__zp(6) void (*putc)(char), __zp(8) const char *s)
+printf_str: {
+    .label s = 8
+    .label putc = 6
+  __b1:
+    // while(c=*s++)
+    ldy #0
+    lda (s),y
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // putc(c)
+    pha
+    jsr icall1
+    pla
+    jmp __b1
+  icall1:
+    jmp (putc)
+}
+// Print a signed char using a specific format
+// void printf_schar(void (*putc)(char), __register(X) signed char value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+printf_schar: {
+    // printf_buffer.sign = 0
+    // Handle any sign
+    lda #0
+    sta printf_buffer
+    // if(value<0)
+    cpx #0
+    bmi __b1
+    jmp __b2
+  __b1:
+    // value = -value
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
+    // printf_buffer.sign = '-'
+    lda #'-'
+    sta printf_buffer
+  __b2:
+    // uctoa(uvalue, printf_buffer.digits, format.radix)
+    jsr uctoa
+    // printf_number_buffer(putc, printf_buffer, format)
+    lda printf_buffer
+  // Print using format
+    jsr printf_number_buffer
+    // }
+    rts
+}
+// Print a string value using a specific format
+// Handles justification and min length 
+// void printf_string(void (*putc)(char), __zp(4) char *str, char format_min_length, char format_justify_left)
+printf_string: {
+    .label str = 4
+    // printf_str(putc, str)
+    lda.z str
+    sta.z printf_str.s
+    lda.z str+1
+    sta.z printf_str.s+1
+    lda #<cputc
+    sta.z printf_str.putc
+    lda #>cputc
+    sta.z printf_str.putc+1
+    jsr printf_str
+    // }
+    rts
+}
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1c) void *destination, __zp($a) void *source, unsigned int num)
+// void * memcpy(__zp($1f) void *destination, __zp($a) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1a
-    .label dst = $1c
+    .label src_end = $1d
+    .label dst = $1f
     .label src = $a
     .label source = $a
-    .label destination = $1c
+    .label destination = $1f
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -1293,7 +1213,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // void * memset(__zp($a) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1c
+    .label end = $1f
     .label dst = $a
     .label str = $a
     // char* end = (char*)str + num
@@ -1325,6 +1245,132 @@ memset: {
     inc.z dst+1
   !:
     jmp __b2
+}
+// Converts unsigned number value to a string representing it in RADIX format.
+// If the leading digits are zero they are not included in the string.
+// - value : The number to be converted to RADIX
+// - buffer : receives the string representing the number and zero-termination.
+// - radix : The radix to convert the number to (from the enum RADIX)
+// void uctoa(__register(X) char value, __zp($e) char *buffer, char radix)
+uctoa: {
+    .label digit_value = $21
+    .label buffer = $e
+    .label digit = $c
+    .label started = $d
+    lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z buffer
+    lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z buffer+1
+    lda #0
+    sta.z started
+    sta.z digit
+  __b1:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    lda.z digit
+    cmp #3-1
+    bcc __b2
+    // *buffer++ = DIGITS[(char)value]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // *buffer++ = DIGITS[(char)value];
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    // *buffer = 0
+    lda #0
+    tay
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // unsigned char digit_value = digit_values[digit]
+    ldy.z digit
+    lda RADIX_DECIMAL_VALUES_CHAR,y
+    sta.z digit_value
+    // if (started || value >= digit_value)
+    lda.z started
+    bne __b5
+    cpx.z digit_value
+    bcs __b5
+  __b4:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    inc.z digit
+    jmp __b1
+  __b5:
+    // uctoa_append(buffer++, value, digit_value)
+    jsr uctoa_append
+    // uctoa_append(buffer++, value, digit_value)
+    // value = uctoa_append(buffer++, value, digit_value)
+    // value = uctoa_append(buffer++, value, digit_value);
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    lda #1
+    sta.z started
+    jmp __b4
+}
+// Print the contents of the number buffer using a specific format.
+// This handles minimum length, zero-filling, and left/right justification from the format
+// void printf_number_buffer(void (*putc)(char), __register(A) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+printf_number_buffer: {
+    .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    .label putc = cputc
+    // if(buffer.sign)
+    cmp #0
+    beq __b2
+    // putc(buffer.sign)
+    pha
+    jsr cputc
+    pla
+  __b2:
+    // printf_str(putc, buffer.digits)
+    lda #<putc
+    sta.z printf_str.putc
+    lda #>putc
+    sta.z printf_str.putc+1
+    lda #<buffer_digits
+    sta.z printf_str.s
+    lda #>buffer_digits
+    sta.z printf_str.s+1
+    jsr printf_str
+    // }
+    rts
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// __register(X) char uctoa_append(__zp($e) char *buffer, __register(X) char value, __zp($21) char sub)
+uctoa_append: {
+    .label buffer = $e
+    .label sub = $21
+    ldy #0
+  __b1:
+    // while (value >= sub)
+    cpx.z sub
+    bcs __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,y
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    iny
+    // value -= sub
+    txa
+    sec
+    sbc.z sub
+    tax
+    jmp __b1
 }
 .segment Data
   // The digits used for numbers

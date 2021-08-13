@@ -1,34 +1,34 @@
-Added struct type cast to parameter value list call printf_uint(main::pct, (struct printf_format_number){ 0, 0, 0, 0, 0, HEXADECIMAL })
+Added struct type cast to parameter value list call printf_uint((void (*)(char)) 0, main::pct, (struct printf_format_number){ 0, 0, 0, 0, 0, HEXADECIMAL })
 Inlined call call __init
 Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
-void cputs(char *str)
-cputs: scope:[cputs]  from main main::@2
+void printf_str(void (*putc)(char) , char *str)
+printf_str: scope:[printf_str]  from main main::@2
   screen#27 = phi( main/screen#25, main::@2/screen#8 )
-  cputs::str#5 = phi( main/cputs::str#1, main::@2/cputs::str#2 )
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@2
-  screen#24 = phi( cputs/screen#27, cputs::@2/screen#0 )
-  cputs::str#3 = phi( cputs/cputs::str#5, cputs::@2/cputs::str#0 )
-  cputs::$0 = 0 != *cputs::str#3
-  if(cputs::$0) goto cputs::@2
-  to:cputs::@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  screen#14 = phi( cputs::@1/screen#24 )
-  cputs::str#4 = phi( cputs::@1/cputs::str#3 )
-  *screen#14 = *cputs::str#4
+  printf_str::str#5 = phi( main/printf_str::str#1, main::@2/printf_str::str#2 )
+  to:printf_str::@1
+printf_str::@1: scope:[printf_str]  from printf_str printf_str::@2
+  screen#24 = phi( printf_str/screen#27, printf_str::@2/screen#0 )
+  printf_str::str#3 = phi( printf_str/printf_str::str#5, printf_str::@2/printf_str::str#0 )
+  printf_str::$0 = 0 != *printf_str::str#3
+  if(printf_str::$0) goto printf_str::@2
+  to:printf_str::@return
+printf_str::@2: scope:[printf_str]  from printf_str::@1
+  screen#14 = phi( printf_str::@1/screen#24 )
+  printf_str::str#4 = phi( printf_str::@1/printf_str::str#3 )
+  *screen#14 = *printf_str::str#4
   screen#0 = ++ screen#14
-  cputs::str#0 = ++ cputs::str#4
-  to:cputs::@1
-cputs::@return: scope:[cputs]  from cputs::@1
-  screen#15 = phi( cputs::@1/screen#24 )
+  printf_str::str#0 = ++ printf_str::str#4
+  to:printf_str::@1
+printf_str::@return: scope:[printf_str]  from printf_str::@1
+  screen#15 = phi( printf_str::@1/screen#24 )
   screen#1 = screen#15
   return 
   to:@return
 
-void printf_uint(unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
+void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 printf_uint: scope:[printf_uint]  from main::@1
   screen#16 = phi( main::@1/screen#7 )
   printf_uint::uvalue#1 = phi( main::@1/printf_uint::uvalue#0 )
@@ -58,12 +58,14 @@ printf_uint::@return: scope:[printf_uint]  from printf_uint
 void main()
 main: scope:[main]  from __start::@1
   screen#25 = phi( __start::@1/screen#26 )
-  cputs::str#1 = main::str
-  call cputs
+  printf_str::putc#0 = (void (*)(char)) 0
+  printf_str::str#1 = main::str
+  call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   screen#18 = phi( main/screen#1 )
   screen#7 = screen#18
+  printf_uint::putc#0 = (void (*)(char)) 0
   printf_uint::uvalue#0 = main::pct
   printf_uint::format_min_length#0 = 0
   printf_uint::format_justify_left#0 = 0
@@ -76,8 +78,9 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   screen#19 = phi( main::@1/screen#6 )
   screen#8 = screen#19
-  cputs::str#2 = main::str1
-  call cputs
+  printf_str::putc#1 = (void (*)(char)) 0
+  printf_str::str#2 = main::str1
+  call printf_str
   to:main::@3
 main::@3: scope:[main]  from main::@2
   screen#20 = phi( main::@2/screen#1 )
@@ -116,21 +119,24 @@ __constant char RADIX::DECIMAL = $a
 __constant char RADIX::HEXADECIMAL = $10
 __constant char RADIX::OCTAL = 8
 void __start()
-void cputs(char *str)
-bool cputs::$0
-char *cputs::str
-char *cputs::str#0
-char *cputs::str#1
-char *cputs::str#2
-char *cputs::str#3
-char *cputs::str#4
-char *cputs::str#5
 void main()
 __constant unsigned int main::pct = $156
 __constant char main::str[$e] = "Commodore is "
 __constant char main::str1[6] = " cool"
 __constant const char printf_hextab[] = "0123456789abcdef"z
-void printf_uint(unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
+void printf_str(void (*putc)(char) , char *str)
+bool printf_str::$0
+void (*printf_str::putc)(char)
+void (*printf_str::putc#0)(char)
+void (*printf_str::putc#1)(char)
+char *printf_str::str
+char *printf_str::str#0
+char *printf_str::str#1
+char *printf_str::str#2
+char *printf_str::str#3
+char *printf_str::str#4
+char *printf_str::str#5
+void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 char printf_uint::$0
 char printf_uint::$1
 char printf_uint::$2
@@ -152,6 +158,8 @@ char printf_uint::format_upper_case
 char printf_uint::format_upper_case#0
 char printf_uint::format_zero_padding
 char printf_uint::format_zero_padding#0
+void (*printf_uint::putc)(char)
+void (*printf_uint::putc#0)(char)
 unsigned int printf_uint::uvalue
 unsigned int printf_uint::uvalue#0
 unsigned int printf_uint::uvalue#1
@@ -185,7 +193,7 @@ char *screen#7
 char *screen#8
 char *screen#9
 
-Adding number conversion cast (unumber) 0 in cputs::$0 = 0 != *cputs::str#3
+Adding number conversion cast (unumber) 0 in printf_str::$0 = 0 != *printf_str::str#3
 Adding number conversion cast (unumber) 4 in printf_uint::$1 = printf_uint::$0 >> 4
 Adding number conversion cast (unumber) $f in printf_uint::$3 = printf_uint::$2 & $f
 Adding number conversion cast (unumber) printf_uint::$3 in printf_uint::$3 = printf_uint::$2 & (unumber)$f
@@ -208,7 +216,7 @@ Finalized unsigned number type (char) $f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to char in printf_uint::$3 = printf_uint::$2 & $f
 Inferred type updated to char in printf_uint::$7 = printf_uint::$6 & $f
-Alias cputs::str#3 = cputs::str#4 
+Alias printf_str::str#3 = printf_str::str#4 
 Alias screen#1 = screen#14 screen#24 screen#15 
 Alias screen#17 = screen#5 screen#6 
 Alias screen#18 = screen#7 
@@ -225,9 +233,11 @@ Identical Phi Values screen#19 screen#17
 Identical Phi Values screen#10 screen#1
 Identical Phi Values screen#12 screen#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition cputs::$0 [3] if(0!=*cputs::str#3) goto cputs::@2
+Simple Condition printf_str::$0 [3] if(0!=*printf_str::str#3) goto printf_str::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant cputs::str#1 = main::str
+Constant printf_str::putc#0 = (void (*)(char)) 0
+Constant printf_str::str#1 = main::str
+Constant printf_uint::putc#0 = (void (*)(char)) 0
 Constant printf_uint::uvalue#0 = main::pct
 Constant printf_uint::format_min_length#0 = 0
 Constant printf_uint::format_justify_left#0 = 0
@@ -235,9 +245,13 @@ Constant printf_uint::format_sign_always#0 = 0
 Constant printf_uint::format_zero_padding#0 = 0
 Constant printf_uint::format_upper_case#0 = 0
 Constant printf_uint::format_radix#0 = HEXADECIMAL
-Constant cputs::str#2 = main::str1
+Constant printf_str::putc#1 = (void (*)(char)) 0
+Constant printf_str::str#2 = main::str1
 Constant screen#11 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused constant printf_str::putc#0
+Eliminating unused constant printf_str::putc#1
+Eliminating unused constant printf_uint::putc#0
 Eliminating unused constant printf_uint::format_min_length#0
 Eliminating unused constant printf_uint::format_justify_left#0
 Eliminating unused constant printf_uint::format_sign_always#0
@@ -281,11 +295,9 @@ Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant printf_uint::$0
 Eliminating unused constant printf_uint::$1
 Successful SSA optimization PassNEliminateUnusedVars
-Inlining constant with var siblings cputs::str#1
-Inlining constant with var siblings cputs::str#2
+Inlining constant with var siblings printf_str::str#1
+Inlining constant with var siblings printf_str::str#2
 Inlining constant with var siblings screen#11
-Constant inlined cputs::str#1 = main::str
-Constant inlined cputs::str#2 = main::str1
 Constant inlined screen#11 = (char *) 1024
 Constant inlined printf_uint::$3 = byte1 main::pct&$f
 Constant inlined printf_uint::uvalue#0 = main::pct
@@ -294,6 +306,8 @@ Constant inlined printf_uint::$5 = byte0 main::pct>>4
 Constant inlined printf_uint::$4 = byte0 main::pct
 Constant inlined printf_uint::$7 = byte0 main::pct&$f
 Constant inlined printf_uint::$6 = byte0 main::pct
+Constant inlined printf_str::str#2 = main::str1
+Constant inlined printf_str::str#1 = main::str
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(printf_hextab+byte1 main::pct&$f)
 Consolidated array index constant in *(printf_hextab+byte0 main::pct>>4)
@@ -308,13 +322,13 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@3
 CALL GRAPH
-Calls in [main] to cputs:1 printf_uint:3 cputs:5 
+Calls in [main] to printf_str:1 printf_uint:3 printf_str:5 
 
 Created 4 initial phi equivalence classes
 Coalesced [4] screen#28 = screen#17
-Coalesced [9] cputs::str#6 = cputs::str#5
+Coalesced [9] printf_str::str#6 = printf_str::str#5
 Coalesced [10] screen#29 = screen#27
-Coalesced [17] cputs::str#7 = cputs::str#0
+Coalesced [17] printf_str::str#7 = printf_str::str#0
 Coalesced [18] screen#30 = screen#0
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block label main::@3
@@ -327,7 +341,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call cputs
+  [1] call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
@@ -335,32 +349,32 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] phi()
-  [5] call cputs
+  [5] call printf_str
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void cputs(char *str)
-cputs: scope:[cputs]  from main main::@2
+void printf_str(void (*putc)(char) , char *str)
+printf_str: scope:[printf_str]  from main main::@2
   [7] screen#27 = phi( main/(char *) 1024, main::@2/screen#17 )
-  [7] cputs::str#5 = phi( main/main::str, main::@2/main::str1 )
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@2
-  [8] screen#1 = phi( cputs/screen#27, cputs::@2/screen#0 )
-  [8] cputs::str#3 = phi( cputs/cputs::str#5, cputs::@2/cputs::str#0 )
-  [9] if(0!=*cputs::str#3) goto cputs::@2
-  to:cputs::@return
-cputs::@return: scope:[cputs]  from cputs::@1
+  [7] printf_str::str#5 = phi( main/main::str, main::@2/main::str1 )
+  to:printf_str::@1
+printf_str::@1: scope:[printf_str]  from printf_str printf_str::@2
+  [8] screen#1 = phi( printf_str/screen#27, printf_str::@2/screen#0 )
+  [8] printf_str::str#3 = phi( printf_str/printf_str::str#5, printf_str::@2/printf_str::str#0 )
+  [9] if(0!=*printf_str::str#3) goto printf_str::@2
+  to:printf_str::@return
+printf_str::@return: scope:[printf_str]  from printf_str::@1
   [10] return 
   to:@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  [11] *screen#1 = *cputs::str#3
+printf_str::@2: scope:[printf_str]  from printf_str::@1
+  [11] *screen#1 = *printf_str::str#3
   [12] screen#0 = ++ screen#1
-  [13] cputs::str#0 = ++ cputs::str#3
-  to:cputs::@1
+  [13] printf_str::str#0 = ++ printf_str::str#3
+  to:printf_str::@1
 
-void printf_uint(unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
+void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 printf_uint: scope:[printf_uint]  from main::@1
   [14] *screen#1 = *printf_hextab
   [15] screen#2 = ++ screen#1
@@ -377,13 +391,14 @@ printf_uint::@return: scope:[printf_uint]  from printf_uint
 
 
 VARIABLE REGISTER WEIGHTS
-void cputs(char *str)
-char *cputs::str
-char *cputs::str#0 // 202.0
-char *cputs::str#3 // 103.75
-char *cputs::str#5 // 11.0
 void main()
-void printf_uint(unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
+void printf_str(void (*putc)(char) , char *str)
+void (*printf_str::putc)(char)
+char *printf_str::str
+char *printf_str::str#0 // 202.0
+char *printf_str::str#3 // 103.75
+char *printf_str::str#5 // 11.0
+void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 struct printf_format_number printf_uint::format
 char printf_uint::format_justify_left
 char printf_uint::format_min_length
@@ -391,6 +406,7 @@ char printf_uint::format_radix
 char printf_uint::format_sign_always
 char printf_uint::format_upper_case
 char printf_uint::format_zero_padding
+void (*printf_uint::putc)(char)
 unsigned int printf_uint::uvalue
 char *screen
 char *screen#0 // 101.0
@@ -402,25 +418,25 @@ char *screen#3 // 16.5
 char *screen#4 // 16.5
 
 Initial phi equivalence classes
-[ cputs::str#3 cputs::str#5 cputs::str#0 ]
+[ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
 [ screen#1 screen#27 screen#17 screen#0 ]
 Added variable screen#2 to live range equivalence class [ screen#2 ]
 Added variable screen#3 to live range equivalence class [ screen#3 ]
 Added variable screen#4 to live range equivalence class [ screen#4 ]
 Complete equivalence classes
-[ cputs::str#3 cputs::str#5 cputs::str#0 ]
+[ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
 [ screen#1 screen#27 screen#17 screen#0 ]
 [ screen#2 ]
 [ screen#3 ]
 [ screen#4 ]
-Allocated zp[2]:2 [ cputs::str#3 cputs::str#5 cputs::str#0 ]
+Allocated zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
 Allocated zp[2]:4 [ screen#1 screen#27 screen#17 screen#0 ]
 Allocated zp[2]:6 [ screen#2 ]
 Allocated zp[2]:8 [ screen#3 ]
 Allocated zp[2]:10 [ screen#4 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] if(0!=*cputs::str#3) goto cputs::@2 [ cputs::str#3 screen#1 ] ( cputs:1 [ cputs::str#3 screen#1 ] { }  cputs:5 [ cputs::str#3 screen#1 ] { { screen#17 = screen#27 } }  ) always clobbers reg byte a reg byte y 
-Statement [11] *screen#1 = *cputs::str#3 [ cputs::str#3 screen#1 ] ( cputs:1 [ cputs::str#3 screen#1 ] { }  cputs:5 [ cputs::str#3 screen#1 ] { { screen#17 = screen#27 } }  ) always clobbers reg byte a reg byte y 
+Statement [9] if(0!=*printf_str::str#3) goto printf_str::@2 [ printf_str::str#3 screen#1 ] ( printf_str:1 [ printf_str::str#3 screen#1 ] { }  printf_str:5 [ printf_str::str#3 screen#1 ] { { screen#17 = screen#27 } }  ) always clobbers reg byte a reg byte y 
+Statement [11] *screen#1 = *printf_str::str#3 [ printf_str::str#3 screen#1 ] ( printf_str:1 [ printf_str::str#3 screen#1 ] { }  printf_str:5 [ printf_str::str#3 screen#1 ] { { screen#17 = screen#27 } }  ) always clobbers reg byte a reg byte y 
 Statement [14] *screen#1 = *printf_hextab [ screen#1 ] ( printf_uint:3 [ screen#1 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [15] screen#2 = ++ screen#1 [ screen#2 ] ( printf_uint:3 [ screen#2 ] { }  ) always clobbers reg byte a 
 Statement [16] *screen#2 = *(printf_hextab+byte1 main::pct&$f) [ screen#2 ] ( printf_uint:3 [ screen#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -429,21 +445,21 @@ Statement [18] *screen#3 = *(printf_hextab+byte0 main::pct>>4) [ screen#3 ] ( pr
 Statement [19] screen#4 = ++ screen#3 [ screen#4 ] ( printf_uint:3 [ screen#4 ] { }  ) always clobbers reg byte a 
 Statement [20] *screen#4 = *(printf_hextab+byte0 main::pct&$f) [ screen#4 ] ( printf_uint:3 [ screen#4 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [21] screen#17 = ++ screen#4 [ screen#17 ] ( printf_uint:3 [ screen#17 ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ cputs::str#3 cputs::str#5 cputs::str#0 ] : zp[2]:2 , 
+Potential registers zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ screen#1 screen#27 screen#17 screen#0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ screen#2 ] : zp[2]:6 , 
 Potential registers zp[2]:8 [ screen#3 ] : zp[2]:8 , 
 Potential registers zp[2]:10 [ screen#4 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [cputs] 316.75: zp[2]:2 [ cputs::str#3 cputs::str#5 cputs::str#0 ] 
+Uplift Scope [printf_str] 316.75: zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] 
 Uplift Scope [] 165.25: zp[2]:4 [ screen#1 screen#27 screen#17 screen#0 ] 16.5: zp[2]:6 [ screen#2 ] 16.5: zp[2]:8 [ screen#3 ] 16.5: zp[2]:10 [ screen#4 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [printf_format_number] 
 Uplift Scope [printf_uint] 
 Uplift Scope [main] 
 
-Uplifting [cputs] best 813 combination zp[2]:2 [ cputs::str#3 cputs::str#5 cputs::str#0 ] 
+Uplifting [printf_str] best 813 combination zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] 
 Uplifting [] best 813 combination zp[2]:4 [ screen#1 screen#27 screen#17 screen#0 ] zp[2]:6 [ screen#2 ] zp[2]:8 [ screen#3 ] zp[2]:10 [ screen#4 ] 
 Uplifting [RADIX] best 813 combination 
 Uplifting [printf_format_number] best 813 combination 
@@ -472,20 +488,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label pct = $156
-    // [1] call cputs
-    // [7] phi from main to cputs [phi:main->cputs]
-  cputs_from_main:
-    // [7] phi screen#27 = (char *) 1024 [phi:main->cputs#0] -- pbuz1=pbuc1 
+    // [1] call printf_str
+    // [7] phi from main to printf_str [phi:main->printf_str]
+  printf_str_from_main:
+    // [7] phi screen#27 = (char *) 1024 [phi:main->printf_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [7] phi cputs::str#5 = main::str [phi:main->cputs#1] -- pbuz1=pbuc1 
+    // [7] phi printf_str::str#5 = main::str [phi:main->printf_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
@@ -498,16 +514,16 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] call cputs
-    // [7] phi from main::@2 to cputs [phi:main::@2->cputs]
-  cputs_from___b2:
-    // [7] phi screen#27 = screen#17 [phi:main::@2->cputs#0] -- register_copy 
-    // [7] phi cputs::str#5 = main::str1 [phi:main::@2->cputs#1] -- pbuz1=pbuc1 
+    // [5] call printf_str
+    // [7] phi from main::@2 to printf_str [phi:main::@2->printf_str]
+  printf_str_from___b2:
+    // [7] phi screen#27 = screen#17 [phi:main::@2->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#5 = main::str1 [phi:main::@2->printf_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     jmp __breturn
     // main::@return
   __breturn:
@@ -520,31 +536,31 @@ main: {
     .byte 0
 }
 .segment Code
-  // cputs
-// void cputs(__zp(2) char *str)
-cputs: {
+  // printf_str
+// void printf_str(void (*putc)(char), __zp(2) char *str)
+printf_str: {
     .label str = 2
-    // [8] phi from cputs cputs::@2 to cputs::@1 [phi:cputs/cputs::@2->cputs::@1]
-  __b1_from_cputs:
+    // [8] phi from printf_str printf_str::@2 to printf_str::@1 [phi:printf_str/printf_str::@2->printf_str::@1]
+  __b1_from_printf_str:
   __b1_from___b2:
-    // [8] phi screen#1 = screen#27 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
-    // [8] phi cputs::str#3 = cputs::str#5 [phi:cputs/cputs::@2->cputs::@1#1] -- register_copy 
+    // [8] phi screen#1 = screen#27 [phi:printf_str/printf_str::@2->printf_str::@1#0] -- register_copy 
+    // [8] phi printf_str::str#3 = printf_str::str#5 [phi:printf_str/printf_str::@2->printf_str::@1#1] -- register_copy 
     jmp __b1
-    // cputs::@1
+    // printf_str::@1
   __b1:
-    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*printf_str::str#3) goto printf_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
     jmp __breturn
-    // cputs::@return
+    // printf_str::@return
   __breturn:
     // [10] return 
     rts
-    // cputs::@2
+    // printf_str::@2
   __b2:
-    // [11] *screen#1 = *cputs::str#3 -- _deref_pbuz1=_deref_pbuz2 
+    // [11] *screen#1 = *printf_str::str#3 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
@@ -554,7 +570,7 @@ cputs: {
     bne !+
     inc.z screen+1
   !:
-    // [13] cputs::str#0 = ++ cputs::str#3 -- pbuz1=_inc_pbuz1 
+    // [13] printf_str::str#0 = ++ printf_str::str#3 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
@@ -564,7 +580,7 @@ cputs: {
   // printf_uint
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
-// void printf_uint(unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     // [14] *screen#1 = *printf_hextab -- _deref_pbuz1=_deref_pbuc1 
     lda printf_hextab
@@ -625,11 +641,11 @@ Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b2 with __b1
 Removing instruction __b1_from_main:
 Removing instruction __b2_from___b1:
-Removing instruction cputs_from___b2:
-Removing instruction __b1_from_cputs:
+Removing instruction printf_str_from___b2:
+Removing instruction __b1_from_printf_str:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction cputs_from_main:
+Removing instruction printf_str_from_main:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __breturn:
@@ -642,17 +658,18 @@ __constant char RADIX::BINARY = 2
 __constant char RADIX::DECIMAL = $a
 __constant char RADIX::HEXADECIMAL = $10
 __constant char RADIX::OCTAL = 8
-void cputs(char *str)
-char *cputs::str
-char *cputs::str#0 // str zp[2]:2 202.0
-char *cputs::str#3 // str zp[2]:2 103.75
-char *cputs::str#5 // str zp[2]:2 11.0
 void main()
 __constant unsigned int main::pct = $156
 __constant char main::str[$e] = "Commodore is "
 __constant char main::str1[6] = " cool"
 __constant const char printf_hextab[] = "0123456789abcdef"z
-void printf_uint(unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
+void printf_str(void (*putc)(char) , char *str)
+void (*printf_str::putc)(char)
+char *printf_str::str
+char *printf_str::str#0 // str zp[2]:2 202.0
+char *printf_str::str#3 // str zp[2]:2 103.75
+char *printf_str::str#5 // str zp[2]:2 11.0
+void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 struct printf_format_number printf_uint::format
 char printf_uint::format_justify_left
 char printf_uint::format_min_length
@@ -660,6 +677,7 @@ char printf_uint::format_radix
 char printf_uint::format_sign_always
 char printf_uint::format_upper_case
 char printf_uint::format_zero_padding
+void (*printf_uint::putc)(char)
 unsigned int printf_uint::uvalue
 char *screen
 char *screen#0 // screen zp[2]:4 101.0
@@ -670,7 +688,7 @@ char *screen#27 // screen zp[2]:4 13.0
 char *screen#3 // screen zp[2]:4 16.5
 char *screen#4 // screen zp[2]:4 16.5
 
-zp[2]:2 [ cputs::str#3 cputs::str#5 cputs::str#0 ]
+zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
 zp[2]:4 [ screen#1 screen#27 screen#17 screen#0 screen#2 screen#4 screen#3 ]
 
 
@@ -696,19 +714,19 @@ Score: 697
 main: {
     .label pct = $156
     // printf("Commodore is %x cool", pct)
-    // [1] call cputs
-    // [7] phi from main to cputs [phi:main->cputs]
-    // [7] phi screen#27 = (char *) 1024 [phi:main->cputs#0] -- pbuz1=pbuc1 
+    // [1] call printf_str
+    // [7] phi from main to printf_str [phi:main->printf_str]
+    // [7] phi screen#27 = (char *) 1024 [phi:main->printf_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [7] phi cputs::str#5 = main::str [phi:main->cputs#1] -- pbuz1=pbuc1 
+    // [7] phi printf_str::str#5 = main::str [phi:main->printf_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // printf("Commodore is %x cool", pct)
@@ -717,15 +735,15 @@ main: {
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // printf("Commodore is %x cool", pct)
-    // [5] call cputs
-    // [7] phi from main::@2 to cputs [phi:main::@2->cputs]
-    // [7] phi screen#27 = screen#17 [phi:main::@2->cputs#0] -- register_copy 
-    // [7] phi cputs::str#5 = main::str1 [phi:main::@2->cputs#1] -- pbuz1=pbuc1 
+    // [5] call printf_str
+    // [7] phi from main::@2 to printf_str [phi:main::@2->printf_str]
+    // [7] phi screen#27 = screen#17 [phi:main::@2->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#5 = main::str1 [phi:main::@2->printf_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // main::@return
     // }
     // [6] return 
@@ -737,29 +755,29 @@ main: {
     .byte 0
 }
 .segment Code
-  // cputs
-// void cputs(__zp(2) char *str)
-cputs: {
+  // printf_str
+// void printf_str(void (*putc)(char), __zp(2) char *str)
+printf_str: {
     .label str = 2
-    // [8] phi from cputs cputs::@2 to cputs::@1 [phi:cputs/cputs::@2->cputs::@1]
-    // [8] phi screen#1 = screen#27 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
-    // [8] phi cputs::str#3 = cputs::str#5 [phi:cputs/cputs::@2->cputs::@1#1] -- register_copy 
-    // cputs::@1
+    // [8] phi from printf_str printf_str::@2 to printf_str::@1 [phi:printf_str/printf_str::@2->printf_str::@1]
+    // [8] phi screen#1 = screen#27 [phi:printf_str/printf_str::@2->printf_str::@1#0] -- register_copy 
+    // [8] phi printf_str::str#3 = printf_str::str#5 [phi:printf_str/printf_str::@2->printf_str::@1#1] -- register_copy 
+    // printf_str::@1
   __b1:
     // while(*str)
-    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*printf_str::str#3) goto printf_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
-    // cputs::@return
+    // printf_str::@return
     // }
     // [10] return 
     rts
-    // cputs::@2
+    // printf_str::@2
   __b2:
     // *screen++ = *str++
-    // [11] *screen#1 = *cputs::str#3 -- _deref_pbuz1=_deref_pbuz2 
+    // [11] *screen#1 = *printf_str::str#3 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     sta (screen),y
@@ -769,7 +787,7 @@ cputs: {
     bne !+
     inc.z screen+1
   !:
-    // [13] cputs::str#0 = ++ cputs::str#3 -- pbuz1=_inc_pbuz1 
+    // [13] printf_str::str#0 = ++ printf_str::str#3 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
@@ -779,7 +797,7 @@ cputs: {
   // printf_uint
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
-// void printf_uint(unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     // *screen++ = printf_hextab[BYTE1(uvalue)>>4]
     // [14] *screen#1 = *printf_hextab -- _deref_pbuz1=_deref_pbuc1 

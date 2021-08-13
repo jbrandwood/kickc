@@ -1,39 +1,41 @@
-Added struct type cast to parameter value list call printf_string(main::name, (struct printf_format_string){ 0, 0 })
+Added struct type cast to parameter value list call printf_string((void (*)(char)) 0, main::name, (struct printf_format_string){ 0, 0 })
 Inlined call call __init
 Eliminating unused variable with no statement main::$0
 
 CONTROL FLOW GRAPH SSA
 
-void cputs(char *str)
-cputs: scope:[cputs]  from main main::@2 printf_string
+void printf_str(void (*putc)(char) , char *str)
+printf_str: scope:[printf_str]  from main main::@2 printf_string
   screen#25 = phi( main/screen#23, main::@2/screen#5, printf_string/screen#22 )
-  cputs::str#6 = phi( main/cputs::str#2, main::@2/cputs::str#3, printf_string/cputs::str#1 )
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@2
-  screen#21 = phi( cputs/screen#25, cputs::@2/screen#0 )
-  cputs::str#4 = phi( cputs/cputs::str#6, cputs::@2/cputs::str#0 )
-  cputs::$0 = 0 != *cputs::str#4
-  if(cputs::$0) goto cputs::@2
-  to:cputs::@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  screen#11 = phi( cputs::@1/screen#21 )
-  cputs::str#5 = phi( cputs::@1/cputs::str#4 )
-  *screen#11 = *cputs::str#5
+  printf_str::str#6 = phi( main/printf_str::str#2, main::@2/printf_str::str#3, printf_string/printf_str::str#1 )
+  to:printf_str::@1
+printf_str::@1: scope:[printf_str]  from printf_str printf_str::@2
+  screen#21 = phi( printf_str/screen#25, printf_str::@2/screen#0 )
+  printf_str::str#4 = phi( printf_str/printf_str::str#6, printf_str::@2/printf_str::str#0 )
+  printf_str::$0 = 0 != *printf_str::str#4
+  if(printf_str::$0) goto printf_str::@2
+  to:printf_str::@return
+printf_str::@2: scope:[printf_str]  from printf_str::@1
+  screen#11 = phi( printf_str::@1/screen#21 )
+  printf_str::str#5 = phi( printf_str::@1/printf_str::str#4 )
+  *screen#11 = *printf_str::str#5
   screen#0 = ++ screen#11
-  cputs::str#0 = ++ cputs::str#5
-  to:cputs::@1
-cputs::@return: scope:[cputs]  from cputs::@1
-  screen#12 = phi( cputs::@1/screen#21 )
+  printf_str::str#0 = ++ printf_str::str#5
+  to:printf_str::@1
+printf_str::@return: scope:[printf_str]  from printf_str::@1
+  screen#12 = phi( printf_str::@1/screen#21 )
   screen#1 = screen#12
   return 
   to:@return
 
-void printf_string(char *str , char format_min_length , char format_justify_left)
+void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 printf_string: scope:[printf_string]  from main::@1
   screen#22 = phi( main::@1/screen#4 )
   printf_string::str#1 = phi( main::@1/printf_string::str#0 )
-  cputs::str#1 = printf_string::str#1
-  call cputs
+  printf_string::putc#1 = phi( main::@1/printf_string::putc#0 )
+  printf_str::putc#0 = printf_string::putc#1
+  printf_str::str#1 = printf_string::str#1
+  call printf_str
   to:printf_string::@1
 printf_string::@1: scope:[printf_string]  from printf_string
   screen#13 = phi( printf_string/screen#1 )
@@ -48,12 +50,14 @@ printf_string::@return: scope:[printf_string]  from printf_string::@1
 void main()
 main: scope:[main]  from __start::@1
   screen#23 = phi( __start::@1/screen#24 )
-  cputs::str#2 = main::str
-  call cputs
+  printf_str::putc#1 = (void (*)(char)) 0
+  printf_str::str#2 = main::str
+  call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   screen#15 = phi( main/screen#1 )
   screen#4 = screen#15
+  printf_string::putc#0 = (void (*)(char)) 0
   printf_string::str#0 = main::name
   printf_string::format_min_length#0 = 0
   printf_string::format_justify_left#0 = 0
@@ -62,8 +66,9 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   screen#16 = phi( main::@1/screen#3 )
   screen#5 = screen#16
-  cputs::str#3 = main::str1
-  call cputs
+  printf_str::putc#2 = (void (*)(char)) 0
+  printf_str::str#3 = main::str1
+  call printf_str
   to:main::@3
 main::@3: scope:[main]  from main::@2
   screen#17 = phi( main::@2/screen#1 )
@@ -97,26 +102,33 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-void cputs(char *str)
-bool cputs::$0
-char *cputs::str
-char *cputs::str#0
-char *cputs::str#1
-char *cputs::str#2
-char *cputs::str#3
-char *cputs::str#4
-char *cputs::str#5
-char *cputs::str#6
 void main()
 __constant char *main::name = "Jesper"
 __constant char main::str[$d] = "Hello, I am "
 __constant char main::str1[$f] = ". who are you?"
-void printf_string(char *str , char format_min_length , char format_justify_left)
+void printf_str(void (*putc)(char) , char *str)
+bool printf_str::$0
+void (*printf_str::putc)(char)
+void (*printf_str::putc#0)(char)
+void (*printf_str::putc#1)(char)
+void (*printf_str::putc#2)(char)
+char *printf_str::str
+char *printf_str::str#0
+char *printf_str::str#1
+char *printf_str::str#2
+char *printf_str::str#3
+char *printf_str::str#4
+char *printf_str::str#5
+char *printf_str::str#6
+void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 struct printf_format_string printf_string::format
 char printf_string::format_justify_left
 char printf_string::format_justify_left#0
 char printf_string::format_min_length
 char printf_string::format_min_length#0
+void (*printf_string::putc)(char)
+void (*printf_string::putc#0)(char)
+void (*printf_string::putc#1)(char)
 char *printf_string::str
 char *printf_string::str#0
 char *printf_string::str#1
@@ -148,14 +160,14 @@ char *screen#7
 char *screen#8
 char *screen#9
 
-Adding number conversion cast (unumber) 0 in cputs::$0 = 0 != *cputs::str#4
+Adding number conversion cast (unumber) 0 in printf_str::$0 = 0 != *printf_str::str#4
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (char *) 1024
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias cputs::str#4 = cputs::str#5 
+Alias printf_str::str#4 = printf_str::str#5 
 Alias screen#1 = screen#11 screen#21 screen#12 
 Alias screen#13 = screen#2 screen#14 screen#3 
 Alias screen#15 = screen#4 
@@ -164,6 +176,7 @@ Alias screen#17 = screen#6 screen#18 screen#7
 Alias screen#24 = screen#8 
 Alias screen#10 = screen#9 screen#19 screen#20 
 Successful SSA optimization Pass2AliasElimination
+Identical Phi Values printf_string::putc#1 printf_string::putc#0
 Identical Phi Values printf_string::str#1 printf_string::str#0
 Identical Phi Values screen#22 screen#15
 Identical Phi Values screen#13 screen#1
@@ -173,19 +186,28 @@ Identical Phi Values screen#16 screen#13
 Identical Phi Values screen#17 screen#1
 Identical Phi Values screen#10 screen#17
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition cputs::$0 [3] if(0!=*cputs::str#4) goto cputs::@2
+Simple Condition printf_str::$0 [3] if(0!=*printf_str::str#4) goto printf_str::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant cputs::str#2 = main::str
+Constant printf_str::putc#1 = (void (*)(char)) 0
+Constant printf_str::str#2 = main::str
+Constant printf_string::putc#0 = (void (*)(char)) 0
 Constant printf_string::str#0 = main::name
 Constant printf_string::format_min_length#0 = 0
 Constant printf_string::format_justify_left#0 = 0
-Constant cputs::str#3 = main::str1
+Constant printf_str::putc#2 = (void (*)(char)) 0
+Constant printf_str::str#3 = main::str1
 Constant screen#24 = (char *) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant cputs::str#1 = printf_string::str#0
+Constant printf_str::putc#0 = printf_string::putc#0
+Constant printf_str::str#1 = printf_string::str#0
 Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused constant printf_str::putc#1
+Eliminating unused constant printf_str::putc#2
+Eliminating unused constant printf_str::putc#0
 Eliminating unused constant printf_string::format_min_length#0
 Eliminating unused constant printf_string::format_justify_left#0
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant printf_string::putc#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -194,29 +216,29 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings cputs::str#2
-Inlining constant with var siblings cputs::str#3
-Inlining constant with var siblings cputs::str#1
+Inlining constant with var siblings printf_str::str#2
+Inlining constant with var siblings printf_str::str#3
+Inlining constant with var siblings printf_str::str#1
 Inlining constant with var siblings screen#24
-Constant inlined cputs::str#1 = main::name
-Constant inlined cputs::str#2 = main::str
-Constant inlined cputs::str#3 = main::str1
 Constant inlined screen#24 = (char *) 1024
 Constant inlined printf_string::str#0 = main::name
+Constant inlined printf_str::str#2 = main::str
+Constant inlined printf_str::str#1 = main::name
+Constant inlined printf_str::str#3 = main::str1
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of printf_string::@1
 CALL GRAPH
-Calls in [main] to cputs:1 printf_string:3 cputs:5 
-Calls in [printf_string] to cputs:20 
+Calls in [main] to printf_str:1 printf_string:3 printf_str:5 
+Calls in [printf_string] to printf_str:20 
 
 Created 4 initial phi equivalence classes
 Coalesced [4] screen#26 = screen#1
-Coalesced [9] cputs::str#7 = cputs::str#6
+Coalesced [9] printf_str::str#7 = printf_str::str#6
 Coalesced (already) [10] screen#28 = screen#25
-Coalesced [17] cputs::str#8 = cputs::str#0
+Coalesced [17] printf_str::str#8 = printf_str::str#0
 Coalesced [18] screen#29 = screen#0
 Coalesced (already) [19] screen#27 = screen#1
 Coalesced down to 2 phi equivalence classes
@@ -232,7 +254,7 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] phi()
-  [1] call cputs
+  [1] call printf_str
   to:main::@1
 main::@1: scope:[main]  from main
   [2] phi()
@@ -240,35 +262,35 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [4] phi()
-  [5] call cputs
+  [5] call printf_str
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [6] return 
   to:@return
 
-void cputs(char *str)
-cputs: scope:[cputs]  from main main::@2 printf_string
+void printf_str(void (*putc)(char) , char *str)
+printf_str: scope:[printf_str]  from main main::@2 printf_string
   [7] screen#25 = phi( main/(char *) 1024, main::@2/screen#1, printf_string/screen#1 )
-  [7] cputs::str#6 = phi( main/main::str, main::@2/main::str1, printf_string/main::name )
-  to:cputs::@1
-cputs::@1: scope:[cputs]  from cputs cputs::@2
-  [8] screen#1 = phi( cputs/screen#25, cputs::@2/screen#0 )
-  [8] cputs::str#4 = phi( cputs/cputs::str#6, cputs::@2/cputs::str#0 )
-  [9] if(0!=*cputs::str#4) goto cputs::@2
-  to:cputs::@return
-cputs::@return: scope:[cputs]  from cputs::@1
+  [7] printf_str::str#6 = phi( main/main::str, main::@2/main::str1, printf_string/main::name )
+  to:printf_str::@1
+printf_str::@1: scope:[printf_str]  from printf_str printf_str::@2
+  [8] screen#1 = phi( printf_str/screen#25, printf_str::@2/screen#0 )
+  [8] printf_str::str#4 = phi( printf_str/printf_str::str#6, printf_str::@2/printf_str::str#0 )
+  [9] if(0!=*printf_str::str#4) goto printf_str::@2
+  to:printf_str::@return
+printf_str::@return: scope:[printf_str]  from printf_str::@1
   [10] return 
   to:@return
-cputs::@2: scope:[cputs]  from cputs::@1
-  [11] *screen#1 = *cputs::str#4
+printf_str::@2: scope:[printf_str]  from printf_str::@1
+  [11] *screen#1 = *printf_str::str#4
   [12] screen#0 = ++ screen#1
-  [13] cputs::str#0 = ++ cputs::str#4
-  to:cputs::@1
+  [13] printf_str::str#0 = ++ printf_str::str#4
+  to:printf_str::@1
 
-void printf_string(char *str , char format_min_length , char format_justify_left)
+void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 printf_string: scope:[printf_string]  from main::@1
   [14] phi()
-  [15] call cputs
+  [15] call printf_str
   to:printf_string::@return
 printf_string::@return: scope:[printf_string]  from printf_string
   [16] return 
@@ -276,16 +298,18 @@ printf_string::@return: scope:[printf_string]  from printf_string
 
 
 VARIABLE REGISTER WEIGHTS
-void cputs(char *str)
-char *cputs::str
-char *cputs::str#0 // 2002.0
-char *cputs::str#4 // 1026.25
-char *cputs::str#6 // 101.0
 void main()
-void printf_string(char *str , char format_min_length , char format_justify_left)
+void printf_str(void (*putc)(char) , char *str)
+void (*printf_str::putc)(char)
+char *printf_str::str
+char *printf_str::str#0 // 2002.0
+char *printf_str::str#4 // 1026.25
+char *printf_str::str#6 // 101.0
+void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 struct printf_format_string printf_string::format
 char printf_string::format_justify_left
 char printf_string::format_min_length
+void (*printf_string::putc)(char)
 char *printf_string::str
 char *screen
 char *screen#0 // 1001.0
@@ -294,26 +318,26 @@ char *screen#25 // 114.0
 
 Initial phi equivalence classes
 [ screen#25 screen#1 screen#0 ]
-[ cputs::str#4 cputs::str#6 cputs::str#0 ]
+[ printf_str::str#4 printf_str::str#6 printf_str::str#0 ]
 Complete equivalence classes
 [ screen#25 screen#1 screen#0 ]
-[ cputs::str#4 cputs::str#6 cputs::str#0 ]
+[ printf_str::str#4 printf_str::str#6 printf_str::str#0 ]
 Allocated zp[2]:2 [ screen#25 screen#1 screen#0 ]
-Allocated zp[2]:4 [ cputs::str#4 cputs::str#6 cputs::str#0 ]
+Allocated zp[2]:4 [ printf_str::str#4 printf_str::str#6 printf_str::str#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] if(0!=*cputs::str#4) goto cputs::@2 [ screen#1 cputs::str#4 ] ( cputs:1 [ screen#1 cputs::str#4 ] { }  cputs:5 [ screen#1 cputs::str#4 ] { { screen#1 = screen#25 } }  printf_string:3::cputs:15 [ screen#1 cputs::str#4 ] { { screen#1 = screen#25 } }  ) always clobbers reg byte a reg byte y 
-Statement [11] *screen#1 = *cputs::str#4 [ screen#1 cputs::str#4 ] ( cputs:1 [ screen#1 cputs::str#4 ] { }  cputs:5 [ screen#1 cputs::str#4 ] { { screen#1 = screen#25 } }  printf_string:3::cputs:15 [ screen#1 cputs::str#4 ] { { screen#1 = screen#25 } }  ) always clobbers reg byte a reg byte y 
+Statement [9] if(0!=*printf_str::str#4) goto printf_str::@2 [ screen#1 printf_str::str#4 ] ( printf_str:1 [ screen#1 printf_str::str#4 ] { }  printf_str:5 [ screen#1 printf_str::str#4 ] { { screen#1 = screen#25 } }  printf_string:3::printf_str:15 [ screen#1 printf_str::str#4 ] { { screen#1 = screen#25 } }  ) always clobbers reg byte a reg byte y 
+Statement [11] *screen#1 = *printf_str::str#4 [ screen#1 printf_str::str#4 ] ( printf_str:1 [ screen#1 printf_str::str#4 ] { }  printf_str:5 [ screen#1 printf_str::str#4 ] { { screen#1 = screen#25 } }  printf_string:3::printf_str:15 [ screen#1 printf_str::str#4 ] { { screen#1 = screen#25 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ screen#25 screen#1 screen#0 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ cputs::str#4 cputs::str#6 cputs::str#0 ] : zp[2]:4 , 
+Potential registers zp[2]:4 [ printf_str::str#4 printf_str::str#6 printf_str::str#0 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [cputs] 3,129.25: zp[2]:4 [ cputs::str#4 cputs::str#6 cputs::str#0 ] 
+Uplift Scope [printf_str] 3,129.25: zp[2]:4 [ printf_str::str#4 printf_str::str#6 printf_str::str#0 ] 
 Uplift Scope [] 1,398.36: zp[2]:2 [ screen#25 screen#1 screen#0 ] 
 Uplift Scope [printf_format_string] 
 Uplift Scope [printf_string] 
 Uplift Scope [main] 
 
-Uplifting [cputs] best 709 combination zp[2]:4 [ cputs::str#4 cputs::str#6 cputs::str#0 ] 
+Uplifting [printf_str] best 709 combination zp[2]:4 [ printf_str::str#4 printf_str::str#6 printf_str::str#0 ] 
 Uplifting [] best 709 combination zp[2]:2 [ screen#25 screen#1 screen#0 ] 
 Uplifting [printf_format_string] best 709 combination 
 Uplifting [printf_string] best 709 combination 
@@ -322,7 +346,7 @@ Uplifting [main] best 709 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests printf function call rewriting
-// A simple string - with the printf-sub cuntions in the same file.
+// A simple string - with the printf-sub funtions in the same file.
   // Upstart
   // Commodore 64 PRG executable file
 .file [name="printf-10.prg", type="prg", segments="Program"]
@@ -337,20 +361,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call cputs
-    // [7] phi from main to cputs [phi:main->cputs]
-  cputs_from_main:
-    // [7] phi screen#25 = (char *) 1024 [phi:main->cputs#0] -- pbuz1=pbuc1 
+    // [1] call printf_str
+    // [7] phi from main to printf_str [phi:main->printf_str]
+  printf_str_from_main:
+    // [7] phi screen#25 = (char *) 1024 [phi:main->printf_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [7] phi cputs::str#6 = main::str [phi:main->cputs#1] -- pbuz1=pbuc1 
+    // [7] phi printf_str::str#6 = main::str [phi:main->printf_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
@@ -365,16 +389,16 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [5] call cputs
-    // [7] phi from main::@2 to cputs [phi:main::@2->cputs]
-  cputs_from___b2:
-    // [7] phi screen#25 = screen#1 [phi:main::@2->cputs#0] -- register_copy 
-    // [7] phi cputs::str#6 = main::str1 [phi:main::@2->cputs#1] -- pbuz1=pbuc1 
+    // [5] call printf_str
+    // [7] phi from main::@2 to printf_str [phi:main::@2->printf_str]
+  printf_str_from___b2:
+    // [7] phi screen#25 = screen#1 [phi:main::@2->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#6 = main::str1 [phi:main::@2->printf_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     jmp __breturn
     // main::@return
   __breturn:
@@ -389,31 +413,31 @@ main: {
     .byte 0
 }
 .segment Code
-  // cputs
-// void cputs(__zp(4) char *str)
-cputs: {
+  // printf_str
+// void printf_str(void (*putc)(char), __zp(4) char *str)
+printf_str: {
     .label str = 4
-    // [8] phi from cputs cputs::@2 to cputs::@1 [phi:cputs/cputs::@2->cputs::@1]
-  __b1_from_cputs:
+    // [8] phi from printf_str printf_str::@2 to printf_str::@1 [phi:printf_str/printf_str::@2->printf_str::@1]
+  __b1_from_printf_str:
   __b1_from___b2:
-    // [8] phi screen#1 = screen#25 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
-    // [8] phi cputs::str#4 = cputs::str#6 [phi:cputs/cputs::@2->cputs::@1#1] -- register_copy 
+    // [8] phi screen#1 = screen#25 [phi:printf_str/printf_str::@2->printf_str::@1#0] -- register_copy 
+    // [8] phi printf_str::str#4 = printf_str::str#6 [phi:printf_str/printf_str::@2->printf_str::@1#1] -- register_copy 
     jmp __b1
-    // cputs::@1
+    // printf_str::@1
   __b1:
-    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*printf_str::str#4) goto printf_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
     jmp __breturn
-    // cputs::@return
+    // printf_str::@return
   __breturn:
     // [10] return 
     rts
-    // cputs::@2
+    // printf_str::@2
   __b2:
-    // [11] *screen#1 = *cputs::str#4 -- _deref_pbuz1=_deref_pbuz2 
+    // [11] *screen#1 = *printf_str::str#4 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
@@ -423,7 +447,7 @@ cputs: {
     bne !+
     inc.z screen+1
   !:
-    // [13] cputs::str#0 = ++ cputs::str#4 -- pbuz1=_inc_pbuz1 
+    // [13] printf_str::str#0 = ++ printf_str::str#4 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
@@ -433,18 +457,18 @@ cputs: {
   // printf_string
 // Print a string value using a specific format
 // Handles justification and min length
-// void printf_string(char *str, char format_min_length, char format_justify_left)
+// void printf_string(void (*putc)(char), char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    // [15] call cputs
-    // [7] phi from printf_string to cputs [phi:printf_string->cputs]
-  cputs_from_printf_string:
-    // [7] phi screen#25 = screen#1 [phi:printf_string->cputs#0] -- register_copy 
-    // [7] phi cputs::str#6 = main::name [phi:printf_string->cputs#1] -- pbuz1=pbuc1 
+    // [15] call printf_str
+    // [7] phi from printf_string to printf_str [phi:printf_string->printf_str]
+  printf_str_from_printf_string:
+    // [7] phi screen#25 = screen#1 [phi:printf_string->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#6 = main::name [phi:printf_string->printf_str#1] -- pbuz1=pbuc1 
     lda #<main.name
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>main.name
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     jmp __breturn
     // printf_string::@return
   __breturn:
@@ -467,33 +491,35 @@ Replacing label __b1_from___b2 with __b1
 Removing instruction __b1_from_main:
 Removing instruction printf_string_from___b1:
 Removing instruction __b2_from___b1:
-Removing instruction cputs_from___b2:
-Removing instruction __b1_from_cputs:
+Removing instruction printf_str_from___b2:
+Removing instruction __b1_from_printf_str:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction cputs_from_main:
+Removing instruction printf_str_from_main:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __breturn:
-Removing instruction cputs_from_printf_string:
+Removing instruction printf_str_from_printf_string:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-void cputs(char *str)
-char *cputs::str
-char *cputs::str#0 // str zp[2]:4 2002.0
-char *cputs::str#4 // str zp[2]:4 1026.25
-char *cputs::str#6 // str zp[2]:4 101.0
 void main()
 __constant char *main::name = "Jesper"
 __constant char main::str[$d] = "Hello, I am "
 __constant char main::str1[$f] = ". who are you?"
-void printf_string(char *str , char format_min_length , char format_justify_left)
+void printf_str(void (*putc)(char) , char *str)
+void (*printf_str::putc)(char)
+char *printf_str::str
+char *printf_str::str#0 // str zp[2]:4 2002.0
+char *printf_str::str#4 // str zp[2]:4 1026.25
+char *printf_str::str#6 // str zp[2]:4 101.0
+void printf_string(void (*putc)(char) , char *str , char format_min_length , char format_justify_left)
 struct printf_format_string printf_string::format
 char printf_string::format_justify_left
 char printf_string::format_min_length
+void (*printf_string::putc)(char)
 char *printf_string::str
 char *screen
 char *screen#0 // screen zp[2]:2 1001.0
@@ -501,7 +527,7 @@ char *screen#1 // screen zp[2]:2 283.3636363636364
 char *screen#25 // screen zp[2]:2 114.0
 
 zp[2]:2 [ screen#25 screen#1 screen#0 ]
-zp[2]:4 [ cputs::str#4 cputs::str#6 cputs::str#0 ]
+zp[2]:4 [ printf_str::str#4 printf_str::str#6 printf_str::str#0 ]
 
 
 FINAL ASSEMBLER
@@ -509,7 +535,7 @@ Score: 617
 
   // File Comments
 // Tests printf function call rewriting
-// A simple string - with the printf-sub cuntions in the same file.
+// A simple string - with the printf-sub funtions in the same file.
   // Upstart
   // Commodore 64 PRG executable file
 .file [name="printf-10.prg", type="prg", segments="Program"]
@@ -525,19 +551,19 @@ Score: 617
   // main
 main: {
     // printf("Hello, I am %s. who are you?", name)
-    // [1] call cputs
-    // [7] phi from main to cputs [phi:main->cputs]
-    // [7] phi screen#25 = (char *) 1024 [phi:main->cputs#0] -- pbuz1=pbuc1 
+    // [1] call printf_str
+    // [7] phi from main to printf_str [phi:main->printf_str]
+    // [7] phi screen#25 = (char *) 1024 [phi:main->printf_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [7] phi cputs::str#6 = main::str [phi:main->cputs#1] -- pbuz1=pbuc1 
+    // [7] phi printf_str::str#6 = main::str [phi:main->printf_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // printf("Hello, I am %s. who are you?", name)
@@ -547,15 +573,15 @@ main: {
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // printf("Hello, I am %s. who are you?", name)
-    // [5] call cputs
-    // [7] phi from main::@2 to cputs [phi:main::@2->cputs]
-    // [7] phi screen#25 = screen#1 [phi:main::@2->cputs#0] -- register_copy 
-    // [7] phi cputs::str#6 = main::str1 [phi:main::@2->cputs#1] -- pbuz1=pbuc1 
+    // [5] call printf_str
+    // [7] phi from main::@2 to printf_str [phi:main::@2->printf_str]
+    // [7] phi screen#25 = screen#1 [phi:main::@2->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#6 = main::str1 [phi:main::@2->printf_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // main::@return
     // }
     // [6] return 
@@ -569,29 +595,29 @@ main: {
     .byte 0
 }
 .segment Code
-  // cputs
-// void cputs(__zp(4) char *str)
-cputs: {
+  // printf_str
+// void printf_str(void (*putc)(char), __zp(4) char *str)
+printf_str: {
     .label str = 4
-    // [8] phi from cputs cputs::@2 to cputs::@1 [phi:cputs/cputs::@2->cputs::@1]
-    // [8] phi screen#1 = screen#25 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
-    // [8] phi cputs::str#4 = cputs::str#6 [phi:cputs/cputs::@2->cputs::@1#1] -- register_copy 
-    // cputs::@1
+    // [8] phi from printf_str printf_str::@2 to printf_str::@1 [phi:printf_str/printf_str::@2->printf_str::@1]
+    // [8] phi screen#1 = screen#25 [phi:printf_str/printf_str::@2->printf_str::@1#0] -- register_copy 
+    // [8] phi printf_str::str#4 = printf_str::str#6 [phi:printf_str/printf_str::@2->printf_str::@1#1] -- register_copy 
+    // printf_str::@1
   __b1:
     // while(*str)
-    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*printf_str::str#4) goto printf_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
-    // cputs::@return
+    // printf_str::@return
     // }
     // [10] return 
     rts
-    // cputs::@2
+    // printf_str::@2
   __b2:
     // *screen++ = *str++
-    // [11] *screen#1 = *cputs::str#4 -- _deref_pbuz1=_deref_pbuz2 
+    // [11] *screen#1 = *printf_str::str#4 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     sta (screen),y
@@ -601,7 +627,7 @@ cputs: {
     bne !+
     inc.z screen+1
   !:
-    // [13] cputs::str#0 = ++ cputs::str#4 -- pbuz1=_inc_pbuz1 
+    // [13] printf_str::str#0 = ++ printf_str::str#4 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
@@ -611,18 +637,18 @@ cputs: {
   // printf_string
 // Print a string value using a specific format
 // Handles justification and min length
-// void printf_string(char *str, char format_min_length, char format_justify_left)
+// void printf_string(void (*putc)(char), char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    // cputs(str)
-    // [15] call cputs
-    // [7] phi from printf_string to cputs [phi:printf_string->cputs]
-    // [7] phi screen#25 = screen#1 [phi:printf_string->cputs#0] -- register_copy 
-    // [7] phi cputs::str#6 = main::name [phi:printf_string->cputs#1] -- pbuz1=pbuc1 
+    // printf_str(putc, str)
+    // [15] call printf_str
+    // [7] phi from printf_string to printf_str [phi:printf_string->printf_str]
+    // [7] phi screen#25 = screen#1 [phi:printf_string->printf_str#0] -- register_copy 
+    // [7] phi printf_str::str#6 = main::name [phi:printf_string->printf_str#1] -- pbuz1=pbuc1 
     lda #<main.name
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>main.name
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // printf_string::@return
     // }
     // [16] return 

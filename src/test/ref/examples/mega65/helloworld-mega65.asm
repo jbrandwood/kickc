@@ -16,6 +16,7 @@
   /// Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
   .const LIGHT_BLUE = $e
+  .const STACK_BASE = $103
   /// I/O Personality selection
   .label IO_KEY = $d02f
   /// C65 Banking Register
@@ -89,9 +90,41 @@ conio_mega65_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldz conio_cursor_x
+    sta.z (conio_line_text),z
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda #LIGHT_BLUE
+    ldz conio_cursor_x
+    sta.z (conio_line_color),z
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$50
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
     // printf("hello world!")
-    jsr cputs
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -225,57 +258,6 @@ gotoxy: {
     // }
     rts
 }
-// Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(2) const char *s)
-cputs: {
-    .label s = 2
-    lda #<main.s
-    sta.z s
-    lda #>main.s
-    sta.z s+1
-  __b1:
-    // while(c=*s++)
-    ldy #0
-    lda (s),y
-    inw.z s
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // cputc(c)
-    jsr cputc
-    jmp __b1
-}
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__register(A) char c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldz conio_cursor_x
-    sta.z (conio_line_text),z
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #LIGHT_BLUE
-    ldz conio_cursor_x
-    sta.z (conio_line_color),z
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$50
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
-    // }
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
-    rts
-}
 // Print a newline
 cputln: {
     // conio_line_text +=  CONIO_WIDTH
@@ -303,6 +285,30 @@ cputln: {
     jsr cscroll
     // }
     rts
+}
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp(2) const char *s)
+printf_str: {
+    .label s = 2
+    lda #<main.s
+    sta.z s
+    lda #>main.s
+    sta.z s+1
+  __b1:
+    // while(c=*s++)
+    ldy #0
+    lda (s),y
+    inw.z s
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // putc(c)
+    pha
+    jsr cputc
+    pla
+    jmp __b1
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {

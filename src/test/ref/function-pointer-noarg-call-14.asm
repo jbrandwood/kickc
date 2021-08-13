@@ -8,6 +8,7 @@
 .segment Basic
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
+  .const STACK_BASE = $103
   /// Color Ram
   .label COLORRAM = $d800
   /// Default address of screen character matrix
@@ -46,10 +47,10 @@ __start: {
 world: {
     // printf("world!")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -60,10 +61,10 @@ world: {
 hello: {
     // printf("hello ")
     lda #<s
-    sta.z cputs.s
+    sta.z printf_str.s
     lda #>s
-    sta.z cputs.s+1
-    jsr cputs
+    sta.z printf_str.s+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -87,6 +88,37 @@ conio_c64_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda #LIGHT_BLUE
+    sta (conio_line_color),y
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
     // f1(&hello)
     lda #<hello
@@ -103,9 +135,9 @@ main: {
     // }
     rts
 }
-// Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(2) const char *s)
-cputs: {
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp(2) const char *s)
+printf_str: {
     .label s = 2
   __b1:
     // while(c=*s++)
@@ -120,8 +152,10 @@ cputs: {
     // }
     rts
   __b2:
-    // cputc(c)
+    // putc(c)
+    pha
     jsr cputc
+    pla
     jmp __b1
 }
 // Set the cursor to the specified position
@@ -199,44 +233,6 @@ gotoxy: {
     // }
     rts
 }
-// void f1(__zp(4) void (*fn)())
-f1: {
-    .label fn = 4
-    // (*fn)()
-    jsr icall1
-    // }
-    rts
-  icall1:
-    jmp (fn)
-}
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__register(A) char c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldy.z conio_cursor_x
-    sta (conio_line_text),y
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #LIGHT_BLUE
-    sta (conio_line_color),y
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$28
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
-    // }
-    rts
-  __b1:
-    // cputln()
-    jsr cputln
-    rts
-}
 // Print a newline
 cputln: {
     // conio_line_text +=  CONIO_WIDTH
@@ -264,6 +260,16 @@ cputln: {
     jsr cscroll
     // }
     rts
+}
+// void f1(__zp(4) void (*fn)())
+f1: {
+    .label fn = 4
+    // (*fn)()
+    jsr icall2
+    // }
+    rts
+  icall2:
+    jmp (fn)
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {

@@ -7,13 +7,13 @@ void main() {
 
     clrscr();
 
-    printf_schar(-77, { 6, 0, 0, 0, 0, DECIMAL});
+    printf_schar(cputc, -77, { 6, 0, 0, 0, 0, DECIMAL});
     cputln();
 
-    printf_schar(99, {6, 0, 1, 1, 0, OCTAL});
+    printf_schar(cputc, 99, {6, 0, 1, 1, 0, OCTAL});
     cputln();
 
-    printf_uint(3456, {10, 1, 0, 0, 1, HEXADECIMAL});
+    printf_uint(cputc, 3456, {10, 1, 0, 0, 1, HEXADECIMAL});
     cputln();
 
 }

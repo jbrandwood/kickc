@@ -7,8 +7,10 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Arrays;
@@ -24,10 +26,12 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
    /** The printf procedure name. */
    public static final String INTRINSIC_PRINTF_NAME = "printf";
+
    /** The printf routine used to print a raw char */
-   private static final String PRINTF_CHAR = "cputc";
+   private static final String CPUTC = "cputc";
+
    /** The printf routine used to print a raw string */
-   private static final String PRINTF_STR = "cputs";
+   private static final String PRINTF_STR = "printf_str";
    /** The printf routine used to print formatted strings. */
    private static final String PRINTF_STRING = "printf_string";
    /** The printf routine used to print signed chars. */
@@ -42,6 +46,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    private static final String PRINTF_SLONG = "printf_slong";
    /** The printf routine used to print unsigned long integers. */
    private static final String PRINTF_ULONG = "printf_ulong";
+
    /** Hexadecimal Radix name. */
    public static final String HEXADECIMAL = "HEXADECIMAL";
    /** Decimal Radix name. */
@@ -55,6 +60,8 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
+
+
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
@@ -70,6 +77,13 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   throw new CompileError("printf() format parameter must be a string!", statement);
                final String formatString = ((ConstantString) formatLiteral).getString();
                final StringEncoding formatEncoding = ((ConstantString) formatLiteral).getEncoding();
+
+               Symbol cputcSymbol = getScope().getGlobalSymbol(CPUTC);
+               ConstantValue CPUTC_REF;
+               if(cputcSymbol!=null)
+                  CPUTC_REF = new ConstantSymbolPointer(cputcSymbol.getRef());
+               else
+                  CPUTC_REF = new ConstantPointer(0L, new SymbolTypeProcedure(SymbolType.VOID, Arrays.asList(SymbolType.BYTE)));
 
                // Remove the call to printf()
                stmtIt.remove();
@@ -121,12 +135,13 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
-                  if(prefix.length() > 0)
-                     addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(prefix, formatEncoding, true)), stmtIt, printfCall);
+                  if(prefix.length() > 0) {
+                     addPrintfCall(PRINTF_STR, Arrays.asList(CPUTC_REF, new ConstantString(prefix, formatEncoding, true)), stmtIt, printfCall);
+                  }
                   formatIdx = end;
 
                   if(typeField.equals("%")) {
-                     addPrintfCall(PRINTF_CHAR, Arrays.asList(new ConstantChar('%', formatEncoding)), stmtIt, printfCall);
+                     addPrintfCall(CPUTC, Arrays.asList(new ConstantChar('%', formatEncoding)), stmtIt, printfCall);
                   } else if(typeField.equals("s")) {
                      // A formatted string
                      //struct printf_format_string {
@@ -138,7 +153,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(width, SymbolType.BYTE),
                                  new ConstantInteger(leftJustify, SymbolType.BYTE)
                            ));
-                     addPrintfCall(PRINTF_STRING, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall), format_string_struct), stmtIt, printfCall);
+                     addPrintfCall(PRINTF_STRING, Arrays.asList(CPUTC_REF, getParameterValue(parameters, paramIdx, printfCall), format_string_struct), stmtIt, printfCall);
                      paramIdx++;
                   } else if("diuxXo".contains(typeField)) {
                      // A formatted integer
@@ -214,11 +229,11 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(upperCase, SymbolType.BYTE),
                                  radix
                            ));
-                     addPrintfCall(printf_number_procedure, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall), format_number_struct), stmtIt, printfCall);
+                     addPrintfCall(printf_number_procedure, Arrays.asList(CPUTC_REF, getParameterValue(parameters, paramIdx, printfCall), format_number_struct), stmtIt, printfCall);
                      paramIdx++;
                   } else if(typeField.equals("c")) {
                      // Print char
-                     addPrintfCall(PRINTF_CHAR, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall)), stmtIt, printfCall);
+                     addPrintfCall(CPUTC, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall)), stmtIt, printfCall);
                      paramIdx++;
                   } else if(typeField.equals("p")) {
                      // Print a pointer
@@ -231,14 +246,14 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(upperCase, SymbolType.BYTE),
                                  getScope().getLocalConstant(HEXADECIMAL).getRef()
                            ));
-                     addPrintfCall(PRINTF_UINT, Arrays.asList(new CastValue(SymbolType.WORD, getParameterValue(parameters, paramIdx, printfCall)), format_number_struct), stmtIt, printfCall);
+                     addPrintfCall(PRINTF_UINT, Arrays.asList(CPUTC_REF, new CastValue(SymbolType.WORD, getParameterValue(parameters, paramIdx, printfCall)), format_number_struct), stmtIt, printfCall);
                      paramIdx++;
                   }
                }
                // Grab the rest
                String suffix = formatString.substring(formatIdx);
                if(suffix.length() > 0)
-                  addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(suffix, formatEncoding, true)), stmtIt, printfCall);
+                  addPrintfCall(PRINTF_STR, Arrays.asList(CPUTC_REF, new ConstantString(suffix, formatEncoding, true)), stmtIt, printfCall);
             }
          }
       }

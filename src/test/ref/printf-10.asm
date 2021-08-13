@@ -1,5 +1,5 @@
 // Tests printf function call rewriting
-// A simple string - with the printf-sub cuntions in the same file.
+// A simple string - with the printf-sub funtions in the same file.
   // Commodore 64 PRG executable file
 .file [name="printf-10.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -17,18 +17,18 @@ main: {
     lda #>$400
     sta.z screen+1
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // printf("Hello, I am %s. who are you?", name)
     jsr printf_string
     // printf("Hello, I am %s. who are you?", name)
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -40,8 +40,8 @@ main: {
     .byte 0
 }
 .segment Code
-// void cputs(__zp(4) char *str)
-cputs: {
+// void printf_str(void (*putc)(char), __zp(4) char *str)
+printf_str: {
     .label str = 4
   __b1:
     // while(*str)
@@ -69,14 +69,14 @@ cputs: {
 }
 // Print a string value using a specific format
 // Handles justification and min length
-// void printf_string(char *str, char format_min_length, char format_justify_left)
+// void printf_string(void (*putc)(char), char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    // cputs(str)
+    // printf_str(putc, str)
     lda #<main.name
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>main.name
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // }
     rts
 }

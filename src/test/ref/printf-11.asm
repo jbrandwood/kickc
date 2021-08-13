@@ -18,18 +18,18 @@ main: {
     lda #>$400
     sta.z screen+1
     lda #<str
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // printf("Commodore is %x cool", pct)
     jsr printf_uint
     // printf("Commodore is %x cool", pct)
     lda #<str1
-    sta.z cputs.str
+    sta.z printf_str.str
     lda #>str1
-    sta.z cputs.str+1
-    jsr cputs
+    sta.z printf_str.str+1
+    jsr printf_str
     // }
     rts
   .segment Data
@@ -39,8 +39,8 @@ main: {
     .byte 0
 }
 .segment Code
-// void cputs(__zp(2) char *str)
-cputs: {
+// void printf_str(void (*putc)(char), __zp(2) char *str)
+printf_str: {
     .label str = 2
   __b1:
     // while(*str)
@@ -68,7 +68,7 @@ cputs: {
 }
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
-// void printf_uint(unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     // *screen++ = printf_hextab[BYTE1(uvalue)>>4]
     lda printf_hextab

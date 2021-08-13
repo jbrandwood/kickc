@@ -1,12 +1,12 @@
 // Tests printf function call rewriting
-// A simple string - with the printf-sub cuntions in the same file.
+// A simple string - with the printf-sub funtions in the same file.
 
 __intrinsic void printf(char* format, ...);
 
 char * screen = (char*)0x0400;
 char idx = 0;
 
-void cputs(char* str) {
+void printf_str(void (*putc)(char), char* str) {
     while(*str) {
         *screen++ = *str++;
     }
@@ -22,8 +22,8 @@ struct printf_format_string {
 
 // Print a string value using a specific format
 // Handles justification and min length
-void printf_string(char* str, struct printf_format_string format) {
-    cputs(str);
+void printf_string(void (*putc)(char), char* str, struct printf_format_string format) {
+    printf_str(putc, str);
 }
 
 

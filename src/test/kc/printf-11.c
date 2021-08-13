@@ -6,7 +6,7 @@ __intrinsic void printf(char* format, ...);
 char * screen = (char*)0x0400;
 char idx = 0;
 
-void cputs(char* str) {
+void printf_str(void (*putc)(char), char* str) {
     while(*str) {
         *screen++ = *str++;
     }
@@ -35,7 +35,7 @@ const char printf_hextab[] = "0123456789abcdef"z;
 
 // Print an unsigned int using a specific format
 // Always prints hexadecimals - ignores min_length and flags
-void printf_uint(unsigned int uvalue, struct printf_format_number format) {
+void printf_uint(void (*putc)(char), unsigned int uvalue, struct printf_format_number format) {
     *screen++ = printf_hextab[BYTE1(uvalue)>>4];
     *screen++ = printf_hextab[BYTE1(uvalue)&0xf];
     *screen++ = printf_hextab[BYTE0(uvalue)>>4];

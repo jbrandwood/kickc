@@ -9,6 +9,7 @@
 .segment Basic
 :BasicUpstart(__start)
   .const LIGHT_BLUE = $e
+  .const STACK_BASE = $103
   /// Color Ram
   .label COLORRAM = $d800
   /// Default address of screen character matrix
@@ -60,10 +61,41 @@ conio_c64_init: {
     // }
     rts
 }
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// void cputc(__register(A) char c)
+cputc: {
+    .const OFFSET_STACK_C = 0
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
+    lda #LIGHT_BLUE
+    sta (conio_line_color),y
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // cputln()
+    jsr cputln
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
+}
 main: {
     // clrscr()
     jsr clrscr
-    // printf_string( "cml", { 10, 0 } )
+    // printf_string(&cputc, "cml", { 10, 0 } )
     lda #<str
     sta.z printf_string.str
     lda #>str
@@ -73,7 +105,7 @@ main: {
     jsr printf_string
     // cputln()
     jsr cputln
-    // printf_string( "rules", { 10, 0 } )
+    // printf_string(&cputc, "rules", { 10, 0 } )
     lda #<str1
     sta.z printf_string.str
     lda #>str1
@@ -83,7 +115,7 @@ main: {
     jsr printf_string
     // cputln()
     jsr cputln
-    // printf_string( "cml", { 10, 1 } )
+    // printf_string(&cputc, "cml", { 10, 1 } )
     lda #<str
     sta.z printf_string.str
     lda #>str
@@ -93,7 +125,7 @@ main: {
     jsr printf_string
     // cputln()
     jsr cputln
-    // printf_string( "rules", { 10, 1 } )
+    // printf_string(&cputc, "rules", { 10, 1 } )
     lda #<str1
     sta.z printf_string.str
     lda #>str1
@@ -185,6 +217,34 @@ gotoxy: {
     // }
     rts
 }
+// Print a newline
+cputln: {
+    // conio_line_text +=  CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     .label line_text = 3
@@ -257,7 +317,7 @@ clrscr: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// void printf_string(__zp(3) char *str, char format_min_length, __zp(2) char format_justify_left)
+// void printf_string(void (*putc)(char), __zp(3) char *str, char format_min_length, __zp(2) char format_justify_left)
 printf_string: {
     .label __9 = 6
     .label padding = 5
@@ -291,15 +351,15 @@ printf_string: {
     bne __b4
     jmp __b2
   __b4:
-    // printf_padding(' ',(char)padding)
+    // printf_padding(putc, ' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #' '
     sta.z printf_padding.pad
     jsr printf_padding
   __b2:
-    // cputs(str)
-    jsr cputs
+    // printf_str(putc, str)
+    jsr printf_str
     // if(format.justify_left && padding)
     lda.z format_justify_left
     beq __breturn
@@ -308,7 +368,7 @@ printf_string: {
     bne __b5
     rts
   __b5:
-    // printf_padding(' ',(char)padding)
+    // printf_padding(putc, ' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
     lda #' '
@@ -317,108 +377,6 @@ printf_string: {
   __breturn:
     // }
     rts
-}
-// Print a newline
-cputln: {
-    // conio_line_text +=  CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_text
-    sta.z conio_line_text
-    bcc !+
-    inc.z conio_line_text+1
-  !:
-    // conio_line_color += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z conio_line_color
-    sta.z conio_line_color
-    bcc !+
-    inc.z conio_line_color+1
-  !:
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y++;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
-    // }
-    rts
-}
-// Computes the length of the string str up to but not including the terminating null character.
-// __zp(6) unsigned int strlen(__zp($b) char *str)
-strlen: {
-    .label len = 6
-    .label str = $b
-    .label return = 6
-    lda #<0
-    sta.z len
-    sta.z len+1
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // len++;
-    inc.z len
-    bne !+
-    inc.z len+1
-  !:
-    // str++;
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Print a padding char a number of times
-// void printf_padding(__zp(9) char pad, __zp(8) char length)
-printf_padding: {
-    .label i = $a
-    .label length = 8
-    .label pad = 9
-    lda #0
-    sta.z i
-  __b1:
-    // for(char i=0;i<length; i++)
-    lda.z i
-    cmp.z length
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // cputc(pad)
-    lda.z pad
-    jsr cputc
-    // for(char i=0;i<length; i++)
-    inc.z i
-    jmp __b1
-}
-// Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(3) const char *s)
-cputs: {
-    .label s = 3
-  __b1:
-    // while(c=*s++)
-    ldy #0
-    lda (s),y
-    inc.z s
-    bne !+
-    inc.z s+1
-  !:
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // cputc(c)
-    jsr cputc
-    jmp __b1
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
@@ -482,33 +440,83 @@ cscroll: {
     // }
     rts
 }
-// Output one character at the current cursor position
-// Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__register(A) char c)
-cputc: {
-    // if(c=='\n')
-    cmp #'\n'
-    beq __b1
-    // conio_line_text[conio_cursor_x] = c
-    ldy.z conio_cursor_x
-    sta (conio_line_text),y
-    // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #LIGHT_BLUE
-    sta (conio_line_color),y
-    // if(++conio_cursor_x==CONIO_WIDTH)
-    inc.z conio_cursor_x
-    lda #$28
-    cmp.z conio_cursor_x
-    bne __breturn
-    // cputln()
-    jsr cputln
-  __breturn:
+// Computes the length of the string str up to but not including the terminating null character.
+// __zp(6) unsigned int strlen(__zp($b) char *str)
+strlen: {
+    .label len = 6
+    .label str = $b
+    .label return = 6
+    lda #<0
+    sta.z len
+    sta.z len+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
     // }
     rts
+  __b2:
+    // len++;
+    inc.z len
+    bne !+
+    inc.z len+1
+  !:
+    // str++;
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Print a padding char a number of times
+// void printf_padding(void (*putc)(char), __zp(9) char pad, __zp(8) char length)
+printf_padding: {
+    .label i = $a
+    .label length = 8
+    .label pad = 9
+    lda #0
+    sta.z i
   __b1:
-    // cputln()
-    jsr cputln
+    // for(char i=0;i<length; i++)
+    lda.z i
+    cmp.z length
+    bcc __b2
+    // }
     rts
+  __b2:
+    // putc(pad)
+    lda.z pad
+    pha
+    jsr cputc
+    pla
+    // for(char i=0;i<length; i++)
+    inc.z i
+    jmp __b1
+}
+/// Print a NUL-terminated string
+// void printf_str(void (*putc)(char), __zp(3) const char *s)
+printf_str: {
+    .label s = 3
+  __b1:
+    // while(c=*s++)
+    ldy #0
+    lda (s),y
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // putc(c)
+    pha
+    jsr cputc
+    pla
+    jmp __b1
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.

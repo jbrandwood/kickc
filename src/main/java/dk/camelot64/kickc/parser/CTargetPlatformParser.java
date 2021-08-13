@@ -113,6 +113,13 @@ public class CTargetPlatformParser {
             }
          }
          {
+            final String structModel = platformJson.getString("struct_model", null);
+            if(structModel != null) {
+               boolean classic = "classic".equals(structModel);
+               targetPlatform.getVariableBuilderConfig().setStructModelClassic(classic);
+            }
+         }
+         {
             final JsonObject defines = platformJson.getJsonObject("defines");
             if(defines != null) {
                final Set<String> macroNames = defines.keySet();

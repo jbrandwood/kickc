@@ -1,7 +1,7 @@
 // Tests snprintf function call rewriting
 // Test simple formats
 
-#include <snprintf.h>
+#include <sprintf.h>
 
 char BUF[20];
 

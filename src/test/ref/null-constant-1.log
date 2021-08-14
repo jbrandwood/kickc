@@ -1,0 +1,441 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  get::ptr#0 = main::SCREEN
+  call get
+  get::return#0 = get::return#4
+  to:main::@1
+main::@1: scope:[main]  from main
+  get::return#5 = phi( main/get::return#0 )
+  main::$0 = get::return#5
+  main::SCREEN[1] = main::$0
+  get::ptr#1 = 0
+  call get
+  get::return#1 = get::return#4
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  get::return#6 = phi( main::@1/get::return#1 )
+  main::$1 = get::return#6
+  main::SCREEN[0] = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+char get(char *ptr)
+get: scope:[get]  from main main::@1
+  get::ptr#2 = phi( main/get::ptr#0, main::@1/get::ptr#1 )
+  get::$0 = 0 == get::ptr#2
+  get::$1 = ! get::$0
+  if(get::$1) goto get::@1
+  to:get::@2
+get::@1: scope:[get]  from get
+  get::ptr#3 = phi( get/get::ptr#2 )
+  get::return#2 = *get::ptr#3
+  to:get::@return
+get::@2: scope:[get]  from get
+  get::return#3 = 0
+  to:get::@return
+get::@return: scope:[get]  from get::@1 get::@2
+  get::return#7 = phi( get::@1/get::return#2, get::@2/get::return#3 )
+  get::return#4 = get::return#7
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+char get(char *ptr)
+bool get::$0
+bool get::$1
+char *get::ptr
+char *get::ptr#0
+char *get::ptr#1
+char *get::ptr#2
+char *get::ptr#3
+char get::return
+char get::return#0
+char get::return#1
+char get::return#2
+char get::return#3
+char get::return#4
+char get::return#5
+char get::return#6
+char get::return#7
+void main()
+char main::$0
+char main::$1
+__constant char *main::SCREEN = (char *)$400
+
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::$0
+Adding number conversion cast (unumber) 0 in get::ptr#1 = 0
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::$1
+Adding number conversion cast (unumber) 0 in get::$0 = 0 == get::ptr#2
+Adding number conversion cast (unumber) 0 in get::return#3 = 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast get::ptr#1 = (unumber)0
+Inlining cast get::return#3 = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [15] get::$1 = 0 != get::ptr#2 from [14] get::$0 = 0 == get::ptr#2
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias get::return#0 = get::return#5 
+Alias get::return#1 = get::return#6 
+Alias get::ptr#2 = get::ptr#3 
+Alias get::return#4 = get::return#7 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition get::$1 [13] if(0!=get::ptr#2) goto get::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant get::ptr#0 = main::SCREEN
+Constant get::ptr#1 = 0
+Constant get::return#3 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [9] main::SCREEN[0] = main::$1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings get::ptr#0
+Inlining constant with var siblings get::ptr#1
+Inlining constant with var siblings get::return#3
+Constant inlined get::ptr#1 = 0
+Constant inlined get::return#3 = 0
+Constant inlined get::ptr#0 = main::SCREEN
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of main
+Adding NOP phi() at start of get::@2
+CALL GRAPH
+Calls in [main] to get:1 get:5 
+
+Created 2 initial phi equivalence classes
+Coalesced [16] get::return#8 = get::return#2
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block label get::@2
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call get
+  [2] get::return#0 = get::return#4
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] main::$0 = get::return#0
+  [4] *(main::SCREEN+1) = main::$0
+  [5] call get
+  [6] get::return#1 = get::return#4
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [7] main::$1 = get::return#1
+  [8] *main::SCREEN = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return 
+  to:@return
+
+char get(char *ptr)
+get: scope:[get]  from main main::@1
+  [10] get::ptr#2 = phi( main/main::SCREEN, main::@1/0 )
+  [11] if(0!=get::ptr#2) goto get::@1
+  to:get::@return
+get::@1: scope:[get]  from get
+  [12] get::return#2 = *get::ptr#2
+  to:get::@return
+get::@return: scope:[get]  from get get::@1
+  [13] get::return#4 = phi( get::@1/get::return#2, get/0 )
+  [14] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+char get(char *ptr)
+char *get::ptr
+char *get::ptr#2 // 11.0
+char get::return
+char get::return#0 // 4.0
+char get::return#1 // 4.0
+char get::return#2 // 22.0
+char get::return#4 // 3.75
+void main()
+char main::$0 // 4.0
+char main::$1 // 4.0
+
+Initial phi equivalence classes
+[ get::ptr#2 ]
+[ get::return#4 get::return#2 ]
+Added variable get::return#0 to live range equivalence class [ get::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable get::return#1 to live range equivalence class [ get::return#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Complete equivalence classes
+[ get::ptr#2 ]
+[ get::return#4 get::return#2 ]
+[ get::return#0 ]
+[ main::$0 ]
+[ get::return#1 ]
+[ main::$1 ]
+Allocated zp[2]:2 [ get::ptr#2 ]
+Allocated zp[1]:4 [ get::return#4 get::return#2 ]
+Allocated zp[1]:5 [ get::return#0 ]
+Allocated zp[1]:6 [ main::$0 ]
+Allocated zp[1]:7 [ get::return#1 ]
+Allocated zp[1]:8 [ main::$1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [11] if(0!=get::ptr#2) goto get::@1 [ get::ptr#2 ] ( get:1 [ get::ptr#2 ] { { get::return#0 = get::return#4 } }  get:5 [ get::ptr#2 ] { { get::return#1 = get::return#4 } }  ) always clobbers reg byte a 
+Statement [12] get::return#2 = *get::ptr#2 [ get::return#2 ] ( get:1 [ get::return#2 ] { { get::return#0 = get::return#4 } }  get:5 [ get::return#2 ] { { get::return#1 = get::return#4 } }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ get::ptr#2 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ get::return#4 get::return#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ get::return#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ get::return#1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ main::$1 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [get] 25.75: zp[1]:4 [ get::return#4 get::return#2 ] 11: zp[2]:2 [ get::ptr#2 ] 4: zp[1]:5 [ get::return#0 ] 4: zp[1]:7 [ get::return#1 ] 
+Uplift Scope [main] 4: zp[1]:6 [ main::$0 ] 4: zp[1]:8 [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [get] best 96 combination reg byte a [ get::return#4 get::return#2 ] zp[2]:2 [ get::ptr#2 ] reg byte a [ get::return#0 ] reg byte a [ get::return#1 ] 
+Uplifting [main] best 84 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [] best 84 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the NULL pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="null-constant-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // [1] call get
+    // [10] phi from main to get [phi:main->get]
+  get_from_main:
+    // [10] phi get::ptr#2 = main::SCREEN [phi:main->get#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z get.ptr
+    lda #>SCREEN
+    sta.z get.ptr+1
+    jsr get
+    // [2] get::return#0 = get::return#4
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] main::$0 = get::return#0
+    // [4] *(main::SCREEN+1) = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    // [5] call get
+    // [10] phi from main::@1 to get [phi:main::@1->get]
+  get_from___b1:
+    // [10] phi get::ptr#2 = 0 [phi:main::@1->get#0] -- pbuz1=vwuc1 
+    lda #<0
+    sta.z get.ptr
+    lda #>0
+    sta.z get.ptr+1
+    jsr get
+    // [6] get::return#1 = get::return#4
+    jmp __b2
+    // main::@2
+  __b2:
+    // [7] main::$1 = get::return#1
+    // [8] *main::SCREEN = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // get
+// __register(A) char get(__zp(2) char *ptr)
+get: {
+    .label ptr = 2
+    // [11] if(0!=get::ptr#2) goto get::@1 -- 0_neq_pbuz1_then_la1 
+    lda.z ptr
+    ora.z ptr+1
+    bne __b1
+    // [13] phi from get to get::@return [phi:get->get::@return]
+  __breturn_from_get:
+    // [13] phi get::return#4 = 0 [phi:get->get::@return#0] -- vbuaa=vbuc1 
+    lda #0
+    jmp __breturn
+    // get::@1
+  __b1:
+    // [12] get::return#2 = *get::ptr#2 -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (ptr),y
+    // [13] phi from get::@1 to get::@return [phi:get::@1->get::@return]
+  __breturn_from___b1:
+    // [13] phi get::return#4 = get::return#2 [phi:get::@1->get::@return#0] -- register_copy 
+    jmp __breturn
+    // get::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction get_from_main:
+Removing instruction __b1:
+Removing instruction get_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn_from_get:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing jump to rts with rts in jmp __breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+char get(char *ptr)
+char *get::ptr
+char *get::ptr#2 // ptr zp[2]:2 11.0
+char get::return
+char get::return#0 // reg byte a 4.0
+char get::return#1 // reg byte a 4.0
+char get::return#2 // reg byte a 22.0
+char get::return#4 // reg byte a 3.75
+void main()
+char main::$0 // reg byte a 4.0
+char main::$1 // reg byte a 4.0
+__constant char *main::SCREEN = (char *) 1024
+
+zp[2]:2 [ get::ptr#2 ]
+reg byte a [ get::return#4 get::return#2 ]
+reg byte a [ get::return#0 ]
+reg byte a [ main::$0 ]
+reg byte a [ get::return#1 ]
+reg byte a [ main::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 73
+
+  // File Comments
+// Test the NULL pointer
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="null-constant-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // get(SCREEN)
+    // [1] call get
+    // [10] phi from main to get [phi:main->get]
+    // [10] phi get::ptr#2 = main::SCREEN [phi:main->get#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z get.ptr
+    lda #>SCREEN
+    sta.z get.ptr+1
+    jsr get
+    // get(SCREEN)
+    // [2] get::return#0 = get::return#4
+    // main::@1
+    // [3] main::$0 = get::return#0
+    // SCREEN[1] = get(SCREEN)
+    // [4] *(main::SCREEN+1) = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+    // get(NULL)
+    // [5] call get
+    // [10] phi from main::@1 to get [phi:main::@1->get]
+    // [10] phi get::ptr#2 = 0 [phi:main::@1->get#0] -- pbuz1=vwuc1 
+    lda #<0
+    sta.z get.ptr
+    sta.z get.ptr+1
+    jsr get
+    // get(NULL)
+    // [6] get::return#1 = get::return#4
+    // main::@2
+    // [7] main::$1 = get::return#1
+    // SCREEN[0] = get(NULL)
+    // [8] *main::SCREEN = main::$1 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // main::@return
+    // }
+    // [9] return 
+    rts
+}
+  // get
+// __register(A) char get(__zp(2) char *ptr)
+get: {
+    .label ptr = 2
+    // if(NULL==ptr)
+    // [11] if(0!=get::ptr#2) goto get::@1 -- 0_neq_pbuz1_then_la1 
+    lda.z ptr
+    ora.z ptr+1
+    bne __b1
+    // [13] phi from get to get::@return [phi:get->get::@return]
+    // [13] phi get::return#4 = 0 [phi:get->get::@return#0] -- vbuaa=vbuc1 
+    lda #0
+    rts
+    // get::@1
+  __b1:
+    // return *ptr;
+    // [12] get::return#2 = *get::ptr#2 -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (ptr),y
+    // [13] phi from get::@1 to get::@return [phi:get::@1->get::@return]
+    // [13] phi get::return#4 = get::return#2 [phi:get::@1->get::@return#0] -- register_copy 
+    // get::@return
+    // }
+    // [14] return 
+    rts
+}
+  // File Data
+

@@ -99,10 +99,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("null-constant.c");
    }
 
-   //@Test
-   //public void testNullConstant1() throws IOException {
-   //   compileAndCompare("null-constant-1.c");
-   //}
+   @Test
+   public void testNullConstant1() throws IOException {
+      compileAndCompare("null-constant-1.c");
+   }
 
    @Test
    public void testBlockError2() throws IOException {

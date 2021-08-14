@@ -10,10 +10,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.AssignmentRValue;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.*;
 
 /**
  * Asserts that types match in all assignments and calculations
@@ -45,7 +42,17 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
    private void checkVarInit(Variable variable) {
 
       SymbolType lValueType = variable.getType();
-      SymbolType rValueType = variable.getInitValue().getType(getScope());
+      final ConstantValue rValue = variable.getInitValue();
+
+      // Test NULL pointer assignment
+      if(lValueType instanceof SymbolTypePointer) {
+         if(rValue instanceof ConstantInteger && ((ConstantInteger) rValue).getInteger().equals(0L))
+            // A null-pointer assignment is OK!
+            return;
+      }
+
+
+      SymbolType rValueType = rValue.getType(getScope());
       if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match
       getLog().append("ERROR! Type mismatch (" + lValueType.toCDecl() + ") cannot be assigned from (" + rValueType.toCDecl() + "). In initialization of " + variable.toString(getProgram()));

@@ -10,6 +10,8 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.List;
@@ -40,6 +42,12 @@ public class Pass1AssertProcedureCallParameters extends Pass1Base {
                   RValue callParameter = callParameters.get(i);
                   SymbolType callParameterType = SymbolTypeInference.inferType(getScope(), callParameter);
                   SymbolType declParameterType = declParameter.getType();
+
+                  if(declParameterType instanceof SymbolTypePointer) {
+                     if(callParameter instanceof ConstantInteger && ((ConstantInteger) callParameter).getInteger().equals(0L))
+                        // A null-pointer assignment is OK!
+                        continue;
+                  }
                   if(!SymbolTypeConversion.assignmentTypeMatch(declParameterType, callParameterType)) {
                      throw new CompileError("Parameters type mismatch in call "+call.toString(getProgram(), true, false)+" expected "+procedure.toString(getProgram(), true), statement);
                   }

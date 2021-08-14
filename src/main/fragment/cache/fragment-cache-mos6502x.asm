@@ -20303,3 +20303,61 @@ tya
 clc
 adc {c1}
 tay
+//FRAGMENT pbuz1=vbuc1
+NO_SYNTHESIS
+//FRAGMENT pbuz1=vbsc1
+NO_SYNTHESIS
+//FRAGMENT pbuz1=vwuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT 0_neq_pbuz1_then_la1
+lda {z1}
+ora {z1}+1
+bne {la1}
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuz2
+ldy {z2}
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuaa
+tay
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuxx
+lda {c1},x
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=pbuc1_derefidx_vbuyy
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwsz1=vbsz2
+lda {z2}
+sta {z1}
+and #$80
+beq !+
+lda #$ff
+!:
+sta {z1}+1
+//FRAGMENT vwuz1_le_vwuz2_then_la1
+lda {z1}+1
+cmp {z2}+1
+bne !+
+lda {z1}
+cmp {z2}
+beq {la1}
+!:
+bcc {la1}
+//FRAGMENT vwuz1=_word_pbuc1_derefidx_vbuaa
+tay
+lda {c1},y
+sta {z1}
+lda #0
+sta {z1}+1

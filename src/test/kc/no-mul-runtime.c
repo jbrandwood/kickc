@@ -1,8 +1,8 @@
-// Test that division at runtime gives a proper error
+// Test that multiplication at runtime gives a proper error
 
 void main() {
     byte* screen = (char*)$400;
     for (byte i: 2..5) {
-        screen[i] = 5*i;
+        screen[i] = i*i;
     }
 }

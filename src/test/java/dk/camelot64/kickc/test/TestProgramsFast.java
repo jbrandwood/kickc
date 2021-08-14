@@ -807,6 +807,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("stars-2.c");
    }
 
+   @Test
+   public void testMultiply4() throws IOException {
+      compileAndCompare("multiply-4.c");
+   }
+
    /* TODO: Add support for var*var
    @Test
    public void testMultiply3() throws IOException {

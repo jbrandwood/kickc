@@ -175,6 +175,13 @@ public class Pass4RegistersFinalize extends Pass2Base {
                register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
             }  else {
                register = allocateNewRegisterZp(variable);
+               int zp = ((Registers.RegisterZpMem) register).getZp();
+               int sizeBytes = variable.getType().getSizeBytes();
+               if(zp + sizeBytes > 0x100) {
+                  // Zero-page exhausted - move to main memory instead (TODO: prioritize!)
+                  register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
+                  getLog().append("Zero-page exhausted. Moving allocation to main memory "+variable.toString());
+               }
             }
             equivalenceClass.setRegister(register);
             if(before == null || !before.equals(register.toString())) {

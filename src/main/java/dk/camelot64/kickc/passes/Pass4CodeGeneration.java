@@ -564,22 +564,16 @@ public class Pass4CodeGeneration {
       // Add all memory variables
       Collection<Variable> scopeVariables = scope.getAllVariables(false);
       for(Variable variable : scopeVariables) {
-         if(variable.isMemoryAreaMain()) {
+         Registers.Register allocation = variable.getAllocation();
+         if(variable.getAllocation() instanceof Registers.RegisterMainMem) {
+            Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
             // Skip PHI masters
             if(variable.isKindPhiMaster())
                continue;
             // Skip if already added
-            if(added.contains(variable.getAsmName())) {
+            if(added.contains(variable.getAsmName()))
                continue;
-            }
             if(variable.isKindLoadStore() || variable.isKindPhiVersion() || variable.isKindIntermediate()) {
-               Registers.Register allocation = variable.getAllocation();
-               if(allocation instanceof Registers.RegisterCpuByte)
-                  continue;
-               if(!(allocation instanceof Registers.RegisterMainMem)) {
-                  throw new InternalError("Expected main memory allocation " + variable.toString(program));
-               }
-               Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
                final Variable mainVar = program.getScope().getVariable(registerMainMem.getVariableRef());
                if(registerMainMem.getAddress() == null) {
                   // Generate into the data segment

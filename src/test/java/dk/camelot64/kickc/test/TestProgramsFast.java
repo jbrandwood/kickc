@@ -1817,8 +1817,13 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testZeropageOverflow() throws IOException {
+      compileAndCompare("zeropage-overflow.c");
+   }
+
+   @Test
    public void testZeropageExhausted() throws IOException {
-      assertError("zeropage-exhausted.c", "Variables used in program do not fit on zeropage", false);
+      compileAndCompare("zeropage-exhausted.c");
    }
 
    @Test

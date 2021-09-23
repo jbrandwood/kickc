@@ -170,8 +170,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
             if(register.isHardware()) {
                // Do not allocate hardware registers
                reallocate = false;
-            } else if(register.isNonRelocatable()) {
-               // Do not allocate non-relocatable ZP registers
+            } else if(register.isAddressHardcoded()) {
+               // Do not allocate registers with hardcoded address
                reallocate = false;
             }
          }

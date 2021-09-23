@@ -447,7 +447,7 @@ public class VariableBuilder {
             return new Registers.RegisterZpMem(addressDirective.addressLiteral.intValue(), -1, true);
          } else {
             // TODO: Fix VariableRef for the hard-coded register
-            return new Registers.RegisterMainMem(null, -1, addressDirective.addressLiteral);
+            return new Registers.RegisterMainMem(null, -1, addressDirective.addressLiteral, true);
          }
       }
 

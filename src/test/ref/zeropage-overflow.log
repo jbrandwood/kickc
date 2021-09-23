@@ -21,7 +21,7 @@ main::@1: scope:[main]  from main main::@2
   main::d#3 = phi( main/main::d#0, main::@2/main::d#1 )
   main::c#3 = phi( main/main::c#0, main::@2/main::c#1 )
   main::b#3 = phi( main/main::b#0, main::@2/main::b#1 )
-  main::a#3 = phi( main/main::a#0, main::@2/main::a#1 )
+  main::a#5 = phi( main/main::a#0, main::@2/main::a#3 )
   main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
   main::$0 = main::i#2 < $a
   if(main::$0) goto main::@2
@@ -34,11 +34,11 @@ main::@2: scope:[main]  from main::@1
   main::d#2 = phi( main::@1/main::d#3 )
   main::c#2 = phi( main::@1/main::c#3 )
   main::b#2 = phi( main::@1/main::b#3 )
-  main::a#2 = phi( main::@1/main::a#3 )
+  main::a#4 = phi( main::@1/main::a#5 )
   main::i#3 = phi( main::@1/main::i#2 )
   main::$1 = main::i#3 * SIZEOF_INT
-  main::SCREEN[main::$1] = main::a#2
-  main::a#1 = ++ main::a#2
+  main::SCREEN[main::$1] = main::a#4
+  main::a#1 = ++ main::a#4
   main::$2 = main::i#3 * SIZEOF_INT
   main::SCREEN[main::$2] = main::b#2
   main::b#1 = ++ main::b#2
@@ -49,17 +49,23 @@ main::@2: scope:[main]  from main::@1
   main::SCREEN[main::$4] = main::d#2
   main::d#1 = ++ main::d#2
   main::$5 = main::i#3 * SIZEOF_INT
-  main::SCREEN[main::$5] = main::e#2
-  main::e#1 = ++ main::e#2
+  main::SCREEN[main::$5] = main::a#1
+  main::a#2 = ++ main::a#1
   main::$6 = main::i#3 * SIZEOF_INT
-  main::SCREEN[main::$6] = main::f#2
-  main::f#1 = ++ main::f#2
+  main::SCREEN[main::$6] = main::e#2
+  main::e#1 = ++ main::e#2
   main::$7 = main::i#3 * SIZEOF_INT
-  main::SCREEN[main::$7] = main::g#2
-  main::g#1 = ++ main::g#2
+  main::SCREEN[main::$7] = main::f#2
+  main::f#1 = ++ main::f#2
   main::$8 = main::i#3 * SIZEOF_INT
-  main::SCREEN[main::$8] = main::h#2
+  main::SCREEN[main::$8] = main::g#2
+  main::g#1 = ++ main::g#2
+  main::$9 = main::i#3 * SIZEOF_INT
+  main::SCREEN[main::$9] = main::h#2
   main::h#1 = ++ main::h#2
+  main::$10 = main::i#3 * SIZEOF_INT
+  main::SCREEN[main::$10] = main::a#2
+  main::a#3 = ++ main::a#2
   main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -82,6 +88,7 @@ void __start()
 void main()
 bool main::$0
 char main::$1
+char main::$10
 char main::$2
 char main::$3
 char main::$4
@@ -89,12 +96,15 @@ char main::$5
 char main::$6
 char main::$7
 char main::$8
+char main::$9
 __constant int * const main::SCREEN = (int *)$400
 int main::a
 int main::a#0
 int main::a#1
 int main::a#2
 int main::a#3
+int main::a#4
+int main::a#5
 int main::b
 int main::b#0
 int main::b#1
@@ -144,7 +154,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (char) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
-Alias main::a#2 = main::a#3 
+Alias main::a#4 = main::a#5 
 Alias main::b#2 = main::b#3 
 Alias main::c#2 = main::c#3 
 Alias main::d#2 = main::d#3 
@@ -160,6 +170,8 @@ Identified duplicate assignment right side [25] main::$5 = main::i#2 * SIZEOF_IN
 Identified duplicate assignment right side [28] main::$6 = main::i#2 * SIZEOF_INT
 Identified duplicate assignment right side [31] main::$7 = main::i#2 * SIZEOF_INT
 Identified duplicate assignment right side [34] main::$8 = main::i#2 * SIZEOF_INT
+Identified duplicate assignment right side [37] main::$9 = main::i#2 * SIZEOF_INT
+Identified duplicate assignment right side [40] main::$10 = main::i#2 * SIZEOF_INT
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition main::$0 [11] if(main::i#2<$a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -178,7 +190,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Alias main::$2 = main::$1 main::$3 main::$4 main::$5 main::$6 main::$7 main::$8 
+Alias main::$2 = main::$1 main::$3 main::$4 main::$5 main::$6 main::$7 main::$8 main::$9 main::$10 
 Successful SSA optimization Pass2AliasElimination
 Rewriting multiplication to use shift [2] main::$2 = main::i#2 * SIZEOF_INT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -207,15 +219,15 @@ Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 9 initial phi equivalence classes
-Coalesced [22] main::i#4 = main::i#1
-Coalesced [23] main::a#4 = main::a#1
-Coalesced [24] main::b#4 = main::b#1
-Coalesced [25] main::c#4 = main::c#1
-Coalesced [26] main::d#4 = main::d#1
-Coalesced [27] main::e#4 = main::e#1
-Coalesced [28] main::f#4 = main::f#1
-Coalesced [29] main::g#4 = main::g#1
-Coalesced [30] main::h#4 = main::h#1
+Coalesced [26] main::i#4 = main::i#1
+Coalesced [27] main::a#6 = main::a#3
+Coalesced [28] main::b#4 = main::b#1
+Coalesced [29] main::c#4 = main::c#1
+Coalesced [30] main::d#4 = main::d#1
+Coalesced [31] main::e#4 = main::e#1
+Coalesced [32] main::f#4 = main::f#1
+Coalesced [33] main::g#4 = main::g#1
+Coalesced [34] main::h#4 = main::h#1
 Coalesced down to 9 phi equivalence classes
 Adding NOP phi() at start of main
 
@@ -233,7 +245,7 @@ main::@1: scope:[main]  from main main::@2
   [1] main::d#2 = phi( main/0, main::@2/main::d#1 )
   [1] main::c#2 = phi( main/0, main::@2/main::c#1 )
   [1] main::b#2 = phi( main/0, main::@2/main::b#1 )
-  [1] main::a#2 = phi( main/0, main::@2/main::a#1 )
+  [1] main::a#4 = phi( main/0, main::@2/main::a#3 )
   [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
   [2] if(main::i#2<$a) goto main::@2
   to:main::@return
@@ -242,60 +254,66 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [4] main::$2 = main::i#2 << 1
-  [5] main::SCREEN[main::$2] = main::a#2
-  [6] main::a#1 = ++ main::a#2
+  [5] main::SCREEN[main::$2] = main::a#4
+  [6] main::a#1 = ++ main::a#4
   [7] main::SCREEN[main::$2] = main::b#2
   [8] main::b#1 = ++ main::b#2
   [9] main::SCREEN[main::$2] = main::c#2
   [10] main::c#1 = ++ main::c#2
   [11] main::SCREEN[main::$2] = main::d#2
   [12] main::d#1 = ++ main::d#2
-  [13] main::SCREEN[main::$2] = main::e#2
-  [14] main::e#1 = ++ main::e#2
-  [15] main::SCREEN[main::$2] = main::f#2
-  [16] main::f#1 = ++ main::f#2
-  [17] main::SCREEN[main::$2] = main::g#2
-  [18] main::g#1 = ++ main::g#2
-  [19] main::SCREEN[main::$2] = main::h#2
-  [20] main::h#1 = ++ main::h#2
-  [21] main::i#1 = ++ main::i#2
+  [13] main::SCREEN[main::$2] = main::a#1
+  [14] main::a#2 = ++ main::a#1
+  [15] main::SCREEN[main::$2] = main::e#2
+  [16] main::e#1 = ++ main::e#2
+  [17] main::SCREEN[main::$2] = main::f#2
+  [18] main::f#1 = ++ main::f#2
+  [19] main::SCREEN[main::$2] = main::g#2
+  [20] main::g#1 = ++ main::g#2
+  [21] main::SCREEN[main::$2] = main::h#2
+  [22] main::h#1 = ++ main::h#2
+  [23] main::SCREEN[main::$2] = main::a#2
+  [24] main::a#3 = ++ main::a#2
+  [25] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
-char main::$2 // 6.6
+char main::$2 // 6.3684210526315805
 int main::a
-int main::a#1 // 1.375
-int main::a#2 // 8.25
+int main::a#1 // 4.125
+int main::a#2 // 3.3000000000000003
+int main::a#3 // 11.0
+int main::a#4 // 8.25
 int main::b
-int main::b#1 // 1.5714285714285714
+int main::b#1 // 1.2222222222222223
 int main::b#2 // 5.5
 int main::c
-int main::c#1 // 1.8333333333333333
+int main::c#1 // 1.375
 int main::c#2 // 4.125
 int main::d
-int main::d#1 // 2.2
+int main::d#1 // 1.5714285714285714
 int main::d#2 // 3.3000000000000003
 int main::e
-int main::e#1 // 2.75
-int main::e#2 // 2.75
+int main::e#1 // 2.2
+int main::e#2 // 2.357142857142857
 int main::f
-int main::f#1 // 3.6666666666666665
-int main::f#2 // 2.357142857142857
+int main::f#1 // 2.75
+int main::f#2 // 2.0625
 int main::g
-int main::g#1 // 5.5
-int main::g#2 // 2.0625
+int main::g#1 // 3.6666666666666665
+int main::g#2 // 1.8333333333333335
 int main::h
-int main::h#1 // 11.0
-int main::h#2 // 1.8333333333333335
+int main::h#1 // 5.5
+int main::h#2 // 1.6500000000000001
 char main::i
 char main::i#1 // 22.0
-char main::i#2 // 2.3157894736842106
+char main::i#2 // 1.9130434782608696
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ main::a#2 main::a#1 ]
+[ main::a#4 main::a#3 ]
 [ main::b#2 main::b#1 ]
 [ main::c#2 main::c#1 ]
 [ main::d#2 main::d#1 ]
@@ -304,9 +322,11 @@ Initial phi equivalence classes
 [ main::g#2 main::g#1 ]
 [ main::h#2 main::h#1 ]
 Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::a#1 to live range equivalence class [ main::a#1 ]
+Added variable main::a#2 to live range equivalence class [ main::a#2 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ main::a#2 main::a#1 ]
+[ main::a#4 main::a#3 ]
 [ main::b#2 main::b#1 ]
 [ main::c#2 main::c#1 ]
 [ main::d#2 main::d#1 ]
@@ -315,8 +335,10 @@ Complete equivalence classes
 [ main::g#2 main::g#1 ]
 [ main::h#2 main::h#1 ]
 [ main::$2 ]
+[ main::a#1 ]
+[ main::a#2 ]
 Allocated zp[1]:251 [ main::i#2 main::i#1 ]
-Allocated zp[2]:252 [ main::a#2 main::a#1 ]
+Allocated zp[2]:252 [ main::a#4 main::a#3 ]
 Allocated zp[2]:254 [ main::b#2 main::b#1 ]
 Zero-page exhausted. Moving allocation to main memory main::c#2
 Allocated mem[2] [ main::c#2 main::c#1 ]
@@ -332,29 +354,43 @@ Zero-page exhausted. Moving allocation to main memory main::h#2
 Allocated mem[2] [ main::h#2 main::h#1 ]
 Zero-page exhausted. Moving allocation to main memory main::$2
 Allocated mem[1] [ main::$2 ]
+Zero-page exhausted. Moving allocation to main memory main::a#1
+Allocated mem[2] [ main::a#1 ]
+Zero-page exhausted. Moving allocation to main memory main::a#2
+Allocated mem[2] [ main::a#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:251 [ main::i#2 main::i#1 ]
-Statement [5] main::SCREEN[main::$2] = main::a#2 [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::SCREEN[main::$2] = main::a#4 [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for mem[1] [ main::$2 ]
-Statement [7] main::SCREEN[main::$2] = main::b#2 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::$2 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [9] main::SCREEN[main::$2] = main::c#2 [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::$2 ] (  [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [11] main::SCREEN[main::$2] = main::d#2 [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::$2 ] (  [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [13] main::SCREEN[main::$2] = main::e#2 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::$2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [15] main::SCREEN[main::$2] = main::f#2 [ main::i#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 ] (  [ main::i#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [17] main::SCREEN[main::$2] = main::g#2 [ main::i#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 ] (  [ main::i#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [19] main::SCREEN[main::$2] = main::h#2 [ main::i#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 ] (  [ main::i#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 ] { }  ) always clobbers reg byte a 
-Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [5] main::SCREEN[main::$2] = main::a#2 [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [7] main::SCREEN[main::$2] = main::b#2 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::$2 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [9] main::SCREEN[main::$2] = main::c#2 [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::$2 ] (  [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [11] main::SCREEN[main::$2] = main::d#2 [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::$2 ] (  [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [13] main::SCREEN[main::$2] = main::e#2 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::$2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [15] main::SCREEN[main::$2] = main::f#2 [ main::i#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 ] (  [ main::i#2 main::f#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [17] main::SCREEN[main::$2] = main::g#2 [ main::i#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 ] (  [ main::i#2 main::g#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [19] main::SCREEN[main::$2] = main::h#2 [ main::i#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 ] (  [ main::i#2 main::h#2 main::a#1 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 ] { }  ) always clobbers reg byte a 
+Statement [6] main::a#1 = ++ main::a#4 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [7] main::SCREEN[main::$2] = main::b#2 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [9] main::SCREEN[main::$2] = main::c#2 [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::$2 main::a#1 ] (  [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [11] main::SCREEN[main::$2] = main::d#2 [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::$2 main::a#1 ] (  [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [13] main::SCREEN[main::$2] = main::a#1 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#1 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [14] main::a#2 = ++ main::a#1 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [15] main::SCREEN[main::$2] = main::e#2 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [17] main::SCREEN[main::$2] = main::f#2 [ main::i#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 main::a#2 ] (  [ main::i#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [19] main::SCREEN[main::$2] = main::g#2 [ main::i#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 main::a#2 ] (  [ main::i#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [21] main::SCREEN[main::$2] = main::h#2 [ main::i#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::$2 main::a#2 ] (  [ main::i#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [23] main::SCREEN[main::$2] = main::a#2 [ main::i#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 main::a#2 ] (  [ main::i#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [24] main::a#3 = ++ main::a#2 [ main::i#2 main::a#3 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 ] (  [ main::i#2 main::a#3 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::SCREEN[main::$2] = main::a#4 [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] (  [ main::i#2 main::a#4 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] main::a#1 = ++ main::a#4 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [7] main::SCREEN[main::$2] = main::b#2 [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] (  [ main::i#2 main::b#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [9] main::SCREEN[main::$2] = main::c#2 [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::$2 main::a#1 ] (  [ main::i#2 main::c#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [11] main::SCREEN[main::$2] = main::d#2 [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::$2 main::a#1 ] (  [ main::i#2 main::d#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [13] main::SCREEN[main::$2] = main::a#1 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#1 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [14] main::a#2 = ++ main::a#1 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [15] main::SCREEN[main::$2] = main::e#2 [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] (  [ main::i#2 main::e#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [17] main::SCREEN[main::$2] = main::f#2 [ main::i#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 main::a#2 ] (  [ main::i#2 main::f#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [19] main::SCREEN[main::$2] = main::g#2 [ main::i#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 main::a#2 ] (  [ main::i#2 main::g#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [21] main::SCREEN[main::$2] = main::h#2 [ main::i#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::$2 main::a#2 ] (  [ main::i#2 main::h#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::$2 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [23] main::SCREEN[main::$2] = main::a#2 [ main::i#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 main::a#2 ] (  [ main::i#2 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [24] main::a#3 = ++ main::a#2 [ main::i#2 main::a#3 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 ] (  [ main::i#2 main::a#3 main::b#1 main::c#1 main::d#1 main::e#1 main::f#1 main::g#1 main::h#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:251 [ main::i#2 main::i#1 ] : zp[1]:251 , reg byte x , reg byte y , 
-Potential registers zp[2]:252 [ main::a#2 main::a#1 ] : zp[2]:252 , 
+Potential registers zp[2]:252 [ main::a#4 main::a#3 ] : zp[2]:252 , 
 Potential registers zp[2]:254 [ main::b#2 main::b#1 ] : zp[2]:254 , 
 Potential registers mem[2] [ main::c#2 main::c#1 ] : mem[2] , 
 Potential registers mem[2] [ main::d#2 main::d#1 ] : mem[2] , 
@@ -363,15 +399,25 @@ Potential registers mem[2] [ main::f#2 main::f#1 ] : mem[2] ,
 Potential registers mem[2] [ main::g#2 main::g#1 ] : mem[2] , 
 Potential registers mem[2] [ main::h#2 main::h#1 ] : mem[2] , 
 Potential registers mem[1] [ main::$2 ] : mem[1] , reg byte x , reg byte y , 
+Potential registers mem[2] [ main::a#1 ] : mem[2] , 
+Potential registers mem[2] [ main::a#2 ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 24.32: zp[1]:251 [ main::i#2 main::i#1 ] 12.83: mem[2] [ main::h#2 main::h#1 ] 9.62: zp[2]:252 [ main::a#2 main::a#1 ] 7.56: mem[2] [ main::g#2 main::g#1 ] 7.07: zp[2]:254 [ main::b#2 main::b#1 ] 6.6: mem[1] [ main::$2 ] 6.02: mem[2] [ main::f#2 main::f#1 ] 5.96: mem[2] [ main::c#2 main::c#1 ] 5.5: mem[2] [ main::d#2 main::d#1 ] 5.5: mem[2] [ main::e#2 main::e#1 ] 
+Uplift Scope [main] 23.91: zp[1]:251 [ main::i#2 main::i#1 ] 19.25: zp[2]:252 [ main::a#4 main::a#3 ] 7.15: mem[2] [ main::h#2 main::h#1 ] 6.72: zp[2]:254 [ main::b#2 main::b#1 ] 6.37: mem[1] [ main::$2 ] 5.5: mem[2] [ main::c#2 main::c#1 ] 5.5: mem[2] [ main::g#2 main::g#1 ] 4.87: mem[2] [ main::d#2 main::d#1 ] 4.81: mem[2] [ main::f#2 main::f#1 ] 4.56: mem[2] [ main::e#2 main::e#1 ] 4.12: mem[2] [ main::a#1 ] 3.3: mem[2] [ main::a#2 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 3681 combination reg byte y [ main::i#2 main::i#1 ] mem[2] [ main::h#2 main::h#1 ] zp[2]:252 [ main::a#2 main::a#1 ] mem[2] [ main::g#2 main::g#1 ] zp[2]:254 [ main::b#2 main::b#1 ] reg byte x [ main::$2 ] mem[2] [ main::f#2 main::f#1 ] mem[2] [ main::c#2 main::c#1 ] mem[2] [ main::d#2 main::d#1 ] mem[2] [ main::e#2 main::e#1 ] 
-Uplifting [] best 3681 combination 
-Allocated (was zp[2]:252) zp[2]:251 [ main::a#2 main::a#1 ]
+Uplifting [main] best 4536 combination reg byte y [ main::i#2 main::i#1 ] zp[2]:252 [ main::a#4 main::a#3 ] mem[2] [ main::h#2 main::h#1 ] zp[2]:254 [ main::b#2 main::b#1 ] reg byte x [ main::$2 ] mem[2] [ main::c#2 main::c#1 ] mem[2] [ main::g#2 main::g#1 ] mem[2] [ main::d#2 main::d#1 ] mem[2] [ main::f#2 main::f#1 ] mem[2] [ main::e#2 main::e#1 ] mem[2] [ main::a#1 ] mem[2] [ main::a#2 ] 
+Uplifting [] best 4536 combination 
+Coalescing zero page register [ mem[2] [ main::a#1 ] ] with [ mem[2] [ main::a#2 ] ] - score: 1
+Allocated (was zp[2]:252) zp[2]:251 [ main::a#4 main::a#3 ]
 Allocated (was zp[2]:254) zp[2]:253 [ main::b#2 main::b#1 ]
+Zero-page exhausted. Moving allocation to main memory main::c#2
+Zero-page exhausted. Moving allocation to main memory main::d#2
+Zero-page exhausted. Moving allocation to main memory main::e#2
+Zero-page exhausted. Moving allocation to main memory main::f#2
+Zero-page exhausted. Moving allocation to main memory main::g#2
+Zero-page exhausted. Moving allocation to main memory main::h#2
+Zero-page exhausted. Moving allocation to main memory main::a#1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -391,8 +437,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 // And then allocate a bunch of variables
 main: {
     .label SCREEN = $400
-    .label a = $fb
     .label b = $fd
+    .label a_1 = $fb
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::h#2 = 0 [phi:main->main::@1#0] -- vwsm1=vwsc1 
@@ -430,11 +476,11 @@ main: {
     sta.z b
     lda #>0
     sta.z b+1
-    // [1] phi main::a#2 = 0 [phi:main->main::@1#7] -- vwsz1=vwsc1 
+    // [1] phi main::a#4 = 0 [phi:main->main::@1#7] -- vwsz1=vwsc1 
     lda #<0
-    sta.z a
+    sta.z a_1
     lda #>0
-    sta.z a+1
+    sta.z a_1+1
     // [1] phi main::i#2 = 0 [phi:main->main::@1#8] -- vbuyy=vbuc1 
     ldy #0
     jmp __b1
@@ -454,16 +500,19 @@ main: {
     tya
     asl
     tax
-    // [5] main::SCREEN[main::$2] = main::a#2 -- pwsc1_derefidx_vbuxx=vwsz1 
-    lda.z a
+    // [5] main::SCREEN[main::$2] = main::a#4 -- pwsc1_derefidx_vbuxx=vwsz1 
+    lda.z a_1
     sta SCREEN,x
-    lda.z a+1
+    lda.z a_1+1
     sta SCREEN+1,x
-    // [6] main::a#1 = ++ main::a#2 -- vwsz1=_inc_vwsz1 
-    inc.z a
-    bne !+
-    inc.z a+1
-  !:
+    // [6] main::a#1 = ++ main::a#4 -- vwsm1=_inc_vwsz2 
+    clc
+    lda.z a_1
+    adc #1
+    sta a
+    lda.z a_1+1
+    adc #0
+    sta a+1
     // [7] main::SCREEN[main::$2] = main::b#2 -- pwsc1_derefidx_vbuxx=vwsz1 
     lda.z b
     sta SCREEN,x
@@ -494,47 +543,70 @@ main: {
     bne !+
     inc d+1
   !:
-    // [13] main::SCREEN[main::$2] = main::e#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [13] main::SCREEN[main::$2] = main::a#1 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda a
+    sta SCREEN,x
+    lda a+1
+    sta SCREEN+1,x
+    // [14] main::a#2 = ++ main::a#1 -- vwsm1=_inc_vwsm1 
+    inc a
+    bne !+
+    inc a+1
+  !:
+    // [15] main::SCREEN[main::$2] = main::e#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda e
     sta SCREEN,x
     lda e+1
     sta SCREEN+1,x
-    // [14] main::e#1 = ++ main::e#2 -- vwsm1=_inc_vwsm1 
+    // [16] main::e#1 = ++ main::e#2 -- vwsm1=_inc_vwsm1 
     inc e
     bne !+
     inc e+1
   !:
-    // [15] main::SCREEN[main::$2] = main::f#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [17] main::SCREEN[main::$2] = main::f#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda f
     sta SCREEN,x
     lda f+1
     sta SCREEN+1,x
-    // [16] main::f#1 = ++ main::f#2 -- vwsm1=_inc_vwsm1 
+    // [18] main::f#1 = ++ main::f#2 -- vwsm1=_inc_vwsm1 
     inc f
     bne !+
     inc f+1
   !:
-    // [17] main::SCREEN[main::$2] = main::g#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [19] main::SCREEN[main::$2] = main::g#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda g
     sta SCREEN,x
     lda g+1
     sta SCREEN+1,x
-    // [18] main::g#1 = ++ main::g#2 -- vwsm1=_inc_vwsm1 
+    // [20] main::g#1 = ++ main::g#2 -- vwsm1=_inc_vwsm1 
     inc g
     bne !+
     inc g+1
   !:
-    // [19] main::SCREEN[main::$2] = main::h#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [21] main::SCREEN[main::$2] = main::h#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda h
     sta SCREEN,x
     lda h+1
     sta SCREEN+1,x
-    // [20] main::h#1 = ++ main::h#2 -- vwsm1=_inc_vwsm1 
+    // [22] main::h#1 = ++ main::h#2 -- vwsm1=_inc_vwsm1 
     inc h
     bne !+
     inc h+1
   !:
-    // [21] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    // [23] main::SCREEN[main::$2] = main::a#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda a
+    sta SCREEN,x
+    lda a+1
+    sta SCREEN+1,x
+    // [24] main::a#3 = ++ main::a#2 -- vwsz1=_inc_vwsm2 
+    clc
+    lda a
+    adc #1
+    sta.z a_1
+    lda a+1
+    adc #0
+    sta.z a_1+1
+    // [25] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
@@ -545,10 +617,11 @@ main: {
     // [1] phi main::d#2 = main::d#1 [phi:main::@2->main::@1#4] -- register_copy 
     // [1] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#5] -- register_copy 
     // [1] phi main::b#2 = main::b#1 [phi:main::@2->main::@1#6] -- register_copy 
-    // [1] phi main::a#2 = main::a#1 [phi:main::@2->main::@1#7] -- register_copy 
+    // [1] phi main::a#4 = main::a#3 [phi:main::@2->main::@1#7] -- register_copy 
     // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#8] -- register_copy 
     jmp __b1
   .segment Data
+    a: .word 0
     c: .word 0
     d: .word 0
     e: .word 0
@@ -586,38 +659,40 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-char main::$2 // reg byte x 6.6
+char main::$2 // reg byte x 6.3684210526315805
 __constant int * const main::SCREEN = (int *) 1024
 int main::a
-int main::a#1 // a zp[2]:251 1.375
-int main::a#2 // a zp[2]:251 8.25
+int main::a#1 // a mem[2] 4.125
+int main::a#2 // a mem[2] 3.3000000000000003
+int main::a#3 // a_1 zp[2]:251 11.0
+int main::a#4 // a_1 zp[2]:251 8.25
 int main::b
-int main::b#1 // b zp[2]:253 1.5714285714285714
+int main::b#1 // b zp[2]:253 1.2222222222222223
 int main::b#2 // b zp[2]:253 5.5
 int main::c
-int main::c#1 // c mem[2] 1.8333333333333333
+int main::c#1 // c mem[2] 1.375
 int main::c#2 // c mem[2] 4.125
 int main::d
-int main::d#1 // d mem[2] 2.2
+int main::d#1 // d mem[2] 1.5714285714285714
 int main::d#2 // d mem[2] 3.3000000000000003
 int main::e
-int main::e#1 // e mem[2] 2.75
-int main::e#2 // e mem[2] 2.75
+int main::e#1 // e mem[2] 2.2
+int main::e#2 // e mem[2] 2.357142857142857
 int main::f
-int main::f#1 // f mem[2] 3.6666666666666665
-int main::f#2 // f mem[2] 2.357142857142857
+int main::f#1 // f mem[2] 2.75
+int main::f#2 // f mem[2] 2.0625
 int main::g
-int main::g#1 // g mem[2] 5.5
-int main::g#2 // g mem[2] 2.0625
+int main::g#1 // g mem[2] 3.6666666666666665
+int main::g#2 // g mem[2] 1.8333333333333335
 int main::h
-int main::h#1 // h mem[2] 11.0
-int main::h#2 // h mem[2] 1.8333333333333335
+int main::h#1 // h mem[2] 5.5
+int main::h#2 // h mem[2] 1.6500000000000001
 char main::i
 char main::i#1 // reg byte y 22.0
-char main::i#2 // reg byte y 2.3157894736842106
+char main::i#2 // reg byte y 1.9130434782608696
 
 reg byte y [ main::i#2 main::i#1 ]
-zp[2]:251 [ main::a#2 main::a#1 ]
+zp[2]:251 [ main::a#4 main::a#3 ]
 zp[2]:253 [ main::b#2 main::b#1 ]
 mem[2] [ main::c#2 main::c#1 ]
 mem[2] [ main::d#2 main::d#1 ]
@@ -626,10 +701,11 @@ mem[2] [ main::f#2 main::f#1 ]
 mem[2] [ main::g#2 main::g#1 ]
 mem[2] [ main::h#2 main::h#1 ]
 reg byte x [ main::$2 ]
+mem[2] [ main::a#1 main::a#2 ]
 
 
 FINAL ASSEMBLER
-Score: 3321
+Score: 4101
 
   // File Comments
 // Tests that variables overflow to main memory when zeropage is exhausted
@@ -648,8 +724,8 @@ Score: 3321
 // And then allocate a bunch of variables
 main: {
     .label SCREEN = $400
-    .label a = $fb
     .label b = $fd
+    .label a_1 = $fb
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::h#2 = 0 [phi:main->main::@1#0] -- vwsm1=vwsc1 
     lda #<0
@@ -673,9 +749,9 @@ main: {
     // [1] phi main::b#2 = 0 [phi:main->main::@1#6] -- vwsz1=vwsc1 
     sta.z b
     sta.z b+1
-    // [1] phi main::a#2 = 0 [phi:main->main::@1#7] -- vwsz1=vwsc1 
-    sta.z a
-    sta.z a+1
+    // [1] phi main::a#4 = 0 [phi:main->main::@1#7] -- vwsz1=vwsc1 
+    sta.z a_1
+    sta.z a_1+1
     // [1] phi main::i#2 = 0 [phi:main->main::@1#8] -- vbuyy=vbuc1 
     tay
     // main::@1
@@ -695,17 +771,20 @@ main: {
     tya
     asl
     tax
-    // [5] main::SCREEN[main::$2] = main::a#2 -- pwsc1_derefidx_vbuxx=vwsz1 
-    lda.z a
+    // [5] main::SCREEN[main::$2] = main::a#4 -- pwsc1_derefidx_vbuxx=vwsz1 
+    lda.z a_1
     sta SCREEN,x
-    lda.z a+1
+    lda.z a_1+1
     sta SCREEN+1,x
     // SCREEN[i] = a++;
-    // [6] main::a#1 = ++ main::a#2 -- vwsz1=_inc_vwsz1 
-    inc.z a
-    bne !+
-    inc.z a+1
-  !:
+    // [6] main::a#1 = ++ main::a#4 -- vwsm1=_inc_vwsz2 
+    clc
+    lda.z a_1
+    adc #1
+    sta a
+    lda.z a_1+1
+    adc #0
+    sta a+1
     // SCREEN[i] = b++
     // [7] main::SCREEN[main::$2] = main::b#2 -- pwsc1_derefidx_vbuxx=vwsz1 
     lda.z b
@@ -742,56 +821,83 @@ main: {
     bne !+
     inc d+1
   !:
+    // SCREEN[i] = a++
+    // [13] main::SCREEN[main::$2] = main::a#1 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda a
+    sta SCREEN,x
+    lda a+1
+    sta SCREEN+1,x
+    // SCREEN[i] = a++;
+    // [14] main::a#2 = ++ main::a#1 -- vwsm1=_inc_vwsm1 
+    inc a
+    bne !+
+    inc a+1
+  !:
     // SCREEN[i] = e++
-    // [13] main::SCREEN[main::$2] = main::e#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [15] main::SCREEN[main::$2] = main::e#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda e
     sta SCREEN,x
     lda e+1
     sta SCREEN+1,x
     // SCREEN[i] = e++;
-    // [14] main::e#1 = ++ main::e#2 -- vwsm1=_inc_vwsm1 
+    // [16] main::e#1 = ++ main::e#2 -- vwsm1=_inc_vwsm1 
     inc e
     bne !+
     inc e+1
   !:
     // SCREEN[i] = f++
-    // [15] main::SCREEN[main::$2] = main::f#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [17] main::SCREEN[main::$2] = main::f#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda f
     sta SCREEN,x
     lda f+1
     sta SCREEN+1,x
     // SCREEN[i] = f++;
-    // [16] main::f#1 = ++ main::f#2 -- vwsm1=_inc_vwsm1 
+    // [18] main::f#1 = ++ main::f#2 -- vwsm1=_inc_vwsm1 
     inc f
     bne !+
     inc f+1
   !:
     // SCREEN[i] = g++
-    // [17] main::SCREEN[main::$2] = main::g#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [19] main::SCREEN[main::$2] = main::g#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda g
     sta SCREEN,x
     lda g+1
     sta SCREEN+1,x
     // SCREEN[i] = g++;
-    // [18] main::g#1 = ++ main::g#2 -- vwsm1=_inc_vwsm1 
+    // [20] main::g#1 = ++ main::g#2 -- vwsm1=_inc_vwsm1 
     inc g
     bne !+
     inc g+1
   !:
     // SCREEN[i] = h++
-    // [19] main::SCREEN[main::$2] = main::h#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    // [21] main::SCREEN[main::$2] = main::h#2 -- pwsc1_derefidx_vbuxx=vwsm1 
     lda h
     sta SCREEN,x
     lda h+1
     sta SCREEN+1,x
     // SCREEN[i] = h++;
-    // [20] main::h#1 = ++ main::h#2 -- vwsm1=_inc_vwsm1 
+    // [22] main::h#1 = ++ main::h#2 -- vwsm1=_inc_vwsm1 
     inc h
     bne !+
     inc h+1
   !:
+    // SCREEN[i] = a++
+    // [23] main::SCREEN[main::$2] = main::a#2 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda a
+    sta SCREEN,x
+    lda a+1
+    sta SCREEN+1,x
+    // SCREEN[i] = a++;
+    // [24] main::a#3 = ++ main::a#2 -- vwsz1=_inc_vwsm2 
+    clc
+    lda a
+    adc #1
+    sta.z a_1
+    lda a+1
+    adc #0
+    sta.z a_1+1
     // for(char i=0;i<10;i++)
-    // [21] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    // [25] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [1] phi main::h#2 = main::h#1 [phi:main::@2->main::@1#0] -- register_copy 
@@ -801,10 +907,11 @@ main: {
     // [1] phi main::d#2 = main::d#1 [phi:main::@2->main::@1#4] -- register_copy 
     // [1] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#5] -- register_copy 
     // [1] phi main::b#2 = main::b#1 [phi:main::@2->main::@1#6] -- register_copy 
-    // [1] phi main::a#2 = main::a#1 [phi:main::@2->main::@1#7] -- register_copy 
+    // [1] phi main::a#4 = main::a#3 [phi:main::@2->main::@1#7] -- register_copy 
     // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#8] -- register_copy 
     jmp __b1
   .segment Data
+    a: .word 0
     c: .word 0
     d: .word 0
     e: .word 0

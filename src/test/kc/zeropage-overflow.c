@@ -17,9 +17,11 @@ void main() {
         SCREEN[i] = b++;
         SCREEN[i] = c++;
         SCREEN[i] = d++;
+        SCREEN[i] = a++;
         SCREEN[i] = e++;
         SCREEN[i] = f++;
         SCREEN[i] = g++;
         SCREEN[i] = h++;
+        SCREEN[i] = a++;
     }
 }

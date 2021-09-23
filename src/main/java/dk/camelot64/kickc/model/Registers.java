@@ -69,6 +69,7 @@ public class Registers {
 
       boolean isNonRelocatable();
 
+      boolean isHardware();
    }
 
    public static class RegisterMainMem implements Register {
@@ -80,10 +81,14 @@ public class Registers {
       /** If the address is hardcoded this contains it. */
       private Long address;
 
-      public RegisterMainMem(VariableRef variableRef, int bytes, Long address) {
+      /** True if the address of the register is declared in the code (non-relocatable) */
+      private boolean nonRelocatable;
+
+      public RegisterMainMem(VariableRef variableRef, int bytes, Long address, boolean nonRelocatable) {
          this.variableRef = variableRef;
          this.bytes = bytes;
          this.address = address;
+         this.nonRelocatable = nonRelocatable;
       }
 
       public VariableRef getVariableRef() {
@@ -115,7 +120,12 @@ public class Registers {
 
       @Override
       public boolean isNonRelocatable() {
-         return true;
+         return nonRelocatable;
+      }
+
+      @Override
+      public boolean isHardware() {
+         return false;
       }
 
       @Override
@@ -189,6 +199,11 @@ public class Registers {
       }
 
       @Override
+      public boolean isHardware() {
+         return false;
+      }
+
+      @Override
       public String toString() {
          return "zp[" + getBytes() + "]:" + getZp();
       }
@@ -231,6 +246,11 @@ public class Registers {
 
       @Override
       public boolean isNonRelocatable() {
+         return true;
+      }
+
+      @Override
+      public boolean isHardware() {
          return true;
       }
 
@@ -352,6 +372,11 @@ public class Registers {
       }
 
       @Override
+      public boolean isHardware() {
+         return false;
+      }
+
+      @Override
       public int getBytes() {
          return 0;
       }
@@ -370,14 +395,14 @@ public class Registers {
          return constantValue != null ? constantValue.hashCode() : 0;
       }
 
+
       @Override
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
          RegisterConstant that = (RegisterConstant) o;
-         return constantValue != null ? constantValue.equals(that.constantValue) : that.constantValue == null;
+         return Objects.equals(constantValue, that.constantValue);
       }
-
    }
 
 }

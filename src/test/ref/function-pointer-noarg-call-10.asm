@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(__start)
   .label SCREEN = $400
-  .label idx = 7
+  .label idx = 3
 .segment Code
 __start: {
     // volatile byte idx = 0
@@ -61,9 +61,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(2) char *msg)
+// void print(__zp(4) char *msg)
 print: {
-    .label msg = 2
+    .label msg = 4
     ldy #0
   __b1:
     // SCREEN[idx++] = msg[i++]
@@ -80,10 +80,10 @@ print: {
     // }
     rts
 }
-// void do10(__zp(4) void (*fn)())
+// void do10(__zp(6) void (*fn)())
 do10: {
-    .label i = 6
-    .label fn = 4
+    .label i = 2
+    .label fn = 6
     lda #0
     sta.z i
   __b1:

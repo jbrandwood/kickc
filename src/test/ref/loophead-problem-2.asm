@@ -32,8 +32,8 @@ main: {
     rts
 }
 scan_for_lowest: {
-    .label height = 2
-    .label lowest = 4
+    .label height = 3
+    .label lowest = 2
     lda #$ff
     sta.z lowest
     lda #<$258

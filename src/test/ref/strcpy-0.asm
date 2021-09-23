@@ -39,10 +39,10 @@ main: {
     .byte 0
 }
 .segment Code
-// void str_cpy(__zp(4) char *dst, __zp(2) const char *src)
+// void str_cpy(__zp(2) char *dst, __zp(4) const char *src)
 str_cpy: {
-    .label dst = 4
-    .label src = 2
+    .label dst = 2
+    .label src = 4
   __b1:
     // *dst++ = *src++
     ldy #0

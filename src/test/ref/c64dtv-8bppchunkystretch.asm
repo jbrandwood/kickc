@@ -276,10 +276,10 @@ main: {
 }
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label __5 = 7
-    .label gfxb = 5
-    .label x = 3
-    .label y = 2
+    .label __5 = 6
+    .label gfxb = 2
+    .label x = 4
+    .label y = 8
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #CHUNKY/$4000
     jsr dtvSetCpuBankSegment1

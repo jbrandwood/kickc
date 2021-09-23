@@ -11,10 +11,10 @@
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
   .const YSPACE = $14
-  .label x = 3
-  .label idx = 4
+  .label x = 2
+  .label idx = 3
   .label y = 5
-  .label line = 2
+  .label line = 4
 .segment Code
 main: {
     lda #0

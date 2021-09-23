@@ -24,7 +24,7 @@ main: {
     jmp __b1
 }
 initscreen: {
-    .label screen = 3
+    .label screen = 8
     lda #<SCREEN
     sta.z screen
     lda #>SCREEN
@@ -54,9 +54,9 @@ initscreen: {
     jmp __b1
 }
 render: {
-    .label x = 5
-    .label colline = 3
-    .label y = 2
+    .label x = 7
+    .label colline = 8
+    .label y = 6
     lda #<COLORS
     sta.z colline
     lda #>COLORS
@@ -179,14 +179,14 @@ animate: {
     // }
     rts
 }
-// __register(X) char findcol(__zp(5) char x, __zp(2) char y)
+// __register(X) char findcol(__zp(7) char x, __zp(6) char y)
 findcol: {
-    .label x = 5
-    .label y = 2
-    .label xp = 8
-    .label yp = 9
-    .label i = 6
-    .label mindiff = 7
+    .label x = 7
+    .label y = 6
+    .label xp = 4
+    .label yp = 5
+    .label i = 3
+    .label mindiff = 2
     lda #$ff
     sta.z mindiff
     ldx #0

@@ -144,8 +144,8 @@ Complete equivalence classes
 [ foo::v1 ]
 [ foo::v2 ]
 [ foo::a2 ]
-Allocated zp[2]:128 [ foo::v1 ]
-Allocated zp[2]:130 [ foo::v2 ]
+Allocated zp[2]:128 [ foo::v2 ]
+Allocated zp[2]:130 [ foo::v1 ]
 Allocated zp[1]:132 [ foo::a2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [3] foo::v1 = (volatile char *) 0 [ ] ( foo:1 [ ] { }  ) always clobbers reg byte a 
@@ -154,16 +154,16 @@ Statement [5] foo::a2 = 2 [ foo::a2 ] ( foo:1 [ foo::a2 ] { }  ) always clobbers
 Statement [6] foo::v1 = main::a [ foo::v1 foo::a2 ] ( foo:1 [ foo::v1 foo::a2 ] { }  ) always clobbers reg byte a 
 Statement [7] foo::v2 = &foo::a2 [ foo::v1 foo::v2 foo::a2 ] ( foo:1 [ foo::v1 foo::v2 foo::a2 ] { }  ) always clobbers reg byte a 
 Statement [9] *OUT = foo::a2 [ ] ( foo:1 [ ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:128 [ foo::v1 ] : zp[2]:128 , 
-Potential registers zp[2]:130 [ foo::v2 ] : zp[2]:130 , 
+Potential registers zp[2]:130 [ foo::v1 ] : zp[2]:130 , 
+Potential registers zp[2]:128 [ foo::v2 ] : zp[2]:128 , 
 Potential registers zp[1]:132 [ foo::a2 ] : zp[1]:132 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [foo] 22: zp[2]:130 [ foo::v2 ] 11: zp[2]:128 [ foo::v1 ] 5.5: zp[1]:132 [ foo::a2 ] 
+Uplift Scope [foo] 22: zp[2]:128 [ foo::v2 ] 11: zp[2]:130 [ foo::v1 ] 5.5: zp[1]:132 [ foo::a2 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [foo] best 332 combination zp[2]:130 [ foo::v2 ] zp[2]:128 [ foo::v1 ] zp[1]:132 [ foo::a2 ] 
+Uplifting [foo] best 332 combination zp[2]:128 [ foo::v2 ] zp[2]:130 [ foo::v1 ] zp[1]:132 [ foo::a2 ] 
 Uplifting [main] best 332 combination 
 Uplifting [] best 332 combination 
 Attempting to uplift remaining variables inzp[1]:132 [ foo::a2 ]
@@ -201,8 +201,8 @@ main: {
   // foo
 // void foo(char *x1, char *x2)
 foo: {
-    .label v1 = $80
-    .label v2 = $82
+    .label v1 = $82
+    .label v2 = $80
     .label a2 = $84
     // [3] foo::v1 = (volatile char *) 0 -- pbuz1=pbuc1 
     lda #<0
@@ -258,15 +258,15 @@ FINAL SYMBOL TABLE
 __constant const char *OUT = (char *) 32768
 void foo(char *x1 , char *x2)
 __loadstore volatile char foo::a2 // zp[1]:132 5.5
-__loadstore volatile char * volatile foo::v1 // zp[2]:128 11.0
-__loadstore char * volatile foo::v2 // zp[2]:130 22.0
+__loadstore volatile char * volatile foo::v1 // zp[2]:130 11.0
+__loadstore char * volatile foo::v2 // zp[2]:128 22.0
 char *foo::x1
 char *foo::x2
 void main()
 __constant char main::a[] = { $80, $4f, 2, $d }
 
-zp[2]:128 [ foo::v1 ]
-zp[2]:130 [ foo::v2 ]
+zp[2]:130 [ foo::v1 ]
+zp[2]:128 [ foo::v2 ]
 zp[1]:132 [ foo::a2 ]
 
 
@@ -304,8 +304,8 @@ main: {
   // foo
 // void foo(char *x1, char *x2)
 foo: {
-    .label v1 = $80
-    .label v2 = $82
+    .label v1 = $82
+    .label v2 = $80
     .label a2 = $84
     // volatile uint8_t * v1
     // [3] foo::v1 = (volatile char *) 0 -- pbuz1=pbuc1 

@@ -11,12 +11,12 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label __0 = 2
-    .label __1 = 2
-    .label __3 = 4
-    .label __6 = 2
-    .label __7 = 4
-    .label __8 = 4
+    .label __0 = 4
+    .label __1 = 4
+    .label __3 = 2
+    .label __6 = 4
+    .label __7 = 2
+    .label __8 = 2
     ldx #0
   __b1:
     // ((word)i)*0x100

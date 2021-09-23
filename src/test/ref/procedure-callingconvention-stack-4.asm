@@ -10,7 +10,7 @@
 :BasicUpstart(__start)
   .const STACK_BASE = $103
   .label SCREEN = $400
-  .label i = 3
+  .label i = 4
 .segment Code
 __start: {
     // char i = 0
@@ -19,12 +19,12 @@ __start: {
     jsr main
     rts
 }
-// __register(A) char plus(__zp(4) char a, __register(A) char b)
+// __register(A) char plus(__zp(2) char a, __register(A) char b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
-    .label a = 4
+    .label a = 2
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
@@ -41,7 +41,7 @@ plus: {
     rts
 }
 main: {
-    .label a = 2
+    .label a = 3
     lda #0
     sta.z a
   __b1:

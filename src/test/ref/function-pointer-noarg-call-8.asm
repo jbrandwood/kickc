@@ -9,7 +9,7 @@
 :BasicUpstart(__start)
   .label SCREEN = $400
   .label msg = 3
-  .label idx = 5
+  .label idx = 2
 .segment Code
 __start: {
     // byte* volatile msg
@@ -58,7 +58,7 @@ main: {
 }
 // void do10(void (*fn)())
 do10: {
-    .label i = 2
+    .label i = 5
     lda #0
     sta.z i
   __b1:

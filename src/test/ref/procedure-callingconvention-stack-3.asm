@@ -13,14 +13,14 @@
   .const STACK_BASE = $103
   .label SCREEN = $400
 .segment Code
-// __zp(4) unsigned int plus(__zp(4) unsigned int a, __zp(2) unsigned int b)
+// __zp(2) unsigned int plus(__zp(2) unsigned int a, __zp(4) unsigned int b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_2 = 2
-    .label a = 4
-    .label b = 2
-    .label return = 4
+    .label a = 2
+    .label b = 4
+    .label return = 2
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
@@ -48,7 +48,7 @@ plus: {
     rts
 }
 main: {
-    .label __0 = 4
+    .label __0 = 2
     // plus('0', 7)
     lda #0
     pha

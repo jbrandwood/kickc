@@ -10,11 +10,11 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label cycles = 3
-    .label bytes = 4
+    .label cycles = 7
+    .label bytes = 6
     .label uses = 5
-    .label clobbers = 6
-    .label resource = 7
+    .label clobbers = 4
+    .label resource = 3
     .label i = 2
     lda #0
     sta.z resource

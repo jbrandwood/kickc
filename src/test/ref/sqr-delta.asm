@@ -9,7 +9,7 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label __0 = 6
+    .label __0 = $a
     // ifunc(8)
     jsr ifunc
     // ifunc(8)
@@ -25,13 +25,13 @@ main: {
     // }
     rts
 }
-// __zp(6) unsigned long ifunc(unsigned long a)
+// __zp($a) unsigned long ifunc(unsigned long a)
 ifunc: {
     .const a = 8
-    .label x = 6
-    .label xsqr = 2
-    .label delta = $a
-    .label return = 6
+    .label x = $a
+    .label xsqr = 6
+    .label delta = 2
+    .label return = $a
     lda #<3
     sta.z delta
     lda #>3

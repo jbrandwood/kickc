@@ -21,8 +21,8 @@ main: {
 .segment Code
 // void foo(char *x1, char *x2)
 foo: {
-    .label v1 = $80
-    .label v2 = $82
+    .label v1 = $82
+    .label v2 = $80
     .label a2 = $84
     // volatile uint8_t * v1
     lda #<0

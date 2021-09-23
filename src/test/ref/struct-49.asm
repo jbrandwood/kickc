@@ -10,9 +10,9 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label msg = 4
-    .label screen = 6
-    .label txt = 2
+    .label msg = 2
+    .label screen = 4
+    .label txt = 6
     lda #<$400
     sta.z screen
     lda #>$400

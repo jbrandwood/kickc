@@ -20,10 +20,10 @@ main: {
     rts
 }
 scrollup1: {
-    .label __4 = 5
-    .label line = 9
-    .label __5 = 7
-    .label __6 = 5
+    .label __4 = 2
+    .label line = 4
+    .label __5 = 8
+    .label __6 = 2
     lda #<0
     sta.z line
     sta.z line+1
@@ -86,9 +86,9 @@ scrollup1: {
     jmp __b2
 }
 scrollup2: {
-    .label line1 = 3
-    .label line2 = 9
-    .label l = 2
+    .label line1 = 6
+    .label line2 = 4
+    .label l = $a
     lda #0
     sta.z l
     lda #<screen
@@ -128,10 +128,10 @@ scrollup2: {
     rts
 }
 scrollup3: {
-    .label l2 = 5
-    .label line = 3
-    .label __3 = 7
-    .label __4 = 9
+    .label l2 = 2
+    .label line = 6
+    .label __3 = 8
+    .label __4 = 4
     lda #<0
     sta.z line
     sta.z line+1

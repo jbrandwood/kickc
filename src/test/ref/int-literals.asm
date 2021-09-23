@@ -17,10 +17,10 @@
   .const TYPEID_LONG = 6
   .label SCREEN = $400
   .label COLS = $d800
-  .label idx = 4
+  .label idx = 2
 .segment Code
 main: {
-    .label s = 2
+    .label s = 3
     lda #<SCREEN
     sta.z s
     lda #>SCREEN

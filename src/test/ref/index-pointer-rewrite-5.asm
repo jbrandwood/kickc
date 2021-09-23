@@ -12,8 +12,8 @@
   .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
-    .label __1 = 3
-    .label __3 = 4
+    .label __1 = 5
+    .label __3 = 3
     .label i = 2
     // fibs[0] = 0
     lda #<0

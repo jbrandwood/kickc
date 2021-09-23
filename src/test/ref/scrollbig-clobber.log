@@ -259,32 +259,34 @@ Complete equivalence classes
 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 [ next_char::return#0 ]
 [ main::$0 ]
-Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 Allocated zp[2]:3 [ nxt#11 nxt#15 nxt#12 ]
-Allocated zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
+Allocated zp[1]:5 [ main::i#2 main::i#1 ]
 Allocated zp[1]:6 [ next_char::return#0 ]
 Allocated zp[1]:7 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] next_char::c#0 = *nxt#15 [ nxt#15 next_char::c#0 ] ( next_char:2 [ main::i#2 nxt#15 next_char::c#0 ] { { next_char::return#0 = next_char::return#1 } }  ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:5 [ main::i#2 main::i#1 ]
 Statement [9] next_char::c#0 = *nxt#15 [ nxt#15 next_char::c#0 ] ( next_char:2 [ main::i#2 nxt#15 next_char::c#0 ] { { next_char::return#0 = next_char::return#1 } }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[1]:5 [ main::i#2 main::i#1 ] : zp[1]:5 , reg byte x , 
 Potential registers zp[2]:3 [ nxt#11 nxt#15 nxt#12 ] : zp[2]:3 , 
-Potential registers zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:6 [ next_char::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:7 [ main::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [next_char] 406.75: zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 22: zp[1]:6 [ next_char::return#0 ] 
+Uplift Scope [next_char] 406.75: zp[1]:2 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 22: zp[1]:6 [ next_char::return#0 ] 
 Uplift Scope [] 287: zp[2]:3 [ nxt#11 nxt#15 nxt#12 ] 
-Uplift Scope [main] 23.1: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:7 [ main::$0 ] 
+Uplift Scope [main] 23.1: zp[1]:5 [ main::i#2 main::i#1 ] 22: zp[1]:7 [ main::$0 ] 
 
 Uplifting [next_char] best 638 combination reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ] reg byte x [ next_char::return#0 ] 
 Uplifting [] best 638 combination zp[2]:3 [ nxt#11 nxt#15 nxt#12 ] 
-Uplifting [main] best 598 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
-Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 598 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 598 combination zp[1]:5 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ main::i#2 main::i#1 ]
+Uplifting [main] best 598 combination zp[1]:5 [ main::i#2 main::i#1 ] 
+Allocated (was zp[2]:3) zp[2]:2 [ nxt#11 nxt#15 nxt#12 ]
+Allocated (was zp[1]:5) zp[1]:4 [ main::i#2 main::i#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -299,12 +301,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label nxt = 3
+  .label nxt = 2
 .segment Code
   // main
 main: {
     .label SCREEN = $400
-    .label i = 2
+    .label i = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -422,8 +424,8 @@ void main()
 char main::$0 // reg byte a 22.0
 __constant char *main::SCREEN = (char *) 1024
 char main::i
-char main::i#1 // i zp[1]:2 16.5
-char main::i#2 // i zp[1]:2 6.6000000000000005
+char main::i#1 // i zp[1]:4 16.5
+char main::i#2 // i zp[1]:4 6.6000000000000005
 char next_char()
 char next_char::c
 char next_char::c#0 // reg byte x 151.5
@@ -432,12 +434,12 @@ char next_char::return
 char next_char::return#0 // reg byte x 22.0
 char next_char::return#1 // reg byte x 53.25
 char *nxt
-char *nxt#11 // nxt zp[2]:3 202.0
-char *nxt#12 // nxt zp[2]:3 14.0
-char *nxt#15 // nxt zp[2]:3 71.0
+char *nxt#11 // nxt zp[2]:2 202.0
+char *nxt#12 // nxt zp[2]:2 14.0
+char *nxt#15 // nxt zp[2]:2 71.0
 
-zp[1]:2 [ main::i#2 main::i#1 ]
-zp[2]:3 [ nxt#11 nxt#15 nxt#12 ]
+zp[1]:4 [ main::i#2 main::i#1 ]
+zp[2]:2 [ nxt#11 nxt#15 nxt#12 ]
 reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 reg byte x [ next_char::return#0 ]
 reg byte a [ main::$0 ]
@@ -458,12 +460,12 @@ Score: 466
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label nxt = 3
+  .label nxt = 2
 .segment Code
   // main
 main: {
     .label SCREEN = $400
-    .label i = 2
+    .label i = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0

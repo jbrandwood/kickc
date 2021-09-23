@@ -101,9 +101,9 @@ loadFileToMemory: {
 }
 // Basic ERROR function
 // ERROR. Show error.
-// void error(__zp(6) volatile char err)
+// void error(__zp($e) volatile char err)
 error: {
-    .label err = 6
+    .label err = $e
     // asm
     ldx err
     jsr $a437
@@ -112,10 +112,10 @@ error: {
 }
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
-// void setnam(__zp(7) char * volatile filename)
+// void setnam(__zp(8) char * volatile filename)
 setnam: {
-    .label filename = 7
-    .label filename_len = $d
+    .label filename = 8
+    .label filename_len = 6
     .label __0 = 4
     // strlen(filename)
     lda.z filename
@@ -135,9 +135,9 @@ setnam: {
     rts
 }
 // SETLFS. Set file parameters.
-// void setlfs(__zp(9) volatile char device)
+// void setlfs(__zp($a) volatile char device)
 setlfs: {
-    .label device = 9
+    .label device = $a
     // asm
     ldx device
     lda #1
@@ -150,11 +150,11 @@ setlfs: {
 // - verify: 0 = Load, 1-255 = Verify
 //
 // Returns a status, 0xff: Success other: Kernal Error Code
-// __register(A) char load(__zp($a) char * volatile address, __zp($c) volatile char verify)
+// __register(A) char load(__zp($c) char * volatile address, __zp($b) volatile char verify)
 load: {
-    .label address = $a
-    .label verify = $c
-    .label status = $e
+    .label address = $c
+    .label verify = $b
+    .label status = 7
     // char status
     lda #0
     sta.z status

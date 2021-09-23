@@ -10,11 +10,11 @@
 :BasicUpstart(main)
   .label BGCOL = $d021
 .segment Code
-// __zp(2) char plus(__zp(3) char a, __zp(4) char b)
+// __zp(3) char plus(__zp(4) char a, __zp(2) char b)
 plus: {
-    .label a = 3
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 2
+    .label return = 3
     // a+b
     lda.z a
     clc

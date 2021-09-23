@@ -21,7 +21,7 @@
 .segment Code
 main: {
     .label line = SCREEN+$28
-    .label nxt = 2
+    .label nxt = 4
     // fillscreen(SCREEN, $20)
     jsr fillscreen
     lda #<TEXT
@@ -92,7 +92,7 @@ main: {
 // void fillscreen(char *screen, char fill)
 fillscreen: {
     .const fill = $20
-    .label cursor = 4
+    .label cursor = 2
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN

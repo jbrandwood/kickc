@@ -15,7 +15,7 @@
   .label BACKGROUND = $d021
 .segment Code
 main: {
-    .label i = 2
+    .label i = 4
   __b3:
     lda #0
     sta.z i
@@ -65,9 +65,9 @@ set_border: {
     // }
     rts
 }
-// void run(__zp(3) struct Task *task)
+// void run(__zp(2) struct Task *task)
 run: {
-    .label task = 3
+    .label task = 2
     // task->handler(task->param)
     lda tasks,x
     pha

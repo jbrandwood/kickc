@@ -19,9 +19,9 @@
   .label CIA1_INTERRUPT = $dc0d
 .segment Code
 irq: {
-    .label k = 4
-    .label j = 3
-    .label i = 2
+    .label k = 6
+    .label j = 8
+    .label i = 9
     // (*BG_COLOR)++;
     inc BG_COLOR
     lda #0
@@ -66,9 +66,9 @@ irq: {
     jmp $ea81
 }
 main: {
-    .label k = 7
-    .label j = 6
-    .label i = 5
+    .label k = 4
+    .label j = 5
+    .label i = 7
     // asm
     sei
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
@@ -132,7 +132,7 @@ main: {
     jmp __b4
 }
 sub_irq: {
-    .label i = 8
+    .label i = 3
     lda #0
     sta.z i
   __b1:
@@ -167,7 +167,7 @@ sub_irq: {
     rts
 }
 sub_main: {
-    .label i = 9
+    .label i = 2
     lda #0
     sta.z i
   __b1:

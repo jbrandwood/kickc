@@ -13,12 +13,12 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label SCREEN = $400
-  .label print_char_cursor = $c
+  .label print_char_cursor = 2
 .segment Code
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = $e
+    .label r = $a
     // mulf_init()
     jsr mulf_init
     // asm
@@ -49,17 +49,17 @@ main: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 2
+    .label c = $f
     // Counter used for determining x%2==0
-    .label sqr1_hi = $c
+    .label sqr1_hi = 2
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = 8
-    .label sqr1_lo = $a
+    .label sqr = 6
+    .label sqr1_lo = 4
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 5
-    .label sqr2_lo = 3
+    .label sqr2_hi = $10
+    .label sqr2_lo = 8
     //Start with g(0)=f(255)
-    .label dir = 7
+    .label dir = $e
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -187,12 +187,12 @@ mulf_init: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
-// __zp($e) unsigned long mulf16u(unsigned int a, unsigned int b)
+// __zp($a) unsigned long mulf16u(unsigned int a, unsigned int b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $e
+    .label return = $a
     // *memA = a
     lda #<main.a
     sta memA
@@ -309,9 +309,9 @@ mulf16u: {
     rts
 }
 // Print a unsigned long as HEX
-// void print_ulong(__zp($e) unsigned long dw)
+// void print_ulong(__zp($a) unsigned long dw)
 print_ulong: {
-    .label dw = $e
+    .label dw = $a
     // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
@@ -328,9 +328,9 @@ print_ulong: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($a) unsigned int w)
+// void print_uint(__zp(4) unsigned int w)
 print_uint: {
-    .label w = $a
+    .label w = 4
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar

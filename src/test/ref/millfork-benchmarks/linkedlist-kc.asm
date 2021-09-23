@@ -12,12 +12,12 @@
 :BasicUpstart(__start)
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label print_screen = $400
-  .label last_time = $a
-  .label print_line_cursor = 8
-  .label Ticks = $c
-  .label Ticks_1 = $e
-  .label print_char_cursor = 6
-  .label free_ = 4
+  .label last_time = $e
+  .label print_line_cursor = $a
+  .label Ticks = 4
+  .label Ticks_1 = $c
+  .label print_char_cursor = 8
+  .label free_ = 6
   .label root = 2
 .segment Code
 __start: {
@@ -29,8 +29,8 @@ __start: {
     rts
 }
 main: {
-    .label __5 = 4
-    .label i = 8
+    .label __5 = 6
+    .label i = $a
     // start()
     jsr start
     ldx #0
@@ -83,10 +83,10 @@ start: {
     // }
     rts
 }
-// void prepend(__zp(8) unsigned int x)
+// void prepend(__zp($a) unsigned int x)
 prepend: {
-    .label new = $c
-    .label x = 8
+    .label new = 4
+    .label x = $a
     // alloc()
     jsr alloc
     // new = alloc()
@@ -114,8 +114,8 @@ prepend: {
 }
 sum: {
     .label current = 2
-    .label s = 4
-    .label return = 4
+    .label s = 6
+    .label return = 6
     // current = root
     lda #<0
     sta.z s
@@ -195,8 +195,8 @@ end: {
     rts
 }
 alloc: {
-    .label __1 = $c
-    .label return = $c
+    .label __1 = 4
+    .label return = 4
     // heap + free_
     lda.z free_
     asl
@@ -222,9 +222,9 @@ alloc: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($e) unsigned int w)
+// void print_uint(__zp($c) unsigned int w)
 print_uint: {
-    .label w = $e
+    .label w = $c
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar

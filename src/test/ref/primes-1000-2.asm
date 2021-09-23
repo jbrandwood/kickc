@@ -11,20 +11,20 @@
 :BasicUpstart(main)
   .const SIZEOF_UNSIGNED_INT = 2
   .label print_screen = $400
-  .label print_char_cursor = $f
+  .label print_char_cursor = $b
   // The number currently being tested for whether it is a prime
-  .label potential = 5
+  .label potential = $10
   // The last index to test. It is the smallest index where PRIMES[test_last] > sqr(potential)
-  .label test_last = 2
+  .label test_last = $12
   // The index into PRIMES[] used for prime testing. It runs from 2 to test_last for each number tested.
-  .label test_idx = $c
+  .label test_idx = $d
   // The index of the last prime we put into the PRIME[] table
-  .label prime_idx = 3
+  .label prime_idx = $13
 .segment Code
 main: {
-    .label __0 = 7
-    .label __14 = $11
-    .label __15 = $11
+    .label __0 = $e
+    .label __14 = 2
+    .label __15 = 2
     // PRIMES[1] = 2
     lda #<2
     sta PRIMES+1*SIZEOF_UNSIGNED_INT
@@ -155,11 +155,11 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(7) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp($e) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label mb = $11
-    .label res = 7
-    .label return = 7
+    .label mb = 2
+    .label res = $e
+    .label return = $e
     // unsigned int mb = b
     sta.z mb
     lda #0
@@ -199,10 +199,10 @@ mul8u: {
 }
 // Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
 // The 8-bit unsigned char remainder can be found in rem8u after the division
-// unsigned int div16u8u(__zp(5) unsigned int dividend, __zp(9) char divisor)
+// unsigned int div16u8u(__zp($10) unsigned int dividend, __zp(8) char divisor)
 div16u8u: {
-    .label dividend = 5
-    .label divisor = 9
+    .label dividend = $10
+    .label divisor = 8
     // unsigned char quotient_hi = divr8u(BYTE1(dividend), divisor, 0)
     lda.z dividend+1
     sta.z divr8u.dividend
@@ -216,9 +216,9 @@ div16u8u: {
     rts
 }
 // Print a unsigned int as DECIMAL
-// void print_uint_decimal(__zp(5) unsigned int w)
+// void print_uint_decimal(__zp($10) unsigned int w)
 print_uint_decimal: {
-    .label w = 5
+    .label w = $10
     // utoa(w, decimal_digits, DECIMAL)
     lda.z w
     sta.z utoa.value
@@ -248,12 +248,12 @@ print_char: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// __zp($b) char divr8u(__zp($a) char dividend, __zp(9) char divisor, __register(Y) char rem)
+// __zp(6) char divr8u(__zp(7) char dividend, __zp(8) char divisor, __register(Y) char rem)
 divr8u: {
-    .label dividend = $a
-    .label quotient = $b
-    .label return = $b
-    .label divisor = 9
+    .label dividend = 7
+    .label quotient = 6
+    .label return = 6
+    .label divisor = 8
     ldx #0
     txa
     sta.z quotient
@@ -301,13 +301,13 @@ divr8u: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($11) unsigned int value, __zp($d) char *buffer, char radix)
+// void utoa(__zp(2) unsigned int value, __zp(9) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label value = $11
-    .label digit_value = $13
-    .label buffer = $d
-    .label digit = $c
+    .label value = 2
+    .label digit_value = 4
+    .label buffer = 9
+    .label digit = $d
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -373,9 +373,9 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// void print_str(__zp($d) char *str)
+// void print_str(__zp(9) char *str)
 print_str: {
-    .label str = $d
+    .label str = 9
     lda #<decimal_digits
     sta.z str
     lda #>decimal_digits
@@ -408,12 +408,12 @@ print_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($11) unsigned int utoa_append(__zp($d) char *buffer, __zp($11) unsigned int value, __zp($13) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp(9) char *buffer, __zp(2) unsigned int value, __zp(4) unsigned int sub)
 utoa_append: {
-    .label buffer = $d
-    .label value = $11
-    .label sub = $13
-    .label return = $11
+    .label buffer = 9
+    .label value = 2
+    .label sub = 4
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)

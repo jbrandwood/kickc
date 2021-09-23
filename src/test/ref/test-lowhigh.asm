@@ -11,18 +11,18 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_line_cursor = 8
-  .label print_char_cursor = $10
-  .label print_char_cursor_1 = 8
-  .label print_line_cursor_1 = 6
+  .label print_line_cursor = 6
+  .label print_char_cursor = 2
+  .label print_char_cursor_1 = 6
+  .label print_line_cursor_1 = 4
 .segment Code
 main: {
-    .label __3 = $a
-    .label __6 = $10
-    .label __28 = $a
-    .label __29 = $10
-    .label dw2 = $c
-    .label dw = 2
+    .label __3 = 8
+    .label __6 = 2
+    .label __28 = 8
+    .label __29 = 2
+    .label dw2 = $a
+    .label dw = $e
     // print_cls()
     jsr print_cls
     lda #<print_screen
@@ -172,9 +172,9 @@ print_cls: {
     rts
 }
 // Print a unsigned long as HEX
-// void print_ulong(__zp($c) unsigned long dw)
+// void print_ulong(__zp($a) unsigned long dw)
 print_ulong: {
-    .label dw = $c
+    .label dw = $a
     // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
@@ -210,9 +210,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($a) unsigned int w)
+// void print_uint(__zp(8) unsigned int w)
 print_uint: {
-    .label w = $a
+    .label w = 8
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -280,7 +280,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 8
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str

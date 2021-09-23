@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .label h1 = 2
+  .label h1 = 6
 .segment Code
 __start: {
     // unsigned char *volatile h1
@@ -28,14 +28,14 @@ main: {
     rts
 }
 // This must be volatile because is used in an interrupt routine...
-// void test(__zp(4) char *videoMem, char *colorMem, char *other)
+// void test(__zp(2) char *videoMem, char *colorMem, char *other)
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 6
-    .label __1 = 4
-    .label diff = 4
-    .label videoMem = 4
+    .label dst = 4
+    .label __1 = 2
+    .label diff = 2
+    .label videoMem = 2
     // __ma unsigned char *dst
     lda #<0
     sta.z dst

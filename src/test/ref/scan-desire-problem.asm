@@ -52,8 +52,8 @@
   .label level_address = $3000
 .segment Code
 main: {
-    .label y = 3
-    .label x = 2
+    .label y = $14
+    .label x = $15
     // init()
     jsr init
     lda #0
@@ -132,23 +132,23 @@ init: {
     // }
     rts
 }
-// void draw_block(__register(Y) char tileno, __register(X) char x, __zp(3) char y, char color)
+// void draw_block(__register(Y) char tileno, __register(X) char x, __zp($14) char y, char color)
 draw_block: {
-    .label __6 = $a
-    .label __8 = $e
-    .label __10 = $14
-    .label y = 3
-    .label x1 = $14
-    .label z = 4
-    .label z_1 = $14
-    .label __11 = 6
-    .label __12 = 8
-    .label __13 = $c
-    .label __14 = $a
+    .label __6 = 8
+    .label __8 = $a
+    .label __10 = 6
+    .label y = $14
+    .label x1 = 6
+    .label z = 2
+    .label z_1 = 6
+    .label __11 = 4
+    .label __12 = $c
+    .label __13 = $e
+    .label __14 = 8
     .label __15 = $10
-    .label __16 = $e
+    .label __16 = $a
     .label __17 = $12
-    .label __18 = $14
+    .label __18 = 6
     // tileno = tileno << 2
     tya
     asl
@@ -309,11 +309,11 @@ init_sprites: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $14
-    .label dst = 4
-    .label str = 4
+    .label end = 6
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda.z str
     clc
@@ -345,12 +345,12 @@ memset: {
     jmp __b2
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(4) unsigned int mul8u(__register(X) char a, char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
     .const b = $28
-    .label mb = 6
-    .label res = 4
-    .label return = 4
+    .label mb = 4
+    .label res = 2
+    .label return = 2
     lda #<b
     sta.z mb
     lda #>b

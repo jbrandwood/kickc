@@ -146,36 +146,37 @@ Complete equivalence classes
 [ fgetc::ret ]
 [ fgetc::return#1 ]
 [ fgetc::return#2 ]
-Allocated zp[1]:2 [ fgetc::channel ]
-Allocated zp[1]:3 [ fgetc::return#0 ]
-Allocated zp[1]:4 [ main::x#0 ]
-Allocated zp[1]:5 [ fgetc::ret ]
-Allocated zp[1]:6 [ fgetc::return#1 ]
-Allocated zp[1]:7 [ fgetc::return#2 ]
+Allocated zp[1]:2 [ fgetc::return#1 ]
+Allocated zp[1]:3 [ fgetc::ret ]
+Allocated zp[1]:4 [ fgetc::return#2 ]
+Allocated zp[1]:5 [ fgetc::return#0 ]
+Allocated zp[1]:6 [ main::x#0 ]
+Allocated zp[1]:7 [ fgetc::channel ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] fgetc::channel = 7 [ fgetc::channel ] (  [ fgetc::channel ] { { fgetc::return#0 = fgetc::return#2 } }  ) always clobbers reg byte a 
 Statement [6] fgetc::ret = 0 [ fgetc::channel fgetc::ret ] ( fgetc:1 [ fgetc::channel fgetc::ret ] { { fgetc::return#0 = fgetc::return#2 } }  ) always clobbers reg byte a 
 Statement asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  } always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp[1]:2 [ fgetc::channel ] : zp[1]:2 , 
-Potential registers zp[1]:3 [ fgetc::return#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ main::x#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ fgetc::ret ] : zp[1]:5 , 
-Potential registers zp[1]:6 [ fgetc::return#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ fgetc::return#2 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ fgetc::channel ] : zp[1]:7 , 
+Potential registers zp[1]:5 [ fgetc::return#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::x#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ fgetc::ret ] : zp[1]:3 , 
+Potential registers zp[1]:2 [ fgetc::return#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ fgetc::return#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fgetc] 22: zp[1]:6 [ fgetc::return#1 ] 11: zp[1]:5 [ fgetc::ret ] 4.33: zp[1]:7 [ fgetc::return#2 ] 4: zp[1]:3 [ fgetc::return#0 ] 1: zp[1]:2 [ fgetc::channel ] 
-Uplift Scope [main] 4: zp[1]:4 [ main::x#0 ] 
+Uplift Scope [fgetc] 22: zp[1]:2 [ fgetc::return#1 ] 11: zp[1]:3 [ fgetc::ret ] 4.33: zp[1]:4 [ fgetc::return#2 ] 4: zp[1]:5 [ fgetc::return#0 ] 1: zp[1]:7 [ fgetc::channel ] 
+Uplift Scope [main] 4: zp[1]:6 [ main::x#0 ] 
 Uplift Scope [] 
 
-Uplifting [fgetc] best 76 combination reg byte a [ fgetc::return#1 ] zp[1]:5 [ fgetc::ret ] reg byte a [ fgetc::return#2 ] reg byte a [ fgetc::return#0 ] zp[1]:2 [ fgetc::channel ] 
+Uplifting [fgetc] best 76 combination reg byte a [ fgetc::return#1 ] zp[1]:3 [ fgetc::ret ] reg byte a [ fgetc::return#2 ] reg byte a [ fgetc::return#0 ] zp[1]:7 [ fgetc::channel ] 
 Uplifting [main] best 70 combination reg byte a [ main::x#0 ] 
 Uplifting [] best 70 combination 
-Attempting to uplift remaining variables inzp[1]:5 [ fgetc::ret ]
-Uplifting [fgetc] best 70 combination zp[1]:5 [ fgetc::ret ] 
-Attempting to uplift remaining variables inzp[1]:2 [ fgetc::channel ]
-Uplifting [fgetc] best 70 combination zp[1]:2 [ fgetc::channel ] 
-Allocated (was zp[1]:5) zp[1]:3 [ fgetc::ret ]
+Attempting to uplift remaining variables inzp[1]:3 [ fgetc::ret ]
+Uplifting [fgetc] best 70 combination zp[1]:3 [ fgetc::ret ] 
+Attempting to uplift remaining variables inzp[1]:7 [ fgetc::channel ]
+Uplifting [fgetc] best 70 combination zp[1]:7 [ fgetc::channel ] 
+Allocated (was zp[1]:3) zp[1]:2 [ fgetc::ret ]
+Allocated (was zp[1]:7) zp[1]:3 [ fgetc::channel ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -216,10 +217,10 @@ main: {
     rts
 }
   // fgetc
-// __register(A) char fgetc(__zp(2) volatile char channel)
+// __register(A) char fgetc(__zp(3) volatile char channel)
 fgetc: {
-    .label channel = 2
-    .label ret = 3
+    .label channel = 3
+    .label ret = 2
     // [6] fgetc::ret = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z ret
@@ -255,8 +256,8 @@ __constant char * const CHKIN = (char *) 4096
 __constant char * const CLRCHN = (char *) 4102
 __constant char * const GETIN = (char *) 4099
 char fgetc(volatile char channel)
-__loadstore volatile char fgetc::channel // zp[1]:2 1.0
-__loadstore volatile char fgetc::ret // zp[1]:3 11.0
+__loadstore volatile char fgetc::channel // zp[1]:3 1.0
+__loadstore volatile char fgetc::ret // zp[1]:2 11.0
 char fgetc::return
 char fgetc::return#0 // reg byte a 4.0
 char fgetc::return#1 // reg byte a 22.0
@@ -266,10 +267,10 @@ __constant char * const main::SCREEN = (char *) 4105
 char main::x
 char main::x#0 // reg byte a 4.0
 
-zp[1]:2 [ fgetc::channel ]
+zp[1]:3 [ fgetc::channel ]
 reg byte a [ fgetc::return#0 ]
 reg byte a [ main::x#0 ]
-zp[1]:3 [ fgetc::ret ]
+zp[1]:2 [ fgetc::ret ]
 reg byte a [ fgetc::return#1 ]
 reg byte a [ fgetc::return#2 ]
 
@@ -314,10 +315,10 @@ main: {
     rts
 }
   // fgetc
-// __register(A) char fgetc(__zp(2) volatile char channel)
+// __register(A) char fgetc(__zp(3) volatile char channel)
 fgetc: {
-    .label channel = 2
-    .label ret = 3
+    .label channel = 3
+    .label ret = 2
     // char ret
     // [6] fgetc::ret = 0 -- vbuz1=vbuc1 
     lda #0

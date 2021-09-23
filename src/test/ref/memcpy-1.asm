@@ -11,10 +11,10 @@
 .segment Code
 main: {
     // Working memory copy of string
-    .label sc = 4
-    .label camelot = 2
-    .label sc2 = 8
-    .label reigns = 6
+    .label sc = 8
+    .label camelot = $c
+    .label sc2 = $a
+    .label reigns = $e
     ldx #0
     lda #<SCREEN
     sta.z sc
@@ -108,14 +108,14 @@ main: {
 .segment Code
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($c) void *destination, __zp($a) void *source, __zp($e) unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, __zp(6) unsigned int num)
 memcpy: {
-    .label src_end = $e
-    .label dst = $c
-    .label src = $a
-    .label source = $a
-    .label destination = $c
-    .label num = $e
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
+    .label num = 6
     // char* src_end = (char*)source+num
     clc
     lda.z src_end

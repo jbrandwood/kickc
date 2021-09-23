@@ -115,9 +115,9 @@ print_ulong_at: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// void print_uint_at(__zp(2) unsigned int w, __zp(4) char *at)
+// void print_uint_at(__zp(7) unsigned int w, __zp(4) char *at)
 print_uint_at: {
-    .label w = 2
+    .label w = 7
     .label at = 4
     // print_uchar_at(BYTE1(w), at)
     lda.z w+1
@@ -175,9 +175,9 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp(7) char *at)
+// void print_char_at(__register(X) char ch, __zp(2) char *at)
 print_char_at: {
-    .label at = 7
+    .label at = 2
     // *(at) = ch
     txa
     ldy #0

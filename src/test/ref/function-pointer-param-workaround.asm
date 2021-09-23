@@ -14,8 +14,8 @@
 :BasicUpstart(__start)
   .label SCREEN1 = $400
   .label SCREEN2 = $428
-  .label idx1 = 4
-  .label idx2 = 5
+  .label idx1 = 7
+  .label idx2 = 8
 .segment Code
 __start: {
     // volatile char idx1 = 0
@@ -27,8 +27,8 @@ __start: {
     rts
 }
 fn2: {
-    .label ret_addr = 6
-    .label param_char = 8
+    .label ret_addr = $b
+    .label param_char = 9
     // PARAM_BEGIN
     lda #<0
     sta.z ret_addr
@@ -67,8 +67,8 @@ fn2: {
     rts
 }
 fn1: {
-    .label ret_addr = 9
-    .label param_char = $b
+    .label ret_addr = $d
+    .label param_char = $a
     // PARAM_BEGIN
     lda #<0
     sta.z ret_addr
@@ -107,10 +107,10 @@ fn1: {
     rts
 }
 main: {
-    .label param_char = $c
-    .label f = $d
-    .label i = 2
-    .label j = 3
+    .label param_char = 5
+    .label f = 2
+    .label i = 6
+    .label j = 4
     lda #'a'
     sta.z i
   __b1:

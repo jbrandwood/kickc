@@ -17,14 +17,14 @@
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   /// The capacity of the buffer (n passed to snprintf())
   /// Used to hold state while printing
-  .label __snprintf_capacity = $12
+  .label __snprintf_capacity = $18
   // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
   /// Used to hold state while printing
   .label __snprintf_size = $14
   /// Current position in the buffer being filled ( initially *s passed to snprintf()
   /// Used to hold state while printing
   .label __snprintf_buffer = $16
-  .label screen = 2
+  .label screen = $e
 .segment Code
 __start: {
     // volatile size_t __snprintf_capacity
@@ -264,9 +264,9 @@ main: {
 }
 .segment Code
 /// Initialize the snprintf() state
-// void snprintf_init(char *s, __zp(4) unsigned int n)
+// void snprintf_init(char *s, __zp(2) unsigned int n)
 snprintf_init: {
-    .label n = 4
+    .label n = 2
     // __snprintf_capacity = n
     lda.z n
     sta.z __snprintf_capacity
@@ -285,10 +285,10 @@ snprintf_init: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(4) void (*putc)(char), __zp($b) const char *s)
+// void printf_str(__zp(2) void (*putc)(char), __zp(6) const char *s)
 printf_str: {
-    .label s = $b
-    .label putc = 4
+    .label s = 6
+    .label putc = 2
   __b1:
     // while(c=*s++)
     ldy #0
@@ -310,9 +310,9 @@ printf_str: {
   icall6:
     jmp (putc)
 }
-// void print(__zp($b) char *msg)
+// void print(__zp(6) char *msg)
 print: {
-    .label msg = $b
+    .label msg = 6
     lda #<BUF
     sta.z msg
     lda #>BUF
@@ -360,9 +360,9 @@ printf_string: {
     rts
 }
 // Print a signed integer using a specific format
-// void printf_sint(void (*putc)(char), __zp(4) int value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_sint(void (*putc)(char), __zp(2) int value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_sint: {
-    .label value = 4
+    .label value = 2
     // printf_buffer.sign = 0
     // Handle any sign
     lda #0
@@ -450,14 +450,14 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(4) unsigned int value, __zp($d) char *buffer, __register(X) char radix)
+// void utoa(__zp(2) unsigned int value, __zp(9) char *buffer, __register(X) char radix)
 utoa: {
-    .label digit_value = $18
-    .label buffer = $d
-    .label digit = 7
-    .label value = 4
-    .label max_digits = 6
-    .label digit_values = $b
+    .label digit_value = 4
+    .label buffer = 9
+    .label digit = $c
+    .label value = 2
+    .label max_digits = $11
+    .label digit_values = 6
     // if(radix==DECIMAL)
     cpx #DECIMAL
     beq __b2
@@ -586,15 +586,15 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__zp(4) void (*putc)(char), __zp(8) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp(6) char format_justify_left, char format_sign_always, __zp(7) char format_zero_padding, __zp(9) char format_upper_case, char format_radix)
+// void printf_number_buffer(__zp(2) void (*putc)(char), __zp($12) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($11) char format_justify_left, char format_sign_always, __zp($c) char format_zero_padding, __zp($13) char format_upper_case, char format_radix)
 printf_number_buffer: {
-    .label __19 = $d
-    .label buffer_sign = 8
-    .label padding = $a
-    .label putc = 4
-    .label format_zero_padding = 7
-    .label format_justify_left = 6
-    .label format_upper_case = 9
+    .label __19 = 9
+    .label buffer_sign = $12
+    .label padding = $10
+    .label putc = 2
+    .label format_zero_padding = $c
+    .label format_justify_left = $11
+    .label format_upper_case = $13
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -705,12 +705,12 @@ printf_number_buffer: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(4) unsigned int utoa_append(__zp($d) char *buffer, __zp(4) unsigned int value, __zp($18) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp(9) char *buffer, __zp(2) unsigned int value, __zp(4) unsigned int sub)
 utoa_append: {
-    .label buffer = $d
-    .label value = 4
-    .label sub = $18
-    .label return = 4
+    .label buffer = 9
+    .label value = 2
+    .label sub = 4
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)
@@ -742,11 +742,11 @@ utoa_append: {
     jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// __zp($d) unsigned int strlen(__zp($b) char *str)
+// __zp(9) unsigned int strlen(__zp(6) char *str)
 strlen: {
-    .label len = $d
-    .label str = $b
-    .label return = $d
+    .label len = 9
+    .label str = 6
+    .label return = 9
     lda #<0
     sta.z len
     sta.z len+1
@@ -776,12 +776,12 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// void printf_padding(__zp(4) void (*putc)(char), __zp($10) char pad, __zp($f) char length)
+// void printf_padding(__zp(2) void (*putc)(char), __zp($d) char pad, __zp($b) char length)
 printf_padding: {
-    .label i = $11
-    .label putc = 4
-    .label length = $f
-    .label pad = $10
+    .label i = 8
+    .label putc = 2
+    .label length = $b
+    .label pad = $d
     lda #0
     sta.z i
   __b1:
@@ -807,7 +807,7 @@ printf_padding: {
 // char * strupr(char *str)
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $18
+    .label src = 4
     lda #<str
     sta.z src
     lda #>str

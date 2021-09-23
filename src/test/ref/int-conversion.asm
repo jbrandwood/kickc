@@ -19,7 +19,7 @@
   .label COLS = $d800
 .segment Code
 main: {
-    .label s = 2
+    .label s = 3
     lda #<SCREEN
     sta.z s
     lda #>SCREEN
@@ -291,9 +291,9 @@ testBinaryOperator: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// void assertType(__register(Y) char t1, __zp(4) char t2)
+// void assertType(__register(Y) char t1, __zp(2) char t2)
 assertType: {
-    .label t2 = 4
+    .label t2 = 2
     // if(t1==t2)
     tya
     cmp.z t2

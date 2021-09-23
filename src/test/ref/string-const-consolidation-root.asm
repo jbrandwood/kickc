@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label screen = 2
+  .label screen = 4
 .segment Code
 main: {
     // print1()
@@ -65,9 +65,9 @@ print2: {
     // }
     rts
 }
-// void print(__zp(4) char *s)
+// void print(__zp(2) char *s)
 print: {
-    .label s = 4
+    .label s = 2
   __b1:
     // while(*s)
     ldy #0

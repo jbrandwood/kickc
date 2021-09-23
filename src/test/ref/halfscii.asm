@@ -13,12 +13,12 @@
   .label CHARSET4 = $2800
 .segment Code
 main: {
-    .label __1 = 8
-    .label __11 = 9
-    .label __21 = $a
-    .label __30 = $b
-    .label chargen1 = 6
-    .label charset4 = 4
+    .label __1 = 7
+    .label __11 = 8
+    .label __21 = 9
+    .label __30 = 4
+    .label chargen1 = $a
+    .label charset4 = 5
     .label chargen = 2
     // asm
     sei

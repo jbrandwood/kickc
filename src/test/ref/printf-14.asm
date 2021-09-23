@@ -18,13 +18,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $a
+  .label conio_cursor_x = $e
   // The current cursor y-position
-  .label conio_cursor_y = $b
+  .label conio_cursor_y = 8
   // The current text cursor line start
-  .label conio_line_text = $c
+  .label conio_line_text = $b
   // The current color cursor line start
-  .label conio_line_color = $e
+  .label conio_line_color = 9
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -107,12 +107,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $14
-    .label __6 = $10
-    .label __7 = $10
-    .label line_offset = $10
-    .label __8 = $12
-    .label __9 = $10
+    .label __5 = $17
+    .label __6 = $13
+    .label __7 = $13
+    .label line_offset = $13
+    .label __8 = $15
+    .label __9 = $13
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -208,7 +208,7 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 6
+    .label line_text = 2
     .label line_cols = 4
     lda #<COLORRAM
     sta.z line_cols
@@ -360,13 +360,13 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp(6) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp(2) char *buffer, char radix)
 uctoa: {
     .const max_digits = 3
-    .label digit_value = $16
-    .label buffer = 6
-    .label digit = 2
-    .label started = 3
+    .label digit_value = $d
+    .label buffer = 2
+    .label digit = $11
+    .label started = $12
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -443,13 +443,13 @@ printf_number_buffer: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp(6) void *destination, __zp(4) void *source, unsigned int num)
+// void * memcpy(__zp(2) void *destination, __zp(4) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $17
-    .label dst = 6
+    .label src_end = 6
+    .label dst = 2
     .label src = 4
     .label source = 4
-    .label destination = 6
+    .label destination = 2
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -485,11 +485,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $17
-    .label dst = 6
-    .label str = 6
+    .label end = 6
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -528,10 +528,10 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp(6) char *buffer, __register(X) char value, __zp($16) char sub)
+// __register(X) char uctoa_append(__zp(2) char *buffer, __register(X) char value, __zp($d) char sub)
 uctoa_append: {
-    .label buffer = 6
-    .label sub = $16
+    .label buffer = 2
+    .label sub = $d
     ldy #0
   __b1:
     // while (value >= sub)
@@ -554,9 +554,9 @@ uctoa_append: {
     jmp __b1
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp(8) const char *s)
+// void printf_str(void (*putc)(char), __zp($f) const char *s)
 printf_str: {
-    .label s = 8
+    .label s = $f
     lda #<printf_number_buffer.buffer_digits
     sta.z s
     lda #>printf_number_buffer.buffer_digits

@@ -10,12 +10,12 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label __0 = 3
-    .label __5 = 3
-    .label line = 3
-    .label y = 2
+    .label __0 = 2
+    .label __5 = 2
+    .label line = 2
+    .label y = 4
     .label __6 = 5
-    .label __7 = 3
+    .label __7 = 2
     lda #5
     sta.z y
   __b1:

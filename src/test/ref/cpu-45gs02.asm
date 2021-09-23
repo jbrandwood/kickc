@@ -12,8 +12,8 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label sum = 3
-    .label addend = 7
+    .label sum = 7
+    .label addend = 3
     .label i = 2
     lda #<$1e240
     sta.z addend

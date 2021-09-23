@@ -154,40 +154,40 @@ Complete equivalence classes
 [ main::a#1 ]
 [ main::a#2 ]
 Allocated zp[1]:2 [ plus::$0 ]
-Allocated zp[1]:3 [ plus::return ]
-Allocated zp[1]:4 [ plus::a ]
-Allocated zp[1]:5 [ plus::b ]
-Allocated zp[1]:6 [ main::a#1 ]
-Allocated zp[1]:7 [ main::a#2 ]
+Allocated zp[1]:3 [ plus::b ]
+Allocated zp[1]:4 [ main::a#2 ]
+Allocated zp[1]:5 [ plus::return ]
+Allocated zp[1]:6 [ plus::a ]
+Allocated zp[1]:7 [ main::a#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] plus::$0 = plus::a + plus::b [ plus::$0 ] ( plus:6 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  plus:11 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  ) always clobbers reg byte a 
 Statement [3] *BGCOL = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] plus::a = 1 [ plus::a ] (  [ plus::a ] { }  ) always clobbers reg byte a 
 Statement [5] plus::b = 1 [ plus::a plus::b ] (  [ plus::a plus::b ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ plus::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:3 [ plus::return ] : zp[1]:3 , 
-Potential registers zp[1]:4 [ plus::a ] : zp[1]:4 , 
-Potential registers zp[1]:5 [ plus::b ] : zp[1]:5 , 
-Potential registers zp[1]:6 [ main::a#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ main::a#2 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ plus::return ] : zp[1]:5 , 
+Potential registers zp[1]:6 [ plus::a ] : zp[1]:6 , 
+Potential registers zp[1]:3 [ plus::b ] : zp[1]:3 , 
+Potential registers zp[1]:7 [ main::a#1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::a#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [plus] 22: zp[1]:2 [ plus::$0 ] 7.5: zp[1]:5 [ plus::b ] 3.75: zp[1]:3 [ plus::return ] 3.75: zp[1]:4 [ plus::a ] 
-Uplift Scope [main] 4: zp[1]:7 [ main::a#2 ] 2.67: zp[1]:6 [ main::a#1 ] 
+Uplift Scope [plus] 22: zp[1]:2 [ plus::$0 ] 7.5: zp[1]:3 [ plus::b ] 3.75: zp[1]:5 [ plus::return ] 3.75: zp[1]:6 [ plus::a ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::a#2 ] 2.67: zp[1]:7 [ main::a#1 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 95 combination reg byte a [ plus::$0 ] zp[1]:5 [ plus::b ] zp[1]:3 [ plus::return ] zp[1]:4 [ plus::a ] 
+Uplifting [plus] best 95 combination reg byte a [ plus::$0 ] zp[1]:3 [ plus::b ] zp[1]:5 [ plus::return ] zp[1]:6 [ plus::a ] 
 Uplifting [main] best 77 combination reg byte a [ main::a#2 ] reg byte a [ main::a#1 ] 
 Uplifting [] best 77 combination 
-Attempting to uplift remaining variables inzp[1]:5 [ plus::b ]
-Uplifting [plus] best 77 combination zp[1]:5 [ plus::b ] 
-Attempting to uplift remaining variables inzp[1]:3 [ plus::return ]
-Uplifting [plus] best 77 combination zp[1]:3 [ plus::return ] 
-Attempting to uplift remaining variables inzp[1]:4 [ plus::a ]
-Uplifting [plus] best 77 combination zp[1]:4 [ plus::a ] 
-Allocated (was zp[1]:3) zp[1]:2 [ plus::return ]
-Allocated (was zp[1]:4) zp[1]:3 [ plus::a ]
-Allocated (was zp[1]:5) zp[1]:4 [ plus::b ]
+Attempting to uplift remaining variables inzp[1]:3 [ plus::b ]
+Uplifting [plus] best 77 combination zp[1]:3 [ plus::b ] 
+Attempting to uplift remaining variables inzp[1]:5 [ plus::return ]
+Uplifting [plus] best 77 combination zp[1]:5 [ plus::return ] 
+Attempting to uplift remaining variables inzp[1]:6 [ plus::a ]
+Uplifting [plus] best 77 combination zp[1]:6 [ plus::a ] 
+Allocated (was zp[1]:3) zp[1]:2 [ plus::b ]
+Allocated (was zp[1]:5) zp[1]:3 [ plus::return ]
+Allocated (was zp[1]:6) zp[1]:4 [ plus::a ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -206,11 +206,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
 .segment Code
   // plus
-// __zp(2) char plus(__zp(3) char a, __zp(4) char b)
+// __zp(3) char plus(__zp(4) char a, __zp(2) char b)
 plus: {
-    .label a = 3
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 2
+    .label return = 3
     // [0] plus::$0 = plus::a + plus::b -- vbuaa=vbuz1_plus_vbuz2 
     lda.z a
     clc
@@ -277,14 +277,14 @@ char main::a#1 // reg byte a 2.6666666666666665
 char main::a#2 // reg byte a 4.0
 __varcall char plus(char a , char b)
 char plus::$0 // reg byte a 22.0
-__loadstore char plus::a // zp[1]:3 3.75
-__loadstore char plus::b // zp[1]:4 7.5
-__loadstore char plus::return // zp[1]:2 3.75
+__loadstore char plus::a // zp[1]:4 3.75
+__loadstore char plus::b // zp[1]:2 7.5
+__loadstore char plus::return // zp[1]:3 3.75
 
 reg byte a [ plus::$0 ]
-zp[1]:2 [ plus::return ]
-zp[1]:3 [ plus::a ]
-zp[1]:4 [ plus::b ]
+zp[1]:3 [ plus::return ]
+zp[1]:4 [ plus::a ]
+zp[1]:2 [ plus::b ]
 reg byte a [ main::a#1 ]
 reg byte a [ main::a#2 ]
 
@@ -308,11 +308,11 @@ Score: 67
   .label BGCOL = $d021
 .segment Code
   // plus
-// __zp(2) char plus(__zp(3) char a, __zp(4) char b)
+// __zp(3) char plus(__zp(4) char a, __zp(2) char b)
 plus: {
-    .label a = 3
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 2
+    .label return = 3
     // a+b
     // [0] plus::$0 = plus::a + plus::b -- vbuaa=vbuz1_plus_vbuz2 
     lda.z a

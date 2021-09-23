@@ -34,8 +34,8 @@ syscall1: {
 }
 main: {
     // Print message
-    .label sc = 4
-    .label msg = 2
+    .label sc = 6
+    .label msg = 4
     // *VICII_MEMORY = 0x14
     // Initialize screen memory
     lda #$14
@@ -103,11 +103,11 @@ main: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
     .label end = 8
-    .label dst = 6
-    .label str = 6
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda.z str
     clc

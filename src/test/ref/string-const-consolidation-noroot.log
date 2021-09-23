@@ -235,21 +235,21 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ screen#20 screen#13 screen#4 ]
 [ print::string#4 print::string#3 ]
-Allocated zp[2]:2 [ screen#20 screen#13 screen#4 ]
-Allocated zp[2]:4 [ print::string#4 print::string#3 ]
+Allocated zp[2]:2 [ print::string#4 print::string#3 ]
+Allocated zp[2]:4 [ screen#20 screen#13 screen#4 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] if(0!=*print::string#4) goto print::@2 [ screen#13 print::string#4 ] ( print:1 [ screen#13 print::string#4 ] { }  print:3 [ screen#13 print::string#4 ] { { screen#13 = screen#20 } }  print:5 [ screen#13 print::string#4 ] { { screen#13 = screen#20 } }  ) always clobbers reg byte a reg byte y 
 Statement [11] *screen#13 = *print::string#4 [ screen#13 print::string#4 ] ( print:1 [ screen#13 print::string#4 ] { }  print:3 [ screen#13 print::string#4 ] { { screen#13 = screen#20 } }  print:5 [ screen#13 print::string#4 ] { { screen#13 = screen#20 } }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ screen#20 screen#13 screen#4 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ print::string#4 print::string#3 ] : zp[2]:4 , 
+Potential registers zp[2]:4 [ screen#20 screen#13 screen#4 ] : zp[2]:4 , 
+Potential registers zp[2]:2 [ print::string#4 print::string#3 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 303: zp[2]:4 [ print::string#4 print::string#3 ] 
-Uplift Scope [] 155.75: zp[2]:2 [ screen#20 screen#13 screen#4 ] 
+Uplift Scope [print] 303: zp[2]:2 [ print::string#4 print::string#3 ] 
+Uplift Scope [] 155.75: zp[2]:4 [ screen#20 screen#13 screen#4 ] 
 Uplift Scope [main] 
 
-Uplifting [print] best 764 combination zp[2]:4 [ print::string#4 print::string#3 ] 
-Uplifting [] best 764 combination zp[2]:2 [ screen#20 screen#13 screen#4 ] 
+Uplifting [print] best 764 combination zp[2]:2 [ print::string#4 print::string#3 ] 
+Uplifting [] best 764 combination zp[2]:4 [ screen#20 screen#13 screen#4 ] 
 Uplifting [main] best 764 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -265,7 +265,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 2
+  .label screen = 4
 .segment Code
   // main
 main: {
@@ -309,9 +309,9 @@ main: {
 }
 .segment Code
   // print
-// void print(__zp(4) char *string)
+// void print(__zp(2) char *string)
 print: {
-    .label string = 4
+    .label string = 2
     // [8] phi from print to print::@1 [phi:print->print::@1]
   __b1_from_print:
     // [8] phi screen#13 = screen#20 [phi:print->print::@1#0] -- register_copy 
@@ -386,15 +386,15 @@ void main()
 __constant char main::rex1[] = "rex"
 void print(char *string)
 char *print::string
-char *print::string#3 // string zp[2]:4 202.0
-char *print::string#4 // string zp[2]:4 101.0
+char *print::string#3 // string zp[2]:2 202.0
+char *print::string#4 // string zp[2]:2 101.0
 char *screen
-char *screen#13 // screen zp[2]:2 39.75
-char *screen#20 // screen zp[2]:2 15.0
-char *screen#4 // screen zp[2]:2 101.0
+char *screen#13 // screen zp[2]:4 39.75
+char *screen#20 // screen zp[2]:4 15.0
+char *screen#4 // screen zp[2]:4 101.0
 
-zp[2]:2 [ screen#20 screen#13 screen#4 ]
-zp[2]:4 [ print::string#4 print::string#3 ]
+zp[2]:4 [ screen#20 screen#13 screen#4 ]
+zp[2]:2 [ print::string#4 print::string#3 ]
 
 
 FINAL ASSEMBLER
@@ -412,7 +412,7 @@ Score: 675
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 2
+  .label screen = 4
 .segment Code
   // main
 main: {
@@ -449,9 +449,9 @@ main: {
 }
 .segment Code
   // print
-// void print(__zp(4) char *string)
+// void print(__zp(2) char *string)
 print: {
-    .label string = 4
+    .label string = 2
     // [8] phi from print to print::@1 [phi:print->print::@1]
     // [8] phi screen#13 = screen#20 [phi:print->print::@1#0] -- register_copy 
     // [8] phi print::string#4 = main::rex1 [phi:print->print::@1#1] -- pbuz1=pbuc1 

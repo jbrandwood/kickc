@@ -14,10 +14,10 @@ main: {
     .const x1 = $27
     .const y1 = $18
     .label screen = $400
-    .label x = 4
+    .label x = 7
     .label idx = 2
-    .label y = 5
-    .label __15 = 6
+    .label y = 4
+    .label __15 = 5
     lda #y0
     sta.z y
     ldx #y1/2

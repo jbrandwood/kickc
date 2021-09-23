@@ -9,8 +9,8 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label i = 2
-    .label f = 3
+    .label i = 4
+    .label f = 2
     lda #0
     sta.z i
   __b2:

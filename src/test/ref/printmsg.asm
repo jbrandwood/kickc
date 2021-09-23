@@ -11,7 +11,7 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_char_cursor = 4
+  .label print_char_cursor = 2
   .label print_line_cursor = 6
 .segment Code
 main: {
@@ -59,9 +59,9 @@ main: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(2) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 2
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0

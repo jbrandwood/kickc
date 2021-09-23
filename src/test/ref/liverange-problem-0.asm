@@ -11,8 +11,8 @@
 .segment Basic
 :BasicUpstart(__start)
   .label MEM = 2
-  .label SCREEN_1 = 4
-  .label SCREEN_2 = 6
+  .label SCREEN_1 = 6
+  .label SCREEN_2 = 4
 .segment Code
 __start: {
     // byte* SCREEN_1 = malloc()
@@ -33,8 +33,8 @@ __start: {
     rts
 }
 malloc: {
-    .label return = 6
-    .label return_1 = 4
+    .label return = 4
+    .label return_1 = 6
     // return ++MEM;
     inc.z MEM
     bne !+

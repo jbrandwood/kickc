@@ -32,13 +32,13 @@
   .label CIA1 = $dc00
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = 6
+  .label conio_cursor_x = $d
   // The current cursor y-position
-  .label conio_cursor_y = 7
+  .label conio_cursor_y = 8
   // The current text cursor line start
-  .label conio_line_text = 8
+  .label conio_line_text = $b
   // The current color cursor line start
-  .label conio_line_color = $a
+  .label conio_line_color = 9
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -107,12 +107,12 @@ main: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __5 = $12
-    .label __6 = $e
-    .label __7 = $e
-    .label line_offset = $e
-    .label __8 = $10
-    .label __9 = $e
+    .label __5 = $14
+    .label __6 = $10
+    .label __7 = $10
+    .label line_offset = $10
+    .label __8 = $12
+    .label __9 = $10
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -180,10 +180,10 @@ gotoxy: {
 }
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// void tod_init(__zp($c) char tod_TENTHS, __zp($d) char tod_SEC, __register(X) char tod_MIN, __register(Y) char tod_HOURS)
+// void tod_init(__zp($18) char tod_TENTHS, __zp($17) char tod_SEC, __register(X) char tod_MIN, __register(Y) char tod_HOURS)
 tod_init: {
-    .label tod_TENTHS = $c
-    .label tod_SEC = $d
+    .label tod_TENTHS = $18
+    .label tod_SEC = $17
     // CIA1->TIMER_A_CONTROL |= 0x80
     // Set 50hz (this assumes PAL!) (bit7=1)
     lda #$80
@@ -211,8 +211,8 @@ tod_init: {
 }
 // Read time of day
 tod_read: {
-    .label return_HOURS = $14
-    .label return_MIN = $c
+    .label return_HOURS = $16
+    .label return_MIN = $18
     // char hours = CIA1->TOD_HOURS
     // Reading sequence is important. TOD latches on reading hours until 10ths is read.
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
@@ -227,10 +227,10 @@ tod_read: {
     rts
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// char * tod_str(__zp($d) char tod_TENTHS, __zp($14) char tod_SEC, __register(Y) char tod_MIN, __register(X) char tod_HOURS)
+// char * tod_str(__zp($17) char tod_TENTHS, __zp($16) char tod_SEC, __register(Y) char tod_MIN, __register(X) char tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $d
-    .label tod_SEC = $14
+    .label tod_TENTHS = $17
+    .label tod_SEC = $16
     // tod.HOURS>>4
     txa
     lsr
@@ -311,9 +311,9 @@ tod_str: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(2) const char *s)
+// void cputs(__zp($e) const char *s)
 cputs: {
-    .label s = 2
+    .label s = $e
     lda #<tod_buffer
     sta.z s
     lda #>tod_buffer
@@ -455,13 +455,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($17) void *destination, __zp(4) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $15
-    .label dst = $17
-    .label src = 4
-    .label source = 4
-    .label destination = $17
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -497,11 +497,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $17
-    .label dst = 4
-    .label str = 4
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc

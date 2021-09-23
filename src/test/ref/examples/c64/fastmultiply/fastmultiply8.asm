@@ -16,13 +16,13 @@
   .label print_screen = $400
 .segment Code
 main: {
-    .label at = 3
-    .label k = 2
-    .label at_1 = 5
+    .label at = $11
+    .label k = $10
+    .label at_1 = $d
     .label at_2 = 8
     .label j = $a
-    .label i = 7
-    .label at_line = 5
+    .label i = $f
+    .label at_line = $d
     // init_screen()
     jsr init_screen
     lda #<$400+4
@@ -122,7 +122,7 @@ main: {
 }
 init_screen: {
     .const WHITE = 1
-    .label COLS = $b
+    .label COLS = 2
     // print_cls()
     jsr print_cls
     ldx #0
@@ -169,10 +169,10 @@ init_screen: {
     rts
 }
 // Print a signed char as hex at a specific screen position
-// void print_schar_at(__zp($d) signed char b, __zp($b) char *at)
+// void print_schar_at(__zp(6) signed char b, __zp(2) char *at)
 print_schar_at: {
-    .label b = $d
-    .label at = $b
+    .label b = 6
+    .label at = 2
     // if(b<0)
     lda.z b
     bmi __b1
@@ -200,11 +200,11 @@ print_schar_at: {
     sta.z b
     jmp __b2
 }
-// __register(A) signed char fmul8(__zp($10) volatile signed char aa, __zp($11) volatile signed char bb)
+// __register(A) signed char fmul8(__zp($c) volatile signed char aa, __zp($b) volatile signed char bb)
 fmul8: {
-    .label aa = $10
-    .label bb = $11
-    .label cc = $12
+    .label aa = $c
+    .label bb = $b
+    .label cc = 7
     // signed char cc
     lda #0
     sta.z cc
@@ -232,9 +232,9 @@ print_cls: {
     rts
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp($b) char *at)
+// void print_char_at(__register(X) char ch, __zp(2) char *at)
 print_char_at: {
-    .label at = $b
+    .label at = 2
     // *(at) = ch
     txa
     ldy #0
@@ -243,10 +243,10 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// void print_uchar_at(__zp($d) char b, __zp($b) char *at)
+// void print_uchar_at(__zp(6) char b, __zp(2) char *at)
 print_uchar_at: {
-    .label b = $d
-    .label at = $b
+    .label b = 6
+    .label at = 2
     // b>>4
     lda.z b
     lsr
@@ -279,7 +279,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $e
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str

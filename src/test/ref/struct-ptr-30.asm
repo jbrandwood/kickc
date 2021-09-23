@@ -10,10 +10,10 @@
   .const OFFSET_STRUCT_POINT_Y = 1
   .const SIZEOF_STRUCT_POINT = 3
   .label SCREEN = $400
-  .label idx = 3
+  .label idx = 2
 .segment Code
 main: {
-    .label i = 2
+    .label i = 5
     lda #0
     sta.z idx
     sta.z i
@@ -38,9 +38,9 @@ main: {
     // }
     rts
 }
-// void print(__register(X) char p_x, __zp(4) int p_y)
+// void print(__register(X) char p_x, __zp(3) int p_y)
 print: {
-    .label p_y = 4
+    .label p_y = 3
     // SCREEN[idx++] = p.x
     ldy.z idx
     txa

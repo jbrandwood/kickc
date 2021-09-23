@@ -16,13 +16,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $d
+  .label conio_cursor_x = $e
   // The current cursor y-position
-  .label conio_cursor_y = $e
+  .label conio_cursor_y = 8
   // The current text cursor line start
-  .label conio_line_text = $f
+  .label conio_line_text = $b
   // The current color cursor line start
-  .label conio_line_color = $11
+  .label conio_line_color = 9
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -146,12 +146,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $17
-    .label __6 = $13
-    .label __7 = $13
-    .label line_offset = $13
-    .label __8 = $15
-    .label __9 = $13
+    .label __5 = $19
+    .label __6 = $15
+    .label __7 = $15
+    .label line_offset = $15
+    .label __8 = $17
+    .label __9 = $15
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -247,8 +247,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 3
-    .label line_cols = $b
+    .label line_text = $f
+    .label line_cols = 2
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -317,12 +317,12 @@ clrscr: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// void printf_string(void (*putc)(char), __zp(3) char *str, char format_min_length, __zp(2) char format_justify_left)
+// void printf_string(void (*putc)(char), __zp($f) char *str, char format_min_length, __zp($1c) char format_justify_left)
 printf_string: {
-    .label __9 = 6
-    .label padding = 5
-    .label str = 3
-    .label format_justify_left = 2
+    .label __9 = $11
+    .label padding = $1b
+    .label str = $f
+    .label format_justify_left = $1c
     // strlen(str)
     lda.z str
     sta.z strlen.str
@@ -441,11 +441,11 @@ cscroll: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// __zp(6) unsigned int strlen(__zp($b) char *str)
+// __zp($11) unsigned int strlen(__zp(2) char *str)
 strlen: {
-    .label len = 6
-    .label str = $b
-    .label return = 6
+    .label len = $11
+    .label str = 2
+    .label return = $11
     lda #<0
     sta.z len
     sta.z len+1
@@ -471,11 +471,11 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// void printf_padding(void (*putc)(char), __zp(9) char pad, __zp(8) char length)
+// void printf_padding(void (*putc)(char), __zp($14) char pad, __zp($13) char length)
 printf_padding: {
-    .label i = $a
-    .label length = 8
-    .label pad = 9
+    .label i = $d
+    .label length = $13
+    .label pad = $14
     lda #0
     sta.z i
   __b1:
@@ -496,9 +496,9 @@ printf_padding: {
     jmp __b1
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp(3) const char *s)
+// void printf_str(void (*putc)(char), __zp($f) const char *s)
 printf_str: {
-    .label s = 3
+    .label s = $f
   __b1:
     // while(c=*s++)
     ldy #0
@@ -520,13 +520,13 @@ printf_str: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1b) void *destination, __zp($b) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $19
-    .label dst = $1b
-    .label src = $b
-    .label source = $b
-    .label destination = $1b
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -562,11 +562,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($b) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1b
-    .label dst = $b
-    .label str = $b
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc

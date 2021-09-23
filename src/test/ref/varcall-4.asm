@@ -13,15 +13,15 @@
   .const SIZEOF_STRUCT_COLS = 3
   .label COLS = $d020
 .segment Code
-// __zp(2) char fg_sum(__zp(3) char a_border, __zp(4) char a_bg, __zp(5) char a_fg, __zp(6) char b_border, __zp(7) char b_bg, __zp(8) char b_fg)
+// __zp(7) char fg_sum(__zp(2) char a_border, __zp(3) char a_bg, __zp(8) char a_fg, __zp(4) char b_border, __zp(5) char b_bg, __zp(6) char b_fg)
 fg_sum: {
-    .label return = 2
-    .label a_border = 3
-    .label a_bg = 4
-    .label a_fg = 5
-    .label b_border = 6
-    .label b_bg = 7
-    .label b_fg = 8
+    .label return = 7
+    .label a_border = 2
+    .label a_bg = 3
+    .label a_fg = 8
+    .label b_border = 4
+    .label b_bg = 5
+    .label b_fg = 6
     // a.fg+b.fg
     lda.z a_fg
     clc

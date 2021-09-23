@@ -7,11 +7,11 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label textid = 2
+  .label textid = 4
 .segment Code
 main: {
     .label text = 5
-    .label screen = 3
+    .label screen = 2
     // byte* text
     lda #<0
     sta.z text

@@ -9,12 +9,12 @@
 .segment Code
 main: {
     .label screen = $400
-    .label __4 = 6
-    .label __6 = 4
-    .label line = 2
-    .label __7 = 8
-    .label __8 = 6
-    .label __9 = 4
+    .label __4 = 2
+    .label __6 = 6
+    .label line = 8
+    .label __7 = 4
+    .label __8 = 2
+    .label __9 = 6
     lda #<0
     sta.z line
     sta.z line+1

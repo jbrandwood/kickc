@@ -9,8 +9,8 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label w = 3
-    .label h = 2
+    .label w = 2
+    .label h = 4
     lda #0
     sta.z h
   // constant array

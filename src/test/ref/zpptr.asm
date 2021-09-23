@@ -9,10 +9,10 @@
 .segment Code
 main: {
     .label zpptr = $1000
-    .label zpptr2 = 4
-    .label w = 6
-    .label i = 3
-    .label j = 2
+    .label zpptr2 = 2
+    .label w = 4
+    .label i = 6
+    .label j = 7
     lda #0
     sta.z j
   __b1:

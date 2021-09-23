@@ -16,11 +16,11 @@
 main: {
     .label slotsA = ssA
     .label __0 = 6
-    .label __4 = 4
-    .label i = 2
-    .label __13 = 4
-    .label __14 = 4
-    .label __15 = 4
+    .label __4 = 2
+    .label i = 4
+    .label __13 = 2
+    .label __14 = 2
+    .label __15 = 2
     // deviceslot_t s1 = {'A', 'R', "f1"}
     lda #<@__0
     sta.z $fc

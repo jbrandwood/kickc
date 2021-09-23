@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(main)
   .label cur_line = 2
-  .label cur_line_1 = 6
+  .label cur_line_1 = 4
 .segment Code
 main: {
     .const line1_xpos = 2
@@ -20,8 +20,8 @@ main: {
     .const line2_ysize = $f
     .const line2_ch = '.'
     .label sc = 2
-    .label line1_pos = 6
-    .label line2_pos = 4
+    .label line1_pos = 4
+    .label line2_pos = 6
     lda #<$400
     sta.z sc
     lda #>$400

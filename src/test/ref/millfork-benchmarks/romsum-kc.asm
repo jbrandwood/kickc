@@ -12,11 +12,11 @@
 :BasicUpstart(__start)
   .label rom = $e000
   .label print_screen = $400
-  .label last_time = 9
-  .label print_char_cursor = 7
-  .label print_line_cursor = 2
-  .label Ticks = $b
-  .label Ticks_1 = $d
+  .label last_time = $f
+  .label print_char_cursor = 6
+  .label print_line_cursor = $b
+  .label Ticks = $d
+  .label Ticks_1 = 2
 .segment Code
 __start: {
     // unsigned int last_time
@@ -27,7 +27,7 @@ __start: {
     rts
 }
 main: {
-    .label i = $b
+    .label i = $d
     // start()
     jsr start
     lda #<print_screen
@@ -110,9 +110,9 @@ end: {
     rts
 }
 sum: {
-    .label s = $d
-    .label p = 5
-    .label return = $d
+    .label s = 2
+    .label p = 8
+    .label return = 2
     lda #<rom
     sta.z p
     lda #>rom
@@ -158,9 +158,9 @@ sum: {
     jmp __b1
 }
 // Print a unsigned int as DECIMAL
-// void print_uint_decimal(__zp($d) unsigned int w)
+// void print_uint_decimal(__zp(2) unsigned int w)
 print_uint_decimal: {
-    .label w = $d
+    .label w = 2
     // utoa(w, decimal_digits, DECIMAL)
     jsr utoa
     // print_str(decimal_digits)
@@ -192,9 +192,9 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($d) unsigned int w)
+// void print_uint(__zp(2) unsigned int w)
 print_uint: {
-    .label w = $d
+    .label w = 2
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -209,13 +209,13 @@ print_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($d) unsigned int value, __zp(5) char *buffer, char radix)
+// void utoa(__zp(2) unsigned int value, __zp(8) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label value = $d
-    .label digit_value = $f
-    .label buffer = 5
-    .label digit = 4
+    .label value = 2
+    .label digit_value = 4
+    .label buffer = 8
+    .label digit = $a
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -281,9 +281,9 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// void print_str(__zp($f) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = $f
+    .label str = 4
     lda #<decimal_digits
     sta.z str
     lda #>decimal_digits
@@ -339,12 +339,12 @@ print_uchar: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($d) unsigned int utoa_append(__zp(5) char *buffer, __zp($d) unsigned int value, __zp($f) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp(8) char *buffer, __zp(2) unsigned int value, __zp(4) unsigned int sub)
 utoa_append: {
-    .label buffer = 5
-    .label value = $d
-    .label sub = $f
-    .label return = $d
+    .label buffer = 8
+    .label value = 2
+    .label sub = 4
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)

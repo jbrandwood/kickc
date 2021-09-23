@@ -226,11 +226,11 @@ Complete equivalence classes
 [ main::buf2#0 ]
 [ malloc::return#2 ]
 Allocated zp[2]:2 [ heap_head#11 heap_head#12 ]
-Allocated zp[2]:4 [ malloc::return#0 ]
-Allocated zp[2]:6 [ main::buf1#0 ]
+Allocated zp[2]:4 [ malloc::return#2 ]
+Allocated zp[2]:6 [ malloc::return#0 ]
 Allocated zp[2]:8 [ malloc::return#1 ]
 Allocated zp[2]:10 [ main::buf2#0 ]
-Allocated zp[2]:12 [ malloc::return#2 ]
+Allocated zp[2]:12 [ main::buf1#0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] malloc::return#0 = malloc::return#2 [ malloc::return#0 heap_head#12 ] (  [ malloc::return#0 heap_head#12 ] { { malloc::return#0 = malloc::return#2 } }  ) always clobbers reg byte a 
 Statement [3] main::buf1#0 = (char *)malloc::return#0 [ main::buf1#0 heap_head#12 ] (  [ main::buf1#0 heap_head#12 ] { { heap_head#11 = heap_head#12 } { malloc::return#1 = malloc::return#2 } }  ) always clobbers reg byte a 
@@ -242,24 +242,24 @@ Statement [9] *SCREEN = *main::buf1#0 [ main::buf2#0 ] (  [ main::buf2#0 ] { }  
 Statement [10] *(SCREEN+1) = *main::buf2#0 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [14] malloc::return#2 = (void *)heap_head#12 [ malloc::return#2 heap_head#12 ] ( malloc:1 [ malloc::return#2 heap_head#12 ] { { malloc::return#0 = malloc::return#2 } }  malloc:4 [ main::buf1#0 malloc::return#2 heap_head#12 ] { { heap_head#11 = heap_head#12 } { malloc::return#1 = malloc::return#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ heap_head#11 heap_head#12 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ malloc::return#0 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ main::buf1#0 ] : zp[2]:6 , 
+Potential registers zp[2]:6 [ malloc::return#0 ] : zp[2]:6 , 
+Potential registers zp[2]:12 [ main::buf1#0 ] : zp[2]:12 , 
 Potential registers zp[2]:8 [ malloc::return#1 ] : zp[2]:8 , 
 Potential registers zp[2]:10 [ main::buf2#0 ] : zp[2]:10 , 
-Potential registers zp[2]:12 [ malloc::return#2 ] : zp[2]:12 , 
+Potential registers zp[2]:4 [ malloc::return#2 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 15.17: zp[2]:2 [ heap_head#11 heap_head#12 ] 
-Uplift Scope [malloc] 3.75: zp[2]:12 [ malloc::return#2 ] 2: zp[2]:4 [ malloc::return#0 ] 2: zp[2]:8 [ malloc::return#1 ] 
-Uplift Scope [main] 1.5: zp[2]:10 [ main::buf2#0 ] 1: zp[2]:6 [ main::buf1#0 ] 
+Uplift Scope [malloc] 3.75: zp[2]:4 [ malloc::return#2 ] 2: zp[2]:6 [ malloc::return#0 ] 2: zp[2]:8 [ malloc::return#1 ] 
+Uplift Scope [main] 1.5: zp[2]:10 [ main::buf2#0 ] 1: zp[2]:12 [ main::buf1#0 ] 
 
 Uplifting [] best 160 combination zp[2]:2 [ heap_head#11 heap_head#12 ] 
-Uplifting [malloc] best 160 combination zp[2]:12 [ malloc::return#2 ] zp[2]:4 [ malloc::return#0 ] zp[2]:8 [ malloc::return#1 ] 
-Uplifting [main] best 160 combination zp[2]:10 [ main::buf2#0 ] zp[2]:6 [ main::buf1#0 ] 
-Coalescing zero page register [ zp[2]:4 [ malloc::return#0 ] ] with [ zp[2]:6 [ main::buf1#0 ] ] - score: 1
+Uplifting [malloc] best 160 combination zp[2]:4 [ malloc::return#2 ] zp[2]:6 [ malloc::return#0 ] zp[2]:8 [ malloc::return#1 ] 
+Uplifting [main] best 160 combination zp[2]:10 [ main::buf2#0 ] zp[2]:12 [ main::buf1#0 ] 
+Coalescing zero page register [ zp[2]:6 [ malloc::return#0 ] ] with [ zp[2]:12 [ main::buf1#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:8 [ malloc::return#1 ] ] with [ zp[2]:10 [ main::buf2#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:8 [ malloc::return#1 main::buf2#0 ] ] with [ zp[2]:12 [ malloc::return#2 ] ] - score: 1
-Allocated (was zp[2]:8) zp[2]:6 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
+Coalescing zero page register [ zp[2]:8 [ malloc::return#1 main::buf2#0 ] ] with [ zp[2]:4 [ malloc::return#2 ] ] - score: 1
+Allocated (was zp[2]:8) zp[2]:4 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -279,8 +279,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label buf1 = 4
-    .label buf2 = 6
+    .label buf1 = 6
+    .label buf2 = 4
     // [1] call malloc
     // [12] phi from main to malloc [phi:main->malloc]
   malloc_from_main:
@@ -333,8 +333,8 @@ main: {
 }
   // malloc
 malloc: {
-    .label return = 4
-    .label return_1 = 6
+    .label return = 6
+    .label return_1 = 4
     // [13] heap_head#12 = ++ heap_head#11 -- pbuz1=_inc_pbuz1 
     inc.z heap_head
     bne !+
@@ -379,18 +379,18 @@ char *heap_head#11 // heap_head zp[2]:2 13.0
 char *heap_head#12 // heap_head zp[2]:2 2.1666666666666665
 void main()
 char *main::buf1
-char *main::buf1#0 // buf1 zp[2]:4 1.0
+char *main::buf1#0 // buf1 zp[2]:6 1.0
 char *main::buf2
-char *main::buf2#0 // buf2 zp[2]:6 1.5
+char *main::buf2#0 // buf2 zp[2]:4 1.5
 void * malloc()
 void *malloc::return
-void *malloc::return#0 // return zp[2]:4 2.0
-void *malloc::return#1 // return_1 zp[2]:6 2.0
-void *malloc::return#2 // return_1 zp[2]:6 3.75
+void *malloc::return#0 // return zp[2]:6 2.0
+void *malloc::return#1 // return_1 zp[2]:4 2.0
+void *malloc::return#2 // return_1 zp[2]:4 3.75
 
 zp[2]:2 [ heap_head#11 heap_head#12 ]
-zp[2]:4 [ malloc::return#0 main::buf1#0 ]
-zp[2]:6 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
+zp[2]:6 [ malloc::return#0 main::buf1#0 ]
+zp[2]:4 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
 
 
 FINAL ASSEMBLER
@@ -413,8 +413,8 @@ Score: 106
 .segment Code
   // main
 main: {
-    .label buf1 = 4
-    .label buf2 = 6
+    .label buf1 = 6
+    .label buf2 = 4
     // byte* buf1 = malloc()
     // [1] call malloc
     // [12] phi from main to malloc [phi:main->malloc]
@@ -465,8 +465,8 @@ main: {
 }
   // malloc
 malloc: {
-    .label return = 4
-    .label return_1 = 6
+    .label return = 6
+    .label return_1 = 4
     // heap_head++;
     // [13] heap_head#12 = ++ heap_head#11 -- pbuz1=_inc_pbuz1 
     inc.z heap_head

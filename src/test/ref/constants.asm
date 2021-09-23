@@ -14,8 +14,8 @@
   .const RED = 2
   .label BG_COLOR = $d021
   .label print_screen = $400
-  .label print_char_cursor = 5
-  .label print_line_cursor = 7
+  .label print_char_cursor = 2
+  .label print_line_cursor = 6
 .segment Code
 main: {
     // print_cls()
@@ -162,7 +162,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 2
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -189,10 +189,10 @@ memset: {
   !:
     jmp __b1
 }
-// void assert_byte(__zp(2) char *msg, __register(X) char b, __zp(4) char c)
+// void assert_byte(__zp(4) char *msg, __register(X) char b, __zp(8) char c)
 assert_byte: {
-    .label msg = 2
-    .label c = 4
+    .label msg = 4
+    .label c = 8
     // print_str(msg)
     jsr print_str
     // print_str(" ")
@@ -227,10 +227,10 @@ assert_byte: {
     jsr print_str
     jmp __b2
 }
-// void assert_sbyte(__zp(2) char *msg, __register(X) signed char b, __zp(4) signed char c)
+// void assert_sbyte(__zp(4) char *msg, __register(X) signed char b, __zp(8) signed char c)
 assert_sbyte: {
-    .label msg = 2
-    .label c = 4
+    .label msg = 4
+    .label c = 8
     // print_str(msg)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -271,9 +271,9 @@ assert_sbyte: {
     jmp __b2
 }
 // Print a zero-terminated string
-// void print_str(__zp(2) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 2
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0

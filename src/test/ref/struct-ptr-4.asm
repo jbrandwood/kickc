@@ -15,10 +15,10 @@ main: {
     // Print points
     .label SCREEN = $400
     // Fill points
-    .label points = 2
+    .label points = 3
     // Fill points
-    .label points_1 = 4
-    .label i1 = 6
+    .label points_1 = 5
+    .label i1 = 2
     ldx #0
     lda #<POINTS
     sta.z points

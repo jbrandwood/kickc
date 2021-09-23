@@ -158,10 +158,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>(equivalenceClassSet.getEquivalenceClasses());
-      /*
       final VariableRegisterWeights registerWeights = getProgram().getVariableRegisterWeights();
       Collections.sort(equivalenceClasses, (o1, o2) -> Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1)));
-       */
 
       for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          Registers.Register register = equivalenceClass.getRegister();

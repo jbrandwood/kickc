@@ -19,13 +19,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $b
+  .label conio_cursor_x = $14
   // The current cursor y-position
-  .label conio_cursor_y = $c
+  .label conio_cursor_y = $f
   // The current text cursor line start
-  .label conio_line_text = $d
+  .label conio_line_text = $12
   // The current color cursor line start
-  .label conio_line_color = $f
+  .label conio_line_color = $10
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -96,7 +96,7 @@ cputc: {
     rts
 }
 main: {
-    .label i = 2
+    .label i = $17
     // clrscr()
     jsr clrscr
     lda #0
@@ -151,12 +151,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $15
-    .label __6 = $11
-    .label __7 = $11
-    .label line_offset = $11
-    .label __8 = $13
-    .label __9 = $11
+    .label __5 = $1a
+    .label __6 = $15
+    .label __7 = $15
+    .label line_offset = $15
+    .label __8 = $18
+    .label __9 = $15
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -252,8 +252,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 7
-    .label line_cols = 3
+    .label line_text = $b
+    .label line_cols = 9
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -338,10 +338,10 @@ printf_uchar: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(7) void (*putc)(char), __zp(3) const char *s)
+// void printf_str(__zp($b) void (*putc)(char), __zp(9) const char *s)
 printf_str: {
-    .label s = 3
-    .label putc = 7
+    .label s = 9
+    .label putc = $b
   __b1:
     // while(c=*s++)
     ldy #0
@@ -430,12 +430,12 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp(7) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp($b) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $17
-    .label buffer = 7
-    .label digit = 5
-    .label started = 6
+    .label digit_value = 6
+    .label buffer = $b
+    .label digit = $d
+    .label started = $e
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -520,13 +520,13 @@ printf_number_buffer: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1a) void *destination, __zp(9) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $18
-    .label dst = $1a
-    .label src = 9
-    .label source = 9
-    .label destination = $1a
+    .label src_end = 7
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -562,11 +562,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(9) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1a
-    .label dst = 9
-    .label str = 9
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -605,10 +605,10 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp(7) char *buffer, __register(X) char value, __zp($17) char sub)
+// __register(X) char uctoa_append(__zp($b) char *buffer, __register(X) char value, __zp(6) char sub)
 uctoa_append: {
-    .label buffer = 7
-    .label sub = $17
+    .label buffer = $b
+    .label sub = 6
     ldy #0
   __b1:
     // while (value >= sub)

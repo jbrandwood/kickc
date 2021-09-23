@@ -48,7 +48,7 @@ main: {
     jmp __b1
 }
 init_screen: {
-    .label b = 6
+    .label b = 2
     .label c = 4
     lda #<BITMAP
     sta.z b
@@ -100,8 +100,8 @@ init_screen: {
     jmp __b1
 }
 init_plot_tables: {
-    .label __9 = 2
-    .label yoffs = 6
+    .label __9 = 7
+    .label yoffs = 2
     ldy #$80
     ldx #0
   __b1:
@@ -186,12 +186,12 @@ plots: {
     inx
     jmp __b1
 }
-// void plot(__zp(2) char x, __zp(3) char y)
+// void plot(__zp(7) char x, __zp(6) char y)
 plot: {
-    .label x = 2
-    .label y = 3
+    .label x = 7
+    .label y = 6
     .label plotter_x = 4
-    .label plotter_y = 6
+    .label plotter_y = 2
     .label plotter = 4
     // BYTE1(plotter_x) = plot_xhi[x]
     ldy.z x

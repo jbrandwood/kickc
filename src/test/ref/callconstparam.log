@@ -252,28 +252,30 @@ Complete equivalence classes
 [ line::x1#3 ]
 [ screen#18 screen#11 screen#3 ]
 [ line::x#2 line::x#0 line::x#1 ]
-Allocated zp[1]:2 [ line::x1#3 ]
+Allocated zp[1]:2 [ line::x#2 line::x#0 line::x#1 ]
 Allocated zp[2]:3 [ screen#18 screen#11 screen#3 ]
-Allocated zp[1]:5 [ line::x#2 line::x#0 line::x#1 ]
+Allocated zp[1]:5 [ line::x1#3 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] *screen#11 = line::x#2 [ line::x1#3 screen#11 line::x#2 ] ( line:1 [ line::x1#3 screen#11 line::x#2 ] { }  line:3 [ line::x1#3 screen#11 line::x#2 ] { { screen#11 = screen#18 } }  ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp[1]:2 [ line::x1#3 ]
-Removing always clobbered register reg byte y as potential for zp[1]:5 [ line::x#2 line::x#0 line::x#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:5 [ line::x1#3 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ line::x#2 line::x#0 line::x#1 ]
 Statement [9] *screen#11 = line::x#2 [ line::x1#3 screen#11 line::x#2 ] ( line:1 [ line::x1#3 screen#11 line::x#2 ] { }  line:3 [ line::x1#3 screen#11 line::x#2 ] { { screen#11 = screen#18 } }  ) always clobbers reg byte y 
-Potential registers zp[1]:2 [ line::x1#3 ] : zp[1]:2 , reg byte a , reg byte x , 
+Potential registers zp[1]:5 [ line::x1#3 ] : zp[1]:5 , reg byte a , reg byte x , 
 Potential registers zp[2]:3 [ screen#18 screen#11 screen#3 ] : zp[2]:3 , 
-Potential registers zp[1]:5 [ line::x#2 line::x#0 line::x#1 ] : zp[1]:5 , reg byte a , reg byte x , 
+Potential registers zp[1]:2 [ line::x#2 line::x#0 line::x#1 ] : zp[1]:2 , reg byte a , reg byte x , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [line] 316.75: zp[1]:5 [ line::x#2 line::x#0 line::x#1 ] 16.83: zp[1]:2 [ line::x1#3 ] 
+Uplift Scope [line] 316.75: zp[1]:2 [ line::x#2 line::x#0 line::x#1 ] 16.83: zp[1]:5 [ line::x1#3 ] 
 Uplift Scope [] 166.67: zp[2]:3 [ screen#18 screen#11 screen#3 ] 
 Uplift Scope [main] 
 
-Uplifting [line] best 444 combination reg byte x [ line::x#2 line::x#0 line::x#1 ] zp[1]:2 [ line::x1#3 ] 
+Uplifting [line] best 444 combination reg byte x [ line::x#2 line::x#0 line::x#1 ] zp[1]:5 [ line::x1#3 ] 
 Uplifting [] best 444 combination zp[2]:3 [ screen#18 screen#11 screen#3 ] 
 Uplifting [main] best 444 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ line::x1#3 ]
-Uplifting [line] best 444 combination zp[1]:2 [ line::x1#3 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ line::x1#3 ]
+Uplifting [line] best 444 combination zp[1]:5 [ line::x1#3 ] 
+Allocated (was zp[2]:3) zp[2]:2 [ screen#18 screen#11 screen#3 ]
+Allocated (was zp[1]:5) zp[1]:4 [ line::x1#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -290,7 +292,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 3
+  .label screen = 2
 .segment Code
   // main
 main: {
@@ -330,9 +332,9 @@ main: {
     rts
 }
   // line
-// void line(char x0, __zp(2) char x1)
+// void line(char x0, __zp(4) char x1)
 line: {
-    .label x1 = 2
+    .label x1 = 4
     // [6] phi from line line::@2 to line::@1 [phi:line/line::@2->line::@1]
   __b1_from_line:
   __b1_from___b2:
@@ -392,15 +394,15 @@ char line::x#1 // reg byte x 202.0
 char line::x#2 // reg byte x 103.75
 char line::x0
 char line::x1
-char line::x1#3 // x1 zp[1]:2 16.833333333333332
+char line::x1#3 // x1 zp[1]:4 16.833333333333332
 void main()
 char *screen
-char *screen#11 // screen zp[2]:3 52.66666666666666
-char *screen#18 // screen zp[2]:3 13.0
-char *screen#3 // screen zp[2]:3 101.0
+char *screen#11 // screen zp[2]:2 52.66666666666666
+char *screen#18 // screen zp[2]:2 13.0
+char *screen#3 // screen zp[2]:2 101.0
 
-zp[1]:2 [ line::x1#3 ]
-zp[2]:3 [ screen#18 screen#11 screen#3 ]
+zp[1]:4 [ line::x1#3 ]
+zp[2]:2 [ screen#18 screen#11 screen#3 ]
 reg byte x [ line::x#2 line::x#0 line::x#1 ]
 
 
@@ -421,7 +423,7 @@ Score: 378
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 3
+  .label screen = 2
 .segment Code
   // main
 main: {
@@ -457,9 +459,9 @@ main: {
     rts
 }
   // line
-// void line(char x0, __zp(2) char x1)
+// void line(char x0, __zp(4) char x1)
 line: {
-    .label x1 = 2
+    .label x1 = 4
     // [6] phi from line line::@2 to line::@1 [phi:line/line::@2->line::@1]
     // [6] phi screen#11 = screen#18 [phi:line/line::@2->line::@1#0] -- register_copy 
     // [6] phi line::x#2 = line::x#0 [phi:line/line::@2->line::@1#1] -- register_copy 

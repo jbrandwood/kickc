@@ -11,8 +11,8 @@
 main: {
     .label SCREEN = $400
     .label ppb = pb
-    .label b = 2
-    .label pb = 3
+    .label b = 4
+    .label pb = 2
     // byte b = 'a'
     lda #'a'
     sta.z b

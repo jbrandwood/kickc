@@ -42,13 +42,13 @@ main: {
 // Make charset from proto chars
 // void init_font_hex(__zp(5) char *charset)
 init_font_hex: {
-    .label __0 = $b
-    .label idx = $a
+    .label __0 = 3
+    .label idx = 2
     .label proto_lo = 7
     .label charset = 5
-    .label c1 = 9
-    .label proto_hi = 2
-    .label c = 4
+    .label c1 = 4
+    .label proto_hi = 9
+    .label c = $b
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO

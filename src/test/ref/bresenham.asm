@@ -16,9 +16,9 @@ main: {
     .const y1 = $18
     .const xd = x1-x0
     .const yd = y1-y0
-    .label x = 4
+    .label x = 5
     .label cursor = 2
-    .label y = 5
+    .label y = 4
     lda #y0
     sta.z y
     ldx #yd/2

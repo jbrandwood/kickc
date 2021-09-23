@@ -54,12 +54,12 @@ benchmarkCountdownFor: {
     jmp __b3
 }
 benchmarkLandscape: {
-    .label __5 = $86
-    .label screenAddress = $83
-    .label z = $80
-    .label stop = $85
-    .label x = $81
-    .label c = $82
+    .label __5 = $82
+    .label screenAddress = $80
+    .label z = $86
+    .label stop = $84
+    .label x = $85
+    .label c = $83
     lda #0
     sta.z z
   __b1:

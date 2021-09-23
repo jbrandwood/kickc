@@ -23,8 +23,8 @@ main: {
 // void set_process_name(char *name)
 set_process_name: {
     .label j = 2
-    .label __1 = 4
-    .label __2 = 6
+    .label __1 = 6
+    .label __2 = 4
     lda #<0
     sta.z j
     sta.z j+1

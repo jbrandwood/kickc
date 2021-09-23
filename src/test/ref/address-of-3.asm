@@ -9,10 +9,10 @@
 :BasicUpstart(main)
   .const SIZEOF_INT = 2
   .label SCREEN = $400
-  .label idx = 3
+  .label idx = 2
 .segment Code
 main: {
-    .label i = 2
+    .label i = 5
     // print(VALS)
     lda #<VALS
     sta.z print.p
@@ -49,9 +49,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(4) int *p)
+// void print(__zp(3) int *p)
 print: {
-    .label p = 4
+    .label p = 3
     // SCREEN[idx++] = *p
     lda.z idx
     asl

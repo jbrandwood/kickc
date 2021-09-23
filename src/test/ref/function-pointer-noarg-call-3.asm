@@ -23,8 +23,8 @@ fn1: {
     rts
 }
 main: {
-    .label __0 = 3
-    .label i = 2
+    .label __0 = 2
+    .label i = 4
     lda #0
     sta.z i
   __b2:
@@ -40,9 +40,9 @@ main: {
     jmp (__0)
 }
 // declare getfn as function (char b) returning pointer to function (void) returning void
-// __zp(3) void (*)() getfn(__register(A) char b)
+// __zp(2) void (*)() getfn(__register(A) char b)
 getfn: {
-    .label return = 3
+    .label return = 2
     // b&1
     and #1
     // if((b&1)==0)

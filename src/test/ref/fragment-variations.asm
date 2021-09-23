@@ -12,8 +12,8 @@
 .segment Code
 main: {
     .label screen = $400
-    .label __0 = 6
-    .label __1 = 6
+    .label __0 = 2
+    .label __1 = 2
     // mul16u(w, w)
     lda #<$a
     sta.z mul16u.a
@@ -57,12 +57,12 @@ main: {
     // }
     rts
 }
-// __zp(6) unsigned long mul16u(__zp(2) unsigned int b, __zp(4) unsigned int a)
+// __zp(2) unsigned long mul16u(__zp(8) unsigned int b, __zp(6) unsigned int a)
 mul16u: {
-    .label return = 6
-    .label mb = 6
-    .label b = 2
-    .label a = 4
+    .label return = 2
+    .label mb = 2
+    .label b = 8
+    .label a = 6
     // dword mb = b
     lda.z b
     sta.z mb

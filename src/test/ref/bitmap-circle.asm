@@ -72,11 +72,11 @@ main: {
     jmp __b1
 }
 // Fill some memory with a value
-// void fill(char *start, __zp(2) int size, __register(X) char val)
+// void fill(char *start, __zp($e) int size, __register(X) char val)
 fill: {
-    .label end = 2
-    .label addr = 4
-    .label size = 2
+    .label end = $e
+    .label addr = $c
+    .label size = $e
     // byte* end = start + size
     clc
     lda.z end
@@ -114,12 +114,12 @@ circle: {
     .const r = $32
     .label __5 = 8
     .label __6 = 8
-    .label __7 = 6
-    .label __9 = $a
-    .label __10 = 6
-    .label p = 6
-    .label y = 4
-    .label x1 = 2
+    .label __7 = $a
+    .label __9 = 6
+    .label __10 = $a
+    .label p = $a
+    .label y = $c
+    .label x1 = $e
     lda #<3-(r<<1)
     sta.z p
     lda #>3-(r<<1)
@@ -349,16 +349,16 @@ circle: {
     sta.z p+1
     jmp __b4
 }
-// void plot(__zp(8) int x, __zp($a) int y)
+// void plot(__zp(8) int x, __zp(6) int y)
 plot: {
-    .label __0 = $c
-    .label __2 = $a
-    .label __3 = $e
+    .label __0 = 4
+    .label __2 = 6
+    .label __3 = 2
     .label x = 8
-    .label y = $a
-    .label location = $c
-    .label __7 = $e
-    .label __8 = $e
+    .label y = 6
+    .label location = 4
+    .label __7 = 2
+    .label __8 = 2
     // x & $fff8
     lda.z x
     and #<$fff8

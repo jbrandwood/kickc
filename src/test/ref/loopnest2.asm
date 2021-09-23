@@ -10,7 +10,7 @@
 .segment Code
 main: {
     .label j = 3
-    .label i = 2
+    .label i = 4
     lda #$64
     sta.z i
   __b1:
@@ -31,7 +31,7 @@ main: {
     rts
 }
 nest1: {
-    .label i = 4
+    .label i = 2
     lda #$64
     sta.z i
   __b1:

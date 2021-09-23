@@ -312,9 +312,9 @@ gfx_init: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label __1 = 9
-    .label ch = 3
-    .label cy = 2
+    .label __1 = 8
+    .label ch = 6
+    .label cy = 9
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -362,12 +362,12 @@ gfx_init_screen0: {
 gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = $ff&CHARSET8/$4000
-    .label bits = 5
-    .label chargen = 3
-    .label gfxa = 6
-    .label col = 8
-    .label cr = 9
-    .label ch = 2
+    .label bits = 2
+    .label chargen = 6
+    .label gfxa = 3
+    .label col = 5
+    .label cr = 8
+    .label ch = 9
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1

@@ -67,23 +67,23 @@ Added variable main::pb to live range equivalence class [ main::pb ]
 Complete equivalence classes
 [ main::b ]
 [ main::pb ]
-Allocated zp[1]:2 [ main::b ]
-Allocated zp[2]:3 [ main::pb ]
+Allocated zp[2]:2 [ main::pb ]
+Allocated zp[1]:4 [ main::b ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] main::b = 'a' [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
 Statement [1] main::pb = &main::b [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *main::SCREEN = *(*main::ppb) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[1]:2 [ main::b ] : zp[1]:2 , 
-Potential registers zp[2]:3 [ main::pb ] : zp[2]:3 , 
+Potential registers zp[1]:4 [ main::b ] : zp[1]:4 , 
+Potential registers zp[2]:2 [ main::pb ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[2]:3 [ main::pb ] 2: zp[1]:2 [ main::b ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::pb ] 2: zp[1]:4 [ main::b ] 
 Uplift Scope [] 
 
-Uplifting [main] best 47 combination zp[2]:3 [ main::pb ] zp[1]:2 [ main::b ] 
+Uplifting [main] best 47 combination zp[2]:2 [ main::pb ] zp[1]:4 [ main::b ] 
 Uplifting [] best 47 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ main::b ]
-Uplifting [main] best 47 combination zp[1]:2 [ main::b ] 
+Attempting to uplift remaining variables inzp[1]:4 [ main::b ]
+Uplifting [main] best 47 combination zp[1]:4 [ main::b ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -103,8 +103,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label SCREEN = $400
     .label ppb = pb
-    .label b = 2
-    .label pb = 3
+    .label b = 4
+    .label pb = 2
     // [0] main::b = 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
@@ -138,12 +138,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 void main()
 __constant char * const main::SCREEN = (char *) 1024
-__loadstore volatile char main::b // zp[1]:2 2.0
-__loadstore char * volatile main::pb // zp[2]:3 20.0
+__loadstore volatile char main::b // zp[1]:4 2.0
+__loadstore char * volatile main::pb // zp[2]:2 20.0
 __constant char **main::ppb = &main::pb
 
-zp[1]:2 [ main::b ]
-zp[2]:3 [ main::pb ]
+zp[1]:4 [ main::b ]
+zp[2]:2 [ main::pb ]
 
 
 FINAL ASSEMBLER
@@ -166,8 +166,8 @@ Score: 44
 main: {
     .label SCREEN = $400
     .label ppb = pb
-    .label b = 2
-    .label pb = 3
+    .label b = 4
+    .label pb = 2
     // byte b = 'a'
     // [0] main::b = 'a' -- vbuz1=vbuc1 
     lda #'a'

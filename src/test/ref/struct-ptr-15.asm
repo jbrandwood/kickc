@@ -13,10 +13,10 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label __28 = 6
-    .label x = 5
-    .label ptr = 2
-    .label i = 4
+    .label __28 = 3
+    .label x = 7
+    .label ptr = 5
+    .label i = 2
     // circles[0].center.x = 2
     lda #2
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER

@@ -12,9 +12,9 @@
 .segment Code
 main: {
     .label CHAR_A = CHARGEN+8
-    .label bits = 3
-    .label sc = 4
-    .label y = 2
+    .label bits = 2
+    .label sc = 3
+    .label y = 5
     // asm
     sei
     // *PROCPORT = $32

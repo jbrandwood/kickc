@@ -24,13 +24,13 @@
   .label SCREEN2 = $e400
   .label CHARSET = $e800
   .label print_screen = $400
-  .label last_time = $a
-  .label print_line_cursor = $f
+  .label last_time = $16
+  .label print_line_cursor = $14
   // The random state variable
   .label rand_state = 2
-  .label Ticks = $14
-  .label Ticks_1 = $16
-  .label print_char_cursor = $11
+  .label Ticks = 6
+  .label Ticks_1 = 4
+  .label print_char_cursor = $a
 .segment Code
 __start: {
     // unsigned int last_time
@@ -41,8 +41,8 @@ __start: {
     rts
 }
 main: {
-    .label block = $c
-    .label v = $d
+    .label block = $18
+    .label v = $19
     .label count = 2
     // makechar()
     jsr makechar
@@ -110,14 +110,14 @@ main: {
     jmp __b1
 }
 makechar: {
-    .label __3 = $11
-    .label __4 = $13
-    .label __7 = $f
-    .label __8 = $f
-    .label s = $e
-    .label c = 8
-    .label i = 4
-    .label __10 = $f
+    .label __3 = $a
+    .label __4 = $c
+    .label __7 = $14
+    .label __8 = $14
+    .label s = $12
+    .label c = $d
+    .label i = $f
+    .label __10 = $14
     lda #<1
     sta.z rand_state
     lda #>1
@@ -251,17 +251,17 @@ end: {
     // }
     rts
 }
-// void doplasma(__zp(8) char *scrn)
+// void doplasma(__zp($d) char *scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
-    .label c1a = $e
-    .label c1b = $13
-    .label ii = 4
-    .label c2a = 6
-    .label c2b = 7
-    .label i = 5
-    .label scrn = 8
+    .label c1a = $12
+    .label c1b = $c
+    .label ii = $f
+    .label c2a = $13
+    .label c2b = $11
+    .label i = $10
+    .label scrn = $d
     lda #0
     sta.z c1b
     sta.z c1a
@@ -364,10 +364,10 @@ doplasma: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $14
-    .label __1 = $16
-    .label __2 = $18
-    .label return = $11
+    .label __0 = 6
+    .label __1 = 4
+    .label __2 = 8
+    .label return = $a
     // rand_state << 7
     lda.z rand_state+1
     lsr
@@ -417,9 +417,9 @@ rand: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($16) unsigned int w)
+// void print_uint(__zp(4) unsigned int w)
 print_uint: {
-    .label w = $16
+    .label w = 4
     // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen

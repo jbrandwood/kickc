@@ -10,10 +10,10 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label __1 = 4
-    .label tile = 4
-    .label i = 2
-    .label __4 = 4
+    .label __1 = 2
+    .label tile = 2
+    .label i = 4
+    .label __4 = 2
     .label __5 = 6
     lda #<0
     sta.z i

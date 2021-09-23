@@ -9,7 +9,7 @@
 .segment Basic
 :BasicUpstart(main)
   .const STACK_BASE = $103
-  .label screen = 2
+  .label screen = 4
 .segment Code
 main: {
     // printf("Hello, I am %s. who are you?", name)
@@ -41,9 +41,9 @@ main: {
     .byte 0
 }
 .segment Code
-// void printf_str(void (*putc)(char), __zp(4) char *str)
+// void printf_str(void (*putc)(char), __zp(2) char *str)
 printf_str: {
-    .label str = 4
+    .label str = 2
   __b1:
     // while(*str)
     ldy #0

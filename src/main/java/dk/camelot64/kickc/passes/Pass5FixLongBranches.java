@@ -94,8 +94,6 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       // Look for a long branch distance error
       if(asmRes != 0) {
          String outputLines[] = output.split("\\r?\\n");
-         if(getLog().isVerboseFixLongBranch())
-            getLog().append("Pass5FixLongBranches: Number of ASM lines " + outputLines.length);
          for(int i = 0; i < outputLines.length; i++) {
             String outputLine = outputLines[i];
             if(outputLine.contains("Error: relative address is illegal (jump distance is too far).")) {
@@ -118,6 +116,8 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                throw new CompileError("Error! Failed to fix long branch at " + contextLine);
             }
          }
+         // KickAssembler returned error, but no long branch was found. Fail with the output from KickAss
+         throw new CompileError("Error! Failed to  compile using KickAss\n" + output);
       }
       return false;
    }

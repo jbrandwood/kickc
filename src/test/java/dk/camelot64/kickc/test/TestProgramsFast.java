@@ -3673,6 +3673,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testInlineKasmResource2() throws IOException {
+      compileAndCompare("inline-kasm-resource-2.c");
+   }
+
+   @Test
    public void testInlineKasmResource() throws IOException {
       compileAndCompare("inline-kasm-resource.c");
    }

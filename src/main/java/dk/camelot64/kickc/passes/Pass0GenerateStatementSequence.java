@@ -294,6 +294,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_DATA_SEG:
             this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
             break;
+         case CParser.PRAGMA_RESOURCE:
+            String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
+            addResourceFile(ctx, resourceFileName);
+            break;
          case CParser.PRAGMA_START_ADDRESS:
             Number startAddress = pragmaParamNumber(pragmaParamSingle(ctx));
             program.getTargetPlatform().setStartAddress(startAddress);
@@ -777,20 +781,29 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          return new AsmDirectiveClobber(clobber);
       } else if("resource".equals(ctx.NAME().getText())) {
          TerminalNode resource = ctx.STRING();
-         String resourceName = resource.getText();
-         resourceName = resourceName.substring(1, resourceName.length() - 1);
-         Path currentPath = cParser.getSourceFolderPath(ctx);
-         File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
-         if(resourceFile == null)
-            throw new CompileError("File  not found " + resourceName);
-         if(!program.getAsmResourceFiles().contains(resourceFile.toPath()))
-            program.addAsmResourceFile(resourceFile.toPath());
-         if(program.getLog().isVerboseParse()) {
-            program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
-         }
+         String resourceFileName = resource.getText();
+         resourceFileName = resourceFileName.substring(1, resourceFileName.length() - 1);
+         addResourceFile(ctx, resourceFileName);
          return null;
       }
       throw new CompileError("Unknown ASM directive '"+ctx.NAME().getText()+"'", new StatementSource(ctx));
+   }
+
+   /**
+    * Add a resource to the program.
+    * @param ctx The parser context used for finding the folder containing the current source line.
+    * @param resourceFileName The file name of the resource file.
+    */
+   private void addResourceFile(ParserRuleContext ctx, String resourceFileName) {
+      Path currentPath = cParser.getSourceFolderPath(ctx);
+      File resourceFile = SourceLoader.loadFile(resourceFileName, currentPath, new ArrayList<>());
+      if(resourceFile == null)
+         throw new CompileError("File  not found " + resourceFileName);
+      if(!program.getAsmResourceFiles().contains(resourceFile.toPath()))
+         program.addAsmResourceFile(resourceFile.toPath());
+      if(program.getLog().isVerboseParse()) {
+         program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
+      }
    }
 
    /** Information about a declared parameter. */

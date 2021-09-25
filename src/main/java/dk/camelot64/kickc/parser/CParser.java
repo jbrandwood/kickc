@@ -45,6 +45,7 @@ public class CParser {
    public static final String PRAGMA_CONSTRUCTOR_FOR = "constructor_for";
    public static final String PRAGMA_INTERRUPT = "interrupt";
    public static final String PRAGMA_STRUCT_MODEL = "struct_model";
+   public static final String PRAGMA_RESOURCE = "resource";
 
    /** The Program. */
    private Program program;

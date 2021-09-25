@@ -80,30 +80,37 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       } catch(Throwable e) {
          if(e instanceof AssertionError && e.getMessage().contains("Invalid number of bytes in memblock!")) {
             throw new CompileError("Error! KickAssembler failed due to assertion. Please run java without -ea / -enableassertions.", e);
-         }  else {
+         } else {
             throw new CompileError("Error! KickAssembler failed, while trying to fix long branch. " + e);
          }
-      }  finally {
+      } finally {
          System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
       }
       String output = kickAssOut.toString();
 
+      if(getLog().isVerboseFixLongBranch())
+         getLog().append("Pass5FixLongBranches: ASM process result " + asmRes);
+
       // Look for a long branch distance error
       if(asmRes != 0) {
          String outputLines[] = output.split("\\r?\\n");
+         if(getLog().isVerboseFixLongBranch())
+            getLog().append("Pass5FixLongBranches: Number of ASM lines " + outputLines.length);
          for(int i = 0; i < outputLines.length; i++) {
             String outputLine = outputLines[i];
             if(outputLine.contains("Error: relative address is illegal (jump distance is too far).")) {
                // Found a long branch!
                String contextLine = outputLines[i + 1];
+               if(getLog().isVerboseFixLongBranch())
+                  getLog().append("Pass5FixLongBranches: Found long branch " + contextLine);
                Pattern contextPattern = Pattern.compile("at line ([0-9]*),.*");
                Matcher matcher = contextPattern.matcher(contextLine);
-               //getLog().append("Found long branch "+contextLine);
                if(matcher.matches()) {
                   String contextLineIdxStr = matcher.group(1);
                   int contextLineIdx = Integer.parseInt(contextLineIdxStr);
                   // Found line number
-                  //getLog().append("Found long branch line number "+contextLineIdx);
+                  if(getLog().isVerboseFixLongBranch())
+                     getLog().append("Pass5FixLongBranches: Found long branch line number " + contextLineIdx);
                   if(fixLongBranch(contextLineIdx - 1)) {
                      return true;
                   }
@@ -138,7 +145,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                String branchDest = asmInstruction.getOperandJumpTarget();
                asmInstruction.setCpuOpcode(inverseCpuOpcode);
                String newLabel = AsmFormat.asmFix("!" + branchDest);
-               asmInstruction.setOperandJumpTarget(newLabel+"+");
+               asmInstruction.setOperandJumpTarget(newLabel + "+");
                CpuOpcode jmpOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("jmp", CpuAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest, null);
                asmChunk.addLineAfter(asmInstruction, jmpInstruction);
@@ -186,7 +193,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
    }
 
    private static File getTmpFile(Path tmpDir, String fileName) {
-      return new File(tmpDir.toFile(), fileName );
+      return new File(tmpDir.toFile(), fileName);
    }
 
 }

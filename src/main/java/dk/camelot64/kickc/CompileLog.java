@@ -86,6 +86,11 @@ public class CompileLog {
    private boolean verboseSsaSourceCode = false;
 
    /**
+    * Print verbose info in the fix long branch fix pass
+    */
+   private boolean verboseFixLongBranch = false;
+
+   /**
     * Should the log be output to System.out while being built
     */
    private boolean sysOut = false;
@@ -130,6 +135,14 @@ public class CompileLog {
 
    public void setVerboseSsaSourceCode(boolean verboseSsaSourceCode) {
       this.verboseSsaSourceCode = verboseSsaSourceCode;
+   }
+
+   public boolean isVerboseFixLongBranch() {
+      return verboseFixLongBranch;
+   }
+
+   public void setVerboseFixLongBranch(boolean verboseFixLongBranch) {
+      this.verboseFixLongBranch = verboseFixLongBranch;
    }
 
    public boolean isVerboseCreateSsa() {

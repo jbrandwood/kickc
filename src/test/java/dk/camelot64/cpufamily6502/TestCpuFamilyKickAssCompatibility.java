@@ -38,12 +38,23 @@ public class TestCpuFamilyKickAssCompatibility {
 
    private void assertOpcodesMatch(Cpu65xx kcCpu, Cpu kaCpu) {
       final Collection<CpuOpcode> kcAllOpcodes = kcCpu.getAllOpcodes();
-      final Map<String, int[]> kaAllMnemonics = kaCpu.mnemonics;
+      final List<MnemonicDefinition> kaAllMnemonics = kaCpu.mnemonics;
       final Map<CpuAddressingMode, List<_65xxArgType>> kaAddressingModeMap = getKAAddressingModeMap();
 
       // Test that each KickC opcode has a matching KickAss opcode
       for(CpuOpcode kcOpcode : kcAllOpcodes) {
-         final int[] kaOpcodes = kaAllMnemonics.get(kcOpcode.getMnemonic());
+
+         int[] kaOpcodes = null;
+         for(MnemonicDefinition kaMnemonic : kaAllMnemonics) {
+            for(String kaName : kaMnemonic.namesList) {
+               if(kaName.equals(kcOpcode.getMnemonic())) {
+                  kaOpcodes = kaMnemonic.opcodes;
+               }
+            }
+         }
+
+         // final int[] kaOpcodes = kaAllMnemonics.get(kcOpcode.getMnemonic());
+
          assertNotNull(kcOpcode.getMnemonic(), "KickAss CPU " + kaCpu.name + " does not know the KickC CPU " + kcCpu.getName() + " mnemonic");
          final List<_65xxArgType> kaArgTypes = kaAddressingModeMap.get(kcOpcode.getAddressingMode());
          assertNotNull(kaArgTypes, "KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName());
@@ -63,6 +74,8 @@ public class TestCpuFamilyKickAssCompatibility {
                }
             }
          }
+         if(!found)
+            System.out.println("Not found!");
          assertTrue(found, "KickAss opcode not found for mnemonic " + kcOpcode.toString());
       }
 

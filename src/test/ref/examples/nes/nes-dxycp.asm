@@ -81,11 +81,11 @@
   /// NES CPU and audion processing unit (APU)
   .label APU = $4000
   // Index into the Y sine
-  .label y_sin_idx = $c
+  .label y_sin_idx = $e
   // Index into the X sine
-  .label x_sin_idx = $d
+  .label x_sin_idx = $f
   // Index into the small X sine
-  .label x_sin_idx_2 = $e
+  .label x_sin_idx_2 = $10
 .segment Code
 __start: {
     // volatile char y_sin_idx = 0
@@ -102,15 +102,15 @@ __start: {
 }
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 vblank: {
-    .label __17 = 4
-    .label __19 = 4
-    .label __23 = 5
-    .label __25 = 5
-    .label __28 = $f
-    .label y_idx = 3
-    .label x_idx = 4
-    .label x_idx_2 = 5
-    .label s = 2
+    .label __17 = $a
+    .label __19 = $a
+    .label __23 = 9
+    .label __25 = 9
+    .label __28 = $d
+    .label y_idx = $c
+    .label x_idx = $a
+    .label x_idx_2 = 9
+    .label s = $b
     pha
     txa
     pha
@@ -366,7 +366,7 @@ main: {
 // - bit 6: B
 // - bit 7: A
 readJoy1: {
-    .label __1 = $10
+    .label __1 = 8
     // APU->JOY1 = 1
     // Latch the controller buttons
     lda #1
@@ -404,8 +404,8 @@ ppuDataTransfer: {
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
-    .label cpuSrc = 8
-    .label i = 6
+    .label cpuSrc = 6
+    .label i = 4
     // PPU->PPUADDR = BYTE1(ppuData)
     lda #>ppuData
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
@@ -452,11 +452,11 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// void ppuDataFill(void * const ppuData, __register(X) char val, __zp(8) unsigned int size)
+// void ppuDataFill(void * const ppuData, __register(X) char val, __zp(6) unsigned int size)
 ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = 6
-    .label i = $a
-    .label size = 8
+    .label ppuDataPrepare1_ppuData = 4
+    .label i = 2
+    .label size = 6
     // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)

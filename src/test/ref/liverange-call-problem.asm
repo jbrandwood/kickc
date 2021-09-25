@@ -9,8 +9,8 @@
 .segment Basic
 :BasicUpstart(main)
   .const SIZEOF_UNSIGNED_INT = 2
-  .label w1 = 2
-  .label w2 = 4
+  .label w1 = 4
+  .label w2 = 2
 .segment Code
 main: {
     .label SCREEN = $400

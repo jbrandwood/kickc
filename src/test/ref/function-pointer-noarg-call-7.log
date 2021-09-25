@@ -241,13 +241,13 @@ Complete equivalence classes
 [ do10::i#2 do10::i#1 ]
 [ idx ]
 Allocated zp[1]:2 [ hello::i#2 hello::i#1 ]
-Allocated zp[1]:3 [ do10::i#2 do10::i#1 ]
-Allocated zp[1]:4 [ idx ]
+Allocated zp[1]:3 [ idx ]
+Allocated zp[1]:4 [ do10::i#2 do10::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
 Statement [7] SCREEN[idx] = msg[hello::i#2] [ idx hello::i#2 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:3 [ do10::i#2 do10::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:3 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ do10::i#2 do10::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ hello::i#2 hello::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ hello::i#2 hello::i#1 ]
 Statement [10] if(0!=msg[hello::i#1]) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
@@ -255,27 +255,27 @@ Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a
 Statement [7] SCREEN[idx] = msg[hello::i#2] [ idx hello::i#2 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(0!=msg[hello::i#1]) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ hello::i#2 hello::i#1 ] : zp[1]:2 , reg byte x , 
-Potential registers zp[1]:3 [ do10::i#2 do10::i#1 ] : zp[1]:3 , reg byte x , 
-Potential registers zp[1]:4 [ idx ] : zp[1]:4 , 
+Potential registers zp[1]:4 [ do10::i#2 do10::i#1 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [hello] 250,002.5: zp[1]:2 [ hello::i#2 hello::i#1 ] 
-Uplift Scope [] 20,000.33: zp[1]:4 [ idx ] 
-Uplift Scope [do10] 2,502.5: zp[1]:3 [ do10::i#2 do10::i#1 ] 
+Uplift Scope [] 20,000.33: zp[1]:3 [ idx ] 
+Uplift Scope [do10] 2,502.5: zp[1]:4 [ do10::i#2 do10::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
 Uplifting [hello] best 830 combination reg byte x [ hello::i#2 hello::i#1 ] 
-Uplifting [] best 830 combination zp[1]:4 [ idx ] 
-Uplifting [do10] best 830 combination zp[1]:3 [ do10::i#2 do10::i#1 ] 
+Uplifting [] best 830 combination zp[1]:3 [ idx ] 
+Uplifting [do10] best 830 combination zp[1]:4 [ do10::i#2 do10::i#1 ] 
 Uplifting [main] best 830 combination 
 Uplifting [__start] best 830 combination 
-Attempting to uplift remaining variables inzp[1]:4 [ idx ]
-Uplifting [] best 830 combination zp[1]:4 [ idx ] 
-Attempting to uplift remaining variables inzp[1]:3 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 830 combination zp[1]:3 [ do10::i#2 do10::i#1 ] 
-Allocated (was zp[1]:3) zp[1]:2 [ do10::i#2 do10::i#1 ]
-Allocated (was zp[1]:4) zp[1]:3 [ idx ]
+Attempting to uplift remaining variables inzp[1]:3 [ idx ]
+Uplifting [] best 830 combination zp[1]:3 [ idx ] 
+Attempting to uplift remaining variables inzp[1]:4 [ do10::i#2 do10::i#1 ]
+Uplifting [do10] best 830 combination zp[1]:4 [ do10::i#2 do10::i#1 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ idx ]
+Allocated (was zp[1]:4) zp[1]:3 [ do10::i#2 do10::i#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -291,7 +291,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__start)
   // Global Constants & labels
   .label SCREEN = $400
-  .label idx = 3
+  .label idx = 2
 .segment Code
   // __start
 __start: {
@@ -362,7 +362,7 @@ main: {
   // do10
 // void do10(void (*fn)())
 do10: {
-    .label i = 2
+    .label i = 3
     // [16] phi from do10 to do10::@1 [phi:do10->do10::@1]
   __b1_from_do10:
     // [16] phi do10::i#2 = 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
@@ -436,19 +436,19 @@ void __start()
 void do10(void (*fn)())
 void (*do10::fn)()
 char do10::i
-char do10::i#1 // i zp[1]:2 1501.5
-char do10::i#2 // i zp[1]:2 1001.0
+char do10::i#1 // i zp[1]:3 1501.5
+char do10::i#2 // i zp[1]:3 1001.0
 __stackcall void hello()
 char hello::i
 char hello::i#1 // reg byte x 150001.5
 char hello::i#2 // reg byte x 100001.0
-__loadstore volatile char idx // zp[1]:3 20000.333333333336
+__loadstore volatile char idx // zp[1]:2 20000.333333333336
 void main()
 __constant const char msg[] = "hello "
 
 reg byte x [ hello::i#2 hello::i#1 ]
-zp[1]:2 [ do10::i#2 do10::i#1 ]
-zp[1]:3 [ idx ]
+zp[1]:3 [ do10::i#2 do10::i#1 ]
+zp[1]:2 [ idx ]
 
 
 FINAL ASSEMBLER
@@ -467,7 +467,7 @@ Score: 581
 :BasicUpstart(__start)
   // Global Constants & labels
   .label SCREEN = $400
-  .label idx = 3
+  .label idx = 2
 .segment Code
   // __start
 __start: {
@@ -528,7 +528,7 @@ main: {
   // do10
 // void do10(void (*fn)())
 do10: {
-    .label i = 2
+    .label i = 3
     // [16] phi from do10 to do10::@1 [phi:do10->do10::@1]
     // [16] phi do10::i#2 = 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0

@@ -13,9 +13,9 @@ main: {
     .label vb = b
     .label vw = w
     .label vd = d
-    .label d = 4
-    .label w = 8
-    .label b = $a
+    .label d = 2
+    .label w = 6
+    .label b = 8
     // dword d = 0x12345678
     lda #<$12345678
     sta.z d
@@ -55,9 +55,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(2) void *ptr)
+// void print(__zp(9) void *ptr)
 print: {
-    .label ptr = 2
+    .label ptr = 9
     // SCREEN[idx++] = *((byte*)ptr)
     ldy #0
     lda (ptr),y

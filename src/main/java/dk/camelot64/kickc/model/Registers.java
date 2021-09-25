@@ -67,8 +67,9 @@ public class Registers {
 
       int getBytes();
 
-      boolean isNonRelocatable();
+      boolean isAddressHardcoded();
 
+      boolean isHardware();
    }
 
    public static class RegisterMainMem implements Register {
@@ -80,10 +81,14 @@ public class Registers {
       /** If the address is hardcoded this contains it. */
       private Long address;
 
-      public RegisterMainMem(VariableRef variableRef, int bytes, Long address) {
+      /** True if the address of the register is declared in the code (non-relocatable) */
+      private boolean addressHardcoded;
+
+      public RegisterMainMem(VariableRef variableRef, int bytes, Long address, boolean addressHardcoded) {
          this.variableRef = variableRef;
          this.bytes = bytes;
          this.address = address;
+         this.addressHardcoded = addressHardcoded;
       }
 
       public VariableRef getVariableRef() {
@@ -114,8 +119,13 @@ public class Registers {
       }
 
       @Override
-      public boolean isNonRelocatable() {
-         return true;
+      public boolean isAddressHardcoded() {
+         return addressHardcoded;
+      }
+
+      @Override
+      public boolean isHardware() {
+         return false;
       }
 
       @Override
@@ -154,12 +164,12 @@ public class Registers {
       private int zp;
 
       /** True if the address of the register is declared in the code (non-relocatable) */
-      private boolean nonRelocatable;
+      private boolean addressHardcoded;
 
-      public RegisterZpMem(int zp, int bytes, boolean nonRelocatable) {
+      public RegisterZpMem(int zp, int bytes, boolean addressHardcoded) {
          this.zp = zp;
          this.bytes = bytes;
-         this.nonRelocatable = nonRelocatable;
+         this.addressHardcoded = addressHardcoded;
       }
 
       public RegisterZpMem(int zp, int bytes) {
@@ -184,8 +194,13 @@ public class Registers {
          return bytes;
       }
 
-      public boolean isNonRelocatable() {
-         return nonRelocatable;
+      public boolean isAddressHardcoded() {
+         return addressHardcoded;
+      }
+
+      @Override
+      public boolean isHardware() {
+         return false;
       }
 
       @Override
@@ -205,7 +220,7 @@ public class Registers {
          RegisterZpMem that = (RegisterZpMem) o;
          return zp == that.zp &&
                bytes == that.bytes &&
-               nonRelocatable == that.nonRelocatable;
+               addressHardcoded == that.addressHardcoded;
       }
 
       @Override
@@ -230,7 +245,12 @@ public class Registers {
       }
 
       @Override
-      public boolean isNonRelocatable() {
+      public boolean isAddressHardcoded() {
+         return false;
+      }
+
+      @Override
+      public boolean isHardware() {
          return true;
       }
 
@@ -347,7 +367,12 @@ public class Registers {
       }
 
       @Override
-      public boolean isNonRelocatable() {
+      public boolean isAddressHardcoded() {
+         return false;
+      }
+
+      @Override
+      public boolean isHardware() {
          return false;
       }
 
@@ -370,14 +395,14 @@ public class Registers {
          return constantValue != null ? constantValue.hashCode() : 0;
       }
 
+
       @Override
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
          RegisterConstant that = (RegisterConstant) o;
-         return constantValue != null ? constantValue.equals(that.constantValue) : that.constantValue == null;
+         return Objects.equals(constantValue, that.constantValue);
       }
-
    }
 
 }

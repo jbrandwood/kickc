@@ -146,6 +146,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-vasmoptimize"}, description = "Verbosity Option. Assembler optimization.")
    private boolean verboseAsmOptimize = false;
 
+   @CommandLine.Option(names = {"-vfixlongbranch"}, description = "Verbosity Option. Fix Long ASM branches.")
+   private boolean verboseFixLongBranch = false;
+
    @CommandLine.Option(names = {"-Wfragment"}, description = "Warning Option. Missing fragments produces a warning instead of an error.")
    private boolean warnFragmentMissing = false;
 
@@ -564,6 +567,11 @@ public class KickC implements Callable<Integer> {
          compiler.getLog().setVerboseAsmOptimize(true);
          compiler.getLog().setSysOut(true);
       }
+      if(verboseFixLongBranch) {
+         compiler.getLog().setVerboseFixLongBranch(true);
+         compiler.getLog().setSysOut(true);
+      }
+
    }
 
    /**

@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(main)
   .label SCREEN = $400
-  .label screen_idx = 4
+  .label screen_idx = 2
 .segment Code
 main: {
     // print(msg1)
@@ -28,9 +28,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(2) char *m)
+// void print(__zp(3) char *m)
 print: {
-    .label m = 2
+    .label m = 3
     // SCREEN[screen_idx++] = *(word*)(m+2)
     lda.z screen_idx
     asl

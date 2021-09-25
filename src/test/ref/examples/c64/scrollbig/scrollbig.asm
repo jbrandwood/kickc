@@ -23,10 +23,10 @@
   /// The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
-  .label current_bit = 2
+  .label current_bit = 8
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
-  .label current_chargen = 3
-  .label nxt = 7
+  .label current_chargen = 6
+  .label nxt = 4
 .segment Code
 main: {
     // fillscreen(SCREEN, $20)
@@ -65,7 +65,7 @@ main: {
 // void fillscreen(char *screen, char fill)
 fillscreen: {
     .const fill = $20
-    .label cursor = 3
+    .label cursor = 6
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -109,9 +109,9 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label __7 = 3
-    .label c = 3
-    .label sc = 5
+    .label __7 = 6
+    .label c = 6
+    .label sc = 2
     // current_bit = current_bit/2
     lsr.z current_bit
     // if(current_bit==0)

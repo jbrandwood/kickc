@@ -12,7 +12,7 @@
   .const OFFSET_STRUCT_CIRCLE_CENTER = 2
   .const OFFSET_STRUCT_CIRCLE_COLOR = 6
   .const OFFSET_STRUCT_POINT_Y = 2
-  .label screen_line = $b
+  .label screen_line = 2
 .segment Code
 main: {
     // print_circle(circle)
@@ -56,11 +56,11 @@ main: {
     // }
     rts
 }
-// void print_circle(__zp(2) unsigned int c_radius, __zp(4) unsigned int c_center_x, __zp(6) unsigned int c_center_y, __zp(8) char c_color)
+// void print_circle(__zp(6) unsigned int c_radius, __zp($b) unsigned int c_center_x, __zp(9) unsigned int c_center_y, __zp(8) char c_color)
 print_circle: {
-    .label c_radius = 2
-    .label c_center_x = 4
-    .label c_center_y = 6
+    .label c_radius = 6
+    .label c_center_x = $b
+    .label c_center_y = 9
     .label c_color = 8
     // print_str("r:")
     ldx #0
@@ -128,9 +128,9 @@ print_ln: {
     // }
     rts
 }
-// void print_str(__zp(9) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 9
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0
@@ -151,9 +151,9 @@ print_str: {
   !:
     jmp __b1
 }
-// void print_uint(__zp(2) unsigned int i)
+// void print_uint(__zp(6) unsigned int i)
 print_uint: {
-    .label i = 2
+    .label i = 6
     // BYTE1(i)
     lda.z i+1
     // BYTE1(i)>>4

@@ -38,9 +38,9 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label __13 = 6
-    .label __14 = $10
-    .label a = 3
-    .label i = 2
+    .label __14 = $16
+    .label a = $1c
+    .label i = $1b
     // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
@@ -113,8 +113,8 @@ main: {
 // Initialize bitmap plotting tables
 // void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
-    .label __7 = $14
-    .label yoffs = 4
+    .label __7 = $1a
+    .label yoffs = $c
     ldx #0
     lda #$80
   __b1:
@@ -202,20 +202,20 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// void bitmap_line(__zp(6) unsigned int x1, __zp(8) unsigned int y1, __zp($10) unsigned int x2, __zp($12) unsigned int y2)
+// void bitmap_line(__zp(6) unsigned int x1, __zp($a) unsigned int y1, __zp($16) unsigned int x2, __zp($18) unsigned int y2)
 bitmap_line: {
-    .label dx = $15
-    .label dy = $c
-    .label sx = $17
-    .label sy = $e
-    .label e1 = $a
-    .label e = 4
-    .label y = 8
+    .label dx = $12
+    .label dy = $e
+    .label sx = $14
+    .label sy = $10
+    .label e1 = 8
+    .label e = $c
+    .label y = $a
     .label x = 6
     .label x1 = 6
-    .label y1 = 8
-    .label x2 = $10
-    .label y2 = $12
+    .label y1 = $a
+    .label x2 = $16
+    .label y2 = $18
     // unsigned int dx = abs_u16(x2-x1)
     lda.z x2
     sec
@@ -418,12 +418,12 @@ bitmap_line: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($a) void *str, __register(X) char c, __zp(8) unsigned int num)
+// void * memset(__zp(8) void *str, __register(X) char c, __zp($a) unsigned int num)
 memset: {
-    .label end = 8
-    .label dst = $a
-    .label num = 8
-    .label str = $a
+    .label end = $a
+    .label dst = 8
+    .label num = $a
+    .label str = 8
     // if(num>0)
     lda.z num
     bne !+
@@ -462,10 +462,10 @@ memset: {
     jmp __b2
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// __zp($c) unsigned int abs_u16(__zp($c) unsigned int w)
+// __zp($e) unsigned int abs_u16(__zp($e) unsigned int w)
 abs_u16: {
-    .label w = $c
-    .label return = $c
+    .label w = $e
+    .label return = $e
     // BYTE1(w)
     lda.z w+1
     // BYTE1(w)&0x80
@@ -488,10 +488,10 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// __zp($e) unsigned int sgn_u16(__zp($19) unsigned int w)
+// __zp($10) unsigned int sgn_u16(__zp(2) unsigned int w)
 sgn_u16: {
-    .label w = $19
-    .label return = $e
+    .label w = 2
+    .label return = $10
     // BYTE1(w)
     lda.z w+1
     // BYTE1(w)&0x80
@@ -514,8 +514,8 @@ sgn_u16: {
 // Plot a single dot in the bitmap
 // void bitmap_plot(__zp(6) unsigned int x, __register(X) char y)
 bitmap_plot: {
-    .label __1 = $1b
-    .label plotter = $19
+    .label __1 = 4
+    .label plotter = 2
     .label x = 6
     // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x

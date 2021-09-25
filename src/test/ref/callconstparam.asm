@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label screen = 3
+  .label screen = 2
 .segment Code
 main: {
     // line(1,2)
@@ -29,9 +29,9 @@ main: {
     // }
     rts
 }
-// void line(char x0, __zp(2) char x1)
+// void line(char x0, __zp(4) char x1)
 line: {
-    .label x1 = 2
+    .label x1 = 4
   __b1:
     // for(byte x  = x0; x<x1; x++)
     cpx.z x1

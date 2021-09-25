@@ -12,10 +12,10 @@
   .const OFFSET_STRUCT_BALL_SYM = 2
 .segment Code
 main: {
-    .label __2 = 4
-    .label __8 = 4
-    .label i = 2
-    .label __10 = 4
+    .label __2 = 2
+    .label __8 = 2
+    .label i = 4
+    .label __10 = 2
     lda #<0
     sta.z i
     sta.z i+1

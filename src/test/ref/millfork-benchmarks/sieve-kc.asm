@@ -13,11 +13,11 @@
   .const COUNT = $4000
   .const SQRT_COUNT = $80
   .label print_screen = $400
-  .label last_time = 6
-  .label print_line_cursor = 2
+  .label last_time = $a
+  .label print_line_cursor = 4
   .label Ticks = 8
-  .label Ticks_1 = $a
-  .label print_char_cursor = 4
+  .label Ticks_1 = 6
+  .label print_char_cursor = 2
 .segment Code
 __start: {
     // unsigned int last_time
@@ -65,8 +65,8 @@ start: {
     rts
 }
 round: {
-    .label p = 2
-    .label S = 4
+    .label p = 4
+    .label S = 2
     lda #<Sieve
     sta.z p
     lda #>Sieve
@@ -172,9 +172,9 @@ end: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($a) unsigned int w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
-    .label w = $a
+    .label w = 6
     // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen

@@ -46,10 +46,10 @@ main: {
 }
 // Appends the first num characters of source to destination, plus a terminating null-character.
 // If the length of the C string in source is less than num, only the content up to the terminating null-character is copied.
-// char * strncat(char *destination, __zp(2) const char *source, __zp(6) unsigned int num)
+// char * strncat(char *destination, __zp(4) const char *source, __zp(6) unsigned int num)
 strncat: {
-    .label dst = 4
-    .label source = 2
+    .label dst = 2
+    .label source = 4
     .label num = 6
     lda #<build
     sta.z dst

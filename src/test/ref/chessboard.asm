@@ -9,8 +9,8 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label screen = 2
-    .label colors = 4
+    .label screen = 4
+    .label colors = 2
     .label row = 6
     lda #0
     sta.z row

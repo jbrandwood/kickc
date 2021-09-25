@@ -78,16 +78,16 @@
   // Location of screen & sprites
   .label SCREEN = $400
   // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = 6
+  .label PLEX_SCREEN_PTR = $d
   // The index in the PLEX tables of the next sprite to show
-  .label plex_show_idx = 8
+  .label plex_show_idx = $c
   // The index the next sprite to use for showing (sprites are used round-robin)
   .label plex_sprite_idx = 9
   // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = $a
+  .label plex_sprite_msb = $b
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = $b
-  .label framedone = $c
+  .label plex_free_next = $a
+  .label framedone = 7
 .segment Code
 __start: {
     // char* volatile PLEX_SCREEN_PTR = (char*)0x400+0x3f8
@@ -113,7 +113,7 @@ __start: {
     rts
 }
 plex_irq: {
-    .label __4 = $d
+    .label __4 = $10
     // asm
     sei
     // *BORDER_COLOR = WHITE
@@ -176,7 +176,7 @@ main: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $e
+    .label plex_sprite_idx2 = $f
     // char plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -260,7 +260,7 @@ plexShowSprite: {
 // Initialize the program
 init: {
     // Set the x-positions & pointers
-    .label xp = 2
+    .label xp = 5
     // *D011 = VICII_DEN | VICII_RSEL | 3
     lda #VICII_DEN|VICII_RSEL|3
     sta D011
@@ -340,7 +340,7 @@ init: {
 // The raster loop
 loop: {
     // The current index into the y-sine
-    .label sin_idx = 4
+    .label sin_idx = 8
     lda #0
     sta.z sin_idx
   __b2:
@@ -410,9 +410,9 @@ plexInit: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $f
-    .label nxt_y = $10
-    .label m = 5
+    .label nxt_idx = 4
+    .label nxt_y = 3
+    .label m = 2
     lda #0
     sta.z m
   __b1:

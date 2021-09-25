@@ -11,20 +11,20 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label bu = 2
-    .label bs = 3
-    .label wu = 4
-    .label ws = 6
-    .label du = 8
-    .label ds = $c
-    .label ptr = $10
-    .label __0 = $12
-    .label __1 = $14
-    .label __2 = $16
-    .label __3 = $18
-    .label __4 = $1a
-    .label __5 = $1c
-    .label __6 = $1e
+    .label bu = $10
+    .label bs = $11
+    .label wu = $12
+    .label ws = $14
+    .label du = $16
+    .label ds = $1a
+    .label ptr = $1e
+    .label __0 = 2
+    .label __1 = 4
+    .label __2 = 6
+    .label __3 = 8
+    .label __4 = $a
+    .label __5 = $c
+    .label __6 = $e
     // volatile unsigned char bu = 7
     lda #7
     sta.z bu

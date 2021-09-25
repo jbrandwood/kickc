@@ -19,15 +19,15 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $10
+  .label conio_cursor_x = $15
   // The current cursor y-position
-  .label conio_cursor_y = $11
+  .label conio_cursor_y = $e
   // The current text cursor line start
-  .label conio_line_text = $12
+  .label conio_line_text = $13
   // The current color cursor line start
-  .label conio_line_color = $14
+  .label conio_line_color = $11
   // The current text color
-  .label conio_textcolor = $16
+  .label conio_textcolor = $f
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -583,12 +583,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $1b
-    .label __6 = $17
-    .label __7 = $17
-    .label line_offset = $17
-    .label __8 = $19
-    .label __9 = $17
+    .label __5 = $1f
+    .label __6 = $1a
+    .label __7 = $1a
+    .label line_offset = $1a
+    .label __8 = $1d
+    .label __9 = $1a
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -688,11 +688,11 @@ cputln: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp(8) int strcmp(const char *str1, const char *str2)
+// __zp(9) int strcmp(const char *str1, const char *str2)
 strcmp: {
-    .label s1 = 4
-    .label s2 = 6
-    .label return = 8
+    .label s1 = $16
+    .label s2 = $18
+    .label return = 9
   __b1:
     // while(*s1==*s2)
     ldy #0
@@ -735,11 +735,11 @@ strcmp: {
   !:
     jmp __b1
 }
-// void assert_cmp(__zp(2) signed char expect, __zp(3) signed char actual, __zp(4) char *message)
+// void assert_cmp(__zp($21) signed char expect, __zp($1c) signed char actual, __zp($16) char *message)
 assert_cmp: {
-    .label actual = 3
-    .label expect = 2
-    .label message = 4
+    .label actual = $1c
+    .label expect = $21
+    .label message = $16
     // case LESS_THAN:
     //             ok = (char)(actual<0);
     //             break;
@@ -905,12 +905,12 @@ assert_cmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp($e) int strncmp(const char *str1, const char *str2, __zp(4) unsigned int n)
+// __zp($b) int strncmp(const char *str1, const char *str2, __zp($16) unsigned int n)
 strncmp: {
-    .label s1 = 6
-    .label s2 = 8
-    .label n = 4
-    .label return = $e
+    .label s1 = $18
+    .label s2 = 9
+    .label n = $16
+    .label return = $b
   __b1:
     // while(*s1==*s2)
     ldy #0
@@ -969,14 +969,14 @@ strncmp: {
 /// @return if Return value < 0 then it indicates str1 is less than str2.
 ///         if Return value > 0 then it indicates str2 is less than str1.
 ///         if Return value = 0 then it indicates str1 is equal to str2.
-// __zp(8) int memcmp(__zp(4) const void *str1, __zp($e) const void *str2, __zp(6) unsigned int n)
+// __zp(9) int memcmp(__zp($16) const void *str1, __zp($b) const void *str2, __zp($18) unsigned int n)
 memcmp: {
-    .label n = 6
-    .label s1 = 4
-    .label s2 = $e
-    .label return = 8
-    .label str1 = 4
-    .label str2 = $e
+    .label n = $18
+    .label s1 = $16
+    .label s2 = $b
+    .label return = 9
+    .label str1 = $16
+    .label str2 = $b
   __b1:
     // for(char *s1 = str1, *s2 = str2; n!=0; n--,s1++,s2++)
     lda.z n
@@ -1093,10 +1093,10 @@ textcolor: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(6) void (*putc)(char), __zp(8) const char *s)
+// void printf_str(__zp($18) void (*putc)(char), __zp(9) const char *s)
 printf_str: {
-    .label s = 8
-    .label putc = 6
+    .label s = 9
+    .label putc = $18
   __b1:
     // while(c=*s++)
     ldy #0
@@ -1151,9 +1151,9 @@ printf_schar: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// void printf_string(void (*putc)(char), __zp(4) char *str, char format_min_length, char format_justify_left)
+// void printf_string(void (*putc)(char), __zp($16) char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    .label str = 4
+    .label str = $16
     // printf_str(putc, str)
     lda.z str
     sta.z printf_str.s
@@ -1169,13 +1169,13 @@ printf_string: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1f) void *destination, __zp($a) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1d
-    .label dst = $1f
-    .label src = $a
-    .label source = $a
-    .label destination = $1f
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -1211,11 +1211,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($a) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1f
-    .label dst = $a
-    .label str = $a
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -1251,12 +1251,12 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp($e) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp($b) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $21
-    .label buffer = $e
-    .label digit = $c
-    .label started = $d
+    .label digit_value = 8
+    .label buffer = $b
+    .label digit = $d
+    .label started = $10
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1347,10 +1347,10 @@ printf_number_buffer: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($e) char *buffer, __register(X) char value, __zp($21) char sub)
+// __register(X) char uctoa_append(__zp($b) char *buffer, __register(X) char value, __zp(8) char sub)
 uctoa_append: {
-    .label buffer = $e
-    .label sub = $21
+    .label buffer = $b
+    .label sub = 8
     ldy #0
   __b1:
     // while (value >= sub)

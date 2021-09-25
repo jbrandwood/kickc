@@ -9,7 +9,7 @@
 :BasicUpstart(main)
 .segment Code
 main: {
-    .label cols = 2
+    .label cols = 4
     lda #<$d800
     sta.z cols
     lda #>$d800
@@ -43,7 +43,7 @@ main: {
     jmp __b1
 }
 fn1: {
-    .label screen = 4
+    .label screen = 2
     lda #<$400
     sta.z screen
     lda #>$400

@@ -64,7 +64,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
                   Long address = ((Registers.RegisterMainMem) declaredRegister).getAddress();
                   VariableRef varRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
                   int bytes = variable.getType().getSizeBytes();
-                  register = new Registers.RegisterMainMem(varRef, bytes, address);
+                  register = new Registers.RegisterMainMem(varRef, bytes, address, true);
                } else if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
@@ -155,15 +155,21 @@ public class Pass4RegistersFinalize extends Pass2Base {
     * @param liveRangeEquivalenceClassSet The
     */
    private void reallocateMemRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
-      for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+
+      LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
+      List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>(equivalenceClassSet.getEquivalenceClasses());
+      final VariableRegisterWeights registerWeights = getProgram().getVariableRegisterWeights();
+      Collections.sort(equivalenceClasses, (o1, o2) -> Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1)));
+
+      for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          Registers.Register register = equivalenceClass.getRegister();
          boolean reallocate = true;
          if(register!=null) {
-            if(!Registers.RegisterType.ZP_MEM.equals(register.getType())) {
-               // Do not allocate non-ZP registers
+            if(register.isHardware()) {
+               // Do not allocate hardware registers
                reallocate = false;
-            } else if(register.isNonRelocatable()) {
-               // Do not allocate non-relocatable ZP registers
+            } else if(register.isAddressHardcoded()) {
+               // Do not allocate registers with hardcoded address
                reallocate = false;
             }
          }
@@ -172,14 +178,14 @@ public class Pass4RegistersFinalize extends Pass2Base {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             if(variable.isMemoryAreaMain()) {
-               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
+               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null, false);
             }  else {
                register = allocateNewRegisterZp(variable);
                int zp = ((Registers.RegisterZpMem) register).getZp();
                int sizeBytes = variable.getType().getSizeBytes();
                if(zp + sizeBytes > 0x100) {
                   // Zero-page exhausted - move to main memory instead (TODO: prioritize!)
-                  register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
+                  register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null, false);
                   getLog().append("Zero-page exhausted. Moving allocation to main memory "+variable.toString());
                }
             }

@@ -9,7 +9,7 @@
 .segment Basic
 :BasicUpstart(main)
   .label SCREEN = $400
-  .label idx = 2
+  .label idx = 4
 .segment Code
 main: {
     .const jesper_id = 4
@@ -51,9 +51,9 @@ main: {
     henriette_name: .fill $40, 0
 }
 .segment Code
-// void print_person(__register(X) char person_id, __zp(3) char *person_name)
+// void print_person(__register(X) char person_id, __zp(2) char *person_name)
 print_person: {
-    .label person_name = 3
+    .label person_name = 2
     // SCREEN[idx++] = DIGIT[person.id]
     lda DIGIT,x
     ldy.z idx

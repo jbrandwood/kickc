@@ -105,10 +105,10 @@ main: {
     jmp __b1
 }
 // Fill a screen (1000 chars) with a specific char
-// void fillscreen(__zp(5) char *screen, __register(X) char fill)
+// void fillscreen(__zp(2) char *screen, __register(X) char fill)
 fillscreen: {
-    .label screen = 5
-    .label i = 7
+    .label screen = 2
+    .label i = $a
     lda #<0
     sta.z i
     sta.z i+1
@@ -139,16 +139,16 @@ fillscreen: {
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 // void makecharset(char *charset)
 makecharset: {
-    .label __13 = $d
-    .label __15 = $b
-    .label __16 = $b
-    .label __17 = $b
-    .label font = 5
-    .label font1 = 7
-    .label c = 2
-    .label i = 3
-    .label ii = 4
-    .label __18 = $b
+    .label __13 = 9
+    .label __15 = 7
+    .label __16 = 7
+    .label __17 = 7
+    .label font = 2
+    .label font1 = $a
+    .label c = $d
+    .label i = $c
+    .label ii = 6
+    .label __18 = 7
     lda #<CHARSET
     sta.z font
     lda #>CHARSET
@@ -304,10 +304,10 @@ makecharset: {
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 // void fire(char *screenbase)
 fire: {
-    .label screen = $b
-    .label screen_1 = 7
-    .label buffer = 5
-    .label buffer_1 = 9
+    .label screen = 7
+    .label screen_1 = $a
+    .label buffer = 2
+    .label buffer_1 = 4
     lda.z screen
     sta.z screen_1
     lda.z screen+1

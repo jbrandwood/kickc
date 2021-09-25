@@ -7,11 +7,11 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label nxt = 3
+  .label nxt = 2
 .segment Code
 main: {
     .label SCREEN = $400
-    .label i = 2
+    .label i = 4
     lda #0
     sta.z i
     lda #<TEXT

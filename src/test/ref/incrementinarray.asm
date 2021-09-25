@@ -12,7 +12,7 @@
 :BasicUpstart(main)
   .label print_screen = $400
   .label print_char_cursor = 2
-  .label print_line_cursor = 4
+  .label print_line_cursor = 6
 .segment Code
 main: {
     // print_cls()
@@ -54,9 +54,9 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(6) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 6
+    .label str = 4
     lda #<txt
     sta.z str
     lda #>txt
@@ -111,7 +111,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str

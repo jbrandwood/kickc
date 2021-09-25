@@ -27,13 +27,13 @@
   .label DEFAULT_SCREEN = $800
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = 6
+  .label conio_cursor_x = $d
   // The current cursor y-position
-  .label conio_cursor_y = 7
+  .label conio_cursor_y = 8
   // The current text cursor line start
-  .label conio_line_text = 8
+  .label conio_line_text = $b
   // The current color cursor line start
-  .label conio_line_color = $a
+  .label conio_line_color = 9
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -158,10 +158,10 @@ main: {
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
-    .label aVal = $c
-    .label xVal = $d
-    .label yVal = $e
-    .label zVal = $f
+    .label aVal = $19
+    .label xVal = $18
+    .label yVal = $17
+    .label zVal = $16
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda #0
@@ -287,9 +287,9 @@ cputln: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp(2) const char *s)
+// void printf_str(void (*putc)(char), __zp($e) const char *s)
 printf_str: {
-    .label s = 2
+    .label s = $e
     lda #<main.s
     sta.z s
     lda #>main.s
@@ -374,13 +374,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($18) void *destination, __zp(4) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $16
-    .label dst = $18
-    .label src = 4
-    .label source = 4
-    .label destination = $18
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -410,11 +410,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(4) void *str, __register(Z) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(Z) char c, unsigned int num)
 memset: {
-    .label end = $18
-    .label dst = 4
-    .label str = 4
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$50
     clc

@@ -14,12 +14,12 @@
   .label memLo = $fe
   .label memHi = $ff
   .label print_screen = $400
-  .label print_line_cursor = 3
-  .label print_char_cursor = 5
+  .label print_line_cursor = 2
+  .label print_char_cursor = 4
 .segment Code
 main: {
     .label f_2pi = $e2e5
-    .label i = 2
+    .label i = 8
     // setFAC(1275)
     lda #<$4fb
     sta.z setFAC.prepareMEM1_mem
@@ -107,10 +107,10 @@ main: {
 .segment Code
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
-// void setFAC(__zp(7) unsigned int w)
+// void setFAC(__zp(6) unsigned int w)
 setFAC: {
-    .label prepareMEM1_mem = 7
-    .label w = 7
+    .label prepareMEM1_mem = 6
+    .label w = 6
     // BYTE0(mem)
     lda.z prepareMEM1_mem
     // *memLo = BYTE0(mem)
@@ -137,9 +137,9 @@ divFACby10: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
-// void setMEMtoFAC(__zp(7) char *mem)
+// void setMEMtoFAC(__zp(6) char *mem)
 setMEMtoFAC: {
-    .label mem = 7
+    .label mem = 6
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
@@ -158,9 +158,9 @@ setMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 chars from memory
-// void mulFACbyMEM(__zp(7) char *mem)
+// void mulFACbyMEM(__zp(6) char *mem)
 mulFACbyMEM: {
-    .label mem = 7
+    .label mem = 6
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
@@ -227,7 +227,7 @@ addMEMtoFAC: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = 7
+    .label return = 6
     // asm
     // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
     jsr $b1aa
@@ -241,9 +241,9 @@ getFAC: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(7) unsigned int w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
-    .label w = 7
+    .label w = 6
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar

@@ -9,8 +9,8 @@
   .label screen = $400
 .segment Code
 main: {
-    .label s1 = 2
-    .label s3 = 3
+    .label s1 = 3
+    .label s3 = 2
     // byte s1=sum(1,2)
     lda #2
     ldx #1

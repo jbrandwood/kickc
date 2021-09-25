@@ -66,12 +66,12 @@
   .label CIA1 = $dc00
 .segment Code
 main: {
-    .label sc = 2
-    .label screen = 5
-    .label row = 4
-    .label ch = 7
+    .label sc = 7
+    .label screen = 3
+    .label row = 6
+    .label ch = 5
     // Checks all specific chars $00-$3f
-    .label i = 8
+    .label i = 2
     lda #<$400
     sta.z sc
     lda #>$400

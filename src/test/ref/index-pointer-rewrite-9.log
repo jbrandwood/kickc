@@ -167,9 +167,9 @@ Complete equivalence classes
 [ main::$2 ]
 [ main::$8 ]
 Allocated zp[2]:2 [ main::i#2 main::i#1 ]
-Allocated zp[2]:4 [ main::$10 ]
-Allocated zp[2]:6 [ main::$2 ]
-Allocated zp[2]:8 [ main::$8 ]
+Allocated zp[2]:4 [ main::$8 ]
+Allocated zp[2]:6 [ main::$10 ]
+Allocated zp[2]:8 [ main::$2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if(main::i#2<$19) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [4] main::$10 = main::i#2 << 1 [ main::i#2 main::$10 ] (  [ main::i#2 main::$10 ] { }  ) always clobbers reg byte a 
@@ -179,20 +179,22 @@ Statement [7] *main::$8 = *main::$8 + main::$8[OFFSET_STRUCT_BALL_VEL] [ main::i
 Statement [8] main::$8[OFFSET_STRUCT_BALL_VEL] = main::$8[OFFSET_STRUCT_BALL_VEL] + $a [ main::i#2 main::$8 ] (  [ main::i#2 main::$8 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [9] main::$8[OFFSET_STRUCT_BALL_SYM] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ main::$10 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ main::$2 ] : zp[2]:6 , 
-Potential registers zp[2]:8 [ main::$8 ] : zp[2]:8 , 
+Potential registers zp[2]:6 [ main::$10 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$2 ] : zp[2]:8 , 
+Potential registers zp[2]:4 [ main::$8 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 28.88: zp[2]:2 [ main::i#2 main::i#1 ] 25.67: zp[2]:8 [ main::$8 ] 22: zp[2]:4 [ main::$10 ] 22: zp[2]:6 [ main::$2 ] 
+Uplift Scope [main] 28.88: zp[2]:2 [ main::i#2 main::i#1 ] 25.67: zp[2]:4 [ main::$8 ] 22: zp[2]:6 [ main::$10 ] 22: zp[2]:8 [ main::$2 ] 
 Uplift Scope [Ball] 
 Uplift Scope [] 
 
-Uplifting [main] best 1516 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:8 [ main::$8 ] zp[2]:4 [ main::$10 ] zp[2]:6 [ main::$2 ] 
+Uplifting [main] best 1516 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$8 ] zp[2]:6 [ main::$10 ] zp[2]:8 [ main::$2 ] 
 Uplifting [Ball] best 1516 combination 
 Uplifting [] best 1516 combination 
-Coalescing zero page register [ zp[2]:4 [ main::$10 ] ] with [ zp[2]:6 [ main::$2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ main::$10 main::$2 ] ] with [ zp[2]:8 [ main::$8 ] ] - score: 1
+Coalescing zero page register [ zp[2]:6 [ main::$10 ] ] with [ zp[2]:8 [ main::$2 ] ] - score: 1
+Coalescing zero page register [ zp[2]:6 [ main::$10 main::$2 ] ] with [ zp[2]:4 [ main::$8 ] ] - score: 1
+Allocated (was zp[2]:6) zp[2]:2 [ main::$10 main::$2 main::$8 ]
+Allocated (was zp[2]:2) zp[2]:4 [ main::i#2 main::i#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -213,10 +215,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label __2 = 4
-    .label __8 = 4
-    .label i = 2
-    .label __10 = 4
+    .label __2 = 2
+    .label __8 = 2
+    .label i = 4
+    .label __10 = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
@@ -312,15 +314,15 @@ __constant char OFFSET_STRUCT_BALL_SYM = 2
 __constant char OFFSET_STRUCT_BALL_VEL = 1
 __constant struct Ball balls[$19] = { fill( $19, 0) }
 void main()
-unsigned int main::$10 // zp[2]:4 22.0
-unsigned int main::$2 // zp[2]:4 22.0
-char *main::$8 // zp[2]:4 25.666666666666668
+unsigned int main::$10 // zp[2]:2 22.0
+unsigned int main::$2 // zp[2]:2 22.0
+char *main::$8 // zp[2]:2 25.666666666666668
 unsigned int main::i
-unsigned int main::i#1 // i zp[2]:2 22.0
-unsigned int main::i#2 // i zp[2]:2 6.875
+unsigned int main::i#1 // i zp[2]:4 22.0
+unsigned int main::i#2 // i zp[2]:4 6.875
 
-zp[2]:2 [ main::i#2 main::i#1 ]
-zp[2]:4 [ main::$10 main::$2 main::$8 ]
+zp[2]:4 [ main::i#2 main::i#1 ]
+zp[2]:2 [ main::$10 main::$2 main::$8 ]
 
 
 FINAL ASSEMBLER
@@ -344,10 +346,10 @@ Score: 1436
 .segment Code
   // main
 main: {
-    .label __2 = 4
-    .label __8 = 4
-    .label i = 2
-    .label __10 = 4
+    .label __2 = 2
+    .label __8 = 2
+    .label i = 4
+    .label __10 = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0

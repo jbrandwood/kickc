@@ -67,9 +67,9 @@
   .label CHARSET = $6000
 .segment Code
 main: {
-    .label c = 8
+    .label c = 2
     // Fill extended screen to achieve column-wise linear addressing
-    .label erow = 2
+    .label erow = 8
     //  Copy the LOGO to the CHARSET
     .label logo_dest = 6
     .label logo_src = 4
@@ -314,10 +314,10 @@ main: {
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
-    .label aVal = $e
-    .label xVal = $f
-    .label yVal = $10
-    .label zVal = $11
+    .label aVal = $f
+    .label xVal = $e
+    .label yVal = $d
+    .label zVal = $a
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda #0
@@ -346,10 +346,10 @@ memoryRemap: {
 // - dest The destination address (within the MB and bank)
 // - fill The char to fill with
 // - num The number of bytes to copy
-// void memset_dma(__zp($c) void *dest, __register(Z) char fill, __zp($a) unsigned int num)
+// void memset_dma(__zp($10) void *dest, __register(Z) char fill, __zp($b) unsigned int num)
 memset_dma: {
-    .label num = $a
-    .label dest = $c
+    .label num = $b
+    .label dest = $10
     // char dmaMode = DMA->EN018B
     // Remember current F018 A/B mode
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B

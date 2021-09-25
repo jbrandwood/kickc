@@ -12,9 +12,9 @@
 .segment Code
 main: {
     .label i = 2
-    .label __4 = 4
-    .label __5 = 6
-    .label __6 = 8
+    .label __4 = 8
+    .label __5 = 4
+    .label __6 = 6
     // fibs[0] = 0
     lda #0
     sta fibs

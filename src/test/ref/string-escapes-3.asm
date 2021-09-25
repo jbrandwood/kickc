@@ -13,8 +13,8 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label cursor = 6
-    .label msg = 2
+    .label cursor = 2
+    .label msg = 6
     .label line = 4
     lda #<$400
     sta.z cursor

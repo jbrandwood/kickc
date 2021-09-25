@@ -12,8 +12,8 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_line_cursor = 6
-  .label print_char_cursor = 4
+  .label print_line_cursor = 5
+  .label print_char_cursor = 2
 .segment Code
 main: {
     // print_cls()
@@ -92,10 +92,10 @@ print_cls: {
     // }
     rts
 }
-// void print_euclid(__zp(2) char a, __zp(3) char b)
+// void print_euclid(__zp(4) char a, __zp(7) char b)
 print_euclid: {
-    .label b = 3
-    .label a = 2
+    .label b = 7
+    .label a = 4
     // print_uchar(a)
     ldx.z a
     jsr print_uchar
@@ -128,7 +128,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 4
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str
@@ -192,9 +192,9 @@ print_char: {
     // }
     rts
 }
-// __register(A) char euclid(__zp(2) char a, __register(X) char b)
+// __register(A) char euclid(__zp(4) char a, __register(X) char b)
 euclid: {
-    .label a = 2
+    .label a = 4
   __b1:
     // while (a!=b)
     cpx.z a

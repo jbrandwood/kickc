@@ -10,9 +10,9 @@
   .const SIZEOF_INT = 2
 .segment Code
 main: {
-    .label __0 = 6
-    .label vram_ptr = 4
-    .label pos_ptr = 2
+    .label __0 = 4
+    .label vram_ptr = 2
+    .label pos_ptr = 6
     ldx #0
     lda #<$428
     sta.z vram_ptr

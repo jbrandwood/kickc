@@ -12,8 +12,8 @@
   .label CHARSET = $3000
 .segment Code
 main: {
-    .label charset = 3
-    .label c = 2
+    .label charset = 5
+    .label c = 7
     lda #<CHARSET+8
     sta.z charset
     lda #>CHARSET+8
@@ -54,11 +54,11 @@ main: {
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
-// void gen_char3(__zp(3) char *dst, __zp(6) unsigned int spec)
+// void gen_char3(__zp(5) char *dst, __zp(2) unsigned int spec)
 gen_char3: {
-    .label dst = 3
-    .label spec = 6
-    .label r = 5
+    .label dst = 5
+    .label spec = 2
+    .label r = 4
     lda #0
     sta.z r
   __b1:

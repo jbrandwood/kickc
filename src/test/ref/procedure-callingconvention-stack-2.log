@@ -160,9 +160,9 @@ Complete equivalence classes
 [ plus::b#0 ]
 [ plus::return#0 ]
 [ main::$0 ]
-Allocated zp[2]:2 [ plus::a#0 ]
-Allocated zp[2]:4 [ plus::b#0 ]
-Allocated zp[2]:6 [ plus::return#0 ]
+Allocated zp[2]:2 [ plus::b#0 ]
+Allocated zp[2]:4 [ plus::return#0 ]
+Allocated zp[2]:6 [ plus::a#0 ]
 Allocated zp[2]:8 [ main::$0 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] plus::a#0 = stackidx(unsigned int,plus::OFFSET_STACK_A) [ plus::a#0 ] ( plus:7 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
@@ -174,23 +174,23 @@ Statement [6] stackpush(unsigned int) = $2345 [ ] (  [ ] { }  ) always clobbers 
 Statement sideeffect stackpullbytes(2) always clobbers reg byte a 
 Statement [9] main::$0 = stackpull(unsigned int) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
 Statement [10] *SCREEN = main::$0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ plus::a#0 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ plus::b#0 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ plus::return#0 ] : zp[2]:6 , 
+Potential registers zp[2]:6 [ plus::a#0 ] : zp[2]:6 , 
+Potential registers zp[2]:2 [ plus::b#0 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ plus::return#0 ] : zp[2]:4 , 
 Potential registers zp[2]:8 [ main::$0 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [plus] 22: zp[2]:4 [ plus::b#0 ] 22: zp[2]:6 [ plus::return#0 ] 11: zp[2]:2 [ plus::a#0 ] 
+Uplift Scope [plus] 22: zp[2]:2 [ plus::b#0 ] 22: zp[2]:4 [ plus::return#0 ] 11: zp[2]:6 [ plus::a#0 ] 
 Uplift Scope [main] 4: zp[2]:8 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 152 combination zp[2]:4 [ plus::b#0 ] zp[2]:6 [ plus::return#0 ] zp[2]:2 [ plus::a#0 ] 
+Uplifting [plus] best 152 combination zp[2]:2 [ plus::b#0 ] zp[2]:4 [ plus::return#0 ] zp[2]:6 [ plus::a#0 ] 
 Uplifting [main] best 152 combination zp[2]:8 [ main::$0 ] 
 Uplifting [] best 152 combination 
-Coalescing zero page register [ zp[2]:2 [ plus::a#0 ] ] with [ zp[2]:6 [ plus::return#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:8 [ main::$0 ] ] with [ zp[2]:2 [ plus::a#0 plus::return#0 ] ]
-Allocated (was zp[2]:4) zp[2]:2 [ plus::b#0 ]
-Allocated (was zp[2]:8) zp[2]:4 [ main::$0 plus::a#0 plus::return#0 ]
+Coalescing zero page register [ zp[2]:6 [ plus::a#0 ] ] with [ zp[2]:4 [ plus::return#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ main::$0 ] ] with [ zp[2]:6 [ plus::a#0 plus::return#0 ] ]
+Allocated (was zp[2]:8) zp[2]:2 [ main::$0 plus::a#0 plus::return#0 ]
+Allocated (was zp[2]:2) zp[2]:4 [ plus::b#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -209,14 +209,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
 .segment Code
   // plus
-// __zp(4) unsigned int plus(__zp(4) unsigned int a, __zp(2) unsigned int b)
+// __zp(2) unsigned int plus(__zp(2) unsigned int a, __zp(4) unsigned int b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_2 = 2
-    .label a = 4
-    .label b = 2
-    .label return = 4
+    .label a = 2
+    .label b = 4
+    .label return = 2
     // [0] plus::a#0 = stackidx(unsigned int,plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -251,7 +251,7 @@ plus: {
 }
   // main
 main: {
-    .label __0 = 4
+    .label __0 = 2
     // [5] stackpush(unsigned int) = $1234 -- _stackpushword_=vwuc1 
     lda #>$1234
     pha
@@ -297,20 +297,20 @@ FINAL SYMBOL TABLE
 __constant unsigned int * const SCREEN = (char *) 1024
 __constant unsigned int STACK_BASE = $103
 void main()
-unsigned int main::$0 // zp[2]:4 4.0
+unsigned int main::$0 // zp[2]:2 4.0
 __stackcall unsigned int plus(unsigned int a , unsigned int b)
 __constant char plus::OFFSET_STACK_A = 2
 __constant char plus::OFFSET_STACK_B = 0
 __constant char plus::OFFSET_STACK_RETURN_2 = 2
 unsigned int plus::a
-unsigned int plus::a#0 // a zp[2]:4 11.0
+unsigned int plus::a#0 // a zp[2]:2 11.0
 unsigned int plus::b
-unsigned int plus::b#0 // b zp[2]:2 22.0
+unsigned int plus::b#0 // b zp[2]:4 22.0
 unsigned int plus::return
-unsigned int plus::return#0 // return zp[2]:4 22.0
+unsigned int plus::return#0 // return zp[2]:2 22.0
 
-zp[2]:2 [ plus::b#0 ]
-zp[2]:4 [ main::$0 plus::a#0 plus::return#0 ]
+zp[2]:4 [ plus::b#0 ]
+zp[2]:2 [ main::$0 plus::a#0 plus::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -332,14 +332,14 @@ Score: 146
   .label SCREEN = $400
 .segment Code
   // plus
-// __zp(4) unsigned int plus(__zp(4) unsigned int a, __zp(2) unsigned int b)
+// __zp(2) unsigned int plus(__zp(2) unsigned int a, __zp(4) unsigned int b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_2 = 2
-    .label a = 4
-    .label b = 2
-    .label return = 4
+    .label a = 2
+    .label b = 4
+    .label return = 2
     // [0] plus::a#0 = stackidx(unsigned int,plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -374,7 +374,7 @@ plus: {
 }
   // main
 main: {
-    .label __0 = 4
+    .label __0 = 2
     // plus(0x1234, 0x2345)
     // [5] stackpush(unsigned int) = $1234 -- _stackpushword_=vwuc1 
     lda #>$1234

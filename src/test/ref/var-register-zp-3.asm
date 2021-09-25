@@ -39,11 +39,11 @@ main: {
     .byte 0
 }
 .segment Code
-// void print2(__zp(4) char *at, __zp(2) char *msg)
+// void print2(__zp(2) char *at, __zp(5) char *msg)
 print2: {
-    .label i = 6
-    .label msg = 2
-    .label at = 4
+    .label i = 4
+    .label msg = 5
+    .label at = 2
     ldx #0
     txa
     sta.z i
@@ -67,9 +67,9 @@ print2: {
     inc.z i
     jmp __b1
 }
-// void print_char(__zp(4) char *at, __register(X) char idx, __register(A) char ch)
+// void print_char(__zp(2) char *at, __register(X) char idx, __register(A) char ch)
 print_char: {
-    .label at = 4
+    .label at = 2
     // at[idx] = ch
     stx.z $ff
     ldy.z $ff

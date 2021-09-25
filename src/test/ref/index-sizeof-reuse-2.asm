@@ -13,9 +13,9 @@
 .segment Code
 main: {
     // Move the entities
-    .label line = 3
+    .label line = 5
     .label i = 2
-    .label __11 = 5
+    .label __11 = 3
     // asm
     sei
   // Wait for raster refresh

@@ -38,7 +38,7 @@
   .label BITMAP = $2000
 .segment Code
 main: {
-    .label i = 2
+    .label i = $10
     // fill(BITMAP,40*25*8,0)
     ldx #0
     lda #<$28*$19*8
@@ -104,11 +104,11 @@ main: {
     jmp __b1
 }
 // Fill some memory with a value
-// void fill(char *start, __zp(4) int size, __register(X) char val)
+// void fill(char *start, __zp($c) int size, __register(X) char val)
 fill: {
-    .label end = 4
-    .label addr = 6
-    .label size = 4
+    .label end = $c
+    .label addr = $e
+    .label size = $c
     // byte* end = start + size
     clc
     lda.z end
@@ -139,20 +139,20 @@ fill: {
   !:
     jmp __b1
 }
-// void circle(int xc, int yc, __zp(6) int r)
+// void circle(int xc, int yc, __zp($e) int r)
 circle: {
     .const xc = $a0
     .const yc = $64
-    .label __0 = 8
-    .label __5 = $a
-    .label __6 = $a
-    .label __7 = 8
-    .label __9 = $c
-    .label __10 = 8
-    .label r = 6
-    .label p = 8
-    .label y = 6
-    .label x1 = 4
+    .label __0 = $a
+    .label __5 = 8
+    .label __6 = 8
+    .label __7 = $a
+    .label __9 = 6
+    .label __10 = $a
+    .label r = $e
+    .label p = $a
+    .label y = $e
+    .label x1 = $c
     // r << 1
     lda.z r
     asl
@@ -389,16 +389,16 @@ circle: {
     sta.z p+1
     jmp __b4
 }
-// void plot(__zp($a) int x, __zp($c) int y)
+// void plot(__zp(8) int x, __zp(6) int y)
 plot: {
-    .label __8 = $e
-    .label __11 = $c
-    .label __12 = $10
-    .label x = $a
-    .label y = $c
-    .label location = $e
-    .label __15 = $10
-    .label __16 = $10
+    .label __8 = 4
+    .label __11 = 6
+    .label __12 = 2
+    .label x = 8
+    .label y = 6
+    .label location = 4
+    .label __15 = 2
+    .label __16 = 2
     // if (x < 0 || x > 319 || y < 0 || y > 199)
     lda.z x+1
     bpl !__breturn+

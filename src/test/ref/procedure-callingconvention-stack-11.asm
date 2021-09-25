@@ -13,7 +13,7 @@
   .const SIZEOF_STRUCT_VECTOR = 4
   .const STACK_BASE = $103
   .label SCREEN = $400
-  .label idx = 3
+  .label idx = 2
 .segment Code
 __start: {
     // char idx = 0
@@ -22,10 +22,10 @@ __start: {
     jsr main
     rts
 }
-// void print(__zp(6) struct Vector v)
+// void print(__zp(5) struct Vector v)
 print: {
     .const OFFSET_STACK_V = 0
-    .label v = 6
+    .label v = 5
     tsx
     lda STACK_BASE+OFFSET_STACK_V,x
     sta.z v
@@ -74,8 +74,8 @@ get: {
     .const OFFSET_STACK_RETURN_0 = 0
     .label return = $a
     .label v = $e
-    .label __0 = 4
-    .label __2 = 5
+    .label __0 = 3
+    .label __2 = 4
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tay
@@ -118,8 +118,8 @@ get: {
     rts
 }
 main: {
-    .label v = 6
-    .label i = 2
+    .label v = 5
+    .label i = 9
     lda #0
     sta.z i
   __b1:

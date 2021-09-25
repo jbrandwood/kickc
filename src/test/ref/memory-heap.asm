@@ -14,8 +14,8 @@
 .segment Code
 main: {
     .label screen = $400
-    .label buf1 = 4
-    .label buf2 = 6
+    .label buf1 = 6
+    .label buf2 = 4
     // unsigned char* buf1 = malloc(100)
     lda #<HEAP_TOP
     sta.z heap_head
@@ -60,7 +60,7 @@ main: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // void * malloc(unsigned int size)
 malloc: {
-    .label mem = 6
+    .label mem = 4
     // unsigned char* mem = heap_head-size
     sec
     lda.z heap_head

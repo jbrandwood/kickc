@@ -12,8 +12,8 @@
   .label NUL = 0
 .segment Code
 main: {
-    .label c = 4
-    .label msg = 2
+    .label c = 2
+    .label msg = 4
     ldx #0
     lda #<msgs
     sta.z msg

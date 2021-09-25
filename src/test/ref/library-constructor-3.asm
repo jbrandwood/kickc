@@ -8,8 +8,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .label sym = 2
-  .label SCREEN = 3
+  .label sym = 4
+  .label SCREEN = 2
 .segment Code
 __start: {
     // volatile char sym

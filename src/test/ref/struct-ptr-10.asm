@@ -12,13 +12,13 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label __2 = 6
-    .label __3 = 8
-    .label __5 = 6
-    .label i = 2
-    .label i1 = 4
+    .label __2 = 2
+    .label __3 = 4
+    .label __5 = 2
+    .label i = 6
+    .label i1 = 8
     .label __6 = $a
-    .label __7 = 8
+    .label __7 = 4
     lda #<0
     sta.z i
     sta.z i+1

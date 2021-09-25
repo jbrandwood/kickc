@@ -21,9 +21,9 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label screen = 4
-    .label x = 3
-    .label y = 2
+    .label screen = $e
+    .label x = $c
+    .label y = $d
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -66,15 +66,15 @@ main: {
     jmp __b4
 }
 // Make charset from proto chars
-// void init_font_hex(__zp(8) char *charset)
+// void init_font_hex(__zp(6) char *charset)
 init_font_hex: {
-    .label __0 = $f
-    .label idx = $e
-    .label proto_lo = $a
-    .label charset = 8
-    .label c1 = $d
-    .label proto_hi = 6
-    .label c = $c
+    .label __0 = 5
+    .label idx = 2
+    .label proto_lo = 8
+    .label charset = 6
+    .label c1 = 4
+    .label proto_hi = $a
+    .label c = 3
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO
@@ -174,15 +174,15 @@ init_font_hex: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// __register(A) char atan2_8(__zp(3) signed char x, __zp(2) signed char y)
+// __register(A) char atan2_8(__zp($c) signed char x, __zp($d) signed char y)
 atan2_8: {
-    .label __7 = $c
-    .label xi = $c
-    .label xd = $f
-    .label angle = $e
-    .label i = $d
-    .label x = 3
-    .label y = 2
+    .label __7 = 3
+    .label xi = 3
+    .label xd = 5
+    .label angle = 2
+    .label i = 4
+    .label x = $c
+    .label y = $d
     // (y>0)?y:-y
     lda.z y
     cmp #0

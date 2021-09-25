@@ -168,8 +168,8 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:4 [ main::$1 ]
 Allocated zp[2]:6 [ main::$4 ]
-Allocated zp[2]:8 [ main::tile#0 ]
-Allocated zp[2]:10 [ main::$5 ]
+Allocated zp[2]:8 [ main::$5 ]
+Allocated zp[2]:10 [ main::tile#0 ]
 Allocated mem[25] [ S1 ]
 Allocated mem[25] [ S2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -182,22 +182,24 @@ Statement [8] if(main::i#1!=2) goto main::@1 [ main::i#1 ] (  [ main::i#1 ] { } 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::$1 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ main::$4 ] : zp[2]:6 , 
-Potential registers zp[2]:8 [ main::tile#0 ] : zp[2]:8 , 
-Potential registers zp[2]:10 [ main::$5 ] : zp[2]:10 , 
+Potential registers zp[2]:10 [ main::tile#0 ] : zp[2]:10 , 
+Potential registers zp[2]:8 [ main::$5 ] : zp[2]:8 , 
 Potential registers mem[25] [ S1 ] : mem[25] , 
 Potential registers mem[25] [ S2 ] : mem[25] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 23.83: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::$1 ] 22: zp[2]:6 [ main::$4 ] 22: zp[2]:10 [ main::$5 ] 5.5: zp[2]:8 [ main::tile#0 ] 
+Uplift Scope [main] 23.83: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::$1 ] 22: zp[2]:6 [ main::$4 ] 22: zp[2]:8 [ main::$5 ] 5.5: zp[2]:10 [ main::tile#0 ] 
 Uplift Scope [Tile] 
 Uplift Scope [] 0: mem[25] [ S1 ] 0: mem[25] [ S2 ] 
 
-Uplifting [main] best 1356 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$1 ] zp[2]:6 [ main::$4 ] zp[2]:10 [ main::$5 ] zp[2]:8 [ main::tile#0 ] 
+Uplifting [main] best 1356 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$1 ] zp[2]:6 [ main::$4 ] zp[2]:8 [ main::$5 ] zp[2]:10 [ main::tile#0 ] 
 Uplifting [Tile] best 1356 combination 
 Uplifting [] best 1356 combination mem[25] [ S1 ] mem[25] [ S2 ] 
 Coalescing zero page register [ zp[2]:4 [ main::$1 ] ] with [ zp[2]:6 [ main::$4 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ main::$1 main::$4 ] ] with [ zp[2]:8 [ main::tile#0 ] ] - score: 1
-Allocated (was zp[2]:10) zp[2]:6 [ main::$5 ]
+Coalescing zero page register [ zp[2]:4 [ main::$1 main::$4 ] ] with [ zp[2]:10 [ main::tile#0 ] ] - score: 1
+Allocated (was zp[2]:4) zp[2]:2 [ main::$1 main::$4 main::tile#0 ]
+Allocated (was zp[2]:2) zp[2]:4 [ main::i#2 main::i#1 ]
+Allocated (was zp[2]:8) zp[2]:6 [ main::$5 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -216,10 +218,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    .label __1 = 4
-    .label tile = 4
-    .label i = 2
-    .label __4 = 4
+    .label __1 = 2
+    .label tile = 2
+    .label i = 4
+    .label __4 = 2
     .label __5 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
@@ -330,18 +332,18 @@ __loadstore volatile struct Tile S1 = { Tiles: PlayerSprites, Offset: $14, Count
 __loadstore volatile struct Tile S2 = { Tiles: Enemy2Sprites, Offset: $32, Count: $80, Name: "Jesper" } // mem[25]
 __constant struct Tile *TileDB[2] = { &S1, &S2 }
 void main()
-int main::$1 // zp[2]:4 22.0
-struct Tile **main::$4 // zp[2]:4 22.0
+int main::$1 // zp[2]:2 22.0
+struct Tile **main::$4 // zp[2]:2 22.0
 char *main::$5 // zp[2]:6 22.0
 __constant char * const main::SCREEN = (char *) 1024
 int main::i
-int main::i#1 // i zp[2]:2 16.5
-int main::i#2 // i zp[2]:2 7.333333333333333
+int main::i#1 // i zp[2]:4 16.5
+int main::i#2 // i zp[2]:4 7.333333333333333
 struct Tile *main::tile
-struct Tile *main::tile#0 // tile zp[2]:4 5.5
+struct Tile *main::tile#0 // tile zp[2]:2 5.5
 
-zp[2]:2 [ main::i#2 main::i#1 ]
-zp[2]:4 [ main::$1 main::$4 main::tile#0 ]
+zp[2]:4 [ main::i#2 main::i#1 ]
+zp[2]:2 [ main::$1 main::$4 main::tile#0 ]
 zp[2]:6 [ main::$5 ]
 mem[25] [ S1 ]
 mem[25] [ S2 ]
@@ -366,10 +368,10 @@ Score: 1316
   // main
 main: {
     .label SCREEN = $400
-    .label __1 = 4
-    .label tile = 4
-    .label i = 2
-    .label __4 = 4
+    .label __1 = 2
+    .label tile = 2
+    .label i = 4
+    .label __4 = 2
     .label __5 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwsz1=vwsc1 

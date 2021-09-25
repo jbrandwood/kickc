@@ -11,8 +11,8 @@
 .segment Code
 main: {
     .label screen = 4
-    .label ch = 3
-    .label x = 2
+    .label ch = 6
+    .label x = 7
     // memset(SCREEN, ' ', 1000)
     jsr memset
     lda #0
@@ -63,7 +63,7 @@ memset: {
     .const num = $3e8
     .label str = SCREEN
     .label end = str+num
-    .label dst = 6
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

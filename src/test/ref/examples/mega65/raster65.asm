@@ -92,15 +92,15 @@
   // Pointer to the song play routine
   .label songPlay = SONG+3
   // Sine Position (used across effects)
-  .label sin_idx = 6
+  .label sin_idx = 8
   // scroll soft position of text scrolly (0-7)
-  .label scroll_soft = 7
+  .label scroll_soft = 9
   // scroll text pointer to next char
-  .label scroll_ptr = 8
+  .label scroll_ptr = $a
   // Zoom Position
-  .label greet_zoomx = $a
+  .label greet_zoomx = 6
   // The greeting currently being shown
-  .label greet_idx = $b
+  .label greet_idx = 7
 .segment Code
 __start: {
     // volatile char sin_idx
@@ -124,8 +124,8 @@ __start: {
 }
 // BIG INTERRUPT LOOP
 irq: {
-    .label sin_bar = 3
-    .label barcnt = 2
+    .label sin_bar = 5
+    .label barcnt = 4
     pha
     phx
     phy
@@ -563,7 +563,7 @@ memset: {
     .const num = $28*$19
     .label str = DEFAULT_SCREEN
     .label end = str+num
-    .label dst = 4
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

@@ -11,10 +11,10 @@
   .const SIZEOF_UNSIGNED_INT = 2
 .segment Code
 main: {
-    .label z1 = 5
-    .label screen = 3
-    .label z2 = 5
-    .label y = 2
+    .label z1 = 2
+    .label screen = 7
+    .label z2 = 2
+    .label y = 6
     lda #<$400
     sta.z screen
     lda #>$400
@@ -61,11 +61,11 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(5) unsigned int mul8u(__register(X) char a, char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
-    .label mb = 7
-    .label res = 5
-    .label return = 5
+    .label mb = 4
+    .label res = 2
+    .label return = 2
     lda #<$28
     sta.z mb
     lda #>$28

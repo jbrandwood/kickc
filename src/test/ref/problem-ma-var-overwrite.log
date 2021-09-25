@@ -186,11 +186,11 @@ Complete equivalence classes
 [ test::dst ]
 [ test::diff#1 ]
 [ test::$1 ]
-Allocated zp[2]:2 [ h1 ]
-Allocated zp[2]:4 [ test::videoMem#0 ]
+Allocated zp[2]:2 [ test::diff#1 ]
+Allocated zp[2]:4 [ test::$1 ]
 Allocated zp[2]:6 [ test::dst ]
-Allocated zp[2]:8 [ test::diff#1 ]
-Allocated zp[2]:10 [ test::$1 ]
+Allocated zp[2]:8 [ test::videoMem#0 ]
+Allocated zp[2]:10 [ h1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] h1 = (char *) 0 [ h1 ] (  [ h1 ] { }  ) always clobbers reg byte a 
 Statement [5] test::videoMem#0 = h1 [ test::videoMem#0 ] ( main:3 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
@@ -200,24 +200,27 @@ Statement [10] test::$1 = test::other#0 + test::diff#1 [ test::$1 ] ( main:3::te
 Statement [11] test::dst = test::$1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
 Statement [12] *test::dst = 1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a reg byte y 
 Statement asm { ldy#0 lda#1 sta(dst),y  } always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ h1 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ test::videoMem#0 ] : zp[2]:4 , 
+Potential registers zp[2]:10 [ h1 ] : zp[2]:10 , 
+Potential registers zp[2]:8 [ test::videoMem#0 ] : zp[2]:8 , 
 Potential registers zp[2]:6 [ test::dst ] : zp[2]:6 , 
-Potential registers zp[2]:8 [ test::diff#1 ] : zp[2]:8 , 
-Potential registers zp[2]:10 [ test::$1 ] : zp[2]:10 , 
+Potential registers zp[2]:2 [ test::diff#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ test::$1 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [test] 202: zp[2]:8 [ test::diff#1 ] 202: zp[2]:10 [ test::$1 ] 151.5: zp[2]:6 [ test::dst ] 56: zp[2]:4 [ test::videoMem#0 ] 
-Uplift Scope [] 6.5: zp[2]:2 [ h1 ] 
+Uplift Scope [test] 202: zp[2]:2 [ test::diff#1 ] 202: zp[2]:4 [ test::$1 ] 151.5: zp[2]:6 [ test::dst ] 56: zp[2]:8 [ test::videoMem#0 ] 
+Uplift Scope [] 6.5: zp[2]:10 [ h1 ] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [test] best 172 combination zp[2]:8 [ test::diff#1 ] zp[2]:10 [ test::$1 ] zp[2]:6 [ test::dst ] zp[2]:4 [ test::videoMem#0 ] 
-Uplifting [] best 172 combination zp[2]:2 [ h1 ] 
+Uplifting [test] best 172 combination zp[2]:2 [ test::diff#1 ] zp[2]:4 [ test::$1 ] zp[2]:6 [ test::dst ] zp[2]:8 [ test::videoMem#0 ] 
+Uplifting [] best 172 combination zp[2]:10 [ h1 ] 
 Uplifting [main] best 172 combination 
 Uplifting [__start] best 172 combination 
-Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 ] ] with [ zp[2]:8 [ test::diff#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 test::diff#1 ] ] with [ zp[2]:10 [ test::$1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ test::videoMem#0 ] ] with [ zp[2]:2 [ test::diff#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ test::videoMem#0 test::diff#1 ] ] with [ zp[2]:4 [ test::$1 ] ] - score: 1
+Allocated (was zp[2]:8) zp[2]:2 [ test::videoMem#0 test::diff#1 test::$1 ]
+Allocated (was zp[2]:6) zp[2]:4 [ test::dst ]
+Allocated (was zp[2]:10) zp[2]:6 [ h1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -232,7 +235,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .label h1 = 2
+  .label h1 = 6
 .segment Code
   // __start
 __start: {
@@ -274,14 +277,14 @@ main: {
 }
   // test
 // This must be volatile because is used in an interrupt routine...
-// void test(__zp(4) char *videoMem, char *colorMem, char *other)
+// void test(__zp(2) char *videoMem, char *colorMem, char *other)
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 6
-    .label __1 = 4
-    .label diff = 4
-    .label videoMem = 4
+    .label dst = 4
+    .label __1 = 2
+    .label diff = 2
+    .label videoMem = 2
     // [8] test::dst = (char *) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z dst
@@ -347,23 +350,23 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void __start()
-__loadstore char * volatile h1 // zp[2]:2 6.5
+__loadstore char * volatile h1 // zp[2]:6 6.5
 void main()
 void test(char *videoMem , char *colorMem , char *other)
-char *test::$1 // zp[2]:4 202.0
+char *test::$1 // zp[2]:2 202.0
 char *test::colorMem
 __constant char *test::colorMem#0 = (char *) 55296 // colorMem
 unsigned int test::diff
-unsigned int test::diff#1 // diff zp[2]:4 202.0
-__loadstore char * volatile test::dst // zp[2]:6 151.5
+unsigned int test::diff#1 // diff zp[2]:2 202.0
+__loadstore char * volatile test::dst // zp[2]:4 151.5
 char *test::other
 __constant char *test::other#0 = (char *) 49152 // other
 char *test::videoMem
-char *test::videoMem#0 // videoMem zp[2]:4 56.0
+char *test::videoMem#0 // videoMem zp[2]:2 56.0
 
-zp[2]:2 [ h1 ]
-zp[2]:4 [ test::videoMem#0 test::diff#1 test::$1 ]
-zp[2]:6 [ test::dst ]
+zp[2]:6 [ h1 ]
+zp[2]:2 [ test::videoMem#0 test::diff#1 test::$1 ]
+zp[2]:4 [ test::dst ]
 
 
 FINAL ASSEMBLER
@@ -381,7 +384,7 @@ Score: 122
 .segment Basic
 :BasicUpstart(__start)
   // Global Constants & labels
-  .label h1 = 2
+  .label h1 = 6
 .segment Code
   // __start
 __start: {
@@ -416,14 +419,14 @@ main: {
 }
   // test
 // This must be volatile because is used in an interrupt routine...
-// void test(__zp(4) char *videoMem, char *colorMem, char *other)
+// void test(__zp(2) char *videoMem, char *colorMem, char *other)
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 6
-    .label __1 = 4
-    .label diff = 4
-    .label videoMem = 4
+    .label dst = 4
+    .label __1 = 2
+    .label diff = 2
+    .label videoMem = 2
     // __ma unsigned char *dst
     // [8] test::dst = (char *) 0 -- pbuz1=pbuc1 
     lda #<0

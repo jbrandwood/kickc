@@ -10,9 +10,9 @@
 .segment Code
 main: {
     .label screen = $400
-    .label __0 = 4
-    .label i = 3
-    .label a = 2
+    .label __0 = 2
+    .label i = 6
+    .label a = 7
     lda #0
     sta.z i
     sta.z a
@@ -46,11 +46,11 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(4) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label mb = 6
-    .label res = 4
-    .label return = 4
+    .label mb = 4
+    .label res = 2
+    .label return = 2
     // unsigned int mb = b
     sta.z mb
     lda #0

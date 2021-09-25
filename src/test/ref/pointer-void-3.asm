@@ -11,8 +11,8 @@
   .label heap_head = 2
 .segment Code
 main: {
-    .label buf1 = 4
-    .label buf2 = 6
+    .label buf1 = 6
+    .label buf2 = 4
     // byte* buf1 = malloc()
     lda #<$c000
     sta.z heap_head
@@ -44,8 +44,8 @@ main: {
     rts
 }
 malloc: {
-    .label return = 4
-    .label return_1 = 6
+    .label return = 6
+    .label return_1 = 4
     // heap_head++;
     inc.z heap_head
     bne !+

@@ -328,32 +328,31 @@ Complete equivalence classes
 [ screen#20 screen#15 screen#5 ]
 [ print_msg::msg#3 ]
 [ print::msg#2 print::msg#0 print::msg#1 ]
-Allocated zp[1]:2 [ print_msg::idx#2 ]
-Allocated zp[2]:3 [ screen#20 screen#15 screen#5 ]
-Allocated zp[2]:5 [ print_msg::msg#3 ]
-Allocated zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ]
+Allocated zp[2]:2 [ print::msg#2 print::msg#0 print::msg#1 ]
+Allocated zp[2]:4 [ screen#20 screen#15 screen#5 ]
+Allocated zp[1]:6 [ print_msg::idx#2 ]
+Allocated zp[2]:7 [ print_msg::msg#3 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] print::msg#0 = print_msg::msg#3 [ screen#20 print::msg#0 ] ( print_msg:1 [ screen#20 print::msg#0 ] { { print::msg#0 = print_msg::msg#3 } }  print_msg:3 [ screen#20 print::msg#0 ] { { screen#15 = screen#20 } { print::msg#0 = print_msg::msg#3 } }  ) always clobbers reg byte a 
 Statement [14] if(0!=*print::msg#2) goto print::@2 [ screen#15 print::msg#2 ] ( print_msg:1::print:10 [ screen#15 print::msg#2 ] { { print::msg#0 = print_msg::msg#3 } }  print_msg:3::print:10 [ screen#15 print::msg#2 ] { { screen#15 = screen#20 } { print::msg#0 = print_msg::msg#3 } }  ) always clobbers reg byte a reg byte y 
 Statement [16] *screen#15 = *print::msg#2 [ screen#15 print::msg#2 ] ( print_msg:1::print:10 [ screen#15 print::msg#2 ] { { print::msg#0 = print_msg::msg#3 } }  print_msg:3::print:10 [ screen#15 print::msg#2 ] { { screen#15 = screen#20 } { print::msg#0 = print_msg::msg#3 } }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[1]:2 [ print_msg::idx#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:3 [ screen#20 screen#15 screen#5 ] : zp[2]:3 , 
-Potential registers zp[2]:5 [ print_msg::msg#3 ] : zp[2]:5 , 
-Potential registers zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] : zp[2]:7 , 
+Potential registers zp[1]:6 [ print_msg::idx#2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:4 [ screen#20 screen#15 screen#5 ] : zp[2]:4 , 
+Potential registers zp[2]:7 [ print_msg::msg#3 ] : zp[2]:7 , 
+Potential registers zp[2]:2 [ print::msg#2 print::msg#0 print::msg#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 3,084.25: zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
-Uplift Scope [] 1,406.42: zp[2]:3 [ screen#20 screen#15 screen#5 ] 
-Uplift Scope [print_msg] 11: zp[1]:2 [ print_msg::idx#2 ] 11: zp[2]:5 [ print_msg::msg#3 ] 
+Uplift Scope [print] 3,084.25: zp[2]:2 [ print::msg#2 print::msg#0 print::msg#1 ] 
+Uplift Scope [] 1,406.42: zp[2]:4 [ screen#20 screen#15 screen#5 ] 
+Uplift Scope [print_msg] 11: zp[1]:6 [ print_msg::idx#2 ] 11: zp[2]:7 [ print_msg::msg#3 ] 
 Uplift Scope [main] 
 
-Uplifting [print] best 728 combination zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
-Uplifting [] best 728 combination zp[2]:3 [ screen#20 screen#15 screen#5 ] 
-Uplifting [print_msg] best 719 combination reg byte x [ print_msg::idx#2 ] zp[2]:5 [ print_msg::msg#3 ] 
+Uplifting [print] best 728 combination zp[2]:2 [ print::msg#2 print::msg#0 print::msg#1 ] 
+Uplifting [] best 728 combination zp[2]:4 [ screen#20 screen#15 screen#5 ] 
+Uplifting [print_msg] best 719 combination reg byte x [ print_msg::idx#2 ] zp[2]:7 [ print_msg::msg#3 ] 
 Uplifting [main] best 719 combination 
-Coalescing zero page register [ zp[2]:5 [ print_msg::msg#3 ] ] with [ zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
-Allocated (was zp[2]:3) zp[2]:2 [ screen#20 screen#15 screen#5 ]
-Allocated (was zp[2]:5) zp[2]:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
+Coalescing zero page register [ zp[2]:7 [ print_msg::msg#3 ] ] with [ zp[2]:2 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
+Allocated (was zp[2]:7) zp[2]:2 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -368,7 +367,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 2
+  .label screen = 4
 .segment Code
   // main
 main: {
@@ -404,7 +403,7 @@ main: {
   // print_msg
 // void print_msg(__register(X) char idx)
 print_msg: {
-    .label msg = 4
+    .label msg = 2
     // [6] if(print_msg::idx#2==1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
     beq __b1_from_print_msg
@@ -449,9 +448,9 @@ print_msg: {
 }
 .segment Code
   // print
-// void print(__zp(4) char *msg)
+// void print(__zp(2) char *msg)
 print: {
-    .label msg = 4
+    .label msg = 2
     // [13] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
   __b1_from_print:
   __b1_from___b2:
@@ -524,24 +523,24 @@ FINAL SYMBOL TABLE
 void main()
 void print(char *msg)
 char *print::msg
-char *print::msg#0 // msg zp[2]:4 56.0
-char *print::msg#1 // msg zp[2]:4 2002.0
-char *print::msg#2 // msg zp[2]:4 1026.25
+char *print::msg#0 // msg zp[2]:2 56.0
+char *print::msg#1 // msg zp[2]:2 2002.0
+char *print::msg#2 // msg zp[2]:2 1026.25
 void print_msg(char idx)
 char print_msg::idx
 char print_msg::idx#2 // reg byte x 11.0
 char *print_msg::msg
 __constant char *print_msg::msg#1 = "Hello " // msg_1
 __constant char *print_msg::msg#2 = "World!" // msg_2
-char *print_msg::msg#3 // msg zp[2]:4 11.0
+char *print_msg::msg#3 // msg zp[2]:2 11.0
 char *screen
-char *screen#15 // screen zp[2]:2 388.25
-char *screen#20 // screen zp[2]:2 17.166666666666664
-char *screen#5 // screen zp[2]:2 1001.0
+char *screen#15 // screen zp[2]:4 388.25
+char *screen#20 // screen zp[2]:4 17.166666666666664
+char *screen#5 // screen zp[2]:4 1001.0
 
 reg byte x [ print_msg::idx#2 ]
-zp[2]:2 [ screen#20 screen#15 screen#5 ]
-zp[2]:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
+zp[2]:4 [ screen#20 screen#15 screen#5 ]
+zp[2]:2 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 
 FINAL ASSEMBLER
@@ -559,7 +558,7 @@ Score: 612
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
-  .label screen = 2
+  .label screen = 4
 .segment Code
   // main
 main: {
@@ -591,7 +590,7 @@ main: {
   // print_msg
 // void print_msg(__register(X) char idx)
 print_msg: {
-    .label msg = 4
+    .label msg = 2
     // if(idx==1)
     // [6] if(print_msg::idx#2==1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
@@ -631,9 +630,9 @@ print_msg: {
 }
 .segment Code
   // print
-// void print(__zp(4) char *msg)
+// void print(__zp(2) char *msg)
 print: {
-    .label msg = 4
+    .label msg = 2
     // [13] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
     // [13] phi screen#15 = screen#20 [phi:print/print::@2->print::@1#0] -- register_copy 
     // [13] phi print::msg#2 = print::msg#0 [phi:print/print::@2->print::@1#1] -- register_copy 

@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label screen = 2
+  .label screen = 4
 .segment Code
 main: {
     // print(rex1)
@@ -23,9 +23,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(4) char *string)
+// void print(__zp(2) char *string)
 print: {
-    .label string = 4
+    .label string = 2
     lda #<rex1
     sta.z string
     lda #>rex1

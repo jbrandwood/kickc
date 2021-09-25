@@ -16,22 +16,22 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = 8
+  .label conio_cursor_x = $12
   // The current cursor y-position
-  .label conio_cursor_y = 9
+  .label conio_cursor_y = $15
   // The current text cursor line start
-  .label conio_line_text = $a
+  .label conio_line_text = $18
   // The current color cursor line start
-  .label conio_line_color = $c
+  .label conio_line_color = $1a
   /// The capacity of the buffer (n passed to snprintf())
   /// Used to hold state while printing
-  .label __snprintf_capacity = $e
+  .label __snprintf_capacity = $1c
   // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
   /// Used to hold state while printing
-  .label __snprintf_size = $10
+  .label __snprintf_size = $13
   /// Current position in the buffer being filled ( initially *s passed to snprintf()
   /// Used to hold state while printing
-  .label __snprintf_buffer = $12
+  .label __snprintf_buffer = $16
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -284,12 +284,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $18
-    .label __6 = $14
-    .label __7 = $14
-    .label line_offset = $14
-    .label __8 = $16
-    .label __9 = $14
+    .label __5 = $10
+    .label __6 = $c
+    .label __7 = $c
+    .label line_offset = $c
+    .label __8 = $e
+    .label __9 = $c
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -384,9 +384,9 @@ cputln: {
     rts
 }
 /// Initialize the snprintf() state
-// void snprintf_init(__zp(2) char *s, unsigned int n)
+// void snprintf_init(__zp($a) char *s, unsigned int n)
 snprintf_init: {
-    .label s = 2
+    .label s = $a
     // __snprintf_capacity = n
     lda #<$14
     sta.z __snprintf_capacity
@@ -405,10 +405,10 @@ snprintf_init: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(2) void (*putc)(char), __zp(4) const char *s)
+// void printf_str(__zp($a) void (*putc)(char), __zp(4) const char *s)
 printf_str: {
     .label s = 4
-    .label putc = 2
+    .label putc = $a
   __b1:
     // while(c=*s++)
     ldy #0
@@ -432,9 +432,9 @@ printf_str: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// void printf_string(__zp(2) void (*putc)(char), __zp(4) char *str, char format_min_length, char format_justify_left)
+// void printf_string(__zp($a) void (*putc)(char), __zp(4) char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    .label putc = 2
+    .label putc = $a
     .label str = 4
     // printf_str(putc, str)
     jsr printf_str
@@ -505,13 +505,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1c) void *destination, __zp(6) void *source, unsigned int num)
+// void * memcpy(__zp(6) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1a
-    .label dst = $1c
-    .label src = 6
-    .label source = 6
-    .label destination = $1c
+    .label src_end = 8
+    .label dst = 6
+    .label src = 2
+    .label source = 2
+    .label destination = 6
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -547,11 +547,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1c
-    .label dst = 6
-    .label str = 6
+    .label end = 6
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc

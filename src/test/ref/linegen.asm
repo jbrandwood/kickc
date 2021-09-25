@@ -16,13 +16,13 @@
   .const SIZEOF_UNSIGNED_INT = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $18
-  .label print_char_cursor = $f
-  .label print_line_cursor = $b
+  .label rem16u = 8
+  .label print_char_cursor = 2
+  .label print_line_cursor = 6
 .segment Code
 main: {
-    .label __28 = $11
-    .label i = 2
+    .label __28 = $17
+    .label i = $12
     // lin16u_gen(557, 29793, lintab1, 20)
     lda #<lintab1
     sta.z lin16u_gen.lintab
@@ -231,18 +231,18 @@ main: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sine wavelength (the size of the table)
-// void lin16u_gen(__zp(9) unsigned int min, __zp(7) unsigned int max, __zp($d) unsigned int *lintab, unsigned int length)
+// void lin16u_gen(__zp($10) unsigned int min, __zp(4) unsigned int max, __zp($a) unsigned int *lintab, unsigned int length)
 lin16u_gen: {
-    .label __8 = $18
-    .label ampl = 7
-    .label stepi = $12
-    .label stepf = $f
-    .label step = $14
-    .label val = 3
-    .label lintab = $d
-    .label i = $b
-    .label max = 7
-    .label min = 9
+    .label __8 = 8
+    .label ampl = 4
+    .label stepi = $18
+    .label stepf = 2
+    .label step = $13
+    .label val = $c
+    .label lintab = $a
+    .label i = 6
+    .label max = 4
+    .label min = $10
     // word ampl = max-min
     lda.z ampl
     sec
@@ -346,9 +346,9 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(7) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 7
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0
@@ -370,9 +370,9 @@ print_str: {
     jmp __b1
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(9) unsigned int w)
+// void print_uint(__zp($10) unsigned int w)
 print_uint: {
-    .label w = 9
+    .label w = $10
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -432,12 +432,12 @@ print_uchar: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($f) unsigned int divr16u(__zp(7) unsigned int dividend, unsigned int divisor, __zp($18) unsigned int rem)
+// __zp(2) unsigned int divr16u(__zp(4) unsigned int dividend, unsigned int divisor, __zp(8) unsigned int rem)
 divr16u: {
-    .label rem = $18
-    .label dividend = 7
-    .label quotient = $f
-    .label return = $f
+    .label rem = 8
+    .label dividend = 4
+    .label quotient = 2
+    .label return = 2
     ldx #0
     txa
     sta.z quotient
@@ -500,7 +500,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $d
+    .label dst = $a
     lda #<str
     sta.z dst
     lda #>str

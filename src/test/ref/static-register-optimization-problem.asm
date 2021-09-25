@@ -11,9 +11,9 @@
 .segment Code
 main: {
     .label screen = $400
-    .label lasti = 4
+    .label lasti = 6
     .label i = 2
-    .label __1 = 6
+    .label __1 = 4
     lda #<-1
     sta.z lasti
     sta.z lasti+1

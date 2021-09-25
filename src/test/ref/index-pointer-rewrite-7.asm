@@ -13,14 +13,14 @@
 .segment Code
 main: {
     .label __1 = 4
-    .label __2 = 6
-    .label __3 = 6
+    .label __2 = 2
+    .label __3 = 2
     .label __6 = 8
-    .label __7 = 6
+    .label __7 = 2
     .label __8 = 4
-    .label i = 2
+    .label i = 6
     .label __9 = 8
-    .label __10 = 6
+    .label __10 = 2
     .label __11 = 4
     // fibs[0] = 0
     lda #<0

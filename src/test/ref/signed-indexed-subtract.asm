@@ -8,11 +8,11 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_line_cursor = 3
-  .label print_char_cursor = 7
+  .label print_line_cursor = 4
+  .label print_char_cursor = 2
 .segment Code
 main: {
-    .label j = 2
+    .label j = 8
     ldy #0
   __b1:
     // sub(i, $80)
@@ -93,9 +93,9 @@ print_cls: {
     rts
 }
 // Print a signed int as HEX
-// void print_sint(__zp(5) int w)
+// void print_sint(__zp(6) int w)
 print_sint: {
-    .label w = 5
+    .label w = 6
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -151,7 +151,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 5
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str
@@ -193,9 +193,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(5) unsigned int w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
-    .label w = 5
+    .label w = 6
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar

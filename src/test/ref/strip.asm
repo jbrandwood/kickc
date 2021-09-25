@@ -45,9 +45,9 @@ main: {
 }
 // void strip(__zp(8) char *p, __register(X) char c)
 strip: {
-    .label dest = 2
+    .label dest = 4
     .label p = 8
-    .label p_1 = 4
+    .label p_1 = 2
     lda.z dest
     sta.z p_1
     lda.z dest+1
@@ -88,9 +88,9 @@ strip: {
     sta.z p_1+1
     jmp __b1
 }
-// void print(__zp(4) char *msg)
+// void print(__zp(2) char *msg)
 print: {
-    .label msg = 4
+    .label msg = 2
   __b1:
     // *screen++ = *msg++
     ldy #0

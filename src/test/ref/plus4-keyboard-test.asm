@@ -20,8 +20,8 @@
   .label DEFAULT_SCREEN = $c00
 .segment Code
 main: {
-    .label row = 3
-    .label y = 2
+    .label row = 5
+    .label y = 4
     // asm
     sei
     // memset(DEFAULT_SCREEN, ' ', 0x0400)
@@ -103,7 +103,7 @@ memset: {
     .const num = $400
     .label str = DEFAULT_SCREEN
     .label end = str+num
-    .label dst = 5
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

@@ -18,13 +18,13 @@
 :BasicUpstart(__start)
   .label print_screen = $400
   // The rotated point - updated by calling rotate()
-  .label xr = 8
-  .label yr = 9
-  .label zr = $a
+  .label xr = $a
+  .label yr = $b
+  .label zr = 8
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
-  .label psp1 = $b
-  .label psp2 = $d
-  .label print_char_cursor = 6
+  .label psp1 = $e
+  .label psp2 = $c
+  .label print_char_cursor = 2
   .label print_line_cursor = 4
 .segment Code
 __start: {
@@ -68,9 +68,9 @@ main: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = $f
+    .label val = 9
     .label sqr = 4
-    .label add = 2
+    .label add = 6
     lda #<1
     sta.z add
     lda #>1
@@ -252,9 +252,9 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// void print_str(__zp(2) char *str)
+// void print_str(__zp(6) char *str)
 print_str: {
-    .label str = 2
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0

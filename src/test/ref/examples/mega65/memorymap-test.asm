@@ -130,7 +130,7 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // void memoryRemapBlock(__register(X) char blockPage, unsigned int memoryPage)
 memoryRemapBlock: {
-    .label pageOffset = 2
+    .label pageOffset = 3
     // unsigned int pageOffset = memoryPage-blockPage
     // Find the page offset (the number of pages to offset the block)
     stx.z $ff
@@ -193,16 +193,16 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(3) unsigned int lowerPageOffset, __zp(7) unsigned int upperPageOffset)
 memoryRemap: {
-    .label aVal = $a
-    .label xVal = $b
-    .label __1 = $16
-    .label yVal = $c
-    .label zVal = $e
-    .label __6 = $d
-    .label lowerPageOffset = 2
-    .label upperPageOffset = 4
+    .label aVal = $10
+    .label xVal = $a
+    .label __1 = 5
+    .label yVal = 9
+    .label zVal = 2
+    .label __6 = 6
+    .label lowerPageOffset = 3
+    .label upperPageOffset = 7
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda.z lowerPageOffset
@@ -273,17 +273,17 @@ memoryRemap: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// void memoryRemap256M(__register(Z) char remapBlocks, __zp(6) unsigned long lowerPageOffset, unsigned long upperPageOffset)
+// void memoryRemap256M(__register(Z) char remapBlocks, __zp($11) unsigned long lowerPageOffset, unsigned long upperPageOffset)
 memoryRemap256M: {
-    .label lMb = $13
-    .label __0 = $f
-    .label uMb = $14
-    .label aVal = $15
-    .label xVal = $17
-    .label __5 = $16
-    .label yVal = $18
-    .label zVal = $19
-    .label lowerPageOffset = 6
+    .label lMb = $19
+    .label __0 = $b
+    .label uMb = $18
+    .label aVal = $17
+    .label xVal = $16
+    .label __5 = 5
+    .label yVal = $15
+    .label zVal = $f
+    .label lowerPageOffset = $11
     // lowerPageOffset>>4
     lda.z lowerPageOffset+3
     lsr

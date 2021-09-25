@@ -9,11 +9,11 @@
 :BasicUpstart(main)
   .const READY_FRAMES = 5
   .label print_screen = $400
-  .label print_char_cursor = 5
-  .label print_line_cursor = 7
+  .label print_char_cursor = 2
+  .label print_line_cursor = 6
 .segment Code
 main: {
-    .label i = 2
+    .label i = 8
     lda #0
     sta.z i
     tax
@@ -90,9 +90,9 @@ game_ready: {
 }
 .segment Code
 // Print a zero-terminated string followed by a newline
-// void print_str_ln(__zp(3) char *str)
+// void print_str_ln(__zp(4) char *str)
 print_str_ln: {
-    .label str = 3
+    .label str = 4
     // print_str(str)
     jsr print_str
     // print_ln()
@@ -101,9 +101,9 @@ print_str_ln: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(3) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 3
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0

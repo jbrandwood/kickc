@@ -11,10 +11,10 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label du = 2
-    .label ds = 6
-    .label __4 = $a
-    .label __5 = $c
+    .label du = 6
+    .label ds = $a
+    .label __4 = 2
+    .label __5 = 4
     // volatile unsigned long du = 2000000
     lda #<$1e8480
     sta.z du

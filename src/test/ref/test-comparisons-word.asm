@@ -17,16 +17,16 @@
   // filled circle
   .const TT = $51
   .label print_screen = $400
-  .label print_line_cursor = 7
-  .label print_char_cursor = $d
+  .label print_line_cursor = 6
+  .label print_char_cursor = 2
 .segment Code
 main: {
-    .label w1 = $f
-    .label w2 = $11
-    .label s = 5
-    .label op = 4
-    .label j = 3
-    .label i = 2
+    .label w1 = $10
+    .label w2 = $b
+    .label s = $d
+    .label op = $e
+    .label j = $f
+    .label i = $12
     // print_cls()
     jsr print_cls
     lda #<print_screen
@@ -111,12 +111,12 @@ print_cls: {
     rts
 }
 // Compare two words using an operator
-// void compare(__zp($b) unsigned int w1, __zp($11) unsigned int w2, __register(A) char op)
+// void compare(__zp(8) unsigned int w1, __zp($b) unsigned int w2, __register(A) char op)
 compare: {
-    .label w1 = $b
-    .label w2 = $11
-    .label ops = 9
-    .label r = 6
+    .label w1 = 8
+    .label w2 = $b
+    .label ops = 4
+    .label r = $a
     // if(op==0)
     cmp #0
     bne !__b1+
@@ -339,7 +339,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 9
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -367,9 +367,9 @@ memset: {
     jmp __b1
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($b) unsigned int w)
+// void print_uint(__zp(8) unsigned int w)
 print_uint: {
-    .label w = $b
+    .label w = 8
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -380,9 +380,9 @@ print_uint: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(9) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 9
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0

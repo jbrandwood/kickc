@@ -177,23 +177,23 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::cols#2 main::cols#1 ]
 [ fn1::screen#2 fn1::screen#1 ]
-Allocated zp[2]:2 [ main::cols#2 main::cols#1 ]
-Allocated zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
+Allocated zp[2]:2 [ fn1::screen#2 fn1::screen#1 ]
+Allocated zp[2]:4 [ main::cols#2 main::cols#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if(main::cols#2<$d800+$3e8) goto main::@2 [ main::cols#2 ] (  [ main::cols#2 ] { }  ) always clobbers reg byte a 
 Statement [6] *main::cols#2 = ++ *main::cols#2 [ main::cols#2 ] (  [ main::cols#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(fn1::screen#2<$400+$3e8) goto fn1::@2 [ fn1::screen#2 ] ( fn1:5 [ main::cols#2 fn1::screen#2 ] { }  ) always clobbers reg byte a 
 Statement [12] *fn1::screen#2 = ++ *fn1::screen#2 [ fn1::screen#2 ] ( fn1:5 [ main::cols#2 fn1::screen#2 ] { }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ main::cols#2 main::cols#1 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] : zp[2]:4 , 
+Potential registers zp[2]:4 [ main::cols#2 main::cols#1 ] : zp[2]:4 , 
+Potential registers zp[2]:2 [ fn1::screen#2 fn1::screen#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fn1] 36,670.33: zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplift Scope [main] 33: zp[2]:2 [ main::cols#2 main::cols#1 ] 
+Uplift Scope [fn1] 36,670.33: zp[2]:2 [ fn1::screen#2 fn1::screen#1 ] 
+Uplift Scope [main] 33: zp[2]:4 [ main::cols#2 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [fn1] best 7667 combination zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [main] best 7667 combination zp[2]:2 [ main::cols#2 main::cols#1 ] 
+Uplifting [fn1] best 7667 combination zp[2]:2 [ fn1::screen#2 fn1::screen#1 ] 
+Uplifting [main] best 7667 combination zp[2]:4 [ main::cols#2 main::cols#1 ] 
 Uplifting [] best 7667 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -212,7 +212,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label cols = 2
+    .label cols = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::cols#2 = (char *) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -266,7 +266,7 @@ main: {
 }
   // fn1
 fn1: {
-    .label screen = 4
+    .label screen = 2
     // [9] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   __b1_from_fn1:
     // [9] phi fn1::screen#2 = (char *) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
@@ -339,15 +339,15 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 __stackcall void fn1()
 char *fn1::screen
-char *fn1::screen#1 // screen zp[2]:4 20002.0
-char *fn1::screen#2 // screen zp[2]:4 16668.333333333332
+char *fn1::screen#1 // screen zp[2]:2 20002.0
+char *fn1::screen#2 // screen zp[2]:2 16668.333333333332
 void main()
 char *main::cols
-char *main::cols#1 // cols zp[2]:2 22.0
-char *main::cols#2 // cols zp[2]:2 11.0
+char *main::cols#1 // cols zp[2]:4 22.0
+char *main::cols#2 // cols zp[2]:4 11.0
 
-zp[2]:2 [ main::cols#2 main::cols#1 ]
-zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
+zp[2]:4 [ main::cols#2 main::cols#1 ]
+zp[2]:2 [ fn1::screen#2 fn1::screen#1 ]
 
 
 FINAL ASSEMBLER
@@ -368,7 +368,7 @@ Score: 6727
 .segment Code
   // main
 main: {
-    .label cols = 2
+    .label cols = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::cols#2 = (char *) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
@@ -417,7 +417,7 @@ main: {
 }
   // fn1
 fn1: {
-    .label screen = 4
+    .label screen = 2
     // [9] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
     // [9] phi fn1::screen#2 = (char *) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400

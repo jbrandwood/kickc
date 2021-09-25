@@ -196,9 +196,9 @@ Complete equivalence classes
 [ main::msg#2 main::msg#1 ]
 [ main::line#2 main::line#5 main::line#8 ]
 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
-Allocated zp[2]:2 [ main::msg#2 main::msg#1 ]
+Allocated zp[2]:2 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
 Allocated zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
-Allocated zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+Allocated zp[2]:6 [ main::msg#2 main::msg#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if(0!=*main::msg#2) goto main::@2 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [4] if(*main::msg#2=='
@@ -206,15 +206,15 @@ Statement [4] if(*main::msg#2=='
 Statement [5] *main::cursor#3 = *main::msg#2 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [9] main::cursor#1 = main::line#2 + $28 [ main::msg#2 main::cursor#1 ] (  [ main::msg#2 main::cursor#1 ] { }  ) always clobbers reg byte a 
 Statement [10] main::line#8 = main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] (  [ main::msg#2 main::line#8 main::cursor#1 ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
+Potential registers zp[2]:6 [ main::msg#2 main::msg#1 ] : zp[2]:6 , 
 Potential registers zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp[2]:6 , 
+Potential registers zp[2]:2 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 63.25: zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 45.1: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 28.88: zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplift Scope [main] 63.25: zp[2]:2 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 45.1: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 28.88: zp[2]:6 [ main::msg#2 main::msg#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1431 combination zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplifting [main] best 1431 combination zp[2]:2 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:6 [ main::msg#2 main::msg#1 ] 
 Uplifting [] best 1431 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -233,8 +233,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label cursor = 6
-    .label msg = 2
+    .label cursor = 2
+    .label msg = 6
     .label line = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
@@ -352,21 +352,21 @@ __constant char MESSAGE[] = "hello
 world"
 void main()
 char *main::cursor
-char *main::cursor#1 // cursor zp[2]:6 16.5
-char *main::cursor#2 // cursor zp[2]:6 22.0
-char *main::cursor#3 // cursor zp[2]:6 8.25
-char *main::cursor#6 // cursor zp[2]:6 16.5
+char *main::cursor#1 // cursor zp[2]:2 16.5
+char *main::cursor#2 // cursor zp[2]:2 22.0
+char *main::cursor#3 // cursor zp[2]:2 8.25
+char *main::cursor#6 // cursor zp[2]:2 16.5
 char *main::line
 char *main::line#2 // line zp[2]:4 6.6000000000000005
 char *main::line#5 // line zp[2]:4 16.5
 char *main::line#8 // line zp[2]:4 22.0
 char *main::msg
-char *main::msg#1 // msg zp[2]:2 22.0
-char *main::msg#2 // msg zp[2]:2 6.875
+char *main::msg#1 // msg zp[2]:6 22.0
+char *main::msg#2 // msg zp[2]:6 6.875
 
-zp[2]:2 [ main::msg#2 main::msg#1 ]
+zp[2]:6 [ main::msg#2 main::msg#1 ]
 zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
-zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+zp[2]:2 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
 
 
 FINAL ASSEMBLER
@@ -387,8 +387,8 @@ Score: 1271
 .segment Code
   // main
 main: {
-    .label cursor = 6
-    .label msg = 2
+    .label cursor = 2
+    .label msg = 6
     .label line = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::cursor#3 = (char *) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 

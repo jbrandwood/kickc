@@ -12,7 +12,7 @@
   .label BORDER_COLOR = $d020
 .segment Code
 main: {
-    .label __1 = 6
+    .label __1 = 4
     .label time_start = 7
     // asm
     sei
@@ -129,7 +129,7 @@ main: {
 .segment Code
 cls: {
     .label screen = $400
-    .label sc = 2
+    .label sc = 5
     lda #<screen
     sta.z sc
     lda #>screen
@@ -154,10 +154,10 @@ cls: {
     rts
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// void utoa16w(__zp(2) unsigned int value, __zp(8) char * volatile dst)
+// void utoa16w(__zp(5) unsigned int value, __zp(8) char * volatile dst)
 utoa16w: {
     .label dst = 8
-    .label value = 2
+    .label value = 5
     // BYTE1(value)
     lda.z value+1
     // utoa16n(BYTE1(value)>>4, &dst, started)
@@ -198,11 +198,11 @@ utoa16w: {
     rts
 }
 // Decimal utoa() without using multiply or divide
-// void utoa10w(__zp(2) unsigned int value, __zp(4) char *dst)
+// void utoa10w(__zp(5) unsigned int value, __zp(2) char *dst)
 utoa10w: {
-    .label value = 2
-    .label digit = 6
-    .label dst = 4
+    .label value = 5
+    .label digit = 4
+    .label dst = 2
     .label bStarted = 7
     lda #<$400+$28+$28+$28+$28+$50
     sta.z dst

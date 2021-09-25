@@ -15,8 +15,8 @@
   .const SIZEOF_UNSIGNED_INT = 2
   .const SIZEOF_UNION___0 = 2
   .label SCREEN = $400
-  .label _b16 = 4
-  .label _b16_1 = 6
+  .label _b16 = 2
+  .label _b16_1 = 4
 .segment Code
 main: {
     // checksum_init
@@ -65,13 +65,13 @@ main: {
  * The result is found in chks.
  * @param v Value to sum.
  */
-// void add_checksum(__zp(2) unsigned int v)
+// void add_checksum(__zp(6) unsigned int v)
 add_checksum: {
-    .label __3 = 4
-    .label __6 = 6
-    .label __14 = 4
-    .label __15 = 6
-    .label v = 2
+    .label __3 = 2
+    .label __6 = 4
+    .label __14 = 2
+    .label __15 = 4
+    .label v = 6
     // _a = chks.b[0]
     /*
     * First byte (MSB).

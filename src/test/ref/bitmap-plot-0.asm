@@ -80,7 +80,7 @@
   .label BITMAP = $2000
   .label SCREEN = $400
   // Counts frames - updated by the IRQ
-  .label frame_cnt = 8
+  .label frame_cnt = $d
 .segment Code
 __start: {
     // volatile byte frame_cnt = 1
@@ -115,10 +115,10 @@ irq: {
 }
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label x = 2
-    .label y = 4
-    .label vx = 5
-    .label vy = 7
+    .label x = 6
+    .label y = $c
+    .label vx = $a
+    .label vy = 9
     // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
@@ -199,8 +199,8 @@ main: {
 // Initialize bitmap plotting tables
 // void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
-    .label __7 = 9
-    .label yoffs = $c
+    .label __7 = 8
+    .label yoffs = 4
     ldx #0
     lda #$80
   __b1:
@@ -326,11 +326,11 @@ init_irq: {
     rts
 }
 // Plot a single dot in the bitmap
-// void bitmap_plot(__zp(2) unsigned int x, __register(X) char y)
+// void bitmap_plot(__zp(6) unsigned int x, __register(X) char y)
 bitmap_plot: {
-    .label __1 = $c
-    .label plotter = $a
-    .label x = 2
+    .label __1 = 4
+    .label plotter = 2
+    .label x = 6
     // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -362,12 +362,12 @@ bitmap_plot: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($a) void *str, __register(X) char c, __zp($c) unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, __zp(4) unsigned int num)
 memset: {
-    .label end = $c
-    .label dst = $a
-    .label num = $c
-    .label str = $a
+    .label end = 4
+    .label dst = 2
+    .label num = 4
+    .label str = 2
     // if(num>0)
     lda.z num
     bne !+

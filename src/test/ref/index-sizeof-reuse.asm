@@ -15,10 +15,10 @@
 .segment Code
 main: {
     // Initialize velocities
-    .label v = 2
+    .label v = 5
     // Move the entities
-    .label line = 4
-    .label i1 = 3
+    .label line = 3
+    .label i1 = 2
     // asm
     sei
     lda #-1

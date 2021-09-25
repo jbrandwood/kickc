@@ -10,8 +10,8 @@
 .segment Code
 main: {
     // Count the number of the different chars on the screen
-    .label screen = 2
-    .label i = 4
+    .label screen = 4
+    .label i = 2
     lda #<0
     sta.z i
     sta.z i+1

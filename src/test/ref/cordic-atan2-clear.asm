@@ -22,7 +22,7 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     // Clear the screen by modifying the charset
-    .label clear_char = 2
+    .label clear_char = $18
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -60,15 +60,15 @@ main: {
     jmp __b2
 }
 // Make charset from proto chars
-// void init_font_hex(__zp(7) char *charset)
+// void init_font_hex(__zp($f) char *charset)
 init_font_hex: {
-    .label __0 = $19
-    .label idx = $a
-    .label proto_lo = $b
-    .label charset = 7
-    .label c1 = 9
-    .label proto_hi = 5
-    .label c = 4
+    .label __0 = $d
+    .label idx = $c
+    .label proto_lo = 8
+    .label charset = $f
+    .label c1 = $e
+    .label proto_hi = $15
+    .label c = $17
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO
@@ -169,16 +169,16 @@ init_font_hex: {
 // Utilizes symmetry around the  center
 // void init_angle_screen(char *screen)
 init_angle_screen: {
-    .label __9 = $f
-    .label xw = $15
-    .label yw = $17
-    .label angle_w = $f
-    .label ang_w = $19
-    .label x = 9
-    .label xb = $a
-    .label screen_topline = 5
-    .label screen_bottomline = 7
-    .label y = 4
+    .label __9 = 6
+    .label xw = $13
+    .label yw = $11
+    .label angle_w = 6
+    .label ang_w = $d
+    .label x = $e
+    .label xb = $c
+    .label screen_topline = $15
+    .label screen_bottomline = $f
+    .label y = $17
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
@@ -285,18 +285,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($f) unsigned int atan2_16(__zp($15) int x, __zp($17) int y)
+// __zp(6) unsigned int atan2_16(__zp($13) int x, __zp($11) int y)
 atan2_16: {
-    .label __2 = $b
-    .label __7 = $d
-    .label yi = $b
-    .label xi = $d
-    .label angle = $f
-    .label xd = $13
-    .label yd = $11
-    .label return = $f
-    .label x = $15
-    .label y = $17
+    .label __2 = 8
+    .label __7 = $a
+    .label yi = 8
+    .label xi = $a
+    .label angle = 6
+    .label xd = 4
+    .label yd = 2
+    .label return = 6
+    .label x = $13
+    .label y = $11
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+

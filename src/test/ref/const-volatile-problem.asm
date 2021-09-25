@@ -13,9 +13,9 @@
 :BasicUpstart(__start)
   .label IRQ = $314
   .label PLEX_SCREEN_PTR2 = $500
-  .label idx = 4
+  .label idx = 2
   // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR1 = 2
+  .label PLEX_SCREEN_PTR1 = 3
 .segment Code
 __start: {
     // volatile char idx = 0

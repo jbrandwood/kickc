@@ -11,8 +11,8 @@
 // And then allocate a bunch of variables
 main: {
     .label SCREEN = $400
-    .label a = $fb
-    .label b = $fd
+    .label a = $fd
+    .label a_1 = $fb
     lda #<0
     sta h
     sta h+1
@@ -26,10 +26,10 @@ main: {
     sta d+1
     sta c
     sta c+1
-    sta.z b
-    sta.z b+1
-    sta.z a
-    sta.z a+1
+    sta b
+    sta b+1
+    sta.z a_1
+    sta.z a_1+1
     tay
   __b1:
     // for(char i=0;i<10;i++)
@@ -42,24 +42,27 @@ main: {
     tya
     asl
     tax
-    lda.z a
+    lda.z a_1
     sta SCREEN,x
-    lda.z a+1
+    lda.z a_1+1
     sta SCREEN+1,x
     // SCREEN[i] = a++;
-    inc.z a
-    bne !+
-    inc.z a+1
-  !:
+    clc
+    lda.z a_1
+    adc #1
+    sta.z a
+    lda.z a_1+1
+    adc #0
+    sta.z a+1
     // SCREEN[i] = b++
-    lda.z b
+    lda b
     sta SCREEN,x
-    lda.z b+1
+    lda b+1
     sta SCREEN+1,x
     // SCREEN[i] = b++;
-    inc.z b
+    inc b
     bne !+
-    inc.z b+1
+    inc b+1
   !:
     // SCREEN[i] = c++
     lda c
@@ -80,6 +83,16 @@ main: {
     inc d
     bne !+
     inc d+1
+  !:
+    // SCREEN[i] = a++
+    lda.z a
+    sta SCREEN,x
+    lda.z a+1
+    sta SCREEN+1,x
+    // SCREEN[i] = a++;
+    inc.z a
+    bne !+
+    inc.z a+1
   !:
     // SCREEN[i] = e++
     lda e
@@ -121,10 +134,24 @@ main: {
     bne !+
     inc h+1
   !:
+    // SCREEN[i] = a++
+    lda.z a
+    sta SCREEN,x
+    lda.z a+1
+    sta SCREEN+1,x
+    // SCREEN[i] = a++;
+    clc
+    lda.z a
+    adc #1
+    sta.z a_1
+    lda.z a+1
+    adc #0
+    sta.z a_1+1
     // for(char i=0;i<10;i++)
     iny
     jmp __b1
   .segment Data
+    b: .word 0
     c: .word 0
     d: .word 0
     e: .word 0

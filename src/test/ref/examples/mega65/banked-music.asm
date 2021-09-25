@@ -275,16 +275,16 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// void memoryRemap(__register(Z) char remapBlocks, __zp(2) unsigned int lowerPageOffset, __zp(4) unsigned int upperPageOffset)
+// void memoryRemap(__register(Z) char remapBlocks, __zp(3) unsigned int lowerPageOffset, __zp(7) unsigned int upperPageOffset)
 memoryRemap: {
-    .label aVal = 6
-    .label xVal = 8
-    .label __1 = 7
+    .label aVal = $b
+    .label xVal = $a
+    .label __1 = 5
     .label yVal = 9
-    .label zVal = $b
-    .label __6 = $a
-    .label lowerPageOffset = 2
-    .label upperPageOffset = 4
+    .label zVal = 2
+    .label __6 = 6
+    .label lowerPageOffset = 3
+    .label upperPageOffset = 7
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda.z lowerPageOffset

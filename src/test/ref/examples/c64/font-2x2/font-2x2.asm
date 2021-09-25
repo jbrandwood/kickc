@@ -24,9 +24,9 @@
 .segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
-    .label c = 3
-    .label x = 4
-    .label y = 2
+    .label c = $e
+    .label x = $11
+    .label y = $12
     // asm
     // Create 2x2 font from CHARGEN
     sei
@@ -81,18 +81,18 @@ main: {
 // Create a 2x2-font by doubling all pixels of the 64 first chars
 // void font_2x2(char *font_original, char *font_2x2)
 font_2x2: {
-    .label __5 = $f
-    .label __7 = $f
-    .label next_2x2_left = $11
-    .label next_2x2_right = $d
-    .label glyph_bits = 6
-    .label glyph_bits_2x2 = $f
-    .label l2 = 5
-    .label l = 8
-    .label next_2x2_left_1 = $b
-    .label next_2x2 = $11
-    .label next_original = 9
-    .label c = 7
+    .label __5 = 6
+    .label __7 = 6
+    .label next_2x2_left = 4
+    .label next_2x2_right = 2
+    .label glyph_bits = 8
+    .label glyph_bits_2x2 = 6
+    .label l2 = $c
+    .label l = $d
+    .label next_2x2_left_1 = $a
+    .label next_2x2 = 4
+    .label next_original = $f
+    .label c = 9
     lda #0
     sta.z c
     lda #<CHARGEN
@@ -247,10 +247,10 @@ font_2x2: {
 // Returns the size of the compressed font (in chars)
 // __register(X) char font_compress(char *font_original, char *font_compressed, char *compress_mapping)
 font_compress: {
-    .label next_original = $11
-    .label i = 8
-    .label next_compressed = 9
-    .label font_size = 7
+    .label next_original = 4
+    .label i = $d
+    .label next_compressed = $f
+    .label font_size = 9
     lda #<FONT_COMPRESSED
     sta.z next_compressed
     lda #>FONT_COMPRESSED
@@ -324,7 +324,7 @@ memset: {
     .const num = $400
     .label str = SCREEN
     .label end = str+num
-    .label dst = $b
+    .label dst = $a
     lda #<str
     sta.z dst
     lda #>str
@@ -352,15 +352,15 @@ memset: {
     jmp __b1
 }
 // Show a 2x2 char on the screen at 2x2-position (x, y) using a font compress mapping
-// void show(__zp(3) char c, __register(X) char x, __register(A) char y, char *font_mapping)
+// void show(__zp($e) char c, __register(X) char x, __register(A) char y, char *font_mapping)
 show: {
-    .label __0 = $f
-    .label __1 = $f
-    .label __7 = $f
-    .label c = 3
-    .label ptr = $f
-    .label __8 = $11
-    .label __9 = $f
+    .label __0 = 6
+    .label __1 = 6
+    .label __7 = 6
+    .label c = $e
+    .label ptr = 6
+    .label __8 = 4
+    .label __9 = 6
     // (unsigned int)y*80
     sta.z __7
     lda #0
@@ -437,11 +437,11 @@ show: {
 // Look for a glyph within a font
 // Only looks at the first font_size glyphs
 // Returns the index of the glyph within the font. Returns 0xff if the glyph is not found.
-// __register(X) char font_find(__zp($11) char *glyph, __zp($d) char *font, __zp(7) char font_size)
+// __register(X) char font_find(__zp(4) char *glyph, __zp(2) char *font, __zp(9) char font_size)
 font_find: {
-    .label glyph = $11
-    .label font_size = 7
-    .label font = $d
+    .label glyph = 4
+    .label font_size = 9
+    .label font = 2
     lda #<FONT_COMPRESSED
     sta.z font
     lda #>FONT_COMPRESSED

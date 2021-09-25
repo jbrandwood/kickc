@@ -51,17 +51,17 @@
   /// $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // The horizontal start
-  .label hstart = 3
+  .label hstart = 6
   // The horizontal stop
-  .label hstop = 4
+  .label hstop = 7
   // The vertical start
-  .label vstart = 5
+  .label vstart = 8
   // The vertical stop
-  .label vstop = 6
+  .label vstop = 9
   // The countdown
-  .label cnt = 7
+  .label cnt = 5
   // The sin idx
-  .label sin_idx = 8
+  .label sin_idx = $a
 .segment Code
 __start: {
     // volatile char hstart = 0/4
@@ -87,8 +87,8 @@ __start: {
 }
 // LINE Interrupt Routine
 irq_line: {
-    .label idx = 2
-    .label bar = 9
+    .label idx = 4
+    .label bar = 2
     // *VERA_CTRL |= VERA_DCSEL
     // Update the border
     lda #VERA_DCSEL
@@ -243,7 +243,7 @@ memset: {
     .const c = 0
     .label str = BARS
     .label end = str+num
-    .label dst = 9
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

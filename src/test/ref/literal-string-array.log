@@ -184,9 +184,9 @@ Complete equivalence classes
 [ main::msg#2 main::msg#1 ]
 [ main::i#4 main::i#2 main::i#1 ]
 [ main::c#2 main::c#0 main::c#1 ]
-Allocated zp[2]:2 [ main::msg#2 main::msg#1 ]
+Allocated zp[2]:2 [ main::c#2 main::c#0 main::c#1 ]
 Allocated zp[1]:4 [ main::i#4 main::i#2 main::i#1 ]
-Allocated zp[2]:5 [ main::c#2 main::c#0 main::c#1 ]
+Allocated zp[2]:5 [ main::msg#2 main::msg#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] if((char *)0!=*main::msg#2) goto main::@2 [ main::msg#2 main::i#4 ] (  [ main::msg#2 main::i#4 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i#4 main::i#2 main::i#1 ]
@@ -200,17 +200,17 @@ Statement [4] main::c#0 = *main::msg#2 [ main::msg#2 main::i#4 main::c#0 ] (  [ 
 Statement [6] if(0!=*main::c#2) goto main::@4 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [7] main::msg#1 = main::msg#2 + SIZEOF_POINTER [ main::msg#1 main::i#2 ] (  [ main::msg#1 main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [8] SCREEN[main::i#2] = *main::c#2 [ main::msg#2 main::i#2 main::c#2 ] (  [ main::msg#2 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
+Potential registers zp[2]:5 [ main::msg#2 main::msg#1 ] : zp[2]:5 , 
 Potential registers zp[1]:4 [ main::i#4 main::i#2 main::i#1 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] : zp[2]:5 , 
+Potential registers zp[2]:2 [ main::c#2 main::c#0 main::c#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 327.75: zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] 189.58: zp[1]:4 [ main::i#4 main::i#2 main::i#1 ] 27.5: zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplift Scope [main] 327.75: zp[2]:2 [ main::c#2 main::c#0 main::c#1 ] 189.58: zp[1]:4 [ main::i#4 main::i#2 main::i#1 ] 27.5: zp[2]:5 [ main::msg#2 main::msg#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 5641 combination zp[2]:5 [ main::c#2 main::c#0 main::c#1 ] reg byte x [ main::i#4 main::i#2 main::i#1 ] zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplifting [main] best 5641 combination zp[2]:2 [ main::c#2 main::c#0 main::c#1 ] reg byte x [ main::i#4 main::i#2 main::i#1 ] zp[2]:5 [ main::msg#2 main::msg#1 ] 
 Uplifting [] best 5641 combination 
-Allocated (was zp[2]:5) zp[2]:4 [ main::c#2 main::c#0 main::c#1 ]
+Allocated (was zp[2]:5) zp[2]:4 [ main::msg#2 main::msg#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -231,8 +231,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    .label c = 4
-    .label msg = 2
+    .label c = 2
+    .label msg = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [1] phi main::i#4 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -353,21 +353,21 @@ __constant char * const SCREEN = (char *) 1024
 __constant char SIZEOF_POINTER = 2
 void main()
 char *main::c
-char *main::c#0 // c zp[2]:4 22.0
-char *main::c#1 // c zp[2]:4 202.0
-char *main::c#2 // c zp[2]:4 103.75
+char *main::c#0 // c zp[2]:2 22.0
+char *main::c#1 // c zp[2]:2 202.0
+char *main::c#2 // c zp[2]:2 103.75
 char main::i
 char main::i#1 // reg byte x 101.0
 char main::i#2 // reg byte x 81.25
 char main::i#4 // reg byte x 7.333333333333333
 char **main::msg
-char **main::msg#1 // msg zp[2]:2 22.0
-char **main::msg#2 // msg zp[2]:2 5.5
+char **main::msg#1 // msg zp[2]:4 22.0
+char **main::msg#2 // msg zp[2]:4 5.5
 __constant char *msgs[] = { $0, $1, $2, NUL }
 
-zp[2]:2 [ main::msg#2 main::msg#1 ]
+zp[2]:4 [ main::msg#2 main::msg#1 ]
 reg byte x [ main::i#4 main::i#2 main::i#1 ]
-zp[2]:4 [ main::c#2 main::c#0 main::c#1 ]
+zp[2]:2 [ main::c#2 main::c#0 main::c#1 ]
 
 
 FINAL ASSEMBLER
@@ -391,8 +391,8 @@ Score: 4961
 .segment Code
   // main
 main: {
-    .label c = 4
-    .label msg = 2
+    .label c = 2
+    .label msg = 4
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#4 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0

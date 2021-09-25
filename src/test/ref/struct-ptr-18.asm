@@ -12,7 +12,7 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label i = 2
+    .label i = 3
     // points[0] = { 1, 2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -48,9 +48,9 @@ main: {
     // }
     rts
 }
-// void print(__zp(3) char p_x, __register(Y) char p_y)
+// void print(__zp(2) char p_x, __register(Y) char p_y)
 print: {
-    .label p_x = 3
+    .label p_x = 2
     // SCREEN[idx++] = p.x
     lda.z p_x
     sta SCREEN,x

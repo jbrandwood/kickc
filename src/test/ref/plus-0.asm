@@ -26,11 +26,11 @@ main: {
     // }
     rts
 }
-// void fill(__zp(2) char *screen, __register(X) char ch)
+// void fill(__zp(6) char *screen, __register(X) char ch)
 fill: {
-    .label screen = 2
-    .label __5 = 4
-    .label __7 = 6
+    .label screen = 6
+    .label __5 = 2
+    .label __7 = 4
     ldy #0
   __b2:
     // (screen+j*40)[i] = ch

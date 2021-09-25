@@ -11,8 +11,8 @@
 .segment Code
 main: {
     .label SCREEN = $400
-    .label point_i = 2
-    .label point_i1 = 4
+    .label point_i = 4
+    .label point_i1 = 2
     ldx #0
   __b1:
     // struct Point* point_i = points+i

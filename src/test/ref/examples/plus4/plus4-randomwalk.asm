@@ -29,18 +29,18 @@
   /// The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
   // The random state variable
-  .label rand_state = 3
+  .label rand_state = 2
 .segment Code
 main: {
-    .label __3 = 5
-    .label __6 = 9
-    .label __8 = 5
+    .label __3 = $d
+    .label __6 = $11
+    .label __8 = $d
     .label __10 = $b
-    .label __24 = 5
-    .label offset = 5
-    .label y = 2
-    .label __29 = 7
-    .label __30 = 5
+    .label __24 = $d
+    .label offset = $d
+    .label y = 6
+    .label __29 = $f
+    .label __30 = $d
     // memset(DEFAULT_SCREEN, 0xa0, 1000)
     ldx #$a0
     lda #<DEFAULT_SCREEN
@@ -205,11 +205,11 @@ main: {
     jmp __b6
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(3) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $d
-    .label dst = 3
-    .label str = 3
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda.z str
     clc
@@ -245,9 +245,9 @@ memset: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $d
-    .label __1 = $f
-    .label __2 = $11
+    .label __0 = 4
+    .label __1 = 7
+    .label __2 = 9
     .label return = $b
     // rand_state << 7
     lda.z rand_state+1

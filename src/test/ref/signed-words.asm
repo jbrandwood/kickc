@@ -34,12 +34,12 @@
   .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   // Reset y velocity
-  .label yvel_init = 2
-  .label yvel = 2
-  .label yvel_1 = 6
+  .label yvel_init = 6
+  .label yvel = 6
+  .label yvel_1 = 2
   // Reset position
-  .label xpos = 8
-  .label ypos = $a
+  .label xpos = $c
+  .label ypos = $e
   .label xvel = 4
 .segment Code
 main: {
@@ -129,10 +129,10 @@ init: {
     jmp __b1
 }
 anim: {
-    .label __5 = $c
-    .label __7 = $e
-    .label sprite_x = $c
-    .label sprite_y = $e
+    .label __5 = $a
+    .label __7 = 8
+    .label sprite_x = $a
+    .label sprite_y = 8
     // if(ypos<0)
     lda.z ypos+1
     bpl __b1

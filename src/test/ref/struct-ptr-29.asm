@@ -28,10 +28,10 @@ main: {
     // }
     rts
 }
-// void print_person(__zp(2) struct Person *person)
+// void print_person(__zp(3) struct Person *person)
 print_person: {
-    .label i = 4
-    .label person = 2
+    .label i = 2
+    .label person = 3
     // SCREEN[idx++] = DIGIT[person->id]
     ldy #0
     lda (person),y

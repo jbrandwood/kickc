@@ -35,11 +35,11 @@
   /// Atari RIOT registers
   .label RIOT = $280
   // Player 0 X position
-  .label p0_xpos = $82
+  .label p0_xpos = $83
   // Counts frames
   .label idx = $80
   // Player 0 Y position
-  .label p0_ypos = $83
+  .label p0_ypos = $82
   .label idx2 = $81
 .segment Code
 __start: {

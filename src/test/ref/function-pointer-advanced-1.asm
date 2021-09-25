@@ -9,8 +9,8 @@
 :BasicUpstart(__start)
   .const STACK_BASE = $103
   .const SIZEOF_CHAR = 1
-  .label line = 8
-  .label idx = 7
+  .label line = 5
+  .label idx = 2
 .segment Code
 __start: {
     // __ma char* line = (char*)0x400
@@ -21,12 +21,12 @@ __start: {
     jsr main
     rts
 }
-// __register(A) char xor(__zp($a) char a, __register(A) char b)
+// __register(A) char xor(__zp(8) char a, __register(A) char b)
 xor: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
-    .label a = $a
+    .label a = 8
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
@@ -64,12 +64,12 @@ min: {
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
-// __register(A) char max(__zp($b) char a, __register(A) char b)
+// __register(A) char max(__zp(9) char a, __register(A) char b)
 max: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
-    .label a = $b
+    .label a = 9
     // return a;
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -89,12 +89,12 @@ max: {
     sta STACK_BASE+OFFSET_STACK_RETURN_1,x
     rts
 }
-// __register(A) char sum(__zp($c) char a, __register(A) char b)
+// __register(A) char sum(__zp($a) char a, __register(A) char b)
 sum: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN_1 = 1
-    .label a = $c
+    .label a = $a
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
@@ -109,7 +109,7 @@ sum: {
     rts
 }
 main: {
-    .label i = 2
+    .label i = 7
     lda #0
     sta.z idx
     sta.z i
@@ -177,11 +177,11 @@ ln: {
     // }
     rts
 }
-// void exec(__zp(3) char (*collect)(char, char))
+// void exec(__zp($b) char (*collect)(char, char))
 exec: {
-    .label out = 6
-    .label i = 5
-    .label collect = 3
+    .label out = 3
+    .label i = 4
+    .label collect = $b
     // cout(' ')
     lda #0
     sta.z idx
@@ -228,9 +228,9 @@ exec: {
   icall1:
     jmp (collect)
 }
-// void print(__zp(6) char i)
+// void print(__zp(3) char i)
 print: {
-    .label i = 6
+    .label i = 3
     // i>>4
     lda.z i
     lsr

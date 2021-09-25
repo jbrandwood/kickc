@@ -11,8 +11,8 @@
 .segment Code
 main: {
     .label i = 2
-    .label __2 = 4
-    .label __3 = 6
+    .label __2 = 6
+    .label __3 = 4
     // bug b
     lda #<b
     sta.z $fe

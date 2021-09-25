@@ -18,15 +18,15 @@
   /* Sqrt of COUNT */
   .label sieve = $1000
   .label print_screen = $400
-  .label print_char_cursor = $a
+  .label print_char_cursor = 2
 .segment Code
 main: {
-    .label i = $a
-    .label sieve_i = 2
+    .label i = 2
+    .label sieve_i = $c
     .label j = 6
     .label s = 8
-    .label i_1 = 4
-    .label __16 = $c
+    .label i_1 = $a
+    .label __16 = 4
     // memset(sieve, 0, COUNT)
   // Fill sieve with zeros
     jsr memset
@@ -166,7 +166,7 @@ memset: {
     .const c = 0
     .label str = sieve
     .label end = str+COUNT
-    .label dst = $c
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -194,9 +194,9 @@ memset: {
     jmp __b1
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(4) unsigned int w)
+// void print_uint(__zp($a) unsigned int w)
 print_uint: {
-    .label w = 4
+    .label w = $a
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar

@@ -7,8 +7,8 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .label line = 9
-  .label idx = $b
+  .label line = 7
+  .label idx = 2
 .segment Code
 __start: {
     // __ma char * line = (char*)0x0400
@@ -23,7 +23,7 @@ __start: {
     rts
 }
 main: {
-    .label s = 2
+    .label s = $a
     lda #<$400
     sta.z s
     lda #>$400
@@ -56,9 +56,9 @@ main: {
 }
 md5: {
     .const c = $98
-    .label b = 7
-    .label a = 5
-    .label b_1 = 4
+    .label b = 4
+    .label a = 6
+    .label b_1 = 9
     lda #c
     sta.z a
     lda #$ef
@@ -102,11 +102,11 @@ md5: {
     sta.z a
     jmp __b1
 }
-// void print(__register(X) char i, __zp(6) char a, __zp(7) char b, __zp(8) char c)
+// void print(__register(X) char i, __zp(5) char a, __zp(4) char b, __zp(3) char c)
 print: {
-    .label a = 6
-    .label b = 7
-    .label c = 8
+    .label a = 5
+    .label b = 4
+    .label c = 3
     // l/0x10
     txa
     lsr

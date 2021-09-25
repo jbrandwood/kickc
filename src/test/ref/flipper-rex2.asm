@@ -51,7 +51,7 @@ prepare: {
 // Flip buffer
 flip: {
     .label c = 2
-    .label r = 5
+    .label r = 3
     lda #$10
     sta.z r
     ldx #$f
@@ -92,8 +92,8 @@ flip: {
 }
 // Plot buffer on screen
 plot: {
-    .label line = 3
-    .label y = 5
+    .label line = 4
+    .label y = 3
     lda #$10
     sta.z y
     lda #<SCREEN+5*$28+$c

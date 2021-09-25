@@ -70,10 +70,10 @@ main: {
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // void memoryRemap(char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset)
 memoryRemap: {
-    .label aVal = 2
-    .label xVal = 3
-    .label yVal = 4
-    .label zVal = 5
+    .label aVal = 5
+    .label xVal = 4
+    .label yVal = 3
+    .label zVal = 2
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda #0

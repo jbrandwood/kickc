@@ -117,7 +117,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             }
          }
          // KickAssembler returned error, but no long branch was found. Fail with the output from KickAss
-         throw new CompileError("Error! Failed to  compile using KickAss\n" + output);
+         throw new CompileError("Error! Failed to compile using KickAss\n" + output);
       }
       return false;
    }

@@ -2,7 +2,7 @@
 
 KickC is a C-compiler for 6502-based platforms creating optimized and readable assembler code.
 
-The language is 95% standard C with a few limitations, and a few extensions to ensure an optimal fit for creating 6502 assembler code.
+The language is 95% standard C99 with a few limitations, and a few extensions to ensure an optimal fit for creating 6502 assembler code.
 
 The KickC-compiler includes all necessary linker and header files to makes it easy to create and test binaries for the following 6502-based platforms out-of-the-box:
 - Commodore VIC 20

@@ -4319,6 +4319,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testLongJump3() throws IOException {
+      assertError("longjump3.c", "Error! Failed to compile using KickAss", false);
+   }
+
+   @Test
    public void testLongJump2() throws IOException {
       compileAndCompare("longjump2.c");
    }

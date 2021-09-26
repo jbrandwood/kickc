@@ -1,4 +1,3 @@
-#pragma var_model(mem)
 
 #pragma zp_reserve(0x73..0x8a)  // CHRGET routine: fetches next character of BASIC program text
 #pragma zp_reserve(0x91)        // Keyboard Flag. 127 = STOP , 223 = C= , 239 = SPACE , 251 = CTRL , 255 = no key pressed
@@ -10,6 +9,7 @@
 #pragma zp_reserve(0xcb)        // Index to keyboard decoding table for currently pressed key, 64 = no key was depressed
 #pragma zp_reserve(0xcc)        // Flash cursor flag 0 = yes, otherwise no
 #pragma zp_reserve(0xd0) 	    // Input from 0 = keyboard or 3 = screen
+#pragma zp_reserve(0xf5..0xf6)  // Keyboard decoding table
 
 #include <6502.h>
 #include <c64.h>

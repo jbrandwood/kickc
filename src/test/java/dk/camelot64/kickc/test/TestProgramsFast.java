@@ -4289,6 +4289,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testCbmKeyboard() throws IOException {
+      compileAndCompare("cbm-keyboard.c");
+   }
+
+   @Test
    public void testC64DtvColor() throws IOException {
       compileAndCompare("c64dtv-color.c");
    }

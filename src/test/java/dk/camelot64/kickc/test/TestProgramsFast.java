@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testStructFunction() throws IOException {
+      compileAndCompare("struct-function.c");
+   }
+
+   @Test
    public void testStructWithHugeArray() throws IOException {
       compileAndCompare("struct-with-huge-array.c");
    }

@@ -1,0 +1,413 @@
+Calling convention STACK_CALL adding prepare/execute/finalize for call *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2]) 
+
+CONTROL FLOW GRAPH SSA
+
+void file()
+file: scope:[file]  from
+  SCREEN[0] = 'f'
+  to:file::@return
+file::@return: scope:[file]  from file
+  return 
+  to:@return
+
+void exit()
+exit: scope:[exit]  from
+  SCREEN[1] = 'x'
+  to:exit::@return
+exit::@return: scope:[exit]  from exit
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  main::i#2 = phi( main/main::i#0, main::@3/main::i#1 )
+  main::$0 = main::i#2 < 2
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::$2 = main::i#3 * SIZEOF_STRUCT_MENU_ITEM
+  callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2]) 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  main::i#4 = phi( main::@2/main::i#3 )
+  main::i#1 = ++ main::i#4
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char OFFSET_STRUCT_MENU_ITEM_CODE = 2
+__constant char * const SCREEN = (char *)$400
+__constant char SIZEOF_STRUCT_MENU_ITEM = 4
+void __start()
+void exit()
+void file()
+void main()
+bool main::$0
+char main::$2
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+__constant struct MENU_ITEM menu[] = { { text: menu_item_text, code: &file }, { text: menu_item_text1, code: &exit } }
+__constant char menu_item_text[5] = "File"
+__constant char menu_item_text1[5] = "Exit"
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = 'f'
+Adding number conversion cast (unumber) 1 in SCREEN[1] = 'x'
+Adding number conversion cast (unumber) 2 in main::$0 = main::i#2 < 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 main::i#4 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [7] if(main::i#2<2) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = 'f'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting multiplication to use shift [6] main::$2 = main::i#2 * SIZEOF_STRUCT_MENU_ITEM
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Eliminating unused constant SIZEOF_STRUCT_MENU_ITEM
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to null:5 
+
+Created 1 initial phi equivalence classes
+Coalesced [7] main::i#5 = main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [1] main::i#2 = phi( main/0, main::@3/main::i#1 )
+  [2] if(main::i#2<2) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::$2 = main::i#2 << 2
+  [5] callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2]) 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [6] main::i#1 = ++ main::i#2
+  to:main::@1
+
+void exit()
+exit: scope:[exit]  from
+  [7] *(SCREEN+1) = 'x'
+  to:exit::@return
+exit::@return: scope:[exit]  from exit
+  [8] return 
+  to:@return
+
+void file()
+file: scope:[file]  from
+  [9] *SCREEN = 'f'
+  to:file::@return
+file::@return: scope:[file]  from file
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void exit()
+void file()
+void main()
+char main::$2 // 110.0
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 14.666666666666666
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$2 ]
+Allocated zp[1]:2 [ main::$2 ]
+Allocated zp[1]:3 [ main::i#2 main::i#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] main::$2 = main::i#2 << 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2])  [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::i#2 main::i#1 ]
+Statement [7] *(SCREEN+1) = 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *SCREEN = 'f' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] if(main::i#2<2) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::i#2 << 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2])  [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [7] *(SCREEN+1) = 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *SCREEN = 'f' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , 
+Potential registers zp[1]:2 [ main::$2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 110: zp[1]:2 [ main::$2 ] 36.67: zp[1]:3 [ main::i#2 main::i#1 ] 
+Uplift Scope [file] 
+Uplift Scope [exit] 
+Uplift Scope [MENU_ITEM] 
+Uplift Scope [] 
+
+Uplifting [main] best 651 combination reg byte a [ main::$2 ] zp[1]:3 [ main::i#2 main::i#1 ] 
+Uplifting [file] best 651 combination 
+Uplifting [exit] best 651 combination 
+Uplifting [MENU_ITEM] best 651 combination 
+Uplifting [] best 651 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::i#2 main::i#1 ]
+Uplifting [main] best 651 combination zp[1]:3 [ main::i#2 main::i#1 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ main::i#2 main::i#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-function.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_MENU_ITEM_CODE = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label i = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<2) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #2
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::$2 = main::i#2 << 2 -- vbuaa=vbuz1_rol_2 
+    lda.z i
+    asl
+    asl
+    // [5] callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2])  -- call__deref_(qprc1_derefidx_vbuaa) 
+    tay
+    lda menu+OFFSET_STRUCT_MENU_ITEM_CODE,y
+    sta !+ +1
+    lda menu+OFFSET_STRUCT_MENU_ITEM_CODE+1,y
+    sta !+ +2
+  !:
+    jsr 0
+    jmp __b3
+    // main::@3
+  __b3:
+    // [6] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  __b1_from___b3:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // exit
+exit: {
+    // [7] *(SCREEN+1) = 'x' -- _deref_pbuc1=vbuc2 
+    lda #'x'
+    sta SCREEN+1
+    jmp __breturn
+    // exit::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // file
+file: {
+    // [9] *SCREEN = 'f' -- _deref_pbuc1=vbuc2 
+    lda #'f'
+    sta SCREEN
+    jmp __breturn
+    // file::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+.segment Data
+  menu: .word menu_item_text, file, menu_item_text1, exit
+  menu_item_text: .text "File"
+  .byte 0
+  menu_item_text1: .text "Exit"
+  .byte 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char OFFSET_STRUCT_MENU_ITEM_CODE = 2
+__constant char * const SCREEN = (char *) 1024
+void exit()
+void file()
+void main()
+char main::$2 // reg byte a 110.0
+char main::i
+char main::i#1 // i zp[1]:2 22.0
+char main::i#2 // i zp[1]:2 14.666666666666666
+__constant struct MENU_ITEM menu[] = { { text: menu_item_text, code: &file }, { text: menu_item_text1, code: &exit } }
+__constant char menu_item_text[5] = "File"
+__constant char menu_item_text1[5] = "Exit"
+
+zp[1]:2 [ main::i#2 main::i#1 ]
+reg byte a [ main::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 555
+
+  // File Comments
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="struct-function.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_MENU_ITEM_CODE = 2
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label i = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // main::@1
+  __b1:
+    // for(char i=0;i<2;i++)
+    // [2] if(main::i#2<2) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #2
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // (*(menu[i].code))()
+    // [4] main::$2 = main::i#2 << 2 -- vbuaa=vbuz1_rol_2 
+    lda.z i
+    asl
+    asl
+    // [5] callexecute *(((void (**)())menu+OFFSET_STRUCT_MENU_ITEM_CODE)[main::$2])  -- call__deref_(qprc1_derefidx_vbuaa) 
+    tay
+    lda menu+OFFSET_STRUCT_MENU_ITEM_CODE,y
+    sta !+ +1
+    lda menu+OFFSET_STRUCT_MENU_ITEM_CODE+1,y
+    sta !+ +2
+  !:
+    jsr 0
+    // main::@3
+    // for(char i=0;i<2;i++)
+    // [6] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // exit
+exit: {
+    // SCREEN[1] = 'x'
+    // [7] *(SCREEN+1) = 'x' -- _deref_pbuc1=vbuc2 
+    lda #'x'
+    sta SCREEN+1
+    // exit::@return
+    // }
+    // [8] return 
+    rts
+}
+  // file
+file: {
+    // SCREEN[0] = 'f'
+    // [9] *SCREEN = 'f' -- _deref_pbuc1=vbuc2 
+    lda #'f'
+    sta SCREEN
+    // file::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+.segment Data
+  menu: .word menu_item_text, file, menu_item_text1, exit
+  menu_item_text: .text "File"
+  .byte 0
+  menu_item_text1: .text "Exit"
+  .byte 0
+

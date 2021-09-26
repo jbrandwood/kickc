@@ -1,5 +1,15 @@
 #pragma var_model(mem)
-#pragma zp_reserve(0x91, 0x99, 0xa0, 0xa1, 0xa2, 0xc0, 0xc5, 0xc6, 0xcb, 0xcc )
+
+#pragma zp_reserve(0x73..0x8a)  // CHRGET routine: fetches next character of BASIC program text
+#pragma zp_reserve(0x91)        // Keyboard Flag. 127 = STOP , 223 = C= , 239 = SPACE , 251 = CTRL , 255 = no key pressed
+#pragma zp_reserve(0x99)        // Current input device: defaults to 0 = keyboard
+#pragma zp_reserve(0xa0..0xa2)  // Software jiffy clock, updated by KERNAL IRQ every 1/60 second
+#pragma zp_reserve(0xc0)        // Cassette motor flag 0 = off, 1 = on
+#pragma zp_reserve(0xc5)        // Matrix coordinate of last pressed key, 64 = none
+#pragma zp_reserve(0xc6)        // Number of characters in keyboard buffer
+#pragma zp_reserve(0xcb)        // Index to keyboard decoding table for currently pressed key, 64 = no key was depressed
+#pragma zp_reserve(0xcc)        // Flash cursor flag 0 = yes, otherwise no
+#pragma zp_reserve(0xd0) 	    // Input from 0 = keyboard or 3 = screen
 
 #include <6502.h>
 #include <c64.h>

@@ -77,9 +77,9 @@
   /// $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // X sine index
-  .label sin_idx_x = $12
+  .label sin_idx_x = $16
   // Y sine index
-  .label sin_idx_y = $14
+  .label sin_idx_y = $18
 .segment Code
 __start: {
     // volatile unsigned int sin_idx_x = 119
@@ -98,14 +98,14 @@ __start: {
 // VSYNC Interrupt Routine
 irq_vsync: {
     .const vram_sprite_attr_bank = <VERA_SPRITE_ATTR>>$10
-    .label __11 = $16
-    .label __12 = $18
-    .label i_x = 3
-    .label i_y = 5
-    .label vram_sprite_pos = 7
-    .label s = 2
-    .label __13 = $16
-    .label __14 = $18
+    .label __11 = $f
+    .label __12 = $11
+    .label i_x = $d
+    .label i_y = $b
+    .label vram_sprite_pos = $14
+    .label s = $13
+    .label __13 = $f
+    .label __14 = $11
     // if(++sin_idx_x==SINX_LEN)
     inc.z sin_idx_x
     bne !+
@@ -285,8 +285,8 @@ irq_vsync: {
 }
 main: {
     // Copy 8* sprite attributes to VRAM    
-    .label vram_sprite_attr = $a
-    .label s = 9
+    .label vram_sprite_attr = 9
+    .label s = 8
     // memcpy_to_vram(BYTE2(SPRITE_PIXELS_VRAM), (char*)WORD0(SPRITE_PIXELS_VRAM), SPRITE_PIXELS, 64*64)
   // Copy sprite data to VRAM
     lda #<$40*$40
@@ -403,13 +403,13 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
-// void memcpy_to_vram(__register(X) char vbank, __zp($c) void *vdest, __zp($e) void *src, __zp($10) unsigned int num)
+// void memcpy_to_vram(__register(X) char vbank, __zp(6) void *vdest, __zp(2) void *src, __zp(4) unsigned int num)
 memcpy_to_vram: {
-    .label end = $10
-    .label s = $e
-    .label vdest = $c
-    .label src = $e
-    .label num = $10
+    .label end = 4
+    .label s = 2
+    .label vdest = 6
+    .label src = 2
+    .label num = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

@@ -21,15 +21,15 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $1b
+  .label conio_cursor_x = $27
   // The current cursor y-position
-  .label conio_cursor_y = $1c
+  .label conio_cursor_y = $2c
   // The current text cursor line start
-  .label conio_line_text = $1d
+  .label conio_line_text = $28
   // The current color cursor line start
-  .label conio_line_color = $1f
+  .label conio_line_color = $2a
   // The number of found solutions
-  .label count = 2
+  .label count = $2f
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -176,12 +176,12 @@ main: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __5 = $25
-    .label __6 = $21
-    .label __7 = $21
-    .label line_offset = $21
-    .label __8 = $23
-    .label __9 = $21
+    .label __5 = $21
+    .label __6 = $1c
+    .label __7 = $1c
+    .label line_offset = $1c
+    .label __8 = $1f
+    .label __9 = $1c
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -277,8 +277,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = $f
-    .label line_cols = $13
+    .label line_text = $15
+    .label line_cols = 3
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -346,10 +346,10 @@ clrscr: {
     jmp __b3
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp($f) void (*putc)(char), __zp($13) const char *s)
+// void printf_str(__zp($15) void (*putc)(char), __zp(3) const char *s)
 printf_str: {
-    .label s = $13
-    .label putc = $f
+    .label s = 3
+    .label putc = $15
   __b1:
     // while(c=*s++)
     ldy #0
@@ -414,7 +414,7 @@ printf_uint: {
 // When all columns on a row is exhausted move back down to the lower level and move forward one position until we are done with the last position on the first row
 queens: {
     // The current row where the queen is moving
-    .label row = $a
+    .label row = $1e
     lda #<0
     sta.z count
     sta.z count+1
@@ -480,9 +480,9 @@ queens: {
     rts
 }
 // Print an unsigned int using a specific format
-// void printf_ulong(void (*putc)(char), __zp(6) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_ulong(void (*putc)(char), __zp(8) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_ulong: {
-    .label uvalue = 6
+    .label uvalue = 8
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -590,13 +590,13 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($f) unsigned int value, __zp($13) char *buffer, char radix)
+// void utoa(__zp($15) unsigned int value, __zp(3) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $28
-    .label buffer = $13
-    .label digit = $a
-    .label value = $f
+    .label digit_value = 6
+    .label buffer = 3
+    .label digit = $1e
+    .label value = $15
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -667,15 +667,15 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__zp($f) void (*putc)(char), __zp($e) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($b) char format_justify_left, char format_sign_always, __zp($d) char format_zero_padding, __zp($17) char format_upper_case, char format_radix)
+// void printf_number_buffer(__zp($15) void (*putc)(char), __zp($17) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($19) char format_justify_left, char format_sign_always, __zp($18) char format_zero_padding, __zp($12) char format_upper_case, char format_radix)
 printf_number_buffer: {
-    .label __19 = $19
-    .label buffer_sign = $e
-    .label padding = $18
-    .label format_zero_padding = $d
-    .label putc = $f
-    .label format_justify_left = $b
-    .label format_upper_case = $17
+    .label __19 = $c
+    .label buffer_sign = $17
+    .label padding = $14
+    .label format_zero_padding = $18
+    .label putc = $15
+    .label format_justify_left = $19
+    .label format_upper_case = $12
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -781,11 +781,11 @@ printf_number_buffer: {
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
-// __register(A) char legal(__zp($a) char row, __zp($27) char column)
+// __register(A) char legal(__zp($1e) char row, __zp($1a) char column)
 legal: {
-    .label row = $a
-    .label column = $27
-    .label diff1_return = $b
+    .label row = $1e
+    .label column = $1a
+    .label diff1_return = $19
     ldy #1
   __b1:
     // row-1
@@ -848,9 +848,9 @@ legal: {
 }
 // Print the board with a legal placement.
 print: {
-    .label i = $27
-    .label i1 = $c
-    .label j = $d
+    .label i = $1a
+    .label i1 = $1b
+    .label j = $18
     // gotoxy(0,5)
     ldx #5
     jsr gotoxy
@@ -979,12 +979,12 @@ print: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void ultoa(__zp(6) unsigned long value, __zp($f) char *buffer, char radix)
+// void ultoa(__zp(8) unsigned long value, __zp($15) char *buffer, char radix)
 ultoa: {
-    .label digit_value = $2a
-    .label buffer = $f
-    .label digit = $e
-    .label value = 6
+    .label digit_value = $e
+    .label buffer = $15
+    .label digit = $17
+    .label value = 8
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1066,13 +1066,13 @@ ultoa: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($30) void *destination, __zp($11) void *source, unsigned int num)
+// void * memcpy(__zp($25) void *destination, __zp($23) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $2e
-    .label dst = $30
-    .label src = $11
-    .label source = $11
-    .label destination = $30
+    .label src_end = $2d
+    .label dst = $25
+    .label src = $23
+    .label source = $23
+    .label destination = $25
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -1108,11 +1108,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($11) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp($23) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $30
-    .label dst = $11
-    .label str = $11
+    .label end = $25
+    .label dst = $23
+    .label str = $23
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -1151,12 +1151,12 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($f) unsigned int utoa_append(__zp($13) char *buffer, __zp($f) unsigned int value, __zp($28) unsigned int sub)
+// __zp($15) unsigned int utoa_append(__zp(3) char *buffer, __zp($15) unsigned int value, __zp(6) unsigned int sub)
 utoa_append: {
-    .label buffer = $13
-    .label value = $f
-    .label sub = $28
-    .label return = $f
+    .label buffer = 3
+    .label value = $15
+    .label sub = 6
+    .label return = $15
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1188,11 +1188,11 @@ utoa_append: {
     jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// __zp($19) unsigned int strlen(__zp($13) char *str)
+// __zp($c) unsigned int strlen(__zp(3) char *str)
 strlen: {
-    .label len = $19
-    .label str = $13
-    .label return = $19
+    .label len = $c
+    .label str = 3
+    .label return = $c
     lda #<0
     sta.z len
     sta.z len+1
@@ -1222,12 +1222,12 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// void printf_padding(__zp($f) void (*putc)(char), __zp($15) char pad, __zp($32) char length)
+// void printf_padding(__zp($15) void (*putc)(char), __zp($13) char pad, __zp(2) char length)
 printf_padding: {
-    .label i = $16
-    .label putc = $f
-    .label length = $32
-    .label pad = $15
+    .label i = 5
+    .label putc = $15
+    .label length = 2
+    .label pad = $13
     lda #0
     sta.z i
   __b1:
@@ -1253,7 +1253,7 @@ printf_padding: {
 // char * strupr(char *str)
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $28
+    .label src = 6
     lda #<str
     sta.z src
     lda #>str
@@ -1317,12 +1317,12 @@ printf_uchar: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(6) unsigned long ultoa_append(__zp($f) char *buffer, __zp(6) unsigned long value, __zp($2a) unsigned long sub)
+// __zp(8) unsigned long ultoa_append(__zp($15) char *buffer, __zp(8) unsigned long value, __zp($e) unsigned long sub)
 ultoa_append: {
-    .label buffer = $f
-    .label value = 6
-    .label sub = $2a
-    .label return = 6
+    .label buffer = $15
+    .label value = 8
+    .label sub = $e
+    .label return = 8
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1391,12 +1391,12 @@ toupper: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp($19) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp($c) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $32
-    .label buffer = $19
-    .label digit = $17
-    .label started = $18
+    .label digit_value = 2
+    .label buffer = $c
+    .label digit = $12
+    .label started = $14
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1460,10 +1460,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($19) char *buffer, __register(X) char value, __zp($32) char sub)
+// __register(X) char uctoa_append(__zp($c) char *buffer, __register(X) char value, __zp(2) char sub)
 uctoa_append: {
-    .label buffer = $19
-    .label sub = $32
+    .label buffer = $c
+    .label sub = 2
     ldy #0
   __b1:
     // while (value >= sub)

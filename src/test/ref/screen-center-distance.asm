@@ -39,8 +39,8 @@ main: {
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
     .label BASE_SCREEN = $400
     .label BASE_CHARSET = $1000
-    .label __4 = $c
-    .label cyclecount = $c
+    .label __4 = $15
+    .label cyclecount = $15
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -75,15 +75,15 @@ main: {
     rts
 }
 // Make charset from proto chars
-// void init_font_hex(__zp(5) char *charset)
+// void init_font_hex(__zp($10) char *charset)
 init_font_hex: {
-    .label __0 = $10
-    .label idx = 9
-    .label proto_lo = $a
-    .label charset = 5
-    .label c1 = 7
-    .label proto_hi = 3
-    .label c = 2
+    .label __0 = $e
+    .label idx = $d
+    .label proto_lo = 2
+    .label charset = $10
+    .label c1 = $f
+    .label proto_hi = $12
+    .label c = $14
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO
@@ -212,14 +212,14 @@ clock_start: {
 // The actual value stored is distance*2 to increase precision
 // void init_dist_screen(char *screen)
 init_dist_screen: {
-    .label yds = $11
-    .label screen_topline = 3
-    .label screen_bottomline = 5
-    .label y = 2
-    .label xds = $13
-    .label ds = $13
-    .label x = 7
-    .label xb = 9
+    .label yds = $b
+    .label screen_topline = $12
+    .label screen_bottomline = $10
+    .label y = $14
+    .label xds = 9
+    .label ds = 9
+    .label x = $f
+    .label xb = $d
     // init_squares()
     jsr init_squares
     lda #<SCREEN+$28*$18
@@ -334,7 +334,7 @@ init_dist_screen: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $c
+    .label return = $15
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Stop the timer
     lda #0
@@ -361,9 +361,9 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// void print_ulong_at(__zp($c) unsigned long dw, char *at)
+// void print_ulong_at(__zp($15) unsigned long dw, char *at)
 print_ulong_at: {
-    .label dw = $c
+    .label dw = $15
     // print_uint_at(WORD1(dw), at)
     lda.z dw+2
     sta.z print_uint_at.w
@@ -390,8 +390,8 @@ print_ulong_at: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $13
-    .label sqr = $a
+    .label squares = 9
+    .label sqr = 2
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     jsr malloc
     lda #<SQUARES
@@ -443,10 +443,10 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// __zp($13) unsigned int sqr(__register(A) char val)
+// __zp(9) unsigned int sqr(__register(A) char val)
 sqr: {
-    .label return = $13
-    .label return_1 = $11
+    .label return = 9
+    .label return_1 = $b
     // return SQUARES[val];
     asl
     tay
@@ -460,12 +460,12 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// __register(A) char sqrt(__zp($13) unsigned int val)
+// __register(A) char sqrt(__zp(9) unsigned int val)
 sqrt: {
-    .label __1 = $a
-    .label __2 = $a
-    .label found = $a
-    .label val = $13
+    .label __1 = 2
+    .label __2 = 2
+    .label found = 2
+    .label val = 9
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     jsr bsearch16u
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -485,10 +485,10 @@ sqrt: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// void print_uint_at(__zp($13) unsigned int w, __zp($a) char *at)
+// void print_uint_at(__zp(9) unsigned int w, __zp(2) char *at)
 print_uint_at: {
-    .label w = $13
-    .label at = $a
+    .label w = 9
+    .label at = 2
     // print_uchar_at(BYTE1(w), at)
     lda.z w+1
     sta.z print_uchar_at.b
@@ -521,14 +521,14 @@ malloc: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// __zp($a) unsigned int * bsearch16u(__zp($13) unsigned int key, __zp($a) unsigned int *items, __register(X) char num)
+// __zp(2) unsigned int * bsearch16u(__zp(9) unsigned int key, __zp(2) unsigned int *items, __register(X) char num)
 bsearch16u: {
-    .label __2 = $a
-    .label pivot = $15
-    .label result = $17
-    .label return = $a
-    .label items = $a
-    .label key = $13
+    .label __2 = 2
+    .label pivot = 6
+    .label result = 4
+    .label return = 2
+    .label items = 2
+    .label key = 9
     lda #<SQUARES
     sta.z items
     lda #>SQUARES
@@ -615,10 +615,10 @@ bsearch16u: {
     jmp __b3
 }
 // Print a char as HEX at a specific position
-// void print_uchar_at(__zp($10) char b, __zp($a) char *at)
+// void print_uchar_at(__zp($e) char b, __zp(2) char *at)
 print_uchar_at: {
-    .label b = $10
-    .label at = $a
+    .label b = $e
+    .label at = 2
     // b>>4
     lda.z b
     lsr
@@ -652,9 +652,9 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp($11) char *at)
+// void print_char_at(__register(X) char ch, __zp($b) char *at)
 print_char_at: {
-    .label at = $11
+    .label at = $b
     // *(at) = ch
     txa
     ldy #0

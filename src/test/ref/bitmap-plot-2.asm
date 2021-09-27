@@ -89,9 +89,9 @@
   .label BITMAP = $2000
   .label SCREEN = $400
   // Counts frames - updated by the IRQ
-  .label frame_cnt = $1b
+  .label frame_cnt = $30
   // Remainder after unsigned 16-bit division
-  .label rem16u = $2f
+  .label rem16u = $20
 .segment Code
 __start: {
     // volatile byte frame_cnt = 1
@@ -126,24 +126,24 @@ irq: {
 }
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __7 = $1c
-    .label __11 = $1e
-    .label __26 = $d
-    .label __27 = $d
-    .label __28 = $1c
-    .label __29 = $1e
-    .label cos_x = $d
-    .label xpos = $f
-    .label x = $1c
-    .label sin_y = $d
-    .label ypos = $f
-    .label y = $1e
-    .label idx_x = 2
-    .label idx_y = 6
-    .label r = 4
-    .label r_add = 8
-    .label __30 = $d
-    .label __31 = $d
+    .label __7 = $10
+    .label __11 = $1a
+    .label __26 = $1e
+    .label __27 = $1e
+    .label __28 = $10
+    .label __29 = $1a
+    .label cos_x = $1e
+    .label xpos = 2
+    .label x = $10
+    .label sin_y = $1e
+    .label ypos = 2
+    .label y = $1a
+    .label idx_x = $2c
+    .label idx_y = $2e
+    .label r = $16
+    .label r_add = $2b
+    .label __30 = $1e
+    .label __31 = $1e
     // sin16s_gen2(SINE, 512, -0x1001, 0x1001)
     jsr sin16s_gen2
     // bitmap_init(BITMAP, SCREEN)
@@ -348,20 +348,20 @@ main: {
 // Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// void sin16s_gen2(__zp($17) int *sintab, unsigned int wavelength, int min, int max)
+// void sin16s_gen2(__zp($1c) int *sintab, unsigned int wavelength, int min, int max)
 sin16s_gen2: {
     .const min = -$1001
     .const max = $1001
     .const ampl = max-min
     .label wavelength = $200
-    .label __6 = $f
-    .label __8 = $25
-    .label step = $20
-    .label sintab = $17
+    .label __6 = 2
+    .label __8 = $c
+    .label step = $26
+    .label sintab = $1c
     // u[4.28]
     // Iterate over the table
-    .label x = 9
-    .label i = $1e
+    .label x = $22
+    .label i = $1a
     // unsigned long step = div32u16u(PI2_u4f28, wavelength)
   // ampl is always positive so shifting left does not alter the sign
   // u[4.28] step = PI*2/wavelength
@@ -456,8 +456,8 @@ sin16s_gen2: {
 // Initialize bitmap plotting tables
 // void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
-    .label __7 = $24
-    .label yoffs = $1e
+    .label __7 = $2a
+    .label yoffs = $1a
     ldx #0
     lda #$80
   __b1:
@@ -584,16 +584,16 @@ init_irq: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// __zp($f) long mul16s(__zp(4) int a, __zp($d) int b)
+// __zp(2) long mul16s(__zp($16) int a, __zp($1e) int b)
 mul16s: {
-    .label __6 = $2d
-    .label __9 = $2b
-    .label __11 = $2d
-    .label __12 = $2b
-    .label a = 4
-    .label return = $f
-    .label m = $f
-    .label b = $d
+    .label __6 = $a
+    .label __9 = $18
+    .label __11 = $a
+    .label __12 = $18
+    .label a = $16
+    .label return = 2
+    .label m = 2
+    .label b = $1e
     // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -652,11 +652,11 @@ mul16s: {
     rts
 }
 // Plot a single dot in the bitmap
-// void bitmap_plot(__zp($1c) unsigned int x, __register(X) char y)
+// void bitmap_plot(__zp($10) unsigned int x, __register(X) char y)
 bitmap_plot: {
-    .label __1 = $2d
-    .label plotter = $25
-    .label x = $1c
+    .label __1 = $a
+    .label plotter = $c
+    .label x = $10
     // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -689,11 +689,11 @@ bitmap_plot: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
-// __zp($20) unsigned long div32u16u(unsigned long dividend, unsigned int divisor)
+// __zp($26) unsigned long div32u16u(unsigned long dividend, unsigned int divisor)
 div32u16u: {
-    .label return = $20
-    .label quotient_hi = $2b
-    .label quotient_lo = $1c
+    .label return = $26
+    .label quotient_hi = $18
+    .label quotient_lo = $10
     // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -734,20 +734,20 @@ div32u16u: {
 // Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// __zp(4) int sin16s(__zp($13) unsigned long x)
+// __zp($16) int sin16s(__zp($12) unsigned long x)
 sin16s: {
-    .label __4 = $27
-    .label x = $13
-    .label return = 4
-    .label x1 = $2b
-    .label x2 = $19
-    .label x3 = $19
-    .label x3_6 = $2d
-    .label usinx = 4
-    .label x4 = $19
-    .label x5 = $2d
-    .label x5_128 = $2d
-    .label sinx = 4
+    .label __4 = 6
+    .label x = $12
+    .label return = $16
+    .label x1 = $18
+    .label x2 = $e
+    .label x3 = $e
+    .label x3_6 = $a
+    .label usinx = $16
+    .label x4 = $e
+    .label x5 = $a
+    .label x5_128 = $a
+    .label sinx = $16
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -947,12 +947,12 @@ sin16s: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($25) void *str, __register(X) char c, __zp($17) unsigned int num)
+// void * memset(__zp($c) void *str, __register(X) char c, __zp($1c) unsigned int num)
 memset: {
-    .label end = $17
-    .label dst = $25
-    .label num = $17
-    .label str = $25
+    .label end = $1c
+    .label dst = $c
+    .label num = $1c
+    .label str = $c
     // if(num>0)
     lda.z num
     bne !+
@@ -991,13 +991,13 @@ memset: {
     jmp __b2
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// __zp($f) unsigned long mul16u(__zp($2d) unsigned int a, __zp($25) unsigned int b)
+// __zp(2) unsigned long mul16u(__zp($a) unsigned int a, __zp($c) unsigned int b)
 mul16u: {
-    .label a = $2d
-    .label b = $25
-    .label return = $f
-    .label mb = $27
-    .label res = $f
+    .label a = $a
+    .label b = $c
+    .label return = 2
+    .label mb = 6
+    .label res = 2
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -1055,12 +1055,12 @@ mul16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($1c) unsigned int divr16u(__zp($19) unsigned int dividend, unsigned int divisor, __zp($2d) unsigned int rem)
+// __zp($10) unsigned int divr16u(__zp($e) unsigned int dividend, unsigned int divisor, __zp($a) unsigned int rem)
 divr16u: {
-    .label rem = $2d
-    .label dividend = $19
-    .label quotient = $1c
-    .label return = $1c
+    .label rem = $a
+    .label dividend = $e
+    .label quotient = $10
+    .label return = $10
     ldx #0
     txa
     sta.z quotient
@@ -1124,14 +1124,14 @@ divr16u: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// __zp($2d) unsigned int mulu16_sel(__zp($19) unsigned int v1, __zp($25) unsigned int v2, __register(X) char select)
+// __zp($a) unsigned int mulu16_sel(__zp($e) unsigned int v1, __zp($c) unsigned int v2, __register(X) char select)
 mulu16_sel: {
-    .label __0 = $f
-    .label __1 = $f
-    .label v1 = $19
-    .label v2 = $25
-    .label return = $2d
-    .label return_1 = $19
+    .label __0 = 2
+    .label __1 = 2
+    .label v1 = $e
+    .label v2 = $c
+    .label return = $a
+    .label return_1 = $e
     // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a

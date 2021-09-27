@@ -40,20 +40,20 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $d
+  .label conio_cursor_x = $13
   // The current cursor y-position
-  .label conio_cursor_y = $e
+  .label conio_cursor_y = $10
   // The current text cursor line start
-  .label conio_line_text = $f
+  .label conio_line_text = $11
   // The current color cursor line start
-  .label conio_line_color = $11
+  .label conio_line_color = $e
   // The current text color
-  .label conio_textcolor = $13
+  .label conio_textcolor = $15
   // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
   // If disabled the cursor just moves back to (0,0) instead
   .label conio_scroll_enable = $14
-  .label XSize = $15
-  .label YSize = $16
+  .label XSize = $20
+  .label YSize = $21
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -126,12 +126,12 @@ main: {
 // Set the cursor to the specified position
 // void gotoxy(__register(X) char x, __register(A) char y)
 gotoxy: {
-    .label __5 = $1b
-    .label __6 = $17
-    .label __7 = $17
-    .label line_offset = $17
-    .label __8 = $19
-    .label __9 = $17
+    .label __5 = $c
+    .label __6 = 8
+    .label __7 = 8
+    .label line_offset = 8
+    .label __8 = $a
+    .label __9 = 8
     // if(y>CONIO_HEIGHT)
     cmp #$19+1
     bcc __b1
@@ -215,9 +215,9 @@ screensize: {
     rts
 }
 MakeNiceScreen: {
-    .label __22 = 5
-    .label T = 3
-    .label I = 2
+    .label __22 = $18
+    .label T = $1e
+    .label I = $1d
     // scroll(0)
     // disable scrolling
     jsr scroll
@@ -396,8 +396,8 @@ kbhit: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 9
-    .label line_cols = 5
+    .label line_text = $16
+    .label line_cols = $18
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -521,10 +521,10 @@ cputcxy: {
     rts
 }
 // Output a horizontal line with the given length starting at the current cursor position.
-// void chline(__zp(7) char length)
+// void chline(__zp($1b) char length)
 chline: {
-    .label i = 8
-    .label length = 7
+    .label i = $1a
+    .label length = $1b
     lda #0
     sta.z i
   __b1:
@@ -600,11 +600,11 @@ MakeTeeLine: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// __zp(5) unsigned int strlen(__zp(9) char *str)
+// __zp($18) unsigned int strlen(__zp($16) char *str)
 strlen: {
-    .label len = 5
-    .label str = 9
-    .label return = 5
+    .label len = $18
+    .label str = $16
+    .label return = $18
     lda #<0
     sta.z len
     sta.z len+1
@@ -631,9 +631,9 @@ strlen: {
 }
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-// void cputsxy(__register(X) char x, __register(A) char y, __zp(9) const char *s)
+// void cputsxy(__register(X) char x, __register(A) char y, __zp($16) const char *s)
 cputsxy: {
-    .label s = 9
+    .label s = $16
     // gotoxy(x, y)
     jsr gotoxy
     // cputs(s)
@@ -673,9 +673,9 @@ cputln: {
 // void cvline(char length)
 cvline: {
     .const length = $17
-    .label x = $1d
-    .label y = 8
-    .label i = 7
+    .label x = $1c
+    .label y = $1a
+    .label i = $1b
     // char x = conio_cursor_x
     lda.z conio_cursor_x
     sta.z x
@@ -706,9 +706,9 @@ cvline: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// void cputs(__zp(9) const char *s)
+// void cputs(__zp($16) const char *s)
 cputs: {
-    .label s = 9
+    .label s = $16
   __b1:
     // while(c=*s++)
     ldy #0
@@ -799,13 +799,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($20) void *destination, __zp($b) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1e
-    .label dst = $20
-    .label src = $b
-    .label source = $b
-    .label destination = $20
+    .label src_end = 6
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -841,11 +841,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($b) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $20
-    .label dst = $b
-    .label str = $b
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc

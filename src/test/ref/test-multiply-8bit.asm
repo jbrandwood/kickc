@@ -13,8 +13,8 @@
 :BasicUpstart(main)
   .label BG_COLOR = $d021
   .label print_screen = $400
-  .label print_char_cursor = $e
-  .label print_line_cursor = 8
+  .label print_char_cursor = $b
+  .label print_line_cursor = $f
 .segment Code
 main: {
     // *BG_COLOR = 5
@@ -45,17 +45,17 @@ print_cls: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 4
+    .label c = 8
     // Counter used for determining x%2==0
-    .label sqr1_hi = 2
+    .label sqr1_hi = 6
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = 8
-    .label sqr1_lo = $a
+    .label sqr = $f
+    .label sqr1_lo = 2
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 6
-    .label sqr2_lo = $c
+    .label sqr2_hi = $d
+    .label sqr2_lo = 4
     //Start with g(0)=f(255)
-    .label dir = 5
+    .label dir = $12
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -243,8 +243,8 @@ mulf_init_asm: {
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 mulf_tables_cmp: {
-    .label asm_sqr = 2
-    .label kc_sqr = $a
+    .label asm_sqr = 6
+    .label kc_sqr = 2
     lda #<mula_sqr1_lo
     sta.z asm_sqr
     lda #>mula_sqr1_lo
@@ -346,11 +346,11 @@ mulf_tables_cmp: {
 .segment Code
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
-    .label ms = 2
-    .label mf = $10
-    .label mn = $a
-    .label b = 5
-    .label a = 4
+    .label ms = 6
+    .label mf = 9
+    .label mn = 2
+    .label b = $12
+    .label a = 8
     lda #0
     sta.z a
   __b1:
@@ -428,11 +428,11 @@ mul8u_compare: {
 .segment Code
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
-    .label ms = 2
-    .label mf = $10
-    .label mn = $a
-    .label a = 4
-    .label b = 5
+    .label ms = 6
+    .label mf = 9
+    .label mn = 2
+    .label a = 8
+    .label b = $12
     lda #-$80
     sta.z a
   __b1:
@@ -526,7 +526,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $c
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -554,9 +554,9 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// void print_str(__zp(6) char *str)
+// void print_str(__zp($d) char *str)
 print_str: {
-    .label str = 6
+    .label str = $d
   __b1:
     // while(*str)
     ldy #0
@@ -601,9 +601,9 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(2) unsigned int w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
-    .label w = 2
+    .label w = 6
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -615,11 +615,11 @@ print_uint: {
 }
 // Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
-// __zp(2) unsigned int muls8u(__zp(4) char a, __register(X) char b)
+// __zp(6) unsigned int muls8u(__zp(8) char a, __register(X) char b)
 muls8u: {
-    .label return = 2
-    .label m = 2
-    .label a = 4
+    .label return = 6
+    .label m = 6
+    .label a = 8
     // if(a!=0)
     lda.z a
     beq __b4
@@ -652,9 +652,9 @@ muls8u: {
     jmp __b2
 }
 // Fast multiply two unsigned chars to a unsigned int result
-// __zp($10) unsigned int mulf8u(__register(A) char a, __register(X) char b)
+// __zp(9) unsigned int mulf8u(__register(A) char a, __register(X) char b)
 mulf8u: {
-    .label return = $10
+    .label return = 9
     // mulf8u_prepare(a)
     jsr mulf8u_prepare
     // mulf8u_prepared(b)
@@ -665,11 +665,11 @@ mulf8u: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp($a) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label mb = $c
-    .label res = $a
-    .label return = $a
+    .label mb = 4
+    .label res = 2
+    .label return = 2
     // unsigned int mb = b
     sta.z mb
     lda #0
@@ -707,12 +707,12 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
-// void mul8u_error(__register(X) char a, __zp(5) char b, __zp(2) unsigned int ms, __zp($a) unsigned int mn, __zp($10) unsigned int mf)
+// void mul8u_error(__register(X) char a, __zp($12) char b, __zp(6) unsigned int ms, __zp(2) unsigned int mn, __zp(9) unsigned int mf)
 mul8u_error: {
-    .label b = 5
-    .label ms = 2
-    .label mn = $a
-    .label mf = $10
+    .label b = $12
+    .label ms = 6
+    .label mn = 2
+    .label mf = 9
     // print_str("multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -773,11 +773,11 @@ mul8u_error: {
 .segment Code
 // Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/subtraction
-// __zp(2) int muls8s(__zp(4) signed char a, __register(X) signed char b)
+// __zp(6) int muls8s(__zp(8) signed char a, __register(X) signed char b)
 muls8s: {
-    .label m = 2
-    .label return = 2
-    .label a = 4
+    .label m = 6
+    .label return = 6
+    .label a = 8
     // if(a<0)
     lda.z a
     bmi __b8
@@ -847,9 +847,9 @@ muls8s: {
     jmp __b5
 }
 // Fast multiply two signed chars to a unsigned int result
-// __zp($10) int mulf8s(__register(A) signed char a, __register(X) signed char b)
+// __zp(9) int mulf8s(__register(A) signed char a, __register(X) signed char b)
 mulf8s: {
-    .label return = $10
+    .label return = 9
     // mulf8u_prepare((char)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -860,10 +860,10 @@ mulf8s: {
 }
 // Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
-// int mul8s(__zp(4) signed char a, __register(Y) signed char b)
+// int mul8s(__zp(8) signed char a, __register(Y) signed char b)
 mul8s: {
-    .label m = $a
-    .label a = 4
+    .label m = 2
+    .label a = 8
     // unsigned int m = mul8u((char)a, (char) b)
     ldx.z a
     tya
@@ -894,12 +894,12 @@ mul8s: {
     // }
     rts
 }
-// void mul8s_error(__register(X) signed char a, __zp(5) signed char b, __zp(2) int ms, __zp($a) int mn, __zp($10) int mf)
+// void mul8s_error(__register(X) signed char a, __zp($12) signed char b, __zp(6) int ms, __zp(2) int mn, __zp(9) int mf)
 mul8s_error: {
-    .label b = 5
-    .label ms = 2
-    .label mn = $a
-    .label mf = $10
+    .label b = $12
+    .label ms = 6
+    .label mn = 2
+    .label mf = 9
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1016,11 +1016,11 @@ mulf8u_prepare: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8u_prepare(char a)
-// __zp($10) unsigned int mulf8u_prepared(__register(A) char b)
+// __zp(9) unsigned int mulf8u_prepared(__register(A) char b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = $10
+    .label return = 9
     // *memB = b
     sta memB
     // asm
@@ -1045,11 +1045,11 @@ mulf8u_prepared: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
-// int mulf8s_prepared(__zp($12) signed char b)
+// int mulf8s_prepared(__zp($11) signed char b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = $10
-    .label b = $12
+    .label m = 9
+    .label b = $11
     // unsigned int m = mulf8u_prepared((char) b)
     lda.z b
     jsr mulf8u_prepared
@@ -1106,9 +1106,9 @@ print_schar: {
     jmp __b2
 }
 // Print a signed int as HEX
-// void print_sint(__zp(2) int w)
+// void print_sint(__zp(6) int w)
 print_sint: {
-    .label w = 2
+    .label w = 6
     // if(w<0)
     lda.z w+1
     bmi __b1

@@ -78,13 +78,13 @@
   .label SCREEN = $400
 .segment Code
 main: {
-    .label sc = 2
-    .label i = 4
-    .label ch = 7
+    .label sc = $a
+    .label i = $c
+    .label ch = 8
     // Which char canvas to use
-    .label cur_pos = 5
+    .label cur_pos = 9
     // Is shift pressed
-    .label shift = 6
+    .label shift = $d
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -272,10 +272,10 @@ main: {
 }
 .segment Code
 // Print a string at a specific screen position
-// void print_str_at(__zp(8) char *str, __zp($c) char *at)
+// void print_str_at(__zp(6) char *str, __zp(3) char *at)
 print_str_at: {
-    .label at = $c
-    .label str = 8
+    .label at = 3
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -303,12 +303,12 @@ print_str_at: {
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // void plot_chargen(__register(Y) char pos, __register(A) char ch, __register(X) char shift)
 plot_chargen: {
-    .label __0 = 8
-    .label __15 = 8
-    .label chargen = 8
-    .label sc = $c
-    .label bits = $b
-    .label y = $a
+    .label __0 = 6
+    .label __15 = 6
+    .label chargen = 6
+    .label sc = 3
+    .label bits = 2
+    .label y = 5
     // asm
     sei
     // (unsigned int)ch*8

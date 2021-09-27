@@ -30,22 +30,22 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
-  .label heap_head = 3
+  .label heap_head = $18
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
-  .label SQUARES = 6
+  .label SQUARES = $14
   // Screen containing distance to center
-  .label SCREEN_DIST = $1d
+  .label SCREEN_DIST = $21
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $14
+  .label SCREEN_ANGLE = $2a
   // Array containing the bucket size for each of the distance buckets
-  .label BUCKET_SIZES = $16
+  .label BUCKET_SIZES = $26
   // Buckets containing screen indices for each distance from the center.
   // BUCKETS[dist] is an array of words containing screen indices.
   // The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
-  .label BUCKETS = $18
+  .label BUCKETS = $28
   // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
-  .label BUCKET_IDX = $1f
+  .label BUCKET_IDX = $23
 .segment Code
 __start: {
     // byte* SCREEN_DIST = malloc(1000)
@@ -112,10 +112,10 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// void * malloc(__zp(6) unsigned int size)
+// void * malloc(__zp($14) unsigned int size)
 malloc: {
-    .label mem = 6
-    .label size = 6
+    .label mem = $14
+    .label size = $14
     // unsigned char* mem = heap_head-size
     lda.z heap_head
     sec
@@ -133,18 +133,18 @@ malloc: {
     rts
 }
 main: {
-    .label bucket = $1a
-    .label bucket_size = $1c
+    .label bucket = 4
+    .label bucket_size = $1e
     // Animate a spiral walking through the buckets one at a time
-    .label bucket_idx = 2
-    .label offset = 6
-    .label fill = $1d
-    .label angle = $1f
+    .label bucket_idx = $25
+    .label offset = $14
+    .label fill = $21
+    .label angle = $23
     // Find the minimum unfilled angle in the current bucket
-    .label min_angle = 5
-    .label fill1 = 3
-    .label min_offset = 3
-    .label min_offset_1 = 6
+    .label min_angle = $1d
+    .label fill1 = $18
+    .label min_offset = $18
+    .label min_offset_1 = $14
     // asm
     sei
     // init_dist_screen(SCREEN_DIST)
@@ -303,17 +303,17 @@ main: {
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 // Utilizes symmetry around the center
-// void init_dist_screen(__zp($26) char *screen)
+// void init_dist_screen(__zp($1b) char *screen)
 init_dist_screen: {
-    .label screen = $26
-    .label screen_bottomline = 8
-    .label yds = $21
-    .label screen_topline = $26
-    .label y = $1c
-    .label xds = $23
-    .label ds = $23
-    .label x = $a
-    .label xb = $b
+    .label screen = $1b
+    .label screen_bottomline = $1f
+    .label yds = $16
+    .label screen_topline = $1b
+    .label y = $1e
+    .label xds = $10
+    .label ds = $10
+    .label x = $13
+    .label xb = $12
     // init_squares()
     jsr init_squares
     // byte *screen_bottomline = screen+40*24
@@ -427,19 +427,19 @@ init_dist_screen: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the center
-// void init_angle_screen(__zp(8) char *screen)
+// void init_angle_screen(__zp($1f) char *screen)
 init_angle_screen: {
-    .label __9 = $10
-    .label screen = 8
-    .label screen_bottomline = 8
-    .label xw = $21
-    .label yw = $23
-    .label angle_w = $10
-    .label ang_w = $25
-    .label x = $a
-    .label xb = $b
-    .label screen_topline = $26
-    .label y = $1c
+    .label __9 = 8
+    .label screen = $1f
+    .label screen_bottomline = $1f
+    .label xw = $16
+    .label yw = $10
+    .label angle_w = 8
+    .label ang_w = $1a
+    .label x = $13
+    .label xb = $12
+    .label screen_topline = $1b
+    .label y = $1e
     // byte* screen_topline = screen+40*12
     lda.z screen_bottomline
     clc
@@ -546,24 +546,24 @@ init_angle_screen: {
     jmp __b2
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
-// void init_buckets(__zp($1d) char *screen)
+// void init_buckets(__zp($21) char *screen)
 init_buckets: {
-    .label __4 = 6
-    .label __7 = $26
-    .label __11 = $28
-    .label __12 = $2a
-    .label __14 = $2a
-    .label screen = $1d
-    .label dist = $12
-    .label i1 = $1a
+    .label __4 = $14
+    .label __7 = $1b
+    .label __11 = $a
+    .label __12 = 6
+    .label __14 = 6
+    .label screen = $21
+    .label dist = 2
+    .label i1 = 4
     .label i2 = $c
-    .label distance = $25
-    .label bucket = $2a
+    .label distance = $1a
+    .label bucket = 6
     .label dist_1 = $e
-    .label i4 = $10
-    .label __15 = 6
-    .label __16 = $28
-    .label __17 = $2a
+    .label i4 = 8
+    .label __15 = $14
+    .label __16 = $a
+    .label __17 = 6
     ldy #0
   // Init bucket sizes to 0
   __b1:
@@ -746,8 +746,8 @@ init_buckets: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $1a
-    .label sqr = $12
+    .label squares = 4
+    .label sqr = 2
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     lda #<NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size
@@ -805,10 +805,10 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// __zp($23) unsigned int sqr(__register(A) char val)
+// __zp($10) unsigned int sqr(__register(A) char val)
 sqr: {
-    .label return = $23
-    .label return_1 = $21
+    .label return = $10
+    .label return_1 = $16
     // return SQUARES[val];
     asl
     tay
@@ -823,12 +823,12 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// __register(A) char sqrt(__zp($23) unsigned int val)
+// __register(A) char sqrt(__zp($10) unsigned int val)
 sqrt: {
-    .label __1 = $12
-    .label __2 = $12
-    .label found = $12
-    .label val = $23
+    .label __1 = 2
+    .label __2 = 2
+    .label found = 2
+    .label val = $10
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -854,18 +854,18 @@ sqrt: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($10) unsigned int atan2_16(__zp($21) int x, __zp($23) int y)
+// __zp(8) unsigned int atan2_16(__zp($16) int x, __zp($10) int y)
 atan2_16: {
     .label __2 = $c
     .label __7 = $e
     .label yi = $c
     .label xi = $e
-    .label angle = $10
-    .label xd = $1a
-    .label yd = $12
-    .label return = $10
-    .label x = $21
-    .label y = $23
+    .label angle = 8
+    .label xd = 4
+    .label yd = 2
+    .label return = 8
+    .label x = $16
+    .label y = $10
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -1070,14 +1070,14 @@ atan2_16: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// __zp($12) unsigned int * bsearch16u(__zp($23) unsigned int key, __zp($12) unsigned int *items, __register(X) char num)
+// __zp(2) unsigned int * bsearch16u(__zp($10) unsigned int key, __zp(2) unsigned int *items, __register(X) char num)
 bsearch16u: {
-    .label __2 = $12
-    .label pivot = $28
-    .label result = $2a
-    .label return = $12
-    .label items = $12
-    .label key = $23
+    .label __2 = 2
+    .label pivot = $a
+    .label result = 6
+    .label return = 2
+    .label items = 2
+    .label key = $10
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)

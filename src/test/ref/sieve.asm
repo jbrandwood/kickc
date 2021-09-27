@@ -41,24 +41,24 @@
   .label sieve = $1000
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $e
-  .label print_char_cursor = $a
-  .label print_line_cursor = $c
-  .label print_char_cursor_1 = $c
+  .label rem16u = $a
+  .label print_char_cursor = $10
+  .label print_line_cursor = $13
+  .label print_char_cursor_1 = $13
 .segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label toD0181_gfx = $1800
-    .label __10 = $11
-    .label __12 = $17
-    .label cyclecount = $11
-    .label sec100s = 4
-    .label i = $a
-    .label sieve_i = 2
-    .label j = 6
-    .label s = 8
-    .label i_1 = 4
-    .label __33 = $1b
+    .label __10 = 6
+    .label __12 = $1f
+    .label cyclecount = 6
+    .label sec100s = $1b
+    .label i = $10
+    .label sieve_i = $1d
+    .label j = $17
+    .label s = $19
+    .label i_1 = $1b
+    .label __33 = $15
     // *D018 = toD018(SCREEN, (char*)0x1800)
     //Show lower case font
     lda #toD0181_return
@@ -330,9 +330,9 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp($e) char *str)
+// void print_str(__zp($a) char *str)
 print_str: {
-    .label str = $e
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0
@@ -381,9 +381,9 @@ print_ln: {
     rts
 }
 // Print a unsigned int as DECIMAL
-// void print_uint_decimal(__zp(4) unsigned int w)
+// void print_uint_decimal(__zp($1b) unsigned int w)
 print_uint_decimal: {
-    .label w = 4
+    .label w = $1b
     // utoa(w, decimal_digits, DECIMAL)
     lda.z w
     sta.z utoa.value
@@ -400,12 +400,12 @@ print_uint_decimal: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($15) void *str, __register(X) char c, __zp($e) unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, __zp($a) unsigned int num)
 memset: {
-    .label end = $e
-    .label dst = $15
-    .label num = $e
-    .label str = $15
+    .label end = $a
+    .label dst = 2
+    .label num = $a
+    .label str = 2
     // if(num>0)
     lda.z num
     bne !+
@@ -474,7 +474,7 @@ clock_start: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $11
+    .label return = 6
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Stop the timer
     lda #0
@@ -502,13 +502,13 @@ clock: {
 }
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
-// __zp($17) unsigned long div32u16u(__zp($11) unsigned long dividend, unsigned int divisor)
+// __zp($1f) unsigned long div32u16u(__zp(6) unsigned long dividend, unsigned int divisor)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
-    .label quotient_hi = $1d
-    .label quotient_lo = $1b
-    .label return = $17
-    .label dividend = $11
+    .label quotient_hi = 4
+    .label quotient_lo = $15
+    .label return = $1f
+    .label dividend = 6
     // unsigned int quotient_hi = divr16u(WORD1(dividend), divisor, 0)
     lda.z dividend+2
     sta.z divr16u.dividend
@@ -543,9 +543,9 @@ div32u16u: {
     rts
 }
 // Print a unsigned long as DECIMAL
-// void print_ulong_decimal(__zp($11) unsigned long w)
+// void print_ulong_decimal(__zp(6) unsigned long w)
 print_ulong_decimal: {
-    .label w = $11
+    .label w = 6
     // ultoa(w, decimal_digits_long, DECIMAL)
     jsr ultoa
     // print_str(decimal_digits_long)
@@ -579,13 +579,13 @@ print_char: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($15) unsigned int value, __zp($e) char *buffer, char radix)
+// void utoa(__zp(2) unsigned int value, __zp($a) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label value = $15
-    .label digit_value = $1d
-    .label buffer = $e
-    .label digit = $10
+    .label value = 2
+    .label digit_value = 4
+    .label buffer = $a
+    .label digit = $12
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -654,12 +654,12 @@ utoa: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($1b) unsigned int divr16u(__zp($15) unsigned int dividend, unsigned int divisor, __zp($e) unsigned int rem)
+// __zp($15) unsigned int divr16u(__zp(2) unsigned int dividend, unsigned int divisor, __zp($a) unsigned int rem)
 divr16u: {
-    .label rem = $e
-    .label dividend = $15
-    .label quotient = $1b
-    .label return = $1b
+    .label rem = $a
+    .label dividend = 2
+    .label quotient = $15
+    .label return = $15
     ldx #0
     txa
     sta.z quotient
@@ -722,13 +722,13 @@ divr16u: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void ultoa(__zp($11) unsigned long value, __zp($15) char *buffer, char radix)
+// void ultoa(__zp(6) unsigned long value, __zp(2) char *buffer, char radix)
 ultoa: {
     .const max_digits = $a
-    .label value = $11
-    .label digit_value = $1f
-    .label buffer = $15
-    .label digit = $10
+    .label value = 6
+    .label digit_value = $c
+    .label buffer = 2
+    .label digit = $12
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long
@@ -816,12 +816,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($15) unsigned int utoa_append(__zp($e) char *buffer, __zp($15) unsigned int value, __zp($1d) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp($a) char *buffer, __zp(2) unsigned int value, __zp(4) unsigned int sub)
 utoa_append: {
-    .label buffer = $e
-    .label value = $15
-    .label sub = $1d
-    .label return = $15
+    .label buffer = $a
+    .label value = 2
+    .label sub = 4
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)
@@ -860,12 +860,12 @@ utoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($11) unsigned long ultoa_append(__zp($15) char *buffer, __zp($11) unsigned long value, __zp($1f) unsigned long sub)
+// __zp(6) unsigned long ultoa_append(__zp(2) char *buffer, __zp(6) unsigned long value, __zp($c) unsigned long sub)
 ultoa_append: {
-    .label buffer = $15
-    .label value = $11
-    .label sub = $1f
-    .label return = $11
+    .label buffer = 2
+    .label value = 6
+    .label sub = $c
+    .label return = 6
     ldx #0
   __b1:
     // while (value >= sub)

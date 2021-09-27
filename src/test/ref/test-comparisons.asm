@@ -12,13 +12,13 @@
 :BasicUpstart(main)
   .label print_screen = $400
   .label print_line_cursor = 6
-  .label print_char_cursor = $a
+  .label print_char_cursor = 2
 .segment Code
 main: {
     .label b = $c
-    .label a = 2
-    .label i = 3
-    .label r = 4
+    .label a = $b
+    .label i = $a
+    .label r = 8
     // print_cls()
     jsr print_cls
     lda #<print_screen
@@ -502,11 +502,11 @@ print_cls: {
     // }
     rts
 }
-// void printu(__register(X) char a, __zp(8) char *op, __zp(5) char b, __zp(4) char res)
+// void printu(__register(X) char a, __zp(4) char *op, __zp(9) char b, __zp(8) char res)
 printu: {
-    .label b = 5
-    .label res = 4
-    .label op = 8
+    .label b = 9
+    .label res = 8
+    .label op = 4
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -556,7 +556,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 8
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -622,9 +622,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(8) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 8
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0

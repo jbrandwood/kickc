@@ -29,37 +29,37 @@
 .segment Code
 main: {
     .const num_entries = $c8*SIZEOF_UNSIGNED_INT/SIZEOF_UNSIGNED_INT
-    .label __8 = $9d
-    .label __21 = $97
-    .label __22 = $9b
-    .label __34 = $8e
-    .label __35 = $8c
-    .label __41 = $8e
-    .label __42 = $95
-    .label __43 = $8c
-    .label j = $88
-    .label i = $80
-    .label mul = $90
-    .label j1 = $84
-    .label k = $86
-    .label i1 = $82
-    .label mul1 = $90
-    .label mul2 = $90
-    .label __47 = $9d
-    .label __48 = $9f
-    .label __49 = $8a
-    .label __50 = $8a
-    .label __51 = $8e
-    .label __52 = $8c
-    .label __53 = $97
-    .label __54 = $99
-    .label __55 = $9b
-    .label __56 = $8a
-    .label __57 = $8a
-    .label __58 = $8a
-    .label __59 = $8e
-    .label __60 = $8c
-    .label __61 = $8c
+    .label __8 = $ae
+    .label __21 = $9a
+    .label __22 = $9a
+    .label __34 = $b8
+    .label __35 = $ba
+    .label __41 = $a4
+    .label __42 = $a6
+    .label __43 = $a2
+    .label j = $b6
+    .label i = $c4
+    .label mul = $b0
+    .label j1 = $b4
+    .label k = $a0
+    .label i1 = $c2
+    .label mul1 = $96
+    .label mul2 = $9c
+    .label __47 = $ae
+    .label __48 = $bc
+    .label __49 = $be
+    .label __50 = $c0
+    .label __51 = $b8
+    .label __52 = $ba
+    .label __53 = $9a
+    .label __54 = $82
+    .label __55 = $84
+    .label __56 = $a8
+    .label __57 = $aa
+    .label __58 = $ac
+    .label __59 = $a4
+    .label __60 = $a2
+    .label __61 = $a6
     // clrscr()
     jsr clrscr
     // printf("looking a+b=2020 within %u entries\n",num_entries)
@@ -239,17 +239,7 @@ main: {
     lda.z __43+1
     adc #>entries
     sta.z __55+1
-    ldy #0
-    clc
-    lda (__22),y
-    adc.z __21
-    pha
-    iny
-    lda (__22),y
-    adc.z __21+1
-    sta.z __22+1
-    pla
-    sta.z __22
+    .assert "Missing ASM fragment Fragment not found vwuz1=vwuz1_plus__deref_pwuz2. Attempted variations vwuz1=vwuz1_plus__deref_pwuz2 ", 0, 1
     // if(entries[i]+entries[j]+entries[k]==2020)
     lda.z __22+1
     cmp #>$7e4
@@ -294,13 +284,11 @@ main: {
     adc #>entries
     sta.z __56+1
     ldy #0
-    lda (printf_uint.uvalue),y
-    pha
-    iny
-    lda (printf_uint.uvalue),y
-    sta.z printf_uint.uvalue+1
-    pla
+    lda (__56),y
     sta.z printf_uint.uvalue
+    iny
+    lda (__56),y
+    sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
     lda #<s8
@@ -329,13 +317,11 @@ main: {
     adc #>entries
     sta.z __57+1
     ldy #0
-    lda (printf_uint.uvalue),y
-    pha
-    iny
-    lda (printf_uint.uvalue),y
-    sta.z printf_uint.uvalue+1
-    pla
+    lda (__57),y
     sta.z printf_uint.uvalue
+    iny
+    lda (__57),y
+    sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
     lda #<s8
@@ -364,13 +350,11 @@ main: {
     adc #>entries
     sta.z __58+1
     ldy #0
-    lda (printf_uint.uvalue),y
-    pha
-    iny
-    lda (printf_uint.uvalue),y
-    sta.z printf_uint.uvalue+1
-    pla
+    lda (__58),y
     sta.z printf_uint.uvalue
+    iny
+    lda (__58),y
+    sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("match found [%u]%u+[%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j], k,entries[k])
     lda #<s10
@@ -387,13 +371,11 @@ main: {
     adc #>entries
     sta.z __59+1
     ldy #0
-    lda (mul16u.a),y
-    pha
-    iny
-    lda (mul16u.a),y
-    sta.z mul16u.a+1
-    pla
+    lda (__59),y
     sta.z mul16u.a
+    iny
+    lda (__59),y
+    sta.z mul16u.a+1
     lda.z __60
     clc
     adc #<entries
@@ -402,38 +384,50 @@ main: {
     adc #>entries
     sta.z __60+1
     ldy #0
-    lda (mul16u.b),y
-    pha
-    iny
-    lda (mul16u.b),y
-    sta.z mul16u.b+1
-    pla
+    lda (__60),y
     sta.z mul16u.b
+    iny
+    lda (__60),y
+    sta.z mul16u.b+1
     jsr mul16u
     // unsigned long mul1 = mul16u(entries[i],entries[k])
+    lda.z mul16u.res
+    sta.z mul16u.return_1
+    lda.z mul16u.res+1
+    sta.z mul16u.return_1+1
+    lda.z mul16u.res+2
+    sta.z mul16u.return_1+2
+    lda.z mul16u.res+3
+    sta.z mul16u.return_1+3
     // unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] )
     lda.z mul1
     sta.z mul16u.a
     lda.z mul1+1
     sta.z mul16u.a+1
-    lda.z __42
+    lda.z __61
     clc
     adc #<entries
     sta.z __61
-    lda.z __42+1
+    lda.z __61+1
     adc #>entries
     sta.z __61+1
     ldy #0
-    lda (mul16u.b),y
-    pha
-    iny
-    lda (mul16u.b),y
-    sta.z mul16u.b+1
-    pla
+    lda (__61),y
     sta.z mul16u.b
+    iny
+    lda (__61),y
+    sta.z mul16u.b+1
   // I am cheating a bit here multiplying entry i&k first
     jsr mul16u
     // unsigned long mul2 = mul16u( WORD0(mul1) ,entries[j] )
+    lda.z mul16u.res
+    sta.z mul16u.return_2
+    lda.z mul16u.res+1
+    sta.z mul16u.return_2+1
+    lda.z mul16u.res+2
+    sta.z mul16u.return_2+2
+    lda.z mul16u.res+3
+    sta.z mul16u.return_2+3
     // printf("multiplied %lu\n", mul2)
     lda #<s11
     sta.z printf_str.s
@@ -441,6 +435,14 @@ main: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("multiplied %lu\n", mul2)
+    lda.z mul2
+    sta.z printf_ulong.uvalue
+    lda.z mul2+1
+    sta.z printf_ulong.uvalue+1
+    lda.z mul2+2
+    sta.z printf_ulong.uvalue+2
+    lda.z mul2+3
+    sta.z printf_ulong.uvalue+3
     jsr printf_ulong
     // printf("multiplied %lu\n", mul2)
     lda #<s5
@@ -569,13 +571,11 @@ main: {
     adc #>entries
     sta.z __49+1
     ldy #0
-    lda (printf_uint.uvalue),y
-    pha
-    iny
-    lda (printf_uint.uvalue),y
-    sta.z printf_uint.uvalue+1
-    pla
+    lda (__49),y
     sta.z printf_uint.uvalue
+    iny
+    lda (__49),y
+    sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("match found [%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j])
     lda #<s8
@@ -604,13 +604,11 @@ main: {
     adc #>entries
     sta.z __50+1
     ldy #0
-    lda (printf_uint.uvalue),y
-    pha
-    iny
-    lda (printf_uint.uvalue),y
-    sta.z printf_uint.uvalue+1
-    pla
+    lda (__50),y
     sta.z printf_uint.uvalue
+    iny
+    lda (__50),y
+    sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("match found [%u]%u+[%u]%u=2020\n", i,entries[i], j,entries[j])
     lda #<s10
@@ -627,13 +625,11 @@ main: {
     adc #>entries
     sta.z __51+1
     ldy #0
-    lda (mul16u.a),y
-    pha
-    iny
-    lda (mul16u.a),y
-    sta.z mul16u.a+1
-    pla
+    lda (__51),y
     sta.z mul16u.a
+    iny
+    lda (__51),y
+    sta.z mul16u.a+1
     lda.z __52
     clc
     adc #<entries
@@ -642,15 +638,21 @@ main: {
     adc #>entries
     sta.z __52+1
     ldy #0
-    lda (mul16u.b),y
-    pha
-    iny
-    lda (mul16u.b),y
-    sta.z mul16u.b+1
-    pla
+    lda (__52),y
     sta.z mul16u.b
+    iny
+    lda (__52),y
+    sta.z mul16u.b+1
     jsr mul16u
     // unsigned long mul = mul16u(entries[i],entries[j])
+    lda.z mul16u.res
+    sta.z mul16u.return
+    lda.z mul16u.res+1
+    sta.z mul16u.return+1
+    lda.z mul16u.res+2
+    sta.z mul16u.return+2
+    lda.z mul16u.res+3
+    sta.z mul16u.return+3
     // printf("multiplied %lu\n", mul)
     lda #<s11
     sta.z printf_str.s
@@ -658,6 +660,14 @@ main: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("multiplied %lu\n", mul)
+    lda.z mul
+    sta.z printf_ulong.uvalue
+    lda.z mul+1
+    sta.z printf_ulong.uvalue+1
+    lda.z mul+2
+    sta.z printf_ulong.uvalue+2
+    lda.z mul+3
+    sta.z printf_ulong.uvalue+3
     jsr printf_ulong
     // printf("multiplied %lu\n", mul)
     lda #<s5
@@ -698,11 +708,11 @@ main: {
 .segment Code
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__zp($a1) volatile char c)
+// void cputc(__zp($94) volatile char c)
 cputc: {
     .const OFFSET_STACK_C = 0
     .label convertToScreenCode1_v = c
-    .label c = $a1
+    .label c = $94
     tsx
     lda STACK_BASE+OFFSET_STACK_C,x
     sta.z c
@@ -789,9 +799,9 @@ clrscr: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp($8a) const char *s)
+// void printf_str(void (*putc)(char), __zp($88) const char *s)
 printf_str: {
-    .label s = $8a
+    .label s = $88
   __b1:
     // while(c=*s++)
     ldy #0
@@ -812,9 +822,9 @@ printf_str: {
     jmp __b1
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp($8a) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp($88) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
-    .label uvalue = $8a
+    .label uvalue = $88
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -830,13 +840,15 @@ printf_uint: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// __zp($90) unsigned long mul16u(__zp($8e) unsigned int a, __zp($8c) unsigned int b)
+// __zp($9c) unsigned long mul16u(__zp($80) unsigned int a, __zp($82) unsigned int b)
 mul16u: {
-    .label mb = $a4
-    .label a = $8e
-    .label res = $90
-    .label b = $8c
-    .label return = $90
+    .label mb = $90
+    .label a = $80
+    .label res = $8a
+    .label b = $82
+    .label return = $b0
+    .label return_1 = $96
+    .label return_2 = $9c
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -891,9 +903,9 @@ mul16u: {
     jmp __b1
 }
 // Print an unsigned int using a specific format
-// void printf_ulong(void (*putc)(char), __zp($90) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_ulong(void (*putc)(char), __zp($8a) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_ulong: {
-    .label uvalue = $90
+    .label uvalue = $8a
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -911,7 +923,7 @@ printf_ulong: {
 // Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
 // void putchar(char code)
 putchar: {
-    .label loc = $a2
+    .label loc = $8e
     // **OLDADR = *OLDCHR
     lda OLDCHR
     ldy OLDADR
@@ -936,7 +948,7 @@ putchar: {
 }
 // Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
 setcursor: {
-    .label loc = $a2
+    .label loc = $8e
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
     lda OLDCHR
@@ -978,7 +990,7 @@ setcursor: {
     rts
 }
 newline: {
-    .label start = $9b
+    .label start = $80
     // if ((*ROWCRS)++ == CONIO_HEIGHT)
     inc ROWCRS
     lda #$18
@@ -1037,12 +1049,12 @@ newline: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($9b) char *str, char c, __zp($97) unsigned int num)
+// void * memset(__zp($80) char *str, char c, __zp($82) unsigned int num)
 memset: {
-    .label end = $97
-    .label dst = $9b
-    .label str = $9b
-    .label num = $97
+    .label end = $82
+    .label dst = $80
+    .label str = $80
+    .label num = $82
     // if(num>0)
     lda.z num
     bne !+
@@ -1103,12 +1115,12 @@ gotoxy: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($8a) unsigned int value, __zp($97) char *buffer, char radix)
+// void utoa(__zp($88) unsigned int value, __zp($82) char *buffer, char radix)
 utoa: {
-    .label digit_value = $a2
-    .label buffer = $97
-    .label digit = $94
-    .label value = $8a
+    .label digit_value = $8e
+    .label buffer = $82
+    .label digit = $95
+    .label value = $88
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1199,12 +1211,12 @@ printf_number_buffer: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void ultoa(__zp($90) unsigned long value, __zp($9b) char *buffer, char radix)
+// void ultoa(__zp($8a) unsigned long value, __zp($82) char *buffer, char radix)
 ultoa: {
-    .label digit_value = $a4
-    .label buffer = $9b
-    .label digit = $94
-    .label value = $90
+    .label digit_value = $90
+    .label buffer = $82
+    .label digit = $95
+    .label value = $8a
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1286,12 +1298,12 @@ ultoa: {
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
-    .label __0 = $a2
-    .label __1 = $a2
-    .label __3 = $a2
-    .label return = $a2
-    .label __4 = $a8
-    .label __5 = $a2
+    .label __0 = $8e
+    .label __1 = $8e
+    .label __3 = $8e
+    .label return = $8e
+    .label __4 = $86
+    .label __5 = $8e
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
     sta.z __3
@@ -1339,14 +1351,14 @@ cursorLocation: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($99) void *destination, __zp($97) char *source, unsigned int num)
+// void * memcpy(__zp($84) void *destination, __zp($82) char *source, unsigned int num)
 memcpy: {
     .const num = $28*$17
-    .label src_end = $a8
-    .label dst = $99
-    .label src = $97
-    .label destination = $99
-    .label source = $97
+    .label src_end = $86
+    .label dst = $84
+    .label src = $82
+    .label destination = $84
+    .label source = $82
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -1389,12 +1401,12 @@ memcpy: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($8a) unsigned int utoa_append(__zp($97) char *buffer, __zp($8a) unsigned int value, __zp($a2) unsigned int sub)
+// __zp($88) unsigned int utoa_append(__zp($82) char *buffer, __zp($88) unsigned int value, __zp($8e) unsigned int sub)
 utoa_append: {
-    .label buffer = $97
-    .label value = $8a
-    .label sub = $a2
-    .label return = $8a
+    .label buffer = $82
+    .label value = $88
+    .label sub = $8e
+    .label return = $88
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1433,12 +1445,12 @@ utoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($90) unsigned long ultoa_append(__zp($9b) char *buffer, __zp($90) unsigned long value, __zp($a4) unsigned long sub)
+// __zp($8a) unsigned long ultoa_append(__zp($82) char *buffer, __zp($8a) unsigned long value, __zp($90) unsigned long sub)
 ultoa_append: {
-    .label buffer = $9b
-    .label value = $90
-    .label sub = $a4
-    .label return = $90
+    .label buffer = $82
+    .label value = $8a
+    .label sub = $90
+    .label return = $8a
     ldx #0
   __b1:
     // while (value >= sub)

@@ -12,8 +12,8 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_char_cursor = 8
-  .label print_line_cursor = 2
+  .label print_char_cursor = 2
+  .label print_line_cursor = 6
 .segment Code
 main: {
     // print_cls()
@@ -158,9 +158,9 @@ print_cls: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(6) char *str)
+// void print_str(__zp(4) char *str)
 print_str: {
-    .label str = 6
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0
@@ -204,10 +204,10 @@ print_ln: {
     // }
     rts
 }
-// void print_mulf8u127(__register(Y) char a, __zp(4) char b)
+// void print_mulf8u127(__register(Y) char a, __zp($a) char b)
 print_mulf8u127: {
-    .label c = 6
-    .label b = 4
+    .label c = 4
+    .label b = $a
     // unsigned word c = mulf8u127(a,b)
     tya
     tax
@@ -239,11 +239,11 @@ print_mulf8u127: {
     // }
     rts
 }
-// void print_mulf8s127(__zp(4) signed char a, __zp(5) signed char b)
+// void print_mulf8s127(__zp($a) signed char a, __zp($b) signed char b)
 print_mulf8s127: {
-    .label c = 6
-    .label a = 4
-    .label b = 5
+    .label c = 4
+    .label a = $a
+    .label b = $b
     // signed word c = mulf8s127(a,b)
     ldy.z b
     jsr mulf8s127
@@ -278,7 +278,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -319,14 +319,14 @@ print_char: {
     // }
     rts
 }
-// __zp(6) unsigned int mulf8u127(__register(X) char a, __register(A) char b)
+// __zp(4) unsigned int mulf8u127(__register(X) char a, __register(A) char b)
 mulf8u127: {
     .label memA = $fc
     .label memB = $fd
     .label res = $fe
     .label resL = $fe
     .label resH = $ff
-    .label return = 6
+    .label return = 4
     // *memA = a
     stx memA
     // *memB = b
@@ -382,9 +382,9 @@ print_uchar: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(6) unsigned int w)
+// void print_uint(__zp(4) unsigned int w)
 print_uint: {
-    .label w = 6
+    .label w = 4
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -394,15 +394,15 @@ print_uint: {
     // }
     rts
 }
-// __zp(6) int mulf8s127(__zp(4) signed char a, __register(Y) signed char b)
+// __zp(4) int mulf8s127(__zp($a) signed char a, __register(Y) signed char b)
 mulf8s127: {
-    .label __9 = 8
-    .label __10 = $a
-    .label __11 = 8
-    .label __12 = $a
-    .label a = 4
-    .label return = 6
-    .label c = 6
+    .label __9 = 2
+    .label __10 = 8
+    .label __11 = 2
+    .label __12 = 8
+    .label a = $a
+    .label return = 4
+    .label c = 4
     // mulf8u127((unsigned char)a, (unsigned char)b)
     ldx.z a
     tya
@@ -499,9 +499,9 @@ print_schar: {
     jmp __b2
 }
 // Print a signed int as HEX
-// void print_sint(__zp(6) int w)
+// void print_sint(__zp(4) int w)
 print_sint: {
-    .label w = 6
+    .label w = 4
     // if(w<0)
     lda.z w+1
     bmi __b1

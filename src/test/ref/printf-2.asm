@@ -22,13 +22,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $f
+  .label conio_cursor_x = $1d
   // The current cursor y-position
-  .label conio_cursor_y = $10
+  .label conio_cursor_y = $1c
   // The current text cursor line start
-  .label conio_line_text = $11
+  .label conio_line_text = $20
   // The current color cursor line start
-  .label conio_line_color = $13
+  .label conio_line_color = $1e
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -130,11 +130,11 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $19
+    .label __5 = $1a
     .label __6 = $15
     .label __7 = $15
     .label line_offset = $15
-    .label __8 = $17
+    .label __8 = $18
     .label __9 = $15
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
@@ -231,8 +231,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 6
-    .label line_cols = $a
+    .label line_text = 2
+    .label line_cols = 9
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -300,10 +300,10 @@ clrscr: {
     jmp __b3
 }
 // Print a signed char using a specific format
-// void printf_schar(void (*putc)(char), __register(X) signed char value, char format_min_length, char format_justify_left, __zp(5) char format_sign_always, __zp(2) char format_zero_padding, char format_upper_case, __register(Y) char format_radix)
+// void printf_schar(void (*putc)(char), __register(X) signed char value, char format_min_length, char format_justify_left, __zp($f) char format_sign_always, __zp($17) char format_zero_padding, char format_upper_case, __register(Y) char format_radix)
 printf_schar: {
-    .label format_sign_always = 5
-    .label format_zero_padding = 2
+    .label format_sign_always = $f
+    .label format_zero_padding = $17
     // printf_buffer.sign = 0
     // Handle any sign
     lda #0
@@ -450,13 +450,13 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp($a) char *buffer, __register(Y) char radix)
+// void uctoa(__register(X) char value, __zp(9) char *buffer, __register(Y) char radix)
 uctoa: {
-    .label buffer = $a
-    .label digit = 3
-    .label started = 4
-    .label max_digits = 5
-    .label digit_values = 6
+    .label buffer = 9
+    .label digit = $10
+    .label started = $12
+    .label max_digits = $f
+    .label digit_values = 2
     // if(radix==DECIMAL)
     cpy #DECIMAL
     beq __b2
@@ -577,15 +577,15 @@ uctoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__zp(6) void (*putc)(char), __zp(3) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp(5) char format_justify_left, char format_sign_always, __zp(2) char format_zero_padding, __zp(4) char format_upper_case, char format_radix)
+// void printf_number_buffer(__zp(2) void (*putc)(char), __zp($10) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($f) char format_justify_left, char format_sign_always, __zp($17) char format_zero_padding, __zp($12) char format_upper_case, char format_radix)
 printf_number_buffer: {
-    .label __19 = $1c
-    .label buffer_sign = 3
-    .label format_zero_padding = 2
-    .label padding = $1b
-    .label putc = 6
-    .label format_justify_left = 5
-    .label format_upper_case = 4
+    .label __19 = 4
+    .label buffer_sign = $10
+    .label format_zero_padding = $17
+    .label padding = 6
+    .label putc = 2
+    .label format_justify_left = $f
+    .label format_upper_case = $12
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -689,13 +689,13 @@ printf_number_buffer: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(6) unsigned int value, __zp($a) char *buffer, char radix)
+// void utoa(__zp(2) unsigned int value, __zp(9) char *buffer, char radix)
 utoa: {
     .const max_digits = 4
-    .label digit_value = $1c
-    .label buffer = $a
-    .label digit = 5
-    .label value = 6
+    .label digit_value = 4
+    .label buffer = 9
+    .label digit = $f
+    .label value = 2
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -766,13 +766,13 @@ utoa: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($20) void *destination, __zp(8) void *source, unsigned int num)
+// void * memcpy(__zp($c) void *destination, __zp(7) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1e
-    .label dst = $20
-    .label src = 8
-    .label source = 8
-    .label destination = $20
+    .label src_end = $13
+    .label dst = $c
+    .label src = 7
+    .label source = 7
+    .label destination = $c
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -808,11 +808,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(8) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(7) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $20
-    .label dst = 8
-    .label str = 8
+    .label end = $c
+    .label dst = 7
+    .label str = 7
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -851,10 +851,10 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($a) char *buffer, __register(X) char value, __zp($1b) char sub)
+// __register(X) char uctoa_append(__zp(9) char *buffer, __register(X) char value, __zp(6) char sub)
 uctoa_append: {
-    .label buffer = $a
-    .label sub = $1b
+    .label buffer = 9
+    .label sub = 6
     ldy #0
   __b1:
     // while (value >= sub)
@@ -877,11 +877,11 @@ uctoa_append: {
     jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// __zp($1c) unsigned int strlen(__zp($a) char *str)
+// __zp(4) unsigned int strlen(__zp(9) char *str)
 strlen: {
-    .label len = $1c
-    .label str = $a
-    .label return = $1c
+    .label len = 4
+    .label str = 9
+    .label return = 4
     lda #<0
     sta.z len
     sta.z len+1
@@ -911,12 +911,12 @@ strlen: {
     jmp __b1
 }
 // Print a padding char a number of times
-// void printf_padding(__zp(6) void (*putc)(char), __zp($d) char pad, __zp($c) char length)
+// void printf_padding(__zp(2) void (*putc)(char), __zp($11) char pad, __zp($e) char length)
 printf_padding: {
-    .label i = $e
-    .label putc = 6
-    .label length = $c
-    .label pad = $d
+    .label i = $b
+    .label putc = 2
+    .label length = $e
+    .label pad = $11
     lda #0
     sta.z i
   __b1:
@@ -942,7 +942,7 @@ printf_padding: {
 // char * strupr(char *str)
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $1c
+    .label src = 4
     lda #<str
     sta.z src
     lda #>str
@@ -971,10 +971,10 @@ strupr: {
     jmp __b1
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(6) void (*putc)(char), __zp($1c) const char *s)
+// void printf_str(__zp(2) void (*putc)(char), __zp(4) const char *s)
 printf_str: {
-    .label s = $1c
-    .label putc = 6
+    .label s = 4
+    .label putc = 2
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z s
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1008,12 +1008,12 @@ printf_str: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(6) unsigned int utoa_append(__zp($a) char *buffer, __zp(6) unsigned int value, __zp($1c) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp(9) char *buffer, __zp(2) unsigned int value, __zp(4) unsigned int sub)
 utoa_append: {
-    .label buffer = $a
-    .label value = 6
-    .label sub = $1c
-    .label return = 6
+    .label buffer = 9
+    .label value = 2
+    .label sub = 4
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)

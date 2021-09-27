@@ -152,12 +152,12 @@
   /// Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
   /// Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
-  .label print_char_cursor = 2
-  .label print_line_cursor = 9
+  .label print_char_cursor = $a
+  .label print_line_cursor = $e
   // The adddress of the bitmap graphics (used for pixels)
-  .label bitmap_gfx = 4
+  .label bitmap_gfx = $2f
   // The adddress of the bitmap screen (used for colors)
-  .label bitmap_screen = $b
+  .label bitmap_screen = $31
 .segment Code
 main: {
     // asm
@@ -188,7 +188,7 @@ main: {
 menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
-    .label c = 2
+    .label c = $2d
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // Charset ROM
     // DTV Graphics Bank
@@ -434,9 +434,9 @@ print_cls: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// void print_str_lines(__zp($d) char *str)
+// void print_str_lines(__zp($1d) char *str)
 print_str_lines: {
-    .label str = $d
+    .label str = $1d
     lda #<menu.SCREEN
     sta.z print_line_cursor
     lda #>menu.SCREEN
@@ -488,7 +488,7 @@ print_str_lines: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // __register(A) char keyboard_key_pressed(__register(Y) char key)
 keyboard_key_pressed: {
-    .label colidx = $1c
+    .label colidx = $17
     // char colidx = key&7
     tya
     and #7
@@ -519,11 +519,11 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __5 = $18
+    .label __5 = $1f
     // Char Colors and screen chars
-    .label col = $d
-    .label ch = $f
-    .label cy = 6
+    .label col = $1d
+    .label ch = $a
+    .label cy = $20
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -654,11 +654,11 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __5 = $19
+    .label __5 = $10
     // Char Colors and screen chars
-    .label col = $f
-    .label ch = $d
-    .label cy = 6
+    .label col = $1d
+    .label ch = $a
+    .label cy = $20
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -801,9 +801,9 @@ mode_mcchar: {
     .label COLORS = $d800
     .label __5 = $1c
     // Char Colors and screen chars
-    .label col = $d
-    .label ch = $f
-    .label cy = 6
+    .label col = $1d
+    .label ch = $a
+    .label cy = $20
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -936,11 +936,11 @@ mode_stdbitmap: {
     .const lines_cnt = 9
     .label SCREEN = $4000
     .label BITMAP = $6000
-    .label col2 = $17
+    .label col2 = $10
     // Bitmap Colors
-    .label ch = 4
-    .label cy = 6
-    .label l = 7
+    .label ch = $1d
+    .label cy = $21
+    .label l = $20
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)BITMAP/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1090,9 +1090,9 @@ mode_hicolstdchar: {
     .label COLORS = $8400
     .label __3 = $17
     // Char Colors and screen chars
-    .label col = $f
-    .label ch = $d
-    .label cy = 7
+    .label col = $1d
+    .label ch = $a
+    .label cy = $23
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1218,11 +1218,11 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __3 = $18
+    .label __3 = $10
     // Char Colors and screen chars
-    .label col = $d
-    .label ch = $f
-    .label cy = 7
+    .label col = $a
+    .label ch = $1d
+    .label cy = $24
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1359,11 +1359,11 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __3 = $18
+    .label __3 = $10
     // Char Colors and screen chars
-    .label col = $f
-    .label ch = $d
-    .label cy = 7
+    .label col = $1d
+    .label ch = $a
+    .label cy = $25
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1490,16 +1490,16 @@ mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __3 = $19
+    .label __3 = $1c
     // Colors for high 4 bits of 8bpp
-    .label col = $d
-    .label cy = 6
+    .label col = $a
+    .label cy = $20
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    .label gfxa = $f
-    .label ay = 7
+    .label gfxa = $e
+    .label ay = $1f
     // Graphics for Plane B - vertical stripes every 2 pixels
-    .label gfxb = 9
-    .label by = 8
+    .label gfxb = 8
+    .label by = $27
     // *DTV_CONTROL = DTV_LINEAR
     lda #DTV_LINEAR
     sta DTV_CONTROL
@@ -1689,17 +1689,17 @@ mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __3 = $19
+    .label __3 = $1c
     // Color for bits 11
     // Colors for bits 01 / 10
-    .label col = $f
-    .label cy = 6
+    .label col = $e
+    .label cy = $20
     // Graphics for Plane A - horizontal stripes
-    .label gfxa = 9
-    .label ay = 7
+    .label gfxa = 8
+    .label ay = $22
     // Graphics for Plane B - vertical stripes
-    .label gfxb = $d
-    .label by = 8
+    .label gfxb = $a
+    .label by = $28
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -1903,14 +1903,14 @@ mode_sixsfred: {
     .label PLANEB = $6000
     .label COLORS = $8000
     // Colors for high 4 bits of 8bpp
-    .label col = $d
-    .label cy = 6
+    .label col = $a
+    .label cy = $1f
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    .label gfxa = 9
-    .label ay = 7
+    .label gfxa = $e
+    .label ay = $20
     // Graphics for Plane B - vertical stripes every 2 pixels
-    .label gfxb = $f
-    .label by = 8
+    .label gfxb = 8
+    .label by = $29
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -2094,16 +2094,16 @@ mode_8bpppixelcell: {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label CHARGEN = $d000
-    .label __3 = $1c
+    .label __3 = $17
     // Screen Chars for Plane A (screen) - 16x16 repeating
-    .label gfxa = 9
-    .label ay = 6
-    .label bits = $17
-    .label chargen = $f
-    .label gfxb = $d
-    .label col = $18
-    .label cr = 8
-    .label ch = 7
+    .label gfxa = $e
+    .label ay = $20
+    .label bits = $10
+    .label chargen = 8
+    .label gfxb = $a
+    .label col = $1c
+    .label cr = $1f
+    .label ch = $2a
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
@@ -2284,10 +2284,10 @@ mode_8bpppixelcell: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label __7 = $1a
-    .label gfxb = $f
-    .label x = $d
-    .label y = $17
+    .label __7 = $c
+    .label gfxb = $e
+    .label x = $a
+    .label y = $26
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
@@ -2406,12 +2406,12 @@ mode_8bppchunkybmm: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(9) void *str, __register(X) char c, __zp($f) unsigned int num)
+// void * memset(__zp($33) void *str, __register(X) char c, __zp($2b) unsigned int num)
 memset: {
-    .label end = $f
-    .label dst = 9
-    .label num = $f
-    .label str = 9
+    .label end = 6
+    .label dst = $e
+    .label num = $2b
+    .label str = $33
     // if(num>0)
     lda.z num
     bne !+
@@ -2419,13 +2419,17 @@ memset: {
     beq __breturn
   !:
     // char* end = (char*)str + num
+    lda.z str
     clc
-    lda.z end
-    adc.z str
+    adc.z num
     sta.z end
-    lda.z end+1
-    adc.z str+1
+    lda.z str+1
+    adc.z num+1
     sta.z end+1
+    lda.z str
+    sta.z dst
+    lda.z str+1
+    sta.z dst+1
   __b2:
     // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
@@ -2505,7 +2509,7 @@ keyboard_matrix_read: {
 // Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
     // DTV Graphics Mode - Reset
-    .label ctrl = $19
+    .label ctrl = $10
   __b1:
   // Wait for the raster
   __b2:
@@ -2624,8 +2628,8 @@ mode_ctrl: {
 // Initialize bitmap plotting tables
 // void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
-    .label __7 = $1c
-    .label yoffs = $b
+    .label __7 = $17
+    .label yoffs = $e
     ldx #0
     lda #$80
   __b1:
@@ -2713,20 +2717,20 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// void bitmap_line(__zp(9) unsigned int x1, __zp($b) unsigned int y1, __zp($13) unsigned int x2, __zp($15) unsigned int y2)
+// void bitmap_line(__zp(6) unsigned int x1, __zp(8) unsigned int y1, __zp($1a) unsigned int x2, __zp($18) unsigned int y2)
 bitmap_line: {
-    .label dx = $1d
-    .label dy = $f
-    .label sx = $1f
+    .label dx = $13
+    .label dy = $e
+    .label sx = $15
     .label sy = $11
-    .label e1 = $d
-    .label e = $1a
-    .label y = $b
-    .label x = 9
-    .label x1 = 9
-    .label y1 = $b
-    .label x2 = $13
-    .label y2 = $15
+    .label e1 = $a
+    .label e = $c
+    .label y = 8
+    .label x = 6
+    .label x1 = 6
+    .label y1 = 8
+    .label x2 = $1a
+    .label y2 = $18
     // unsigned int dx = abs_u16(x2-x1)
     lda.z x2
     sec
@@ -2945,10 +2949,10 @@ dtvSetCpuBankSegment1: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// __zp($f) unsigned int abs_u16(__zp($f) unsigned int w)
+// __zp($e) unsigned int abs_u16(__zp($e) unsigned int w)
 abs_u16: {
-    .label w = $f
-    .label return = $f
+    .label w = $e
+    .label return = $e
     // BYTE1(w)
     lda.z w+1
     // BYTE1(w)&0x80
@@ -2971,9 +2975,9 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// __zp($11) unsigned int sgn_u16(__zp($21) unsigned int w)
+// __zp($11) unsigned int sgn_u16(__zp(2) unsigned int w)
 sgn_u16: {
-    .label w = $21
+    .label w = 2
     .label return = $11
     // BYTE1(w)
     lda.z w+1
@@ -2995,11 +2999,11 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// void bitmap_plot(__zp(9) unsigned int x, __register(X) char y)
+// void bitmap_plot(__zp(6) unsigned int x, __register(X) char y)
 bitmap_plot: {
-    .label __1 = $23
-    .label plotter = $21
-    .label x = 9
+    .label __1 = 4
+    .label plotter = 2
+    .label x = 6
     // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1

@@ -18,20 +18,20 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   .label print_screen = $400
-  .label print_char_cursor = $15
+  .label print_char_cursor = $f
 .segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label __6 = $f
-    .label xw = $17
-    .label yw = $19
-    .label angle_w = $f
-    .label diff_sum = 4
-    .label screen = 6
-    .label screen_ref = $15
-    .label x = 3
-    .label y = 2
+    .label __6 = 6
+    .label xw = $13
+    .label yw = $15
+    .label angle_w = 6
+    .label diff_sum = $19
+    .label screen = $17
+    .label screen_ref = $f
+    .label x = $12
+    .label y = $1b
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -123,15 +123,15 @@ main: {
     jmp __b5
 }
 // Make charset from proto chars
-// void init_font_hex(__zp($d) char *charset)
+// void init_font_hex(__zp($a) char *charset)
 init_font_hex: {
-    .label __0 = $1b
-    .label idx = $a
-    .label proto_lo = $f
-    .label charset = $d
-    .label c1 = 9
-    .label proto_hi = $b
-    .label c = 8
+    .label __0 = $d
+    .label idx = $c
+    .label proto_lo = 6
+    .label charset = $a
+    .label c1 = $e
+    .label proto_hi = 8
+    .label c = $11
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO
@@ -231,18 +231,18 @@ init_font_hex: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($f) unsigned int atan2_16(__zp($17) int x, __zp($19) int y)
+// __zp(6) unsigned int atan2_16(__zp($13) int x, __zp($15) int y)
 atan2_16: {
-    .label __2 = $b
-    .label __7 = $d
-    .label yi = $b
-    .label xi = $d
-    .label angle = $f
-    .label xd = $13
-    .label yd = $11
-    .label return = $f
-    .label x = $17
-    .label y = $19
+    .label __2 = 8
+    .label __7 = $a
+    .label yi = 8
+    .label xi = $a
+    .label angle = 6
+    .label xd = 4
+    .label yd = 2
+    .label return = 6
+    .label x = $13
+    .label y = $15
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -462,9 +462,9 @@ diff: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(4) unsigned int w)
+// void print_uint(__zp($19) unsigned int w)
 print_uint: {
-    .label w = 4
+    .label w = $19
     // print_uchar(BYTE1(w))
     ldx.z w+1
     lda #<print_screen

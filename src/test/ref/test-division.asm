@@ -12,12 +12,12 @@
 .segment Basic
 :BasicUpstart(main)
   .label print_screen = $400
-  .label print_line_cursor = 4
-  .label print_char_cursor = $c
+  .label print_line_cursor = $f
+  .label print_char_cursor = 7
   // Remainder after unsigned 16-bit division
-  .label rem16u = $a
+  .label rem16u = 2
   // Remainder after signed 16 bit division
-  .label rem16s = $a
+  .label rem16s = 2
 .segment Code
 main: {
     // print_cls()
@@ -41,10 +41,10 @@ print_cls: {
     rts
 }
 test_8u: {
-    .label dividend = 3
-    .label divisor = $10
-    .label res = $11
-    .label i = 2
+    .label dividend = $11
+    .label divisor = $12
+    .label res = 9
+    .label i = $13
     lda #<print_screen
     sta.z print_line_cursor
     lda #>print_screen
@@ -120,10 +120,10 @@ test_8u: {
 }
 .segment Code
 test_16u: {
-    .label dividend = 6
-    .label divisor = 8
-    .label res = $e
-    .label i = 2
+    .label dividend = $d
+    .label divisor = $a
+    .label res = 5
+    .label i = $13
     lda #0
     sta.z i
   __b1:
@@ -204,10 +204,10 @@ test_16u: {
 }
 .segment Code
 test_8s: {
-    .label dividend = 3
-    .label divisor = $12
-    .label res = $13
-    .label i = 2
+    .label dividend = $11
+    .label divisor = $16
+    .label res = 4
+    .label i = $13
     lda #0
     sta.z i
   __b1:
@@ -274,10 +274,10 @@ test_8s: {
 }
 .segment Code
 test_16s: {
-    .label dividend = 6
+    .label dividend = $d
     .label divisor = $14
-    .label res = $e
-    .label i = 2
+    .label res = 5
+    .label i = $13
     lda #0
     sta.z i
   __b1:
@@ -360,7 +360,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = $d
     lda #<str
     sta.z dst
     lda #>str
@@ -403,9 +403,9 @@ div8u: {
     rts
 }
 // Print a char as HEX
-// void print_uchar(__zp(3) char b)
+// void print_uchar(__zp($11) char b)
 print_uchar: {
-    .label b = 3
+    .label b = $11
     // b>>4
     lda.z b
     lsr
@@ -428,9 +428,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp(6) char *str)
+// void print_str(__zp($d) char *str)
 print_str: {
-    .label str = 6
+    .label str = $d
   __b1:
     // while(*str)
     ldy #0
@@ -478,11 +478,11 @@ print_ln: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($e) unsigned int div16u(__zp($c) unsigned int dividend, __zp(8) unsigned int divisor)
+// __zp(5) unsigned int div16u(__zp(7) unsigned int dividend, __zp($a) unsigned int divisor)
 div16u: {
-    .label return = $e
-    .label dividend = $c
-    .label divisor = 8
+    .label return = 5
+    .label dividend = 7
+    .label divisor = $a
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -490,9 +490,9 @@ div16u: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp(6) unsigned int w)
+// void print_uint(__zp($d) unsigned int w)
 print_uint: {
-    .label w = 6
+    .label w = $d
     // print_uchar(BYTE1(w))
     lda.z w+1
     sta.z print_uchar.b
@@ -512,7 +512,7 @@ print_uint: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // __register(A) signed char div8s(__register(X) signed char dividend, __register(Y) signed char divisor)
 div8s: {
-    .label neg = $10
+    .label neg = $12
     // if(dividend<0)
     cpx #0
     bmi __b1
@@ -572,9 +572,9 @@ div8s: {
     jmp __b2
 }
 // Print a signed char as HEX
-// void print_schar(__zp(3) signed char b)
+// void print_schar(__zp($11) signed char b)
 print_schar: {
-    .label b = 3
+    .label b = $11
     // if(b<0)
     lda.z b
     bmi __b1
@@ -604,10 +604,10 @@ print_schar: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// __zp($e) int div16s(__zp(6) int dividend, __zp($14) int divisor)
+// __zp(5) int div16s(__zp($d) int dividend, __zp($14) int divisor)
 div16s: {
-    .label return = $e
-    .label dividend = 6
+    .label return = 5
+    .label dividend = $d
     .label divisor = $14
     // divr16s(dividend, divisor, 0)
     lda.z dividend
@@ -623,9 +623,9 @@ div16s: {
     rts
 }
 // Print a signed int as HEX
-// void print_sint(__zp(6) int w)
+// void print_sint(__zp($d) int w)
 print_sint: {
-    .label w = 6
+    .label w = $d
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -655,12 +655,12 @@ print_sint: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// __zp($13) char divr8u(__zp($11) char dividend, __zp($16) char divisor, __register(Y) char rem)
+// __zp(4) char divr8u(__zp(9) char dividend, __zp($c) char divisor, __register(Y) char rem)
 divr8u: {
-    .label dividend = $11
-    .label divisor = $16
-    .label quotient = $13
-    .label return = $13
+    .label dividend = 9
+    .label divisor = $c
+    .label quotient = 4
+    .label return = 4
     ldx #0
     txa
     sta.z quotient
@@ -724,13 +724,13 @@ print_char: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($e) unsigned int divr16u(__zp($c) unsigned int dividend, __zp(8) unsigned int divisor, __zp($a) unsigned int rem)
+// __zp(5) unsigned int divr16u(__zp(7) unsigned int dividend, __zp($a) unsigned int divisor, __zp(2) unsigned int rem)
 divr16u: {
-    .label rem = $a
-    .label dividend = $c
-    .label quotient = $e
-    .label return = $e
-    .label divisor = 8
+    .label rem = 2
+    .label dividend = 7
+    .label quotient = 5
+    .label return = 5
+    .label divisor = $a
     ldx #0
     txa
     sta.z quotient
@@ -795,14 +795,14 @@ divr16u: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// __zp($e) int divr16s(__zp($c) int dividend, __zp(8) int divisor, int rem)
+// __zp(5) int divr16s(__zp(7) int dividend, __zp($a) int divisor, int rem)
 divr16s: {
-    .label dividendu = $c
-    .label divisoru = 8
-    .label resultu = $e
-    .label return = $e
-    .label dividend = $c
-    .label divisor = 8
+    .label dividendu = 7
+    .label divisoru = $a
+    .label resultu = 5
+    .label return = 5
+    .label dividend = 7
+    .label divisor = $a
     // if(dividend<0 || rem<0)
     lda.z dividend+1
     bmi __b1

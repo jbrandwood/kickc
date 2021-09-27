@@ -88,13 +88,13 @@
   /// NES CPU and audion processing unit (APU)
   .label APU = $4000
   // The current cursor x-position
-  .label conio_cursor_x = $f
+  .label conio_cursor_x = $12
   // The current cursor y-position
-  .label conio_cursor_y = $10
+  .label conio_cursor_y = $f
   // The current text cursor line start
-  .label conio_line_text = $11
-  .label x_scroll = $13
-  .label y_scroll = $14
+  .label conio_line_text = $10
+  .label x_scroll = $1c
+  .label y_scroll = $1b
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -195,9 +195,9 @@ main: {
     .const screensizey2_return = $1e
     .const screensizex2_return = $20
     .const screensizey3_return = $1e
-    .label x = 2
-    .label y = 3
-    .label i = 4
+    .label x = $18
+    .label y = $19
+    .label i = $17
     // asm
     cld
     ldx #$ff
@@ -383,7 +383,7 @@ main: {
 // - bit 6: B
 // - bit 7: A
 readJoy1: {
-    .label __1 = $15
+    .label __1 = $1a
     // APU->JOY1 = 1
     // Latch the controller buttons
     lda #1
@@ -415,14 +415,14 @@ readJoy1: {
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
-// void ppuDataTransfer(__zp($b) void * const ppuData, __zp($d) void * const cpuData, __zp($1b) unsigned int size)
+// void ppuDataTransfer(__zp(2) void * const ppuData, __zp(4) void * const cpuData, __zp(8) unsigned int size)
 ppuDataTransfer: {
-    .label ppuDataPrepare1_ppuData = $b
-    .label cpuSrc = $d
-    .label i = 7
-    .label ppuData = $b
-    .label cpuData = $d
-    .label size = $1b
+    .label ppuDataPrepare1_ppuData = 2
+    .label cpuSrc = 4
+    .label i = 6
+    .label ppuData = 2
+    .label cpuData = 4
+    .label size = 8
     // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)
@@ -467,11 +467,11 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// void ppuDataFill(void * const ppuData, __register(X) char val, __zp($d) unsigned int size)
+// void ppuDataFill(void * const ppuData, __register(X) char val, __zp(4) unsigned int size)
 ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = $b
-    .label i = $1b
-    .label size = $d
+    .label ppuDataPrepare1_ppuData = 2
+    .label i = 8
+    .label size = 4
     // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)
@@ -537,13 +537,13 @@ clrscr: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp(7) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp(6) char *buffer, char radix)
 uctoa: {
     .const max_digits = 2
-    .label digit_value = $16
-    .label buffer = 7
-    .label digit = 5
-    .label started = 6
+    .label digit_value = $e
+    .label buffer = 6
+    .label digit = $15
+    .label started = $16
     lda #<num_buffer
     sta.z buffer
     lda #>num_buffer
@@ -631,10 +631,10 @@ cputcxy: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp(7) char *buffer, __register(X) char value, __zp($16) char sub)
+// __register(X) char uctoa_append(__zp(6) char *buffer, __register(X) char value, __zp($e) char sub)
 uctoa_append: {
-    .label buffer = 7
-    .label sub = $16
+    .label buffer = 6
+    .label sub = $e
     ldy #0
   __b1:
     // while (value >= sub)
@@ -659,9 +659,9 @@ uctoa_append: {
 // Set the cursor to the specified position
 // void gotoxy(__register(X) char x, __register(A) char y)
 gotoxy: {
-    .label __5 = $17
-    .label __6 = $17
-    .label line_offset = $17
+    .label __5 = $13
+    .label __6 = $13
+    .label line_offset = $13
     // if(y>CONIO_HEIGHT)
     cmp #$1e+1
     bcc __b1
@@ -707,9 +707,9 @@ gotoxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// void cputs(__zp($17) const char *s)
+// void cputs(__zp($13) const char *s)
 cputs: {
-    .label s = $17
+    .label s = $13
     lda #<num_buffer
     sta.z s
     lda #>num_buffer
@@ -768,9 +768,9 @@ cputc: {
 // Set one byte in PPU memory
 // - ppuData : Pointer in the PPU memory
 // - val : The value to set
-// void ppuDataSet(__zp($19) char * const ppuData, __register(A) char val)
+// void ppuDataSet(__zp($a) char * const ppuData, __register(A) char val)
 ppuDataSet: {
-    .label ppuData = $19
+    .label ppuData = $a
     // BYTE1(ppuData)
     ldx.z ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)
@@ -807,8 +807,8 @@ cputln: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // Scroll lines up
-    .label line1 = 9
-    .label line2 = $19
+    .label line1 = $c
+    .label line2 = $a
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$1e
     cmp.z conio_cursor_y
@@ -896,14 +896,14 @@ cscroll: {
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// void ppuDataFetch(void * const cpuData, __zp($1b) void * const ppuData, unsigned int size)
+// void ppuDataFetch(void * const cpuData, __zp(8) void * const ppuData, unsigned int size)
 ppuDataFetch: {
     .const size = $20
     .label cpuData = conio_cscroll_buffer
     // Fetch from PPU to CPU
-    .label cpuDst = $d
-    .label i = $b
-    .label ppuData = $1b
+    .label cpuDst = 4
+    .label i = 2
+    .label ppuData = 8
     // BYTE1(ppuData)
     lda.z ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)

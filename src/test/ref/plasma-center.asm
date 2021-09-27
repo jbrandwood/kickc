@@ -36,18 +36,18 @@
   .label HEAP_TOP = $a000
   .label print_screen = $400
   // Head of the heap. Moved backward each malloc()
-  .label heap_head = 7
+  .label heap_head = $f
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
-  .label SQUARES = 2
-  .label print_char_cursor = 4
+  .label SQUARES = $17
+  .label print_char_cursor = $c
   // Screen containing distance to center
-  .label SCREEN_DIST = $b
+  .label SCREEN_DIST = $1c
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $d
+  .label SCREEN_ANGLE = $1a
   // Offsets for the sines
-  .label sin_offset_x = 6
-  .label sin_offset_y = $13
+  .label sin_offset_x = $16
+  .label sin_offset_y = $19
 .segment Code
 __start: {
     // byte* SCREEN_DIST = malloc(1000)
@@ -81,10 +81,10 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// void * malloc(__zp(2) unsigned int size)
+// void * malloc(__zp($17) unsigned int size)
 malloc: {
-    .label mem = 2
-    .label size = 2
+    .label mem = $17
+    .label size = $17
     // unsigned char* mem = heap_head-size
     lda.z heap_head
     sec
@@ -152,17 +152,17 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// void init_dist_screen(__zp(4) char *screen)
+// void init_dist_screen(__zp($c) char *screen)
 init_dist_screen: {
-    .label screen = 4
-    .label screen_bottomline = 7
-    .label yds = $f
-    .label screen_topline = 4
-    .label y = 6
-    .label xds = $11
-    .label ds = $11
-    .label x = $14
-    .label xb = $15
+    .label screen = $c
+    .label screen_bottomline = $f
+    .label yds = $a
+    .label screen_topline = $c
+    .label y = $16
+    .label xds = 8
+    .label ds = 8
+    .label x = $11
+    .label xb = $e
     // init_squares()
     jsr init_squares
     // byte *screen_bottomline = screen+40*24
@@ -276,19 +276,19 @@ init_dist_screen: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// void init_angle_screen(__zp(4) char *screen)
+// void init_angle_screen(__zp($c) char *screen)
 init_angle_screen: {
-    .label __9 = $11
-    .label screen = 4
-    .label screen_bottomline = 4
-    .label xw = $16
-    .label yw = $18
-    .label angle_w = $11
-    .label ang_w = $13
-    .label x = $14
-    .label xb = $15
-    .label screen_topline = 2
-    .label y = 6
+    .label __9 = 8
+    .label screen = $c
+    .label screen_bottomline = $c
+    .label xw = $14
+    .label yw = $12
+    .label angle_w = 8
+    .label ang_w = $19
+    .label x = $11
+    .label xb = $e
+    .label screen_topline = $17
+    .label y = $16
     // byte* screen_topline = screen+40*12
     lda.z screen_bottomline
     clc
@@ -397,13 +397,13 @@ init_angle_screen: {
 // Make a plasma-friendly charset where the chars are randomly filled
 // void make_plasma_charset(char *charset)
 make_plasma_charset: {
-    .label __7 = $15
-    .label __10 = $1a
-    .label __11 = $1a
-    .label s = $14
-    .label i = 6
-    .label c = 7
-    .label __16 = $1a
+    .label __7 = $e
+    .label __10 = 6
+    .label __11 = 6
+    .label s = $11
+    .label i = $16
+    .label c = $f
+    .label __16 = 6
     // SID->CH3_FREQ = 0xffff
     lda #<$ffff
     sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
@@ -524,11 +524,11 @@ make_plasma_charset: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(4) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp($c) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1c
-    .label dst = 4
-    .label str = 4
+    .label end = 2
+    .label dst = $c
+    .label str = $c
     // char* end = (char*)str + num
     lda.z str
     clc
@@ -560,14 +560,14 @@ memset: {
     jmp __b2
 }
 // Render plasma to the passed screen
-// void doplasma(__zp($f) char *screen)
+// void doplasma(__zp($a) char *screen)
 doplasma: {
-    .label angle = 7
-    .label dist = 9
-    .label sin_x = $16
-    .label sin_y = $18
-    .label screen = $f
-    .label y = $14
+    .label angle = $f
+    .label dist = 4
+    .label sin_x = $14
+    .label sin_y = $12
+    .label screen = $a
+    .label y = $11
     // char* angle = SCREEN_ANGLE
     lda.z SCREEN_ANGLE
     sta.z angle
@@ -661,8 +661,8 @@ doplasma: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $f
-    .label sqr = 9
+    .label squares = $a
+    .label sqr = 4
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     lda #<NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size
@@ -720,10 +720,10 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// __zp($11) unsigned int sqr(__register(A) char val)
+// __zp(8) unsigned int sqr(__register(A) char val)
 sqr: {
-    .label return = $11
-    .label return_1 = $f
+    .label return = 8
+    .label return_1 = $a
     // return SQUARES[val];
     asl
     tay
@@ -738,12 +738,12 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// __register(A) char sqrt(__zp($11) unsigned int val)
+// __register(A) char sqrt(__zp(8) unsigned int val)
 sqrt: {
-    .label __1 = 9
-    .label __2 = 9
-    .label found = 9
-    .label val = $11
+    .label __1 = 4
+    .label __2 = 4
+    .label found = 4
+    .label val = 8
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -769,18 +769,18 @@ sqrt: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($11) unsigned int atan2_16(__zp($16) int x, __zp($18) int y)
+// __zp(8) unsigned int atan2_16(__zp($14) int x, __zp($12) int y)
 atan2_16: {
-    .label __2 = 9
-    .label __7 = $f
-    .label yi = 9
-    .label xi = $f
-    .label angle = $11
-    .label xd = $1c
-    .label yd = $1a
-    .label return = $11
-    .label x = $16
-    .label y = $18
+    .label __2 = 4
+    .label __7 = $a
+    .label yi = 4
+    .label xi = $a
+    .label angle = 8
+    .label xd = 2
+    .label yd = 6
+    .label return = 8
+    .label x = $14
+    .label y = $12
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -1013,14 +1013,14 @@ print_char: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// __zp(9) unsigned int * bsearch16u(__zp($11) unsigned int key, __zp(9) unsigned int *items, __register(X) char num)
+// __zp(4) unsigned int * bsearch16u(__zp(8) unsigned int key, __zp(4) unsigned int *items, __register(X) char num)
 bsearch16u: {
-    .label __2 = 9
-    .label pivot = $1a
-    .label result = $1c
-    .label return = 9
-    .label items = 9
-    .label key = $11
+    .label __2 = 4
+    .label pivot = 6
+    .label result = 2
+    .label return = 4
+    .label items = 4
+    .label key = 8
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)

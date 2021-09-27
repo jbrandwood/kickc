@@ -23,15 +23,15 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $e
+  .label conio_cursor_x = $17
   // The current cursor y-position
-  .label conio_cursor_y = $f
+  .label conio_cursor_y = $10
   // The current text cursor line start
-  .label conio_line_text = $10
+  .label conio_line_text = $13
   // The current color cursor line start
-  .label conio_line_color = $12
+  .label conio_line_color = $11
   // The current text color
-  .label conio_textcolor = $14
+  .label conio_textcolor = $16
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -105,8 +105,8 @@ cputc: {
     rts
 }
 main: {
-    .label ptr = 2
-    .label ptr2 = 2
+    .label ptr = $19
+    .label ptr2 = $19
     // clrscr()
     jsr clrscr
     // char* ptr = memchr( str, 'a', 14)
@@ -153,12 +153,12 @@ main: {
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
     .const x = 0
-    .label __5 = $19
-    .label __6 = $15
-    .label __7 = $15
-    .label line_offset = $15
-    .label __8 = $17
-    .label __9 = $15
+    .label __5 = $1f
+    .label __6 = $1b
+    .label __7 = $1b
+    .label line_offset = $1b
+    .label __8 = $1d
+    .label __9 = $1b
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -254,8 +254,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 4
-    .label line_cols = 9
+    .label line_text = 6
+    .label line_cols = $c
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -327,13 +327,13 @@ clrscr: {
 // - c: A character to search for
 // - n: The number of bytes to look through
 // Return: A pointer to the matching byte or NULL if the character does not occur in the given memory area.
-// __zp(2) void * memchr(const void *str, __zp(8) char c, __zp(4) unsigned int n)
+// __zp($19) void * memchr(const void *str, __zp($18) char c, __zp(6) unsigned int n)
 memchr: {
-    .label ptr = 2
-    .label i = 9
-    .label return = 2
-    .label n = 4
-    .label c = 8
+    .label ptr = $19
+    .label i = $c
+    .label return = $19
+    .label n = 6
+    .label c = $18
     lda #<main.str
     sta.z ptr
     lda #>main.str
@@ -376,10 +376,10 @@ memchr: {
   !:
     jmp __b1
 }
-// void assert_uint(unsigned int expect, __zp(2) unsigned int actual, char *message)
+// void assert_uint(unsigned int expect, __zp($19) unsigned int actual, char *message)
 assert_uint: {
     .const expect = 8
-    .label actual = 2
+    .label actual = $19
     // if(expect!=actual)
     lda.z actual+1
     cmp #>expect
@@ -490,10 +490,10 @@ assert_uint: {
     .byte 0
 }
 .segment Code
-// void assert_ptr(void *expect, __zp(2) void *actual, char *message)
+// void assert_ptr(void *expect, __zp($19) void *actual, char *message)
 assert_ptr: {
     .label expect = 0
-    .label actual = 2
+    .label actual = $19
     // if(expect!=actual)
     lda.z actual+1
     cmp #>expect
@@ -674,10 +674,10 @@ textcolor: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(4) void (*putc)(char), __zp(9) const char *s)
+// void printf_str(__zp(6) void (*putc)(char), __zp($c) const char *s)
 printf_str: {
-    .label s = 9
-    .label putc = 4
+    .label s = $c
+    .label putc = 6
   __b1:
     // while(c=*s++)
     ldy #0
@@ -701,9 +701,9 @@ printf_str: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// void printf_string(void (*putc)(char), __zp(9) char *str, char format_min_length, char format_justify_left)
+// void printf_string(void (*putc)(char), __zp($c) char *str, char format_min_length, char format_justify_left)
 printf_string: {
-    .label str = 9
+    .label str = $c
     // printf_str(putc, str)
     lda #<cputc
     sta.z printf_str.putc
@@ -714,9 +714,9 @@ printf_string: {
     rts
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp(4) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, __register(X) char format_radix)
+// void printf_uint(void (*putc)(char), __zp(6) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, __register(X) char format_radix)
 printf_uint: {
-    .label uvalue = 4
+    .label uvalue = 6
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -733,13 +733,13 @@ printf_uint: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1d) void *destination, __zp(6) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1b
-    .label dst = $1d
-    .label src = 6
-    .label source = 6
-    .label destination = $1d
+    .label src_end = 8
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -775,11 +775,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(6) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1d
-    .label dst = 6
-    .label str = 6
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -815,14 +815,14 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(4) unsigned int value, __zp($c) char *buffer, __register(X) char radix)
+// void utoa(__zp(6) unsigned int value, __zp($e) char *buffer, __register(X) char radix)
 utoa: {
-    .label digit_value = $1f
-    .label buffer = $c
-    .label digit = $b
-    .label value = 4
-    .label max_digits = 8
-    .label digit_values = 9
+    .label digit_value = $a
+    .label buffer = $e
+    .label digit = $15
+    .label value = 6
+    .label max_digits = $18
+    .label digit_values = $c
     // if(radix==DECIMAL)
     cpx #DECIMAL
     beq __b2
@@ -984,12 +984,12 @@ printf_number_buffer: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(4) unsigned int utoa_append(__zp($c) char *buffer, __zp(4) unsigned int value, __zp($1f) unsigned int sub)
+// __zp(6) unsigned int utoa_append(__zp($e) char *buffer, __zp(6) unsigned int value, __zp($a) unsigned int sub)
 utoa_append: {
-    .label buffer = $c
-    .label value = 4
-    .label sub = $1f
-    .label return = 4
+    .label buffer = $e
+    .label value = 6
+    .label sub = $a
+    .label return = 6
     ldx #0
   __b1:
     // while (value >= sub)

@@ -216,116 +216,116 @@
   // Pointer to the music play routine
   .label musicPlay = INTRO_MUSIC+6
   // Is the pacman eating sound enabled
-  .label pacman_ch1_enabled = $d
+  .label pacman_ch1_enabled = $6e
   // Index into the eating sound
-  .label pacman_ch1_idx = $e
+  .label pacman_ch1_idx = $66
   // Pointer to the tile to render in the logic code
-  .label logic_tile_ptr = $f
+  .label logic_tile_ptr = $1a
   // The x-column of the tile to render
-  .label logic_tile_xcol = $11
+  .label logic_tile_xcol = $1c
   // The y-fine of the tile to render
-  .label logic_tile_yfine = $12
+  .label logic_tile_yfine = $1d
   // The ID*4 of the left tile to render
-  .label logic_tile_left_idx = $13
+  .label logic_tile_left_idx = $4d
   // The ID*4 of the right tile to render
-  .label logic_tile_right_idx = $14
+  .label logic_tile_right_idx = $4e
   // Variables used by the logic-code renderer and restorer
-  .label left_render_index_xcol = $15
-  .label left_canvas = $17
-  .label left_ypos_inc_offset = $19
-  .label rigt_render_index_xcol = $1a
-  .label rigt_canvas = $1c
-  .label rigt_ypos_inc_offset = $1e
+  .label left_render_index_xcol = $4f
+  .label left_canvas = $51
+  .label left_ypos_inc_offset = $53
+  .label rigt_render_index_xcol = $54
+  .label rigt_canvas = $56
+  .label rigt_ypos_inc_offset = $58
   // The high-byte of the start-address of the canvas currently being rendered to
-  .label canvas_base_hi = $1f
+  .label canvas_base_hi = $20
   // The offset used for bobs_restore - used to achieve double buffering
-  .label bobs_restore_base = $20
+  .label bobs_restore_base = $21
   // Sprite settings used for the top/side/bottom sprites. 
   // Used for achieving single-color sprites on the splash and multi-color sprites in the game
-  .label top_sprites_color = $21
-  .label top_sprites_mc = $22
-  .label side_sprites_color = $23
-  .label side_sprites_mc = $24
-  .label bottom_sprites_color = $25
-  .label bottom_sprites_mc = $26
+  .label top_sprites_color = $1e
+  .label top_sprites_mc = $3a
+  .label side_sprites_color = $16
+  .label side_sprites_mc = $17
+  .label bottom_sprites_color = $18
+  .label bottom_sprites_mc = $19
   // The number of pills left
-  .label pill_count = $27
+  .label pill_count = $59
   // 1 When pacman wins
-  .label pacman_wins = $29
+  .label pacman_wins = $1f
   // The number of pacman lives left
-  .label pacman_lives = $2a
+  .label pacman_lives = $23
   // Signal for playing th next music frame during the intro
-  .label music_play_next = $2b
+  .label music_play_next = $15
   // 0: intro, 1: game
-  .label phase = $2c
+  .label phase = $3d
   // The double buffer frame (0=BANK_1, 1=BANK_2)
-  .label frame = $2d
+  .label frame = $6d
   // The animation frame IDX (within the current direction) [0-3] 
-  .label anim_frame_idx = $2e
+  .label anim_frame_idx = $68
   // Pacman x fine position (0-99). 
-  .label pacman_xfine = $2f
+  .label pacman_xfine = $47
   // Pacman y fine position (0-70). 
-  .label pacman_yfine = $30
+  .label pacman_yfine = $48
   // The pacman movement current direction 
-  .label pacman_direction = $31
+  .label pacman_direction = $34
   // Pacman movement substep (0: on tile, 1: between tiles). 
-  .label pacman_substep = $32
+  .label pacman_substep = $2c
   // Mode determining ghost target mode. 0: chase, 1: scatter
-  .label ghosts_mode = $33
+  .label ghosts_mode = $67
   // Counts frames to change ghost mode (7 seconds scatter, 20 seconds chase )
-  .label ghosts_mode_count = $34
+  .label ghosts_mode_count = $2b
   // Ghost 1 x fine position (0-99). 
-  .label ghost1_xfine = $35
+  .label ghost1_xfine = $3b
   // Ghost 1 y fine position (0-70). 
-  .label ghost1_yfine = $36
+  .label ghost1_yfine = $3c
   // Ghost 1 movement current direction 
-  .label ghost1_direction = $37
+  .label ghost1_direction = $35
   // Ghost 1 movement substep (0: on tile, 1: between tiles). 
-  .label ghost1_substep = $38
+  .label ghost1_substep = $2d
   // Ghost 1 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost1_reverse = $39
+  .label ghost1_reverse = $69
   // Ghost 1 respawn timer
-  .label ghost1_respawn = $3a
+  .label ghost1_respawn = $26
   // Ghost 2 x fine position (0-99). 
-  .label ghost2_xfine = $3b
+  .label ghost2_xfine = $3e
   // Ghost 2 y fine position (0-70). 
-  .label ghost2_yfine = $3c
+  .label ghost2_yfine = $3f
   // Ghost 2 movement current direction 
-  .label ghost2_direction = $3d
+  .label ghost2_direction = $36
   // Ghost 2 movement substep (0: on tile, 1: between tiles). 
-  .label ghost2_substep = $3e
+  .label ghost2_substep = $2e
   // Ghost 2 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost2_reverse = $3f
+  .label ghost2_reverse = $6a
   // Ghost 2 respawn timer
-  .label ghost2_respawn = $40
+  .label ghost2_respawn = $28
   // Ghost 3 x fine position (0-99). 
-  .label ghost3_xfine = $41
+  .label ghost3_xfine = $40
   // Ghost 3 y fine position (0-70). 
   .label ghost3_yfine = $42
   // Ghost 3 movement current direction 
-  .label ghost3_direction = $43
+  .label ghost3_direction = $38
   // Ghost 3 movement substep (0: on tile, 1: between tiles). 
-  .label ghost3_substep = $44
+  .label ghost3_substep = $2f
   // Ghost 3 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost3_reverse = $45
+  .label ghost3_reverse = $6b
   // Ghost 3 respawn timer
-  .label ghost3_respawn = $46
+  .label ghost3_respawn = $29
   // Ghost 4 x fine position (0-99). 
-  .label ghost4_xfine = $47
+  .label ghost4_xfine = $43
   // Ghost 4 y fine position (0-70). 
-  .label ghost4_yfine = $48
+  .label ghost4_yfine = $44
   // Ghost 4 movement current direction 
-  .label ghost4_direction = $49
+  .label ghost4_direction = $39
   // Ghost 4 movement substep (0: on tile, 1: between tiles). 
-  .label ghost4_substep = $4a
+  .label ghost4_substep = $30
   // Ghost 4 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost4_reverse = $4b
+  .label ghost4_reverse = $6c
   // Ghost 4 respawn timer
-  .label ghost4_respawn = $4c
+  .label ghost4_respawn = $2a
   // Game logic sub-step [0-7]. Each frame a different sub-step is animated
-  .label game_logic_substep = $4d
+  .label game_logic_substep = $5c
   // 1 when the game is playable and characters should move around
-  .label game_playable = $4e
+  .label game_playable = $41
 .segment Code
 __start: {
     // volatile char pacman_ch1_enabled = 0
@@ -644,24 +644,24 @@ main: {
 }
 // Perform game logic such as moving pacman and ghosts
 game_logic: {
-    .label __67 = $51
-    .label __71 = $51
-    .label __210 = $50
-    .label ghost_frame_idx = 2
-    .label pacman_xtile = $4f
-    .label ytiles = $51
-    .label ghost4_xtile = $53
-    .label ghost4_ytile = 4
-    .label target_ytile = 3
-    .label ghost3_xtile = $54
-    .label ghost3_ytile = 4
-    .label target_ytile1 = 3
-    .label ghost2_xtile = $55
-    .label ghost2_ytile = 4
-    .label target_ytile2 = 3
-    .label ghost1_xtile = $56
-    .label ghost1_ytile = 4
-    .label target_ytile3 = 3
+    .label __67 = $45
+    .label __71 = $45
+    .label __210 = $5d
+    .label ghost_frame_idx = $49
+    .label pacman_xtile = $5b
+    .label ytiles = $45
+    .label ghost4_xtile = $5e
+    .label ghost4_ytile = $5f
+    .label target_ytile = $27
+    .label ghost3_xtile = $60
+    .label ghost3_ytile = $61
+    .label target_ytile1 = $27
+    .label ghost2_xtile = $62
+    .label ghost2_ytile = $63
+    .label target_ytile2 = $27
+    .label ghost1_xtile = $64
+    .label ghost1_ytile = $65
+    .label target_ytile3 = $27
     // if(game_playable==0)
     lda.z game_playable
     bne __b1
@@ -1347,6 +1347,8 @@ game_logic: {
     // choose_direction( open_directions, ghost4_xtile, ghost4_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost4_xtile
+    lda.z ghost4_ytile
+    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost4_xtile, ghost4_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1516,6 +1518,8 @@ game_logic: {
     // choose_direction( open_directions, ghost3_xtile, ghost3_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost3_xtile
+    lda.z ghost3_ytile
+    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost3_xtile, ghost3_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1686,6 +1690,8 @@ game_logic: {
     // choose_direction( open_directions, ghost2_xtile, ghost2_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost2_xtile
+    lda.z ghost2_ytile
+    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost2_xtile, ghost2_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1857,6 +1863,8 @@ game_logic: {
     // choose_direction( open_directions, ghost1_xtile, ghost1_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost1_xtile
+    lda.z ghost1_ytile
+    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost1_xtile, ghost1_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -2082,8 +2090,8 @@ pacman_sound_play: {
 splash_run: {
     .const toDd001_return = 3^(>SCREENS_1)/$40
     .const toD0181_return = 0
-    .label xpos = $59
-    .label i = 5
+    .label xpos = 5
+    .label i = $14
     // asm
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
@@ -2435,7 +2443,7 @@ splash_run: {
 // Initialize all data for gameplay and runs the game. 
 // Exits when the user has won or lost
 gameplay_run: {
-    .label __4 = $b
+    .label __4 = 9
     // asm
     sei
     ldx #0
@@ -2616,9 +2624,9 @@ gameplay_run: {
 // Returns when the user clicks the joystick button
 done_run: {
     // Show the win graphics
-    .label gfx = $59
-    .label ypos = 6
-    .label xcol = 5
+    .label gfx = 5
+    .label ypos = $10
+    .label xcol = $14
     // game_playable = 0
     // Stop the game play
     lda #0
@@ -2817,7 +2825,7 @@ spawn_all: {
 // If xtile of ytile is outside the legal range the empty tile (0) is returned
 // __register(A) char level_tile_directions(__register(X) char xtile, __register(A) char ytile)
 level_tile_directions: {
-    .label ytiles = $5b
+    .label ytiles = $31
     // if(xtile>49 || ytile>36)
     cpx #$31+1
     bcs __b1
@@ -2845,17 +2853,17 @@ level_tile_directions: {
 }
 // Choose the open direction that brings the ghost closest to the target
 // Uses Manhattan distance calculation
-// __zp($53) char choose_direction(__zp($4f) char open_directions, __register(Y) char ghost_xtile, __zp(4) char ghost_ytile, __register(X) char target_xtile, __zp(3) char target_ytile)
+// __zp($33) char choose_direction(__zp($4a) char open_directions, __register(Y) char ghost_xtile, __zp($37) char ghost_ytile, __register(X) char target_xtile, __zp($27) char target_ytile)
 choose_direction: {
-    .label open_directions = $4f
-    .label ghost_ytile = 4
-    .label target_ytile = 3
-    .label xdiff = $5d
-    .label ydiff = 4
-    .label dist_left = $50
-    .label return = $53
-    .label direction = $53
-    .label dist_min = $50
+    .label open_directions = $4a
+    .label ghost_ytile = $37
+    .label target_ytile = $27
+    .label xdiff = $4c
+    .label ydiff = $4b
+    .label dist_left = $22
+    .label return = $33
+    .label direction = $33
+    .label dist_min = $22
     // char xdiff = ghost_xtile-target_xtile
     tya
     stx.z $ff
@@ -2863,7 +2871,7 @@ choose_direction: {
     sbc.z $ff
     sta.z xdiff
     // char ydiff = ghost_ytile-target_ytile
-    lda.z ydiff
+    lda.z ghost_ytile
     sec
     sbc.z target_ytile
     sta.z ydiff
@@ -2968,12 +2976,12 @@ choose_direction: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($63) void *str, char c, __zp($59) unsigned int num)
+// void * memset(__zp($6f) void *str, char c, __zp(5) unsigned int num)
 memset: {
-    .label end = $59
-    .label dst = $63
-    .label num = $59
-    .label str = $63
+    .label end = 5
+    .label dst = $b
+    .label num = 5
+    .label str = $6f
     // if(num>0)
     lda.z num
     bne !+
@@ -2988,6 +2996,10 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
+    lda.z str
+    sta.z dst
+    lda.z str+1
+    sta.z dst+1
   __b2:
     // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
@@ -3013,9 +3025,9 @@ memset: {
 }
 // Decrunch crunched data using ByteBoozer
 // - crunched: Pointer to the start of the crunched data
-// void byteboozer_decrunch(__zp($57) char * volatile crunched)
+// void byteboozer_decrunch(__zp($24) char * volatile crunched)
 byteboozer_decrunch: {
-    .label crunched = $57
+    .label crunched = $24
     // asm
     ldy crunched
     ldx crunched+1
@@ -3049,7 +3061,7 @@ byteboozer_decrunch: {
 //         If <cc> is non-zero it holds the number of cycles used by the block of code.
 // <nn>* : some bytes of code. any number of bytes are allowed. This code uses exactly the number of cycles specified by <cc>
 // 0xff  : signals the end of a block.
-// void merge_code(__zp($b) char *dest_code, __zp($63) char *raster_code, __zp($59) char *logic_code)
+// void merge_code(__zp(9) char *dest_code, __zp($b) char *raster_code, __zp(5) char *logic_code)
 merge_code: {
     // Cycle-count signalling the last block of the logic-code
     .const LOGIC_EXIT = 0
@@ -3059,10 +3071,10 @@ merge_code: {
     .const RASTER_EXIT = 0
     // Value signalling the end of a block of the raster-code
     .const RASTER_END = $ff
-    .label dest_code = $b
-    .label raster_code = $63
-    .label logic_cycles = $60
-    .label logic_code = $59
+    .label dest_code = 9
+    .label raster_code = $b
+    .label logic_cycles = 2
+    .label logic_code = 5
     lda #<LOGIC_CODE_UNMERGED
     sta.z logic_code
     lda #>LOGIC_CODE_UNMERGED
@@ -3282,18 +3294,18 @@ merge_code: {
 }
 // Initialize the RENDER_INDEX table from sub-tables
 init_render_index: {
-    .label __10 = $61
-    .label __11 = $61
-    .label render_index_xcol = $59
-    .label canvas_xcol = $5e
-    .label canvas = $61
-    .label render_index = $59
-    .label x_col = 5
-    .label render_index_xcol_1 = $63
-    .label y_pos = 6
+    .label __10 = $d
+    .label __11 = $d
+    .label render_index_xcol = 5
+    .label canvas_xcol = 3
+    .label canvas = $d
+    .label render_index = 5
+    .label x_col = $14
+    .label render_index_xcol_1 = $b
+    .label y_pos = $10
     // Special column in sprite#9
-    .label render_ypos_table = $b
-    .label __12 = $61
+    .label render_ypos_table = 9
+    .label __12 = $d
     lda #<RENDER_INDEX
     sta.z render_index_xcol
     lda #>RENDER_INDEX
@@ -3425,9 +3437,9 @@ init_render_index: {
 // Show the splash screen
 splash_show: {
     // Show splash screen
-    .label splash = $63
-    .label ypos = 6
-    .label xcol = 5
+    .label splash = $b
+    .label ypos = $10
+    .label xcol = $14
     lda #<SPLASH
     sta.z splash
     lda #>SPLASH
@@ -3472,7 +3484,7 @@ splash_show: {
 // Initialize bobs_restore with data to prevent crash on the first call
 init_bobs_restore: {
     .label CANVAS_HIDDEN = $ea00
-    .label bob_restore = $b
+    .label bob_restore = 9
     lda #<bobs_restore
     sta.z bob_restore
     lda #>bobs_restore
@@ -3540,8 +3552,8 @@ init_bobs_restore: {
 // Initialize sprite pointers on all screens (in both graphics banks)
 init_sprite_pointers: {
     .const SPRITE_ID_0 = $ff&(SPRITES_1&$3fff)/$40
-    .label sprites_ptr_1 = $b
-    .label sprites_ptr_2 = 9
+    .label sprites_ptr_1 = 9
+    .label sprites_ptr_2 = 7
     lda #<SCREENS_2+OFFSET_SPRITE_PTRS
     sta.z sprites_ptr_2
     lda #>SCREENS_2+OFFSET_SPRITE_PTRS
@@ -3608,8 +3620,8 @@ memcpy: {
     .label destination = INTRO_MUSIC_CRUNCHED_UPPER
     .label source = INTRO_MUSIC_CRUNCHED
     .label src_end = source+INTRO_MUSIC_CRUNCHED_SIZE
-    .label dst = $b
-    .label src = 9
+    .label dst = 9
+    .label src = 7
     lda #<destination
     sta.z dst
     lda #>destination
@@ -3670,10 +3682,10 @@ joyfire: {
 }
 // Initialize the LEVEL_TILES_DIRECTIONS table with bits representing all open (non-blocked) movement directions from a tile
 init_level_tile_directions: {
-    .label directions = $b
-    .label ytile = 5
-    .label open_directions = 7
-    .label xtile = 6
+    .label directions = 9
+    .label ytile = $14
+    .label open_directions = $f
+    .label xtile = $10
     lda #<LEVEL_TILES_DIRECTIONS
     sta.z directions
     lda #>LEVEL_TILES_DIRECTIONS
@@ -3786,13 +3798,13 @@ init_level_tile_directions: {
 // Show the level by rendering all tiles
 // Returns the number of pills on the level
 level_show: {
-    .label return = $b
-    .label level = 9
-    .label ytile = 6
-    .label tile_right = $60
-    .label xtile = 8
-    .label count = $b
-    .label xcol = 7
+    .label return = 9
+    .label level = 7
+    .label ytile = $10
+    .label tile_right = 2
+    .label xtile = $13
+    .label count = 9
+    .label xcol = $f
     lda #<LEVEL_TILES
     sta.z level
     lda #>LEVEL_TILES
@@ -3895,16 +3907,16 @@ pacman_sound_init: {
 // - xcol: x column (0-24). The x-column represents 8 bits of data, 4 mc pixels, 16 on-screen pixels (due to x-expanded sprites)
 // - ypos: y position (0-145). The y-position is a line on the screen. Since every second line is black each ypos represents a 2 pixel distance.
 // - pixels: The pixel data to set 
-// void render(__zp(5) char xcol, __zp(6) char ypos, __zp(8) char pixels)
+// void render(__zp($14) char xcol, __zp($10) char ypos, __zp($13) char pixels)
 render: {
-    .label render_index_xcol = $61
-    .label canvas_offset = $b
-    .label canvas1 = 9
-    .label canvas2 = $b
-    .label ypix = $60
-    .label xcol = 5
-    .label ypos = 6
-    .label pixels = 8
+    .label render_index_xcol = $d
+    .label canvas_offset = 9
+    .label canvas1 = 7
+    .label canvas2 = 9
+    .label ypix = 2
+    .label xcol = $14
+    .label ypos = $10
+    .label pixels = $13
     // char ytile = ypos/4
     lda.z ypos
     lsr
@@ -3992,7 +4004,7 @@ render: {
 // If xtile of ytile is outside the legal range the empty tile (0) is returned
 // __register(A) char level_tile_get(__register(X) char xtile, __register(A) char ytile)
 level_tile_get: {
-    .label ytiles = $61
+    .label ytiles = $d
     // if(xtile>49 || ytile>36)
     cpx #$31+1
     bcs __b1
@@ -4024,17 +4036,17 @@ level_tile_get: {
 // - ytile: The y tile position (0-37). Tile y position 0 is a special half-tile at the top of the screen.
 // - tile_left:  The left tile ID.
 // - tile_right:  The right tile ID.
-// void render_tiles(__zp(7) char xcol, __zp(6) char ytile, __register(X) char tile_left, __register(Y) char tile_right)
+// void render_tiles(__zp($f) char xcol, __zp($10) char ytile, __register(X) char tile_left, __register(Y) char tile_right)
 render_tiles: {
-    .label tile_left_pixels = $61
-    .label tile_right_pixels = $63
-    .label render_index_xcol = $65
-    .label canvas_offset = $5e
-    .label canvas1 = $59
-    .label canvas2 = $5e
-    .label y = $60
-    .label xcol = 7
-    .label ytile = 6
+    .label tile_left_pixels = $d
+    .label tile_right_pixels = $b
+    .label render_index_xcol = $11
+    .label canvas_offset = 3
+    .label canvas1 = 5
+    .label canvas2 = 3
+    .label y = 2
+    .label xcol = $f
+    .label ytile = $10
     // tile_left*4
     txa
     asl

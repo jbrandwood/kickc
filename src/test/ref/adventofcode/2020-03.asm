@@ -222,11 +222,11 @@ main: {
 .segment Code
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__zp($8a) volatile char c)
+// void cputc(__zp($8f) volatile char c)
 cputc: {
     .const OFFSET_STACK_C = 0
     .label convertToScreenCode1_v = c
-    .label c = $8a
+    .label c = $8f
     tsx
     lda STACK_BASE+OFFSET_STACK_C,x
     sta.z c
@@ -313,14 +313,14 @@ clrscr: {
     rts
 }
 // Count the number of trees on a specific slope
-// __zp($81) unsigned int test_slope(__zp($85) char x_inc, __zp($80) char y_inc)
+// __zp($86) unsigned int test_slope(__zp($8e) char x_inc, __zp($90) char y_inc)
 test_slope: {
-    .label return = $81
-    .label trees = $81
-    .label mapline = $8d
-    .label y = $86
-    .label x_inc = $85
-    .label y_inc = $80
+    .label return = $86
+    .label trees = $86
+    .label mapline = $8a
+    .label y = $8c
+    .label x_inc = $8e
+    .label y_inc = $90
     lda #<0
     sta.z trees
     sta.z trees+1
@@ -401,10 +401,10 @@ test_slope: {
     jmp __b1
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp($86) void (*putc)(char), __zp($8d) const char *s)
+// void printf_str(__zp($8c) void (*putc)(char), __zp($8a) const char *s)
 printf_str: {
-    .label s = $8d
-    .label putc = $86
+    .label s = $8a
+    .label putc = $8c
   __b1:
     // while(c=*s++)
     ldy #0
@@ -427,9 +427,9 @@ printf_str: {
     jmp (putc)
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp($81) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp($86) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
-    .label uvalue = $81
+    .label uvalue = $86
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -447,7 +447,7 @@ printf_uint: {
 // Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
 // void putchar(char code)
 putchar: {
-    .label loc = $8b
+    .label loc = $80
     // **OLDADR = *OLDCHR
     lda OLDCHR
     ldy OLDADR
@@ -472,7 +472,7 @@ putchar: {
 }
 // Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
 setcursor: {
-    .label loc = $8b
+    .label loc = $80
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
     lda OLDCHR
@@ -514,7 +514,7 @@ setcursor: {
     rts
 }
 newline: {
-    .label start = $83
+    .label start = $82
     // if ((*ROWCRS)++ == CONIO_HEIGHT)
     inc ROWCRS
     lda #$18
@@ -573,12 +573,12 @@ newline: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($83) char *str, char c, __zp($88) unsigned int num)
+// void * memset(__zp($82) char *str, char c, __zp($84) unsigned int num)
 memset: {
-    .label end = $88
-    .label dst = $83
-    .label str = $83
-    .label num = $88
+    .label end = $84
+    .label dst = $82
+    .label str = $82
+    .label num = $84
     // if(num>0)
     lda.z num
     bne !+
@@ -639,12 +639,12 @@ gotoxy: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($81) unsigned int value, __zp($86) char *buffer, char radix)
+// void utoa(__zp($86) unsigned int value, __zp($8c) char *buffer, char radix)
 utoa: {
-    .label digit_value = $8d
-    .label buffer = $86
-    .label digit = $85
-    .label value = $81
+    .label digit_value = $8a
+    .label buffer = $8c
+    .label digit = $8e
+    .label value = $86
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -738,12 +738,12 @@ printf_number_buffer: {
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
-    .label __0 = $8b
-    .label __1 = $8b
-    .label __3 = $8b
-    .label return = $8b
-    .label __4 = $8f
-    .label __5 = $8b
+    .label __0 = $80
+    .label __1 = $80
+    .label __3 = $80
+    .label return = $80
+    .label __4 = $88
+    .label __5 = $80
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
     sta.z __3
@@ -791,14 +791,14 @@ cursorLocation: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($8b) void *destination, __zp($88) char *source, unsigned int num)
+// void * memcpy(__zp($80) void *destination, __zp($84) char *source, unsigned int num)
 memcpy: {
     .const num = $28*$17
-    .label src_end = $8f
-    .label dst = $8b
-    .label src = $88
-    .label destination = $8b
-    .label source = $88
+    .label src_end = $88
+    .label dst = $80
+    .label src = $84
+    .label destination = $80
+    .label source = $84
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -841,12 +841,12 @@ memcpy: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($81) unsigned int utoa_append(__zp($86) char *buffer, __zp($81) unsigned int value, __zp($8d) unsigned int sub)
+// __zp($86) unsigned int utoa_append(__zp($8c) char *buffer, __zp($86) unsigned int value, __zp($8a) unsigned int sub)
 utoa_append: {
-    .label buffer = $86
-    .label value = $81
-    .label sub = $8d
-    .label return = $81
+    .label buffer = $8c
+    .label value = $86
+    .label sub = $8a
+    .label return = $86
     ldx #0
   __b1:
     // while (value >= sub)

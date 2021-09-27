@@ -34,17 +34,17 @@
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
   .label print_screen = $400
-  .label print_char_cursor = 2
+  .label print_char_cursor = $f
   // Plasma state variables
-  .label c1A = 4
+  .label c1A = $d
   .label c1B = $e
-  .label c2A = $11
-  .label c2B = 5
+  .label c2A = 8
+  .label c2B = $11
 .segment Code
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
-    .label col = 2
+    .label col = $f
     // asm
     sei
     // VICII->BORDER_COLOR = BLUE
@@ -104,13 +104,13 @@ main: {
 // Make a plasma-friendly charset where the chars are randomly filled
 // void makecharset(char *charset)
 makecharset: {
-    .label __7 = $11
-    .label __10 = $f
-    .label __11 = $f
+    .label __7 = 8
+    .label __10 = 2
+    .label __11 = 2
     .label s = $e
-    .label i = 4
-    .label c = $c
-    .label __16 = $f
+    .label i = $d
+    .label c = 4
+    .label __16 = 2
     // SID->CH3_FREQ = 0xffff
     lda #<$ffff
     sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
@@ -231,15 +231,15 @@ makecharset: {
 }
 .segment Code
 // Render plasma to the passed screen
-// void doplasma(__zp($c) char *screen)
+// void doplasma(__zp(4) char *screen)
 doplasma: {
-    .label c1a = 7
-    .label c1b = 8
+    .label c1a = $b
+    .label c1b = 9
     .label i = 6
-    .label c2a = $a
-    .label c2b = $b
-    .label i1 = 9
-    .label screen = $c
+    .label c2a = $c
+    .label c2b = $a
+    .label i1 = 7
+    .label screen = 4
     // char c1a = c1A
     lda.z c1A
     sta.z c1a
@@ -394,7 +394,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $f
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

@@ -13,8 +13,8 @@
 :BasicUpstart(main)
   .label BG_COLOR = $d021
   .label print_screen = $400
-  .label print_char_cursor = $16
-  .label print_line_cursor = $10
+  .label print_char_cursor = $12
+  .label print_line_cursor = $1a
 .segment Code
 main: {
     // *BG_COLOR = 5
@@ -41,17 +41,17 @@ print_cls: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 2
+    .label c = $1d
     // Counter used for determining x%2==0
-    .label sqr1_hi = $1a
+    .label sqr1_hi = $14
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $1c
-    .label sqr1_lo = $18
+    .label sqr = $a
+    .label sqr1_lo = $10
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 6
-    .label sqr2_lo = 4
+    .label sqr2_hi = $16
+    .label sqr2_lo = $18
     //Start with g(0)=f(255)
-    .label dir = 3
+    .label dir = $1c
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -179,12 +179,12 @@ mulf_init: {
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
-    .label a = $18
-    .label b = $1a
-    .label ms = 8
-    .label mn = $c
-    .label mf = $12
-    .label i = 2
+    .label a = $10
+    .label b = $14
+    .label ms = $c
+    .label mn = 2
+    .label mf = 6
+    .label i = $1d
     lda #0
     sta.z i
     sta.z b
@@ -315,12 +315,12 @@ mul16u_compare: {
 .segment Code
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
-    .label a = 4
-    .label b = 6
-    .label ms = 8
-    .label mn = $c
-    .label mf = $12
-    .label i = 3
+    .label a = $18
+    .label b = $16
+    .label ms = $c
+    .label mn = 2
+    .label mf = 6
+    .label i = $1c
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -450,7 +450,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $1c
+    .label dst = $a
     lda #<str
     sta.z dst
     lda #>str
@@ -478,9 +478,9 @@ memset: {
     jmp __b1
 }
 // Print a zero-terminated string
-// void print_str(__zp($1c) char *str)
+// void print_str(__zp($a) char *str)
 print_str: {
-    .label str = $1c
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0
@@ -503,13 +503,13 @@ print_str: {
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
-// __zp(8) unsigned long muls16u(__zp($18) unsigned int a, __zp($1a) unsigned int b)
+// __zp($c) unsigned long muls16u(__zp($10) unsigned int a, __zp($14) unsigned int b)
 muls16u: {
-    .label return = 8
-    .label m = 8
-    .label i = $1c
-    .label a = $18
-    .label b = $1a
+    .label return = $c
+    .label m = $c
+    .label i = $a
+    .label a = $10
+    .label b = $14
     // if(a!=0)
     lda.z a
     ora.z a+1
@@ -566,13 +566,13 @@ muls16u: {
     jmp __b2
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// __zp($c) unsigned long mul16u(__zp($1c) unsigned int a, __zp($1a) unsigned int b)
+// __zp(2) unsigned long mul16u(__zp($a) unsigned int a, __zp($14) unsigned int b)
 mul16u: {
-    .label mb = $12
-    .label a = $1c
-    .label res = $c
-    .label b = $1a
-    .label return = $c
+    .label mb = 6
+    .label a = $a
+    .label res = 2
+    .label b = $14
+    .label return = 2
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -628,14 +628,14 @@ mul16u: {
 }
 // Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-// __zp($12) unsigned long mulf16u(__zp($18) unsigned int a, __zp($1a) unsigned int b)
+// __zp(6) unsigned long mulf16u(__zp($10) unsigned int a, __zp($14) unsigned int b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $12
-    .label a = $18
-    .label b = $1a
+    .label return = 6
+    .label a = $10
+    .label b = $14
     // *memA = a
     lda.z a
     sta memA
@@ -751,13 +751,13 @@ mulf16u: {
     // }
     rts
 }
-// void mul16u_error(__zp($18) unsigned int a, __zp($1a) unsigned int b, __zp(8) unsigned long ms, __zp($c) unsigned long mn, __zp($12) unsigned long mf)
+// void mul16u_error(__zp($10) unsigned int a, __zp($14) unsigned int b, __zp($c) unsigned long ms, __zp(2) unsigned long mn, __zp(6) unsigned long mf)
 mul16u_error: {
-    .label a = $18
-    .label b = $1a
-    .label ms = 8
-    .label mn = $c
-    .label mf = $12
+    .label a = $10
+    .label b = $14
+    .label ms = $c
+    .label mn = 2
+    .label mf = 6
     // print_str("multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -856,14 +856,14 @@ print_ln: {
 }
 // Slow multiplication of signed words
 // Perform a signed multiplication by repeated addition/subtraction
-// __zp(8) long muls16s(__zp(4) int a, __zp(6) int b)
+// __zp($c) long muls16s(__zp($18) int a, __zp($16) int b)
 muls16s: {
-    .label m = 8
-    .label j = $1c
-    .label return = 8
-    .label i = $18
-    .label a = 4
-    .label b = 6
+    .label m = $c
+    .label j = $a
+    .label return = $c
+    .label i = $10
+    .label a = $18
+    .label b = $16
     // if(a<0)
     lda.z a+1
     bmi __b8
@@ -979,16 +979,16 @@ muls16s: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// __zp($c) long mul16s(__zp(4) int a, __zp(6) int b)
+// __zp(2) long mul16s(__zp($18) int a, __zp($16) int b)
 mul16s: {
-    .label __6 = $18
-    .label __9 = $1a
-    .label __11 = $18
-    .label __12 = $1a
-    .label m = $c
-    .label return = $c
-    .label a = 4
-    .label b = 6
+    .label __6 = $10
+    .label __9 = $14
+    .label __11 = $10
+    .label __12 = $14
+    .label m = 2
+    .label return = 2
+    .label a = $18
+    .label b = $16
     // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -1048,16 +1048,16 @@ mul16s: {
 }
 // Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-// __zp($12) long mulf16s(__zp(4) int a, __zp(6) int b)
+// __zp(6) long mulf16s(__zp($18) int a, __zp($16) int b)
 mulf16s: {
-    .label __6 = $1a
-    .label __9 = $1c
-    .label __11 = $1a
-    .label __12 = $1c
-    .label m = $12
-    .label return = $12
-    .label a = 4
-    .label b = 6
+    .label __6 = $14
+    .label __9 = $a
+    .label __11 = $14
+    .label __12 = $a
+    .label m = 6
+    .label return = 6
+    .label a = $18
+    .label b = $16
     // unsigned long m = mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
@@ -1115,13 +1115,13 @@ mulf16s: {
     // }
     rts
 }
-// void mul16s_error(__zp(4) int a, __zp(6) int b, __zp(8) long ms, __zp($c) long mn, __zp($12) long mf)
+// void mul16s_error(__zp($18) int a, __zp($16) int b, __zp($c) long ms, __zp(2) long mn, __zp(6) long mf)
 mul16s_error: {
-    .label a = 4
-    .label b = 6
-    .label ms = 8
-    .label mn = $c
-    .label mf = $12
+    .label a = $18
+    .label b = $16
+    .label ms = $c
+    .label mn = 2
+    .label mf = 6
     // print_str("signed word multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -1210,9 +1210,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($18) unsigned int w)
+// void print_uint(__zp($10) unsigned int w)
 print_uint: {
-    .label w = $18
+    .label w = $10
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -1223,9 +1223,9 @@ print_uint: {
     rts
 }
 // Print a unsigned long as HEX
-// void print_ulong(__zp(8) unsigned long dw)
+// void print_ulong(__zp($c) unsigned long dw)
 print_ulong: {
-    .label dw = 8
+    .label dw = $c
     // print_uint(WORD1(dw))
     lda.z dw+2
     sta.z print_uint.w
@@ -1242,9 +1242,9 @@ print_ulong: {
     rts
 }
 // Print a signed int as HEX
-// void print_sint(__zp($18) int w)
+// void print_sint(__zp($10) int w)
 print_sint: {
-    .label w = $18
+    .label w = $10
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -1271,9 +1271,9 @@ print_sint: {
     jmp __b2
 }
 // Print a signed long as HEX
-// void print_slong(__zp(8) long dw)
+// void print_slong(__zp($c) long dw)
 print_slong: {
-    .label dw = 8
+    .label dw = $c
     // if(dw<0)
     lda.z dw+3
     bmi __b1

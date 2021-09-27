@@ -6,10 +6,10 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label ba = 2
+  .label ba = 5
   .label bb = 3
   .label bb_1 = 4
-  .label bc = 5
+  .label bc = 2
 .segment Code
 main: {
     lda #0

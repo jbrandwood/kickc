@@ -64,16 +64,16 @@
   /// Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
   .label VERA_L1_TILEBASE = $9f36
   // Variable holding the screen width;
-  .label conio_screen_width = $16
+  .label conio_screen_width = $e
   // Variable holding the screen height;
-  .label conio_screen_height = $17
+  .label conio_screen_height = $22
   // Variable holding the screen layer on the VERA card with which conio interacts;
-  .label conio_screen_layer = $18
+  .label conio_screen_layer = $1c
   // Variables holding the current map width and map height of the layer.
-  .label conio_width = $19
-  .label conio_height = $1b
-  .label conio_rowshift = $1d
-  .label conio_rowskip = $1e
+  .label conio_width = $29
+  .label conio_height = $23
+  .label conio_rowshift = $13
+  .label conio_rowskip = $11
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -88,8 +88,8 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT = 3
-  .label CONIO_SCREEN_BANK = 5
+  .label CONIO_SCREEN_TEXT = $f
+  .label CONIO_SCREEN_BANK = $27
 .segment Code
 __start: {
     // __ma unsigned byte conio_screen_width = 0
@@ -121,7 +121,7 @@ __start: {
 conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    .label line = 2
+    .label line = $42
     // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
@@ -160,12 +160,12 @@ conio_x16_init: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__zp($34) char c)
+// void cputc(__zp($1d) char c)
 cputc: {
     .const OFFSET_STACK_C = 0
-    .label __16 = $20
-    .label c = $34
-    .label conio_addr = $35
+    .label __16 = 2
+    .label c = $1d
+    .label conio_addr = 8
     tsx
     lda STACK_BASE+OFFSET_STACK_C,x
     sta.z c
@@ -263,24 +263,22 @@ cputc: {
     jsr cputln
     rts
 }
-/// @file
-/// Functions for performing input and output.
 main: {
     //(byte)(((((word)<(>calcend)<<8)|>(<calcend))>>5)+((word)<(>calcend)<<3));
     .const borderbeg = $a000
     .const inc = $123
-    .label __1 = $22
-    .label __4 = $26
-    .label __9 = $27
-    .label __13 = $12
-    .label __15 = $28
-    .label calcend = $22
-    .label bankbeg = $26
-    .label bankend = $27
-    .label beg = $12
-    .label end = $28
-    .label num = $a
-    .label src1 = 6
+    .label __1 = $35
+    .label __4 = $28
+    .label __9 = $41
+    .label __13 = $16
+    .label __15 = $33
+    .label calcend = $35
+    .label bankbeg = $28
+    .label bankend = $41
+    .label beg = $16
+    .label end = $33
+    .label num = $3d
+    .label src1 = $39
     lda #<$40*$40*2
     sta.z num
     lda #>$40*$40*2
@@ -643,13 +641,13 @@ screensize: {
 // void screenlayer(char layer)
 screenlayer: {
     .const layer = 1
-    .label __2 = $2c
-    .label __4 = $2e
-    .label __5 = $39
-    .label vera_layer_get_width1_config = $2a
-    .label vera_layer_get_width1_return = $2c
-    .label vera_layer_get_height1_config = $37
-    .label vera_layer_get_height1_return = $39
+    .label __2 = $14
+    .label __4 = $31
+    .label __5 = $2b
+    .label vera_layer_get_width1_config = $2d
+    .label vera_layer_get_width1_return = $14
+    .label vera_layer_get_height1_config = $2f
+    .label vera_layer_get_height1_return = $2b
     // conio_screen_layer = layer
     lda #layer
     sta.z conio_screen_layer
@@ -767,7 +765,7 @@ vera_layer_set_backcolor: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
 // void vera_layer_set_mapbase(__register(A) char layer, __register(X) char mapbase)
 vera_layer_set_mapbase: {
-    .label addr = $2a
+    .label addr = $2d
     // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
@@ -785,8 +783,8 @@ vera_layer_set_mapbase: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __6 = $2c
-    .label line_offset = $2c
+    .label __6 = $14
+    .label line_offset = $14
     // if(y>CONIO_HEIGHT)
     lda.z conio_screen_height
     stx.z $ff
@@ -834,7 +832,7 @@ gotoxy: {
 //   Note that on the VERA, the transparent color has value 0.
 // __register(A) char vera_layer_get_color(__register(X) char layer)
 vera_layer_get_color: {
-    .label addr = $35
+    .label addr = 8
     // byte* addr = vera_layer_config[layer]
     txa
     asl
@@ -867,7 +865,7 @@ vera_layer_get_color: {
 }
 // Print a newline
 cputln: {
-    .label temp = $35
+    .label temp = 8
     // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
@@ -906,9 +904,9 @@ cputln: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp($14) const char *s)
+// void printf_str(void (*putc)(char), __zp($25) const char *s)
 printf_str: {
-    .label s = $14
+    .label s = $25
   __b1:
     // while(c=*s++)
     ldy #0
@@ -929,9 +927,9 @@ printf_str: {
     jmp __b1
 }
 // Print an unsigned int using a specific format
-// void printf_ulong(void (*putc)(char), __zp($e) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_ulong(void (*putc)(char), __zp($18) unsigned long uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_ulong: {
-    .label uvalue = $e
+    .label uvalue = $18
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -964,9 +962,9 @@ printf_uchar: {
     rts
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp($12) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp($16) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
-    .label uvalue = $12
+    .label uvalue = $16
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -1062,7 +1060,7 @@ vera_layer_mode_tile: {
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 // void vera_layer_set_text_color_mode(char layer, char color_mode)
 vera_layer_set_text_color_mode: {
-    .label addr = $2e
+    .label addr = $31
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -1092,9 +1090,9 @@ vera_layer_get_rowshift: {
 // Get the value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Skip value to calculate fast from a y value to line offset in tile mode.
-// __zp($2e) unsigned int vera_layer_get_rowskip(__register(A) char layer)
+// __zp($31) unsigned int vera_layer_get_rowskip(__register(A) char layer)
 vera_layer_get_rowskip: {
-    .label return = $2e
+    .label return = $31
     // return vera_layer_rowskip[layer];
     asl
     tay
@@ -1138,12 +1136,12 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void ultoa(__zp($e) unsigned long value, __zp($14) char *buffer, char radix)
+// void ultoa(__zp($18) unsigned long value, __zp($25) char *buffer, char radix)
 ultoa: {
-    .label digit_value = $30
-    .label buffer = $14
-    .label digit = $3b
-    .label value = $e
+    .label digit_value = $1e
+    .label buffer = $25
+    .label digit = $d
+    .label value = $18
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1249,12 +1247,12 @@ printf_number_buffer: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(X) char value, __zp($14) char *buffer, char radix)
+// void uctoa(__register(X) char value, __zp($25) char *buffer, char radix)
 uctoa: {
-    .label digit_value = $34
-    .label buffer = $14
-    .label digit = $3b
-    .label started = $26
+    .label digit_value = $1d
+    .label buffer = $25
+    .label digit = $d
+    .label started = $28
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1315,12 +1313,12 @@ uctoa: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($12) unsigned int value, __zp($14) char *buffer, char radix)
+// void utoa(__zp($16) unsigned int value, __zp($25) char *buffer, char radix)
 utoa: {
-    .label digit_value = $35
-    .label buffer = $14
-    .label digit = $26
-    .label value = $12
+    .label digit_value = 8
+    .label buffer = $25
+    .label digit = $28
+    .label value = $16
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1390,7 +1388,7 @@ utoa: {
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 // void vera_layer_set_config(char layer, char config)
 vera_layer_set_config: {
-    .label addr = $37
+    .label addr = $2f
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -1410,7 +1408,7 @@ vera_layer_set_config: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
 // void vera_layer_set_tilebase(char layer, char tilebase)
 vera_layer_set_tilebase: {
-    .label addr = $39
+    .label addr = $2b
     // byte* addr = vera_layer_tilebase[layer]
     lda vera_layer_tilebase+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -1425,10 +1423,10 @@ vera_layer_set_tilebase: {
 }
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $3b
-    .label width = $3c
-    .label line = $3d
-    .label start = $3d
+    .label cy = $d
+    .label width = $c
+    .label line = 6
+    .label start = 6
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
@@ -1500,12 +1498,12 @@ insertup: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($e) unsigned long ultoa_append(__zp($14) char *buffer, __zp($e) unsigned long value, __zp($30) unsigned long sub)
+// __zp($18) unsigned long ultoa_append(__zp($25) char *buffer, __zp($18) unsigned long value, __zp($1e) unsigned long sub)
 ultoa_append: {
-    .label buffer = $14
-    .label value = $e
-    .label sub = $30
-    .label return = $e
+    .label buffer = $25
+    .label value = $18
+    .label sub = $1e
+    .label return = $18
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1558,10 +1556,10 @@ ultoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($14) char *buffer, __register(X) char value, __zp($34) char sub)
+// __register(X) char uctoa_append(__zp($25) char *buffer, __register(X) char value, __zp($1d) char sub)
 uctoa_append: {
-    .label buffer = $14
-    .label sub = $34
+    .label buffer = $25
+    .label sub = $1d
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1591,12 +1589,12 @@ uctoa_append: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($12) unsigned int utoa_append(__zp($14) char *buffer, __zp($12) unsigned int value, __zp($35) unsigned int sub)
+// __zp($16) unsigned int utoa_append(__zp($25) char *buffer, __zp($16) unsigned int value, __zp(8) unsigned int sub)
 utoa_append: {
-    .label buffer = $14
-    .label value = $12
-    .label sub = $35
-    .label return = $12
+    .label buffer = $25
+    .label value = $16
+    .label sub = 8
+    .label return = $16
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1628,8 +1626,8 @@ utoa_append: {
     jmp __b1
 }
 clearline: {
-    .label addr = $41
-    .label c = $20
+    .label addr = $a
+    .label c = 2
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -1704,12 +1702,12 @@ clearline: {
 // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
 // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 // - num: The number of bytes to copy
-// void memcpy_in_vram(char dest_bank, __zp($3d) void *dest, char dest_increment, char src_bank, __zp($41) char *src, char src_increment, __zp($3f) unsigned int num)
+// void memcpy_in_vram(char dest_bank, __zp(6) void *dest, char dest_increment, char src_bank, __zp($a) char *src, char src_increment, __zp(4) unsigned int num)
 memcpy_in_vram: {
-    .label i = $20
-    .label dest = $3d
-    .label src = $41
-    .label num = $3f
+    .label i = 2
+    .label dest = 6
+    .label src = $a
+    .label num = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

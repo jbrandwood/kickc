@@ -20,8 +20,8 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label print_screen = $400
-  .label print_char_cursor = $10
-  .label print_line_cursor = $a
+  .label print_char_cursor = 4
+  .label print_line_cursor = 8
 .segment Code
 main: {
     .label tabsize = $14
@@ -47,21 +47,21 @@ print_cls: {
 // tabsize - the number of sine points (the size of the table)
 // min - the minimal value
 // max - the maximal value
-// void sin8u_table(__zp(4) char *sintab, unsigned int tabsize, char min, char max)
+// void sin8u_table(__zp($15) char *sintab, unsigned int tabsize, char min, char max)
 sin8u_table: {
     .const min = $a
     .const max = $ff
     .const sum = min+max
     .const mid = sum/2+1
     .label amplitude = max-min
-    .label step = $e
-    .label sinx = $12
-    .label sinx_sc = 8
-    .label sinx_tr = $13
-    .label sintab = 4
+    .label step = $a
+    .label sinx = $14
+    .label sinx_sc = 2
+    .label sinx_tr = $e
+    .label sintab = $15
     // Iterate over the table
-    .label x = 2
-    .label i = 6
+    .label x = $12
+    .label i = $c
     // word step = div16u(PI2_u4f12, tabsize)
   //if( sum & 1 > 0) mid++;
   // u[4.28] step = PI*2/wavelength
@@ -263,7 +263,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = $c
     lda #<str
     sta.z dst
     lda #>str
@@ -294,9 +294,9 @@ memset: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($e) unsigned int div16u(unsigned int dividend, unsigned int divisor)
+// __zp($a) unsigned int div16u(unsigned int dividend, unsigned int divisor)
 div16u: {
-    .label return = $e
+    .label return = $a
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -304,9 +304,9 @@ div16u: {
     rts
 }
 // Print a zero-terminated string
-// void print_str(__zp($c) char *str)
+// void print_str(__zp(6) char *str)
 print_str: {
-    .label str = $c
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -328,9 +328,9 @@ print_str: {
     jmp __b1
 }
 // Print a unsigned int as HEX
-// void print_uint(__zp($c) unsigned int w)
+// void print_uint(__zp(6) unsigned int w)
 print_uint: {
-    .label w = $c
+    .label w = 6
     // print_uchar(BYTE1(w))
     ldx.z w+1
     jsr print_uchar
@@ -389,17 +389,17 @@ print_ln: {
 // Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// __register(A) signed char sin8s(__zp($c) unsigned int x)
+// __register(A) signed char sin8s(__zp(6) unsigned int x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $c
-    .label x = $c
-    .label x1 = $14
-    .label x3 = $15
-    .label usinx = $16
+    .label __4 = 6
+    .label x = 6
+    .label x1 = $10
+    .label x3 = $f
+    .label usinx = $11
     // Move x1 into the range 0-PI/2 using sine mirror symmetries
-    .label isUpper = $12
+    .label isUpper = $14
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -535,7 +535,7 @@ sin8s: {
 // int mul8su(__register(Y) signed char a, char b)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label m = 8
+    .label m = 2
     // unsigned int m = mul8u((char)a, (char) b)
     tya
     tax
@@ -582,9 +582,9 @@ print_schar: {
     jmp __b2
 }
 // Print a signed int as HEX
-// void print_sint(__zp($c) int w)
+// void print_sint(__zp(6) int w)
 print_sint: {
-    .label w = $c
+    .label w = 6
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -614,12 +614,12 @@ print_sint: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($e) unsigned int divr16u(__zp($c) unsigned int dividend, unsigned int divisor, __zp($a) unsigned int rem)
+// __zp($a) unsigned int divr16u(__zp(6) unsigned int dividend, unsigned int divisor, __zp(8) unsigned int rem)
 divr16u: {
-    .label rem = $a
-    .label dividend = $c
-    .label quotient = $e
-    .label return = $e
+    .label rem = 8
+    .label dividend = 6
+    .label quotient = $a
+    .label return = $a
     ldx #0
     txa
     sta.z quotient
@@ -699,11 +699,11 @@ print_char: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($13) char select)
+// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($e) char select)
 mulu8_sel: {
-    .label __0 = 8
-    .label __1 = 8
-    .label select = $13
+    .label __0 = 2
+    .label __1 = 2
+    .label select = $e
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -723,11 +723,11 @@ mulu8_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(8) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label return = 8
-    .label mb = $10
-    .label res = 8
+    .label return = 2
+    .label mb = 4
+    .label res = 2
     // unsigned int mb = b
     sta.z mb
     lda #0

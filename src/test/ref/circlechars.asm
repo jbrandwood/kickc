@@ -23,13 +23,13 @@
   .label SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $f
+  .label conio_cursor_x = $16
   // The current cursor y-position
   .label conio_cursor_y = $10
   // The current text cursor line start
-  .label conio_line_text = $11
+  .label conio_line_text = $13
   // The current color cursor line start
-  .label conio_line_color = $13
+  .label conio_line_color = $11
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -100,14 +100,14 @@ cputc: {
     rts
 }
 main: {
-    .label __9 = $16
-    .label __10 = 8
-    .label yd = $15
-    .label dist_sq = $16
-    .label y = 2
-    .label sc = 5
-    .label x = 7
-    .label count = 3
+    .label __9 = $e
+    .label __10 = 4
+    .label yd = $1c
+    .label dist_sq = $e
+    .label y = $1d
+    .label sc = $18
+    .label x = $17
+    .label count = $a
     // memset(SCREEN, ' ', 1000)
     ldx #' '
     lda #<SCREEN
@@ -245,12 +245,12 @@ main: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __5 = $1c
-    .label __6 = $18
-    .label __7 = $18
-    .label line_offset = $18
-    .label __8 = $1a
-    .label __9 = $18
+    .label __5 = $20
+    .label __6 = $1a
+    .label __7 = $1a
+    .label line_offset = $1a
+    .label __8 = $1e
+    .label __9 = $1a
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -345,12 +345,12 @@ cputln: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($d) void *str, __register(X) char c, __zp($b) unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, __zp(6) unsigned int num)
 memset: {
-    .label end = $b
-    .label dst = $d
-    .label num = $b
-    .label str = $d
+    .label end = 6
+    .label dst = 2
+    .label num = 6
+    .label str = 2
     // if(num>0)
     lda.z num
     bne !+
@@ -389,10 +389,10 @@ memset: {
     jmp __b2
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp(3) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp($a) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     .label putc = cputc
-    .label uvalue = 3
+    .label uvalue = $a
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -408,10 +408,10 @@ printf_uint: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(8) void (*putc)(char), __zp($16) const char *s)
+// void printf_str(__zp(4) void (*putc)(char), __zp($e) const char *s)
 printf_str: {
-    .label s = $16
-    .label putc = 8
+    .label s = $e
+    .label putc = 4
   __b1:
     // while(c=*s++)
     ldy #0
@@ -435,10 +435,10 @@ printf_str: {
 }
 // Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
-// int mul8s(__zp($a) signed char a, __register(Y) signed char b)
+// int mul8s(__zp($15) signed char a, __register(Y) signed char b)
 mul8s: {
-    .label m = 8
-    .label a = $a
+    .label m = 4
+    .label a = $15
     // unsigned int m = mul8u((char)a, (char) b)
     ldx.z a
     tya
@@ -543,13 +543,13 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(3) unsigned int value, __zp($16) char *buffer, char radix)
+// void utoa(__zp($a) unsigned int value, __zp($e) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $1e
-    .label buffer = $16
-    .label digit = $a
-    .label value = 3
+    .label digit_value = 8
+    .label buffer = $e
+    .label digit = $15
+    .label value = $a
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -641,11 +641,11 @@ printf_number_buffer: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(8) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp(4) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label mb = $1e
-    .label res = 8
-    .label return = 8
+    .label mb = 8
+    .label res = 4
+    .label return = 4
     // unsigned int mb = b
     sta.z mb
     lda #0
@@ -685,13 +685,13 @@ mul8u: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($d) void *destination, __zp($b) void *source, unsigned int num)
+// void * memcpy(__zp(2) void *destination, __zp(6) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $20
-    .label dst = $d
-    .label src = $b
-    .label source = $b
-    .label destination = $d
+    .label src_end = $c
+    .label dst = 2
+    .label src = 6
+    .label source = 6
+    .label destination = 2
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -734,12 +734,12 @@ memcpy: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(3) unsigned int utoa_append(__zp($16) char *buffer, __zp(3) unsigned int value, __zp($1e) unsigned int sub)
+// __zp($a) unsigned int utoa_append(__zp($e) char *buffer, __zp($a) unsigned int value, __zp(8) unsigned int sub)
 utoa_append: {
-    .label buffer = $16
-    .label value = 3
-    .label sub = $1e
-    .label return = 3
+    .label buffer = $e
+    .label value = $a
+    .label sub = 8
+    .label return = $a
     ldx #0
   __b1:
     // while (value >= sub)

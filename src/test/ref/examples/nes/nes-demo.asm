@@ -364,7 +364,7 @@ ppuDataTransfer: {
     .label cpuData = PALETTE
     // Transfer to PPU
     .label cpuSrc = 6
-    .label i = 4
+    .label i = 2
     // PPU->PPUADDR = BYTE1(ppuData)
     lda #>ppuData
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
@@ -413,8 +413,8 @@ ppuDataTransfer: {
 // - size : The number of bytes to transfer
 // void ppuDataFill(void * const ppuData, __register(X) char val, __zp(6) unsigned int size)
 ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = 4
-    .label i = 2
+    .label ppuDataPrepare1_ppuData = 2
+    .label i = 4
     .label size = 6
     // BYTE1(ppuData)
     lda.z ppuDataPrepare1_ppuData+1
@@ -453,11 +453,11 @@ ppuDataFill: {
 // Transfer a 2x2 tile into the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - tile : The tile to transfer
-// void ppuDataPutTile(__zp(2) char * const ppuData, __zp(4) char *tile)
+// void ppuDataPutTile(__zp(4) char * const ppuData, __zp(2) char *tile)
 ppuDataPutTile: {
-    .label ppuDataPrepare2_ppuData = 2
-    .label ppuData = 2
-    .label tile = 4
+    .label ppuDataPrepare2_ppuData = 4
+    .label ppuData = 4
+    .label tile = 2
     // BYTE1(ppuData)
     lda.z ppuData+1
     // PPU->PPUADDR = BYTE1(ppuData)
@@ -514,7 +514,7 @@ memcpy: {
     .label source = SPRITES
     .label src_end = source+num
     .label dst = 6
-    .label src = 4
+    .label src = 2
     lda #<destination
     sta.z dst
     lda #>destination

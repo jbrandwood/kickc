@@ -33,7 +33,7 @@
   .label DEFAULT_SCREEN = 0
 .segment Code
 main: {
-    .label vaddr = 2
+    .label vaddr = 4
     lda #<DEFAULT_SCREEN
     sta.z vaddr
     lda #>DEFAULT_SCREEN
@@ -92,7 +92,7 @@ memcpy_to_vram: {
     .label src = main.MSG2
     // Transfer the data
     .label end = src+num
-    .label s = 4
+    .label s = 2
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -139,9 +139,9 @@ memcpy_to_vram: {
 // - bank: Which 64K VRAM bank to put data into (0/1)
 // - addr: The address in VRAM
 // - data: The data to put into VRAM
-// void vpoke(char vbank, __zp(2) char *vaddr, __register(X) char data)
+// void vpoke(char vbank, __zp(4) char *vaddr, __register(X) char data)
 vpoke: {
-    .label vaddr = 2
+    .label vaddr = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

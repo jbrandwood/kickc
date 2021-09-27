@@ -84,25 +84,25 @@
   /// Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
   .label VERA_L1_TILEBASE = $9f36
   // Variable holding the screen width;
-  .label conio_screen_width = $1c
+  .label conio_screen_width = $22
   // Variable holding the screen height;
-  .label conio_screen_height = $1d
+  .label conio_screen_height = $2f
   // Variable holding the screen layer on the VERA card with which conio interacts;
-  .label conio_screen_layer = $1e
+  .label conio_screen_layer = $2e
   // Variables holding the current map width and map height of the layer.
-  .label conio_width = $1f
-  .label conio_height = $21
-  .label conio_rowshift = $23
-  .label conio_rowskip = $24
-  .label __bitmap_address = $26
-  .label __bitmap_layer = $2a
-  .label __bitmap_hscale = $2b
-  .label __bitmap_vscale = $2c
-  .label __bitmap_color_depth = $2d
+  .label conio_width = $a1
+  .label conio_height = $33
+  .label conio_rowshift = $2b
+  .label conio_rowskip = $2c
+  .label __bitmap_address = $a8
+  .label __bitmap_layer = $92
+  .label __bitmap_hscale = $ac
+  .label __bitmap_vscale = $ad
+  .label __bitmap_color_depth = $a3
   // The random state variable
-  .label rand_state = $14
+  .label rand_state = $35
   // Remainder after unsigned 16-bit division
-  .label rem16u = $5b
+  .label rem16u = $41
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -117,9 +117,9 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT = 3
-  .label CONIO_SCREEN_BANK = 5
-  .label CONIO_SCREEN_BANK_1 = $2f
+  .label CONIO_SCREEN_TEXT = $29
+  .label CONIO_SCREEN_BANK = $84
+  .label CONIO_SCREEN_BANK_1 = $a7
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -134,7 +134,7 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT_1 = $30
+  .label CONIO_SCREEN_TEXT_1 = $ae
 .segment Code
 __start: {
     // __ma unsigned byte conio_screen_width = 0
@@ -182,7 +182,7 @@ __start: {
 conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    .label line = 2
+    .label line = $a4
     // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
@@ -225,12 +225,12 @@ conio_x16_init: {
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// void cputc(__zp($2e) char c)
+// void cputc(__zp($65) char c)
 cputc: {
     .const OFFSET_STACK_C = 0
-    .label __16 = $3e
-    .label c = $2e
-    .label conio_addr = $46
+    .label __16 = $27
+    .label c = $65
+    .label conio_addr = $1c
     tsx
     lda STACK_BASE+OFFSET_STACK_C,x
     sta.z c
@@ -329,9 +329,9 @@ cputc: {
     rts
 }
 main: {
-    .label __40 = $16
-    .label color = 8
-    .label x = 6
+    .label __40 = $6a
+    .label color = $7a
+    .label x = $74
     // memcpy_in_vram(1, (char*)0xF000, VERA_INC_1, 0, (char*)0xF800, VERA_INC_1, 256*8)
   // Before we configure the bitmap pane into vera  memory we need to re-arrange a few things!
   // It is better to load all in bank 0, but then there is an issue.
@@ -520,6 +520,10 @@ main: {
   __b4:
     // bitmap_line(x, x, 0, 199, color)
     lda.z x
+    sta.z bitmap_line.x0
+    lda.z x+1
+    sta.z bitmap_line.x0+1
+    lda.z x
     sta.z bitmap_line.x1
     lda.z x+1
     sta.z bitmap_line.x1+1
@@ -557,6 +561,10 @@ main: {
     jsr rand
     // rand()
     // modr16u(rand(),320,0)
+    lda.z rand.return
+    sta.z modr16u.dividend
+    lda.z rand.return+1
+    sta.z modr16u.dividend+1
     lda #<$140
     sta.z modr16u.divisor
     lda #>$140
@@ -572,36 +580,29 @@ main: {
     jsr rand
     // rand()
     // modr16u(rand(),320,0)
+    lda.z rand.return
+    sta.z modr16u.dividend
+    lda.z rand.return+1
+    sta.z modr16u.dividend+1
     lda #<$140
     sta.z modr16u.divisor
     lda #>$140
     sta.z modr16u.divisor+1
     jsr modr16u
     // modr16u(rand(),320,0)
-    lda.z modr16u.return
-    sta.z modr16u.return_1
-    lda.z modr16u.return+1
-    sta.z modr16u.return_1+1
     // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
+    lda.z modr16u.return
+    sta.z bitmap_line.x1
+    lda.z modr16u.return+1
+    sta.z bitmap_line.x1+1
     // rand()
     jsr rand
     // rand()
     // modr16u(rand(),200,0)
-    lda #<$c8
-    sta.z modr16u.divisor
-    lda #>$c8
-    sta.z modr16u.divisor+1
-    jsr modr16u
-    // modr16u(rand(),200,0)
-    lda.z modr16u.return
-    sta.z modr16u.return_2
-    lda.z modr16u.return+1
-    sta.z modr16u.return_2+1
-    // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
-    // rand()
-    jsr rand
-    // rand()
-    // modr16u(rand(),200,0)
+    lda.z rand.return
+    sta.z modr16u.dividend
+    lda.z rand.return+1
+    sta.z modr16u.dividend+1
     lda #<$c8
     sta.z modr16u.divisor
     lda #>$c8
@@ -609,6 +610,29 @@ main: {
     jsr modr16u
     // modr16u(rand(),200,0)
     // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
+    lda.z modr16u.return
+    sta.z bitmap_line.y0
+    lda.z modr16u.return+1
+    sta.z bitmap_line.y0+1
+    // rand()
+    jsr rand
+    // rand()
+    // modr16u(rand(),200,0)
+    lda.z rand.return
+    sta.z modr16u.dividend
+    lda.z rand.return+1
+    sta.z modr16u.dividend+1
+    lda #<$c8
+    sta.z modr16u.divisor
+    lda #>$c8
+    sta.z modr16u.divisor+1
+    jsr modr16u
+    // modr16u(rand(),200,0)
+    // bitmap_line(modr16u(rand(),320,0), modr16u(rand(),320,0), modr16u(rand(),200,0), modr16u(rand(),200,0), rand()&255)
+    lda.z modr16u.return
+    sta.z bitmap_line.y1
+    lda.z modr16u.return+1
+    sta.z bitmap_line.y1+1
     // rand()
     jsr rand
     // rand()
@@ -747,13 +771,13 @@ screensize: {
 // - layer: value of 0 or 1.
 // void screenlayer(char layer)
 screenlayer: {
-    .label __2 = $51
-    .label __4 = $34
-    .label __5 = $3c
-    .label vera_layer_get_width1_config = $32
-    .label vera_layer_get_width1_return = $51
-    .label vera_layer_get_height1_config = $38
-    .label vera_layer_get_height1_return = $3c
+    .label __2 = $85
+    .label __4 = $7b
+    .label __5 = $87
+    .label vera_layer_get_width1_config = $93
+    .label vera_layer_get_width1_return = $85
+    .label vera_layer_get_height1_config = $95
+    .label vera_layer_get_height1_return = $87
     // conio_screen_layer = layer
     lda #1
     sta.z conio_screen_layer
@@ -879,7 +903,7 @@ vera_layer_set_backcolor: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
 // void vera_layer_set_mapbase(__register(A) char layer, __register(X) char mapbase)
 vera_layer_set_mapbase: {
-    .label addr = $51
+    .label addr = $23
     // byte* addr = vera_layer_mapbase[layer]
     asl
     tay
@@ -897,8 +921,8 @@ vera_layer_set_mapbase: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __6 = $34
-    .label line_offset = $34
+    .label __6 = $23
+    .label line_offset = $23
     // if(y>CONIO_HEIGHT)
     lda.z conio_screen_height
     stx.z $ff
@@ -946,7 +970,7 @@ gotoxy: {
 //   Note that on the VERA, the transparent color has value 0.
 // __register(A) char vera_layer_get_color(__register(X) char layer)
 vera_layer_get_color: {
-    .label addr = $36
+    .label addr = 8
     // byte* addr = vera_layer_config[layer]
     txa
     asl
@@ -979,7 +1003,7 @@ vera_layer_get_color: {
 }
 // Print a newline
 cputln: {
-    .label temp = $36
+    .label temp = 8
     // word temp = conio_line_text[conio_screen_layer]
     lda.z conio_screen_layer
     asl
@@ -1027,12 +1051,12 @@ cputln: {
 // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
 // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 // - num: The number of bytes to copy
-// void memcpy_in_vram(__register(Y) char dest_bank, __zp($18) void *dest, char dest_increment, char src_bank, __zp($16) char *src, char src_increment, __zp($1a) unsigned int num)
+// void memcpy_in_vram(__register(Y) char dest_bank, __zp($a) void *dest, char dest_increment, char src_bank, __zp(6) char *src, char src_increment, __zp(8) unsigned int num)
 memcpy_in_vram: {
-    .label i = $36
-    .label dest = $18
-    .label src = $16
-    .label num = $1a
+    .label i = 2
+    .label dest = $a
+    .label src = 6
+    .label num = 8
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -1113,19 +1137,19 @@ memcpy_in_vram: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
-// void vera_layer_mode_tile(__zp(9) char layer, __zp($a) unsigned long mapbase_address, __zp($e) unsigned long tilebase_address, __zp($34) unsigned int mapwidth, __zp($32) unsigned int mapheight, __zp($12) char tilewidth, __zp($13) char tileheight, char color_depth)
+// void vera_layer_mode_tile(__zp($90) char layer, __zp($43) unsigned long mapbase_address, __zp($47) unsigned long tilebase_address, __zp($76) unsigned int mapwidth, __zp($9b) unsigned int mapheight, __zp($a5) char tilewidth, __zp($a6) char tileheight, char color_depth)
 vera_layer_mode_tile: {
-    .label __1 = $38
-    .label __6 = $3c
-    .label __17 = $3a
-    .label __18 = $3b
-    .label mapbase_address = $a
-    .label tilebase_address = $e
-    .label mapwidth = $34
-    .label layer = 9
-    .label mapheight = $32
-    .label tilewidth = $12
-    .label tileheight = $13
+    .label __1 = $78
+    .label __6 = $4b
+    .label __17 = $91
+    .label __18 = $8f
+    .label mapbase_address = $43
+    .label tilebase_address = $47
+    .label mapwidth = $76
+    .label layer = $90
+    .label mapheight = $9b
+    .label tilewidth = $a5
+    .label tileheight = $a6
     // case 32:
     //             config |= VERA_LAYER_WIDTH_32;
     //             vera_layer_rowshift[layer] = 6;
@@ -1476,9 +1500,9 @@ vera_layer_mode_bitmap: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label __1 = $5d
-    .label line_text = $16
-    .label color = $5d
+    .label __1 = $83
+    .label line_text = $6c
+    .label color = $83
     // char* line_text = CONIO_SCREEN_TEXT
     lda.z CONIO_SCREEN_TEXT_1
     sta.z line_text
@@ -1571,9 +1595,9 @@ clrscr: {
     jmp __b4
 }
 /// Print a NUL-terminated string
-// void printf_str(void (*putc)(char), __zp($40) const char *s)
+// void printf_str(void (*putc)(char), __zp($31) const char *s)
 printf_str: {
-    .label s = $40
+    .label s = $31
   __b1:
     // while(c=*s++)
     ldy #0
@@ -1598,33 +1622,34 @@ printf_str: {
 bitmap_init: {
     .const layer = 0
     .const address = 0
-    .label __7 = $46
-    .label __10 = $4f
-    .label __13 = $59
-    .label __23 = $48
-    .label __24 = $53
-    .label __25 = $5f
-    .label __26 = $6d
-    .label __28 = $44
-    .label vera_layer_get_color_depth1_config = $3e
-    .label bitmask = $2e
-    .label x = $18
-    .label hdelta = $42
-    .label yoffs = $61
-    .label y = $1a
-    .label __29 = $48
-    .label __30 = $4b
-    .label __31 = $4d
-    .label __32 = $53
-    .label __33 = $55
-    .label __34 = $57
-    .label __35 = $5f
-    .label __36 = $65
-    .label __37 = $6b
-    .label __38 = $6d
-    .label __39 = $6f
-    .label __40 = $40
-    .label __41 = $44
+    .label __7 = $7d
+    .label __10 = $7f
+    .label __13 = $81
+    .label __23 = $37
+    .label __24 = $39
+    .label __25 = $3b
+    .label __26 = $3d
+    .label __28 = $3f
+    .label vera_layer_get_color_depth1_config = $97
+    .label bitmask = $1f
+    .label bitshift = $1e
+    .label x = $63
+    .label hdelta = $9f
+    .label yoffs = $66
+    .label y = 6
+    .label __29 = $37
+    .label __30 = $4d
+    .label __31 = $4f
+    .label __32 = $39
+    .label __33 = $51
+    .label __34 = $53
+    .label __35 = $3b
+    .label __36 = $55
+    .label __37 = $57
+    .label __38 = $3d
+    .label __39 = $59
+    .label __40 = $5b
+    .label __41 = $3f
     // __bitmap_address = address
     lda #<address
     sta.z __bitmap_address
@@ -1671,7 +1696,8 @@ bitmap_init: {
     lda bitmasks,y
     sta.z bitmask
     // signed byte bitshift = bitshifts[__bitmap_color_depth]
-    ldx bitshifts,y
+    lda bitshifts,y
+    sta.z bitshift
     lda #<0
     sta.z x
     sta.z x+1
@@ -1729,10 +1755,10 @@ bitmap_init: {
     lda.z x+1
     adc #>__bitmap_plot_bitshift
     sta.z __31+1
-    txa
+    lda.z bitshift
     sta (__31),y
     // bitshift -= 1
-    dex
+    dec.z bitshift
     // bitmask >>= 1
     lsr.z bitmask
   __b2:
@@ -1788,11 +1814,11 @@ bitmap_init: {
     lda.z x+1
     adc #>__bitmap_plot_bitshift
     sta.z __34+1
-    txa
+    lda.z bitshift
     sta (__34),y
     // bitshift -= 2
-    dex
-    dex
+    dec.z bitshift
+    dec.z bitshift
     // bitmask >>= 2
     lda.z bitmask
     lsr
@@ -1849,13 +1875,12 @@ bitmap_init: {
     lda.z x+1
     adc #>__bitmap_plot_bitshift
     sta.z __37+1
-    txa
+    lda.z bitshift
     sta (__37),y
     // bitshift -= 4
-    txa
     sec
     sbc #4
-    tax
+    sta.z bitshift
     // bitmask >>= 4
     lda.z bitmask
     lsr
@@ -1907,15 +1932,17 @@ bitmap_init: {
     lda.z x+1
     adc #>__bitmap_plot_bitshift
     sta.z __40+1
-    txa
+    lda.z bitshift
     sta (__40),y
   __b5:
     // if(bitshift<0)
-    cpx #0
+    lda.z bitshift
+    cmp #0
     bpl __b6
     // bitshift = bitshifts[__bitmap_color_depth]
     ldy.z __bitmap_color_depth
-    ldx bitshifts,y
+    lda bitshifts,y
+    sta.z bitshift
   __b6:
     // if(bitmask==0)
     lda.z bitmask
@@ -2027,10 +2054,10 @@ bitmap_init: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label vdelta = $46
-    .label hdelta = $18
-    .label count = $61
-    .label vdest = $48
+    .label vdelta = $9d
+    .label hdelta = $99
+    .label count = $6e
+    .label vdest = $8d
     // word vdelta = vdeltas[__bitmap_vscale]
     lda.z __bitmap_vscale
     asl
@@ -2054,7 +2081,19 @@ bitmap_clear: {
     lda hdeltas+1,y
     sta.z hdelta+1
     // dword count = mul16u(hdelta,vdelta)
+    lda.z hdelta
+    sta.z mul16u.a
+    lda.z hdelta+1
+    sta.z mul16u.a+1
     jsr mul16u
+    lda.z mul16u.res
+    sta.z mul16u.return
+    lda.z mul16u.res+1
+    sta.z mul16u.return+1
+    lda.z mul16u.res+2
+    sta.z mul16u.return+2
+    lda.z mul16u.res+3
+    sta.z mul16u.return+3
     // char vbank = BYTE2(__bitmap_address)
     ldx.z __bitmap_address+2
     // WORD0(__bitmap_address)
@@ -2073,7 +2112,7 @@ kbhit: {
     .label IN_DEV = $28a
     // Current input device number
     .label GETIN = $ffe4
-    .label ch = $4a
+    .label ch = $30
     // char ch = 0
     lda #0
     sta.z ch
@@ -2113,15 +2152,15 @@ kbhit: {
     rts
 }
 // Draw a line on the bitmap
-// void bitmap_line(__zp(6) unsigned int x0, __zp($36) unsigned int x1, __zp($40) unsigned int y0, __zp($18) unsigned int y1, __register(X) char c)
+// void bitmap_line(__zp($a) unsigned int x0, __zp(8) unsigned int x1, __zp(2) unsigned int y0, __zp($31) unsigned int y1, __register(X) char c)
 bitmap_line: {
-    .label xd = $1a
-    .label yd = $46
-    .label yd_1 = $3e
-    .label x0 = 6
-    .label x1 = $36
-    .label y0 = $40
-    .label y1 = $18
+    .label xd = $20
+    .label yd = $27
+    .label yd_1 = $25
+    .label x0 = $a
+    .label x1 = 8
+    .label y0 = 2
+    .label y1 = $31
     // if(x0<x1)
     lda.z x0+1
     cmp.z x1+1
@@ -2173,6 +2212,10 @@ bitmap_line: {
     sta.z bitmap_line_ydxi.y
     lda.z y1+1
     sta.z bitmap_line_ydxi.y+1
+    lda.z x1
+    sta.z bitmap_line_ydxi.x
+    lda.z x1+1
+    sta.z bitmap_line_ydxi.x+1
     stx.z bitmap_line_ydxi.c
     jsr bitmap_line_ydxi
     // }
@@ -2187,10 +2230,6 @@ bitmap_line: {
     sta.z bitmap_line_xdyi.y
     lda.z y1+1
     sta.z bitmap_line_xdyi.y+1
-    lda.z x0
-    sta.z bitmap_line_xdyi.x1
-    lda.z x0+1
-    sta.z bitmap_line_xdyi.x1+1
     stx.z bitmap_line_xdyi.c
     jsr bitmap_line_xdyi
     rts
@@ -2216,10 +2255,6 @@ bitmap_line: {
     sta.z bitmap_line_ydxd.y
     lda.z y0+1
     sta.z bitmap_line_ydxd.y+1
-    lda.z x0
-    sta.z bitmap_line_ydxd.x
-    lda.z x0+1
-    sta.z bitmap_line_ydxd.x+1
     lda.z y1
     sta.z bitmap_line_ydxd.y1
     lda.z y1+1
@@ -2237,10 +2272,6 @@ bitmap_line: {
     sta.z bitmap_line_xdyd.y
     lda.z y1+1
     sta.z bitmap_line_xdyd.y+1
-    lda.z x0
-    sta.z bitmap_line_xdyd.x1
-    lda.z x0+1
-    sta.z bitmap_line_xdyd.x1+1
     stx.z bitmap_line_xdyd.c
     jsr bitmap_line_xdyd
     rts
@@ -2283,6 +2314,10 @@ bitmap_line: {
     sta.z bitmap_line_ydxd.y
     lda.z y1+1
     sta.z bitmap_line_ydxd.y+1
+    lda.z x1
+    sta.z bitmap_line_ydxd.x
+    lda.z x1+1
+    sta.z bitmap_line_ydxd.x+1
     stx.z bitmap_line_ydxd.c
     jsr bitmap_line_ydxd
     rts
@@ -2292,6 +2327,10 @@ bitmap_line: {
     sta.z bitmap_line_xdyd.x
     lda.z x0+1
     sta.z bitmap_line_xdyd.x+1
+    lda.z x1
+    sta.z bitmap_line_xdyd.x1
+    lda.z x1+1
+    sta.z bitmap_line_xdyd.x1+1
     stx.z bitmap_line_xdyd.c
     jsr bitmap_line_xdyd
     rts
@@ -2317,10 +2356,6 @@ bitmap_line: {
     sta.z bitmap_line_ydxi.y
     lda.z y0+1
     sta.z bitmap_line_ydxi.y+1
-    lda.z x0
-    sta.z bitmap_line_ydxi.x
-    lda.z x0+1
-    sta.z bitmap_line_ydxi.x+1
     lda.z y1
     sta.z bitmap_line_ydxi.y1
     lda.z y1+1
@@ -2334,6 +2369,10 @@ bitmap_line: {
     sta.z bitmap_line_xdyi.x
     lda.z x0+1
     sta.z bitmap_line_xdyi.x+1
+    lda.z x1
+    sta.z bitmap_line_xdyi.x1
+    lda.z x1+1
+    sta.z bitmap_line_xdyi.x1+1
     stx.z bitmap_line_xdyi.c
     jsr bitmap_line_xdyi
     rts
@@ -2343,10 +2382,10 @@ bitmap_line: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $4b
-    .label __1 = $4d
-    .label __2 = $4f
-    .label return = $16
+    .label __0 = $5d
+    .label __1 = $5f
+    .label __2 = $61
+    .label return = $6a
     // rand_state << 7
     lda.z rand_state+1
     lsr
@@ -2398,14 +2437,16 @@ rand: {
 // Performs modulo on two 16 bit unsigned ints and an initial remainder
 // Returns the remainder.
 // Implemented using simple binary division
-// __zp($18) unsigned int modr16u(__zp($16) unsigned int dividend, __zp($1a) unsigned int divisor, unsigned int rem)
+// __zp($72) unsigned int modr16u(__zp(6) unsigned int dividend, __zp($8b) unsigned int divisor, unsigned int rem)
 modr16u: {
-    .label return = $18
-    .label dividend = $16
-    .label return_1 = $36
-    .label return_2 = $40
-    .label divisor = $1a
+    .label return = $72
+    .label dividend = 6
+    .label divisor = $8b
     // divr16u(dividend, divisor, rem)
+    lda.z divisor
+    sta.z divr16u.divisor
+    lda.z divisor+1
+    sta.z divr16u.divisor+1
     jsr divr16u
     // return rem16u;
     lda.z rem16u
@@ -2420,7 +2461,7 @@ modr16u: {
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 // void vera_layer_set_text_color_mode(char layer, char color_mode)
 vera_layer_set_text_color_mode: {
-    .label addr = $51
+    .label addr = $23
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -2450,9 +2491,9 @@ vera_layer_get_mapbase_bank: {
 // Get the map base lower 16-bit address (offset) of the tiles for the layer.
 // - layer: Value of 0 or 1.
 // - return: Offset in vera vram of the specified bank.
-// __zp($34) unsigned int vera_layer_get_mapbase_offset(__register(A) char layer)
+// __zp($89) unsigned int vera_layer_get_mapbase_offset(__register(A) char layer)
 vera_layer_get_mapbase_offset: {
-    .label return = $34
+    .label return = $89
     // return vera_mapbase_offset[layer];
     asl
     tay
@@ -2476,9 +2517,9 @@ vera_layer_get_rowshift: {
 // Get the value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Skip value to calculate fast from a y value to line offset in tile mode.
-// __zp($34) unsigned int vera_layer_get_rowskip(__register(A) char layer)
+// __zp($7b) unsigned int vera_layer_get_rowskip(__register(A) char layer)
 vera_layer_get_rowskip: {
-    .label return = $34
+    .label return = $7b
     // return vera_layer_rowskip[layer];
     asl
     tay
@@ -2522,7 +2563,7 @@ cscroll: {
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 // void vera_layer_set_config(__register(A) char layer, __register(X) char config)
 vera_layer_set_config: {
-    .label addr = $51
+    .label addr = $23
     // byte* addr = vera_layer_config[layer]
     asl
     tay
@@ -2544,7 +2585,7 @@ vera_layer_set_config: {
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
 // void vera_layer_set_tilebase(__register(A) char layer, __register(X) char tilebase)
 vera_layer_set_tilebase: {
-    .label addr = $51
+    .label addr = $23
     // byte* addr = vera_layer_tilebase[layer]
     asl
     tay
@@ -2626,13 +2667,13 @@ vera_display_get_vscale: {
 }
 .segment Code
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// __zp($61) unsigned long mul16u(__zp($18) unsigned int a, __zp($46) unsigned int b)
+// __zp($6e) unsigned long mul16u(__zp(6) unsigned int a, __zp($9d) unsigned int b)
 mul16u: {
-    .label a = $18
-    .label b = $46
-    .label return = $61
-    .label mb = $67
-    .label res = $61
+    .label a = 6
+    .label b = $9d
+    .label return = $6e
+    .label mb = $18
+    .label res = $10
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -2692,12 +2733,12 @@ mul16u: {
 // - vdest: The destination address in VRAM
 // - data: The value to set the vram with.
 // - num: The number of bytes to set
-// void memset_vram(__register(X) char vbank, __zp($48) void *vdest, char data, __zp($61) unsigned long num)
+// void memset_vram(__register(X) char vbank, __zp($8d) void *vdest, char data, __zp($6e) unsigned long num)
 memset_vram: {
     .const data = 0
-    .label i = $67
-    .label vdest = $48
-    .label num = $61
+    .label i = $10
+    .label vdest = $8d
+    .label num = $6e
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
@@ -2760,16 +2801,16 @@ memset_vram: {
   !:
     jmp __b1
 }
-// void bitmap_line_ydxi(__zp($42) unsigned int y, __zp($36) unsigned int x, __zp($40) unsigned int y1, __zp($3e) unsigned int yd, __zp($1a) unsigned int xd, __zp($2e) char c)
+// void bitmap_line_ydxi(__zp(4) unsigned int y, __zp($a) unsigned int x, __zp(2) unsigned int y1, __zp($25) unsigned int yd, __zp($20) unsigned int xd, __zp($1e) char c)
 bitmap_line_ydxi: {
-    .label __6 = $53
-    .label y = $42
-    .label x = $36
-    .label y1 = $40
-    .label yd = $3e
-    .label xd = $1a
-    .label c = $2e
-    .label e = $48
+    .label __6 = $1c
+    .label y = 4
+    .label x = $a
+    .label y1 = 2
+    .label yd = $25
+    .label xd = $20
+    .label c = $1e
+    .label e = 6
     // word e = xd>>1
     lda.z xd+1
     lsr
@@ -2838,16 +2879,16 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// void bitmap_line_xdyi(__zp($44) unsigned int x, __zp($40) unsigned int y, __zp($36) unsigned int x1, __zp($1a) unsigned int xd, __zp($3e) unsigned int yd, __zp($2e) char c)
+// void bitmap_line_xdyi(__zp($1c) unsigned int x, __zp(2) unsigned int y, __zp($a) unsigned int x1, __zp($20) unsigned int xd, __zp($25) unsigned int yd, __zp($1f) char c)
 bitmap_line_xdyi: {
-    .label __6 = $55
-    .label x = $44
-    .label y = $40
-    .label x1 = $36
-    .label xd = $1a
-    .label yd = $3e
-    .label c = $2e
-    .label e = $48
+    .label __6 = $e
+    .label x = $1c
+    .label y = 2
+    .label x1 = $a
+    .label xd = $20
+    .label yd = $25
+    .label c = $1f
+    .label e = 6
     // word e = yd>>1
     lda.z yd+1
     lsr
@@ -2916,16 +2957,16 @@ bitmap_line_xdyi: {
     // }
     rts
 }
-// void bitmap_line_ydxd(__zp($42) unsigned int y, __zp($36) unsigned int x, __zp($40) unsigned int y1, __zp($46) unsigned int yd, __zp($1a) unsigned int xd, __zp($2e) char c)
+// void bitmap_line_ydxd(__zp(4) unsigned int y, __zp($a) unsigned int x, __zp(2) unsigned int y1, __zp($27) unsigned int yd, __zp($20) unsigned int xd, __zp($1e) char c)
 bitmap_line_ydxd: {
-    .label __6 = $57
-    .label y = $42
-    .label x = $36
-    .label y1 = $40
-    .label yd = $46
-    .label xd = $1a
-    .label c = $2e
-    .label e = $48
+    .label __6 = $e
+    .label y = 4
+    .label x = $a
+    .label y1 = 2
+    .label yd = $27
+    .label xd = $20
+    .label c = $1e
+    .label e = 6
     // word e = xd>>1
     lda.z xd+1
     lsr
@@ -2995,16 +3036,16 @@ bitmap_line_ydxd: {
     // }
     rts
 }
-// void bitmap_line_xdyd(__zp($44) unsigned int x, __zp($40) unsigned int y, __zp($36) unsigned int x1, __zp($1a) unsigned int xd, __zp($46) unsigned int yd, __zp($2e) char c)
+// void bitmap_line_xdyd(__zp($1c) unsigned int x, __zp(2) unsigned int y, __zp($a) unsigned int x1, __zp($20) unsigned int xd, __zp($27) unsigned int yd, __zp($1e) char c)
 bitmap_line_xdyd: {
-    .label __6 = $59
-    .label x = $44
-    .label y = $40
-    .label x1 = $36
-    .label xd = $1a
-    .label yd = $46
-    .label c = $2e
-    .label e = $48
+    .label __6 = $e
+    .label x = $1c
+    .label y = 2
+    .label x1 = $a
+    .label xd = $20
+    .label yd = $27
+    .label c = $1e
+    .label e = 6
     // word e = yd>>1
     lda.z yd+1
     lsr
@@ -3078,13 +3119,13 @@ bitmap_line_xdyd: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($42) unsigned int divr16u(__zp($16) unsigned int dividend, __zp($1a) unsigned int divisor, __zp($3e) unsigned int rem)
+// __zp($25) unsigned int divr16u(__zp(6) unsigned int dividend, __zp($1c) unsigned int divisor, __zp($20) unsigned int rem)
 divr16u: {
-    .label rem = $3e
-    .label dividend = $16
-    .label quotient = $42
-    .label return = $42
-    .label divisor = $1a
+    .label rem = $20
+    .label dividend = 6
+    .label quotient = $25
+    .label return = $25
+    .label divisor = $1c
     ldx #0
     txa
     sta.z quotient
@@ -3150,10 +3191,10 @@ divr16u: {
 }
 // Insert a new line, and scroll the upper part of the screen up.
 insertup: {
-    .label cy = $5d
-    .label width = $5e
-    .label line = $18
-    .label start = $18
+    .label cy = $1f
+    .label width = $1e
+    .label line = $a
+    .label start = $a
     // unsigned byte cy = conio_cursor_y[conio_screen_layer]
     ldy.z conio_screen_layer
     lda conio_cursor_y,y
@@ -3219,19 +3260,19 @@ insertup: {
     inx
     jmp __b1
 }
-// void bitmap_plot(__zp($44) unsigned int x, __zp($42) unsigned int y, __register(X) char c)
+// void bitmap_plot(__zp($1c) unsigned int x, __zp(4) unsigned int y, __register(X) char c)
 bitmap_plot: {
-    .label __9 = $5f
-    .label __10 = $65
-    .label plot_x = $61
-    .label plot_y = $67
-    .label vera_vram_address01_bankaddr = $61
-    .label x = $44
-    .label y = $42
-    .label __12 = $5f
-    .label __13 = $65
-    .label __14 = $6b
-    .label __15 = $6d
+    .label __9 = $e
+    .label __10 = $c
+    .label plot_x = $18
+    .label plot_y = $10
+    .label vera_vram_address01_bankaddr = $18
+    .label x = $1c
+    .label y = 4
+    .label __12 = $e
+    .label __13 = $c
+    .label __14 = $14
+    .label __15 = $16
     // dword plot_x = __bitmap_plot_x[x]
     lda.z x
     asl
@@ -3361,8 +3402,8 @@ bitmap_plot: {
     rts
 }
 clearline: {
-    .label addr = $6f
-    .label c = $44
+    .label addr = $e
+    .label c = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

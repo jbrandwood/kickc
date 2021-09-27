@@ -36,18 +36,18 @@
   .label COSQ = SINQ+$40
   .label print_screen = $400
   // The rotated point - updated by calling rotate_matrix()
-  .label xr = 5
-  .label yr = 6
-  .label zr = 7
+  .label xr = $18
+  .label yr = $19
+  .label zr = $1a
   // The rotated point with perspective
-  .label pp = 8
-  .label xp = 9
-  .label yp = $a
+  .label pp = $25
+  .label xp = $24
+  .label yp = $23
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
-  .label psp1 = $b
-  .label psp2 = $d
-  .label sx = 2
-  .label sy = 3
+  .label psp1 = $28
+  .label psp2 = $26
+  .label sx = $1c
+  .label sy = $1b
 .segment Code
 __start: {
     // signed char xr
@@ -122,17 +122,17 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label __41 = $f
-    .label __44 = $11
-    .label __47 = $13
-    .label __50 = $15
-    .label __53 = $17
-    .label __56 = $19
-    .label __59 = $1b
-    .label __62 = $1d
-    .label __65 = $1f
-    .label c = 2
-    .label i = 3
+    .label __41 = 2
+    .label __44 = 7
+    .label __47 = $a
+    .label __50 = $c
+    .label __53 = $e
+    .label __56 = $10
+    .label __59 = $12
+    .label __62 = $14
+    .label __65 = $16
+    .label c = $1c
+    .label i = $1b
     // print_cls()
     jsr print_cls
     // print_str_at("sx", SCREEN+40*0+34)
@@ -447,7 +447,7 @@ debug_print_init: {
 }
 .segment Code
 anim: {
-    .label i = 4
+    .label i = 9
     lda #0
     sta.z sy
     sta.z sx
@@ -553,10 +553,10 @@ print_cls: {
     rts
 }
 // Print a string at a specific screen position
-// void print_str_at(__zp($f) char *str, __zp($11) char *at)
+// void print_str_at(__zp(2) char *str, __zp(7) char *at)
 print_str_at: {
-    .label at = $11
-    .label str = $f
+    .label at = 7
+    .label str = 2
   __b1:
     // while(*str)
     ldy #0
@@ -582,10 +582,10 @@ print_str_at: {
     jmp __b1
 }
 // Print a signed char as hex at a specific screen position
-// void print_schar_at(__zp($22) signed char b, __zp($f) char *at)
+// void print_schar_at(__zp(4) signed char b, __zp(2) char *at)
 print_schar_at: {
-    .label b = $22
-    .label at = $f
+    .label b = 4
+    .label at = 2
     // if(b<0)
     lda.z b
     bmi __b1
@@ -616,18 +616,18 @@ print_schar_at: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// void calculate_matrix(__register(X) signed char sx, __zp(3) signed char sy, signed char sz)
+// void calculate_matrix(__register(X) signed char sx, __zp($1b) signed char sy, signed char sz)
 calculate_matrix: {
-    .label sy = 3
-    .label t1 = $21
-    .label t2 = $22
-    .label t3 = $23
-    .label t4 = $24
-    .label t5 = $25
-    .label t6 = $26
-    .label t7 = $27
-    .label t8 = $28
-    .label t9 = $29
+    .label sy = $1b
+    .label t1 = 5
+    .label t2 = 4
+    .label t3 = 6
+    .label t4 = $1e
+    .label t5 = $21
+    .label t6 = $1d
+    .label t7 = $1f
+    .label t8 = $20
+    .label t9 = $22
     // signed char t1 = sy-sz
     lda.z sy
     sta.z t1
@@ -858,10 +858,10 @@ store_matrix: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// void rotate_matrix(__register(X) signed char x, __zp($22) signed char y, __zp($23) signed char z)
+// void rotate_matrix(__register(X) signed char x, __zp(4) signed char y, __zp(6) signed char z)
 rotate_matrix: {
-    .label y = $22
-    .label z = $23
+    .label y = 4
+    .label z = 6
     // xr = x
     stx.z xr
     // yr = y
@@ -985,8 +985,8 @@ debug_print: {
     .const print_schar_pos12_row = 6
     .const print_schar_pos12_col = $25
     .label at_line = SCREEN+$13*$28
-    .label c = $23
-    .label i = $21
+    .label c = 6
+    .label i = 5
     // print_schar_pos(sx, 0, 37)
     lda.z sx
     // print_schar_at(sb, print_screen+row*40+col)
@@ -1192,7 +1192,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $11
+    .label dst = 7
     lda #<str
     sta.z dst
     lda #>str
@@ -1220,9 +1220,9 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp($f) char *at)
+// void print_char_at(__register(X) char ch, __zp(2) char *at)
 print_char_at: {
-    .label at = $f
+    .label at = 2
     // *(at) = ch
     txa
     ldy #0
@@ -1231,10 +1231,10 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// void print_uchar_at(__zp($22) char b, __zp($f) char *at)
+// void print_uchar_at(__zp(4) char b, __zp(2) char *at)
 print_uchar_at: {
-    .label b = $22
-    .label at = $f
+    .label b = 4
+    .label at = 2
     // b>>4
     lda.z b
     lsr

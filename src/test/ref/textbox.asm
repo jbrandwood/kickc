@@ -16,8 +16,8 @@
   .label screen = $400
 .segment Code
 main: {
-    .label wait = 3
-    .label x = 2
+    .label wait = $23
+    .label x = $21
     lda #0
     sta.z x
   __b1:
@@ -113,23 +113,23 @@ main: {
   !:
     jmp __b4
 }
-// void textbox(__zp(2) char x1, __zp(5) char y1, __zp(6) char x2, __zp(7) char y2, __zp(8) char *text)
+// void textbox(__zp($21) char x1, __zp($12) char y1, __zp($15) char x2, __zp($22) char y2, __zp($1b) char *text)
 textbox: {
-    .label __8 = $10
-    .label __17 = $12
-    .label __31 = $c
-    .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label y = 5
-    .label x = $b
-    .label z = $c
-    .label i = $a
-    .label text = 8
-    .label __32 = $10
-    .label __33 = $e
-    .label __34 = $c
+    .label __8 = $13
+    .label __17 = $c
+    .label __31 = $10
+    .label x1 = $21
+    .label y1 = $12
+    .label x2 = $15
+    .label y2 = $22
+    .label y = $12
+    .label x = $f
+    .label z = $10
+    .label i = $1a
+    .label text = $1b
+    .label __32 = $13
+    .label __33 = $25
+    .label __34 = $10
     // draw_window(x1, y1, x2, y2)
     jsr draw_window
     // byte y = y1+1
@@ -307,35 +307,35 @@ textbox: {
     inx
     jmp __b3
 }
-// void draw_window(__zp(2) char x1, __zp(5) char y1, __zp(6) char x2, __zp(7) char y2)
+// void draw_window(__zp($21) char x1, __zp($12) char y1, __zp($15) char x2, __zp($22) char y2)
 draw_window: {
-    .label __2 = $17
-    .label __3 = $13
-    .label __4 = $19
-    .label __5 = $15
-    .label __14 = $23
-    .label __15 = $25
-    .label __19 = $21
-    .label __20 = $1f
-    .label __26 = $1d
-    .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label z = $13
-    .label q = $15
-    .label z_1 = $1f
-    .label y3 = $12
-    .label z_2 = $1b
-    .label __27 = $23
-    .label __28 = $25
-    .label __29 = $17
-    .label __30 = $13
-    .label __31 = $21
-    .label __32 = $1f
-    .label __33 = $19
-    .label __34 = $15
-    .label __35 = $1d
+    .label __2 = $1d
+    .label __3 = $16
+    .label __4 = $1f
+    .label __5 = $18
+    .label __14 = 8
+    .label __15 = $a
+    .label __19 = 6
+    .label __20 = 4
+    .label __26 = 2
+    .label x1 = $21
+    .label y1 = $12
+    .label x2 = $15
+    .label y2 = $22
+    .label z = $16
+    .label q = $18
+    .label z_1 = 4
+    .label y3 = $c
+    .label z_2 = $d
+    .label __27 = 8
+    .label __28 = $a
+    .label __29 = $1d
+    .label __30 = $16
+    .label __31 = 6
+    .label __32 = 4
+    .label __33 = $1f
+    .label __34 = $18
+    .label __35 = 2
     // word z = y1*40
     lda.z y1
     asl

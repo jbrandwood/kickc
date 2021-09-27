@@ -36,18 +36,18 @@
   /// The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label print_screen = $400
-  .label print_char_cursor = $a
-  .label print_line_cursor = $10
+  .label print_char_cursor = 2
+  .label print_line_cursor = $a
   .label print_line_cursor_1 = 4
 .segment Code
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1___0 = 2
-    .label fileEntry2___0 = 2
-    .label entry1 = 6
-    .label entry2 = 2
+    .label fileEntry1___0 = 6
+    .label fileEntry2___0 = 6
+    .label entry1 = $10
+    .label entry2 = 6
     // keyboard_init()
     jsr keyboard_init
     // mul8u(idx, SIZEOF_ENTRY)
@@ -233,11 +233,11 @@ keyboard_init: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp(2) unsigned int mul8u(__register(X) char a, char b)
+// __zp(6) unsigned int mul8u(__register(X) char a, char b)
 mul8u: {
     .label mb = 4
-    .label res = 2
-    .label return = 2
+    .label res = 6
+    .label return = 6
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY
@@ -281,10 +281,10 @@ mul8u: {
 // void initEntry(__zp(4) char *entry, __register(X) char n)
 initEntry: {
     .label __1 = 8
-    .label __3 = $10
-    .label __5 = $a
-    .label __7 = $c
-    .label __17 = $e
+    .label __3 = $a
+    .label __5 = 2
+    .label __7 = $e
+    .label __17 = $c
     .label entry = 4
     // 0x1111+n
     txa
@@ -480,9 +480,9 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// void printEntry(__zp(6) char *entry)
+// void printEntry(__zp($10) char *entry)
 printEntry: {
-    .label entry = 6
+    .label entry = $10
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -824,7 +824,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $a
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str

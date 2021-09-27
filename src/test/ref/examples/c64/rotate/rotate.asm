@@ -71,23 +71,23 @@ init: {
     rts
 }
 anim: {
-    .label __4 = 5
-    .label __6 = 5
-    .label __9 = 5
-    .label __10 = 5
-    .label __11 = 5
-    .label __12 = 5
-    .label __26 = $11
-    .label x = 9
-    .label y = $a
+    .label __4 = 4
+    .label __6 = 4
+    .label __9 = 4
+    .label __10 = 4
+    .label __11 = 4
+    .label __12 = 4
+    .label __26 = $f
+    .label x = 8
+    .label y = $14
     .label xr = $b
-    .label yr = $d
-    .label xpos = $f
+    .label yr = 9
+    .label xpos = 6
     // signed fixed[0.7]
-    .label sprite_msb = 2
-    .label i = 4
-    .label angle = 3
-    .label cyclecount = $11
+    .label sprite_msb = $d
+    .label i = $e
+    .label angle = $13
+    .label cyclecount = $f
     lda #0
     sta.z angle
   __b2:
@@ -256,17 +256,17 @@ anim: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 3
+    .label c = $13
     // Counter used for determining x%2==0
-    .label sqr1_hi = $d
+    .label sqr1_hi = 9
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $b
-    .label sqr1_lo = 5
+    .label sqr1_lo = 4
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 7
-    .label sqr2_lo = $f
+    .label sqr2_hi = 2
+    .label sqr2_lo = 6
     //Start with g(0)=f(255)
-    .label dir = 4
+    .label dir = $e
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -440,7 +440,7 @@ mulf8u_prepare: {
 // int mulf8s_prepared(__register(Y) signed char b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 5
+    .label m = 4
     // unsigned int m = mulf8u_prepared((char) b)
     tya
     jsr mulf8u_prepared
@@ -472,7 +472,7 @@ mulf8s_prepared: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $11
+    .label return = $f
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Stop the timer
     lda #0
@@ -499,9 +499,9 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// void print_ulong_at(__zp($11) unsigned long dw, char *at)
+// void print_ulong_at(__zp($f) unsigned long dw, char *at)
 print_ulong_at: {
-    .label dw = $11
+    .label dw = $f
     // print_uint_at(WORD1(dw), at)
     lda.z dw+2
     sta.z print_uint_at.w
@@ -527,11 +527,11 @@ print_ulong_at: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8u_prepare(char a)
-// __zp(5) unsigned int mulf8u_prepared(__register(A) char b)
+// __zp(4) unsigned int mulf8u_prepared(__register(A) char b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 5
+    .label return = 4
     // *memB = b
     sta memB
     // asm
@@ -555,10 +555,10 @@ mulf8u_prepared: {
     rts
 }
 // Print a unsigned int as HEX at a specific position
-// void print_uint_at(__zp($d) unsigned int w, __zp($f) char *at)
+// void print_uint_at(__zp(9) unsigned int w, __zp(6) char *at)
 print_uint_at: {
-    .label w = $d
-    .label at = $f
+    .label w = 9
+    .label at = 6
     // print_uchar_at(BYTE1(w), at)
     lda.z w+1
     sta.z print_uchar_at.b
@@ -578,10 +578,10 @@ print_uint_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// void print_uchar_at(__zp(9) char b, __zp($f) char *at)
+// void print_uchar_at(__zp(8) char b, __zp(6) char *at)
 print_uchar_at: {
-    .label b = 9
-    .label at = $f
+    .label b = 8
+    .label at = 6
     // b>>4
     lda.z b
     lsr
@@ -615,9 +615,9 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp(7) char *at)
+// void print_char_at(__register(X) char ch, __zp(2) char *at)
 print_char_at: {
-    .label at = 7
+    .label at = 2
     // *(at) = ch
     txa
     ldy #0

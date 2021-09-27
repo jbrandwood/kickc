@@ -200,64 +200,64 @@
   // Pointer to the music play routine
   .label musicPlay = DEMO_MUSIC+3
   // Signals the main() loop to do work when all rasters are complete
-  .label p1_work_ready = 9
+  .label p1_work_ready = $19
   // Top of the flipper
-  .label irq_flipper_top_line = $a
+  .label irq_flipper_top_line = $1e
   // Bottom of the flipper
-  .label irq_flipper_bottom_line = $c
+  .label irq_flipper_bottom_line = $46
   // 1 if flipper is done
-  .label flipper_done = $e
+  .label flipper_done = $49
   // Middle of the flipper
-  .label irq_flipper_idx = $f
+  .label irq_flipper_idx = $4b
   // The current char line where the flipper switches from bitmap to text
-  .label flipper_charline = $11
+  .label flipper_charline = $1d
   // The number of chars to scroll the screen by VSP. 
   // Legal values are 0-40.
   //  0 shows the normal screen (no scrolling)
   // 20 shows char #20 in the top left corner of the screen, effectively scrolling the screen left 20 chars.
-  .label vsp_scroll = $12
+  .label vsp_scroll = $3b
   // The next "real" sprite being used by the multiplexer
-  .label plex_real_sprite_idx = $13
+  .label plex_real_sprite_idx = $3a
   // Signals the main() loop to do work when all rasters are complete
-  .label p2_work_ready = $14
+  .label p2_work_ready = $1a
   // 1 if the logo is being revealed
-  .label p2_logo_revealing = $15
+  .label p2_logo_revealing = $25
   // 1 if the logo is completely revealed
-  .label p2_logo_reveal_done = $16
+  .label p2_logo_reveal_done = $24
   // 1 if the logo is being showed
-  .label p2_logo_swinging = $17
+  .label p2_logo_swinging = $26
   // 1 if the scroll is moving
-  .label p2_plex_scroller_moving = $18
+  .label p2_plex_scroller_moving = $28
   // Number of columns shown of the logo
-  .label p2_logo_reveal_idx = $19
+  .label p2_logo_reveal_idx = $1c
   // X-movement index
-  .label x_movement_idx = $1a
+  .label x_movement_idx = $4a
   // The next char to use from the scroll text
-  .label scroll_text_next = $1b
+  .label scroll_text_next = $36
   // The current frame ID (0-7)
-  .label plex_frame_id = $1d
+  .label plex_frame_id = $35
   // Pointer to the buckets of the current frame
-  .label plex_frame = $1e
+  .label plex_frame = $30
   // Offset added to plex_id to ensure the sprite cycling works (decreased 1 every time a cycle is complete)
-  .label plex_id_offset = $20
+  .label plex_id_offset = $34
   // Pointer to the current bucket of the current frame
-  .label plex_bucket = $21
+  .label plex_bucket = $40
   // Index of the current bucket in the current frame (0..BUCKET_COUNT-1)
-  .label plex_bucket_id = $23
+  .label plex_bucket_id = $45
   // The fine scroll (0-7)
-  .label vsp_fine_scroll = $24
+  .label vsp_fine_scroll = $42
   // The coarse scroll (0-40)
-  .label vsp_coarse_scroll = $25
+  .label vsp_coarse_scroll = $4e
   // Index into the VSP sinus value
-  .label vsp_sin_idx = $26
+  .label vsp_sin_idx = $4f
   // Index into the sprite color sequence
-  .label sprite_color_idx = $27
+  .label sprite_color_idx = $4d
   // Counts total demo frames
-  .label demo_frame_count = $28
+  .label demo_frame_count = $22
   // Is the sparkler active
-  .label sparkler_active = $2a
+  .label sparkler_active = $20
   // The sparkler sprite idx
-  .label sparkler_idx = $2b
+  .label sparkler_idx = $f
 .segment Code
 __start: {
     // volatile char p1_work_ready = 0
@@ -342,7 +342,7 @@ __start: {
 }
 // IRQ running during between parts
 irq_demo: {
-    .label port_value = $2c
+    .label port_value = $48
     sta rega+1
     stx regx+1
     sty regy+1
@@ -388,13 +388,13 @@ irq_demo: {
 irq_swing_plex: {
     // Move to the next frame of the plexer
     .const YMOVE = 3
-    .label __7 = $2d
-    .label __26 = $2d
-    .label __27 = $2d
-    .label scroll = $2d
-    .label new_coarse_scroll = $2f
-    .label x_offset = $30
-    .label __31 = $2d
+    .label __7 = $2c
+    .label __26 = $2c
+    .label __27 = $2c
+    .label scroll = $2c
+    .label new_coarse_scroll = $27
+    .label x_offset = $43
+    .label __31 = $2c
     sta rega+1
     stx regx+1
     sty regy+1
@@ -771,11 +771,11 @@ irq_swing_top: {
 // Flips from start screen to bitmap (starts the start-up screen)
 irq_flipper_bottom: {
     .const toD0181_return = (>(LOAD_SCREEN&$3fff)*4)|(>LOAD_CHARSET)/4&$f
-    .label __7 = $35
-    .label __9 = $37
-    .label __12 = $33
-    .label irq_flipper_line = $33
-    .label __14 = $33
+    .label __7 = $3c
+    .label __9 = $3e
+    .label __12 = $32
+    .label irq_flipper_line = $32
+    .label __14 = $32
     sta rega+1
     stx regx+1
     sty regy+1
@@ -1191,10 +1191,10 @@ demo_work: {
 .segment CodePart2
 // Show the sprites in a specific bucket
 // - bucket: The bucket to show
-// void plexBucketShow(__zp(2) struct BucketSprite *bucket)
+// void plexBucketShow(__zp($38) struct BucketSprite *bucket)
 plexBucketShow: {
-    .label i = $3b
-    .label bucket = 2
+    .label i = $2b
+    .label bucket = $38
     // char real_idx = plex_real_sprite_idx*2
     lda.z plex_real_sprite_idx
     asl
@@ -1273,7 +1273,7 @@ plexBucketShow: {
 // void update_frame_plex_id_offset(__register(A) char plex_frame_id)
 update_frame_plex_id_offset: {
     .label jmp_table = PLEX_ID_UPDATERS
-    .label jmp_address = $3c
+    .label jmp_address = $2e
     // unsigned int jmp_address = jmp_table[plex_frame_id]
     asl
     tay
@@ -1293,11 +1293,11 @@ update_frame_plex_id_offset: {
 }
 // Update screen, colors and bitmap with a single column of new data
 // - x_offset is the offset of the column to update (0-79)
-// void vsp_update_screen(__zp($31) volatile char x_offset)
+// void vsp_update_screen(__zp($1b) volatile char x_offset)
 vsp_update_screen: {
-    .label x_offset = $31
-    .label x_offset8 = $40
-    .label __5 = $3e
+    .label x_offset = $1b
+    .label x_offset8 = $10
+    .label __5 = 9
     // kickasm
     // Update screen and colors
     ldx x_offset
@@ -1388,7 +1388,7 @@ vsp_update_screen: {
 // Scroll the plex sprites to the left.
 plex_scroller_move: {
     .const toSpritePtr1_return = $ff&PART2_SPRITES/$40
-    .label s = $2f
+    .label s = $27
     // char x_idx = x_movement_idx
     ldx.z x_movement_idx
     lda #0
@@ -1464,9 +1464,9 @@ plexFrameStart: {
 // Waits until at the exact start of raster line 
 // Excepts to start at a line divisible by 8 (0x00, 0x08, x010, ...). 
 // Waits line_offset (0-7) additional lines.
-// void raster_fine(__zp($32) volatile char line_offset)
+// void raster_fine(__zp($44) volatile char line_offset)
 raster_fine: {
-    .label line_offset = $32
+    .label line_offset = $44
     // kickasm
     jmp aligned
         .align $100
@@ -1535,9 +1535,9 @@ demo_init: {
 }
 // Decrunch crunched data using ByteBoozer
 // - crunched: Pointer to the start of the crunched data
-// void byteboozer_decrunch(__zp($39) char * volatile crunched)
+// void byteboozer_decrunch(__zp($29) char * volatile crunched)
 byteboozer_decrunch: {
-    .label crunched = $39
+    .label crunched = $29
     // asm
     ldy crunched
     ldx crunched+1
@@ -1780,8 +1780,8 @@ part1_run: {
 part2_init: {
     .const toSpritePtr1_return = $ff&PART2_SPRITES/$40
     // Prepare 8 frames of y-positions into BUCKET_SPRITES
-    .label frame = $46
-    .label frame_idx = 4
+    .label frame = $17
+    .label frame_idx = $21
     // byteboozer_decrunch(SPRITES_CRUNCHED)
     lda #<SPRITES_CRUNCHED
     sta.z byteboozer_decrunch.crunched
@@ -2111,8 +2111,8 @@ sparkler_anim: {
 .segment CodePart1
 // Initialize the BADLINES
 init_rasters: {
-    .label i = $46
-    .label __3 = $4c
+    .label i = $17
+    .label __3 = 4
     lda #<0
     sta.z i
     sta.z i+1
@@ -2162,12 +2162,12 @@ init_rasters: {
 }
 .segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($48) void *str, __register(X) char c, __zp($4c) unsigned int num)
+// void * memset(__zp($12) void *str, __register(X) char c, __zp(4) unsigned int num)
 memset: {
-    .label end = $4c
-    .label dst = $48
-    .label num = $4c
-    .label str = $48
+    .label end = 4
+    .label dst = $12
+    .label num = 4
+    .label str = $12
     // if(num>0)
     lda.z num
     bne !+
@@ -2207,14 +2207,14 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($48) void *destination, __zp($4c) void *source, __zp($4a) unsigned int num)
+// void * memcpy(__zp($12) void *destination, __zp(4) void *source, __zp(2) unsigned int num)
 memcpy: {
-    .label src_end = $4a
-    .label dst = $48
-    .label src = $4c
-    .label source = $4c
-    .label destination = $48
-    .label num = $4a
+    .label src_end = 2
+    .label dst = $12
+    .label src = 4
+    .label source = 4
+    .label destination = $12
+    .label num = 2
     // char* src_end = (char*)source+num
     clc
     lda.z src_end
@@ -2252,7 +2252,7 @@ memcpy: {
 .segment CodePart1
 // Handle some stuff in the main() routine
 part1_loop: {
-    .label __11 = $46
+    .label __11 = $17
     // p1_work_ready = 0
     lda #0
     sta.z p1_work_ready
@@ -2330,21 +2330,21 @@ plexPrepareInit: {
 }
 // Performs run-time bucket sort of the sprites in the PLEX_ arrays into struct BucketSprite[]
 // Starts by performing a true sorting of the sprites based on Y-position (unsing insertion sort)
-// void plexPrepareFrame(__zp($4c) struct BucketSprite *frame)
+// void plexPrepareFrame(__zp(4) struct BucketSprite *frame)
 plexPrepareFrame: {
-    .label nxt_idx = $44
-    .label nxt_y = $45
-    .label m = 5
-    .label bucket_ypos = 8
-    .label plex_id = $42
-    .label ypos = $43
-    .label bucket = $4a
-    .label sprite = $4c
-    .label i1 = 6
+    .label nxt_idx = $14
+    .label nxt_y = $d
+    .label m = 6
+    .label bucket_ypos = 7
+    .label plex_id = $15
+    .label ypos = $16
+    .label bucket = 2
+    .label sprite = 4
+    .label i1 = 8
     // The current bucket idx
-    .label bucket_id = 7
-    .label sprite_1 = $4a
-    .label frame = $4c
+    .label bucket_id = $e
+    .label sprite_1 = 2
+    .label frame = 4
     lda #0
     sta.z m
   // Sort the sprite indices in PLEX_SORTED_IDX based on the Y-position (using insertion sort)
@@ -2545,8 +2545,8 @@ plexPrepareFrame: {
 .segment CodePart2
 // Part 2 main loop
 part2_loop: {
-    .label __23 = $46
-    .label __24 = $48
+    .label __23 = $17
+    .label __24 = $12
     // p2_work_ready = 0
     lda #0
     sta.z p2_work_ready
@@ -2626,14 +2626,14 @@ part2_loop: {
 // Fixes the colors for the flipper
 // Updates with bitmap colors when the bitmap is being shown
 flipper_fix_colors: {
-    .label __4 = $48
-    .label __5 = $48
-    .label __12 = $4a
-    .label offset = $4a
-    .label colors = $4e
-    .label happy_cols = $4a
-    .label __13 = $4c
-    .label __14 = $4a
+    .label __4 = $12
+    .label __5 = $12
+    .label __12 = 2
+    .label offset = 2
+    .label colors = $b
+    .label happy_cols = 2
+    .label __13 = 4
+    .label __14 = 2
     // if(irq_flipper_top_line>0x2e && irq_flipper_top_line<0xf6)
     lda.z irq_flipper_top_line+1
     bne !+

@@ -37,11 +37,11 @@
   // The screen width
   // The screen height
   // The current reverse value indicator. Values 0 or 0x80 for reverse text
-  .label conio_reverse_value = $8d
+  .label conio_reverse_value = $91
   // The current cursor enable flag. 1 = on, 0 = off.
-  .label conio_display_cursor = $8e
+  .label conio_display_cursor = $8f
   // The current scroll enable flag. 1 = on, 0 = off.
-  .label conio_scroll_enable = $8f
+  .label conio_scroll_enable = $92
 .segment Code
 __start: {
     // __ma char conio_reverse_value = 0
@@ -126,8 +126,8 @@ cputc: {
     rts
 }
 main: {
-    .label i = $80
-    .label i1 = $82
+    .label i = $93
+    .label i1 = $95
     // cursor(0)
     // hide the cursor
     jsr cursor
@@ -294,7 +294,7 @@ main: {
 // Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
 // void putchar(char code)
 putchar: {
-    .label loc = $91
+    .label loc = $82
     // **OLDADR = *OLDCHR
     lda OLDCHR
     ldy OLDADR
@@ -320,7 +320,7 @@ putchar: {
 }
 // Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
 setcursor: {
-    .label loc = $91
+    .label loc = $82
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
     lda OLDCHR
@@ -374,7 +374,7 @@ setcursor: {
     jmp __b2
 }
 newline: {
-    .label start = $88
+    .label start = $84
     // if ((*ROWCRS)++ == CONIO_HEIGHT)
     inc ROWCRS
     lda #$18
@@ -532,10 +532,10 @@ revers: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp($84) void (*putc)(char), __zp($8b) const char *s)
+// void printf_str(__zp($80) void (*putc)(char), __zp($8c) const char *s)
 printf_str: {
-    .label s = $8b
-    .label putc = $84
+    .label s = $8c
+    .label putc = $80
   __b1:
     // while(c=*s++)
     ldy #0
@@ -614,9 +614,9 @@ clrscr: {
     rts
 }
 // Print a signed integer using a specific format
-// void printf_sint(void (*putc)(char), __zp($84) int value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_sint(void (*putc)(char), __zp($80) int value, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_sint: {
-    .label value = $84
+    .label value = $80
     // printf_buffer.sign = 0
     // Handle any sign
     lda #0
@@ -661,12 +661,12 @@ scroll: {
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
-    .label __0 = $91
-    .label __1 = $91
-    .label __3 = $91
-    .label return = $91
-    .label __4 = $93
-    .label __5 = $91
+    .label __0 = $82
+    .label __1 = $82
+    .label __3 = $82
+    .label return = $82
+    .label __4 = $8a
+    .label __5 = $82
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
     sta.z __3
@@ -714,14 +714,14 @@ cursorLocation: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($91) void *destination, __zp($86) char *source, unsigned int num)
+// void * memcpy(__zp($82) void *destination, __zp($88) char *source, unsigned int num)
 memcpy: {
     .const num = $28*$17
-    .label src_end = $93
-    .label dst = $91
-    .label src = $86
-    .label destination = $91
-    .label source = $86
+    .label src_end = $8a
+    .label dst = $82
+    .label src = $88
+    .label destination = $82
+    .label source = $88
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -757,12 +757,12 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($88) char *str, char c, __zp($86) unsigned int num)
+// void * memset(__zp($84) char *str, char c, __zp($88) unsigned int num)
 memset: {
-    .label end = $86
-    .label dst = $88
-    .label str = $88
-    .label num = $86
+    .label end = $88
+    .label dst = $84
+    .label str = $84
+    .label num = $88
     // if(num>0)
     lda.z num
     bne !+
@@ -801,9 +801,9 @@ memset: {
     jmp __b2
 }
 // Output a NUL-terminated string at the current cursor position
-// void cputs(__zp($8b) const char *s)
+// void cputs(__zp($8c) const char *s)
 cputs: {
-    .label s = $8b
+    .label s = $8c
     lda #<main.s
     sta.z s
     lda #>main.s
@@ -845,12 +845,12 @@ kbhit: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($84) unsigned int value, __zp($8b) char *buffer, char radix)
+// void utoa(__zp($80) unsigned int value, __zp($8c) char *buffer, char radix)
 utoa: {
-    .label digit_value = $95
-    .label buffer = $8b
-    .label digit = $8a
-    .label value = $84
+    .label digit_value = $86
+    .label buffer = $8c
+    .label digit = $8e
+    .label value = $80
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -950,12 +950,12 @@ printf_number_buffer: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($84) unsigned int utoa_append(__zp($8b) char *buffer, __zp($84) unsigned int value, __zp($95) unsigned int sub)
+// __zp($80) unsigned int utoa_append(__zp($8c) char *buffer, __zp($80) unsigned int value, __zp($86) unsigned int sub)
 utoa_append: {
-    .label buffer = $8b
-    .label value = $84
-    .label sub = $95
-    .label return = $84
+    .label buffer = $8c
+    .label value = $80
+    .label sub = $86
+    .label return = $80
     ldx #0
   __b1:
     // while (value >= sub)

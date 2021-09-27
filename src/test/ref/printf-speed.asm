@@ -30,13 +30,13 @@
   .label CIA1 = $dc00
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $a
+  .label conio_cursor_x = $14
   // The current cursor y-position
-  .label conio_cursor_y = $b
+  .label conio_cursor_y = $f
   // The current text cursor line start
-  .label conio_line_text = $c
+  .label conio_line_text = $12
   // The current color cursor line start
-  .label conio_line_color = $e
+  .label conio_line_color = $10
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -107,7 +107,7 @@ cputc: {
     rts
 }
 main: {
-    .label i = 2
+    .label i = $1b
     // tod_init(TOD_ZERO)
     lda TOD_ZERO
     sta.z tod_init.tod_TENTHS
@@ -198,12 +198,12 @@ main: {
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __5 = $16
-    .label __6 = $12
-    .label __7 = $12
-    .label line_offset = $12
-    .label __8 = $14
-    .label __9 = $12
+    .label __5 = $19
+    .label __6 = $15
+    .label __7 = $15
+    .label line_offset = $15
+    .label __8 = $17
+    .label __9 = $15
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -299,10 +299,10 @@ cputln: {
 }
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// void tod_init(__zp($11) char tod_TENTHS, __zp($10) char tod_SEC, __register(X) char tod_MIN, __register(Y) char tod_HOURS)
+// void tod_init(__zp($e) char tod_TENTHS, __zp($1d) char tod_SEC, __register(X) char tod_MIN, __register(Y) char tod_HOURS)
 tod_init: {
-    .label tod_TENTHS = $11
-    .label tod_SEC = $10
+    .label tod_TENTHS = $e
+    .label tod_SEC = $1d
     // CIA1->TIMER_A_CONTROL |= 0x80
     // Set 50hz (this assumes PAL!) (bit7=1)
     lda #$80
@@ -330,8 +330,8 @@ tod_init: {
 }
 // Read time of day
 tod_read: {
-    .label return_HOURS = $18
-    .label return_MIN = $10
+    .label return_HOURS = $1e
+    .label return_MIN = $1d
     // char hours = CIA1->TOD_HOURS
     // Reading sequence is important. TOD latches on reading hours until 10ths is read.
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
@@ -346,10 +346,10 @@ tod_read: {
     rts
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// char * tod_str(__zp($18) char tod_TENTHS, __zp($11) char tod_SEC, __register(Y) char tod_MIN, __register(X) char tod_HOURS)
+// char * tod_str(__zp($1e) char tod_TENTHS, __zp($e) char tod_SEC, __register(Y) char tod_MIN, __register(X) char tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $18
-    .label tod_SEC = $11
+    .label tod_TENTHS = $1e
+    .label tod_SEC = $e
     // tod.HOURS>>4
     txa
     lsr
@@ -430,9 +430,9 @@ tod_str: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp(4) void (*putc)(char), __zp(6) const char *s)
+// void printf_str(__zp(4) void (*putc)(char), __zp($c) const char *s)
 printf_str: {
-    .label s = 6
+    .label s = $c
     .label putc = 4
   __b1:
     // while(c=*s++)
@@ -474,10 +474,10 @@ printf_string: {
     rts
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp(2) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp($1b) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
     .label putc = cputc
-    .label uvalue = 2
+    .label uvalue = $1b
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -563,12 +563,12 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(4) unsigned int value, __zp(6) char *buffer, char radix)
+// void utoa(__zp(4) unsigned int value, __zp($c) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $19
-    .label buffer = 6
-    .label digit = $11
+    .label digit_value = 8
+    .label buffer = $c
+    .label digit = $e
     .label value = 4
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
@@ -662,13 +662,13 @@ printf_number_buffer: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($1d) void *destination, __zp(8) void *source, unsigned int num)
+// void * memcpy(__zp(6) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $1b
-    .label dst = $1d
-    .label src = 8
-    .label source = 8
-    .label destination = $1d
+    .label src_end = $a
+    .label dst = 6
+    .label src = 2
+    .label source = 2
+    .label destination = 6
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -704,11 +704,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp(8) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $1d
-    .label dst = 8
-    .label str = 8
+    .label end = 6
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -747,11 +747,11 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(4) unsigned int utoa_append(__zp(6) char *buffer, __zp(4) unsigned int value, __zp($19) unsigned int sub)
+// __zp(4) unsigned int utoa_append(__zp($c) char *buffer, __zp(4) unsigned int value, __zp(8) unsigned int sub)
 utoa_append: {
-    .label buffer = 6
+    .label buffer = $c
     .label value = 4
-    .label sub = $19
+    .label sub = 8
     .label return = 4
     ldx #0
   __b1:

@@ -12,25 +12,25 @@
   .const SIZEOF_INT = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $19
+  .label rem16u = 4
   // Remainder after signed 16 bit division
-  .label rem16s = $19
-  .label testnum = 6
-  .label lasttest = 2
-  .label primeptr = $15
-  .label lastprime = 4
-  .label print_char_cursor = $c
+  .label rem16s = 4
+  .label testnum = $19
+  .label lasttest = $1b
+  .label primeptr = 2
+  .label lastprime = $1d
+  .label print_char_cursor = $e
 .segment Code
 main: {
-    .label __0 = 8
-    .label __12 = $15
-    .label __13 = $12
-    .label __14 = $19
-    .label __15 = $17
-    .label p = $15
-    .label __16 = $15
-    .label __17 = $12
-    .label __18 = $19
+    .label __0 = $10
+    .label __12 = 2
+    .label __13 = $c
+    .label __14 = 4
+    .label __15 = $a
+    .label p = 2
+    .label __16 = 2
+    .label __17 = $c
+    .label __18 = 4
     // primenum[1] = 2
     lda #<2
     sta primenum+1*SIZEOF_INT
@@ -219,16 +219,16 @@ main: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// __zp(8) long mul16s(__zp($15) int a, __zp($15) int b)
+// __zp($10) long mul16s(__zp(2) int a, __zp(2) int b)
 mul16s: {
-    .label __6 = $1b
-    .label __9 = $1d
-    .label __11 = $1b
-    .label __12 = $1d
-    .label m = 8
-    .label return = 8
-    .label a = $15
-    .label b = $15
+    .label __6 = 6
+    .label __9 = 8
+    .label __11 = 6
+    .label __12 = 8
+    .label m = $10
+    .label return = $10
+    .label a = 2
+    .label b = 2
     // unsigned long m = mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -291,10 +291,10 @@ mul16s: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// int div16s(__zp(6) int dividend, __zp($12) int divisor)
+// int div16s(__zp($19) int dividend, __zp($c) int divisor)
 div16s: {
-    .label dividend = 6
-    .label divisor = $12
+    .label dividend = $19
+    .label divisor = $c
     // divr16s(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16s.dividend
@@ -305,9 +305,9 @@ div16s: {
     rts
 }
 // Print a signed int as DECIMAL
-// void print_sint_decimal(__zp($15) int w)
+// void print_sint_decimal(__zp(2) int w)
 print_sint_decimal: {
-    .label w = $15
+    .label w = 2
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -350,13 +350,13 @@ print_char: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// __zp(8) unsigned long mul16u(__zp($17) unsigned int a, __zp($1b) unsigned int b)
+// __zp($10) unsigned long mul16u(__zp($a) unsigned int a, __zp(6) unsigned int b)
 mul16u: {
-    .label mb = $e
-    .label a = $17
-    .label res = 8
-    .label b = $1b
-    .label return = 8
+    .label mb = $14
+    .label a = $a
+    .label res = $10
+    .label b = 6
+    .label return = $10
     // unsigned long mb = b
     lda.z b
     sta.z mb
@@ -415,12 +415,12 @@ mul16u: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// int divr16s(__zp($17) int dividend, __zp($12) int divisor, int rem)
+// int divr16s(__zp($a) int dividend, __zp($c) int divisor, int rem)
 divr16s: {
-    .label dividendu = $17
-    .label divisoru = $12
-    .label dividend = $17
-    .label divisor = $12
+    .label dividendu = $a
+    .label divisoru = $c
+    .label dividend = $a
+    .label divisor = $c
     // if(dividend<0 || rem<0)
     lda.z dividend+1
     bmi __b1
@@ -477,13 +477,13 @@ divr16s: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp($15) unsigned int value, __zp($19) char *buffer, char radix)
+// void utoa(__zp(2) unsigned int value, __zp(4) char *buffer, char radix)
 utoa: {
     .const max_digits = 5
-    .label value = $15
-    .label digit_value = $1d
-    .label buffer = $19
-    .label digit = $14
+    .label value = 2
+    .label digit_value = 8
+    .label buffer = 4
+    .label digit = $18
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -549,9 +549,9 @@ utoa: {
     jmp __b4
 }
 // Print a zero-terminated string
-// void print_str(__zp($1b) char *str)
+// void print_str(__zp(6) char *str)
 print_str: {
-    .label str = $1b
+    .label str = 6
     lda #<decimal_digits
     sta.z str
     lda #>decimal_digits
@@ -580,13 +580,13 @@ print_str: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($1b) unsigned int divr16u(__zp($17) unsigned int dividend, __zp($12) unsigned int divisor, __zp($19) unsigned int rem)
+// __zp(6) unsigned int divr16u(__zp($a) unsigned int dividend, __zp($c) unsigned int divisor, __zp(4) unsigned int rem)
 divr16u: {
-    .label rem = $19
-    .label dividend = $17
-    .label quotient = $1b
-    .label return = $1b
-    .label divisor = $12
+    .label rem = 4
+    .label dividend = $a
+    .label quotient = 6
+    .label return = 6
+    .label divisor = $c
     ldx #0
     txa
     sta.z quotient
@@ -654,12 +654,12 @@ divr16u: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp($15) unsigned int utoa_append(__zp($19) char *buffer, __zp($15) unsigned int value, __zp($1d) unsigned int sub)
+// __zp(2) unsigned int utoa_append(__zp(4) char *buffer, __zp(2) unsigned int value, __zp(8) unsigned int sub)
 utoa_append: {
-    .label buffer = $19
-    .label value = $15
-    .label sub = $1d
-    .label return = $15
+    .label buffer = 4
+    .label value = 2
+    .label sub = 8
+    .label return = 2
     ldx #0
   __b1:
     // while (value >= sub)

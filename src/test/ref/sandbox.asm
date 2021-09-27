@@ -19,16 +19,16 @@
   .label VICBANK = $d018
 .segment Code
 main: {
-    .label __3 = 6
-    .label __10 = 6
-    .label __14 = 6
-    .label __15 = $11
-    .label __16 = 6
-    .label __17 = $f
-    .label v = 4
+    .label __3 = $17
+    .label __10 = $17
+    .label __14 = $17
+    .label __15 = 4
+    .label __16 = $17
+    .label __17 = 2
+    .label v = $a
     // test performance of 'div16u(10)'
     // test performance of 'div10'
-    .label u = 2
+    .label u = $15
     // *VICBANK = 23
     lda #$17
     sta VICBANK
@@ -189,21 +189,21 @@ main: {
     .byte 0
 }
 .segment Code
-// char myprintf(char *dst, __zp($15) char *str, __zp(2) unsigned int w1, __zp(4) unsigned int w2, __zp(6) unsigned int w3)
+// char myprintf(char *dst, __zp(8) char *str, __zp($15) unsigned int w1, __zp($a) unsigned int w2, __zp($17) unsigned int w3)
 myprintf: {
-    .label str = $15
-    .label bDigits = $d
+    .label str = 8
+    .label bDigits = $f
     .label bLen = $e
     // formats
-    .label b = $c
-    .label bArg = 9
-    .label w1 = 2
-    .label w2 = 4
-    .label w3 = 6
-    .label w = $17
-    .label bFormat = 8
-    .label bTrailing = $a
-    .label bLeadZero = $b
+    .label b = $10
+    .label bArg = $11
+    .label w1 = $15
+    .label w2 = $a
+    .label w3 = $17
+    .label w = $c
+    .label bFormat = $12
+    .label bTrailing = $14
+    .label bLeadZero = $13
     lda #0
     sta.z bLeadZero
     sta.z bDigits
@@ -513,18 +513,18 @@ Print: {
     // }
     rts
 }
-// __zp(4) unsigned int div10(__zp($13) unsigned int val)
+// __zp($a) unsigned int div10(__zp(6) unsigned int val)
 div10: {
-    .label __0 = $13
-    .label __2 = $15
-    .label __3 = $17
-    .label __4 = 4
-    .label val = $13
-    .label val_1 = $15
-    .label val_2 = $17
-    .label val_3 = 4
-    .label return = 4
-    .label val_4 = 2
+    .label __0 = 6
+    .label __2 = 8
+    .label __3 = $c
+    .label __4 = $a
+    .label val = 6
+    .label val_1 = 8
+    .label val_2 = $c
+    .label val_3 = $a
+    .label return = $a
+    .label val_4 = $15
     // val >> 1
     lda.z val_4+1
     lsr
@@ -600,11 +600,11 @@ div10: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp(4) unsigned int div16u(__zp(2) unsigned int dividend, unsigned int divisor)
+// __zp($a) unsigned int div16u(__zp($15) unsigned int dividend, unsigned int divisor)
 div16u: {
     .label divisor = $a
-    .label return = 4
-    .label dividend = 2
+    .label return = $a
+    .label dividend = $15
     // divr16u(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16u.dividend
@@ -615,10 +615,10 @@ div16u: {
     // }
     rts
 }
-// void utoa(__zp($f) unsigned int value, __zp($11) char *dst)
+// void utoa(__zp(2) unsigned int value, __zp(4) char *dst)
 utoa: {
-    .label value = $f
-    .label dst = $11
+    .label value = 2
+    .label dst = 4
     // if (bStarted == 1 || value >= 10000)
     lda.z value+1
     cmp #>$2710
@@ -759,12 +759,12 @@ utoa: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp(4) unsigned int divr16u(__zp($17) unsigned int dividend, unsigned int divisor, __zp($15) unsigned int rem)
+// __zp($a) unsigned int divr16u(__zp($c) unsigned int dividend, unsigned int divisor, __zp(8) unsigned int rem)
 divr16u: {
-    .label rem = $15
-    .label dividend = $17
-    .label quotient = 4
-    .label return = 4
+    .label rem = 8
+    .label dividend = $c
+    .label quotient = $a
+    .label return = $a
     ldx #0
     txa
     sta.z quotient
@@ -824,12 +824,12 @@ divr16u: {
     rts
 }
 // simple 'utoa' without using multiply or divide
-// __zp($f) unsigned int append(__zp($11) char *dst, __zp($f) unsigned int value, __zp($13) unsigned int sub)
+// __zp(2) unsigned int append(__zp(4) char *dst, __zp(2) unsigned int value, __zp(6) unsigned int sub)
 append: {
-    .label value = $f
-    .label return = $f
-    .label dst = $11
-    .label sub = $13
+    .label value = 2
+    .label return = 2
+    .label dst = 4
+    .label sub = 6
     // *dst = '0'
     lda #'0'
     ldy #0

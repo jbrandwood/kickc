@@ -17,13 +17,13 @@
   .label DEFAULT_SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = $11
+  .label conio_cursor_x = $14
   // The current cursor y-position
-  .label conio_cursor_y = $12
+  .label conio_cursor_y = $f
   // The current text cursor line start
-  .label conio_line_text = $13
+  .label conio_line_text = $12
   // The current color cursor line start
-  .label conio_line_color = $15
+  .label conio_line_color = $10
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -94,18 +94,18 @@ cputc: {
     rts
 }
 main: {
-    .label pwd = $17
-    .label min = $19
-    .label max = $1a
-    .label ch = $1b
+    .label pwd = $24
+    .label min = $27
+    .label max = $e
+    .label ch = $26
     // skip char and ": "
     // Count whether char at pos min & max matches ch
-    .label count_b = $c
-    .label valid_a = 2
-    .label invalid_a = 4
-    .label valid_b = 8
-    .label invalid_b = $a
-    .label total = 6
+    .label count_b = $1b
+    .label valid_a = 6
+    .label invalid_a = $1c
+    .label valid_b = $17
+    .label invalid_b = $19
+    .label total = $22
     // clrscr()
     jsr clrscr
     // char *pwd = passwords
@@ -406,11 +406,11 @@ main: {
 gotoxy: {
     .const x = 0
     .label __5 = $20
-    .label __6 = $1c
-    .label __7 = $1c
-    .label line_offset = $1c
+    .label __6 = $15
+    .label __7 = $15
+    .label line_offset = $15
     .label __8 = $1e
-    .label __9 = $1c
+    .label __9 = $15
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -506,8 +506,8 @@ cputln: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = $d
-    .label line_cols = $22
+    .label line_text = $c
+    .label line_cols = $a
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -575,10 +575,10 @@ clrscr: {
     jmp __b3
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp($d) void (*putc)(char), __zp($22) const char *s)
+// void printf_str(__zp($c) void (*putc)(char), __zp($a) const char *s)
 printf_str: {
-    .label s = $22
-    .label putc = $d
+    .label s = $a
+    .label putc = $c
   __b1:
     // while(c=*s++)
     ldy #0
@@ -601,9 +601,9 @@ printf_str: {
     jmp (putc)
 }
 // Print an unsigned int using a specific format
-// void printf_uint(void (*putc)(char), __zp(2) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uint(void (*putc)(char), __zp(6) unsigned int uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uint: {
-    .label uvalue = 2
+    .label uvalue = 6
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -620,10 +620,10 @@ printf_uint: {
 }
 // Converts the string pointed to, by the argument str to an unsigned char (unsing base 10)
 // Modifies *endptr to point to the first unparseable character
-// __register(A) char strtouc(__zp($d) char *str, char **endptr)
+// __register(A) char strtouc(__zp($c) char *str, char **endptr)
 strtouc: {
-    .label val = $1a
-    .label str = $d
+    .label val = $e
+    .label str = $c
     // char c = *str
     ldy #0
     lda (str),y
@@ -740,12 +740,12 @@ cscroll: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void utoa(__zp(2) unsigned int value, __zp($d) char *buffer, char radix)
+// void utoa(__zp(6) unsigned int value, __zp($c) char *buffer, char radix)
 utoa: {
-    .label digit_value = $22
-    .label buffer = $d
-    .label digit = $1a
-    .label value = 2
+    .label digit_value = $a
+    .label buffer = $c
+    .label digit = $e
+    .label value = 6
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -839,13 +839,13 @@ printf_number_buffer: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// void * memcpy(__zp($26) void *destination, __zp($f) void *source, unsigned int num)
+// void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
 memcpy: {
-    .label src_end = $24
-    .label dst = $26
-    .label src = $f
-    .label source = $f
-    .label destination = $26
+    .label src_end = 8
+    .label dst = 4
+    .label src = 2
+    .label source = 2
+    .label destination = 4
     // char* src_end = (char*)source+num
     lda.z source
     clc
@@ -881,11 +881,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($f) void *str, __register(X) char c, unsigned int num)
+// void * memset(__zp(2) void *str, __register(X) char c, unsigned int num)
 memset: {
-    .label end = $26
-    .label dst = $f
-    .label str = $f
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // char* end = (char*)str + num
     lda #$28
     clc
@@ -924,12 +924,12 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __zp(2) unsigned int utoa_append(__zp($d) char *buffer, __zp(2) unsigned int value, __zp($22) unsigned int sub)
+// __zp(6) unsigned int utoa_append(__zp($c) char *buffer, __zp(6) unsigned int value, __zp($a) unsigned int sub)
 utoa_append: {
-    .label buffer = $d
-    .label value = 2
-    .label sub = $22
-    .label return = 2
+    .label buffer = $c
+    .label value = 6
+    .label sub = $a
+    .label return = 6
     ldx #0
   __b1:
     // while (value >= sub)

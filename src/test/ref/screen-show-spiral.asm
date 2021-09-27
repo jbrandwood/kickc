@@ -19,14 +19,14 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
-  .label heap_head = 2
+  .label heap_head = $14
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
-  .label SQUARES = 4
+  .label SQUARES = $12
   // Screen containing distance to center
-  .label SCREEN_DIST = $1b
+  .label SCREEN_DIST = $26
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $1d
+  .label SCREEN_ANGLE = $24
 .segment Code
 __start: {
     // byte* SCREEN_DIST = malloc(1000)
@@ -60,10 +60,10 @@ __start: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// void * malloc(__zp(4) unsigned int size)
+// void * malloc(__zp($12) unsigned int size)
 malloc: {
-    .label mem = 4
-    .label size = 4
+    .label mem = $12
+    .label size = $12
     // unsigned char* mem = heap_head-size
     lda.z heap_head
     sec
@@ -81,13 +81,13 @@ malloc: {
     rts
 }
 main: {
-    .label dist = 4
-    .label angle = 6
-    .label fill = 2
-    .label dist_angle = $c
-    .label min_dist_angle = 8
-    .label min_dist_angle_1 = $c
-    .label min_fill = $a
+    .label dist = $12
+    .label angle = $22
+    .label fill = $14
+    .label dist_angle = $17
+    .label min_dist_angle = $1e
+    .label min_dist_angle_1 = $17
+    .label min_fill = $1c
     // init_dist_screen(SCREEN_DIST)
     lda.z SCREEN_DIST
     sta.z init_dist_screen.screen
@@ -210,17 +210,17 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// void init_dist_screen(__zp($f) char *screen)
+// void init_dist_screen(__zp($20) char *screen)
 init_dist_screen: {
-    .label screen = $f
-    .label screen_bottomline = $11
-    .label yds = $1f
-    .label screen_topline = $f
-    .label y = $e
-    .label xds = $21
-    .label ds = $21
-    .label x = $13
-    .label xb = $14
+    .label screen = $20
+    .label screen_bottomline = $1a
+    .label yds = 4
+    .label screen_topline = $20
+    .label y = $19
+    .label xds = 6
+    .label ds = 6
+    .label x = $11
+    .label xb = $10
     // init_squares()
     jsr init_squares
     // byte *screen_bottomline = screen+40*24
@@ -334,19 +334,19 @@ init_dist_screen: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// void init_angle_screen(__zp($11) char *screen)
+// void init_angle_screen(__zp($1a) char *screen)
 init_angle_screen: {
-    .label __9 = $19
-    .label screen = $11
-    .label screen_bottomline = $11
-    .label xw = $24
-    .label yw = $26
-    .label angle_w = $19
-    .label ang_w = $23
-    .label x = $13
-    .label xb = $14
-    .label screen_topline = $f
-    .label y = $e
+    .label __9 = 2
+    .label screen = $1a
+    .label screen_bottomline = $1a
+    .label xw = $a
+    .label yw = 8
+    .label angle_w = 2
+    .label ang_w = $16
+    .label x = $11
+    .label xb = $10
+    .label screen_topline = $20
+    .label y = $19
     // byte* screen_topline = screen+40*12
     lda.z screen_bottomline
     clc
@@ -455,8 +455,8 @@ init_angle_screen: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $17
-    .label sqr = $15
+    .label squares = $e
+    .label sqr = $c
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     lda #<NUM_SQUARES*SIZEOF_UNSIGNED_INT
     sta.z malloc.size
@@ -514,10 +514,10 @@ init_squares: {
 }
 // Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
-// __zp($21) unsigned int sqr(__register(A) char val)
+// __zp(6) unsigned int sqr(__register(A) char val)
 sqr: {
-    .label return = $21
-    .label return_1 = $1f
+    .label return = 6
+    .label return_1 = 4
     // return SQUARES[val];
     asl
     tay
@@ -532,12 +532,12 @@ sqr: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// __register(A) char sqrt(__zp($21) unsigned int val)
+// __register(A) char sqrt(__zp(6) unsigned int val)
 sqrt: {
-    .label __1 = $19
-    .label __2 = $19
-    .label found = $19
-    .label val = $21
+    .label __1 = 2
+    .label __2 = 2
+    .label found = 2
+    .label val = 6
     // unsigned int* found = bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -563,18 +563,18 @@ sqrt: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($19) unsigned int atan2_16(__zp($24) int x, __zp($26) int y)
+// __zp(2) unsigned int atan2_16(__zp($a) int x, __zp(8) int y)
 atan2_16: {
-    .label __2 = $15
-    .label __7 = $17
-    .label yi = $15
-    .label xi = $17
-    .label angle = $19
-    .label xd = $21
-    .label yd = $1f
-    .label return = $19
-    .label x = $24
-    .label y = $26
+    .label __2 = $c
+    .label __7 = $e
+    .label yi = $c
+    .label xi = $e
+    .label angle = 2
+    .label xd = 6
+    .label yd = 4
+    .label return = 2
+    .label x = $a
+    .label y = 8
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -779,14 +779,14 @@ atan2_16: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// __zp($19) unsigned int * bsearch16u(__zp($21) unsigned int key, __zp($19) unsigned int *items, __register(X) char num)
+// __zp(2) unsigned int * bsearch16u(__zp(6) unsigned int key, __zp(2) unsigned int *items, __register(X) char num)
 bsearch16u: {
-    .label __2 = $19
-    .label pivot = $24
-    .label result = $26
-    .label return = $19
-    .label items = $19
-    .label key = $21
+    .label __2 = 2
+    .label pivot = $a
+    .label result = 8
+    .label return = 2
+    .label items = 2
+    .label key = 6
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)

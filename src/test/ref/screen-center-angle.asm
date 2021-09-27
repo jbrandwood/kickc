@@ -39,8 +39,8 @@ main: {
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
     .label BASE_SCREEN = $400
     .label BASE_CHARSET = $1000
-    .label __4 = $13
-    .label cyclecount = $13
+    .label __4 = $18
+    .label cyclecount = $18
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -75,15 +75,15 @@ main: {
     rts
 }
 // Make charset from proto chars
-// void init_font_hex(__zp(5) char *charset)
+// void init_font_hex(__zp($f) char *charset)
 init_font_hex: {
-    .label __0 = $1b
-    .label idx = 8
-    .label proto_lo = 9
-    .label charset = 5
-    .label c1 = 7
-    .label proto_hi = 3
-    .label c = 2
+    .label __0 = $d
+    .label idx = $c
+    .label proto_lo = 8
+    .label charset = $f
+    .label c1 = $e
+    .label proto_hi = $15
+    .label c = $17
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO
@@ -212,16 +212,16 @@ clock_start: {
 // Utilizes symmetry around the  center
 // void init_angle_screen(char *screen)
 init_angle_screen: {
-    .label __9 = $f
-    .label xw = $17
-    .label yw = $19
-    .label angle_w = $f
-    .label ang_w = $1b
-    .label x = 7
-    .label xb = 8
-    .label screen_topline = 3
-    .label screen_bottomline = 5
-    .label y = 2
+    .label __9 = 6
+    .label xw = $13
+    .label yw = $11
+    .label angle_w = 6
+    .label ang_w = $d
+    .label x = $e
+    .label xb = $c
+    .label screen_topline = $15
+    .label screen_bottomline = $f
+    .label y = $17
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
@@ -326,7 +326,7 @@ init_angle_screen: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $13
+    .label return = $18
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Stop the timer
     lda #0
@@ -353,9 +353,9 @@ clock: {
     rts
 }
 // Print a unsigned long as HEX at a specific position
-// void print_ulong_at(__zp($13) unsigned long dw, char *at)
+// void print_ulong_at(__zp($18) unsigned long dw, char *at)
 print_ulong_at: {
-    .label dw = $13
+    .label dw = $18
     // print_uint_at(WORD1(dw), at)
     lda.z dw+2
     sta.z print_uint_at.w
@@ -382,18 +382,18 @@ print_ulong_at: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// __zp($f) unsigned int atan2_16(__zp($17) int x, __zp($19) int y)
+// __zp(6) unsigned int atan2_16(__zp($13) int x, __zp($11) int y)
 atan2_16: {
-    .label __2 = 9
-    .label __7 = $d
-    .label yi = 9
-    .label xi = $d
-    .label angle = $f
-    .label xd = $b
-    .label yd = $11
-    .label return = $f
-    .label x = $17
-    .label y = $19
+    .label __2 = 8
+    .label __7 = $a
+    .label yi = 8
+    .label xi = $a
+    .label angle = 6
+    .label xd = 4
+    .label yd = 2
+    .label return = 6
+    .label x = $13
+    .label y = $11
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -594,10 +594,10 @@ atan2_16: {
     jmp __b3
 }
 // Print a unsigned int as HEX at a specific position
-// void print_uint_at(__zp($d) unsigned int w, __zp($f) char *at)
+// void print_uint_at(__zp($a) unsigned int w, __zp(6) char *at)
 print_uint_at: {
-    .label w = $d
-    .label at = $f
+    .label w = $a
+    .label at = 6
     // print_uchar_at(BYTE1(w), at)
     lda.z w+1
     sta.z print_uchar_at.b
@@ -617,10 +617,10 @@ print_uint_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// void print_uchar_at(__zp($1b) char b, __zp($f) char *at)
+// void print_uchar_at(__zp($d) char b, __zp(6) char *at)
 print_uchar_at: {
-    .label b = $1b
-    .label at = $f
+    .label b = $d
+    .label at = 6
     // b>>4
     lda.z b
     lsr
@@ -654,9 +654,9 @@ print_uchar_at: {
     rts
 }
 // Print a single char
-// void print_char_at(__register(X) char ch, __zp($11) char *at)
+// void print_char_at(__register(X) char ch, __zp(2) char *at)
 print_char_at: {
-    .label at = $11
+    .label at = 2
     // *(at) = ch
     txa
     ldy #0

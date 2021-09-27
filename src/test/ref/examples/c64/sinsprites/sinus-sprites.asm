@@ -40,11 +40,11 @@
   .label sprites = $2000
   .label SCREEN = $400
   // Current index within the progress cursor (0-7)
-  .label progress_idx = 6
+  .label progress_idx = 5
   // Current position of the progress cursor
-  .label progress_cursor = $a
-  .label sin_idx_x = 4
-  .label sin_idx_y = 5
+  .label progress_cursor = 3
+  .label sin_idx_x = 9
+  .label sin_idx_y = 6
 .segment Code
 main: {
     // init()
@@ -121,12 +121,12 @@ init: {
 }
 anim: {
     .label __7 = 8
-    .label xidx = 6
-    .label yidx = 2
+    .label xidx = 5
+    .label yidx = $c
     .label x = $13
     .label x_msb = 8
-    .label j2 = 9
-    .label j = 3
+    .label j2 = 2
+    .label j = $11
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // char xidx = sin_idx_x
@@ -257,11 +257,11 @@ clear_screen: {
 }
 place_sprites: {
     .label sprites_ptr = SCREEN+$3f8
-    .label spr_id = 4
-    .label spr_x = 6
-    .label col = 9
+    .label spr_id = 9
+    .label spr_x = 5
+    .label col = 2
     .label j2 = 8
-    .label j = 5
+    .label j = 6
     // VICII->SPRITES_ENABLE = %01111111
     lda #$7f
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
@@ -320,7 +320,7 @@ place_sprites: {
 }
 gen_sprites: {
     .label spr = $f
-    .label i = 2
+    .label i = $c
     lda #<sprites
     sta.z spr
     lda #>sprites
@@ -356,9 +356,9 @@ gen_sprites: {
 }
 .segment Code
 // Initialize the PETSCII progress bar
-// void progress_init(__zp($a) char *line)
+// void progress_init(__zp(3) char *line)
 progress_init: {
-    .label line = $a
+    .label line = 3
     // progress_cursor = line
     // }
     rts
@@ -368,14 +368,14 @@ progress_init: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sine
 // - max is the maximum value of the generated sine
-// void gen_sintab(__zp($13) char *sintab, __zp(4) char length, __zp(3) char min, __register(X) char max)
+// void gen_sintab(__zp($13) char *sintab, __zp(9) char length, __zp($11) char min, __register(X) char max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label __20 = $15
-    .label i = 5
-    .label min = 3
-    .label length = 4
+    .label __20 = $a
+    .label i = 6
+    .label min = $11
+    .label length = 9
     .label sintab = $13
     // setFAC((unsigned int)max)
     txa
@@ -524,17 +524,17 @@ gen_sintab: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// void gen_chargen_sprite(__register(X) char ch, __zp($a) char *sprite)
+// void gen_chargen_sprite(__register(X) char ch, __zp(3) char *sprite)
 gen_chargen_sprite: {
-    .label __0 = $15
-    .label __14 = $15
-    .label sprite = $a
-    .label chargen = $15
-    .label bits = 5
+    .label __0 = $a
+    .label __14 = $a
+    .label sprite = 3
+    .label chargen = $a
+    .label bits = 6
     // current sprite char
-    .label s_gen = 9
-    .label x = 6
-    .label y = 4
+    .label s_gen = 2
+    .label x = 5
+    .label y = 9
     // Find the current chargen pixel (c)
     .label c = 8
     // ((unsigned int)ch)*8
@@ -712,9 +712,9 @@ subFACfromARG: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 chars from memory
-// void divMEMbyFAC(__zp($15) char *mem)
+// void divMEMbyFAC(__zp($a) char *mem)
 divMEMbyFAC: {
-    .label mem = $15
+    .label mem = $a
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
@@ -751,9 +751,9 @@ addMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 chars from memory
-// void mulFACbyMEM(__zp($15) char *mem)
+// void mulFACbyMEM(__zp($a) char *mem)
 mulFACbyMEM: {
-    .label mem = $15
+    .label mem = $a
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
@@ -782,7 +782,7 @@ sinFAC: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = $15
+    .label return = $a
     // asm
     // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
     jsr $b1aa

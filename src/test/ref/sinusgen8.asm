@@ -21,10 +21,10 @@
   .const PI_HALF_u4f12 = $1922
   .const wavelength = $c0
   .label print_screen = $400
-  .label print_char_cursor = 8
+  .label print_char_cursor = 6
 .segment Code
 main: {
-    .label i = 2
+    .label i = $15
     // sin8s_gen(sintab2, wavelength)
     jsr sin8s_gen
     // print_cls()
@@ -61,14 +61,14 @@ main: {
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
-// void sin8s_gen(__zp(8) signed char *sintab, unsigned int wavelength)
+// void sin8s_gen(__zp(6) signed char *sintab, unsigned int wavelength)
 sin8s_gen: {
-    .label step = $c
-    .label sintab = 8
+    .label step = $a
+    .label sintab = 6
     // u[4.12]
     // Iterate over the table
-    .label x = 6
-    .label i = 3
+    .label x = $e
+    .label i = $c
     // unsigned int step = div16u(PI2_u4f12, wavelength)
   // u[4.28] step = PI*2/wavelength
     jsr div16u
@@ -159,9 +159,9 @@ print_schar: {
     jmp __b2
 }
 // Print a zero-terminated string
-// void print_str(__zp(3) char *str)
+// void print_str(__zp($c) char *str)
 print_str: {
-    .label str = 3
+    .label str = $c
     lda #<main.str
     sta.z str
     lda #>main.str
@@ -190,9 +190,9 @@ print_str: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($c) unsigned int div16u(unsigned int dividend, unsigned int divisor)
+// __zp($a) unsigned int div16u(unsigned int dividend, unsigned int divisor)
 div16u: {
-    .label return = $c
+    .label return = $a
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -202,17 +202,17 @@ div16u: {
 // Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// __register(A) signed char sin8s(__zp($a) unsigned int x)
+// __register(A) signed char sin8s(__zp(8) unsigned int x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $a
-    .label x = $a
-    .label x1 = $13
-    .label x3 = $14
-    .label usinx = $15
+    .label __4 = 8
+    .label x = 8
+    .label x1 = $12
+    .label x3 = $11
+    .label usinx = $13
     // Move x1 into the range 0-PI/2 using sine mirror symmetries
-    .label isUpper = 5
+    .label isUpper = $14
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -350,7 +350,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = $e
     lda #<str
     sta.z dst
     lda #>str
@@ -418,12 +418,12 @@ print_uchar: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// __zp($c) unsigned int divr16u(__zp($f) unsigned int dividend, unsigned int divisor, __zp($a) unsigned int rem)
+// __zp($a) unsigned int divr16u(__zp(2) unsigned int dividend, unsigned int divisor, __zp(8) unsigned int rem)
 divr16u: {
-    .label rem = $a
-    .label dividend = $f
-    .label quotient = $c
-    .label return = $c
+    .label rem = 8
+    .label dividend = 2
+    .label quotient = $a
+    .label return = $a
     ldx #0
     txa
     sta.z quotient
@@ -489,11 +489,11 @@ divr16u: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($e) char select)
+// __register(A) char mulu8_sel(__register(X) char v1, __register(Y) char v2, __zp($10) char select)
 mulu8_sel: {
-    .label __0 = $f
-    .label __1 = $f
-    .label select = $e
+    .label __0 = 2
+    .label __1 = 2
+    .label select = $10
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -512,11 +512,11 @@ mulu8_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// __zp($f) unsigned int mul8u(__register(X) char a, __register(A) char b)
+// __zp(2) unsigned int mul8u(__register(X) char a, __register(A) char b)
 mul8u: {
-    .label return = $f
-    .label mb = $11
-    .label res = $f
+    .label return = 2
+    .label mb = 4
+    .label res = 2
     // unsigned int mb = b
     sta.z mb
     lda #0

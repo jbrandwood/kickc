@@ -115,7 +115,7 @@ public enum CpuAddressingMode {
     * address. The carry from this addition is added to the contents of the next page zero memory location, the result
     * being the high order eight bits of the effective address."
     */
-   IZZ("(zp),z", "%i.z (%p),z", 1),
+   IZZ("(zp),z", "%i (%p),z", 1),
 
    /**
     * (abs) Indirect Absolute <br>
@@ -132,7 +132,7 @@ public enum CpuAddressingMode {
     * ZEROPAGE INDIRECT
     * The second byte of the instruction contains address of a zeropage memory location.
     */
-   INZ("(zp)", "%i.z (%p)", 1),
+   INZ("(zp)", "%i (%p)", 1),
 
    /**
     * ((zp)) 32-bit Indirect Zeropage <br>
@@ -140,7 +140,7 @@ public enum CpuAddressingMode {
     * In indirect addressing the second byte of the instruction points to a memory location in page zero. This mode is
     * formed by preceding a Base Page Indirect Mode instruction with NEG NEG NOP instructions.
     */
-   LIN("((zp))", "%i.z ((%p))", 1),
+   LIN("((zp))", "%i ((%p))", 1),
 
    /**
     * ((zp)),z 32-bit Indirect Zeropage Z <br>
@@ -148,7 +148,7 @@ public enum CpuAddressingMode {
     * In indirect indexed addressing the second byte of the instruction points to a memory location in page zero. This
     * mode is formed by preceding a Base Page Indirect Z-Indexed Mode instruction with the NOP instruction (opcode $EA).
     */
-   LIZ("((zp)),z", "%i.z ((%p)),z", 1),
+   LIZ("((zp)),z", "%i ((%p)),z", 1),
 
    /**
     * (zp,sp),y Stack Pointer Indirect Indexed <br>
@@ -159,7 +159,7 @@ public enum CpuAddressingMode {
     * addition is added to the contents of the next (D -1) stack location the result being the high order eight bits of
     * the effective address."	STA ($12,SP),Y
     */
-   ISY("(zp,sp),y", "%i.z (%p,sp),y", 1),
+   ISY("(zp,sp),y", "%i (%p,sp),y", 1),
 
    /**
     * Relative <br>

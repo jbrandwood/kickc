@@ -43,7 +43,7 @@ main: {
     ldz #0
   !:
     tza
-    sta.z ((ADDR32)),z
+    sta ((ADDR32)),z
     inz
     cpz #$50
     bne !-
@@ -61,7 +61,7 @@ main: {
     lda #'*'
     ldz #$4f
   !:
-    sta.z ((ADDR32)),z
+    sta ((ADDR32)),z
     dez
     bpl !-
     // }

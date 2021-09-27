@@ -19,12 +19,22 @@
   .label DEFAULT_SCREEN = $400
   /// Default address of the chargen font (mixed case)
   .label DEFAULT_FONT_MIXED = $1800
+  // The number of bytes on the screen
+  // The current cursor x-position
+  .label conio_cursor_x = $13
+  // The current cursor y-position
+  .label conio_cursor_y = 9
   // The current text cursor line start
-  .label conio_line_text = $e
+  .label conio_line_text = $c
   // The current color cursor line start
-  .label conio_line_color = $c
+  .label conio_line_color = $a
 .segment Code
 __start: {
+    // __ma char conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // __ma char conio_cursor_y = 0
+    sta.z conio_cursor_y
     // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
@@ -67,15 +77,15 @@ cputc: {
     cmp #'\n'
     beq __b1
     // conio_line_text[conio_cursor_x] = c
-    ldy conio_cursor_x
+    ldy.z conio_cursor_x
     sta (conio_line_text),y
     // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda conio_textcolor
+    lda #LIGHT_BLUE
     sta (conio_line_color),y
     // if(++conio_cursor_x==CONIO_WIDTH)
-    inc conio_cursor_x
+    inc.z conio_cursor_x
     lda #$28
-    cmp conio_cursor_x
+    cmp.z conio_cursor_x
     bne __breturn
     // cputln()
     jsr cputln
@@ -90,27 +100,30 @@ cputc: {
 // Show the currently pressed key
 main: {
     .const toD0181_return = (>(DEFAULT_SCREEN&$3fff)*4)|(>DEFAULT_FONT_MIXED)/4&$f
+    .label __6 = $14
+    .label ch = $17
+    .label current = $16
     // VICII->MEMORY = toD018(DEFAULT_SCREEN, DEFAULT_FONT_MIXED)
     lda #toD0181_return
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
     // clrscr()
     jsr clrscr
     lda #0
-    sta current
+    sta.z current
   __b1:
     // char ch = GETIN()
     jsr GETIN
-    sta ch
+    sta.z ch
     // if(ch && ch!=current)
     beq __b1
-    cmp current
+    cmp.z current
     bne __b2
     jmp __b1
   __b2:
     // petscii_to_screencode(ch)
-    lda ch
+    lda.z ch
     jsr petscii_to_screencode
-    sta __6
+    sta.z __6
     // printf("'%c'($%2x) ", petscii_to_screencode(ch), ch)
     lda #<cputc
     sta.z printf_str.putc
@@ -122,7 +135,7 @@ main: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("'%c'($%2x) ", petscii_to_screencode(ch), ch)
-    lda __6
+    lda.z __6
     pha
     jsr cputc
     pla
@@ -136,7 +149,7 @@ main: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("'%c'($%2x) ", petscii_to_screencode(ch), ch)
-    ldx ch
+    ldx.z ch
     jsr printf_uchar
     // printf("'%c'($%2x) ", petscii_to_screencode(ch), ch)
     lda #<cputc
@@ -148,8 +161,8 @@ main: {
     lda #>s2
     sta.z printf_str.s+1
     jsr printf_str
-    lda ch
-    sta current
+    lda.z ch
+    sta.z current
     jmp __b1
   .segment Data
     s: .text "'"
@@ -158,58 +171,60 @@ main: {
     .byte 0
     s2: .text ") "
     .byte 0
-    __6: .byte 0
-    ch: .byte 0
-    current: .byte 0
 }
 .segment Code
 // Set the cursor to the specified position
 // void gotoxy(char x, __register(X) char y)
 gotoxy: {
-    .label __5 = 8
-    .label __6 = $a
+    .const x = 0
+    .label __5 = $1c
+    .label __6 = $18
+    .label __7 = $18
+    .label line_offset = $18
+    .label __8 = $1a
+    .label __9 = $18
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
     ldx #0
   __b2:
     // conio_cursor_x = x
-    lda #0
-    sta conio_cursor_x
+    lda #x
+    sta.z conio_cursor_x
     // conio_cursor_y = y
-    stx conio_cursor_y
+    stx.z conio_cursor_y
     // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
     txa
-    sta __7
+    sta.z __7
     lda #0
-    sta __7+1
-    lda __7
+    sta.z __7+1
+    lda.z __7
     asl
-    sta __8
-    lda __7+1
+    sta.z __8
+    lda.z __7+1
     rol
-    sta __8+1
-    asl __8
-    rol __8+1
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
     clc
-    lda __9
-    adc __8
-    sta __9
-    lda __9+1
-    adc __8+1
-    sta __9+1
-    asl line_offset
-    rol line_offset+1
-    asl line_offset
-    rol line_offset+1
-    asl line_offset
-    rol line_offset+1
+    lda.z __9
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
     // CONIO_SCREEN_TEXT + line_offset
-    lda line_offset
+    lda.z line_offset
     clc
     adc #<DEFAULT_SCREEN
     sta.z __5
-    lda line_offset+1
+    lda.z line_offset+1
     adc #>DEFAULT_SCREEN
     sta.z __5+1
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
@@ -218,11 +233,11 @@ gotoxy: {
     lda.z __5+1
     sta.z conio_line_text+1
     // CONIO_SCREEN_COLORS + line_offset
-    lda line_offset
+    lda.z __6
     clc
     adc #<COLORRAM
     sta.z __6
-    lda line_offset+1
+    lda.z __6+1
     adc #>COLORRAM
     sta.z __6+1
     // conio_line_color = CONIO_SCREEN_COLORS + line_offset
@@ -232,13 +247,7 @@ gotoxy: {
     sta.z conio_line_color+1
     // }
     rts
-  .segment Data
-    __7: .word 0
-    .label line_offset = __7
-    __8: .word 0
-    .label __9 = __7
 }
-.segment Code
 // Print a newline
 cputln: {
     // conio_line_text +=  CONIO_WIDTH
@@ -259,9 +268,9 @@ cputln: {
   !:
     // conio_cursor_x = 0
     lda #0
-    sta conio_cursor_x
+    sta.z conio_cursor_x
     // conio_cursor_y++;
-    inc conio_cursor_y
+    inc.z conio_cursor_y
     // cscroll()
     jsr cscroll
     // }
@@ -270,7 +279,7 @@ cputln: {
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     .label line_text = $10
-    .label line_cols = $12
+    .label line_cols = $e
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM
@@ -286,9 +295,9 @@ clrscr: {
     bcc __b2
     // conio_cursor_x = 0
     lda #0
-    sta conio_cursor_x
+    sta.z conio_cursor_x
     // conio_cursor_y = 0
-    sta conio_cursor_y
+    sta.z conio_cursor_y
     // conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
@@ -331,7 +340,7 @@ clrscr: {
     lda #' '
     sta (line_text),y
     // line_cols[c] = conio_textcolor
-    lda conio_textcolor
+    lda #LIGHT_BLUE
     sta (line_cols),y
     // for( char c=0;c<CONIO_WIDTH; c++ )
     iny
@@ -400,9 +409,9 @@ petscii_to_screencode: {
     rts
 }
 /// Print a NUL-terminated string
-// void printf_str(__zp($10) void (*putc)(char), __zp($12) const char *s)
+// void printf_str(__zp($10) void (*putc)(char), __zp($e) const char *s)
 printf_str: {
-    .label s = $12
+    .label s = $e
     .label putc = $10
   __b1:
     // while(c=*s++)
@@ -439,7 +448,7 @@ printf_uchar: {
     jsr uctoa
     // printf_number_buffer(putc, printf_buffer, format)
     lda printf_buffer
-    sta printf_number_buffer.buffer_sign
+    sta.z printf_number_buffer.buffer_sign
   // Print using format
     jsr printf_number_buffer
     // }
@@ -449,18 +458,8 @@ printf_uchar: {
 cscroll: {
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
-    cmp conio_cursor_y
+    cmp.z conio_cursor_y
     bne __breturn
-    // if(conio_scroll_enable)
-    lda conio_scroll_enable
-    bne __b3
-    // gotoxy(0,0)
-    ldx #0
-    jsr gotoxy
-  __breturn:
-    // }
-    rts
-  __b3:
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
     lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
@@ -489,7 +488,7 @@ cscroll: {
     sta.z memset.str+1
     jsr memset
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
-    ldx conio_textcolor
+    ldx #LIGHT_BLUE
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28
@@ -512,7 +511,9 @@ cscroll: {
     sbc #0
     sta.z conio_line_color+1
     // conio_cursor_y--;
-    dec conio_cursor_y
+    dec.z conio_cursor_y
+  __breturn:
+    // }
     rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
@@ -523,17 +524,20 @@ cscroll: {
 // void uctoa(__register(X) char value, __zp($10) char *buffer, char radix)
 uctoa: {
     .const max_digits = 2
+    .label digit_value = 8
     .label buffer = $10
+    .label digit = $12
+    .label started = $14
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer+1
     lda #0
-    sta started
-    sta digit
+    sta.z started
+    sta.z digit
   __b1:
     // for( char digit=0; digit<max_digits-1; digit++ )
-    lda digit
+    lda.z digit
     cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
@@ -553,17 +557,17 @@ uctoa: {
     rts
   __b2:
     // unsigned char digit_value = digit_values[digit]
-    ldy digit
+    ldy.z digit
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
-    sta digit_value
+    sta.z digit_value
     // if (started || value >= digit_value)
-    lda started
+    lda.z started
     bne __b5
-    cpx digit_value
+    cpx.z digit_value
     bcs __b5
   __b4:
     // for( char digit=0; digit<max_digits-1; digit++ )
-    inc digit
+    inc.z digit
     jmp __b1
   __b5:
     // uctoa_append(buffer++, value, digit_value)
@@ -576,27 +580,24 @@ uctoa: {
     inc.z buffer+1
   !:
     lda #1
-    sta started
+    sta.z started
     jmp __b4
-  .segment Data
-    digit_value: .byte 0
-    digit: .byte 0
-    started: .byte 0
 }
-.segment Code
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(void (*putc)(char), __mem() char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_number_buffer(void (*putc)(char), __zp(8) char buffer_sign, char *buffer_digits, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    .label __19 = $e
+    .label buffer_sign = 8
     // strlen(buffer.digits)
     jsr strlen
     // strlen(buffer.digits)
     // signed char len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
-    ldx __19
+    ldx.z __19
     // if(buffer.sign)
-    lda buffer_sign
+    lda.z buffer_sign
     beq __b8
     // len++;
     inx
@@ -617,11 +618,11 @@ printf_number_buffer: {
     jmp __b2
   __b6:
     // printf_padding(putc, ' ',(char)padding)
-    sta printf_padding.length
+    sta.z printf_padding.length
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda buffer_sign
+    lda.z buffer_sign
     beq __b3
     // putc(buffer.sign)
     pha
@@ -640,11 +641,7 @@ printf_number_buffer: {
     jsr printf_str
     // }
     rts
-  .segment Data
-    .label __19 = strlen.len
-    buffer_sign: .byte 0
 }
-.segment Code
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // void * memcpy(__zp(4) void *destination, __zp(2) void *source, unsigned int num)
@@ -732,13 +729,14 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// __register(X) char uctoa_append(__zp($10) char *buffer, __register(X) char value, __mem() char sub)
+// __register(X) char uctoa_append(__zp($10) char *buffer, __register(X) char value, __zp(8) char sub)
 uctoa_append: {
     .label buffer = $10
+    .label sub = 8
     ldy #0
   __b1:
     // while (value >= sub)
-    cpx sub
+    cpx.z sub
     bcs __b2
     // *buffer = DIGITS[digit]
     lda DIGITS,y
@@ -752,20 +750,19 @@ uctoa_append: {
     // value -= sub
     txa
     sec
-    sbc sub
+    sbc.z sub
     tax
     jmp __b1
-  .segment Data
-    .label sub = uctoa.digit_value
 }
-.segment Code
 // Computes the length of the string str up to but not including the terminating null character.
-// __mem() unsigned int strlen(__zp($10) char *str)
+// __zp($e) unsigned int strlen(__zp($10) char *str)
 strlen: {
+    .label len = $e
     .label str = $10
+    .label return = $e
     lda #<0
-    sta len
-    sta len+1
+    sta.z len
+    sta.z len+1
     lda #<printf_number_buffer.buffer_digits
     sta.z str
     lda #>printf_number_buffer.buffer_digits
@@ -780,9 +777,9 @@ strlen: {
     rts
   __b2:
     // len++;
-    inc len
+    inc.z len
     bne !+
-    inc len+1
+    inc.z len+1
   !:
     // str++;
     inc.z str
@@ -790,21 +787,19 @@ strlen: {
     inc.z str+1
   !:
     jmp __b1
-  .segment Data
-    len: .word 0
-    .label return = len
 }
-.segment Code
 // Print a padding char a number of times
-// void printf_padding(void (*putc)(char), char pad, __mem() char length)
+// void printf_padding(void (*putc)(char), char pad, __zp($15) char length)
 printf_padding: {
     .const pad = ' '
+    .label i = $12
+    .label length = $15
     lda #0
-    sta i
+    sta.z i
   __b1:
     // for(char i=0;i<length; i++)
-    lda i
-    cmp length
+    lda.z i
+    cmp.z length
     bcc __b2
     // }
     rts
@@ -815,25 +810,13 @@ printf_padding: {
     jsr cputc
     pla
     // for(char i=0;i<length; i++)
-    inc i
+    inc.z i
     jmp __b1
-  .segment Data
-    i: .byte 0
-    length: .byte 0
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
-  // The number of bytes on the screen
-  // The current cursor x-position
-  conio_cursor_x: .byte 0
-  // The current cursor y-position
-  conio_cursor_y: .byte 0
-  // The current text color
-  conio_textcolor: .byte LIGHT_BLUE
-  // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
-  // If disabled the cursor just moves back to (0,0) instead
-  conio_scroll_enable: .byte 1
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0

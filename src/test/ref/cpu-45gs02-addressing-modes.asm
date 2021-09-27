@@ -19,8 +19,8 @@ main: {
     ldx.z $12,y
     lda ($12,x)
     lda ($12),y
-    ora.z ($12),z
-    lda.z ($12,sp),y
+    ora ($12),z
+    lda ($12,sp),y
     lda $1234
     lda $1234,x
     lda $1234,y
@@ -32,8 +32,8 @@ main: {
   lbl2:
     jmp ($1234,x)
   lbl3:
-    lda.z (($12)),z
-    ldq.z (($12))
+    lda (($12)),z
+    ldq (($12))
     // }
     rts
 }

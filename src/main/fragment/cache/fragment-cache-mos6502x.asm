@@ -16511,3 +16511,49 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT call__deref_(qprc1_derefidx_vbuz1)
+ldy {z1}
+lda {c1},y
+sta !+ +1
+lda {c1}+1,y
+sta !+ +2
+!:
+jsr $0000
+//FRAGMENT call__deref_(qprc1_derefidx_vbuaa)
+tay
+lda {c1},y
+sta !+ +1
+lda {c1}+1,y
+sta !+ +2
+!:
+jsr $0000
+//FRAGMENT call__deref_(qprc1_derefidx_vbuxx)
+txa
+tay
+lda {c1},y
+sta !+ +1
+lda {c1}+1,y
+sta !+ +2
+!:
+jsr $0000
+//FRAGMENT call__deref_(qprc1_derefidx_vbuyy)
+lda {c1},y
+sta !+ +1
+lda {c1}+1,y
+sta !+ +2
+!:
+jsr $0000
+//FRAGMENT vbsaa=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+//FRAGMENT vbsxx=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+tax
+//FRAGMENT vbsyy=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+tay

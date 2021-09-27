@@ -16,7 +16,7 @@ main: {
     lda.z $12
     lda.z $12,x
     ldx.z $12,y
-    ora.z ($12)
+    ora ($12)
     lda ($12,x)
     lda ($12),y
     lda $1234

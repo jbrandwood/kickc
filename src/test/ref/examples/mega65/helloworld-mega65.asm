@@ -102,11 +102,11 @@ cputc: {
     beq __b1
     // conio_line_text[conio_cursor_x] = c
     ldz conio_cursor_x
-    sta.z (conio_line_text),z
+    sta (conio_line_text),z
     // conio_line_color[conio_cursor_x] = conio_textcolor
     lda #LIGHT_BLUE
     ldz conio_cursor_x
-    sta.z (conio_line_color),z
+    sta (conio_line_color),z
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
     lda #$50

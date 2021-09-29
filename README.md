@@ -20,6 +20,8 @@ KickC uses the very versatile [Kick Assembler](http://theweb.dk/KickAssembler). 
 
 * [Download](https://gitlab.com/camelot/kickc/-/releases) the newest Release 
 
+* [Download](http://s3.sto3.safedc.net/kickc-nightly/kickc-release.zip) a nightly build 
+
 * [Read](https://docs.google.com/document/d/1JE-Lt5apM-g4tZN3LS4TDbPKYgXuBz294enS9Oc4HXM/edit?usp=sharing) the Reference Manual
 
 * [See](https://camelot.gitlab.io/kickc/files.html) the included C standard library

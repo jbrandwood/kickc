@@ -11,7 +11,9 @@
 // The number of bytes on the screen
 #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
 // The text screen address
-char * const CONIO_SCREEN_TEXT = PPU_NAME_TABLE_0;
+#ifndef CONIO_SCREEN_TEXT
+#define CONIO_SCREEN_TEXT PPU_NAME_TABLE_0
+#endif
 
 // Return true if there's any key pressed, return false if not
 unsigned char kbhit (void) {

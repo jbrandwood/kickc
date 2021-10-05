@@ -373,8 +373,8 @@ uctoa_append::@return: scope:[uctoa_append]  from uctoa_append::@3
 
 void clrscr()
 clrscr: scope:[clrscr]  from main
-  clrscr::line_text#0 = CONIO_SCREEN_TEXT
-  clrscr::line_cols#0 = CONIO_SCREEN_COLORS
+  clrscr::line_text#0 = DEFAULT_SCREEN
+  clrscr::line_cols#0 = COLORRAM
   clrscr::l#0 = 0
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr clrscr::@6
@@ -393,8 +393,8 @@ clrscr::@2: scope:[clrscr]  from clrscr::@1
 clrscr::@3: scope:[clrscr]  from clrscr::@1
   conio_cursor_x = 0
   conio_cursor_y = 0
-  conio_line_text = CONIO_SCREEN_TEXT
-  conio_line_color = CONIO_SCREEN_COLORS
+  conio_line_text = DEFAULT_SCREEN
+  conio_line_color = COLORRAM
   to:clrscr::@return
 clrscr::@4: scope:[clrscr]  from clrscr::@2 clrscr::@5
   clrscr::l#4 = phi( clrscr::@2/clrscr::l#5, clrscr::@5/clrscr::l#6 )
@@ -451,9 +451,9 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_y = gotoxy::y#4
   gotoxy::$7 = (unsigned int)gotoxy::y#4
   gotoxy::line_offset#0 = gotoxy::$7 * $28
-  gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
+  gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
-  gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
+  gotoxy::$6 = COLORRAM + gotoxy::line_offset#0
   conio_line_color = gotoxy::$6
   to:gotoxy::@return
 gotoxy::@4: scope:[gotoxy]  from gotoxy::@1
@@ -519,28 +519,28 @@ cscroll::@1: scope:[cscroll]  from cscroll
   if(cscroll::$7) goto cscroll::@3
   to:cscroll::@2
 cscroll::@3: scope:[cscroll]  from cscroll::@1
-  memcpy::destination#0 = (void *)CONIO_SCREEN_TEXT
-  memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+  memcpy::destination#0 = (void *)DEFAULT_SCREEN
+  memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
   memcpy::num#0 = $19*$28-$28
   call memcpy
   memcpy::return#2 = memcpy::return#1
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@3
-  memcpy::destination#1 = (void *)CONIO_SCREEN_COLORS
-  memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+  memcpy::destination#1 = (void *)COLORRAM
+  memcpy::source#1 = (void *)COLORRAM+$28
   memcpy::num#1 = $19*$28-$28
   call memcpy
   memcpy::return#3 = memcpy::return#1
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
-  memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-$28
+  memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-$28
   memset::c#0 = ' '
   memset::num#0 = $28
   call memset
   memset::return#2 = memset::return#1
   to:cscroll::@6
 cscroll::@6: scope:[cscroll]  from cscroll::@5
-  memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-$28
+  memset::str#1 = (void *)COLORRAM+$19*$28-$28
   memset::c#1 = conio_textcolor
   memset::num#1 = $28
   call memset
@@ -1019,9 +1019,9 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   conio_cursor_x = 0
   conio_cursor_y = 0
-  conio_line_text = CONIO_SCREEN_TEXT
-  conio_line_color = CONIO_SCREEN_COLORS
-  conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+  conio_line_text = DEFAULT_SCREEN
+  conio_line_color = COLORRAM
+  conio_textcolor = LIGHT_BLUE
   conio_scroll_enable = 1
   call conio_c64_init
   to:__start::@2
@@ -1039,9 +1039,6 @@ __start::@return: scope:[__start]  from __start::@3
 SYMBOL TABLE SSA
 __constant char BINARY = 2
 __constant char * const COLORRAM = (char *)$d800
-__constant char * const CONIO_SCREEN_COLORS = COLORRAM
-__constant char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN
-__constant const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 __constant char DECIMAL = $a
 __constant char * const DEFAULT_SCREEN = (char *)$400
 __constant char DIGITS[] = "0123456789abcdef"z
@@ -1761,15 +1758,15 @@ Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_col
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
-Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
 Adding number conversion cast (unumber) $19*$28-$28 in memcpy::num#0 = $19*$28-$28
-Adding number conversion cast (unumber) $28 in memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+Adding number conversion cast (unumber) $28 in memcpy::source#1 = (void *)COLORRAM+$28
 Adding number conversion cast (unumber) $19*$28-$28 in memcpy::num#1 = $19*$28-$28
-Adding number conversion cast (unumber) $28 in memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-$28
-Adding number conversion cast (unumber) $19*$28 in memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-(unumber)$28
+Adding number conversion cast (unumber) $28 in memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-$28
+Adding number conversion cast (unumber) $19*$28 in memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-(unumber)$28
 Adding number conversion cast (unumber) $28 in memset::num#0 = $28
-Adding number conversion cast (unumber) $28 in memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-$28
-Adding number conversion cast (unumber) $19*$28 in memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-(unumber)$28
+Adding number conversion cast (unumber) $28 in memset::str#1 = (void *)COLORRAM+$19*$28-$28
+Adding number conversion cast (unumber) $19*$28 in memset::str#1 = (void *)COLORRAM+$19*$28-(unumber)$28
 Adding number conversion cast (unumber) $28 in memset::num#1 = $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text - $28
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color - $28
@@ -2232,22 +2229,22 @@ Constant uctoa::started#0 = 0
 Constant uctoa::digit#0 = 0
 Constant uctoa::started#1 = 1
 Constant uctoa_append::digit#0 = 0
-Constant clrscr::line_text#0 = CONIO_SCREEN_TEXT
-Constant clrscr::line_cols#0 = CONIO_SCREEN_COLORS
+Constant clrscr::line_text#0 = DEFAULT_SCREEN
+Constant clrscr::line_cols#0 = COLORRAM
 Constant clrscr::l#0 = 0
 Constant clrscr::c#0 = 0
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
-Constant memcpy::destination#0 = (void *)CONIO_SCREEN_TEXT
-Constant memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+Constant memcpy::destination#0 = (void *)DEFAULT_SCREEN
+Constant memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
 Constant memcpy::num#0 = (unumber)$19*$28-$28
-Constant memcpy::destination#1 = (void *)CONIO_SCREEN_COLORS
-Constant memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+Constant memcpy::destination#1 = (void *)COLORRAM
+Constant memcpy::source#1 = (void *)COLORRAM+$28
 Constant memcpy::num#1 = (unumber)$19*$28-$28
-Constant memset::str#0 = (void *)CONIO_SCREEN_TEXT+(unsigned int)$19*$28-$28
+Constant memset::str#0 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28
 Constant memset::c#0 = ' '
 Constant memset::num#0 = $28
-Constant memset::str#1 = (void *)CONIO_SCREEN_COLORS+(unsigned int)$19*$28-$28
+Constant memset::str#1 = (void *)COLORRAM+(unsigned int)$19*$28-$28
 Constant memset::num#1 = $28
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
@@ -2283,7 +2280,7 @@ Constant printf_uchar::format_upper_case#1 = 0
 Constant printf_uchar::format_radix#1 = DECIMAL
 Constant printf_str::putc#2 = &cputc
 Constant printf_str::s#3 = main::s1
-Constant conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+Constant conio_textcolor = LIGHT_BLUE
 Constant conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#1 = conio_textcolor
@@ -2480,7 +2477,6 @@ Constant inlined memset::num#0 = $28
 Constant inlined clrscr::l#0 = 0
 Constant inlined strlen::len#0 = 0
 Constant inlined printf_str::s#3 = main::s1
-Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
 Constant inlined printf_str::s#1 = printf_number_buffer::buffer_digits#0
 Constant inlined printf_str::s#2 = main::s
 Constant inlined printf_number_buffer::padding#2 = 0
@@ -2517,7 +2513,6 @@ Constant inlined main::i#0 = 0
 Constant inlined uctoa::max_digits#3 = 3
 Constant inlined uctoa::max_digits#2 = 2
 Constant inlined strupr::str#0 = printf_number_buffer::buffer_digits#0
-Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 Constant inlined uctoa::max_digits#4 = 8
 Constant inlined uctoa::buffer#1 = ++++(char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Constant inlined memset::str#1 = (void *)COLORRAM+(unsigned int)$19*$28-$28
@@ -2527,7 +2522,6 @@ Constant inlined memset::str#0 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$2
 Constant inlined printf_padding::i#0 = 0
 Constant inlined printf_padding::pad#1 = '0'
 Constant inlined printf_uchar::format_zero_padding#1 = 0
-Constant inlined CONIO_SCREEN_COLORS = COLORRAM
 Constant inlined uctoa::buffer#0 = ++(char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Constant inlined printf_padding::pad#2 = ' '
 Constant inlined printf_uchar::format_zero_padding#0 = 0

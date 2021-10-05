@@ -7,11 +7,17 @@
 // The screen height
 #define CONIO_HEIGHT 25
 // The text screen address
-char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
+#ifndef CONIO_SCREEN_TEXT
+#define CONIO_SCREEN_TEXT DEFAULT_SCREEN
+#endif
 // The color screen address
-char * const CONIO_SCREEN_COLORS = DEFAULT_COLORRAM;
+#ifndef CONIO_SCREEN_COLORS
+#define CONIO_SCREEN_COLORS DEFAULT_COLORRAM
+#endif
 // The default text color
-const char CONIO_TEXTCOLOR_DEFAULT = 0;
+#ifndef CONIO_TEXTCOLOR_DEFAULT
+#define CONIO_TEXTCOLOR_DEFAULT 0
+#endif
 
 // Use the shared CMB flat memory implementation
 #include "conio-cbm-shared.c"

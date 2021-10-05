@@ -22,9 +22,13 @@
 char* CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
 char CONIO_SCREEN_BANK = 0; // Default screen of the CX16 emulator uses memory bank 0 for text.
 // The default text color
-const char CONIO_TEXTCOLOR_DEFAULT = WHITE;
+#ifndef CONIO_TEXTCOLOR_DEFAULT
+#define CONIO_TEXTCOLOR_DEFAULT WHITE
+#endif
 // The default back color
-const char CONIO_BACKCOLOR_DEFAULT = BLUE;
+#ifndef CONIO_BACKCOLOR_DEFAULT
+#define CONIO_BACKCOLOR_DEFAULT BLUE
+#endif
 
 
 // This requires the following constants to be defined

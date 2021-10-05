@@ -9,6 +9,11 @@ import java.io.IOException;
  */
 public class TestProgramsThorough extends TestPrograms {
 
+   //@Test
+   //public void testComplexSwinkiblues() throws IOException {
+   //   compileAndCompare("complex/swinkiblues/kielbasa.c", log());
+   //}
+
    @Test
    public void testCx16VeralibTilemap8bpp8() throws IOException {
       compileAndCompare("examples/cx16/veralib/tilemap_8bpp_8_x_8.c");

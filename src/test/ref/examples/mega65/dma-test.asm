@@ -35,25 +35,25 @@ main: {
     jsr memoryRemap
     // DMA->EN018B = 1
     // Enable enable F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&DMA_SCREEN_UP)
-    lda #>DMA_SCREEN_UP
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>DMA_SCREEN_UP
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&DMA_SCREEN_UP)
     // Trigger the DMA (without option lists)
-    lda #<DMA_SCREEN_UP
-    sta DMA
+    ldz #<DMA_SCREEN_UP
+    stz DMA
     // DMA->EN018B = 0
     // Re-enable F018A mode
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // }
     rts
 }
@@ -89,22 +89,21 @@ memoryRemap: {
     .label zVal = 2
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
-    lda #0
-    sta.z aVal
+    ldz #0
+    stz.z aVal
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
-    sta.z xVal
+    stz.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    sta.z yVal
+    stz.z yVal
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
-    sta.z zVal
+    stz.z zVal
     // asm
     lda aVal
     ldx xVal
     ldy yVal
-    ldz zVal
     map
     eom
     // }

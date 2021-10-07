@@ -104,17 +104,21 @@ public class AsmProgramStaticRegisterValues {
             current.setY(null);
             current.setyMem(null);
          }
+         if(cpuClobber.isRegisterZ()) {
+            current.setZ(null);
+            current.setzMem(null);
+         }
          if(cpuClobber.isFlagC()) {
-            current.setC(null);
+            current.setFlagC(null);
          }
          if(cpuClobber.isFlagN()) {
-            current.setN(null);
+            current.setFlagN(null);
          }
          if(cpuClobber.isFlagV()) {
-            current.setV(null);
+            current.setFlagV(null);
          }
          if(cpuClobber.isFlagZ()) {
-            current.setZ(null);
+            current.setFlagZ(null);
          }
          String mnemnonic = cpuOpcode.getMnemonic();
          CpuAddressingMode addressingMode = cpuOpcode.getAddressingMode();
@@ -129,14 +133,17 @@ public class AsmProgramStaticRegisterValues {
             if(current.getyMem() != null && current.getyMem().equals(modParam)) {
                current.setyMem(null);
             }
+            if(current.getzMem() != null && current.getzMem().equals(modParam)) {
+               current.setzMem(null);
+            }
          }
          if(mnemnonic.equals("lda") && addressingMode.equals(CpuAddressingMode.IMM)) {
             current.setA(instruction.getOperand1());
             current.setaMem(null);
             Integer immValue = getImmValue(instruction.getOperand1());
             if(immValue != null) {
-               current.setZ(immValue == 0);
-               current.setN(immValue > 127);
+               current.setFlagZ(immValue == 0);
+               current.setFlagN(immValue > 127);
             }
          }
          if(mnemnonic.equals("lda") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
@@ -147,14 +154,15 @@ public class AsmProgramStaticRegisterValues {
             current.setaMem(instruction.getOperand1());
             if(instruction.getOperand1().equals(current.getyMem())) current.setyMem(null);
             if(instruction.getOperand1().equals(current.getxMem())) current.setxMem(null);
+            if(instruction.getOperand1().equals(current.getzMem())) current.setzMem(null);
          }
          if(mnemnonic.equals("ldx") && addressingMode.equals(CpuAddressingMode.IMM)) {
             current.setX(instruction.getOperand1());
             current.setxMem(null);
             Integer immValue = getImmValue(instruction.getOperand1());
             if(immValue != null) {
-               current.setZ(immValue == 0);
-               current.setN(immValue > 127);
+               current.setFlagZ(immValue == 0);
+               current.setFlagN(immValue > 127);
             }
          }
          if(mnemnonic.equals("ldx") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
@@ -163,16 +171,17 @@ public class AsmProgramStaticRegisterValues {
          }
          if(mnemnonic.equals("stx") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
             current.setxMem(instruction.getOperand1());
-            if(instruction.getOperand1().equals(current.getyMem())) current.setyMem(null);
             if(instruction.getOperand1().equals(current.getaMem())) current.setaMem(null);
+            if(instruction.getOperand1().equals(current.getyMem())) current.setyMem(null);
+            if(instruction.getOperand1().equals(current.getzMem())) current.setzMem(null);
          }
          if(mnemnonic.equals("ldy") && addressingMode.equals(CpuAddressingMode.IMM)) {
             current.setY(instruction.getOperand1());
             current.setyMem(null);
             Integer immValue = getImmValue(instruction.getOperand1());
             if(immValue != null) {
-               current.setZ(immValue == 0);
-               current.setN(immValue > 127);
+               current.setFlagZ(immValue == 0);
+               current.setFlagN(immValue > 127);
             }
          }
          if(mnemnonic.equals("ldy") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
@@ -180,8 +189,27 @@ public class AsmProgramStaticRegisterValues {
          }
          if(mnemnonic.equals("sty") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
             current.setyMem(instruction.getOperand1());
-            if(instruction.getOperand1().equals(current.getxMem())) current.setxMem(null);
             if(instruction.getOperand1().equals(current.getaMem())) current.setaMem(null);
+            if(instruction.getOperand1().equals(current.getxMem())) current.setxMem(null);
+            if(instruction.getOperand1().equals(current.getzMem())) current.setzMem(null);
+         }
+         if(mnemnonic.equals("ldz") && addressingMode.equals(CpuAddressingMode.IMM)) {
+            current.setZ(instruction.getOperand1());
+            current.setzMem(null);
+            Integer immValue = getImmValue(instruction.getOperand1());
+            if(immValue != null) {
+               current.setFlagZ(immValue == 0);
+               current.setFlagN(immValue > 127);
+            }
+         }
+         if(mnemnonic.equals("ldz") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
+            current.setzMem(instruction.getOperand1());
+         }
+         if(mnemnonic.equals("stz") && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
+            current.setzMem(instruction.getOperand1());
+            if(instruction.getOperand1().equals(current.getaMem())) current.setaMem(null);
+            if(instruction.getOperand1().equals(current.getxMem())) current.setxMem(null);
+            if(instruction.getOperand1().equals(current.getyMem())) current.setyMem(null);
          }
          if(mnemnonic.equals("txa")) {
             current.setA(current.getX());
@@ -199,11 +227,19 @@ public class AsmProgramStaticRegisterValues {
             current.setY(current.getA());
             current.setyMem(current.getaMem());
          }
+         if(mnemnonic.equals("tza")) {
+            current.setA(current.getZ());
+            current.setaMem(current.getzMem());
+         }
+         if(mnemnonic.equals("taz")) {
+            current.setZ(current.getA());
+            current.setzMem(current.getaMem());
+         }
          if(mnemnonic.equals("sec")) {
-            current.setC(Boolean.TRUE);
+            current.setFlagC(Boolean.TRUE);
          }
          if(mnemnonic.equals("clc")) {
-            current.setC(Boolean.FALSE);
+            current.setFlagC(Boolean.FALSE);
          }
       }
       return current;
@@ -213,16 +249,18 @@ public class AsmProgramStaticRegisterValues {
     * Known values of registers/flags at an instruction. null where value is unknown.
     */
    public static class AsmRegisterValues {
+      private Boolean flagC;
+      private Boolean flagV;
+      private Boolean flagN;
+      private Boolean flagZ;
       private String a;
       private String x;
       private String y;
-      private Boolean c;
-      private Boolean v;
-      private Boolean n;
-      private Boolean z;
+      private String z;
       private String aMem;
       private String xMem;
       private String yMem;
+      private String zMem;
 
       public AsmRegisterValues() {
       }
@@ -231,13 +269,15 @@ public class AsmProgramStaticRegisterValues {
          this.a = original.getA();
          this.x = original.getX();
          this.y = original.getY();
-         this.c = original.getC();
-         this.v = original.getV();
-         this.n = original.getN();
          this.z = original.getZ();
+         this.flagZ = original.getFlagZ();
+         this.flagC = original.getFlagC();
+         this.flagV = original.getFlagV();
+         this.flagN = original.getFlagN();
          this.aMem = original.getaMem();
          this.xMem = original.getxMem();
          this.yMem = original.getyMem();
+         this.zMem = original.getzMem();
       }
 
       public String getA() {
@@ -272,36 +312,44 @@ public class AsmProgramStaticRegisterValues {
          this.y = y;
       }
 
-      public Boolean getC() {
-         return c;
-      }
-
-      public void setC(Boolean c) {
-         this.c = c;
-      }
-
-      public Boolean getV() {
-         return v;
-      }
-
-      public void setV(Boolean v) {
-         this.v = v;
-      }
-
-      public Boolean getN() {
-         return n;
-      }
-
-      public void setN(Boolean n) {
-         this.n = n;
-      }
-
-      public Boolean getZ() {
+      public String getZ() {
          return z;
       }
 
-      public void setZ(Boolean z) {
+      public void setZ(String z) {
          this.z = z;
+      }
+
+      public Boolean getFlagC() {
+         return flagC;
+      }
+
+      public void setFlagC(Boolean flagC) {
+         this.flagC = flagC;
+      }
+
+      public Boolean getFlagV() {
+         return flagV;
+      }
+
+      public void setFlagV(Boolean flagV) {
+         this.flagV = flagV;
+      }
+
+      public Boolean getFlagN() {
+         return flagN;
+      }
+
+      public void setFlagN(Boolean flagN) {
+         this.flagN = flagN;
+      }
+
+      public Boolean getFlagZ() {
+         return flagZ;
+      }
+
+      public void setFlagZ(Boolean flagZ) {
+         this.flagZ = flagZ;
       }
 
       public String getxMem() {
@@ -318,6 +366,14 @@ public class AsmProgramStaticRegisterValues {
 
       public void setyMem(String yMem) {
          this.yMem = yMem;
+      }
+
+      public String getzMem() {
+         return zMem;
+      }
+
+      public void setzMem(String zMem) {
+         this.zMem = zMem;
       }
 
 

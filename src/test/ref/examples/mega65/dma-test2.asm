@@ -76,22 +76,21 @@ memoryRemap: {
     .label zVal = 2
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
-    lda #0
-    sta.z aVal
+    ldz #0
+    stz.z aVal
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
-    sta.z xVal
+    stz.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    sta.z yVal
+    stz.z yVal
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
-    sta.z zVal
+    stz.z zVal
     // asm
     lda aVal
     ldx xVal
     ldy yVal
-    ldz zVal
     map
     eom
     // }
@@ -128,21 +127,21 @@ memcpy_dma: {
     sta memcpy_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
     // Set F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command)
-    lda #>memcpy_dma_command
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>memcpy_dma_command
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command)
     // Trigger the DMA (without option lists)
-    lda #<memcpy_dma_command
-    sta DMA
+    ldz #<memcpy_dma_command
+    stz DMA
     // DMA->EN018B = dmaMode
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B

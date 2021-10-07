@@ -44,11 +44,11 @@ main: {
     eom
     // *IO_KEY = 0x47
     // Enable the VIC 4
-    lda #$47
-    sta IO_KEY
+    ldz #$47
+    stz IO_KEY
     // *IO_KEY = 0x53
-    lda #$53
-    sta IO_KEY
+    ldz #$53
+    stz IO_KEY
     // *IO_BANK |= CRAM2K
     // Enable 2K Color RAM
     lda #CRAM2K

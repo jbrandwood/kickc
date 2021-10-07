@@ -37,10 +37,10 @@
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // __ma char conio_cursor_y = 0
-    sta.z conio_cursor_y
+    stz.z conio_cursor_y
     // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
@@ -67,23 +67,23 @@ conio_mega65_init: {
     jsr memoryRemap
     // *IO_KEY = 0x47
     // Enable the VIC 4
-    lda #$47
-    sta IO_KEY
+    ldz #$47
+    stz IO_KEY
     // *IO_KEY = 0x53
-    lda #$53
-    sta IO_KEY
+    ldz #$53
+    stz IO_KEY
     // *IO_BANK |= CRAM2K
     // Enable 2K Color RAM
     lda #CRAM2K
     ora IO_BANK
     sta IO_BANK
     // char line = *BASIC_CURSOR_LINE+1
-    ldx BASIC_CURSOR_LINE
-    inx
+    lda BASIC_CURSOR_LINE
+    inc
     // if(line>=CONIO_HEIGHT)
-    cpx #$19
+    cmp #$19
     bcc __b1
-    ldx #$19-1
+    lda #$19-1
   __b1:
     // gotoxy(0, line)
     jsr gotoxy
@@ -105,12 +105,11 @@ cputc: {
     sta (conio_line_text),z
     // conio_line_color[conio_cursor_x] = conio_textcolor
     lda #LIGHT_BLUE
-    ldz conio_cursor_x
     sta (conio_line_color),z
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
-    lda #$50
-    cmp.z conio_cursor_x
+    ldz #$50
+    cpz.z conio_cursor_x
     bne __breturn
     // cputln()
     jsr cputln
@@ -164,29 +163,28 @@ memoryRemap: {
     .label zVal = $16
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
-    lda #0
-    sta.z aVal
+    ldz #0
+    stz.z aVal
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
-    sta.z xVal
+    stz.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    sta.z yVal
+    stz.z yVal
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
-    sta.z zVal
+    stz.z zVal
     // asm
     lda aVal
     ldx xVal
     ldy yVal
-    ldz zVal
     map
     eom
     // }
     rts
 }
 // Set the cursor to the specified position
-// void gotoxy(char x, __register(X) char y)
+// void gotoxy(char x, __register(A) char y)
 gotoxy: {
     .const x = 0
     .label __5 = $14
@@ -196,17 +194,16 @@ gotoxy: {
     .label __8 = $12
     .label __9 = $10
     // if(y>CONIO_HEIGHT)
-    cpx #$19+1
+    cmp #$19+1
     bcc __b2
-    ldx #0
+    lda #0
   __b2:
     // conio_cursor_x = x
-    lda #x
-    sta.z conio_cursor_x
+    ldz #x
+    stz.z conio_cursor_x
     // conio_cursor_y = y
-    stx.z conio_cursor_y
+    sta.z conio_cursor_y
     // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
-    txa
     sta.z __7
     lda #0
     sta.z __7+1
@@ -277,8 +274,8 @@ cputln: {
     inc.z conio_line_color+1
   !:
     // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // conio_cursor_y++;
     inc.z conio_cursor_y
     // cscroll()
@@ -313,8 +310,8 @@ printf_str: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // if(conio_cursor_y==CONIO_HEIGHT)
-    lda #$19
-    cmp.z conio_cursor_y
+    ldz #$19
+    cpz.z conio_cursor_y
     bne __breturn
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
     lda #<DEFAULT_SCREEN

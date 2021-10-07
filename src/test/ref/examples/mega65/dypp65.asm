@@ -89,27 +89,27 @@ main: {
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     // VICIV->KEY = 0x47
     // Enable the VIC 4
-    lda #$47
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_KEY
+    ldz #$47
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_KEY
     // VICIV->KEY = 0x53
-    lda #$53
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_KEY
+    ldz #$53
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_KEY
     // VICIV->SIDBDRWD_LO = 0
     // Set sideborder width=0, disable raster delay and hot registers
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // VICIV->SIDBDRWD_HI = 0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_HI
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_HI
     // VICIV->TBDRPOS_LO = 0
     // Disable top/bottom borders
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TBDRPOS_LO
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TBDRPOS_LO
     // VICIV->TBDRPOS_HI = 0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TBDRPOS_HI
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TBDRPOS_HI
     // VICIV->BBDRPOS_LO = 0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_BBDRPOS_LO
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_BBDRPOS_LO
     // VICIV->BBDRPOS_HI = 2
-    lda #2
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_BBDRPOS_HI
+    ldz #2
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_BBDRPOS_HI
     // VICIV->CONTROLC |= 1
     // Enable Super Extended Attribute Mode
     lda #1
@@ -121,50 +121,49 @@ main: {
     and VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
     // VICIV->CHARSTEP_LO = 90
-    lda #$5a
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARSTEP_LO
+    ldz #$5a
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARSTEP_LO
     // VICIV->CHARSTEP_HI = 0
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARSTEP_HI
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARSTEP_HI
     // VICIV->TEXTXPOS_LO = 40
     // Start text in the left border
-    lda #$28
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
+    ldz #$28
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICIV->TEXTXPOS_HI = 0
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_HI
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_HI
     // VICIV->CHRCOUNT = 45
     // Set number of characters to display per row
-    lda #$2d
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRCOUNT
+    ldz #$2d
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRCOUNT
     // VICIV->SCRNPTR_LOLO = BYTE0(SCREEN)
     // Set exact screen address
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOLO
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOLO
     // VICIV->SCRNPTR_LOHI = BYTE1(SCREEN)
-    lda #>SCREEN
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOHI
+    ldz #>SCREEN
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_LOHI
     // VICIV->SCRNPTR_HILO = 0
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HILO
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HILO
     // VICIV->SCRNPTR_HIHI = 0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HIHI
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SCRNPTR_HIHI
     // VICIV->CHARPTR_LOLO = BYTE0(CHARSET)
     // Set exact charset address
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOLO
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOLO
     // VICIV->CHARPTR_LOHI = BYTE1(CHARSET)
-    lda #>CHARSET
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOHI
+    ldz #>CHARSET
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_LOHI
     // VICIV->CHARPTR_HILO = 0
-    lda #0
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_HILO
+    ldz #0
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHARPTR_HILO
     // memset_dma(SCREEN, 0, 45*25*2)
   // Fill the screen with 0
     lda #<SCREEN
     sta.z memset_dma.dest
     lda #>SCREEN
     sta.z memset_dma.dest+1
-    ldz #0
     lda #<$2d*$19*2
     sta.z memset_dma.num
     lda #>$2d*$19*2
@@ -250,7 +249,7 @@ main: {
     sta.z c
     lda #0
     sta.z c+1
-    ldz #0
+    taz
   __b3:
     // for(char i=0; i<45; i++)
     cpz #$2d
@@ -320,22 +319,21 @@ memoryRemap: {
     .label zVal = $a
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
-    lda #0
-    sta.z aVal
+    ldz #0
+    stz.z aVal
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
-    sta.z xVal
+    stz.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    sta.z yVal
+    stz.z yVal
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
-    sta.z zVal
+    stz.z zVal
     // asm
     lda aVal
     ldx xVal
     ldy yVal
-    ldz zVal
     map
     eom
     // }
@@ -371,21 +369,21 @@ memset_dma: {
     sta memset_dma_command+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
     // Set F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memset_dma_command)
-    lda #>memset_dma_command
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>memset_dma_command
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memset_dma_command)
     // Trigger the DMA (without option lists)
-    lda #<memset_dma_command
-    sta DMA
+    ldz #<memset_dma_command
+    stz DMA
     // DMA->EN018B = dmaMode
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
@@ -410,16 +408,16 @@ memset_dma256: {
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memset_dma_command256[1] = dest_mb
     // Set up command
-    lda #dest_mb
-    sta memset_dma_command256+1
+    ldz #dest_mb
+    stz memset_dma_command256+1
     // f018b->count = num
     lda #<num
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // f018b->dest_bank = dest_bank
-    lda #dest_bank
-    sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
+    ldz #dest_bank
+    stz f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // f018b->dest = dest
     lda #<dest
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST
@@ -433,21 +431,21 @@ memset_dma256: {
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // DMA->EN018B = 1
     // Set F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(memset_dma_command256)
-    lda #>memset_dma_command256
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>memset_dma_command256
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ETRIG = BYTE0(memset_dma_command256)
     // Trigger the DMA (with option lists)
-    lda #<memset_dma_command256
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG
+    ldz #<memset_dma_command256
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG
     // DMA->EN018B = dmaMode
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B

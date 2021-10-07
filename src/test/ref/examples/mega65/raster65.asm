@@ -92,40 +92,41 @@
   // Pointer to the song play routine
   .label songPlay = SONG+3
   // Sine Position (used across effects)
-  .label sin_idx = 8
+  .label sin_idx = 9
   // scroll soft position of text scrolly (0-7)
-  .label scroll_soft = 9
+  .label scroll_soft = $a
   // scroll text pointer to next char
-  .label scroll_ptr = $a
+  .label scroll_ptr = $b
   // Zoom Position
-  .label greet_zoomx = 6
+  .label greet_zoomx = 7
   // The greeting currently being shown
-  .label greet_idx = 7
+  .label greet_idx = 8
 .segment Code
 __start: {
     // volatile char sin_idx
-    lda #0
-    sta.z sin_idx
+    ldz #0
+    stz.z sin_idx
     // volatile char scroll_soft = 7
-    lda #7
-    sta.z scroll_soft
+    ldz #7
+    stz.z scroll_soft
     // char * volatile scroll_ptr = SCROLL_TEXT
     lda #<SCROLL_TEXT
     sta.z scroll_ptr
     lda #>SCROLL_TEXT
     sta.z scroll_ptr+1
     // volatile char greet_zoomx
-    lda #0
-    sta.z greet_zoomx
+    ldz #0
+    stz.z greet_zoomx
     // volatile char greet_idx
-    sta.z greet_idx
+    stz.z greet_idx
     jsr main
     rts
 }
 // BIG INTERRUPT LOOP
 irq: {
-    .label sin_bar = 5
-    .label barcnt = 4
+    .label line = 4
+    .label sin_bar = 6
+    .label barcnt = 5
     pha
     phx
     phy
@@ -137,20 +138,21 @@ irq: {
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_RASLINE0
     // VICII->IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    ldz #IRQ_RASTER
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
     // VICII->CONTROL2 = 0
     // reset x scroll
-    lda #0
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
+    ldz #0
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // char wobble_idx = ++sin_idx
     inc.z sin_idx
     // Generate Raster Bars and more
     ldx.z sin_idx
-    ldz #0
+    stz.z line
   __b2:
     // for(char line=0;line!=RASTER_LINES;line++)
-    cpz #RASTER_LINES
+    ldz #RASTER_LINES
+    cpz.z line
     beq !__b3+
     jmp __b3
   !__b3:
@@ -179,8 +181,8 @@ irq: {
     // Big block of bars (16)
     lda.z sin_idx
     sta.z sin_bar
-    lda #0
-    sta.z barcnt
+    ldz #0
+    stz.z barcnt
   __b22:
     // for(char barcnt=0; barcnt<16; barcnt++)
     lda.z barcnt
@@ -207,12 +209,12 @@ irq: {
     bcc __b33
     // if(--scroll_soft == 0xff)
     dec.z scroll_soft
-    lda #$ff
-    cmp.z scroll_soft
+    ldz #$ff
+    cpz.z scroll_soft
     bne __breturn
     // scroll_soft = 7
-    lda #7
-    sta.z scroll_soft
+    ldz #7
+    stz.z scroll_soft
     ldx #0
   // Move scroll on screen
   __b36:
@@ -285,16 +287,16 @@ irq: {
     asl
     asl
     asl
-    taz
-    ldy #0
+    tay
+    ldz #0
   __b24:
     // for(char i=0;i<16;i++)
-    cpy #$10
+    cpz #$10
     bcc __b25
-    ldy #0
+    ldz #0
   __b26:
     // for(char i=0;i<15;i++)
-    cpy #$f
+    cpz #$f
     bcc __b27
     // sin_bar += 10
     lda #$a
@@ -306,24 +308,24 @@ irq: {
     jmp __b22
   __b27:
     // rasters[idx++] = --barcol;
-    dez
+    dey
     // rasters[idx++] = --barcol
-    tza
+    tya
     sta rasters,x
     // rasters[idx++] = --barcol;
     inx
     // for(char i=0;i<15;i++)
-    iny
+    inz
     jmp __b26
   __b25:
     // rasters[idx++] = barcol++
-    tza
+    tya
     sta rasters,x
     // rasters[idx++] = barcol++;
     inx
-    inz
-    // for(char i=0;i<16;i++)
     iny
+    // for(char i=0;i<16;i++)
+    inz
     jmp __b24
   __b20:
     // rasters[l] = 0
@@ -366,24 +368,27 @@ irq: {
     jmp __b17
   __b3:
     // char col = rasters[line]
-    tza
-    tay
+    ldy.z line
     lda rasters,y
     // VICIII->BORDER_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
     // VICIII->BG_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < SCROLL_Y)
-    cpz #SCROLL_Y
+    tya
+    cmp #SCROLL_Y
     bcc __b5
     // if(line == SCROLL_Y)
-    cpz #SCROLL_Y
+    ldz #SCROLL_Y
+    cpz.z line
     beq __b6
     // if(line == SCROLL_Y+SCROLL_BLACKBARS)
-    cpz #SCROLL_Y+SCROLL_BLACKBARS
+    ldz #SCROLL_Y+SCROLL_BLACKBARS
+    cpz.z line
     beq __b7
     // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
-    cpz #SCROLL_Y+SCROLL_BLACKBARS+1
+    ldz #SCROLL_Y+SCROLL_BLACKBARS+1
+    cpz.z line
     bne __b8
     // char zoomval = SINE[greet_zoomx++]
     // if raster position > SCROLL_Y pos do zoom
@@ -401,12 +406,12 @@ irq: {
     bne __b8
     // if(++greet_idx == GREET_COUNT)
     inc.z greet_idx
-    lda #GREET_COUNT
-    cmp.z greet_idx
+    ldz #GREET_COUNT
+    cpz.z greet_idx
     bne __b8
     // greet_idx = 0
-    lda #0
-    sta.z greet_idx
+    ldz #0
+    stz.z greet_idx
   __b8:
     // char raster = VICII->RASTER
     // Wait for the next raster line
@@ -416,20 +421,20 @@ irq: {
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b9
     // for(char line=0;line!=RASTER_LINES;line++)
-    inz
+    inc.z line
     jmp __b2
   __b7:
     // VICIV->TEXTXPOS_LO = 0x50
     // if raster position > SCROLL_Y pos do nozoom
     // default value
-    lda #$50
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
+    ldz #$50
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     jmp __b8
   __b6:
     // if raster position = SCROLL_Y pos do scroll
     // no wobbling from this point
-    lda #$50
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
+    ldz #$50
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICII->CONTROL2 = scroll_soft
     // set softscroll
     lda.z scroll_soft
@@ -444,18 +449,18 @@ irq: {
     inx
     // VICIV->CHRXSCL = 0x66
     // No zooming
-    lda #$66
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
+    ldz #$66
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
     jmp __b8
 }
 main: {
     // VICIII->KEY = 0x47
     // Enable MEGA65 features
-    lda #$47
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    ldz #$47
+    stz VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIII->KEY = 0x53
-    lda #$53
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    ldz #$53
+    stz VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIV->CONTROLB |= 0x40
     // Enable 48MHz fast mode
     lda #$40
@@ -505,20 +510,20 @@ main: {
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    ldz #CIA_INTERRUPT_CLEAR
+    stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = IRQ_Y
     // Set raster line to 0x16
-    lda #IRQ_Y
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    ldz #IRQ_Y
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
+    ldz #IRQ_RASTER
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *HARDWARE_IRQ = &irq
     // Set the IRQ routine
     lda #<irq
@@ -527,15 +532,15 @@ main: {
     sta HARDWARE_IRQ+1
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // no kernal or BASIC rom visible
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    ldz #PROCPORT_DDR_MEMORY_MASK
+    stz PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    ldz #PROCPORT_RAM_IO
+    stz PROCPORT
     // VICIV->SIDBDRWD_LO = 1
     // open sideborder
-    lda #1
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
+    ldz #1
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm
     // Enable IRQ
     cli

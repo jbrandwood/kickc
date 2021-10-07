@@ -84,8 +84,8 @@ irq: {
     phz
     // VICII->IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    ldz #IRQ_RASTER
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // memoryRemapBlock(0x40, 0x100)
@@ -99,7 +99,7 @@ irq: {
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    ldz #0
+    taz
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
@@ -128,17 +128,17 @@ main: {
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    ldz #0
+    taz
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // VICIII->KEY = 0x47
     // Enable MEGA65 features
-    lda #$47
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    ldz #$47
+    stz VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIII->KEY = 0x53
-    lda #$53
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    ldz #$53
+    stz VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIV->CONTROLB |= 0x40
     // Enable 48MHz fast mode
     lda #$40
@@ -150,15 +150,15 @@ main: {
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // no kernal or BASIC rom visible
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    ldz #PROCPORT_DDR_MEMORY_MASK
+    stz PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    ldz #PROCPORT_RAM_IO
+    stz PROCPORT
     // VICIV->SIDBDRWD_LO = 1
     // open sideborder
-    lda #1
-    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
+    ldz #1
+    stz VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // memcpy_dma4(1, (void*)0x0000, 0, upperCodeData, MUSIC_END-MUSIC)
     // Transfer banked code/data to upper memory ($10000)
     jsr memcpy_dma4
@@ -175,27 +175,27 @@ main: {
     lda #<0
     sta.z memoryRemap.upperPageOffset
     sta.z memoryRemap.upperPageOffset+1
-    ldz #0
+    taz
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    ldz #CIA_INTERRUPT_CLEAR
+    stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0xff
     // Set raster line to 0xff
-    lda #$ff
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    ldz #$ff
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
+    ldz #IRQ_RASTER
+    stz VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *HARDWARE_IRQ = &irq
     // Set the IRQ routine
     lda #<irq
@@ -354,16 +354,16 @@ memcpy_dma4: {
     lda #>num
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // memcpy_dma_command4.src_bank = src_bank
-    lda #src_bank
-    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
+    ldz #src_bank
+    stz memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
     // memcpy_dma_command4.src = src
     lda #<src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
     lda #>src
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // memcpy_dma_command4.dest_bank = dest_bank
-    lda #dest_bank
-    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
+    ldz #dest_bank
+    stz memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // memcpy_dma_command4.dest = dest
     lda #<dest
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
@@ -371,21 +371,21 @@ memcpy_dma4: {
     sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
     // DMA->EN018B = 1
     // Set F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(&memcpy_dma_command4)
-    lda #>memcpy_dma_command4
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>memcpy_dma_command4
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ADDRLSBTRIG = BYTE0(&memcpy_dma_command4)
     // Trigger the DMA (without option lists)
-    lda #<memcpy_dma_command4
-    sta DMA
+    ldz #<memcpy_dma_command4
+    stz DMA
     // DMA->EN018B = dmaMode
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B

@@ -84,22 +84,21 @@ memoryRemap: {
     .label zVal = 2
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
-    lda #0
-    sta.z aVal
+    ldz #0
+    stz.z aVal
     // char xVal = (remapBlocks << 4)   | (BYTE1(lowerPageOffset) & 0xf)
     // lower blocks to map + lower blocks offset high nibble
-    sta.z xVal
+    stz.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    sta.z yVal
+    stz.z yVal
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble
-    sta.z zVal
+    stz.z zVal
     // asm
     lda aVal
     ldx xVal
     ldy yVal
-    ldz zVal
     map
     eom
     // }
@@ -124,16 +123,16 @@ memset_dma256: {
     ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // memset_dma_command256[1] = dest_mb
     // Set up command
-    lda #dest_mb
-    sta memset_dma_command256+1
+    ldz #dest_mb
+    stz memset_dma_command256+1
     // f018b->count = num
     lda #<num
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
     lda #>num
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
     // f018b->dest_bank = dest_bank
-    lda #dest_bank
-    sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
+    ldz #dest_bank
+    stz f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
     // f018b->dest = dest
     lda #<dest
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_DEST
@@ -147,21 +146,21 @@ memset_dma256: {
     sta f018b+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
     // DMA->EN018B = 1
     // Set F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    ldz #1
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
     // DMA->ADDRMB = 0
     // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    ldz #0
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
     // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
     // DMA-> ADDRMSB = BYTE1(memset_dma_command256)
-    lda #>memset_dma_command256
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    ldz #>memset_dma_command256
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
     // DMA-> ETRIG = BYTE0(memset_dma_command256)
     // Trigger the DMA (with option lists)
-    lda #<memset_dma_command256
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG
+    ldz #<memset_dma_command256
+    stz DMA+OFFSET_STRUCT_F018_DMAGIC_ETRIG
     // DMA->EN018B = dmaMode
     // Re-enable F018A mode
     stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B

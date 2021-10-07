@@ -35,22 +35,22 @@ main: {
     jsr memoryRemapBlock
     // BLOCK_4000[0] = '-'
     // Put '-', '*' into $10000
-    lda #'-'
-    sta BLOCK_4000
+    ldz #'-'
+    stz BLOCK_4000
     // BLOCK_4000[1] = '*'
-    lda #'*'
-    sta BLOCK_4000+1
+    ldz #'*'
+    stz BLOCK_4000+1
     // memoryRemapBlock(0x80, 0x100)
   // Remap [$8000-$9fff] to point to [$10000-$11fff]
     ldx #$80
     jsr memoryRemapBlock
     // BLOCK_8000[2] = '-'
     // Put '-', '*' into $10002
-    lda #'-'
-    sta BLOCK_8000+2
+    ldz #'-'
+    stz BLOCK_8000+2
     // BLOCK_8000[3] = '*'
-    lda #'*'
-    sta BLOCK_8000+3
+    ldz #'*'
+    stz BLOCK_8000+3
     // memoryRemap(MEMORYBLOCK_4000|MEMORYBLOCK_8000, 0x0c0, 0x080)
   // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
     lda #<$80
@@ -78,7 +78,7 @@ main: {
     bcc __b2
     // memoryRemap256M(MEMORYBLOCK_4000, 0xff800-0x00040, 0)
   // Remap [$4000-$5fff] to point to [$ff80000-$ff81fff] COLORRAM! (notice usage of page offsets)
-    ldz #MEMORYBLOCK_4000
+    ldx #MEMORYBLOCK_4000
     lda #<$ff800-$40
     sta.z memoryRemap256M.lowerPageOffset
     lda #>$ff800-$40
@@ -96,8 +96,8 @@ main: {
     bcc __b5
     // memoryRemap256M(0, 0, 0)
   // Remap [$4000-$5fff] back to normal memory!
-    ldz #0
-    lda #0
+    ldx #0
+    txa
     sta.z memoryRemap256M.lowerPageOffset
     sta.z memoryRemap256M.lowerPageOffset+1
     sta.z memoryRemap256M.lowerPageOffset+2
@@ -273,7 +273,7 @@ memoryRemap: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// void memoryRemap256M(__register(Z) char remapBlocks, __zp($11) unsigned long lowerPageOffset, unsigned long upperPageOffset)
+// void memoryRemap256M(__register(X) char remapBlocks, __zp($11) unsigned long lowerPageOffset, unsigned long upperPageOffset)
 memoryRemap256M: {
     .label lMb = $19
     .label __0 = $b
@@ -315,14 +315,14 @@ memoryRemap256M: {
     sta.z lMb
     // char uMb = BYTE1((unsigned int)(upperPageOffset>>4))
     // upper blocks offset megabytes
-    lda #0
-    sta.z uMb
+    ldz #0
+    stz.z uMb
     // char aVal = BYTE0(lowerPageOffset)
     // lower blocks offset page low
     lda.z lowerPageOffset
     sta.z aVal
     // remapBlocks << 4
-    tza
+    txa
     asl
     asl
     asl
@@ -338,10 +338,9 @@ memoryRemap256M: {
     sta.z xVal
     // char yVal = BYTE0(upperPageOffset)
     // upper blocks offset page
-    lda #0
-    sta.z yVal
+    stz.z yVal
     // remapBlocks & 0xf0
-    tza
+    txa
     and #$f0
     // char zVal = (remapBlocks & 0xf0) | (BYTE1(upperPageOffset) & 0xf)
     // upper blocks to map + upper blocks offset page high nibble

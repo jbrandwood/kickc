@@ -30,8 +30,8 @@ main: {
     sta.z sum+2
     lda #>0>>$10
     sta.z sum+3
-    lda #0
-    sta.z i
+    ldz #0
+    stz.z i
   __b1:
     // for(char i=0;i<100;i++)
     lda.z i

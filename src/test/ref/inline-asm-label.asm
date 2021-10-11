@@ -23,3 +23,4 @@ main: {
 }
 .segment Data
   table: .text "cml!"
+  .byte 0

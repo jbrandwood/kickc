@@ -1,10 +1,8 @@
 // Illustrates how inline kickassembler can reference data from the outside program
 
-byte table[] = "cml!"z;
-
+char table[] = "cml!";
 void main() {
-    byte* const SCREEN = (char*)$400;
-
+    char* const SCREEN = (char*)0x400;
     kickasm(uses SCREEN, uses table) {{
         ldx #0
         !:
@@ -14,5 +12,7 @@ void main() {
         cpx #4
         bne !-
     }}
-
 }
+
+
+

@@ -1,7 +1,7 @@
 // Illustrates how inline assembler use internal labels and external references
 
-byte* const SCREEN = (char*)$400;
-byte table[] = "cml!"z;
+char* const SCREEN = (char*)0x400;
+char table[] = "cml!";
 void main() {
     asm {
         ldx #0
@@ -14,3 +14,4 @@ void main() {
     }
 
 }
+

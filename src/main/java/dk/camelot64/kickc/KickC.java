@@ -273,14 +273,20 @@ public class KickC implements Callable<Integer> {
             compiler.getLog().setVerboseFragmentLog(true);
          }
          compiler.getLog().setSysOut(true);
-         final AsmFragmentTemplateMasterSynthesizer masterSynthesizer = compiler.getAsmFragmentMasterSynthesizer();
-         final AsmFragmentTemplateSynthesizer cpuSynthesizer = masterSynthesizer.getSynthesizer(program.getTargetCpu());
-         Collection<AsmFragmentTemplate> fragmentTemplates = cpuSynthesizer.getBestTemplates(fragment, compiler.getLog());
-         for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
-            AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
-         }
-         if(fragmentTemplates.size()==0) {
-            compiler.getLog().append("Cannot create "+fragment);
+         try {
+            final AsmFragmentTemplateMasterSynthesizer masterSynthesizer = compiler.getAsmFragmentMasterSynthesizer();
+            final AsmFragmentTemplateSynthesizer cpuSynthesizer = masterSynthesizer.getSynthesizer(program.getTargetCpu());
+            Collection<AsmFragmentTemplate> fragmentTemplates = cpuSynthesizer.getBestTemplates(fragment, compiler.getLog());
+            for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
+               AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
+            }
+            if(fragmentTemplates.size() == 0) {
+               compiler.getLog().append("Cannot create " + fragment);
+               return COMPILE_ERROR;
+            }
+         } catch (CompileError e) {
+            // Print the error and exit with compile error
+            System.err.println(e.format());
             return COMPILE_ERROR;
          }
       }
@@ -295,7 +301,7 @@ public class KickC implements Callable<Integer> {
          if(outputDir != null)
             program.getOutputFileManager().setOutputDir(outputDir);
 
-         if(outputFileName!=null)
+         if(outputFileName != null)
             program.getOutputFileManager().setOutputFileName(outputFileName);
 
          if(optimizeNoUplift)

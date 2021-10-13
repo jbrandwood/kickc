@@ -18,6 +18,7 @@ public class AsmParser {
       KickCLexer kickCLexer = new KickCLexer(fragmentCharStream, cParser);
       kickCLexer.pushMode(KickCLexer.ASM_MODE);
       KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer), cParser);
+      kickCParser.removeErrorListeners();
       kickCParser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {

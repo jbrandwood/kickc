@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testConstBoolReturnProblem() throws IOException {
+      compileAndCompare("const-bool-return-problem.c");
+   }
+
+   @Test
    public void testStructFunction() throws IOException {
       compileAndCompare("struct-function.c");
    }

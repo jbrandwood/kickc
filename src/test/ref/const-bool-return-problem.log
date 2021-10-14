@@ -1,0 +1,678 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::ox#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  main::ox#2 = phi( main/main::ox#0, main::@5/main::ox#1 )
+  main::$0 = main::ox#2 < 5
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::ox#8 = phi( main::@1/main::ox#2 )
+  main::oy#0 = 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@6
+  main::ox#6 = phi( main::@2/main::ox#8, main::@6/main::ox#9 )
+  main::oy#2 = phi( main::@2/main::oy#0, main::@6/main::oy#1 )
+  main::$1 = main::oy#2 < 5
+  if(main::$1) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3
+  main::oy#3 = phi( main::@3/main::oy#2 )
+  main::ox#3 = phi( main::@3/main::ox#6 )
+  OBJ_is_solid::ox#0 = main::ox#3
+  OBJ_is_solid::oy#0 = main::oy#3
+  call OBJ_is_solid
+  OBJ_is_solid::return#0 = OBJ_is_solid::return#3
+  to:main::@8
+main::@8: scope:[main]  from main::@4
+  main::ox#7 = phi( main::@4/main::ox#3 )
+  main::oy#6 = phi( main::@4/main::oy#3 )
+  OBJ_is_solid::return#4 = phi( main::@4/OBJ_is_solid::return#0 )
+  main::$2 = OBJ_is_solid::return#4
+  main::$3 = ! main::$2
+  if(main::$3) goto main::@6
+  to:main::@7
+main::@5: scope:[main]  from main::@3
+  main::ox#4 = phi( main::@3/main::ox#6 )
+  main::ox#1 = ++ main::ox#4
+  to:main::@1
+main::@6: scope:[main]  from main::@7 main::@8
+  main::ox#9 = phi( main::@7/main::ox#5, main::@8/main::ox#7 )
+  main::oy#4 = phi( main::@7/main::oy#5, main::@8/main::oy#6 )
+  main::oy#1 = ++ main::oy#4
+  to:main::@3
+main::@7: scope:[main]  from main::@8
+  main::ox#5 = phi( main::@8/main::ox#7 )
+  main::oy#5 = phi( main::@8/main::oy#6 )
+  SCREEN[main::ox#5] = main::oy#5
+  to:main::@6
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+bool OBJ_is_solid(char ox , char oy)
+OBJ_is_solid: scope:[OBJ_is_solid]  from main::@4
+  OBJ_is_solid::oy#1 = phi( main::@4/OBJ_is_solid::oy#0 )
+  OBJ_is_solid::$0 = OBJ_is_solid::oy#1 == OBJ_is_solid::oy#1
+  OBJ_is_solid::$1 = ! OBJ_is_solid::$0
+  if(OBJ_is_solid::$1) goto OBJ_is_solid::@1
+  to:OBJ_is_solid::@2
+OBJ_is_solid::@1: scope:[OBJ_is_solid]  from OBJ_is_solid
+  call tile_flag_at
+  tile_flag_at::return#0 = tile_flag_at::return#2
+  to:OBJ_is_solid::@3
+OBJ_is_solid::@3: scope:[OBJ_is_solid]  from OBJ_is_solid::@1
+  tile_flag_at::return#3 = phi( OBJ_is_solid::@1/tile_flag_at::return#0 )
+  OBJ_is_solid::$2 = tile_flag_at::return#3
+  OBJ_is_solid::return#1 = OBJ_is_solid::$2
+  to:OBJ_is_solid::@return
+OBJ_is_solid::@2: scope:[OBJ_is_solid]  from OBJ_is_solid
+  OBJ_is_solid::return#2 = true
+  to:OBJ_is_solid::@return
+OBJ_is_solid::@return: scope:[OBJ_is_solid]  from OBJ_is_solid::@2 OBJ_is_solid::@3
+  OBJ_is_solid::return#5 = phi( OBJ_is_solid::@2/OBJ_is_solid::return#2, OBJ_is_solid::@3/OBJ_is_solid::return#1 )
+  OBJ_is_solid::return#3 = OBJ_is_solid::return#5
+  return 
+  to:@return
+
+bool tile_flag_at()
+tile_flag_at: scope:[tile_flag_at]  from OBJ_is_solid::@1
+  tile_flag_at::return#1 = false
+  to:tile_flag_at::@return
+tile_flag_at::@return: scope:[tile_flag_at]  from tile_flag_at
+  tile_flag_at::return#4 = phi( tile_flag_at/tile_flag_at::return#1 )
+  tile_flag_at::return#2 = tile_flag_at::return#4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+bool OBJ_is_solid(char ox , char oy)
+bool OBJ_is_solid::$0
+bool OBJ_is_solid::$1
+bool OBJ_is_solid::$2
+char OBJ_is_solid::ox
+char OBJ_is_solid::ox#0
+char OBJ_is_solid::oy
+char OBJ_is_solid::oy#0
+char OBJ_is_solid::oy#1
+bool OBJ_is_solid::return
+bool OBJ_is_solid::return#0
+bool OBJ_is_solid::return#1
+bool OBJ_is_solid::return#2
+bool OBJ_is_solid::return#3
+bool OBJ_is_solid::return#4
+bool OBJ_is_solid::return#5
+__constant char * const SCREEN = (char *)$400
+void __start()
+void main()
+bool main::$0
+bool main::$1
+bool main::$2
+bool main::$3
+char main::ox
+char main::ox#0
+char main::ox#1
+char main::ox#2
+char main::ox#3
+char main::ox#4
+char main::ox#5
+char main::ox#6
+char main::ox#7
+char main::ox#8
+char main::ox#9
+char main::oy
+char main::oy#0
+char main::oy#1
+char main::oy#2
+char main::oy#3
+char main::oy#4
+char main::oy#5
+char main::oy#6
+bool tile_flag_at()
+bool tile_flag_at::return
+bool tile_flag_at::return#0
+bool tile_flag_at::return#1
+bool tile_flag_at::return#2
+bool tile_flag_at::return#3
+bool tile_flag_at::return#4
+
+Adding number conversion cast (unumber) 5 in main::$0 = main::ox#2 < 5
+Adding number conversion cast (unumber) 5 in main::$1 = main::oy#2 < 5
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 5
+Simplifying constant integer cast 5
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 5
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [27] OBJ_is_solid::$1 = OBJ_is_solid::oy#1 != OBJ_is_solid::oy#1 from [26] OBJ_is_solid::$0 = OBJ_is_solid::oy#1 == OBJ_is_solid::oy#1
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias main::ox#2 = main::ox#8 
+Alias main::ox#3 = main::ox#6 main::ox#7 main::ox#4 main::ox#5 
+Alias main::oy#2 = main::oy#3 main::oy#6 main::oy#5 
+Alias OBJ_is_solid::return#0 = OBJ_is_solid::return#4 
+Alias tile_flag_at::return#0 = tile_flag_at::return#3 
+Alias OBJ_is_solid::return#1 = OBJ_is_solid::$2 
+Alias OBJ_is_solid::return#3 = OBJ_is_solid::return#5 
+Alias tile_flag_at::return#1 = tile_flag_at::return#4 tile_flag_at::return#2 
+Successful SSA optimization Pass2AliasElimination
+Alias main::oy#2 = main::oy#4 
+Alias main::ox#3 = main::ox#9 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::ox#3 main::ox#2
+Identical Phi Values OBJ_is_solid::oy#1 OBJ_is_solid::oy#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$0 [3] if(main::ox#2<5) goto main::@2
+Simple Condition main::$1 [7] if(main::oy#2<5) goto main::@4
+Simple Condition OBJ_is_solid::$1 [21] if(OBJ_is_solid::oy#0!=OBJ_is_solid::oy#0) goto OBJ_is_solid::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Rewriting ! if()-condition to reversed if() [13] main::$3 = ! main::$2
+Successful SSA optimization Pass2ConditionalAndOrRewriting
+Constant main::ox#0 = 0
+Constant main::oy#0 = 0
+Constant OBJ_is_solid::return#2 = true
+Constant tile_flag_at::return#1 = false
+Successful SSA optimization Pass2ConstantIdentification
+Constant tile_flag_at::return#0 = tile_flag_at::return#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant OBJ_is_solid::return#1 = tile_flag_at::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable OBJ_is_solid::ox#0 and assignment [4] OBJ_is_solid::ox#0 = main::ox#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::ox#0
+Inlining constant with var siblings main::oy#0
+Inlining constant with var siblings OBJ_is_solid::return#2
+Inlining constant with var siblings OBJ_is_solid::return#1
+Inlining constant with different constant siblings tile_flag_at::return#0
+Constant inlined main::oy#0 = 0
+Constant inlined OBJ_is_solid::return#1 = tile_flag_at::return#1
+Constant inlined tile_flag_at::return#0 = tile_flag_at::return#1
+Constant inlined main::ox#0 = 0
+Constant inlined OBJ_is_solid::return#2 = true
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of OBJ_is_solid::@2
+Adding NOP phi() at start of OBJ_is_solid::@1
+Adding NOP phi() at start of OBJ_is_solid::@3
+Adding NOP phi() at start of tile_flag_at
+CALL GRAPH
+Calls in [main] to OBJ_is_solid:10 
+Calls in [OBJ_is_solid] to tile_flag_at:22 
+
+Created 3 initial phi equivalence classes
+Coalesced [8] main::ox#10 = main::ox#1
+Coalesced [16] main::oy#7 = main::oy#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block label main::@2
+Culled Empty Block label OBJ_is_solid::@2
+Culled Empty Block label OBJ_is_solid::@3
+Renumbering block main::@3 to main::@2
+Renumbering block main::@4 to main::@3
+Renumbering block main::@5 to main::@4
+Renumbering block main::@6 to main::@5
+Renumbering block main::@7 to main::@6
+Renumbering block main::@8 to main::@7
+Adding NOP phi() at start of main
+Adding NOP phi() at start of OBJ_is_solid::@1
+Adding NOP phi() at start of tile_flag_at
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [1] main::ox#2 = phi( main/0, main::@4/main::ox#1 )
+  [2] if(main::ox#2<5) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1 main::@5
+  [4] main::oy#2 = phi( main::@1/0, main::@5/main::oy#1 )
+  [5] if(main::oy#2<5) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  [6] main::ox#1 = ++ main::ox#2
+  to:main::@1
+main::@3: scope:[main]  from main::@2
+  [7] OBJ_is_solid::oy#0 = main::oy#2
+  [8] call OBJ_is_solid
+  [9] OBJ_is_solid::return#0 = OBJ_is_solid::return#3
+  to:main::@7
+main::@7: scope:[main]  from main::@3
+  [10] main::$2 = OBJ_is_solid::return#0
+  [11] if(main::$2) goto main::@6
+  to:main::@5
+main::@6: scope:[main]  from main::@7
+  [12] SCREEN[main::ox#2] = main::oy#2
+  to:main::@5
+main::@5: scope:[main]  from main::@6 main::@7
+  [13] main::oy#1 = ++ main::oy#2
+  to:main::@2
+
+bool OBJ_is_solid(char ox , char oy)
+OBJ_is_solid: scope:[OBJ_is_solid]  from main::@3
+  [14] if(OBJ_is_solid::oy#0!=OBJ_is_solid::oy#0) goto OBJ_is_solid::@1
+  to:OBJ_is_solid::@return
+OBJ_is_solid::@1: scope:[OBJ_is_solid]  from OBJ_is_solid
+  [15] phi()
+  [16] call tile_flag_at
+  to:OBJ_is_solid::@return
+OBJ_is_solid::@return: scope:[OBJ_is_solid]  from OBJ_is_solid OBJ_is_solid::@1
+  [17] OBJ_is_solid::return#3 = phi( OBJ_is_solid/true, OBJ_is_solid::@1/tile_flag_at::return#1 )
+  [18] return 
+  to:@return
+
+bool tile_flag_at()
+tile_flag_at: scope:[tile_flag_at]  from OBJ_is_solid::@1
+  [19] phi()
+  to:tile_flag_at::@return
+tile_flag_at::@return: scope:[tile_flag_at]  from tile_flag_at
+  [20] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+bool OBJ_is_solid(char ox , char oy)
+char OBJ_is_solid::ox
+char OBJ_is_solid::oy
+char OBJ_is_solid::oy#0 // 2103.0
+bool OBJ_is_solid::return
+bool OBJ_is_solid::return#0 // 202.0
+bool OBJ_is_solid::return#3 // 33.666666666666664
+void main()
+bool main::$2 // 202.0
+char main::ox
+char main::ox#1 // 22.0
+char main::ox#2 // 12.181818181818182
+char main::oy
+char main::oy#1 // 202.0
+char main::oy#2 // 63.125
+bool tile_flag_at()
+bool tile_flag_at::return
+
+Initial phi equivalence classes
+[ main::ox#2 main::ox#1 ]
+[ main::oy#2 main::oy#1 ]
+[ OBJ_is_solid::return#3 ]
+Added variable OBJ_is_solid::oy#0 to live range equivalence class [ OBJ_is_solid::oy#0 ]
+Added variable OBJ_is_solid::return#0 to live range equivalence class [ OBJ_is_solid::return#0 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::ox#2 main::ox#1 ]
+[ main::oy#2 main::oy#1 ]
+[ OBJ_is_solid::return#3 ]
+[ OBJ_is_solid::oy#0 ]
+[ OBJ_is_solid::return#0 ]
+[ main::$2 ]
+Allocated zp[1]:2 [ OBJ_is_solid::oy#0 ]
+Allocated zp[1]:3 [ main::oy#2 main::oy#1 ]
+Allocated zp[1]:4 [ OBJ_is_solid::return#0 ]
+Allocated zp[1]:5 [ main::$2 ]
+Allocated zp[1]:6 [ main::ox#2 main::ox#1 ]
+Allocated zp[1]:7 [ OBJ_is_solid::return#3 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp[1]:6 [ main::ox#2 main::ox#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::oy#2 main::oy#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ OBJ_is_solid::return#3 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ OBJ_is_solid::oy#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ OBJ_is_solid::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [OBJ_is_solid] 2,103: zp[1]:2 [ OBJ_is_solid::oy#0 ] 202: zp[1]:4 [ OBJ_is_solid::return#0 ] 33.67: zp[1]:7 [ OBJ_is_solid::return#3 ] 
+Uplift Scope [main] 265.12: zp[1]:3 [ main::oy#2 main::oy#1 ] 202: zp[1]:5 [ main::$2 ] 34.18: zp[1]:6 [ main::ox#2 main::ox#1 ] 
+Uplift Scope [tile_flag_at] 
+Uplift Scope [] 
+
+Uplifting [OBJ_is_solid] best 6944 combination reg byte a [ OBJ_is_solid::oy#0 ] reg byte a [ OBJ_is_solid::return#0 ] reg byte a [ OBJ_is_solid::return#3 ] 
+Uplifting [main] best 6344 combination zp[1]:3 [ main::oy#2 main::oy#1 ] reg byte a [ main::$2 ] zp[1]:6 [ main::ox#2 main::ox#1 ] 
+Uplifting [tile_flag_at] best 6344 combination 
+Uplifting [] best 6344 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::oy#2 main::oy#1 ]
+Uplifting [main] best 6344 combination zp[1]:3 [ main::oy#2 main::oy#1 ] 
+Attempting to uplift remaining variables inzp[1]:6 [ main::ox#2 main::ox#1 ]
+Uplifting [main] best 6344 combination zp[1]:6 [ main::ox#2 main::ox#1 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ main::oy#2 main::oy#1 ]
+Allocated (was zp[1]:6) zp[1]:3 [ main::ox#2 main::ox#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// A function that returns a constant boolean crashes the compiler because it produces illegal ASM
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="const-bool-return-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label ox = 3
+    .label oy = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::ox#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z ox
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::ox#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z ox
+    cmp #5
+    bcc __b2_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b2_from___b1:
+    // [4] phi main::oy#2 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z oy
+    jmp __b2
+    // main::@2
+  __b2:
+    // [5] if(main::oy#2<5) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z oy
+    cmp #5
+    bcc __b3
+    jmp __b4
+    // main::@4
+  __b4:
+    // [6] main::ox#1 = ++ main::ox#2 -- vbuz1=_inc_vbuz1 
+    inc.z ox
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [1] phi main::ox#2 = main::ox#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@3
+  __b3:
+    // [7] OBJ_is_solid::oy#0 = main::oy#2 -- vbuaa=vbuz1 
+    lda.z oy
+    // [8] call OBJ_is_solid
+    jsr OBJ_is_solid
+    // [9] OBJ_is_solid::return#0 = OBJ_is_solid::return#3
+    jmp __b7
+    // main::@7
+  __b7:
+    // [10] main::$2 = OBJ_is_solid::return#0
+    // [11] if(main::$2) goto main::@6 -- vboaa_then_la1 
+    cmp #0
+    bne __b6
+    jmp __b5
+    // main::@6
+  __b6:
+    // [12] SCREEN[main::ox#2] = main::oy#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda.z oy
+    ldy.z ox
+    sta SCREEN,y
+    jmp __b5
+    // main::@5
+  __b5:
+    // [13] main::oy#1 = ++ main::oy#2 -- vbuz1=_inc_vbuz1 
+    inc.z oy
+    // [4] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
+  __b2_from___b5:
+    // [4] phi main::oy#2 = main::oy#1 [phi:main::@5->main::@2#0] -- register_copy 
+    jmp __b2
+}
+  // OBJ_is_solid
+// __register(A) bool OBJ_is_solid(char ox, __register(A) char oy)
+OBJ_is_solid: {
+    // [14] if(OBJ_is_solid::oy#0!=OBJ_is_solid::oy#0) goto OBJ_is_solid::@1 -- vbuaa_neq_vbuaa_then_la1 
+    tax
+    tay
+    stx.z $ff
+    cpy.z $ff
+    bne __b1_from_OBJ_is_solid
+    // [17] phi from OBJ_is_solid to OBJ_is_solid::@return [phi:OBJ_is_solid->OBJ_is_solid::@return]
+  __breturn_from_OBJ_is_solid:
+    // [17] phi OBJ_is_solid::return#3 = true [phi:OBJ_is_solid->OBJ_is_solid::@return#0] -- vboaa=vboc1 
+    lda #1
+    jmp __breturn
+    // [15] phi from OBJ_is_solid to OBJ_is_solid::@1 [phi:OBJ_is_solid->OBJ_is_solid::@1]
+  __b1_from_OBJ_is_solid:
+    jmp __b1
+    // OBJ_is_solid::@1
+  __b1:
+    // [16] call tile_flag_at
+    // [19] phi from OBJ_is_solid::@1 to tile_flag_at [phi:OBJ_is_solid::@1->tile_flag_at]
+  tile_flag_at_from___b1:
+    jsr tile_flag_at
+    // [17] phi from OBJ_is_solid::@1 to OBJ_is_solid::@return [phi:OBJ_is_solid::@1->OBJ_is_solid::@return]
+  __breturn_from___b1:
+    // [17] phi OBJ_is_solid::return#3 = tile_flag_at::return#1 [phi:OBJ_is_solid::@1->OBJ_is_solid::@return#0] -- vboaa=vboc1 
+    lda #tile_flag_at.return
+    jmp __breturn
+    // OBJ_is_solid::@return
+  __breturn:
+    // [18] return 
+    rts
+}
+  // tile_flag_at
+tile_flag_at: {
+    .label return = 0
+    jmp __breturn
+    // tile_flag_at::@return
+  __breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b7
+Removing instruction jmp __b5
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b1_from_OBJ_is_solid with __b1
+Removing instruction __b1_from_OBJ_is_solid:
+Removing instruction tile_flag_at_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __b7:
+Removing instruction __b2_from___b5:
+Removing instruction __breturn_from_OBJ_is_solid:
+Removing instruction __breturn_from___b1:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing jump to rts with rts in jmp __breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
+Relabelling long label __b2_from___b1 to __b4
+Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+bool OBJ_is_solid(char ox , char oy)
+char OBJ_is_solid::ox
+char OBJ_is_solid::oy
+char OBJ_is_solid::oy#0 // reg byte a 2103.0
+bool OBJ_is_solid::return
+bool OBJ_is_solid::return#0 // reg byte a 202.0
+bool OBJ_is_solid::return#3 // reg byte a 33.666666666666664
+__constant char * const SCREEN = (char *) 1024
+void main()
+bool main::$2 // reg byte a 202.0
+char main::ox
+char main::ox#1 // ox zp[1]:3 22.0
+char main::ox#2 // ox zp[1]:3 12.181818181818182
+char main::oy
+char main::oy#1 // oy zp[1]:2 202.0
+char main::oy#2 // oy zp[1]:2 63.125
+bool tile_flag_at()
+bool tile_flag_at::return
+__constant bool tile_flag_at::return#1 = false // return
+
+zp[1]:3 [ main::ox#2 main::ox#1 ]
+zp[1]:2 [ main::oy#2 main::oy#1 ]
+reg byte a [ OBJ_is_solid::return#3 ]
+reg byte a [ OBJ_is_solid::oy#0 ]
+reg byte a [ OBJ_is_solid::return#0 ]
+reg byte a [ main::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 5051
+
+  // File Comments
+// A function that returns a constant boolean crashes the compiler because it produces illegal ASM
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="const-bool-return-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    .label ox = 3
+    .label oy = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::ox#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z ox
+    // main::@1
+  __b1:
+    // for(char ox=0;ox<5;ox++)
+    // [2] if(main::ox#2<5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z ox
+    cmp #5
+    bcc __b4
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b4:
+    // [4] phi main::oy#2 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z oy
+    // main::@2
+  __b2:
+    // for(char oy=0;oy<5;oy++)
+    // [5] if(main::oy#2<5) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z oy
+    cmp #5
+    bcc __b3
+    // main::@4
+    // for(char ox=0;ox<5;ox++)
+    // [6] main::ox#1 = ++ main::ox#2 -- vbuz1=_inc_vbuz1 
+    inc.z ox
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi main::ox#2 = main::ox#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@3
+  __b3:
+    // OBJ_is_solid(ox,oy)
+    // [7] OBJ_is_solid::oy#0 = main::oy#2 -- vbuaa=vbuz1 
+    lda.z oy
+    // [8] call OBJ_is_solid
+    jsr OBJ_is_solid
+    // [9] OBJ_is_solid::return#0 = OBJ_is_solid::return#3
+    // main::@7
+    // [10] main::$2 = OBJ_is_solid::return#0
+    // if(OBJ_is_solid(ox,oy))
+    // [11] if(main::$2) goto main::@6 -- vboaa_then_la1 
+    cmp #0
+    bne __b6
+    jmp __b5
+    // main::@6
+  __b6:
+    // SCREEN[ox] = oy
+    // [12] SCREEN[main::ox#2] = main::oy#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda.z oy
+    ldy.z ox
+    sta SCREEN,y
+    // main::@5
+  __b5:
+    // for(char oy=0;oy<5;oy++)
+    // [13] main::oy#1 = ++ main::oy#2 -- vbuz1=_inc_vbuz1 
+    inc.z oy
+    // [4] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
+    // [4] phi main::oy#2 = main::oy#1 [phi:main::@5->main::@2#0] -- register_copy 
+    jmp __b2
+}
+  // OBJ_is_solid
+// __register(A) bool OBJ_is_solid(char ox, __register(A) char oy)
+OBJ_is_solid: {
+    // if (oy==oy)
+    // [14] if(OBJ_is_solid::oy#0!=OBJ_is_solid::oy#0) goto OBJ_is_solid::@1 -- vbuaa_neq_vbuaa_then_la1 
+    tax
+    tay
+    stx.z $ff
+    cpy.z $ff
+    bne __b1
+    // [17] phi from OBJ_is_solid to OBJ_is_solid::@return [phi:OBJ_is_solid->OBJ_is_solid::@return]
+    // [17] phi OBJ_is_solid::return#3 = true [phi:OBJ_is_solid->OBJ_is_solid::@return#0] -- vboaa=vboc1 
+    lda #1
+    rts
+    // [15] phi from OBJ_is_solid to OBJ_is_solid::@1 [phi:OBJ_is_solid->OBJ_is_solid::@1]
+    // OBJ_is_solid::@1
+  __b1:
+    // tile_flag_at()
+    // [16] call tile_flag_at
+    // [19] phi from OBJ_is_solid::@1 to tile_flag_at [phi:OBJ_is_solid::@1->tile_flag_at]
+    jsr tile_flag_at
+    // [17] phi from OBJ_is_solid::@1 to OBJ_is_solid::@return [phi:OBJ_is_solid::@1->OBJ_is_solid::@return]
+    // [17] phi OBJ_is_solid::return#3 = tile_flag_at::return#1 [phi:OBJ_is_solid::@1->OBJ_is_solid::@return#0] -- vboaa=vboc1 
+    lda #tile_flag_at.return
+    // OBJ_is_solid::@return
+    // }
+    // [18] return 
+    rts
+}
+  // tile_flag_at
+tile_flag_at: {
+    .label return = 0
+    // tile_flag_at::@return
+    // [20] return 
+    rts
+}
+  // File Data
+

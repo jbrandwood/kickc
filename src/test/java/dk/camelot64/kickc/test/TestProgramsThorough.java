@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsThorough extends TestPrograms {
 
    @Test
+   public void testComplexCeleste() throws IOException {
+      compileAndCompare("complex/celeste/celeste.c", log());
+   }
+
+   @Test
    public void testComplexSwinkiblues() throws IOException {
       compileAndCompare("complex/swinkiblues/kielbasa.c", log());
    }

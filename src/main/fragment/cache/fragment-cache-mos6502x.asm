@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE f5ed49330 f5ed4b75f
+//KICKC FRAGMENT CACHE db0ab6caa db0ab911c
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -8638,6 +8638,52 @@ NO_SYNTHESIS
 NO_SYNTHESIS
 //FRAGMENT vduz1=_makelong4_(vbuyy)_(vbuyy)_(vbuyy)_(vbuyy)
 NO_SYNTHESIS
+//FRAGMENT vbuz1_neq_vbuz1_then_la1
+lda {z1}
+cmp {z1}
+bne {la1}
+//FRAGMENT vboz1=vboc1
+lda #{c1}
+sta {z1}
+//FRAGMENT vbuaa_neq_vbuaa_then_la1
+tax
+tay
+stx $ff
+cpy $ff
+bne {la1}
+//FRAGMENT vbuxx_neq_vbuxx_then_la1
+txa
+tay
+stx $ff
+cpy $ff
+bne {la1}
+//FRAGMENT vbuyy_neq_vbuyy_then_la1
+tya
+tax
+stx $ff
+cpy $ff
+bne {la1}
+//FRAGMENT vboz1=vboxx
+txa
+sta {z1}
+//FRAGMENT vboaa=vboc1
+lda #{c1}
+//FRAGMENT vboxx=vboaa
+tax
+//FRAGMENT vboxx=vboc1
+lda #{c1}
+tax
+//FRAGMENT vboaa=vboxx
+txa
+//FRAGMENT vboyy=vboxx
+txa
+tay
+//FRAGMENT vboyy=vboc1
+lda #{c1}
+tay
+//FRAGMENT vboxx=vboyy
+tya
+tax
 //FRAGMENT isr_rom_sys_c64_entry
 
 //FRAGMENT pbuz1_derefidx_vbuz2=_inc_pbuz1_derefidx_vbuz2
@@ -8889,19 +8935,6 @@ bcc {la1}
 lda {c1}
 cmp #{c2}
 bcs {la1}
-//FRAGMENT vboz1=vboxx
-txa
-sta {z1}
-//FRAGMENT vboaa=vboxx
-txa
-//FRAGMENT vboxx=vboaa
-tax
-//FRAGMENT vboxx=vboyy
-tya
-tax
-//FRAGMENT vboyy=vboxx
-txa
-tay
 //FRAGMENT pwuz1=pwuc1
 lda #<{c1}
 sta {z1}
@@ -13241,17 +13274,6 @@ lda ({z1}),y
 sta {z1}+1
 pla
 sta {z1}
-//FRAGMENT vboz1=vboc1
-lda #{c1}
-sta {z1}
-//FRAGMENT vboaa=vboc1
-lda #{c1}
-//FRAGMENT vboxx=vboc1
-lda #{c1}
-tax
-//FRAGMENT vboyy=vboc1
-lda #{c1}
-tay
 //FRAGMENT vbuz1=_deref_pbuc1_plus_2
 lda {c1}
 clc

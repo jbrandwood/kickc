@@ -383,8 +383,8 @@ public class Pass4CodeGeneration {
          if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
-               if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
-                  // Use label for integers referenced in other scope - to allow cross-scope referencing
+               if(isIntTypeInScope(constantVar)) {
+                  // Use label for integers/bools referenced in other scope - to allow cross-scope referencing
                   if(!useLabelForConst(scopeRef, constantVar)) {
                      // Use constant for constant integers not referenced outside scope
                      added.add(asmName);
@@ -413,7 +413,7 @@ public class Pass4CodeGeneration {
                   added.add(asmName);
                   String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
                   addConstantLabelDecl(asmName, constantVar, asmConstant, asm);
-               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
+               } else if(isIntTypeInScope(constantVar)) {
                   // Use label for integers referenced in other scope - to allow cross-scope referencing
                   if(useLabelForConst(scopeRef, constantVar)) {
                      // Use label for integers referenced in other scope - to allow cross-scope referencing
@@ -451,6 +451,10 @@ public class Pass4CodeGeneration {
          }
       }
 
+   }
+
+   private boolean isIntTypeInScope(Variable constantVar) {
+      return (SymbolType.isInteger(constantVar.getType()) || SymbolType.BOOLEAN.equals(constantVar.getType())) && constantVar.getRef().getScopeDepth() > 0;
    }
 
    private void addConstant(String asmName, Variable constantVar, String asmConstant, AsmProgram asm) {

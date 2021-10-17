@@ -11,9 +11,9 @@ void memcpy_dma(void* dest, void* src, unsigned int num);
 
 /// Copy a memory block anywhere in first 4MB memory space using MEGA65 DMagic DMA
 /// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-/// @param dest_bank The 64KB bank for the destination (0-63)
+/// @param dest_bank The 64KB bank for the destination (0-127)
 /// @param dest The destination address (within the MB and bank)
-/// @param src_bank The 64KB bank for the source (0-63)
+/// @param src_bank The 64KB bank for the source (0-127)
 /// @param src The source address (within the MB and bank)
 /// @param num The number of bytes to copy
 void memcpy_dma4(char dest_bank, void* dest, char src_bank, void* src, unsigned int num);

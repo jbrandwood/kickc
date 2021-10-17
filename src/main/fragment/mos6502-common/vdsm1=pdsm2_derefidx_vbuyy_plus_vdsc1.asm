@@ -12,9 +12,9 @@ adc #>{c1}
 sta {m1}+1
 iny
 lda ($fe),y
-adc #<{c1}>>16
+adc #<{c1}>>$10
 sta {m1}+2
 iny
 lda ($fe),y
-adc #>{c1}>>16
+adc #>{c1}>>$10
 sta {m1}+3

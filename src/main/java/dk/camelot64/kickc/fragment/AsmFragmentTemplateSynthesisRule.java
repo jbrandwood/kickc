@@ -751,12 +751,18 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZM1 + "|" + twoZM2, null, "$1z1$2z2$3", null, mapZM2Swap, false));
       // Correct wrong ordered Z2/Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m2(.*)m1(.*)", twoZM1 + "|" + twoZM2, null, "$1m1$2m2$3", null, mapZM2Swap, false));
+      // Correct wrong ordered M2/Z1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m2(.*)z1(.*)", twoZM1 + "|" + twoZM2, null, "$1m1$2z2$3", null, mapZM2Swap, false));
+      // Correct wrong ordered Z2/M1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)m1(.*)", twoZM1 + "|" + twoZM2, null, "$1z1$2m2$3", null, mapZM2Swap, false));
       // Correct wrong ordered Z3/Z2
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m3(.*)m2(.*)", twoZM2 + "|" + twoZM3, null, "$1m2$2m3$3", null, mapZM3Swap, false));
       // Correct wrong ordered Z4/Z3
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m4(.*)m3(.*)", twoZM3 + "|" + twoZM4, null, "$1m3$2m4$3", null, mapZM4Swap, false));
-      // Correct wrong ordered Z2/Z1
+      // Correct wrong ordered M2/M2/M1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m2(.*)m2(.*)m1(.*)", twoZM1 + "|" + threeZM2, null, "$1m1$2m1$3m2$4", null, mapZM2Swap, false));
+      // Correct wrong ordered M2/M2/Z1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m2(.*)m2(.*)z1(.*)", twoZM1 + "|" + threeZM2, null, "$1m1$2m1$3z2$4", null, mapZM2Swap, false));
       // Correct wrong ordered C2/C1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)c2(.*)c1(.*)", twoC1 + "|" + twoC2, null, "$1c1$2c2$3", null, mapC2Swap, false));
 

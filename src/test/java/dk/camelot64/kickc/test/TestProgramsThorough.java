@@ -16,7 +16,7 @@ public class TestProgramsThorough extends TestPrograms {
 
    @Test
    public void testComplexSwinkiblues() throws IOException {
-      compileAndCompare("complex/swinkiblues/kielbasa.c", log());
+      compileAndCompare("complex/swinkiblues_4/loader.c");
    }
 
    @Test

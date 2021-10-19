@@ -418,9 +418,7 @@ graphics_mode: {
   __b1:
     // for(char y=0;y<25;y++)
     cpx #$19
-    bcs !__b2+
-    jmp __b2
-  !__b2:
+    bcc __b2
     lda #<$ff80000
     sta.z cols
     lda #>$ff80000
@@ -471,14 +469,7 @@ graphics_mode: {
     stz.z lpoke.val
     jsr lpoke
     // lpoke(cols++, 0);
-    inc.z cols
-    bne !+
-    inc.z cols+1
-    bne !+
-    inc.z cols+2
-    bne !+
-    inc.z cols+3
-  !:
+    inq.z cols
     // lpoke(cols++, WHITE)
     ldq.z cols
     stq.z lpoke.addr
@@ -487,14 +478,7 @@ graphics_mode: {
     // No extended attributes
     jsr lpoke
     // lpoke(cols++, WHITE);
-    inc.z cols
-    bne !+
-    inc.z cols+1
-    bne !+
-    inc.z cols+2
-    bne !+
-    inc.z cols+3
-  !:
+    inq.z cols
     // for( unsigned int i=0; i<1000;i++)
     inw.z i
     jmp __b6

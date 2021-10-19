@@ -3598,6 +3598,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("inline-kasm-clobber.c");
    }
 
+   @Test
+   public void testInlineKickAsmClobberMem() throws IOException {
+      compileAndCompare("inline-kasm-clobbermem.c");
+   }
+
 
    @Test
    public void testInlineAsmClobberNone() throws IOException {

@@ -1,0 +1,288 @@
+Setting inferred volatile on symbol affected by address-of: main::tile in kickasm( uses main::tile) {{ lda #4
+            sta tile
+            lda #2
+            sta $02
+         }}
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::tile = 0
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < $a
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  kickasm( uses main::tile) {{ lda #4
+            sta tile
+            lda #2
+            sta $02
+         }}
+  main::SCREEN[main::i#3] = main::tile
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+bool main::$0
+__constant char * const main::SCREEN = (char *)$400
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+__loadstore volatile char main::tile
+
+Adding number conversion cast (unumber) $a in main::$0 = main::i#2 < $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [4] if(main::i#2<$a) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [7] main::i#4 = main::i#1
+Coalesced down to 1 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] main::tile = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [2] if(main::i#2<$a) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  kickasm( uses main::tile) {{ lda #4
+            sta tile
+            lda #2
+            sta $02
+         }}
+  [5] main::SCREEN[main::i#2] = main::tile
+  [6] main::i#1 = ++ main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 11.0
+__loadstore volatile char main::tile // 2.1666666666666665
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::tile to live range equivalence class [ main::tile ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::tile ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::tile ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] main::tile = 0 [ main::tile ] (  [ main::tile ] { }  ) always clobbers reg byte a 
+Statement kickasm( uses main::tile) {{ lda #4
+            sta tile
+            lda #2
+            sta $02
+         }} always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [5] main::SCREEN[main::i#2] = main::tile [ main::tile main::i#2 ] (  [ main::tile main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] main::tile = 0 [ main::tile ] (  [ main::tile ] { }  ) always clobbers reg byte a 
+Statement kickasm( uses main::tile) {{ lda #4
+            sta tile
+            lda #2
+            sta $02
+         }} always clobbers reg byte a 
+Statement [5] main::SCREEN[main::i#2] = main::tile [ main::tile main::i#2 ] (  [ main::tile main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::tile ] : zp[1]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp[1]:2 [ main::i#2 main::i#1 ] 2.17: zp[1]:3 [ main::tile ] 
+Uplift Scope [] 
+
+Uplifting [main] best 2826 combination reg byte x [ main::i#2 main::i#1 ] zp[1]:3 [ main::tile ] 
+Uplifting [] best 2826 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::tile ]
+Uplifting [main] best 2826 combination zp[1]:3 [ main::tile ] 
+Allocated (was zp[1]:3) zp[1]:2 [ main::tile ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrate problem with inline kasm clobbering memory
+// And the ASM peephole optimizer not realizing this
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-clobbermem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    .label tile = 2
+    // [0] main::tile = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z tile
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<$a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // kickasm( uses main::tile) {{ lda #4             sta tile             lda #2             sta $02          }}
+    lda #4
+            sta tile
+            lda #2
+            sta $02
+        
+    // [5] main::SCREEN[main::i#2] = main::tile -- pbuc1_derefidx_vbuxx=vbuz1 
+    lda.z tile
+    sta SCREEN,x
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing instruction ldx #0 with TAX
+
+FINAL SYMBOL TABLE
+void main()
+__constant char * const main::SCREEN = (char *) 1024
+char main::i
+char main::i#1 // reg byte x 22.0
+char main::i#2 // reg byte x 11.0
+__loadstore volatile char main::tile // zp[1]:2 2.1666666666666665
+
+reg byte x [ main::i#2 main::i#1 ]
+zp[1]:2 [ main::tile ]
+
+
+FINAL ASSEMBLER
+Score: 2766
+
+  // File Comments
+// Demonstrate problem with inline kasm clobbering memory
+// And the ASM peephole optimizer not realizing this
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-clobbermem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    .label tile = 2
+    // __ma char tile = 0
+    // [0] main::tile = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z tile
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    tax
+    // main::@1
+  __b1:
+    // for(char i=0;i<10;i++)
+    // [2] if(main::i#2<$a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // kickasm
+    // kickasm( uses main::tile) {{ lda #4             sta tile             lda #2             sta $02          }}
+    lda #4
+            sta tile
+            lda #2
+            sta $02
+        
+    // SCREEN[i] = tile
+    // [5] main::SCREEN[main::i#2] = main::tile -- pbuc1_derefidx_vbuxx=vbuz1 
+    lda.z tile
+    sta SCREEN,x
+    // for(char i=0;i<10;i++)
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

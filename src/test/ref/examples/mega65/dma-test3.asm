@@ -100,9 +100,9 @@ memoryRemap: {
 }
 // Copy a memory block anywhere in first 4MB memory space using MEGA65 DMagic DMA
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// - dest_bank The 64KB bank for the destination (0-63)
+// - dest_bank The 64KB bank for the destination (0-127)
 // - dest The destination address (within the MB and bank)
-// - src_bank The 64KB bank for the source (0-63)
+// - src_bank The 64KB bank for the source (0-127)
 // - src The source address (within the MB and bank)
 // - num The number of bytes to copy
 // void memcpy_dma4(char dest_bank, void *dest, char src_bank, void *src, unsigned int num)

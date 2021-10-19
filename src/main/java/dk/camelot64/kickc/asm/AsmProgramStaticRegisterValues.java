@@ -83,6 +83,10 @@ public class AsmProgramStaticRegisterValues {
          current = new AsmRegisterValues();
       } else if(line instanceof AsmScopeEnd) {
          current = new AsmRegisterValues();
+      } else if(line instanceof AsmInlineKickAsm) {
+         current = new AsmRegisterValues(current);
+         final CpuClobber cpuClobber = ((AsmInlineKickAsm) line).getClobber();
+         handleClobber(current, cpuClobber);
       } else if(line instanceof AsmInstruction) {
          AsmInstruction instruction = (AsmInstruction) line;
          values.put(instruction, current);
@@ -92,34 +96,7 @@ public class AsmProgramStaticRegisterValues {
          if(instruction.getCpuOpcode().getMnemonic().equals("jsr")) {
             cpuClobber = CpuClobber.CLOBBER_ALL;
          }
-         if(cpuClobber.isRegisterA()) {
-            current.setA(null);
-            current.setaMem(null);
-         }
-         if(cpuClobber.isRegisterX()) {
-            current.setX(null);
-            current.setxMem(null);
-         }
-         if(cpuClobber.isRegisterY()) {
-            current.setY(null);
-            current.setyMem(null);
-         }
-         if(cpuClobber.isRegisterZ()) {
-            current.setZ(null);
-            current.setzMem(null);
-         }
-         if(cpuClobber.isFlagC()) {
-            current.setFlagC(null);
-         }
-         if(cpuClobber.isFlagN()) {
-            current.setFlagN(null);
-         }
-         if(cpuClobber.isFlagV()) {
-            current.setFlagV(null);
-         }
-         if(cpuClobber.isFlagZ()) {
-            current.setFlagZ(null);
-         }
+         handleClobber(current, cpuClobber);
          String mnemnonic = cpuOpcode.getMnemonic();
          CpuAddressingMode addressingMode = cpuOpcode.getAddressingMode();
          if((mnemnonic.equals("inc") || mnemnonic.equals("dec") || mnemnonic.equals("ror") || mnemnonic.equals("rol") || mnemnonic.equals("lsr") || mnemnonic.equals("asl")) && (addressingMode.equals(CpuAddressingMode.ZP) || addressingMode.equals(CpuAddressingMode.ABS))) {
@@ -243,6 +220,37 @@ public class AsmProgramStaticRegisterValues {
          }
       }
       return current;
+   }
+
+   private void handleClobber(AsmRegisterValues current, CpuClobber cpuClobber) {
+      if(cpuClobber.isRegisterA()) {
+         current.setA(null);
+         current.setaMem(null);
+      }
+      if(cpuClobber.isRegisterX()) {
+         current.setX(null);
+         current.setxMem(null);
+      }
+      if(cpuClobber.isRegisterY()) {
+         current.setY(null);
+         current.setyMem(null);
+      }
+      if(cpuClobber.isRegisterZ()) {
+         current.setZ(null);
+         current.setzMem(null);
+      }
+      if(cpuClobber.isFlagC()) {
+         current.setFlagC(null);
+      }
+      if(cpuClobber.isFlagN()) {
+         current.setFlagN(null);
+      }
+      if(cpuClobber.isFlagV()) {
+         current.setFlagV(null);
+      }
+      if(cpuClobber.isFlagZ()) {
+         current.setFlagZ(null);
+      }
    }
 
    /**

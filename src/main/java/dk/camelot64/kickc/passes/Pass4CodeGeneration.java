@@ -98,7 +98,7 @@ public class Pass4CodeGeneration {
       Number startAddress = program.getTargetPlatform().getStartAddress();
       if(startAddress != null)
          linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
-      asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
+      asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L, CpuClobber.CLOBBER_ALL));
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
@@ -815,7 +815,7 @@ public class Pass4CodeGeneration {
                   if(statementSource != null)
                      stmtFormat = statementSource.format();
                   program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + stmtFormat);
-                  asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment " + e.getFragmentSignature() + "\", 0, 1", 0L, 0L));
+                  asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment " + e.getFragmentSignature() + "\", 0, 1", 0L, 0L, CpuClobber.CLOBBER_NONE));
                } else {
                   throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statementSource);
                }
@@ -1061,7 +1061,7 @@ public class Pass4CodeGeneration {
          ConstantLiteral kasmCyclesLiteral = kasmCycles.calculateLiteral(getScope());
          asmCycles = ((ConstantInteger) kasmCyclesLiteral).getInteger();
       }
-      asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), asmBytes, asmCycles);
+      asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), asmBytes, asmCycles, statementKasm.getDeclaredClobber());
    }
 
    /**

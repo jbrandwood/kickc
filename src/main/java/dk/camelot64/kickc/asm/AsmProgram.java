@@ -213,8 +213,8 @@ public class AsmProgram {
     *
     * @param kickAsmCode The kickassembler code
     */
-   public void addInlinedKickAsm(String kickAsmCode, Long bytes, Long cycles) {
-      addLine(new AsmInlineKickAsm(kickAsmCode, bytes, cycles));
+   public void addInlinedKickAsm(String kickAsmCode, Long bytes, Long cycles, CpuClobber cpuClobber) {
+      addLine(new AsmInlineKickAsm(kickAsmCode, bytes, cycles, cpuClobber));
    }
 
    /**

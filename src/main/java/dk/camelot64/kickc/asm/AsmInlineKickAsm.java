@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.cpufamily6502.CpuClobber;
+
 /**
  * Inlined KickAssembler code.
  * If no cycles/byte size is specified it defaults to 256/256.
@@ -12,7 +14,9 @@ public class AsmInlineKickAsm extends AsmLine {
 
    private double cycles;
 
-   public AsmInlineKickAsm(String kickAsmCode, Long bytes, Long cycles) {
+   private CpuClobber clobber;
+
+   public AsmInlineKickAsm(String kickAsmCode, Long bytes, Long cycles, CpuClobber clobber) {
       this.kickAsmCode = kickAsmCode;
       if(bytes != null) {
          this.bytes = bytes.intValue();
@@ -24,14 +28,19 @@ public class AsmInlineKickAsm extends AsmLine {
       } else {
          this.cycles = 256;
       }
+      if(clobber==null) {
+         this.clobber = CpuClobber.CLOBBER_ALL;
+      }  else {
+         this.clobber = clobber;
+      }
+   }
+
+   public CpuClobber getClobber() {
+      return clobber;
    }
 
    public String getKickAsmCode() {
       return kickAsmCode;
-   }
-
-   public void setKickAsmCode(String kickAsmCode) {
-      this.kickAsmCode = kickAsmCode;
    }
 
    /**

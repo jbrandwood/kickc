@@ -683,6 +683,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testMega65Camelot1536Dots() throws IOException {
+      compileAndCompare("examples/mega65/camelot-1536dots.c");
+   }
+
+   @Test
    public void testMega65BankedMusic() throws IOException {
       compileAndCompare("examples/mega65/banked-music.c");
    }

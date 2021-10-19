@@ -28,11 +28,11 @@ void lpoke(__zp unsigned long addr, char val) {
 }
 
 // Address of the screen
-char * const SCREEN = 0xc800;
+char * const SCREEN = (char*)0xc800;
 // // Absolute address of graphics buffer 1
-char * const GRAPHICS1 = 0xa000;
+char * const GRAPHICS1 = (char*)0xa000;
 // // Absolute address of graphics buffer 2
-char * const GRAPHICS2 = 0x7000;
+char * const GRAPHICS2 = (char*)0x7000;
 
 // SID tune at an absolute address
 __address(0x5000) char MUSIC[] = kickasm(resource "Thaw_5000.sid") {{
@@ -44,7 +44,7 @@ typedef void (*PROC_PTR)(void);
 // Pointer to the music init routine
 PROC_PTR const musicInit = (PROC_PTR) MUSIC;
 // Pointer to the music play routine
-PROC_PTR const = (PROC_PTR) MUSIC+3;
+PROC_PTR const musicPlay = (PROC_PTR) MUSIC+3;
 
 
 __align(0x40) char SPRITES[0xc0] = kickasm(resource "camelot-sprites.png") {{

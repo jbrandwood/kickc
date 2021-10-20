@@ -1,4 +1,17 @@
-//KICKC FRAGMENT CACHE d528e7a15 d528e9ed4
+//KICKC FRAGMENT CACHE df9b88c62 df9b8b138
+//FRAGMENT vbuz1=vbuc1
+ldz #{c1}
+stz {z1}
+//FRAGMENT pbuz1=pbuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=vwuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
 //FRAGMENT _deref_pbuc1=vbuc2
 ldz #{c2}
 stz {c1}
@@ -6,11 +19,578 @@ stz {c1}
 lda #{c2}
 ora {c1}
 sta {c1}
-//FRAGMENT pbuz1=pbuc1
+//FRAGMENT _deref_pwuc1=vbuc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1
+//FRAGMENT call__deref_pprc1
+jsr {c1}
+//FRAGMENT _deref_pbuc1_neq_vbuc2_then_la1
+ldz #{c2}
+cpz {c1}
+bne {la1}
+//FRAGMENT vbuz1=vbuz1_bxor_vbuc1
+lda #{c1}
+eor {z1}
+sta {z1}
+//FRAGMENT vbuz1_eq_0_then_la1
+lda {z1}
+beq {la1}
+//FRAGMENT pvoz1=pvoz2
+lda {z2}
+sta {z1}
+lda {z2}+1
+sta {z1}+1
+//FRAGMENT pwuz1=pwuc1
 lda #<{c1}
 sta {z1}
 lda #>{c1}
 sta {z1}+1
+//FRAGMENT vbuz1_lt_vbuc1_then_la1
+lda {z1}
+cmp #{c1}
+bcc {la1}
+//FRAGMENT vduz1=vduc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+lda #<{c1}>>$10
+sta {z1}+2
+lda #>{c1}>>$10
+sta {z1}+3
+//FRAGMENT vwuz1_lt_vwuc1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bcc {la1}
+bne !+
+lda {z1}
+cmp #<{c1}
+bcc {la1}
+!:
+//FRAGMENT pvoz1=pvoc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT vduz1=vduz2
+ldq {z2}
+stq {z1}
+//FRAGMENT vduz1=_inc_vduz2
+lda {z2}
+clc
+adc #1
+sta {z1}
+lda {z2}+1
+adc #0
+sta {z1}+1
+lda {z2}+2
+adc #0
+sta {z1}+2
+lda {z2}+3
+adc #0
+sta {z1}+3
+//FRAGMENT vwuz1=_inc_vwuz1
+inw {z1}
+//FRAGMENT vwuz1=vwuz2
+lda {z2}
+sta {z1}
+lda {z2}+1
+sta {z1}+1
+//FRAGMENT pwuz1=pwuz1_plus_vbuc1
+lda #{c1}
+clc
+adc {z1}
+sta {z1}
+bcc !+
+inc {z1}+1
+!:
+//FRAGMENT vbuz1=_inc_vbuz1
+inc {z1}
+//FRAGMENT vbuz1=vbuz2_rol_1
+lda {z2}
+asl
+sta {z1}
+//FRAGMENT pwuz1_derefidx_vbuz2=vwuz3
+ldy {z2}
+lda {z3}
+sta ({z1}),y
+iny
+lda {z3}+1
+sta ({z1}),y
+//FRAGMENT vwuz1=vwuz1_plus_vbuc1
+lda #{c1}
+clc
+adc {z1}
+sta {z1}
+bcc !+
+inc {z1}+1
+!:
+//FRAGMENT vwuz1=vwuz2_rol_1
+lda {z2}
+asl
+sta {z1}
+lda {z2}+1
+rol
+sta {z1}+1
+//FRAGMENT pwuz1=pwuc1_plus_vwuz2
+lda {z2}
+clc
+adc #<{c1}
+sta {z1}
+lda {z2}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT _deref_pwuz1=vwuz2
+ldy #0
+lda {z2}
+sta ({z1}),y
+iny
+lda {z2}+1
+sta ({z1}),y
+//FRAGMENT vbuz1=vwuz2_band_vbuc1
+lda #{c1}
+and {z2}
+sta {z1}
+//FRAGMENT vbuz1_neq_vbuc1_then_la1
+ldz #{c1}
+cpz {z1}
+bne {la1}
+//FRAGMENT vbuz1=_deref_pbuc1
+lda {c1}
+sta {z1}
+//FRAGMENT _deref_pwuc1=vwuc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1
+//FRAGMENT _deref_qbuc1=pbuc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1
+//FRAGMENT _deref_qbuc1=pbuz1
+lda {z1}
+sta {c1}
+lda {z1}+1
+sta {c1}+1
+//FRAGMENT _deref_pbuc1=vbuz1
+lda {z1}
+sta {c1}
+//FRAGMENT vwuz1=vwuz1_plus_1
+inw {z1}
+//FRAGMENT vwuz1_le_vwuc1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bne !+
+lda {z1}
+cmp #<{c1}
+!:
+bcc {la1}
+beq {la1}
+//FRAGMENT vwuz1=vwuz1_minus_vwuc1
+lda {z1}
+sec
+sbc #<{c1}
+sta {z1}
+lda {z1}+1
+sbc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_minus_1
+lda {z1}
+sec
+sbc #1
+sta {z1}
+lda {z1}+1
+sbc #0
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_plus_vwuc1
+lda {z1}
+clc
+adc #<{c1}
+sta {z1}
+lda {z1}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=_deref_pwuz2_plus__deref_pwuz3
+ldy #0
+clc
+lda ({z2}),y
+adc ({z3}),y
+sta {z1}
+iny
+lda ({z2}),y
+adc ({z3}),y
+sta {z1}+1
+//FRAGMENT pbuz1=pbuc1_plus_vwuz2
+lda {z2}
+clc
+adc #<{c1}
+sta {z1}
+lda {z2}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vbuz1=_deref_pbuz2_plus__deref_pbuz3
+ldy #0
+lda ({z2}),y
+clc
+ldy #0
+adc ({z3}),y
+sta {z1}
+//FRAGMENT vwuz1=vwuz1_minus_vbuc1
+sec
+lda {z1}
+sbc #{c1}
+sta {z1}
+lda {z1}+1
+sbc #0
+sta {z1}+1
+//FRAGMENT pbuz1=pbuz2_plus__deref_pwuz3
+ldy #0
+clc
+lda {z2}
+adc ({z3}),y
+sta {z1}
+iny
+lda {z2}+1
+adc ({z3}),y
+sta {z1}+1
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuz3
+ldx {z3}
+ldy {z2}
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT vbuaa_lt_vbuc1_then_la1
+cmp #{c1}
+bcc {la1}
+//FRAGMENT vbuaa=vbuz1_rol_1
+lda {z1}
+asl
+//FRAGMENT vbuxx=vbuz1_rol_1
+lda {z1}
+asl
+tax
+//FRAGMENT vbuyy=vbuz1_rol_1
+lda {z1}
+asl
+tay
+//FRAGMENT vbuzz=vbuz1_rol_1
+lda {z1}
+asl
+taz
+//FRAGMENT vbuz1=vbuaa_rol_1
+asl
+sta {z1}
+//FRAGMENT vbuaa=vbuaa_rol_1
+asl
+//FRAGMENT vbuxx=vbuaa_rol_1
+asl
+tax
+//FRAGMENT vbuyy=vbuaa_rol_1
+asl
+tay
+//FRAGMENT vbuzz=vbuaa_rol_1
+asl
+taz
+//FRAGMENT vbuz1=vbuxx_rol_1
+txa
+asl
+sta {z1}
+//FRAGMENT vbuaa=vbuxx_rol_1
+txa
+asl
+//FRAGMENT vbuxx=vbuxx_rol_1
+txa
+asl
+tax
+//FRAGMENT vbuyy=vbuxx_rol_1
+txa
+asl
+tay
+//FRAGMENT vbuzz=vbuxx_rol_1
+txa
+asl
+taz
+//FRAGMENT vbuz1=vbuyy_rol_1
+tya
+asl
+sta {z1}
+//FRAGMENT vbuaa=vbuyy_rol_1
+tya
+asl
+//FRAGMENT vbuxx=vbuyy_rol_1
+tya
+asl
+tax
+//FRAGMENT vbuyy=vbuyy_rol_1
+tya
+asl
+tay
+//FRAGMENT vbuzz=vbuyy_rol_1
+tya
+asl
+taz
+//FRAGMENT vbuz1=vbuzz_rol_1
+tza
+asl
+sta {z1}
+//FRAGMENT vbuaa=vbuzz_rol_1
+tza
+asl
+//FRAGMENT vbuxx=vbuzz_rol_1
+tza
+asl
+tax
+//FRAGMENT vbuyy=vbuzz_rol_1
+tza
+asl
+tay
+//FRAGMENT vbuzz=vbuzz_rol_1
+tza
+asl
+taz
+//FRAGMENT pwuz1_derefidx_vbuaa=vwuz2
+tay
+lda {z2}
+sta ({z1}),y
+iny
+lda {z2}+1
+sta ({z1}),y
+//FRAGMENT pwuz1_derefidx_vbuxx=vwuz2
+txa
+tay
+lda {z2}
+sta ({z1}),y
+iny
+lda {z2}+1
+sta ({z1}),y
+//FRAGMENT pwuz1_derefidx_vbuyy=vwuz2
+lda {z2}
+sta ({z1}),y
+iny
+lda {z2}+1
+sta ({z1}),y
+//FRAGMENT pwuz1_derefidx_vbuzz=vwuz2
+tza
+tay
+lda {z2}
+sta ({z1}),y
+iny
+lda {z2}+1
+sta ({z1}),y
+//FRAGMENT vbuaa=vwuz1_band_vbuc1
+lda #{c1}
+and {z1}
+//FRAGMENT vbuxx=vwuz1_band_vbuc1
+lda #{c1}
+and {z1}
+tax
+//FRAGMENT vbuyy=vwuz1_band_vbuc1
+lda #{c1}
+and {z1}
+tay
+//FRAGMENT vbuzz=vwuz1_band_vbuc1
+lda #{c1}
+and {z1}
+taz
+//FRAGMENT vbuaa_neq_vbuc1_then_la1
+cmp #{c1}
+bne {la1}
+//FRAGMENT vbuaa=_deref_pbuc1
+lda {c1}
+//FRAGMENT vbuxx=_deref_pbuc1
+ldx {c1}
+//FRAGMENT _deref_pbuc1=vbuxx
+stx {c1}
+//FRAGMENT vbuaa=_deref_pbuz1_plus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+clc
+ldy #0
+adc ({z2}),y
+//FRAGMENT vbuxx=_deref_pbuz1_plus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+clc
+ldy #0
+adc ({z2}),y
+tax
+//FRAGMENT vbuyy=_deref_pbuz1_plus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+clc
+ldy #0
+adc ({z2}),y
+tay
+//FRAGMENT vbuzz=_deref_pbuz1_plus__deref_pbuz2
+ldy #0
+lda ({z1}),y
+clc
+ldy #0
+adc ({z2}),y
+taz
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuaa
+ldy {z2}
+tax
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuxx
+ldy {z2}
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuyy
+tya
+ldy {z2}
+tax
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuzz
+ldy {z2}
+tza
+tax
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuz2
+txa
+ldx {z2}
+tay
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuaa
+tay
+txa
+ldx {c1},y
+tay
+lda ({z1}),y
+stx $ff
+ora $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuxx
+txa
+tay
+lda ({z1}),y
+stx $ff
+ora {c1},x
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuyy
+txa
+ldx {c1},y
+tay
+lda ({z1}),y
+stx $ff
+ora $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuzz
+txa
+tay
+tza
+tax
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuz2
+ldx {z2}
+tza
+tay
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuaa
+tax
+tza
+tay
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuxx
+tza
+tay
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuyy
+lda ({z1}),z
+stz $ff
+ora {c1},y
+ldz $ff
+sta ({z1}),z
+//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuzz
+tza
+tax
+tza
+tay
+lda ({z1}),y
+ora {c1},x
+sta ({z1}),y
+//FRAGMENT vbuxx_lt_vbuc1_then_la1
+cpx #{c1}
+bcc {la1}
+//FRAGMENT vbuxx=vbuc1
+ldx #{c1}
+//FRAGMENT vbuxx=_inc_vbuxx
+inx
+//FRAGMENT vbuzz=vbuc1
+ldz #{c1}
+//FRAGMENT vbuzz_lt_vbuc1_then_la1
+cpz #{c1}
+bcc {la1}
+//FRAGMENT vbuzz=_inc_vbuzz
+inz
+//FRAGMENT vbuxx_neq_vbuc1_then_la1
+cpx #{c1}
+bne {la1}
+//FRAGMENT vbuyy_neq_vbuc1_then_la1
+cpy #{c1}
+bne {la1}
+//FRAGMENT vbuzz_neq_vbuc1_then_la1
+cpz #{c1}
+bne {la1}
+//FRAGMENT vbuyy=_deref_pbuc1
+ldy {c1}
+//FRAGMENT _deref_pbuc1=vbuyy
+sty {c1}
+//FRAGMENT vduz1=_inc_vduz1
+inq {z1}
+//FRAGMENT pwuz1=pwuc1_plus_vwuz1
+lda {z1}
+clc
+adc #<{c1}
+sta {z1}
+lda {z1}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=_deref_pwuz1_plus__deref_pwuz2
+ldy #0
+clc
+lda ({z1}),y
+adc ({z2}),y
+pha
+iny
+lda ({z1}),y
+adc ({z2}),y
+sta {z1}+1
+pla
+sta {z1}
+//FRAGMENT pbuz1=pbuz2_plus__deref_pwuz1
+ldy #0
+clc
+lda ({z1}),y
+adc {z2}
+pha
+iny
+lda ({z1}),y
+adc {z2}+1
+sta {z1}+1
+pla
+sta {z1}
 //FRAGMENT pbuz1_lt_pbuc1_then_la1
 lda {z1}+1
 cmp #>{c1}
@@ -33,29 +613,14 @@ inw {z1}
 lda #{c1}
 ldy #0
 sta ({z1}),y
-//FRAGMENT vbuz1=vbuc1
-ldz #{c1}
-stz {z1}
 //FRAGMENT isr_hardware_all_entry
 pha @clob_a
 phx @clob_x
 phy @clob_y
 phz @clob_z
-//FRAGMENT vbuz1=_inc_vbuz1
-inc {z1}
 //FRAGMENT vbuz1=vbuz2
 lda {z2}
 sta {z1}
-//FRAGMENT vbuz1_neq_vbuc1_then_la1
-ldz #{c1}
-cpz {z1}
-bne {la1}
-//FRAGMENT call__deref_pprc1
-jsr {c1}
-//FRAGMENT vbuz1_lt_vbuc1_then_la1
-lda {z1}
-cmp #{c1}
-bcc {la1}
 //FRAGMENT vbuz1=vbuz2_rol_4
 lda {z2}
 asl
@@ -76,9 +641,6 @@ bne {la1}
 lda #{c1}
 and {z2}
 sta {z1}
-//FRAGMENT _deref_pbuc1=vbuz1
-lda {z1}
-sta {c1}
 //FRAGMENT isr_hardware_all_exit
 plz @clob_z
 ply @clob_y
@@ -139,9 +701,6 @@ beq {la1}
 lda {z2}
 inc
 sta {z1}
-//FRAGMENT vbuz1=_deref_pbuc1
-lda {c1}
-sta {z1}
 //FRAGMENT vbuz1_eq__deref_pbuc1_then_la1
 lda {c1}
 cmp {z1}
@@ -170,12 +729,6 @@ bne {la1}
 lda {z1}
 //FRAGMENT vbuxx=vbuz1
 ldx {z1}
-//FRAGMENT vbuaa_neq_vbuc1_then_la1
-cmp #{c1}
-bne {la1}
-//FRAGMENT vbuaa_lt_vbuc1_then_la1
-cmp #{c1}
-bcc {la1}
 //FRAGMENT vbuaa=vbuz1_rol_4
 lda {z1}
 asl
@@ -1026,10 +1579,6 @@ inc
 //FRAGMENT vbuxx=vbuz1_plus_1
 ldx {z1}
 inx
-//FRAGMENT vbuaa=_deref_pbuc1
-lda {c1}
-//FRAGMENT vbuxx=_deref_pbuc1
-ldx {c1}
 //FRAGMENT vbuaa_eq__deref_pbuc1_then_la1
 cmp {c1}
 beq {la1}
@@ -1042,12 +1591,6 @@ sta {c1}
 //FRAGMENT vbuxx_neq_0_then_la1
 cpx #0
 bne {la1}
-//FRAGMENT vbuxx_neq_vbuc1_then_la1
-cpx #{c1}
-bne {la1}
-//FRAGMENT vbuxx_lt_vbuc1_then_la1
-cpx #{c1}
-bcc {la1}
 //FRAGMENT vbuxx_eq_vbuc1_then_la1
 cpx #{c1}
 beq {la1}
@@ -1058,16 +1601,12 @@ sbc #1
 inc
 //FRAGMENT vbuxx=_dec_vbuxx
 dex
-//FRAGMENT vbuxx=_inc_vbuxx
-inx
 //FRAGMENT vbuyy=_dec_vbuyy
 dey
 //FRAGMENT vbuyy=_inc_vbuyy
 iny
 //FRAGMENT vbuzz=_dec_vbuzz
 dez
-//FRAGMENT vbuzz=_inc_vbuzz
-inz
 //FRAGMENT pbuc1_derefidx_vbuxx=vbuaa
 sta {c1},x
 //FRAGMENT pbuc1_derefidx_vbuxx=vbuyy
@@ -1102,17 +1641,10 @@ tya
 sta {c1},x
 //FRAGMENT vbuaa=vbuc1
 lda #{c1}
-//FRAGMENT vbuxx=vbuc1
-ldx #{c1}
 //FRAGMENT vbuyy=vbuc1
 ldy #{c1}
 //FRAGMENT vbuyy_lt_vbuc1_then_la1
 cpy #{c1}
-bcc {la1}
-//FRAGMENT vbuzz=vbuc1
-ldz #{c1}
-//FRAGMENT vbuzz_lt_vbuc1_then_la1
-cpz #{c1}
 bcc {la1}
 //FRAGMENT vbuyy_neq_0_then_la1
 cpy #0
@@ -1123,8 +1655,6 @@ bne {la1}
 //FRAGMENT vbuxx_eq__deref_pbuc1_then_la1
 cpx {c1}
 beq {la1}
-//FRAGMENT vbuyy=_deref_pbuc1
-ldy {c1}
 //FRAGMENT vbuyy_eq__deref_pbuc1_then_la1
 tya
 cmp {c1}
@@ -1136,12 +1666,6 @@ cpz {c1}
 beq {la1}
 //FRAGMENT vbuyy=vbuz1
 ldy {z1}
-//FRAGMENT vbuyy_neq_vbuc1_then_la1
-cpy #{c1}
-bne {la1}
-//FRAGMENT vbuzz_neq_vbuc1_then_la1
-cpz #{c1}
-bne {la1}
 //FRAGMENT vbuz1=pbuc1_derefidx_vbuyy
 lda {c1},y
 sta {z1}
@@ -1151,8 +1675,6 @@ beq {la1}
 //FRAGMENT vbuyy=vbuz1_plus_1
 ldy {z1}
 iny
-//FRAGMENT _deref_pbuc1=vbuyy
-sty {c1}
 //FRAGMENT vbuzz=vbuz1_plus_1
 lda {z1}
 inc
@@ -1169,8 +1691,6 @@ inc
 //FRAGMENT vbuaa=vbuzz_plus_1
 tza
 inc
-//FRAGMENT _deref_pbuc1=vbuxx
-stx {c1}
 //FRAGMENT vbuz1=_deref_pbuc1_plus_1
 lda {c1}
 inc
@@ -1222,14 +1742,6 @@ asl {z1}
 rol {z1}+1
 asl {z1}
 rol {z1}+1
-//FRAGMENT pbuz1=pbuc1_plus_vwuz2
-lda {z2}
-clc
-adc #<{c1}
-sta {z1}
-lda {z2}+1
-adc #>{c1}
-sta {z1}+1
 //FRAGMENT pbuz1=pbuz2
 lda {z2}
 sta {z1}
@@ -1253,11 +1765,6 @@ pha
 jsr {c1}
 //FRAGMENT _stackpullbyte_1
 pla
-//FRAGMENT pvoz1=pvoc1
-lda #<{c1}
-sta {z1}
-lda #>{c1}
-sta {z1}+1
 //FRAGMENT pbuz1=pbuz1_minus_vbuc1
 sec
 lda {z1}
@@ -1426,11 +1933,6 @@ asw {z1}
 asw {z1}
 asw {z1}
 asw {z1}
-//FRAGMENT vwuz1=vwuc1
-lda #<{c1}
-sta {z1}
-lda #>{c1}
-sta {z1}+1
 //FRAGMENT pwuz1=pbuc1
 lda #<{c1}
 sta {z1}
@@ -1448,33 +1950,6 @@ sta {z1}+1
 ldy {z2}
 lda ({z3}),y
 sta ({z1}),y
-//FRAGMENT pwuz1=pwuz1_plus_vbuc1
-lda #{c1}
-clc
-adc {z1}
-sta {z1}
-bcc !+
-inc {z1}+1
-!:
-//FRAGMENT vbuz1=vbuz2_rol_1
-lda {z2}
-asl
-sta {z1}
-//FRAGMENT pwuz1_derefidx_vbuz2=vwuz3
-ldy {z2}
-lda {z3}
-sta ({z1}),y
-iny
-lda {z3}+1
-sta ({z1}),y
-//FRAGMENT vwuz1=vwuz1_plus_vbuc1
-lda #{c1}
-clc
-adc {z1}
-sta {z1}
-bcc !+
-inc {z1}+1
-!:
 //FRAGMENT _deref_pwuc1=vwuz1
 lda {z1}
 sta {c1}
@@ -1484,21 +1959,6 @@ sta {c1}+1
 lda {z1}
 sta {c1}
 lda #0
-sta {c1}+1
-//FRAGMENT _deref_qbuc1=pbuz1
-lda {z1}
-sta {c1}
-lda {z1}+1
-sta {c1}+1
-//FRAGMENT _deref_pwuc1=vwuc2
-lda #<{c2}
-sta {c1}
-lda #>{c2}
-sta {c1}+1
-//FRAGMENT _deref_qbuc1=pbuc2
-lda #<{c2}
-sta {c1}
-lda #>{c2}
 sta {c1}+1
 //FRAGMENT pbuz1_derefidx_vbuaa=pbuz2_derefidx_vbuaa
 tay
@@ -1522,121 +1982,6 @@ tza
 sta {z1}
 lda #0
 sta {z1}+1
-//FRAGMENT vbuz1=vbuaa_rol_1
-asl
-sta {z1}
-//FRAGMENT vbuz1=vbuxx_rol_1
-txa
-asl
-sta {z1}
-//FRAGMENT vbuz1=vbuyy_rol_1
-tya
-asl
-sta {z1}
-//FRAGMENT vbuz1=vbuzz_rol_1
-tza
-asl
-sta {z1}
-//FRAGMENT vbuaa=vbuz1_rol_1
-lda {z1}
-asl
-//FRAGMENT vbuaa=vbuaa_rol_1
-asl
-//FRAGMENT vbuaa=vbuxx_rol_1
-txa
-asl
-//FRAGMENT vbuaa=vbuyy_rol_1
-tya
-asl
-//FRAGMENT vbuaa=vbuzz_rol_1
-tza
-asl
-//FRAGMENT vbuxx=vbuz1_rol_1
-lda {z1}
-asl
-tax
-//FRAGMENT vbuxx=vbuaa_rol_1
-asl
-tax
-//FRAGMENT vbuxx=vbuxx_rol_1
-txa
-asl
-tax
-//FRAGMENT vbuxx=vbuyy_rol_1
-tya
-asl
-tax
-//FRAGMENT vbuxx=vbuzz_rol_1
-tza
-asl
-tax
-//FRAGMENT vbuyy=vbuz1_rol_1
-lda {z1}
-asl
-tay
-//FRAGMENT vbuyy=vbuaa_rol_1
-asl
-tay
-//FRAGMENT vbuyy=vbuxx_rol_1
-txa
-asl
-tay
-//FRAGMENT vbuyy=vbuyy_rol_1
-tya
-asl
-tay
-//FRAGMENT vbuyy=vbuzz_rol_1
-tza
-asl
-tay
-//FRAGMENT vbuzz=vbuz1_rol_1
-lda {z1}
-asl
-taz
-//FRAGMENT vbuzz=vbuaa_rol_1
-asl
-taz
-//FRAGMENT vbuzz=vbuxx_rol_1
-txa
-asl
-taz
-//FRAGMENT vbuzz=vbuyy_rol_1
-tya
-asl
-taz
-//FRAGMENT vbuzz=vbuzz_rol_1
-tza
-asl
-taz
-//FRAGMENT pwuz1_derefidx_vbuaa=vwuz2
-tay
-lda {z2}
-sta ({z1}),y
-iny
-lda {z2}+1
-sta ({z1}),y
-//FRAGMENT pwuz1_derefidx_vbuxx=vwuz2
-txa
-tay
-lda {z2}
-sta ({z1}),y
-iny
-lda {z2}+1
-sta ({z1}),y
-//FRAGMENT pwuz1_derefidx_vbuyy=vwuz2
-lda {z2}
-sta ({z1}),y
-iny
-lda {z2}+1
-sta ({z1}),y
-//FRAGMENT pwuz1_derefidx_vbuzz=vwuz2
-tza
-tay
-lda {z2}
-sta ({z1}),y
-iny
-lda {z2}+1
-sta ({z1}),y
 //FRAGMENT _deref_qbuc1=_ptr_vbuxx
 txa
 sta {c1}
@@ -1756,15 +2101,6 @@ beq {la1}
 //FRAGMENT _deref_pbuc1_eq_vbuzz_then_la1
 cpz {c1}
 beq {la1}
-//FRAGMENT vduz1=vduc1
-lda #<{c1}
-sta {z1}
-lda #>{c1}
-sta {z1}+1
-lda #<{c1}>>$10
-sta {z1}+2
-lda #>{c1}>>$10
-sta {z1}+3
 //FRAGMENT vduz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -1804,11 +2140,6 @@ dey
 bne !-
 !e:
 sta {z1}
-//FRAGMENT vwuz1=vwuz2
-lda {z2}
-sta {z1}
-lda {z2}+1
-sta {z1}+1
 //FRAGMENT vduz1=vduz2_ror_4
 lda {z2}+3
 lsr
@@ -2477,334 +2808,3 @@ sta {z1}+3
 NO_SYNTHESIS
 //FRAGMENT vduz1=vwsc1
 NO_SYNTHESIS
-//FRAGMENT _deref_pwuc1=vbuc2
-lda #<{c2}
-sta {c1}
-lda #>{c2}
-sta {c1}+1
-//FRAGMENT _deref_pbuc1_neq_vbuc2_then_la1
-ldz #{c2}
-cpz {c1}
-bne {la1}
-//FRAGMENT vbuz1=vbuz1_bxor_vbuc1
-lda #{c1}
-eor {z1}
-sta {z1}
-//FRAGMENT vbuz1_eq_0_then_la1
-lda {z1}
-beq {la1}
-//FRAGMENT pvoz1=pvoz2
-lda {z2}
-sta {z1}
-lda {z2}+1
-sta {z1}+1
-//FRAGMENT pwuz1=pwuc1
-lda #<{c1}
-sta {z1}
-lda #>{c1}
-sta {z1}+1
-//FRAGMENT vwuz1_lt_vwuc1_then_la1
-lda {z1}+1
-cmp #>{c1}
-bcc {la1}
-bne !+
-lda {z1}
-cmp #<{c1}
-bcc {la1}
-!:
-//FRAGMENT vduz1=vduz2
-ldq {z2}
-stq {z1}
-//FRAGMENT vduz1=_inc_vduz2
-lda {z2}
-clc
-adc #1
-sta {z1}
-lda {z2}+1
-adc #0
-sta {z1}+1
-lda {z2}+2
-adc #0
-sta {z1}+2
-lda {z2}+3
-adc #0
-sta {z1}+3
-//FRAGMENT vwuz1=_inc_vwuz1
-inw {z1}
-//FRAGMENT vwuz1=vwuz2_rol_1
-lda {z2}
-asl
-sta {z1}
-lda {z2}+1
-rol
-sta {z1}+1
-//FRAGMENT pwuz1=pwuc1_plus_vwuz2
-lda {z2}
-clc
-adc #<{c1}
-sta {z1}
-lda {z2}+1
-adc #>{c1}
-sta {z1}+1
-//FRAGMENT _deref_pwuz1=vwuz2
-ldy #0
-lda {z2}
-sta ({z1}),y
-iny
-lda {z2}+1
-sta ({z1}),y
-//FRAGMENT vbuz1=vwuz2_band_vbuc1
-lda #{c1}
-and {z2}
-sta {z1}
-//FRAGMENT vwuz1=vwuz1_plus_1
-inw {z1}
-//FRAGMENT vwuz1_le_vwuc1_then_la1
-lda {z1}+1
-cmp #>{c1}
-bne !+
-lda {z1}
-cmp #<{c1}
-!:
-bcc {la1}
-beq {la1}
-//FRAGMENT vwuz1=vwuz1_minus_vwuc1
-lda {z1}
-sec
-sbc #<{c1}
-sta {z1}
-lda {z1}+1
-sbc #>{c1}
-sta {z1}+1
-//FRAGMENT vwuz1=vwuz1_minus_1
-lda {z1}
-sec
-sbc #1
-sta {z1}
-lda {z1}+1
-sbc #0
-sta {z1}+1
-//FRAGMENT vwuz1=vwuz1_plus_vwuc1
-lda {z1}
-clc
-adc #<{c1}
-sta {z1}
-lda {z1}+1
-adc #>{c1}
-sta {z1}+1
-//FRAGMENT vwuz1=_deref_pwuz2_plus__deref_pwuz3
-ldy #0
-clc
-lda ({z2}),y
-adc ({z3}),y
-sta {z1}
-iny
-lda ({z2}),y
-adc ({z3}),y
-sta {z1}+1
-//FRAGMENT vbuz1=_deref_pbuz2_plus__deref_pbuz3
-ldy #0
-lda ({z2}),y
-clc
-ldy #0
-adc ({z3}),y
-sta {z1}
-//FRAGMENT vwuz1=vwuz1_minus_vbuc1
-sec
-lda {z1}
-sbc #{c1}
-sta {z1}
-lda {z1}+1
-sbc #0
-sta {z1}+1
-//FRAGMENT pbuz1=pbuz2_plus__deref_pwuz3
-ldy #0
-clc
-lda {z2}
-adc ({z3}),y
-sta {z1}
-iny
-lda {z2}+1
-adc ({z3}),y
-sta {z1}+1
-//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuz3
-ldx {z3}
-ldy {z2}
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT vbuaa=vwuz1_band_vbuc1
-lda #{c1}
-and {z1}
-//FRAGMENT vbuxx=vwuz1_band_vbuc1
-lda #{c1}
-and {z1}
-tax
-//FRAGMENT vbuyy=vwuz1_band_vbuc1
-lda #{c1}
-and {z1}
-tay
-//FRAGMENT vbuzz=vwuz1_band_vbuc1
-lda #{c1}
-and {z1}
-taz
-//FRAGMENT vbuaa=_deref_pbuz1_plus__deref_pbuz2
-ldy #0
-lda ({z1}),y
-clc
-ldy #0
-adc ({z2}),y
-//FRAGMENT vbuxx=_deref_pbuz1_plus__deref_pbuz2
-ldy #0
-lda ({z1}),y
-clc
-ldy #0
-adc ({z2}),y
-tax
-//FRAGMENT vbuyy=_deref_pbuz1_plus__deref_pbuz2
-ldy #0
-lda ({z1}),y
-clc
-ldy #0
-adc ({z2}),y
-tay
-//FRAGMENT vbuzz=_deref_pbuz1_plus__deref_pbuz2
-ldy #0
-lda ({z1}),y
-clc
-ldy #0
-adc ({z2}),y
-taz
-//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuaa
-ldy {z2}
-tax
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuxx
-ldy {z2}
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuyy
-tya
-ldy {z2}
-tax
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuzz
-ldy {z2}
-tza
-tax
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuz2
-txa
-ldx {z2}
-tay
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuaa
-tay
-txa
-ldx {c1},y
-tay
-lda ({z1}),y
-stx $ff
-ora $ff
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuxx
-txa
-tay
-lda ({z1}),y
-stx $ff
-ora {c1},x
-ldy $ff
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuyy
-txa
-ldx {c1},y
-tay
-lda ({z1}),y
-stx $ff
-ora $ff
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuzz
-txa
-tay
-tza
-tax
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuz2
-ldx {z2}
-tza
-tay
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuaa
-tax
-tza
-tay
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuxx
-tza
-tay
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuyy
-lda ({z1}),z
-stz $ff
-ora {c1},y
-ldz $ff
-sta ({z1}),z
-//FRAGMENT pbuz1_derefidx_vbuzz=pbuz1_derefidx_vbuzz_bor_pbuc1_derefidx_vbuzz
-tza
-tax
-tza
-tay
-lda ({z1}),y
-ora {c1},x
-sta ({z1}),y
-//FRAGMENT vduz1=_inc_vduz1
-inq {z1}
-//FRAGMENT pwuz1=pwuc1_plus_vwuz1
-lda {z1}
-clc
-adc #<{c1}
-sta {z1}
-lda {z1}+1
-adc #>{c1}
-sta {z1}+1
-//FRAGMENT vwuz1=_deref_pwuz1_plus__deref_pwuz2
-ldy #0
-clc
-lda ({z1}),y
-adc ({z2}),y
-pha
-iny
-lda ({z1}),y
-adc ({z2}),y
-sta {z1}+1
-pla
-sta {z1}
-//FRAGMENT pbuz1=pbuz2_plus__deref_pwuz1
-ldy #0
-clc
-lda ({z1}),y
-adc {z2}
-pha
-iny
-lda ({z1}),y
-adc {z2}+1
-sta {z1}+1
-pla
-sta {z1}

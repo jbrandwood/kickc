@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE df9b88c62 df9b8b138
+//KICKC FRAGMENT CACHE e65dd24b5 e65dd4993
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -8935,6 +8935,16 @@ bcc {la1}
 lda {c1}
 cmp #{c2}
 bcs {la1}
+//FRAGMENT _deref_pbum1=_inc__deref_pbum1
+ldy {m1}
+sty $fe
+ldy {m1}+1
+sty $ff
+ldy #0
+lda ($fe),y
+clc
+adc #1
+sta ($fe),y
 //FRAGMENT pwuz1=pwuc1
 lda #<{c1}
 sta {z1}

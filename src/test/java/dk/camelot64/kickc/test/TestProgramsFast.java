@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testTmpZpProblem() throws IOException {
+      compileAndCompare("tmp-zp-problem.c", log());
+   }
+
+   @Test
    public void testConstBoolReturnProblem() throws IOException {
       compileAndCompare("const-bool-return-problem.c");
    }

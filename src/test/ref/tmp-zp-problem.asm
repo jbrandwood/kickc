@@ -74,6 +74,7 @@ main: {
     jmp __b1
   __b3:
     // char k = i+j
+    // i and j are put into X/Y. The A=X+Y fragment uses $ff as temporary storage.
     txa
     sty.z $ff
     clc

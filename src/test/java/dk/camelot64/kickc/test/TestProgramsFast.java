@@ -11,7 +11,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testTmpZpProblem() throws IOException {
-      compileAndCompare("tmp-zp-problem.c", log());
+      compileAndCompare("tmp-zp-problem.c");
    }
 
    @Test

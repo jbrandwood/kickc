@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE cabdd9118 cabddb616
+//KICKC FRAGMENT CACHE d15657331 d1565983c
 //FRAGMENT vbuz1=vbuc1
 ldz #{c1}
 stz {z1}

@@ -1,0 +1,207 @@
+Inlined call call __init
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  SCREEN[0] = MSG1
+  SCREEN[1] = MSG2
+  SCREEN[2] = MSG3
+  SCREEN[3] = MSG4
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char MSG1 = 'a'
+__constant char MSG2 = 'b'
+__constant char MSG3 = 'c'
+__constant char MSG4 = '刺'
+__constant char *SCREEN = (char *)$400
+void __start()
+void main()
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = MSG1
+Adding number conversion cast (unumber) 1 in SCREEN[1] = MSG2
+Adding number conversion cast (unumber) 2 in SCREEN[2] = MSG3
+Adding number conversion cast (unumber) 3 in SCREEN[3] = MSG4
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = MSG1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(SCREEN+1)
+Consolidated array index constant in *(SCREEN+2)
+Consolidated array index constant in *(SCREEN+3)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SCREEN = MSG1
+  [1] *(SCREEN+1) = MSG2
+  [2] *(SCREEN+2) = MSG3
+  [3] *(SCREEN+3) = MSG4
+  to:main::@return
+main::@return: scope:[main]  from main
+  [4] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SCREEN = MSG1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = MSG2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+2) = MSG3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *(SCREEN+3) = MSG4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 33 combination 
+Uplifting [] best 33 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test octal escapes in chars
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const MSG1 = 'a'
+  .const MSG2 = 'b'
+  .const MSG3 = 'c'
+  .const MSG4 = '\$ff'
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *SCREEN = MSG1 -- _deref_pbuc1=vbuc2 
+    lda #MSG1
+    sta SCREEN
+    // [1] *(SCREEN+1) = MSG2 -- _deref_pbuc1=vbuc2 
+    lda #MSG2
+    sta SCREEN+1
+    // [2] *(SCREEN+2) = MSG3 -- _deref_pbuc1=vbuc2 
+    lda #MSG3
+    sta SCREEN+2
+    // [3] *(SCREEN+3) = MSG4 -- _deref_pbuc1=vbuc2 
+    lda #MSG4
+    sta SCREEN+3
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char MSG1 = 'a'
+__constant char MSG2 = 'b'
+__constant char MSG3 = 'c'
+__constant char MSG4 = '刺'
+__constant char *SCREEN = (char *) 1024
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+  // File Comments
+// Test octal escapes in chars
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const MSG1 = 'a'
+  .const MSG2 = 'b'
+  .const MSG3 = 'c'
+  .const MSG4 = '\$ff'
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[0] = MSG1
+    // [0] *SCREEN = MSG1 -- _deref_pbuc1=vbuc2 
+    lda #MSG1
+    sta SCREEN
+    // SCREEN[1] = MSG2
+    // [1] *(SCREEN+1) = MSG2 -- _deref_pbuc1=vbuc2 
+    lda #MSG2
+    sta SCREEN+1
+    // SCREEN[2] = MSG3
+    // [2] *(SCREEN+2) = MSG3 -- _deref_pbuc1=vbuc2 
+    lda #MSG3
+    sta SCREEN+2
+    // SCREEN[3] = MSG4
+    // [3] *(SCREEN+3) = MSG4 -- _deref_pbuc1=vbuc2 
+    lda #MSG4
+    sta SCREEN+3
+    // main::@return
+    // }
+    // [4] return 
+    rts
+}
+  // File Data
+

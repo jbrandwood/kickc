@@ -3,8 +3,9 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.CompileError;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.PrimitiveIterator;
+import java.util.stream.Collectors;
 
 /** String encoding. */
 public enum StringEncoding {
@@ -15,8 +16,7 @@ public enum StringEncoding {
    SCREENCODE_UPPER("screencode_upper", "screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper),
    ASCII("ascii", "ascii", "as", CharToPetsciiConverter.charToAscii),
    ATASCII("atascii", null, "at", CharToAtasciiConverter.charToAtascii),
-   SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari)
-   ;
+   SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari);
 
    /** Char value used to encode \xnn chars without a value within the chosen encoding. A char C is  encoded as CHAR_SPECIAL_VAL+C */
    public static final char CHAR_SPECIAL_VAL = 64000;
@@ -136,9 +136,9 @@ public enum StringEncoding {
     */
    public String escapeToAscii(String stringValue) {
       StringBuilder stringResult = new StringBuilder();
-      final PrimitiveIterator.OfInt escapedIterator = stringValue.chars().iterator();
-      while(escapedIterator.hasNext()) {
-         stringResult.append(escapeToAsciiFirst(escapedIterator));
+      final LinkedList<Integer> escapedChars = new LinkedList<>(stringValue.chars().boxed().collect(Collectors.toList()));
+      while(!escapedChars.isEmpty()) {
+         stringResult.append(escapeToAsciiFirst(escapedChars));
       }
       return stringResult.toString();
    }
@@ -151,13 +151,13 @@ public enum StringEncoding {
     * @param escapedCharsIterator The characters of the string to parse one char from. The iterator is moved beyond any handled chars.
     * @return The first ASCII character of the list.
     */
-   public char escapeToAsciiFirst(PrimitiveIterator.OfInt escapedCharsIterator) {
-      char stringChar = (char) escapedCharsIterator.nextInt();
+   public char escapeToAsciiFirst(LinkedList<Integer> escapedCharsIterator) {
+      char stringChar = (char) escapedCharsIterator.pop().intValue();
       if(stringChar != '\\')
          return stringChar;
       // Escape started - handle it!
-      if(!escapedCharsIterator.hasNext()) throw new CompileError("Unfinished string escape sequence at end of string");
-      char escapeChar = (char) escapedCharsIterator.nextInt();
+      if(escapedCharsIterator.isEmpty()) throw new CompileError("Unfinished string escape sequence at end of string");
+      char escapeChar = (char) escapedCharsIterator.pop().intValue();
       switch(escapeChar) {
          case 'n':
             return '\n';
@@ -165,8 +165,6 @@ public enum StringEncoding {
             return '\r';
          case 'f':
             return '\f';
-         case '0':
-            return '\0';
          case '"':
             return '"';
          case '\'':
@@ -175,10 +173,28 @@ public enum StringEncoding {
             return '\\';
          case 'x':
             String hexNum = "";
-            hexNum += (char) escapedCharsIterator.nextInt();
-            hexNum += (char) escapedCharsIterator.nextInt();
+            hexNum += (char) escapedCharsIterator.pop().intValue();
+            hexNum += (char) escapedCharsIterator.pop().intValue();
             final byte hexEncoding = (byte) Integer.parseInt(hexNum, 16);
             return charFromEncoded(hexEncoding);
+         case '0':
+         case '1':
+         case '2':
+         case '3':
+         case '4':
+         case '5':
+         case '6':
+         case '7':
+            String octalNum = "" + escapeChar;
+            while(octalNum.length() < 3) {
+               final Integer peek = escapedCharsIterator.peek();
+               if(peek != null && peek >= '0' && peek <= '7') {
+                  octalNum += (char) escapedCharsIterator.pop().intValue();
+               } else
+                  break;
+            }
+            final byte octalEncoding = (byte) Integer.parseInt(octalNum, 8);
+            return charFromEncoded(octalEncoding);
          default:
             throw new CompileError("Illegal string escape sequence \\" + escapeChar);
       }

@@ -9,6 +9,7 @@ import java.io.IOException;
  */
 public class TestProgramsFast extends TestPrograms {
 
+
    @Test
    public void testTmpZpProblem() throws IOException {
       compileAndCompare("tmp-zp-problem.c");
@@ -1674,6 +1675,21 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testStringEscapesErr0() throws IOException {
       assertError("string-escapes-err-0.c", "Unfinished string escape sequence at end of string");
+   }
+
+   @Test
+   public void testStringEscapes10() throws IOException {
+      compileAndCompare("string-escapes-10.c");
+   }
+
+   @Test
+   public void testStringEscapes9() throws IOException {
+      compileAndCompare("string-escapes-9.c");
+   }
+
+   @Test
+   public void testStringEscapes8() throws IOException {
+      compileAndCompare("string-escapes-8.c");
    }
 
    @Test

@@ -10,6 +10,7 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    /* Fix problem where removing empty method can cause NPE (because a local variable in the method is still used)
+   https://gitlab.com/camelot/kickc/-/issues/724
    @Test
    public void testStructOptimizeProblem() throws IOException {
       compileAndCompare("struct-optimize-problem.c",log().verboseSSAOptimize());

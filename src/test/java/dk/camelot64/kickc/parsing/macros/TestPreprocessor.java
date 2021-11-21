@@ -6,6 +6,7 @@ import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -215,6 +216,23 @@ public class TestPreprocessor {
       assertEquals("(&(call(name:PEEK,+(name:VIC_BASE,num:0x31)),num:128));", parse("#define IS_H640 (PEEK(VIC_BASE + 0x31) & 128)\nIS_H640;"));
    }
 
+   /**
+    * Test define with stringize
+    */
+   @Test
+   public void testStringize() {
+      // A simple define with one stringized parameter
+      assertEquals("str:\"b\";", parse("#define A(a) #a \nA(b);"));
+      // A simple define with one stringized parameter
+      assertEquals("str:\"two words\";", parse("#define A(a) #a \nA(two words);"));
+      // A simple define with one spaced  stringized parameter
+      assertEquals("str:\" two words \";", parse("#define A(a) #a \nA( two words );"));
+      // Concatenating string with stringized macro
+      assertEquals("str:\"qwe\"\"asd\";", parse("#define A(a) #a \n \"qwe\" A(asd);"));
+      // Complex concat with a path - from Kernighan&Ritchie
+      assertEquals("str:\"/usr/tmp\"\"%s\";", parse("#define tempfile(dir) #dir \"%s\" \n tempfile(/usr/tmp);"));
+   }
+
    private void assertError(String program, String expectError, boolean expectLineNumber) {
       try {
          parse(program);
@@ -274,6 +292,15 @@ public class TestPreprocessor {
       @Override
       public Object visitExprNumber(KickCParser.ExprNumberContext ctx) {
          return out.append("num:").append(ctx.NUMBER().getText());
+      }
+
+      @Override
+      public Object visitExprString(KickCParser.ExprStringContext ctx) {
+         out.append("str:");
+         for(TerminalNode terminalNode : ctx.STRING()) {
+            out.append(terminalNode.getText());
+         }
+         return null;
       }
 
       @Override

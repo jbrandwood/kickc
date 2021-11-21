@@ -50,20 +50,23 @@ public class CPreprocessor implements TokenSource {
       }
 
       /** Does the macro have any parameters */
-      boolean hasParameters() { return parameters!=null; }
+      boolean hasParameters() {
+         return parameters != null;
+      }
 
       /** Does the macro have a specific parameter */
       boolean hasParameter(String param) {
-         return parameters!=null && parameters.contains(param);
+         return parameters != null && parameters.contains(param);
       }
 
       /**
        * Get the index of a specific parameter in the parameter list
+       *
        * @param param The parameter name to look for
        * @return The index of the parameter in the list. -1 if the passed name is not a parameter.
        */
       private int getParameterIndex(String param) {
-         if(parameters==null)
+         if(parameters == null)
             return -1;
          return parameters.indexOf(param);
       }
@@ -225,17 +228,17 @@ public class CPreprocessor implements TokenSource {
       // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
       if(pragmaBodyStart.getType() != KickCLexer.PAR_BEGIN) {
          ArrayList<Token> parenthesizedBody = new ArrayList<>();
-         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "(" ));
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "("));
          // Parenthesize the parameter list
          boolean first = true;
          for(Token token : pragmaBody) {
             if(token.getChannel() != CParser.CHANNEL_WHITESPACE && !first) {
-               parenthesizedBody.add(new CommonToken(KickCLexer.COMMA, "," ));
+               parenthesizedBody.add(new CommonToken(KickCLexer.COMMA, ","));
             }
             parenthesizedBody.add(token);
             first = false;
          }
-         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")" ));
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")"));
          pragmaBody = parenthesizedBody;
       }
       pragmaTokens.addAll(pragmaBody);
@@ -353,10 +356,10 @@ public class CPreprocessor implements TokenSource {
                // Skip '('
                skipWhitespace(cTokenSource);
                final Token nextToken = cTokenSource.peekToken();
-               if(nextToken.getType()!=KickCLexer.PAR_BEGIN) {
+               if(nextToken.getType() != KickCLexer.PAR_BEGIN) {
                   // The macro has parameters - but the expansion has no parameters - add the name directly to the output
                   return false;
-               }  else {
+               } else {
                   // Gobble the parenthesis
                   cTokenSource.nextToken();
                }
@@ -364,7 +367,7 @@ public class CPreprocessor implements TokenSource {
                List<Token> paramValue = new ArrayList<>();
                int nesting = 1;
                while(true) {
-                  skipWhitespace(cTokenSource);
+                  //skipWhitespace(cTokenSource);
                   final Token paramToken = cTokenSource.nextToken();
                   if(paramToken.getType() == KickCLexer.PAR_END && nesting == 1) {
                      // We reached the end of the parameters - add the current param unless it is an empty parameter alone in the list
@@ -417,6 +420,21 @@ public class CPreprocessor implements TokenSource {
                for(Token expandedParamValueToken : expandedParamValue) {
                   addTokenToExpandedBody(expandedParamValueToken, macroNameToken, expandedBody);
                }
+            } else if(macroBodyToken.getType() == KickCLexer.TOKEN_STRINGIZE) {
+               final String paramName = macroBodyToken.getText().substring(1);
+               if(!macro.hasParameter(paramName)) throw new CompileError("Expected macro parameter name after '#'", macroBodyToken);
+               // body token is a parameter name - replace with stringized expanded parameter value
+               final int paramIndex = macro.getParameterIndex(paramName);
+               final List<Token> expandedParamValue = paramValues.get(paramIndex);
+               StringBuilder stringized = new StringBuilder();
+               for(Token expandedParamValueToken : expandedParamValue) {
+                  //if(stringized.length()>0) stringized.append(" ");
+                  stringized.append(expandedParamValueToken.getText());
+               }
+               CommonToken stringToken = new CommonToken(KickCLexer.STRING);
+               stringToken.setText("\""+stringized.toString()+"\"");
+               stringToken.setChannel(macroBodyToken.getChannel());
+               addTokenToExpandedBody(stringToken, macroNameToken, expandedBody);
             } else {
                // body token is a normal token 
                addTokenToExpandedBody(macroBodyToken, macroNameToken, expandedBody);

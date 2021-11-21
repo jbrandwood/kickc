@@ -118,6 +118,8 @@ ELIF: '#elif' ;
 IFELSE: '#else' ;
 ENDIF: '#endif' ;
 ERROR: '#error' ;
+TOKEN_STRINGIZE: '#' NAME;
+TOKEN_MERGE: '#' NAME;
 
 // Numbers
 NUMBER : NUMFLOAT | NUMINT ;

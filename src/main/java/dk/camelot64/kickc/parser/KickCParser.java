@@ -34,19 +34,20 @@ public class KickCParser extends Parser {
 		KICKASM=76, LOGIC_NOT=77, SIMPLETYPE=78, BOOLEAN=79, KICKASM_BODY=80, 
 		IMPORT=81, INCLUDE=82, PRAGMA=83, DEFINE=84, DEFINE_CONTINUE=85, UNDEF=86, 
 		IFDEF=87, IFNDEF=88, IFIF=89, ELIF=90, IFELSE=91, ENDIF=92, ERROR=93, 
-		NUMBER=94, NUMFLOAT=95, BINFLOAT=96, DECFLOAT=97, HEXFLOAT=98, NUMINT=99, 
-		BININTEGER=100, DECINTEGER=101, HEXINTEGER=102, NAME=103, STRING=104, 
-		CHAR=105, WS=106, COMMENT_LINE=107, COMMENT_BLOCK=108, ASM_BYTE=109, ASM_MNEMONIC=110, 
-		ASM_IMM=111, ASM_COLON=112, ASM_COMMA=113, ASM_PAR_BEGIN=114, ASM_PAR_END=115, 
-		ASM_BRACKET_BEGIN=116, ASM_BRACKET_END=117, ASM_DOT=118, ASM_SHIFT_LEFT=119, 
-		ASM_SHIFT_RIGHT=120, ASM_PLUS=121, ASM_MINUS=122, ASM_LESS_THAN=123, ASM_GREATER_THAN=124, 
-		ASM_MULTIPLY=125, ASM_DIVIDE=126, ASM_CURLY_BEGIN=127, ASM_CURLY_END=128, 
-		ASM_NUMBER=129, ASM_NUMFLOAT=130, ASM_BINFLOAT=131, ASM_DECFLOAT=132, 
-		ASM_HEXFLOAT=133, ASM_NUMINT=134, ASM_BININTEGER=135, ASM_DECINTEGER=136, 
-		ASM_HEXINTEGER=137, ASM_CHAR=138, ASM_MULTI_REL=139, ASM_MULTI_NAME=140, 
-		ASM_NAME=141, ASM_TAG=142, ASM_WS=143, ASM_COMMENT_LINE=144, ASM_COMMENT_BLOCK=145, 
-		IMPORT_SYSTEMFILE=146, IMPORT_LOCALFILE=147, IMPORT_WS=148, IMPORT_COMMENT_LINE=149, 
-		IMPORT_COMMENT_BLOCK=150;
+		TOKEN_STRINGIZE=94, TOKEN_MERGE=95, NUMBER=96, NUMFLOAT=97, BINFLOAT=98, 
+		DECFLOAT=99, HEXFLOAT=100, NUMINT=101, BININTEGER=102, DECINTEGER=103, 
+		HEXINTEGER=104, NAME=105, STRING=106, CHAR=107, WS=108, COMMENT_LINE=109, 
+		COMMENT_BLOCK=110, ASM_BYTE=111, ASM_MNEMONIC=112, ASM_IMM=113, ASM_COLON=114, 
+		ASM_COMMA=115, ASM_PAR_BEGIN=116, ASM_PAR_END=117, ASM_BRACKET_BEGIN=118, 
+		ASM_BRACKET_END=119, ASM_DOT=120, ASM_SHIFT_LEFT=121, ASM_SHIFT_RIGHT=122, 
+		ASM_PLUS=123, ASM_MINUS=124, ASM_LESS_THAN=125, ASM_GREATER_THAN=126, 
+		ASM_MULTIPLY=127, ASM_DIVIDE=128, ASM_CURLY_BEGIN=129, ASM_CURLY_END=130, 
+		ASM_NUMBER=131, ASM_NUMFLOAT=132, ASM_BINFLOAT=133, ASM_DECFLOAT=134, 
+		ASM_HEXFLOAT=135, ASM_NUMINT=136, ASM_BININTEGER=137, ASM_DECINTEGER=138, 
+		ASM_HEXINTEGER=139, ASM_CHAR=140, ASM_MULTI_REL=141, ASM_MULTI_NAME=142, 
+		ASM_NAME=143, ASM_TAG=144, ASM_WS=145, ASM_COMMENT_LINE=146, ASM_COMMENT_BLOCK=147, 
+		IMPORT_SYSTEMFILE=148, IMPORT_LOCALFILE=149, IMPORT_WS=150, IMPORT_COMMENT_LINE=151, 
+		IMPORT_COMMENT_BLOCK=152;
 	public static final int
 		RULE_file = 0, RULE_asmFile = 1, RULE_declSeq = 2, RULE_decl = 3, RULE_declVariables = 4, 
 		RULE_declaratorInitList = 5, RULE_declaratorInit = 6, RULE_typeDef = 7, 
@@ -91,7 +92,7 @@ public class KickCParser extends Parser {
 			null, "'#import'", "'#include'", "'#pragma'", "'#define'", null, "'#undef'", 
 			"'#ifdef'", "'#ifndef'", "'#if'", "'#elif'", "'#else'", "'#endif'", "'#error'", 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, "'.byte'", null, "'#'"
+			null, null, null, null, null, "'.byte'", null, "'#'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -111,17 +112,18 @@ public class KickCParser extends Parser {
 			"TYPEID", "DEFINED", "KICKASM", "LOGIC_NOT", "SIMPLETYPE", "BOOLEAN", 
 			"KICKASM_BODY", "IMPORT", "INCLUDE", "PRAGMA", "DEFINE", "DEFINE_CONTINUE", 
 			"UNDEF", "IFDEF", "IFNDEF", "IFIF", "ELIF", "IFELSE", "ENDIF", "ERROR", 
-			"NUMBER", "NUMFLOAT", "BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", 
-			"DECINTEGER", "HEXINTEGER", "NAME", "STRING", "CHAR", "WS", "COMMENT_LINE", 
-			"COMMENT_BLOCK", "ASM_BYTE", "ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", 
-			"ASM_COMMA", "ASM_PAR_BEGIN", "ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", 
-			"ASM_DOT", "ASM_SHIFT_LEFT", "ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", 
-			"ASM_LESS_THAN", "ASM_GREATER_THAN", "ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", 
-			"ASM_CURLY_END", "ASM_NUMBER", "ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", 
-			"ASM_HEXFLOAT", "ASM_NUMINT", "ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", 
-			"ASM_CHAR", "ASM_MULTI_REL", "ASM_MULTI_NAME", "ASM_NAME", "ASM_TAG", 
-			"ASM_WS", "ASM_COMMENT_LINE", "ASM_COMMENT_BLOCK", "IMPORT_SYSTEMFILE", 
-			"IMPORT_LOCALFILE", "IMPORT_WS", "IMPORT_COMMENT_LINE", "IMPORT_COMMENT_BLOCK"
+			"TOKEN_STRINGIZE", "TOKEN_MERGE", "NUMBER", "NUMFLOAT", "BINFLOAT", "DECFLOAT", 
+			"HEXFLOAT", "NUMINT", "BININTEGER", "DECINTEGER", "HEXINTEGER", "NAME", 
+			"STRING", "CHAR", "WS", "COMMENT_LINE", "COMMENT_BLOCK", "ASM_BYTE", 
+			"ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", 
+			"ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", 
+			"ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", 
+			"ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", 
+			"ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", 
+			"ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", "ASM_CHAR", "ASM_MULTI_REL", 
+			"ASM_MULTI_NAME", "ASM_NAME", "ASM_TAG", "ASM_WS", "ASM_COMMENT_LINE", 
+			"ASM_COMMENT_BLOCK", "IMPORT_SYSTEMFILE", "IMPORT_LOCALFILE", "IMPORT_WS", 
+			"IMPORT_COMMENT_LINE", "IMPORT_COMMENT_BLOCK"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -5956,7 +5958,7 @@ public class KickCParser extends Parser {
 			setState(695);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (((((_la - 109)) & ~0x3f) == 0 && ((1L << (_la - 109)) & ((1L << (ASM_BYTE - 109)) | (1L << (ASM_MNEMONIC - 109)) | (1L << (ASM_CURLY_BEGIN - 109)) | (1L << (ASM_MULTI_NAME - 109)) | (1L << (ASM_NAME - 109)))) != 0)) {
+			while (((((_la - 111)) & ~0x3f) == 0 && ((1L << (_la - 111)) & ((1L << (ASM_BYTE - 111)) | (1L << (ASM_MNEMONIC - 111)) | (1L << (ASM_CURLY_BEGIN - 111)) | (1L << (ASM_MULTI_NAME - 111)) | (1L << (ASM_NAME - 111)))) != 0)) {
 				{
 				{
 				setState(692);
@@ -6987,7 +6989,7 @@ public class KickCParser extends Parser {
 				_prevctx = _localctx;
 				setState(808);
 				_la = _input.LA(1);
-				if ( !(((((_la - 121)) & ~0x3f) == 0 && ((1L << (_la - 121)) & ((1L << (ASM_PLUS - 121)) | (1L << (ASM_MINUS - 121)) | (1L << (ASM_LESS_THAN - 121)) | (1L << (ASM_GREATER_THAN - 121)))) != 0)) ) {
+				if ( !(((((_la - 123)) & ~0x3f) == 0 && ((1L << (_la - 123)) & ((1L << (ASM_PLUS - 123)) | (1L << (ASM_MINUS - 123)) | (1L << (ASM_LESS_THAN - 123)) | (1L << (ASM_GREATER_THAN - 123)))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -7269,7 +7271,7 @@ public class KickCParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u0098\u0347\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u009a\u0347\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -7329,14 +7331,14 @@ public class KickCParser extends Parser {
 		"\u0334\n/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\7/\u0342\n/\f/\16/\u0345"+
 		"\13/\3/\2\t\f\26\30&DF\\\60\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \""+
 		"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\\2\r\3\2HI\3\2\27\30\5\2\22\23\31"+
-		"\32OO\3\2\35\36\3\2\24\26\3\2\22\23\3\2\37$\3\2{~\3\2yz\3\2\177\u0080"+
-		"\3\2{|\2\u03c2\2^\3\2\2\2\4a\3\2\2\2\6g\3\2\2\2\bx\3\2\2\2\nz\3\2\2\2"+
-		"\f}\3\2\2\2\16\u0091\3\2\2\2\20\u0093\3\2\2\2\22\u009b\3\2\2\2\24\u00a5"+
-		"\3\2\2\2\26\u00b5\3\2\2\2\30\u00d7\3\2\2\2\32\u00f4\3\2\2\2\34\u00f6\3"+
-		"\2\2\2\36\u00f9\3\2\2\2 \u0105\3\2\2\2\"\u0108\3\2\2\2$\u010b\3\2\2\2"+
-		"&\u0113\3\2\2\2(\u011e\3\2\2\2*\u0123\3\2\2\2,\u012b\3\2\2\2.\u0138\3"+
-		"\2\2\2\60\u013a\3\2\2\2\62\u014e\3\2\2\2\64\u017d\3\2\2\2\66\u0180\3\2"+
-		"\2\28\u01de\3\2\2\2:\u01e1\3\2\2\2<\u01ec\3\2\2\2>\u0202\3\2\2\2@\u0208"+
+		"\32OO\3\2\35\36\3\2\24\26\3\2\22\23\3\2\37$\3\2}\u0080\3\2{|\3\2\u0081"+
+		"\u0082\3\2}~\2\u03c2\2^\3\2\2\2\4a\3\2\2\2\6g\3\2\2\2\bx\3\2\2\2\nz\3"+
+		"\2\2\2\f}\3\2\2\2\16\u0091\3\2\2\2\20\u0093\3\2\2\2\22\u009b\3\2\2\2\24"+
+		"\u00a5\3\2\2\2\26\u00b5\3\2\2\2\30\u00d7\3\2\2\2\32\u00f4\3\2\2\2\34\u00f6"+
+		"\3\2\2\2\36\u00f9\3\2\2\2 \u0105\3\2\2\2\"\u0108\3\2\2\2$\u010b\3\2\2"+
+		"\2&\u0113\3\2\2\2(\u011e\3\2\2\2*\u0123\3\2\2\2,\u012b\3\2\2\2.\u0138"+
+		"\3\2\2\2\60\u013a\3\2\2\2\62\u014e\3\2\2\2\64\u017d\3\2\2\2\66\u0180\3"+
+		"\2\2\28\u01de\3\2\2\2:\u01e1\3\2\2\2<\u01ec\3\2\2\2>\u0202\3\2\2\2@\u0208"+
 		"\3\2\2\2B\u020a\3\2\2\2D\u020c\3\2\2\2F\u0254\3\2\2\2H\u0295\3\2\2\2J"+
 		"\u029d\3\2\2\2L\u02a3\3\2\2\2N\u02b4\3\2\2\2P\u02b9\3\2\2\2R\u02bf\3\2"+
 		"\2\2T\u02db\3\2\2\2V\u02dd\3\2\2\2X\u02e7\3\2\2\2Z\u0323\3\2\2\2\\\u0333"+
@@ -7370,7 +7372,7 @@ public class KickCParser extends Parser {
 		"\2\u00c0\u00c1\3\2\2\2\u00c1\u00c2\3\2\2\2\u00c2\u00c4\7\7\2\2\u00c3\u00b7"+
 		"\3\2\2\2\u00c3\u00bd\3\2\2\2\u00c4\u00c7\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c5"+
 		"\u00c6\3\2\2\2\u00c6\27\3\2\2\2\u00c7\u00c5\3\2\2\2\u00c8\u00c9\b\r\1"+
-		"\2\u00c9\u00ca\7i\2\2\u00ca\u00d8\b\r\1\2\u00cb\u00cf\7\24\2\2\u00cc\u00ce"+
+		"\2\u00c9\u00ca\7k\2\2\u00ca\u00d8\b\r\1\2\u00cb\u00cf\7\24\2\2\u00cc\u00ce"+
 		"\5\64\33\2\u00cd\u00cc\3\2\2\2\u00ce\u00d1\3\2\2\2\u00cf\u00cd\3\2\2\2"+
 		"\u00cf\u00d0\3\2\2\2\u00d0\u00d2\3\2\2\2\u00d1\u00cf\3\2\2\2\u00d2\u00d8"+
 		"\5\30\r\4\u00d3\u00d4\7\b\2\2\u00d4\u00d5\5\30\r\2\u00d5\u00d6\7\t\2\2"+
@@ -7386,19 +7388,19 @@ public class KickCParser extends Parser {
 		"\u00f5\5\36\20\2\u00f0\u00f5\5\34\17\2\u00f1\u00f5\5$\23\2\u00f2\u00f5"+
 		"\5\"\22\2\u00f3\u00f5\7\3\2\2\u00f4\u00eb\3\2\2\2\u00f4\u00ef\3\2\2\2"+
 		"\u00f4\u00f0\3\2\2\2\u00f4\u00f1\3\2\2\2\u00f4\u00f2\3\2\2\2\u00f4\u00f3"+
-		"\3\2\2\2\u00f5\33\3\2\2\2\u00f6\u00f7\t\2\2\2\u00f7\u00f8\7i\2\2\u00f8"+
-		"\35\3\2\2\2\u00f9\u00fb\t\2\2\2\u00fa\u00fc\7i\2\2\u00fb\u00fa\3\2\2\2"+
+		"\3\2\2\2\u00f5\33\3\2\2\2\u00f6\u00f7\t\2\2\2\u00f7\u00f8\7k\2\2\u00f8"+
+		"\35\3\2\2\2\u00f9\u00fb\t\2\2\2\u00fa\u00fc\7k\2\2\u00fb\u00fa\3\2\2\2"+
 		"\u00fb\u00fc\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u00ff\7\4\2\2\u00fe\u0100"+
 		"\5 \21\2\u00ff\u00fe\3\2\2\2\u0100\u0101\3\2\2\2\u0101\u00ff\3\2\2\2\u0101"+
 		"\u0102\3\2\2\2\u0102\u0103\3\2\2\2\u0103\u0104\7\5\2\2\u0104\37\3\2\2"+
 		"\2\u0105\u0106\5\n\6\2\u0106\u0107\7\n\2\2\u0107!\3\2\2\2\u0108\u0109"+
-		"\7J\2\2\u0109\u010a\7i\2\2\u010a#\3\2\2\2\u010b\u010d\7J\2\2\u010c\u010e"+
-		"\7i\2\2\u010d\u010c\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f"+
+		"\7J\2\2\u0109\u010a\7k\2\2\u010a#\3\2\2\2\u010b\u010d\7J\2\2\u010c\u010e"+
+		"\7k\2\2\u010d\u010c\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f"+
 		"\u0110\7\4\2\2\u0110\u0111\5&\24\2\u0111\u0112\7\5\2\2\u0112%\3\2\2\2"+
 		"\u0113\u0114\b\24\1\2\u0114\u0115\5(\25\2\u0115\u011b\3\2\2\2\u0116\u0117"+
 		"\f\3\2\2\u0117\u0118\7\f\2\2\u0118\u011a\5(\25\2\u0119\u0116\3\2\2\2\u011a"+
 		"\u011d\3\2\2\2\u011b\u0119\3\2\2\2\u011b\u011c\3\2\2\2\u011c\'\3\2\2\2"+
-		"\u011d\u011b\3\2\2\2\u011e\u0121\7i\2\2\u011f\u0120\7\'\2\2\u0120\u0122"+
+		"\u011d\u011b\3\2\2\2\u011e\u0121\7k\2\2\u011f\u0120\7\'\2\2\u0120\u0122"+
 		"\5F$\2\u0121\u011f\3\2\2\2\u0121\u0122\3\2\2\2\u0122)\3\2\2\2\u0123\u0124"+
 		"\5\22\n\2\u0124\u0125\5\30\r\2\u0125\u0127\7\4\2\2\u0126\u0128\5\66\34"+
 		"\2\u0127\u0126\3\2\2\2\u0127\u0128\3\2\2\2\u0128\u0129\3\2\2\2\u0129\u012a"+
@@ -7407,23 +7409,23 @@ public class KickCParser extends Parser {
 		"\2\2\u0130\u0131\3\2\2\2\u0131-\3\2\2\2\u0132\u0130\3\2\2\2\u0133\u0134"+
 		"\5\22\n\2\u0134\u0135\5\30\r\2\u0135\u0139\3\2\2\2\u0136\u0139\5\24\13"+
 		"\2\u0137\u0139\7\16\2\2\u0138\u0133\3\2\2\2\u0138\u0136\3\2\2\2\u0138"+
-		"\u0137\3\2\2\2\u0139/\3\2\2\2\u013a\u013b\7U\2\2\u013b\u013c\7i\2\2\u013c"+
+		"\u0137\3\2\2\2\u0139/\3\2\2\2\u013a\u013b\7U\2\2\u013b\u013c\7k\2\2\u013c"+
 		"\u013d\7\b\2\2\u013d\u0142\5\62\32\2\u013e\u013f\7\f\2\2\u013f\u0141\5"+
 		"\62\32\2\u0140\u013e\3\2\2\2\u0141\u0144\3\2\2\2\u0142\u0140\3\2\2\2\u0142"+
 		"\u0143\3\2\2\2\u0143\u0145\3\2\2\2\u0144\u0142\3\2\2\2\u0145\u0146\7\t"+
-		"\2\2\u0146\61\3\2\2\2\u0147\u014f\7`\2\2\u0148\u0149\7`\2\2\u0149\u014a"+
-		"\7\r\2\2\u014a\u014f\7`\2\2\u014b\u014f\7i\2\2\u014c\u014f\7j\2\2\u014d"+
+		"\2\2\u0146\61\3\2\2\2\u0147\u014f\7b\2\2\u0148\u0149\7b\2\2\u0149\u014a"+
+		"\7\r\2\2\u014a\u014f\7b\2\2\u014b\u014f\7k\2\2\u014c\u014f\7l\2\2\u014d"+
 		"\u014f\7:\2\2\u014e\u0147\3\2\2\2\u014e\u0148\3\2\2\2\u014e\u014b\3\2"+
 		"\2\2\u014e\u014c\3\2\2\2\u014e\u014d\3\2\2\2\u014f\63\3\2\2\2\u0150\u017e"+
-		"\7*\2\2\u0151\u0152\7-\2\2\u0152\u0153\7\b\2\2\u0153\u0154\7`\2\2\u0154"+
+		"\7*\2\2\u0151\u0152\7-\2\2\u0152\u0153\7\b\2\2\u0153\u0154\7b\2\2\u0154"+
 		"\u017e\7\t\2\2\u0155\u0159\7\62\2\2\u0156\u0157\7\b\2\2\u0157\u0158\7"+
-		"i\2\2\u0158\u015a\7\t\2\2\u0159\u0156\3\2\2\2\u0159\u015a\3\2\2\2\u015a"+
+		"k\2\2\u0158\u015a\7\t\2\2\u0159\u0156\3\2\2\2\u0159\u015a\3\2\2\2\u015a"+
 		"\u017e\3\2\2\2\u015b\u017e\7\65\2\2\u015c\u017e\7\66\2\2\u015d\u015e\7"+
 		"\64\2\2\u015e\u015f\7\b\2\2\u015f\u0160\5F$\2\u0160\u0161\7\t\2\2\u0161"+
 		"\u017e\3\2\2\2\u0162\u017e\7/\2\2\u0163\u017e\7\60\2\2\u0164\u017e\7\67"+
 		"\2\2\u0165\u017e\78\2\2\u0166\u017e\7+\2\2\u0167\u017e\7,\2\2\u0168\u017e"+
 		"\7.\2\2\u0169\u017e\79\2\2\u016a\u016e\7\61\2\2\u016b\u016c\7\b\2\2\u016c"+
-		"\u016d\7i\2\2\u016d\u016f\7\t\2\2\u016e\u016b\3\2\2\2\u016e\u016f\3\2"+
+		"\u016d\7k\2\2\u016d\u016f\7\t\2\2\u016e\u016b\3\2\2\2\u016e\u016f\3\2"+
 		"\2\2\u016f\u017e\3\2\2\2\u0170\u0171\7\63\2\2\u0171\u0172\7\b\2\2\u0172"+
 		"\u0177\5\62\32\2\u0173\u0174\7\f\2\2\u0174\u0176\5\62\32\2\u0175\u0173"+
 		"\3\2\2\2\u0176\u0179\3\2\2\2\u0177\u0175\3\2\2\2\u0177\u0178\3\2\2\2\u0178"+
@@ -7459,9 +7461,9 @@ public class KickCParser extends Parser {
 		"\u01ca\3\2\2\2\u01ca\u01df\7\n\2\2\u01cb\u01cc\7B\2\2\u01cc\u01df\7\n"+
 		"\2\2\u01cd\u01ce\7C\2\2\u01ce\u01df\7\n\2\2\u01cf\u01d1\7E\2\2\u01d0\u01d2"+
 		"\5L\'\2\u01d1\u01d0\3\2\2\2\u01d1\u01d2\3\2\2\2\u01d2\u01d3\3\2\2\2\u01d3"+
-		"\u01d4\7\4\2\2\u01d4\u01d5\5P)\2\u01d5\u01d6\7\u0082\2\2\u01d6\u01df\3"+
-		"\2\2\2\u01d7\u01df\5J&\2\u01d8\u01df\7\n\2\2\u01d9\u01da\7i\2\2\u01da"+
-		"\u01df\7\13\2\2\u01db\u01dc\7D\2\2\u01dc\u01dd\7i\2\2\u01dd\u01df\7\n"+
+		"\u01d4\7\4\2\2\u01d4\u01d5\5P)\2\u01d5\u01d6\7\u0084\2\2\u01d6\u01df\3"+
+		"\2\2\2\u01d7\u01df\5J&\2\u01d8\u01df\7\n\2\2\u01d9\u01da\7k\2\2\u01da"+
+		"\u01df\7\13\2\2\u01db\u01dc\7D\2\2\u01dc\u01dd\7k\2\2\u01dd\u01df\7\n"+
 		"\2\2\u01de\u0184\3\2\2\2\u01de\u0187\3\2\2\2\u01de\u018c\3\2\2\2\u01de"+
 		"\u018f\3\2\2\2\u01de\u019b\3\2\2\2\u01de\u01a7\3\2\2\2\u01de\u01b5\3\2"+
 		"\2\2\u01de\u01be\3\2\2\2\u01de\u01c6\3\2\2\2\u01de\u01cb\3\2\2\2\u01de"+
@@ -7491,7 +7493,7 @@ public class KickCParser extends Parser {
 		"\u0224\7L\2\2\u0224\u0225\7\b\2\2\u0225\u0226\5\24\13\2\u0226\u0227\7"+
 		"\t\2\2\u0227\u0255\3\2\2\2\u0228\u0229\7L\2\2\u0229\u0255\5F$\34\u022a"+
 		"\u022c\7M\2\2\u022b\u022d\7\b\2\2\u022c\u022b\3\2\2\2\u022c\u022d\3\2"+
-		"\2\2\u022d\u022e\3\2\2\2\u022e\u0230\7i\2\2\u022f\u0231\7\t\2\2\u0230"+
+		"\2\2\u022d\u022e\3\2\2\2\u022e\u0230\7k\2\2\u022f\u0231\7\t\2\2\u0230"+
 		"\u022f\3\2\2\2\u0230\u0231\3\2\2\2\u0231\u0255\3\2\2\2\u0232\u0233\7\b"+
 		"\2\2\u0233\u0234\5\24\13\2\u0234\u0235\7\t\2\2\u0235\u0236\5F$\31\u0236"+
 		"\u0255\3\2\2\2\u0237\u0238\t\3\2\2\u0238\u0255\5F$\30\u0239\u023a\7\24"+
@@ -7500,9 +7502,9 @@ public class KickCParser extends Parser {
 		"\u023f\3\2\2\2\u0242\u0245\3\2\2\2\u0243\u0241\3\2\2\2\u0243\u0244\3\2"+
 		"\2\2\u0244\u0247\3\2\2\2\u0245\u0243\3\2\2\2\u0246\u0248\7\f\2\2\u0247"+
 		"\u0246\3\2\2\2\u0247\u0248\3\2\2\2\u0248\u0249\3\2\2\2\u0249\u024a\7\5"+
-		"\2\2\u024a\u0255\3\2\2\2\u024b\u0255\7i\2\2\u024c\u0255\7`\2\2\u024d\u024f"+
-		"\7j\2\2\u024e\u024d\3\2\2\2\u024f\u0250\3\2\2\2\u0250\u024e\3\2\2\2\u0250"+
-		"\u0251\3\2\2\2\u0251\u0255\3\2\2\2\u0252\u0255\7k\2\2\u0253\u0255\7Q\2"+
+		"\2\2\u024a\u0255\3\2\2\2\u024b\u0255\7k\2\2\u024c\u0255\7b\2\2\u024d\u024f"+
+		"\7l\2\2\u024e\u024d\3\2\2\2\u024f\u0250\3\2\2\2\u0250\u024e\3\2\2\2\u0250"+
+		"\u0251\3\2\2\2\u0251\u0255\3\2\2\2\u0252\u0255\7m\2\2\u0253\u0255\7Q\2"+
 		"\2\u0254\u0217\3\2\2\2\u0254\u021c\3\2\2\2\u0254\u0221\3\2\2\2\u0254\u0223"+
 		"\3\2\2\2\u0254\u0228\3\2\2\2\u0254\u022a\3\2\2\2\u0254\u0232\3\2\2\2\u0254"+
 		"\u0237\3\2\2\2\u0254\u0239\3\2\2\2\u0254\u023b\3\2\2\2\u0254\u023d\3\2"+
@@ -7519,8 +7521,8 @@ public class KickCParser extends Parser {
 		"\2\2\u0273\u0274\5F$\2\u0274\u0275\7\13\2\2\u0275\u0276\5F$\f\u0276\u0291"+
 		"\3\2\2\2\u0277\u0278\f\n\2\2\u0278\u0279\7\'\2\2\u0279\u0291\5F$\n\u027a"+
 		"\u027b\f\t\2\2\u027b\u027c\7(\2\2\u027c\u0291\5F$\t\u027d\u027e\f\"\2"+
-		"\2\u027e\u027f\7\20\2\2\u027f\u0291\7i\2\2\u0280\u0281\f!\2\2\u0281\u0282"+
-		"\7\21\2\2\u0282\u0291\7i\2\2\u0283\u0284\f \2\2\u0284\u0286\7\b\2\2\u0285"+
+		"\2\u027e\u027f\7\20\2\2\u027f\u0291\7k\2\2\u0280\u0281\f!\2\2\u0281\u0282"+
+		"\7\21\2\2\u0282\u0291\7k\2\2\u0283\u0284\f \2\2\u0284\u0286\7\b\2\2\u0285"+
 		"\u0287\5H%\2\u0286\u0285\3\2\2\2\u0286\u0287\3\2\2\2\u0287\u0288\3\2\2"+
 		"\2\u0288\u0291\7\t\2\2\u0289\u028a\f\32\2\2\u028a\u028b\7\6\2\2\u028b"+
 		"\u028c\5D#\2\u028c\u028d\7\7\2\2\u028d\u0291\3\2\2\2\u028e\u028f\f\27"+
@@ -7538,53 +7540,53 @@ public class KickCParser extends Parser {
 		"\7\b\2\2\u02a4\u02a9\5N(\2\u02a5\u02a6\7\f\2\2\u02a6\u02a8\5N(\2\u02a7"+
 		"\u02a5\3\2\2\2\u02a8\u02ab\3\2\2\2\u02a9\u02a7\3\2\2\2\u02a9\u02aa\3\2"+
 		"\2\2\u02aa\u02ac\3\2\2\2\u02ab\u02a9\3\2\2\2\u02ac\u02ad\7\t\2\2\u02ad"+
-		"M\3\2\2\2\u02ae\u02af\7i\2\2\u02af\u02b5\7j\2\2\u02b0\u02b1\7i\2\2\u02b1"+
-		"\u02b5\7i\2\2\u02b2\u02b3\7i\2\2\u02b3\u02b5\5F$\2\u02b4\u02ae\3\2\2\2"+
+		"M\3\2\2\2\u02ae\u02af\7k\2\2\u02af\u02b5\7l\2\2\u02b0\u02b1\7k\2\2\u02b1"+
+		"\u02b5\7k\2\2\u02b2\u02b3\7k\2\2\u02b3\u02b5\5F$\2\u02b4\u02ae\3\2\2\2"+
 		"\u02b4\u02b0\3\2\2\2\u02b4\u02b2\3\2\2\2\u02b5O\3\2\2\2\u02b6\u02b8\5"+
 		"R*\2\u02b7\u02b6\3\2\2\2\u02b8\u02bb\3\2\2\2\u02b9\u02b7\3\2\2\2\u02b9"+
 		"\u02ba\3\2\2\2\u02baQ\3\2\2\2\u02bb\u02b9\3\2\2\2\u02bc\u02c0\5T+\2\u02bd"+
 		"\u02c0\5V,\2\u02be\u02c0\5X-\2\u02bf\u02bc\3\2\2\2\u02bf\u02bd\3\2\2\2"+
-		"\u02bf\u02be\3\2\2\2\u02c0S\3\2\2\2\u02c1\u02c2\7\u008f\2\2\u02c2\u02c6"+
-		"\7r\2\2\u02c3\u02c5\7\u0090\2\2\u02c4\u02c3\3\2\2\2\u02c5\u02c8\3\2\2"+
+		"\u02bf\u02be\3\2\2\2\u02c0S\3\2\2\2\u02c1\u02c2\7\u0091\2\2\u02c2\u02c6"+
+		"\7t\2\2\u02c3\u02c5\7\u0092\2\2\u02c4\u02c3\3\2\2\2\u02c5\u02c8\3\2\2"+
 		"\2\u02c6\u02c4\3\2\2\2\u02c6\u02c7\3\2\2\2\u02c7\u02dc\3\2\2\2\u02c8\u02c6"+
-		"\3\2\2\2\u02c9\u02ca\7\u0081\2\2\u02ca\u02cb\7\u008f\2\2\u02cb\u02cc\7"+
-		"\u0082\2\2\u02cc\u02d0\7r\2\2\u02cd\u02cf\7\u0090\2\2\u02ce\u02cd\3\2"+
+		"\3\2\2\2\u02c9\u02ca\7\u0083\2\2\u02ca\u02cb\7\u0091\2\2\u02cb\u02cc\7"+
+		"\u0084\2\2\u02cc\u02d0\7t\2\2\u02cd\u02cf\7\u0092\2\2\u02ce\u02cd\3\2"+
 		"\2\2\u02cf\u02d2\3\2\2\2\u02d0\u02ce\3\2\2\2\u02d0\u02d1\3\2\2\2\u02d1"+
-		"\u02dc\3\2\2\2\u02d2\u02d0\3\2\2\2\u02d3\u02d4\7\u008e\2\2\u02d4\u02d8"+
-		"\7r\2\2\u02d5\u02d7\7\u0090\2\2\u02d6\u02d5\3\2\2\2\u02d7\u02da\3\2\2"+
+		"\u02dc\3\2\2\2\u02d2\u02d0\3\2\2\2\u02d3\u02d4\7\u0090\2\2\u02d4\u02d8"+
+		"\7t\2\2\u02d5\u02d7\7\u0092\2\2\u02d6\u02d5\3\2\2\2\u02d7\u02da\3\2\2"+
 		"\2\u02d8\u02d6\3\2\2\2\u02d8\u02d9\3\2\2\2\u02d9\u02dc\3\2\2\2\u02da\u02d8"+
 		"\3\2\2\2\u02db\u02c1\3\2\2\2\u02db\u02c9\3\2\2\2\u02db\u02d3\3\2\2\2\u02dc"+
-		"U\3\2\2\2\u02dd\u02df\7p\2\2\u02de\u02e0\5Z.\2\u02df\u02de\3\2\2\2\u02df"+
-		"\u02e0\3\2\2\2\u02e0\u02e4\3\2\2\2\u02e1\u02e3\7\u0090\2\2\u02e2\u02e1"+
+		"U\3\2\2\2\u02dd\u02df\7r\2\2\u02de\u02e0\5Z.\2\u02df\u02de\3\2\2\2\u02df"+
+		"\u02e0\3\2\2\2\u02e0\u02e4\3\2\2\2\u02e1\u02e3\7\u0092\2\2\u02e2\u02e1"+
 		"\3\2\2\2\u02e3\u02e6\3\2\2\2\u02e4\u02e2\3\2\2\2\u02e4\u02e5\3\2\2\2\u02e5"+
-		"W\3\2\2\2\u02e6\u02e4\3\2\2\2\u02e7\u02e8\7o\2\2\u02e8\u02ed\5\\/\2\u02e9"+
-		"\u02ea\7s\2\2\u02ea\u02ec\5\\/\2\u02eb\u02e9\3\2\2\2\u02ec\u02ef\3\2\2"+
+		"W\3\2\2\2\u02e6\u02e4\3\2\2\2\u02e7\u02e8\7q\2\2\u02e8\u02ed\5\\/\2\u02e9"+
+		"\u02ea\7u\2\2\u02ea\u02ec\5\\/\2\u02eb\u02e9\3\2\2\2\u02ec\u02ef\3\2\2"+
 		"\2\u02ed\u02eb\3\2\2\2\u02ed\u02ee\3\2\2\2\u02ee\u02f3\3\2\2\2\u02ef\u02ed"+
-		"\3\2\2\2\u02f0\u02f2\7\u0090\2\2\u02f1\u02f0\3\2\2\2\u02f2\u02f5\3\2\2"+
+		"\3\2\2\2\u02f0\u02f2\7\u0092\2\2\u02f1\u02f0\3\2\2\2\u02f2\u02f5\3\2\2"+
 		"\2\u02f3\u02f1\3\2\2\2\u02f3\u02f4\3\2\2\2\u02f4Y\3\2\2\2\u02f5\u02f3"+
-		"\3\2\2\2\u02f6\u0324\5\\/\2\u02f7\u02f8\7q\2\2\u02f8\u0324\5\\/\2\u02f9"+
-		"\u02fa\5\\/\2\u02fa\u02fb\7s\2\2\u02fb\u02fc\5\\/\2\u02fc\u0324\3\2\2"+
-		"\2\u02fd\u02fe\7t\2\2\u02fe\u02ff\5\\/\2\u02ff\u0300\7u\2\2\u0300\u0301"+
-		"\7s\2\2\u0301\u0302\7\u008f\2\2\u0302\u0324\3\2\2\2\u0303\u0304\7t\2\2"+
-		"\u0304\u0305\7t\2\2\u0305\u0306\5\\/\2\u0306\u0307\7u\2\2\u0307\u0308"+
-		"\7u\2\2\u0308\u0309\7s\2\2\u0309\u030a\7\u008f\2\2\u030a\u0324\3\2\2\2"+
-		"\u030b\u030c\7t\2\2\u030c\u030d\5\\/\2\u030d\u030e\7s\2\2\u030e\u030f"+
-		"\7\u008f\2\2\u030f\u0310\7u\2\2\u0310\u0311\7s\2\2\u0311\u0312\7\u008f"+
-		"\2\2\u0312\u0324\3\2\2\2\u0313\u0314\7t\2\2\u0314\u0315\5\\/\2\u0315\u0316"+
-		"\7s\2\2\u0316\u0317\7\u008f\2\2\u0317\u0318\7u\2\2\u0318\u0324\3\2\2\2"+
-		"\u0319\u031a\7t\2\2\u031a\u031b\5\\/\2\u031b\u031c\7u\2\2\u031c\u0324"+
-		"\3\2\2\2\u031d\u031e\7t\2\2\u031e\u031f\7t\2\2\u031f\u0320\5\\/\2\u0320"+
-		"\u0321\7u\2\2\u0321\u0322\7u\2\2\u0322\u0324\3\2\2\2\u0323\u02f6\3\2\2"+
+		"\3\2\2\2\u02f6\u0324\5\\/\2\u02f7\u02f8\7s\2\2\u02f8\u0324\5\\/\2\u02f9"+
+		"\u02fa\5\\/\2\u02fa\u02fb\7u\2\2\u02fb\u02fc\5\\/\2\u02fc\u0324\3\2\2"+
+		"\2\u02fd\u02fe\7v\2\2\u02fe\u02ff\5\\/\2\u02ff\u0300\7w\2\2\u0300\u0301"+
+		"\7u\2\2\u0301\u0302\7\u0091\2\2\u0302\u0324\3\2\2\2\u0303\u0304\7v\2\2"+
+		"\u0304\u0305\7v\2\2\u0305\u0306\5\\/\2\u0306\u0307\7w\2\2\u0307\u0308"+
+		"\7w\2\2\u0308\u0309\7u\2\2\u0309\u030a\7\u0091\2\2\u030a\u0324\3\2\2\2"+
+		"\u030b\u030c\7v\2\2\u030c\u030d\5\\/\2\u030d\u030e\7u\2\2\u030e\u030f"+
+		"\7\u0091\2\2\u030f\u0310\7w\2\2\u0310\u0311\7u\2\2\u0311\u0312\7\u0091"+
+		"\2\2\u0312\u0324\3\2\2\2\u0313\u0314\7v\2\2\u0314\u0315\5\\/\2\u0315\u0316"+
+		"\7u\2\2\u0316\u0317\7\u0091\2\2\u0317\u0318\7w\2\2\u0318\u0324\3\2\2\2"+
+		"\u0319\u031a\7v\2\2\u031a\u031b\5\\/\2\u031b\u031c\7w\2\2\u031c\u0324"+
+		"\3\2\2\2\u031d\u031e\7v\2\2\u031e\u031f\7v\2\2\u031f\u0320\5\\/\2\u0320"+
+		"\u0321\7w\2\2\u0321\u0322\7w\2\2\u0322\u0324\3\2\2\2\u0323\u02f6\3\2\2"+
 		"\2\u0323\u02f7\3\2\2\2\u0323\u02f9\3\2\2\2\u0323\u02fd\3\2\2\2\u0323\u0303"+
 		"\3\2\2\2\u0323\u030b\3\2\2\2\u0323\u0313\3\2\2\2\u0323\u0319\3\2\2\2\u0323"+
-		"\u031d\3\2\2\2\u0324[\3\2\2\2\u0325\u0326\b/\1\2\u0326\u0327\7v\2\2\u0327"+
-		"\u0328\5\\/\2\u0328\u0329\7w\2\2\u0329\u0334\3\2\2\2\u032a\u032b\t\t\2"+
-		"\2\u032b\u0334\5\\/\n\u032c\u0334\7\u008f\2\2\u032d\u0334\7\u008d\2\2"+
-		"\u032e\u032f\7\u0081\2\2\u032f\u0330\7\u008f\2\2\u0330\u0334\7\u0082\2"+
-		"\2\u0331\u0334\7\u0083\2\2\u0332\u0334\7\u008c\2\2\u0333\u0325\3\2\2\2"+
+		"\u031d\3\2\2\2\u0324[\3\2\2\2\u0325\u0326\b/\1\2\u0326\u0327\7x\2\2\u0327"+
+		"\u0328\5\\/\2\u0328\u0329\7y\2\2\u0329\u0334\3\2\2\2\u032a\u032b\t\t\2"+
+		"\2\u032b\u0334\5\\/\n\u032c\u0334\7\u0091\2\2\u032d\u0334\7\u008f\2\2"+
+		"\u032e\u032f\7\u0083\2\2\u032f\u0330\7\u0091\2\2\u0330\u0334\7\u0084\2"+
+		"\2\u0331\u0334\7\u0085\2\2\u0332\u0334\7\u008e\2\2\u0333\u0325\3\2\2\2"+
 		"\u0333\u032a\3\2\2\2\u0333\u032c\3\2\2\2\u0333\u032d\3\2\2\2\u0333\u032e"+
 		"\3\2\2\2\u0333\u0331\3\2\2\2\u0333\u0332\3\2\2\2\u0334\u0343\3\2\2\2\u0335"+
-		"\u0336\f\f\2\2\u0336\u0337\7x\2\2\u0337\u0342\5\\/\r\u0338\u0339\f\13"+
+		"\u0336\f\f\2\2\u0336\u0337\7z\2\2\u0337\u0342\5\\/\r\u0338\u0339\f\13"+
 		"\2\2\u0339\u033a\t\n\2\2\u033a\u0342\5\\/\f\u033b\u033c\f\t\2\2\u033c"+
 		"\u033d\t\13\2\2\u033d\u0342\5\\/\n\u033e\u033f\f\b\2\2\u033f\u0340\t\f"+
 		"\2\2\u0340\u0342\5\\/\t\u0341\u0335\3\2\2\2\u0341\u0338\3\2\2\2\u0341"+

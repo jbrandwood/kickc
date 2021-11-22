@@ -223,14 +223,16 @@ public class TestPreprocessor {
    public void testStringize() {
       // A simple define with one stringized parameter
       assertEquals("str:\"b\";", parse("#define A(a) #a \nA(b);"));
-      // A simple define with one stringized parameter
+      // A spaced stringized parameter
       assertEquals("str:\"two words\";", parse("#define A(a) #a \nA(two words);"));
-      // A simple define with one spaced  stringized parameter
-      assertEquals("str:\" two words \";", parse("#define A(a) #a \nA( two words );"));
+      // A spaced stringized parameter - leading/trailing spaces removed
+      assertEquals("str:\"two words\";", parse("#define A(a) #a \nA( two words );"));
       // Concatenating string with stringized macro
-      assertEquals("str:\"qwe\"\"asd\";", parse("#define A(a) #a \n \"qwe\" A(asd);"));
+      assertEquals("str:\"qwe\"\"asd\";", parse("#define A(a) #a \n A(qwe) A(asd);"));
       // Complex concat with a path - from Kernighan&Ritchie
       assertEquals("str:\"/usr/tmp\"\"%s\";", parse("#define tempfile(dir) #dir \"%s\" \n tempfile(/usr/tmp);"));
+      // Complex stringize example - from https://gcc.gnu.org/onlinedocs/gcc-3.4.6/cpp/Stringification.html
+      assertEquals("str:\"4\";", parse("#define str(s) #s \n #define foo 4 \n str (foo);"));
    }
 
    private void assertError(String program, String expectError, boolean expectLineNumber) {

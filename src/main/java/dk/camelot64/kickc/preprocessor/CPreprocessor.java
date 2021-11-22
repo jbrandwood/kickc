@@ -349,7 +349,7 @@ public class CPreprocessor implements TokenSource {
       }
       if(macro != null) {
          // Handle parameters
-         List<List<Token>> paramValues = new ArrayList<>();
+         List<LinkedList<Token>> paramValues = new ArrayList<>();
          if(macro.hasParameters()) {
             // Parse parameter value list
             {
@@ -364,10 +364,9 @@ public class CPreprocessor implements TokenSource {
                   cTokenSource.nextToken();
                }
                // Read parameter values
-               List<Token> paramValue = new ArrayList<>();
+               LinkedList<Token> paramValue = new LinkedList<>();
                int nesting = 1;
                while(true) {
-                  //skipWhitespace(cTokenSource);
                   final Token paramToken = cTokenSource.nextToken();
                   if(paramToken.getType() == KickCLexer.PAR_END && nesting == 1) {
                      // We reached the end of the parameters - add the current param unless it is an empty parameter alone in the list
@@ -377,7 +376,7 @@ public class CPreprocessor implements TokenSource {
                   } else if(paramToken.getType() == KickCLexer.COMMA && nesting == 1) {
                      // We have reached the next parameter value
                      paramValues.add(paramValue);
-                     paramValue = new ArrayList<>();
+                     paramValue = new LinkedList<>();
                   } else {
                      // We are reading a parameter value - handle nesting and store it
                      if(paramToken.getType() == KickCLexer.PAR_BEGIN)
@@ -393,9 +392,9 @@ public class CPreprocessor implements TokenSource {
                throw new CompileError("Error! Wrong number of macro parameters. Expected " + macro.parameters.size() + " was " + paramValues.size(), macroNameToken);
             }
             // Expand parameter values
-            List<List<Token>> expandedParamValues = new ArrayList<>();
+            List<LinkedList<Token>> expandedParamValues = new ArrayList<>();
             for(List<Token> paramTokens : paramValues) {
-               List<Token> expandedParamValue = new ArrayList<>();
+               LinkedList<Token> expandedParamValue = new LinkedList<>();
                CPreprocessor subPreprocessor = new CPreprocessor(cParser, new ListTokenSource(paramTokens), new HashMap<>(defines));
                while(true) {
                   final Token expandedToken = subPreprocessor.nextToken();
@@ -404,6 +403,11 @@ public class CPreprocessor implements TokenSource {
                   else
                      expandedParamValue.add(expandedToken);
                }
+               // Remove leading and trailing whitespace in each paramValue
+               if(expandedParamValue.peekFirst().getType() == KickCLexer.WS)
+                  expandedParamValue.pollFirst();
+               if(expandedParamValue.peekLast().getType() == KickCLexer.WS)
+                  expandedParamValue.pollLast();
                expandedParamValues.add(expandedParamValue);
                paramValues = expandedParamValues;
             }
@@ -422,21 +426,21 @@ public class CPreprocessor implements TokenSource {
                }
             } else if(macroBodyToken.getType() == KickCLexer.TOKEN_STRINGIZE) {
                final String paramName = macroBodyToken.getText().substring(1);
-               if(!macro.hasParameter(paramName)) throw new CompileError("Expected macro parameter name after '#'", macroBodyToken);
+               if(!macro.hasParameter(paramName))
+                  throw new CompileError("Expected macro parameter name after '#'", macroBodyToken);
                // body token is a parameter name - replace with stringized expanded parameter value
                final int paramIndex = macro.getParameterIndex(paramName);
                final List<Token> expandedParamValue = paramValues.get(paramIndex);
                StringBuilder stringized = new StringBuilder();
                for(Token expandedParamValueToken : expandedParamValue) {
-                  //if(stringized.length()>0) stringized.append(" ");
                   stringized.append(expandedParamValueToken.getText());
                }
                CommonToken stringToken = new CommonToken(KickCLexer.STRING);
-               stringToken.setText("\""+stringized.toString()+"\"");
+               stringToken.setText("\"" + stringized.toString() + "\"");
                stringToken.setChannel(macroBodyToken.getChannel());
                addTokenToExpandedBody(stringToken, macroNameToken, expandedBody);
             } else {
-               // body token is a normal token 
+               // body token is a normal token
                addTokenToExpandedBody(macroBodyToken, macroNameToken, expandedBody);
             }
          }

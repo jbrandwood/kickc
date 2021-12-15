@@ -9,6 +9,12 @@ import java.io.IOException;
  */
 public class TestProgramsFast extends TestPrograms {
 
+
+   @Test
+   public void testPceaPointer1() throws IOException {
+      compileAndCompare("pcea-pointer-1.c", log());
+   }
+
    /* Fix problem where removing empty method can cause NPE (because a local variable in the method is still used)
    https://gitlab.com/camelot/kickc/-/issues/724
    @Test

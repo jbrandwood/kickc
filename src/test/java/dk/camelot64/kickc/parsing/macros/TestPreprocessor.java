@@ -233,6 +233,9 @@ public class TestPreprocessor {
       assertEquals("str:\"/usr/tmp\"\"%s\";", parse("#define tempfile(dir) #dir \"%s\" \n tempfile(/usr/tmp);"));
       // Complex stringize example - from https://gcc.gnu.org/onlinedocs/gcc-3.4.6/cpp/Stringification.html
       assertEquals("str:\"4\";", parse("#define str(s) #s \n #define foo 4 \n str (foo);"));
+      // Complex stringize example using the two-macro trick - from @everslick
+      assertEquals("str:\"qwe\";", parse("#define _mkstr_(_s_)  #_s_ \n #define mkstr(_s_) _mkstr_(_s_) \n mkstr(qwe);"));
+
    }
 
    private void assertError(String program, String expectError, boolean expectLineNumber) {

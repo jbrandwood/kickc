@@ -1,0 +1,167 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *_s1 = 7
+  *_s2 = 7
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+__constant char * const _s1 = (char *)$ee
+__constant unsigned int * const _s2 = (unsigned int *)$ef
+void main()
+
+Adding number conversion cast (unumber) 7 in *_s1 = 7
+Adding number conversion cast (unumber) 7 in *_s2 = 7
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *_s1 = (unumber)7
+Inlining cast *_s2 = (unumber)7
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 238
+Simplifying constant pointer cast (unsigned int *) 239
+Simplifying constant integer cast 7
+Simplifying constant integer cast 7
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 7
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *_s1 = 7
+  [1] *_s2 = 7
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *_s1 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *_s2 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// These pointers lives on zeropage
+// KickAss should be able to add .z to the
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="pcea-pointer-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label _s1 = $ee
+  .label _s2 = $ef
+.segment Code
+  // main
+main: {
+    // [0] *_s1 = 7 -- _deref_pbuc1=vbuc2 
+    lda #7
+    sta _s1
+    // [1] *_s2 = 7 -- _deref_pwuc1=vbuc2 
+    lda #<7
+    sta _s2
+    lda #>7
+    sta _s2+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #<7
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const _s1 = (char *) 238
+__constant unsigned int * const _s2 = (unsigned int *) 239
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 22
+
+  // File Comments
+// These pointers lives on zeropage
+// KickAss should be able to add .z to the
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="pcea-pointer-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label _s1 = $ee
+  .label _s2 = $ef
+.segment Code
+  // main
+main: {
+    // *_s1 = 7
+    // [0] *_s1 = 7 -- _deref_pbuc1=vbuc2 
+    lda #7
+    sta _s1
+    // *_s2 = 7
+    // [1] *_s2 = 7 -- _deref_pwuc1=vbuc2 
+    sta _s2
+    lda #>7
+    sta _s2+1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

@@ -1681,6 +1681,16 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testStringEscapesErr3() throws IOException {
+      assertError("string-escapes-err-3.c", "Unfinished string escape sequence at end of string");
+   }
+
+   @Test
+   public void testStringEscapesErr2() throws IOException {
+      assertError("string-escapes-err-2.c", "Unfinished string escape sequence at end of string");
+   }
+
+   @Test
    public void testStringEscapesErr1() throws IOException {
       assertError("string-escapes-err-1.c", "Illegal string escape sequence");
    }

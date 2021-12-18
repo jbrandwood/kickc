@@ -173,7 +173,9 @@ public enum StringEncoding {
             return '\\';
          case 'x':
             String hexNum = "";
+            if(escapedCharsIterator.isEmpty()) throw new CompileError("Unfinished string escape sequence at end of string");
             hexNum += (char) escapedCharsIterator.pop().intValue();
+            if(escapedCharsIterator.isEmpty()) throw new CompileError("Unfinished string escape sequence at end of string");
             hexNum += (char) escapedCharsIterator.pop().intValue();
             final byte hexEncoding = (byte) Integer.parseInt(hexNum, 16);
             return charFromEncoded(hexEncoding);

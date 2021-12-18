@@ -1731,6 +1731,7 @@ kbhit: {
         nop
      
     // return ch;
+    lda.z ch
     // }
     rts
 }

@@ -759,8 +759,8 @@ ultoa_append::@return: scope:[ultoa_append]  from ultoa_append::@3
 
 void clrscr()
 clrscr: scope:[clrscr]  from main
-  clrscr::line_text#0 = CONIO_SCREEN_TEXT
-  clrscr::line_cols#0 = CONIO_SCREEN_COLORS
+  clrscr::line_text#0 = DEFAULT_SCREEN
+  clrscr::line_cols#0 = COLORRAM
   clrscr::l#0 = 0
   to:clrscr::@1
 clrscr::@1: scope:[clrscr]  from clrscr clrscr::@6
@@ -779,8 +779,8 @@ clrscr::@2: scope:[clrscr]  from clrscr::@1
 clrscr::@3: scope:[clrscr]  from clrscr::@1
   conio_cursor_x = 0
   conio_cursor_y = 0
-  conio_line_text = CONIO_SCREEN_TEXT
-  conio_line_color = CONIO_SCREEN_COLORS
+  conio_line_text = DEFAULT_SCREEN
+  conio_line_color = COLORRAM
   to:clrscr::@return
 clrscr::@4: scope:[clrscr]  from clrscr::@2 clrscr::@5
   clrscr::l#4 = phi( clrscr::@2/clrscr::l#5, clrscr::@5/clrscr::l#6 )
@@ -837,9 +837,9 @@ gotoxy::@2: scope:[gotoxy]  from gotoxy::@1 gotoxy::@4
   conio_cursor_y = gotoxy::y#5
   gotoxy::$7 = (unsigned int)gotoxy::y#5
   gotoxy::line_offset#0 = gotoxy::$7 * $28
-  gotoxy::$5 = CONIO_SCREEN_TEXT + gotoxy::line_offset#0
+  gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0
   conio_line_text = gotoxy::$5
-  gotoxy::$6 = CONIO_SCREEN_COLORS + gotoxy::line_offset#0
+  gotoxy::$6 = COLORRAM + gotoxy::line_offset#0
   conio_line_color = gotoxy::$6
   to:gotoxy::@return
 gotoxy::@4: scope:[gotoxy]  from gotoxy::@1
@@ -905,28 +905,28 @@ cscroll::@1: scope:[cscroll]  from cscroll
   if(cscroll::$7) goto cscroll::@3
   to:cscroll::@2
 cscroll::@3: scope:[cscroll]  from cscroll::@1
-  memcpy::destination#0 = (void *)CONIO_SCREEN_TEXT
-  memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+  memcpy::destination#0 = (void *)DEFAULT_SCREEN
+  memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
   memcpy::num#0 = $19*$28-$28
   call memcpy
   memcpy::return#2 = memcpy::return#1
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@3
-  memcpy::destination#1 = (void *)CONIO_SCREEN_COLORS
-  memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+  memcpy::destination#1 = (void *)COLORRAM
+  memcpy::source#1 = (void *)COLORRAM+$28
   memcpy::num#1 = $19*$28-$28
   call memcpy
   memcpy::return#3 = memcpy::return#1
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
-  memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-$28
+  memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-$28
   memset::c#0 = ' '
   memset::num#0 = $28
   call memset
   memset::return#2 = memset::return#1
   to:cscroll::@6
 cscroll::@6: scope:[cscroll]  from cscroll::@5
-  memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-$28
+  memset::str#1 = (void *)COLORRAM+$19*$28-$28
   memset::c#1 = conio_textcolor
   memset::num#1 = $28
   call memset
@@ -1909,9 +1909,9 @@ __start: scope:[__start]  from
 __start::__init1: scope:[__start]  from __start
   conio_cursor_x = 0
   conio_cursor_y = 0
-  conio_line_text = CONIO_SCREEN_TEXT
-  conio_line_color = CONIO_SCREEN_COLORS
-  conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+  conio_line_text = DEFAULT_SCREEN
+  conio_line_color = COLORRAM
+  conio_textcolor = LIGHT_BLUE
   conio_scroll_enable = 1
   count#4 = 0
   call conio_c64_init
@@ -1936,9 +1936,6 @@ __start::@return: scope:[__start]  from __start::@3
 SYMBOL TABLE SSA
 __constant char BINARY = 2
 __constant char * const COLORRAM = (char *)$d800
-__constant char * const CONIO_SCREEN_COLORS = COLORRAM
-__constant char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN
-__constant const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 __constant char DECIMAL = $a
 __constant char * const DEFAULT_SCREEN = (char *)$400
 __constant char DIGITS[] = "0123456789abcdef"z
@@ -3315,15 +3312,15 @@ Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_col
 Adding number conversion cast (unumber) 0 in conio_cursor_x = 0
 Adding number conversion cast (unumber) $19 in cscroll::$0 = conio_cursor_y == $19
 Adding number conversion cast (unumber) 0 in cscroll::$7 = 0 != conio_scroll_enable
-Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+Adding number conversion cast (unumber) $28 in memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
 Adding number conversion cast (unumber) $19*$28-$28 in memcpy::num#0 = $19*$28-$28
-Adding number conversion cast (unumber) $28 in memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+Adding number conversion cast (unumber) $28 in memcpy::source#1 = (void *)COLORRAM+$28
 Adding number conversion cast (unumber) $19*$28-$28 in memcpy::num#1 = $19*$28-$28
-Adding number conversion cast (unumber) $28 in memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-$28
-Adding number conversion cast (unumber) $19*$28 in memset::str#0 = (void *)CONIO_SCREEN_TEXT+$19*$28-(unumber)$28
+Adding number conversion cast (unumber) $28 in memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-$28
+Adding number conversion cast (unumber) $19*$28 in memset::str#0 = (void *)DEFAULT_SCREEN+$19*$28-(unumber)$28
 Adding number conversion cast (unumber) $28 in memset::num#0 = $28
-Adding number conversion cast (unumber) $28 in memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-$28
-Adding number conversion cast (unumber) $19*$28 in memset::str#1 = (void *)CONIO_SCREEN_COLORS+$19*$28-(unumber)$28
+Adding number conversion cast (unumber) $28 in memset::str#1 = (void *)COLORRAM+$19*$28-$28
+Adding number conversion cast (unumber) $19*$28 in memset::str#1 = (void *)COLORRAM+$19*$28-(unumber)$28
 Adding number conversion cast (unumber) $28 in memset::num#1 = $28
 Adding number conversion cast (unumber) $28 in conio_line_text = conio_line_text - $28
 Adding number conversion cast (unumber) $28 in conio_line_color = conio_line_color - $28
@@ -4155,22 +4152,22 @@ Constant uctoa::started#1 = 1
 Constant uctoa_append::digit#0 = 0
 Constant utoa_append::digit#0 = 0
 Constant ultoa_append::digit#0 = 0
-Constant clrscr::line_text#0 = CONIO_SCREEN_TEXT
-Constant clrscr::line_cols#0 = CONIO_SCREEN_COLORS
+Constant clrscr::line_text#0 = DEFAULT_SCREEN
+Constant clrscr::line_cols#0 = COLORRAM
 Constant clrscr::l#0 = 0
 Constant clrscr::c#0 = 0
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
-Constant memcpy::destination#0 = (void *)CONIO_SCREEN_TEXT
-Constant memcpy::source#0 = (void *)CONIO_SCREEN_TEXT+$28
+Constant memcpy::destination#0 = (void *)DEFAULT_SCREEN
+Constant memcpy::source#0 = (void *)DEFAULT_SCREEN+$28
 Constant memcpy::num#0 = (unumber)$19*$28-$28
-Constant memcpy::destination#1 = (void *)CONIO_SCREEN_COLORS
-Constant memcpy::source#1 = (void *)CONIO_SCREEN_COLORS+$28
+Constant memcpy::destination#1 = (void *)COLORRAM
+Constant memcpy::source#1 = (void *)COLORRAM+$28
 Constant memcpy::num#1 = (unumber)$19*$28-$28
-Constant memset::str#0 = (void *)CONIO_SCREEN_TEXT+(unsigned int)$19*$28-$28
+Constant memset::str#0 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28
 Constant memset::c#0 = ' '
 Constant memset::num#0 = $28
-Constant memset::str#1 = (void *)CONIO_SCREEN_COLORS+(unsigned int)$19*$28-$28
+Constant memset::str#1 = (void *)COLORRAM+(unsigned int)$19*$28-$28
 Constant memset::num#1 = $28
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
@@ -4260,7 +4257,7 @@ Constant printf_str::s#9 = print::s3
 Constant printf_str::putc#9 = &cputc
 Constant printf_str::s#10 = print::s4
 Constant count#21 = 0
-Constant conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+Constant conio_textcolor = LIGHT_BLUE
 Constant conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#1 = conio_textcolor
@@ -4615,7 +4612,6 @@ Constant inlined printf_str::s#5 = s3
 Constant inlined printf_str::s#6 = print::s
 Constant inlined printf_str::s#3 = main::s1
 Constant inlined printf_str::s#4 = main::s2
-Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
 Constant inlined printf_str::s#2 = main::s
 Constant inlined utoa::$4 = utoa::max_digits#1-1
 Constant inlined printf_ulong::format_min_length#1 = 0
@@ -4660,7 +4656,6 @@ Constant inlined print::s2 = s3
 Constant inlined uctoa::max_digits#3 = 3
 Constant inlined printf_number_buffer::format_min_length#1 = printf_uint::format_min_length#0
 Constant inlined uctoa::max_digits#2 = 2
-Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 Constant inlined uctoa::max_digits#4 = 8
 Constant inlined uctoa::buffer#1 = ++++(char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
 Constant inlined uctoa::buffer#2 = ++++++(char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -4732,7 +4727,6 @@ Constant inlined memset::str#1 = (void *)COLORRAM+(unsigned int)$19*$28-$28
 Constant inlined count#21 = 0
 Constant inlined printf_number_buffer::format_zero_padding#1 = printf_uint::format_zero_padding#0
 Constant inlined memset::str#0 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28
-Constant inlined CONIO_SCREEN_COLORS = COLORRAM
 Constant inlined printf_uint::$0 = 0
 Constant inlined print::i#0 = 1
 Constant inlined main::s3 = s3
@@ -6817,19 +6811,20 @@ Allocated zp[2]:163 [ memcpy::destination#2 ]
 Allocated zp[2]:165 [ memset::str#3 ]
 Allocated mem[12] [ printf_buffer ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [3] conio_line_text = DEFAULT_SCREEN [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [4] conio_line_color = COLORRAM [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [16] cputc::c#0 = stackidx(char,cputc::OFFSET_STACK_C) [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [18] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [19] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a reg byte z 
-Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [39] printf_ulong::uvalue#0 = count#10 [ printf_ulong::uvalue#0 printf_buffer ] ( main:7 [ printf_ulong::uvalue#0 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } }  ) always clobbers reg byte a 
-Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:105 [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ]
-Removing always clobbered register reg byte a as potential for zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
+Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte z 
+Removing always clobbered register reg byte z as potential for zp[1]:105 [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ]
+Removing always clobbered register reg byte z as potential for zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
 Statement [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 [ gotoxy::$7 ] ( gotoxy:14 [ gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
 Statement [51] gotoxy::$8 = gotoxy::$7 << 2 [ gotoxy::$7 gotoxy::$8 ] ( gotoxy:14 [ gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 gotoxy::$8 ] { }  ) always clobbers reg byte a 
 Statement [52] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ gotoxy::$9 ] ( gotoxy:14 [ gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$9 ] { }  ) always clobbers reg byte a 
 Statement [53] gotoxy::line_offset#0 = gotoxy::$9 << 3 [ gotoxy::line_offset#0 ] ( gotoxy:14 [ gotoxy::line_offset#0 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::line_offset#0 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::line_offset#0 ] { }  ) always clobbers reg byte a 
@@ -6839,9 +6834,9 @@ Statement [56] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ gotoxy::$6 ] ( go
 Statement [57] conio_line_color = gotoxy::$6 [ ] ( gotoxy:14 [ ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 ] { }  ) always clobbers reg byte a 
 Statement [59] conio_line_text = conio_line_text + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [60] conio_line_color = conio_line_color + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
+Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [70] conio_line_text = DEFAULT_SCREEN [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [71] conio_line_color = COLORRAM [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [75] clrscr::line_text#1 = clrscr::line_text#5 + $28 [ clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] ( main:7::clrscr:28 [ printf_buffer clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] { }  ) always clobbers reg byte a 
@@ -6872,7 +6867,6 @@ Removing always clobbered register reg byte z as potential for zp[1]:78 [ printf
 Removing always clobbered register reg byte x as potential for zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
 Removing always clobbered register reg byte z as potential for zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
-Removing always clobbered register reg byte z as potential for zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
 Removing always clobbered register reg byte x as potential for zp[1]:86 [ print::i1#2 print::i1#1 ]
 Removing always clobbered register reg byte z as potential for zp[1]:86 [ print::i1#2 print::i1#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:85 [ print::i#2 print::i#1 ]
@@ -6880,15 +6874,15 @@ Removing always clobbered register reg byte z as potential for zp[1]:85 [ print:
 Removing always clobbered register reg byte x as potential for zp[1]:70 [ print::j#2 print::j#1 ]
 Removing always clobbered register reg byte z as potential for zp[1]:70 [ print::j#2 print::j#1 ]
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
-Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [98] board[queens::row#10] = ++ board[queens::row#10] [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte x 
 Statement [99] if(board[queens::row#10]==8+1) goto queens::@3 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
+Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
 Statement [110] board[queens::row#10] = 0 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
-Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
+Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
+Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte z 
 Statement [116] ultoa::value#1 = printf_ulong::uvalue#2 [ printf_buffer ultoa::value#1 ] ( main:7::printf_ulong:40 [ printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
-Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [130] conio_line_text = conio_line_text - $28 [ conio_cursor_y conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [131] conio_line_color = conio_line_color - $28 [ conio_cursor_y ] ( cputln:23::cscroll:63 [ conio_cursor_y ] { }  cputln:26::cscroll:63 [ conio_cursor_y ] { }  ) always clobbers reg byte a 
 Statement [138] *utoa::buffer#11 = DIGITS[utoa::$11] [ printf_buffer utoa::buffer#11 ] ( main:7::printf_uint:34::utoa:92 [ printf_buffer utoa::buffer#11 ] { }  ) always clobbers reg byte a reg byte y 
@@ -6996,8 +6990,8 @@ Statement sideeffect stackpullbytes(1) always clobbers reg byte a
 Statement [305] if(0!=*strupr::src#2) goto strupr::@2 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [307] toupper::ch#0 = *strupr::src#2 [ strupr::src#2 toupper::ch#0 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  ) always clobbers reg byte a reg byte y 
 Statement [311] *strupr::src#2 = strupr::$0 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte y 
-Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:76 [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ]
+Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte z 
+Removing always clobbered register reg byte z as potential for zp[1]:76 [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ]
 Statement [317] printf_number_buffer::buffer_sign#2 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a 
 Statement [322] if(ultoa_append::value#2>=ultoa_append::sub#0) goto ultoa_append::@2 [ ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] ( main:7::printf_ulong:40::ultoa:117::ultoa_append:260 [ printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  main:7::queens:36::print:109::printf_ulong:219::ultoa:117::ultoa_append:260 [ queens::row#10 count#2 printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ ultoa_append::digit#2 ultoa_append::digit#1 ]
@@ -7019,16 +7013,16 @@ Removing always clobbered register reg byte y as potential for zp[1]:2 [ uctoa_a
 Statement [357] uctoa_append::value#1 = uctoa_append::value#2 - uctoa_append::sub#0 [ uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ uctoa_append::sub#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ uctoa_append::digit#2 uctoa_append::digit#1 ]
-Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [3] conio_line_text = DEFAULT_SCREEN [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [4] conio_line_color = COLORRAM [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [16] cputc::c#0 = stackidx(char,cputc::OFFSET_STACK_C) [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [18] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [19] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a reg byte z 
-Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [39] printf_ulong::uvalue#0 = count#10 [ printf_ulong::uvalue#0 printf_buffer ] ( main:7 [ printf_ulong::uvalue#0 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } }  ) always clobbers reg byte a 
-Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte a 
+Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte z 
 Statement [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 [ gotoxy::$7 ] ( gotoxy:14 [ gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 ] { }  ) always clobbers reg byte a 
 Statement [51] gotoxy::$8 = gotoxy::$7 << 2 [ gotoxy::$7 gotoxy::$8 ] ( gotoxy:14 [ gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 gotoxy::$8 ] { }  ) always clobbers reg byte a 
 Statement [52] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ gotoxy::$9 ] ( gotoxy:14 [ gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$9 ] { }  ) always clobbers reg byte a 
@@ -7039,9 +7033,9 @@ Statement [56] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ gotoxy::$6 ] ( go
 Statement [57] conio_line_color = gotoxy::$6 [ ] ( gotoxy:14 [ ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 ] { }  ) always clobbers reg byte a 
 Statement [59] conio_line_text = conio_line_text + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [60] conio_line_color = conio_line_color + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
+Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [70] conio_line_text = DEFAULT_SCREEN [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [71] conio_line_color = COLORRAM [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [75] clrscr::line_text#1 = clrscr::line_text#5 + $28 [ clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] ( main:7::clrscr:28 [ printf_buffer clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] { }  ) always clobbers reg byte a 
@@ -7051,17 +7045,17 @@ Statement [79] clrscr::line_cols#5[clrscr::c#2] = LIGHT_BLUE [ clrscr::l#2 clrsc
 Statement [83] printf_str::c#1 = *printf_str::s#11 [ printf_str::s#11 printf_str::c#1 printf_buffer ] ( main:7::printf_str:30 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:32 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:38 [ count#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:42 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_uint:34::printf_number_buffer:94::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::printf_str:188 [ queens::row#10 count#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i1#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_str:217 [ queens::row#10 count#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:221 [ queens::row#10 count#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:228 [ queens::row#10 count#2 print::i1#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:236 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:239 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  ) always clobbers reg byte a reg byte y 
 Statement [88] callexecute *printf_str::putc#12  [ printf_str::s#0 printf_buffer ] ( main:7::printf_str:30 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_str:32 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_str:38 [ count#10 printf_str::s#0 printf_buffer ] { }  main:7::printf_str:42 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_uint:34::printf_number_buffer:94::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::printf_str:188 [ queens::row#10 count#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i1#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_str:217 [ queens::row#10 count#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:221 [ queens::row#10 count#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:228 [ queens::row#10 count#2 print::i1#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:236 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:239 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#0 printf_buffer ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
-Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [93] printf_number_buffer::buffer_sign#1 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#1 ] ( main:7::printf_uint:34 [ printf_buffer printf_number_buffer::buffer_sign#1 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  ) always clobbers reg byte a 
 Statement [98] board[queens::row#10] = ++ board[queens::row#10] [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte x 
 Statement [99] if(board[queens::row#10]==8+1) goto queens::@3 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
+Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
 Statement [110] board[queens::row#10] = 0 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
-Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
+Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
+Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte z 
 Statement [116] ultoa::value#1 = printf_ulong::uvalue#2 [ printf_buffer ultoa::value#1 ] ( main:7::printf_ulong:40 [ printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
 Statement [118] printf_number_buffer::buffer_sign#0 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#0 ] ( main:7::printf_ulong:40 [ printf_buffer printf_number_buffer::buffer_sign#0 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_number_buffer::buffer_sign#0 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  ) always clobbers reg byte a 
-Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [130] conio_line_text = conio_line_text - $28 [ conio_cursor_y conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [131] conio_line_color = conio_line_color - $28 [ conio_cursor_y ] ( cputln:23::cscroll:63 [ conio_cursor_y ] { }  cputln:26::cscroll:63 [ conio_cursor_y ] { }  ) always clobbers reg byte a 
 Statement [138] *utoa::buffer#11 = DIGITS[utoa::$11] [ printf_buffer utoa::buffer#11 ] ( main:7::printf_uint:34::utoa:92 [ printf_buffer utoa::buffer#11 ] { }  ) always clobbers reg byte a reg byte y 
@@ -7143,7 +7137,7 @@ Statement sideeffect stackpullbytes(1) always clobbers reg byte a
 Statement [305] if(0!=*strupr::src#2) goto strupr::@2 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [307] toupper::ch#0 = *strupr::src#2 [ strupr::src#2 toupper::ch#0 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  ) always clobbers reg byte a reg byte y 
 Statement [311] *strupr::src#2 = strupr::$0 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte y 
-Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte a 
+Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte z 
 Statement [317] printf_number_buffer::buffer_sign#2 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a 
 Statement [322] if(ultoa_append::value#2>=ultoa_append::sub#0) goto ultoa_append::@2 [ ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] ( main:7::printf_ulong:40::ultoa:117::ultoa_append:260 [ printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  main:7::queens:36::print:109::printf_ulong:219::ultoa:117::ultoa_append:260 [ queens::row#10 count#2 printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [323] *ultoa_append::buffer#0 = DIGITS[ultoa_append::digit#2] [ ultoa_append::value#2 ] ( main:7::printf_ulong:40::ultoa:117::ultoa_append:260 [ printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  main:7::queens:36::print:109::printf_ulong:219::ultoa:117::ultoa_append:260 [ queens::row#10 count#2 printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
@@ -7155,16 +7149,16 @@ Statement [337] *uctoa::buffer#3 = 0 [ printf_buffer ] ( main:7::queens:36::prin
 Statement [344] uctoa_append::buffer#0 = uctoa::buffer#11 [ printf_buffer uctoa::digit#2 uctoa::value#2 uctoa::buffer#11 uctoa::digit_value#0 uctoa_append::buffer#0 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::value#2 uctoa::buffer#11 uctoa::digit_value#0 uctoa_append::buffer#0 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::value#2 uctoa::buffer#11 uctoa::digit_value#0 uctoa_append::buffer#0 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [354] *uctoa_append::buffer#0 = DIGITS[uctoa_append::digit#2] [ uctoa_append::value#2 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::value#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::value#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [357] uctoa_append::value#1 = uctoa_append::value#2 - uctoa_append::sub#0 [ uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a 
-Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [1] conio_cursor_x = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [2] conio_cursor_y = 0 [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [3] conio_line_text = DEFAULT_SCREEN [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [4] conio_line_color = COLORRAM [ printf_buffer ] (  [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [16] cputc::c#0 = stackidx(char,cputc::OFFSET_STACK_C) [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputc::c#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [18] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [19] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a reg byte z 
-Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [21] if(conio_cursor_x!=$28) goto cputc::@return [ conio_cursor_y conio_line_text conio_line_color ] (  [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [39] printf_ulong::uvalue#0 = count#10 [ printf_ulong::uvalue#0 printf_buffer ] ( main:7 [ printf_ulong::uvalue#0 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } }  ) always clobbers reg byte a 
-Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte a 
+Statement [48] conio_cursor_x = 0 [ gotoxy::y#5 ] ( gotoxy:14 [ gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::y#5 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::y#5 ] { }  ) always clobbers reg byte z 
 Statement [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 [ gotoxy::$7 ] ( gotoxy:14 [ gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 ] { }  ) always clobbers reg byte a 
 Statement [51] gotoxy::$8 = gotoxy::$7 << 2 [ gotoxy::$7 gotoxy::$8 ] ( gotoxy:14 [ gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$7 gotoxy::$8 ] { }  ) always clobbers reg byte a 
 Statement [52] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ gotoxy::$9 ] ( gotoxy:14 [ gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer gotoxy::$9 ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 gotoxy::$9 ] { }  ) always clobbers reg byte a 
@@ -7175,9 +7169,9 @@ Statement [56] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ gotoxy::$6 ] ( go
 Statement [57] conio_line_color = gotoxy::$6 [ ] ( gotoxy:14 [ ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  conio_c64_init:5::gotoxy:14 [ printf_buffer ] { { gotoxy::y#2 = gotoxy::y#4 conio_c64_init::line#2 } }  main:7::queens:36::print:109::gotoxy:215 [ queens::row#10 printf_buffer count#2 ] { }  ) always clobbers reg byte a 
 Statement [59] conio_line_text = conio_line_text + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [60] conio_line_color = conio_line_color + $28 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
-Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
-Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [61] conio_cursor_x = 0 [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
+Statement [68] conio_cursor_x = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
+Statement [69] conio_cursor_y = 0 [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [70] conio_line_text = DEFAULT_SCREEN [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [71] conio_line_color = COLORRAM [ ] ( main:7::clrscr:28 [ printf_buffer ] { }  ) always clobbers reg byte a 
 Statement [75] clrscr::line_text#1 = clrscr::line_text#5 + $28 [ clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] ( main:7::clrscr:28 [ printf_buffer clrscr::l#2 clrscr::line_cols#5 clrscr::line_text#1 ] { }  ) always clobbers reg byte a 
@@ -7187,17 +7181,17 @@ Statement [79] clrscr::line_cols#5[clrscr::c#2] = LIGHT_BLUE [ clrscr::l#2 clrsc
 Statement [83] printf_str::c#1 = *printf_str::s#11 [ printf_str::s#11 printf_str::c#1 printf_buffer ] ( main:7::printf_str:30 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:32 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:38 [ count#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_str:42 [ printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::printf_uint:34::printf_number_buffer:94::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::printf_str:188 [ queens::row#10 count#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i1#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#11 printf_str::c#1 printf_buffer ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_str:217 [ queens::row#10 count#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:221 [ queens::row#10 count#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:228 [ queens::row#10 count#2 print::i1#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:236 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:239 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#11 printf_str::c#1 printf_buffer ] { }  ) always clobbers reg byte a reg byte y 
 Statement [88] callexecute *printf_str::putc#12  [ printf_str::s#0 printf_buffer ] ( main:7::printf_str:30 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_str:32 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_str:38 [ count#10 printf_str::s#0 printf_buffer ] { }  main:7::printf_str:42 [ printf_str::s#0 printf_buffer ] { }  main:7::printf_uint:34::printf_number_buffer:94::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::printf_str:188 [ printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::printf_str:188 [ queens::row#10 count#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i1#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::printf_str:188 [ queens::row#10 count#2 print::i#2 printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 printf_str::s#0 printf_buffer ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { printf_str::putc#0 = printf_str::putc#12 printf_number_buffer::putc#10 } }  main:7::queens:36::print:109::printf_str:217 [ queens::row#10 count#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:221 [ queens::row#10 count#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:228 [ queens::row#10 count#2 print::i1#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:236 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#0 printf_buffer ] { }  main:7::queens:36::print:109::printf_str:239 [ queens::row#10 count#2 print::i1#2 print::j#2 printf_str::s#0 printf_buffer ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement sideeffect stackpullbytes(1) always clobbers reg byte a 
-Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte a 
+Statement [91] *((char *)&printf_buffer) = 0 [ printf_buffer ] ( main:7::printf_uint:34 [ printf_buffer ] { }  ) always clobbers reg byte z 
 Statement [93] printf_number_buffer::buffer_sign#1 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#1 ] ( main:7::printf_uint:34 [ printf_buffer printf_number_buffer::buffer_sign#1 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  ) always clobbers reg byte a 
 Statement [98] board[queens::row#10] = ++ board[queens::row#10] [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte x 
 Statement [99] if(board[queens::row#10]==8+1) goto queens::@3 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
+Statement [106] if(queens::row#10==8) goto queens::@4 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
 Statement [110] board[queens::row#10] = 0 [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte a 
-Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
+Statement [111] if(queens::row#10==1) goto queens::@return [ count#10 printf_buffer queens::row#10 ] ( main:7::queens:36 [ count#10 printf_buffer queens::row#10 ] { }  ) always clobbers reg byte z 
+Statement [115] *((char *)&printf_buffer) = 0 [ printf_buffer printf_ulong::uvalue#2 ] ( main:7::printf_ulong:40 [ printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_ulong::uvalue#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte z 
 Statement [116] ultoa::value#1 = printf_ulong::uvalue#2 [ printf_buffer ultoa::value#1 ] ( main:7::printf_ulong:40 [ printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer ultoa::value#1 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } }  ) always clobbers reg byte a 
 Statement [118] printf_number_buffer::buffer_sign#0 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#0 ] ( main:7::printf_ulong:40 [ printf_buffer printf_number_buffer::buffer_sign#0 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219 [ queens::row#10 count#2 printf_buffer printf_number_buffer::buffer_sign#0 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  ) always clobbers reg byte a 
-Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte a 
+Statement [121] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_text conio_line_color ] { }  ) always clobbers reg byte z 
 Statement [130] conio_line_text = conio_line_text - $28 [ conio_cursor_y conio_line_color ] ( cputln:23::cscroll:63 [ conio_cursor_y conio_line_color ] { }  cputln:26::cscroll:63 [ conio_cursor_y conio_line_color ] { }  ) always clobbers reg byte a 
 Statement [131] conio_line_color = conio_line_color - $28 [ conio_cursor_y ] ( cputln:23::cscroll:63 [ conio_cursor_y ] { }  cputln:26::cscroll:63 [ conio_cursor_y ] { }  ) always clobbers reg byte a 
 Statement [138] *utoa::buffer#11 = DIGITS[utoa::$11] [ printf_buffer utoa::buffer#11 ] ( main:7::printf_uint:34::utoa:92 [ printf_buffer utoa::buffer#11 ] { }  ) always clobbers reg byte a reg byte y 
@@ -7278,7 +7272,7 @@ Statement sideeffect stackpullbytes(1) always clobbers reg byte a
 Statement [305] if(0!=*strupr::src#2) goto strupr::@2 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [307] toupper::ch#0 = *strupr::src#2 [ strupr::src#2 toupper::ch#0 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 toupper::ch#0 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } { toupper::return#2 = toupper::return#3 } }  ) always clobbers reg byte a reg byte y 
 Statement [311] *strupr::src#2 = strupr::$0 [ strupr::src#2 ] ( main:7::printf_uint:34::printf_number_buffer:94::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_number_buffer::buffer_sign#1 = printf_number_buffer::buffer_sign#10 } }  main:7::printf_ulong:40::printf_number_buffer:119::strupr:186 [ printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_ulong:219::printf_number_buffer:119::strupr:186 [ queens::row#10 count#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 } { printf_number_buffer::buffer_sign#0 = printf_number_buffer::buffer_sign#10 } }  main:7::queens:36::print:109::printf_uchar:230::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241::printf_number_buffer:318::strupr:186 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::format_justify_left#10 printf_number_buffer::format_zero_padding#10 printf_number_buffer::putc#10 printf_number_buffer::padding#10 strupr::src#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte y 
-Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte a 
+Statement [314] *((char *)&printf_buffer) = 0 [ printf_buffer printf_uchar::uvalue#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_uchar::uvalue#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } }  ) always clobbers reg byte z 
 Statement [317] printf_number_buffer::buffer_sign#2 = *((char *)&printf_buffer) [ printf_buffer printf_number_buffer::buffer_sign#2 ] ( main:7::queens:36::print:109::printf_uchar:230 [ queens::row#10 count#2 print::i1#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  main:7::queens:36::print:109::printf_uchar:241 [ queens::row#10 count#2 print::i#2 printf_buffer printf_number_buffer::buffer_sign#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 } { printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 } }  ) always clobbers reg byte a 
 Statement [322] if(ultoa_append::value#2>=ultoa_append::sub#0) goto ultoa_append::@2 [ ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] ( main:7::printf_ulong:40::ultoa:117::ultoa_append:260 [ printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  main:7::queens:36::print:109::printf_ulong:219::ultoa:117::ultoa_append:260 [ queens::row#10 count#2 printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#2 ultoa_append::digit#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [323] *ultoa_append::buffer#0 = DIGITS[ultoa_append::digit#2] [ ultoa_append::value#2 ] ( main:7::printf_ulong:40::ultoa:117::ultoa_append:260 [ printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] { { printf_ulong::uvalue#0 = printf_ulong::uvalue#2 count#10 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  main:7::queens:36::print:109::printf_ulong:219::ultoa:117::ultoa_append:260 [ queens::row#10 count#2 printf_buffer ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] { { printf_ulong::uvalue#1 = printf_ulong::uvalue#2 count#2 ultoa::value#1 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
@@ -7291,7 +7285,7 @@ Statement [344] uctoa_append::buffer#0 = uctoa::buffer#11 [ printf_buffer uctoa:
 Statement [354] *uctoa_append::buffer#0 = DIGITS[uctoa_append::digit#2] [ uctoa_append::value#2 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::value#2 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::value#2 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a reg byte y 
 Statement [357] uctoa_append::value#1 = uctoa_append::value#2 - uctoa_append::sub#0 [ uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] ( main:7::queens:36::print:109::printf_uchar:230::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i1#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#1 = printf_uchar::uvalue#2 print::i1#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  main:7::queens:36::print:109::printf_uchar:241::uctoa:316::uctoa_append:347 [ queens::row#10 count#2 print::i#2 printf_buffer uctoa::digit#2 uctoa::buffer#11 uctoa_append::buffer#0 uctoa_append::sub#0 uctoa_append::value#1 uctoa_append::digit#1 ] { { printf_uchar::uvalue#0 = printf_uchar::uvalue#2 print::i#2 uctoa::value#1 } { uctoa_append::buffer#0 = uctoa::buffer#11 } { uctoa_append::value#0 = uctoa::value#2 } { uctoa_append::sub#0 = uctoa::digit_value#0 } { uctoa_append::return#0 = uctoa_append::value#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:159 [ conio_c64_init::line#2 conio_c64_init::line#0 ] : zp[1]:159 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:105 [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ] : zp[1]:105 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:105 [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ] : zp[1]:105 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:143 [ clrscr::l#2 clrscr::l#1 ] : zp[1]:143 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:141 [ clrscr::line_text#5 clrscr::line_text#1 ] : zp[2]:141 , 
 Potential registers zp[2]:139 [ clrscr::line_cols#5 clrscr::line_cols#1 ] : zp[2]:139 , 
@@ -7340,7 +7334,7 @@ Potential registers zp[1]:30 [ printf_padding::pad#5 ] : zp[1]:30 ,
 Potential registers zp[2]:38 [ printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 ] : zp[2]:38 , 
 Potential registers zp[1]:8 [ printf_padding::i#2 printf_padding::i#1 ] : zp[1]:8 , 
 Potential registers zp[2]:9 [ strupr::src#2 strupr::src#1 ] : zp[2]:9 , 
-Potential registers zp[1]:76 [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ] : zp[1]:76 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:76 [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ] : zp[1]:76 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[4]:11 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] : zp[4]:11 , 
 Potential registers zp[1]:15 [ ultoa_append::digit#2 ultoa_append::digit#1 ] : zp[1]:15 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:5 [ toupper::return#2 toupper::return#0 toupper::ch#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , reg byte z , 
@@ -7440,92 +7434,94 @@ Uplifting [ultoa_append] best 736826 combination zp[4]:11 [ ultoa_append::value#
 Uplifting [strupr] best 730826 combination zp[2]:9 [ strupr::src#2 strupr::src#1 ] reg byte a [ strupr::$0 ] 
 Uplifting [strlen] best 730826 combination zp[2]:6 [ strlen::str#2 strlen::str#0 ] zp[2]:18 [ strlen::len#2 strlen::len#1 ] zp[2]:50 [ strlen::return#2 ] 
 Uplifting [printf_padding] best 730826 combination zp[1]:8 [ printf_padding::i#2 printf_padding::i#1 ] zp[1]:28 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ] zp[1]:30 [ printf_padding::pad#5 ] zp[2]:38 [ printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 ] 
-Uplifting [uctoa] best 714824 combination zp[2]:20 [ uctoa::buffer#11 uctoa::buffer#14 uctoa::buffer#4 ] reg byte z [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ] zp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ] reg byte x [ uctoa::started#2 uctoa::started#4 ] zp[1]:34 [ uctoa::digit_value#0 ] zp[2]:57 [ uctoa::buffer#3 ] 
+Uplifting [uctoa] best 723826 combination zp[2]:20 [ uctoa::buffer#11 uctoa::buffer#14 uctoa::buffer#4 ] zp[1]:26 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ] zp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ] reg byte x [ uctoa::started#2 uctoa::started#4 ] zp[1]:34 [ uctoa::digit_value#0 ] zp[2]:57 [ uctoa::buffer#3 ] 
 Limited combination testing to 100 combinations of 240 possible.
-Uplifting [printf_str] best 714754 combination zp[2]:35 [ printf_str::s#11 printf_str::s#12 printf_str::s#0 ] reg byte a [ printf_str::c#1 ] zp[2]:40 [ printf_str::putc#12 printf_str::putc#0 ] 
-Uplifting [ultoa] best 712654 combination zp[2]:43 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:45 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] reg byte x [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$10 ] reg byte z [ ultoa::started#2 ultoa::started#4 ] zp[4]:65 [ ultoa::digit_value#0 ] zp[1]:90 [ ultoa::$11 ] zp[2]:91 [ ultoa::buffer#3 ] 
+Uplifting [printf_str] best 723756 combination zp[2]:35 [ printf_str::s#11 printf_str::s#12 printf_str::s#0 ] reg byte a [ printf_str::c#1 ] zp[2]:40 [ printf_str::putc#12 printf_str::putc#0 ] 
+Uplifting [ultoa] best 721656 combination zp[2]:43 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:45 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] reg byte x [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$10 ] reg byte z [ ultoa::started#2 ultoa::started#4 ] zp[4]:65 [ ultoa::digit_value#0 ] zp[1]:90 [ ultoa::$11 ] zp[2]:91 [ ultoa::buffer#3 ] 
 Limited combination testing to 100 combinations of 300 possible.
-Uplifting [printf_number_buffer] best 712639 combination reg byte x [ printf_number_buffer::len#2 printf_number_buffer::len#0 printf_number_buffer::len#1 ] zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] zp[2]:63 [ printf_number_buffer::$19 ] zp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ] zp[2]:74 [ printf_number_buffer::putc#10 ] reg byte z [ printf_number_buffer::format_min_length#3 ] zp[1]:78 [ printf_number_buffer::format_zero_padding#10 ] zp[1]:80 [ printf_number_buffer::format_justify_left#10 ] zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] 
-Uplifting [utoa_append] best 711939 combination zp[2]:71 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte z [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:83 [ utoa_append::sub#0 ] zp[2]:126 [ utoa_append::return#0 ] zp[2]:129 [ utoa_append::buffer#0 ] 
-Uplifting [print] best 711939 combination zp[1]:70 [ print::j#2 print::j#1 ] zp[1]:85 [ print::i#2 print::i#1 ] zp[1]:86 [ print::i1#2 print::i1#1 ] 
-Uplifting [legal] best 709839 combination reg byte a [ legal::diff2_return#2 legal::diff2_return#0 legal::diff2_return#1 ] zp[1]:81 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 ] reg byte y [ legal::i#10 legal::i#1 ] zp[1]:88 [ legal::$0 ] zp[1]:89 [ legal::diff1_a#0 ] zp[1]:93 [ legal::column#0 ] zp[1]:94 [ legal::row#0 ] zp[1]:144 [ legal::return#0 ] zp[1]:158 [ legal::return#4 ] 
+Uplifting [printf_number_buffer] best 721642 combination reg byte y [ printf_number_buffer::len#2 printf_number_buffer::len#0 printf_number_buffer::len#1 ] zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] zp[2]:63 [ printf_number_buffer::$19 ] zp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ] zp[2]:74 [ printf_number_buffer::putc#10 ] reg byte x [ printf_number_buffer::format_min_length#3 ] zp[1]:78 [ printf_number_buffer::format_zero_padding#10 ] zp[1]:80 [ printf_number_buffer::format_justify_left#10 ] zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] 
+Uplifting [utoa_append] best 720942 combination zp[2]:71 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte z [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:83 [ utoa_append::sub#0 ] zp[2]:126 [ utoa_append::return#0 ] zp[2]:129 [ utoa_append::buffer#0 ] 
+Uplifting [print] best 720942 combination zp[1]:70 [ print::j#2 print::j#1 ] zp[1]:85 [ print::i#2 print::i#1 ] zp[1]:86 [ print::i1#2 print::i1#1 ] 
+Uplifting [legal] best 718842 combination reg byte a [ legal::diff2_return#2 legal::diff2_return#0 legal::diff2_return#1 ] zp[1]:81 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 ] reg byte y [ legal::i#10 legal::i#1 ] zp[1]:88 [ legal::$0 ] zp[1]:89 [ legal::diff1_a#0 ] zp[1]:93 [ legal::column#0 ] zp[1]:94 [ legal::row#0 ] zp[1]:144 [ legal::return#0 ] zp[1]:158 [ legal::return#4 ] 
 Limited combination testing to 100 combinations of 800000 possible.
-Uplifting [printf_uchar] best 709238 combination reg byte x [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ] 
-Uplifting [gotoxy] best 709222 combination zp[2]:95 [ gotoxy::$8 ] zp[2]:97 [ gotoxy::$9 ] zp[2]:99 [ gotoxy::$5 ] zp[2]:101 [ gotoxy::$6 ] zp[2]:103 [ gotoxy::$7 ] reg byte x [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ] zp[2]:106 [ gotoxy::line_offset#0 ] 
-Uplifting [utoa] best 709012 combination zp[2]:112 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:119 [ utoa::value#2 utoa::value#6 utoa::value#0 ] reg byte x [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte z [ utoa::started#2 utoa::started#4 ] zp[2]:131 [ utoa::digit_value#0 ] zp[1]:146 [ utoa::$11 ] zp[2]:147 [ utoa::buffer#3 ] 
+Uplifting [printf_uchar] best 718239 combination reg byte a [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ] 
+Uplifting [gotoxy] best 718221 combination zp[2]:95 [ gotoxy::$8 ] zp[2]:97 [ gotoxy::$9 ] zp[2]:99 [ gotoxy::$5 ] zp[2]:101 [ gotoxy::$6 ] zp[2]:103 [ gotoxy::$7 ] reg byte a [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ] zp[2]:106 [ gotoxy::line_offset#0 ] 
+Uplifting [utoa] best 718011 combination zp[2]:112 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:119 [ utoa::value#2 utoa::value#6 utoa::value#0 ] reg byte x [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte z [ utoa::started#2 utoa::started#4 ] zp[2]:131 [ utoa::digit_value#0 ] zp[1]:146 [ utoa::$11 ] zp[2]:147 [ utoa::buffer#3 ] 
 Limited combination testing to 100 combinations of 300 possible.
-Uplifting [printf_ulong] best 709012 combination zp[4]:108 [ printf_ulong::uvalue#2 printf_ulong::uvalue#0 printf_ulong::uvalue#1 ] 
-Uplifting [memcpy] best 709012 combination zp[2]:117 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:122 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:152 [ memcpy::src_end#0 ] zp[2]:161 [ memcpy::source#2 ] zp[2]:163 [ memcpy::destination#2 ] 
-Uplifting [clrscr] best 707122 combination reg byte z [ clrscr::c#2 clrscr::c#1 ] zp[2]:139 [ clrscr::line_cols#5 clrscr::line_cols#1 ] zp[2]:141 [ clrscr::line_text#5 clrscr::line_text#1 ] reg byte x [ clrscr::l#2 clrscr::l#1 ] 
-Uplifting [memset] best 707096 combination zp[2]:114 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:149 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:165 [ memset::str#3 ] 
-Uplifting [] best 707096 combination zp[1]:124 [ conio_cursor_x ] zp[2]:134 [ conio_line_text ] zp[2]:136 [ conio_line_color ] zp[1]:138 [ conio_cursor_y ] zp[4]:154 [ count#10 count#2 ] mem[12] [ printf_buffer ] 
-Uplifting [queens] best 707056 combination zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ] reg byte a [ queens::$2 ] 
-Uplifting [conio_c64_init] best 707044 combination reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
-Uplifting [cputc] best 707035 combination reg byte a [ cputc::c#0 ] 
-Uplifting [RADIX] best 707035 combination 
-Uplifting [cputln] best 707035 combination 
-Uplifting [MOS6526_CIA] best 707035 combination 
-Uplifting [MOS6569_VICII] best 707035 combination 
-Uplifting [MOS6581_SID] best 707035 combination 
-Uplifting [cscroll] best 707035 combination 
-Uplifting [printf_format_number] best 707035 combination 
-Uplifting [printf_buffer_number] best 707035 combination 
-Uplifting [printf_uint] best 707035 combination 
-Uplifting [printf_format_string] best 707035 combination 
-Uplifting [main] best 707035 combination 
-Uplifting [__start] best 707035 combination 
+Uplifting [printf_ulong] best 718011 combination zp[4]:108 [ printf_ulong::uvalue#2 printf_ulong::uvalue#0 printf_ulong::uvalue#1 ] 
+Uplifting [memcpy] best 718011 combination zp[2]:117 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:122 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:152 [ memcpy::src_end#0 ] zp[2]:161 [ memcpy::source#2 ] zp[2]:163 [ memcpy::destination#2 ] 
+Uplifting [clrscr] best 716121 combination reg byte z [ clrscr::c#2 clrscr::c#1 ] zp[2]:139 [ clrscr::line_cols#5 clrscr::line_cols#1 ] zp[2]:141 [ clrscr::line_text#5 clrscr::line_text#1 ] reg byte x [ clrscr::l#2 clrscr::l#1 ] 
+Uplifting [memset] best 716095 combination zp[2]:114 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:149 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:165 [ memset::str#3 ] 
+Uplifting [] best 716095 combination zp[1]:124 [ conio_cursor_x ] zp[2]:134 [ conio_line_text ] zp[2]:136 [ conio_line_color ] zp[1]:138 [ conio_cursor_y ] zp[4]:154 [ count#10 count#2 ] mem[12] [ printf_buffer ] 
+Uplifting [queens] best 716055 combination zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ] reg byte a [ queens::$2 ] 
+Uplifting [conio_c64_init] best 716043 combination reg byte a [ conio_c64_init::line#2 conio_c64_init::line#0 ] 
+Uplifting [cputc] best 716034 combination reg byte a [ cputc::c#0 ] 
+Uplifting [RADIX] best 716034 combination 
+Uplifting [cputln] best 716034 combination 
+Uplifting [MOS6526_CIA] best 716034 combination 
+Uplifting [MOS6569_VICII] best 716034 combination 
+Uplifting [MOS6581_SID] best 716034 combination 
+Uplifting [cscroll] best 716034 combination 
+Uplifting [printf_format_number] best 716034 combination 
+Uplifting [printf_buffer_number] best 716034 combination 
+Uplifting [printf_uint] best 716034 combination 
+Uplifting [printf_format_string] best 716034 combination 
+Uplifting [main] best 716034 combination 
+Uplifting [__start] best 716034 combination 
 Attempting to uplift remaining variables inzp[1]:4 [ uctoa_append::sub#0 ]
-Uplifting [uctoa_append] best 707035 combination zp[1]:4 [ uctoa_append::sub#0 ] 
+Uplifting [uctoa_append] best 716034 combination zp[1]:4 [ uctoa_append::sub#0 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ printf_padding::i#2 printf_padding::i#1 ]
-Uplifting [printf_padding] best 707035 combination zp[1]:8 [ printf_padding::i#2 printf_padding::i#1 ] 
+Uplifting [printf_padding] best 716034 combination zp[1]:8 [ printf_padding::i#2 printf_padding::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:26 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ]
+Uplifting [uctoa] best 716034 combination zp[1]:26 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ]
-Uplifting [uctoa] best 707035 combination zp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ] 
+Uplifting [uctoa] best 716034 combination zp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ] 
 Attempting to uplift remaining variables inzp[1]:28 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ]
-Uplifting [printf_padding] best 707035 combination zp[1]:28 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ] 
+Uplifting [printf_padding] best 716034 combination zp[1]:28 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ printf_padding::pad#5 ]
-Uplifting [printf_padding] best 707035 combination zp[1]:30 [ printf_padding::pad#5 ] 
+Uplifting [printf_padding] best 716034 combination zp[1]:30 [ printf_padding::pad#5 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ uctoa::digit_value#0 ]
-Uplifting [uctoa] best 707035 combination zp[1]:34 [ uctoa::digit_value#0 ] 
+Uplifting [uctoa] best 716034 combination zp[1]:34 [ uctoa::digit_value#0 ] 
 Attempting to uplift remaining variables inzp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
-Uplifting [printf_number_buffer] best 707035 combination zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] 
+Uplifting [printf_number_buffer] best 716034 combination zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] 
 Attempting to uplift remaining variables inzp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ]
-Uplifting [printf_number_buffer] best 707035 combination zp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ] 
+Uplifting [printf_number_buffer] best 716034 combination zp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ] 
 Attempting to uplift remaining variables inzp[1]:70 [ print::j#2 print::j#1 ]
-Uplifting [print] best 707035 combination zp[1]:70 [ print::j#2 print::j#1 ] 
+Uplifting [print] best 716034 combination zp[1]:70 [ print::j#2 print::j#1 ] 
 Attempting to uplift remaining variables inzp[1]:78 [ printf_number_buffer::format_zero_padding#10 ]
-Uplifting [printf_number_buffer] best 707035 combination zp[1]:78 [ printf_number_buffer::format_zero_padding#10 ] 
+Uplifting [printf_number_buffer] best 716034 combination zp[1]:78 [ printf_number_buffer::format_zero_padding#10 ] 
 Attempting to uplift remaining variables inzp[1]:80 [ printf_number_buffer::format_justify_left#10 ]
-Uplifting [printf_number_buffer] best 707035 combination zp[1]:80 [ printf_number_buffer::format_justify_left#10 ] 
+Uplifting [printf_number_buffer] best 716034 combination zp[1]:80 [ printf_number_buffer::format_justify_left#10 ] 
 Attempting to uplift remaining variables inzp[1]:81 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 ]
-Uplifting [legal] best 707035 combination zp[1]:81 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 ] 
+Uplifting [legal] best 716034 combination zp[1]:81 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 ] 
 Attempting to uplift remaining variables inzp[1]:82 [ printf_number_buffer::format_upper_case#10 ]
-Uplifting [printf_number_buffer] best 707035 combination zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] 
+Uplifting [printf_number_buffer] best 716034 combination zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] 
 Attempting to uplift remaining variables inzp[1]:85 [ print::i#2 print::i#1 ]
-Uplifting [print] best 707035 combination zp[1]:85 [ print::i#2 print::i#1 ] 
+Uplifting [print] best 716034 combination zp[1]:85 [ print::i#2 print::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:86 [ print::i1#2 print::i1#1 ]
-Uplifting [print] best 707035 combination zp[1]:86 [ print::i1#2 print::i1#1 ] 
+Uplifting [print] best 716034 combination zp[1]:86 [ print::i1#2 print::i1#1 ] 
 Attempting to uplift remaining variables inzp[1]:88 [ legal::$0 ]
-Uplifting [legal] best 706435 combination reg byte x [ legal::$0 ] 
+Uplifting [legal] best 715434 combination reg byte x [ legal::$0 ] 
 Attempting to uplift remaining variables inzp[1]:89 [ legal::diff1_a#0 ]
-Uplifting [legal] best 705435 combination reg byte a [ legal::diff1_a#0 ] 
+Uplifting [legal] best 714434 combination reg byte a [ legal::diff1_a#0 ] 
 Attempting to uplift remaining variables inzp[1]:90 [ ultoa::$11 ]
-Uplifting [ultoa] best 705431 combination reg byte a [ ultoa::$11 ] 
+Uplifting [ultoa] best 714430 combination reg byte a [ ultoa::$11 ] 
 Attempting to uplift remaining variables inzp[1]:93 [ legal::column#0 ]
-Uplifting [legal] best 705431 combination zp[1]:93 [ legal::column#0 ] 
+Uplifting [legal] best 714430 combination zp[1]:93 [ legal::column#0 ] 
 Attempting to uplift remaining variables inzp[1]:94 [ legal::row#0 ]
-Uplifting [legal] best 705431 combination zp[1]:94 [ legal::row#0 ] 
+Uplifting [legal] best 714430 combination zp[1]:94 [ legal::row#0 ] 
 Attempting to uplift remaining variables inzp[1]:124 [ conio_cursor_x ]
-Uplifting [] best 705431 combination zp[1]:124 [ conio_cursor_x ] 
+Uplifting [] best 714430 combination zp[1]:124 [ conio_cursor_x ] 
 Attempting to uplift remaining variables inzp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ]
-Uplifting [queens] best 705431 combination zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ] 
+Uplifting [queens] best 714430 combination zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ] 
 Attempting to uplift remaining variables inzp[1]:138 [ conio_cursor_y ]
-Uplifting [] best 705431 combination zp[1]:138 [ conio_cursor_y ] 
+Uplifting [] best 714430 combination zp[1]:138 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:144 [ legal::return#0 ]
-Uplifting [legal] best 705371 combination reg byte a [ legal::return#0 ] 
+Uplifting [legal] best 714370 combination reg byte a [ legal::return#0 ] 
 Attempting to uplift remaining variables inzp[1]:146 [ utoa::$11 ]
-Uplifting [utoa] best 705365 combination reg byte x [ utoa::$11 ] 
+Uplifting [utoa] best 714364 combination reg byte x [ utoa::$11 ] 
 Attempting to uplift remaining variables inzp[1]:158 [ legal::return#4 ]
-Uplifting [legal] best 705329 combination reg byte a [ legal::return#4 ] 
+Uplifting [legal] best 714328 combination reg byte a [ legal::return#4 ] 
 Coalescing zero page register [ zp[2]:74 [ printf_number_buffer::putc#10 ] ] with [ zp[2]:38 [ printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 ] ] - score: 3
 Coalescing zero page register [ zp[2]:40 [ printf_str::putc#12 printf_str::putc#0 ] ] with [ zp[2]:74 [ printf_number_buffer::putc#10 printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 ] ] - score: 1
 Coalescing zero page register [ zp[1]:133 [ queens::row#10 queens::row#1 queens::row#2 ] ] with [ zp[1]:94 [ legal::row#0 ] ] - score: 1
@@ -7559,27 +7555,28 @@ Coalescing zero page register [ zp[2]:43 [ ultoa::buffer#11 ultoa::buffer#14 ult
 Coalescing zero page register [ zp[2]:165 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:161 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ]
 Coalescing zero page register [ zp[2]:6 [ strlen::str#2 strlen::str#0 ] ] with [ zp[2]:112 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ] ]
 Coalescing zero page register [ zp[1]:27 [ uctoa::digit#2 uctoa::digit#1 ] ] with [ zp[1]:69 [ printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ] ]
+Coalescing zero page register [ zp[1]:26 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ] ] with [ zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] ]
 Coalescing zero page register [ zp[2]:20 [ uctoa::buffer#11 uctoa::buffer#14 uctoa::buffer#4 uctoa::buffer#3 uctoa_append::buffer#0 ] ] with [ zp[2]:18 [ strlen::len#2 strlen::len#1 strlen::return#2 printf_number_buffer::$19 ] ]
-Coalescing zero page register [ zp[1]:93 [ legal::column#0 ] ] with [ zp[1]:82 [ printf_number_buffer::format_upper_case#10 ] ]
+Coalescing zero page register [ zp[1]:93 [ legal::column#0 ] ] with [ zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] ]
 Coalescing zero page register [ zp[2]:131 [ utoa::digit_value#0 utoa_append::sub#0 ] ] with [ zp[2]:9 [ strupr::src#2 strupr::src#1 ] ]
 Coalescing zero page register [ zp[2]:149 [ memset::end#0 ] ] with [ zp[2]:163 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ]
-Coalescing zero page register [ zp[1]:34 [ uctoa::digit_value#0 uctoa_append::sub#0 ] ] with [ zp[1]:62 [ printf_number_buffer::padding#10 printf_number_buffer::padding#1 ] ]
+Coalescing zero page register [ zp[1]:34 [ uctoa::digit_value#0 uctoa_append::sub#0 ] ] with [ zp[1]:28 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ] ]
 Coalescing zero page register [ zp[2]:43 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 utoa::value#2 utoa::value#6 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 ] ] with [ zp[2]:40 [ printf_str::putc#12 printf_str::putc#0 printf_number_buffer::putc#10 printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 clrscr::line_text#5 clrscr::line_text#1 ] ]
 Coalescing zero page register [ zp[2]:6 [ strlen::str#2 strlen::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ] ] with [ zp[2]:35 [ printf_str::s#11 printf_str::s#12 printf_str::s#0 clrscr::line_cols#5 clrscr::line_cols#1 ] ]
-Allocated (was zp[1]:34) zp[1]:2 [ uctoa::digit_value#0 uctoa_append::sub#0 printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
+Allocated (was zp[1]:34) zp[1]:2 [ uctoa::digit_value#0 uctoa_append::sub#0 printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ]
 Allocated (was zp[2]:6) zp[2]:3 [ strlen::str#2 strlen::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 printf_str::s#11 printf_str::s#12 printf_str::s#0 clrscr::line_cols#5 clrscr::line_cols#1 ]
 Allocated (was zp[1]:8) zp[1]:5 [ printf_padding::i#2 printf_padding::i#1 ]
 Allocated (was zp[2]:131) zp[2]:6 [ utoa::digit_value#0 utoa_append::sub#0 strupr::src#2 strupr::src#1 ]
 Allocated (was zp[4]:108) zp[4]:8 [ printf_ulong::uvalue#2 printf_ulong::uvalue#0 printf_ulong::uvalue#1 ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ultoa_append::return#0 ]
 Allocated (was zp[2]:20) zp[2]:12 [ uctoa::buffer#11 uctoa::buffer#14 uctoa::buffer#4 uctoa::buffer#3 uctoa_append::buffer#0 strlen::len#2 strlen::len#1 strlen::return#2 printf_number_buffer::$19 ]
 Allocated (was zp[4]:65) zp[4]:14 [ ultoa::digit_value#0 ultoa_append::sub#0 ]
-Allocated (was zp[1]:27) zp[1]:18 [ uctoa::digit#2 uctoa::digit#1 printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ]
-Allocated (was zp[1]:28) zp[1]:19 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ]
+Allocated (was zp[1]:26) zp[1]:18 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 printf_number_buffer::format_upper_case#10 ]
+Allocated (was zp[1]:27) zp[1]:19 [ uctoa::digit#2 uctoa::digit#1 printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ]
 Allocated (was zp[1]:30) zp[1]:20 [ printf_padding::pad#5 ]
 Allocated (was zp[2]:43) zp[2]:21 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 utoa::value#2 utoa::value#6 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 printf_str::putc#12 printf_str::putc#0 printf_number_buffer::putc#10 printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 clrscr::line_text#5 clrscr::line_text#1 ]
-Allocated (was zp[1]:70) zp[1]:23 [ print::j#2 print::j#1 printf_number_buffer::format_zero_padding#10 ]
-Allocated (was zp[1]:81) zp[1]:24 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 printf_number_buffer::format_justify_left#10 ]
-Allocated (was zp[1]:93) zp[1]:25 [ legal::column#0 printf_number_buffer::format_upper_case#10 ]
+Allocated (was zp[1]:93) zp[1]:23 [ legal::column#0 printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
+Allocated (was zp[1]:70) zp[1]:24 [ print::j#2 print::j#1 printf_number_buffer::format_zero_padding#10 ]
+Allocated (was zp[1]:81) zp[1]:25 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 printf_number_buffer::format_justify_left#10 ]
 Allocated (was zp[1]:85) zp[1]:26 [ print::i#2 print::i#1 ]
 Allocated (was zp[1]:86) zp[1]:27 [ print::i1#2 print::i1#1 ]
 Allocated (was zp[2]:103) zp[2]:28 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
@@ -7639,11 +7636,11 @@ __start: {
     // __start::__init1
   __init1:
     // [1] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // [2] conio_cursor_y = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_y
+    ldz #0
+    stz.z conio_cursor_y
     // [3] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
@@ -7676,15 +7673,15 @@ __start: {
 conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuxx=_deref_pbuc1 
-    ldx BASIC_CURSOR_LINE
-    // [10] if(conio_c64_init::line#0<$19) goto conio_c64_init::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$19
+    // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuaa=_deref_pbuc1 
+    lda BASIC_CURSOR_LINE
+    // [10] if(conio_c64_init::line#0<$19) goto conio_c64_init::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$19
     bcc __b2_from_conio_c64_init
     // [12] phi from conio_c64_init to conio_c64_init::@1 [phi:conio_c64_init->conio_c64_init::@1]
   __b1_from_conio_c64_init:
-    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
-    ldx #$19-1
+    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuaa=vbuc1 
+    lda #$19-1
     jmp __b1
     // [11] phi from conio_c64_init to conio_c64_init::@2 [phi:conio_c64_init->conio_c64_init::@2]
   __b2_from_conio_c64_init:
@@ -7734,8 +7731,8 @@ cputc: {
     // [20] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_x
     // [21] if(conio_cursor_x!=$28) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$28
-    cmp.z conio_cursor_x
+    ldz #$28
+    cpz.z conio_cursor_x
     bne __breturn
     // [22] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
   __b3_from___b2:
@@ -7891,7 +7888,7 @@ main: {
 .segment Code
   // gotoxy
 // Set the cursor to the specified position
-// void gotoxy(char x, __register(X) char y)
+// void gotoxy(char x, __register(A) char y)
 gotoxy: {
     .label __5 = $21
     .label __6 = $1c
@@ -7899,13 +7896,13 @@ gotoxy: {
     .label line_offset = $1c
     .label __8 = $1f
     .label __9 = $1c
-    // [45] if(gotoxy::y#4<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$19+1
+    // [45] if(gotoxy::y#4<$19+1) goto gotoxy::@3 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$19+1
     bcc __b3_from_gotoxy
     // [47] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
   __b1_from_gotoxy:
-    // [47] phi gotoxy::y#5 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [47] phi gotoxy::y#5 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuaa=vbuc1 
+    lda #0
     jmp __b1
     // [46] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
   __b3_from_gotoxy:
@@ -7922,12 +7919,11 @@ gotoxy: {
     // gotoxy::@2
   __b2:
     // [48] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
-    // [49] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuxx 
-    stx.z conio_cursor_y
-    // [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 -- vwuz1=_word_vbuxx 
-    txa
+    ldz #0
+    stz.z conio_cursor_x
+    // [49] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuaa 
+    sta.z conio_cursor_y
+    // [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 -- vwuz1=_word_vbuaa 
     sta.z __7
     lda #0
     sta.z __7+1
@@ -8004,8 +8000,8 @@ cputln: {
     inc.z conio_line_color+1
   !:
     // [61] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // [62] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // [63] call cscroll
@@ -8045,11 +8041,11 @@ clrscr: {
     // clrscr::@2
   __b2:
     // [68] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // [69] conio_cursor_y = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_y
+    ldz #0
+    stz.z conio_cursor_y
     // [70] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z conio_line_text
@@ -8171,8 +8167,8 @@ printf_uint: {
   __b1:
     // [91] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
+    ldz #0
+    stz printf_buffer
     // [92] call utoa
   // Format number into buffer
     // [134] phi from printf_uint::@1 to utoa [phi:printf_uint::@1->utoa]
@@ -8189,8 +8185,8 @@ printf_uint: {
     // [155] phi from printf_uint::@2 to printf_number_buffer [phi:printf_uint::@2->printf_number_buffer]
   printf_number_buffer_from___b2:
     // [155] phi printf_number_buffer::format_upper_case#10 = printf_uint::format_upper_case#0 [phi:printf_uint::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #format_upper_case
-    sta.z printf_number_buffer.format_upper_case
+    ldz #format_upper_case
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = printf_uint::putc#0 [phi:printf_uint::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<putc
     sta.z printf_number_buffer.putc
@@ -8198,13 +8194,13 @@ printf_uint: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#1 [phi:printf_uint::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = printf_uint::format_zero_padding#0 [phi:printf_uint::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #format_zero_padding
-    sta.z printf_number_buffer.format_zero_padding
+    ldz #format_zero_padding
+    stz.z printf_number_buffer.format_zero_padding
     // [155] phi printf_number_buffer::format_justify_left#10 = printf_uint::format_justify_left#0 [phi:printf_uint::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    lda #format_justify_left
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = printf_uint::format_min_length#0 [phi:printf_uint::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
-    ldz #format_min_length
+    ldz #format_justify_left
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = printf_uint::format_min_length#0 [phi:printf_uint::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #format_min_length
     jsr printf_number_buffer
     jmp __breturn
     // printf_uint::@return
@@ -8234,8 +8230,8 @@ queens: {
     lda #>0>>$10
     sta.z count+3
     // [97] phi queens::row#10 = 1 [phi:queens->queens::@1#1] -- vbuz1=vbuc1 
-    lda #1
-    sta.z row
+    ldz #1
+    stz.z row
     jmp __b1
     // [97] phi from queens::@4 queens::@7 queens::@8 queens::@9 to queens::@1 [phi:queens::@4/queens::@7/queens::@8/queens::@9->queens::@1]
   __b1_from___b4:
@@ -8283,8 +8279,8 @@ queens: {
   __b6:
     // [106] if(queens::row#10==8) goto queens::@4 -- vbuz1_eq_vbuc1_then_la1 
     // position is legal - move up to the next row
-    lda #8
-    cmp.z row
+    ldz #8
+    cpz.z row
     beq __b4
     jmp __b7
     // queens::@7
@@ -8316,8 +8312,8 @@ queens: {
     ldy.z row
     sta board,y
     // [111] if(queens::row#10==1) goto queens::@return -- vbuz1_eq_vbuc1_then_la1 
-    lda #1
-    cmp.z row
+    ldz #1
+    cpz.z row
     beq __breturn
     jmp __b8
     // queens::@8
@@ -8340,8 +8336,8 @@ printf_ulong: {
   __b1:
     // [115] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
+    ldz #0
+    stz printf_buffer
     // [116] ultoa::value#1 = printf_ulong::uvalue#2
     // [117] call ultoa
   // Format number into buffer
@@ -8359,8 +8355,8 @@ printf_ulong: {
     // [155] phi from printf_ulong::@2 to printf_number_buffer [phi:printf_ulong::@2->printf_number_buffer]
   printf_number_buffer_from___b2:
     // [155] phi printf_number_buffer::format_upper_case#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_upper_case
+    ldz #0
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = &cputc [phi:printf_ulong::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<cputc
     sta.z printf_number_buffer.putc
@@ -8368,13 +8364,13 @@ printf_ulong: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#0 [phi:printf_ulong::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_zero_padding
-    // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_ulong::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
     ldz #0
+    stz.z printf_number_buffer.format_zero_padding
+    // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
+    ldz #0
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_ulong::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #0
     jsr printf_number_buffer
     jmp __breturn
     // printf_ulong::@return
@@ -8386,8 +8382,8 @@ printf_ulong: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // [121] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$19
-    cmp.z conio_cursor_y
+    ldz #$19
+    cpz.z conio_cursor_y
     bne __breturn
     // [122] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
   __b1_from_cscroll:
@@ -8610,17 +8606,17 @@ utoa: {
   // printf_number_buffer
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__zp($15) void (*putc)(char), __zp($12) char buffer_sign, char *buffer_digits, __register(Z) char format_min_length, __zp($18) char format_justify_left, char format_sign_always, __zp($17) char format_zero_padding, __zp($19) char format_upper_case, char format_radix)
+// void printf_number_buffer(__zp($15) void (*putc)(char), __zp($13) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($19) char format_justify_left, char format_sign_always, __zp($18) char format_zero_padding, __zp($12) char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label __19 = $c
-    .label buffer_sign = $12
-    .label padding = 2
-    .label format_zero_padding = $17
+    .label buffer_sign = $13
+    .label padding = $17
+    .label format_zero_padding = $18
     .label putc = $15
-    .label format_justify_left = $18
-    .label format_upper_case = $19
-    // [156] if(0==printf_number_buffer::format_min_length#3) goto printf_number_buffer::@1 -- 0_eq_vbuzz_then_la1 
-    cpz #0
+    .label format_justify_left = $19
+    .label format_upper_case = $12
+    // [156] if(0==printf_number_buffer::format_min_length#3) goto printf_number_buffer::@1 -- 0_eq_vbuxx_then_la1 
+    cpx #0
     beq __b1_from_printf_number_buffer
     // [157] phi from printf_number_buffer to printf_number_buffer::@6 [phi:printf_number_buffer->printf_number_buffer::@6]
   __b6_from_printf_number_buffer:
@@ -8636,17 +8632,17 @@ printf_number_buffer: {
     // printf_number_buffer::@14
   __b14:
     // [160] printf_number_buffer::$19 = strlen::return#2
-    // [161] printf_number_buffer::len#0 = (signed char)printf_number_buffer::$19 -- vbsxx=_sbyte_vwuz1 
+    // [161] printf_number_buffer::len#0 = (signed char)printf_number_buffer::$19 -- vbsyy=_sbyte_vwuz1 
     // There is a minimum length - work out the padding
-    ldx.z __19
+    ldy.z __19
     // [162] if(0==printf_number_buffer::buffer_sign#10) goto printf_number_buffer::@13 -- 0_eq_vbuz1_then_la1 
     lda.z buffer_sign
     beq __b13_from___b14
     jmp __b7
     // printf_number_buffer::@7
   __b7:
-    // [163] printf_number_buffer::len#1 = ++ printf_number_buffer::len#0 -- vbsxx=_inc_vbsxx 
-    inx
+    // [163] printf_number_buffer::len#1 = ++ printf_number_buffer::len#0 -- vbsyy=_inc_vbsyy 
+    iny
     // [164] phi from printf_number_buffer::@14 printf_number_buffer::@7 to printf_number_buffer::@13 [phi:printf_number_buffer::@14/printf_number_buffer::@7->printf_number_buffer::@13]
   __b13_from___b14:
   __b13_from___b7:
@@ -8654,9 +8650,9 @@ printf_number_buffer: {
     jmp __b13
     // printf_number_buffer::@13
   __b13:
-    // [165] printf_number_buffer::padding#1 = (signed char)printf_number_buffer::format_min_length#3 - printf_number_buffer::len#2 -- vbsz1=vbszz_minus_vbsxx 
-    tza
-    stx.z $ff
+    // [165] printf_number_buffer::padding#1 = (signed char)printf_number_buffer::format_min_length#3 - printf_number_buffer::len#2 -- vbsz1=vbsxx_minus_vbsyy 
+    txa
+    sty.z $ff
     sec
     sbc.z $ff
     sta.z padding
@@ -8668,8 +8664,8 @@ printf_number_buffer: {
   __b1_from_printf_number_buffer:
   __b1_from___b13:
     // [168] phi printf_number_buffer::padding#10 = 0 [phi:printf_number_buffer/printf_number_buffer::@13->printf_number_buffer::@1#0] -- vbsz1=vbsc1 
-    lda #0
-    sta.z padding
+    ldz #0
+    stz.z padding
     jmp __b1
     // [167] phi from printf_number_buffer::@13 to printf_number_buffer::@21 [phi:printf_number_buffer::@13->printf_number_buffer::@21]
   __b21_from___b13:
@@ -8710,8 +8706,8 @@ printf_number_buffer: {
   printf_padding_from___b8:
     // [295] phi printf_padding::putc#5 = printf_padding::putc#0 [phi:printf_number_buffer::@8->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = ' ' [phi:printf_number_buffer::@8->printf_padding#1] -- vbuz1=vbuc1 
-    lda #' '
-    sta.z printf_padding.pad
+    ldz #' '
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#0 [phi:printf_number_buffer::@8->printf_padding#2] -- register_copy 
     jsr printf_padding
     jmp __b2
@@ -8755,8 +8751,8 @@ printf_number_buffer: {
   printf_padding_from___b10:
     // [295] phi printf_padding::putc#5 = printf_padding::putc#1 [phi:printf_number_buffer::@10->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = '0' [phi:printf_number_buffer::@10->printf_padding#1] -- vbuz1=vbuc1 
-    lda #'0'
-    sta.z printf_padding.pad
+    ldz #'0'
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#1 [phi:printf_number_buffer::@10->printf_padding#2] -- register_copy 
     jsr printf_padding
     jmp __b4
@@ -8819,8 +8815,8 @@ printf_number_buffer: {
   printf_padding_from___b12:
     // [295] phi printf_padding::putc#5 = printf_padding::putc#2 [phi:printf_number_buffer::@12->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = ' ' [phi:printf_number_buffer::@12->printf_padding#1] -- vbuz1=vbuc1 
-    lda #' '
-    sta.z printf_padding.pad
+    ldz #' '
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#2 [phi:printf_number_buffer::@12->printf_padding#2] -- register_copy 
     jsr printf_padding
     jmp __breturn
@@ -8836,11 +8832,11 @@ printf_number_buffer: {
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
-// __register(A) char legal(__zp($1e) char row, __zp($19) char column)
+// __register(A) char legal(__zp($1e) char row, __zp($17) char column)
 legal: {
     .label row = $1e
-    .label column = $19
-    .label diff1_return = $18
+    .label column = $17
+    .label diff1_return = $19
     // [197] phi from legal to legal::@1 [phi:legal->legal::@1]
   __b1_from_legal:
     // [197] phi legal::i#10 = 1 [phi:legal->legal::@1#0] -- vbuyy=vbuc1 
@@ -8958,12 +8954,12 @@ legal: {
 print: {
     .label i = $1a
     .label i1 = $1b
-    .label j = $17
+    .label j = $18
     // [215] call gotoxy
     // [44] phi from print to gotoxy [phi:print->gotoxy]
   gotoxy_from_print:
-    // [44] phi gotoxy::y#4 = 5 [phi:print->gotoxy#0] -- vbuxx=vbuc1 
-    ldx #5
+    // [44] phi gotoxy::y#4 = 5 [phi:print->gotoxy#0] -- vbuaa=vbuc1 
+    lda #5
     jsr gotoxy
     // [216] phi from print to print::@11 [phi:print->print::@11]
   __b11_from_print:
@@ -9023,8 +9019,8 @@ print: {
     // [222] phi from print::@13 to print::@1 [phi:print::@13->print::@1]
   __b1_from___b13:
     // [222] phi print::i#2 = 1 [phi:print::@13->print::@1#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z i
+    ldz #1
+    stz.z i
     jmp __b1
     // print::@1
   __b1:
@@ -9035,8 +9031,8 @@ print: {
     // [224] phi from print::@1 to print::@3 [phi:print::@1->print::@3]
   __b3_from___b1:
     // [224] phi print::i1#2 = 1 [phi:print::@1->print::@3#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z i1
+    ldz #1
+    stz.z i1
     jmp __b3
     // print::@3
   __b3:
@@ -9071,8 +9067,8 @@ print: {
     jmp __b15
     // print::@15
   __b15:
-    // [229] printf_uchar::uvalue#1 = print::i1#2 -- vbuxx=vbuz1 
-    ldx.z i1
+    // [229] printf_uchar::uvalue#1 = print::i1#2 -- vbuaa=vbuz1 
+    lda.z i1
     // [230] call printf_uchar
     // [313] phi from print::@15 to printf_uchar [phi:print::@15->printf_uchar]
   printf_uchar_from___b15:
@@ -9081,8 +9077,8 @@ print: {
     // [231] phi from print::@15 to print::@5 [phi:print::@15->print::@5]
   __b5_from___b15:
     // [231] phi print::j#2 = 1 [phi:print::@15->print::@5#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z j
+    ldz #1
+    stz.z j
     jmp __b5
     // print::@5
   __b5:
@@ -9156,8 +9152,8 @@ print: {
     jmp __b9
     // print::@2
   __b2:
-    // [240] printf_uchar::uvalue#0 = print::i#2 -- vbuxx=vbuz1 
-    ldx.z i
+    // [240] printf_uchar::uvalue#0 = print::i#2 -- vbuaa=vbuz1 
+    lda.z i
     // [241] call printf_uchar
     // [313] phi from print::@2 to printf_uchar [phi:print::@2->printf_uchar]
   printf_uchar_from___b2:
@@ -9524,17 +9520,17 @@ strlen: {
 }
   // printf_padding
 // Print a padding char a number of times
-// void printf_padding(__zp($15) void (*putc)(char), __zp($14) char pad, __zp($13) char length)
+// void printf_padding(__zp($15) void (*putc)(char), __zp($14) char pad, __zp(2) char length)
 printf_padding: {
     .label i = 5
     .label putc = $15
-    .label length = $13
+    .label length = 2
     .label pad = $14
     // [296] phi from printf_padding to printf_padding::@1 [phi:printf_padding->printf_padding::@1]
   __b1_from_printf_padding:
     // [296] phi printf_padding::i#2 = 0 [phi:printf_padding->printf_padding::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    ldz #0
+    stz.z i
     jmp __b1
     // printf_padding::@1
   __b1:
@@ -9619,18 +9615,17 @@ strupr: {
 }
   // printf_uchar
 // Print an unsigned char using a specific format
-// void printf_uchar(void (*putc)(char), __register(X) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uchar(void (*putc)(char), __register(A) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
     jmp __b1
     // printf_uchar::@1
   __b1:
     // [314] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
-    // [315] uctoa::value#1 = printf_uchar::uvalue#2 -- vbuzz=vbuxx 
-    txa
-    taz
+    ldz #0
+    stz printf_buffer
+    // [315] uctoa::value#1 = printf_uchar::uvalue#2 -- vbuz1=vbuaa 
+    sta.z uctoa.value
     // [316] call uctoa
   // Format number into buffer
     // [332] phi from printf_uchar::@1 to uctoa [phi:printf_uchar::@1->uctoa]
@@ -9647,8 +9642,8 @@ printf_uchar: {
     // [155] phi from printf_uchar::@2 to printf_number_buffer [phi:printf_uchar::@2->printf_number_buffer]
   printf_number_buffer_from___b2:
     // [155] phi printf_number_buffer::format_upper_case#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_upper_case
+    ldz #0
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = &cputc [phi:printf_uchar::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<cputc
     sta.z printf_number_buffer.putc
@@ -9656,13 +9651,13 @@ printf_uchar: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 [phi:printf_uchar::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_zero_padding
-    // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_uchar::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
     ldz #0
+    stz.z printf_number_buffer.format_zero_padding
+    // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
+    ldz #0
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_uchar::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #0
     jsr printf_number_buffer
     jmp __breturn
     // printf_uchar::@return
@@ -9786,11 +9781,12 @@ toupper: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(Z) char value, __zp($c) char *buffer, char radix)
+// void uctoa(__zp($12) char value, __zp($c) char *buffer, char radix)
 uctoa: {
     .label digit_value = 2
     .label buffer = $c
-    .label digit = $12
+    .label digit = $13
+    .label value = $12
     // [333] phi from uctoa to uctoa::@1 [phi:uctoa->uctoa::@1]
   __b1_from_uctoa:
     // [333] phi uctoa::buffer#11 = (char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS [phi:uctoa->uctoa::@1#0] -- pbuz1=pbuc1 
@@ -9802,8 +9798,8 @@ uctoa: {
     ldx #0
     // [333] phi uctoa::value#2 = uctoa::value#1 [phi:uctoa->uctoa::@1#2] -- register_copy 
     // [333] phi uctoa::digit#2 = 0 [phi:uctoa->uctoa::@1#3] -- vbuz1=vbuc1 
-    lda #0
-    sta.z digit
+    ldz #0
+    stz.z digit
     jmp __b1
     // uctoa::@1
   __b1:
@@ -9814,9 +9810,8 @@ uctoa: {
     jmp __b3
     // uctoa::@3
   __b3:
-    // [335] *uctoa::buffer#11 = DIGITS[uctoa::value#2] -- _deref_pbuz1=pbuc1_derefidx_vbuzz 
-    tza
-    tay
+    // [335] *uctoa::buffer#11 = DIGITS[uctoa::value#2] -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z value
     lda DIGITS,y
     ldy #0
     sta (buffer),y
@@ -9843,8 +9838,9 @@ uctoa: {
     jmp __b7
     // uctoa::@7
   __b7:
-    // [341] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@5 -- vbuzz_ge_vbuz1_then_la1 
-    cpz.z digit_value
+    // [341] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@5 -- vbuz1_ge_vbuz2_then_la1 
+    lda.z value
+    cmp.z digit_value
     bcs __b5
     // [342] phi from uctoa::@7 to uctoa::@4 [phi:uctoa::@7->uctoa::@4]
   __b4_from___b7:
@@ -9866,7 +9862,8 @@ uctoa: {
     // uctoa::@5
   __b5:
     // [344] uctoa_append::buffer#0 = uctoa::buffer#11
-    // [345] uctoa_append::value#0 = uctoa::value#2
+    // [345] uctoa_append::value#0 = uctoa::value#2 -- vbuzz=vbuz1 
+    ldz value
     // [346] uctoa_append::sub#0 = uctoa::digit_value#0
     // [347] call uctoa_append
     // [351] phi from uctoa::@5 to uctoa_append [phi:uctoa::@5->uctoa_append]
@@ -9877,8 +9874,8 @@ uctoa: {
     jmp __b6
     // uctoa::@6
   __b6:
-    // [349] uctoa::value#0 = uctoa_append::return#0 -- vbuzz=vbuaa 
-    taz
+    // [349] uctoa::value#0 = uctoa_append::return#0 -- vbuz1=vbuaa 
+    sta.z value
     // [350] uctoa::buffer#4 = ++ uctoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inw.z buffer
     // [342] phi from uctoa::@6 to uctoa::@4 [phi:uctoa::@6->uctoa::@4]
@@ -10095,10 +10092,13 @@ Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #0
-Removing instruction lda #0
+Removing instruction ldz #0
+Removing instruction ldz conio_cursor_x
+Replacing instruction lda #0 with TZA
+Removing instruction ldz #0
 Removing instruction lda #>0
-Removing instruction lda #0
+Removing instruction ldz #0
+Removing instruction ldz #0
 Replacing instruction lda #0 with TYA
 Removing instruction ldy #0
 Removing instruction lda.z padding
@@ -10106,8 +10106,8 @@ Replacing instruction lda #0 with TYA
 Removing instruction ldy #0
 Removing instruction ldy #0
 Removing instruction lda #>0
-Removing instruction lda #0
-Replacing instruction lda #0 with TXA
+Removing instruction ldz #0
+Removing instruction ldz #0
 Replacing instruction lda #0 with TYA
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
@@ -10211,7 +10211,6 @@ Removing instruction __b2_from___b3:
 Removing instruction __breturn_from_toupper:
 Removing instruction __breturn_from___b1:
 Removing instruction __b4_from___b7:
-Removing instruction uctoa_append_from___b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
@@ -10349,6 +10348,7 @@ Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __b7:
 Removing instruction __b1_from___b4:
+Removing instruction uctoa_append_from___b5:
 Removing instruction __b6:
 Removing instruction __b4_from___b6:
 Removing instruction __b1_from_uctoa_append:
@@ -10415,8 +10415,8 @@ char *clrscr::line_text#5 // line_text zp[2]:21 1714.7142857142858
 void conio_c64_init()
 __constant char * const conio_c64_init::BASIC_CURSOR_LINE = (char *) 214
 char conio_c64_init::line
-char conio_c64_init::line#0 // reg byte x 11.0
-char conio_c64_init::line#2 // reg byte x 22.0
+char conio_c64_init::line#0 // reg byte a 11.0
+char conio_c64_init::line#2 // reg byte a 22.0
 __loadstore char conio_cursor_x // zp[1]:39 20025.000000000004
 __loadstore char conio_cursor_y // zp[1]:44 4366.478260869564
 __loadstore char *conio_line_color // zp[2]:42 4560.454545454545
@@ -10440,20 +10440,20 @@ unsigned int gotoxy::line_offset
 unsigned int gotoxy::line_offset#0 // line_offset zp[2]:28 100001.0
 char gotoxy::x
 char gotoxy::y
-char gotoxy::y#2 // reg byte x 22.0
-char gotoxy::y#4 // reg byte x 66671.0
-char gotoxy::y#5 // reg byte x 66667.33333333333
+char gotoxy::y#2 // reg byte a 22.0
+char gotoxy::y#4 // reg byte a 66671.0
+char gotoxy::y#5 // reg byte a 66667.33333333333
 char legal(char row , char column)
 char legal::$0 // reg byte x 2000002.0
 char legal::column
-char legal::column#0 // column zp[1]:25 235353.23529411765
+char legal::column#0 // column zp[1]:23 235353.23529411765
 char legal::diff1_a
 char legal::diff1_a#0 // reg byte a 2000002.0
 char legal::diff1_b
 char legal::diff1_return
-char legal::diff1_return#0 // diff1_return zp[1]:24 2000002.0
-char legal::diff1_return#1 // diff1_return zp[1]:24 2000002.0
-char legal::diff1_return#2 // diff1_return zp[1]:24 600000.6000000001
+char legal::diff1_return#0 // diff1_return zp[1]:25 2000002.0
+char legal::diff1_return#1 // diff1_return zp[1]:25 2000002.0
+char legal::diff1_return#2 // diff1_return zp[1]:25 600000.6000000001
 char legal::diff2_a
 char legal::diff2_b
 char legal::diff2_return
@@ -10513,8 +10513,8 @@ char print::i1
 char print::i1#1 // i1 zp[1]:27 2000002.0
 char print::i1#2 // i1 zp[1]:27 1000000.357142857
 char print::j
-char print::j#1 // j zp[1]:23 2.0000002E7
-char print::j#2 // j zp[1]:23 5714286.285714285
+char print::j#1 // j zp[1]:24 2.0000002E7
+char print::j#2 // j zp[1]:24 5714286.285714285
 __constant char print::s[3] = "
 #"
 __constant char print::s1[4] = ":
@@ -10527,28 +10527,28 @@ unsigned int printf_number_buffer::$19 // zp[2]:12 1.00000001E8
 struct printf_buffer_number printf_number_buffer::buffer
 char *printf_number_buffer::buffer_digits
 char printf_number_buffer::buffer_sign
-char printf_number_buffer::buffer_sign#0 // buffer_sign zp[1]:18 200002.0
-char printf_number_buffer::buffer_sign#1 // buffer_sign zp[1]:18 202.0
-char printf_number_buffer::buffer_sign#10 // buffer_sign zp[1]:18 1.4766671714285715E7
-char printf_number_buffer::buffer_sign#2 // buffer_sign zp[1]:18 2.0000002E7
+char printf_number_buffer::buffer_sign#0 // buffer_sign zp[1]:19 200002.0
+char printf_number_buffer::buffer_sign#1 // buffer_sign zp[1]:19 202.0
+char printf_number_buffer::buffer_sign#10 // buffer_sign zp[1]:19 1.4766671714285715E7
+char printf_number_buffer::buffer_sign#2 // buffer_sign zp[1]:19 2.0000002E7
 struct printf_format_number printf_number_buffer::format
 char printf_number_buffer::format_justify_left
-char printf_number_buffer::format_justify_left#10 // format_justify_left zp[1]:24 6060606.121212121
+char printf_number_buffer::format_justify_left#10 // format_justify_left zp[1]:25 6060606.121212121
 char printf_number_buffer::format_min_length
-char printf_number_buffer::format_min_length#3 // reg byte z 1.00000001E7
+char printf_number_buffer::format_min_length#3 // reg byte x 1.00000001E7
 char printf_number_buffer::format_radix
 char printf_number_buffer::format_sign_always
 char printf_number_buffer::format_upper_case
-char printf_number_buffer::format_upper_case#10 // format_upper_case zp[1]:25 3571428.6071428573
+char printf_number_buffer::format_upper_case#10 // format_upper_case zp[1]:18 3571428.6071428573
 char printf_number_buffer::format_zero_padding
-char printf_number_buffer::format_zero_padding#10 // format_zero_padding zp[1]:23 8823529.5
+char printf_number_buffer::format_zero_padding#10 // format_zero_padding zp[1]:24 8823529.5
 signed char printf_number_buffer::len
-signed char printf_number_buffer::len#0 // reg byte x 1.500000015E8
-signed char printf_number_buffer::len#1 // reg byte x 2.00000002E8
-signed char printf_number_buffer::len#2 // reg byte x 3.00000003E8
+signed char printf_number_buffer::len#0 // reg byte y 1.500000015E8
+signed char printf_number_buffer::len#1 // reg byte y 2.00000002E8
+signed char printf_number_buffer::len#2 // reg byte y 3.00000003E8
 signed char printf_number_buffer::padding
-signed char printf_number_buffer::padding#1 // padding zp[1]:2 1.00000001E8
-signed char printf_number_buffer::padding#10 // padding zp[1]:2 1.6666666833333334E7
+signed char printf_number_buffer::padding#1 // padding zp[1]:23 1.00000001E8
+signed char printf_number_buffer::padding#10 // padding zp[1]:23 1.6666666833333334E7
 void (*printf_number_buffer::putc)(char)
 void (*printf_number_buffer::putc#10)(char) // putc zp[2]:21 1.1111111222222222E7
 void printf_padding(void (*putc)(char) , char pad , char length)
@@ -10556,10 +10556,10 @@ char printf_padding::i
 char printf_padding::i#1 // i zp[1]:5 2.000000000002E12
 char printf_padding::i#2 // i zp[1]:5 1.000000000001E12
 char printf_padding::length
-char printf_padding::length#0 // length zp[1]:19 2.00000002E8
-char printf_padding::length#1 // length zp[1]:19 2.00000002E8
-char printf_padding::length#2 // length zp[1]:19 2.00000002E8
-char printf_padding::length#4 // length zp[1]:19 2.0006000000080002E11
+char printf_padding::length#0 // length zp[1]:2 2.00000002E8
+char printf_padding::length#1 // length zp[1]:2 2.00000002E8
+char printf_padding::length#2 // length zp[1]:2 2.00000002E8
+char printf_padding::length#4 // length zp[1]:2 2.0006000000080002E11
 char printf_padding::pad
 char printf_padding::pad#5 // pad zp[1]:20 1.6666666666683334E11
 void (*printf_padding::putc)(char)
@@ -10587,9 +10587,9 @@ char printf_uchar::format_upper_case
 char printf_uchar::format_zero_padding
 void (*printf_uchar::putc)(char)
 char printf_uchar::uvalue
-char printf_uchar::uvalue#0 // reg byte x 2000002.0
-char printf_uchar::uvalue#1 // reg byte x 2000002.0
-char printf_uchar::uvalue#2 // reg byte x 6000001.5
+char printf_uchar::uvalue#0 // reg byte a 2000002.0
+char printf_uchar::uvalue#1 // reg byte a 2000002.0
+char printf_uchar::uvalue#2 // reg byte a 6000001.5
 void printf_uint(void (*putc)(char) , unsigned int uvalue , char format_min_length , char format_justify_left , char format_sign_always , char format_zero_padding , char format_upper_case , char format_radix)
 struct printf_format_number printf_uint::format
 char printf_uint::format_justify_left
@@ -10658,8 +10658,8 @@ char *uctoa::buffer#14 // buffer zp[2]:12 1.500000000015E11
 char *uctoa::buffer#3 // buffer zp[2]:12 2.00000002E8
 char *uctoa::buffer#4 // buffer zp[2]:12 2.00000000002E11
 char uctoa::digit
-char uctoa::digit#1 // digit zp[1]:18 2.00000000002E11
-char uctoa::digit#2 // digit zp[1]:18 3.076923076953846E10
+char uctoa::digit#1 // digit zp[1]:19 2.00000000002E11
+char uctoa::digit#2 // digit zp[1]:19 3.076923076953846E10
 char uctoa::digit_value
 char uctoa::digit_value#0 // digit_value zp[1]:2 6.0000000000600006E10
 char *uctoa::digit_values
@@ -10669,10 +10669,10 @@ char uctoa::started
 char uctoa::started#2 // reg byte x 6.0000000000600006E10
 char uctoa::started#4 // reg byte x 1.00000000001E11
 char uctoa::value
-char uctoa::value#0 // reg byte z 1.00000000001E11
-char uctoa::value#1 // reg byte z 5.5000001E7
-char uctoa::value#2 // reg byte z 6.670000000100001E10
-char uctoa::value#6 // reg byte z 1.500000000015E11
+char uctoa::value#0 // value zp[1]:18 1.00000000001E11
+char uctoa::value#1 // value zp[1]:18 5.5000001E7
+char uctoa::value#2 // value zp[1]:18 6.670000000100001E10
+char uctoa::value#6 // value zp[1]:18 1.500000000015E11
 char uctoa_append(char *buffer , char value , char sub)
 char *uctoa_append::buffer
 char *uctoa_append::buffer#0 // buffer zp[2]:12 1.3750000000025E11
@@ -10764,8 +10764,8 @@ unsigned int utoa_append::value#0 // value zp[2]:21 36667.33333333333
 unsigned int utoa_append::value#1 // value zp[2]:21 2.0000002E7
 unsigned int utoa_append::value#2 // value zp[2]:21 5018334.166666666
 
-reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ]
-reg byte x [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ]
+reg byte a [ conio_c64_init::line#2 conio_c64_init::line#0 ]
+reg byte a [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ]
 reg byte x [ clrscr::l#2 clrscr::l#1 ]
 reg byte z [ clrscr::c#2 clrscr::c#1 ]
 zp[1]:30 [ queens::row#10 queens::row#1 queens::row#2 legal::row#0 ]
@@ -10773,15 +10773,15 @@ zp[4]:47 [ count#10 count#2 ]
 zp[4]:8 [ printf_ulong::uvalue#2 printf_ulong::uvalue#0 printf_ulong::uvalue#1 ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ultoa_append::return#0 ]
 reg byte x [ utoa::digit#2 utoa::digit#1 ]
 reg byte z [ utoa::started#2 utoa::started#4 ]
-reg byte z [ printf_number_buffer::format_min_length#3 ]
-reg byte x [ printf_number_buffer::len#2 printf_number_buffer::len#0 printf_number_buffer::len#1 ]
+reg byte x [ printf_number_buffer::format_min_length#3 ]
+reg byte y [ printf_number_buffer::len#2 printf_number_buffer::len#0 printf_number_buffer::len#1 ]
 reg byte y [ legal::i#10 legal::i#1 ]
 reg byte a [ legal::return#4 ]
-zp[1]:24 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 printf_number_buffer::format_justify_left#10 ]
+zp[1]:25 [ legal::diff1_return#2 legal::diff1_return#0 legal::diff1_return#1 printf_number_buffer::format_justify_left#10 ]
 reg byte a [ legal::diff2_return#2 legal::diff2_return#0 legal::diff2_return#1 ]
 zp[1]:26 [ print::i#2 print::i#1 ]
 zp[1]:27 [ print::i1#2 print::i1#1 ]
-zp[1]:23 [ print::j#2 print::j#1 printf_number_buffer::format_zero_padding#10 ]
+zp[1]:24 [ print::j#2 print::j#1 printf_number_buffer::format_zero_padding#10 ]
 reg byte x [ ultoa::digit#2 ultoa::digit#1 ]
 reg byte z [ ultoa::started#2 ultoa::started#4 ]
 zp[2]:21 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 utoa::value#2 utoa::value#6 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 printf_str::putc#12 printf_str::putc#0 printf_number_buffer::putc#10 printf_padding::putc#5 printf_padding::putc#1 printf_padding::putc#2 printf_padding::putc#0 clrscr::line_text#5 clrscr::line_text#1 ]
@@ -10789,14 +10789,13 @@ zp[2]:35 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 memcpy::sourc
 reg byte z [ memset::c#4 ]
 reg byte z [ utoa_append::digit#2 utoa_append::digit#1 ]
 zp[2]:3 [ strlen::str#2 strlen::str#0 utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 printf_str::s#11 printf_str::s#12 printf_str::s#0 clrscr::line_cols#5 clrscr::line_cols#1 ]
-zp[1]:19 [ printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ]
 zp[1]:20 [ printf_padding::pad#5 ]
 zp[1]:5 [ printf_padding::i#2 printf_padding::i#1 ]
-reg byte x [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ]
+reg byte a [ printf_uchar::uvalue#2 printf_uchar::uvalue#1 printf_uchar::uvalue#0 ]
 reg byte z [ ultoa_append::digit#2 ultoa_append::digit#1 ]
 reg byte a [ toupper::return#2 toupper::return#0 toupper::ch#0 ]
-zp[1]:18 [ uctoa::digit#2 uctoa::digit#1 printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ]
-reg byte z [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 ]
+zp[1]:19 [ uctoa::digit#2 uctoa::digit#1 printf_number_buffer::buffer_sign#10 printf_number_buffer::buffer_sign#2 printf_number_buffer::buffer_sign#1 printf_number_buffer::buffer_sign#0 ]
+zp[1]:18 [ uctoa::value#2 uctoa::value#6 uctoa::value#1 uctoa::value#0 printf_number_buffer::format_upper_case#10 ]
 reg byte x [ uctoa::started#2 uctoa::started#4 ]
 zp[2]:12 [ uctoa::buffer#11 uctoa::buffer#14 uctoa::buffer#4 uctoa::buffer#3 uctoa_append::buffer#0 strlen::len#2 strlen::len#1 strlen::return#2 printf_number_buffer::$19 ]
 reg byte z [ uctoa_append::value#2 uctoa_append::value#0 uctoa_append::value#1 ]
@@ -10810,7 +10809,7 @@ zp[2]:28 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
 zp[2]:31 [ gotoxy::$8 ]
 zp[2]:33 [ gotoxy::$5 ]
 reg byte a [ printf_str::c#1 ]
-zp[1]:25 [ legal::column#0 printf_number_buffer::format_upper_case#10 ]
+zp[1]:23 [ legal::column#0 printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
 reg byte a [ legal::return#0 ]
 reg byte a [ queens::$2 ]
 reg byte x [ utoa::$11 ]
@@ -10825,13 +10824,13 @@ zp[2]:45 [ memcpy::src_end#0 ]
 zp[2]:37 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 reg byte a [ toupper::return#3 ]
 reg byte a [ strupr::$0 ]
-zp[1]:2 [ uctoa::digit_value#0 uctoa_append::sub#0 printf_number_buffer::padding#10 printf_number_buffer::padding#1 ]
+zp[1]:2 [ uctoa::digit_value#0 uctoa_append::sub#0 printf_padding::length#4 printf_padding::length#1 printf_padding::length#2 printf_padding::length#0 ]
 reg byte a [ uctoa_append::return#0 ]
 mem[12] [ printf_buffer ]
 
 
 FINAL ASSEMBLER
-Score: 549492
+Score: 558482
 
   // File Comments
 // N Queens Problem in C Using Backtracking
@@ -10875,11 +10874,11 @@ __start: {
     // __start::__init1
     // __ma char conio_cursor_x = 0
     // [1] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // __ma char conio_cursor_y = 0
     // [2] conio_cursor_y = 0 -- vbuz1=vbuc1 
-    sta.z conio_cursor_y
+    stz.z conio_cursor_y
     // __ma char *conio_line_text = CONIO_SCREEN_TEXT
     // [3] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
@@ -10910,15 +10909,15 @@ conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     // char line = *BASIC_CURSOR_LINE
-    // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuxx=_deref_pbuc1 
-    ldx BASIC_CURSOR_LINE
+    // [9] conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE -- vbuaa=_deref_pbuc1 
+    lda BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
-    // [10] if(conio_c64_init::line#0<$19) goto conio_c64_init::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$19
+    // [10] if(conio_c64_init::line#0<$19) goto conio_c64_init::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$19
     bcc __b1
     // [12] phi from conio_c64_init to conio_c64_init::@1 [phi:conio_c64_init->conio_c64_init::@1]
-    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
-    ldx #$19-1
+    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuaa=vbuc1 
+    lda #$19-1
     // [11] phi from conio_c64_init to conio_c64_init::@2 [phi:conio_c64_init->conio_c64_init::@2]
     // conio_c64_init::@2
     // [12] phi from conio_c64_init::@2 to conio_c64_init::@1 [phi:conio_c64_init::@2->conio_c64_init::@1]
@@ -10957,14 +10956,13 @@ cputc: {
     // conio_line_color[conio_cursor_x] = conio_textcolor
     // [19] conio_line_color[conio_cursor_x] = LIGHT_BLUE -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #LIGHT_BLUE
-    ldz conio_cursor_x
     sta (conio_line_color),z
     // if(++conio_cursor_x==CONIO_WIDTH)
     // [20] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_x
     // [21] if(conio_cursor_x!=$28) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$28
-    cmp.z conio_cursor_x
+    ldz #$28
+    cpz.z conio_cursor_x
     bne __breturn
     // [22] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
@@ -11096,7 +11094,7 @@ main: {
 .segment Code
   // gotoxy
 // Set the cursor to the specified position
-// void gotoxy(char x, __register(X) char y)
+// void gotoxy(char x, __register(A) char y)
 gotoxy: {
     .label __5 = $21
     .label __6 = $1c
@@ -11105,12 +11103,12 @@ gotoxy: {
     .label __8 = $1f
     .label __9 = $1c
     // if(y>CONIO_HEIGHT)
-    // [45] if(gotoxy::y#4<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$19+1
+    // [45] if(gotoxy::y#4<$19+1) goto gotoxy::@3 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$19+1
     bcc __b2
     // [47] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
-    // [47] phi gotoxy::y#5 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [47] phi gotoxy::y#5 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuaa=vbuc1 
+    lda #0
     // [46] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
     // gotoxy::@3
     // [47] phi from gotoxy::@3 to gotoxy::@1 [phi:gotoxy::@3->gotoxy::@1]
@@ -11120,16 +11118,15 @@ gotoxy: {
   __b2:
     // conio_cursor_x = x
     // [48] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // conio_cursor_y = y
-    // [49] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuxx 
-    stx.z conio_cursor_y
+    // [49] conio_cursor_y = gotoxy::y#5 -- vbuz1=vbuaa 
+    sta.z conio_cursor_y
     // unsigned int line_offset = (unsigned int)y*CONIO_WIDTH
-    // [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 -- vwuz1=_word_vbuxx 
-    txa
+    // [50] gotoxy::$7 = (unsigned int)gotoxy::y#5 -- vwuz1=_word_vbuaa 
     sta.z __7
-    lda #0
+    tza
     sta.z __7+1
     // [51] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
@@ -11210,8 +11207,8 @@ cputln: {
   !:
     // conio_cursor_x = 0
     // [61] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // conio_cursor_y++;
     // [62] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
@@ -11250,11 +11247,11 @@ clrscr: {
     // clrscr::@2
     // conio_cursor_x = 0
     // [68] conio_cursor_x = 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z conio_cursor_x
+    ldz #0
+    stz.z conio_cursor_x
     // conio_cursor_y = 0
     // [69] conio_cursor_y = 0 -- vbuz1=vbuc1 
-    sta.z conio_cursor_y
+    stz.z conio_cursor_y
     // conio_line_text = CONIO_SCREEN_TEXT
     // [70] conio_line_text = DEFAULT_SCREEN -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
@@ -11376,8 +11373,8 @@ printf_uint: {
     // printf_buffer.sign = format.sign_always?'+':0
     // [91] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
+    ldz #0
+    stz printf_buffer
     // utoa(uvalue, printf_buffer.digits, format.radix)
     // [92] call utoa
   // Format number into buffer
@@ -11392,8 +11389,8 @@ printf_uint: {
   // Print using format
     // [155] phi from printf_uint::@2 to printf_number_buffer [phi:printf_uint::@2->printf_number_buffer]
     // [155] phi printf_number_buffer::format_upper_case#10 = printf_uint::format_upper_case#0 [phi:printf_uint::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #format_upper_case
-    sta.z printf_number_buffer.format_upper_case
+    ldz #format_upper_case
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = printf_uint::putc#0 [phi:printf_uint::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<putc
     sta.z printf_number_buffer.putc
@@ -11401,13 +11398,13 @@ printf_uint: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#1 [phi:printf_uint::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = printf_uint::format_zero_padding#0 [phi:printf_uint::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #format_zero_padding
-    sta.z printf_number_buffer.format_zero_padding
+    ldz #format_zero_padding
+    stz.z printf_number_buffer.format_zero_padding
     // [155] phi printf_number_buffer::format_justify_left#10 = printf_uint::format_justify_left#0 [phi:printf_uint::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    lda #format_justify_left
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = printf_uint::format_min_length#0 [phi:printf_uint::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
-    ldz #format_min_length
+    ldz #format_justify_left
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = printf_uint::format_min_length#0 [phi:printf_uint::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #format_min_length
     jsr printf_number_buffer
     // printf_uint::@return
     // }
@@ -11434,8 +11431,8 @@ queens: {
     lda #>0>>$10
     sta.z count+3
     // [97] phi queens::row#10 = 1 [phi:queens->queens::@1#1] -- vbuz1=vbuc1 
-    lda #1
-    sta.z row
+    ldz #1
+    stz.z row
     // [97] phi from queens::@4 queens::@7 queens::@8 queens::@9 to queens::@1 [phi:queens::@4/queens::@7/queens::@8/queens::@9->queens::@1]
     // [97] phi count#10 = count#2 [phi:queens::@4/queens::@7/queens::@8/queens::@9->queens::@1#0] -- register_copy 
     // [97] phi queens::row#10 = queens::row#10 [phi:queens::@4/queens::@7/queens::@8/queens::@9->queens::@1#1] -- register_copy 
@@ -11473,8 +11470,8 @@ queens: {
     // if(row==QUEENS)
     // [106] if(queens::row#10==8) goto queens::@4 -- vbuz1_eq_vbuc1_then_la1 
     // position is legal - move up to the next row
-    lda #8
-    cmp.z row
+    ldz #8
+    cpz.z row
     beq __b4
     // queens::@7
     // row++;
@@ -11508,8 +11505,8 @@ queens: {
     sta board,y
     // if(row==1)
     // [111] if(queens::row#10==1) goto queens::@return -- vbuz1_eq_vbuc1_then_la1 
-    lda #1
-    cmp.z row
+    ldz #1
+    cpz.z row
     beq __breturn
     // queens::@8
     // row--;
@@ -11531,8 +11528,8 @@ printf_ulong: {
     // printf_buffer.sign = format.sign_always?'+':0
     // [115] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
+    ldz #0
+    stz printf_buffer
     // ultoa(uvalue, printf_buffer.digits, format.radix)
     // [116] ultoa::value#1 = printf_ulong::uvalue#2
     // [117] call ultoa
@@ -11548,8 +11545,8 @@ printf_ulong: {
   // Print using format
     // [155] phi from printf_ulong::@2 to printf_number_buffer [phi:printf_ulong::@2->printf_number_buffer]
     // [155] phi printf_number_buffer::format_upper_case#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_upper_case
+    ldz #0
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = &cputc [phi:printf_ulong::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<cputc
     sta.z printf_number_buffer.putc
@@ -11557,12 +11554,11 @@ printf_ulong: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#0 [phi:printf_ulong::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_zero_padding
+    stz.z printf_number_buffer.format_zero_padding
     // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_ulong::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_ulong::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
-    ldz #0
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_ulong::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #0
     jsr printf_number_buffer
     // printf_ulong::@return
     // }
@@ -11574,8 +11570,8 @@ printf_ulong: {
 cscroll: {
     // if(conio_cursor_y==CONIO_HEIGHT)
     // [121] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$19
-    cmp.z conio_cursor_y
+    ldz #$19
+    cpz.z conio_cursor_y
     bne __breturn
     // [122] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
     // cscroll::@1
@@ -11782,18 +11778,18 @@ utoa: {
   // printf_number_buffer
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// void printf_number_buffer(__zp($15) void (*putc)(char), __zp($12) char buffer_sign, char *buffer_digits, __register(Z) char format_min_length, __zp($18) char format_justify_left, char format_sign_always, __zp($17) char format_zero_padding, __zp($19) char format_upper_case, char format_radix)
+// void printf_number_buffer(__zp($15) void (*putc)(char), __zp($13) char buffer_sign, char *buffer_digits, __register(X) char format_min_length, __zp($19) char format_justify_left, char format_sign_always, __zp($18) char format_zero_padding, __zp($12) char format_upper_case, char format_radix)
 printf_number_buffer: {
     .label __19 = $c
-    .label buffer_sign = $12
-    .label padding = 2
-    .label format_zero_padding = $17
+    .label buffer_sign = $13
+    .label padding = $17
+    .label format_zero_padding = $18
     .label putc = $15
-    .label format_justify_left = $18
-    .label format_upper_case = $19
+    .label format_justify_left = $19
+    .label format_upper_case = $12
     // if(format.min_length)
-    // [156] if(0==printf_number_buffer::format_min_length#3) goto printf_number_buffer::@1 -- 0_eq_vbuzz_then_la1 
-    cpz #0
+    // [156] if(0==printf_number_buffer::format_min_length#3) goto printf_number_buffer::@1 -- 0_eq_vbuxx_then_la1 
+    cpx #0
     beq __b6
     // [157] phi from printf_number_buffer to printf_number_buffer::@6 [phi:printf_number_buffer->printf_number_buffer::@6]
     // printf_number_buffer::@6
@@ -11806,25 +11802,25 @@ printf_number_buffer: {
     // printf_number_buffer::@14
     // [160] printf_number_buffer::$19 = strlen::return#2
     // signed char len = (signed char)strlen(buffer.digits)
-    // [161] printf_number_buffer::len#0 = (signed char)printf_number_buffer::$19 -- vbsxx=_sbyte_vwuz1 
+    // [161] printf_number_buffer::len#0 = (signed char)printf_number_buffer::$19 -- vbsyy=_sbyte_vwuz1 
     // There is a minimum length - work out the padding
-    ldx.z __19
+    ldy.z __19
     // if(buffer.sign)
     // [162] if(0==printf_number_buffer::buffer_sign#10) goto printf_number_buffer::@13 -- 0_eq_vbuz1_then_la1 
     lda.z buffer_sign
     beq __b13
     // printf_number_buffer::@7
     // len++;
-    // [163] printf_number_buffer::len#1 = ++ printf_number_buffer::len#0 -- vbsxx=_inc_vbsxx 
-    inx
+    // [163] printf_number_buffer::len#1 = ++ printf_number_buffer::len#0 -- vbsyy=_inc_vbsyy 
+    iny
     // [164] phi from printf_number_buffer::@14 printf_number_buffer::@7 to printf_number_buffer::@13 [phi:printf_number_buffer::@14/printf_number_buffer::@7->printf_number_buffer::@13]
     // [164] phi printf_number_buffer::len#2 = printf_number_buffer::len#0 [phi:printf_number_buffer::@14/printf_number_buffer::@7->printf_number_buffer::@13#0] -- register_copy 
     // printf_number_buffer::@13
   __b13:
     // padding = (signed char)format.min_length - len
-    // [165] printf_number_buffer::padding#1 = (signed char)printf_number_buffer::format_min_length#3 - printf_number_buffer::len#2 -- vbsz1=vbszz_minus_vbsxx 
-    tza
-    stx.z $ff
+    // [165] printf_number_buffer::padding#1 = (signed char)printf_number_buffer::format_min_length#3 - printf_number_buffer::len#2 -- vbsz1=vbsxx_minus_vbsyy 
+    txa
+    sty.z $ff
     sec
     sbc.z $ff
     sta.z padding
@@ -11835,8 +11831,8 @@ printf_number_buffer: {
     // [168] phi from printf_number_buffer printf_number_buffer::@13 to printf_number_buffer::@1 [phi:printf_number_buffer/printf_number_buffer::@13->printf_number_buffer::@1]
   __b6:
     // [168] phi printf_number_buffer::padding#10 = 0 [phi:printf_number_buffer/printf_number_buffer::@13->printf_number_buffer::@1#0] -- vbsz1=vbsc1 
-    lda #0
-    sta.z padding
+    ldz #0
+    stz.z padding
     // [167] phi from printf_number_buffer::@13 to printf_number_buffer::@21 [phi:printf_number_buffer::@13->printf_number_buffer::@21]
     // printf_number_buffer::@21
     // [168] phi from printf_number_buffer::@21 to printf_number_buffer::@1 [phi:printf_number_buffer::@21->printf_number_buffer::@1]
@@ -11868,8 +11864,8 @@ printf_number_buffer: {
     // [295] phi from printf_number_buffer::@8 to printf_padding [phi:printf_number_buffer::@8->printf_padding]
     // [295] phi printf_padding::putc#5 = printf_padding::putc#0 [phi:printf_number_buffer::@8->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = ' ' [phi:printf_number_buffer::@8->printf_padding#1] -- vbuz1=vbuc1 
-    lda #' '
-    sta.z printf_padding.pad
+    ldz #' '
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#0 [phi:printf_number_buffer::@8->printf_padding#2] -- register_copy 
     jsr printf_padding
     // printf_number_buffer::@2
@@ -11909,8 +11905,8 @@ printf_number_buffer: {
     // [295] phi from printf_number_buffer::@10 to printf_padding [phi:printf_number_buffer::@10->printf_padding]
     // [295] phi printf_padding::putc#5 = printf_padding::putc#1 [phi:printf_number_buffer::@10->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = '0' [phi:printf_number_buffer::@10->printf_padding#1] -- vbuz1=vbuc1 
-    lda #'0'
-    sta.z printf_padding.pad
+    ldz #'0'
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#1 [phi:printf_number_buffer::@10->printf_padding#2] -- register_copy 
     jsr printf_padding
     // printf_number_buffer::@4
@@ -11964,8 +11960,8 @@ printf_number_buffer: {
     // [295] phi from printf_number_buffer::@12 to printf_padding [phi:printf_number_buffer::@12->printf_padding]
     // [295] phi printf_padding::putc#5 = printf_padding::putc#2 [phi:printf_number_buffer::@12->printf_padding#0] -- register_copy 
     // [295] phi printf_padding::pad#5 = ' ' [phi:printf_number_buffer::@12->printf_padding#1] -- vbuz1=vbuc1 
-    lda #' '
-    sta.z printf_padding.pad
+    ldz #' '
+    stz.z printf_padding.pad
     // [295] phi printf_padding::length#4 = printf_padding::length#2 [phi:printf_number_buffer::@12->printf_padding#2] -- register_copy 
     jsr printf_padding
     // printf_number_buffer::@return
@@ -11981,11 +11977,11 @@ printf_number_buffer: {
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
-// __register(A) char legal(__zp($1e) char row, __zp($19) char column)
+// __register(A) char legal(__zp($1e) char row, __zp($17) char column)
 legal: {
     .label row = $1e
-    .label column = $19
-    .label diff1_return = $18
+    .label column = $17
+    .label diff1_return = $19
     // [197] phi from legal to legal::@1 [phi:legal->legal::@1]
     // [197] phi legal::i#10 = 1 [phi:legal->legal::@1#0] -- vbuyy=vbuc1 
     ldy #1
@@ -12090,12 +12086,12 @@ legal: {
 print: {
     .label i = $1a
     .label i1 = $1b
-    .label j = $17
+    .label j = $18
     // gotoxy(0,5)
     // [215] call gotoxy
     // [44] phi from print to gotoxy [phi:print->gotoxy]
-    // [44] phi gotoxy::y#4 = 5 [phi:print->gotoxy#0] -- vbuxx=vbuc1 
-    ldx #5
+    // [44] phi gotoxy::y#4 = 5 [phi:print->gotoxy#0] -- vbuaa=vbuc1 
+    lda #5
     jsr gotoxy
     // [216] phi from print to print::@11 [phi:print->print::@11]
     // print::@11
@@ -12146,8 +12142,8 @@ print: {
     jsr printf_str
     // [222] phi from print::@13 to print::@1 [phi:print::@13->print::@1]
     // [222] phi print::i#2 = 1 [phi:print::@13->print::@1#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z i
+    ldz #1
+    stz.z i
     // print::@1
   __b1:
     // for(char i=1;i<=QUEENS;++i)
@@ -12157,8 +12153,8 @@ print: {
     bcc __b2
     // [224] phi from print::@1 to print::@3 [phi:print::@1->print::@3]
     // [224] phi print::i1#2 = 1 [phi:print::@1->print::@3#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z i1
+    ldz #1
+    stz.z i1
     // print::@3
   __b3:
     // for(char i=1;i<=QUEENS;++i)
@@ -12189,16 +12185,16 @@ print: {
     jsr printf_str
     // print::@15
     // printf("\n%x",i)
-    // [229] printf_uchar::uvalue#1 = print::i1#2 -- vbuxx=vbuz1 
-    ldx.z i1
+    // [229] printf_uchar::uvalue#1 = print::i1#2 -- vbuaa=vbuz1 
+    lda.z i1
     // [230] call printf_uchar
     // [313] phi from print::@15 to printf_uchar [phi:print::@15->printf_uchar]
     // [313] phi printf_uchar::uvalue#2 = printf_uchar::uvalue#1 [phi:print::@15->printf_uchar#0] -- register_copy 
     jsr printf_uchar
     // [231] phi from print::@15 to print::@5 [phi:print::@15->print::@5]
     // [231] phi print::j#2 = 1 [phi:print::@15->print::@5#0] -- vbuz1=vbuc1 
-    lda #1
-    sta.z j
+    ldz #1
+    stz.z j
     // print::@5
   __b5:
     // for(char j=1;j<=QUEENS;++j)
@@ -12266,8 +12262,8 @@ print: {
     // print::@2
   __b2:
     // printf("%x",i)
-    // [240] printf_uchar::uvalue#0 = print::i#2 -- vbuxx=vbuz1 
-    ldx.z i
+    // [240] printf_uchar::uvalue#0 = print::i#2 -- vbuaa=vbuz1 
+    lda.z i
     // [241] call printf_uchar
     // [313] phi from print::@2 to printf_uchar [phi:print::@2->printf_uchar]
     // [313] phi printf_uchar::uvalue#2 = printf_uchar::uvalue#0 [phi:print::@2->printf_uchar#0] -- register_copy 
@@ -12620,16 +12616,16 @@ strlen: {
 }
   // printf_padding
 // Print a padding char a number of times
-// void printf_padding(__zp($15) void (*putc)(char), __zp($14) char pad, __zp($13) char length)
+// void printf_padding(__zp($15) void (*putc)(char), __zp($14) char pad, __zp(2) char length)
 printf_padding: {
     .label i = 5
     .label putc = $15
-    .label length = $13
+    .label length = 2
     .label pad = $14
     // [296] phi from printf_padding to printf_padding::@1 [phi:printf_padding->printf_padding::@1]
     // [296] phi printf_padding::i#2 = 0 [phi:printf_padding->printf_padding::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    ldz #0
+    stz.z i
     // printf_padding::@1
   __b1:
     // for(char i=0;i<length; i++)
@@ -12710,18 +12706,17 @@ strupr: {
 }
   // printf_uchar
 // Print an unsigned char using a specific format
-// void printf_uchar(void (*putc)(char), __register(X) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
+// void printf_uchar(void (*putc)(char), __register(A) char uvalue, char format_min_length, char format_justify_left, char format_sign_always, char format_zero_padding, char format_upper_case, char format_radix)
 printf_uchar: {
     // printf_uchar::@1
     // printf_buffer.sign = format.sign_always?'+':0
     // [314] *((char *)&printf_buffer) = 0 -- _deref_pbuc1=vbuc2 
     // Handle any sign
-    lda #0
-    sta printf_buffer
+    ldz #0
+    stz printf_buffer
     // uctoa(uvalue, printf_buffer.digits, format.radix)
-    // [315] uctoa::value#1 = printf_uchar::uvalue#2 -- vbuzz=vbuxx 
-    txa
-    taz
+    // [315] uctoa::value#1 = printf_uchar::uvalue#2 -- vbuz1=vbuaa 
+    sta.z uctoa.value
     // [316] call uctoa
   // Format number into buffer
     // [332] phi from printf_uchar::@1 to uctoa [phi:printf_uchar::@1->uctoa]
@@ -12735,8 +12730,8 @@ printf_uchar: {
   // Print using format
     // [155] phi from printf_uchar::@2 to printf_number_buffer [phi:printf_uchar::@2->printf_number_buffer]
     // [155] phi printf_number_buffer::format_upper_case#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_upper_case
+    ldz #0
+    stz.z printf_number_buffer.format_upper_case
     // [155] phi printf_number_buffer::putc#10 = &cputc [phi:printf_uchar::@2->printf_number_buffer#1] -- pprz1=pprc1 
     lda #<cputc
     sta.z printf_number_buffer.putc
@@ -12744,12 +12739,11 @@ printf_uchar: {
     sta.z printf_number_buffer.putc+1
     // [155] phi printf_number_buffer::buffer_sign#10 = printf_number_buffer::buffer_sign#2 [phi:printf_uchar::@2->printf_number_buffer#2] -- register_copy 
     // [155] phi printf_number_buffer::format_zero_padding#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#3] -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_number_buffer.format_zero_padding
+    stz.z printf_number_buffer.format_zero_padding
     // [155] phi printf_number_buffer::format_justify_left#10 = 0 [phi:printf_uchar::@2->printf_number_buffer#4] -- vbuz1=vbuc1 
-    sta.z printf_number_buffer.format_justify_left
-    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_uchar::@2->printf_number_buffer#5] -- vbuzz=vbuc1 
-    ldz #0
+    stz.z printf_number_buffer.format_justify_left
+    // [155] phi printf_number_buffer::format_min_length#3 = 0 [phi:printf_uchar::@2->printf_number_buffer#5] -- vbuxx=vbuc1 
+    ldx #0
     jsr printf_number_buffer
     // printf_uchar::@return
     // }
@@ -12867,11 +12861,12 @@ toupper: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// void uctoa(__register(Z) char value, __zp($c) char *buffer, char radix)
+// void uctoa(__zp($12) char value, __zp($c) char *buffer, char radix)
 uctoa: {
     .label digit_value = 2
     .label buffer = $c
-    .label digit = $12
+    .label digit = $13
+    .label value = $12
     // [333] phi from uctoa to uctoa::@1 [phi:uctoa->uctoa::@1]
     // [333] phi uctoa::buffer#11 = (char *)&printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS [phi:uctoa->uctoa::@1#0] -- pbuz1=pbuc1 
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -12882,8 +12877,8 @@ uctoa: {
     ldx #0
     // [333] phi uctoa::value#2 = uctoa::value#1 [phi:uctoa->uctoa::@1#2] -- register_copy 
     // [333] phi uctoa::digit#2 = 0 [phi:uctoa->uctoa::@1#3] -- vbuz1=vbuc1 
-    txa
-    sta.z digit
+    ldz #0
+    stz.z digit
     // uctoa::@1
   __b1:
     // for( char digit=0; digit<max_digits-1; digit++ )
@@ -12893,9 +12888,8 @@ uctoa: {
     bcc __b2
     // uctoa::@3
     // *buffer++ = DIGITS[(char)value]
-    // [335] *uctoa::buffer#11 = DIGITS[uctoa::value#2] -- _deref_pbuz1=pbuc1_derefidx_vbuzz 
-    tza
-    tay
+    // [335] *uctoa::buffer#11 = DIGITS[uctoa::value#2] -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z value
     lda DIGITS,y
     ldy #0
     sta (buffer),y
@@ -12922,8 +12916,9 @@ uctoa: {
     cpx #0
     bne __b5
     // uctoa::@7
-    // [341] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@5 -- vbuzz_ge_vbuz1_then_la1 
-    cpz.z digit_value
+    // [341] if(uctoa::value#2>=uctoa::digit_value#0) goto uctoa::@5 -- vbuz1_ge_vbuz2_then_la1 
+    lda.z value
+    cmp.z digit_value
     bcs __b5
     // [342] phi from uctoa::@7 to uctoa::@4 [phi:uctoa::@7->uctoa::@4]
     // [342] phi uctoa::buffer#14 = uctoa::buffer#11 [phi:uctoa::@7->uctoa::@4#0] -- register_copy 
@@ -12944,7 +12939,8 @@ uctoa: {
   __b5:
     // uctoa_append(buffer++, value, digit_value)
     // [344] uctoa_append::buffer#0 = uctoa::buffer#11
-    // [345] uctoa_append::value#0 = uctoa::value#2
+    // [345] uctoa_append::value#0 = uctoa::value#2 -- vbuzz=vbuz1 
+    ldz value
     // [346] uctoa_append::sub#0 = uctoa::digit_value#0
     // [347] call uctoa_append
     // [351] phi from uctoa::@5 to uctoa_append [phi:uctoa::@5->uctoa_append]
@@ -12954,8 +12950,8 @@ uctoa: {
     tza
     // uctoa::@6
     // value = uctoa_append(buffer++, value, digit_value)
-    // [349] uctoa::value#0 = uctoa_append::return#0 -- vbuzz=vbuaa 
-    taz
+    // [349] uctoa::value#0 = uctoa_append::return#0 -- vbuz1=vbuaa 
+    sta.z value
     // value = uctoa_append(buffer++, value, digit_value);
     // [350] uctoa::buffer#4 = ++ uctoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inw.z buffer

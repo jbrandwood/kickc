@@ -68,8 +68,8 @@ irq_bottom_2: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // VICII->RASTER = $fa
-    // Trigger IRQ 1 at line $fa
+    // VICII->RASTER = 0xfa
+    // Trigger IRQ 1 at line 0xfa
     lda #$fa
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *HARDWARE_IRQ = &irq_bottom_1
@@ -91,7 +91,7 @@ irq_bottom_1: {
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // VICII->CONTROL1 &= ($ff^VICII_RSEL)
+    // VICII->CONTROL1 &= (0xff^VICII_RSEL)
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VICII_RSEL
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
@@ -100,8 +100,8 @@ irq_bottom_1: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // VICII->RASTER = $fd
-    // Trigger IRQ 2 at line $fd
+    // VICII->RASTER = 0xfd
+    // Trigger IRQ 2 at line 0xfd
     lda #$fd
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *HARDWARE_IRQ = &irq_bottom_2
@@ -127,12 +127,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // VICII->CONTROL1 &=$7f
-    // Set raster line to $fa
+    // VICII->CONTROL1 &= 0x7f
+    // Set raster line to 0xfa
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // VICII->RASTER = $fa
+    // VICII->RASTER = 0xfa
     lda #$fa
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->IRQ_ENABLE = IRQ_RASTER

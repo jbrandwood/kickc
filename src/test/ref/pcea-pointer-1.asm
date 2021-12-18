@@ -1,5 +1,5 @@
 // These pointers lives on zeropage
-// KickAss should be able to add .z to the
+// KickAss should be able to add .z to the STAs
   // Commodore 64 PRG executable file
 .file [name="pcea-pointer-1.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

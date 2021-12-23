@@ -11,8 +11,8 @@
 // And then allocate a bunch of variables
 main: {
     .label SCREEN = $400
-    .label a = $fd
-    .label a_1 = $fb
+    .label a = $f9
+    .label a_1 = $f7
     lda #<0
     sta h
     sta h+1

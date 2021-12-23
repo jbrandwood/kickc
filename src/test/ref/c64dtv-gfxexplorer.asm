@@ -217,7 +217,7 @@
   .label form_VICII_bg2_lo = form_fields_val+$21
   .label form_VICII_bg3_hi = form_fields_val+$22
   .label form_VICII_bg3_lo = form_fields_val+$23
-  .label print_char_cursor = $11
+  .label print_char_cursor = 6
   .label print_line_cursor = 8
   .label print_screen = 8
   // Keyboard event buffer size. The number of events currently in the event buffer
@@ -450,16 +450,16 @@ form_mode: {
 gfx_mode: {
     .label __20 = $26
     .label __31 = $26
-    .label __41 = $2a
-    .label __42 = $2a
-    .label __44 = $2c
-    .label __46 = $32
-    .label __76 = $2a
-    .label __77 = $2c
+    .label __41 = $2c
+    .label __42 = $2c
+    .label __44 = $2e
+    .label __46 = $34
+    .label __76 = $2c
+    .label __77 = $2e
     .label plane_a = $26
     .label plane_b = $26
-    .label VICII_colors = 8
-    .label col = 6
+    .label VICII_colors = 6
+    .label col = $11
     .label cy = $1d
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
@@ -849,7 +849,7 @@ gfx_mode: {
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label __1 = 5
-    .label ch = 8
+    .label ch = 6
     .label cy = $1a
     lda #<VICII_SCREEN0
     sta.z ch
@@ -896,7 +896,7 @@ gfx_init_screen0: {
 }
 // Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
-    .label ch = 6
+    .label ch = $11
     .label cy = $19
     lda #<VICII_SCREEN1
     sta.z ch
@@ -936,7 +936,7 @@ gfx_init_screen1: {
 // Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label col2 = 4
-    .label ch = 8
+    .label ch = 6
     .label cy = $1d
     lda #<VICII_SCREEN2
     sta.z ch
@@ -991,7 +991,7 @@ gfx_init_screen2: {
 // Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label __1 = 4
-    .label ch = 8
+    .label ch = 6
     .label cy = $1d
     lda #<VICII_SCREEN3
     sta.z ch
@@ -1038,7 +1038,7 @@ gfx_init_screen3: {
 }
 // Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
-    .label ch = 6
+    .label ch = $11
     .label cy = $1a
     lda #0
     sta.z cy
@@ -1071,8 +1071,8 @@ gfx_init_screen4: {
     rts
 }
 gfx_init_charset: {
-    .label charset = 8
-    .label chargen = 6
+    .label charset = 6
+    .label chargen = $11
     .label c = $1a
     // *PROCPORT = $32
     lda #$32
@@ -1166,8 +1166,8 @@ gfx_init_VICII_bitmap: {
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label __5 = $13
-    .label gfxb = 6
-    .label x = 8
+    .label gfxb = $11
+    .label x = 6
     .label y = $19
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #PLANE_8BPP_CHUNKY/$4000
@@ -1247,8 +1247,8 @@ gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 5
-    .label chargen = 6
-    .label gfxa = 8
+    .label chargen = $11
+    .label gfxa = 6
     .label col = 4
     .label cr = 2
     .label ch = 3
@@ -1332,7 +1332,7 @@ gfx_init_plane_charset8: {
 // Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
-    .label gfxa = 8
+    .label gfxa = 6
     .label ay = 3
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
@@ -1392,7 +1392,7 @@ gfx_init_plane_horisontal: {
 // Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
-    .label gfxb = 6
+    .label gfxb = $11
     .label by = 2
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
@@ -1434,7 +1434,7 @@ gfx_init_plane_vertical: {
 // Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
-    .label gfxa = 6
+    .label gfxa = $11
     .label ay = 5
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
@@ -1534,10 +1534,14 @@ gfx_init_plane_full: {
     rts
 }
 // Set the screen to print on. Also resets current line/char cursor.
-// void print_set_screen(__zp(8) char *screen)
+// void print_set_screen(__zp($2a) char *screen)
 print_set_screen: {
-    .label screen = 8
+    .label screen = $2a
     // print_screen = screen
+    lda.z screen
+    sta.z print_screen
+    lda.z screen+1
+    sta.z print_screen+1
     // }
     rts
 }
@@ -1559,9 +1563,9 @@ print_cls: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// void print_str_lines(__zp(6) char *str)
+// void print_str_lines(__zp($11) char *str)
 print_str_lines: {
-    .label str = 6
+    .label str = $11
     lda.z print_screen
     sta.z print_char_cursor
     lda.z print_screen+1
@@ -1603,7 +1607,7 @@ print_str_lines: {
 // screen is the start address of the screen to use
 // void form_set_screen(char *screen)
 form_set_screen: {
-    .label line = 8
+    .label line = $11
     ldx #0
     lda #<FORM_SCREEN
     sta.z line
@@ -2246,9 +2250,9 @@ get_plane: {
     rts
 }
 // Get the VIC screen address from the screen index
-// __zp($2a) char * get_VICII_screen(__register(A) char idx)
+// __zp($2c) char * get_VICII_screen(__register(A) char idx)
 get_VICII_screen: {
-    .label return = $2a
+    .label return = $2c
     // if(idx==0)
     cmp #0
     beq __b1
@@ -2296,9 +2300,9 @@ get_VICII_screen: {
     rts
 }
 // Get the VIC charset/bitmap address from the index
-// __zp($2c) char * get_VICII_charset(__register(A) char idx)
+// __zp($2e) char * get_VICII_charset(__register(A) char idx)
 get_VICII_charset: {
-    .label return = $2c
+    .label return = $2e
     // if(idx==0)
     cmp #0
     beq __b1
@@ -2479,7 +2483,7 @@ keyboard_event_get: {
 // void bitmap_init(char *gfx, char *screen)
 bitmap_init: {
     .label __7 = 5
-    .label yoffs = 8
+    .label yoffs = $11
     ldx #0
     lda #$80
   __b1:
@@ -2567,18 +2571,18 @@ bitmap_clear: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// void bitmap_line(__zp(6) unsigned int x1, __zp($11) unsigned int y1, __zp($f) unsigned int x2, __zp($20) unsigned int y2)
+// void bitmap_line(__zp($11) unsigned int x1, __zp($17) unsigned int y1, __zp($f) unsigned int x2, __zp($20) unsigned int y2)
 bitmap_line: {
     .label dx = $1b
     .label dy = $a
     .label sx = $1e
     .label sy = $d
-    .label e1 = $17
-    .label e = 8
-    .label y = $11
-    .label x = 6
-    .label x1 = 6
-    .label y1 = $11
+    .label e1 = 8
+    .label e = 6
+    .label y = $17
+    .label x = $11
+    .label x1 = $11
+    .label y1 = $17
     .label x2 = $f
     .label y2 = $20
     // unsigned int dx = abs_u16(x2-x1)
@@ -2799,14 +2803,14 @@ dtvSetCpuBankSegment1: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// void gfx_init_plane_fill(__zp($2e) unsigned long plane_addr, __zp(3) char fill)
+// void gfx_init_plane_fill(__zp($30) unsigned long plane_addr, __zp(3) char fill)
 gfx_init_plane_fill: {
     .label __0 = $22
     .label __3 = 6
     .label __4 = 6
     .label gfxb = 6
     .label by = 2
-    .label plane_addr = $2e
+    .label plane_addr = $30
     .label fill = 3
     // plane_addr*4
     lda.z plane_addr
@@ -3112,11 +3116,11 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// void bitmap_plot(__zp(6) unsigned int x, __register(X) char y)
+// void bitmap_plot(__zp($11) unsigned int x, __register(X) char y)
 bitmap_plot: {
     .label __1 = $15
     .label plotter = $13
-    .label x = 6
+    .label x = $11
     // MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] )
     lda bitmap_plot_yhi,x
     sta.z plotter+1

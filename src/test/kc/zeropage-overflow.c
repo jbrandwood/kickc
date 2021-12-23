@@ -4,7 +4,7 @@
 #pragma var_model(ssa_zp)
 
 // Start by reserving most of zeropage (254 bytes)
-#pragma zp_reserve(1..250)
+#pragma zp_reserve(1..246)
 
 // And then allocate a bunch of variables
 void main() {

@@ -89,7 +89,7 @@
   // Variable holding the screen layer on the VERA card with which conio interacts;
   .label conio_screen_layer = $1d
   // Variables holding the current map width and map height of the layer.
-  .label conio_width = $48
+  .label conio_width = $46
   .label conio_height = $26
   .label conio_rowshift = $18
   .label conio_rowskip = $19
@@ -108,7 +108,7 @@
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
   .label CONIO_SCREEN_TEXT = $12
-  .label CONIO_SCREEN_BANK = $3b
+  .label CONIO_SCREEN_BANK = $39
   // The screen width
   // The screen height
   // The text screen base address, which is a 16:0 bit value in VERA VRAM.
@@ -123,7 +123,7 @@
   // based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
   // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
   // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
-  .label CONIO_SCREEN_TEXT_1 = $58
+  .label CONIO_SCREEN_TEXT_1 = $56
 .segment Code
 __start: {
     // __ma unsigned byte conio_screen_width = 0
@@ -155,7 +155,7 @@ __start: {
 conio_x16_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
-    .label line = $54
+    .label line = $52
     // char line = *BASIC_CURSOR_LINE
     lda BASIC_CURSOR_LINE
     sta.z line
@@ -301,17 +301,17 @@ cputc: {
     rts
 }
 main: {
-    .label tilebase = $4a
-    .label t = $41
+    .label tilebase = $48
+    .label t = $3f
     .label tile = $24
-    .label c = $39
+    .label c = $37
     // Draw 4 squares with each tile, starting from row 4, width 1, height 1, separated by 2 characters.
-    .label row = $42
-    .label r = $44
+    .label row = $40
+    .label r = $42
     .label column1 = $29
     // Draw 4 squares with each tile, starting from row 4, width 1, height 1, separated by 2 characters.
-    .label row_1 = $43
-    .label r1 = $45
+    .label row_1 = $41
+    .label r1 = $43
     // memcpy_in_vram(1, (char*)0xF000, VERA_INC_1, 0, (char*)0xF800, VERA_INC_1, 256*8)
   // Before we can load the tiles into memory we need to re-arrange a few things!
   // The amount of tiles is 256, the color depth is 256, so each tile is 256 bytes!
@@ -884,12 +884,12 @@ screensize: {
 // void screenlayer(char layer)
 screenlayer: {
     .label __2 = $10
-    .label __4 = $37
-    .label __5 = $3f
+    .label __4 = $35
+    .label __5 = $3a
     .label vera_layer_get_width1_config = $22
     .label vera_layer_get_width1_return = $10
-    .label vera_layer_get_height1_config = $2d
-    .label vera_layer_get_height1_return = $2b
+    .label vera_layer_get_height1_config = $2b
+    .label vera_layer_get_height1_return = $3a
     // conio_screen_layer = layer
     lda #1
     sta.z conio_screen_layer
@@ -975,10 +975,6 @@ screenlayer: {
     sta.z vera_layer_get_height1_return+1
     // }
     // vera_layer_get_height(conio_screen_layer)
-    lda.z vera_layer_get_height1_return
-    sta.z __5
-    lda.z vera_layer_get_height1_return+1
-    sta.z __5+1
     // conio_height = vera_layer_get_height(conio_screen_layer)
     lda.z __5
     sta.z conio_height
@@ -1256,21 +1252,21 @@ memcpy_in_vram: {
 // - tilewidth: The width of a tile, which can be 8 or 16 pixels.
 // - tileheight: The height of a tile, which can be 8 or 16 pixels.
 // - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
-// void vera_layer_mode_tile(__zp($3e) char layer, __zp($2f) unsigned long mapbase_address, __zp($33) unsigned long tilebase_address, __zp($10) unsigned int mapwidth, __zp($46) unsigned int mapheight, __zp($56) char tilewidth, __zp($57) char tileheight, __register(X) char color_depth)
+// void vera_layer_mode_tile(__zp($3e) char layer, __zp($2d) unsigned long mapbase_address, __zp($31) unsigned long tilebase_address, __zp($10) unsigned int mapwidth, __zp($44) unsigned int mapheight, __zp($54) char tilewidth, __zp($55) char tileheight, __register(X) char color_depth)
 vera_layer_mode_tile: {
-    .label __1 = $37
-    .label __6 = $2d
+    .label __1 = $35
+    .label __6 = $2b
     .label __17 = $3d
     .label __18 = $3c
-    .label mapbase_address = $2f
-    .label tilebase_address = $33
+    .label mapbase_address = $2d
+    .label tilebase_address = $31
     .label layer = $3e
     .label mapwidth = $10
-    .label mapheight = $46
-    .label mapbase_address_1 = $4c
-    .label tileheight = $57
-    .label tilebase_address_1 = $50
-    .label tilewidth = $56
+    .label mapheight = $44
+    .label mapbase_address_1 = $4a
+    .label tileheight = $55
+    .label tilebase_address_1 = $4e
+    .label tilewidth = $54
     // case 1:
     //             config |= VERA_LAYER_COLOR_DEPTH_1BPP;
     //             break;
@@ -1619,7 +1615,7 @@ vera_layer_mode_tile: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label __1 = $55
+    .label __1 = $53
     .label line_text = 6
     .label color = $20
     .label l = $a
@@ -1964,7 +1960,7 @@ kbhit: {
     .label IN_DEV = $28a
     // Current input device number
     .label GETIN = $ffe4
-    .label ch = $3a
+    .label ch = $38
     // char ch = 0
     lda #0
     sta.z ch
@@ -2009,7 +2005,7 @@ kbhit: {
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 // void vera_layer_set_text_color_mode(char layer, char color_mode)
 vera_layer_set_text_color_mode: {
-    .label addr = $2b
+    .label addr = $22
     // byte* addr = vera_layer_config[layer]
     lda vera_layer_config+vera_layer_mode_text.layer*SIZEOF_POINTER
     sta.z addr
@@ -2065,9 +2061,9 @@ vera_layer_get_rowshift: {
 // Get the value required to skip a whole line fast.
 // - layer: Value of 0 or 1.
 // - return: Skip value to calculate fast from a y value to line offset in tile mode.
-// __zp($37) unsigned int vera_layer_get_rowskip(__register(A) char layer)
+// __zp($35) unsigned int vera_layer_get_rowskip(__register(A) char layer)
 vera_layer_get_rowskip: {
-    .label return = $37
+    .label return = $35
     // return vera_layer_rowskip[layer];
     asl
     tay

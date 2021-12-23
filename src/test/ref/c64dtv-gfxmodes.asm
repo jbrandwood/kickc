@@ -155,9 +155,9 @@
   .label print_char_cursor = $a
   .label print_line_cursor = $e
   // The adddress of the bitmap graphics (used for pixels)
-  .label bitmap_gfx = $2f
+  .label bitmap_gfx = $33
   // The adddress of the bitmap screen (used for colors)
-  .label bitmap_screen = $31
+  .label bitmap_screen = $35
 .segment Code
 main: {
     // asm
@@ -188,7 +188,7 @@ main: {
 menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
-    .label c = $2d
+    .label c = $31
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // Charset ROM
     // DTV Graphics Bank
@@ -939,7 +939,7 @@ mode_stdbitmap: {
     .label col2 = $10
     // Bitmap Colors
     .label ch = $1d
-    .label cy = $21
+    .label cy = $25
     .label l = $20
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)BITMAP/$10000)
     // DTV Graphics Bank
@@ -1092,7 +1092,7 @@ mode_hicolstdchar: {
     // Char Colors and screen chars
     .label col = $1d
     .label ch = $a
-    .label cy = $23
+    .label cy = $27
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1222,7 +1222,7 @@ mode_hicolecmchar: {
     // Char Colors and screen chars
     .label col = $a
     .label ch = $1d
-    .label cy = $24
+    .label cy = $28
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1363,7 +1363,7 @@ mode_hicolmcchar: {
     // Char Colors and screen chars
     .label col = $1d
     .label ch = $a
-    .label cy = $25
+    .label cy = $29
     // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000)
     // DTV Graphics Bank
     lda #0
@@ -1493,13 +1493,13 @@ mode_sixsfred2: {
     .label __3 = $1c
     // Colors for high 4 bits of 8bpp
     .label col = $a
-    .label cy = $20
+    .label cy = $22
     // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = $e
     .label ay = $1f
     // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = 8
-    .label by = $27
+    .label by = $2b
     // *DTV_CONTROL = DTV_LINEAR
     lda #DTV_LINEAR
     sta DTV_CONTROL
@@ -1693,13 +1693,13 @@ mode_twoplanebitmap: {
     // Color for bits 11
     // Colors for bits 01 / 10
     .label col = $e
-    .label cy = $20
+    .label cy = $23
     // Graphics for Plane A - horizontal stripes
     .label gfxa = 8
-    .label ay = $22
+    .label ay = $26
     // Graphics for Plane B - vertical stripes
     .label gfxb = $a
-    .label by = $28
+    .label by = $2c
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -1907,10 +1907,10 @@ mode_sixsfred: {
     .label cy = $1f
     // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = $e
-    .label ay = $20
+    .label ay = $21
     // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = 8
-    .label by = $29
+    .label by = $2d
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
@@ -2097,13 +2097,13 @@ mode_8bpppixelcell: {
     .label __3 = $17
     // Screen Chars for Plane A (screen) - 16x16 repeating
     .label gfxa = $e
-    .label ay = $20
+    .label ay = $24
     .label bits = $10
     .label chargen = 8
     .label gfxb = $a
     .label col = $1c
     .label cr = $1f
-    .label ch = $2a
+    .label ch = $2e
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
@@ -2287,7 +2287,7 @@ mode_8bppchunkybmm: {
     .label __7 = $c
     .label gfxb = $e
     .label x = $a
-    .label y = $26
+    .label y = $2a
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
@@ -2406,12 +2406,12 @@ mode_8bppchunkybmm: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($33) void *str, __register(X) char c, __zp($2b) unsigned int num)
+// void * memset(__zp($37) void *str, __register(X) char c, __zp($2f) unsigned int num)
 memset: {
     .label end = 6
     .label dst = $e
-    .label num = $2b
-    .label str = $33
+    .label num = $2f
+    .label str = $37
     // if(num>0)
     lda.z num
     bne !+

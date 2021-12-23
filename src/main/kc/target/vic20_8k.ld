@@ -1,7 +1,7 @@
-// Commodore VIC 20 unexpanded executable PRG file
+// Commodore VIC 20 +8k expanded executable PRG file
 .file [name="%O", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
+.segmentdef Basic [start=$1201]
 .segmentdef Code [start=%P]
 .segmentdef Data [startAfter="Code"]
 .segment Basic

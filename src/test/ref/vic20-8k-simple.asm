@@ -9,19 +9,19 @@
 ///
 /// Used in VIC 20
 /// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
-  // Commodore VIC 20 unexpanded executable PRG file
-.file [name="vic20-simple.prg", type="prg", segments="Program"]
+  // Commodore VIC 20 +8k expanded executable PRG file
+.file [name="vic20-8k-simple.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
-.segmentdef Code [start=$100d]
+.segmentdef Basic [start=$1201]
+.segmentdef Code [start=$120d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
   .const RED = 2
   /// Default address of screen color matrix
-  .label DEFAULT_COLORRAM = $9600
+  .label DEFAULT_COLORRAM = $9400
   /// Default address of screen character matrix
-  .label DEFAULT_SCREEN = $1e00
+  .label DEFAULT_SCREEN = $1000
 .segment Code
 main: {
     ldx #0

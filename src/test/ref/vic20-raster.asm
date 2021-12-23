@@ -9,7 +9,7 @@
 ///
 /// Used in VIC 20
 /// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
-  // Commodore VIC 20 executable PRG file
+  // Commodore VIC 20 unexpanded executable PRG file
 .file [name="vic20-raster.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$1001]

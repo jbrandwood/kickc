@@ -811,6 +811,16 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testVic20_3kSimple() throws IOException {
+      compileAndCompare("vic20-3k-simple.c");
+   }
+
+   @Test
+   public void testVic20_8kSimple() throws IOException {
+      compileAndCompare("vic20-8k-simple.c");
+   }
+
+   @Test
    public void testPlus4KeyboardTest() throws IOException {
       compileAndCompare("plus4-keyboard-test.c");
    }

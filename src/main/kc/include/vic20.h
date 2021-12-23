@@ -10,12 +10,22 @@
     #error "Target platform must be VIC20"
 #endif
 
+#ifdef __VIC20_8K__
+/// Default address of screen color matrix
+char * const DEFAULT_COLORRAM = (char*)0x9400;
+/// Default address of screen character matrix
+char * const DEFAULT_SCREEN = (char*)0x1000;
+#else
 /// Default address of screen color matrix
 char * const DEFAULT_COLORRAM = (char*)0x9600;
-/// Address of screen color matrix if bit 7 of $9002 is 1
-char * const ALTERNATIVE_COLORRAM = (char*)0x9400;
 /// Default address of screen character matrix
 char * const DEFAULT_SCREEN = (char*)0x1e00;
+#endif
+
+/// Address of screen color matrix if bit 7 of $9002 is 0
+char * const PRIMARY_COLORRAM = (char*)0x9400;
+/// Address of screen color matrix if bit 7 of $9002 is 1
+char * const SECONDARY_COLORRAM = (char*)0x9600;
 
 /// The address of the CHARGEN character set
 char * const CHARGEN = (char*)0x8000;

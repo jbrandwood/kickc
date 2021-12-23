@@ -9,11 +9,11 @@
 ///
 /// Used in VIC 20
 /// http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
-  // Commodore VIC 20 unexpanded executable PRG file
-.file [name="vic20-simple.prg", type="prg", segments="Program"]
+  // Commodore VIC 20 +3k expanded executable PRG file
+.file [name="vic20-3k-simple.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
-.segmentdef Code [start=$100d]
+.segmentdef Basic [start=$0401]
+.segmentdef Code [start=$40d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)

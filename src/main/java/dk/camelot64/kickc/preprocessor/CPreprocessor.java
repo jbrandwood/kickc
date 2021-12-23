@@ -212,7 +212,7 @@ public class CPreprocessor implements TokenSource {
          Token nl = nextToken(cTokenSource, KickCLexer.WS);
          if(nl.getChannel() != CParser.CHANNEL_WHITESPACE || !nl.getText().contains("\n"))
             throw new CompileError("Unexpected token. Was expecting newline after #pragma");
-         cParser.loadTargetPlatform(targetName, cParser.getCurrentSourceFolderPath());
+         cParser.updateTargetPlatform(targetName, cParser.getCurrentSourceFolderPath());
          return true;
       }
 

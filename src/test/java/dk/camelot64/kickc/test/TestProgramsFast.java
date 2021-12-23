@@ -9,10 +9,14 @@ import java.io.IOException;
  */
 public class TestProgramsFast extends TestPrograms {
 
+   @Test
+   public void testLoByte1() throws IOException {
+      compileAndCompare("lobyte-1.c");
+   }
 
    @Test
    public void testPceaPointer1() throws IOException {
-      compileAndCompare("pcea-pointer-1.c", log());
+      compileAndCompare("pcea-pointer-1.c");
    }
 
    /* Fix problem where removing empty method can cause NPE (because a local variable in the method is still used)
@@ -1893,6 +1897,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testPlatformAsm6502() throws IOException {
       compileAndCompare("platform-asm6502.c");
+   }
+
+   @Test
+   public void testPlatformUnknown() throws IOException {
+      assertError("platform-unknown.c", "Unknown target platform 'unknown'. Supported: ", false);
    }
 
    @Test

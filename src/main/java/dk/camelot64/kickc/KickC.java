@@ -8,7 +8,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.parser.CTargetPlatformParser;
+import dk.camelot64.kickc.parser.CParser;
 import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
@@ -241,10 +241,9 @@ public class KickC implements Callable<Integer> {
 
       // Set up Target Platform
       try {
-         final File platformFile = SourceLoader.loadFile(targetPlatform + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, program.getTargetPlatformPaths());
-         final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(this.targetPlatform, platformFile, currentPath, program.getTargetPlatformPaths());
-         program.setTargetPlatform(targetPlatform);
-         program.getOutputFileManager().setBinaryExtension(targetPlatform.getOutFileExtension());
+         final TargetPlatform platform = CParser.loadPlatformFile(targetPlatform, currentPath, program.getTargetPlatformPaths());
+         program.setTargetPlatform(platform);
+         program.getOutputFileManager().setBinaryExtension(platform.getOutFileExtension());
       } catch(CompileError e) {
          // Print the error and exit with compile error
          System.err.println(e.getMessage());

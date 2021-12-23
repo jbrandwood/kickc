@@ -249,38 +249,56 @@ public class CParser {
       }
    }
 
-   public void loadTargetPlatform(String platformName, Path currentPath) {
-      final File platformFile = SourceLoader.loadFile(platformName + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, program.getTargetPlatformPaths());
-      if(platformFile != null) {
-         final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(platformName, platformFile, currentPath, program.getTargetPlatformPaths());
-         // Remove macros from existing platform!
-         if(program.getTargetPlatform() != null && program.getTargetPlatform().getDefines() != null)
-            for(String macroName : program.getTargetPlatform().getDefines().keySet())
-               preprocessor.undef(macroName);
-         // Remove reserved ZP's from existing platform
-         program.getReservedZps().removeAll(program.getTargetPlatform().getReservedZps());
+   /**
+    * Update the target platform
+    *
+    * @param platformName The name of the platform
+    * @param currentPath The current path
+    */
+   public void updateTargetPlatform(String platformName, Path currentPath) {
 
-         // Set the new program platform
-         program.setTargetPlatform(targetPlatform);
-         // Define macros from new platform!
-         if(program.getTargetPlatform().getDefines() != null)
-            for(String macroName : program.getTargetPlatform().getDefines().keySet())
-               define(macroName, program.getTargetPlatform().getDefines().get(macroName));
-         // Add reserved ZP's from new platform
-         program.addReservedZps(program.getTargetPlatform().getReservedZps());
-         // Set the output file extension
-         program.getOutputFileManager().setBinaryExtension(targetPlatform.getOutFileExtension());
+      final TargetPlatform targetPlatform = loadPlatformFile(platformName, currentPath, program.getTargetPlatformPaths());
 
-      } else {
+      // Remove macros from existing platform!
+      if(program.getTargetPlatform() != null && program.getTargetPlatform().getDefines() != null)
+         for(String macroName : program.getTargetPlatform().getDefines().keySet())
+            preprocessor.undef(macroName);
+      // Remove reserved ZP's from existing platform
+      program.getReservedZps().removeAll(program.getTargetPlatform().getReservedZps());
+
+      // Set the new program platform
+      program.setTargetPlatform(targetPlatform);
+      // Define macros from new platform!
+      if(program.getTargetPlatform().getDefines() != null)
+         for(String macroName : program.getTargetPlatform().getDefines().keySet())
+            define(macroName, program.getTargetPlatform().getDefines().get(macroName));
+      // Add reserved ZP's from new platform
+      program.addReservedZps(program.getTargetPlatform().getReservedZps());
+      // Set the output file extension
+      program.getOutputFileManager().setBinaryExtension(targetPlatform.getOutFileExtension());
+
+   }
+
+   /**
+    * Load a platform file and produce an error if it cannot be found.
+    * @param platformName The platform name
+    * @param currentPath The current path
+    * @param targetPlatformPaths The search list of paths to look through
+    * @return The loaded platform file
+    */
+   public static TargetPlatform loadPlatformFile(String platformName, Path currentPath, List<String> targetPlatformPaths) {
+      final File platformFile = SourceLoader.loadFile(platformName + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, targetPlatformPaths);
+      if(platformFile == null) {
          StringBuilder supported = new StringBuilder();
-         final List<File> platformFiles = SourceLoader.listFiles(currentPath, program.getTargetPlatformPaths(), CTargetPlatformParser.FILE_EXTENSION);
+         final List<File> platformFiles = SourceLoader.listFiles(currentPath, targetPlatformPaths, CTargetPlatformParser.FILE_EXTENSION);
          for(File file : platformFiles) {
             String name = file.getName();
             name = name.substring(0, name.length() - CTargetPlatformParser.FILE_EXTENSION.length() - 1);
             supported.append(name).append(" ");
          }
-         throw new CompileError("Unknown target platform '" + platformName + "'. Supported: " + supported.toString());
+         throw new CompileError("Unknown target platform '" + platformName + "'. Supported: " + supported);
       }
+      return CTargetPlatformParser.parseTargetPlatformFile(platformName, platformFile, currentPath, targetPlatformPaths);
    }
 
    /**
@@ -300,7 +318,7 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            StatementSource source = new StatementSource(charStream.getSourceName(), line, charPositionInLine, null, -1,-1);
+            StatementSource source = new StatementSource(charStream.getSourceName(), line, charPositionInLine, null, -1, -1);
             throw new CompileError("Error parsing file: " + msg, source);
          }
       });

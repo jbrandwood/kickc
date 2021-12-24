@@ -4,7 +4,7 @@
 cp ./repo/cml/kickass/kickassembler/maven-metadata.xml ./repo/cml/kickass/kickassembler/maven-metadata-local.xml
 
 # mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Applications/KickAssembler/KickAss.jar -DgroupId=cml.kickass -DartifactId=kickassembler -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=5.16
-mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Users/jespergravgaard/c64/kickassembler65ce02/out/KickAss65CE02.jar -DgroupId=cml.kickass -DartifactId=kickassembler -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=5.22-65ce02.a
+mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Users/jespergravgaard/c64/kickassembler65ce02/out/KickAss65CE02.jar -DgroupId=cml.kickass -DartifactId=kickassembler -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=5.23-65ce02.a
 
 # Finalize by making the local metadata official
 pushd ./repo/cml/kickass/kickassembler

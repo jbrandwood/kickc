@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.cpufamily6502.CpuClobber;
-import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.fragment.AsmFragmentInstance;
-import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpecBuilder;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
+import dk.camelot64.kickc.asm.AsmChunk;
+import dk.camelot64.kickc.asm.AsmLine;
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -119,7 +118,7 @@ public class Pass4InterruptClobberFix extends Pass2Base {
     * Prune the interrupt entry/exit fragment removing code handling non-clobbered registers
     *
     * @param interruptAsmChunk The AsmFragment representing an interrupt entry/exit
-    * @param nonClobberedRegisters The non-clobbered registers
+    * @param clobberedRegisters The clobbered registers
     */
    private void pruneFragmentClobber(AsmChunk interruptAsmChunk, String clobberedRegisters) {
       final ListIterator<AsmLine> asmLineListIterator = interruptAsmChunk.getLines().listIterator();

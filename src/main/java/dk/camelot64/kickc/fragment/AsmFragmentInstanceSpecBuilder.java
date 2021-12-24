@@ -42,28 +42,13 @@ public class AsmFragmentInstanceSpecBuilder {
    private int nextMemIdx = 1;
    private int nextConstIdx = 1;
    private int nextLabelIdx = 1;
-
-   /**
-    * Create a fragment instance spec factory for an interrupt routine (entry or exit)
-    *
-    * @param interruptTypeComplete The interrupt routine handler name - including "isr_" and "_entry"/_exit"
-    * @param program The program
-    * @return the fragment instance spec factory
-    */
-   public static AsmFragmentInstanceSpecBuilder interrupt(String interruptTypeComplete, Program program) {
-      Map<String, Value> bindings = new HashMap<>();
-      String signature = interruptTypeComplete;
-      ScopeRef codeScope = program.getScope().getRef();
-      final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
-   }
-
+   
    /**
     * Create a fragment instance spec factory for an indirect call
     * @return the fragment instance spec factory
     */
-   public static AsmFragmentInstanceSpecBuilder call(StatementCallExecute call, int indirectCallId, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(call, indirectCallId, program);
+   public static AsmFragmentInstanceSpec call(StatementCallExecute call, int indirectCallId, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(call, indirectCallId, program).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(StatementCallExecute call, int indirectCallId, Program program) {
@@ -85,12 +70,12 @@ public class AsmFragmentInstanceSpecBuilder {
     * @param program The program
     * @return the fragment instance spec factory
     */
-   public static AsmFragmentInstanceSpecBuilder interruptEntry(String interruptType, Program program) {
+   public static AsmFragmentInstanceSpec interruptEntry(String interruptType, Program program) {
       Map<String, Value> bindings = new HashMap<>();
       String signature = "isr_" + interruptType + "_entry";
       ScopeRef codeScope = program.getScope().getRef();
       final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
+      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec).getAsmFragmentInstanceSpec();
    }
 
    /**
@@ -100,12 +85,12 @@ public class AsmFragmentInstanceSpecBuilder {
     * @param program The program
     * @return the fragment instance spec factory
     */
-   public static AsmFragmentInstanceSpecBuilder interruptExit(String interruptType, Program program) {
+   public static AsmFragmentInstanceSpec interruptExit(String interruptType, Program program) {
       Map<String, Value> bindings = new HashMap<>();
       String signature = "isr_" + interruptType + "_exit";
       ScopeRef codeScope = program.getScope().getRef();
       final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
+      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(Program program, Map<String, Value> bindings, AsmFragmentInstanceSpec asmFragmentInstanceSpec) {
@@ -115,8 +100,8 @@ public class AsmFragmentInstanceSpecBuilder {
    }
 
 
-   public static AsmFragmentInstanceSpecBuilder conditionalJump(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(conditionalJump, block, program);
+   public static AsmFragmentInstanceSpec conditionalJump(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(conditionalJump, block, program).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(
@@ -130,8 +115,8 @@ public class AsmFragmentInstanceSpecBuilder {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public static AsmFragmentInstanceSpecBuilder exprSideEffect(StatementExprSideEffect exprSideEffect, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(exprSideEffect, program);
+   public static AsmFragmentInstanceSpec exprSideEffect(StatementExprSideEffect exprSideEffect, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(exprSideEffect, program).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(StatementExprSideEffect exprSideEffect, Program program) {
@@ -142,8 +127,8 @@ public class AsmFragmentInstanceSpecBuilder {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public static AsmFragmentInstanceSpecBuilder assignment(StatementAssignment assignment, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(assignment, program);
+   public static AsmFragmentInstanceSpec assignment(StatementAssignment assignment, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(assignment, program).getAsmFragmentInstanceSpec();
    }
 
    /**
@@ -153,8 +138,8 @@ public class AsmFragmentInstanceSpecBuilder {
     * @param program The program
     * @return The ASM fragment instance
     */
-   public static AsmFragmentInstanceSpecBuilder makelong4(StatementCall call, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(call, program);
+   public static AsmFragmentInstanceSpec makelong4(StatementCall call, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(call, program).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(StatementCall make4long, Program program) {
@@ -190,8 +175,8 @@ public class AsmFragmentInstanceSpecBuilder {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public static AsmFragmentInstanceSpecBuilder assignment(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
-      return new AsmFragmentInstanceSpecBuilder(lValue, rValue, program, codeScopeRef);
+   public static AsmFragmentInstanceSpec assignment(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+      return new AsmFragmentInstanceSpecBuilder(lValue, rValue, program, codeScopeRef).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
@@ -201,8 +186,8 @@ public class AsmFragmentInstanceSpecBuilder {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScopeRef);
    }
 
-   public static AsmFragmentInstanceSpecBuilder assignmentAlu(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
-      return new AsmFragmentInstanceSpecBuilder(assignment, assignmentAlu, program);
+   public static AsmFragmentInstanceSpec assignmentAlu(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(assignment, assignmentAlu, program).getAsmFragmentInstanceSpec();
    }
 
    private AsmFragmentInstanceSpecBuilder(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {

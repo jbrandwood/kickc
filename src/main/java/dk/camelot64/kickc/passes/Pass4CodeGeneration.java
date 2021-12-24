@@ -848,9 +848,7 @@ public class Pass4CodeGeneration {
             throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignmentAlu(assignment, assignmentAlu, program);
-         ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-         generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+         generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignmentAlu(assignment, assignmentAlu, program));
          aluState.clear();
          return;
       }
@@ -873,23 +871,17 @@ public class Pass4CodeGeneration {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignment(assignment, program);
-                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+                  generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(assignment, program));
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program);
-            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+            generateAsm(asm, AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program));
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(procedure.isDeclaredIntrinsic()) {
                if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedure.getFullName())) {
-                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.makelong4(call, program);
-                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+                  generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program));
                } else {
                   throw new CompileError("Intrinsic procedure not supported " + procedure.toString(program));
                }
@@ -913,16 +905,12 @@ public class Pass4CodeGeneration {
             StatementCallExecute call = (StatementCallExecute) statement;
             RValue procedureRVal = call.getProcedureRVal();
             // Generate ASM for a call
-            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++,  program);
-            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+            generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++,  program));
             if(!(procedureRVal instanceof ProcedureRef)) {
                asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
             }
          } else if(statement instanceof StatementExprSideEffect) {
-            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program);
-            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+            generateAsm(asm, AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program));
          } else if(statement instanceof StatementReturn) {
             Procedure procedure = null;
             ScopeRef scope = block.getScope();
@@ -972,6 +960,7 @@ public class Pass4CodeGeneration {
     * @param fragmentInstanceSpec The ASM fragment instance specification
     */
    private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpec fragmentInstanceSpec) {
+      ensureEncoding(asm, fragmentInstanceSpec);
       String initialSignature = fragmentInstanceSpec.getSignature();
       AsmFragmentInstance fragmentInstance = null;
       StringBuilder fragmentVariationsTried = new StringBuilder();
@@ -1006,20 +995,20 @@ public class Pass4CodeGeneration {
     */
    private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
       final String interruptType = procedure.getInterruptType().toLowerCase();
-      AsmFragmentInstanceSpecBuilder entryFragment;
+      AsmFragmentInstanceSpec entryFragment;
       String entryName;
       if(interruptType.contains("clobber")) {
          entryFragment = AsmFragmentInstanceSpecBuilder.interruptEntry(interruptType.replace("clobber", "all"), program);
-         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature().replace("all", "clobber");
+         entryName = entryFragment.getSignature().replace("all", "clobber");
       } else {
          entryFragment = AsmFragmentInstanceSpecBuilder.interruptEntry(interruptType, program);
-         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature();
+         entryName = entryFragment.getSignature();
       }
       try {
          asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
-         generateAsm(asm, entryFragment.getAsmFragmentInstanceSpec());
+         generateAsm(asm, entryFragment);
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());
+         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure + "\n" + e.getMessage());
       }
    }
 
@@ -1031,20 +1020,20 @@ public class Pass4CodeGeneration {
     */
    private void generateInterruptExit(AsmProgram asm, Procedure procedure) {
       final String interruptType = procedure.getInterruptType().toLowerCase();
-      AsmFragmentInstanceSpecBuilder entryFragment;
+      AsmFragmentInstanceSpec entryFragment;
       String entryName;
       if(interruptType.contains("clobber")) {
          entryFragment = AsmFragmentInstanceSpecBuilder.interruptExit(interruptType.replace("clobber", "all"), program);
-         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature().replace("all", "clobber");
+         entryName = entryFragment.getSignature().replace("all", "clobber");
       } else {
          entryFragment = AsmFragmentInstanceSpecBuilder.interruptExit(interruptType, program);
-         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature();
+         entryName = entryFragment.getSignature();
       }
       asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
       try {
-         generateAsm(asm, entryFragment.getAsmFragmentInstanceSpec());
+         generateAsm(asm, entryFragment);
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());
+         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure + "\n" + e.getMessage());
       }
    }
 
@@ -1121,9 +1110,7 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentChunk().setFragment("register_copy");
             } else {
-               AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignment(lValue, rValue, program, scope);
-               ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
-               generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
+               generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(lValue, rValue, program, scope));
             }
          }
          transitionSetGenerated(transition);
@@ -1132,14 +1119,13 @@ public class Pass4CodeGeneration {
       }
    }
 
-
    /**
     * Ensure that the current encoding in the ASM matches any encoding in the data to be emitted
     *
     * @param asm The ASM program (where any .encoding directive will be emitted)
     * @param asmFragmentInstance The ASM fragment to be emitted
     */
-   private static void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpecBuilder asmFragmentInstance) {
+   private static void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpec asmFragmentInstance) {
       asm.ensureEncoding(getEncoding(asmFragmentInstance));
    }
 
@@ -1175,7 +1161,7 @@ public class Pass4CodeGeneration {
     * @param asmFragmentInstance The asm fragment instance to examine
     * @return Any encoding found inside the constant
     */
-   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpecBuilder asmFragmentInstance) {
+   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpec asmFragmentInstance) {
       LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
       Map<String, Value> bindings = asmFragmentInstance.getBindings();
       for(Value boundValue : bindings.values()) {
@@ -1183,7 +1169,6 @@ public class Pass4CodeGeneration {
       }
       return encodings;
    }
-
 
    /**
     * Get phi transitions for a specific to-block.

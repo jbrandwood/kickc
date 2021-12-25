@@ -7,8 +7,19 @@ main: scope:[main]  from __start
   *_s1 = 7
   *_s2 = $32c
   *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < 4
+  if(main::$0) goto main::@2
   to:main::@return
-main::@return: scope:[main]  from main
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  _s1[main::i#3] = $c
+  main::i#1 = ++ main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
@@ -28,16 +39,25 @@ void __start()
 __constant char * const _s1 = (char *)$ee
 __constant unsigned int * const _s2 = (unsigned int *)$ef
 void main()
+bool main::$0
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
 
 Adding number conversion cast (unumber) 7 in *_s1 = 7
 Adding number conversion cast (unumber) $32c in *_s2 = $32c
 Adding number conversion cast (unumber) $32c in *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
 Adding number conversion cast (unumber) 1*SIZEOF_UNSIGNED_INT in *(_s2-1*SIZEOF_UNSIGNED_INT) = ((unumber)) $32c
 Adding number conversion cast (unumber) 1 in *(_s2-(unumber)1*SIZEOF_UNSIGNED_INT) = ((unumber)) $32c
+Adding number conversion cast (unumber) 4 in main::$0 = main::i#2 < 4
+Adding number conversion cast (unumber) $c in _s1[main::i#3] = $c
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *_s1 = (unumber)7
 Inlining cast *_s2 = (unumber)$32c
 Inlining cast *(_s2-(unumber)(unumber)1*SIZEOF_UNSIGNED_INT) = (unumber)$32c
+Inlining cast _s1[main::i#3] = (unumber)$c
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (char *) 238
 Simplifying constant pointer cast (unsigned int *) 239
@@ -46,21 +66,35 @@ Simplifying constant integer cast $32c
 Simplifying constant integer cast $32c
 Simplifying constant integer cast (unumber)1*SIZEOF_UNSIGNED_INT
 Simplifying constant integer cast 1
+Simplifying constant integer cast 4
+Simplifying constant integer cast $c
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (char) 7
 Finalized unsigned number type (unsigned int) $32c
 Finalized unsigned number type (unsigned int) $32c
 Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) $c
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [6] if(main::i#2<4) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced [8] main::i#4 = main::i#1
+Coalesced down to 1 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
@@ -69,28 +103,49 @@ main: scope:[main]  from
   [0] *_s1 = 7
   [1] *_s2 = $32c
   [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [3] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [4] if(main::i#2<4) goto main::@2
   to:main::@return
-main::@return: scope:[main]  from main
-  [3] return 
+main::@return: scope:[main]  from main::@1
+  [5] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [6] _s1[main::i#2] = $c
+  [7] main::i#1 = ++ main::i#2
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 void main()
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 14.666666666666666
 
 Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
 Complete equivalence classes
+[ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *_s1 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *_s2 = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] _s1[main::i#2] = $c [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [0] *_s1 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *_s2 = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] _s1[main::i#2] = $c [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
+Uplift Scope [main] 36.67: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 34 combination 
-Uplifting [] best 34 combination 
+Uplifting [main] best 266 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 266 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -125,18 +180,42 @@ main: {
     sta.z _s2-1*SIZEOF_UNSIGNED_INT
     lda #>$32c
     sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
+    // [3] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [3] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [4] if(main::i#2<4) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #4
+    bcc __b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [3] return 
+    // [5] return 
     rts
+    // main::@2
+  __b2:
+    // [6] _s1[main::i#2] = $c -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #$c
+    sta.z _s1,x
+    // [7] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [3] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
 Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -144,11 +223,15 @@ __constant char SIZEOF_UNSIGNED_INT = 2
 __constant char * const _s1 = (char *) 238
 __constant unsigned int * const _s2 = (unsigned int *) 239
 void main()
+char main::i
+char main::i#1 // reg byte x 22.0
+char main::i#2 // reg byte x 14.666666666666666
 
+reg byte x [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 31
+Score: 206
 
   // File Comments
 // These pointers lives on zeropage
@@ -185,10 +268,31 @@ main: {
     sta.z _s2-1*SIZEOF_UNSIGNED_INT
     lda #>$32c
     sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
+    // [3] phi from main to main::@1 [phi:main->main::@1]
+    // [3] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char i=0;i<4;i++)
+    // [4] if(main::i#2<4) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #4
+    bcc __b2
     // main::@return
     // }
-    // [3] return 
+    // [5] return 
     rts
+    // main::@2
+  __b2:
+    // _s1[i] = 12
+    // [6] _s1[main::i#2] = $c -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #$c
+    sta.z _s1,x
+    // for(char i=0;i<4;i++)
+    // [7] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [3] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
 }
   // File Data
 

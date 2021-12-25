@@ -26,6 +26,18 @@ main: {
     sta.z _s2-1*SIZEOF_UNSIGNED_INT
     lda #>$32c
     sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
+    ldx #0
+  __b1:
+    // for(char i=0;i<4;i++)
+    cpx #4
+    bcc __b2
     // }
     rts
+  __b2:
+    // _s1[i] = 12
+    lda #$c
+    sta.z _s1,x
+    // for(char i=0;i<4;i++)
+    inx
+    jmp __b1
 }

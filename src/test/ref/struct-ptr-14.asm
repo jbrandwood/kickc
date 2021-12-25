@@ -27,7 +27,7 @@ main: {
     lda.z q
     sta SCREEN
     // SCREEN[1] = q->y
-    lda q+OFFSET_STRUCT_POINT_Y
+    lda.z q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // }
     rts
@@ -39,7 +39,7 @@ set: {
     sta.z main.q
     // ptr->y = 5
     lda #5
-    sta main.q+OFFSET_STRUCT_POINT_Y
+    sta.z main.q+OFFSET_STRUCT_POINT_Y
     // }
     rts
 }

@@ -147,9 +147,9 @@ Uplift Scope [Point]
 Uplift Scope [main] 0: zp[3]:2 [ main::point1 ] 0: zp[3]:5 [ main::point2 ] 
 Uplift Scope [] 
 
-Uplifting [Point] best 78 combination 
-Uplifting [main] best 78 combination zp[3]:2 [ main::point1 ] zp[3]:5 [ main::point2 ] 
-Uplifting [] best 78 combination 
+Uplifting [Point] best 74 combination 
+Uplifting [main] best 74 combination zp[3]:2 [ main::point1 ] zp[3]:5 [ main::point2 ] 
+Uplifting [] best 74 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -184,10 +184,10 @@ main: {
     sta.z point1
     // [2] *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS) = 'j' -- _deref_pbuc1=vbuc2 
     lda #'j'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS
     // [3] *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS+1) = 'g' -- _deref_pbuc1=vbuc2 
     lda #'g'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS+1
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS+1
     // [4] *(&main::point2) = memcpy(*(&main::point1), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -199,10 +199,10 @@ main: {
     lda.z point2
     sta SCREEN
     // [6] *(SCREEN+1) = *((char *)&main::point2+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_INITIALS
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // [7] *(SCREEN+2) = *((char *)&main::point2+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_INITIALS+1
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
@@ -231,7 +231,7 @@ zp[3]:5 [ main::point2 ]
 
 
 FINAL ASSEMBLER
-Score: 75
+Score: 71
 
   // File Comments
 // Minimal struct with C-Standard behavior - member is array, copy assignment
@@ -268,11 +268,11 @@ main: {
     // point1.initials[0] = 'j'
     // [2] *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS) = 'j' -- _deref_pbuc1=vbuc2 
     lda #'j'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS
     // point1.initials[1] = 'g'
     // [3] *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS+1) = 'g' -- _deref_pbuc1=vbuc2 
     lda #'g'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS+1
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS+1
     // __ma struct Point point2 = point1
     // [4] *(&main::point2) = memcpy(*(&main::point1), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
@@ -287,11 +287,11 @@ main: {
     sta SCREEN
     // SCREEN[1] = point2.initials[0]
     // [6] *(SCREEN+1) = *((char *)&main::point2+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_INITIALS
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // SCREEN[2] = point2.initials[1]
     // [7] *(SCREEN+2) = *((char *)&main::point2+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_INITIALS+1
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     // main::@return
     // }

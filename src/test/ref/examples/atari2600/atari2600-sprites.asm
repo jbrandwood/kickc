@@ -56,15 +56,15 @@ main: {
     // Player 0
     // - Color
     lda #$f0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0
     // TIA->GRP0 = 0xaf
     // - Graphics
     lda #$af
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0
     // TIA->NUSIZ0 = 0x05
     // - Size
     lda #5
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_NUSIZ0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_NUSIZ0
     lda #$39
     sta.z idx2
     lda #0
@@ -76,7 +76,7 @@ main: {
     // the screen so we can start the next frame of video.
     // The Sync Signal must be on for 3 scanlines.
     lda #2
-    sta TIA
+    sta.z TIA
     // RIOT->TIM64T = (41*CYCLES_PER_SCANLINE)/64
     // D1=1, turns on Vertical Sync signal
     lda #$29*CYCLES_PER_SCANLINE/$40
@@ -84,14 +84,14 @@ main: {
     // TIA->WSYNC = 0
     // Set timer to wait 41 lines
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // Wait for Sync - halts CPU until end of 1st scanline of VSYNC
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // wait until end of 2nd scanline of VSYNC
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->VSYNC = 0
     // wait until end of 3rd scanline of VSYNC
-    sta TIA
+    sta.z TIA
     // asm
     // Vertical Sprite Position Player 0 - inline ASM to achieve cycle exact code
     lda p0_xpos
@@ -122,9 +122,9 @@ main: {
     // TIA->WSYNC = 0
     // Execute horisontal movement
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->HMOVE = 0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
   // Wait for the timer to run out
   __b3:
     // while(RIOT->INTIM)
@@ -135,10 +135,10 @@ main: {
     // Update the registers in TIA (the video chip) in order to generate what the player sees.
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // TIA->COLUBK = 0x0
     // D1=1, turns off Vertical Blank signal (image output on)
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     tay
     ldx #1
   __b6:
@@ -148,15 +148,15 @@ main: {
     // TIA->WSYNC = 0
     // Start OverScan
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->VBLANK = 2
     // Wait for SYNC (halts CPU until end of scanline)
     lda #2
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // TIA->COLUBK = 0
     // D1=1 turns image output off
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // RIOT->TIM64T = (27*CYCLES_PER_SCANLINE)/64
     // Set background color to black
     lda #$1b*CYCLES_PER_SCANLINE/$40
@@ -170,14 +170,14 @@ main: {
   __b14:
     // TIA->WSYNC = 0
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b13
   __b7:
     // Wait for SYNC (halts CPU until end of scanline)
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->COLUBK = i
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // if(p0_idx)
     cpy #0
     bne __b9
@@ -197,7 +197,7 @@ main: {
     // Player 0 is active - show it
     lda SPRITE_C,y
     // TIA->GRP0 = gfx
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0
     // if(gfx==0)
     cmp #0
     beq __b1
@@ -207,7 +207,7 @@ main: {
   __b4:
     // TIA->WSYNC = 0
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b3
 }
 .segment Data

@@ -24,7 +24,7 @@ main: {
     sei
     // *PROCPORT = $32
     lda #$32
-    sta PROCPORT
+    sta.z PROCPORT
     lda #<CHARSET4
     sta.z charset4
     lda #>CHARSET4
@@ -185,7 +185,7 @@ main: {
   !:
     // *PROCPORT = $37
     lda #$37
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     ldx #0

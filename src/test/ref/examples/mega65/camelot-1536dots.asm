@@ -146,10 +146,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable Kernal & Basic
     ldz #PROCPORT_DDR_MEMORY_MASK
-    stz PROCPORT_DDR
+    stz.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     ldz #PROCPORT_RAM_IO
-    stz PROCPORT
+    stz.z PROCPORT
     // VICIV->KEY = VICIV_KEY_M65_A
     // Enable MEGA65 features
     ldz #VICIV_KEY_M65_A

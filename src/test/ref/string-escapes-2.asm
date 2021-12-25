@@ -33,7 +33,7 @@ main: {
 // void chrout(__register(A) char c)
 chrout: {
     // *memA = c
-    sta memA
+    sta.z memA
     // asm
     jsr $ffd2
     // }

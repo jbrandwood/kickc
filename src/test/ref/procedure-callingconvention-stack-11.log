@@ -373,22 +373,22 @@ Uplift Scope [Point]
 Uplift Scope [Vector] 
 Uplift Scope [__start] 
 
-Uplifting [get] best 1425 combination reg byte y [ get::i#0 ] zp[1]:4 [ get::$0 ] reg byte x [ get::$1 ] zp[1]:6 [ get::$2 ] zp[4]:16 [ get::return ] zp[4]:20 [ get::v ] 
+Uplifting [get] best 1419 combination reg byte y [ get::i#0 ] zp[1]:4 [ get::$0 ] reg byte x [ get::$1 ] zp[1]:6 [ get::$2 ] zp[4]:16 [ get::return ] zp[4]:20 [ get::v ] 
 Limited combination testing to 100 combinations of 108 possible.
-Uplifting [] best 1425 combination zp[1]:3 [ idx ] 
-Uplifting [main] best 1425 combination zp[1]:7 [ main::i#2 main::i#1 ] zp[4]:8 [ main::v ] 
-Uplifting [print] best 1425 combination zp[4]:12 [ print::v ] 
-Uplifting [Point] best 1425 combination 
-Uplifting [Vector] best 1425 combination 
-Uplifting [__start] best 1425 combination 
+Uplifting [] best 1419 combination zp[1]:3 [ idx ] 
+Uplifting [main] best 1419 combination zp[1]:7 [ main::i#2 main::i#1 ] zp[4]:8 [ main::v ] 
+Uplifting [print] best 1419 combination zp[4]:12 [ print::v ] 
+Uplifting [Point] best 1419 combination 
+Uplifting [Vector] best 1419 combination 
+Uplifting [__start] best 1419 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ idx ]
-Uplifting [] best 1425 combination zp[1]:3 [ idx ] 
+Uplifting [] best 1419 combination zp[1]:3 [ idx ] 
 Attempting to uplift remaining variables inzp[1]:4 [ get::$0 ]
-Uplifting [get] best 1425 combination zp[1]:4 [ get::$0 ] 
+Uplifting [get] best 1419 combination zp[1]:4 [ get::$0 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ get::$2 ]
-Uplifting [get] best 1425 combination zp[1]:6 [ get::$2 ] 
+Uplifting [get] best 1419 combination zp[1]:6 [ get::$2 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ main::i#2 main::i#1 ]
-Uplifting [main] best 1425 combination zp[1]:7 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 1419 combination zp[1]:7 [ main::i#2 main::i#1 ] 
 Coalescing zero page register [ zp[4]:8 [ main::v ] ] with [ zp[4]:12 [ print::v ] ]
 Allocated (was zp[1]:3) zp[1]:2 [ idx ]
 Allocated (was zp[1]:4) zp[1]:3 [ get::$0 ]
@@ -462,19 +462,19 @@ print: {
     // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_P2
+    lda.z v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
     // [11] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // [13] idx = ++ idx -- vbuz1=_inc_vbuz1 
@@ -520,12 +520,12 @@ get: {
     sty.z v
     // [22] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
-    sta v+OFFSET_STRUCT_POINT_Y
+    sta.z v+OFFSET_STRUCT_POINT_Y
     // [23] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
-    stx v+OFFSET_STRUCT_VECTOR_P2
+    stx.z v+OFFSET_STRUCT_VECTOR_P2
     // [24] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
-    sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    sta.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     // [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_VECTOR
   !:
@@ -677,7 +677,7 @@ zp[4]:14 [ get::v ]
 
 
 FINAL ASSEMBLER
-Score: 1293
+Score: 1287
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -739,7 +739,7 @@ print: {
     inc.z idx
     // SCREEN[idx++] = v.p1.y
     // [8] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p1.y;
@@ -747,7 +747,7 @@ print: {
     inc.z idx
     // SCREEN[idx++] = v.p2.x
     // [10] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_P2
+    lda.z v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.x;
@@ -755,7 +755,7 @@ print: {
     inc.z idx
     // SCREEN[idx++] = v.p2.y
     // [12] SCREEN[idx] = *((char *)(struct Point *)&print::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.y;
@@ -807,12 +807,12 @@ get: {
     sty.z v
     // [22] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
-    sta v+OFFSET_STRUCT_POINT_Y
+    sta.z v+OFFSET_STRUCT_POINT_Y
     // [23] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2) = get::$1 -- _deref_pbuc1=vbuxx 
-    stx v+OFFSET_STRUCT_VECTOR_P2
+    stx.z v+OFFSET_STRUCT_VECTOR_P2
     // [24] *((char *)(struct Point *)&get::v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y) = get::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
-    sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    sta.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     // return v;
     // [25] *(&get::return) = memcpy(*(&get::v), struct Vector, SIZEOF_STRUCT_VECTOR) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_VECTOR

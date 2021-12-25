@@ -114,9 +114,9 @@ Uplift Scope [Point]
 Uplift Scope [main] 0: zp[4]:2 [ main::point1 ] 
 Uplift Scope [] 
 
-Uplifting [Point] best 48 combination 
-Uplifting [main] best 48 combination zp[4]:2 [ main::point1 ] 
-Uplifting [] best 48 combination 
+Uplifting [Point] best 46 combination 
+Uplifting [main] best 46 combination zp[4]:2 [ main::point1 ] 
+Uplifting [] best 46 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -149,10 +149,10 @@ main: {
     lda.z point1
     sta SCREEN
     // [2] *(SCREEN+1) = *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS
+    lda.z point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // [3] *(SCREEN+2) = *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS+1
+    lda.z point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
@@ -184,7 +184,7 @@ zp[4]:2 [ main::point1 ]
 
 
 FINAL ASSEMBLER
-Score: 45
+Score: 43
 
   // File Comments
 // Minimal struct with C-Standard behavior - member is array, copy assignment
@@ -219,11 +219,11 @@ main: {
     sta SCREEN
     // SCREEN[1] = point1.initials[0]
     // [2] *(SCREEN+1) = *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS
+    lda.z point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // SCREEN[2] = point1.initials[1]
     // [3] *(SCREEN+2) = *((char *)&main::point1+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS+1
+    lda.z point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     // main::@return
     // }

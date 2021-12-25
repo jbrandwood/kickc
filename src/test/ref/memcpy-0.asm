@@ -45,7 +45,7 @@ main: {
     sei
     // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
+    sta.z PROCPORT
     // memcpy(CHARSET, CHARGEN, 0x0800)
     lda #<$800
     sta.z memcpy.num
@@ -62,7 +62,7 @@ main: {
     jsr memcpy
     // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
     lda #PROCPORT_BASIC_KERNEL_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // }

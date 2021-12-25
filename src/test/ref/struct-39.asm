@@ -53,9 +53,9 @@ main: {
     txa
     asl
     tay
-    lda to+OFFSET_STRUCT_VECTOR_Y
+    lda.z to+OFFSET_STRUCT_VECTOR_Y
     sta SCREEN,y
-    lda to+OFFSET_STRUCT_VECTOR_Y+1
+    lda.z to+OFFSET_STRUCT_VECTOR_Y+1
     sta SCREEN+1,y
     // SCREEN[j++] = to.y;
     inx

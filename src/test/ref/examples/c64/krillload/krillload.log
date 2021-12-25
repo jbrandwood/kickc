@@ -411,14 +411,14 @@ Uplift Scope [MOS6569_VICII]
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [krill_install] best 215 combination reg byte a [ krill_install::return#0 ] reg byte a [ krill_install::return#2 ] 
-Uplifting [krill_loadraw] best 203 combination reg byte a [ krill_loadraw::return#0 ] reg byte a [ krill_loadraw::return#2 ] 
-Uplifting [main] best 191 combination reg byte a [ main::status#0 ] reg byte a [ main::status#1 ] 
-Uplifting [KrillStatus] best 191 combination 
-Uplifting [MOS6526_CIA] best 191 combination 
-Uplifting [MOS6569_VICII] best 191 combination 
-Uplifting [MOS6581_SID] best 191 combination 
-Uplifting [] best 191 combination 
+Uplifting [krill_install] best 211 combination reg byte a [ krill_install::return#0 ] reg byte a [ krill_install::return#2 ] 
+Uplifting [krill_loadraw] best 199 combination reg byte a [ krill_loadraw::return#0 ] reg byte a [ krill_loadraw::return#2 ] 
+Uplifting [main] best 187 combination reg byte a [ main::status#0 ] reg byte a [ main::status#1 ] 
+Uplifting [KrillStatus] best 187 combination 
+Uplifting [MOS6526_CIA] best 187 combination 
+Uplifting [MOS6569_VICII] best 187 combination 
+Uplifting [MOS6581_SID] best 187 combination 
+Uplifting [] best 187 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -551,7 +551,7 @@ krill_install: {
     jsr KRILL_INSTALL
     sta status
     // [20] krill_install::return#0 = *krill_install::status -- vbuaa=_deref_pbuc1 
-    lda status
+    lda.z status
     jmp __breturn
     // krill_install::@return
   __breturn:
@@ -571,16 +571,16 @@ krill_loadraw: {
     .label fname = $fe
     // [22] *krill_loadraw::fname = main::filename -- _deref_qbuc1=pbuc2 
     lda #<main.filename
-    sta fname
+    sta.z fname
     lda #>main.filename
-    sta fname+1
+    sta.z fname+1
     // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
     ldx fname
     ldy fname+1
     jsr KRILL_LOADER
     sta status
     // [24] krill_loadraw::return#0 = *krill_loadraw::status -- vbuaa=_deref_pbuc1 
-    lda status
+    lda.z status
     jmp __breturn
     // krill_loadraw::@return
   __breturn:
@@ -621,9 +621,9 @@ Removing instruction jmp __b5
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda status
+Removing instruction lda.z status
 Replacing instruction ldy fname+1 with TAY
-Removing instruction lda status
+Removing instruction lda.z status
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b6 with __b1
 Removing instruction __b1_from___b6:
@@ -701,7 +701,7 @@ reg byte a [ krill_loadraw::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 130
+Score: 128
 
   // File Comments
 // Tests Krill Loader
@@ -850,9 +850,9 @@ krill_loadraw: {
     // *fname = filename
     // [22] *krill_loadraw::fname = main::filename -- _deref_qbuc1=pbuc2 
     lda #<main.filename
-    sta fname
+    sta.z fname
     lda #>main.filename
-    sta fname+1
+    sta.z fname+1
     // asm
     // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
     ldx fname

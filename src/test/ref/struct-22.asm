@@ -30,11 +30,11 @@ main: {
     bne !-
     // print(point1)
     ldx.z point1
-    lda point1+OFFSET_STRUCT_POINT_Y
+    lda.z point1+OFFSET_STRUCT_POINT_Y
     jsr print
     // print(point2)
     ldx.z point2
-    lda point2+OFFSET_STRUCT_POINT_Y
+    lda.z point2+OFFSET_STRUCT_POINT_Y
     jsr print
     // }
     rts

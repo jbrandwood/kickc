@@ -533,10 +533,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // no kernal or BASIC rom visible
     ldz #PROCPORT_DDR_MEMORY_MASK
-    stz PROCPORT_DDR
+    stz.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     ldz #PROCPORT_RAM_IO
-    stz PROCPORT
+    stz.z PROCPORT
     // VICIV->SIDBDRWD_LO = 1
     // open sideborder
     ldz #1

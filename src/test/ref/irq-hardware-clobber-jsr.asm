@@ -79,10 +79,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR

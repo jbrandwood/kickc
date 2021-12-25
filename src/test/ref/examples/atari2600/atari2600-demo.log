@@ -452,13 +452,13 @@ Uplift Scope [ATARI_TIA_WRITE]
 Uplift Scope [ATARI_TIA_READ] 
 Uplift Scope [MOS6532_RIOT] 
 
-Uplifting [main] best 8959 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] 
-Uplifting [] best 8959 combination zp[1]:130 [ idx#1 idx#0 ] 
-Uplifting [ATARI_TIA_WRITE] best 8959 combination 
-Uplifting [ATARI_TIA_READ] best 8959 combination 
-Uplifting [MOS6532_RIOT] best 8959 combination 
+Uplifting [main] best 8065 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] 
+Uplifting [] best 8065 combination zp[1]:130 [ idx#1 idx#0 ] 
+Uplifting [ATARI_TIA_WRITE] best 8065 combination 
+Uplifting [ATARI_TIA_READ] best 8065 combination 
+Uplifting [MOS6532_RIOT] best 8065 combination 
 Attempting to uplift remaining variables inzp[1]:130 [ idx#1 idx#0 ]
-Uplifting [] best 8959 combination zp[1]:130 [ idx#1 idx#0 ] 
+Uplifting [] best 8065 combination zp[1]:130 [ idx#1 idx#0 ] 
 Allocated (was zp[1]:130) zp[1]:128 [ idx#1 idx#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -501,16 +501,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [0] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) = $a0 -- _deref_pbuc1=vbuc2 
     lda #$a0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
     // [1] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1) = $55 -- _deref_pbuc1=vbuc2 
     lda #$55
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
     // [2] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2) = $aa -- _deref_pbuc1=vbuc2 
     lda #$aa
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
     // [3] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF) = $55 -- _deref_pbuc1=vbuc2 
     lda #$55
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     // [4] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [4] phi idx#1 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -528,7 +528,7 @@ main: {
     // the screen so we can start the next frame of video.
     // The Sync Signal must be on for 3 scanlines.
     lda #2
-    sta TIA
+    sta.z TIA
     // [6] *((char *)RIOT+OFFSET_STRUCT_MOS6532_RIOT_TIM64T) = $29*$4c/$40 -- _deref_pbuc1=vbuc2 
     // D1=1, turns on Vertical Sync signal
     lda #$29*$4c/$40
@@ -536,19 +536,19 @@ main: {
     // [7] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Set timer to wait 41 lines
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [8] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Wait for Sync - halts CPU until end of 1st scanline of VSYNC
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [9] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // wait until end of 2nd scanline of VSYNC
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [10] *((char *)TIA) = 0 -- _deref_pbuc1=vbuc2 
     // wait until end of 3rd scanline of VSYNC
     lda #0
-    sta TIA
+    sta.z TIA
     jmp __b3
   // Wait for the timer to run out
     // main::@3
@@ -564,7 +564,7 @@ main: {
     // Update the registers in TIA (the video chip) in order to generate what the player sees.
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // [13] main::c#0 = SINTABLE[idx#1] -- vbuxx=pbuc1_derefidx_vbuz1 
     // D1=1, turns off Vertical Blank signal (image output on)
     ldy.z idx
@@ -588,15 +588,15 @@ main: {
     // [17] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Start OverScan
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [18] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK) = 2 -- _deref_pbuc1=vbuc2 
     // Wait for SYNC (halts CPU until end of scanline)
     lda #2
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // [19] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK) = 0 -- _deref_pbuc1=vbuc2 
     // D1=1 turns image output off
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // [20] *((char *)RIOT+OFFSET_STRUCT_MOS6532_RIOT_TIM64T) = $1b*$4c/$40 -- _deref_pbuc1=vbuc2 
     // Set background color to black
     lda #$1b*$4c/$40
@@ -616,25 +616,25 @@ main: {
   __b10:
     // [22] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b9
     // main::@7
   __b7:
     // [23] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [24] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK) = main::c#2 -- _deref_pbuc1=vbuxx 
     // Wait for SYNC (halts CPU until end of scanline)
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // [25] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) = main::c#2 -- _deref_pbuc1=vbuxx 
     // Set background color
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
     // [26] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
     // [27] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
     // [28] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
     // [29] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
     inx
     // [30] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
@@ -648,7 +648,7 @@ main: {
   __b4:
     // [31] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b3
 }
   // File Data
@@ -716,7 +716,7 @@ reg byte x [ main::c#2 main::c#0 main::c#1 ]
 
 
 FINAL ASSEMBLER
-Score: 7879
+Score: 6985
 
   // File Comments
 // Minimal Atari 2600 VCS Program
@@ -758,19 +758,19 @@ main: {
     // TIA->PF0 = 0b10100000
     // [0] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) = $a0 -- _deref_pbuc1=vbuc2 
     lda #$a0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
     // TIA->PF1 = 0b01010101
     // [1] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1) = $55 -- _deref_pbuc1=vbuc2 
     lda #$55
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
     // TIA->PF2 = 0b10101010
     // [2] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2) = $aa -- _deref_pbuc1=vbuc2 
     lda #$aa
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
     // TIA->COLUPF = 0x55
     // [3] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF) = $55 -- _deref_pbuc1=vbuc2 
     lda #$55
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     // [4] phi from main to main::@1 [phi:main->main::@1]
     // [4] phi idx#1 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -785,7 +785,7 @@ main: {
     // the screen so we can start the next frame of video.
     // The Sync Signal must be on for 3 scanlines.
     lda #2
-    sta TIA
+    sta.z TIA
     // RIOT->TIM64T = (41*76)/64
     // [6] *((char *)RIOT+OFFSET_STRUCT_MOS6532_RIOT_TIM64T) = $29*$4c/$40 -- _deref_pbuc1=vbuc2 
     // D1=1, turns on Vertical Sync signal
@@ -795,17 +795,17 @@ main: {
     // [7] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Set timer to wait 41 lines
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [8] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Wait for Sync - halts CPU until end of 1st scanline of VSYNC
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // [9] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // wait until end of 2nd scanline of VSYNC
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->VSYNC = 0
     // [10] *((char *)TIA) = 0 -- _deref_pbuc1=vbuc2 
     // wait until end of 3rd scanline of VSYNC
-    sta TIA
+    sta.z TIA
   // Wait for the timer to run out
     // main::@3
   __b3:
@@ -820,7 +820,7 @@ main: {
     // Update the registers in TIA (the video chip) in order to generate what the player sees.
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // char c = SINTABLE[idx++]
     // [13] main::c#0 = SINTABLE[idx#1] -- vbuxx=pbuc1_derefidx_vbuz1 
     // D1=1, turns off Vertical Blank signal (image output on)
@@ -843,17 +843,17 @@ main: {
     // [17] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     // Start OverScan
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->VBLANK = 2
     // [18] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK) = 2 -- _deref_pbuc1=vbuc2 
     // Wait for SYNC (halts CPU until end of scanline)
     lda #2
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // TIA->COLUBK = 0
     // [19] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK) = 0 -- _deref_pbuc1=vbuc2 
     // D1=1 turns image output off
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // RIOT->TIM64T = (27*76)/64
     // [20] *((char *)RIOT+OFFSET_STRUCT_MOS6532_RIOT_TIM64T) = $1b*$4c/$40 -- _deref_pbuc1=vbuc2 
     // Set background color to black
@@ -874,30 +874,30 @@ main: {
     // TIA->WSYNC = 0
     // [22] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b9
     // main::@7
   __b7:
     // [23] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->COLUBK = c
     // [24] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK) = main::c#2 -- _deref_pbuc1=vbuxx 
     // Wait for SYNC (halts CPU until end of scanline)
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     // TIA->PF0 = c
     // [25] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) = main::c#2 -- _deref_pbuc1=vbuxx 
     // Set background color
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
     // TIA->PF1 = c
     // [26] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF1
     // TIA->PF2 = c
     // [27] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF2
     // TIA->HMOVE = c
     // [28] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE) = main::c#2 -- _deref_pbuc1=vbuxx 
-    stx TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
+    stx.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE
     // c++;
     // [29] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -913,7 +913,7 @@ main: {
     // TIA->WSYNC = 0
     // [31] *((char *)TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
+    sta.z TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     jmp __b3
 }
   // File Data

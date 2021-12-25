@@ -148,10 +148,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
   __b1:

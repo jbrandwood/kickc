@@ -40,7 +40,7 @@ main: {
     dey
     bne !-
     // SCREEN[idx++] = y.d
-    lda y+OFFSET_STRUCT_DATA_D
+    lda.z y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     // }
     rts
@@ -55,7 +55,7 @@ sum: {
     adc.z $ff
     // struct Data d = { a+b, b }
     sta.z d
-    stx d+OFFSET_STRUCT_DATA_D
+    stx.z d+OFFSET_STRUCT_DATA_D
     // return d;
     ldy #SIZEOF_STRUCT_DATA
   !:

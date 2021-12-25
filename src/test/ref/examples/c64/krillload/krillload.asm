@@ -107,9 +107,9 @@ krill_loadraw: {
     .label fname = $fe
     // *fname = filename
     lda #<main.filename
-    sta fname
+    sta.z fname
     lda #>main.filename
-    sta fname+1
+    sta.z fname+1
     // asm
     ldx fname
     tay

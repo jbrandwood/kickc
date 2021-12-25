@@ -19,7 +19,7 @@ main: {
     sei
     // *PROCPORT = $32
     lda #$32
-    sta PROCPORT
+    sta.z PROCPORT
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -73,7 +73,7 @@ main: {
     bne __b1
     // *PROCPORT = $37
     lda #$37
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // }

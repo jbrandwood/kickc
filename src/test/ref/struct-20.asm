@@ -47,13 +47,13 @@ main: {
     lda.z v
     sta SCREEN
     // SCREEN[1] = v.p.y
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // SCREEN[2] = v.q.x
-    lda v+OFFSET_STRUCT_VECTOR_Q
+    lda.z v+OFFSET_STRUCT_VECTOR_Q
     sta SCREEN+2
     // SCREEN[3] = v.q.y
-    lda v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
     // }
     rts

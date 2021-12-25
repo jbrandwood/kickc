@@ -12,15 +12,15 @@
 .segment Code
 main: {
     // **p1 = **p2
-    ldy p2
+    ldy.z p2
     sty.z $fe
-    ldy p2+1
+    ldy.z p2+1
     sty.z $ff
     ldy #0
     lda ($fe),y
-    ldy p1
+    ldy.z p1
     sty.z $fe
-    ldy p1+1
+    ldy.z p1+1
     sty.z $ff
     ldy #0
     sta ($fe),y

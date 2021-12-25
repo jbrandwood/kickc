@@ -50,7 +50,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_uchar(*(char *)0x0000)
-    ldx 0
+    ldx.z 0
     jsr print_uchar
     // print_ln()
     lda #<print_screen

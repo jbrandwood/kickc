@@ -8,17 +8,24 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  .const SIZEOF_UNSIGNED_INT = 2
   .label _s1 = $ee
   .label _s2 = $ef
 .segment Code
 main: {
     // *_s1 = 7
     lda #7
-    sta _s1
-    // *_s2 = 7
-    sta _s2
-    lda #>7
-    sta _s2+1
+    sta.z _s1
+    // *_s2 = 812
+    lda #<$32c
+    sta.z _s2
+    lda #>$32c
+    sta.z _s2+1
+    // *(_s2-1) = 812
+    lda #<$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT
+    lda #>$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
     // }
     rts
 }

@@ -1,10 +1,12 @@
+Fixing constant pointer addition _s2-1
 
 CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
   *_s1 = 7
-  *_s2 = 7
+  *_s2 = $32c
+  *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -21,24 +23,34 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
+__constant char SIZEOF_UNSIGNED_INT = 2
 void __start()
 __constant char * const _s1 = (char *)$ee
 __constant unsigned int * const _s2 = (unsigned int *)$ef
 void main()
 
 Adding number conversion cast (unumber) 7 in *_s1 = 7
-Adding number conversion cast (unumber) 7 in *_s2 = 7
+Adding number conversion cast (unumber) $32c in *_s2 = $32c
+Adding number conversion cast (unumber) $32c in *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
+Adding number conversion cast (unumber) 1*SIZEOF_UNSIGNED_INT in *(_s2-1*SIZEOF_UNSIGNED_INT) = ((unumber)) $32c
+Adding number conversion cast (unumber) 1 in *(_s2-(unumber)1*SIZEOF_UNSIGNED_INT) = ((unumber)) $32c
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *_s1 = (unumber)7
-Inlining cast *_s2 = (unumber)7
+Inlining cast *_s2 = (unumber)$32c
+Inlining cast *(_s2-(unumber)(unumber)1*SIZEOF_UNSIGNED_INT) = (unumber)$32c
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (char *) 238
 Simplifying constant pointer cast (unsigned int *) 239
 Simplifying constant integer cast 7
-Simplifying constant integer cast 7
+Simplifying constant integer cast $32c
+Simplifying constant integer cast $32c
+Simplifying constant integer cast (unumber)1*SIZEOF_UNSIGNED_INT
+Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (char) 7
-Finalized unsigned number type (char) 7
+Finalized unsigned number type (unsigned int) $32c
+Finalized unsigned number type (unsigned int) $32c
+Finalized unsigned number type (char) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -55,10 +67,11 @@ FINAL CONTROL FLOW GRAPH
 void main()
 main: scope:[main]  from
   [0] *_s1 = 7
-  [1] *_s2 = 7
+  [1] *_s2 = $32c
+  [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c
   to:main::@return
 main::@return: scope:[main]  from main
-  [2] return 
+  [3] return 
   to:@return
 
 
@@ -69,14 +82,15 @@ Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *_s1 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *_s2 = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *_s2 = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 27 combination 
-Uplifting [] best 27 combination 
+Uplifting [main] best 34 combination 
+Uplifting [] best 34 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -92,6 +106,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_UNSIGNED_INT = 2
   .label _s1 = $ee
   .label _s2 = $ef
 .segment Code
@@ -99,16 +114,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [0] *_s1 = 7 -- _deref_pbuc1=vbuc2 
     lda #7
-    sta _s1
-    // [1] *_s2 = 7 -- _deref_pwuc1=vbuc2 
-    lda #<7
-    sta _s2
-    lda #>7
-    sta _s2+1
+    sta.z _s1
+    // [1] *_s2 = $32c -- _deref_pwuc1=vwuc2 
+    lda #<$32c
+    sta.z _s2
+    lda #>$32c
+    sta.z _s2+1
+    // [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c -- _deref_pwuc1=vwuc2 
+    lda #<$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT
+    lda #>$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [2] return 
+    // [3] return 
     rts
 }
   // File Data
@@ -116,12 +136,11 @@ main: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #<7
-Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
+__constant char SIZEOF_UNSIGNED_INT = 2
 __constant char * const _s1 = (char *) 238
 __constant unsigned int * const _s2 = (unsigned int *) 239
 void main()
@@ -129,7 +148,7 @@ void main()
 
 
 FINAL ASSEMBLER
-Score: 22
+Score: 31
 
   // File Comments
 // These pointers lives on zeropage
@@ -144,6 +163,7 @@ Score: 22
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_UNSIGNED_INT = 2
   .label _s1 = $ee
   .label _s2 = $ef
 .segment Code
@@ -152,15 +172,22 @@ main: {
     // *_s1 = 7
     // [0] *_s1 = 7 -- _deref_pbuc1=vbuc2 
     lda #7
-    sta _s1
-    // *_s2 = 7
-    // [1] *_s2 = 7 -- _deref_pwuc1=vbuc2 
-    sta _s2
-    lda #>7
-    sta _s2+1
+    sta.z _s1
+    // *_s2 = 812
+    // [1] *_s2 = $32c -- _deref_pwuc1=vwuc2 
+    lda #<$32c
+    sta.z _s2
+    lda #>$32c
+    sta.z _s2+1
+    // *(_s2-1) = 812
+    // [2] *(_s2-1*SIZEOF_UNSIGNED_INT) = $32c -- _deref_pwuc1=vwuc2 
+    lda #<$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT
+    lda #>$32c
+    sta.z _s2-1*SIZEOF_UNSIGNED_INT+1
     // main::@return
     // }
-    // [2] return 
+    // [3] return 
     rts
 }
   // File Data

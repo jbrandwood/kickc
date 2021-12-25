@@ -114,11 +114,11 @@ setFAC: {
     // BYTE0(mem)
     lda.z prepareMEM1_mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z prepareMEM1_mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     // Load unsigned int register Y,A into FAC (floating point accumulator)
     ldy memLo
@@ -143,11 +143,11 @@ setMEMtoFAC: {
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     ldx memLo
     tay
@@ -164,11 +164,11 @@ mulFACbyMEM: {
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi
@@ -184,10 +184,10 @@ divMEMbyFAC: {
     .const prepareMEM1_mem = main.f_i
     // *memLo = BYTE0(mem)
     lda #<prepareMEM1_mem
-    sta memLo
+    sta.z memLo
     // *memHi = BYTE1(mem)
     lda #>prepareMEM1_mem
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi
@@ -212,10 +212,10 @@ addMEMtoFAC: {
     .const prepareMEM1_mem = main.f_127
     // *memLo = BYTE0(mem)
     lda #<prepareMEM1_mem
-    sta memLo
+    sta.z memLo
     // *memHi = BYTE1(mem)
     lda #>prepareMEM1_mem
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi

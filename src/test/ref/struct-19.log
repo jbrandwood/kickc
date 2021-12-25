@@ -142,10 +142,10 @@ Uplift Scope [Vector]
 Uplift Scope [main] 0: zp[4]:2 [ main::v ] 0: zp[2]:6 [ main::p1 ] 0: zp[2]:8 [ main::p2 ] 
 Uplift Scope [] 
 
-Uplifting [Point] best 117 combination 
-Uplifting [Vector] best 117 combination 
-Uplifting [main] best 117 combination zp[4]:2 [ main::v ] zp[2]:6 [ main::p1 ] zp[2]:8 [ main::p2 ] 
-Uplifting [] best 117 combination 
+Uplifting [Point] best 114 combination 
+Uplifting [Vector] best 114 combination 
+Uplifting [main] best 114 combination zp[4]:2 [ main::v ] zp[2]:6 [ main::p1 ] zp[2]:8 [ main::p2 ] 
+Uplifting [] best 114 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -210,13 +210,13 @@ main: {
     lda.z v
     sta SCREEN
     // [6] *(SCREEN+1) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // [7] *(SCREEN+2) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_VECTOR_Q) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_Q
+    lda.z v+OFFSET_STRUCT_VECTOR_Q
     sta SCREEN+2
     // [8] *(SCREEN+3) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
     jmp __breturn
     // main::@return
@@ -254,7 +254,7 @@ zp[2]:8 [ main::p2 ]
 
 
 FINAL ASSEMBLER
-Score: 114
+Score: 111
 
   // File Comments
 // Minimal struct with C-Standard behavior - struct containing struct with assignment of sub-struct
@@ -325,15 +325,15 @@ main: {
     sta SCREEN
     // SCREEN[1] = v.p.y
     // [6] *(SCREEN+1) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // SCREEN[2] = v.q.x
     // [7] *(SCREEN+2) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_VECTOR_Q) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_Q
+    lda.z v+OFFSET_STRUCT_VECTOR_Q
     sta SCREEN+2
     // SCREEN[3] = v.q.y
     // [8] *(SCREEN+3) = *((char *)(struct Point *)&main::v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
     // main::@return
     // }

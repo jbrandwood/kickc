@@ -24,13 +24,13 @@ main: {
     bne !-
     // print(point)
     ldy.z point
-    ldx point+OFFSET_STRUCT_POINT_Y
+    ldx.z point+OFFSET_STRUCT_POINT_Y
     lda #0
     sta.z idx
     jsr print
     // print(*ptr)
     ldy.z ptr
-    ldx ptr+OFFSET_STRUCT_POINT_Y
+    ldx.z ptr+OFFSET_STRUCT_POINT_Y
     jsr print
     // }
     rts

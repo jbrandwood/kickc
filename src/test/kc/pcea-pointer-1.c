@@ -6,5 +6,6 @@ unsigned int * const _s2 = (unsigned int*)0xef;
 
 void main() {
     *_s1 = 7;
-    *_s2 = 7;
+    *_s2 = 812;
+    *(_s2-1) = 812;
 }

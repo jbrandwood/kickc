@@ -29,7 +29,7 @@ main: {
     bne !-
     // struct Point p2 = p1
     lda.z p1
-    ldx p1+OFFSET_STRUCT_POINT_Y
+    ldx.z p1+OFFSET_STRUCT_POINT_Y
     // SCREEN[2] = p2
     sta SCREEN+2*SIZEOF_STRUCT_POINT
     stx SCREEN+2*SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
@@ -50,7 +50,7 @@ main: {
     stx SCREEN+6*SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
     // p1 = p2
     sta.z p1
-    stx p1+OFFSET_STRUCT_POINT_Y
+    stx.z p1+OFFSET_STRUCT_POINT_Y
     // SCREEN[8] = p1
     ldy #SIZEOF_STRUCT_POINT
   !:

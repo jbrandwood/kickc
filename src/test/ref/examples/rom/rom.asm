@@ -20,7 +20,7 @@ main: {
     pla
     pla
     // *ptr = call1(1,2)
-    sta ptr
+    sta.z ptr
     // call1(3,4)
     lda #3
     pha
@@ -30,7 +30,7 @@ main: {
     pla
     pla
     // *ptr = call1(3,4)
-    sta ptr
+    sta.z ptr
     // call2(1,2)
     lda #2
     ldx #1
@@ -38,7 +38,7 @@ main: {
     // call2(1,2)
     lda.z call2.return
     // *ptr = call2(1,2)
-    sta ptr
+    sta.z ptr
     // call2(3,4)
     lda #4
     ldx #3
@@ -46,21 +46,21 @@ main: {
     // call2(3,4)
     lda.z call2.return
     // *ptr = call2(3,4)
-    sta ptr
+    sta.z ptr
     // call3(1,2)
     lda #2
     ldx #1
     jsr call3
     // call3(1,2)
     // *ptr = call3(1,2)
-    sta ptr
+    sta.z ptr
     // call3(3,4)
     lda #4
     ldx #3
     jsr call3
     // call3(3,4)
     // *ptr = call3(3,4)
-    sta ptr
+    sta.z ptr
     // }
     rts
 }

@@ -37,7 +37,7 @@ print: {
     // SCREEN[idx++] = p.x;
     inc.z idx
     // SCREEN[idx++] = p.y
-    lda p+OFFSET_STRUCT_POINT_Y
+    lda.z p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.y;
@@ -59,7 +59,7 @@ get: {
     lsr
     // struct Point p = { i, i/2 }
     stx.z p
-    sta p+OFFSET_STRUCT_POINT_Y
+    sta.z p+OFFSET_STRUCT_POINT_Y
     // return p;
     ldy #SIZEOF_STRUCT_POINT
   !:

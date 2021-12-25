@@ -287,10 +287,10 @@ Uplift Scope [Data]
 Uplift Scope [main] 0: zp[2]:5 [ main::x ] 0: zp[2]:7 [ main::y ] 
 Uplift Scope [] 
 
-Uplifting [sum] best 122 combination reg byte a [ sum::$0 ] reg byte a [ sum::a#2 ] reg byte x [ sum::b#2 ] zp[2]:9 [ sum::return ] zp[2]:11 [ sum::d ] 
-Uplifting [Data] best 122 combination 
-Uplifting [main] best 122 combination zp[2]:5 [ main::x ] zp[2]:7 [ main::y ] 
-Uplifting [] best 122 combination 
+Uplifting [sum] best 120 combination reg byte a [ sum::$0 ] reg byte a [ sum::a#2 ] reg byte x [ sum::b#2 ] zp[2]:9 [ sum::return ] zp[2]:11 [ sum::d ] 
+Uplifting [Data] best 120 combination 
+Uplifting [main] best 120 combination zp[2]:5 [ main::x ] zp[2]:7 [ main::y ] 
+Uplifting [] best 120 combination 
 Allocated (was zp[2]:5) zp[2]:2 [ main::x ]
 Allocated (was zp[2]:7) zp[2]:4 [ main::y ]
 Allocated (was zp[2]:9) zp[2]:6 [ sum::return ]
@@ -357,7 +357,7 @@ main: {
     dey
     bne !-
     // [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
-    lda y+OFFSET_STRUCT_DATA_D
+    lda.z y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -377,7 +377,7 @@ sum: {
     // [10] *((char *)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
     sta.z d
     // [11] *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
-    stx d+OFFSET_STRUCT_DATA_D
+    stx.z d+OFFSET_STRUCT_DATA_D
     // [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_DATA
   !:
@@ -434,7 +434,7 @@ zp[2]:8 [ sum::d ]
 
 
 FINAL ASSEMBLER
-Score: 110
+Score: 108
 
   // File Comments
 // Test intermediate vars
@@ -496,7 +496,7 @@ main: {
     bne !-
     // SCREEN[idx++] = y.d
     // [6] *(SCREEN+1) = *((char *)&main::y+OFFSET_STRUCT_DATA_D) -- _deref_pbuc1=_deref_pbuc2 
-    lda y+OFFSET_STRUCT_DATA_D
+    lda.z y+OFFSET_STRUCT_DATA_D
     sta SCREEN+1
     // main::@return
     // }
@@ -517,7 +517,7 @@ sum: {
     // [10] *((char *)&sum::d) = sum::$0 -- _deref_pbuc1=vbuaa 
     sta.z d
     // [11] *((char *)&sum::d+OFFSET_STRUCT_DATA_D) = sum::b#2 -- _deref_pbuc1=vbuxx 
-    stx d+OFFSET_STRUCT_DATA_D
+    stx.z d+OFFSET_STRUCT_DATA_D
     // return d;
     // [12] *(&sum::return) = memcpy(*(&sum::d), struct Data, SIZEOF_STRUCT_DATA) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_DATA

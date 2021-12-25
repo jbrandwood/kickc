@@ -42,19 +42,19 @@ print: {
     // SCREEN[idx++] = v.p1.x;
     inc.z idx
     // SCREEN[idx++] = v.p1.y
-    lda v+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p1.y;
     inc.z idx
     // SCREEN[idx++] = v.p2.x
-    lda v+OFFSET_STRUCT_VECTOR_P2
+    lda.z v+OFFSET_STRUCT_VECTOR_P2
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.x;
     inc.z idx
     // SCREEN[idx++] = v.p2.y
-    lda v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    lda.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = v.p2.y;
@@ -94,10 +94,10 @@ get: {
     // struct Vector v = { {i, i/2}, {i+1, i*2} }
     sty.z v
     lda.z __0
-    sta v+OFFSET_STRUCT_POINT_Y
-    stx v+OFFSET_STRUCT_VECTOR_P2
+    sta.z v+OFFSET_STRUCT_POINT_Y
+    stx.z v+OFFSET_STRUCT_VECTOR_P2
     lda.z __2
-    sta v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
+    sta.z v+OFFSET_STRUCT_VECTOR_P2+OFFSET_STRUCT_POINT_Y
     // return v;
     ldy #SIZEOF_STRUCT_VECTOR
   !:

@@ -147,7 +147,7 @@ scroll_bit: {
     sei
     // *PROCPORT = $32
     lda #$32
-    sta PROCPORT
+    sta.z PROCPORT
     lda #<SCREEN+$28+$27
     sta.z sc
     lda #>SCREEN+$28+$27
@@ -185,7 +185,7 @@ scroll_bit: {
     bne __b3
     // *PROCPORT = $37
     lda #$37
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // }

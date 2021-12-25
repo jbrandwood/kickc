@@ -26,10 +26,10 @@ main: {
     sta.z point1
     // point1.initials[0] = 'j'
     lda #'j'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS
     // point1.initials[1] = 'g'
     lda #'g'
-    sta point1+OFFSET_STRUCT_POINT_INITIALS+1
+    sta.z point1+OFFSET_STRUCT_POINT_INITIALS+1
     // __ma struct Point point2 = point1
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -41,10 +41,10 @@ main: {
     lda.z point2
     sta SCREEN
     // SCREEN[1] = point2.initials[0]
-    lda point2+OFFSET_STRUCT_POINT_INITIALS
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // SCREEN[2] = point2.initials[1]
-    lda point2+OFFSET_STRUCT_POINT_INITIALS+1
+    lda.z point2+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     // }
     rts

@@ -24,7 +24,7 @@ main: {
     lda.z point1
     sta SCREEN
     // SCREEN[1] = point1.y
-    lda point1+OFFSET_STRUCT_POINT_Y
+    lda.z point1+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // }
     rts

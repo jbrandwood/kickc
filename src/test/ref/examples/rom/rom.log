@@ -496,23 +496,23 @@ Uplift Scope [call3] 11: zp[1]:7 [ call3::param1#2 ] 11: zp[1]:8 [ call3::param2
 Uplift Scope [main] 4: zp[1]:10 [ main::$0 ] 4: zp[1]:11 [ main::$1 ] 4: zp[1]:12 [ main::$2 ] 4: zp[1]:13 [ main::$3 ] 4: zp[1]:15 [ main::$4 ] 4: zp[1]:17 [ main::$5 ] 
 Uplift Scope [] 
 
-Uplifting [call1] best 299 combination reg byte a [ call1::param2#0 ] reg byte a [ call1::return#0 ] zp[1]:9 [ call1::param1#0 ] 
-Uplifting [call2] best 281 combination reg byte a [ call2::$0 ] reg byte x [ call2::param1#2 ] reg byte a [ call2::param2#2 ] zp[1]:18 [ call2::return ] 
-Uplifting [call3] best 257 combination reg byte x [ call3::param1#2 ] reg byte a [ call3::param2#2 ] reg byte a [ call3::return#2 ] reg byte a [ call3::return#3 ] zp[1]:19 [ call3::return#0 ] 
+Uplifting [call1] best 293 combination reg byte a [ call1::param2#0 ] reg byte a [ call1::return#0 ] zp[1]:9 [ call1::param1#0 ] 
+Uplifting [call2] best 275 combination reg byte a [ call2::$0 ] reg byte x [ call2::param1#2 ] reg byte a [ call2::param2#2 ] zp[1]:18 [ call2::return ] 
+Uplifting [call3] best 251 combination reg byte x [ call3::param1#2 ] reg byte a [ call3::param2#2 ] reg byte a [ call3::return#2 ] reg byte a [ call3::return#3 ] zp[1]:19 [ call3::return#0 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [main] best 233 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[1]:15 [ main::$4 ] zp[1]:17 [ main::$5 ] 
+Uplifting [main] best 227 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[1]:15 [ main::$4 ] zp[1]:17 [ main::$5 ] 
 Limited combination testing to 100 combinations of 4096 possible.
-Uplifting [] best 233 combination 
+Uplifting [] best 227 combination 
 Attempting to uplift remaining variables inzp[1]:9 [ call1::param1#0 ]
-Uplifting [call1] best 233 combination zp[1]:9 [ call1::param1#0 ] 
+Uplifting [call1] best 227 combination zp[1]:9 [ call1::param1#0 ] 
 Attempting to uplift remaining variables inzp[1]:15 [ main::$4 ]
-Uplifting [main] best 227 combination reg byte a [ main::$4 ] 
+Uplifting [main] best 221 combination reg byte a [ main::$4 ] 
 Attempting to uplift remaining variables inzp[1]:17 [ main::$5 ]
-Uplifting [main] best 221 combination reg byte a [ main::$5 ] 
+Uplifting [main] best 215 combination reg byte a [ main::$5 ] 
 Attempting to uplift remaining variables inzp[1]:18 [ call2::return ]
-Uplifting [call2] best 221 combination zp[1]:18 [ call2::return ] 
+Uplifting [call2] best 215 combination zp[1]:18 [ call2::return ] 
 Attempting to uplift remaining variables inzp[1]:19 [ call3::return#0 ]
-Uplifting [call3] best 212 combination reg byte a [ call3::return#0 ] 
+Uplifting [call3] best 206 combination reg byte a [ call3::return#0 ] 
 Coalescing zero page register [ zp[1]:9 [ call1::param1#0 ] ] with [ zp[1]:18 [ call2::return ] ]
 Allocated (was zp[1]:9) zp[1]:2 [ call1::param1#0 call2::return ]
 
@@ -547,7 +547,7 @@ main: {
     // [4] main::$0 = stackpull(char) -- vbuaa=_stackpullbyte_ 
     pla
     // [5] *main::ptr = main::$0 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // [6] stackpush(char) = 3 -- _stackpushbyte_=vbuc1 
     lda #3
     pha
@@ -561,7 +561,7 @@ main: {
     // [10] main::$1 = stackpull(char) -- vbuaa=_stackpullbyte_ 
     pla
     // [11] *main::ptr = main::$1 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // [12] call call2
     // [34] phi from main to call2 [phi:main->call2]
   call2_from_main:
@@ -577,7 +577,7 @@ main: {
     // [14] main::$2 = call2::return -- vbuaa=vbuz1 
     lda.z call2.return
     // [15] *main::ptr = main::$2 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // [16] call call2
     // [34] phi from main::@1 to call2 [phi:main::@1->call2]
   call2_from___b1:
@@ -593,7 +593,7 @@ main: {
     // [18] main::$3 = call2::return -- vbuaa=vbuz1 
     lda.z call2.return
     // [19] *main::ptr = main::$3 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // [20] call call3
     // [38] phi from main::@2 to call3 [phi:main::@2->call3]
   call3_from___b2:
@@ -608,7 +608,7 @@ main: {
   __b3:
     // [22] main::$4 = call3::return#2
     // [23] *main::ptr = main::$4 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // [24] call call3
     // [38] phi from main::@3 to call3 [phi:main::@3->call3]
   call3_from___b3:
@@ -623,7 +623,7 @@ main: {
   __b4:
     // [26] main::$5 = call3::return#3
     // [27] *main::ptr = main::$5 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     jmp __breturn
     // main::@return
   __breturn:
@@ -772,7 +772,7 @@ reg byte a [ call3::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 188
+Score: 182
 
   // File Comments
 // Demonstrates how to code a ROM
@@ -806,7 +806,7 @@ main: {
     pla
     // *ptr = call1(1,2)
     // [5] *main::ptr = main::$0 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // call1(3,4)
     // [6] stackpush(char) = 3 -- _stackpushbyte_=vbuc1 
     lda #3
@@ -822,7 +822,7 @@ main: {
     pla
     // *ptr = call1(3,4)
     // [11] *main::ptr = main::$1 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // call2(1,2)
     // [12] call call2
     // [34] phi from main to call2 [phi:main->call2]
@@ -838,7 +838,7 @@ main: {
     lda.z call2.return
     // *ptr = call2(1,2)
     // [15] *main::ptr = main::$2 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // call2(3,4)
     // [16] call call2
     // [34] phi from main::@1 to call2 [phi:main::@1->call2]
@@ -854,7 +854,7 @@ main: {
     lda.z call2.return
     // *ptr = call2(3,4)
     // [19] *main::ptr = main::$3 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // call3(1,2)
     // [20] call call3
     // [38] phi from main::@2 to call3 [phi:main::@2->call3]
@@ -869,7 +869,7 @@ main: {
     // [22] main::$4 = call3::return#2
     // *ptr = call3(1,2)
     // [23] *main::ptr = main::$4 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // call3(3,4)
     // [24] call call3
     // [38] phi from main::@3 to call3 [phi:main::@3->call3]
@@ -884,7 +884,7 @@ main: {
     // [26] main::$5 = call3::return#3
     // *ptr = call3(3,4)
     // [27] *main::ptr = main::$5 -- _deref_pbuc1=vbuaa 
-    sta ptr
+    sta.z ptr
     // main::@return
     // }
     // [28] return 

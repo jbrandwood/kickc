@@ -50,7 +50,7 @@ PrintName: {
     bne __breturn
     // *(BYTE *)0xC7 = 1
     lda #1
-    sta $c7
+    sta.z $c7
   __breturn:
     // }
     rts

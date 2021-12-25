@@ -26,7 +26,7 @@ main: {
     sta.z point1
     // point1.y = 3
     lda #3
-    sta point1+OFFSET_STRUCT_POINT_Y
+    sta.z point1+OFFSET_STRUCT_POINT_Y
     // __ma struct Point point2 = point1
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -38,7 +38,7 @@ main: {
     lda.z point2
     sta SCREEN
     // SCREEN[1] = point2.y
-    lda point2+OFFSET_STRUCT_POINT_Y
+    lda.z point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // }
     rts

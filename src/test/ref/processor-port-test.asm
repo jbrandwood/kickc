@@ -39,10 +39,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Write recognizable values into memory
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
-    sta PROCPORT
+    sta.z PROCPORT
     // *BASIC_ROM = $a0
     lda #$a0
     sta BASIC_ROM
@@ -54,10 +54,10 @@ main: {
     sta IO_RAM
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
     lda #PROCPORT_BASIC_KERNEL_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // *IO_RAM = $dd
     lda #$dd
     sta IO_RAM
@@ -238,10 +238,10 @@ main: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Return to normal settings
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
     lda #PROCPORT_BASIC_KERNEL_IO
-    sta PROCPORT
+    sta.z PROCPORT
   __b1:
     // (*(SCREEN+999))++;
     inc SCREEN+$3e7
@@ -311,18 +311,18 @@ testProcport: {
     .label ddr2 = 9
     // *PROCPORT_DDR = $ff
     lda #$ff
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = $00
     lda #0
-    sta PROCPORT
+    sta.z PROCPORT
     // *PROCPORT_DDR = ddr
-    stx PROCPORT_DDR
+    stx.z PROCPORT_DDR
     // *PROCPORT = port
     lda.z port
-    sta PROCPORT
+    sta.z PROCPORT
     // *PROCPORT_DDR = ddr2
     lda.z ddr2
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -360,7 +360,7 @@ testProcport: {
     sta.z print_str.str+1
     jsr print_str
     // print_uchar(*PROCPORT_DDR)
-    ldx PROCPORT_DDR
+    ldx.z PROCPORT_DDR
     jsr print_uchar
     // print_str("  ")
     lda #<str3
@@ -369,7 +369,7 @@ testProcport: {
     sta.z print_str.str+1
     jsr print_str
     // print_uchar(*PROCPORT)
-    ldx PROCPORT
+    ldx.z PROCPORT
     jsr print_uchar
     // print_str("    ")
     lda #<str5

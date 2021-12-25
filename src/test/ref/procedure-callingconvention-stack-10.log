@@ -310,16 +310,16 @@ Uplift Scope [] 316.21: zp[1]:6 [ idx ]
 Uplift Scope [Point] 
 Uplift Scope [__start] 
 
-Uplifting [get] best 995 combination reg byte x [ get::i#0 ] reg byte a [ get::$0 ] zp[2]:10 [ get::return ] zp[2]:12 [ get::p ] 
-Uplifting [main] best 995 combination zp[1]:7 [ main::i#2 main::i#1 ] zp[2]:8 [ main::p ] 
-Uplifting [print] best 995 combination zp[2]:4 [ print::p ] 
-Uplifting [] best 995 combination zp[1]:6 [ idx ] 
-Uplifting [Point] best 995 combination 
-Uplifting [__start] best 995 combination 
+Uplifting [get] best 993 combination reg byte x [ get::i#0 ] reg byte a [ get::$0 ] zp[2]:10 [ get::return ] zp[2]:12 [ get::p ] 
+Uplifting [main] best 993 combination zp[1]:7 [ main::i#2 main::i#1 ] zp[2]:8 [ main::p ] 
+Uplifting [print] best 993 combination zp[2]:4 [ print::p ] 
+Uplifting [] best 993 combination zp[1]:6 [ idx ] 
+Uplifting [Point] best 993 combination 
+Uplifting [__start] best 993 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ idx ]
-Uplifting [] best 995 combination zp[1]:6 [ idx ] 
+Uplifting [] best 993 combination zp[1]:6 [ idx ] 
 Attempting to uplift remaining variables inzp[1]:7 [ main::i#2 main::i#1 ]
-Uplifting [main] best 995 combination zp[1]:7 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 993 combination zp[1]:7 [ main::i#2 main::i#1 ] 
 Coalescing zero page register [ zp[2]:8 [ main::p ] ] with [ zp[2]:4 [ print::p ] ]
 Allocated (was zp[2]:8) zp[2]:2 [ main::p print::p ]
 Allocated (was zp[1]:6) zp[1]:4 [ idx ]
@@ -386,7 +386,7 @@ print: {
     // [7] idx = ++ idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [8] SCREEN[idx] = *((char *)&print::p+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda p+OFFSET_STRUCT_POINT_Y
+    lda.z p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // [9] idx = ++ idx -- vbuz1=_inc_vbuz1 
@@ -414,7 +414,7 @@ get: {
     // [13] *((char *)&get::p) = get::i#0 -- _deref_pbuc1=vbuxx 
     stx.z p
     // [14] *((char *)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuaa 
-    sta p+OFFSET_STRUCT_POINT_Y
+    sta.z p+OFFSET_STRUCT_POINT_Y
     // [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -545,7 +545,7 @@ zp[2]:8 [ get::p ]
 
 
 FINAL ASSEMBLER
-Score: 863
+Score: 861
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -602,7 +602,7 @@ print: {
     inc.z idx
     // SCREEN[idx++] = p.y
     // [8] SCREEN[idx] = *((char *)&print::p+OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
-    lda p+OFFSET_STRUCT_POINT_Y
+    lda.z p+OFFSET_STRUCT_POINT_Y
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.y;
@@ -632,7 +632,7 @@ get: {
     // [13] *((char *)&get::p) = get::i#0 -- _deref_pbuc1=vbuxx 
     stx.z p
     // [14] *((char *)&get::p+OFFSET_STRUCT_POINT_Y) = get::$0 -- _deref_pbuc1=vbuaa 
-    sta p+OFFSET_STRUCT_POINT_Y
+    sta.z p+OFFSET_STRUCT_POINT_Y
     // return p;
     // [15] *(&get::return) = memcpy(*(&get::p), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT

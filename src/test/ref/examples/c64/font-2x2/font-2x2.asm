@@ -32,12 +32,12 @@ main: {
     sei
     // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
+    sta.z PROCPORT
     // font_2x2(CHARGEN, FONT_ORIGINAL)
     jsr font_2x2
     // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
     lda #PROCPORT_BASIC_KERNEL_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // char size = font_compress(FONT_ORIGINAL, FONT_COMPRESSED, FONT_COMPRESSED_MAP)

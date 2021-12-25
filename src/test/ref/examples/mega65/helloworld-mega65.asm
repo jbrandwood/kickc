@@ -78,7 +78,7 @@ conio_mega65_init: {
     ora IO_BANK
     sta IO_BANK
     // char line = *BASIC_CURSOR_LINE+1
-    lda BASIC_CURSOR_LINE
+    lda.z BASIC_CURSOR_LINE
     inc
     // if(line>=CONIO_HEIGHT)
     cmp #$19

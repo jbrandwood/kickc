@@ -117,9 +117,9 @@ Uplift Scope [Point]
 Uplift Scope [main] 0: zp[2]:2 [ main::point1 ] 0: zp[2]:4 [ main::point2 ] 
 Uplift Scope [] 
 
-Uplifting [Point] best 64 combination 
-Uplifting [main] best 64 combination zp[2]:2 [ main::point1 ] zp[2]:4 [ main::point2 ] 
-Uplifting [] best 64 combination 
+Uplifting [Point] best 62 combination 
+Uplifting [main] best 62 combination zp[2]:2 [ main::point1 ] zp[2]:4 [ main::point2 ] 
+Uplifting [] best 62 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -154,7 +154,7 @@ main: {
     sta.z point1
     // [2] *((char *)&main::point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta point1+OFFSET_STRUCT_POINT_Y
+    sta.z point1+OFFSET_STRUCT_POINT_Y
     // [3] *(&main::point2) = memcpy(*(&main::point1), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -166,7 +166,7 @@ main: {
     lda.z point2
     sta SCREEN
     // [5] *(SCREEN+1) = *((char *)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_Y
+    lda.z point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -195,7 +195,7 @@ zp[2]:4 [ main::point2 ]
 
 
 FINAL ASSEMBLER
-Score: 61
+Score: 59
 
   // File Comments
 // Minimal struct with C-Standard behavior - copying
@@ -232,7 +232,7 @@ main: {
     // point1.y = 3
     // [2] *((char *)&main::point1+OFFSET_STRUCT_POINT_Y) = 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta point1+OFFSET_STRUCT_POINT_Y
+    sta.z point1+OFFSET_STRUCT_POINT_Y
     // __ma struct Point point2 = point1
     // [3] *(&main::point2) = memcpy(*(&main::point1), struct Point, SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
@@ -247,7 +247,7 @@ main: {
     sta SCREEN
     // SCREEN[1] = point2.y
     // [5] *(SCREEN+1) = *((char *)&main::point2+OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
-    lda point2+OFFSET_STRUCT_POINT_Y
+    lda.z point2+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return
     // }

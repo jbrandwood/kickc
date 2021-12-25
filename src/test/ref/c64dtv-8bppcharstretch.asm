@@ -117,10 +117,10 @@ main: {
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // gfx_init()
     jsr gfx_init
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
@@ -373,7 +373,7 @@ gfx_init_plane_charset8: {
     jsr dtvSetCpuBankSegment1
     // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
+    sta.z PROCPORT
     lda #0
     sta.z ch
     sta.z col
@@ -437,7 +437,7 @@ gfx_init_plane_charset8: {
     bne __b1
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
   // Reset CPU BANK segment to $4000
     lda #$4000/$4000
@@ -453,7 +453,7 @@ dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx
-    sta cpuBank
+    sta.z cpuBank
     // asm
     .byte $32, $dd
     lda.z $ff

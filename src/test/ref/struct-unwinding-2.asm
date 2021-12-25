@@ -25,13 +25,13 @@ main: {
     bne !-
     // print1(p1, 0)
     ldy.z p1
-    ldx p1+OFFSET_STRUCT_POINT_Y
+    ldx.z p1+OFFSET_STRUCT_POINT_Y
   // Pass classic struct to function taking unwound struct
     lda #0
     jsr print1
     // print2(p1, 2)
     ldy.z p1
-    ldx p1+OFFSET_STRUCT_POINT_Y
+    ldx.z p1+OFFSET_STRUCT_POINT_Y
   // Pass classic struct to function taking classic struct
     lda #2
     jsr print2

@@ -22,9 +22,9 @@ main: {
 print: {
     // *(word*)0x80 = (word)str
     lda #<main.str
-    sta $80
+    sta.z $80
     lda #>main.str
-    sta $80+1
+    sta.z $80+1
     // }
     rts
 }

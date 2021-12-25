@@ -130,6 +130,9 @@ public class AsmFragmentInstance {
          if(literal instanceof ConstantInteger) {
             Long integer = ((ConstantInteger) literal).getInteger();
             return integer <= 255 && integer >= 0;
+         }  else if (literal instanceof ConstantPointer) {
+            final Long location = ((ConstantPointer) literal).getLocation();
+            return location <= 255 && location >= 0;
          }
       } catch(ConstantNotLiteral e) {
          // ignore

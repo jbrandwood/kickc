@@ -105,10 +105,10 @@ main: {
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // gfx_init_chunky()
     jsr gfx_init_chunky
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
@@ -361,7 +361,7 @@ dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx
-    sta cpuBank
+    sta.z cpuBank
     // asm
     .byte $32, $dd
     lda.z $ff

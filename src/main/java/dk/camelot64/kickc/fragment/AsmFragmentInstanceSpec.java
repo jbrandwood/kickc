@@ -83,7 +83,7 @@ public class AsmFragmentInstanceSpec {
    /**
     * Does any more variations of the ASM fragment instance specification exist?
     * Variations are used for finding the right fragment to use for constant numbers.
-    * For instance the number 1000 can be represented as several different types (unsigned/signed word/dword).
+    * For instance the number 1000 can be represented as several types (unsigned/signed word/dword).
     *
     * @return true if more variations exits
     */

@@ -6,9 +6,6 @@ import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ProgramValue;
-import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
-import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -461,7 +458,7 @@ public class Pass4CodeGeneration {
       // Add any comments
       generateComments(asm, constantVar.getComments());
       // Ensure encoding is good
-      ensureEncoding(asm, constantVar.getInitValue());
+      AsmEncodingHelper.ensureEncoding(asm, constantVar.getInitValue());
       asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
    }
 
@@ -469,7 +466,7 @@ public class Pass4CodeGeneration {
       // Add any comments
       generateComments(asm, variable.getComments());
       // Ensure encoding is good
-      ensureEncoding(asm, variable.getInitValue());
+      AsmEncodingHelper.ensureEncoding(asm, variable.getInitValue());
       // Find the constant value calculation
       asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
    }
@@ -666,7 +663,7 @@ public class Pass4CodeGeneration {
                ConstantValue paddingSizeVal = new ConstantInteger(paddingSize);
                String paddingBytesAsm = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
                ConstantValue zeroValue = new ConstantInteger(0l, SymbolType.BYTE);
-               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, paddingBytesAsm, (int) paddingSize, getEncoding(zeroValue));
+               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, paddingBytesAsm, (int) paddingSize, AsmEncodingHelper.getEncoding(zeroValue));
             }
          } else if(value instanceof StructZero) {
             final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();
@@ -713,12 +710,12 @@ public class Pass4CodeGeneration {
             if(declaredSize != null) {
                bytes = declaredSize * elementType.getSizeBytes();
             }
-            dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), getEncoding(value));
+            dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), AsmEncodingHelper.getEncoding(value));
             dataNumElements = bytes;
          } else if(value instanceof ConstantString) {
             ConstantString stringValue = (ConstantString) value;
             String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
-            dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+            dataChunk.addDataString(asmConstant, AsmEncodingHelper.getEncoding(stringValue));
             if(stringValue.isZeroTerminated()) {
                dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
             }
@@ -748,7 +745,7 @@ public class Pass4CodeGeneration {
                }
                ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType), null);
                if(zeroValue instanceof ConstantInteger | zeroValue instanceof ConstantPointer) {
-                  dataChunk.addDataZeroFilled(getNumericType(elementType), paddingBytesAsm, (int) paddingSize, getEncoding(zeroValue));
+                  dataChunk.addDataZeroFilled(getNumericType(elementType), paddingBytesAsm, (int) paddingSize, AsmEncodingHelper.getEncoding(zeroValue));
                } else {
                   for(int i = 0; i < paddingSize; i++) {
                      addChunkData(dataChunk, zeroValue, elementType, null, scopeRef);
@@ -760,20 +757,20 @@ public class Pass4CodeGeneration {
          ConstantString stringValue = (ConstantString) value;
          // Ensure encoding is good
          String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
-         dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+         dataChunk.addDataString(asmConstant, AsmEncodingHelper.getEncoding(stringValue));
          if(stringValue.isZeroTerminated()) {
             dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
          }
       } else if(SymbolType.BYTE.equals(valueType) || SymbolType.SBYTE.equals(valueType)) {
-         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), AsmEncodingHelper.getEncoding(value));
       } else if(SymbolType.WORD.equals(valueType) || SymbolType.SWORD.equals(valueType)) {
-         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), AsmEncodingHelper.getEncoding(value));
       } else if(SymbolType.DWORD.equals(valueType) || SymbolType.SDWORD.equals(valueType)) {
-         dataChunk.addDataNumeric(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), AsmEncodingHelper.getEncoding(value));
       } else if(valueType instanceof SymbolTypePointer) {
-         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), AsmEncodingHelper.getEncoding(value));
       } else if(SymbolType.BOOLEAN.equals(valueType)) {
-         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), AsmEncodingHelper.getEncoding(value));
       } else {
          throw new InternalError("Unhandled array element type " + valueType.toString() + " value " + value.toString(program));
       }
@@ -848,7 +845,7 @@ public class Pass4CodeGeneration {
             throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignmentAlu(assignment, assignmentAlu, program));
+         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignmentAlu(assignment, assignmentAlu, program), program);
          aluState.clear();
          return;
       }
@@ -871,17 +868,17 @@ public class Pass4CodeGeneration {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(assignment, program));
+                  AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(assignment, program), program);
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            generateAsm(asm, AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program));
+            AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program), program);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(procedure.isDeclaredIntrinsic()) {
                if(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedure.getFullName())) {
-                  generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program));
+                  AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program), program);
                } else {
                   throw new CompileError("Intrinsic procedure not supported " + procedure.toString(program));
                }
@@ -905,12 +902,12 @@ public class Pass4CodeGeneration {
             StatementCallExecute call = (StatementCallExecute) statement;
             RValue procedureRVal = call.getProcedureRVal();
             // Generate ASM for a call
-            generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++,  program));
+            AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++,  program), program);
             if(!(procedureRVal instanceof ProcedureRef)) {
                asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
             }
          } else if(statement instanceof StatementExprSideEffect) {
-            generateAsm(asm, AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program));
+            AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program), program);
          } else if(statement instanceof StatementReturn) {
             Procedure procedure = null;
             ScopeRef scope = block.getScope();
@@ -954,40 +951,6 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Generate ASM code for an ASM fragment instance
-    *
-    * @param asm The ASM program to generate into
-    * @param fragmentInstanceSpec The ASM fragment instance specification
-    */
-   private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpec fragmentInstanceSpec) {
-      ensureEncoding(asm, fragmentInstanceSpec);
-      String initialSignature = fragmentInstanceSpec.getSignature();
-      AsmFragmentInstance fragmentInstance = null;
-      StringBuilder fragmentVariationsTried = new StringBuilder();
-      while(fragmentInstance == null) {
-         try {
-            final AsmFragmentTemplateSynthesizer cpuSynthesizer = program.getAsmFragmentMasterSynthesizer().getSynthesizer(program.getTargetCpu());
-            fragmentInstance = cpuSynthesizer.getFragmentInstance(fragmentInstanceSpec, program.getLog());
-         } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-            // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
-            String signature = fragmentInstanceSpec.getSignature();
-            fragmentVariationsTried.append(signature).append(" ");
-            if(fragmentInstanceSpec.hasNextVariation()) {
-               fragmentInstanceSpec.nextVariation();
-               if(program.getLog().isVerboseFragmentLog()) {
-                  program.getLog().append("Fragment not found " + signature + ". Attempting another variation " + fragmentInstanceSpec.getSignature());
-               }
-            } else {
-               // No more variations available - fail with an error
-               throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException("Fragment not found " + initialSignature + ". Attempted variations " + fragmentVariationsTried);
-            }
-         }
-      }
-      asm.getCurrentChunk().setFragment(fragmentInstance.getFragmentName());
-      fragmentInstance.generate(asm);
-   }
-
-   /**
     * Generate exit-code for entering an interrupt procedure based on the interrupt type
     *
     * @param asm The assembler to generate code into
@@ -1006,7 +969,7 @@ public class Pass4CodeGeneration {
       }
       try {
          asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
-         generateAsm(asm, entryFragment);
+         AsmFragmentCodeGenerator.generateAsm(asm, entryFragment, program);
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure + "\n" + e.getMessage());
       }
@@ -1031,7 +994,7 @@ public class Pass4CodeGeneration {
       }
       asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
       try {
-         generateAsm(asm, entryFragment);
+         AsmFragmentCodeGenerator.generateAsm(asm, entryFragment, program);
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure + "\n" + e.getMessage());
       }
@@ -1110,64 +1073,13 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentChunk().setFragment("register_copy");
             } else {
-               generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(lValue, rValue, program, scope));
+               AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(lValue, rValue, program, scope), program);
             }
          }
          transitionSetGenerated(transition);
       } else {
          program.getLog().append("Already generated transition from " + fromBlock.getLabel() + " to " + toBlock.getLabel() + " - not generating it again!");
       }
-   }
-
-   /**
-    * Ensure that the current encoding in the ASM matches any encoding in the data to be emitted
-    *
-    * @param asm The ASM program (where any .encoding directive will be emitted)
-    * @param asmFragmentInstance The ASM fragment to be emitted
-    */
-   private static void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpec asmFragmentInstance) {
-      asm.ensureEncoding(getEncoding(asmFragmentInstance));
-   }
-
-   private static void ensureEncoding(AsmProgram asm, Value value) {
-      asm.ensureEncoding(getEncoding(value));
-   }
-
-   /**
-    * Examine a constantvalue to see if any string encoding information is present
-    *
-    * @param value The constant to examine
-    * @return Any encoding found inside the constant
-    */
-   private static Set<StringEncoding> getEncoding(Value value) {
-      LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
-      ProgramValue programValue = new ProgramValue.GenericValue(value);
-      ProgramValueHandler handler = (ProgramValue pVal, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) -> {
-         Value val = pVal.get();
-         if(val instanceof ConstantChar) {
-            encodings.add(((ConstantChar) val).getEncoding());
-         } else if(val instanceof ConstantString) {
-            encodings.add(((ConstantString) val).getEncoding());
-         }
-      };
-      ProgramValueIterator.execute(programValue, handler, null, null, null);
-      return encodings;
-   }
-
-
-   /**
-    * Examine an ASM fragment to see if any string encoding information is present
-    *
-    * @param asmFragmentInstance The asm fragment instance to examine
-    * @return Any encoding found inside the constant
-    */
-   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpec asmFragmentInstance) {
-      LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
-      Map<String, Value> bindings = asmFragmentInstance.getBindings();
-      for(Value boundValue : bindings.values()) {
-         encodings.addAll(getEncoding(boundValue));
-      }
-      return encodings;
    }
 
    /**

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.fragment.signature.AsmFragmentBindings;
+import dk.camelot64.kickc.fragment.signature.AsmFragmentSignature;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -42,10 +44,10 @@ public class AsmFragmentInstanceSpec {
     * @param bindings Binding of named values in the fragment to values (constants, variables, ...)
     * @param codeScopeRef The scope containing the fragment. Used when referencing symbols defined in other scopes.
     */
-   public AsmFragmentInstanceSpec(Program program, String signature, Map<String, Value> bindings, ScopeRef codeScopeRef) {
+   public AsmFragmentInstanceSpec(Program program, AsmFragmentSignature signature, AsmFragmentBindings bindings, ScopeRef codeScopeRef) {
       this.program = program;
-      this.signature = signature;
-      this.bindings = bindings;
+      this.signature = signature.getName();
+      this.bindings = bindings.variables;
       this.codeScopeRef = codeScopeRef;
    }
 
@@ -156,7 +158,7 @@ public class AsmFragmentInstanceSpec {
          SymbolType nextVariationValue = variationIterator.next();
          // Find the next name
          String variationConstName = "c" + variationCurrentName.substring(variationCurrentName.length() - 1);
-         String variationNextName = AsmFragmentInstanceSpecBuilder.getTypePrefix(nextVariationValue) + variationConstName;
+         String variationNextName = AsmFragmentBindings.getTypePrefix(nextVariationValue) + variationConstName;
          // Update bindings
          Value constValue = bindings.get(variationCurrentName);
          bindings.remove(variationCurrentName);

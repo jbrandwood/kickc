@@ -85,4 +85,34 @@ public interface AsmFragmentSignature {
             return expr.getName();
         }
     }
+
+    /** Interrupt Service Routine Entry Code. */
+    class IsrEntry implements AsmFragmentSignature {
+
+        final private String interruptType;
+
+        public IsrEntry(String interruptType) {
+            this.interruptType = interruptType;
+        }
+
+        @Override
+        public String getName() {
+            return "isr_" + interruptType + "_entry";
+        }
+    }
+
+    /** Interrupt Service Routine Exit Code. */
+    class IsrExit implements AsmFragmentSignature {
+
+        final private String interruptType;
+
+        public IsrExit(String interruptType) {
+            this.interruptType = interruptType;
+        }
+
+        @Override
+        public String getName() {
+            return "isr_" + interruptType + "_exit";
+        }
+    }
 }

@@ -34,7 +34,7 @@ main: {
     sta VICBANK
     // *zp1 = 0
     lda #0
-    sta zp1
+    sta.z zp1
     sta.z v
     sta.z v+1
     lda #<$6e85
@@ -43,19 +43,19 @@ main: {
     sta.z u+1
   __b1:
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
-    lda zp1
+    lda.z zp1
     cmp #$a
     bcc __b2
     // *zp1 = 0
     lda #0
-    sta zp1
+    sta.z zp1
     lda #<$6e85
     sta.z u
     lda #>$6e85
     sta.z u+1
   __b7:
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
-    lda zp1
+    lda.z zp1
     cmp #$a
     bcc __b8
     // }
@@ -63,18 +63,18 @@ main: {
   __b8:
     // *TIMEHI = 0
     lda #0
-    sta TIMEHI
+    sta.z TIMEHI
     // *TIMELO = 0
-    sta TIMELO
+    sta.z TIMELO
     // *zp2 = 0
-    sta zp2
+    sta.z zp2
   __b9:
     // for (*zp2 = 0; *zp2 < 200; ++*zp2)
-    lda zp2
+    lda.z zp2
     cmp #$c8
     bcc __b10
     // (word)*TIMEHI << 8
-    lda TIMEHI
+    lda.z TIMEHI
     sta.z __16
     lda #0
     sta.z __16+1
@@ -83,7 +83,7 @@ main: {
     lda #0
     sta.z __10
     // ((word)*TIMEHI << 8) + (word)*TIMELO
-    lda TIMELO
+    lda.z TIMELO
     sta.z __17
     lda #0
     sta.z __17+1
@@ -111,30 +111,30 @@ main: {
     sbc #>$4d2
     sta.z u+1
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
-    inc zp1
+    inc.z zp1
     jmp __b7
   __b10:
     // div10(u)
     jsr div10
     // v = div10(u)
     // for (*zp2 = 0; *zp2 < 200; ++*zp2)
-    inc zp2
+    inc.z zp2
     jmp __b9
   __b2:
     // *TIMEHI = 0
     lda #0
-    sta TIMEHI
+    sta.z TIMEHI
     // *TIMELO = 0
-    sta TIMELO
+    sta.z TIMELO
     // *zp2 = 0
-    sta zp2
+    sta.z zp2
   __b4:
     // for (*zp2 = 0; *zp2 < 200; ++*zp2)
-    lda zp2
+    lda.z zp2
     cmp #$c8
     bcc __b5
     // (word)*TIMEHI << 8
-    lda TIMEHI
+    lda.z TIMEHI
     sta.z __14
     lda #0
     sta.z __14+1
@@ -143,7 +143,7 @@ main: {
     lda #0
     sta.z __3
     // ((word)*TIMEHI << 8) + (word)*TIMELO
-    lda TIMELO
+    lda.z TIMELO
     sta.z __15
     lda #0
     sta.z __15+1
@@ -173,14 +173,14 @@ main: {
     sbc #>$4d2
     sta.z u+1
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
-    inc zp1
+    inc.z zp1
     jmp __b1
   __b5:
     // div16u(u, 10)
     jsr div16u
     // v = div16u(u, 10)
     // for (*zp2 = 0; *zp2 < 200; ++*zp2)
-    inc zp2
+    inc.z zp2
     jmp __b4
   .segment Data
     str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm"

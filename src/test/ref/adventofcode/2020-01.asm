@@ -733,14 +733,14 @@ cputc: {
     // putchar(convertToScreenCode(&c))
     jsr putchar
     // (*COLCRS)++;
-    inc COLCRS
+    inc.z COLCRS
     bne !+
-    inc COLCRS+1
+    inc.z COLCRS+1
   !:
     // if (*COLCRS == CONIO_WIDTH)
-    lda COLCRS+1
+    lda.z COLCRS+1
     bne !+
-    lda COLCRS
+    lda.z COLCRS
     cmp #$28
     beq __b5
   !:
@@ -751,8 +751,8 @@ cputc: {
   __b5:
     // *COLCRS = 0
     lda #<0
-    sta COLCRS
-    sta COLCRS+1
+    sta.z COLCRS
+    sta.z COLCRS+1
     // newline()
     jsr newline
     rts
@@ -760,8 +760,8 @@ cputc: {
     // *COLCRS = 0
     // 0x0a LF, or atascii EOL
     lda #<0
-    sta COLCRS
-    sta COLCRS+1
+    sta.z COLCRS
+    sta.z COLCRS+1
     // newline()
     jsr newline
     rts
@@ -769,17 +769,17 @@ cputc: {
     // *COLCRS = 0
     // 0x0d, CR = just set the cursor x value to 0
     lda #<0
-    sta COLCRS
-    sta COLCRS+1
+    sta.z COLCRS
+    sta.z COLCRS+1
     // setcursor()
     jsr setcursor
     rts
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    lda SAVMSC
+    lda.z SAVMSC
     sta.z memset.str
-    lda SAVMSC+1
+    lda.z SAVMSC+1
     sta.z memset.str+1
     // memset(*SAVMSC, 0x00, CONIO_WIDTH * CONIO_HEIGHT)
   // Fill entire screen with spaces
@@ -792,7 +792,7 @@ clrscr: {
     // 0x00 is screencode for space character
     // set the old character to a space so the cursor doesn't reappear at the last position it was at
     lda #0
-    sta OLDCHR
+    sta.z OLDCHR
     // gotoxy(0,0)
     jsr gotoxy
     // }
@@ -925,10 +925,10 @@ printf_ulong: {
 putchar: {
     .label loc = $8e
     // **OLDADR = *OLDCHR
-    lda OLDCHR
-    ldy OLDADR
+    lda.z OLDCHR
+    ldy.z OLDADR
     sty.z $fe
-    ldy OLDADR+1
+    ldy.z OLDADR+1
     sty.z $ff
     ldy #0
     sta ($fe),y
@@ -940,7 +940,7 @@ putchar: {
     ldy #0
     sta (loc),y
     // *OLDCHR = newChar
-    sta OLDCHR
+    sta.z OLDCHR
     // setcursor()
     jsr setcursor
     // }
@@ -951,10 +951,10 @@ setcursor: {
     .label loc = $8e
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
-    lda OLDCHR
-    ldy OLDADR
+    lda.z OLDCHR
+    ldy.z OLDADR
     sty.z $fe
-    ldy OLDADR+1
+    ldy.z OLDADR+1
     sty.z $ff
     ldy #0
     sta ($fe),y
@@ -966,12 +966,12 @@ setcursor: {
     lda (loc),y
     tax
     // *OLDCHR = c
-    stx OLDCHR
+    stx.z OLDCHR
     // *OLDADR = loc
     lda.z loc
-    sta OLDADR
+    sta.z OLDADR
     lda.z loc+1
-    sta OLDADR+1
+    sta.z OLDADR+1
     // *CRSINH = 0
     // cursor is on, so invert the inverse bit and turn cursor on
     tya
@@ -980,9 +980,9 @@ setcursor: {
     txa
     eor #$80
     // **OLDADR = c
-    ldy OLDADR
+    ldy.z OLDADR
     sty.z $fe
-    ldy OLDADR+1
+    ldy.z OLDADR+1
     sty.z $ff
     ldy #0
     sta ($fe),y
@@ -992,14 +992,14 @@ setcursor: {
 newline: {
     .label start = $80
     // if ((*ROWCRS)++ == CONIO_HEIGHT)
-    inc ROWCRS
+    inc.z ROWCRS
     lda #$18
-    cmp ROWCRS
+    cmp.z ROWCRS
     bne __b1
     // **OLDADR ^= 0x80
-    ldy OLDADR
+    ldy.z OLDADR
     sty.z $fe
-    ldy OLDADR+1
+    ldy.z OLDADR+1
     sty.z $ff
     ldy #0
     lda ($fe),y
@@ -1007,9 +1007,9 @@ newline: {
     sta ($fe),y
     // char * start = *SAVMSC
     // move screen up 1 line
-    lda SAVMSC
+    lda.z SAVMSC
     sta.z start
-    lda SAVMSC+1
+    lda.z SAVMSC+1
     sta.z start+1
     // start + CONIO_WIDTH
     lda #$28
@@ -1041,7 +1041,7 @@ newline: {
     jsr memset
     // *ROWCRS = CONIO_HEIGHT - 1
     lda #$18-1
-    sta ROWCRS
+    sta.z ROWCRS
   __b1:
     // setcursor()
     jsr setcursor
@@ -1099,12 +1099,12 @@ gotoxy: {
     .const y = 0
     // *COLCRS = x
     lda #<x
-    sta COLCRS
+    sta.z COLCRS
     lda #>x
-    sta COLCRS+1
+    sta.z COLCRS+1
     // *ROWCRS = y
     lda #y
-    sta ROWCRS
+    sta.z ROWCRS
     // setcursor()
     jsr setcursor
     // }
@@ -1305,7 +1305,7 @@ cursorLocation: {
     .label __4 = $86
     .label __5 = $8e
     // (word)(*ROWCRS)*CONIO_WIDTH
-    lda ROWCRS
+    lda.z ROWCRS
     sta.z __3
     lda #0
     sta.z __3+1
@@ -1333,18 +1333,18 @@ cursorLocation: {
     // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH
     clc
     lda.z __1
-    adc SAVMSC
+    adc.z SAVMSC
     sta.z __1
     lda.z __1+1
-    adc SAVMSC+1
+    adc.z SAVMSC+1
     sta.z __1+1
     // *SAVMSC + (word)(*ROWCRS)*CONIO_WIDTH + *COLCRS
     clc
     lda.z return
-    adc COLCRS
+    adc.z COLCRS
     sta.z return
     lda.z return+1
-    adc COLCRS+1
+    adc.z COLCRS+1
     sta.z return+1
     // }
     rts

@@ -166,10 +166,10 @@ main: {
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
     // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
@@ -2203,7 +2203,7 @@ mode_8bpppixelcell: {
     // *PROCPORT = PROCPORT_RAM_CHARROM
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
+    sta.z PROCPORT
     lda #0
     sta.z ch
     sta.z col
@@ -2267,7 +2267,7 @@ mode_8bpppixelcell: {
     bne __b6
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // mode_ctrl()
   // Leave control to the user until exit
     ldx #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
@@ -2940,7 +2940,7 @@ dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx
-    sta cpuBank
+    sta.z cpuBank
     // asm
     .byte $32, $dd
     lda.z $ff

@@ -128,7 +128,7 @@ public class StatementPhiBlock extends StatementBase {
    /**
     * A variable being defined as part of a phi predecessor.
     */
-   public static class PhiVariable implements Serializable {
+   public static class PhiVariable {
 
       /**
        * The variable being defined.
@@ -225,7 +225,7 @@ public class StatementPhiBlock extends StatementBase {
    /**
     * The value assigned to a phi variable when entering the predecessor from a specific predecessor block.
     */
-   public static class PhiRValue implements Serializable {
+   public static class PhiRValue  {
 
       /**
        * The predecessor predecessor

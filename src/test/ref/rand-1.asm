@@ -61,7 +61,7 @@ conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     // char line = *BASIC_CURSOR_LINE
-    lda BASIC_CURSOR_LINE
+    lda.z BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
     cmp #$19
     bcc __b1

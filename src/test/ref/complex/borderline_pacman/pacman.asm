@@ -2101,10 +2101,10 @@ splash_run: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic & IO
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
-    sta PROCPORT
+    sta.z PROCPORT
     // memset((char*)0x4000, 0, 0xc00)
   // Reset memory to avoid crashes
     lda #<$4000
@@ -2217,10 +2217,10 @@ splash_run: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic - enable IO
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     ldx #0
     txa
     sta.z i

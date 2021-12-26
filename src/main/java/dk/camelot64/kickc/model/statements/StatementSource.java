@@ -9,12 +9,11 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /** Contains information about the source of a program statement */
-public class StatementSource implements Serializable {
+public class StatementSource {
 
    /** The file name of the file containing the source. */
    private String fileName;

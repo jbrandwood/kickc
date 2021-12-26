@@ -9,7 +9,6 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.ListIterator;
  * The connections defines the control flow of the program.
  * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.
  */
-public class ControlFlowBlock implements Serializable {
+public class ControlFlowBlock {
 
    /** The label representing the block. */
    private LabelRef label;

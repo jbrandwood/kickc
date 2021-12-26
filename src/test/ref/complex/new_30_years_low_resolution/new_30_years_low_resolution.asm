@@ -349,17 +349,17 @@ irq_demo: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Remember processor port value
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // char port_value = *PROCPORT
-    lda PROCPORT
+    lda.z PROCPORT
     sta.z port_value
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Enable IO
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // demo_work()
     // Perform any demo work
     jsr demo_work
@@ -370,10 +370,10 @@ irq_demo: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Restore processor port value
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = port_value
     lda.z port_value
-    sta PROCPORT
+    sta.z PROCPORT
     // }
   rega:
     lda #0
@@ -1311,10 +1311,10 @@ vsp_update_screen: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable I/O (BITMAP is below I/O)
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
-    sta PROCPORT
+    sta.z PROCPORT
     // unsigned int x_offset8 = (unsigned int)x_offset*8
     lda.z x_offset
     sta.z __5
@@ -1357,10 +1357,10 @@ vsp_update_screen: {
   __b3:
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // }
     rts
   __b2:
@@ -1515,10 +1515,10 @@ demo_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
@@ -1579,10 +1579,10 @@ part1_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable IO
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
-    sta PROCPORT
+    sta.z PROCPORT
     // byteboozer_decrunch(P1_PIXELS_CRUNCHED)
     lda #<P1_PIXELS_CRUNCHED
     sta.z byteboozer_decrunch.crunched
@@ -1593,10 +1593,10 @@ part1_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Enable IO, Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // byteboozer_decrunch(P1_SCREEN_CRUNCHED)
     lda #<P1_SCREEN_CRUNCHED
     sta.z byteboozer_decrunch.crunched
@@ -1643,10 +1643,10 @@ part1_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Enable CHARGEN, Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
+    sta.z PROCPORT
     // memcpy(LOAD_CHARSET, CHARGEN, 0x800)
     lda #<$800
     sta.z memcpy.num
@@ -1664,10 +1664,10 @@ part1_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Enable IO, Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // memcpy(LOAD_SCREEN, DEFAULT_SCREEN, 0x0400)
   // Copy loading screen 
     lda #<$400
@@ -1708,10 +1708,10 @@ part1_run: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
@@ -1836,10 +1836,10 @@ part2_init: {
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Empty the hidden part of the bitmap   
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_ALL
     lda #PROCPORT_RAM_ALL
-    sta PROCPORT
+    sta.z PROCPORT
     // memset(PART2_BITMAP+8000, 0, 192)
     ldx #0
     lda #<PART2_BITMAP+$1f40
@@ -1853,10 +1853,10 @@ part2_init: {
     jsr memset
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // memset(COLS, BLACK, 1024)
   // Empty screen & cols
     ldx #BLACK

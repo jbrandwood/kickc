@@ -425,7 +425,7 @@ clock_start: {
 mulf8u_prepare: {
     .label memA = $fd
     // *memA = a
-    sta memA
+    sta.z memA
     // asm
     sta mulf8u_prepared.sm1+1
     sta mulf8u_prepared.sm3+1
@@ -445,7 +445,7 @@ mulf8s_prepared: {
     tya
     jsr mulf8u_prepared
     // if(*memA<0)
-    lda memA
+    lda.z memA
     cmp #0
     bpl __b1
     // BYTE1(m)
@@ -463,7 +463,7 @@ mulf8s_prepared: {
     lda.z m+1
     // BYTE1(m) = BYTE1(m)-(char)*memA
     sec
-    sbc memA
+    sbc.z memA
     sta.z m+1
   __b2:
     // }
@@ -533,7 +533,7 @@ mulf8u_prepared: {
     .label memB = $ff
     .label return = 4
     // *memB = b
-    sta memB
+    sta.z memB
     // asm
     tax
     sec
@@ -549,7 +549,7 @@ mulf8u_prepared: {
     sta memB
     // MAKEWORD( *memB, *resL )
     sta.z return+1
-    lda resL
+    lda.z resL
     sta.z return
     // }
     rts

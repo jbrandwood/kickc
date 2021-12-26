@@ -167,7 +167,7 @@ conio_x16_init: {
     .label BASIC_CURSOR_LINE = $d6
     .label line = $37
     // char line = *BASIC_CURSOR_LINE
-    lda BASIC_CURSOR_LINE
+    lda.z BASIC_CURSOR_LINE
     sta.z line
     // vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16)
     jsr vera_layer_mode_text
@@ -388,14 +388,14 @@ main: {
     sta.z SPRITE_ATTR+1
     // SPRITE_ATTR.X = 100
     lda #<$64
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    sta.z SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
     lda #>$64
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    sta.z SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
     // SPRITE_ATTR.Y = 100
     lda #<$64
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    sta.z SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
     lda #>$64
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    sta.z SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
     // memcpy_to_vram(BYTE2(VERA_SPRITE_ATTR), (char*)WORD0(VERA_SPRITE_ATTR), &SPRITE_ATTR, sizeof(SPRITE_ATTR))
     jsr memcpy_to_vram
     // *VERA_CTRL &= ~VERA_DCSEL

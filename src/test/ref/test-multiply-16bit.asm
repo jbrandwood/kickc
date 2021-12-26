@@ -638,14 +638,14 @@ mulf16u: {
     .label b = $14
     // *memA = a
     lda.z a
-    sta memA
+    sta.z memA
     lda.z a+1
-    sta memA+1
+    sta.z memA+1
     // *memB = b
     lda.z b
-    sta memB
+    sta.z memB
     lda.z b+1
-    sta memB+1
+    sta.z memB+1
     // asm
     lda memA
     sta sm1a+1
@@ -740,13 +740,13 @@ mulf16u: {
     inc memR+3
   !:
     // return *memR;
-    lda memR
+    lda.z memR
     sta.z return
-    lda memR+1
+    lda.z memR+1
     sta.z return+1
-    lda memR+2
+    lda.z memR+2
     sta.z return+2
-    lda memR+3
+    lda.z memR+3
     sta.z return+3
     // }
     rts

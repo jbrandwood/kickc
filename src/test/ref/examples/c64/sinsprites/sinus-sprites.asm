@@ -560,7 +560,7 @@ gen_chargen_sprite: {
     sei
     // *PROCPORT = $32
     lda #$32
-    sta PROCPORT
+    sta.z PROCPORT
     lda #0
     sta.z y
   __b1:
@@ -645,7 +645,7 @@ gen_chargen_sprite: {
     bne __b1
     // *PROCPORT = $37
     lda #$37
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // }
@@ -660,11 +660,11 @@ setFAC: {
     // BYTE0(mem)
     lda.z prepareMEM1_mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z prepareMEM1_mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     // Load unsigned int register Y,A into FAC (floating point accumulator)
     ldy memLo
@@ -689,11 +689,11 @@ setMEMtoFAC: {
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     ldx memLo
     tay
@@ -718,11 +718,11 @@ divMEMbyFAC: {
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi
@@ -737,10 +737,10 @@ divMEMbyFAC: {
 addMEMtoFAC: {
     // *memLo = BYTE0(mem)
     lda #<gen_sintab.f_min
-    sta memLo
+    sta.z memLo
     // *memHi = BYTE1(mem)
     lda #>gen_sintab.f_min
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi
@@ -757,11 +757,11 @@ mulFACbyMEM: {
     // BYTE0(mem)
     lda.z mem
     // *memLo = BYTE0(mem)
-    sta memLo
+    sta.z memLo
     // BYTE1(mem)
     lda.z mem+1
     // *memHi = BYTE1(mem)
-    sta memHi
+    sta.z memHi
     // asm
     lda memLo
     ldy memHi

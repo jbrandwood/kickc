@@ -54,7 +54,7 @@ conio_c64_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $d6
     // char line = *BASIC_CURSOR_LINE
-    ldx BASIC_CURSOR_LINE
+    ldx.z BASIC_CURSOR_LINE
     // if(line>=CONIO_HEIGHT)
     cpx #$19
     bcc __b1
@@ -814,13 +814,7 @@ rol_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 16, val<<16)
-    lda #0
-    sta.z printf_ulong.uvalue
-    sta.z printf_ulong.uvalue+1
-    lda.z val
-    sta.z printf_ulong.uvalue+2
-    lda.z val+1
-    sta.z printf_ulong.uvalue+3
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_rol_$10. Attempted variations vduz1=vduz2_rol_$10 ", 0, 1
     lda #<$10
     sta.z printf_sint.value
     lda #>$10
@@ -958,12 +952,7 @@ rol_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 24, val<<24)
-    lda #0
-    sta.z printf_ulong.uvalue
-    sta.z printf_ulong.uvalue+1
-    sta.z printf_ulong.uvalue+2
-    lda.z val
-    sta.z printf_ulong.uvalue+3
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_rol_$18. Attempted variations vduz1=vduz2_rol_$18 ", 0, 1
     lda #<$18
     sta.z printf_sint.value
     lda #>$18
@@ -1101,11 +1090,7 @@ rol_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 32, val<<32)
-    lda #0
-    sta.z printf_ulong.uvalue
-    sta.z printf_ulong.uvalue+1
-    sta.z printf_ulong.uvalue+2
-    sta.z printf_ulong.uvalue+3
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_rol_$20. Attempted variations vduz1=vduz2_rol_$20 ", 0, 1
     lda #<$20
     sta.z printf_sint.value
     lda #>$20
@@ -1595,13 +1580,7 @@ ror_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 16, val>>16)
-    lda #0
-    sta.z printf_ulong.uvalue+3
-    sta.z printf_ulong.uvalue+2
-    lda.z val+3
-    sta.z printf_ulong.uvalue+1
-    lda.z val+2
-    sta.z printf_ulong.uvalue
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_ror_$10. Attempted variations vduz1=vduz2_ror_$10 ", 0, 1
     lda #<$10
     sta.z printf_sint.value
     lda #>$10
@@ -1739,12 +1718,7 @@ ror_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 24, val>>24)
-    lda #0
-    sta.z printf_ulong.uvalue+3
-    sta.z printf_ulong.uvalue+2
-    sta.z printf_ulong.uvalue+1
-    lda.z val+3
-    sta.z printf_ulong.uvalue
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_ror_$18. Attempted variations vduz1=vduz2_ror_$18 ", 0, 1
     lda #<$18
     sta.z printf_sint.value
     lda #>$18
@@ -1882,11 +1856,7 @@ ror_fixed: {
     sta.z printf_str.s+1
     jsr printf_str
     // printf("%2d: %08lx\n", 32, val>>32)
-    lda #0
-    sta.z printf_ulong.uvalue+3
-    sta.z printf_ulong.uvalue+2
-    sta.z printf_ulong.uvalue+1
-    sta.z printf_ulong.uvalue
+    .assert "Missing ASM fragment Fragment not found vduz1=vduz2_ror_$20. Attempted variations vduz1=vduz2_ror_$20 ", 0, 1
     lda #<$20
     sta.z printf_sint.value
     lda #>$20

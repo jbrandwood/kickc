@@ -343,7 +343,7 @@ plot_chargen: {
   __b1:
     // *PROCPORT = $32
     lda #$32
-    sta PROCPORT
+    sta.z PROCPORT
     // pos*10
     tya
     asl
@@ -408,7 +408,7 @@ plot_chargen: {
     bne __b3
     // *PROCPORT = $37
     lda #$37
-    sta PROCPORT
+    sta.z PROCPORT
     // asm
     cli
     // }

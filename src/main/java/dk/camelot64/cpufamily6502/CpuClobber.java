@@ -1,9 +1,7 @@
 package dk.camelot64.cpufamily6502;
 
-import java.io.Serializable;
-
 /** Information about what registers/flags of the CPU an ASM instruction clobbers */
-public class CpuClobber implements Serializable {
+public class CpuClobber {
 
    public static final CpuClobber CLOBBER_ALL = new CpuClobber(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 

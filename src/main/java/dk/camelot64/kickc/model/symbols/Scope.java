@@ -5,13 +5,12 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  * Manages symbols (variables, labels)
  */
-public abstract class Scope implements Symbol, Serializable {
+public abstract class Scope implements Symbol {
 
    /** The default code segment. */
    public static final String SEGMENT_CODE_DEFAULT = "Code";

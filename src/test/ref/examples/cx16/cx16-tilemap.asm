@@ -390,7 +390,7 @@ conio_x16_init: {
     .label BASIC_CURSOR_LINE = $d6
     .label line = $4e
     // char line = *BASIC_CURSOR_LINE
-    lda BASIC_CURSOR_LINE
+    lda.z BASIC_CURSOR_LINE
     sta.z line
     // vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16)
     jsr vera_layer_mode_text

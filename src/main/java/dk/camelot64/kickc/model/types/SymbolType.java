@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
-import java.io.Serializable;
-
 /** Symbol Types */
-public interface SymbolType extends Serializable {
+public interface SymbolType {
 
    /** Specifies that the value of the variable may change at any time, so the optimizer must not make assumptions. The variable must always live in memory to be available for any multi-threaded access (eg. in interrupts). (volatile keyword) */
    boolean isVolatile();

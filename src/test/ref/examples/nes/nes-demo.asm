@@ -210,7 +210,7 @@ main: {
   initNES1___b1:
     // (MEMORY+0x000)[i] = 0
     lda #0
-    sta MEMORY,x
+    sta.z MEMORY,x
     // (MEMORY+0x100)[i] = 0
     sta MEMORY+$100,x
     // (MEMORY+0x200)[i] = 0

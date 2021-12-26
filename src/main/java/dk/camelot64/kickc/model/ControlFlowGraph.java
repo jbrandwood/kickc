@@ -11,14 +11,13 @@ import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  * The control flow graph of the program.
  * The control flow  graph is a set of connected basic blocks.
  */
-public class ControlFlowGraph implements Serializable {
+public class ControlFlowGraph {
 
    private List<ControlFlowBlock> blocks;
 

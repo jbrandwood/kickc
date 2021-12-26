@@ -227,16 +227,16 @@ mulf_init_asm: {
     bne !-
     // *mem = *mula_sqr1_lo
     lda mula_sqr1_lo
-    sta mem
+    sta.z mem
     // *mem = *mula_sqr1_hi
     lda mula_sqr1_hi
-    sta mem
+    sta.z mem
     // *mem = *mula_sqr2_lo
     lda mula_sqr2_lo
-    sta mem
+    sta.z mem
     // *mem = *mula_sqr2_hi
     lda mula_sqr2_hi
-    sta mem
+    sta.z mem
     // }
     rts
 }
@@ -1004,7 +1004,7 @@ print_uchar: {
 mulf8u_prepare: {
     .label memA = $fd
     // *memA = a
-    sta memA
+    sta.z memA
     // asm
     sta mulf8u_prepared.sm1+1
     sta mulf8u_prepared.sm3+1
@@ -1022,7 +1022,7 @@ mulf8u_prepared: {
     .label memB = $ff
     .label return = 9
     // *memB = b
-    sta memB
+    sta.z memB
     // asm
     tax
     sec
@@ -1038,7 +1038,7 @@ mulf8u_prepared: {
     sta memB
     // MAKEWORD( *memB, *resL )
     sta.z return+1
-    lda resL
+    lda.z resL
     sta.z return
     // }
     rts
@@ -1055,7 +1055,7 @@ mulf8s_prepared: {
     jsr mulf8u_prepared
     // unsigned int m = mulf8u_prepared((char) b)
     // if(*memA<0)
-    lda memA
+    lda.z memA
     cmp #0
     bpl __b1
     // BYTE1(m)
@@ -1073,7 +1073,7 @@ mulf8s_prepared: {
     lda.z m+1
     // BYTE1(m) = BYTE1(m)-(char)*memA
     sec
-    sbc memA
+    sbc.z memA
     sta.z m+1
   __b2:
     // }

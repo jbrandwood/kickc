@@ -328,9 +328,9 @@ mulf8u127: {
     .label resH = $ff
     .label return = 4
     // *memA = a
-    stx memA
+    stx.z memA
     // *memB = b
-    sta memB
+    sta.z memB
     // asm
     txa
     sta sm1+1
@@ -351,9 +351,9 @@ mulf8u127: {
     sbc mulf127_sqr2_hi,x
     sta resH
     // return *res;
-    lda res
+    lda.z res
     sta.z return
-    lda res+1
+    lda.z res+1
     sta.z return+1
     // }
     rts

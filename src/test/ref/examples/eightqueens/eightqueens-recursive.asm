@@ -153,7 +153,7 @@ conio_c64_init: {
     .label BASIC_CURSOR_LINE = $d6
     .label line = $2e
     // char line = *BASIC_CURSOR_LINE
-    lda BASIC_CURSOR_LINE
+    lda.z BASIC_CURSOR_LINE
     sta.z line
     // if(line>=CONIO_HEIGHT)
     cmp #$19

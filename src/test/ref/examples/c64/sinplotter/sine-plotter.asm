@@ -69,10 +69,10 @@ main: {
     // Disable normal interrupt
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
+    sta.z PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
-    sta PROCPORT
+    sta.z PROCPORT
     // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
     lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011

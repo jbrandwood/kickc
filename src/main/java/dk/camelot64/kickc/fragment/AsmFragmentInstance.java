@@ -452,15 +452,4 @@ public class AsmFragmentInstance {
       }
    }
 
-   public static class AluNotApplicableException extends RuntimeException {
-
-      public AluNotApplicableException() {
-         super("ALU register not appicable.");
-      }
-
-      public AluNotApplicableException(String message) {
-         super(message);
-      }
-   }
-
 }

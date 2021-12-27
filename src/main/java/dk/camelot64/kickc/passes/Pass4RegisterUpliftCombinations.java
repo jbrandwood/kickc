@@ -2,7 +2,6 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -117,15 +116,6 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             StringBuilder msg = new StringBuilder();
             msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
             msg.append("missing fragment " + e.getFragmentSignature());
-            msg.append(" allocation: ").append(combination.toString());
-            program.getLog().append(msg.toString());
-         }
-         return false;
-      } catch(AsmFragmentInstance.AluNotApplicableException e) {
-         if(program.getLog().isVerboseUplift()) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
-            msg.append("alu not applicable");
             msg.append(" allocation: ").append(combination.toString());
             program.getLog().append(msg.toString());
          }

@@ -2,7 +2,6 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -175,15 +174,6 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             msg.append(" missing fragment " + e.getFragmentSignature());
             msg.append(" allocation: ").append(combination.toString());
             getLog().append(msg.toString());
-            continue;
-         } catch(AsmFragmentInstance.AluNotApplicableException e) {
-            if(getProgram().getLog().isVerboseUplift()) {
-               StringBuilder msg = new StringBuilder();
-               msg.append("Potential register analysis ");
-               msg.append("alu not applicable");
-               msg.append(" allocation: ").append(combination.toString());
-               getProgram().getLog().append(msg.toString());
-            }
             continue;
          }
          CpuClobber clobber = asm.getClobber();

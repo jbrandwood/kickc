@@ -88,13 +88,6 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
                referencedClasses.add(liveRangeEquivalenceClassSet.getEquivalenceClass(var));
             }
 
-            // If statement assigns to an ALU potential equivalence class then always clobbered is empty
-            for(LiveRangeEquivalenceClass assignedClass : assignedClasses) {
-               if(registerPotentials.getPotentialRegisters(assignedClass).contains(Registers.getRegisterALU())) {
-                  continue;
-               }
-            }
-
             // Generate all combinations of potential register allocations for the referenced equivalence classes
             // one statement has so few references that all combinations wont explode
             RegisterCombinationIterator combinationIterator = registerPotentials.getAllCombinations(referencedClasses);
@@ -173,9 +166,8 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          // Generate ASM
          AsmProgram asm = new AsmProgram(getProgram().getTargetCpu());
          asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(getProgram(), false));
-         Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
-            (new Pass4CodeGeneration(getProgram(), false, false)).generateStatementAsm(asm, block, statement, aluState, false);
+            (new Pass4CodeGeneration(getProgram(), false, false)).generateStatementAsm(asm, block, statement, false);
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             unknownFragments.add(e.getFragmentSignature());
             StringBuilder msg = new StringBuilder();

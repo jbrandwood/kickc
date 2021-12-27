@@ -10,7 +10,6 @@ import java.util.Objects;
 /** The different registers available for a program */
 public class Registers {
 
-
    public static Register getRegisterX() {
       return new RegisterXByte();
    }
@@ -25,10 +24,6 @@ public class Registers {
 
    public static Register getRegisterA() {
       return new RegisterAByte();
-   }
-
-   public static Register getRegisterALU() {
-      return new RegisterALUByte();
    }
 
    public static Register getRegister(String name) {
@@ -52,7 +47,6 @@ public class Registers {
       REG_Y,
       REG_X,
       REG_Z,
-      REG_ALU,
       ZP_MEM,
       MAIN_MEM,
       CONSTANT,
@@ -329,20 +323,6 @@ public class Registers {
       @Override
       public String toString() {
          return "reg byte a";
-      }
-
-   }
-
-   /** The special ALU register. */
-   public static class RegisterALUByte extends RegisterCpuByte {
-      @Override
-      public RegisterType getType() {
-         return RegisterType.REG_ALU;
-      }
-
-      @Override
-      public String toString() {
-         return "reg byte alu";
       }
 
    }

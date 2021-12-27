@@ -187,8 +187,6 @@ public class AsmFragmentBindings {
             return "yy";
         } else if (Registers.RegisterType.REG_Z.equals(register.getType())) {
             return "zz";
-        } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
-            throw new AsmFragmentInstance.AluNotApplicableException();
         } else {
             throw new RuntimeException("Not implemented " + register.getType());
         }

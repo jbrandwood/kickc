@@ -4,7 +4,10 @@ import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentBindings;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentSignature;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentSignatureExpr;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -12,7 +15,6 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
@@ -120,50 +122,6 @@ final public class AsmFragmentInstanceSpecBuilder {
         final AsmFragmentSignatureExpr rValueExpr = assignmentRightSideSignature(bindings, null, null, rValue);
         AsmFragmentSignature signature = new AsmFragmentSignature.Assignment(lValueExpr, rValueExpr);
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScopeRef);
-    }
-
-    public static AsmFragmentInstanceSpec assignmentAlu(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
-        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        ScopeRef codeScope = program.getStatementInfos().getBlock(assignment).getScope();
-        AsmFragmentSignature signature = assignmentWithAluSignature(bindings, assignment, assignmentAlu);
-        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-    }
-
-    private static AsmFragmentSignature assignmentWithAluSignature(AsmFragmentBindings bindingContext, StatementAssignment assignment, StatementAssignment assignmentAlu) {
-        if (!(assignment.getrValue2() instanceof VariableRef)) {
-            throw new AsmFragmentInstance.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
-        }
-        VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
-        Variable assignmentRValue2Var = bindingContext.program.getSymbolInfos().getVariable(assignmentRValue2);
-        Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
-
-        if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU)) {
-            throw new AsmFragmentInstance.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
-        }
-        final AsmFragmentSignatureExpr lValueFragmentExpr = bindingContext.bind(assignment.getlValue());
-
-        AsmFragmentSignatureExpr rVal1FragmentExpr = null;
-        if (assignment.getrValue1() != null) {
-            rVal1FragmentExpr = bindingContext.bind(assignment.getrValue1());
-        }
-
-        final AsmFragmentSignatureExpr rVal2FragmentExpr = assignmentRightSideSignature(
-                bindingContext,
-                assignmentAlu.getrValue1(),
-                assignmentAlu.getOperator(),
-                assignmentAlu.getrValue2());
-
-        if (rVal1FragmentExpr == null) {
-            return new AsmFragmentSignature.Assignment(lValueFragmentExpr, rVal2FragmentExpr);
-        } else {
-            return new AsmFragmentSignature.Assignment(
-                    lValueFragmentExpr,
-                    new AsmFragmentSignatureExpr.Binary(
-                            (OperatorBinary) assignment.getOperator(),
-                            rVal1FragmentExpr,
-                            rVal2FragmentExpr)
-            );
-        }
     }
 
     private static AsmFragmentSignatureExpr assignmentRightSideSignature(AsmFragmentBindings bindings, RValue rValue1, Operator operator, RValue rValue2) {

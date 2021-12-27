@@ -125,7 +125,9 @@ irq: {
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label __6 = 2
+    .label __7 = $18
     .label __10 = 2
+    .label __11 = $1a
     .label __19 = $1c
     .label __20 = $1c
     .label cos_x = $1c
@@ -207,14 +209,18 @@ main: {
     rol.z __6+2
     rol.z __6+3
     // WORD1(xpos<<4)
+    lda.z __6+2
+    sta.z __7
+    lda.z __6+3
+    sta.z __7+1
     // word x = (word)(160 + WORD1(xpos<<4))
-    lda #<$a0
+    lda #$a0
     clc
-    adc.z __6+2
+    adc.z x
     sta.z x
-    lda #>$a0
-    adc.z __6+3
-    sta.z x+1
+    bcc !+
+    inc.z x+1
+  !:
     // signed word sin_y = SINE[idx_y]
     lda.z idx_y
     asl
@@ -262,14 +268,18 @@ main: {
     rol.z __10+2
     rol.z __10+3
     // WORD1(ypos<<4)
+    lda.z __10+2
+    sta.z __11
+    lda.z __10+3
+    sta.z __11+1
     // word y = (word)(100 + WORD1(ypos<<4))
-    lda #<$64
+    lda #$64
     clc
-    adc.z __10+2
+    adc.z y
     sta.z y
-    lda #>$64
-    adc.z __10+3
-    sta.z y+1
+    bcc !+
+    inc.z y+1
+  !:
     // bitmap_plot(x, (byte)y)
     ldx.z y
     jsr bitmap_plot

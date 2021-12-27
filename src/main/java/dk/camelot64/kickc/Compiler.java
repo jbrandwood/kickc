@@ -676,7 +676,6 @@ public class Compiler {
          // Find potential registers for each live range equivalence class - based on clobbering of fragments
          getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
          new Pass4RegisterUpliftPotentialInitialize(program).initPotentialRegisters();
-         new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
          boolean change;
          do {
             change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();

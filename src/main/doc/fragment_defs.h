@@ -164,4 +164,3 @@ QVOC qvoc1, qvoc2, qvoc3, qvoc4;
 
 // pbuz1=pbuz1+pbuc1[vbuxx] => pbuz1=pbuz1_plus_pbuc1_derefidx_vbuxx
 
-

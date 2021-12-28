@@ -1,10 +1,10 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentSynthesisResult;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -275,8 +275,8 @@ public class KickC implements Callable<Integer> {
          try {
             final AsmFragmentTemplateMasterSynthesizer masterSynthesizer = compiler.getAsmFragmentMasterSynthesizer();
             final AsmFragmentTemplateSynthesizer cpuSynthesizer = masterSynthesizer.getSynthesizer(program.getTargetCpu());
-            Collection<AsmFragmentTemplate> fragmentTemplates = cpuSynthesizer.getBestTemplates(fragment, compiler.getLog());
-            for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
+            Collection<AsmFragmentSynthesisResult> fragmentTemplates = cpuSynthesizer.getBestTemplates(fragment, compiler.getLog());
+            for(AsmFragmentSynthesisResult fragmentTemplate : fragmentTemplates) {
                AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
             }
             if(fragmentTemplates.size() == 0) {
@@ -359,7 +359,7 @@ public class KickC implements Callable<Integer> {
          }
 
          StringBuilder CFileNames = new StringBuilder();
-         cFiles.stream().forEach(path -> CFileNames.append(path.toString()).append(" "));
+         cFiles.forEach(path -> CFileNames.append(path.toString()).append(" "));
 
          Map<String, String> effectiveDefines = new LinkedHashMap<>();
          effectiveDefines.put("__KICKC__", "1");

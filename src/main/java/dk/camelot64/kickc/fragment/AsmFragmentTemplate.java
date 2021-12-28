@@ -2,7 +2,6 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRule;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.TargetCpu;
@@ -19,6 +18,7 @@ import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.parser.KickCParser;
 
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * An ASM fragment template usable for generating KickAssembler code for different bindings.
@@ -26,43 +26,24 @@ import java.util.LinkedHashMap;
  */
 public class AsmFragmentTemplate {
 
-   /** true if the fragment was loaded from disk. */
-   private boolean file;
-   /** true if the fragment was loaded from the disk cache. */
-   private boolean cache;
    /** The fragment template signature name. */
    private final String signature;
-   /** The fragment template body */
-   private String body;
-   /** The synthesis that created the fragment. null if the fragment template was loaded. */
-   private AsmFragmentTemplateSynthesisRule synthesis;
-   /** The sub fragment template that the synthesis modified to create this. null if the fragment template was loaded. */
-   private AsmFragmentTemplate subFragment;
    /** The target CPU. */
    private final TargetCpu targetCpu;
-   /** The parsed ASM lines. Initially null. Will be non-null, is the template is ever used to generate ASM code. */
+   /** The fragment template body */
+   private String body;
+
+   /** The parsed ASM lines. Initially null. Non-null after the template is used to generate ASM code. */
    private KickCParser.AsmLinesContext bodyAsm;
-   /** The ASM clobber of the fragment. */
+   /** The ASM clobber of the fragment. Initially null. Non-null after the template is used to generate ASM code.*/
    private AsmFragmentClobber clobber;
-   /** The cycles consumed by the ASM of the fragment. */
+   /** The cycles consumed by the ASM of the fragment. Initially null. Non-null after the template is used to generate ASM code.*/
    private Double cycles;
 
-   public AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu, boolean cache) {
+   public AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu) {
       this.signature = signature;
       this.body = body;
       this.targetCpu = targetCpu;
-      this.file = true;
-      this.cache = cache;
-   }
-
-   public AsmFragmentTemplate(String signature, String body, AsmFragmentTemplateSynthesisRule synthesis, AsmFragmentTemplate subFragment) {
-      this.signature = signature;
-      this.body = body;
-      this.synthesis = synthesis;
-      this.subFragment = subFragment;
-      this.targetCpu = subFragment.targetCpu;
-      this.file = false;
-      this.cache = false;
    }
 
    /**
@@ -173,7 +154,7 @@ public class AsmFragmentTemplate {
       this.cycles = asm.getCycles();
    }
 
-   String getSignature() {
+   public String getSignature() {
       return signature;
    }
 
@@ -206,43 +187,16 @@ public class AsmFragmentTemplate {
       return cycles;
    }
 
-   public boolean isFile() {
-      return file;
-   }
-
-   public boolean isCache() {
-      return cache;
-   }
-
-   AsmFragmentTemplateSynthesisRule getSynthesis() {
-      return synthesis;
-   }
-
-   AsmFragmentTemplate getSubFragment() {
-      return subFragment;
-   }
-
-   public String getName() {
-      StringBuilder name = new StringBuilder();
-      name.append(signature);
-      if(synthesis != null) {
-         name.append(" < ");
-         name.append(subFragment.getName());
-      }
-      return name.toString();
-   }
-
    @Override
    public boolean equals(Object o) {
-      if(this == o) return true;
-      if(o == null || getClass() != o.getClass()) return false;
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
       AsmFragmentTemplate that = (AsmFragmentTemplate) o;
-      return getName().equals(that.getName());
+      return Objects.equals(signature, that.signature) && targetCpu == that.targetCpu && Objects.equals(body, that.body);
    }
 
    @Override
    public int hashCode() {
-      return getName().hashCode();
+      return Objects.hash(signature, targetCpu, body);
    }
-
 }

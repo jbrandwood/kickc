@@ -97,7 +97,7 @@ class AsmFragmentTemplateSynthesisRuleRegex implements AsmFragmentTemplateSynthe
                subSignature = subSignature.replace(bound, bindMappings.get(bound));
             }
          }
-         return Arrays.asList(subSignature);
+         return Collections.singletonList(subSignature);
       } else {
          return null;
       }
@@ -148,7 +148,7 @@ class AsmFragmentTemplateSynthesisRuleRegex implements AsmFragmentTemplateSynthe
       if(newFragment.length() > 0 && newFragment.charAt(newFragment.length() - 1) == '\n') {
          newFragment = new StringBuilder(newFragment.substring(0, newFragment.length() - 1));
       }
-      return new AsmFragmentTemplate(signature, newFragment.toString(), this, subTemplate);
+      return new AsmFragmentTemplate(signature, newFragment.toString(), subTemplate.getTargetCpu());
    }
 
    static String regexpRewriteSignature(String signature, String match, String replace) {

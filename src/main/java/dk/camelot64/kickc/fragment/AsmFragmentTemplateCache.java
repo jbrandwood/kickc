@@ -48,7 +48,7 @@ public class AsmFragmentTemplateCache {
    }
 
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
-   public static AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", "NO_SYNTHESIS", null, false);
+   public static AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", "NO_SYNTHESIS", null);
 
    /** Prefix for the fragment hash file header. */
    public static final String HASH_HEADER = "//KICKC FRAGMENT CACHE ";
@@ -189,7 +189,7 @@ public class AsmFragmentTemplateCache {
          cache.put(signature, NO_SYNTHESIS);
       } else {
          CharStream fragmentCharStream = CharStreams.fromString(bodyString);
-         AsmFragmentTemplate template = new AsmFragmentTemplate(signature, AsmFragmentTemplateSynthesizer.fixNewlines(fragmentCharStream.toString()), targetCpu, true);
+         AsmFragmentTemplate template = new AsmFragmentTemplate(signature, AsmFragmentTemplateSynthesizer.fixNewlines(fragmentCharStream.toString()), targetCpu);
          cache.put(signature, template);
       }
    }

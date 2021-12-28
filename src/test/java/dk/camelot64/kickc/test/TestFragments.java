@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
-import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentSynthesisResult;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.operators.Operators;
 import org.junit.jupiter.api.AfterAll;
@@ -196,11 +196,11 @@ public class TestFragments {
       asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(TargetCpu.MOS6502X, new File("src/main/fragment/").toPath(), false, new CompileLog());
       log.setSysOut(true);
       //log.setVerboseFragmentLog(true);
-      List<AsmFragmentTemplate> templates =
+      List<AsmFragmentSynthesisResult> templates =
             new ArrayList<>(asmFragmentTemplateSynthesizer.getBestTemplates(signature, log));
       if(templates.size() > 0) {
          log.append("");
-         for(AsmFragmentTemplate template : templates) {
+         for(AsmFragmentSynthesisResult template : templates) {
             AsmFragmentTemplateUsages.logTemplate(log, template, "");
          }
          log.append("");
@@ -227,14 +227,14 @@ public class TestFragments {
 
          String signature = sigs.get(testIdx);
 
-         List<AsmFragmentTemplate> templates =
+         List<AsmFragmentSynthesisResult> templates =
                new ArrayList<>(asmFragmentTemplateSynthesizer.getBestTemplates(signature, log));
-         Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
+         Collections.sort(templates, Comparator.comparing(AsmFragmentSynthesisResult::getClobber));
          if(templates.size() == 0) {
             log.append("CANNOT SYNTHESIZE " + signature);
          }
 
-         for(AsmFragmentTemplate template : templates) {
+         for(AsmFragmentSynthesisResult template : templates) {
             String prefix = "";
             if(template.isCache()) {
                prefix = "cached ";

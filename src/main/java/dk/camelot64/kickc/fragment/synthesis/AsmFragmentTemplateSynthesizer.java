@@ -310,10 +310,10 @@ public class AsmFragmentTemplateSynthesizer {
       /** The signature of the fragment template being synthesized. The from-node in the graph. */
       private final String signature;
 
-      /** The signature of the sub-fragment template to synthesize from. The to-node in the graph. */
-      private final String subSignature;
+      /** The signatures of the sub-fragment templates to synthesize from. The to-nodes in the graph. */
+      private final List<String> subSignatures;
 
-      /** The synthesis rule capable of synthesizing this template from the sub-fragment. */
+      /** The synthesis rule capable of synthesizing this template from the sub-fragments. */
       private final AsmFragmentTemplateSynthesisRule rule;
 
       /**
@@ -325,15 +325,15 @@ public class AsmFragmentTemplateSynthesizer {
       AsmFragmentSynthesisOption(String signature, AsmFragmentTemplateSynthesisRule rule) {
          this.signature = signature;
          this.rule = rule;
-         this.subSignature = rule.getSubSignature(signature);
+         this.subSignatures = rule.getSubSignatures(signature);
       }
 
       public String getSignature() {
          return signature;
       }
 
-      String getSubSignature() {
-         return subSignature;
+      List<String> getSubSignatures() {
+         return subSignatures;
       }
 
       AsmFragmentTemplateSynthesisRule getRule() {
@@ -346,13 +346,13 @@ public class AsmFragmentTemplateSynthesizer {
          if(o == null || getClass() != o.getClass()) return false;
          AsmFragmentSynthesisOption that = (AsmFragmentSynthesisOption) o;
          return Objects.equals(signature, that.signature) &&
-               Objects.equals(subSignature, that.subSignature) &&
+               Objects.equals(subSignatures, that.subSignatures) &&
                Objects.equals(rule, that.rule);
       }
 
       @Override
       public int hashCode() {
-         return Objects.hash(signature, subSignature, rule);
+         return Objects.hash(signature, subSignatures, rule);
       }
    }
 
@@ -412,14 +412,16 @@ public class AsmFragmentTemplateSynthesizer {
             AsmFragmentSynthesisOption synthesisOption = new AsmFragmentSynthesisOption(signature, rule);
             synthesis.addSynthesisOption(synthesisOption);
             if(log.isVerboseFragmentLog()) {
-               log.append("New fragment synthesis " + signature + " - sub-option " + synthesisOption.getSubSignature());
+               log.append("New fragment synthesis " + signature + " - sub-option " + String.join(",", synthesisOption.getSubSignatures()));
             }
          }
       }
       // Ensure that all sub-synthesis exist (recursively) -  and set their parent options
       for(AsmFragmentSynthesisOption synthesisOption : synthesis.getSynthesisOptions()) {
-         AsmFragmentSynthesis subSynthesis = getOrCreateSynthesis(synthesisOption.getSubSignature(), log);
-         subSynthesis.addParentOption(synthesisOption);
+         for (String subSignature : synthesisOption.getSubSignatures()) {
+            AsmFragmentSynthesis subSynthesis = getOrCreateSynthesis(subSignature, log);
+            subSynthesis.addParentOption(synthesisOption);
+         }
       }
       return synthesis;
    }
@@ -454,27 +456,34 @@ public class AsmFragmentTemplateSynthesizer {
          }
          Collection<AsmFragmentSynthesisOption> synthesisOptions = synthesis.getSynthesisOptions();
          for(AsmFragmentSynthesisOption synthesisOption : synthesisOptions) {
-            String subSignature = synthesisOption.getSubSignature();
-            AsmFragmentTemplateSynthesisRule rule = synthesisOption.getRule();
-            AsmFragmentSynthesis subSynthesis = getSynthesis(subSignature);
-            if(subSynthesis == null) {
-               throw new RuntimeException("Synthesis Graph Error! Sub-synthesis not found in graph " + subSignature);
+            // for each sub-signature find the best templates
+            List<Collection<AsmFragmentTemplate>> subSignatureTemplates = new ArrayList<>();
+            for (String subSignature : synthesisOption.getSubSignatures()) {
+               AsmFragmentSynthesis subSynthesis = getSynthesis(subSignature);
+               if (subSynthesis == null) {
+                  throw new RuntimeException("Synthesis Graph Error! Sub-synthesis not found in graph " + subSignature);
+               }
+               Collection<AsmFragmentTemplate> subTemplates = subSynthesis.getBestTemplates();
+               subSignatureTemplates.add(subTemplates);
             }
-            Collection<AsmFragmentTemplate> subTemplates = subSynthesis.getBestTemplates();
-            for(AsmFragmentTemplate subTemplate : subTemplates) {
-               AsmFragmentTemplate synthesized = rule.synthesize(synthesis.getSignature(), subTemplate);
-               if(synthesized != null) {
-                  if(log.isVerboseFragmentLog()) {
-                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Successfully synthesized from " + subSignature);
+            AsmFragmentTemplateSynthesisRule rule = synthesisOption.getRule();
+            // Create all combinations of the best sub-templates
+            List<List<AsmFragmentTemplate>> combinations = combinations(subSignatureTemplates);
+            for (List<AsmFragmentTemplate> subTemplateCombination : combinations) {
+               AsmFragmentTemplate synthesized = rule.synthesize(synthesis.getSignature(), subTemplateCombination);
+               if (synthesized != null) {
+                  if (log.isVerboseFragmentLog()) {
+                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Successfully synthesized from " + String.join(",", synthesisOption.subSignatures));
                   }
                   modified |= synthesis.bestTemplateCandidate(synthesized);
                } else {
-                  if(log.isVerboseFragmentLog()) {
-                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Sub clobber prevents synthesis from " + subSignature);
+                  if (log.isVerboseFragmentLog()) {
+                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Sub clobber prevents synthesis from " + String.join(",", synthesisOption.subSignatures));
                   }
                }
             }
          }
+
          if(modified) {
             // The synthesis was modified - update all parents later
             for(AsmFragmentSynthesisOption parentOption : synthesis.getParentOptions()) {
@@ -492,6 +501,36 @@ public class AsmFragmentTemplateSynthesizer {
          if(synthesis.getBestTemplates().isEmpty() && log.isVerboseFragmentLog()) {
             log.append("Fragment synthesis " + synthesis.getSignature() + " - No file or synthesis results!");
          }
+      }
+   }
+
+   /**
+    * Generate all possible combinations of a number of options.
+    * @param options A list of the options for each position.
+    * @param <T> The top of an option
+    * @return A list with all combinations of the passed options.
+    */
+   private static <T> List<List<T>> combinations(List<Collection<T>> options) {
+      if(options.isEmpty()) {
+         // the empty list has one single combination
+         final ArrayList<List<T>> combinations = new ArrayList<>();
+         combinations.add(new ArrayList<>());
+         return combinations;
+      } else {
+         // Calculate recursively
+         final List<Collection<T>> tail = options.subList(1, options.size());
+         List<List<T>> tailCombinations = combinations(tail);
+         final ArrayList<List<T>> combinations = new ArrayList<>();
+         final Collection<T> head = options.get(0);
+         for (T headOption : head) {
+            for (List<T> tailCombination : tailCombinations) {
+               final ArrayList<T> combination = new ArrayList<>();
+               combination.add(headOption);
+               combination.addAll(tailCombination);
+               combinations.add(combination);
+            }
+         }
+         return combinations;
       }
    }
 

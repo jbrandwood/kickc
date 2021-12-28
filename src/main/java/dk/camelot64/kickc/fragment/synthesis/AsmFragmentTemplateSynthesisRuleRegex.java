@@ -94,7 +94,7 @@ class AsmFragmentTemplateSynthesisRuleRegex implements AsmFragmentTemplateSynthe
     * @param signature The signature to synthesize
     * @return Signature of the sub-template to synthesize the template from. null if the rule does not match the signature.
     */
-   public String getSubSignature(String signature) {
+   public List<String> getSubSignatures(String signature) {
       if(matches(signature)) {
          String subSignature = regexpRewriteSignature(signature, sigMatch, sigReplace);
          if(mapSignature && bindMappings != null) {
@@ -103,13 +103,14 @@ class AsmFragmentTemplateSynthesisRuleRegex implements AsmFragmentTemplateSynthe
                subSignature = subSignature.replace(bound, bindMappings.get(bound));
             }
          }
-         return subSignature;
+         return Arrays.asList(subSignature);
       } else {
          return null;
       }
    }
 
-   public AsmFragmentTemplate synthesize(String signature, AsmFragmentTemplate subTemplate) {
+   public AsmFragmentTemplate synthesize(String signature, List<AsmFragmentTemplate> subTemplates) {
+      final AsmFragmentTemplate subTemplate = subTemplates.get(0);
 //      if(!matches(signature)) {
 //         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching signature signature:"+signature+" match:"+sigMatch+" avoid:"+sigAvoid);
 //      }

@@ -2,6 +2,8 @@ package dk.camelot64.kickc.fragment.synthesis;
 
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 
+import java.util.List;
+
 /**
  * A synthesis rule can create new {@link AsmFragmentTemplate}s from other {@link AsmFragmentTemplate}s.
  */
@@ -16,21 +18,20 @@ public interface AsmFragmentTemplateSynthesisRule {
     boolean matches(String signature);
 
     /**
-     * The signature of the sub-template to synthesize the template from
+     * The signatures of the sub-templates to synthesize the template from
      *
      * @param signature The signature to synthesize
-     * @return Signature of the sub-template to synthesize the template from. null if the rule does not match the signature.
+     * @return Signatures of the sub-templates to synthesize the template from. null if the rule does not match the signature.
      */
-    String getSubSignature(String signature);
+    List<String> getSubSignatures(String signature);
 
     /**
      * Synthesize a fragment template from a sub fragment template.
      *
      * @param signature   The signature to synthesize
-     * @param subTemplate A sub-template that matches the sub-signature
+     * @param subTemplates The sub-templates that matches the sub-signatures
      * @return The synthesized ASM fragment template.
      * Null if the fragment cannot be synthesized (for instance due to clobber constraints).
      */
-    AsmFragmentTemplate synthesize(String signature, AsmFragmentTemplate subTemplate);
-
+    AsmFragmentTemplate synthesize(String signature, List<AsmFragmentTemplate> subTemplates);
 }

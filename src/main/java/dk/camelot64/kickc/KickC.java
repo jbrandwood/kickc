@@ -2,8 +2,8 @@ package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;

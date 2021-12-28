@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.TargetCpu;
 import org.antlr.v4.runtime.CharStream;

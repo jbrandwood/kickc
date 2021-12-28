@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.Program;
 
 public class AsmFragmentCodeGenerator {

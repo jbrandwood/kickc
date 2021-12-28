@@ -4,6 +4,7 @@ import dk.camelot64.cpufamily6502.CpuAddressingMode;
 import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;

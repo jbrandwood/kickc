@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.TargetCpu;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRule;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRuleManager;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 
 import java.io.File;
 import java.util.*;
@@ -17,7 +19,7 @@ public class AsmFragmentTemplateUsages {
     *
     * @param fragmentTemplate The template to increment usage of
     */
-   static void incUsage(AsmFragmentTemplate fragmentTemplate) {
+   public static void incUsage(AsmFragmentTemplate fragmentTemplate) {
       Integer usage = fragmentTemplateUsage.get(fragmentTemplate);
       if(usage == null) {
          usage = 0;
@@ -115,7 +117,7 @@ public class AsmFragmentTemplateUsages {
 
       if(logUnusedRules) {
          log.append("\nUNUSED ASM FRAGMENT SYNTHESIS RULE ANALYSIS (if found consider removing them)");
-         final Collection<AsmFragmentTemplateSynthesisRule> allRules = AsmFragmentTemplateSynthesisRule.getAllSynthesisRules();
+         final Collection<AsmFragmentTemplateSynthesisRule> allRules = AsmFragmentTemplateSynthesisRuleManager.getAllSynthesisRules();
          for(String signature : signatures) {
             Collection<AsmFragmentTemplate> templates =
                   synthesizer.getBestTemplates(signature, log);
@@ -127,7 +129,7 @@ public class AsmFragmentTemplateUsages {
             }
          }
          for(AsmFragmentTemplateSynthesisRule rule : allRules) {
-            log.append("Synthesis Rule Unused: - match:" + rule.sigMatch+ " avoid:"+rule.sigAvoid+" replace:"+rule.sigReplace);
+            log.append("Synthesis Rule Unused: - "+rule.toString());
          }
       }
 

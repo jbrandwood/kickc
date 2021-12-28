@@ -2,6 +2,7 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRule;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.TargetCpu;
@@ -46,7 +47,7 @@ public class AsmFragmentTemplate {
    /** The cycles consumed by the ASM of the fragment. */
    private Double cycles;
 
-   AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu, boolean cache) {
+   public AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu, boolean cache) {
       this.signature = signature;
       this.body = body;
       this.targetCpu = targetCpu;
@@ -54,7 +55,7 @@ public class AsmFragmentTemplate {
       this.cache = cache;
    }
 
-   AsmFragmentTemplate(String signature, String body, AsmFragmentTemplateSynthesisRule synthesis, AsmFragmentTemplate subFragment) {
+   public AsmFragmentTemplate(String signature, String body, AsmFragmentTemplateSynthesisRule synthesis, AsmFragmentTemplate subFragment) {
       this.signature = signature;
       this.body = body;
       this.synthesis = synthesis;

@@ -2,7 +2,7 @@ package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.operators.Operators;

@@ -1,6 +1,7 @@
-package dk.camelot64.kickc.fragment;
+package dk.camelot64.kickc.fragment.synthesis;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.TargetCpu;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -38,13 +39,13 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    /** The folder containing fragment files. */
-   private Path baseFragmentFolder;
+   private final Path baseFragmentFolder;
 
    /** The Target CPU - used for obtaining CPU-specific fragment files. */
-   private TargetCpu targetCpu;
+   private final TargetCpu targetCpu;
 
    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
-   private AsmFragmentTemplateCache fragmentCache;
+   private final AsmFragmentTemplateCache fragmentCache;
 
    /**
     * Contains the synthesis for each fragment template signature.
@@ -53,7 +54,7 @@ public class AsmFragmentTemplateSynthesizer {
     * This map is effectively a full-graph where the nodes are synthesis for signatures and edges are the
     * synthesis rules capable of synthesizing one fragment temple from another.
     */
-   private Map<String, AsmFragmentSynthesis> synthesisGraph;
+   private final Map<String, AsmFragmentSynthesis> synthesisGraph;
 
    /** Finalize the fragment template synthesizer. */
    void finalize(CompileLog log) {
@@ -157,19 +158,19 @@ public class AsmFragmentTemplateSynthesizer {
    public static class AsmFragmentSynthesis {
 
       /** The signature of the fragment template being synthesized. */
-      private String signature;
+      private final String signature;
 
       /** The best template loaded/synthesized so far for each clobber profile */
-      private Map<AsmFragmentClobber, AsmFragmentTemplate> bestTemplates;
+      private final Map<AsmFragmentClobber, AsmFragmentTemplate> bestTemplates;
 
       /** Options for synthesizing the template from sub-fragments using a specific synthesis rule. Forward edges in the synthesis graph. */
-      private Set<AsmFragmentSynthesisOption> synthesisOptions;
+      private final Set<AsmFragmentSynthesisOption> synthesisOptions;
 
       /** Options for synthesizing the other templates from this template using a specific synthesis rule. Backward edges in the synthesis graph. */
-      private Set<AsmFragmentSynthesisOption> parentOptions;
+      private final Set<AsmFragmentSynthesisOption> parentOptions;
 
       /** The templates loaded from a file. Empty if no file exists for the signature. */
-      private List<AsmFragmentTemplate> fileTemplates;
+      private final List<AsmFragmentTemplate> fileTemplates;
 
       /**
        * Create a new synthesis
@@ -294,7 +295,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @return The best templates of the synthesis.
        */
-      Collection<AsmFragmentTemplate> getBestTemplates() {
+      public Collection<AsmFragmentTemplate> getBestTemplates() {
          return bestTemplates.values();
       }
 
@@ -307,13 +308,13 @@ public class AsmFragmentTemplateSynthesizer {
    public static class AsmFragmentSynthesisOption {
 
       /** The signature of the fragment template being synthesized. The from-node in the graph. */
-      private String signature;
+      private final String signature;
 
       /** The signature of the sub-fragment template to synthesize from. The to-node in the graph. */
-      private String subSignature;
+      private final String subSignature;
 
       /** The synthesis rule capable of synthesizing this template from the sub-fragment. */
-      private AsmFragmentTemplateSynthesisRule rule;
+      private final AsmFragmentTemplateSynthesisRule rule;
 
       /**
        * Create a synthesis option
@@ -360,7 +361,7 @@ public class AsmFragmentTemplateSynthesizer {
     *
     * @return The entire synthesis graph
     */
-   Map<String, AsmFragmentSynthesis> getSynthesisGraph() {
+   public Map<String, AsmFragmentSynthesis> getSynthesisGraph() {
       return synthesisGraph;
    }
 
@@ -385,7 +386,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @param log The compile log
     * @return The synthesis that is used to load/synthesize the best template
     */
-   AsmFragmentSynthesis getOrCreateSynthesis(String signature, CompileLog log) {
+   public AsmFragmentSynthesis getOrCreateSynthesis(String signature, CompileLog log) {
       AsmFragmentSynthesis synthesis = getSynthesis(signature);
       if(synthesis != null) {
          return synthesis;
@@ -406,7 +407,7 @@ public class AsmFragmentTemplateSynthesizer {
          }
       }
       // Populate with synthesis options
-      for(AsmFragmentTemplateSynthesisRule rule : AsmFragmentTemplateSynthesisRule.getSynthesisRules(targetCpu)) {
+      for(AsmFragmentTemplateSynthesisRule rule : AsmFragmentTemplateSynthesisRuleManager.getSynthesisRules(targetCpu)) {
          if(rule.matches(signature)) {
             AsmFragmentSynthesisOption synthesisOption = new AsmFragmentSynthesisOption(signature, rule);
             synthesis.addSynthesisOption(synthesisOption);
@@ -424,7 +425,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    /** Work queue with synthesis that need to be recalculated to find the best templates. */
-   private Deque<AsmFragmentSynthesis> bestTemplateUpdate;
+   private final Deque<AsmFragmentSynthesis> bestTemplateUpdate;
 
    /**
     * Queue an update of the best templates for a synthesis to the work queue
@@ -548,7 +549,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @param body The body
     * @return The body with fixed newlines
     */
-   static String fixNewlines(String body) {
+   public static String fixNewlines(String body) {
       body = body.replace("\r", "");
       while(body.length() > 0 && body.charAt(body.length() - 1) == '\n') {
          body = body.substring(0, body.length() - 1);
@@ -556,14 +557,14 @@ public class AsmFragmentTemplateSynthesizer {
       return body;
    }
 
-   File[] allFragmentFiles() {
+   public File[] allFragmentFiles() {
       return baseFragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
 
    }
 
    public static class UnknownFragmentException extends RuntimeException {
 
-      private String signature;
+      private final String signature;
 
       public UnknownFragmentException(String signature) {
          super("Fragment not found " + signature);

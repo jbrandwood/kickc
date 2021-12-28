@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.OutputFileManager;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;

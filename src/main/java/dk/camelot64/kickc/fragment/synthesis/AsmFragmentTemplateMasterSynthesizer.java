@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.fragment;
+package dk.camelot64.kickc.fragment.synthesis;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.TargetCpu;

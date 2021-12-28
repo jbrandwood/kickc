@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRule;
+import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateSynthesisRuleManager;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.TargetCpu;
 
@@ -85,7 +87,7 @@ public class AsmFragmentSystemHash {
          }
       }
       // Also hash in all synthesis rules for all CPU's
-      for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRule.getAllSynthesisRules()) {
+      for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRuleManager.getAllSynthesisRules()) {
          hashCRLF += synthesisRule.hashCode();
          hashLF += synthesisRule.hashCode();
       }

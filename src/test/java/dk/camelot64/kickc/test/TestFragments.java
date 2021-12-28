@@ -34,11 +34,10 @@ public class TestFragments {
       AsmFragmentTemplateUsages.logUsages(asmFragmentTemplateSynthesizer, log, false, false, false, false, false, false);
    }
 
-//   @Test
-//   public void testSynthesis() throws IOException {
-//      List<String> signatures = Arrays.asList("_deref_pwsc1_ge_vwsm1_then_la1");
-//      testFragments("fragment-synthesis", signatures);
-//   }
+   @Test
+   public void testSynthesis() throws IOException {
+      testFragmentExists("pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx");
+   }
 
    @Test
    public void testAssignmentsBu() throws IOException {

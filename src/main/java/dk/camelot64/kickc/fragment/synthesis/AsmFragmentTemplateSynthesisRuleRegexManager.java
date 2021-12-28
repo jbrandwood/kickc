@@ -718,15 +718,10 @@ public class AsmFragmentTemplateSynthesisRuleRegexManager {
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)q[^v][^o]([czm][1-9])(.*)", null, null, "$1qvo$2$3", null, null));
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)q[^v][^o]([czm][1-9])(.*[pq].*)", null, null, "$1qvo$2$3", null, null));
 
-       // Synthesize some constant pointers as constant words (remove when the above section can be included)
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)_(lt|gt|le|ge|eq|neq)_p..([czm][0-9])_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("p..([czm][0-9])_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)=p..([czm][0-9])", null, null, "$1=vwu$2", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)=(.*)_(plus|minus|bor|bxor)_p..([czm][0-9])", null, null, "$1=$2_$3_vwu$4", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)=p..([czm][0-9])_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("p..([czm][0-9])=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)=p..([czm][0-9])_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("p..([czm][0-9])=_(inc|dec)_p..([czm][0-9])", null, null, "vwu$1=_$2_vwu$3", null, null));
+       // Synthesize pointers as words
+       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)p..([czm][0-9])(.*)", null, null, "$1vwu$2$3", null, null));
+       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)p..([czm][0-9])(.*p..[czm][0-9].*)", null, null, "$1vwu$2$3", null, null));
+       synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)p..([czm][0-9])(.*p..[czm][0-9].*p..[czm][0-9].*)", null, null, "$1vwu$2$3", null, null));
 
        // Synthesize constants using AA/XX/YY
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)vb(.)c1(.*)", rvalAa+"|"+ derefC1, "lda #{c1}", "$1vb$2aa$3", null, null));
@@ -734,7 +729,6 @@ public class AsmFragmentTemplateSynthesisRuleRegexManager {
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)vb(.)c1(.*)", rvalXx+"|"+ derefC1, "ldx #{c1}", "$1vb$2xx$3", null, null));
        if(targetCpu.getCpu65xx().hasRegisterZ())
           synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)vb(.)c1(.*)", rvalZz+"|"+ derefC1, "ldz #{c1}", "$1vb$2zz$3", null, null));
-
 
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)vb(.)c2(.*)", rvalAa+"|"+ derefC2, "lda #{c2}", "$1vb$2aa$3", null, null));
        synths.add(new AsmFragmentTemplateSynthesisRuleRegex("(.*)vb(.)c2(.*)", rvalYy+"|"+ derefC2, "ldy #{c2}", "$1vb$2yy$3", null, null));

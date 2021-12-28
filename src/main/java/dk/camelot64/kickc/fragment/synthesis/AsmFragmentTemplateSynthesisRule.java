@@ -24,11 +24,12 @@ public interface AsmFragmentTemplateSynthesisRule {
     String getSubSignature(String signature);
 
     /**
-     * Synthesize a template from a sub template.
+     * Synthesize a fragment template from a sub fragment template.
      *
      * @param signature   The signature to synthesize
      * @param subTemplate A sub-template that matches the sub-signature
-     * @return The synthesized ASM fragment template
+     * @return The synthesized ASM fragment template.
+     * Null if the fragment cannot be synthesized (for instance due to clobber constraints).
      */
     AsmFragmentTemplate synthesize(String signature, AsmFragmentTemplate subTemplate);
 

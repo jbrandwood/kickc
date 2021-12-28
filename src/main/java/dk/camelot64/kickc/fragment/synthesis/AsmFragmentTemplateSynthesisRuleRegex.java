@@ -88,12 +88,6 @@ class AsmFragmentTemplateSynthesisRuleRegex implements AsmFragmentTemplateSynthe
       return false;
    }
 
-   /**
-    * The signature of the sub-template to synthesize the template from
-    *
-    * @param signature The signature to synthesize
-    * @return Signature of the sub-template to synthesize the template from. null if the rule does not match the signature.
-    */
    public List<String> getSubSignatures(String signature) {
       if(matches(signature)) {
          String subSignature = regexpRewriteSignature(signature, sigMatch, sigReplace);

@@ -18,10 +18,10 @@ public interface AsmFragmentTemplateSynthesisRule {
     boolean matches(String signature);
 
     /**
-     * The signatures of the sub-templates to synthesize the template from
+     * The signatures of the sub-templates that are needed to generate an ASM fragment template
      *
-     * @param signature The signature to synthesize
-     * @return Signatures of the sub-templates to synthesize the template from. null if the rule does not match the signature.
+     * @param signature The signature of the fragment to synthesize
+     * @return Signatures of the sub-templates that are needed to synthesize the fragment template.
      */
     List<String> getSubSignatures(String signature);
 

@@ -508,7 +508,7 @@ public class AsmFragmentTemplateSynthesizer {
     * Generate all possible combinations of a number of options.
     * @param options A list of the options for each position.
     * @param <T> The top of an option
-    * @return A list with all combinations of the passed options.
+    * @return A list with all combinations of the passed options on each position.
     */
    private static <T> List<List<T>> combinations(List<Collection<T>> options) {
       if(options.isEmpty()) {

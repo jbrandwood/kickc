@@ -1,5 +1,11 @@
 package dk.camelot64.kickc.fragment.signature;
 
+import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureLexer;
+import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureParser;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 /**
  * A signature of an ASM fragment.
  * The signature captures the operation performed by the fragment and the types of the parameters.
@@ -13,6 +19,20 @@ public interface AsmFragmentSignature {
      * @return The signature name
      */
     String getName();
+
+    /**
+     * Parses a signature name to a typed signature.
+     * @param sigName The signature name (created by signature.getName())
+     * @return The signature
+     */
+    static AsmFragmentSignature parse(String sigName) {
+        final CharStream sigCharStream = CharStreams.fromString(sigName);
+        AsmFragmentSignatureLexer sigLexer = new AsmFragmentSignatureLexer(sigCharStream);
+        AsmFragmentSignatureParser sigParser = new AsmFragmentSignatureParser(new CommonTokenStream(sigLexer));
+        final AsmFragmentSignatureParser.SignatureContext sigCtx = sigParser.signature();
+        final AsmFragmentSignatureInstantiator instantiator = new AsmFragmentSignatureInstantiator();
+        return instantiator.visitSignature(sigCtx);
+    }
 
     /**
      * ASM fragment signature for an assignment <code>A=B</code>.

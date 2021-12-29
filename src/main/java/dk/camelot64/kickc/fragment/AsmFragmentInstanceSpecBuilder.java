@@ -50,7 +50,7 @@ final public class AsmFragmentInstanceSpecBuilder {
      */
     public static AsmFragmentInstanceSpec interruptEntry(String interruptType, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.IsrEntry(interruptType);
+        AsmFragmentSignature signature = new AsmFragmentSignature.Isr(interruptType, AsmFragmentSignature.Isr.EntryExit.Entry);
         ScopeRef codeScope = program.getScope().getRef();
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
@@ -64,7 +64,7 @@ final public class AsmFragmentInstanceSpecBuilder {
      */
     public static AsmFragmentInstanceSpec interruptExit(String interruptType, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.IsrExit(interruptType);
+        AsmFragmentSignature signature = new AsmFragmentSignature.Isr(interruptType, AsmFragmentSignature.Isr.EntryExit.Exit);
         ScopeRef codeScope = program.getScope().getRef();
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
@@ -84,7 +84,7 @@ final public class AsmFragmentInstanceSpecBuilder {
     }
 
     /**
-     * MAKELONG4() creates a long form 4 bytes
+     * MAKELONG4() creates a long from 4 bytes
      *
      * @param make4long The intrinsic call
      * @param program   The program

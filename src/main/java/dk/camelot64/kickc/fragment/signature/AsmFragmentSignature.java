@@ -86,33 +86,27 @@ public interface AsmFragmentSignature {
         }
     }
 
-    /** Interrupt Service Routine Entry Code. */
-    class IsrEntry implements AsmFragmentSignature {
+    /** Interrupt Service Routine Code. */
+    class Isr implements AsmFragmentSignature {
 
         final private String interruptType;
 
-        public IsrEntry(String interruptType) {
+        public enum EntryExit {
+            Entry,
+            Exit
+        }
+
+        final private EntryExit entryExit;
+
+        public Isr(String interruptType, EntryExit entryExit) {
             this.interruptType = interruptType;
+            this.entryExit = entryExit;
         }
 
         @Override
         public String getName() {
-            return "isr_" + interruptType + "_entry";
+            return "isr_" + interruptType + "_" + entryExit.name().toLowerCase();
         }
     }
 
-    /** Interrupt Service Routine Exit Code. */
-    class IsrExit implements AsmFragmentSignature {
-
-        final private String interruptType;
-
-        public IsrExit(String interruptType) {
-            this.interruptType = interruptType;
-        }
-
-        @Override
-        public String getName() {
-            return "isr_" + interruptType + "_exit";
-        }
-    }
 }

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 
 /**
@@ -103,25 +104,25 @@ public interface AsmFragmentSignatureExpr {
      */
     class Makelong4 implements AsmFragmentSignatureExpr {
 
-        final private AsmFragmentSignatureExpr byte3;
-        final private AsmFragmentSignatureExpr byte2;
-        final private AsmFragmentSignatureExpr byte1;
         final private AsmFragmentSignatureExpr byte0;
+        final private AsmFragmentSignatureExpr byte1;
+        final private AsmFragmentSignatureExpr byte2;
+        final private AsmFragmentSignatureExpr byte3;
 
-        public Makelong4(AsmFragmentSignatureExpr byte3, AsmFragmentSignatureExpr byte2, AsmFragmentSignatureExpr byte1, AsmFragmentSignatureExpr byte0) {
-            this.byte3 = byte3;
-            this.byte2 = byte2;
-            this.byte1 = byte1;
+        public Makelong4(AsmFragmentSignatureExpr byte0, AsmFragmentSignatureExpr byte1, AsmFragmentSignatureExpr byte2, AsmFragmentSignatureExpr byte3) {
             this.byte0 = byte0;
+            this.byte1 = byte1;
+            this.byte2 = byte2;
+            this.byte3 = byte3;
         }
 
         @Override
         public String getName() {
             return "_makelong4_("
-                    + byte3.getName() + ")_("
-                    + byte2.getName() + ")_("
+                    + byte0.getName() + ")_("
                     + byte1.getName() + ")_("
-                    + byte0.getName() + ")";
+                    + byte2.getName() + ")_("
+                    + byte3.getName() + ")";
         }
     }
 
@@ -178,7 +179,7 @@ public interface AsmFragmentSignatureExpr {
 
         @Override
         public String getName() {
-            return number.toString();
+            return number.getInteger().toString();
         }
     }
 
@@ -205,7 +206,12 @@ public interface AsmFragmentSignatureExpr {
 
         @Override
         public String getName() {
-            String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
+            String typeShortName;
+            if(type instanceof SymbolTypeStruct) {
+                typeShortName = "struct";
+            } else {
+              typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
+            }             
             String structTypeSizeName = "";
             if (this.structTypeSize != null)
                 structTypeSizeName = "_" + this.structTypeSize.getName();
@@ -252,7 +258,7 @@ public interface AsmFragmentSignatureExpr {
 
         @Override
         public String getName() {
-            return "_stackpullbyte_" + bytes.toString();
+            return "_stackpullpadding_" + bytes.toString();
         }
     }
 
@@ -295,7 +301,7 @@ public interface AsmFragmentSignatureExpr {
 
         @Override
         public String getName() {
-            return "_stackpushbyte_" + bytes.toString();
+            return "_stackpushpadding_" + bytes.toString();
         }
     }
 

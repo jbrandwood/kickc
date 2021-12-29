@@ -112,7 +112,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                   final List<Comment> comments = call.getComments();
                   if(stackCleanBytes > 0) {
                      // Clean up the stack
-                     stmtIt.add(new StatementExprSideEffect( new StackPullBytes(new ConstantInteger(stackCleanBytes)), source, comments));
+                     stmtIt.add(new StatementExprSideEffect( new StackPullPadding(new ConstantInteger(stackCleanBytes)), source, comments));
                   }
                   final RValue value = call.getlValue();
                   if(value!=null)
@@ -149,7 +149,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                   final long stackPadBytes = stackFrameByteSize - parametersByteSize;
                   if(stackFrameByteSize > parametersByteSize) {
                      // Add padding to the stack to make room for the return value
-                        stmtIt.add(new StatementExprSideEffect( new StackPushBytes(new ConstantInteger(stackPadBytes)), source, comments));
+                        stmtIt.add(new StatementExprSideEffect( new StackPushPadding(new ConstantInteger(stackPadBytes)), source, comments));
                   }
                   stmtIt.next();
                   stmtIt.remove();

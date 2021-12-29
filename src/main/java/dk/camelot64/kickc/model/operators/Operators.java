@@ -61,7 +61,7 @@ public class Operators {
    public static final OperatorUnary WORD0 = new OperatorGetWord0(14);
    public static final OperatorUnary WORD1 = new OperatorGetWord1(14);
 
-   public static Operator getBinary(String op) {
+   public static OperatorBinary getBinary(String op) {
       switch(op) {
          case "+":
             return PLUS;
@@ -106,6 +106,61 @@ public class Operators {
       }
    }
 
+   public static OperatorBinary getBinaryFromAsmName(String op) {
+      switch(op) {
+         case "plus":
+            return PLUS;
+         case "minus":
+            return MINUS;
+         case "eq":
+            return EQ;
+         case "neq":
+            return NEQ;
+         case "lt":
+            return LT;
+         case "le":
+            return LE;
+         case "gt":
+            return GT;
+         case "ge":
+            return GE;
+         case "derefidx":
+            return DEREF_IDX;
+         case "and":
+            return LOGIC_AND;
+         case "or":
+            return LOGIC_OR;
+         case "band":
+            return BOOL_AND;
+         case "bor":
+            return BOOL_OR;
+         case "bxor":
+            return BOOL_XOR;
+         case "rol":
+            return SHIFT_LEFT;
+         case "ror":
+            return SHIFT_RIGHT;
+         case "word":
+            return WORD;
+         case "dword":
+            return DWORD;
+         case "setbyte0":
+            return SET_BYTE0;
+         case "setbyte1":
+            return SET_BYTE1;
+         case "setbyte2":
+            return SET_BYTE2;
+         case "setbyte3":
+            return SET_BYTE3;
+         case "setword0":
+            return SET_WORD0;
+         case "setword1":
+            return SET_WORD1;
+         default:
+            throw new RuntimeException("Unknown operator " + op);
+      }
+   }
+
    /**
     * Get the binary operator to use for a sppecific compound assignment
     * @param operator The compound operator as a string
@@ -116,7 +171,7 @@ public class Operators {
    }
 
 
-   public static Operator getUnary(String op) {
+   public static OperatorUnary getUnary(String op) {
       switch(op) {
          case "+":
             return POS;
@@ -146,6 +201,53 @@ public class Operators {
             return WORD1;
          case "&":
             return ADDRESS_OF;
+         default:
+            throw new RuntimeException("Unknown operator " + op);
+      }
+   }
+
+   public static OperatorUnary getUnaryFromAsmName(String op) {
+      switch(op) {
+         case "pos":
+            return POS;
+         case "neg":
+            return NEG;
+         case "inc":
+            return INCREMENT;
+         case "dec":
+            return DECREMENT;
+         case "not":
+            return LOGIC_NOT;
+         case "bnot":
+            return BOOL_NOT;
+         case "deref":
+            return DEREF;
+         case "byte0":
+            return BYTE0;
+         case "byte1":
+            return BYTE1;
+         case "byte2":
+            return BYTE2;
+         case "byte3":
+            return BYTE3;
+         case "word0":
+            return WORD0;
+         case "word1":
+            return WORD1;
+         case "ptr":
+            return ADDRESS_OF;
+         case "byte":
+            return getCastUnary(SymbolType.BYTE);
+         case "sbyte":
+            return getCastUnary(SymbolType.SBYTE);
+         case "word":
+            return getCastUnary(SymbolType.WORD);
+         case "sword":
+            return getCastUnary(SymbolType.SWORD);
+         case "dword":
+            return getCastUnary(SymbolType.DWORD);
+         case "sdword":
+            return getCastUnary(SymbolType.SDWORD);
          default:
             throw new RuntimeException("Unknown operator " + op);
       }

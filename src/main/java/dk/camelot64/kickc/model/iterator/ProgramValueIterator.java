@@ -271,10 +271,10 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueMempySource((MemcpyValue) value));
       } else if(value instanceof StackIdxValue) {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
-      } else if(value instanceof StackPullBytes) {
-         subValues.add(new ProgramValue.ProgramValueStackPullBytes((StackPullBytes) value));
-      } else if(value instanceof StackPushBytes) {
-         subValues.add(new ProgramValue.ProgramValueStackPushBytes((StackPushBytes) value));
+      } else if(value instanceof StackPullPadding) {
+         subValues.add(new ProgramValue.ProgramValueStackPullPadding((StackPullPadding) value));
+      } else if(value instanceof StackPushPadding) {
+         subValues.add(new ProgramValue.ProgramValueStackPushPadding((StackPushPadding) value));
       } else if(value == null ||
             value instanceof SymbolVariableRef ||
             value instanceof Variable ||

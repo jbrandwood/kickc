@@ -840,42 +840,42 @@ public interface ProgramValue {
 
    }
 
-   /** Value inside a StackPullBytes . */
-   class ProgramValueStackPullBytes implements ProgramValue {
-      private final StackPullBytes stackPullBytes;
+   /** Value inside a StackPullPadding . */
+   class ProgramValueStackPullPadding implements ProgramValue {
+      private final StackPullPadding stackPullPadding;
 
-      ProgramValueStackPullBytes(StackPullBytes stackPullBytes) {
-         this.stackPullBytes = stackPullBytes;
+      ProgramValueStackPullPadding(StackPullPadding stackPullPadding) {
+         this.stackPullPadding = stackPullPadding;
       }
 
       @Override
       public Value get() {
-         return stackPullBytes.getBytes();
+         return stackPullPadding.getSize();
       }
 
       @Override
       public void set(Value val) {
-         stackPullBytes.setBytes((ConstantValue) val);
+         stackPullPadding.setSize((ConstantValue) val);
       }
 
    }
 
-   /** Value inside a StackPushBytes . */
-   class ProgramValueStackPushBytes implements ProgramValue {
-      private final StackPushBytes stackPushBytes;
+   /** Value inside a StackPushPadding . */
+   class ProgramValueStackPushPadding implements ProgramValue {
+      private final StackPushPadding stackPushPadding;
 
-      ProgramValueStackPushBytes(StackPushBytes stackPushBytes) {
-         this.stackPushBytes = stackPushBytes;
+      ProgramValueStackPushPadding(StackPushPadding stackPushPadding) {
+         this.stackPushPadding = stackPushPadding;
       }
 
       @Override
       public Value get() {
-         return stackPushBytes.getBytes();
+         return stackPushPadding.getSize();
       }
 
       @Override
       public void set(Value val) {
-         stackPushBytes.setBytes((ConstantValue) val);
+         stackPushPadding.setSize((ConstantValue) val);
       }
 
    }

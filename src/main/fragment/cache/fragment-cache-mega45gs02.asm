@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 10f5477f59 10f547a456
+//KICKC FRAGMENT CACHE 13170826c8 1317084bc5
 //FRAGMENT vbuz1=vbuc1
 ldz #{c1}
 stz {z1}
@@ -1763,7 +1763,7 @@ lda {z1}
 pha
 //FRAGMENT call_vprc1
 jsr {c1}
-//FRAGMENT _stackpullbyte_1
+//FRAGMENT _stackpullpadding_1
 pla
 //FRAGMENT pbuz1=pbuz1_minus_vbuc1
 sec

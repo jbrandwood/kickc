@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.fragment.signature;
 
-import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
@@ -339,11 +338,11 @@ public class AsmFragmentBindings {
         } else if (value instanceof StackPullValue) {
             final StackPullValue stackPullValue = (StackPullValue) value;
             return new AsmFragmentSignatureExpr.StackPull(stackPullValue.getType(), this.bindStructSize(stackPullValue.getType()));
-        } else if (value instanceof StackPullBytes) {
-            final ConstantInteger bytes = (ConstantInteger) ((StackPullBytes) value).getBytes();
+        } else if (value instanceof StackPullPadding) {
+            final ConstantInteger bytes = (ConstantInteger) ((StackPullPadding) value).getSize();
             return new AsmFragmentSignatureExpr.StackPullPadding(bytes);
-        } else if (value instanceof StackPushBytes) {
-            final ConstantInteger bytes = (ConstantInteger) ((StackPushBytes) value).getBytes();
+        } else if (value instanceof StackPushPadding) {
+            final ConstantInteger bytes = (ConstantInteger) ((StackPushPadding) value).getSize();
             return new AsmFragmentSignatureExpr.StackPushPadding(bytes);
         } else if (value instanceof MemsetValue) {
             MemsetValue memsetValue = (MemsetValue) value;

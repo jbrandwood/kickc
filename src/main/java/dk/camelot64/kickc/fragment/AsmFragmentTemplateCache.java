@@ -73,7 +73,7 @@ public class AsmFragmentTemplateCache {
     * @param asmFragmentTemplate The ASM fragment template.  NO_SYNTHESIS if synthesis was unsuccessful.
     */
    public void put(String signature, AsmFragmentTemplate asmFragmentTemplate) {
-      this.cache.put(signature, asmFragmentTemplate);
+      this.cache.put(signature.intern(), asmFragmentTemplate);
       this.modified = true;
    }
 
@@ -186,11 +186,11 @@ public class AsmFragmentTemplateCache {
    private static void addFragment(LinkedHashMap<String, AsmFragmentTemplate> cache, String signature, StringBuilder body, TargetCpu targetCpu) {
       final String bodyString = body.toString();
       if(bodyString.startsWith(NO_SYNTHESIS.getBody())) {
-         cache.put(signature, NO_SYNTHESIS);
+         cache.put(signature.intern(), NO_SYNTHESIS);
       } else {
          CharStream fragmentCharStream = CharStreams.fromString(bodyString);
          AsmFragmentTemplate template = new AsmFragmentTemplate(signature, AsmFragmentTemplateSynthesizer.fixNewlines(fragmentCharStream.toString()), targetCpu);
-         cache.put(signature, template);
+         cache.put(signature.intern(), template);
       }
    }
 

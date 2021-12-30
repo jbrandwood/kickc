@@ -24,12 +24,12 @@ public class AsmFragmentSynthesis {
     /**
      * Options for synthesizing the template from sub-fragments using a specific synthesis rule. Forward edges in the synthesis graph.
      */
-    private final Set<AsmFragmentSynthesisOption> synthesisOptions;
+    private final List<AsmFragmentSynthesisOption> synthesisOptions;
 
     /**
      * Options for synthesizing the other templates from this template using a specific synthesis rule. Backward edges in the synthesis graph.
      */
-    private final Set<AsmFragmentSynthesisOption> parentOptions;
+    private final List<AsmFragmentSynthesisOption> parentOptions;
 
     /**
      * The templates loaded from a file. Empty if no file exists for the signature.
@@ -42,10 +42,10 @@ public class AsmFragmentSynthesis {
      * @param signature The signature of the fragment template to load/synthesize
      */
     AsmFragmentSynthesis(String signature) {
-        this.signature = signature;
+        this.signature = signature.intern();
         this.bestTemplates = new LinkedHashMap<>();
-        this.synthesisOptions = new LinkedHashSet<>();
-        this.parentOptions = new LinkedHashSet<>();
+        this.synthesisOptions = new ArrayList<>();
+        this.parentOptions = new ArrayList<>();
         this.fileTemplates = new ArrayList<>();
     }
 
@@ -149,7 +149,7 @@ public class AsmFragmentSynthesis {
      *
      * @return The parent options.
      */
-    Set<AsmFragmentSynthesisOption> getParentOptions() {
+    List<AsmFragmentSynthesisOption> getParentOptions() {
         return parentOptions;
     }
 

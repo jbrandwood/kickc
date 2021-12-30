@@ -41,7 +41,7 @@ public class AsmFragmentTemplate {
    private Double cycles;
 
    public AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu) {
-      this.signature = signature;
+      this.signature = signature.intern();
       this.body = body;
       this.targetCpu = targetCpu;
    }

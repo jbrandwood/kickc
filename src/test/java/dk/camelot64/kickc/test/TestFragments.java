@@ -36,7 +36,7 @@ public class TestFragments {
 
    @Test
    public void testSynthesis() throws IOException {
-      testFragmentExists("pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx");
+      testFragmentExists("vbuz1=pbuz2_derefidx_(pbuz3_derefidx_vbuz4)_plus_pbuz5_derefidx_(pbuz6_derefidx_vbuz4)");
    }
 
    @Test

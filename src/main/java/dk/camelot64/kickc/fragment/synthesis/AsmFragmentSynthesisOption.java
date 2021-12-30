@@ -2,6 +2,7 @@ package dk.camelot64.kickc.fragment.synthesis;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * An option for synthesizing a fragment template from a sub-template using a specific synthesis rule. An edge in the synthesis graph.
@@ -30,9 +31,9 @@ public class AsmFragmentSynthesisOption {
      * @param rule      The synthesis rule capable of synthesizing this template from the sub-fragment.
      */
     AsmFragmentSynthesisOption(String signature, AsmFragmentTemplateSynthesisRule rule) {
-        this.signature = signature;
+        this.signature = signature.intern();
         this.rule = rule;
-        this.subSignatures = rule.getSubSignatures(signature);
+        this.subSignatures = rule.getSubSignatures(signature).stream().map(String::intern).collect(Collectors.toList());
     }
 
     public String getSignature() {

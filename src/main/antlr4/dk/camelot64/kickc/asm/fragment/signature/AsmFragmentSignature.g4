@@ -26,8 +26,9 @@ expr
     | expr ( 'plus' | 'minus' ) expr #binary
     | 'neg' expr #unary
     | 'bnot' expr #unary
+    | 'addr' expr #unary
     | ( 'inc' | 'dec' ) expr #unary
-    | ( 'byte' | 'sbyte' | 'word' | 'sword' | 'dword' | 'sdword' ) expr #unary
+    | ( 'byte' | 'sbyte' | 'word' | 'sword' | 'dword' | 'sdword' | 'ptr' ) expr #unary
     | ( 'byte0' | 'byte1' | 'byte2' | 'byte3' | 'word0' | 'word1') expr #unary
     | expr ( 'setbyte0' | 'setbyte1' | 'setbyte2' | 'setbyte3' | 'setword0' | 'setword1' ) expr #binary
     | expr 'memcpy' expr #memcpy

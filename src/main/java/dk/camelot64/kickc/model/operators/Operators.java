@@ -234,7 +234,7 @@ public class Operators {
             return WORD0;
          case "word1":
             return WORD1;
-         case "ptr":
+         case "addr":
             return ADDRESS_OF;
          case "byte":
             return getCastUnary(SymbolType.BYTE);
@@ -248,6 +248,8 @@ public class Operators {
             return getCastUnary(SymbolType.DWORD);
          case "sdword":
             return getCastUnary(SymbolType.SDWORD);
+         case "ptr":
+            return getCastUnary(new SymbolTypePointer(SymbolType.VOID));
          default:
             throw new RuntimeException("Unknown operator " + op);
       }

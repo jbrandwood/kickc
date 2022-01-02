@@ -1,0 +1,852 @@
+Converting variable modified inside __stackcall procedure xputc() to load/store SCREEN
+Adding parameter assignment in __stackcall procedure xputc::c = param(xputc::c)
+Inlined call call __init
+Calling convention __stackcall adding prepare/execute/finalize for call xputc(0)
+Calling convention __stackcall adding prepare/execute/finalize for call xputc(1)
+Calling convention STACK_CALL replacing param(xputc::c) with stackidx(char,xputc::OFFSET_STACK_C)
+Calling convention STACK_CALL adding stack push stackpush(char) = 0
+Calling convention STACK_CALL adding stack push stackpush(char) = 1
+
+CONTROL FLOW GRAPH SSA
+
+__stackcall void xputc(char c)
+xputc: scope:[xputc]  from
+  xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C)
+  *SCREEN = xputc::c#0
+  SCREEN = ++ SCREEN
+  to:xputc::@return
+xputc::@return: scope:[xputc]  from xputc
+  return 
+  to:@return
+
+void _updatePotatoSprite()
+_updatePotatoSprite: scope:[_updatePotatoSprite]  from main
+  stackpush(char) = 0
+  callexecute xputc 
+  sideeffect stackpullpadding(1)
+  _copyDigitToAnySprite::pointer#0 = SPR_POTATO_UI
+  _copyDigitToAnySprite::c#0 = num2str[0]
+  call _copyDigitToAnySprite
+  to:_updatePotatoSprite::@1
+_updatePotatoSprite::@1: scope:[_updatePotatoSprite]  from _updatePotatoSprite
+  to:_updatePotatoSprite::@return
+_updatePotatoSprite::@return: scope:[_updatePotatoSprite]  from _updatePotatoSprite::@1
+  return 
+  to:@return
+
+void _updateLupineSprite()
+_updateLupineSprite: scope:[_updateLupineSprite]  from main::@1
+  stackpush(char) = 1
+  callexecute xputc 
+  sideeffect stackpullpadding(1)
+  _copyDigitToAnySprite::pointer#1 = SPR_LUPINE_UI
+  _copyDigitToAnySprite::c#1 = num2str[0]
+  call _copyDigitToAnySprite
+  to:_updateLupineSprite::@1
+_updateLupineSprite::@1: scope:[_updateLupineSprite]  from _updateLupineSprite
+  _copyDigitToAnySprite::pointer#2 = SPR_LUPINE_UI
+  _copyDigitToAnySprite::c#2 = num2str[1]
+  call _copyDigitToAnySprite
+  to:_updateLupineSprite::@2
+_updateLupineSprite::@2: scope:[_updateLupineSprite]  from _updateLupineSprite::@1
+  to:_updateLupineSprite::@return
+_updateLupineSprite::@return: scope:[_updateLupineSprite]  from _updateLupineSprite::@2
+  return 
+  to:@return
+
+void _copyDigitToAnySprite(char *pointer , char c)
+_copyDigitToAnySprite: scope:[_copyDigitToAnySprite]  from _updateLupineSprite _updateLupineSprite::@1 _updatePotatoSprite
+  _copyDigitToAnySprite::pointer#5 = phi( _updateLupineSprite/_copyDigitToAnySprite::pointer#1, _updateLupineSprite::@1/_copyDigitToAnySprite::pointer#2, _updatePotatoSprite/_copyDigitToAnySprite::pointer#0 )
+  _copyDigitToAnySprite::c#3 = phi( _updateLupineSprite/_copyDigitToAnySprite::c#1, _updateLupineSprite::@1/_copyDigitToAnySprite::c#2, _updatePotatoSprite/_copyDigitToAnySprite::c#0 )
+  _copyDigitToAnySprite::$0 = _copyDigitToAnySprite::c#3 == $f0
+  if(_copyDigitToAnySprite::$0) goto _copyDigitToAnySprite::@1
+  to:_copyDigitToAnySprite::@2
+_copyDigitToAnySprite::@1: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite
+  _copyDigitToAnySprite::c#4 = phi( _copyDigitToAnySprite/_copyDigitToAnySprite::c#3 )
+  _copyDigitToAnySprite::pointer#3 = phi( _copyDigitToAnySprite/_copyDigitToAnySprite::pointer#5 )
+  _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#4] = 0
+  to:_copyDigitToAnySprite::@return
+_copyDigitToAnySprite::@2: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite
+  _copyDigitToAnySprite::c#5 = phi( _copyDigitToAnySprite/_copyDigitToAnySprite::c#3 )
+  _copyDigitToAnySprite::pointer#4 = phi( _copyDigitToAnySprite/_copyDigitToAnySprite::pointer#5 )
+  _copyDigitToAnySprite::pointer#4[_copyDigitToAnySprite::c#5] = 1
+  to:_copyDigitToAnySprite::@return
+_copyDigitToAnySprite::@return: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite::@1 _copyDigitToAnySprite::@2
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start::@1
+  call _updatePotatoSprite
+  to:main::@1
+main::@1: scope:[main]  from main
+  call _updateLupineSprite
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  SCREEN = (char *)$400
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__loadstore char *SCREEN
+__constant char * const SPR_LUPINE_UI = (char *)$a40
+__constant char * const SPR_POTATO_UI = (char *)$a00
+__constant unsigned int STACK_BASE = $103
+void __start()
+void _copyDigitToAnySprite(char *pointer , char c)
+bool _copyDigitToAnySprite::$0
+char _copyDigitToAnySprite::c
+char _copyDigitToAnySprite::c#0
+char _copyDigitToAnySprite::c#1
+char _copyDigitToAnySprite::c#2
+char _copyDigitToAnySprite::c#3
+char _copyDigitToAnySprite::c#4
+char _copyDigitToAnySprite::c#5
+char *_copyDigitToAnySprite::pointer
+char *_copyDigitToAnySprite::pointer#0
+char *_copyDigitToAnySprite::pointer#1
+char *_copyDigitToAnySprite::pointer#2
+char *_copyDigitToAnySprite::pointer#3
+char *_copyDigitToAnySprite::pointer#4
+char *_copyDigitToAnySprite::pointer#5
+void _updateLupineSprite()
+void _updatePotatoSprite()
+void main()
+__constant char num2str[3] = { fill( 3, 0) }
+__stackcall void xputc(char c)
+__constant char xputc::OFFSET_STACK_C = 0
+char xputc::c
+char xputc::c#0
+
+Adding number conversion cast (unumber) 0 in stackpush(char) = 0
+Adding number conversion cast (unumber) 0 in _copyDigitToAnySprite::c#0 = num2str[0]
+Adding number conversion cast (unumber) 1 in stackpush(char) = 1
+Adding number conversion cast (unumber) 0 in _copyDigitToAnySprite::c#1 = num2str[0]
+Adding number conversion cast (unumber) 1 in _copyDigitToAnySprite::c#2 = num2str[1]
+Adding number conversion cast (unumber) $f0 in _copyDigitToAnySprite::$0 = _copyDigitToAnySprite::c#3 == $f0
+Adding number conversion cast (unumber) 0 in _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#4] = 0
+Adding number conversion cast (unumber) 1 in _copyDigitToAnySprite::pointer#4[_copyDigitToAnySprite::c#5] = 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast stackpush(char) = (unumber)0
+Inlining cast stackpush(char) = (unumber)1
+Inlining cast _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#4] = (unumber)0
+Inlining cast _copyDigitToAnySprite::pointer#4[_copyDigitToAnySprite::c#5] = (unumber)1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 2560
+Simplifying constant pointer cast (char *) 2624
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast $f0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant pointer cast (char *) 1024
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) $f0
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias _copyDigitToAnySprite::pointer#3 = _copyDigitToAnySprite::pointer#5 _copyDigitToAnySprite::pointer#4 
+Alias _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#4 _copyDigitToAnySprite::c#5 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition _copyDigitToAnySprite::$0 [23] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant _copyDigitToAnySprite::pointer#0 = SPR_POTATO_UI
+Constant _copyDigitToAnySprite::pointer#1 = SPR_LUPINE_UI
+Constant _copyDigitToAnySprite::pointer#2 = SPR_LUPINE_UI
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero num2str in [8] _copyDigitToAnySprite::c#0 = num2str[0]
+Simplifying expression containing zero num2str in [15] _copyDigitToAnySprite::c#1 = num2str[0]
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Inlining constant with var siblings _copyDigitToAnySprite::pointer#0
+Inlining constant with var siblings _copyDigitToAnySprite::pointer#1
+Inlining constant with var siblings _copyDigitToAnySprite::pointer#2
+Constant inlined _copyDigitToAnySprite::pointer#2 = SPR_LUPINE_UI
+Constant inlined _copyDigitToAnySprite::pointer#1 = SPR_LUPINE_UI
+Constant inlined _copyDigitToAnySprite::pointer#0 = SPR_POTATO_UI
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(num2str+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 3
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of _updatePotatoSprite::@1
+Adding NOP phi() at start of _updateLupineSprite::@2
+CALL GRAPH
+Calls in [__start] to main:3 
+Calls in [main] to _updatePotatoSprite:11 _updateLupineSprite:13 
+Calls in [_updatePotatoSprite] to xputc:18 _copyDigitToAnySprite:21 
+Calls in [_updateLupineSprite] to xputc:26 _copyDigitToAnySprite:29 _copyDigitToAnySprite:32 
+
+Created 2 initial phi equivalence classes
+Coalesced [17] _copyDigitToAnySprite::c#8 = _copyDigitToAnySprite::c#0
+Not coalescing [25] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1
+Coalesced [31] _copyDigitToAnySprite::c#7 = _copyDigitToAnySprite::c#2
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block label __start::@2
+Culled Empty Block label main::@2
+Culled Empty Block label _updatePotatoSprite::@1
+Culled Empty Block label _updateLupineSprite::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+
+FINAL CONTROL FLOW GRAPH
+
+void __start()
+__start: scope:[__start]  from
+  [0] phi()
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  [1] SCREEN = (char *) 1024
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  [2] phi()
+  [3] call main
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  [4] return 
+  to:@return
+
+__stackcall void xputc(char c)
+xputc: scope:[xputc]  from
+  [5] xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C)
+  [6] *SCREEN = xputc::c#0
+  [7] SCREEN = ++ SCREEN
+  to:xputc::@return
+xputc::@return: scope:[xputc]  from xputc
+  [8] return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start::@1
+  [9] phi()
+  [10] call _updatePotatoSprite
+  to:main::@1
+main::@1: scope:[main]  from main
+  [11] phi()
+  [12] call _updateLupineSprite
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [13] return 
+  to:@return
+
+void _updatePotatoSprite()
+_updatePotatoSprite: scope:[_updatePotatoSprite]  from main
+  [14] stackpush(char) = 0
+  [15] callexecute xputc 
+  sideeffect stackpullpadding(1)
+  [17] _copyDigitToAnySprite::c#0 = *num2str
+  [18] call _copyDigitToAnySprite
+  to:_updatePotatoSprite::@return
+_updatePotatoSprite::@return: scope:[_updatePotatoSprite]  from _updatePotatoSprite
+  [19] return 
+  to:@return
+
+void _updateLupineSprite()
+_updateLupineSprite: scope:[_updateLupineSprite]  from main::@1
+  [20] stackpush(char) = 1
+  [21] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1
+  [22] callexecute xputc 
+  sideeffect stackpullpadding(1)
+  [24] _copyDigitToAnySprite::c#1 = *num2str
+  [25] call _copyDigitToAnySprite
+  to:_updateLupineSprite::@1
+_updateLupineSprite::@1: scope:[_updateLupineSprite]  from _updateLupineSprite
+  [26] _copyDigitToAnySprite::c#2 = *(num2str+1)
+  [27] call _copyDigitToAnySprite
+  to:_updateLupineSprite::@return
+_updateLupineSprite::@return: scope:[_updateLupineSprite]  from _updateLupineSprite::@1
+  [28] return 
+  to:@return
+
+void _copyDigitToAnySprite(char *pointer , char c)
+_copyDigitToAnySprite: scope:[_copyDigitToAnySprite]  from _updateLupineSprite _updateLupineSprite::@1 _updatePotatoSprite
+  [29] _copyDigitToAnySprite::pointer#3 = phi( _updateLupineSprite/SPR_LUPINE_UI, _updateLupineSprite::@1/SPR_LUPINE_UI, _updatePotatoSprite/SPR_POTATO_UI )
+  [29] _copyDigitToAnySprite::c#3 = phi( _updateLupineSprite/_copyDigitToAnySprite::c#6, _updateLupineSprite::@1/_copyDigitToAnySprite::c#2, _updatePotatoSprite/_copyDigitToAnySprite::c#0 )
+  [30] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1
+  to:_copyDigitToAnySprite::@2
+_copyDigitToAnySprite::@2: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite
+  [31] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 1
+  to:_copyDigitToAnySprite::@return
+_copyDigitToAnySprite::@return: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite::@1 _copyDigitToAnySprite::@2
+  [32] return 
+  to:@return
+_copyDigitToAnySprite::@1: scope:[_copyDigitToAnySprite]  from _copyDigitToAnySprite
+  [33] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 0
+  to:_copyDigitToAnySprite::@return
+
+
+VARIABLE REGISTER WEIGHTS
+__loadstore char *SCREEN // 176.76470588235293
+void __start()
+void _copyDigitToAnySprite(char *pointer , char c)
+char _copyDigitToAnySprite::c
+char _copyDigitToAnySprite::c#0 // 202.0
+char _copyDigitToAnySprite::c#1 // 28.857142857142858
+char _copyDigitToAnySprite::c#2 // 202.0
+char _copyDigitToAnySprite::c#3 // 1653.0
+char _copyDigitToAnySprite::c#6 // 50.5
+char *_copyDigitToAnySprite::pointer
+char *_copyDigitToAnySprite::pointer#3 // 1001.0
+void _updateLupineSprite()
+void _updatePotatoSprite()
+void main()
+__stackcall void xputc(char c)
+char xputc::c
+char xputc::c#0 // 2002.0
+
+Initial phi equivalence classes
+[ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+[ _copyDigitToAnySprite::pointer#3 ]
+Added variable SCREEN to live range equivalence class [ SCREEN ]
+Added variable xputc::c#0 to live range equivalence class [ xputc::c#0 ]
+Added variable _copyDigitToAnySprite::c#1 to live range equivalence class [ _copyDigitToAnySprite::c#1 ]
+Complete equivalence classes
+[ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+[ _copyDigitToAnySprite::pointer#3 ]
+[ SCREEN ]
+[ xputc::c#0 ]
+[ _copyDigitToAnySprite::c#1 ]
+Allocated zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+Allocated zp[1]:3 [ xputc::c#0 ]
+Allocated zp[2]:4 [ _copyDigitToAnySprite::pointer#3 ]
+Allocated zp[2]:6 [ SCREEN ]
+Allocated zp[1]:8 [ _copyDigitToAnySprite::c#1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] SCREEN = (char *) 1024 [ SCREEN _copyDigitToAnySprite::c#1 ] (  [ SCREEN _copyDigitToAnySprite::c#1 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:8 [ _copyDigitToAnySprite::c#1 ]
+Statement [5] xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C) [ SCREEN xputc::c#0 ] ( main:3::_updatePotatoSprite:10::xputc:15 [ _copyDigitToAnySprite::c#1 SCREEN xputc::c#0 ] { }  main:3::_updateLupineSprite:12::xputc:22 [ _copyDigitToAnySprite::c#6 SCREEN xputc::c#0 ] { }  ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte x as potential for zp[1]:8 [ _copyDigitToAnySprite::c#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+Statement [6] *SCREEN = xputc::c#0 [ SCREEN ] ( main:3::_updatePotatoSprite:10::xputc:15 [ _copyDigitToAnySprite::c#1 SCREEN ] { }  main:3::_updateLupineSprite:12::xputc:22 [ _copyDigitToAnySprite::c#6 SCREEN ] { }  ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:8 [ _copyDigitToAnySprite::c#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+Statement [14] stackpush(char) = 0 [ SCREEN ] ( main:3::_updatePotatoSprite:10 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullpadding(1) always clobbers reg byte a 
+Statement [17] _copyDigitToAnySprite::c#0 = *num2str [ SCREEN _copyDigitToAnySprite::c#0 ] ( main:3::_updatePotatoSprite:10 [ _copyDigitToAnySprite::c#1 SCREEN _copyDigitToAnySprite::c#0 ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [20] stackpush(char) = 1 [ SCREEN _copyDigitToAnySprite::c#1 ] ( main:3::_updateLupineSprite:12 [ SCREEN _copyDigitToAnySprite::c#1 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement [21] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1 [ SCREEN _copyDigitToAnySprite::c#6 ] ( main:3::_updateLupineSprite:12 [ SCREEN _copyDigitToAnySprite::c#6 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullpadding(1) always clobbers reg byte a 
+Statement [24] _copyDigitToAnySprite::c#1 = *num2str [ _copyDigitToAnySprite::c#6 ] ( main:3::_updateLupineSprite:12 [ _copyDigitToAnySprite::c#6 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement [26] _copyDigitToAnySprite::c#2 = *(num2str+1) [ _copyDigitToAnySprite::c#2 ] ( main:3::_updateLupineSprite:12 [ _copyDigitToAnySprite::c#2 ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [30] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [31] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 1 [ ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [33] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 0 [ ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [1] SCREEN = (char *) 1024 [ SCREEN _copyDigitToAnySprite::c#1 ] (  [ SCREEN _copyDigitToAnySprite::c#1 ] { }  ) always clobbers reg byte a 
+Statement [5] xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C) [ SCREEN xputc::c#0 ] ( main:3::_updatePotatoSprite:10::xputc:15 [ _copyDigitToAnySprite::c#1 SCREEN xputc::c#0 ] { }  main:3::_updateLupineSprite:12::xputc:22 [ _copyDigitToAnySprite::c#6 SCREEN xputc::c#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [6] *SCREEN = xputc::c#0 [ SCREEN ] ( main:3::_updatePotatoSprite:10::xputc:15 [ _copyDigitToAnySprite::c#1 SCREEN ] { }  main:3::_updateLupineSprite:12::xputc:22 [ _copyDigitToAnySprite::c#6 SCREEN ] { }  ) always clobbers reg byte y 
+Statement [14] stackpush(char) = 0 [ SCREEN ] ( main:3::_updatePotatoSprite:10 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullpadding(1) always clobbers reg byte a 
+Statement [17] _copyDigitToAnySprite::c#0 = *num2str [ SCREEN _copyDigitToAnySprite::c#0 ] ( main:3::_updatePotatoSprite:10 [ _copyDigitToAnySprite::c#1 SCREEN _copyDigitToAnySprite::c#0 ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [20] stackpush(char) = 1 [ SCREEN _copyDigitToAnySprite::c#1 ] ( main:3::_updateLupineSprite:12 [ SCREEN _copyDigitToAnySprite::c#1 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement [21] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1 [ SCREEN _copyDigitToAnySprite::c#6 ] ( main:3::_updateLupineSprite:12 [ SCREEN _copyDigitToAnySprite::c#6 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement sideeffect stackpullpadding(1) always clobbers reg byte a 
+Statement [24] _copyDigitToAnySprite::c#1 = *num2str [ _copyDigitToAnySprite::c#6 ] ( main:3::_updateLupineSprite:12 [ _copyDigitToAnySprite::c#6 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  ) always clobbers reg byte a 
+Statement [26] _copyDigitToAnySprite::c#2 = *(num2str+1) [ _copyDigitToAnySprite::c#2 ] ( main:3::_updateLupineSprite:12 [ _copyDigitToAnySprite::c#2 ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [30] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::pointer#3 ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a 
+Statement [31] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 1 [ ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [33] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 0 [ ] ( main:3::_updatePotatoSprite:10::_copyDigitToAnySprite:18 [ _copyDigitToAnySprite::c#1 SCREEN ] { { _copyDigitToAnySprite::c#0 = _copyDigitToAnySprite::c#3 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:25 [ ] { { _copyDigitToAnySprite::c#1 = _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 } }  main:3::_updateLupineSprite:12::_copyDigitToAnySprite:27 [ ] { { _copyDigitToAnySprite::c#2 = _copyDigitToAnySprite::c#3 } }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ] : zp[1]:2 , 
+Potential registers zp[2]:4 [ _copyDigitToAnySprite::pointer#3 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ SCREEN ] : zp[2]:6 , 
+Potential registers zp[1]:3 [ xputc::c#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ _copyDigitToAnySprite::c#1 ] : zp[1]:8 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [_copyDigitToAnySprite] 2,107.5: zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ] 1,001: zp[2]:4 [ _copyDigitToAnySprite::pointer#3 ] 28.86: zp[1]:8 [ _copyDigitToAnySprite::c#1 ] 
+Uplift Scope [xputc] 2,002: zp[1]:3 [ xputc::c#0 ] 
+Uplift Scope [] 176.76: zp[2]:6 [ SCREEN ] 
+Uplift Scope [_updatePotatoSprite] 
+Uplift Scope [_updateLupineSprite] 
+Uplift Scope [main] 
+Uplift Scope [__start] 
+
+Uplifting [_copyDigitToAnySprite] best 293 combination zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ] zp[2]:4 [ _copyDigitToAnySprite::pointer#3 ] zp[1]:8 [ _copyDigitToAnySprite::c#1 ] 
+Uplifting [xputc] best 287 combination reg byte a [ xputc::c#0 ] 
+Uplifting [] best 287 combination zp[2]:6 [ SCREEN ] 
+Uplifting [_updatePotatoSprite] best 287 combination 
+Uplifting [_updateLupineSprite] best 287 combination 
+Uplifting [main] best 287 combination 
+Uplifting [__start] best 287 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+Uplifting [_copyDigitToAnySprite] best 287 combination zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ _copyDigitToAnySprite::c#1 ]
+Uplifting [_copyDigitToAnySprite] best 287 combination zp[1]:8 [ _copyDigitToAnySprite::c#1 ] 
+Allocated (was zp[2]:4) zp[2]:3 [ _copyDigitToAnySprite::pointer#3 ]
+Allocated (was zp[2]:6) zp[2]:5 [ SCREEN ]
+Allocated (was zp[1]:8) zp[1]:7 [ _copyDigitToAnySprite::c#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Parameter "c" to _copyDigitToAnySprite is passed incorrectly to an unused c_1 in the first call in  _updateLupineSprite
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="sepa-optimize-problem-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+  // Global Constants & labels
+  .const STACK_BASE = $103
+  .label SPR_POTATO_UI = $a00
+  .label SPR_LUPINE_UI = $a40
+  .label SCREEN = 5
+.segment Code
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
+    // [1] SCREEN = (char *) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z SCREEN
+    lda #>$400
+    sta.z SCREEN+1
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
+    jmp __b1
+    // __start::@1
+  __b1:
+    // [3] call main
+    // [9] phi from __start::@1 to main [phi:__start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // __start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // xputc
+// void xputc(__register(A) char c)
+xputc: {
+    .const OFFSET_STACK_C = 0
+    // [5] xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // [6] *SCREEN = xputc::c#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (SCREEN),y
+    // [7] SCREEN = ++ SCREEN -- pbuz1=_inc_pbuz1 
+    inc.z SCREEN
+    bne !+
+    inc.z SCREEN+1
+  !:
+    jmp __breturn
+    // xputc::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // main
+main: {
+    // [10] call _updatePotatoSprite
+    jsr _updatePotatoSprite
+    // [11] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [12] call _updateLupineSprite
+    jsr _updateLupineSprite
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // _updatePotatoSprite
+_updatePotatoSprite: {
+    // [14] stackpush(char) = 0 -- _stackpushbyte_=vbuc1 
+    lda #0
+    pha
+    // [15] callexecute xputc  -- call_vprc1 
+    jsr xputc
+    // sideeffect stackpullpadding(1) -- _stackpullpadding_1 
+    pla
+    // [17] _copyDigitToAnySprite::c#0 = *num2str -- vbuz1=_deref_pbuc1 
+    lda num2str
+    sta.z _copyDigitToAnySprite.c
+    // [18] call _copyDigitToAnySprite
+    // [29] phi from _updatePotatoSprite to _copyDigitToAnySprite [phi:_updatePotatoSprite->_copyDigitToAnySprite]
+  _copyDigitToAnySprite_from__updatePotatoSprite:
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_POTATO_UI [phi:_updatePotatoSprite->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_POTATO_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_POTATO_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#0 [phi:_updatePotatoSprite->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    jmp __breturn
+    // _updatePotatoSprite::@return
+  __breturn:
+    // [19] return 
+    rts
+}
+  // _updateLupineSprite
+_updateLupineSprite: {
+    // [20] stackpush(char) = 1 -- _stackpushbyte_=vbuc1 
+    lda #1
+    pha
+    // [21] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1 -- vbuz1=vbuz2 
+    lda.z _copyDigitToAnySprite.c_1
+    sta.z _copyDigitToAnySprite.c
+    // [22] callexecute xputc  -- call_vprc1 
+    jsr xputc
+    // sideeffect stackpullpadding(1) -- _stackpullpadding_1 
+    pla
+    // [24] _copyDigitToAnySprite::c#1 = *num2str -- vbuz1=_deref_pbuc1 
+    lda num2str
+    sta.z _copyDigitToAnySprite.c_1
+    // [25] call _copyDigitToAnySprite
+    // [29] phi from _updateLupineSprite to _copyDigitToAnySprite [phi:_updateLupineSprite->_copyDigitToAnySprite]
+  _copyDigitToAnySprite_from__updateLupineSprite:
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_LUPINE_UI [phi:_updateLupineSprite->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#6 [phi:_updateLupineSprite->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    jmp __b1
+    // _updateLupineSprite::@1
+  __b1:
+    // [26] _copyDigitToAnySprite::c#2 = *(num2str+1) -- vbuz1=_deref_pbuc1 
+    lda num2str+1
+    sta.z _copyDigitToAnySprite.c
+    // [27] call _copyDigitToAnySprite
+    // [29] phi from _updateLupineSprite::@1 to _copyDigitToAnySprite [phi:_updateLupineSprite::@1->_copyDigitToAnySprite]
+  _copyDigitToAnySprite_from___b1:
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_LUPINE_UI [phi:_updateLupineSprite::@1->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#2 [phi:_updateLupineSprite::@1->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    jmp __breturn
+    // _updateLupineSprite::@return
+  __breturn:
+    // [28] return 
+    rts
+}
+  // _copyDigitToAnySprite
+// void _copyDigitToAnySprite(__zp(3) char *pointer, __zp(2) char c)
+_copyDigitToAnySprite: {
+    .label c = 2
+    .label c_1 = 7
+    .label pointer = 3
+    // [30] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1 -- vbuz1_eq_vbuc1_then_la1 
+    lda #$f0
+    cmp.z c
+    beq __b1
+    jmp __b2
+    // _copyDigitToAnySprite::@2
+  __b2:
+    // [31] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 1 -- pbuz1_derefidx_vbuz2=vbuc1 
+    lda #1
+    ldy.z c
+    sta (pointer),y
+    jmp __breturn
+    // _copyDigitToAnySprite::@return
+  __breturn:
+    // [32] return 
+    rts
+    // _copyDigitToAnySprite::@1
+  __b1:
+    // [33] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    lda #0
+    ldy.z c
+    sta (pointer),y
+    jmp __breturn
+}
+  // File Data
+.segment Data
+  num2str: .fill 3, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __init1
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___init1:
+Removing instruction main_from___b1:
+Removing instruction __b1_from_main:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __init1:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction _copyDigitToAnySprite_from__updatePotatoSprite:
+Removing instruction __breturn:
+Removing instruction _copyDigitToAnySprite_from__updateLupineSprite:
+Removing instruction __b1:
+Removing instruction _copyDigitToAnySprite_from___b1:
+Removing instruction __breturn:
+Removing instruction __b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing jump to rts with rts in jmp __breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__loadstore char *SCREEN // zp[2]:5 176.76470588235293
+__constant char * const SPR_LUPINE_UI = (char *) 2624
+__constant char * const SPR_POTATO_UI = (char *) 2560
+__constant unsigned int STACK_BASE = $103
+void __start()
+void _copyDigitToAnySprite(char *pointer , char c)
+char _copyDigitToAnySprite::c
+char _copyDigitToAnySprite::c#0 // c zp[1]:2 202.0
+char _copyDigitToAnySprite::c#1 // c_1 zp[1]:7 28.857142857142858
+char _copyDigitToAnySprite::c#2 // c zp[1]:2 202.0
+char _copyDigitToAnySprite::c#3 // c zp[1]:2 1653.0
+char _copyDigitToAnySprite::c#6 // c zp[1]:2 50.5
+char *_copyDigitToAnySprite::pointer
+char *_copyDigitToAnySprite::pointer#3 // pointer zp[2]:3 1001.0
+void _updateLupineSprite()
+void _updatePotatoSprite()
+void main()
+__constant char num2str[3] = { fill( 3, 0) }
+__stackcall void xputc(char c)
+__constant char xputc::OFFSET_STACK_C = 0
+char xputc::c
+char xputc::c#0 // reg byte a 2002.0
+
+zp[1]:2 [ _copyDigitToAnySprite::c#3 _copyDigitToAnySprite::c#6 _copyDigitToAnySprite::c#2 _copyDigitToAnySprite::c#0 ]
+zp[2]:3 [ _copyDigitToAnySprite::pointer#3 ]
+zp[2]:5 [ SCREEN ]
+reg byte a [ xputc::c#0 ]
+zp[1]:7 [ _copyDigitToAnySprite::c#1 ]
+
+
+FINAL ASSEMBLER
+Score: 230
+
+  // File Comments
+// Parameter "c" to _copyDigitToAnySprite is passed incorrectly to an unused c_1 in the first call in  _updateLupineSprite
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="sepa-optimize-problem-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+  // Global Constants & labels
+  .const STACK_BASE = $103
+  .label SPR_POTATO_UI = $a00
+  .label SPR_LUPINE_UI = $a40
+  .label SCREEN = 5
+.segment Code
+  // __start
+__start: {
+    // __start::__init1
+    // char * SCREEN = (char*)0x0400
+    // [1] SCREEN = (char *) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z SCREEN
+    lda #>$400
+    sta.z SCREEN+1
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
+    // [3] call main
+    // [9] phi from __start::@1 to main [phi:__start::@1->main]
+    jsr main
+    // __start::@return
+    // [4] return 
+    rts
+}
+  // xputc
+// void xputc(__register(A) char c)
+xputc: {
+    .const OFFSET_STACK_C = 0
+    // [5] xputc::c#0 = stackidx(char,xputc::OFFSET_STACK_C) -- vbuaa=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_C,x
+    // *(SCREEN++) = c
+    // [6] *SCREEN = xputc::c#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (SCREEN),y
+    // *(SCREEN++) = c;
+    // [7] SCREEN = ++ SCREEN -- pbuz1=_inc_pbuz1 
+    inc.z SCREEN
+    bne !+
+    inc.z SCREEN+1
+  !:
+    // xputc::@return
+    // }
+    // [8] return 
+    rts
+}
+  // main
+main: {
+    // _updatePotatoSprite()
+    // [10] call _updatePotatoSprite
+    jsr _updatePotatoSprite
+    // [11] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // _updateLupineSprite()
+    // [12] call _updateLupineSprite
+    jsr _updateLupineSprite
+    // main::@return
+    // }
+    // [13] return 
+    rts
+}
+  // _updatePotatoSprite
+_updatePotatoSprite: {
+    // xputc(0)
+    // [14] stackpush(char) = 0 -- _stackpushbyte_=vbuc1 
+    lda #0
+    pha
+    // [15] callexecute xputc  -- call_vprc1 
+    jsr xputc
+    // sideeffect stackpullpadding(1) -- _stackpullpadding_1 
+    pla
+    // _copyDigitToAnySprite(SPR_POTATO_UI, num2str[0])
+    // [17] _copyDigitToAnySprite::c#0 = *num2str -- vbuz1=_deref_pbuc1 
+    lda num2str
+    sta.z _copyDigitToAnySprite.c
+    // [18] call _copyDigitToAnySprite
+    // [29] phi from _updatePotatoSprite to _copyDigitToAnySprite [phi:_updatePotatoSprite->_copyDigitToAnySprite]
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_POTATO_UI [phi:_updatePotatoSprite->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_POTATO_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_POTATO_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#0 [phi:_updatePotatoSprite->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    // _updatePotatoSprite::@return
+    // }
+    // [19] return 
+    rts
+}
+  // _updateLupineSprite
+_updateLupineSprite: {
+    // xputc(1)
+    // [20] stackpush(char) = 1 -- _stackpushbyte_=vbuc1 
+    lda #1
+    pha
+    // [21] _copyDigitToAnySprite::c#6 = _copyDigitToAnySprite::c#1 -- vbuz1=vbuz2 
+    lda.z _copyDigitToAnySprite.c_1
+    sta.z _copyDigitToAnySprite.c
+    // xputc(1)
+    // [22] callexecute xputc  -- call_vprc1 
+    jsr xputc
+    // sideeffect stackpullpadding(1) -- _stackpullpadding_1 
+    pla
+    // _copyDigitToAnySprite(SPR_LUPINE_UI, num2str[0])
+    // [24] _copyDigitToAnySprite::c#1 = *num2str -- vbuz1=_deref_pbuc1 
+    lda num2str
+    sta.z _copyDigitToAnySprite.c_1
+    // [25] call _copyDigitToAnySprite
+    // [29] phi from _updateLupineSprite to _copyDigitToAnySprite [phi:_updateLupineSprite->_copyDigitToAnySprite]
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_LUPINE_UI [phi:_updateLupineSprite->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#6 [phi:_updateLupineSprite->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    // _updateLupineSprite::@1
+    // _copyDigitToAnySprite(SPR_LUPINE_UI, num2str[1])
+    // [26] _copyDigitToAnySprite::c#2 = *(num2str+1) -- vbuz1=_deref_pbuc1 
+    lda num2str+1
+    sta.z _copyDigitToAnySprite.c
+    // [27] call _copyDigitToAnySprite
+    // [29] phi from _updateLupineSprite::@1 to _copyDigitToAnySprite [phi:_updateLupineSprite::@1->_copyDigitToAnySprite]
+    // [29] phi _copyDigitToAnySprite::pointer#3 = SPR_LUPINE_UI [phi:_updateLupineSprite::@1->_copyDigitToAnySprite#0] -- pbuz1=pbuc1 
+    lda #<SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer
+    lda #>SPR_LUPINE_UI
+    sta.z _copyDigitToAnySprite.pointer+1
+    // [29] phi _copyDigitToAnySprite::c#3 = _copyDigitToAnySprite::c#2 [phi:_updateLupineSprite::@1->_copyDigitToAnySprite#1] -- register_copy 
+    jsr _copyDigitToAnySprite
+    // _updateLupineSprite::@return
+    // }
+    // [28] return 
+    rts
+}
+  // _copyDigitToAnySprite
+// void _copyDigitToAnySprite(__zp(3) char *pointer, __zp(2) char c)
+_copyDigitToAnySprite: {
+    .label c = 2
+    .label c_1 = 7
+    .label pointer = 3
+    // if(c == $f0)
+    // [30] if(_copyDigitToAnySprite::c#3==$f0) goto _copyDigitToAnySprite::@1 -- vbuz1_eq_vbuc1_then_la1 
+    lda #$f0
+    cmp.z c
+    beq __b1
+    // _copyDigitToAnySprite::@2
+    // pointer[c] = 1
+    // [31] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 1 -- pbuz1_derefidx_vbuz2=vbuc1 
+    lda #1
+    ldy.z c
+    sta (pointer),y
+    // _copyDigitToAnySprite::@return
+    // }
+    // [32] return 
+    rts
+    // _copyDigitToAnySprite::@1
+  __b1:
+    // pointer[c] = 0
+    // [33] _copyDigitToAnySprite::pointer#3[_copyDigitToAnySprite::c#3] = 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    lda #0
+    ldy.z c
+    sta (pointer),y
+    rts
+}
+  // File Data
+.segment Data
+  num2str: .fill 3, 0
+

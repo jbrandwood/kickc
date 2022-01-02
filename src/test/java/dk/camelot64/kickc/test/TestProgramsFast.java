@@ -10,6 +10,11 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testSepaOptimizeProblem1() throws IOException {
+      compileAndCompare("sepa-optimize-problem-1.c", log());
+   }
+
+   @Test
    public void testLoByte1() throws IOException {
       compileAndCompare("lobyte-1.c");
    }

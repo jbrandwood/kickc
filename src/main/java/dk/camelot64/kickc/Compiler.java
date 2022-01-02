@@ -36,6 +36,9 @@ public class Compiler {
    /** Disable the entire register uplift. This will create significantly less optimized ASM since registers are not utilized. */
    private boolean disableUplift = false;
 
+   /** Disable the long branch fix pass. */
+   private boolean disableLongBranchFix = false;
+
    /**
     * Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
     * Currently the optimization is flaky and results in NPE's and wrong values in some programs.
@@ -55,6 +58,10 @@ public class Compiler {
 
    void setDisableUplift(boolean disableUplift) {
       this.disableUplift = disableUplift;
+   }
+
+   public void setDisableLongBranchFix(boolean disableLongBranchFix) {
+      this.disableLongBranchFix = disableLongBranchFix;
    }
 
    public void setWarnFragmentMissing(boolean warnFragmentMissing) {
@@ -759,7 +766,11 @@ public class Compiler {
       }
 
       new Pass5ReindexAsmLines(program).optimize();
-      new Pass5FixLongBranches(program).optimize();
+      if(disableLongBranchFix) {
+         getLog().append("LONG BRANCH FIX DISABLED.");
+      } else {
+         new Pass5FixLongBranches(program).optimize();
+      }
 
       getLog().append("\nFINAL SYMBOL TABLE");
       getLog().append(program.getScope().toStringVars(program, false));

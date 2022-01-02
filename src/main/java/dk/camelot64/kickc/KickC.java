@@ -89,6 +89,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-Onouplift"}, description = "Optimization Option. Disable the register uplift allocation phase. This will be much faster but produce significantly slower ASM.")
    private boolean optimizeNoUplift = false;
 
+   @CommandLine.Option(names = {"-Onolongbranchfix"}, description = "Optimization Option. Disable the pass that fixes long branches. This is relevant when using the PCEAS assembler.")
+   private boolean optimizeDisableLongBranchFix = false;
+
    @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
 
@@ -305,6 +308,9 @@ public class KickC implements Callable<Integer> {
 
          if(optimizeNoUplift)
             compiler.setDisableUplift(true);
+
+         if(optimizeDisableLongBranchFix)
+            compiler.setDisableLongBranchFix(true);
 
          if(optimizeUpliftCombinations != null)
             compiler.setUpliftCombinations(optimizeUpliftCombinations);

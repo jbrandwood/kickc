@@ -11,7 +11,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testSepaOptimizeProblem1() throws IOException {
-      compileAndCompare("sepa-optimize-problem-1.c", log());
+      compileAndCompare("sepa-optimize-problem-1.c");
    }
 
    @Test

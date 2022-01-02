@@ -10,7 +10,7 @@
   .const STACK_BASE = $103
   .label SPR_POTATO_UI = $a00
   .label SPR_LUPINE_UI = $a40
-  .label SCREEN = 5
+  .label SCREEN = 4
 .segment Code
 __start: {
     // char * SCREEN = (char*)0x0400
@@ -52,8 +52,7 @@ _updatePotatoSprite: {
     jsr xputc
     pla
     // _copyDigitToAnySprite(SPR_POTATO_UI, num2str[0])
-    lda num2str
-    sta.z _copyDigitToAnySprite.c
+    ldy num2str
     lda #<SPR_POTATO_UI
     sta.z _copyDigitToAnySprite.pointer
     lda #>SPR_POTATO_UI
@@ -66,22 +65,17 @@ _updateLupineSprite: {
     // xputc(1)
     lda #1
     pha
-    lda.z _copyDigitToAnySprite.c_1
-    sta.z _copyDigitToAnySprite.c
-    // xputc(1)
     jsr xputc
     pla
     // _copyDigitToAnySprite(SPR_LUPINE_UI, num2str[0])
-    lda num2str
-    sta.z _copyDigitToAnySprite.c_1
+    ldy num2str
     lda #<SPR_LUPINE_UI
     sta.z _copyDigitToAnySprite.pointer
     lda #>SPR_LUPINE_UI
     sta.z _copyDigitToAnySprite.pointer+1
     jsr _copyDigitToAnySprite
     // _copyDigitToAnySprite(SPR_LUPINE_UI, num2str[1])
-    lda num2str+1
-    sta.z _copyDigitToAnySprite.c
+    ldy num2str+1
     lda #<SPR_LUPINE_UI
     sta.z _copyDigitToAnySprite.pointer
     lda #>SPR_LUPINE_UI
@@ -90,25 +84,20 @@ _updateLupineSprite: {
     // }
     rts
 }
-// void _copyDigitToAnySprite(__zp(3) char *pointer, __zp(2) char c)
+// void _copyDigitToAnySprite(__zp(2) char *pointer, __register(Y) char c)
 _copyDigitToAnySprite: {
-    .label c = 2
-    .label c_1 = 7
-    .label pointer = 3
+    .label pointer = 2
     // if(c == $f0)
-    lda #$f0
-    cmp.z c
+    cpy #$f0
     beq __b1
     // pointer[c] = 1
     lda #1
-    ldy.z c
     sta (pointer),y
     // }
     rts
   __b1:
     // pointer[c] = 0
     lda #0
-    ldy.z c
     sta (pointer),y
     rts
 }

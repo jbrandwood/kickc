@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCalling;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -86,7 +84,7 @@ public class ControlFlowBlock {
       ListIterator<Statement> listIterator = statements.listIterator();
       while(listIterator.hasNext()) {
          Statement statement = listIterator.next();
-         if(statement instanceof StatementCalling) {
+         if(statement instanceof StatementCall) {
             listIterator.previous();
             listIterator.add(newStatement);
             return;

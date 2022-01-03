@@ -43,7 +43,6 @@ public class VariableBuilderConfig {
     * Create variable builder configuration from a number of settings.
     * @param settings The settings.
     * @param statementSource The statement source (used for error messages)
-    * @param program The program log (used for error messages)
     * @return A variable builder configuration
     */
    public static VariableBuilderConfig fromSettings(List<String> settings, StatementSource statementSource) {
@@ -69,10 +68,9 @@ public class VariableBuilderConfig {
    public static final String SETTING_FULL = "full";
 
    /**
-    * Apply any default pre configuration of the variable builder configuration.
+    * Apply any default pre-configuration of the variable builder configuration.
     * Done as the first step when initializing a variable builder configuration
     * @param config The variable builder configuration
-    * @param log The compile log
     */
    public static void defaultPreConfig(VariableBuilderConfig config) {
       config.addSetting("ssa_zp", StatementSource.NONE);
@@ -82,7 +80,6 @@ public class VariableBuilderConfig {
     * Apply any default post configuration of the variable builder configuration.
     * Done as the last step when initializing a variable builder configuration
     * @param config The variable builder configuration
-    * @param log The compile log
     */
    public static void defaultPostConfig(VariableBuilderConfig config) {
       // Arrays are always load/store variables in main memory
@@ -165,7 +162,7 @@ public class VariableBuilderConfig {
    /**
     * The settings
     */
-   private Map<ScopeType, Setting> settings;
+   private final Map<ScopeType, Setting> settings;
 
    /** Should structs use a classic pointer-friendly model. Defaults to false, but can be changed using #pragma struct_model */
    private boolean structModelClassic = false;
@@ -200,23 +197,25 @@ public class VariableBuilderConfig {
     */
    private List<Scope> getScopes(List<String> paramElements) {
       final String paramElement = paramElements.get(0);
-      if(paramElement.equals("global")) {
-         paramElements.remove(0);
-         return Arrays.asList(Scope.GLOBAL);
-      } else if(paramElement.equals("local")) {
-         paramElements.remove(0);
-         return Arrays.asList(Scope.LOCAL);
-      } else if(paramElement.equals("member")) {
-         paramElements.remove(0);
-         return Arrays.asList(Scope.MEMBER);
-      } else if(paramElement.equals("parameter")) {
-         paramElements.remove(0);
-         return Arrays.asList(Scope.PARAMETER);
-      } else if(paramElement.equals("intermediate")) {
-         paramElements.remove(0);
-         return Arrays.asList(Scope.INTERMEDIATE);
-      } else
-         return Arrays.asList(Scope.values());
+      switch (paramElement) {
+         case "global":
+            paramElements.remove(0);
+            return Collections.singletonList(Scope.GLOBAL);
+         case "local":
+            paramElements.remove(0);
+            return Collections.singletonList(Scope.LOCAL);
+         case "member":
+            paramElements.remove(0);
+            return Collections.singletonList(Scope.MEMBER);
+         case "parameter":
+            paramElements.remove(0);
+            return Collections.singletonList(Scope.PARAMETER);
+         case "intermediate":
+            paramElements.remove(0);
+            return Collections.singletonList(Scope.INTERMEDIATE);
+         default:
+            return Arrays.asList(Scope.values());
+      }
    }
 
    /**
@@ -228,23 +227,25 @@ public class VariableBuilderConfig {
     */
    private List<Type> getTypes(List<String> paramElements) {
       final String paramElement = paramElements.get(0);
-      if(paramElement.equals("integer")) {
-         paramElements.remove(0);
-         return Arrays.asList(Type.INTEGER);
-      } else if(paramElement.equals("pointer")) {
-         paramElements.remove(0);
-         return Arrays.asList(Type.POINTER);
-      } else if(paramElement.equals("array")) {
-         paramElements.remove(0);
-         return Arrays.asList(Type.ARRAY);
-      } else if(paramElement.equals("struct")) {
-         paramElements.remove(0);
-         return Arrays.asList(Type.STRUCT);
-      } else if(paramElement.equals("var")) {
-         paramElements.remove(0);
-         return Arrays.asList(Type.VAR);
-      } else
-         return Arrays.asList(Type.values());
+      switch (paramElement) {
+         case "integer":
+            paramElements.remove(0);
+            return Collections.singletonList(Type.INTEGER);
+         case "pointer":
+            paramElements.remove(0);
+            return Collections.singletonList(Type.POINTER);
+         case "array":
+            paramElements.remove(0);
+            return Collections.singletonList(Type.ARRAY);
+         case "struct":
+            paramElements.remove(0);
+            return Collections.singletonList(Type.STRUCT);
+         case "var":
+            paramElements.remove(0);
+            return Collections.singletonList(Type.VAR);
+         default:
+            return Arrays.asList(Type.values());
+      }
    }
 
    /**
@@ -269,7 +270,7 @@ public class VariableBuilderConfig {
    }
 
    /**
-    * Parses the first parameter element as a optimization.
+    * Parses the first parameter element as an optimization.
     * The optimization element is removed from the list.
     *
     * @param paramElements The parameter elements (may be modified)

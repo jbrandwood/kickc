@@ -50,6 +50,12 @@ void bitmap_plot(unsigned int x, char y) {
     *plotter |= bitmap_plot_bit[BYTE0(x)];
 }
 
+void bitmap_unplot(unsigned int x, char y) {
+    char* plotter = (char*) MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] );
+    plotter += ( x & $fff8 );
+    *plotter &= ~(bitmap_plot_bit[BYTE0(x)]);
+}
+
 // Draw a line on the bitmap using bresenhams algorithm
 void bitmap_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
     unsigned int x = x1;

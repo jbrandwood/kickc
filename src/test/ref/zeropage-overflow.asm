@@ -11,11 +11,11 @@
 // And then allocate a bunch of variables
 main: {
     .label SCREEN = $400
-    .label a = $f9
-    .label a_1 = $f7
+    .label a = $f7
+    .label h = $f9
     lda #<0
-    sta h
-    sta h+1
+    sta.z h
+    sta.z h+1
     sta g
     sta g+1
     sta f
@@ -28,8 +28,8 @@ main: {
     sta c+1
     sta b
     sta b+1
-    sta.z a_1
-    sta.z a_1+1
+    sta.z a
+    sta.z a+1
     tay
   __b1:
     // for(char i=0;i<10;i++)
@@ -42,18 +42,15 @@ main: {
     tya
     asl
     tax
-    lda.z a_1
+    lda.z a
     sta SCREEN,x
-    lda.z a_1+1
+    lda.z a+1
     sta SCREEN+1,x
     // SCREEN[i] = a++;
-    clc
-    lda.z a_1
-    adc #1
-    sta.z a
-    lda.z a_1+1
-    adc #0
-    sta.z a+1
+    inc.z a
+    bne !+
+    inc.z a+1
+  !:
     // SCREEN[i] = b++
     lda b
     sta SCREEN,x
@@ -125,14 +122,14 @@ main: {
     inc g+1
   !:
     // SCREEN[i] = h++
-    lda h
+    lda.z h
     sta SCREEN,x
-    lda h+1
+    lda.z h+1
     sta SCREEN+1,x
     // SCREEN[i] = h++;
-    inc h
+    inc.z h
     bne !+
-    inc h+1
+    inc.z h+1
   !:
     // SCREEN[i] = a++
     lda.z a
@@ -140,13 +137,10 @@ main: {
     lda.z a+1
     sta SCREEN+1,x
     // SCREEN[i] = a++;
-    clc
-    lda.z a
-    adc #1
-    sta.z a_1
-    lda.z a+1
-    adc #0
-    sta.z a_1+1
+    inc.z a
+    bne !+
+    inc.z a+1
+  !:
     // for(char i=0;i<10;i++)
     iny
     jmp __b1
@@ -157,5 +151,4 @@ main: {
     e: .word 0
     f: .word 0
     g: .word 0
-    h: .word 0
 }

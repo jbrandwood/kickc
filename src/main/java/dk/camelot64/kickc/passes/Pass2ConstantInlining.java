@@ -44,8 +44,14 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             inline.remove(constantRef);
          }
       }
+      // Remove all SIZEOF_ constants
+      for(ConstantRef constantRef : (List<ConstantRef>) new ArrayList(inline.keySet())) {
+         if(constantRef.getLocalName().startsWith("SIZEOF_")) {
+            inline.remove(constantRef);
+         }
+      }
 
-      // Perform alias replacement within the constant values inside the aliases
+         // Perform alias replacement within the constant values inside the aliases
       replaceInValues(inline);
       // Replace all usages of the constants in the control flow graph or symbol table
       replaceVariables(inline);

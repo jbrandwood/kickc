@@ -91,7 +91,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          Set<String> unknownFragments,
          ScopeRef scope) {
       // Reset register allocation to original zero page allocation
-      new Pass4RegistersFinalize(program).allocate(false);
+      new Pass4RegistersFinalize(program).allocate(false, false);
       // Apply the uplift combination
       combination.allocate(program);
       // Check the register allocation for whether any register is being allocated to two variables with overlapping live ranges

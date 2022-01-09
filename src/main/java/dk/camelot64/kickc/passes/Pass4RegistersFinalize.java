@@ -48,7 +48,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
    }
 
-   public void allocate(boolean reallocateZp) {
+   public void allocate(boolean reallocateZp, boolean overflowToMainMem) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
@@ -79,7 +79,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
       
       if(reallocateZp) {
-         reallocateMemRegisters(liveRangeEquivalenceClassSet);
+         reallocateMemRegisters(liveRangeEquivalenceClassSet, overflowToMainMem);
       }
       liveRangeEquivalenceClassSet.storeRegisterAllocation();
       if(reallocateZp) {
@@ -152,11 +152,11 @@ public class Pass4RegistersFinalize extends Pass2Base {
    /**
     * Reallocate all memory registers. Minimizes zeropage usage.
     *
-    * @param liveRangeEquivalenceClassSet The
+    * @param equivalenceClassSet The live range equivalence classes
+    * @param overflowToMainMem If true zeropage variables overflow into main memory if they do not fit on zeropage.
     */
-   private void reallocateMemRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+   private void reallocateMemRegisters(LiveRangeEquivalenceClassSet equivalenceClassSet, boolean overflowToMainMem) {
 
-      LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>(equivalenceClassSet.getEquivalenceClasses());
       final VariableRegisterWeights registerWeights = getProgram().getVariableRegisterWeights();
       Collections.sort(equivalenceClasses, (o1, o2) -> Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1)));
@@ -183,10 +183,12 @@ public class Pass4RegistersFinalize extends Pass2Base {
                register = allocateNewRegisterZp(variable);
                int zp = ((Registers.RegisterZpMem) register).getZp();
                int sizeBytes = variable.getType().getSizeBytes();
-               if(zp + sizeBytes > 0x100) {
-                  // Zero-page exhausted - move to main memory instead (TODO: prioritize!)
-                  register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null, false);
-                  getLog().append("Zero-page exhausted. Moving allocation to main memory "+variable.toString());
+               if(overflowToMainMem) {
+                  if (zp + sizeBytes > 0x100) {
+                     // Zero-page exhausted - move to main memory instead (TODO: prioritize!)
+                     register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null, false);
+                     getLog().append("Zero-page exhausted. Moving allocation to main memory " + variable.toString());
+                  }
                }
             }
             equivalenceClass.setRegister(register);

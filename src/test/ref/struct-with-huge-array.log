@@ -81,7 +81,6 @@ Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings main::i#0
-Constant inlined SIZEOF_STRUCT_$0 = $11a
 Constant inlined main::i#0 = 0
 Constant inlined main::$0 = $11a
 Successful SSA optimization Pass2ConstantInlining
@@ -98,7 +97,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *(&main::b) = memset(struct $0, $11a)
+  [0] *(&main::b) = memset(struct $0, SIZEOF_STRUCT_$0)
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
@@ -137,10 +136,9 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:4 [ main::$3 ]
 Allocated zp[2]:6 [ main::$2 ]
-Zero-page exhausted. Moving allocation to main memory main::b
-Allocated mem[282] [ main::b ]
+Allocated zp[282]:256 [ main::b ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *(&main::b) = memset(struct $0, $11a) [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [0] *(&main::b) = memset(struct $0, SIZEOF_STRUCT_$0) [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [2] if(main::i#2<$11a) goto main::@2 [ main::i#2 main::b ] (  [ main::i#2 main::b ] { }  ) always clobbers reg byte a 
 Statement [4] main::$2 = (char *)&main::b + main::i#2 [ main::i#2 main::$2 main::b ] (  [ main::i#2 main::$2 main::b ] { }  ) always clobbers reg byte a 
 Statement [5] main::$3 = SCREEN + main::i#2 [ main::i#2 main::$2 main::b main::$3 ] (  [ main::i#2 main::$2 main::b main::$3 ] { }  ) always clobbers reg byte a 
@@ -148,17 +146,18 @@ Statement [6] *main::$3 = *main::$2 [ main::i#2 main::b ] (  [ main::i#2 main::b
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:6 [ main::$2 ] : zp[2]:6 , 
 Potential registers zp[2]:4 [ main::$3 ] : zp[2]:4 , 
-Potential registers mem[282] [ main::b ] : mem[282] , 
+Potential registers zp[282]:256 [ main::b ] : zp[282]:256 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 33: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::$3 ] 11: zp[2]:6 [ main::$2 ] 0: mem[282] [ main::b ] 
+Uplift Scope [main] 33: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::$3 ] 11: zp[2]:6 [ main::$2 ] 0: zp[282]:256 [ main::b ] 
 Uplift Scope [$0] 
 Uplift Scope [] 
 
-Uplifting [main] best 1055 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$3 ] zp[2]:6 [ main::$2 ] mem[282] [ main::b ] 
+Uplifting [main] best 1055 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$3 ] zp[2]:6 [ main::$2 ] zp[282]:256 [ main::b ] 
 Uplifting [$0] best 1055 combination 
 Uplifting [] best 1055 combination 
 Zero-page exhausted. Moving allocation to main memory main::b
+Allocated (was zp[282]:256) mem[282] [ main::b ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -180,7 +179,7 @@ main: {
     .label i = 2
     .label __2 = 6
     .label __3 = 4
-    // [0] *(&main::b) = memset(struct $0, $11a) -- _deref_pssc1=_memset_vwuc2 
+    // [0] *(&main::b) = memset(struct $0, SIZEOF_STRUCT_$0) -- _deref_pssc1=_memset_vwuc2 
     lda #<b
     sta.z $fe
     lda #>b
@@ -196,9 +195,9 @@ main: {
     inc.z $ff
     inx
   !:
-    cpy #<$11a
+    cpy #<SIZEOF_STRUCT___0
     bne !n-
-    cpx #>$11a
+    cpx #>SIZEOF_STRUCT___0
     bne !n-
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
@@ -313,7 +312,7 @@ main: {
     .label __2 = 6
     .label __3 = 4
     // bug b
-    // [0] *(&main::b) = memset(struct $0, $11a) -- _deref_pssc1=_memset_vwuc2 
+    // [0] *(&main::b) = memset(struct $0, SIZEOF_STRUCT_$0) -- _deref_pssc1=_memset_vwuc2 
     lda #<b
     sta.z $fe
     lda #>b
@@ -329,9 +328,9 @@ main: {
     inc.z $ff
     inx
   !:
-    cpy #<$11a
+    cpy #<SIZEOF_STRUCT___0
     bne !n-
-    cpx #>$11a
+    cpx #>SIZEOF_STRUCT___0
     bne !n-
     // [1] phi from main to main::@1 [phi:main->main::@1]
     // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 

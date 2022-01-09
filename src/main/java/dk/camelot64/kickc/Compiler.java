@@ -668,7 +668,7 @@ public class Compiler {
       getLog().append(program.getScope().toStringVars(program, true));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
-      new Pass4RegistersFinalize(program).allocate(true);
+      new Pass4RegistersFinalize(program).allocate(true, false);
 
       // Initial Code generation
       new Pass4CodeGeneration(program, false, program.isWarnFragmentMissing()).generate();
@@ -719,7 +719,7 @@ public class Compiler {
          // Register coalesce using exhaustive search (saving even more ZP - but slow)
          new Pass4MemoryCoalesceExhaustive(program).coalesce();
       }
-      new Pass4RegistersFinalize(program).allocate(true);
+      new Pass4RegistersFinalize(program).allocate(true, true);
       new Pass4AssertZeropageAllocation(program).check();
 
       // Final ASM code generation before optimization

@@ -177,9 +177,8 @@ Inlining constant with var siblings main::txt#0
 Inlining constant with var siblings main::i#0
 Constant inlined main::txt#0 = Text
 Constant inlined main::screen#0 = (char *) 1024
-Constant inlined main::$1 = $c*3/3
-Constant inlined main::$0 = $c*3
-Constant inlined SIZEOF_STRUCT_$0 = 3
+Constant inlined main::$1 = $c*SIZEOF_STRUCT_$0/SIZEOF_STRUCT_$0
+Constant inlined main::$0 = $c*SIZEOF_STRUCT_$0
 Constant inlined main::i#0 = 0
 Constant inlined OFFSET_STRUCT_$0_MSG = 1
 Constant inlined $0_msg7 = $0_msg10
@@ -208,7 +207,7 @@ main::@1: scope:[main]  from main main::@5
   [1] main::screen#6 = phi( main/(char *) 1024, main::@5/main::screen#2 )
   [1] main::txt#2 = phi( main/Text, main::@5/main::txt#1 )
   [1] main::i#2 = phi( main/0, main::@5/main::i#1 )
-  [2] if(main::i#2<$c*3/3) goto main::@2
+  [2] if(main::i#2<$c*SIZEOF_STRUCT_$0/SIZEOF_STRUCT_$0) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
@@ -225,7 +224,7 @@ main::@5: scope:[main]  from main::@3
   [7] *main::screen#3 = ' '
   [8] main::screen#2 = ++ main::screen#3
   [9] main::i#1 = ++ main::i#2
-  [10] main::txt#1 = main::txt#2 + 3
+  [10] main::txt#1 = main::txt#2 + SIZEOF_STRUCT_$0
   to:main::@1
 main::@4: scope:[main]  from main::@3
   [11] *main::screen#3 = *main::msg#2
@@ -272,12 +271,12 @@ Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::i
 Removing always clobbered register reg byte y as potential for zp[1]:8 [ main::i#2 main::i#1 ]
 Statement [6] if(0!=*main::msg#2) goto main::@4 [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [7] *main::screen#3 = ' ' [ main::i#2 main::txt#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] main::txt#1 = main::txt#2 + 3 [ main::i#1 main::txt#1 main::screen#2 ] (  [ main::i#1 main::txt#1 main::screen#2 ] { }  ) always clobbers reg byte a 
+Statement [10] main::txt#1 = main::txt#2 + SIZEOF_STRUCT_$0 [ main::i#1 main::txt#1 main::screen#2 ] (  [ main::i#1 main::txt#1 main::screen#2 ] { }  ) always clobbers reg byte a 
 Statement [11] *main::screen#3 = *main::msg#2 [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [4] main::msg#0 = ((char **)main::txt#2)[1] [ main::i#2 main::txt#2 main::screen#6 main::msg#0 ] (  [ main::i#2 main::txt#2 main::screen#6 main::msg#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [6] if(0!=*main::msg#2) goto main::@4 [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [7] *main::screen#3 = ' ' [ main::i#2 main::txt#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] main::txt#1 = main::txt#2 + 3 [ main::i#1 main::txt#1 main::screen#2 ] (  [ main::i#1 main::txt#1 main::screen#2 ] { }  ) always clobbers reg byte a 
+Statement [10] main::txt#1 = main::txt#2 + SIZEOF_STRUCT_$0 [ main::i#1 main::txt#1 main::screen#2 ] (  [ main::i#1 main::txt#1 main::screen#2 ] { }  ) always clobbers reg byte a 
 Statement [11] *main::screen#3 = *main::msg#2 [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] (  [ main::i#2 main::txt#2 main::msg#2 main::screen#3 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:8 [ main::i#2 main::i#1 ] : zp[1]:8 , reg byte x , 
 Potential registers zp[2]:6 [ main::txt#2 main::txt#1 ] : zp[2]:6 , 
@@ -307,6 +306,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_STRUCT___0 = 3
 .segment Code
   // main
 main: {
@@ -330,8 +330,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(main::i#2<$c*3/3) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$c*3/3
+    // [2] if(main::i#2<$c*SIZEOF_STRUCT_$0/SIZEOF_STRUCT_$0) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$c*SIZEOF_STRUCT___0/SIZEOF_STRUCT___0
     bcc __b2
     jmp __breturn
     // main::@return
@@ -374,8 +374,8 @@ main: {
   !:
     // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] main::txt#1 = main::txt#2 + 3 -- pssz1=pssz1_plus_vbuc1 
-    lda #3
+    // [10] main::txt#1 = main::txt#2 + SIZEOF_STRUCT_$0 -- pssz1=pssz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT___0
     clc
     adc.z txt
     sta.z txt
@@ -488,6 +488,7 @@ __constant char $0_msg5[$1b] = "(joachim@von-bassewitz.de)"
 __constant char $0_msg6[4] = "and"
 __constant char $0_msg8[$1b] = "(ullrich@von-bassewitz.de)"
 __constant char $0_msg9[$14] = "C Implementation by"
+__constant char SIZEOF_STRUCT_$0 = 3
 __constant struct $0 Text[] = { { Y: 2, Msg: $0_msg }, { Y: 4, Msg: $0_msg1 }, { Y: 5, Msg: $0_msg2 }, { Y: 9, Msg: $0_msg3 }, { Y: $b, Msg: $0_msg4 }, { Y: $c, Msg: $0_msg5 }, { Y: $d, Msg: $0_msg6 }, { Y: $e, Msg: $0_msg10 }, { Y: $f, Msg: $0_msg8 }, { Y: $12, Msg: $0_msg9 }, { Y: $13, Msg: $0_msg10 }, { Y: $17, Msg: $0_msg11 } }
 void main()
 char main::i
@@ -528,6 +529,7 @@ Score: 6261
 .segment Basic
 :BasicUpstart(main)
   // Global Constants & labels
+  .const SIZEOF_STRUCT___0 = 3
 .segment Code
   // main
 main: {
@@ -550,8 +552,8 @@ main: {
     // main::@1
   __b1:
     // for(char i=0;i<sizeof(Text)/sizeof(TextDesc); i++, txt++)
-    // [2] if(main::i#2<$c*3/3) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$c*3/3
+    // [2] if(main::i#2<$c*SIZEOF_STRUCT_$0/SIZEOF_STRUCT_$0) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$c*SIZEOF_STRUCT___0/SIZEOF_STRUCT___0
     bcc __b2
     // main::@return
     // }
@@ -592,8 +594,8 @@ main: {
     // for(char i=0;i<sizeof(Text)/sizeof(TextDesc); i++, txt++)
     // [9] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] main::txt#1 = main::txt#2 + 3 -- pssz1=pssz1_plus_vbuc1 
-    lda #3
+    // [10] main::txt#1 = main::txt#2 + SIZEOF_STRUCT_$0 -- pssz1=pssz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT___0
     clc
     adc.z txt
     sta.z txt

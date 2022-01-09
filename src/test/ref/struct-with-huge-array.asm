@@ -29,9 +29,9 @@ main: {
     inc.z $ff
     inx
   !:
-    cpy #<$11a
+    cpy #<SIZEOF_STRUCT___0
     bne !n-
-    cpx #>$11a
+    cpx #>SIZEOF_STRUCT___0
     bne !n-
     lda #<0
     sta.z i

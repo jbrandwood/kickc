@@ -8,6 +8,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
+  .const SIZEOF_STRUCT___0 = 3
 .segment Code
 main: {
     .label msg = 2
@@ -24,7 +25,7 @@ main: {
     ldx #0
   __b1:
     // for(char i=0;i<sizeof(Text)/sizeof(TextDesc); i++, txt++)
-    cpx #$c*3/3
+    cpx #$c*SIZEOF_STRUCT___0/SIZEOF_STRUCT___0
     bcc __b2
     // }
     rts
@@ -52,7 +53,7 @@ main: {
   !:
     // for(char i=0;i<sizeof(Text)/sizeof(TextDesc); i++, txt++)
     inx
-    lda #3
+    lda #SIZEOF_STRUCT___0
     clc
     adc.z txt
     sta.z txt

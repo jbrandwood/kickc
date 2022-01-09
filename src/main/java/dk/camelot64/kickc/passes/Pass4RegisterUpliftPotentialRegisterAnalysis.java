@@ -159,7 +159,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       while(combinations.hasNext()) {
          RegisterCombination combination = combinations.next();
          // Reset register allocation to original zero page allocation
-         new Pass4RegistersFinalize(getProgram()).allocate(false);
+         new Pass4RegistersFinalize(getProgram()).allocate(false, false);
          // Apply the combination
          combination.allocate(getProgram());
          // Generate ASM

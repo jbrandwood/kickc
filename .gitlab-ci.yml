@@ -1,6 +1,5 @@
 stages:
-  - build
-  - test
+  - build_and_test
   - package
 
 variables:
@@ -12,17 +11,11 @@ cache:
     - .m2/repository/
     - target/fragment-cache/
 
-build:
-  stage: build
-  image: maven:3-openjdk-17
-  script:
-    - mvn $MAVEN_CLI_OPTS compile
-
 test:
-  stage: test
+  stage: build_and_test
   image: maven:3-openjdk-17
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - mvn $MAVEN_CLI_OPTS clean compile test
   artifacts:
     name: test
     paths:
@@ -54,9 +47,10 @@ release:
     - ./kickc/NOTICE*
     - ./kickc/*.pdf
 
-pages:
+doxygen:
   stage: package
   image: alpine
+  cache: []
   script:
     - apk update && apk add doxygen graphviz ttf-freefont
     - pwd

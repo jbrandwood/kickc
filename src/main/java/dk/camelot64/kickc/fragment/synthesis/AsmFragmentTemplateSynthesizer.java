@@ -28,13 +28,13 @@ import java.util.stream.Collectors;
 public class AsmFragmentTemplateSynthesizer {
 
    /** Create synthesizer. */
-    public AsmFragmentTemplateSynthesizer(TargetCpu targetCpu, Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
+    public AsmFragmentTemplateSynthesizer(TargetCpu targetCpu, Path fragmentCacheFolder, Path baseFragmentFolder, CompileLog log) {
         this.baseFragmentFolder = baseFragmentFolder;
         this.targetCpu = targetCpu;
         this.synthesisGraph = new LinkedHashMap<>();
         this.bestTemplateUpdate = new ArrayDeque<>();
-        if (useFragmentCache)
-            this.fragmentCache = AsmFragmentTemplateCache.load(targetCpu, baseFragmentFolder, log);
+        if (fragmentCacheFolder!=null)
+            this.fragmentCache = AsmFragmentTemplateCache.load(targetCpu, fragmentCacheFolder, baseFragmentFolder, log);
         else
             this.fragmentCache = AsmFragmentTemplateCache.memoryCache(targetCpu);
     }

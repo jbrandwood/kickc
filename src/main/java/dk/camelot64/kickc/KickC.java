@@ -1,6 +1,7 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateCache;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentSynthesisResult;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
@@ -238,7 +239,8 @@ public class KickC implements Callable<Integer> {
       TmpDirManager.init(program.getAsmFragmentBaseFolder());
 
       // Initialize the master ASM fragment synthesizer
-      program.initAsmFragmentMasterSynthesizer(!optimizeNoFragmentCache);
+      final Path asmFragmentCacheFolder = optimizeNoFragmentCache ? null : program.getAsmFragmentBaseFolder().resolve(AsmFragmentTemplateCache.CACHE_FOLDER_NAME);
+      program.initAsmFragmentMasterSynthesizer(asmFragmentCacheFolder);
 
       Path currentPath = new File(".").toPath();
 

@@ -12,5 +12,8 @@ void bitmap_clear(char bgcol, char fgcol);
 /// Plot a single dot in the bitmap
 void bitmap_plot(unsigned int x, char y);
 
+/// Clear a single dot in the bitmap
+void bitmap_unplot(unsigned int x, char y);
+
 /// Draw a line on the bitmap using bresenhams algorithm
 void bitmap_line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);

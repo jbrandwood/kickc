@@ -1,16 +1,35 @@
+stages:
+  - build
+  - test
+  - package
+
+build:
+  stage: build
+  image: maven:3-openjdk-17
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+
+test:
+  stage: test
+  image: maven:3-openjdk-17
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    name: jacoco
+    paths:
+      - target/site/jacoco/
 
 release:
+  stage: package
   image: maven:3-openjdk-17
-  stage: build
   script:
-  - mvn -e package
+  - mvn $MAVEN_CLI_OPTS -e package
   - mkdir target/release
   - ls target
   - tar -C target/release -xzvf target/kickc-release.tgz
   - mv target/release/kickc/jar/kickc-release.jar target/release/kickc/jar/kickc-${CI_COMMIT_REF_NAME}.jar
   - mkdir ./kickc
   - mv target/release/kickc/* ./kickc/
-  - cat target/site/jacoco/index.html
   artifacts:
     name: kickc_${CI_COMMIT_REF_NAME}
     paths:
@@ -26,8 +45,8 @@ release:
     - ./kickc/*.pdf
 
 pages:
+  stage: package
   image: alpine
-  stage: build
   script:
     - apk update && apk add doxygen graphviz ttf-freefont
     - pwd

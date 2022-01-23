@@ -226,7 +226,7 @@ public class AsmFragmentTemplateCache {
          fragmentFilePrint.close();
          final Date after = new Date();
          final long millis = after.getTime() - before.getTime();
-         if(log.isVerboseFragmentLog())
+         //if(log.isVerboseFragmentLog())
             log.append("Saved cached fragments " + this.cache.size() + " to " + cacheFile.getPath() + " in " + millis + "ms");
       } catch(IOException e) {
          throw new RuntimeException("Error saving fragment cache file " + cacheFile, e);

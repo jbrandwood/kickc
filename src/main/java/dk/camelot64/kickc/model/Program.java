@@ -215,8 +215,8 @@ public class Program {
       return asmFragmentMasterSynthesizer;
    }
 
-   public void initAsmFragmentMasterSynthesizer(boolean useFragmentCache) {
-      this.asmFragmentMasterSynthesizer = new AsmFragmentTemplateMasterSynthesizer(asmFragmentBaseFolder, useFragmentCache, getLog());
+   public void initAsmFragmentMasterSynthesizer(Path asmFragmentCacheFolder) {
+      this.asmFragmentMasterSynthesizer = new AsmFragmentTemplateMasterSynthesizer(asmFragmentCacheFolder, asmFragmentBaseFolder, getLog());
    }
 
    public TargetPlatform getTargetPlatform() {

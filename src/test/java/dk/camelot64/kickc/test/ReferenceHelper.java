@@ -31,7 +31,7 @@ abstract class ReferenceHelper {
    boolean testOutput(
          String fileName,
          String extension,
-         String outputString) throws IOException {
+         String outputString)  {
       // Read reference file
       List<String> refLines;
       try {
@@ -84,14 +84,18 @@ abstract class ReferenceHelper {
       return str.substring(st, len);
    }
 
-   private List<String> getOutLines(String outputString) throws IOException {
-      BufferedReader rdr = new BufferedReader(new StringReader(outputString));
-      List<String> outLines = new ArrayList<>();
-      for (String line = rdr.readLine(); line != null; line = rdr.readLine()) {
-         outLines.add(line);
+   private List<String> getOutLines(String outputString) {
+      try {
+         BufferedReader rdr = new BufferedReader(new StringReader(outputString));
+         List<String> outLines = new ArrayList<>();
+         for (String line = rdr.readLine(); line != null; line = rdr.readLine()) {
+            outLines.add(line);
+         }
+         rdr.close();
+         return outLines;
+      } catch (IOException e) {
+         throw new RuntimeException("Error getting lines.", e);
       }
-      rdr.close();
-      return outLines;
    }
 
    private List<String> loadReferenceLines(String fileName, String extension) throws URISyntaxException, IOException {
@@ -106,16 +110,20 @@ abstract class ReferenceHelper {
 
    abstract URI loadReferenceFile(String fileName, String extension) throws IOException, URISyntaxException ;
 
-   File writeOutputFile(String fileName, String extension, String outputString) throws IOException {
-      // Write output file
-      File file = getTmpFile(fileName, extension);
-      FileOutputStream outputStream = new FileOutputStream(file);
-      OutputStreamWriter writer = new OutputStreamWriter(outputStream);
-      writer.write(outputString);
-      writer.close();
-      outputStream.close();
-      System.out.println("Output written to " + file.getAbsolutePath());
-      return file;
+   File writeOutputFile(String fileName, String extension, String outputString) {
+      try {
+         // Write output file
+         File file = getTmpFile(fileName, extension);
+         FileOutputStream outputStream = new FileOutputStream(file);
+         OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+         writer.write(outputString);
+         writer.close();
+         outputStream.close();
+         System.out.println("Output written to " + file.getAbsolutePath());
+         return file;
+      } catch (IOException e) {
+         throw new RuntimeException("Error writing output file "+fileName, e);
+      }
    }
 
    File getTmpFile(String fileName, String extension) {

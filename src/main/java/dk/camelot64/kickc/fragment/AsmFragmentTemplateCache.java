@@ -112,9 +112,8 @@ public class AsmFragmentTemplateCache {
     * @param log The compile log
     * @return The map with all best fragments from the cache file. null if the cache file is not found.
     */
-   public static AsmFragmentTemplateCache load(TargetCpu cpu, Path baseFragmentFolder, CompileLog log) {
+   public static AsmFragmentTemplateCache load(TargetCpu cpu, Path cacheFolder, Path baseFragmentFolder, CompileLog log) {
       final AsmFragmentSystemHash fragmentSystemHash = AsmFragmentSystemHash.calculate(baseFragmentFolder, false);
-      Path cacheFolder = baseFragmentFolder.resolve(CACHE_FOLDER_NAME);
       final Date before = new Date();
       if(!cacheFolder.toFile().exists()) {
          if(log.isVerboseFragmentLog())
@@ -226,7 +225,7 @@ public class AsmFragmentTemplateCache {
          fragmentFilePrint.close();
          final Date after = new Date();
          final long millis = after.getTime() - before.getTime();
-         //if(log.isVerboseFragmentLog())
+         if(log.isVerboseFragmentLog())
             log.append("Saved cached fragments " + this.cache.size() + " to " + cacheFile.getPath() + " in " + millis + "ms");
       } catch(IOException e) {
          throw new RuntimeException("Error saving fragment cache file " + cacheFile, e);

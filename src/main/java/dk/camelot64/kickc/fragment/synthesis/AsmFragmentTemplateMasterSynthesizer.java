@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public class AsmFragmentTemplateMasterSynthesizer {
 
+   /** Fragment cache folder. Null if a memory cache is used. */
+   private final Path cacheFragmentFolder;
    /** Fragment base folder. */
    private final Path baseFragmentFolder;
    /** Use the fragment synthesis cache */
@@ -23,9 +25,9 @@ public class AsmFragmentTemplateMasterSynthesizer {
    private Map<TargetCpu, AsmFragmentTemplateSynthesizer> synthesizers;
 
    /** Create master synthesizer. */
-   public AsmFragmentTemplateMasterSynthesizer(Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
+   public AsmFragmentTemplateMasterSynthesizer(Path cacheFragmentFolder, Path baseFragmentFolder, CompileLog log) {
+      this.cacheFragmentFolder = cacheFragmentFolder;
       this.baseFragmentFolder = baseFragmentFolder;
-      this.useFragmentCache = useFragmentCache;
       this.log = log;
       this.synthesizers = new LinkedHashMap<>();
    }
@@ -33,7 +35,7 @@ public class AsmFragmentTemplateMasterSynthesizer {
    public AsmFragmentTemplateSynthesizer getSynthesizer(TargetCpu targetCpu) {
       AsmFragmentTemplateSynthesizer synthesizer = synthesizers.get(targetCpu);
       if(synthesizer==null) {
-         synthesizer = new AsmFragmentTemplateSynthesizer(targetCpu, baseFragmentFolder, useFragmentCache, log);
+         synthesizer = new AsmFragmentTemplateSynthesizer(targetCpu, cacheFragmentFolder, baseFragmentFolder, log);
          synthesizers.put(targetCpu, synthesizer);
       }
       return synthesizer;

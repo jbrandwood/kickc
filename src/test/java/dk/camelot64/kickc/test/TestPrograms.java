@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.test;
 
-import dk.camelot64.kickc.*;
 import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.*;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -16,6 +16,7 @@ import java.io.*;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
+import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,11 +89,11 @@ public class TestPrograms {
       return log;
    }
 
-   protected void assertError(String kcFile, String expectError) throws IOException {
+   protected void assertError(String kcFile, String expectError)  {
       assertError(kcFile, expectError, true);
    }
 
-   protected void assertError(String kcFile, String expectError, boolean expectSource) throws IOException {
+   protected void assertError(String kcFile, String expectError, boolean expectSource) {
       try {
          compileAndCompare(kcFile);
       } catch(CompileError e) {
@@ -114,27 +115,27 @@ public class TestPrograms {
       fail("Expected compile error.");
    }
 
-   protected void compileAndCompare(String filename) throws IOException {
+   protected void compileAndCompare(String filename) {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, null, null);
    }
 
-   protected void compileAndCompare(String filename, CompileLog compileLog) throws IOException {
+   protected void compileAndCompare(String filename, CompileLog compileLog) {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, null, compileLog);
    }
 
-   protected void compileAndCompare(String filename, int upliftCombinations) throws IOException {
+   protected void compileAndCompare(String filename, int upliftCombinations)  {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, upliftCombinations, null);
    }
 
-   protected void compileAndCompare(String filename, int upliftCombinations, CompileLog log) throws IOException {
+   protected void compileAndCompare(String filename, int upliftCombinations, CompileLog log) {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, upliftCombinations, log);
    }
 
-   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
+   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
       //compiler.enableZeroPageCoalesce();
@@ -155,7 +156,14 @@ public class TestPrograms {
       files.add(filePath);
       Program program = compiler.getProgram();
       // Initialize the master ASM fragment synthesizer
-      program.initAsmFragmentMasterSynthesizer(true);
+      final Path targetPath;
+      try {
+         targetPath = Paths.get(getClass().getResource("/").toURI()).getParent();
+      } catch (URISyntaxException e) {
+         throw new RuntimeException("Error resolving fragment cache folder.", e);
+      }
+      final Path cacheFolder = targetPath.resolve("fragment-cache");
+      program.initAsmFragmentMasterSynthesizer(cacheFolder);
       final File platformFile = SourceLoader.loadFile(TargetPlatform.DEFAULT_NAME + "." + CTargetPlatformParser.FILE_EXTENSION, filePath, program.getTargetPlatformPaths());
       final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
       program.setTargetPlatform(targetPlatform);
@@ -176,7 +184,11 @@ public class TestPrograms {
          throw e;
       }
 
-      compileAsm(fileName, program);
+      try {
+         compileAsm(fileName, program);
+      } catch (IOException e) {
+         throw new RuntimeException("Error compiling file "+fileName, e);
+      }
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
       String baseFileName = FileNameUtils.removeExtension(fileName);

@@ -32,6 +32,11 @@ public class TestCpuFamilyKickAssCompatibility {
    }
 
    @Test
+   public void testOpcodesHuc6280() {
+      assertOpcodesMatch(CpuHuc6280.INSTANCE, CPU_HUC6280.instance);
+   }
+
+   @Test
    public void testOpcodes45GS02() {
       assertOpcodesMatch(Cpu45GS02.INSTANCE, CPU_45GS02.instance);
    }

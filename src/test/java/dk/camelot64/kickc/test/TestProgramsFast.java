@@ -555,6 +555,11 @@ public class TestProgramsFast extends TestPrograms {
    //}
 
    @Test
+   public void testCpuHuc6280() throws IOException {
+      compileAndCompare("cpu-huc6280.c");
+   }
+
+   @Test
    public void testCpu45GS02AddressingModes() throws IOException {
       compileAndCompare("cpu-45gs02-addressing-modes.c");
    }

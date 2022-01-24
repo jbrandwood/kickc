@@ -164,7 +164,8 @@ ASM_MNEMONIC:
     'rmb0'| 'rmb1'| 'rmb2'| 'rmb3'| 'rmb4'| 'rmb5'| 'rmb6'| 'rmb7'| 'smb0'| 'smb1'| 'smb2'| 'smb3'| 'smb4'| 'smb5'| 'smb6'| 'smb7'| 'stp' | 'stz' | 'trb' |
     'tsb' | 'wai' | 'cle' | 'see' | 'tsy' | 'lbpl'| 'inz' | 'tys' | 'lbmi'| 'dez' | 'neg' | 'asr' | 'taz' | 'lbvc'| 'tab' | 'map' | 'rtn' | 'lbsr'| 'tza' |
     'lbvs'| 'tba' | 'lbra'| 'lbcc'| 'ldz' | 'lbcs'| 'cpz' | 'dew' | 'asw' | 'lbne'| 'phz' | 'inw' | 'row' | 'lbeq'| 'phw' | 'plz' | 'eom' | 'adcq'| 'andq'|
-    'aslq'| 'asrq'| 'bitq'| 'cpq' | 'deq' | 'eorq'| 'inq' | 'ldq' | 'lsrq'| 'orq' | 'rolq'| 'rorq'| 'sbcq'| 'stq'
+    'aslq'| 'asrq'| 'bitq'| 'cpq' | 'deq' | 'eorq'| 'inq' | 'ldq' | 'lsrq'| 'orq' | 'rolq'| 'rorq'| 'sbcq'| 'stq' | 'sxy' | 'st0' | 'st1' | 'st2' | 'say' |
+    'tma' | 'bsr' | 'tam' | 'csl' | 'cla' | 'clx' | 'cly' | 'csh' | 'set'
     ;
 
 ASM_IMM : '#' ;

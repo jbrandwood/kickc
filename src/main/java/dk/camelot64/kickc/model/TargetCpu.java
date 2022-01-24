@@ -25,6 +25,8 @@ public enum TargetCpu {
    WDC65C02("wdc65c02", CPU_65C02.name, Cpu65C02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.WDC65C02_SPECIFIC)),
    /** CSG 65CE02 CPU - Even more addressing modes and instructions, no self-modifying code. http://www.zimmers.net/anonftp/pub/cbm/documents/chipdata/65ce02.txt  */
    CSG65CE02("csg65ce02", CPU_65CE02.name, Cpu65CE02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON)),
+   /** Hudson HuC6280 CPU - PC Engine CPU with more addressing modes and instructions, no self-modifying code. http://shu.emuunlim.com/download/pcedocs/pce_cpu.html  */
+   HUC6280("huc6280", CPU_HUC6280.name, CpuHuc6280.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.WDC65C02_COMMON, Feature.HUC6280_SPECIFIC)),
    /** 45GS02 CPU - Even more addressing modes and instructions, no self-modifying code. https://github.com/MEGA65/mega65-user-guide/blob/master/MEGA65-Book_draft.pdf  */
    MEGA45GS02("mega45gs02", CPU_45GS02.name, Cpu45GS02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON, Feature.MEGA45GS02_COMMON)),
    ///** 65C186 CPU - 16-bit instructions, 24-bit addressing modes and more instructions. http://www.westerndesigncenter.com/wdc/documentation/w65c816s.pdf  */
@@ -48,6 +50,8 @@ public enum TargetCpu {
       WDC65C02_SPECIFIC("wdc65c02-specific"),
       /** Added instructions of the CSG 65CE02 CPU that are also present on the descendant 45GS02.  http://archive.6502.org/datasheets/mos_65ce02_mpu.pdf */
       CSG65CE02_COMMON("csg65ce02-common"),
+      /** Added instructions of the HUC 6280 CPU.  https://www.chrismcovell.com/PCEdev/HuC6280_opcodes.html */
+      HUC6280_SPECIFIC("huc6280-specific"),
       /** Added instructions of the MEGA 45GS02 CPU.  https://github.com/MEGA65/mega65-user-guide/blob/master/MEGA65-Book_draft.pdf */
       MEGA45GS02_COMMON("mega45gs02-common"),
       ;

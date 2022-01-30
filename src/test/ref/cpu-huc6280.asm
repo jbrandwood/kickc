@@ -26,6 +26,8 @@ main: {
     cly
     csh
     set
+    tst #1+2,3+4
+    tst #1+2*3,$7654/2
   !:
     rts
     // }

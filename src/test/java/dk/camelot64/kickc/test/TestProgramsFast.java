@@ -10,6 +10,27 @@ import java.io.IOException;
 public class TestProgramsFast extends TestPrograms {
 
    @Test
+   public void testPointerSwap() throws IOException {
+      compileAndCompare("pointer-swap.c", log());
+   }
+
+   @Test
+   public void testDucksTotal() throws IOException {
+      compileAndCompare("ducks-total.c", log());
+   }
+
+   @Test
+   public void testDucksLoop211() throws IOException {
+      compileAndCompare("ducks-loop211.c", log());
+   }
+
+   @Test
+   public void testDucksArray() throws IOException {
+      compileAndCompare("ducks-array.c", log());
+   }
+
+
+   @Test
    public void testSepaOptimizeProblem1() throws IOException {
       compileAndCompare("sepa-optimize-problem-1.c");
    }

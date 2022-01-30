@@ -287,6 +287,11 @@ public class AsmFragmentInstance {
       }
 
       @Override
+      public Object visitAsmModeImmAndAbs(KickCParser.AsmModeImmAndAbsContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.IMMANDABS);
+      }
+
+      @Override
       public Object visitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx) {
          final KickCParser.AsmExprContext indexCtx = ctx.asmExpr(1);
          if(indexCtx instanceof KickCParser.AsmExprLabelContext) {

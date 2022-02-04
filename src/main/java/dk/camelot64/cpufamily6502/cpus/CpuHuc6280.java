@@ -17,7 +17,7 @@ public class CpuHuc6280 extends Cpu65xx {
     public final static CpuHuc6280 INSTANCE = new CpuHuc6280();
 
     public CpuHuc6280() {
-        super(NAME, Cpu65C02.INSTANCE, true);
+        super(NAME, Cpu65C02.INSTANCE, false);
 
         // The following instructions are not supported yet:
         // TST #imm, zp

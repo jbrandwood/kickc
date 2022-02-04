@@ -139,6 +139,8 @@ public class TestCpuFamilyKickAssCompatibility {
       map.put(CpuAddressingMode.ISY, Collections.singletonList(_65xxArgType.indirectStackZeropageY));
       map.put(CpuAddressingMode.REL, Arrays.asList(_65xxArgType.relative, _65xxArgType.relativeWord));
       map.put(CpuAddressingMode.REZ, Collections.singletonList(_65xxArgType.zeropageRelative));
+      map.put(CpuAddressingMode.IMMANDZP, Collections.singletonList(_65xxArgType.immediateAndZeropage));
+      map.put(CpuAddressingMode.IMMANDABS, Collections.singletonList(_65xxArgType.immediateAndAbsolute));
       return map;
    }
 

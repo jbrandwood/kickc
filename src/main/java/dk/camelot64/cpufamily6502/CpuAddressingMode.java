@@ -182,13 +182,13 @@ public enum CpuAddressingMode {
     * #imm,zp Immediate, zeropage <br>
     * IMMEDIATE ADDRESSING, ZEROPAGE — Two parameters, one immediate the other a zeropage address. Only used by HUC6280 TST.
     */
-   IMMANDZP("#imm,zp", "%i #%p,%q", 3),
+   IMMANDZP("#imm,zp", "%i #%p,%q", 2),
 
    /**
     * #imm,abs Immediate, absolute <br>
     * IMMEDIATE ADDRESSING, ABSOLUTE — Two parameters, one immediate the other an absolute address. Only used by HUC6280 TST.
     */
-   IMMANDABS("#imm,abs", "%i #%p,%q", 4);
+   IMMANDABS("#imm,abs", "%i #%p,%q", 3);
 
 
    /** The short name of the addressing mode. */

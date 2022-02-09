@@ -20,6 +20,13 @@ public enum CpuAddressingMode {
    IMM("#imm", "%i #%p", 1),
 
    /**
+    * #imw Immediate Word<br>
+    * IMMEDIATE WORD ADDRESSING — In immediate word addressing, the operand is contained in the second and third byte
+    * of the instruction, with no further memory addressing required.
+    */
+   IMW("#imw", "%i #%p", 2),
+
+   /**
     * zp Zeropage <br>
     * ZERO PAGE ADDRESSING — The zero page instructions allow for shorter code and execution times by only fetching the
     * second byte of the instruction and assuming a zero high address byte. Careful use of the zero page can result in
@@ -169,6 +176,15 @@ public enum CpuAddressingMode {
     * of the offset is — 128 to + 127 bytes from the next instruction."
     */
    REL("rel", "%i %p", 1),
+
+   /**
+    * Relative Word<br>
+    * RELATIVE WORD ADDRESSING — Relative addressing is used only with branch instructions and establishes a destination for
+    * the conditional branch. The second byte of-the instruction becomes the operand which is an “Offset"" added to the
+    * contents of the program counter when the counter is set at the next instruction. The range
+    * of the offset is — 32768 to + 32767 bytes from the next instruction."
+    */
+   REW("rew", "%i %p", 2),
 
    /**
     * zp,rel Zeropage Test Relative

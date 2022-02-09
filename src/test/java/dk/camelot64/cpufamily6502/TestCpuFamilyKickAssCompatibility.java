@@ -121,7 +121,8 @@ public class TestCpuFamilyKickAssCompatibility {
    Map<CpuAddressingMode, List<_65xxArgType>> getKAAddressingModeMap() {
       final HashMap<CpuAddressingMode, List<_65xxArgType>> map = new HashMap<>();
       map.put(CpuAddressingMode.NON, Collections.singletonList(_65xxArgType.noArgument));
-      map.put(CpuAddressingMode.IMM, Arrays.asList(_65xxArgType.immediate, _65xxArgType.immediateWord));
+      map.put(CpuAddressingMode.IMM, Collections.singletonList(_65xxArgType.immediate));
+      map.put(CpuAddressingMode.IMW, Collections.singletonList(_65xxArgType.immediateWord));
       map.put(CpuAddressingMode.ZP, Collections.singletonList(_65xxArgType.zeropage));
       map.put(CpuAddressingMode.ZPX, Collections.singletonList(_65xxArgType.zeropageX));
       map.put(CpuAddressingMode.ZPY, Collections.singletonList(_65xxArgType.zeropageY));

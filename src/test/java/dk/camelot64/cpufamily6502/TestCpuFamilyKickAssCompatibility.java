@@ -62,7 +62,7 @@ public class TestCpuFamilyKickAssCompatibility {
 
          assertNotNull(kcOpcode.getMnemonic(), "KickAss CPU " + kaCpu.name + " does not know the KickC CPU " + kcCpu.getName() + " mnemonic");
          final List<_65xxArgType> kaArgTypes = kaAddressingModeMap.get(kcOpcode.getAddressingMode());
-         assertNotNull(kaArgTypes, "KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName());
+            assertNotNull(kaArgTypes, "KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName());
          // Try each argtype to find the one that works
          boolean found = false;
          for(_65xxArgType kaArgType : kaArgTypes) {
@@ -138,7 +138,8 @@ public class TestCpuFamilyKickAssCompatibility {
       map.put(CpuAddressingMode.LIN, Collections.singletonList(_65xxArgType.indirect32Zeropage));
       map.put(CpuAddressingMode.LIZ, Collections.singletonList(_65xxArgType.indirect32ZeropageZ));
       map.put(CpuAddressingMode.ISY, Collections.singletonList(_65xxArgType.indirectStackZeropageY));
-      map.put(CpuAddressingMode.REL, Arrays.asList(_65xxArgType.relative, _65xxArgType.relativeWord));
+      map.put(CpuAddressingMode.REL, Collections.singletonList(_65xxArgType.relative));
+      map.put(CpuAddressingMode.REW, Collections.singletonList(_65xxArgType.relativeWord));
       map.put(CpuAddressingMode.REZ, Collections.singletonList(_65xxArgType.zeropageRelative));
       map.put(CpuAddressingMode.IMMANDZP, Collections.singletonList(_65xxArgType.immediateAndZeropage));
       map.put(CpuAddressingMode.IMMANDABS, Collections.singletonList(_65xxArgType.immediateAndAbsolute));

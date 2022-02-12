@@ -138,13 +138,26 @@ public class Cpu65xx {
       if(CpuAddressingMode.IAX.equals(addressingMode) && isOperandZp) {
          cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZX);
       }
+      if(CpuAddressingMode.IAB.equals(addressingMode) && isOperandZp) {
+         cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZP);
+      }
+      if(CpuAddressingMode.IABX.equals(addressingMode) && isOperandZp) {
+         cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZPX);
+      }
       if(cpuOpcode == null) {
          // If the ZP-form does not exist use the ABS-variation
          cpuOpcode = getOpcode(mnemonic, addressingMode);
       }
+      if(cpuOpcode == null && CpuAddressingMode.IMM.equals(addressingMode)) {
+          // If the IMM-form does not exist try #imw (immediate word)
+          cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IMW);
+      }
       if(cpuOpcode == null && CpuAddressingMode.ABS.equals(addressingMode)) {
          // If the ABS-form does not exist try REL
          cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.REL);
+         // If the REL-form does not exist try REW
+         if(cpuOpcode==null)
+            cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.REW);
       }
       return cpuOpcode;
    }

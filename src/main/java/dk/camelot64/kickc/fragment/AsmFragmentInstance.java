@@ -287,6 +287,16 @@ public class AsmFragmentInstance {
       }
 
       @Override
+      public Object visitAsmModeImmAndAbs(KickCParser.AsmModeImmAndAbsContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.IAB);
+      }
+
+      @Override
+      public Object visitAsmModeImmAndAbsX(KickCParser.AsmModeImmAndAbsXContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.IABX);
+      }
+
+      @Override
       public Object visitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx) {
          final KickCParser.AsmExprContext indexCtx = ctx.asmExpr(1);
          if(indexCtx instanceof KickCParser.AsmExprLabelContext) {
@@ -370,13 +380,22 @@ public class AsmFragmentInstance {
          String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
          AsmParameter param1 = operand1Ctx == null ? null : (AsmParameter) this.visit(operand1Ctx);
          AsmParameter param2 = operand2Ctx == null ? null : (AsmParameter) this.visit(operand2Ctx);
+
          // Convert to ZP-addressing mode if possible
+
          boolean isZp = param1 != null && param1.isZp();
+
+         if(CpuAddressingMode.IAB.equals(addressingMode) || CpuAddressingMode.IABX.equals(addressingMode)) {
+            // For the HuC6280 CPU TST #imm,abs addressing mode it is param2 that can converted the instruction to ZP
+            isZp = param2 != null && param2.isZp();
+         }
+
          CpuOpcode cpuOpcode = this.getAsmProgram().getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, isZp);
          if(!isZp && cpuOpcode==null) {
             // Fallback to ZP-addressing
             cpuOpcode = this.getAsmProgram().getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, true);
          }
+
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
          if(cpuOpcode == null) {

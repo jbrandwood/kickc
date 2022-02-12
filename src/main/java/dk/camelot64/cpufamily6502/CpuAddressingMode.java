@@ -20,6 +20,13 @@ public enum CpuAddressingMode {
    IMM("#imm", "%i #%p", 1),
 
    /**
+    * #imw Immediate Word<br>
+    * IMMEDIATE WORD ADDRESSING — In immediate word addressing, the operand is contained in the second and third byte
+    * of the instruction, with no further memory addressing required.
+    */
+   IMW("#imw", "%i #%p", 2),
+
+   /**
     * zp Zeropage <br>
     * ZERO PAGE ADDRESSING — The zero page instructions allow for shorter code and execution times by only fetching the
     * second byte of the instruction and assuming a zero high address byte. Careful use of the zero page can result in
@@ -171,12 +178,45 @@ public enum CpuAddressingMode {
    REL("rel", "%i %p", 1),
 
    /**
+    * Relative Word<br>
+    * RELATIVE WORD ADDRESSING — Relative addressing is used only with branch instructions and establishes a destination for
+    * the conditional branch. The second byte of-the instruction becomes the operand which is an “Offset"" added to the
+    * contents of the program counter when the counter is set at the next instruction. The range
+    * of the offset is — 32768 to + 32767 bytes from the next instruction."
+    */
+   REW("rew", "%i %p", 2),
+
+   /**
     * zp,rel Zeropage Test Relative
     * ZEROPAGE TEST RELATIVE. It needs two one-byte operands, one for the zero page address that is used for the bit
     * test, and one indicating the signed relative PC offset if the branch is taken. This makes BBRi and BBSi the single
     * instructions with two explicit operands.
     */
-   REZ("zp,rel", "%i %p,%q", 2);
+   REZ("zp,rel", "%i %p,%q", 2),
+
+   /**
+    * #imm,zp Immediate, zeropage <br>
+    * IMMEDIATE ADDRESSING, ZEROPAGE — Two parameters, one immediate the other a zeropage address. Only used by HUC6280 TST.
+    */
+   IZP("#imm,zp", "%i.z #%p,%q", 2),
+
+   /**
+    * #imm,abs Immediate, absolute <br>
+    * IMMEDIATE ADDRESSING, ABSOLUTE — Two parameters, one immediate the other an absolute address. Only used by HUC6280 TST.
+    */
+   IAB("#imm,abs", "%i #%p,%q", 3),
+
+   /**
+    * #imm,zp,x Immediate, zeropage, x <br>
+    * IMMEDIATE ADDRESSING, ZEROPAGE — Two parameters, one immediate the other a zeropage address. Only used by HUC6280 TST.
+    */
+   IZPX("#imm,zp,x", "%i.z #%p,%q,x", 2),
+
+   /**
+    * #imm,abs,x Immediate, absolute,x <br>
+    * IMMEDIATE ADDRESSING, ABSOLUTE — Two parameters, one immediate the other an absolute address. Only used by HUC6280 TST.
+    */
+   IABX("#imm,abs,x", "%i #%p,%q,x", 3);
 
    /** The short name of the addressing mode. */
    private String name;

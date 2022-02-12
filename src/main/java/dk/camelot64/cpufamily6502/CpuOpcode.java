@@ -66,18 +66,13 @@ public class CpuOpcode {
       return cycles;
    }
 
-   /** Opcodes that use an extra byte for their operand that the addressing mode reports. This is immediate word and long branches.
-    * The format of the string is <code>mnemonic + " " +  addressingMode</code> */
-   public static List<String> LONG_MNEMONICS = Arrays.asList("phw #imm", "lbra rel", "lbne rel", "lbeq rel", "lbcc rel", "lbcs rel", "lbmi rel", "lbpl rel", "lbvs rel", "lbvc rel", "lbsr rel" );
-
    /**
     * Get the number of bytes the instruction with operands takes up in memory
     *
     * @return The number of bytes.
     */
    public int getBytes() {
-      final int numBytes = opcode.length + addressingMode.getBytes() + (LONG_MNEMONICS.contains(mnemonic+" "+addressingMode.getName())?1:0);
-      return numBytes;
+      return opcode.length + addressingMode.getBytes();
    }
 
    /**

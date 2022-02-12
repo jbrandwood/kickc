@@ -45,8 +45,10 @@ public class CpuHuc6280 extends Cpu65xx {
         addOpcode(0xc2,"cly", CpuAddressingMode.NON,2,"Y");
         addOpcode(0xd4,"csh", CpuAddressingMode.NON,2,"");
         addOpcode(0xf4,"set", CpuAddressingMode.NON,2,"");
-        addOpcode(0x83,"tst", CpuAddressingMode.IMMANDZP,7,"vnz");
-        addOpcode(0xA3,"tst", CpuAddressingMode.IMMANDABS,8,"vnz");
+        addOpcode(0x83,"tst", CpuAddressingMode.IZP,7,"vnz");
+        addOpcode(0x93,"tst", CpuAddressingMode.IAB,8,"vnz");
+        addOpcode(0xA3,"tst", CpuAddressingMode.IZPX,7,"vnz");
+        addOpcode(0xB3,"tst", CpuAddressingMode.IABX,8,"vnz");
     }
 
 }

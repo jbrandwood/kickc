@@ -141,12 +141,11 @@ public class TestCpuFamilyKickAssCompatibility {
       map.put(CpuAddressingMode.REL, Collections.singletonList(_65xxArgType.relative));
       map.put(CpuAddressingMode.REW, Collections.singletonList(_65xxArgType.relativeWord));
       map.put(CpuAddressingMode.REZ, Collections.singletonList(_65xxArgType.zeropageRelative));
-      map.put(CpuAddressingMode.IMMANDZP, Collections.singletonList(_65xxArgType.immediateAndZeropage));
-      map.put(CpuAddressingMode.IMMANDABS, Collections.singletonList(_65xxArgType.immediateAndAbsolute));
+      map.put(CpuAddressingMode.IZP, Collections.singletonList(_65xxArgType.immediateAndZeropage));
+      map.put(CpuAddressingMode.IAB, Collections.singletonList(_65xxArgType.immediateAndAbsolute));
+      map.put(CpuAddressingMode.IZPX, Collections.singletonList(_65xxArgType.immediateAndZeropageX));
+      map.put(CpuAddressingMode.IABX, Collections.singletonList(_65xxArgType.immediateAndAbsoluteX));
       return map;
    }
-
-
-   // map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey))
 
 }

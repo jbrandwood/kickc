@@ -306,6 +306,7 @@ asmParamMode
     | ASM_PAR_BEGIN asmExpr ASM_PAR_END  #asmModeInd
     | ASM_PAR_BEGIN ASM_PAR_BEGIN asmExpr ASM_PAR_END ASM_PAR_END  #asmModeIndLong
     | ASM_IMM asmExpr ASM_COMMA asmExpr #asmModeImmAndAbs
+    | ASM_IMM asmExpr ASM_COMMA asmExpr ASM_COMMA ASM_NAME #asmModeImmAndAbsX
     ;
 
 asmExpr

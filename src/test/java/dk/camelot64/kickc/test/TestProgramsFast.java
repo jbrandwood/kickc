@@ -11,22 +11,22 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testPointerSwap() throws IOException {
-      compileAndCompare("pointer-swap.c", log());
+      compileAndCompare("pointer-swap.c");
    }
 
    @Test
    public void testDucksTotal() throws IOException {
-      compileAndCompare("ducks-total.c", log());
+      compileAndCompare("ducks-total.c");
    }
 
    @Test
    public void testDucksLoop211() throws IOException {
-      compileAndCompare("ducks-loop211.c", log());
+      compileAndCompare("ducks-loop211.c");
    }
 
    @Test
    public void testDucksArray() throws IOException {
-      compileAndCompare("ducks-array.c", log());
+      compileAndCompare("ducks-array.c");
    }
 
 
@@ -574,6 +574,11 @@ public class TestProgramsFast extends TestPrograms {
    //public void testLibraryConstructor0() throws IOException {
    //   compileAndCompare("library-constructor-0.c");
    //}
+
+   @Test
+   public void testCpuHuc6280Tst() throws IOException {
+      compileAndCompare("cpu-huc6280-tst.c");
+   }
 
    @Test
    public void testCpuHuc6280() throws IOException {

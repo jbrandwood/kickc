@@ -138,6 +138,12 @@ public class Cpu65xx {
       if(CpuAddressingMode.IAX.equals(addressingMode) && isOperandZp) {
          cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZX);
       }
+      if(CpuAddressingMode.IAB.equals(addressingMode) && isOperandZp) {
+         cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZP);
+      }
+      if(CpuAddressingMode.IABX.equals(addressingMode) && isOperandZp) {
+         cpuOpcode = getOpcode(mnemonic, CpuAddressingMode.IZPX);
+      }
       if(cpuOpcode == null) {
          // If the ZP-form does not exist use the ABS-variation
          cpuOpcode = getOpcode(mnemonic, addressingMode);

@@ -46,10 +46,14 @@ void main() {
         // 65C02: ($1234,X)
         jmp ($1234,x)
         lbl3:
+        // 45GS02: 32bit Indirect,Z
+        ldq ($12),z
         // 45GS02: Indirect Long,Z
         lda (($12)),z
-        // 45GS02: Indirect Long
-        ldq (($12))
+        // 45GS02: 32bit Indirect Long,Z
+        ldq (($12)),z
+        // 45GS02: 32bit Indirect Long
+        stq (($12))
     }
 
 }

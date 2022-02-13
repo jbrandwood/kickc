@@ -32,8 +32,10 @@ main: {
   lbl2:
     jmp ($1234,x)
   lbl3:
+    ldq ($12),z
     lda (($12)),z
-    ldq (($12))
+    ldq (($12)),z
+    stq (($12))
     // }
     rts
 }

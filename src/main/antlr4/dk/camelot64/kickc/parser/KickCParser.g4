@@ -298,7 +298,8 @@ asmBytes
 asmParamMode
     : asmExpr #asmModeAbs
     | ASM_IMM asmExpr #asmModeImm
-    | asmExpr ASM_COMMA asmExpr #asmModeAbsXY
+    | asmExpr ASM_COMMA asmExpr #asmModeAbs2
+    | asmExpr ASM_COMMA asmExpr ASM_COMMA asmExpr #asmModeAbs3
     | ASM_PAR_BEGIN asmExpr ASM_PAR_END ASM_COMMA ASM_NAME #asmModeIndIdxXY
     | ASM_PAR_BEGIN ASM_PAR_BEGIN asmExpr ASM_PAR_END ASM_PAR_END ASM_COMMA ASM_NAME #asmModeIndLongIdxXY
     | ASM_PAR_BEGIN asmExpr ASM_COMMA ASM_NAME ASM_PAR_END ASM_COMMA ASM_NAME #asmModeSPIndIdx

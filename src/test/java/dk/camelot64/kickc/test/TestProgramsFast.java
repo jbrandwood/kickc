@@ -576,6 +576,11 @@ public class TestProgramsFast extends TestPrograms {
    //}
 
    @Test
+   public void testCpuHuc6280Transfer() throws IOException {
+      compileAndCompare("cpu-huc6280-transfer.c");
+   }
+
+   @Test
    public void testCpuHuc6280Tst() throws IOException {
       compileAndCompare("cpu-huc6280-tst.c");
    }

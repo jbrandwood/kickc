@@ -94,8 +94,8 @@ public class CpuOpcode {
     * @param operand2 The second operand value (only used for addressing mode Zeropage Test Relative)
     * @return The printed ASM code for the instruction
     */
-   public String getAsm(String operand, String operand2) {
-      return addressingMode.getAsm(mnemonic, operand, operand2);
+   public String getAsm(String operand, String operand2, String operand3) {
+      return addressingMode.getAsm(mnemonic, operand, operand2, operand3);
    }
 
    /**

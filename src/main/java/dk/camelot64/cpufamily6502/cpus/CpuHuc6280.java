@@ -18,18 +18,6 @@ public class CpuHuc6280 extends Cpu65xx {
 
     public CpuHuc6280() {
         super(NAME, Cpu65C02.INSTANCE, true);
-
-        // The following instructions are not supported yet:
-        // TST #imm, zp
-        // TST #imm, zp,x
-        // TST #imm, abs
-        // TST #imm, abs,x
-        // TII SHSL,DHDL, LHLL
-        // TIN SHSL,DHDL, LHLL
-        // TDD SHSL,DHDL, LHLL
-        // TIA SHSL,DHDL, LHLL
-        // TAI SHSL,DHDL, LHLL
-
         addOpcode(0x02,"sxy", CpuAddressingMode.NON,3,"XY");
         addOpcode(0x03,"st0", CpuAddressingMode.IMM,4,"");
         addOpcode(0x13,"st1", CpuAddressingMode.IMM,4,"");
@@ -49,6 +37,10 @@ public class CpuHuc6280 extends Cpu65xx {
         addOpcode(0x93,"tst", CpuAddressingMode.IAB,8,"vnz");
         addOpcode(0xA3,"tst", CpuAddressingMode.IZPX,7,"vnz");
         addOpcode(0xB3,"tst", CpuAddressingMode.IABX,8,"vnz");
+        addOpcode(0xE3,"tia", CpuAddressingMode.ABS3,71,"");
+        addOpcode(0xC3,"tdd", CpuAddressingMode.ABS3,71,"");
+        addOpcode(0xD3,"tin", CpuAddressingMode.ABS3,71,"");
+        addOpcode(0x73,"tii", CpuAddressingMode.ABS3,71,"");
     }
 
 }

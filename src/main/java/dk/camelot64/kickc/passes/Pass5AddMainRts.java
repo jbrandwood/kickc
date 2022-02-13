@@ -55,7 +55,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
    }
 
    private void addRts(ListIterator<AsmLine> lineIterator) {
-      lineIterator.add(new AsmInstruction(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("rts", CpuAddressingMode.NON, false), null, null));
+      lineIterator.add(new AsmInstruction(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("rts", CpuAddressingMode.NON, false), null, null, null));
       getLog().append("Adding RTS to root block ");
    }
 

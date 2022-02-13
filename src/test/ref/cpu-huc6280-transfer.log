@@ -1,0 +1,142 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  asm { tia1,2,3 tdd$1000,$2000,$0800 tii$1000+4*8,$2000+4*8,$0800+4*8 tinSCREEN,$2000,40*24 rts  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+__constant char * const main::SCREEN = (char *)$400
+
+Simplifying constant pointer cast (char *) 1024
+Successful SSA optimization PassNCastSimplification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  asm { tia1,2,3 tdd$1000,$2000,$0800 tii$1000+4*8,$2000+4*8,$0800+4*8 tinSCREEN,$2000,40*24 rts  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 299 combination 
+Uplifting [] best 299 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests the HUC6280 instructions
+  // Upstart
+.cpu _huc6280
+  // Commodore 64 PRG executable file
+.file [name="cpu-huc6280-transfer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // asm { tia1,2,3 tdd$1000,$2000,$0800 tii$1000+4*8,$2000+4*8,$0800+4*8 tinSCREEN,$2000,40*24 rts  }
+    tia 1,2,3
+    tdd $1000,$2000,$800
+    tii $1000+4*8,$2000+4*8,$800+4*8
+    tin SCREEN,$2000,$28*$18
+    rts
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing unreachable instruction rts
+Succesful ASM optimization Pass5UnreachableCodeElimination
+
+FINAL SYMBOL TABLE
+void main()
+__constant char * const main::SCREEN = (char *) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 290
+
+  // File Comments
+// Tests the HUC6280 instructions
+  // Upstart
+.cpu _huc6280
+  // Commodore 64 PRG executable file
+.file [name="cpu-huc6280-transfer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label SCREEN = $400
+    // asm
+    // asm { tia1,2,3 tdd$1000,$2000,$0800 tii$1000+4*8,$2000+4*8,$0800+4*8 tinSCREEN,$2000,40*24 rts  }
+    tia 1,2,3
+    tdd $1000,$2000,$800
+    tii $1000+4*8,$2000+4*8,$800+4*8
+    tin SCREEN,$2000,$28*$18
+    rts
+    // main::@return
+    // }
+    // [1] return 
+}
+  // File Data
+

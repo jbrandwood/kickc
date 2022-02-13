@@ -165,7 +165,7 @@ ASM_MNEMONIC:
     'tsb' | 'wai' | 'cle' | 'see' | 'tsy' | 'lbpl'| 'inz' | 'tys' | 'lbmi'| 'dez' | 'neg' | 'asr' | 'taz' | 'lbvc'| 'tab' | 'map' | 'rtn' | 'lbsr'| 'tza' |
     'lbvs'| 'tba' | 'lbra'| 'lbcc'| 'ldz' | 'lbcs'| 'cpz' | 'dew' | 'asw' | 'lbne'| 'phz' | 'inw' | 'row' | 'lbeq'| 'phw' | 'plz' | 'eom' | 'adcq'| 'andq'|
     'aslq'| 'asrq'| 'bitq'| 'cpq' | 'deq' | 'eorq'| 'inq' | 'ldq' | 'lsrq'| 'orq' | 'rolq'| 'rorq'| 'sbcq'| 'stq' | 'sxy' | 'st0' | 'st1' | 'st2' | 'say' |
-    'tma' | 'bsr' | 'tam' | 'csl' | 'cla' | 'clx' | 'cly' | 'csh' | 'set' | 'tst'
+    'tma' | 'bsr' | 'tam' | 'csl' | 'cla' | 'clx' | 'cly' | 'csh' | 'set' | 'tst' | 'tia' | 'tdd' | 'tin' | 'tii'
     ;
 
 ASM_IMM : '#' ;

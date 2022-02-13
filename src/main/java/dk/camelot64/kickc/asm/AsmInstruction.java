@@ -13,13 +13,17 @@ public class AsmInstruction extends AsmLine {
    /** The ASM opcode parameter. Null if the opcode addressing mode is Implied/A/None {@link CpuAddressingMode#NON} - eg. DEX */
    private String operand1;
 
-   /** The second ASM opcode parameter. Null if not used. Only used for addressing mode Zeropage Test Relative  {@link CpuAddressingMode#REZ} - eg. BBR0 $12,label */
+   /** The second ASM opcode parameter. Null if not used. Used for addressing modes with 2+ parameters such as {@link CpuAddressingMode#REZ} - eg. `BBR0 $12,label` */
    private String operand2;
 
-   public AsmInstruction(CpuOpcode cpuOpcode, String operand1, String operand2) {
+   /** The third ASM opcode parameter. Null if not used. Used for addressing modes with 3+ parameters such as {@link CpuAddressingMode#ABS3} - eg. `tia src,dest,cnt` */
+   private String operand3;
+
+   public AsmInstruction(CpuOpcode cpuOpcode, String operand1, String operand2, String operand3) {
       this.cpuOpcode = cpuOpcode;
       this.operand1 = operand1;
       this.operand2 = operand2;
+      this.operand3 = operand3;
    }
 
    public String getOperand1() {
@@ -36,6 +40,14 @@ public class AsmInstruction extends AsmLine {
 
    public void setOperand2(String operand2) {
       this.operand2 = operand2;
+   }
+
+   public String getOperand3() {
+      return operand3;
+   }
+
+   public void setOperand3(String operand3) {
+      this.operand3 = operand3;
    }
 
    public CpuOpcode getCpuOpcode() {
@@ -58,7 +70,7 @@ public class AsmInstruction extends AsmLine {
 
    @Override
    public String getAsm() {
-      return cpuOpcode.getAsm(operand1, operand2);
+      return cpuOpcode.getAsm(operand1, operand2, operand3);
    }
 
    @Override
@@ -103,6 +115,4 @@ public class AsmInstruction extends AsmLine {
 
    }
 
-
-
-   }
+}

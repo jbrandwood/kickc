@@ -216,7 +216,13 @@ public enum CpuAddressingMode {
     * #imm,abs,x Immediate, absolute,x <br>
     * IMMEDIATE ADDRESSING, ABSOLUTE — Two parameters, one immediate the other an absolute address. Only used by HUC6280 TST.
     */
-   IABX("#imm,abs,x", "%i #%p,%q,x", 3);
+   IABX("#imm,abs,x", "%i #%p,%q,x", 3),
+
+   /**
+    * abs,abs,abs Absolute, Absolute, Absolute <br>
+    * ABSOLUTE *3 — Three absolute address parameters. Used by HUC6280 transfer instructions `tia` `tdd`, `tin`, `tii`.
+    */
+   ABS3("abs,abs,abs", "%i %p,%q,%r", 6);
 
    /** The short name of the addressing mode. */
    private String name;
@@ -255,16 +261,20 @@ public enum CpuAddressingMode {
     *
     * @param mnemnonic The opcode mnemonic
     * @param operand The operand value. Null if addressing mode is Implied/A/None
-    * @param operand2 The second operand value (only used for addressing mode Zeropage Test Relative)
+    * @param operand2 The second operand value (used for addressing modes with 2+ parameters)
+    * @param operand3 The second operand value (used for addressing modes with 3+ parameters)
     * @return The printed ASM code for the instruction
     */
-   public String getAsm(String mnemnonic, String operand, String operand2) {
+   public String getAsm(String mnemnonic, String operand, String operand2, String operand3) {
       String replaced = template.replace("%i", mnemnonic);
       if(operand != null) {
          replaced = replaced.replace("%p", operand);
       }
       if(operand2 != null) {
          replaced = replaced.replace("%q", operand2);
+      }
+      if(operand3 != null) {
+         replaced = replaced.replace("%r", operand3);
       }
       return replaced;
    }

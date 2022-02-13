@@ -147,7 +147,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                String newLabel = AsmFormat.asmFix("!" + branchDest);
                asmInstruction.setOperandJumpTarget(newLabel + "+");
                CpuOpcode jmpOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("jmp", CpuAddressingMode.ABS, false);
-               AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest, null);
+               AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest, null, null);
                asmChunk.addLineAfter(asmInstruction, jmpInstruction);
                asmChunk.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
                return true;

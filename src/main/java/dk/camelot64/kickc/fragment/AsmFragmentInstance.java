@@ -264,7 +264,7 @@ public class AsmFragmentInstance {
          KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();
          AsmInstruction instruction;
          if(paramModeCtx == null) {
-            instruction = createAsmInstruction(ctx, null, null, CpuAddressingMode.NON);
+            instruction = createAsmInstruction(ctx, null, null, null, CpuAddressingMode.NON);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
@@ -278,46 +278,52 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmModeAbs(KickCParser.AsmModeAbsContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.ABS);
+         return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.ABS);
       }
 
       @Override
       public Object visitAsmModeImm(KickCParser.AsmModeImmContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.IMM);
+         return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.IMM);
       }
 
       @Override
       public Object visitAsmModeImmAndAbs(KickCParser.AsmModeImmAndAbsContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.IAB);
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), null, CpuAddressingMode.IAB);
       }
 
       @Override
       public Object visitAsmModeImmAndAbsX(KickCParser.AsmModeImmAndAbsXContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.IABX);
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), null, CpuAddressingMode.IABX);
       }
 
       @Override
-      public Object visitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx) {
+      public Object visitAsmModeAbs2(KickCParser.AsmModeAbs2Context ctx) {
          final KickCParser.AsmExprContext indexCtx = ctx.asmExpr(1);
          if(indexCtx instanceof KickCParser.AsmExprLabelContext) {
             final String xy = ((KickCParser.AsmExprLabelContext) indexCtx).ASM_NAME().getText();
             if(xy.equals("x")) {
-               return createAsmInstruction(ctx, ctx.asmExpr(0), null, CpuAddressingMode.ABX);
+               return createAsmInstruction(ctx, ctx.asmExpr(0), null, null, CpuAddressingMode.ABX);
             } else if(xy.equals("y")) {
-               return createAsmInstruction(ctx, ctx.asmExpr(0), null, CpuAddressingMode.ABY);
+               return createAsmInstruction(ctx, ctx.asmExpr(0), null, null, CpuAddressingMode.ABY);
             }
          }
          // Test Relative Addressing Mode (2 parameters)
-         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), CpuAddressingMode.REZ);
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), null, CpuAddressingMode.REZ);
+      }
+
+      @Override
+      public Object visitAsmModeAbs3(KickCParser.AsmModeAbs3Context ctx) {
+         // Abs*3 Addressing Mode (3 parameters)
+         return createAsmInstruction(ctx, ctx.asmExpr(0), ctx.asmExpr(1), ctx.asmExpr(2), CpuAddressingMode.ABS3);
       }
 
       @Override
       public Object visitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx) {
          String xy = ctx.ASM_NAME().getText();
          if(xy.equals("y")) {
-            return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.IZY);
+            return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.IZY);
          } else if(xy.equals("z")) {
-            return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.IZZ);
+            return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.IZZ);
          } else {
             throw new RuntimeException("Unknown addressing mode " + ctx.getText());
          }
@@ -327,7 +333,7 @@ public class AsmFragmentInstance {
       public Object visitAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx) {
          String xy = ctx.ASM_NAME().getText();
          if(xy.equals("z")) {
-            return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.LIZ);
+            return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.LIZ);
          } else {
             throw new RuntimeException("Unknown addressing mode " + ctx.getText());
          }
@@ -337,7 +343,7 @@ public class AsmFragmentInstance {
       public Object visitAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx) {
          String xy = ctx.ASM_NAME().getText();
          if(xy.equals("x")) {
-            return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.IAX);
+            return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.IAX);
          } else {
             throw new RuntimeException("Unknown addressing mode " + ctx.getText());
          }
@@ -348,7 +354,7 @@ public class AsmFragmentInstance {
          String sp = ctx.ASM_NAME(0).getText();
          String y = ctx.ASM_NAME(1).getText();
          if(sp.equals("sp") && y.equals("y")) {
-            return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.ISY);
+            return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.ISY);
          } else {
             throw new RuntimeException("Unknown addressing mode " + ctx.getText());
          }
@@ -356,30 +362,33 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmModeInd(KickCParser.AsmModeIndContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.IND);
+         return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.IND);
       }
 
       @Override
       public Object visitAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx) {
-         return createAsmInstruction(ctx, ctx.asmExpr(), null, CpuAddressingMode.LIN);
+         return createAsmInstruction(ctx, ctx.asmExpr(), null, null, CpuAddressingMode.LIN);
       }
 
       private AsmInstruction createAsmInstruction(
             KickCParser.AsmParamModeContext paramModeCtx,
             KickCParser.AsmExprContext operand1Ctx,
             KickCParser.AsmExprContext operand2Ctx,
+            KickCParser.AsmExprContext operand3Ctx,
             CpuAddressingMode addressingMode) {
-         return createAsmInstruction((KickCParser.AsmInstructionContext) paramModeCtx.getParent(), operand1Ctx, operand2Ctx, addressingMode);
+         return createAsmInstruction((KickCParser.AsmInstructionContext) paramModeCtx.getParent(), operand1Ctx, operand2Ctx, operand3Ctx, addressingMode);
       }
 
       private AsmInstruction createAsmInstruction(
             KickCParser.AsmInstructionContext instructionCtx,
             KickCParser.AsmExprContext operand1Ctx,
             KickCParser.AsmExprContext operand2Ctx,
+            KickCParser.AsmExprContext operand3Ctx,
             CpuAddressingMode addressingMode) {
          String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
          AsmParameter param1 = operand1Ctx == null ? null : (AsmParameter) this.visit(operand1Ctx);
          AsmParameter param2 = operand2Ctx == null ? null : (AsmParameter) this.visit(operand2Ctx);
+         AsmParameter param3 = operand3Ctx == null ? null : (AsmParameter) this.visit(operand3Ctx);
 
          // Convert to ZP-addressing mode if possible
 
@@ -398,10 +407,13 @@ public class AsmFragmentInstance {
 
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
+         String operand3 = param3 == null ? null : param3.getParam();
          if(cpuOpcode == null) {
-            throw new CompileError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) + " by CPU " + this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
+            throw new CompileError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2, operand3) + " by CPU " + this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
          }
-         return new AsmInstruction(cpuOpcode, operand1, operand2);
+
+
+         return new AsmInstruction(cpuOpcode, operand1, operand2, operand3);
       }
 
       @Override

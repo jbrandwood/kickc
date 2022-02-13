@@ -145,6 +145,7 @@ public class TestCpuFamilyKickAssCompatibility {
       map.put(CpuAddressingMode.IAB, Collections.singletonList(_65xxArgType.immediateAndAbsolute));
       map.put(CpuAddressingMode.IZPX, Collections.singletonList(_65xxArgType.immediateAndZeropageX));
       map.put(CpuAddressingMode.IABX, Collections.singletonList(_65xxArgType.immediateAndAbsoluteX));
+      map.put(CpuAddressingMode.ABS3, Collections.singletonList(_65xxArgType.absoluteAbsoluteAbsolute));
       return map;
    }
 

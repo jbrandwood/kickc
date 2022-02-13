@@ -17,7 +17,7 @@ public class CpuHuc6280 extends Cpu65xx {
     public final static CpuHuc6280 INSTANCE = new CpuHuc6280();
 
     public CpuHuc6280() {
-        super(NAME, Cpu65C02.INSTANCE, true);
+        super(NAME, Cpu65C02.INSTANCE, false);
         addOpcode(0x02,"sxy", CpuAddressingMode.NON,3,"XY");
         addOpcode(0x03,"st0", CpuAddressingMode.IMM,4,"");
         addOpcode(0x13,"st1", CpuAddressingMode.IMM,4,"");

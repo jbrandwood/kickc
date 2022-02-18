@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start
-  asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: lda(($12)),z ldq(($12))  }
+  asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: ldq($12),z lda(($12)),z ldq(($12)),z stq(($12))  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -41,7 +41,7 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: lda(($12)),z ldq(($12))  }
+  asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: ldq($12),z lda(($12)),z ldq(($12)),z stq(($12))  }
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -54,14 +54,14 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: lda(($12)),z ldq(($12))  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: ldq($12),z lda(($12)),z ldq(($12)),z stq(($12))  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 106 combination 
-Uplifting [] best 106 combination 
+Uplifting [main] best 129 combination 
+Uplifting [] best 129 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -80,7 +80,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: lda(($12)),z ldq(($12))  }
+    // asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: ldq($12),z lda(($12)),z ldq(($12)),z stq(($12))  }
     inx
     lda #$12
     phw #$1234
@@ -102,8 +102,10 @@ main: {
   lbl2:
     jmp ($1234,x)
   lbl3:
+    ldq ($12),z
     lda (($12)),z
-    ldq (($12))
+    ldq (($12)),z
+    stq (($12))
     jmp __breturn
     // main::@return
   __breturn:
@@ -128,7 +130,7 @@ void main()
 
 
 FINAL ASSEMBLER
-Score: 103
+Score: 126
 
   // File Comments
 // Tests the different ASM addressing modes
@@ -147,7 +149,7 @@ Score: 103
   // main
 main: {
     // asm
-    // asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: lda(($12)),z ldq(($12))  }
+    // asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x) lbl3: ldq($12),z lda(($12)),z ldq(($12)),z stq(($12))  }
     inx
     lda #$12
     phw #$1234
@@ -169,8 +171,10 @@ main: {
   lbl2:
     jmp ($1234,x)
   lbl3:
+    ldq ($12),z
     lda (($12)),z
-    ldq (($12))
+    ldq (($12)),z
+    stq (($12))
     // main::@return
     // }
     // [1] return 

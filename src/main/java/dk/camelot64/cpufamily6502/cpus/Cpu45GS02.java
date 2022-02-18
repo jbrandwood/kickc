@@ -65,7 +65,7 @@ public class Cpu45GS02 extends Cpu65xx {
       addOpcode( new int[] {0x42, 0x42, 0xA5},"ldq",CpuAddressingMode.ZP,8,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xAD},"ldq",CpuAddressingMode.ABS,9,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xB1},"ldq",CpuAddressingMode.IZY,10,"AXYZnz");
-      addOpcode( new int[] {0x42, 0x42, 0xB2},"ldq",CpuAddressingMode.INZ,10,"AXYZnz");
+      addOpcode( new int[] {0x42, 0x42, 0xB2},"ldq",CpuAddressingMode.IZZ,10,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xB5},"ldq",CpuAddressingMode.ZPX,9,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xB9},"ldq",CpuAddressingMode.ABY,10,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xBD},"ldq",CpuAddressingMode.ABX,10,"AXYZnz");
@@ -84,7 +84,7 @@ public class Cpu45GS02 extends Cpu65xx {
       addOpcode( new int[] {0x42, 0x42, 0xea, 0x52},"eorq",CpuAddressingMode.LIN,13,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xea, 0x72},"adcq",CpuAddressingMode.LIN,13,"AXYZcvnz");
       addOpcode( new int[] {0x42, 0x42, 0xea, 0x92},"stq",CpuAddressingMode.LIN,13,"");
-      addOpcode( new int[] {0x42, 0x42, 0xea, 0xB2},"ldq",CpuAddressingMode.LIN,13,"AXYZnz");
+      addOpcode( new int[] {0x42, 0x42, 0xea, 0xB2},"ldq",CpuAddressingMode.LIZ,13,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0xea, 0xD2},"cpq",CpuAddressingMode.LIN,13,"cnz");
       addOpcode( new int[] {0x42, 0x42, 0xea, 0xF2},"sbcq",CpuAddressingMode.LIN,13,"AXYZcvnz");
       addOpcode( new int[] {0x42, 0x42, 0xED},"sbcq",CpuAddressingMode.ABS,9,"AXYZcvnz");

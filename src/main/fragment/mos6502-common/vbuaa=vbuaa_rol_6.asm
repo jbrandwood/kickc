@@ -1,6 +1,4 @@
-asl
-asl
-asl
-asl
-asl
-asl
+ror
+ror
+ror
+and #$c0

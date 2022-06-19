@@ -276,8 +276,8 @@ public class OutputFileManager {
     * @return true if the resources should be copied
     */
    public boolean shouldCopyResources() {
-      final Path cFileDirectory = primaryCFile.toAbsolutePath().getParent();
-      final Path outputDirectory = getOutputDirectory().toAbsolutePath();
+      final Path cFileDirectory = primaryCFile.toAbsolutePath().getParent().normalize();
+      final Path outputDirectory = getOutputDirectory().toAbsolutePath().normalize();
       return !cFileDirectory.equals(outputDirectory);
    }
 

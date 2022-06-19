@@ -420,7 +420,7 @@ public class KickC implements Callable<Integer> {
                if(Files.exists(outResourcePath)) {
                   FileTime resModified = Files.getLastModifiedTime(resourcePath);
                   FileTime outModified = Files.getLastModifiedTime(outResourcePath);
-                  if(outModified.toMillis() > resModified.toMillis()) {
+                  if(outModified.toMillis() >= resModified.toMillis()) {
                      // Outfile is newer - move on to next file
                      System.out.println("Resource already copied " + outResourcePath);
                      continue;

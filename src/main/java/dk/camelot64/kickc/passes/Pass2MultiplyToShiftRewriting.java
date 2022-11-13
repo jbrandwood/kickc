@@ -76,6 +76,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
          getLog().append("Rewriting multiplication to use shift " + assignment.toString(getProgram(), false));
          assignment.setOperator(Operators.SHIFT_LEFT);
          assignment.setrValue2(new ConstantInteger((long) power2, SymbolType.BYTE));
+         assignment.setrValue1(varValue);
          optimized = true;
       } else if(Operators.MULTIPLY.equals(assignment.getOperator())) {
          // Multiplication by constant

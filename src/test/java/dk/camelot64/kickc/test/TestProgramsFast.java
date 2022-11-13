@@ -3355,6 +3355,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testMultiply2sLeft() throws IOException {
+      compileAndCompare("multiply-2s-left.c");
+   }
+
+   @Test
    public void testMultiplyNs() throws IOException {
       compileAndCompare("multiply-ns.c");
    }

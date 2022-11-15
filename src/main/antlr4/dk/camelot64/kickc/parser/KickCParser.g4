@@ -161,6 +161,7 @@ directive
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
     | INLINE #directiveInline
+    | FAR PAR_BEGIN ( NUMBER ) PAR_END #directiveFar
     | INTRINSIC #directiveIntrinsic
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | LOCAL_RESERVE PAR_BEGIN pragmaParam ( COMMA pragmaParam )* PAR_END  #directiveReserveZp

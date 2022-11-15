@@ -75,6 +75,7 @@ LOCAL_RESERVE: '__zp_reserve' ;
 ADDRESS: '__address' ;
 ADDRESS_ZEROPAGE: '__zp' ;
 ADDRESS_MAINMEM: '__mem' ;
+FAR: '__far' ;
 FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 INTRINSIC: '__intrinsic' ;

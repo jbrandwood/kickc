@@ -1170,6 +1170,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
             procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
+         } else if(directive instanceof Directive.Far) {
+            procedure.setDeclaredFar(true);
+            procedure.setBankFar(((Directive.Far) directive).bankFar);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
@@ -1211,6 +1214,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
       return new Directive.Inline();
+   }
+
+   @Override
+   public Object visitDirectiveFar(KickCParser.DirectiveFarContext ctx) {
+      Long bankFar;
+      if(ctx.getChildCount() > 1) {
+         bankFar = Long.valueOf(ctx.getChild(2).getText());
+      } else {
+         bankFar = 0L;
+      }
+      return new Directive.Far(bankFar);
    }
 
    @Override

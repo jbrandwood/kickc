@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -250,9 +251,13 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmBytes(KickCParser.AsmBytesContext ctx) {
+         List<KickCParser.AsmExprContext> asmExpr = ctx.asmExpr();
          ArrayList<String> values = new ArrayList<>();
-         for(int i = 1; i < ctx.getChildCount(); i = i + 2) {
-            values.add(ctx.getChild(i).getText());
+         for(int i = 0; i < asmExpr.size(); i++) {
+            if(asmExpr.get(i) != null) {
+               AsmParameter par = (AsmParameter)this.visit(asmExpr.get(i));
+               values.add(par.getParam());
+            }
          }
          AsmDataNumeric data = new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values);
          handleTags(data, ctx.ASM_TAG());

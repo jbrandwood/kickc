@@ -865,9 +865,22 @@ public class Pass4CodeGeneration {
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                         }
                     }
-                    asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    if(procedure.isDeclaredFar()) {
+                        // Generate ASM for a call (in a bank or other)
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call, program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call, program), program);
+//                        asm.addInstruction("jsr far", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    } else {
+                        asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    }
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                    asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    if(procedure.isDeclaredFar()) {
+                        // Generate ASM for a far call (in a bank or other)
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call, program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call, program), program);
+                    } else {
+                        asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    }
                 }
             } else if (statement instanceof StatementCallExecute) {
                 StatementCallExecute call = (StatementCallExecute) statement;

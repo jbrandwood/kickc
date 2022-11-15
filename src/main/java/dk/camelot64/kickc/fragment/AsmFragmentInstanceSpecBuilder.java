@@ -18,6 +18,7 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
+import kickass.pass.values.StringValue;
 
 /**
  * Creates an ASM Fragment specification for a statement in the control flow graph.
@@ -40,6 +41,40 @@ final public class AsmFragmentInstanceSpecBuilder {
         bindings.bind("la1", new LabelRef(codeScope.getFullName() + "::" + "icall" + indirectCallId));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
+
+    /**
+     * Create a fragment instance spec factory for a far call entry
+     *
+     * @param call          The statement call
+     * @param program       The program
+     * @return the fragment instance spec factory
+     */
+    public static AsmFragmentInstanceSpec farCallEntry(StatementCall call, Program program) {
+        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(call.getBankFar(), program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Entry);
+        ScopeRef codeScope = program.getScope().getRef();
+//        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
+        bindings.bind("c1", new ConstantInteger(call.getBankFar()));
+        bindings.bind("la1", new LabelRef(call.getProcedure().getFullName()));
+        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+    }
+
+    /**
+     * Create a fragment instance spec factory for a far call exit
+     *
+     * @param call          The statement call
+     * @param program       The program
+     * @return the fragment instance spec factory
+     */
+    public static AsmFragmentInstanceSpec farCallExit(StatementCall call, Program program) {
+        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(call.getBankFar(), program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Exit);
+        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
+        bindings.bind("la1", new LabelRef(codeScope.getFullName()));
+        bindings.bind("la2", new ConstantInteger(call.getBankFar()));
+        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+    }
+
 
     /**
      * Create a fragment instance spec factory for an interrupt routine entry

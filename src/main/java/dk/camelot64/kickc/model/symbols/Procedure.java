@@ -25,6 +25,10 @@ public class Procedure extends Scope {
    private boolean variableLengthParameterList;
    /** true if the procedure is declared inline. */
    private boolean declaredInline;
+   /** true if the procedure is declared far. */
+   private boolean declaredFar;
+   /** contains the far bank. */
+   private Long bankFar;
    /** True if the procedure is declared intrinsic. */
    private boolean declaredIntrinsic;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
@@ -52,6 +56,8 @@ public class Procedure extends Scope {
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
+      /** Far call in a cx16 bank using the https://github.com/commanderx16/x16-docs/blob/master/X16%20Reference%20-%2004%20-%20KERNAL.md#function-name-jsrfar routine*/
+      FAR_CALL("__far"),
       /** Parameters and return value handled through PHI-transitions. */
       PHI_CALL("__phicall"),
       /** Parameters and return value over the stack. */
@@ -89,6 +95,8 @@ public class Procedure extends Scope {
       super(name, parentScope, dataSegment);
       this.procedureType = procedureType;
       this.declaredInline = false;
+      this.declaredFar = false;
+      this.bankFar = 0L;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
@@ -198,6 +206,20 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
+   public boolean isDeclaredFar() {
+      return declaredFar;
+   }
+
+   public void setDeclaredFar(boolean declaredFar) {
+      this.declaredFar = declaredFar;
+   }
+
+   public Long getBankFar() { return this.bankFar; }
+
+   public void setBankFar(Long bankFar) {
+      this.bankFar = bankFar;
+   }
+
    public String getInterruptType() {
       return interruptType;
    }
@@ -258,6 +280,9 @@ public class Procedure extends Scope {
       if(declaredIntrinsic) {
          res.append("__intrinsic ");
       }
+      if(declaredFar) {
+         res.append("__far(").append("bank").append(") ");
+      }
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
       }
@@ -296,6 +321,7 @@ public class Procedure extends Scope {
       Procedure procedure = (Procedure) o;
       return variableLengthParameterList == procedure.variableLengthParameterList &&
             declaredInline == procedure.declaredInline &&
+            declaredFar == procedure.declaredFar &&
             declaredIntrinsic == procedure.declaredIntrinsic &&
             isConstructor == procedure.isConstructor &&
             Objects.equals(procedureType, procedure.procedureType) &&

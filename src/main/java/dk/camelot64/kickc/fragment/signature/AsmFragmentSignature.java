@@ -71,6 +71,34 @@ public interface AsmFragmentSignature {
     }
 
     /**
+     * ASM fragment signature for a far jsr <code>if(A) goto B</code>.
+     */
+    class CallFar implements AsmFragmentSignature {
+
+        final private Long bankFar;
+        final private String targetPlatform;
+
+        public enum EntryExit {
+            Exit,
+            Entry
+        }
+
+        final private CallFar.EntryExit entryExit;
+
+
+        public CallFar(Long bankFar, String targetPlatform, CallFar.EntryExit entryExit) {
+            this.bankFar = bankFar;
+            this.targetPlatform = targetPlatform;
+            this.entryExit = entryExit;
+        }
+
+        @Override
+        public String getName() {
+            return "call_far" + "_" + targetPlatform + "_" + entryExit.name().toLowerCase();
+        }
+    }
+
+    /**
      * ASM fragment signature for a conditional jump <code>if(A) goto B</code>.
      */
     class ConditionalJump implements AsmFragmentSignature {

@@ -43,6 +43,18 @@ public class Directive {
       public Inline() { super("inline"); }
    }
 
+   /** Function declared far. */
+   static public class Far extends Directive {
+
+      public Long bankFar;
+
+      public Far(Long bankFar) {
+         super("__far");
+         this.bankFar = bankFar;
+      }
+
+   }
+
    /** Function declared intrinsic. */
    public static class Intrinsic extends Directive {
       public Intrinsic() { super("intrinsic"); }

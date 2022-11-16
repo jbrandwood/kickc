@@ -1496,6 +1496,51 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testProcedureCallingConventionStackFar13() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-13.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar6() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-6.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar5() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-5.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar4() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-4.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar3() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-3.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar2() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-2.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar1() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-1.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionStackFar0() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-far-0.c");
+   }
+
+   @Test
+   public void testProcedureCallingConventionPhiFar0() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-far-0.c");
+   }
+
+   @Test
    public void testProcedureCallingConventionStack13() throws IOException {
       compileAndCompare("procedure-callingconvention-stack-13.c");
    }

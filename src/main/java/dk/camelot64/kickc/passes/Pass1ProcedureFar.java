@@ -41,8 +41,8 @@ public class Pass1ProcedureFar extends Pass1Base {
                      throw new CompileError("Error! Interrupts cannot be far called. "+procedure.getRef().toString());
                   }
                   farProcedureCall(call, procedure, statementsIt, block, blocksIt);
-                  // Exit and restart
-                  return false;
+                  // Continue
+//                  return true;
                }
             }
          }

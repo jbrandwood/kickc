@@ -45,33 +45,35 @@ final public class AsmFragmentInstanceSpecBuilder {
     /**
      * Create a fragment instance spec factory for a far call entry
      *
-     * @param call          The statement call
-     * @param program       The program
+     * @param bankFar           The bank where the procedure is to be called.
+     * @param procedureName     The full name of the procedure.
+     * @param program           The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec farCallEntry(StatementCall call, Program program) {
+    public static AsmFragmentInstanceSpec farCallEntry(Long bankFar, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(call.getBankFar(), program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Entry);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Entry);
         ScopeRef codeScope = program.getScope().getRef();
 //        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
-        bindings.bind("c1", new ConstantInteger(call.getBankFar()));
-        bindings.bind("la1", new LabelRef(call.getProcedure().getFullName()));
+        bindings.bind("c1", new ConstantInteger(bankFar));
+        bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 
     /**
      * Create a fragment instance spec factory for a far call exit
      *
-     * @param call          The statement call
+     * @param bankFar           The bank where the procedure is to be called.
+     * @param procedureName     The full name of the procedure.
      * @param program       The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec farCallExit(StatementCall call, Program program) {
+    public static AsmFragmentInstanceSpec farCallExit(Long bankFar, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(call.getBankFar(), program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Exit);
-        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
-        bindings.bind("la1", new LabelRef(codeScope.getFullName()));
-        bindings.bind("la2", new ConstantInteger(call.getBankFar()));
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Exit);
+        ScopeRef codeScope = program.getScope().getRef();
+        bindings.bind("c1", new ConstantInteger(bankFar));
+        bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 

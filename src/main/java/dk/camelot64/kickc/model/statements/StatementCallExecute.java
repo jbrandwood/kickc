@@ -28,11 +28,15 @@ public class StatementCallExecute extends StatementBase implements StatementCall
    /** The calling convention to use. */
    private Procedure.CallingConvention callingConvention;
 
+   /** This contains the far call parameters */
+   private Long bankFar;
+
    public StatementCallExecute(SymbolTypeProcedure procedureType, RValue procedure, Procedure.CallingConvention callingConvention, StatementSource source, List<Comment> comments) {
       super(source, comments);
       this.procedureType = procedureType;
       this.procedure = procedure;
       this.callingConvention = callingConvention;
+      this.bankFar = bankFar;
    }
 
    public SymbolTypeProcedure getProcedureType() {

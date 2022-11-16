@@ -278,7 +278,7 @@ public class Compiler {
          getLog().append(program.getGraph().toString(program));
       }
       new Pass1ProcedureInline(program).execute();
-      new Pass1ProcedureFar(program).execute(); // Implements far calls to procedures defined in a bank.
+      new Pass1ProcedureFar(program).execute(); // Implements far calls to procedures defined in a bank. See https://gitlab.com/Flight_Control/kickc/-/commits/far-call-isolated
       new PassNStatementIndices(program).step();
       program.clearCallGraph();
       new Pass1AssertNoRecursion(program).execute();

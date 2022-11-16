@@ -867,8 +867,8 @@ public class Pass4CodeGeneration {
                     }
                     if(procedure.isDeclaredFar()) {
                         // Generate ASM for a call (in a bank or other)
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call, program), program);
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call, program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call.getBankFar(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call.getBankFar(), call.getProcedure().getFullName(), program), program);
 //                        asm.addInstruction("jsr far", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     } else {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
@@ -876,17 +876,23 @@ public class Pass4CodeGeneration {
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                     if(procedure.isDeclaredFar()) {
                         // Generate ASM for a far call (in a bank or other)
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call, program), program);
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call, program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(call.getBankFar(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(call.getBankFar(), call.getProcedure().getFullName(), program), program);
                     } else {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }
                 }
             } else if (statement instanceof StatementCallExecute) {
                 StatementCallExecute call = (StatementCallExecute) statement;
+                Procedure procedure = getScope().getProcedure(call.getProcedure());
                 RValue procedureRVal = call.getProcedureRVal();
                 // Generate ASM for a call
-                AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                if(procedure.isDeclaredFar()) {
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
+                } else {
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                }
                 if (!(procedureRVal instanceof ProcedureRef)) {
                     asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
                 }

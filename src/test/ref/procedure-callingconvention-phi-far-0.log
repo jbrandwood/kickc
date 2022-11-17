@@ -1,0 +1,292 @@
+Far call main::$0 = call plus('0', 7)
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  plus::a#0 = '0'
+  plus::b#0 = 7
+  call plus
+  plus::return#0 = plus::return#2
+  to:main::@1
+main::@1: scope:[main]  from main
+  plus::return#3 = phi( main/plus::return#0 )
+  main::$0 = plus::return#3
+  SCREEN[0] = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+__far(bank) char plus(char a , char b)
+plus: scope:[plus]  from main
+  plus::b#1 = phi( main/plus::b#0 )
+  plus::a#1 = phi( main/plus::a#0 )
+  plus::$0 = plus::a#1 + plus::b#1
+  plus::return#1 = plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  plus::return#4 = phi( plus/plus::return#1 )
+  plus::return#2 = plus::return#4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char * const SCREEN = (char *)$400
+void __start()
+void main()
+char main::$0
+__far(bank) char plus(char a , char b)
+char plus::$0
+char plus::a
+char plus::a#0
+char plus::a#1
+char plus::b
+char plus::b#0
+char plus::b#1
+char plus::return
+char plus::return#0
+char plus::return#1
+char plus::return#2
+char plus::return#3
+char plus::return#4
+
+Adding number conversion cast (unumber) 7 in plus::b#0 = 7
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast plus::b#0 = (unumber)7
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 7
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias plus::return#0 = plus::return#3 
+Alias plus::return#1 = plus::$0 plus::return#4 plus::return#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values plus::a#1 plus::a#0
+Identical Phi Values plus::b#1 plus::b#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant plus::a#0 = '0'
+Constant plus::b#0 = 7
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [5] SCREEN[0] = main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [5] plus::return#1 = plus::a#0 + plus::b#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant plus::return#1 = plus::a#0+plus::b#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant plus::return#0 = plus::return#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::$0 = plus::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings plus::return#0
+Constant inlined plus::return#0 = plus::return#1
+Constant inlined main::$0 = plus::return#1
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of plus
+CALL GRAPH
+Calls in [main] to plus:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+Adding NOP phi() at start of plus
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call plus
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] *SCREEN = plus::return#1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+
+__far(bank) char plus(char a , char b)
+plus: scope:[plus]  from main
+  [4] phi()
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+__far(bank) char plus(char a , char b)
+char plus::a
+char plus::b
+char plus::return
+
+Initial phi equivalence classes
+Complete equivalence classes
+Warning! Unknown fragment for statement [1] call plus
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-far-0.c:6:17:
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential register analysis [1] call plus missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [1] call plus [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [2] *SCREEN = plus::return#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [plus] 
+Uplift Scope [] 
+
+Warning! Unknown fragment for statement [1] call plus
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-far-0.c:6:17:
+Uplifting [main] best 54 combination 
+Warning! Unknown fragment for statement [1] call plus
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-far-0.c:6:17:
+Uplifting [plus] best 54 combination 
+Warning! Unknown fragment for statement [1] call plus
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-far-0.c:6:17:
+Uplifting [] best 54 combination 
+Warning! Unknown fragment for statement [1] call plus
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-far-0.c:6:17:
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test a procedure with calling convention stack
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-phi-far-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [1] call plus
+    // [4] phi from main to plus [phi:main->plus]
+  plus_from_main:
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] *SCREEN = plus::return#1 -- _deref_pbuc1=vbuc2 
+    lda #plus.return
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // plus
+// char plus(char a, char b)
+plus: {
+    .const a = '0'
+    .const b = 7
+    .label return = a+b
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction plus_from_main:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const SCREEN = (char *) 1024
+void main()
+__far(bank) char plus(char a , char b)
+char plus::a
+__constant char plus::a#0 = '0' // a
+char plus::b
+__constant char plus::b#0 = 7 // b
+char plus::return
+__constant char plus::return#1 = plus::a#0+plus::b#0 // return
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+  // File Comments
+// Test a procedure with calling convention stack
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-phi-far-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // plus('0', 7)
+    // [1] call plus
+    // [4] phi from main to plus [phi:main->plus]
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // main::@1
+    // SCREEN[0] = plus('0', 7)
+    // [2] *SCREEN = plus::return#1 -- _deref_pbuc1=vbuc2 
+    lda #plus.return
+    sta SCREEN
+    // main::@return
+    // }
+    // [3] return 
+    rts
+}
+  // plus
+// char plus(char a, char b)
+plus: {
+    .const a = '0'
+    .const b = 7
+    .label return = a+b
+    // plus::@return
+    // [5] return 
+    rts
+}
+  // File Data
+

@@ -1,0 +1,1527 @@
+Adding parameter assignment in __stackcall procedure fib::n = param(fib::n)
+Far call main::$0 = call fib(5)
+Far call fib::$4 = call fib(fib::$3)
+Far call fib::$6 = call fib(fib::$5)
+Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call fib(5)
+Calling convention __stackcall adding prepare/execute/finalize for fib::$4 = call fib(fib::$3)
+Calling convention __stackcall adding prepare/execute/finalize for fib::$6 = call fib(fib::$5)
+Calling convention STACK_CALL replacing param(fib::n) with stackidx(char,fib::OFFSET_STACK_N)
+Calling convention STACK_CALL adding stack return stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return
+Calling convention STACK_CALL adding stack pull main::$0 = stackpull(char)
+Calling convention STACK_CALL adding stack pull fib::$4 = stackpull(char)
+Calling convention STACK_CALL adding stack pull fib::$6 = stackpull(char)
+Calling convention STACK_CALL adding stack push stackpush(char) = 5
+Calling convention STACK_CALL adding stack push stackpush(char) = fib::$3
+Calling convention STACK_CALL adding stack push stackpush(char) = fib::$5
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  stackpush(char) = 5
+  callexecute fib 
+  main::$0 = stackpull(char)
+  *SCREEN = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__far(bank) __stackcall char fib(char n)
+fib: scope:[fib]  from
+  fib::n#0 = stackidx(char,fib::OFFSET_STACK_N)
+  fib::$0 = fib::n#0 == 0
+  fib::$1 = fib::n#0 == 1
+  fib::$2 = fib::$0 || fib::$1
+  if(fib::$2) goto fib::@1
+  to:fib::@2
+fib::@1: scope:[fib]  from fib
+  fib::n#1 = phi( fib/fib::n#0 )
+  fib::return#0 = fib::n#1
+  to:fib::@return
+fib::@2: scope:[fib]  from fib
+  fib::n#2 = phi( fib/fib::n#0 )
+  fib::$3 = fib::n#2 - 1
+  stackpush(char) = fib::$3
+  callexecute fib 
+  fib::$4 = stackpull(char)
+  fib::$5 = fib::n#2 - 2
+  stackpush(char) = fib::$5
+  callexecute fib 
+  fib::$6 = stackpull(char)
+  fib::$7 = fib::$4 + fib::$6
+  fib::return#1 = fib::$7
+  to:fib::@return
+fib::@return: scope:[fib]  from fib::@1 fib::@2
+  fib::return#2 = phi( fib::@1/fib::return#0, fib::@2/fib::return#1 )
+  stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char * const SCREEN = (char *)$400
+__constant unsigned int STACK_BASE = $103
+void __start()
+__far(bank) __stackcall char fib(char n)
+bool fib::$0
+bool fib::$1
+bool fib::$2
+number fib::$3
+char fib::$4
+number fib::$5
+char fib::$6
+char fib::$7
+__constant char fib::OFFSET_STACK_N = 0
+__constant char fib::OFFSET_STACK_RETURN_0 = 0
+char fib::n
+char fib::n#0
+char fib::n#1
+char fib::n#2
+char fib::return
+char fib::return#0
+char fib::return#1
+char fib::return#2
+void main()
+char main::$0
+
+Adding number conversion cast (unumber) 5 in stackpush(char) = 5
+Adding number conversion cast (unumber) 0 in fib::$0 = fib::n#0 == 0
+Adding number conversion cast (unumber) 1 in fib::$1 = fib::n#0 == 1
+Adding number conversion cast (unumber) 1 in fib::$3 = fib::n#2 - 1
+Adding number conversion cast (unumber) fib::$3 in fib::$3 = fib::n#2 - (unumber)1
+Adding number conversion cast (unumber) 2 in fib::$5 = fib::n#2 - 2
+Adding number conversion cast (unumber) fib::$5 in fib::$5 = fib::n#2 - (unumber)2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast stackpush(char) = (unumber)5
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 5
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 5
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to char in fib::$3 = fib::n#2 - 1
+Inferred type updated to char in fib::$5 = fib::n#2 - 2
+Alias fib::n#0 = fib::n#1 fib::return#0 fib::n#2 
+Alias fib::return#1 = fib::$7 
+Successful SSA optimization Pass2AliasElimination
+Rewriting || if()-condition to two if()s [8] fib::$2 = fib::$0 || fib::$1
+Successful SSA optimization Pass2ConditionalAndOrRewriting
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Simple Condition fib::$0 [8] if(fib::n#0==0) goto fib::@1
+Simple Condition fib::$1 [21] if(fib::n#0==1) goto fib::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+CALL GRAPH
+Calls in [fib] to fib:5 fib:9 
+Calls in [main] to fib:18 
+
+Created 1 initial phi equivalence classes
+Coalesced [12] fib::return#4 = fib::return#1
+Not coalescing [16] fib::return#3 = fib::n#0
+Coalesced down to 2 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+__far(bank) __stackcall char fib(char n)
+fib: scope:[fib]  from
+  [0] fib::n#0 = stackidx(char,fib::OFFSET_STACK_N)
+  [1] if(fib::n#0==0) goto fib::@1
+  to:fib::@3
+fib::@3: scope:[fib]  from fib
+  [2] if(fib::n#0==1) goto fib::@1
+  to:fib::@2
+fib::@2: scope:[fib]  from fib::@3
+  [3] fib::$3 = fib::n#0 - 1
+  [4] stackpush(char) = fib::$3
+  [5] callexecute fib 
+  [6] fib::$4 = stackpull(char)
+  [7] fib::$5 = fib::n#0 - 2
+  [8] stackpush(char) = fib::$5
+  [9] callexecute fib 
+  [10] fib::$6 = stackpull(char)
+  [11] fib::return#1 = fib::$4 + fib::$6
+  to:fib::@return
+fib::@return: scope:[fib]  from fib::@1 fib::@2
+  [12] fib::return#2 = phi( fib::@1/fib::return#3, fib::@2/fib::return#1 )
+  [13] stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2
+  [14] return 
+  to:@return
+fib::@1: scope:[fib]  from fib fib::@3
+  [15] fib::return#3 = fib::n#0
+  to:fib::@return
+
+void main()
+main: scope:[main]  from
+  [16] stackpush(char) = 5
+  [17] callexecute fib 
+  [18] main::$0 = stackpull(char)
+  [19] *SCREEN = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [20] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__far(bank) __stackcall char fib(char n)
+char fib::$3 // 22.0
+char fib::$4 // 1.375
+char fib::$5 // 22.0
+char fib::$6 // 22.0
+char fib::n
+char fib::n#0 // 5.5
+char fib::return
+char fib::return#1 // 22.0
+char fib::return#2 // 33.0
+char fib::return#3 // 22.0
+void main()
+char main::$0 // 4.0
+
+Initial phi equivalence classes
+[ fib::return#2 fib::return#3 fib::return#1 ]
+Added variable fib::n#0 to live range equivalence class [ fib::n#0 ]
+Added variable fib::$3 to live range equivalence class [ fib::$3 ]
+Added variable fib::$4 to live range equivalence class [ fib::$4 ]
+Added variable fib::$5 to live range equivalence class [ fib::$5 ]
+Added variable fib::$6 to live range equivalence class [ fib::$6 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Complete equivalence classes
+[ fib::return#2 fib::return#3 fib::return#1 ]
+[ fib::n#0 ]
+[ fib::$3 ]
+[ fib::$4 ]
+[ fib::$5 ]
+[ fib::$6 ]
+[ main::$0 ]
+Allocated zp[1]:2 [ fib::return#2 fib::return#3 fib::return#1 ]
+Allocated zp[1]:3 [ fib::$3 ]
+Allocated zp[1]:4 [ fib::$5 ]
+Allocated zp[1]:5 [ fib::$6 ]
+Allocated zp[1]:6 [ fib::n#0 ]
+Allocated zp[1]:7 [ main::$0 ]
+Allocated zp[1]:8 [ fib::$4 ]
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] fib::n#0 = stackidx(char,fib::OFFSET_STACK_N) [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp[1]:8 [ fib::$4 ]
+Removing always clobbered register reg byte x as potential for zp[1]:8 [ fib::$4 ]
+Potential register analysis [5] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [5] callexecute fib  [ fib::n#0 ] ( fib:17 [ fib::n#0 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ fib::n#0 ]
+Removing always clobbered register reg byte x as potential for zp[1]:6 [ fib::n#0 ]
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ fib::n#0 ]
+Statement [6] fib::$4 = stackpull(char) [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a 
+Potential register analysis [9] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [9] callexecute fib  [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:8 [ fib::$4 ]
+Statement [10] fib::$6 = stackpull(char) [ fib::n#0 fib::$4 fib::$6 ] ( fib:17 [ fib::n#0 fib::$4 fib::$6 ] { }  ) always clobbers reg byte a 
+Statement [11] fib::return#1 = fib::$4 + fib::$6 [ fib::n#0 fib::$4 fib::return#1 ] ( fib:17 [ fib::n#0 fib::$4 fib::return#1 ] { }  ) always clobbers reg byte a 
+Statement [13] stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2 [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte x 
+Statement [16] stackpush(char) = 5 [ fib::$4 ] (  [ fib::$4 ] { }  ) always clobbers reg byte a 
+Potential register analysis [17] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [17] callexecute fib  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [18] main::$0 = stackpull(char) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [0] fib::n#0 = stackidx(char,fib::OFFSET_STACK_N) [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [1] if(fib::n#0==0) goto fib::@1 [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a 
+Statement [2] if(fib::n#0==1) goto fib::@1 [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a 
+Potential register analysis [5] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [5] callexecute fib  [ fib::n#0 ] ( fib:17 [ fib::n#0 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] fib::$4 = stackpull(char) [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a 
+Potential register analysis [9] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [9] callexecute fib  [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [10] fib::$6 = stackpull(char) [ fib::n#0 fib::$4 fib::$6 ] ( fib:17 [ fib::n#0 fib::$4 fib::$6 ] { }  ) always clobbers reg byte a 
+Statement [11] fib::return#1 = fib::$4 + fib::$6 [ fib::n#0 fib::$4 fib::return#1 ] ( fib:17 [ fib::n#0 fib::$4 fib::return#1 ] { }  ) always clobbers reg byte a 
+Statement [13] stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2 [ fib::n#0 fib::$4 ] ( fib:17 [ fib::n#0 fib::$4 ] { }  ) always clobbers reg byte x 
+Statement [16] stackpush(char) = 5 [ fib::$4 ] (  [ fib::$4 ] { }  ) always clobbers reg byte a 
+Potential register analysis [17] callexecute fib  missing fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry  allocation: 
+MISSING FRAGMENTS
+  Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+Statement [17] callexecute fib  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [18] main::$0 = stackpull(char) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ fib::return#2 fib::return#3 fib::return#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ fib::n#0 ] : zp[1]:6 , 
+Potential registers zp[1]:3 [ fib::$3 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ fib::$4 ] : zp[1]:8 , 
+Potential registers zp[1]:4 [ fib::$5 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ fib::$6 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [fib] 77: zp[1]:2 [ fib::return#2 fib::return#3 fib::return#1 ] 22: zp[1]:3 [ fib::$3 ] 22: zp[1]:4 [ fib::$5 ] 22: zp[1]:5 [ fib::$6 ] 5.5: zp[1]:6 [ fib::n#0 ] 1.38: zp[1]:8 [ fib::$4 ] 
+Uplift Scope [main] 4: zp[1]:7 [ main::$0 ] 
+Uplift Scope [] 
+
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Uplifting [fib] best 113 combination reg byte a [ fib::return#2 fib::return#3 fib::return#1 ] reg byte a [ fib::$3 ] reg byte a [ fib::$5 ] reg byte a [ fib::$6 ] zp[1]:6 [ fib::n#0 ] zp[1]:8 [ fib::$4 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Uplifting [main] best 107 combination reg byte a [ main::$0 ] 
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Uplifting [] best 107 combination 
+Attempting to uplift remaining variables inzp[1]:6 [ fib::n#0 ]
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Uplifting [fib] best 107 combination zp[1]:6 [ fib::n#0 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ fib::$4 ]
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+Uplifting [fib] best 107 combination zp[1]:8 [ fib::$4 ] 
+Allocated (was zp[1]:6) zp[1]:2 [ fib::n#0 ]
+Allocated (was zp[1]:8) zp[1]:3 [ fib::$4 ]
+Warning! Unknown fragment for statement [5] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:13:
+Warning! Unknown fragment for statement [9] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:14:24:
+Warning! Unknown fragment for statement [17] callexecute fib 
+Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry 
+D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-stack-far-3.c:7:15:
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test a procedure with calling convention stack
+// Recursive fibonacci
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-far-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const STACK_BASE = $103
+  .label SCREEN = $400
+.segment Code
+  // fib
+// __register(A) char fib(__zp(2) char n)
+fib: {
+    .const OFFSET_STACK_N = 0
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label __4 = 3
+    .label n = 2
+    // [0] fib::n#0 = stackidx(char,fib::OFFSET_STACK_N) -- vbuz1=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_N,x
+    sta.z n
+    // [1] if(fib::n#0==0) goto fib::@1 -- vbuz1_eq_0_then_la1 
+    lda.z n
+    beq __b1
+    jmp __b3
+    // fib::@3
+  __b3:
+    // [2] if(fib::n#0==1) goto fib::@1 -- vbuz1_eq_vbuc1_then_la1 
+    lda #1
+    cmp.z n
+    beq __b1
+    jmp __b2
+    // fib::@2
+  __b2:
+    // [3] fib::$3 = fib::n#0 - 1 -- vbuaa=vbuz1_minus_1 
+    lda.z n
+    sec
+    sbc #1
+    // [4] stackpush(char) = fib::$3 -- _stackpushbyte_=vbuaa 
+    pha
+    // [5] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [6] fib::$4 = stackpull(char) -- vbuz1=_stackpullbyte_ 
+    pla
+    sta.z __4
+    // [7] fib::$5 = fib::n#0 - 2 -- vbuaa=vbuz1_minus_2 
+    lda.z n
+    sec
+    sbc #2
+    // [8] stackpush(char) = fib::$5 -- _stackpushbyte_=vbuaa 
+    pha
+    // [9] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [10] fib::$6 = stackpull(char) -- vbuaa=_stackpullbyte_ 
+    pla
+    // [11] fib::return#1 = fib::$4 + fib::$6 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z __4
+    // [12] phi from fib::@1 fib::@2 to fib::@return [phi:fib::@1/fib::@2->fib::@return]
+  __breturn_from___b1:
+  __breturn_from___b2:
+    // [12] phi fib::return#2 = fib::return#3 [phi:fib::@1/fib::@2->fib::@return#0] -- register_copy 
+    jmp __breturn
+    // fib::@return
+  __breturn:
+    // [13] stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    // [14] return 
+    rts
+    // fib::@1
+  __b1:
+    // [15] fib::return#3 = fib::n#0 -- vbuaa=vbuz1 
+    lda.z n
+    jmp __breturn_from___b1
+}
+  // main
+main: {
+    // [16] stackpush(char) = 5 -- _stackpushbyte_=vbuc1 
+    lda #5
+    pha
+    // [17] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [18] main::$0 = stackpull(char) -- vbuaa=_stackpullbyte_ 
+    pla
+    // [19] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda.z n
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __breturn_from___b1 with __breturn
+Removing instruction __breturn_from___b1:
+Removing instruction __breturn_from___b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b3:
+Removing instruction __b2:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const SCREEN = (char *) 1024
+__constant unsigned int STACK_BASE = $103
+__far(bank) __stackcall char fib(char n)
+char fib::$3 // reg byte a 22.0
+char fib::$4 // zp[1]:3 1.375
+char fib::$5 // reg byte a 22.0
+char fib::$6 // reg byte a 22.0
+__constant char fib::OFFSET_STACK_N = 0
+__constant char fib::OFFSET_STACK_RETURN_0 = 0
+char fib::n
+char fib::n#0 // n zp[1]:2 5.5
+char fib::return
+char fib::return#1 // reg byte a 22.0
+char fib::return#2 // reg byte a 33.0
+char fib::return#3 // reg byte a 22.0
+void main()
+char main::$0 // reg byte a 4.0
+
+reg byte a [ fib::return#2 fib::return#3 fib::return#1 ]
+zp[1]:2 [ fib::n#0 ]
+reg byte a [ fib::$3 ]
+zp[1]:3 [ fib::$4 ]
+reg byte a [ fib::$5 ]
+reg byte a [ fib::$6 ]
+reg byte a [ main::$0 ]
+
+
+FINAL ASSEMBLER
+Score: 92
+
+  // File Comments
+// Test a procedure with calling convention stack
+// Recursive fibonacci
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-far-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const STACK_BASE = $103
+  .label SCREEN = $400
+.segment Code
+  // fib
+// __register(A) char fib(__zp(2) char n)
+fib: {
+    .const OFFSET_STACK_N = 0
+    .const OFFSET_STACK_RETURN_0 = 0
+    .label __4 = 3
+    .label n = 2
+    // return n;
+    // [0] fib::n#0 = stackidx(char,fib::OFFSET_STACK_N) -- vbuz1=_stackidxbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_N,x
+    sta.z n
+    // if (n == 0 || n == 1)
+    // [1] if(fib::n#0==0) goto fib::@1 -- vbuz1_eq_0_then_la1 
+    beq __b1
+    // fib::@3
+    // [2] if(fib::n#0==1) goto fib::@1 -- vbuz1_eq_vbuc1_then_la1 
+    lda #1
+    cmp.z n
+    beq __b1
+    // fib::@2
+    // n-1
+    // [3] fib::$3 = fib::n#0 - 1 -- vbuaa=vbuz1_minus_1 
+    lda.z n
+    sec
+    sbc #1
+    // fib(n-1)
+    // [4] stackpush(char) = fib::$3 -- _stackpushbyte_=vbuaa 
+    pha
+    // [5] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [6] fib::$4 = stackpull(char) -- vbuz1=_stackpullbyte_ 
+    pla
+    sta.z __4
+    // n-2
+    // [7] fib::$5 = fib::n#0 - 2 -- vbuaa=vbuz1_minus_2 
+    lda.z n
+    sec
+    sbc #2
+    // fib(n-2)
+    // [8] stackpush(char) = fib::$5 -- _stackpushbyte_=vbuaa 
+    pha
+    // [9] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [10] fib::$6 = stackpull(char) -- vbuaa=_stackpullbyte_ 
+    pla
+    // return (fib(n-1) + fib(n-2));
+    // [11] fib::return#1 = fib::$4 + fib::$6 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z __4
+    // [12] phi from fib::@1 fib::@2 to fib::@return [phi:fib::@1/fib::@2->fib::@return]
+    // [12] phi fib::return#2 = fib::return#3 [phi:fib::@1/fib::@2->fib::@return#0] -- register_copy 
+    // fib::@return
+  __breturn:
+    // }
+    // [13] stackidx(char,fib::OFFSET_STACK_RETURN_0) = fib::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN_0,x
+    // [14] return 
+    rts
+    // fib::@1
+  __b1:
+    // [15] fib::return#3 = fib::n#0 -- vbuaa=vbuz1 
+    lda.z n
+    jmp __breturn
+}
+  // main
+main: {
+    // fib(5)
+    // [16] stackpush(char) = 5 -- _stackpushbyte_=vbuc1 
+    lda #5
+    pha
+    // [17] callexecute fib 
+    .assert "Missing ASM fragment Fragment not found call_far_c64_entry. Attempted variations call_far_c64_entry ", 0, 1
+    // [18] main::$0 = stackpull(char) -- vbuaa=_stackpullbyte_ 
+    pla
+    // *SCREEN = fib(5)
+    // [19] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // main::@return
+    // }
+    // [20] return 
+    rts
+}
+  // File Data
+

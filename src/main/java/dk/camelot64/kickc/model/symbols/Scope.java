@@ -16,6 +16,8 @@ public abstract class Scope implements Symbol {
    public static final String SEGMENT_CODE_DEFAULT = "Code";
    /** The default data segment. */
    public static final String SEGMENT_DATA_DEFAULT = "Data";
+   /** The default far segment. */
+   public static final String SEGMENT_FAR_DEFAULT = "";
 
    private String name;
    private HashMap<String, Symbol> symbols;

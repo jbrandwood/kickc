@@ -106,6 +106,14 @@ public class CParser {
      * The resource-file is copied to the output directory when compiling.
      */
     public static final String PRAGMA_RESOURCE = "resource";
+    /**
+     * #pragma far_seg(...) specifies the scope of the sequent functions to be far. Segments are defined in the linker file.
+     */
+    public static final String PRAGMA_FAR_SEG = "far_seg";
+    /**
+     * #pragma near_seg specifies the scope of the sequent functions to be near. Segments are defined in the linker file.
+     */
+    public static final String PRAGMA_NEAR_SEG = "near_seg";
 
     /**
      * The Program.

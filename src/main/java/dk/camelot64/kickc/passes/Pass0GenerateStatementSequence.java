@@ -43,6 +43,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private final Stack<Scope> scopeStack;
    /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
    private final List<KickCParser.PragmaContext> pragmaConstructorFors;
+   /** All #pragma code segments. Collected during parsing. These are used by the far_seg pragmas to validate if the code segment exists during compilation.*/
+   private final Map<String, KickCParser.PragmaContext> pragmaCodeSegs;
+   /** All #pragma far segments. Collected during parsing. These are used to compare with the current currentFarSegment to decide a near or a far call, and to keep inline calling routines.*/
+   private final Map<String, FarSegment> pragmaFarSegs;
 
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding, String defaultInterruptType) {
@@ -53,6 +57,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.currentCallingConvention = initialCallingConvention;
       this.currentEncoding = defaultEncoding;
       this.pragmaConstructorFors = new ArrayList();
+      this.pragmaCodeSegs = new HashMap<>(); // Used to collect all pragma code segments.
+      this.pragmaFarSegs = new HashMap<>(); // Used to collect all pragma far segments.
       this.currentInterruptType = defaultInterruptType;
       scopeStack.push(program.getScope());
    }
@@ -290,9 +296,34 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             break;
          case CParser.PRAGMA_CODE_SEG:
             this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
+            this.pragmaCodeSegs.put(this.currentCodeSegment, ctx);
             break;
          case CParser.PRAGMA_DATA_SEG:
             this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
+            break;
+         case CParser.PRAGMA_FAR_SEG:
+            try {
+               final int size = ctx.getChildCount();
+               if(size==7) {
+                  final String pragmaFarSegment = pragmaParamFarSegment(ctx.pragmaParam(0));
+                  final Number pragmaFarBank = pragmaParamNumber(ctx.pragmaParam(1));
+                  if (this.pragmaCodeSegs.get(pragmaFarSegment) != null) {
+                     this.currentFarSegment = pragmaFarSegment;
+                     if (size > 7) {
+                        final String call_prepare = pragmaParamName(ctx.pragmaParam(2));
+                        final String call_execute = pragmaParamName(ctx.pragmaParam(3));
+                        final String call_finalize = pragmaParamName(ctx.pragmaParam(4));
+                        this.pragmaFarSegs.put(this.currentFarSegment, new FarSegment(pragmaFarSegment, pragmaFarBank.intValue(), call_prepare, call_execute, call_finalize));
+                     } else {
+                        this.pragmaFarSegs.put(this.currentFarSegment, new FarSegment(pragmaFarSegment, pragmaFarBank.intValue(), "", "", ""));
+                     }
+                  }
+               } else {
+                  throw new CompileError("Expected at least 2 pragma parameters. Found '" + ctx.getText() + "'.", new StatementSource(ctx));
+               }
+            } catch(IllegalArgumentException e) {
+               throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
+            }
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
@@ -367,6 +398,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return callingConvention;
    }
 
+   /**
+    * Parse the FAR_SEG parameter of a #pragma
+    * If the parameter is not a FAR_SEG the compiler will fail out
+    *
+    * @param paramCtx The parameter to parse
+    * @return The name
+    */
+   private String pragmaParamFarSegment(KickCParser.PragmaParamContext paramCtx) {
+      if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
+         throw new CompileError("Expected a FAR_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      final String pragmaFarSegment = ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
+      if(this.pragmaCodeSegs.get(pragmaFarSegment) != null) {
+         return pragmaFarSegment;
+      } else {
+         throw new CompileError("Expected a previously declared CODE_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      }
+   }
+
 
    /**
     * Parse a single NAME parameter of a #pragma
@@ -435,6 +484,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** The current data segment. */
    private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
+
+   /** The current code segment. */
+   private String currentFarSegment = Scope.SEGMENT_FAR_DEFAULT;
 
    /** The current default interrupt type. */
    private String currentInterruptType;

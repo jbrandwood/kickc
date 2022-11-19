@@ -76,6 +76,7 @@ ADDRESS: '__address' ;
 ADDRESS_ZEROPAGE: '__zp' ;
 ADDRESS_MAINMEM: '__mem' ;
 FAR: '__far' ;
+NEAR: '__near' ;
 FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 INTRINSIC: '__intrinsic' ;

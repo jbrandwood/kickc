@@ -325,6 +325,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
             }
             break;
+         case CParser.PRAGMA_NEAR_SEG:
+            this.currentFarSegment = ""; // When the current far segment is "", any function that is far will be called as far.
+            break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
             addResourceFile(ctx, resourceFileName);

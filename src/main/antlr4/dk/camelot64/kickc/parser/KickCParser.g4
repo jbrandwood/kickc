@@ -136,7 +136,8 @@ parameterDecl
     ;
 
 pragma
-    : PRAGMA NAME PAR_BEGIN pragmaParam (COMMA pragmaParam)* PAR_END
+    : PRAGMA NAME
+    | PRAGMA NAME PAR_BEGIN pragmaParam (COMMA pragmaParam)* PAR_END
     ;
 
 pragmaParam

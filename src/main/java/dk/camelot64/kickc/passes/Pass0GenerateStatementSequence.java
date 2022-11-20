@@ -43,10 +43,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private final Stack<Scope> scopeStack;
    /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
    private final List<KickCParser.PragmaContext> pragmaConstructorFors;
-   /** All #pragma code segments. Collected during parsing. These are used by the far_seg pragmas to validate if the code segment exists during compilation.*/
-   private final Map<String, KickCParser.PragmaContext> pragmaCodeSegs;
-   /** All #pragma far segments. Collected during parsing. These are used to compare with the current currentFarSegment to decide a near or a far call, and to keep inline calling routines.*/
-   private final Map<String, FarSegment> pragmaFarSegs;
 
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding, String defaultInterruptType) {
@@ -57,8 +53,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.currentCallingConvention = initialCallingConvention;
       this.currentEncoding = defaultEncoding;
       this.pragmaConstructorFors = new ArrayList();
-      this.pragmaCodeSegs = new HashMap<>(); // Used to collect all pragma code segments.
-      this.pragmaFarSegs = new HashMap<>(); // Used to collect all pragma far segments.
       this.currentInterruptType = defaultInterruptType;
       scopeStack.push(program.getScope());
    }
@@ -137,7 +131,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
       if(initProc == null) {
          // Create the _init() procedure
-         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, null);
          initProc.setDeclaredInline(true);
          initProc.setParameters(new ArrayList<>());
          program.getScope().add(initProc);
@@ -194,7 +188,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Add the _start() procedure to the program
       {
          program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
-         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, null);
          startProcedure.setParameters(new ArrayList<>());
          program.getScope().add(startProcedure);
          final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
@@ -296,27 +290,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             break;
          case CParser.PRAGMA_CODE_SEG:
             this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
-            this.pragmaCodeSegs.put(this.currentCodeSegment, ctx);
+            this.program.getPragmaCodeSegs().put(this.currentCodeSegment, ctx);
             break;
          case CParser.PRAGMA_DATA_SEG:
             this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
             break;
-         case CParser.PRAGMA_FAR_SEG:
+         case CParser.PRAGMA_FAR:
             try {
                final int size = ctx.getChildCount();
                if(size==7) {
                   final String pragmaFarSegment = pragmaParamFarSegment(ctx.pragmaParam(0));
                   final Number pragmaFarBank = pragmaParamNumber(ctx.pragmaParam(1));
-                  if (this.pragmaCodeSegs.get(pragmaFarSegment) != null) {
-                     this.currentFarSegment = pragmaFarSegment;
-                     if (size > 7) {
-                        final String call_prepare = pragmaParamName(ctx.pragmaParam(2));
-                        final String call_execute = pragmaParamName(ctx.pragmaParam(3));
-                        final String call_finalize = pragmaParamName(ctx.pragmaParam(4));
-                        this.pragmaFarSegs.put(this.currentFarSegment, new FarSegment(pragmaFarSegment, pragmaFarBank.intValue(), call_prepare, call_execute, call_finalize));
-                     } else {
-                        this.pragmaFarSegs.put(this.currentFarSegment, new FarSegment(pragmaFarSegment, pragmaFarBank.intValue(), "", "", ""));
-                     }
+                  if (size > 7) {
+                     final String call_prepare = pragmaParamName(ctx.pragmaParam(2));
+                     final String call_execute = pragmaParamName(ctx.pragmaParam(3));
+                     final String call_finalize = pragmaParamName(ctx.pragmaParam(4));
+                     this.currentFarSegment = new FarSegment(pragmaFarSegment, pragmaFarBank.longValue(), call_prepare, call_execute, call_finalize);
+                  } else {
+                     this.currentFarSegment = new FarSegment(pragmaFarSegment, pragmaFarBank.longValue(), "", "", "");
                   }
                } else {
                   throw new CompileError("Expected at least 2 pragma parameters. Found '" + ctx.getText() + "'.", new StatementSource(ctx));
@@ -325,8 +316,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
             }
             break;
-         case CParser.PRAGMA_NEAR_SEG:
-            this.currentFarSegment = ""; // When the current far segment is "", any function that is far will be called as far.
+         case CParser.PRAGMA_NEAR:
+            this.currentFarSegment = null; // When the current far segment is null, any function that is far will be called as far.
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
@@ -402,17 +393,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /**
-    * Parse the FAR_SEG parameter of a #pragma
-    * If the parameter is not a FAR_SEG the compiler will fail out
+    * Parse the FAR parameter of a #pragma
+    * If the parameter is not a FAR the compiler will fail out
     *
     * @param paramCtx The parameter to parse
     * @return The name
     */
    private String pragmaParamFarSegment(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
-         throw new CompileError("Expected a FAR_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a FAR parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       final String pragmaFarSegment = ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
-      if(this.pragmaCodeSegs.get(pragmaFarSegment) != null) {
+      if(this.program.getPragmaCodeSegs().get(pragmaFarSegment) != null) {
          return pragmaFarSegment;
       } else {
          throw new CompileError("Expected a previously declared CODE_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
@@ -488,8 +479,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The current data segment. */
    private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
 
-   /** The current code segment. */
-   private String currentFarSegment = Scope.SEGMENT_FAR_DEFAULT;
+   /** The current far segment. */
+   private FarSegment currentFarSegment;
 
    /** The current default interrupt type. */
    private String currentInterruptType;
@@ -546,7 +537,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
 
-      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
+      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention, currentFarSegment);
       addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
       // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
@@ -1226,8 +1217,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             procedure.setDeclaredInline(true);
             procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
          } else if(directive instanceof Directive.Far) {
-            procedure.setDeclaredFar(true);
-            procedure.setBankFar(((Directive.Far) directive).bankFar);
+            FarSegment farSegment = new FarSegment(((Directive.Far) directive).getFarSegmentName(), ((Directive.Far) directive).getFarSegmentBank(), ((Directive.Far) directive).getFarProcedurePrepare(), ((Directive.Far) directive).getFarProcedureExecute(), ((Directive.Far) directive).getFarProcedureFinalize());
+            procedure.setFarSegment(farSegment);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
@@ -1273,13 +1264,31 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDirectiveFar(KickCParser.DirectiveFarContext ctx) {
-      Long bankFar;
-      if(ctx.getChildCount() > 1) {
-         bankFar = Long.valueOf(ctx.getChild(2).getText());
-      } else {
-         bankFar = 0L;
+      String farSegmentName = "";
+      Long farSegmentBank = 0L;
+      String farProcedurePrepare = null;
+      String farProcedureExecute = null;
+      String farProcedureFinalize = null;
+      if(this.currentFarSegment != null) {
+         farSegmentName = this.currentFarSegment.getFarSegment();
+         farSegmentBank = this.currentFarSegment.getFarBank();
+         farProcedurePrepare = this.currentFarSegment.getProcedurePrepare();
+         farProcedureExecute = this.currentFarSegment.getProcedureExecute();
+         farProcedureFinalize = this.currentFarSegment.getProcedureFinalize();
       }
-      return new Directive.Far(bankFar);
+
+      if(ctx.getChildCount() >= 5) {
+         farSegmentName = ctx.getChild(2).getText();
+         farSegmentBank = Long.valueOf(ctx.getChild(4).getText());
+      }
+
+      if(ctx.getChildCount() == 11) {
+         farProcedurePrepare = ctx.getChild(6).getText();
+         farProcedureExecute = ctx.getChild(8).getText();
+         farProcedureFinalize = ctx.getChild(10).getText();
+      }
+
+      return new Directive.Far(farSegmentName, farSegmentBank, farProcedurePrepare, farProcedureExecute, farProcedureFinalize);
    }
 
    @Override
@@ -2539,7 +2548,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                      new SymbolTypeProcedure(SymbolType.DWORD, Arrays.asList(new SymbolType[]{SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE})),
                      program.getScope(),
                      Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT,
-                     Procedure.CallingConvention.INTRINSIC_CALL);
+                     Procedure.CallingConvention.INTRINSIC_CALL, null);
                makeword4.setDeclaredIntrinsic(true);
                final Variable hihi = new Variable("hihi", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
                makeword4.add(hihi);

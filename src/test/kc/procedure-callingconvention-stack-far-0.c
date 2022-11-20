@@ -6,6 +6,7 @@ void main(void) {
     SCREEN[0] = plus('0', 7);
 }
 
-char __far(1) __stackcall plus(char a, char b) {
+#pragma code_seg(test)
+char __far(test, 2) __stackcall plus(char a, char b) {
     return a+b;
 }

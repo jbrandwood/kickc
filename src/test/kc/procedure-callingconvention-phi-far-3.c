@@ -7,7 +7,7 @@ void main(void) {
 }
 
 #pragma code_seg(stage)
-#pragma far_seg(stage)
+#pragma far(stage)
 
 char plus(char a, char b) {
     return a+b;

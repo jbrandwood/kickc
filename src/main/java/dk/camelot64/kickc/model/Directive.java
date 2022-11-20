@@ -46,13 +46,41 @@ public class Directive {
    /** Function declared far. */
    static public class Far extends Directive {
 
-      public Long bankFar;
+      private String farSegmentName;
+      private Long farSegmentBank;
+      private String farProcedurePrepare;
+      private String farProcedureExecute;
+      private String farProcedureFinalize;
 
-      public Far(Long bankFar) {
-         super("__far");
-         this.bankFar = bankFar;
+
+      public Far(String farSegmentName, Long farSegmentBank, String farProcedurePrepare, String farProcedureExecute, String farProcedureFinalize) {
+         super("far" );
+         this.farSegmentName = farSegmentName;
+         this.farSegmentBank = farSegmentBank;
+         this.farProcedurePrepare = farProcedurePrepare;
+         this.farProcedureExecute = farProcedureExecute;
+         this.farProcedureFinalize = farProcedureFinalize;
       }
 
+      public String getFarSegmentName() {
+         return farSegmentName;
+      }
+
+      public Long getFarSegmentBank() {
+         return farSegmentBank;
+      }
+
+      public String getFarProcedurePrepare() {
+         return farProcedurePrepare;
+      }
+
+      public String getFarProcedureExecute() {
+         return farProcedureExecute;
+      }
+
+      public String getFarProcedureFinalize() {
+         return farProcedureFinalize;
+      }
    }
 
    /** Function declared intrinsic. */

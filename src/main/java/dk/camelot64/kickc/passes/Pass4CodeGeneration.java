@@ -847,6 +847,7 @@ public class Pass4CodeGeneration {
             } else if (statement instanceof StatementCall) {
                 StatementCall call = (StatementCall) statement;
                 Procedure procedure = getScope().getProcedure(call.getProcedure());
+                Procedure procedureFrom = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
                 if (procedure.isDeclaredIntrinsic()) {
                     if (Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedure.getFullName())) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program), program);
@@ -865,31 +866,52 @@ public class Pass4CodeGeneration {
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                         }
                     }
-                    if(procedure.isDeclaredFar()) {
-                        // Generate ASM for a call (in a bank or other)
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
+                    // Note: I've chosen to keep this code duplication between phi and stack calling convention, for later maintenance flexibility, if any.
+                    // We check if the procedure is declared as far, and if the calling procedure is not in the same bank as the procedure called.
+                    if(procedure.isDeclaredFar() && procedureFrom.getFarBank() != procedure.getFarBank()) {
+                        // In this case, Generate ASM for a far call.
+                        // The call is constructed in a prepare, execute and finalize compiler .asm fragments respectively.
+                        // The bank and other preparations are set in the far_call_[platform]_prepare.asm fragment.
+                        // The actual jsr statement is embedded in the far_call_[platform]_execute.asm fragment.
+                        // After the jsr, finalization of the call is defined in the far_call_[platform]_finalize.asm fragment.
+                        // TODO: rework to prepare, execute, finalize
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallPrepare(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExecute(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallFinalize(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
 //                        asm.addInstruction("jsr far", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     } else {
+                        // Otherwise, Generate AM for a normal near call.
+                        // In case of a far call, we assume the bank does not need to be changed.
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                    if(procedure.isDeclaredFar()) {
-                        // Generate ASM for a far call (in a bank or other)
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
+                    // Note: I've chosen to keep this code duplication between phi and stack calling convention, for later maintenance flexibility, if any.
+                    // We check if the procedure is declared as far, and if the calling procedure is not in the same bank as the procedure called.
+                    if(procedure.isDeclaredFar() && procedure.getFarBank() != procedureFrom.getFarBank()) {
+                        // In this case, Generate ASM for a far call.
+                        // The call is constructed in a prepare, execute and finalize compiler .asm fragments respectively.
+                        // The bank and other preparations are set in the far_call_[platform]_prepare.asm fragment.
+                        // The actual jsr statement is embedded in the far_call_[platform]_execute.asm fragment.
+                        // After the jsr, finalization of the call is defined in the far_call_[platform]_finalize.asm fragment.
+                        // TODO: rework to prepare, execute, finalize
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallPrepare(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExecute(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallFinalize(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
                     } else {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }
                 }
             } else if (statement instanceof StatementCallExecute) {
+                // TODO: This part seems never to be executed! Old code?
                 StatementCallExecute call = (StatementCallExecute) statement;
                 Procedure procedure = getScope().getProcedure(call.getProcedure());
+                Procedure procedureFrom = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
                 RValue procedureRVal = call.getProcedureRVal();
                 // Generate ASM for a call
-                if(procedure.isDeclaredFar()) {
-                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallEntry(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
-                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExit(procedure.getBankFar(), call.getProcedure().getFullName(), program), program);
+                if(procedure.isDeclaredFar() && procedureFrom.getFarBank() != procedure.getFarBank()) {
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallPrepare(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallExecute(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.farCallFinalize(procedure.getFarSegment().getFarBank(), call.getProcedure().getFullName(), program), program);
                 } else {
                     AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
                 }

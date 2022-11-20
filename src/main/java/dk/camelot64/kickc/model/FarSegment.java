@@ -1,32 +1,43 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.symbols.Procedure;
-
-import java.util.List;
-
 /** A far segment. */
 public class FarSegment {
 
-   private String name;
-   private Integer bank;
-   private String call_prepare;
-   private String call_execute;
-   private String call_finalize;
+   private final String farSegment;
+   private Long farBank;
+   private final String procedurePrepare;
+   private final String procedureExecute;
+   private final String procedureFinalize;
 
-   public FarSegment(String name, Integer bank, String call_prepare, String call_execute, String call_finalize) {
-      this.name = name;
-      this.bank = bank;
-      this.call_prepare = call_prepare;
-      this.call_execute = call_execute;
-      this.call_finalize = call_finalize;
+   public FarSegment(String name, Long bank, String procedurePrepare, String procedureExecute, String procedureFinalize) {
+      this.farSegment = name;
+      this.farBank = bank;
+      this.procedurePrepare = procedurePrepare;
+      this.procedureExecute = procedureExecute;
+      this.procedureFinalize = procedureFinalize;
    }
 
-   public String getName() {
-      return name;
+   public String getFarSegment() {
+      return farSegment;
    }
 
+   public Long getFarBank() {
+      return farBank;
+   }
 
-   public Integer getBank() {
-      return bank;
+   public void setFarBank(Long farBank) {
+      this.farBank = farBank;
+   }
+
+   public String getProcedurePrepare() {
+      return procedurePrepare;
+   }
+
+   public String getProcedureExecute() {
+      return procedureExecute;
+   }
+
+   public String getProcedureFinalize() {
+      return procedureFinalize;
    }
 }

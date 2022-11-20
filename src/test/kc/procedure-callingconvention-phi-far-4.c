@@ -3,13 +3,13 @@
 char* const SCREEN = (char*)0x0400;
 
 #pragma code_seg(stage)
-#pragma far_seg(stage, 20)
+#pragma far(stage, 20)
 
 char plus(char a, char b) {
     return a+b;
 }
 
-#pragma near_seg
+#pragma near
 
 void main(void) {
     SCREEN[0] = plus('0', 7);

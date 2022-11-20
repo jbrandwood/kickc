@@ -18,7 +18,6 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
-import kickass.pass.values.StringValue;
 
 /**
  * Creates an ASM Fragment specification for a statement in the control flow graph.
@@ -43,16 +42,16 @@ final public class AsmFragmentInstanceSpecBuilder {
     }
 
     /**
-     * Create a fragment instance spec factory for a far call entry
+     * Create a fragment instance spec factory for a far call prepare
      *
      * @param bankFar           The bank where the procedure is to be called.
      * @param procedureName     The full name of the procedure.
      * @param program           The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec farCallEntry(Long bankFar, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec farCallPrepare(Long bankFar, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Entry);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.PrepareExecuteFinalize.Prepare);
         ScopeRef codeScope = program.getScope().getRef();
 //        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
         bindings.bind("c1", new ConstantInteger(bankFar));
@@ -61,16 +60,34 @@ final public class AsmFragmentInstanceSpecBuilder {
     }
 
     /**
-     * Create a fragment instance spec factory for a far call exit
+     * Create a fragment instance spec factory for a far call execute
+     *
+     * @param bankFar           The bank where the procedure is to be called.
+     * @param procedureName     The full name of the procedure.
+     * @param program           The program
+     * @return the fragment instance spec factory
+     */
+    public static AsmFragmentInstanceSpec farCallExecute(Long bankFar, String procedureName, Program program) {
+        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.PrepareExecuteFinalize.Execute);
+        ScopeRef codeScope = program.getScope().getRef();
+//        ScopeRef codeScope = program.getStatementInfos().getBlock(call).getScope();
+        bindings.bind("c1", new ConstantInteger(bankFar));
+        bindings.bind("la1", new LabelRef(procedureName));
+        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+    }
+
+    /**
+     * Create a fragment instance spec factory for a far call finalize
      *
      * @param bankFar           The bank where the procedure is to be called.
      * @param procedureName     The full name of the procedure.
      * @param program       The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec farCallExit(Long bankFar, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec farCallFinalize(Long bankFar, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.EntryExit.Exit);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallFar(bankFar, program.getTargetPlatform().getName(), AsmFragmentSignature.CallFar.PrepareExecuteFinalize.Finalize);
         ScopeRef codeScope = program.getScope().getRef();
         bindings.bind("c1", new ConstantInteger(bankFar));
         bindings.bind("la1", new LabelRef(procedureName));

@@ -13,7 +13,8 @@ void main(void) {
     }
 }
 
-char __far(1) __stackcall plus(char a, char b) {
+// this should give a pragma error during compile, as test is not declared yet.
+char __far(test, 20) __stackcall plus(char a, char b) {
     i++;
     return a+b;
 }

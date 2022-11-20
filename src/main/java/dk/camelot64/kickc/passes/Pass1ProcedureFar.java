@@ -65,7 +65,7 @@ public class Pass1ProcedureFar extends Pass1Base {
       // The all properties have been entered in the __far() directive in the source code.
       // These properties are then used in pass4 of the compiler, to build the platform dependent fragment to execute the far call.
 
-      call.setBankFar(procedure.getBankFar());
+//      call.setBankFar(procedure.getBankFar());
       getLog().append("Far call " + call.toString(getProgram(), false));
    }
 }

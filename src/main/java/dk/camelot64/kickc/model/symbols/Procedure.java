@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.FarSegment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -27,8 +28,6 @@ public class Procedure extends Scope {
    private boolean declaredInline;
    /** true if the procedure is declared far. */
    private boolean declaredFar;
-   /** contains the far bank. */
-   private Long bankFar;
    /** True if the procedure is declared intrinsic. */
    private boolean declaredIntrinsic;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
@@ -45,6 +44,9 @@ public class Procedure extends Scope {
    private boolean isConstructor;
    /** The source of the procedure definition. */
    private StatementSource definitionSource;
+   /** The far segment information. Collected during parsing. These are used to compare with the current currentFarSegment to decide a near or a far call, and to keep inline calling routines.*/
+   private FarSegment farSegment;
+
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
@@ -54,10 +56,17 @@ public class Procedure extends Scope {
          Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 
+   public FarSegment getFarSegment() {
+      return farSegment;
+   }
+
+   public void setFarSegment(FarSegment farSegment) {
+      this.farSegment = farSegment;
+   }
+
+
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
-      /** Far call in a cx16 bank using the https://github.com/commanderx16/x16-docs/blob/master/X16%20Reference%20-%2004%20-%20KERNAL.md#function-name-jsrfar routine*/
-      FAR_CALL("__far"),
       /** Parameters and return value handled through PHI-transitions. */
       PHI_CALL("__phicall"),
       /** Parameters and return value over the stack. */
@@ -91,12 +100,11 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention) {
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention, FarSegment farSegment) {
       super(name, parentScope, dataSegment);
       this.procedureType = procedureType;
       this.declaredInline = false;
-      this.declaredFar = false;
-      this.bankFar = 0L;
+      this.farSegment = farSegment;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
@@ -207,17 +215,14 @@ public class Procedure extends Scope {
    }
 
    public boolean isDeclaredFar() {
-      return declaredFar;
+      return farSegment != null;
    }
 
-   public void setDeclaredFar(boolean declaredFar) {
-      this.declaredFar = declaredFar;
-   }
-
-   public Long getBankFar() { return this.bankFar; }
-
-   public void setBankFar(Long bankFar) {
-      this.bankFar = bankFar;
+   public Long getFarBank() {
+      if(farSegment!=null)
+         return farSegment.getFarBank();
+      else
+         return 0L;
    }
 
    public String getInterruptType() {

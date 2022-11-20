@@ -8,13 +8,11 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.calcs.*;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
@@ -107,6 +105,8 @@ public class Program {
    private NaturalLoopSet loopSet;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
+   /** All #pragma code segments. Collected during parsing. These are used by the far() pragmas to validate if the code segment exists during compilation.*/
+   private final Map<String, KickCParser.PragmaContext> pragmaCodeSegs;
 
    public Program() {
       this.outputFileManager = new OutputFileManager();
@@ -119,6 +119,8 @@ public class Program {
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
       this.procedureCompilations = new LinkedHashMap<>();
+      this.pragmaCodeSegs = new HashMap<>(); // Used to collect all pragma code segments.
+
    }
 
    /**
@@ -539,4 +541,7 @@ public class Program {
       return sizeInfo.toString();
    }
 
+   public Map<String, KickCParser.PragmaContext> getPragmaCodeSegs() {
+      return pragmaCodeSegs;
+   }
 }

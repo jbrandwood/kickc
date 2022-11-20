@@ -1,40 +1,32 @@
 // Test a procedure with calling convention stack
-// Illustrates live range problem with function variable printother::i and global variable val
+// Returning and passing struct values
 
 #pragma calling(__stackcall)
+#pragma struct_model(classic)
 
 char* const SCREEN = (char*)0x0400;
+char idx = 0;
 
-char val = 0;
+struct Point {
+    char x;
+    char y;
+};
 
 void main(void) {
-    for(char i:0..5) {
-        pval();
-        printother();
-        ival();
+    for(char i=0;i<5;i++) {
+        struct Point p = get(i);
+        print(p);
     }
 }
 
-void __far(1) pval() {
-    printval();
+struct Point __far(1) get(char i) {
+    struct Point p = { i, i/2 };
+    return p;
 }
 
-void __far(2) ival() {
-    incval();
-}
-
-void __far(3) printval() {
-    SCREEN[0] = val;
-}
-
-void __far(4) incval() {
-    val++;
-}
-
-void __far(5) printother() {
-    for(char i:0..5) {
-        (SCREEN+40)[i]++;
-    }
+void __far(2) print(struct Point p) {
+    SCREEN[idx++] = p.x;
+    SCREEN[idx++] = p.y;
 }
 
 

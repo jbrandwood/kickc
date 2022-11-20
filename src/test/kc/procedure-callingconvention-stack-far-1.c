@@ -7,7 +7,8 @@ void main(void) {
 }
 
 #pragma calling(__stackcall)
+#pragma code_seg(test)
 
-char __far(1) plus(char a, char b) {
+char __far(test,20) plus(char a, char b) {
     return a+b;
 }

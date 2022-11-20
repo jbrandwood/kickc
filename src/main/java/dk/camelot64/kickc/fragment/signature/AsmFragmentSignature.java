@@ -78,23 +78,24 @@ public interface AsmFragmentSignature {
         final private Long bankFar;
         final private String targetPlatform;
 
-        public enum EntryExit {
-            Exit,
-            Entry
+        public enum PrepareExecuteFinalize {
+            Prepare,
+            Execute,
+            Finalize
         }
 
-        final private CallFar.EntryExit entryExit;
+        final private PrepareExecuteFinalize far;
 
 
-        public CallFar(Long bankFar, String targetPlatform, CallFar.EntryExit entryExit) {
+        public CallFar(Long bankFar, String targetPlatform, PrepareExecuteFinalize far) {
             this.bankFar = bankFar;
             this.targetPlatform = targetPlatform;
-            this.entryExit = entryExit;
+            this.far = far;
         }
 
         @Override
         public String getName() {
-            return "call_far" + "_" + targetPlatform + "_" + entryExit.name().toLowerCase();
+            return "call_far" + "_" + targetPlatform + "_" + far.name().toLowerCase();
         }
     }
 

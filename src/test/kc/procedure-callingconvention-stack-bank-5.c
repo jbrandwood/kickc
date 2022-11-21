@@ -7,7 +7,7 @@ void main(void) {
     *SCREEN = pow2(6);
 }
 
-char __stackcall __far(1) pow2(char n) {
+char __stackcall __bank(ram,1) pow2(char n) {
   if (n == 0)
     return 1;
   else {

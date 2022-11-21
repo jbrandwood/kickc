@@ -19,12 +19,12 @@ void main(void) {
     }
 }
 
-struct Point __far(1) get(char i) {
+struct Point __bank(ram,1) get(char i) {
     struct Point p = { i, i/2 };
     return p;
 }
 
-void __far(2) print(struct Point p) {
+void __bank(ram,2) print(struct Point p) {
     SCREEN[idx++] = p.x;
     SCREEN[idx++] = p.y;
 }

@@ -43,43 +43,24 @@ public class Directive {
       public Inline() { super("inline"); }
    }
 
-   /** Function declared far. */
-   static public class Far extends Directive {
+   /** Function declared banked. */
+   static public class Bank extends Directive {
 
-      private String farSegmentName;
-      private Long farSegmentBank;
-      private String farProcedurePrepare;
-      private String farProcedureExecute;
-      private String farProcedureFinalize;
+      private String bankArea;
+      private Long bank;
 
-
-      public Far(String farSegmentName, Long farSegmentBank, String farProcedurePrepare, String farProcedureExecute, String farProcedureFinalize) {
-         super("far" );
-         this.farSegmentName = farSegmentName;
-         this.farSegmentBank = farSegmentBank;
-         this.farProcedurePrepare = farProcedurePrepare;
-         this.farProcedureExecute = farProcedureExecute;
-         this.farProcedureFinalize = farProcedureFinalize;
+      public Bank(String bankArea, Long bank) {
+         super("bank" );
+         this.bankArea = bankArea;
+         this.bank = bank;
       }
 
-      public String getFarSegmentName() {
-         return farSegmentName;
+      public String getBankArea() {
+         return bankArea;
       }
 
-      public Long getFarSegmentBank() {
-         return farSegmentBank;
-      }
-
-      public String getFarProcedurePrepare() {
-         return farProcedurePrepare;
-      }
-
-      public String getFarProcedureExecute() {
-         return farProcedureExecute;
-      }
-
-      public String getFarProcedureFinalize() {
-         return farProcedureFinalize;
+      public Long getBank() {
+         return bank;
       }
    }
 

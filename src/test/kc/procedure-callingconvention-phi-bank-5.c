@@ -3,7 +3,7 @@
 char* const SCREEN = (char*)0x0400;
 
 #pragma code_seg(bank_1)
-#pragma far(bank_1, 1)
+#pragma bank(ram, 1)
 
 char func_bank1_a(char a, char b) {
     return a+b;
@@ -20,7 +20,7 @@ char func_bank1_d(char a, char b) {
 }
 
 #pragma code_seg(bank_2)
-#pragma far(bank_2, 2)
+#pragma bank(ram, 2)
 
 char func_bank2_a(char a, char b) {
     return a+b;
@@ -47,17 +47,17 @@ char func_bank2_f(char a, char b) {
     return func_bank1_b(a,b);
 }
 
-#pragma near
+#pragma nobank
 
-char __far(bank_1, 1) func_bank1_b(char a, char b) {
+char __bank(ram, 1) func_bank1_b(char a, char b) {
     return a+b;
 }
 
-char __far(bank_2, 2) func_bank2_b(char a, char b) {
+char __bank(ram, 2) func_bank2_b(char a, char b) {
     return a+b;
 }
 
-#pragma near
+#pragma nobank
 
 char func_bank1_e(char a, char b) {
     // this should be a far call, because the call is to bank 1.

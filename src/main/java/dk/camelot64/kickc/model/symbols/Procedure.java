@@ -34,7 +34,7 @@ public class Procedure extends Scope {
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
    /** The code segment to put the procedure into. */
-   private final String codeSegment;
+   private String codeSegment;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
    /** Is this procedure declared as a constructor procedure. */
@@ -115,6 +115,10 @@ public class Procedure extends Scope {
 
    public String getCodeSegment() {
       return codeSegment;
+   }
+
+   public void setCodeSegment(String codeSegment) {
+      this.codeSegment = codeSegment;
    }
 
    public List<String> getParameterNames() {

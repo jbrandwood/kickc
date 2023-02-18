@@ -840,7 +840,14 @@ public class Pass4CodeGeneration {
                 if (assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                     //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                 } else {
-                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(assignment, program), program);
+                    // sven - catch this error decently, it sometimes throws an exception!
+                    try {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.assignment(assignment, program), program);
+                    } catch( AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+                        throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException(e.getMessage());
+                    } catch( RuntimeException e) {
+                        throw new CompileError("Problem with source, runtime Exception: " + e.getMessage(), statement);
+                    }
                 }
             } else if (statement instanceof StatementConditionalJump) {
                 AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program), program);

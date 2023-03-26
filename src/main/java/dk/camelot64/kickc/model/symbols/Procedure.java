@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.FarSegment;
+import dk.camelot64.kickc.model.Bank;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -26,8 +26,6 @@ public class Procedure extends Scope {
    private boolean variableLengthParameterList;
    /** true if the procedure is declared inline. */
    private boolean declaredInline;
-   /** true if the procedure is declared far. */
-   private boolean declaredFar;
    /** True if the procedure is declared intrinsic. */
    private boolean declaredIntrinsic;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
@@ -44,8 +42,8 @@ public class Procedure extends Scope {
    private boolean isConstructor;
    /** The source of the procedure definition. */
    private StatementSource definitionSource;
-   /** The far segment information. Collected during parsing. These are used to compare with the current currentFarSegment to decide a near or a far call, and to keep inline calling routines.*/
-   private FarSegment farSegment;
+   /** The bank segment information. Collected during parsing. These are used to compare with the current currentBank to decide a near or a far call, and to keep inline calling routines.*/
+   private Bank bankLocation;
 
 
    /** The names of all legal intrinsic procedures. */
@@ -56,12 +54,12 @@ public class Procedure extends Scope {
          Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 
-   public FarSegment getFarSegment() {
-      return farSegment;
+   public Bank getBankLocation() {
+      return bankLocation;
    }
 
-   public void setFarSegment(FarSegment farSegment) {
-      this.farSegment = farSegment;
+   public void setBankLocation(Bank bankLocation) {
+      this.bankLocation = bankLocation;
    }
 
 
@@ -100,11 +98,11 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention, FarSegment farSegment) {
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention, Bank bankLocation) {
       super(name, parentScope, dataSegment);
       this.procedureType = procedureType;
       this.declaredInline = false;
-      this.farSegment = farSegment;
+      this.bankLocation = bankLocation;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
@@ -214,15 +212,22 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
-   public boolean isDeclaredFar() {
-      return farSegment != null;
+   public boolean isDeclaredBanked() {
+      return bankLocation != null;
    }
 
-   public Long getFarBank() {
-      if(farSegment!=null)
-         return farSegment.getFarBank();
+   public Long getBank() {
+      if(bankLocation != null)
+         return bankLocation.getBank();
       else
          return 0L;
+   }
+
+   public String getBankArea() {
+      if(bankLocation != null)
+         return bankLocation.getBankArea();
+      else
+         return "";
    }
 
    public String getInterruptType() {
@@ -285,8 +290,8 @@ public class Procedure extends Scope {
       if(declaredIntrinsic) {
          res.append("__intrinsic ");
       }
-      if(declaredFar) {
-         res.append("__far(").append("bank").append(") ");
+      if(isDeclaredBanked()) {
+         res.append("__bank(").append("bank").append(") ");
       }
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
@@ -326,7 +331,7 @@ public class Procedure extends Scope {
       Procedure procedure = (Procedure) o;
       return variableLengthParameterList == procedure.variableLengthParameterList &&
             declaredInline == procedure.declaredInline &&
-            declaredFar == procedure.declaredFar &&
+            isDeclaredBanked() == procedure.isDeclaredBanked() &&
             declaredIntrinsic == procedure.declaredIntrinsic &&
             isConstructor == procedure.isConstructor &&
             Objects.equals(procedureType, procedure.procedureType) &&

@@ -6,7 +6,9 @@ void main(void) {
     SCREEN[0] = plus('0', 7);
 }
 
-#pragma code_seg(stage)
-char __far(stage,2) plus(char a, char b) {
+#pragma calling(__stackcall)
+#pragma code_seg(test)
+
+char __bank(ram,20) plus(char a, char b) {
     return a+b;
 }

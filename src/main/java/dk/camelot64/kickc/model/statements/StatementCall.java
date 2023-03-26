@@ -28,8 +28,6 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
    private List<RValue> parameters;
    /** This is the initial assignment of the lValue. */
    private boolean initialAssignment;
-   /** This contains the far call parameters */
-   private Long bankFar;
 
    public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {
       super(source, comments);
@@ -65,12 +63,6 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
    public void setParameters(List<RValue> parameters) {
       this.parameters = parameters;
    }
-
-   public void setBankFar(Long bankFar) {
-      this.bankFar = bankFar;
-   }
-
-   public Long getBankFar() { return this.bankFar; }
 
    public int getNumParameters() {
       return parameters.size();

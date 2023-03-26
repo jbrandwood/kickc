@@ -7,24 +7,8 @@ void main(void) {
 }
 
 #pragma code_seg(stage)
-#pragma far(stage)
+#pragma bank(ram, 1)
 
 char plus(char a, char b) {
     return a+b;
-}
-
-void stage_entry() {
-    asm {
-        lda 0
-        pha
-        lda #1
-        sta 0
-    }
-}
-
-void stage_exit() {
-    asm {
-        pla
-        sta 0
-    }
 }

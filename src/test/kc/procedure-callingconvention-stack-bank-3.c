@@ -20,23 +20,23 @@ void main(void) {
 #pragma code_seg(test3)
 #pragma code_seg(Code)
 
-void __far(test, 20) pval() {
+void __bank(ram, 20) pval() {
     printval();
 }
 
-void __far(test2, 21) ival() {
+void __bank(ram, 21) ival() {
     incval();
 }
 
-void __far(test, 20) printval() {
+void __bank(ram, 20) printval() {
     SCREEN[0] = val;
 }
 
-void __far(test2, 21) incval() {
+void __bank(ram, 21) incval() {
     val++;
 }
 
-#pragma near
+#pragma nobank
 
 void printother() {
     for(char i:0..5) {

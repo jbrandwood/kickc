@@ -295,20 +295,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_DATA_SEG:
             this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
             break;
-         case CParser.PRAGMA_FAR:
+         case CParser.PRAGMA_BANK:
             try {
                final int size = ctx.getChildCount();
                if(size==7) {
-                  final String pragmaFarSegment = pragmaParamFarSegment(ctx.pragmaParam(0));
-                  final Number pragmaFarBank = pragmaParamNumber(ctx.pragmaParam(1));
-                  if (size > 7) {
-                     final String call_prepare = pragmaParamName(ctx.pragmaParam(2));
-                     final String call_execute = pragmaParamName(ctx.pragmaParam(3));
-                     final String call_finalize = pragmaParamName(ctx.pragmaParam(4));
-                     this.currentFarSegment = new FarSegment(pragmaFarSegment, pragmaFarBank.longValue(), call_prepare, call_execute, call_finalize);
-                  } else {
-                     this.currentFarSegment = new FarSegment(pragmaFarSegment, pragmaFarBank.longValue(), "", "", "");
-                  }
+                  final String pragmaBankArea = pragmaParamBankArea(ctx.pragmaParam(0));
+                  final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
+                  this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
                } else {
                   throw new CompileError("Expected at least 2 pragma parameters. Found '" + ctx.getText() + "'.", new StatementSource(ctx));
                }
@@ -316,8 +309,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
             }
             break;
-         case CParser.PRAGMA_NEAR:
-            this.currentFarSegment = null; // When the current far segment is null, any function that is far will be called as far.
+         case CParser.PRAGMA_NOBANK:
+            this.currentBank = null; // When the current far segment is null, any function that is far will be called as far.
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
@@ -393,21 +386,22 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /**
-    * Parse the FAR parameter of a #pragma
-    * If the parameter is not a FAR the compiler will fail out
+    * Parse the BANK AREA parameter of a #pragma
+    * If the parameter is not a BANK AREA the compiler will fail out
     *
     * @param paramCtx The parameter to parse
     * @return The name
     */
-   private String pragmaParamFarSegment(KickCParser.PragmaParamContext paramCtx) {
+   private String pragmaParamBankArea(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
-         throw new CompileError("Expected a FAR parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
-      final String pragmaFarSegment = ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
-      if(this.program.getPragmaCodeSegs().get(pragmaFarSegment) != null) {
-         return pragmaFarSegment;
-      } else {
-         throw new CompileError("Expected a previously declared CODE_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
-      }
+         throw new CompileError("Expected a BANK AREA parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      final String pragmaBankArea = ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
+//      if(this.program.getPragmaCodeSegs().get(pragmaBankArea) != null) {
+//         return pragmaBankArea;
+//      } else {
+//         throw new CompileError("Expected a previously declared CODE_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+//      }
+      return pragmaBankArea;
    }
 
 
@@ -480,7 +474,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
 
    /** The current far segment. */
-   private FarSegment currentFarSegment;
+   private Bank currentBank;
 
    /** The current default interrupt type. */
    private String currentInterruptType;
@@ -537,7 +531,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
 
-      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention, currentFarSegment);
+      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention, currentBank);
       addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
       // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
@@ -1216,9 +1210,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
             procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
-         } else if(directive instanceof Directive.Far) {
-            FarSegment farSegment = new FarSegment(((Directive.Far) directive).getFarSegmentName(), ((Directive.Far) directive).getFarSegmentBank(), ((Directive.Far) directive).getFarProcedurePrepare(), ((Directive.Far) directive).getFarProcedureExecute(), ((Directive.Far) directive).getFarProcedureFinalize());
-            procedure.setFarSegment(farSegment);
+         } else if(directive instanceof Directive.Bank) {
+            Bank bank = new Bank(((Directive.Bank) directive).getBankArea(), ((Directive.Bank) directive).getBank());
+            procedure.setBankLocation(bank);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
@@ -1263,32 +1257,20 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitDirectiveFar(KickCParser.DirectiveFarContext ctx) {
-      String farSegmentName = "";
-      Long farSegmentBank = 0L;
-      String farProcedurePrepare = null;
-      String farProcedureExecute = null;
-      String farProcedureFinalize = null;
-      if(this.currentFarSegment != null) {
-         farSegmentName = this.currentFarSegment.getFarSegment();
-         farSegmentBank = this.currentFarSegment.getFarBank();
-         farProcedurePrepare = this.currentFarSegment.getProcedurePrepare();
-         farProcedureExecute = this.currentFarSegment.getProcedureExecute();
-         farProcedureFinalize = this.currentFarSegment.getProcedureFinalize();
+   public Object visitDirectiveBank(KickCParser.DirectiveBankContext ctx) {
+      String bankArea = "";
+      Long bank = -1L;
+      if(this.currentBank != null) {
+         bankArea = this.currentBank.getBankArea();
+         bank = this.currentBank.getBank();
       }
 
       if(ctx.getChildCount() >= 5) {
-         farSegmentName = ctx.getChild(2).getText();
-         farSegmentBank = Long.valueOf(ctx.getChild(4).getText());
+         bankArea = ctx.getChild(2).getText();
+         bank = Long.valueOf(ctx.getChild(4).getText());
       }
 
-      if(ctx.getChildCount() == 11) {
-         farProcedurePrepare = ctx.getChild(6).getText();
-         farProcedureExecute = ctx.getChild(8).getText();
-         farProcedureFinalize = ctx.getChild(10).getText();
-      }
-
-      return new Directive.Far(farSegmentName, farSegmentBank, farProcedurePrepare, farProcedureExecute, farProcedureFinalize);
+      return new Directive.Bank(bankArea, bank);
    }
 
    @Override

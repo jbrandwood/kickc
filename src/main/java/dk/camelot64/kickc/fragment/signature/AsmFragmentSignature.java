@@ -71,11 +71,12 @@ public interface AsmFragmentSignature {
     }
 
     /**
-     * ASM fragment signature for a far jsr <code>if(A) goto B</code>.
+     * ASM fragment signature for a banked jsr <code>if(A) goto B</code>.
      */
-    class CallFar implements AsmFragmentSignature {
+    class CallBanked implements AsmFragmentSignature {
 
-        final private Long bankFar;
+        final private String bankArea;
+        final private Long bank;
         final private String targetPlatform;
 
         public enum PrepareExecuteFinalize {
@@ -84,18 +85,19 @@ public interface AsmFragmentSignature {
             Finalize
         }
 
-        final private PrepareExecuteFinalize far;
+        final private PrepareExecuteFinalize fragment;
 
 
-        public CallFar(Long bankFar, String targetPlatform, PrepareExecuteFinalize far) {
-            this.bankFar = bankFar;
+        public CallBanked(String bankArea, Long bank, String targetPlatform, PrepareExecuteFinalize fragment) {
+            this.bankArea = bankArea;
+            this.bank = bank;
             this.targetPlatform = targetPlatform;
-            this.far = far;
+            this.fragment = fragment;
         }
 
         @Override
         public String getName() {
-            return "call_far" + "_" + targetPlatform + "_" + far.name().toLowerCase();
+            return "call_far" + "_" + targetPlatform.toLowerCase() + "_" + bankArea.toLowerCase() + "_" + fragment.name().toLowerCase();
         }
     }
 

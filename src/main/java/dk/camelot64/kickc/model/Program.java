@@ -105,7 +105,7 @@ public class Program {
    private NaturalLoopSet loopSet;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
-   /** All #pragma code segments. Collected during parsing. These are used by the far() pragmas to validate if the code segment exists during compilation.*/
+   /** All #pragma code segments. Collected during parsing. These are used by the bank() pragmas to validate if the code segment exists during compilation.*/
    private final Map<String, KickCParser.PragmaContext> pragmaCodeSegs;
 
    public Program() {

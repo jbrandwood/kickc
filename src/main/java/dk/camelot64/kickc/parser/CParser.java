@@ -107,13 +107,13 @@ public class CParser {
      */
     public static final String PRAGMA_RESOURCE = "resource";
     /**
-     * #pragma far(...) specifies the scope of the sequent functions to be far. Segments are defined in the linker file.
+     * #pragma bank(...) specifies the scope of the sequent functions to be located in a bank using a specific banking area.
      */
-    public static final String PRAGMA_FAR = "far";
+    public static final String PRAGMA_BANK = "bank";
     /**
-     * #pragma near specifies the scope of the sequent functions to be near. Segments are defined in the linker file.
+     * #pragma nobank specifies the scope of the sequent functions to be near. Segments are defined in the linker file.
      */
-    public static final String PRAGMA_NEAR = "near";
+    public static final String PRAGMA_NOBANK = "nobank";
 
     /**
      * The Program.

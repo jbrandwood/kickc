@@ -34,8 +34,8 @@ public class Procedure extends Scope {
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
-   /** The code segment to put the procedure into. */
-   private final String codeSegment;
+   /** The data and code segment to put the procedure into. */
+   private String segmentCode;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
    /** Is this procedure declared as a constructor procedure. */
@@ -98,14 +98,15 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention, Bank bankLocation) {
-      super(name, parentScope, dataSegment);
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String segmentCode, String segmentData, CallingConvention callingConvention, Bank bankLocation) {
+      super(name, parentScope, segmentData);
       this.procedureType = procedureType;
       this.declaredInline = false;
       this.bankLocation = bankLocation;
       this.interruptType = null;
       this.comments = new ArrayList<>();
-      this.codeSegment = codeSegment;
+      this.segmentCode = segmentCode;
+      this.segmentData = segmentData; // The parameter dataSegment was foreseen, but never implemented.
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
       this.isConstructor = false;
@@ -127,8 +128,12 @@ public class Procedure extends Scope {
       this.callingConvention = callingConvention;
    }
 
-   public String getCodeSegment() {
-      return codeSegment;
+   public String getSegmentCode() {
+      return segmentCode;
+   }
+
+   public void setSegmentCode(String segmentCode) {
+      this.segmentCode = segmentCode;
    }
 
    public List<String> getParameterNames() {
@@ -339,13 +344,13 @@ public class Procedure extends Scope {
             Objects.equals(interruptType, procedure.interruptType) &&
             Objects.equals(comments, procedure.comments) &&
             Objects.equals(reservedZps, procedure.reservedZps) &&
-            Objects.equals(codeSegment, procedure.codeSegment) &&
+            Objects.equals(segmentCode, procedure.segmentCode) &&
             Objects.equals(constructorRefs, procedure.constructorRefs) &&
             callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, codeSegment, constructorRefs, isConstructor, callingConvention);
+      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, callingConvention);
    }
 }

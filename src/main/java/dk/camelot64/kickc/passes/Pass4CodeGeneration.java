@@ -115,7 +115,7 @@ public class Pass4CodeGeneration {
                 currentScope = block.getScope();
                 if (block.isProcedureEntry(program)) {
                     Procedure procedure = block.getProcedure(program);
-                    currentCodeSegmentName = procedure.getCodeSegment();
+                    currentCodeSegmentName = procedure.getSegmentCode();
                 }
                 setCurrentSegment(currentCodeSegmentName, asm);
                 asm.startChunk(currentScope, null, block.getLabel().getFullName());
@@ -580,6 +580,31 @@ public class Pass4CodeGeneration {
                     if (registerMainMem.getAddress() == null) {
                         // Generate into the data segment
                         // Set segment
+                        // We check first the bank of the variable. Only local variables can be stored in the bank.
+                        // Parameters must be stored in main memory.
+                        if(!variable.getDataSegment().equals("Data")) {
+                            if(scope instanceof Procedure) {
+                                Procedure procedure = (Procedure) scope;
+                                List<Variable> parameters = procedure.getParameters();
+                                if (variable.isKindPhiVersion()) {
+                                    Variable master = variable.getPhiMaster();
+                                    if (master != null) {
+                                        if (parameters.contains(master) || master.getLocalName().equals("return")) {
+                                            variable.setDataSegment("Data");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Intermediate variables are placed at the banked data segment, but parameters and return values are kept untouched.
+                        if (variable.isKindIntermediate()) {
+                            if (scope instanceof Procedure) {
+                                Procedure procedure = (Procedure) scope;
+                                variable.setDataSegment(procedure.getSegmentData());
+                            }
+                        }
+                        setCurrentSegment(variable.getDataSegment(), asm);
                         setCurrentSegment(variable.getDataSegment(), asm);
                         // Add any comments
                         generateComments(asm, variable.getComments());

@@ -26,7 +26,7 @@ public abstract class Scope implements Symbol {
    private int blockCount = 1;
    private Scope parentScope;
    private String fullName;
-   private String segmentData;
+   protected String segmentData;
 
    public Scope(String name, Scope parentScope, String segmentData) {
       this.name = name;
@@ -43,6 +43,10 @@ public abstract class Scope implements Symbol {
 
    public String getSegmentData() {
       return segmentData;
+   }
+
+   public void setSegmentData(String segmentData) {
+      this.segmentData = segmentData;
    }
 
    public HashMap<String, Symbol> getSymbols() {

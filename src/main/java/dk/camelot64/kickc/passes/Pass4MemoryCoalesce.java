@@ -143,6 +143,10 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
       // Check the both registers have the same type
       if(!register1.getType().equals(register2.getType()))
          return false;
+      if(register1.toString().startsWith("mem"))
+         return false;
+      if(register2.toString().startsWith("mem"))
+         return false;
       // Check the both registers have the same size
       if(register1.getBytes() != register2.getBytes())
          return false;

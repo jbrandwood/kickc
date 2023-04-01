@@ -380,10 +380,10 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("struct-unwinding-1.c");
    }
 
-   //@Test
-   //public void testVarCall5() throws IOException {
-   //   compileAndCompare("varcall-5.c", log().verboseCreateSsa().verboseStructUnwind());
-   //}
+   @Test
+   public void testVarCall5() throws IOException {
+      compileAndCompare("varcall-5.c");
+   }
 
    @Test
    public void testVarCall4() throws IOException {

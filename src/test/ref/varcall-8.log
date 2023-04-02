@@ -1,0 +1,539 @@
+Setting struct to load/store in variable affected by address-of main::m = call min(&main::a, &main::b)
+Setting struct to load/store in variable affected by address-of main::m = call min(&main::a, &main::b)
+Setting struct to load/store in variable affected by address-of main::$1 = call min(main::m, &main::c)
+Converting parameter in __varcall procedure to load/store min::a
+Converting parameter in __varcall procedure to load/store min::b
+Converting return in __varcall procedure to load/store min::return
+Eliminating unused variable with no statement main::$0
+Calling convention __varcall adding prepare/execute/finalize for main::m = call min(&main::a, &main::b)
+Calling convention __varcall adding prepare/execute/finalize for main::$1 = call min(main::m, &main::c)
+Calling convention VAR_CALL adding return value assignment main::m = min::return
+Calling convention VAR_CALL adding return value assignment main::$1 = min::return
+Removing C-classic struct-unwound assignment main::a = struct-unwound {*(&main::a)}
+Removing C-classic struct-unwound assignment main::b = struct-unwound {*(&main::b)}
+Removing C-classic struct-unwound assignment main::c = struct-unwound {*(&main::c)}
+
+CONTROL FLOW GRAPH SSA
+
+__varcall struct Cols * min(struct Cols *a , struct Cols *b)
+min: scope:[min]  from
+  min::$3 = (char *)min::a
+  min::$1 = min::$3 + OFFSET_STRUCT_COLS_BG
+  min::$4 = (char *)min::b
+  min::$2 = min::$4 + OFFSET_STRUCT_COLS_BG
+  min::$0 = *min::$1 < *min::$2
+  if(min::$0) goto min::@1
+  to:min::@2
+min::@1: scope:[min]  from min
+  min::return = min::a
+  to:min::@return
+min::@2: scope:[min]  from min
+  min::return = min::b
+  to:min::@return
+min::@return: scope:[min]  from min::@1 min::@2
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  *(&main::a) = memcpy(*(&$0), struct Cols, SIZEOF_STRUCT_COLS)
+  *(&main::b) = memcpy(*(&$1), struct Cols, SIZEOF_STRUCT_COLS)
+  *(&main::c) = memcpy(*(&$2), struct Cols, SIZEOF_STRUCT_COLS)
+  min::a = &main::a
+  min::b = &main::b
+  callexecute min 
+  main::m#0 = min::return
+  *COLS = memcpy(*main::m#0, struct Cols, SIZEOF_STRUCT_COLS)
+  min::a = main::m#0
+  min::b = &main::c
+  callexecute min 
+  main::$1 = min::return
+  main::m#1 = main::$1
+  *COLS = memcpy(*main::m#1, struct Cols, SIZEOF_STRUCT_COLS)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant struct Cols $0 = { border: 1, bg: 7 }
+__constant struct Cols $1 = { border: 2, bg: 6 }
+__constant struct Cols $2 = { border: 3, bg: 5 }
+__constant struct Cols * const COLS = (struct Cols *)$d020
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char SIZEOF_STRUCT_COLS = 2
+void __start()
+void main()
+struct Cols *main::$1
+__loadstore volatile struct Cols main::a
+__loadstore volatile struct Cols main::b
+__loadstore volatile struct Cols main::c
+struct Cols *main::m
+struct Cols *main::m#0
+struct Cols *main::m#1
+__varcall struct Cols * min(struct Cols *a , struct Cols *b)
+bool min::$0
+char *min::$1
+char *min::$2
+char *min::$3
+char *min::$4
+__loadstore struct Cols *min::a
+__loadstore struct Cols *min::b
+__loadstore struct Cols *min::return
+
+Simplifying constant pointer cast (struct Cols *) 53280
+Successful SSA optimization PassNCastSimplification
+Alias main::m#1 = main::$1 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition min::$0 [5] if(*min::$1<*min::$2) goto min::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Converting *(pointer+n) to pointer[n] [5] if(*min::$1<*min::$2) goto min::@1  -- min::$3[OFFSET_STRUCT_COLS_BG]
+Converting *(pointer+n) to pointer[n] [5] if(min::$3[OFFSET_STRUCT_COLS_BG]<*min::$2) goto min::@1  -- min::$4[OFFSET_STRUCT_COLS_BG]
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable min::$1 and assignment [1] min::$1 = min::$3 + OFFSET_STRUCT_COLS_BG
+Eliminating unused variable min::$2 and assignment [3] min::$2 = min::$4 + OFFSET_STRUCT_COLS_BG
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining Noop Cast [0] min::$3 = (char *)min::a keeping min::a
+Inlining Noop Cast [1] min::$4 = (char *)min::b keeping min::b
+Successful SSA optimization Pass2NopCastInlining
+CALL GRAPH
+Calls in [main] to min:5 min:10 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *(&main::a) = memcpy(*(&$0), struct Cols, SIZEOF_STRUCT_COLS)
+  [1] *(&main::b) = memcpy(*(&$1), struct Cols, SIZEOF_STRUCT_COLS)
+  [2] *(&main::c) = memcpy(*(&$2), struct Cols, SIZEOF_STRUCT_COLS)
+  [3] min::a = &main::a
+  [4] min::b = &main::b
+  [5] callexecute min 
+  [6] main::m#0 = min::return
+  [7] *COLS = memcpy(*main::m#0, struct Cols, SIZEOF_STRUCT_COLS)
+  [8] min::a = main::m#0
+  [9] min::b = &main::c
+  [10] callexecute min 
+  [11] main::m#1 = min::return
+  [12] *COLS = memcpy(*main::m#1, struct Cols, SIZEOF_STRUCT_COLS)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [13] return 
+  to:@return
+
+__varcall struct Cols * min(struct Cols *a , struct Cols *b)
+min: scope:[min]  from
+  [14] if(((char *)min::a)[OFFSET_STRUCT_COLS_BG]<((char *)min::b)[OFFSET_STRUCT_COLS_BG]) goto min::@1
+  to:min::@2
+min::@2: scope:[min]  from min
+  [15] min::return = min::b
+  to:min::@return
+min::@return: scope:[min]  from min::@1 min::@2
+  [16] return 
+  to:@return
+min::@1: scope:[min]  from min
+  [17] min::return = min::a
+  to:min::@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+__loadstore volatile struct Cols main::a
+__loadstore volatile struct Cols main::b
+__loadstore volatile struct Cols main::c
+struct Cols *main::m
+struct Cols *main::m#0 // 2.0
+struct Cols *main::m#1 // 2.0
+__varcall struct Cols * min(struct Cols *a , struct Cols *b)
+__loadstore struct Cols *min::a // 3.0
+__loadstore struct Cols *min::b // 5.0
+__loadstore struct Cols *min::return // 5.2
+
+Initial phi equivalence classes
+Added variable min::a to live range equivalence class [ min::a ]
+Added variable min::b to live range equivalence class [ min::b ]
+Added variable main::m#0 to live range equivalence class [ main::m#0 ]
+Added variable main::m#1 to live range equivalence class [ main::m#1 ]
+Added variable min::return to live range equivalence class [ min::return ]
+Added variable main::a to live range equivalence class [ main::a ]
+Added variable main::b to live range equivalence class [ main::b ]
+Added variable main::c to live range equivalence class [ main::c ]
+Complete equivalence classes
+[ min::a ]
+[ min::b ]
+[ main::m#0 ]
+[ main::m#1 ]
+[ min::return ]
+[ main::a ]
+[ main::b ]
+[ main::c ]
+Allocated zp[2]:2 [ min::return ]
+Allocated zp[2]:4 [ min::b ]
+Allocated zp[2]:6 [ min::a ]
+Allocated zp[2]:8 [ main::m#0 ]
+Allocated zp[2]:10 [ main::m#1 ]
+Allocated zp[2]:12 [ main::a ]
+Allocated zp[2]:14 [ main::b ]
+Allocated zp[2]:16 [ main::c ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *(&main::a) = memcpy(*(&$0), struct Cols, SIZEOF_STRUCT_COLS) [ main::b main::c main::a ] (  [ main::b main::c main::a ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] *(&main::b) = memcpy(*(&$1), struct Cols, SIZEOF_STRUCT_COLS) [ main::b main::c main::a ] (  [ main::b main::c main::a ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] *(&main::c) = memcpy(*(&$2), struct Cols, SIZEOF_STRUCT_COLS) [ main::b main::c main::a ] (  [ main::b main::c main::a ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] min::a = &main::a [ main::b main::c min::a ] (  [ main::b main::c min::a ] { }  ) always clobbers reg byte a 
+Statement [4] min::b = &main::b [ main::c min::a min::b ] (  [ main::c min::a min::b ] { }  ) always clobbers reg byte a 
+Statement [6] main::m#0 = min::return [ main::c main::m#0 ] (  [ main::c main::m#0 ] { }  ) always clobbers reg byte a 
+Statement [7] *COLS = memcpy(*main::m#0, struct Cols, SIZEOF_STRUCT_COLS) [ main::c main::m#0 ] (  [ main::c main::m#0 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [8] min::a = main::m#0 [ main::c min::a ] (  [ main::c min::a ] { }  ) always clobbers reg byte a 
+Statement [9] min::b = &main::c [ min::a min::b ] (  [ min::a min::b ] { }  ) always clobbers reg byte a 
+Statement [11] main::m#1 = min::return [ main::m#1 ] (  [ main::m#1 ] { }  ) always clobbers reg byte a 
+Statement [12] *COLS = memcpy(*main::m#1, struct Cols, SIZEOF_STRUCT_COLS) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [14] if(((char *)min::a)[OFFSET_STRUCT_COLS_BG]<((char *)min::b)[OFFSET_STRUCT_COLS_BG]) goto min::@1 [ min::a min::b ] ( min:5 [ main::c min::a min::b ] { { main::m#0 = min::a } }  min:10 [ min::a min::b ] { { main::m#0 = min::a } }  ) always clobbers reg byte a reg byte y 
+Statement [15] min::return = min::b [ min::return ] ( min:5 [ main::c min::return ] { { main::m#0 = min::a } }  min:10 [ min::return ] { { main::m#0 = min::a } }  ) always clobbers reg byte a 
+Statement [17] min::return = min::a [ min::return ] ( min:5 [ main::c min::return ] { { main::m#0 = min::a } }  min:10 [ min::return ] { { main::m#0 = min::a } }  ) always clobbers reg byte a 
+Potential registers zp[2]:6 [ min::a ] : zp[2]:6 , 
+Potential registers zp[2]:4 [ min::b ] : zp[2]:4 , 
+Potential registers zp[2]:8 [ main::m#0 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::m#1 ] : zp[2]:10 , 
+Potential registers zp[2]:2 [ min::return ] : zp[2]:2 , 
+Potential registers zp[2]:12 [ main::a ] : zp[2]:12 , 
+Potential registers zp[2]:14 [ main::b ] : zp[2]:14 , 
+Potential registers zp[2]:16 [ main::c ] : zp[2]:16 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [min] 5.2: zp[2]:2 [ min::return ] 5: zp[2]:4 [ min::b ] 3: zp[2]:6 [ min::a ] 
+Uplift Scope [main] 2: zp[2]:8 [ main::m#0 ] 2: zp[2]:10 [ main::m#1 ] 0: zp[2]:12 [ main::a ] 0: zp[2]:14 [ main::b ] 0: zp[2]:16 [ main::c ] 
+Uplift Scope [Cols] 
+Uplift Scope [] 
+
+Uplifting [min] best 231 combination zp[2]:2 [ min::return ] zp[2]:4 [ min::b ] zp[2]:6 [ min::a ] 
+Uplifting [main] best 231 combination zp[2]:8 [ main::m#0 ] zp[2]:10 [ main::m#1 ] zp[2]:12 [ main::a ] zp[2]:14 [ main::b ] zp[2]:16 [ main::c ] 
+Uplifting [Cols] best 231 combination 
+Uplifting [] best 231 combination 
+Coalescing zero page register [ zp[2]:6 [ min::a ] ] with [ zp[2]:8 [ main::m#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:6 [ min::a main::m#0 ] ] with [ zp[2]:2 [ min::return ] ] - score: 1
+Coalescing zero page register [ zp[2]:6 [ min::a main::m#0 min::return ] ] with [ zp[2]:10 [ main::m#1 ] ] - score: 1
+Allocated (was zp[2]:6) zp[2]:2 [ min::a main::m#0 min::return main::m#1 ]
+Allocated (was zp[2]:12) zp[2]:6 [ main::a ]
+Allocated (was zp[2]:14) zp[2]:8 [ main::b ]
+Allocated (was zp[2]:16) zp[2]:10 [ main::c ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Pointer to Struct parameter & return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_COLS = 2
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .label a = 6
+    .label b = 8
+    .label c = $a
+    .label m = 2
+    // [0] *(&main::a) = memcpy(*(&$0), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __0-1,y
+    sta a-1,y
+    dey
+    bne !-
+    // [1] *(&main::b) = memcpy(*(&$1), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __1-1,y
+    sta b-1,y
+    dey
+    bne !-
+    // [2] *(&main::c) = memcpy(*(&$2), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __2-1,y
+    sta c-1,y
+    dey
+    bne !-
+    // [3] min::a = &main::a -- pssz1=pssc1 
+    lda #<a
+    sta.z min.a
+    lda #>a
+    sta.z min.a+1
+    // [4] min::b = &main::b -- pssz1=pssc1 
+    lda #<b
+    sta.z min.b
+    lda #>b
+    sta.z min.b+1
+    // [5] callexecute min  -- call_vprc1 
+    jsr min
+    // [6] main::m#0 = min::return
+    // [7] *COLS = memcpy(*main::m#0, struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssz1_memcpy_vbuc2 
+    ldx #SIZEOF_STRUCT_COLS
+    ldy #0
+  !:
+    lda (m),y
+    sta COLS,y
+    iny
+    dex
+    bne !-
+    // [8] min::a = main::m#0
+    // [9] min::b = &main::c -- pssz1=pssc1 
+    lda #<c
+    sta.z min.b
+    lda #>c
+    sta.z min.b+1
+    // [10] callexecute min  -- call_vprc1 
+    jsr min
+    // [11] main::m#1 = min::return
+    // [12] *COLS = memcpy(*main::m#1, struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssz1_memcpy_vbuc2 
+    ldx #SIZEOF_STRUCT_COLS
+    ldy #0
+  !:
+    lda (m),y
+    sta COLS,y
+    iny
+    dex
+    bne !-
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // min
+// __zp(2) struct Cols * min(__zp(2) struct Cols *a, __zp(4) struct Cols *b)
+min: {
+    .label a = 2
+    .label b = 4
+    .label return = 2
+    // [14] if(((char *)min::a)[OFFSET_STRUCT_COLS_BG]<((char *)min::b)[OFFSET_STRUCT_COLS_BG]) goto min::@1 -- pbuz1_derefidx_vbuc1_lt_pbuz2_derefidx_vbuc1_then_la1 
+    ldy #OFFSET_STRUCT_COLS_BG
+    lda (b),y
+    cmp (a),y
+    bcc __b1
+    jmp __b2
+    // min::@2
+  __b2:
+    // [15] min::return = min::b -- pssz1=pssz2 
+    lda.z b
+    sta.z return
+    lda.z b+1
+    sta.z return+1
+    jmp __breturn
+    // min::@return
+  __breturn:
+    // [16] return 
+    rts
+    // min::@1
+  __b1:
+    // [17] min::return = min::a
+    jmp __breturn
+}
+  // File Data
+.segment Data
+  __0: .byte 1, 7
+  __1: .byte 2, 6
+  __2: .byte 3, 5
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Skipping double jump to __breturn in bcc __b1
+Replacing jump to rts with rts in jmp __breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing unreachable instruction rts
+Succesful ASM optimization Pass5UnreachableCodeElimination
+
+FINAL SYMBOL TABLE
+__constant struct Cols $0 = { border: 1, bg: 7 }
+__constant struct Cols $1 = { border: 2, bg: 6 }
+__constant struct Cols $2 = { border: 3, bg: 5 }
+__constant struct Cols * const COLS = (struct Cols *) 53280
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char SIZEOF_STRUCT_COLS = 2
+void main()
+__loadstore volatile struct Cols main::a // zp[2]:6
+__loadstore volatile struct Cols main::b // zp[2]:8
+__loadstore volatile struct Cols main::c // zp[2]:10
+struct Cols *main::m
+struct Cols *main::m#0 // m zp[2]:2 2.0
+struct Cols *main::m#1 // m zp[2]:2 2.0
+__varcall struct Cols * min(struct Cols *a , struct Cols *b)
+__loadstore struct Cols *min::a // zp[2]:2 3.0
+__loadstore struct Cols *min::b // zp[2]:4 5.0
+__loadstore struct Cols *min::return // zp[2]:2 5.2
+
+zp[2]:2 [ min::a main::m#0 min::return main::m#1 ]
+zp[2]:4 [ min::b ]
+zp[2]:6 [ main::a ]
+zp[2]:8 [ main::b ]
+zp[2]:10 [ main::c ]
+
+
+FINAL ASSEMBLER
+Score: 171
+
+  // File Comments
+// Test __varcall calling convention
+// Pointer to Struct parameter & return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const SIZEOF_STRUCT_COLS = 2
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .label a = 6
+    .label b = 8
+    .label c = $a
+    .label m = 2
+    // struct Cols a = { 1, 7 }
+    // [0] *(&main::a) = memcpy(*(&$0), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __0-1,y
+    sta a-1,y
+    dey
+    bne !-
+    // struct Cols b = { 2, 6 }
+    // [1] *(&main::b) = memcpy(*(&$1), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __1-1,y
+    sta b-1,y
+    dey
+    bne !-
+    // struct Cols c = { 3, 5 }
+    // [2] *(&main::c) = memcpy(*(&$2), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda __2-1,y
+    sta c-1,y
+    dey
+    bne !-
+    // struct Cols *m = min(&a,&b)
+    // [3] min::a = &main::a -- pssz1=pssc1 
+    lda #<a
+    sta.z min.a
+    lda #>a
+    sta.z min.a+1
+    // [4] min::b = &main::b -- pssz1=pssc1 
+    lda #<b
+    sta.z min.b
+    lda #>b
+    sta.z min.b+1
+    // [5] callexecute min  -- call_vprc1 
+    jsr min
+    // [6] main::m#0 = min::return
+    // *COLS = *m
+    // [7] *COLS = memcpy(*main::m#0, struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssz1_memcpy_vbuc2 
+    ldx #SIZEOF_STRUCT_COLS
+    ldy #0
+  !:
+    lda (m),y
+    sta COLS,y
+    iny
+    dex
+    bne !-
+    // min(m,&c)
+    // [8] min::a = main::m#0
+    // [9] min::b = &main::c -- pssz1=pssc1 
+    lda #<c
+    sta.z min.b
+    lda #>c
+    sta.z min.b+1
+    // [10] callexecute min  -- call_vprc1 
+    jsr min
+    // m = min(m,&c)
+    // [11] main::m#1 = min::return
+    // *COLS = *m
+    // [12] *COLS = memcpy(*main::m#1, struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssz1_memcpy_vbuc2 
+    ldx #SIZEOF_STRUCT_COLS
+    ldy #0
+  !:
+    lda (m),y
+    sta COLS,y
+    iny
+    dex
+    bne !-
+    // main::@return
+    // }
+    // [13] return 
+    rts
+}
+  // min
+// __zp(2) struct Cols * min(__zp(2) struct Cols *a, __zp(4) struct Cols *b)
+min: {
+    .label a = 2
+    .label b = 4
+    .label return = 2
+    // if(a->bg < b->bg)
+    // [14] if(((char *)min::a)[OFFSET_STRUCT_COLS_BG]<((char *)min::b)[OFFSET_STRUCT_COLS_BG]) goto min::@1 -- pbuz1_derefidx_vbuc1_lt_pbuz2_derefidx_vbuc1_then_la1 
+    ldy #OFFSET_STRUCT_COLS_BG
+    lda (b),y
+    cmp (a),y
+    bcc __breturn
+    // min::@2
+    // return b;
+    // [15] min::return = min::b -- pssz1=pssz2 
+    lda.z b
+    sta.z return
+    lda.z b+1
+    sta.z return+1
+    // min::@return
+  __breturn:
+    // }
+    // [16] return 
+    rts
+    // min::@1
+    // return a;
+    // [17] min::return = min::a
+}
+  // File Data
+.segment Data
+  __0: .byte 1, 7
+  __1: .byte 2, 6
+  __2: .byte 3, 5
+

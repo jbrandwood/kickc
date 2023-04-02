@@ -217,6 +217,15 @@ commaExpr
     | commaExpr COMMA expr #commaSimple
     ;
 
+initMemberExpr
+    : expr
+    ;
+
+initExpr
+    : (DOT initMemberExpr ASSIGN)? expr
+    ;
+
+
 expr
     : PAR_BEGIN commaExpr PAR_END #exprPar
     | expr DOT NAME #exprDot
@@ -243,9 +252,9 @@ expr
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
     | expr '?'   expr COLON expr #exprTernary
+    | CURLY_BEGIN initExpr (COMMA initExpr )* COMMA? CURLY_END #initList
     | <assoc=right> expr '=' expr  #exprAssignment
     | <assoc=right> expr ASSIGN_COMPOUND expr  #exprAssignmentCompound
-    | CURLY_BEGIN expr (COMMA expr )* COMMA? CURLY_END #initList
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING+ #exprString

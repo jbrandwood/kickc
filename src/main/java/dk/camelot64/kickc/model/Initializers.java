@@ -143,10 +143,12 @@ public class Initializers {
       int structInitNeedSize = structDefinition.isUnion() ? 1 : memberDefinitions.size();
       if(structInitNeedSize != valueList.getList().size()) {
          if(structDefinition.isUnion()) {
-            throw new CompileError(
-                  "Union initializer has too many values, since only one is allowed.\n" +
-                        " Union initializer: " + valueList.toString(program),
-                  source);
+            if(valueList.getList().size()>1) {
+               throw new CompileError(
+                       "Union initializer has too many values, since only one is allowed.\n" +
+                               " Union initializer: " + valueList.toString(program),
+                       source);
+            }
          } else {
             throw new CompileError(
                   "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
@@ -165,8 +167,19 @@ public class Initializers {
       Iterator<Variable> memberDefIt = memberDefinitions.iterator();
       Iterator<RValue> valueIt = valueList.getList().iterator();
       for(int i = 0; i < structInitNeedSize; i++) {
-         Variable memberDef = memberDefIt.next();
+         Variable memberDef = null;
          RValue memberValue = valueIt.next();
+         String memberUnion = ((ValueStructList)valueList).getMember(memberValue);
+         if(memberUnion != null) {
+            while(memberDefIt.hasNext()) {
+               memberDef = memberDefIt.next();
+               if (memberDef.getLocalName().contentEquals(memberUnion.toString())) {
+                  break;
+               }
+            }
+         } else {
+            memberDef = memberDefIt.next();
+         }
          RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType()), program, source);
          constantifiedList.add(constantifiedMemberValue);
          if(constantifiedMemberValue instanceof ConstantValue)

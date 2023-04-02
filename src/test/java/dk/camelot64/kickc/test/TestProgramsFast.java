@@ -381,6 +381,16 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testVarCall7() throws IOException {
+      compileAndCompare("varcall-7.c");
+   }
+
+   @Test
+   public void testVarCall6() throws IOException {
+      compileAndCompare("varcall-6.c");
+   }
+
+   @Test
    public void testVarCall5() throws IOException {
       compileAndCompare("varcall-5.c");
    }

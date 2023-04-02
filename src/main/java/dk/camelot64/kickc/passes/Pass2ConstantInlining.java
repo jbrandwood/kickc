@@ -3,9 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.AliasReplacer;
 
@@ -55,15 +53,43 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       replaceInValues(inline);
       // Replace all usages of the constants in the control flow graph or symbol table
       replaceVariables(inline);
+      // Remove parameters
+      final Set<ConstantRef> inlineRefs = inline.keySet();
+      removeParameters(inlineRefs);
       // Remove from symbol table
-      deleteSymbols(getScope(), inline.keySet());
+      deleteSymbols(getScope(), inlineRefs);
 
-      for(ConstantRef constantRef : inline.keySet()) {
+
+      for(ConstantRef constantRef : inlineRefs) {
          getLog().append("Constant inlined " + constantRef.toString() + " = " + inline.get(constantRef).toString(getProgram()));
       }
 
       return inline.size() > 0;
 
+   }
+
+   private void removeParameters(Set<ConstantRef> inlineRefs) {
+      for(ConstantRef inlineRef : inlineRefs) {
+         final Scope scope = getScope().getConstant(inlineRef).getScope();
+         final Procedure procedure = getProcedure(scope);
+         if(procedure!=null) {
+            final List<Variable> parameters = procedure.getParameters();
+            final boolean modified = parameters.removeIf(param -> param.getRef().equals(inlineRef));
+            if(modified) {
+               procedure.setParameters(parameters);
+               getLog().append("Parameter inlined " + inlineRef.toString());
+            }
+         }
+      }
+   }
+
+   private static Procedure getProcedure(Scope scope) {
+      if(scope instanceof Procedure)
+         return (Procedure)  scope;
+      else if(scope instanceof ProgramScope)
+         return null;
+      else
+         return getProcedure(scope.getScope());
    }
 
    /**

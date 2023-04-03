@@ -169,14 +169,21 @@ public class Initializers {
       for(int i = 0; i < structInitNeedSize; i++) {
          Variable memberDef = null;
          RValue memberValue = valueIt.next();
-         String memberUnion = ((ValueStructList)valueList).getMember(memberValue);
-         if(memberUnion != null) {
-            while(memberDefIt.hasNext()) {
+         String memberUnionName = ((ValueStructList)valueList).getMember(memberValue);
+         if(memberUnionName != null) {
+            boolean found = false;
+            while (memberDefIt.hasNext()) {
                memberDef = memberDefIt.next();
-               if (memberDef.getLocalName().contentEquals(memberUnion.toString())) {
+               if (memberDef.getLocalName().contentEquals(memberUnionName)) {
+                  found = true;
                   break;
                }
             }
+            if(!found)
+               throw new CompileError(
+                       "Union initializer cannot find member field " + memberUnionName + "\n" +
+                               " Union initializer: " + valueList.toString(program),
+                       source);
          } else {
             memberDef = memberDefIt.next();
          }

@@ -378,6 +378,12 @@ public class TestProgramsFast extends TestPrograms {
    public void testStructUnwinding1() throws IOException {
       compileAndCompare("struct-unwinding-1.c");
    }
+
+   @Test
+   public void testVarCall9() throws IOException {
+      compileAndCompare("varcall-9.c");
+   }
+
    @Test
    public void testVarCall8() throws IOException {
       compileAndCompare("varcall-8.c");

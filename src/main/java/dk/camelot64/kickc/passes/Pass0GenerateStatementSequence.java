@@ -1917,7 +1917,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public RValue visitInitUnion(KickCParser.InitUnionContext ctx) {
       final String memberName = ctx.NAME().getText();
       final RValue rValue = (RValue) visit(ctx.expr());
-      return new ValueListUnionDesignator(memberName, rValue);
+      return new UnionDesignator(memberName, rValue);
    }
 
    @Override

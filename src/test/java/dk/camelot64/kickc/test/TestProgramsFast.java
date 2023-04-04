@@ -2542,6 +2542,26 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testUnion12() throws IOException {
+      compileAndCompare("union-12.c");
+   }
+
+   @Test
+   public void testUnion11() throws IOException {
+      compileAndCompare("union-11.c");
+   }
+
+   @Test
+   public void testUnion10() throws IOException {
+      compileAndCompare("union-10.c");
+   }
+
+   @Test
+   public void testUnion9() throws IOException {
+      compileAndCompare("union-9.c");
+   }
+
+   @Test
    public void testUnion8() throws IOException {
       compileAndCompare("union-8.c");
    }

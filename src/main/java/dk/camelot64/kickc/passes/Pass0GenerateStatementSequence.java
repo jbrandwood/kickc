@@ -1914,37 +1914,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public String visitInitExpr(KickCParser.InitExprContext ctx) {
-      List<RValue> initValues = new ArrayList<>();
-      HashMap<String, RValue> members = new HashMap<>();
-
-      String member = null;
-      if(ctx.initMemberExpr() != null) {
-         member = ctx.initMemberExpr().getText();
-      }
-      return member;
-   }
-
-   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
-      HashMap<RValue, String> members = new HashMap<>();
+      HashMap<RValue, String> initDesignators = new HashMap<>();
 
       for(KickCParser.InitExprContext initializer : ctx.initExpr()) {
-         RValue member = null;
          String initString = initializer.getText();
-         if (initializer.initMemberExpr() != null) {
-            if(initializer.initMemberExpr().isEmpty() == false) {
-               member = (RValue) visit(initializer.initMemberExpr());
-            }
-         }
-         RValue rValue = (RValue) visit(initializer.expr());
-         initValues.add(rValue);
-         if(member!=null) {
-            members.put(rValue, member.toString());
+         if (initializer.expr().size() == 2) {
+            RValue member = (RValue) visit(initializer.expr(0));
+            RValue rValue = (RValue) visit(initializer.expr(1));
+            initValues.add(rValue);
+            initDesignators.put(rValue, member.toString());
+         } else {
+            RValue rValue = (RValue) visit(initializer.expr(0));
+            initValues.add(rValue);
          }
       }
-      return new ValueStructList(members, initValues);
+      return new ValueStructList(initDesignators, initValues);
    }
 
    @Override

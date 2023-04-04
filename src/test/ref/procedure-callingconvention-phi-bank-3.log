@@ -143,14 +143,7 @@ char plus::return
 
 Initial phi equivalence classes
 Complete equivalence classes
-Warning! Unknown fragment for statement [1] call plus
-Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-bank-3.c:10:17:
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential register analysis [1] call plus missing fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare  allocation: 
-MISSING FRAGMENTS
-  Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-Statement [1] call plus [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [2] *SCREEN = plus::return#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -158,25 +151,13 @@ Uplift Scope [main]
 Uplift Scope [plus] 
 Uplift Scope [] 
 
-Warning! Unknown fragment for statement [1] call plus
-Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-bank-3.c:10:17:
-Uplifting [main] best 54 combination 
-Warning! Unknown fragment for statement [1] call plus
-Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-bank-3.c:10:17:
-Uplifting [plus] best 54 combination 
-Warning! Unknown fragment for statement [1] call plus
-Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-bank-3.c:10:17:
-Uplifting [] best 54 combination 
-Warning! Unknown fragment for statement [1] call plus
-Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare 
-D:\Users\svenv\OneDrive\Documents\GitHub\kickc\src\test\kc\procedure-callingconvention-phi-bank-3.c:10:17:
+Uplifting [main] best 60 combination 
+Uplifting [plus] best 60 combination 
+Uplifting [] best 60 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Test a far call procedure with a calling convention sp
+// Test a far call procedure with a calling convention PHI
   // Upstart
 .cpu _65c02
   .segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
@@ -193,9 +174,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     // [1] call plus
-    // [4] phi from main to plus [phi:main->plus]
+    // [4] phi from main to plus [phi:main->plus] -- call_far_cx16_rom_finalize 
   plus_from_main:
-    .assert "Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare ", 0, 1
+    jsr $ff6e
+    .byte <plus
+    .byte >plus
+    .byte 2
     jmp __b1
     // main::@1
   __b1:
@@ -209,6 +193,7 @@ main: {
     rts
 }
   // plus
+// Test rom fragment
 // char plus(char a, char b)
 plus: {
     .const a = '0'
@@ -247,10 +232,10 @@ __constant char plus::return#1 = plus::a#0+plus::b#0 // return
 
 
 FINAL ASSEMBLER
-Score: 18
+Score: 24
 
   // File Comments
-// Test a far call procedure with a calling convention sp
+// Test a far call procedure with a calling convention PHI
   // Upstart
 .cpu _65c02
   .segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
@@ -268,8 +253,11 @@ Score: 18
 main: {
     // plus('0', 7)
     // [1] call plus
-    // [4] phi from main to plus [phi:main->plus]
-    .assert "Missing ASM fragment Fragment not found call_far_cx16_stage_prepare. Attempted variations call_far_cx16_stage_prepare ", 0, 1
+    // [4] phi from main to plus [phi:main->plus] -- call_far_cx16_rom_finalize 
+    jsr $ff6e
+    .byte <plus
+    .byte >plus
+    .byte 2
     // main::@1
     // SCREEN[0] = plus('0', 7)
     // [2] *SCREEN = plus::return#1 -- _deref_pbuc1=vbuc2 
@@ -281,6 +269,7 @@ main: {
     rts
 }
   // plus
+// Test rom fragment
 // char plus(char a, char b)
 plus: {
     .const a = '0'

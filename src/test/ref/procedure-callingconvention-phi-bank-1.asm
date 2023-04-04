@@ -1,4 +1,4 @@
-// Test a far call procedure with a calling convention sp
+// Test a far call procedure with a calling convention PHI
 .cpu _65c02
   .segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
 .segmentdef Basic                   [start=$0801]

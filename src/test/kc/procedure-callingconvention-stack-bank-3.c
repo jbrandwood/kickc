@@ -19,28 +19,33 @@ void main(void) {
     }
 }
 
-#pragma code_seg(test)
-#pragma code_seg(test2)
-#pragma code_seg(test3)
-#pragma code_seg(Code)
+#pragma code_seg(stage)
 
 void __bank(ram, 20) pval() {
     printval();
 }
 
+#pragma code_seg(platform)
+
 void __bank(ram, 21) ival() {
     incval();
 }
 
+#pragma code_seg(stage)
+
 void __bank(ram, 20) printval() {
     SCREEN[0] = val;
 }
+
+
+#pragma code_seg(platform)
 
 void __bank(ram, 21) incval() {
     val++;
 }
 
 #pragma nobank
+#pragma code_seg(Code)
 
 void printother() {
     for(char i:0..5) {

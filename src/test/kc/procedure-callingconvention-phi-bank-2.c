@@ -1,4 +1,4 @@
-// Test a far call procedure with a calling convention sp
+// Test a far call procedure with a calling convention PHI into ROM
 
 #pragma code_seg(stage)
 #pragma link("procedure-callingconvention-phi-bank.ld")
@@ -11,7 +11,7 @@ void main(void) {
 }
 
 #pragma code_seg(stage)
-#pragma bank(rubbish, 1)
+#pragma bank(rom, 1) // test rom bank
 
 char plus(char a, char b) {
     return a+b;

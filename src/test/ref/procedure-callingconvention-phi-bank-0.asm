@@ -1,4 +1,4 @@
-// Test a procedure with calling convention stack
+// Test a procedure with calling convention PHI
 .cpu _65c02
   .segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
 .segmentdef Basic                   [start=$0801]

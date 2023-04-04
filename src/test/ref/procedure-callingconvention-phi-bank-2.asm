@@ -1,4 +1,4 @@
-// Test a far call procedure with a calling convention sp
+// Test a far call procedure with a calling convention PHI into ROM
 .cpu _65c02
   .segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
 .segmentdef Basic                   [start=$0801]
@@ -12,13 +12,17 @@
 .segment stage
 main: {
     // plus('0', 7)
-    .assert "Missing ASM fragment Fragment not found call_far_cx16_rubbish_prepare. Attempted variations call_far_cx16_rubbish_prepare ", 0, 1
+    jsr $ff6e
+    .byte <plus
+    .byte >plus
+    .byte 1
     // SCREEN[0] = plus('0', 7)
     lda #plus.return
     sta SCREEN
     // }
     rts
 }
+// test rom bank
 // char plus(char a, char b)
 plus: {
     .const a = '0'

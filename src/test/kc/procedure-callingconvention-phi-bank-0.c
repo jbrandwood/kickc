@@ -1,4 +1,4 @@
-// Test a procedure with calling convention stack
+// Test a procedure with calling convention PHI
 
 #pragma code_seg(stage)
 #pragma link("procedure-callingconvention-phi-bank.ld")

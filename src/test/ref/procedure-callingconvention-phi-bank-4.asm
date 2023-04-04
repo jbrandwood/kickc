@@ -12,7 +12,10 @@
 .segment stage
 main: {
     // plus('0', 7)
-    jsr plus
+    jsr $ff6e
+    .byte <plus
+    .byte >plus
+    .byte $14
     // SCREEN[0] = plus('0', 7)
     lda #plus.return
     sta SCREEN

@@ -30,12 +30,14 @@ printother: {
     // }
     rts
 }
+.segment platform
 incval: {
     // val++;
     inc.z val
     // }
     rts
 }
+.segment stage
 printval: {
     // SCREEN[0] = val
     lda.z val
@@ -43,19 +45,20 @@ printval: {
     // }
     rts
 }
+.segment platform
 ival: {
     // incval()
     jsr incval
     // }
     rts
 }
+.segment stage
 pval: {
     // printval()
     jsr printval
     // }
     rts
 }
-.segment stage
 main: {
     ldy #0
   __b1:

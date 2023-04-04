@@ -137,7 +137,7 @@ public class Procedure extends Scope {
    }
 
    public void setCodeSegment(String codeSegment) {
-      this.codeSegment = codeSegment;
+      this.segmentCode = segmentCode;
    }
 
    public List<String> getParameterNames() {

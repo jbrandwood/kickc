@@ -1914,12 +1914,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public RValue visitInitUnion(KickCParser.InitUnionContext ctx) {
+      final String memberName = ctx.NAME().getText();
+      final RValue rValue = (RValue) visit(ctx.expr());
+      return new UnionDesignator(memberName, rValue);
+   }
+
+   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
       for(KickCParser.ExprContext initializer : ctx.expr()) {
          RValue rValue = (RValue) visit(initializer);
-         initValues.add(rValue);
-      }
+            initValues.add(rValue);
+         }
       return new ValueList(initValues);
    }
 

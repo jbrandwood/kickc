@@ -130,10 +130,10 @@ public class Initializers {
    }
 
    /**
-    * Convert as much as possible of a struct to constants.
+    * Convert a union designator initializer to a constant.
     *
-    * @param unionInit The value list
-    * @param structType The struct type
+    * @param unionInit The union initializer
+    * @param structType The union type
     * @param program The program
     * @param source The source line
     * @return The constantified value
@@ -163,7 +163,6 @@ public class Initializers {
          throw new CompileError( "Union initializer is not constant", source);
       }
    }
-
 
    /**
     * Convert as much as possible of a struct to constants.

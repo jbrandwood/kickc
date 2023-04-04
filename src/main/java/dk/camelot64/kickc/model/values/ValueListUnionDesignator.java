@@ -27,6 +27,10 @@ public class ValueListUnionDesignator extends ValueList {
 
    public String getMemberName() { return memberName; }
 
+   public RValue getMemberValue() {
+      return getList().get(0);
+   }
+
    @Override
    public String toString(Program program) {
       StringBuilder out = new StringBuilder();

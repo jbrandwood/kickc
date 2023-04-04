@@ -163,7 +163,7 @@ public class Initializers {
 
          ValueListUnionDesignator unionInit = (ValueListUnionDesignator) valueList;
          final String memberName = unionInit.getMemberName();
-         final RValue initValue = unionInit.getList().get(0);
+         final RValue initValue = unionInit.getMemberValue();
 
          Variable memberDef = null;
          for(Variable definition : memberDefinitions) {

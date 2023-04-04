@@ -136,6 +136,10 @@ public class Procedure extends Scope {
       this.segmentCode = segmentCode;
    }
 
+   public void setCodeSegment(String codeSegment) {
+      this.codeSegment = codeSegment;
+   }
+
    public List<String> getParameterNames() {
       return parameterNames;
    }

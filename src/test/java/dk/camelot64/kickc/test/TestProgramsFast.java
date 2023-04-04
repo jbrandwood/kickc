@@ -1496,68 +1496,63 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFarx() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-x.c");
+   public void testProcedureCallingConventionPhiBank0() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar0() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-0.c");
+   public void testProcedureCallingConventionPhiBank1() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar1() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-1.c");
+   public void testProcedureCallingConventionPhiBank2() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-2.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar2() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-2.c");
+   public void testProcedureCallingConventionPhiBank3() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-3.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar3() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-3.c");
+   public void testProcedureCallingConventionPhiBank4() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-4.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar4() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-4.c");
+   public void testProcedureCallingConventionPhiBank5() throws IOException {
+      compileAndCompare("procedure-callingconvention-phi-bank-5.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiFar5() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-far-5.c");
+   public void testProcedureCallingConventionStackBank5() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-5.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackFar5() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-5.c");
+   public void testProcedureCallingConventionStackBank4() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-4.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackFar4() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-4.c");
+   public void testProcedureCallingConventionStackBank3() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-3.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackFar3() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-3.c");
+   public void testProcedureCallingConventionStackBank2() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-2.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackFar2() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-2.c");
+   public void testProcedureCallingConventionStackBank1() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackFar1() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-1.c");
-   }
-
-   @Test
-   public void testProcedureCallingConventionStackFar0() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-far-0.c");
+   public void testProcedureCallingConventionStackBank0() throws IOException {
+      compileAndCompare("procedure-callingconvention-stack-bank-0.c");
    }
 
    @Test

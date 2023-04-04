@@ -4,6 +4,10 @@
 #pragma calling(__stackcall)
 #pragma struct_model(classic)
 
+#pragma code_seg(stage)
+#pragma link("procedure-callingconvention-stack-bank.ld")
+#pragma target(cx16)
+
 char* const SCREEN = (char*)0x0400;
 char idx = 0;
 

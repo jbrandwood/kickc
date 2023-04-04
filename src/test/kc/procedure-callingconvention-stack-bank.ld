@@ -1,0 +1,6 @@
+.segmentdef Program                 [segments="Basic, Code, Data, stage, platform"]
+.segmentdef Basic                   [start=$0801]
+.segmentdef Code                    [start=%P]
+.segmentdef Data                    [startAfter="Code"]
+.segmentdef stage                   [start=$0400, min=$0400, max=$07FF, align=$100]
+.segmentdef platform                [start=$C000, min=$C000, max=$C7FF, align=$100]

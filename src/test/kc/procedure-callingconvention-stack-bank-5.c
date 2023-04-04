@@ -1,6 +1,10 @@
 // Test a procedure with calling convention stack
 // Recursion that works (no local variables)
 
+#pragma code_seg(stage)
+#pragma link("procedure-callingconvention-stack-bank.ld")
+#pragma platform(cx16)
+
 char* const SCREEN = (char*)0x0400;
 
 void main(void) {

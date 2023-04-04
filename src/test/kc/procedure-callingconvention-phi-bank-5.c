@@ -1,8 +1,12 @@
 // Test a far call procedure with a calling convention phi
 
+#pragma code_seg(stage)
+#pragma link("procedure-callingconvention-phi-bank.ld")
+#pragma target(cx16)
+
 char* const SCREEN = (char*)0x0400;
 
-#pragma code_seg(bank_1)
+#pragma code_seg(stage)
 #pragma bank(ram, 1)
 
 char func_bank1_a(char a, char b) {
@@ -19,7 +23,7 @@ char func_bank1_d(char a, char b) {
     return func_bank2_a(a,b);
 }
 
-#pragma code_seg(bank_2)
+#pragma code_seg(platform)
 #pragma bank(ram, 2)
 
 char func_bank2_a(char a, char b) {
@@ -47,7 +51,7 @@ char func_bank2_f(char a, char b) {
     return func_bank1_b(a,b);
 }
 
-#pragma nobank
+#pragma nobank(dummy)
 
 char __bank(ram, 1) func_bank1_b(char a, char b) {
     return a+b;
@@ -57,7 +61,7 @@ char __bank(ram, 2) func_bank2_b(char a, char b) {
     return a+b;
 }
 
-#pragma nobank
+#pragma nobank(dummy)
 
 char func_bank1_e(char a, char b) {
     // this should be a far call, because the call is to bank 1.

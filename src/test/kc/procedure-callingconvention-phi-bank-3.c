@@ -1,5 +1,9 @@
 // Test a far call procedure with a calling convention sp
 
+#pragma code_seg(stage)
+#pragma link("procedure-callingconvention-phi-bank.ld")
+#pragma target(cx16)
+
 char* const SCREEN = (char*)0x0400;
 
 void main(void) {

@@ -159,51 +159,55 @@ public class Initializers {
          }
       }
 
-      boolean allConst = true;
-      // Constantified values in a list
-      List<RValue> constantifiedList = new ArrayList<>();
-      // Map filled if all member values become constant
-      LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
-      Iterator<Variable> memberDefIt = memberDefinitions.iterator();
-      Iterator<RValue> valueIt = valueList.getList().iterator();
-      for(int i = 0; i < structInitNeedSize; i++) {
+      if(valueList instanceof ValueListUnionDesignator) {
+
+         ValueListUnionDesignator unionInit = (ValueListUnionDesignator) valueList;
+         final String memberName = unionInit.getMemberName();
+         final RValue initValue = unionInit.getList().get(0);
+
          Variable memberDef = null;
-         RValue memberValue = valueIt.next();
-         if(structDefinition.isUnion()) {
-            String memberUnionName = ((ValueStructList)valueList).getMember(memberValue);
-            if(memberUnionName != null) {
-               boolean found = false;
-               while (memberDefIt.hasNext()) {
-                  memberDef = memberDefIt.next();
-                  if (memberDef.getLocalName().contentEquals(memberUnionName)) {
-                     found = true;
-                     break;
-                  }
-               }
-               if (!found)
-                  throw new CompileError(
-                          "Union initializer cannot find member field " + memberUnionName + "\n" +
-                                  " Union initializer: " + valueList.toString(program),
-                          source);
-            } else {
-               memberDef = memberDefIt.next();
+         for(Variable definition : memberDefinitions) {
+            if(definition.getLocalName().equals(memberName)) {
+               memberDef = definition;
             }
-         } else {
-            memberDef = memberDefIt.next();
          }
-         RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType()), program, source);
-         constantifiedList.add(constantifiedMemberValue);
-         if(constantifiedMemberValue instanceof ConstantValue)
+         if(memberDef==null)
+            throw new CompileError( "Union member not found", source);
+
+         RValue constantifiedMemberValue = constantify(initValue, new ValueTypeSpec(memberDef.getType()), program, source);
+         if(constantifiedMemberValue instanceof ConstantValue) {
+            LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
             constMemberMap.put(memberDef.getRef(), (ConstantValue) constantifiedMemberValue);
-         else
-            allConst = false;
-      }
-      if(allConst) {
-         // Constant struct
-         return new ConstantStructValue(structType, constMemberMap);
+            return new ConstantStructValue(structType, constMemberMap);
+         } else {
+            throw new CompileError( "Union initializer is not constant", source);
+         }
       } else {
-         // Constantified list with a cast
-         return new CastValue(structType, new ValueList(constantifiedList));
+         boolean allConst = true;
+         // Constantified values in a list
+         List<RValue> constantifiedList = new ArrayList<>();
+         // Map filled if all member values become constant
+         LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
+         Iterator<Variable> memberDefIt = memberDefinitions.iterator();
+         Iterator<RValue> valueIt = valueList.getList().iterator();
+         for(int i = 0; i < structInitNeedSize; i++) {
+            Variable memberDef = memberDefIt.next();
+            RValue memberValue = valueIt.next();
+            RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType()), program, source);
+            constantifiedList.add(constantifiedMemberValue);
+            if(constantifiedMemberValue instanceof ConstantValue)
+               constMemberMap.put(memberDef.getRef(), (ConstantValue) constantifiedMemberValue);
+            else
+               allConst = false;
+         }
+         if(allConst) {
+            // Constant struct
+            return new ConstantStructValue(structType, constMemberMap);
+         } else {
+            // Constantified list with a cast
+            return new CastValue(structType, new ValueList(constantifiedList));
+         }
+
       }
    }
 

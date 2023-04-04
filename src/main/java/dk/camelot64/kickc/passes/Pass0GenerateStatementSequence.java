@@ -1914,23 +1914,20 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public RValue visitInitUnion(KickCParser.InitUnionContext ctx) {
+      final String memberName = ctx.NAME().getText();
+      final RValue rValue = (RValue) visit(ctx.expr());
+      return new ValueListUnionDesignator(memberName, rValue);
+   }
+
+   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
-      HashMap<RValue, String> initDesignators = new HashMap<>();
-
-      for(KickCParser.InitExprContext initializer : ctx.initExpr()) {
-         String initString = initializer.getText();
-         if (initializer.expr().size() == 2) {
-            RValue member = (RValue) visit(initializer.expr(0));
-            RValue rValue = (RValue) visit(initializer.expr(1));
-            initValues.add(rValue);
-            initDesignators.put(rValue, member.toString());
-         } else {
-            RValue rValue = (RValue) visit(initializer.expr(0));
+      for(KickCParser.ExprContext initializer : ctx.expr()) {
+         RValue rValue = (RValue) visit(initializer);
             initValues.add(rValue);
          }
-      }
-      return new ValueStructList(initDesignators, initValues);
+      return new ValueList(initValues);
    }
 
    @Override

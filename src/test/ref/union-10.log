@@ -1,0 +1,166 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  SCREEN[0] = *((char *)(struct Move *)&data+OFFSET_UNION_DATA_M+OFFSET_STRUCT_MOVE_F)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char OFFSET_STRUCT_MOVE_F = 0
+__constant char OFFSET_UNION_DATA_M = 0
+__constant char * const SCREEN = (char *)$400
+void __start()
+__loadstore union Data data = { t: { t: 1, s: 2, r: 3, d: 4 } }
+void main()
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((char *)(struct Move *)&data+OFFSET_UNION_DATA_M+OFFSET_STRUCT_MOVE_F)
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (char *)(struct Move *)&data+OFFSET_UNION_DATA_M in [0] SCREEN[0] = *((char *)(struct Move *)&data+OFFSET_UNION_DATA_M+OFFSET_STRUCT_MOVE_F)
+Simplifying expression containing zero (struct Move *)&data in [0] SCREEN[0] = *((char *)(struct Move *)&data+OFFSET_UNION_DATA_M)
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = *((char *)(struct Move *)&data)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_UNION_DATA_M
+Eliminating unused constant OFFSET_STRUCT_MOVE_F
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SCREEN = *((char *)(struct Move *)&data)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__loadstore union Data data = { t: { t: 1, s: 2, r: 3, d: 4 } }
+void main()
+
+Initial phi equivalence classes
+Added variable data to live range equivalence class [ data ]
+Complete equivalence classes
+[ data ]
+Allocated mem[4] [ data ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SCREEN = *((char *)(struct Move *)&data) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers mem[4] [ data ] : mem[4] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [Move] 
+Uplift Scope [Turn] 
+Uplift Scope [Data] 
+Uplift Scope [main] 
+Uplift Scope [] 0: mem[4] [ data ] 
+
+Uplifting [Move] best 17 combination 
+Uplifting [Turn] best 17 combination 
+Uplifting [Data] best 17 combination 
+Uplifting [main] best 17 combination 
+Uplifting [] best 17 combination mem[4] [ data ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// More extensive union with C99 style designator initialization behaviour of the second element.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *SCREEN = *((char *)(struct Move *)&data) -- _deref_pbuc1=_deref_pbuc2 
+    lda data
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .byte 1, 2, 3, 4
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const SCREEN = (char *) 1024
+__loadstore union Data data = { t: { t: 1, s: 2, r: 3, d: 4 } } // mem[4]
+void main()
+
+mem[4] [ data ]
+
+
+FINAL ASSEMBLER
+Score: 14
+
+  // File Comments
+// More extensive union with C99 style designator initialization behaviour of the second element.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[0] = data.m.f
+    // [0] *SCREEN = *((char *)(struct Move *)&data) -- _deref_pbuc1=_deref_pbuc2 
+    lda data
+    sta SCREEN
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+.segment Data
+  data: .byte 1, 2, 3, 4
+

@@ -1,0 +1,301 @@
+Converting parameter in __varcall procedure to load/store plus::a
+Converting parameter in __varcall procedure to load/store plus::b
+Converting return in __varcall procedure to load/store plus::return
+Constantified RValue plus::return = (struct Cols){ plus::$0, plus::$1 }
+Eliminating unused variable with no statement plus::a
+Eliminating unused variable with no statement plus::b
+Eliminating unused variable with no statement main::$0
+Calling convention __varcall adding prepare/execute/finalize for { main::c_border, main::c_bg } = call plus(main::a_border, main::a_bg, main::b_border, main::b_bg)
+
+CONTROL FLOW GRAPH SSA
+
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+plus: scope:[plus]  from
+  plus::$0 = plus::a_border + plus::b_border
+  plus::$1 = plus::a_bg + plus::b_bg
+  plus::return_border = plus::$0
+  plus::return_bg = plus::$1
+  plus::return = struct-unwound {plus::return_border, plus::return_bg}
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  plus::a_border = main::a_border
+  plus::a_bg = main::a_bg
+  plus::b_border = main::b_border
+  plus::b_bg = main::b_bg
+  callexecute plus 
+  main::c_border#0 = plus::return_border
+  main::c_bg#0 = plus::return_bg
+  *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#0
+  *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant struct Cols * const COLS = (struct Cols *)$d020
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char OFFSET_STRUCT_COLS_BORDER = 0
+void __start()
+void main()
+__constant char main::a_bg = 2
+__constant char main::a_border = 1
+__constant char main::b_bg = 3
+__constant char main::b_border = 2
+struct Cols main::c
+char main::c_bg
+char main::c_bg#0
+char main::c_border
+char main::c_border#0
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+char plus::$0
+char plus::$1
+__loadstore char plus::a_bg
+__loadstore char plus::a_border
+__loadstore char plus::b_bg
+__loadstore char plus::b_border
+__loadstore struct Cols plus::return
+__loadstore char plus::return_bg
+__loadstore char plus::return_border
+
+Simplifying constant pointer cast (struct Cols *) 53280
+Successful SSA optimization PassNCastSimplification
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Constant plus::a_border = main::a_border
+Constant plus::a_bg = main::a_bg
+Constant plus::b_border = main::b_border
+Constant plus::b_bg = main::b_bg
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero (char *)COLS in [13] *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable plus::return and assignment [4] plus::return = struct-unwound {plus::return_border, plus::return_bg}
+Eliminating unused constant OFFSET_STRUCT_COLS_BORDER
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Constant right-side identified [0] plus::$0 = plus::a_border + plus::b_border
+Constant right-side identified [1] plus::$1 = plus::a_bg + plus::b_bg
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant plus::$0 = plus::a_border+plus::b_border
+Constant plus::$1 = plus::a_bg+plus::b_bg
+Successful SSA optimization Pass2ConstantIdentification
+Constant plus::return_border = plus::$0
+Constant plus::return_bg = plus::$1
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::c_border#0 = plus::return_border
+Constant main::c_bg#0 = plus::return_bg
+Successful SSA optimization Pass2ConstantIdentification
+Parameter inlined plus::b_bg
+Parameter inlined plus::a_bg
+Parameter inlined plus::b_border
+Parameter inlined plus::a_border
+Constant inlined main::c_border#0 = plus::return_border
+Constant inlined plus::b_bg = main::b_bg
+Constant inlined plus::a_bg = main::a_bg
+Constant inlined plus::b_border = main::b_border
+Constant inlined plus::a_border = main::a_border
+Constant inlined plus::$1 = main::a_bg+main::b_bg
+Constant inlined plus::$0 = main::a_border+main::b_border
+Constant inlined main::c_bg#0 = plus::return_bg
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of plus
+CALL GRAPH
+Calls in [main] to plus:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+Adding NOP phi() at start of plus
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] callexecute plus 
+  [2] *((char *)COLS) = plus::return_border
+  [3] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = plus::return_bg
+  to:main::@return
+main::@return: scope:[main]  from main
+  [4] return 
+  to:@return
+
+__varcall struct Cols plus()
+plus: scope:[plus]  from
+  [5] phi()
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+struct Cols main::c
+char main::c_bg
+char main::c_border
+__varcall struct Cols plus()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] *((char *)COLS) = plus::return_border [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = plus::return_bg [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [Cols] 
+Uplift Scope [plus] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [Cols] best 63 combination 
+Uplifting [plus] best 63 combination 
+Uplifting [main] best 63 combination 
+Uplifting [] best 63 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter & return value - only a single call
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .label a_border = 1
+    .label a_bg = 2
+    .label b_border = 2
+    .label b_bg = 3
+    // [1] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [2] *((char *)COLS) = plus::return_border -- _deref_pbuc1=vbuc2 
+    lda #plus.return_border
+    sta COLS
+    // [3] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = plus::return_bg -- _deref_pbuc1=vbuc2 
+    lda #plus.return_bg
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // plus
+plus: {
+    .label return_border = main.a_border+main.b_border
+    .label return_bg = main.a_bg+main.b_bg
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant struct Cols * const COLS = (struct Cols *) 53280
+__constant char OFFSET_STRUCT_COLS_BG = 1
+void main()
+__constant char main::a_bg = 2
+__constant char main::a_border = 1
+__constant char main::b_bg = 3
+__constant char main::b_border = 2
+struct Cols main::c
+char main::c_bg
+char main::c_border
+__varcall struct Cols plus()
+__constant char plus::return_bg = main::a_bg+main::b_bg
+__constant char plus::return_border = main::a_border+main::b_border
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter & return value - only a single call
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .label a_border = 1
+    .label a_bg = 2
+    .label b_border = 2
+    .label b_bg = 3
+    // struct Cols c = plus(a, b)
+    // [1] callexecute plus  -- call_vprc1 
+    jsr plus
+    // *COLS = c
+    // [2] *((char *)COLS) = plus::return_border -- _deref_pbuc1=vbuc2 
+    lda #plus.return_border
+    sta COLS
+    // [3] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = plus::return_bg -- _deref_pbuc1=vbuc2 
+    lda #plus.return_bg
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    // main::@return
+    // }
+    // [4] return 
+    rts
+}
+  // plus
+plus: {
+    .label return_border = main.a_border+main.b_border
+    .label return_bg = main.a_bg+main.b_bg
+    // plus::@return
+    // [6] return 
+    rts
+}
+  // File Data
+

@@ -1,0 +1,541 @@
+Converting parameter in __varcall procedure to load/store plus::a
+Converting parameter in __varcall procedure to load/store plus::b
+Converting return in __varcall procedure to load/store plus::return
+Constantified RValue plus::return = (struct Cols){ plus::$0, plus::$1 }
+Added struct type cast to parameter value list main::c = call plus(main::a, (struct Cols){ 2, 3 })
+Eliminating unused variable with no statement plus::a
+Eliminating unused variable with no statement plus::b
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
+Calling convention __varcall adding prepare/execute/finalize for { main::c_border, main::c_bg } = call plus(main::a_border, main::a_bg, 2, 3)
+Calling convention __varcall adding prepare/execute/finalize for { main::$1_border, main::$1_bg } = call plus(main::c_border, main::c_bg, main::a_border, main::a_bg)
+
+CONTROL FLOW GRAPH SSA
+
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+plus: scope:[plus]  from
+  plus::$0 = plus::a_border + plus::b_border
+  plus::$1 = plus::a_bg + plus::b_bg
+  plus::return_border = plus::$0
+  plus::return_bg = plus::$1
+  plus::return = struct-unwound {plus::return_border, plus::return_bg}
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  plus::a_border = main::a_border
+  plus::a_bg = main::a_bg
+  plus::b_border = 2
+  plus::b_bg = 3
+  callexecute plus 
+  main::c_border#0 = plus::return_border
+  main::c_bg#0 = plus::return_bg
+  *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#0
+  *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#0
+  plus::a_border = main::c_border#0
+  plus::a_bg = main::c_bg#0
+  plus::b_border = main::a_border
+  plus::b_bg = main::a_bg
+  callexecute plus 
+  main::$1_border = plus::return_border
+  main::$1_bg = plus::return_bg
+  main::c_border#1 = main::$1_border
+  main::c_bg#1 = main::$1_bg
+  *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#1
+  *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant struct Cols * const COLS = (struct Cols *)$d020
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char OFFSET_STRUCT_COLS_BORDER = 0
+void __start()
+void main()
+char main::$1_bg
+char main::$1_border
+__constant char main::a_bg = 2
+__constant char main::a_border = 1
+char main::c_bg
+char main::c_bg#0
+char main::c_bg#1
+char main::c_border
+char main::c_border#0
+char main::c_border#1
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+char plus::$0
+char plus::$1
+__loadstore char plus::a_bg
+__loadstore char plus::a_border
+__loadstore char plus::b_bg
+__loadstore char plus::b_border
+__loadstore struct Cols plus::return
+__loadstore char plus::return_bg
+__loadstore char plus::return_border
+
+Adding number conversion cast (unumber) 2 in plus::b_border = 2
+Adding number conversion cast (unumber) 3 in plus::b_bg = 3
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast plus::b_border = (unumber)2
+Inlining cast plus::b_bg = (unumber)3
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (struct Cols *) 53280
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 2
+Finalized unsigned number type (char) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Alias main::c_border#1 = main::$1_border 
+Alias main::c_bg#1 = main::$1_bg 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Simplifying expression containing zero (char *)COLS in [13] *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#0
+Simplifying expression containing zero (char *)COLS in [22] *((char *)COLS+OFFSET_STRUCT_COLS_BORDER) = main::c_border#1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable plus::return and assignment [4] plus::return = struct-unwound {plus::return_border, plus::return_bg}
+Eliminating unused constant OFFSET_STRUCT_COLS_BORDER
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+Alias candidate removed (volatile)plus::return_border = plus::$0 
+Alias candidate removed (volatile)plus::return_bg = plus::$1 
+CALL GRAPH
+Calls in [main] to plus:4 plus:13 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] plus::a_border = main::a_border
+  [1] plus::a_bg = main::a_bg
+  [2] plus::b_border = 2
+  [3] plus::b_bg = 3
+  [4] callexecute plus 
+  [5] main::c_border#0 = plus::return_border
+  [6] main::c_bg#0 = plus::return_bg
+  [7] *((char *)COLS) = main::c_border#0
+  [8] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#0
+  [9] plus::a_border = main::c_border#0
+  [10] plus::a_bg = main::c_bg#0
+  [11] plus::b_border = main::a_border
+  [12] plus::b_bg = main::a_bg
+  [13] callexecute plus 
+  [14] main::c_border#1 = plus::return_border
+  [15] main::c_bg#1 = plus::return_bg
+  [16] *((char *)COLS) = main::c_border#1
+  [17] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#1
+  to:main::@return
+main::@return: scope:[main]  from main
+  [18] return 
+  to:@return
+
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+plus: scope:[plus]  from
+  [19] plus::$0 = plus::a_border + plus::b_border
+  [20] plus::$1 = plus::a_bg + plus::b_bg
+  [21] plus::return_border = plus::$0
+  [22] plus::return_bg = plus::$1
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [23] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+char main::c_bg
+char main::c_bg#0 // 1.5
+char main::c_bg#1 // 2.0
+char main::c_border
+char main::c_border#0 // 1.5
+char main::c_border#1 // 2.0
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+char plus::$0 // 11.0
+char plus::$1 // 11.0
+__loadstore char plus::a_bg // 2.142857142857143
+__loadstore char plus::a_border // 1.875
+__loadstore char plus::b_bg // 5.0
+__loadstore char plus::b_border // 3.75
+__loadstore char plus::return_bg // 2.5
+__loadstore char plus::return_border // 3.0
+
+Initial phi equivalence classes
+Added variable plus::a_border to live range equivalence class [ plus::a_border ]
+Added variable plus::a_bg to live range equivalence class [ plus::a_bg ]
+Added variable plus::b_border to live range equivalence class [ plus::b_border ]
+Added variable plus::b_bg to live range equivalence class [ plus::b_bg ]
+Added variable main::c_border#0 to live range equivalence class [ main::c_border#0 ]
+Added variable main::c_bg#0 to live range equivalence class [ main::c_bg#0 ]
+Added variable main::c_border#1 to live range equivalence class [ main::c_border#1 ]
+Added variable main::c_bg#1 to live range equivalence class [ main::c_bg#1 ]
+Added variable plus::$0 to live range equivalence class [ plus::$0 ]
+Added variable plus::$1 to live range equivalence class [ plus::$1 ]
+Added variable plus::return_border to live range equivalence class [ plus::return_border ]
+Added variable plus::return_bg to live range equivalence class [ plus::return_bg ]
+Complete equivalence classes
+[ plus::a_border ]
+[ plus::a_bg ]
+[ plus::b_border ]
+[ plus::b_bg ]
+[ main::c_border#0 ]
+[ main::c_bg#0 ]
+[ main::c_border#1 ]
+[ main::c_bg#1 ]
+[ plus::$0 ]
+[ plus::$1 ]
+[ plus::return_border ]
+[ plus::return_bg ]
+Allocated zp[1]:2 [ plus::$0 ]
+Allocated zp[1]:3 [ plus::$1 ]
+Allocated zp[1]:4 [ plus::b_bg ]
+Allocated zp[1]:5 [ plus::b_border ]
+Allocated zp[1]:6 [ plus::return_border ]
+Allocated zp[1]:7 [ plus::return_bg ]
+Allocated zp[1]:8 [ plus::a_bg ]
+Allocated zp[1]:9 [ main::c_border#1 ]
+Allocated zp[1]:10 [ main::c_bg#1 ]
+Allocated zp[1]:11 [ plus::a_border ]
+Allocated zp[1]:12 [ main::c_border#0 ]
+Allocated zp[1]:13 [ main::c_bg#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] plus::a_border = main::a_border [ plus::a_border ] (  [ plus::a_border ] { }  ) always clobbers reg byte a 
+Statement [1] plus::a_bg = main::a_bg [ plus::a_border plus::a_bg ] (  [ plus::a_border plus::a_bg ] { }  ) always clobbers reg byte a 
+Statement [2] plus::b_border = 2 [ plus::a_border plus::a_bg plus::b_border ] (  [ plus::a_border plus::a_bg plus::b_border ] { }  ) always clobbers reg byte a 
+Statement [3] plus::b_bg = 3 [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] (  [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] { }  ) always clobbers reg byte a 
+Statement [11] plus::b_border = main::a_border [ plus::a_border plus::a_bg plus::b_border ] (  [ plus::a_border plus::a_bg plus::b_border ] { }  ) always clobbers reg byte a 
+Statement [12] plus::b_bg = main::a_bg [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] (  [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] { }  ) always clobbers reg byte a 
+Statement [19] plus::$0 = plus::a_border + plus::b_border [ plus::a_bg plus::b_bg plus::$0 ] ( plus:4 [ plus::a_bg plus::b_bg plus::$0 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  plus:13 [ plus::a_bg plus::b_bg plus::$0 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  ) always clobbers reg byte a 
+Statement [20] plus::$1 = plus::a_bg + plus::b_bg [ plus::$0 plus::$1 ] ( plus:4 [ plus::$0 plus::$1 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  plus:13 [ plus::$0 plus::$1 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ plus::$0 ]
+Statement [0] plus::a_border = main::a_border [ plus::a_border ] (  [ plus::a_border ] { }  ) always clobbers reg byte a 
+Statement [1] plus::a_bg = main::a_bg [ plus::a_border plus::a_bg ] (  [ plus::a_border plus::a_bg ] { }  ) always clobbers reg byte a 
+Statement [2] plus::b_border = 2 [ plus::a_border plus::a_bg plus::b_border ] (  [ plus::a_border plus::a_bg plus::b_border ] { }  ) always clobbers reg byte a 
+Statement [3] plus::b_bg = 3 [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] (  [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] { }  ) always clobbers reg byte a 
+Statement [11] plus::b_border = main::a_border [ plus::a_border plus::a_bg plus::b_border ] (  [ plus::a_border plus::a_bg plus::b_border ] { }  ) always clobbers reg byte a 
+Statement [12] plus::b_bg = main::a_bg [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] (  [ plus::a_border plus::a_bg plus::b_border plus::b_bg ] { }  ) always clobbers reg byte a 
+Statement [19] plus::$0 = plus::a_border + plus::b_border [ plus::a_bg plus::b_bg plus::$0 ] ( plus:4 [ plus::a_bg plus::b_bg plus::$0 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  plus:13 [ plus::a_bg plus::b_bg plus::$0 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  ) always clobbers reg byte a 
+Statement [20] plus::$1 = plus::a_bg + plus::b_bg [ plus::$0 plus::$1 ] ( plus:4 [ plus::$0 plus::$1 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  plus:13 [ plus::$0 plus::$1 ] { { main::c_border#0 = plus::a_border } { main::c_bg#0 = plus::a_bg } }  ) always clobbers reg byte a 
+Potential registers zp[1]:11 [ plus::a_border ] : zp[1]:11 , 
+Potential registers zp[1]:8 [ plus::a_bg ] : zp[1]:8 , 
+Potential registers zp[1]:5 [ plus::b_border ] : zp[1]:5 , 
+Potential registers zp[1]:4 [ plus::b_bg ] : zp[1]:4 , 
+Potential registers zp[1]:12 [ main::c_border#0 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ main::c_bg#0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ main::c_border#1 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::c_bg#1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ plus::$0 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ plus::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ plus::return_border ] : zp[1]:6 , 
+Potential registers zp[1]:7 [ plus::return_bg ] : zp[1]:7 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 11: zp[1]:2 [ plus::$0 ] 11: zp[1]:3 [ plus::$1 ] 5: zp[1]:4 [ plus::b_bg ] 3.75: zp[1]:5 [ plus::b_border ] 3: zp[1]:6 [ plus::return_border ] 2.5: zp[1]:7 [ plus::return_bg ] 2.14: zp[1]:8 [ plus::a_bg ] 1.88: zp[1]:11 [ plus::a_border ] 
+Uplift Scope [main] 2: zp[1]:9 [ main::c_border#1 ] 2: zp[1]:10 [ main::c_bg#1 ] 1.5: zp[1]:12 [ main::c_border#0 ] 1.5: zp[1]:13 [ main::c_bg#0 ] 
+Uplift Scope [Cols] 
+Uplift Scope [] 
+
+Uplifting [plus] best 148 combination reg byte x [ plus::$0 ] reg byte a [ plus::$1 ] zp[1]:4 [ plus::b_bg ] zp[1]:5 [ plus::b_border ] zp[1]:6 [ plus::return_border ] zp[1]:7 [ plus::return_bg ] zp[1]:8 [ plus::a_bg ] zp[1]:11 [ plus::a_border ] 
+Uplifting [main] best 124 combination reg byte x [ main::c_border#1 ] zp[1]:10 [ main::c_bg#1 ] reg byte x [ main::c_border#0 ] reg byte a [ main::c_bg#0 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [Cols] best 124 combination 
+Uplifting [] best 124 combination 
+Attempting to uplift remaining variables inzp[1]:4 [ plus::b_bg ]
+Uplifting [plus] best 124 combination zp[1]:4 [ plus::b_bg ] 
+Attempting to uplift remaining variables inzp[1]:5 [ plus::b_border ]
+Uplifting [plus] best 124 combination zp[1]:5 [ plus::b_border ] 
+Attempting to uplift remaining variables inzp[1]:6 [ plus::return_border ]
+Uplifting [plus] best 124 combination zp[1]:6 [ plus::return_border ] 
+Attempting to uplift remaining variables inzp[1]:7 [ plus::return_bg ]
+Uplifting [plus] best 124 combination zp[1]:7 [ plus::return_bg ] 
+Attempting to uplift remaining variables inzp[1]:8 [ plus::a_bg ]
+Uplifting [plus] best 124 combination zp[1]:8 [ plus::a_bg ] 
+Attempting to uplift remaining variables inzp[1]:10 [ main::c_bg#1 ]
+Uplifting [main] best 118 combination reg byte a [ main::c_bg#1 ] 
+Attempting to uplift remaining variables inzp[1]:11 [ plus::a_border ]
+Uplifting [plus] best 118 combination zp[1]:11 [ plus::a_border ] 
+Allocated (was zp[1]:4) zp[1]:2 [ plus::b_bg ]
+Allocated (was zp[1]:5) zp[1]:3 [ plus::b_border ]
+Allocated (was zp[1]:6) zp[1]:4 [ plus::return_border ]
+Allocated (was zp[1]:7) zp[1]:5 [ plus::return_bg ]
+Allocated (was zp[1]:8) zp[1]:6 [ plus::a_bg ]
+Allocated (was zp[1]:11) zp[1]:7 [ plus::a_border ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter & return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .const a_border = 1
+    .const a_bg = 2
+    // [0] plus::a_border = main::a_border -- vbuz1=vbuc1 
+    lda #a_border
+    sta.z plus.a_border
+    // [1] plus::a_bg = main::a_bg -- vbuz1=vbuc1 
+    lda #a_bg
+    sta.z plus.a_bg
+    // [2] plus::b_border = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z plus.b_border
+    // [3] plus::b_bg = 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z plus.b_bg
+    // [4] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [5] main::c_border#0 = plus::return_border -- vbuxx=vbuz1 
+    ldx.z plus.return_border
+    // [6] main::c_bg#0 = plus::return_bg -- vbuaa=vbuz1 
+    lda.z plus.return_bg
+    // [7] *((char *)COLS) = main::c_border#0 -- _deref_pbuc1=vbuxx 
+    stx COLS
+    // [8] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#0 -- _deref_pbuc1=vbuaa 
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    // [9] plus::a_border = main::c_border#0 -- vbuz1=vbuxx 
+    stx.z plus.a_border
+    // [10] plus::a_bg = main::c_bg#0 -- vbuz1=vbuaa 
+    sta.z plus.a_bg
+    // [11] plus::b_border = main::a_border -- vbuz1=vbuc1 
+    lda #a_border
+    sta.z plus.b_border
+    // [12] plus::b_bg = main::a_bg -- vbuz1=vbuc1 
+    lda #a_bg
+    sta.z plus.b_bg
+    // [13] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [14] main::c_border#1 = plus::return_border -- vbuxx=vbuz1 
+    ldx.z plus.return_border
+    // [15] main::c_bg#1 = plus::return_bg -- vbuaa=vbuz1 
+    lda.z plus.return_bg
+    // [16] *((char *)COLS) = main::c_border#1 -- _deref_pbuc1=vbuxx 
+    stx COLS
+    // [17] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#1 -- _deref_pbuc1=vbuaa 
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [18] return 
+    rts
+}
+  // plus
+// struct Cols plus(__zp(7) char a_border, __zp(6) char a_bg, __zp(3) char b_border, __zp(2) char b_bg)
+plus: {
+    .label a_border = 7
+    .label a_bg = 6
+    .label b_border = 3
+    .label b_bg = 2
+    .label return_border = 4
+    .label return_bg = 5
+    // [19] plus::$0 = plus::a_border + plus::b_border -- vbuxx=vbuz1_plus_vbuz2 
+    lda.z a_border
+    clc
+    adc.z b_border
+    tax
+    // [20] plus::$1 = plus::a_bg + plus::b_bg -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z a_bg
+    clc
+    adc.z b_bg
+    // [21] plus::return_border = plus::$0 -- vbuz1=vbuxx 
+    stx.z return_border
+    // [22] plus::return_bg = plus::$1 -- vbuz1=vbuaa 
+    sta.z return_bg
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [23] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant struct Cols * const COLS = (struct Cols *) 53280
+__constant char OFFSET_STRUCT_COLS_BG = 1
+void main()
+__constant char main::a_bg = 2
+__constant char main::a_border = 1
+char main::c_bg
+char main::c_bg#0 // reg byte a 1.5
+char main::c_bg#1 // reg byte a 2.0
+char main::c_border
+char main::c_border#0 // reg byte x 1.5
+char main::c_border#1 // reg byte x 2.0
+__varcall struct Cols plus(char a_border , char a_bg , char b_border , char b_bg)
+char plus::$0 // reg byte x 11.0
+char plus::$1 // reg byte a 11.0
+__loadstore char plus::a_bg // zp[1]:6 2.142857142857143
+__loadstore char plus::a_border // zp[1]:7 1.875
+__loadstore char plus::b_bg // zp[1]:2 5.0
+__loadstore char plus::b_border // zp[1]:3 3.75
+__loadstore char plus::return_bg // zp[1]:5 2.5
+__loadstore char plus::return_border // zp[1]:4 3.0
+
+zp[1]:7 [ plus::a_border ]
+zp[1]:6 [ plus::a_bg ]
+zp[1]:3 [ plus::b_border ]
+zp[1]:2 [ plus::b_bg ]
+reg byte x [ main::c_border#0 ]
+reg byte a [ main::c_bg#0 ]
+reg byte x [ main::c_border#1 ]
+reg byte a [ main::c_bg#1 ]
+reg byte x [ plus::$0 ]
+reg byte a [ plus::$1 ]
+zp[1]:4 [ plus::return_border ]
+zp[1]:5 [ plus::return_bg ]
+
+
+FINAL ASSEMBLER
+Score: 112
+
+  // File Comments
+// Test __varcall calling convention
+// Struct parameter & return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .const a_border = 1
+    .const a_bg = 2
+    // struct Cols c = plus(a, { 2, 3 })
+    // [0] plus::a_border = main::a_border -- vbuz1=vbuc1 
+    lda #a_border
+    sta.z plus.a_border
+    // [1] plus::a_bg = main::a_bg -- vbuz1=vbuc1 
+    lda #a_bg
+    sta.z plus.a_bg
+    // [2] plus::b_border = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z plus.b_border
+    // [3] plus::b_bg = 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z plus.b_bg
+    // [4] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [5] main::c_border#0 = plus::return_border -- vbuxx=vbuz1 
+    ldx.z plus.return_border
+    // [6] main::c_bg#0 = plus::return_bg -- vbuaa=vbuz1 
+    lda.z plus.return_bg
+    // *COLS = c
+    // [7] *((char *)COLS) = main::c_border#0 -- _deref_pbuc1=vbuxx 
+    stx COLS
+    // [8] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#0 -- _deref_pbuc1=vbuaa 
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    // plus(c, a)
+    // [9] plus::a_border = main::c_border#0 -- vbuz1=vbuxx 
+    stx.z plus.a_border
+    // [10] plus::a_bg = main::c_bg#0 -- vbuz1=vbuaa 
+    sta.z plus.a_bg
+    // [11] plus::b_border = main::a_border -- vbuz1=vbuc1 
+    lda #a_border
+    sta.z plus.b_border
+    // [12] plus::b_bg = main::a_bg -- vbuz1=vbuc1 
+    lda #a_bg
+    sta.z plus.b_bg
+    // [13] callexecute plus  -- call_vprc1 
+    jsr plus
+    // c = plus(c, a)
+    // [14] main::c_border#1 = plus::return_border -- vbuxx=vbuz1 
+    ldx.z plus.return_border
+    // [15] main::c_bg#1 = plus::return_bg -- vbuaa=vbuz1 
+    lda.z plus.return_bg
+    // *COLS = c
+    // [16] *((char *)COLS) = main::c_border#1 -- _deref_pbuc1=vbuxx 
+    stx COLS
+    // [17] *((char *)COLS+OFFSET_STRUCT_COLS_BG) = main::c_bg#1 -- _deref_pbuc1=vbuaa 
+    sta COLS+OFFSET_STRUCT_COLS_BG
+    // main::@return
+    // }
+    // [18] return 
+    rts
+}
+  // plus
+// struct Cols plus(__zp(7) char a_border, __zp(6) char a_bg, __zp(3) char b_border, __zp(2) char b_bg)
+plus: {
+    .label a_border = 7
+    .label a_bg = 6
+    .label b_border = 3
+    .label b_bg = 2
+    .label return_border = 4
+    .label return_bg = 5
+    // a.border+b.border
+    // [19] plus::$0 = plus::a_border + plus::b_border -- vbuxx=vbuz1_plus_vbuz2 
+    lda.z a_border
+    clc
+    adc.z b_border
+    tax
+    // a.bg+b.bg
+    // [20] plus::$1 = plus::a_bg + plus::b_bg -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z a_bg
+    clc
+    adc.z b_bg
+    // return { a.border+b.border,  a.bg+b.bg };
+    // [21] plus::return_border = plus::$0 -- vbuz1=vbuxx 
+    stx.z return_border
+    // [22] plus::return_bg = plus::$1 -- vbuz1=vbuaa 
+    sta.z return_bg
+    // plus::@return
+    // }
+    // [23] return 
+    rts
+}
+  // File Data
+

@@ -1,6 +1,5 @@
 // Test a far call procedure with a calling convention phi
 
-#pragma code_seg(stage)
 #pragma link("procedure-callingconvention-phi-bank.ld")
 #pragma target(cx16)
 

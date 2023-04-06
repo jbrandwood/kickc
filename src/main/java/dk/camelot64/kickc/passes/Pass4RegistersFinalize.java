@@ -212,7 +212,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
          reserved = false;
          int candidateZp = currentZp;
          for(int i=0;i<size;i++) {
-            if(reservedZp.contains(new Integer(candidateZp+i))) {
+            if(reservedZp.contains(Integer.valueOf(candidateZp+i))) {
                reserved = true;
                currentZp++;
                break;

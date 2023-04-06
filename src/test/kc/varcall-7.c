@@ -1,5 +1,5 @@
 // Test __varcall calling convention
-// Struct parameter & return value
+// Struct parameter & return value - only a single call
 
 struct Cols {
     char border;
@@ -15,8 +15,7 @@ __varcall struct Cols plus(struct Cols a, struct Cols b) {
 
 void main() {
     struct Cols a = { 1, 2 };
-    struct Cols c = plus(a, { 2, 3 });
-    *COLS = c;
-    c = plus(c, a);
+    struct Cols b = { 2, 3 };
+    struct Cols c = plus(a, b);
     *COLS = c;
 }

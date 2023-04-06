@@ -41,7 +41,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                LValue lValue = ((StatementAssignment) statement).getlValue();
                if(lValue instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                   if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + statement.toString(getProgram(), false));
@@ -56,7 +56,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             } else if(statement instanceof StatementCall) {
                LValue lValue = ((StatementCall) statement).getlValue();
                if(lValue instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                   if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -71,7 +71,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             } else if(statement instanceof StatementCallFinalize) {
                LValue lValue = ((StatementCallFinalize) statement).getlValue();
                if(lValue instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                   if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -86,7 +86,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             } else if(statement instanceof StatementCallPointer) {
                LValue lValue = ((StatementCallPointer) statement).getlValue();
                if(lValue instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                   if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -104,7 +104,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                while(phiVarIt.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
-                  Variable variable = getScope().getVariable(variableRef);
+                  Variable variable = getProgramScope().getVariable(variableRef);
                   if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
@@ -120,14 +120,14 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          }
       }
 
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getProgramScope().getAllVariables(true)) {
          if(eliminate(variable, referenceInfos, null) && !variable.isKindPhiMaster()) {
             getLog().append("Eliminating unused variable with no statement " + variable.getRef().toString(getProgram()));
             variable.getScope().remove(variable);
          }
       }
 
-      Collection<Variable> allConstants = getScope().getAllConstants(true);
+      Collection<Variable> allConstants = getProgramScope().getAllConstants(true);
       for(Variable constant : allConstants) {
          if(eliminate(constant, referenceInfos, null)) {
             if(pass2 || getLog().isVerbosePass1CreateSsa()) {

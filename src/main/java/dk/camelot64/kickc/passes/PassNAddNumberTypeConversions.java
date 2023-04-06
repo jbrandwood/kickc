@@ -27,7 +27,7 @@ public class PassNAddNumberTypeConversions extends Pass2SsaOptimization {
             ProgramExpressionBinary binary = (ProgramExpressionBinary) binaryExpression;
             RValue left = binary.getLeft();
             RValue right = binary.getRight();
-            SymbolType castType = SymbolTypeConversion.getNumberCastType(left, right, getScope(), currentStmt);
+            SymbolType castType = SymbolTypeConversion.getNumberCastType(left, right, getProgramScope(), currentStmt);
             if(castType != null) {
                // Convert both left and right to the found type
                SymbolType leftType = SymbolTypeInference.inferType(getProgram().getScope(), left);

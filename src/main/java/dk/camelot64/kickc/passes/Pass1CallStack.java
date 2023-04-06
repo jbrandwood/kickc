@@ -34,7 +34,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
 
       // Introduce STACK_OFFSET constants
       boolean createStackBase = false;
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
             // Introduce the parameter offsets
             for(Variable parameter : procedure.getParameters()) {
@@ -52,7 +52,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
 
       // Add global STACK_BASE constant
       if(createStackBase)
-         CallingConventionStack.getStackBaseConstant(getScope());
+         CallingConventionStack.getStackBaseConstant(getProgramScope());
 
       // Convert param(xxx) to stackidx(PARAM_X) = xxx
       if(offsetConstants.size() > 0) {
@@ -61,7 +61,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                // Convert ParamValues to calling-convention specific param-value
                ParamValue paramValue = (ParamValue) programValue.get();
                VariableRef parameterRef = paramValue.getParameter();
-               SymbolType parameterType = SymbolTypeInference.inferType(getScope(), paramValue.getParameter());
+               SymbolType parameterType = SymbolTypeInference.inferType(getProgramScope(), paramValue.getParameter());
                if(offsetConstants.containsKey(parameterRef)) {
                   StackIdxValue stackIdxValue = new StackIdxValue(offsetConstants.get(parameterRef), parameterType);
                   programValue.set(stackIdxValue);
@@ -77,7 +77,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementReturn) {
-               final Scope blockScope = getScope().getScope(block.getScope());
+               final Scope blockScope = getProgramScope().getScope(block.getScope());
                if(blockScope instanceof Procedure) {
                   Procedure procedure = (Procedure) blockScope;
                   final SymbolType returnType = procedure.getReturnType();
@@ -182,12 +182,12 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       } else {
          // A struct to put on the stack
          final List<RValue> memberValues = ((ValueList) value).getList();
-         final StructDefinition structDefinition = ((SymbolTypeStruct) returnType).getStructDefinition(getScope());
+         final StructDefinition structDefinition = ((SymbolTypeStruct) returnType).getStructDefinition(getProgramScope());
          final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
          for(int i = 0; i < memberVars.size(); i++) {
             final Variable memberVar = memberVars.get(i);
             final RValue memberValue = memberValues.get(i);
-            ConstantRef structMemberOffsetConstant = SizeOfConstants.getStructMemberOffsetConstant(getScope(), structDefinition, memberVar.getLocalName());
+            ConstantRef structMemberOffsetConstant = SizeOfConstants.getStructMemberOffsetConstant(getProgramScope(), structDefinition, memberVar.getLocalName());
             ConstantBinary memberReturnOffsetConstant = new ConstantBinary(stackReturnOffset, Operators.PLUS, structMemberOffsetConstant);
             generateStackReturnValues(memberValue, memberVar.getType(), memberReturnOffsetConstant, source, comments, stmtIt);
          }
@@ -212,7 +212,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       } else {
          // A struct to put on the stack
          final List<RValue> memberValues = ((ValueList) value).getList();
-         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getScope());
+         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getProgramScope());
          final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
          for(int i = 0; i < memberVars.size(); i++) {
             final Variable memberVar = memberVars.get(i);
@@ -240,7 +240,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       } else {
          // A struct to put on the stack
          final List<RValue> memberValues = ((ValueList) value).getList();
-         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getScope());
+         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getProgramScope());
          final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
          for(int i = 0; i < memberVars.size(); i++) {
             final Variable memberVar = memberVars.get(i);

@@ -16,7 +16,6 @@ import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -52,7 +51,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.scopeStack = new Stack<>();
       this.currentCallingConvention = initialCallingConvention;
       this.currentEncoding = defaultEncoding;
-      this.pragmaConstructorFors = new ArrayList();
+      this.pragmaConstructorFors = new ArrayList<>();
       this.currentInterruptType = defaultInterruptType;
       scopeStack.push(program.getScope());
    }
@@ -241,21 +240,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitPragma(KickCParser.PragmaContext ctx) {
       final String pragmaName = ctx.NAME().getText();
       switch(pragmaName) {
-         case CParser.PRAGMA_TARGET:
-            throw new InternalError("Error! #pragma target() should be handled in preprocessor!");
-         case CParser.PRAGMA_CPU:
+         case CParser.PRAGMA_TARGET ->
+               throw new InternalError("Error! #pragma target() should be handled in preprocessor!");
+         case CParser.PRAGMA_CPU -> {
             final String cpuName = pragmaParamName(pragmaParamSingle(ctx));
             TargetCpu cpu = TargetCpu.getTargetCpu(cpuName, false);
             program.getTargetPlatform().setCpu(cpu);
-            break;
-         case CParser.PRAGMA_VAR_MODEL:
+         }
+         case CParser.PRAGMA_VAR_MODEL -> {
             final List<KickCParser.PragmaParamContext> pragmaParams = ctx.pragmaParam();
             List<String> settings = pragmaParams.stream().map(Pass0GenerateStatementSequence::pragmaParamName).collect(Collectors.toList());
             final VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx));
             config.setStructModelClassic(program.getTargetPlatform().getVariableBuilderConfig().isStructModelClassic());
             program.getTargetPlatform().setVariableBuilderConfig(config);
-            break;
-         case CParser.PRAGMA_STRUCT_MODEL:
+         }
+         case CParser.PRAGMA_STRUCT_MODEL -> {
             final String modelName = pragmaParamName(pragmaParamSingle(ctx));
             if(modelName.equalsIgnoreCase("classic"))
                program.getTargetPlatform().getVariableBuilderConfig().setStructModelClassic(true);
@@ -263,61 +262,52 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                program.getTargetPlatform().getVariableBuilderConfig().setStructModelClassic(true);
             else
                throw new CompileError("Unknown struct model " + modelName, new StatementSource(ctx));
-            break;
-         case CParser.PRAGMA_LINKSCRIPT:
+         }
+         case CParser.PRAGMA_LINKSCRIPT -> {
             final String linkScriptName = pragmaParamString(pragmaParamSingle(ctx));
             program.getLog().append("Loading link script \"" + linkScriptName + "\"");
             Path currentPath = cParser.getSourceFolderPath(ctx);
             final File linkScriptFile = SourceLoader.loadFile(linkScriptName, currentPath, program.getTargetPlatformPaths());
             program.getTargetPlatform().setLinkScriptFile(linkScriptFile);
-            break;
-         case CParser.PRAGMA_EXTENSION:
+         }
+         case CParser.PRAGMA_EXTENSION -> {
             String extension = pragmaParamString(pragmaParamSingle(ctx));
             program.getTargetPlatform().setOutFileExtension(extension);
             program.getOutputFileManager().setBinaryExtension(extension);
-            break;
-         case CParser.PRAGMA_EMULATOR:
+         }
+         case CParser.PRAGMA_EMULATOR -> {
             String emuName = pragmaParamString(pragmaParamSingle(ctx));
             program.getTargetPlatform().setEmulatorCommand(emuName);
-            break;
-         case CParser.PRAGMA_ENCODING:
+         }
+         case CParser.PRAGMA_ENCODING -> {
             final String encodingName = pragmaParamName(pragmaParamSingle(ctx));
             try {
                this.currentEncoding = StringEncoding.fromName(encodingName.toUpperCase(Locale.ENGLISH));
             } catch(IllegalArgumentException e) {
                throw new CompileError("Unknown string encoding " + encodingName, new StatementSource(ctx));
             }
-            break;
-         case CParser.PRAGMA_CODE_SEG:
-            this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_DATA_SEG:
-            this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_RESOURCE:
+         }
+         case CParser.PRAGMA_CODE_SEG -> this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_DATA_SEG -> this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_RESOURCE -> {
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
             addResourceFile(ctx, resourceFileName);
-            break;
-         case CParser.PRAGMA_START_ADDRESS:
+         }
+         case CParser.PRAGMA_START_ADDRESS -> {
             Number startAddress = pragmaParamNumber(pragmaParamSingle(ctx));
             program.getTargetPlatform().setStartAddress(startAddress);
-            break;
-         case CParser.PRAGMA_CALLING:
-            currentCallingConvention = pragmaParamCallingConvention(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_INTERRUPT:
-            this.currentInterruptType = pragmaParamName(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_ZP_RESERVE:
+         }
+         case CParser.PRAGMA_CALLING -> currentCallingConvention = pragmaParamCallingConvention(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_INTERRUPT -> this.currentInterruptType = pragmaParamName(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_ZP_RESERVE -> {
             List<Integer> reservedZps = pragmaParamRanges(ctx.pragmaParam());
             program.addReservedZps(reservedZps);
-            break;
-         case CParser.PRAGMA_CONSTRUCTOR_FOR:
+         }
+         case CParser.PRAGMA_CONSTRUCTOR_FOR -> {
             this.pragmaConstructorFors.add(ctx);
             return null;
-         default:
-            program.getLog().append("Warning! Unknown #pragma " + pragmaName);
-
+         }
+         default -> program.getLog().append("Warning! Unknown #pragma " + pragmaName);
       }
       return null;
    }
@@ -492,7 +482,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
 
       Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
-      addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
+      addDirectives(procedure, varDecl.getDeclDirectives());
       // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
       if(existingSymbol != null) {
@@ -518,7 +508,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       if(defineProcedure) {
          // Make sure comments, directives and source are from the definition
-         addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
+         addDirectives(procedure, varDecl.getDeclDirectives());
          procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
          procedure.setDefinitionSource(statementSource);
          // enter the procedure
@@ -753,7 +743,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** ASM Directive specifying clobber registers. */
    private static class AsmDirectiveClobber implements AsmDirective {
-      private CpuClobber clobber;
+      private final CpuClobber clobber;
 
       AsmDirectiveClobber(CpuClobber clobber) {
          this.clobber = clobber;
@@ -1052,8 +1042,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   // The previous assignment of an intermediate variable that can be modified instead of creating a new statement
                   StatementLValue previousAssignment = null;
 
-                  if(initValue instanceof VariableRef) {
-                     VariableRef initVarRef = (VariableRef) initValue;
+                  if(initValue instanceof VariableRef initVarRef) {
                      if(initVarRef.isIntermediate()) {
                         Statement previousStatement = getPreviousStatement();
                         if(previousStatement instanceof StatementLValue && ((StatementLValue) previousStatement).getlValue().equals(initVarRef)) {
@@ -1106,7 +1095,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("Constant value contains a pre/post-modifier.", statementSource);
       }
       if(initValue instanceof ForwardVariableRef) {
-         throw new CompileError("Variable used before being defined " + initValue.toString(), statementSource);
+         throw new CompileError("Variable used before being defined " + initValue, statementSource);
       }
       if(!(initValue instanceof ConstantValue))
          throw new CompileError("Initializer is not a constant value.", statementSource);
@@ -1166,7 +1155,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param procedure The procedure
     * @param directives The directives to add
     */
-   private void addDirectives(Procedure procedure, List<Directive> directives, StatementSource source) {
+   private void addDirectives(Procedure procedure, List<Directive> directives) {
       for(Directive directive : directives) {
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
@@ -1271,7 +1260,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
          StatementSource statementSource = new StatementSource(ctx);
          ConstantValue addressAsConstantValue = getConstInitValue(initValue, initializer, statementSource);
-         ConstantLiteral literal = addressAsConstantValue.calculateLiteral(program.getScope());
+         ConstantLiteral<?> literal = addressAsConstantValue.calculateLiteral(program.getScope());
          if(literal instanceof ConstantInteger) {
             Long address = ((ConstantInteger) literal).getValue();
             return new Directive.Address(addressAsConstantValue, address);
@@ -1739,9 +1728,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    private void addLoopBody(KickCParser.StmtContext stmt) {
       if(stmt != null) {
-         if(stmt instanceof KickCParser.StmtBlockContext) {
+         if(stmt instanceof KickCParser.StmtBlockContext stmtBlockContext) {
             // Skip the block context and reuse the one created by the for() itself
-            KickCParser.StmtBlockContext stmtBlockContext = (KickCParser.StmtBlockContext) stmt;
             if(stmtBlockContext.stmtSeq() != null) {
                this.visit(stmtBlockContext.stmtSeq());
             }
@@ -1836,7 +1824,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Map<String, SymbolRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext
                                                                         ctx, List<String> definedLabels) {
       Map<String, SymbolRef> referenced = new LinkedHashMap<>();
-      KickCParserBaseVisitor<Void> findReferenced = new KickCParserBaseVisitor<Void>() {
+      KickCParserBaseVisitor<Void> findReferenced = new KickCParserBaseVisitor<>() {
 
          @Override
          public Void visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
@@ -1881,7 +1869,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private List<String> getAsmDefinedLabels(KickCParser.StmtAsmContext ctx) {
       List<String> definedLabels = new ArrayList<>();
-      KickCParserBaseVisitor<Void> findDefinedLabels = new KickCParserBaseVisitor<Void>() {
+      KickCParserBaseVisitor<Void> findDefinedLabels = new KickCParserBaseVisitor<>() {
          @Override
          public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
             String label = ctx.ASM_NAME().getText();
@@ -1932,13 +1920,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitTypeSimple(KickCParser.TypeSimpleContext ctx) {
-      String typeName = "";
+      StringBuilder typeName = new StringBuilder();
       for(TerminalNode simpleTypeNode : ctx.SIMPLETYPE()) {
          if(typeName.length() > 0)
-            typeName += " ";
-         typeName += simpleTypeNode.getText();
+            typeName.append(" ");
+         typeName.append(simpleTypeNode.getText());
       }
-      final SymbolType typeSimple = SymbolType.get(typeName);
+      final SymbolType typeSimple = SymbolType.get(typeName.toString());
       if(typeSimple == null)
          throw new CompileError("Unknown type '" + typeName + "'", new StatementSource(ctx));
       varDecl.setDeclType(typeSimple);
@@ -2291,12 +2279,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
       if(val instanceof ConstantRef) {
-         throw new CompileError("const variable may not be modified " + val.toString(), new StatementSource(ctx));
+         throw new CompileError("const variable may not be modified " + val, new StatementSource(ctx));
       }
-      if(!(val instanceof LValue)) {
+      if(!(val instanceof LValue lValue)) {
          throw new CompileError("Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
       }
-      LValue lValue = (LValue) val;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
          // Encountered an intermediate variable. This must be turned into a proper LValue later. Put it into a marker to signify that
          lValue = new LvalueIntermediate((VariableRef) lValue);
@@ -2313,10 +2300,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitExprAssignmentCompound(KickCParser.ExprAssignmentCompoundContext ctx) {
       // Assignment (rValue/lValue)
       Object value = visit(ctx.expr(0));
-      if(!(value instanceof LValue)) {
+      if(!(value instanceof LValue lValue)) {
          throw new CompileError("Illegal assignment Lvalue " + value.toString(), new StatementSource(ctx));
       }
-      LValue lValue = (LValue) value;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
          // Encountered an intermediate variable. This must be turned into a proper LValue later. Put it into a marker to signify that
          lValue = new LvalueIntermediate((VariableRef) lValue);

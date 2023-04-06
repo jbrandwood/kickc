@@ -49,7 +49,7 @@ public class Pass1UnwindStructPrepare extends Pass2SsaOptimization {
             }
             if(statement instanceof StatementCall) {
                final StatementCall call = (StatementCall) statement;
-               final Procedure procedure = getScope().getProcedure(call.getProcedure());
+               final Procedure procedure = getProgramScope().getProcedure(call.getProcedure());
                final List<Variable> paramDefs = procedure.getParameters();
                final List<RValue> paramVals = call.getParameters();
                for(int i=0;i<paramDefs.size();i++) {

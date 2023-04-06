@@ -35,7 +35,7 @@ public class Pass1UnwindStructVariables extends Pass1Base {
    private boolean unwindStructVariables() {
       boolean modified = false;
       // Iterate through all scopes generating member-variables for each struct
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getProgramScope().getAllVariables(true)) {
          if(variable.isStructUnwind()) {
             StructVariableMemberUnwinding structVariableMemberUnwinding = getProgram().getStructVariableMemberUnwinding();
             if(structVariableMemberUnwinding.getVariableUnwinding(variable.getRef()) == null) {

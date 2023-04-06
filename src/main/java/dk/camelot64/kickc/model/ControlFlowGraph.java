@@ -187,7 +187,7 @@ public class ControlFlowGraph {
    public String toString(Program program) {
       StringBuffer out = new StringBuffer();
       for(ControlFlowBlock block : getAllBlocks()) {
-         out.append(block.toString(program));
+         out.append(block.toString(program, this));
       }
       return out.toString();
    }
@@ -224,6 +224,17 @@ public class ControlFlowGraph {
    }
 
    /**
+    * Clear all statement indices,
+    */
+   public void clearStatementIndices() {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            statement.setIndex(null);
+         }
+      }
+   }
+
+   /**
     * Get all blocks that are part of the execution of a specific scope. (mostly a procedure)
     *
     * @param scope The scope to find blocks for
@@ -239,20 +250,6 @@ public class ControlFlowGraph {
       return scopeBlocks;
    }
 
-   /**
-    * Get information about the size of the program
-    *
-    * @return Size information
-    */
-   public String getSizeInfo() {
-      StringBuilder sizeInfo = new StringBuilder();
-      sizeInfo.append("SIZE blocks " + getAllBlocks().size()).append("\n");
-      int numStmt = getAllBlocks().stream().mapToInt(block -> block.getStatements().size()).sum();
-      sizeInfo.append("SIZE statements " + numStmt).append("\n");
-      int numPhiVars = getAllBlocks().stream().mapToInt(value -> value.getStatements().stream().mapToInt(value1 -> (value1 instanceof StatementPhiBlock) ? ((StatementPhiBlock) value1).getPhiVariables().size() : 0).sum()).sum();
-      sizeInfo.append("SIZE phi variables " + numPhiVars).append("\n");
-      return sizeInfo.toString();
-   }
 
    /**
     * Get all statements executed between two statements (none of these are included in the result)

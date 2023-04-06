@@ -29,7 +29,7 @@ public class Pass1AssertJumpLabels extends Pass1Base {
          for(Statement statement : statementSequence.getStatements()) {
             if(statement instanceof StatementJump) {
                LabelRef jumpLabel = ((StatementJump) statement).getDestination();
-               Label label = getScope().getLabel(jumpLabel);
+               Label label = getProgramScope().getLabel(jumpLabel);
                if(label==null) {
                   throw new CompileError("goto label undefined '"+jumpLabel.getLocalName()+"'", statement);
                }

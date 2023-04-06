@@ -33,7 +33,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                final ProcedureRef procedureRef = ((StatementCall) statement).getProcedure();
-               final Procedure procedure = getScope().getProcedure(procedureRef);
+               final Procedure procedure = getProgramScope().getProcedure(procedureRef);
                if(SymbolType.VOID.equals(procedure.getReturnType())) {
                   // Found a call to a VOID returning procedure
                   final LValue lValue = ((StatementCall) statement).getlValue();
@@ -46,7 +46,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
                         throw new CompileError("Function " + procedure.getLocalName() + " does not return a value! ", usage);
                      } else {
                         // Delete the temporary variable
-                        final Variable var = getScope().getVar(tmpVar);
+                        final Variable var = getProgramScope().getVar(tmpVar);
                         var.getScope().remove(var);
                         // And remove the lValue
                         ((StatementCall) statement).setlValue(null);

@@ -79,7 +79,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
    void pushTodo(ControlFlowBlock block) {
       LabelRef blockRef = block.getLabel();
-      Scope blockScope = getScope().getSymbol(blockRef).getScope();
+      Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.pushTodo(block);
@@ -93,7 +93,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
    void pushCallTodo(ControlFlowBlock block) {
       LabelRef blockRef = block.getLabel();
-      Scope blockScope = getScope().getSymbol(blockRef).getScope();
+      Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.addTodo(block);

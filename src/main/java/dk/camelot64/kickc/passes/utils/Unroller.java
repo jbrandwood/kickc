@@ -60,7 +60,7 @@ public class Unroller {
       prepare();
       if(program.getLog().isVerboseLoopUnroll()) {
          program.getLog().append("CONTROL FLOW GRAPH (PREPARED FOR LOOP HEAD UNROLL)");
-         program.getLog().append(program.getGraph().toString(program));
+         program.getLog().append(program.prettyControlFlowGraph());
       }
       // 1. Create new versions of all symbols assigned inside the loop
       this.varsOriginalToCopied = copyDefinedVars(unrollBlocks, program);
@@ -84,7 +84,7 @@ public class Unroller {
             reVersionAllUsages(origVarRef, newPhis, varVersions);
             if(program.getLog().isVerboseLoopUnroll()) {
                program.getLog().append("Created new versions for " + origVarRef );
-               //program.getLog().append(program.getGraph().toString(program));
+               //program.getLog().append(program.prettyControlFlowGraph());
             }
             // Recursively fill out & add PHI-functions until they have propagated everywhere needed
             completePhiFunctions(newPhis, varVersions);
@@ -213,7 +213,7 @@ public class Unroller {
             }
          }
          //program.getLog().append("Completing PHI-functions...");
-         //program.getLog().append(program.getGraph().toString(program));
+         //program.getLog().append(program.prettyControlFlowGraph());
       }
    }
 

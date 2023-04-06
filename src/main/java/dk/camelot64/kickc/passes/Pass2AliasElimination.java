@@ -29,11 +29,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
       fixAliasSources(aliases);
       removeAliasAssignments(aliases);
-      replaceVariables(aliases.getReplacements(getScope()));
+      replaceVariables(aliases.getReplacements(getProgramScope()));
       for(AliasSet aliasSet : aliases.getAliasSets()) {
          getLog().append("Alias " + aliasSet.toString(getProgram()));
       }
-      deleteSymbols(getScope(), aliases.getSymbolsToRemove(getScope()));
+      deleteSymbols(getProgramScope(), aliases.getSymbolsToRemove(getProgramScope()));
       return (aliases.size() > 0);
    }
 
@@ -247,7 +247,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          StatementSource bestSource = null;
          List<Statement> assignments = new ArrayList<>();
          for(VariableRef aliasVar : aliasSet.getVars()) {
-            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(aliasVar, getGraph(), getScope());
+            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(aliasVar, getGraph(), getProgramScope());
             if(varAssignments.size()!=1)
                continue;
             final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);

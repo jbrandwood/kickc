@@ -28,9 +28,11 @@ public class Pass1AssertReturn extends Pass1Base {
       for(Procedure procedure : allProcedures) {
          if(procedure.isDeclaredIntrinsic()) continue;
          if(procedure.getReturnType() != null && !SymbolType.VOID.equals(procedure.getReturnType())) {
+            final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
+            final ControlFlowGraph graph = procedureCompilation.getGraph();
             LabelRef entryLabel = procedure.getRef().getLabelRef();
-            ControlFlowBlock entryBlock = getProgram().getGraph().getBlock(entryLabel);
-            assertReturn(entryBlock, new LinkedHashSet<>());
+            ControlFlowBlock entryBlock = graph.getBlock(entryLabel);
+            assertReturn(graph, entryBlock, new LinkedHashSet<>());
          }
       }
       return false;
@@ -43,7 +45,7 @@ public class Pass1AssertReturn extends Pass1Base {
     * @param block The block to examine
     * @param visited Blocks already visited
     */
-   public void assertReturn(ControlFlowBlock block, Collection<LabelRef> visited) {
+   public void assertReturn(ControlFlowGraph graph, ControlFlowBlock block, Collection<LabelRef> visited) {
       if(visited.contains(block.getLabel())) {
          return;
       }
@@ -57,15 +59,15 @@ public class Pass1AssertReturn extends Pass1Base {
             }
          } else if(statement instanceof StatementConditionalJump) {
             StatementConditionalJump cond = (StatementConditionalJump) statement;
-            ControlFlowBlock jumpTo = getProgram().getGraph().getBlock(cond.getDestination());
-            assertReturn(jumpTo, visited);
+            ControlFlowBlock jumpTo = graph.getBlock(cond.getDestination());
+            assertReturn(graph, jumpTo, visited);
          }
       }
-      ControlFlowBlock successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
+      ControlFlowBlock successor = graph.getBlock(block.getDefaultSuccessor());
       if(successor == null || successor.getLabel().getLocalName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
          throw new CompileError("Error! Method must end with a return statement. " + block.getScope().toString(getProgram()));
       } else {
-         assertReturn(successor, visited);
+         assertReturn(graph, successor, visited);
       }
    }
 

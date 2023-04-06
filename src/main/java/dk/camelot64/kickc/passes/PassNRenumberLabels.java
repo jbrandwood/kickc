@@ -28,8 +28,8 @@ public class PassNRenumberLabels extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       Map<LabelRef, LabelRef> renamed = new LinkedHashMap<>();
-      renumberLabels(getScope(), renamed);
-      for(Scope scope : getScope().getAllScopes(true)) {
+      renumberLabels(getProgramScope(), renamed);
+      for(Scope scope : getProgramScope().getAllScopes(true)) {
          renumberLabels(scope, renamed);
       }
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {

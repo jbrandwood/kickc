@@ -39,7 +39,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
                      optimized = true;
                   }
                } else if(procedure instanceof ConstantRef) {
-                  Variable procedureVariable = getScope().getConstant((ConstantRef) procedure);
+                  Variable procedureVariable = getProgramScope().getConstant((ConstantRef) procedure);
                   SymbolType procedureVariableType = procedureVariable.getType();
                   if(procedureVariableType instanceof SymbolTypePointer) {
                      if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
@@ -68,7 +68,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
       if(block.getCallSuccessor()!=null)
          throw new CompileError("Internal error! Block has two calls!", callPointer);
       block.setCallSuccessor(constProcedureRef.getLabelRef());
-      final Procedure procedure = getScope().getProcedure(constProcedureRef);
+      final Procedure procedure = getProgramScope().getProcedure(constProcedureRef);
       procedure.setCallingConvention(Procedure.CallingConvention.STACK_CALL);
       getLog().append("Replacing constant pointer function " + callPointer.toString(getProgram(), false));
    }
@@ -82,7 +82,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
     */
    private ProcedureRef findConstProcedure(RValue procedurePointer) {
       if(procedurePointer instanceof ConstantRef) {
-         Variable constant = getScope().getConstant((ConstantRef) procedurePointer);
+         Variable constant = getProgramScope().getConstant((ConstantRef) procedurePointer);
          return findConstProcedure(constant.getInitValue());
       } else if(procedurePointer instanceof ConstantSymbolPointer) {
          ConstantSymbolPointer pointer = (ConstantSymbolPointer) procedurePointer;

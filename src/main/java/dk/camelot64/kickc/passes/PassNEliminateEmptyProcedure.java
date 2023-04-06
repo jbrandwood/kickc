@@ -28,7 +28,7 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      final Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
+      final Collection<Procedure> allProcedures = getProgramScope().getAllProcedures(true);
       boolean optimized = false;
       for(Procedure procedure : allProcedures) {
          if(procedure.isDeclaredIntrinsic()) continue;

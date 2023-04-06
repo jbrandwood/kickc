@@ -37,7 +37,7 @@ public class Pass1ProcedureInline extends Pass1Base {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                ProcedureRef procedureRef = call.getProcedure();
-               Procedure procedure = getScope().getProcedure(procedureRef);
+               Procedure procedure = getProgramScope().getProcedure(procedureRef);
                if(procedure.isDeclaredInline()) {
                   procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
                   if(procedure.getInterruptType()!=null) {
@@ -63,7 +63,7 @@ public class Pass1ProcedureInline extends Pass1Base {
     * @param blocksIt The block iterator pointing to the block containing the call
     */
    private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, ControlFlowBlock block, ListIterator<ControlFlowBlock> blocksIt) {
-      Scope callScope = getScope().getScope(block.getScope());
+      Scope callScope = getProgramScope().getScope(block.getScope());
       // Remove call
       statementsIt.remove();
       // Find call serial number (handles when multiple calls to the same procedure is made in the call scope)
@@ -78,7 +78,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
       for(ControlFlowBlock procedureBlock : procedureBlocks) {
          LabelRef procBlockLabelRef = procedureBlock.getLabel();
-         Symbol procBlockLabel = getScope().getSymbol(procBlockLabelRef);
+         Symbol procBlockLabel = getProgramScope().getSymbol(procBlockLabelRef);
          Label inlinedBlockLabel;
          if(procedure.equals(procBlockLabel)) {
             inlinedBlockLabel = callScope.getLocalLabel(procedure.getLocalName() + serial);
@@ -119,7 +119,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          // Remove the tmp var receiving the result
          LValue lValue = call.getlValue();
          if(lValue instanceof VariableRef) {
-            callScope.remove(getScope().getVariable((VariableRef) lValue));
+            callScope.remove(getProgramScope().getVariable((VariableRef) lValue));
             call.setlValue(null);
          }
       }
@@ -147,7 +147,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          // Set successor of the @return block to the rest block
          inlinedSuccessor = restBlockLabel.getRef();
       } else {
-         Label procBlockSuccessor = getScope().getLabel(procBlockSuccessorRef);
+         Label procBlockSuccessor = getProgramScope().getLabel(procBlockSuccessorRef);
          String inlinedSuccessorName = getInlineSymbolName(procedure, procBlockSuccessor, serial);
          Label inlinedSuccessorLabel = callScope.getLocalLabel(inlinedSuccessorName);
          inlinedSuccessor = inlinedSuccessorLabel.getRef();
@@ -206,7 +206,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       } else if(procStatement instanceof StatementConditionalJump) {
          StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
          LabelRef procDestinationRef = procConditional.getDestination();
-         Label procDestination = getScope().getLabel(procDestinationRef);
+         Label procDestination = getProgramScope().getLabel(procDestinationRef);
          Label inlinedDest = procDestination;
          if(procDestination.getScope().equals(procedure)) {
             String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
@@ -251,7 +251,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          Value rValue = programValue.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;
-            Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
+            Variable procVar = Pass1ProcedureInline.this.getProgramScope().getVariable(procVarRef);
             if(procVar.getScope().equals(procedure)) {
                String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
                Variable inlineVar = callScope.getLocalVariable(inlineSymbolName);

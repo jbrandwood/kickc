@@ -18,7 +18,7 @@ public class PassNFixIntermediateMemoryArea extends Pass2SsaOptimization {
    public boolean step() {
       boolean modified = false;
       final VariableBuilderConfig variableBuilderConfig = getProgram().getTargetPlatform().getVariableBuilderConfig();
-      for(Variable var : getScope().getAllVars(true)) {
+      for(Variable var : getProgramScope().getAllVars(true)) {
          if(var.isKindIntermediate()) {
             final VariableBuilder builder = new VariableBuilder(var.getLocalName(), var.getScope(), false, true, var.getType(), null, var.getDataSegment(), variableBuilderConfig);
             final Variable.MemoryArea memoryArea = builder.getMemoryArea();

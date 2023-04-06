@@ -52,7 +52,7 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
     */
    private void updateAddressOfValue(Value value, Statement currentStmt) {
       if(value instanceof SymbolRef) {
-         Symbol toSymbol = getScope().getSymbol((SymbolRef) value);
+         Symbol toSymbol = getProgramScope().getSymbol((SymbolRef) value);
          final String stmtStr = currentStmt == null ? toSymbol.toString(getProgram()) : currentStmt.toString(getProgram(), false);
          if(toSymbol instanceof Variable) {
             final Variable variable = (Variable) toSymbol;

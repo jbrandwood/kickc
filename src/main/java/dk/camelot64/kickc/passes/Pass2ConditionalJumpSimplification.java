@@ -40,7 +40,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
          simpleConditionVars.add(simpleCondition.conditionVar);
       }
       removeAssignments(getGraph(), simpleConditionVars);
-      deleteSymbols(getScope(), simpleConditionVars);
+      deleteSymbols(getProgramScope(), simpleConditionVars);
       return (simpleConditionVars.size() > 0);
    }
 
@@ -129,7 +129,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                   // Create an intermediate variable copy of the load/store-variable at the position of the condition-variable to preserve the value
                   final ControlFlowBlock conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
                   final ScopeRef conditionDefineScopeRef = conditionDefineBlock.getScope();
-                  final Scope conditionDefineScope = getScope().getScope(conditionDefineScopeRef);
+                  final Scope conditionDefineScope = getProgramScope().getScope(conditionDefineScopeRef);
                   SymbolType typeQualified = referencedLoadStoreVariable.getType().getQualified(false, referencedLoadStoreVariable.getType().isNomodify());
                   final Variable intermediateLoadStoreVar = VariableBuilder.createIntermediate(conditionDefineScope, typeQualified, getProgram());
                   final StatementAssignment intermediateLoadStoreAssignment = new StatementAssignment(intermediateLoadStoreVar.getVariableRef(), referencedLoadStoreVariable.getRef(), true, simpleCondition.conditionAssignment.getSource(), Comment.NO_COMMENTS);
@@ -168,7 +168,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    private Collection<Variable> getReferencedLoadStoreVariables(RValue rValue) {
       return VariableReferenceInfos.getReferencedVars(rValue)
             .stream()
-            .map(variableRef -> getScope().getVariable(variableRef))
+            .map(variableRef -> getProgramScope().getVariable(variableRef))
             .filter(Variable::isKindLoadStore)
             .collect(Collectors.toList());
    }

@@ -22,13 +22,13 @@ public class Pass1AssertInterrupts extends Pass1Base {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCalling) {
                ProcedureRef procedureRef = ((StatementCalling) statement).getProcedure();
-               Procedure procedure = getScope().getProcedure(procedureRef);
+               Procedure procedure = getProgramScope().getProcedure(procedureRef);
                if(procedure.getInterruptType()!=null) {
                   throw new CompileError("Interrupts cannot be called.", statement.getSource());
                }
             }
          }
-         for(Procedure procedure : getScope().getAllProcedures(true)) {
+         for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
             if(procedure.getInterruptType()!=null) {
                if(procedure.isDeclaredInline()) {
                   throw new CompileError("Interrupts cannot be inlined. " + procedure.toString());

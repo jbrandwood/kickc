@@ -8,7 +8,6 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.passes.Pass2SsaOptimization;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,7 +30,7 @@ public class PassNCastSimplification extends Pass2SsaOptimization {
             OperatorCast operatorCast = (OperatorCast) programExpression.getOperator();
             ProgramExpressionUnary unary = (ProgramExpressionUnary) programExpression;
             SymbolType castType = operatorCast.getToType();
-            SymbolType operandType = SymbolTypeInference.inferType(getScope(), ((ProgramExpressionUnary) programExpression).getOperand());
+            SymbolType operandType = SymbolTypeInference.inferType(getProgramScope(), ((ProgramExpressionUnary) programExpression).getOperand());
             RValue unaryOperand = unary.getOperand();
             if(!SymbolTypeConversion.assignmentCastNeeded(castType, operandType)) {
                // Cast Not needed

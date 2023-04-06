@@ -144,7 +144,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          } else {
             // Check if the constant is zero
             try {
-               ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue1()).calculateLiteral(getScope());
+               ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue1()).calculateLiteral(getProgramScope());
                if(constantLiteral.getValue().equals(0L)) {
                   getLog().append("Removed zero-constant in assignment " + assignment.getlValue());
                   assignment.setrValue1(null);
@@ -167,7 +167,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          } else {
             // Check if the constant is zero
             try {
-               ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue2()).calculateLiteral(getScope());
+               ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue2()).calculateLiteral(getProgramScope());
                if(constantLiteral.getValue().equals(0L)) {
                   getLog().append("Removed zero-constant in assignment " + assignment.getlValue());
                   assignment.setrValue2(assignment.getrValue1());
@@ -193,10 +193,10 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       if(getUsages(variable) > 1) {
          return null;
       }
-      final Variable var = getScope().getVar(variable);
+      final Variable var = getProgramScope().getVar(variable);
       if(var.isKindLoadStore())
          return null;
-      final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable, getGraph(), getScope());
+      final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable, getGraph(), getProgramScope());
       if(varAssignments.size()!=1)
          return null;
       final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
@@ -208,7 +208,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          if(assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
             if(assignment.getrValue1() instanceof ConstantValue) {
                ConstantValue constant = (ConstantValue) assignment.getrValue1();
-               SymbolType constantType = constant.getType(getScope());
+               SymbolType constantType = constant.getType(getProgramScope());
                if(SymbolType.isInteger(constantType)) {
                   assignment.setrValue1(null);
                   assignment.setOperator(null);

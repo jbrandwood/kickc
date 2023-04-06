@@ -191,7 +191,7 @@ public class Compiler {
       pass2FinalizeAllNumbers();
 
       //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
-      //getLog().append(program.getGraph().toString(program));
+      //getLog().append(program.prettyControlFlowGraph());
 
       //getLog().append("SYMBOL TABLE PASS 2");
       //getLog().append(program.getScope().toString(program, null));
@@ -213,7 +213,7 @@ public class Compiler {
       new Pass1GenerateControlFlowGraph(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("FIRST CONTROL FLOW GRAPH");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1ByteXIntrinsicRewrite(program).execute();
@@ -248,7 +248,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE SIZEOF FIX");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
 
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
@@ -262,7 +262,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH AFTER UNWIND");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
 
       new PassNDeInlineCastValues(program, true).execute();
@@ -275,7 +275,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();
@@ -285,7 +285,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("INITIAL CONTROL FLOW GRAPH");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
 
       new Pass1EliminateUncalledProcedures(program).execute();
@@ -306,14 +306,14 @@ public class Compiler {
       new Pass1CallStackVarConvert(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("PROCEDURE CALLS");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new Pass1CallStack(program).execute();
       new Pass1CallVar(program).execute();
       new Pass1CallPhiParameters(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("PROCEDURE PARAMETERS");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new PassNUnwindLValueLists(program).execute();
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
@@ -326,7 +326,7 @@ public class Compiler {
 
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");
-      getLog().append(program.getGraph().toString(program));
+      getLog().append(program.prettyControlFlowGraph());
 
       getLog().append("SYMBOL TABLE SSA");
       getLog().append(program.getScope().toStringVars(program, false));
@@ -457,7 +457,7 @@ public class Compiler {
 
       if(getLog().isVerboseLoopUnroll()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE UNROLLING");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
 
       boolean unrolled;
@@ -466,7 +466,7 @@ public class Compiler {
          if(unrolled) {
             if(getLog().isVerboseLoopUnroll()) {
                getLog().append("UNROLLED CONTROL FLOW GRAPH");
-               getLog().append(program.getGraph().toString(program));
+               getLog().append(program.prettyControlFlowGraph());
             }
             pass2Optimize();
             new Pass2LoopUnrollAssertComplete(program).step();
@@ -552,7 +552,7 @@ public class Compiler {
          getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
          if(getLog().isVerboseSSAOptimize()) {
             getLog().append("CONTROL FLOW GRAPH");
-            getLog().append(program.getGraph().toString(program));
+            getLog().append(program.prettyControlFlowGraph());
          }
       }
    }
@@ -575,7 +575,7 @@ public class Compiler {
       new Pass3PhiLifting(program).perform();
       new PassNBlockSequencePlanner(program).step();
       //getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
-      //getLog().append(program.getGraph().toString(program));
+      //getLog().append(program.prettyControlFlowGraph());
       pass2AssertSSA();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
@@ -596,17 +596,17 @@ public class Compiler {
 
       if(getLog().isVerboseSSAOptimize()) {
          getLog().append("CONTROL FLOW GRAPH");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new PassNCullEmptyBlocks(program, false).step();
       if(getLog().isVerboseSSAOptimize()) {
          getLog().append("CONTROL FLOW GRAPH");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new PassNRenumberLabels(program, false).execute();
       if(getLog().isVerboseSSAOptimize()) {
          getLog().append("CONTROL FLOW GRAPH");
-         getLog().append(program.getGraph().toString(program));
+         getLog().append(program.prettyControlFlowGraph());
       }
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
@@ -624,12 +624,12 @@ public class Compiler {
 
       // program.getLiveRangeVariablesEffective();
 //      getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
-//      getLog().append(program.getGraph().toString(program));
+//      getLog().append(program.prettyControlFlowGraph());
 
       program.getLiveRangeVariablesEffective();
 
       getLog().append("\nFINAL CONTROL FLOW GRAPH");
-      getLog().append(program.getGraph().toString(program));
+      getLog().append(program.prettyControlFlowGraph());
 
    }
 

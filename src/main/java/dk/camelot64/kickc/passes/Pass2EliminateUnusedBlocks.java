@@ -32,7 +32,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
                   StatementLValue assignment = (StatementLValue) stmt;
                   LValue lValue = assignment.getlValue();
                   if(lValue instanceof VariableRef) {
-                     Variable variable = getScope().getVariable((VariableRef) lValue);
+                     Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                      if(variable.isKindPhiVersion() || variable.isKindIntermediate()) {
                         getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
                         variable.getScope().remove(variable);
@@ -42,7 +42,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
                      VariableRef phiVar = phiVariable.getVariable();
                      getLog().append("Eliminating variable " + phiVar.toString(getProgram()) + " from unused block " + block.getLabel());
-                     Variable variable = getScope().getVariable(phiVar);
+                     Variable variable = getProgramScope().getVariable(phiVar);
                      variable.getScope().remove(variable);
 
                   }
@@ -54,10 +54,10 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
       Set<LabelRef> removedBlocks = new HashSet<>();
       for(LabelRef unusedBlock : unusedBlocks) {
-         Symbol unusedSymbol = getScope().getSymbol(unusedBlock);
+         Symbol unusedSymbol = getProgramScope().getSymbol(unusedBlock);
          if(unusedSymbol instanceof Label) {
             getGraph().remove(unusedBlock);
-            Label label = getScope().getLabel(unusedBlock);
+            Label label = getProgramScope().getLabel(unusedBlock);
             label.getScope().remove(label);
             removePhiRValues(unusedBlock, getProgram());
             removedBlocks.add(unusedBlock);

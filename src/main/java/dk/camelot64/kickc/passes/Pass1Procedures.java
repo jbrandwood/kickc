@@ -25,7 +25,7 @@ public class Pass1Procedures extends Pass2SsaOptimization {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                String procedureName = call.getProcedureName();
-               Scope localScope = (Scope) getScope().getSymbol(block.getScope());
+               Scope localScope = (Scope) getProgramScope().getSymbol(block.getScope());
                final Symbol procedureSymbol = localScope.findSymbol(procedureName);
                if(procedureSymbol == null)
                   throw new CompileError("Called procedure not found. " + procedureName, statement.getSource());

@@ -37,11 +37,11 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                if(Operators.SIZEOF.equals(assignment.getOperator())) {
                   if(assignment.getrValue2() instanceof SymbolVariableRef) {
                      SymbolVariableRef symbolRef = (SymbolVariableRef) assignment.getrValue2();
-                     Variable symbolVar = (Variable) getScope().getSymbol(symbolRef);
+                     Variable symbolVar = (Variable) getProgramScope().getSymbol(symbolRef);
                      SymbolType symbolType = symbolVar.getType();
                      if(!(symbolVar.isArray())) {
                         getLog().append("Resolving sizeof() " + assignment.toString(getProgram(), false));
-                        ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), symbolType);
+                        ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), symbolType);
                         assignment.setrValue2(sizeOfConstantVar);
                         assignment.setOperator(null);
                         modified.set(true);
@@ -68,20 +68,20 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
 
    public void resolveConstantSizeOf(AtomicBoolean modified, ProgramValue programValue, ConstantUnary unary, ConstantValue operand) {
       if(operand instanceof ConstantRef) {
-         Variable constant = getScope().getConstant((ConstantRef) operand);
+         Variable constant = getProgramScope().getConstant((ConstantRef) operand);
          SymbolType symbolType = constant.getType();
          if(constant.isArray() && symbolType instanceof SymbolTypePointer) {
             SymbolTypePointer arrayType = (SymbolTypePointer) symbolType;
             ConstantValue arraySize = constant.getArraySize();
             if(arraySize!=null) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
-               ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), arrayType.getElementType());
+               ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary(arraySize, Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
             } else if(constant.getInitValue() instanceof ConstantArrayList) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                int size = ((ConstantArrayList) constant.getInitValue()).getElements().size();
-               ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), arrayType.getElementType());
+               ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary(new ConstantInteger((long) size), Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
             } else {
@@ -96,7 +96,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                   ConstantString constString = (ConstantString) stringLiteral;
                   int length = constString.getStringLength();
                   getLog().append("Resolving string sizeof() " + unary.toString(getProgram()));
-                  ConstantRef sizeOfChar = SizeOfConstants.getSizeOfConstantVar(getScope(), SymbolType.BYTE);
+                  ConstantRef sizeOfChar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), SymbolType.BYTE);
                   programValue.set(new ConstantBinary(new ConstantInteger((long) length), Operators.MULTIPLY, sizeOfChar));
                   modified.set(true);
                } else {
@@ -105,14 +105,14 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
             }
          } else if(symbolType instanceof SymbolTypePointer ){
             getLog().append("Resolving sizeof() " + unary.toString(getProgram()));
-            ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), symbolType);
+            ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), symbolType);
             programValue.set(sizeOfConstantVar);
             modified.set(true);
          } else {
             getLog().append("Resolving sizeof() " + unary.toString(getProgram()));
             ConstantLiteral literal = operand.calculateLiteral(getProgram().getScope());
             SymbolType constType = literal.getType(getProgram().getScope());
-            ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), constType);
+            ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), constType);
             programValue.set(sizeOfConstantVar);
             modified.set(true);
          }
@@ -120,7 +120,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
          getLog().append("Resolving sizeof() " + unary.toString(getProgram()));
          ConstantLiteral literal = operand.calculateLiteral(getProgram().getScope());
          SymbolType constType = literal.getType(getProgram().getScope());
-         ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getScope(), constType);
+         ConstantRef sizeOfConstantVar = SizeOfConstants.getSizeOfConstantVar(getProgramScope(), constType);
          programValue.set(sizeOfConstantVar);
          modified.set(true);
       }

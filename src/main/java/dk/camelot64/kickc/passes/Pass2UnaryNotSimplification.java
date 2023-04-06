@@ -27,7 +27,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
    public boolean step() {
       final List<VariableRef> unusedComparisons = optimizeUnaryNots();
       removeAssignments(getGraph(), unusedComparisons);
-      deleteSymbols(getScope(), unusedComparisons);
+      deleteSymbols(getProgramScope(), unusedComparisons);
       return (unusedComparisons.size() > 0);
    }
 

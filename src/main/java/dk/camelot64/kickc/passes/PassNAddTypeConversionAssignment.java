@@ -74,7 +74,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCallPointer) {
                RValue procedure = ((StatementCallPointer) statement).getProcedure();
-               SymbolType procType = SymbolTypeInference.inferType(getScope(), procedure);
+               SymbolType procType = SymbolTypeInference.inferType(getProgramScope(), procedure);
                if(procType instanceof SymbolTypePointer && ((SymbolTypePointer) procType).getElementType() instanceof SymbolTypeProcedure) {
                   // Allow calling pointer to procedure directly
                   // Add an automatic dereference to a pointer to procedure

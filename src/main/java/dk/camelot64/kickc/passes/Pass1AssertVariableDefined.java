@@ -13,7 +13,7 @@ public class Pass1AssertVariableDefined extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(Variable var : getScope().getAllVars(true)) {
+      for(Variable var : getProgramScope().getAllVars(true)) {
          if(var.isDeclarationOnly())
             throw new CompileError("Error! Variable is declared but never defined: " +  var.getFullName());
       }

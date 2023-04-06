@@ -24,7 +24,7 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
    @Override
    public boolean step() {
       Map<ProcedureRef, Set<VariableRef>> modified = new LinkedHashMap<>();
-      Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
+      Collection<Procedure> allProcedures = getProgramScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
          Set<VariableRef> modifiedVars = getModifiedVars(procedure, new HashSet<>());
          modified.put(procedure.getRef(), modifiedVars);
@@ -60,7 +60,7 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
                }
                if(statement instanceof StatementCalling) {
                   ProcedureRef called = ((StatementCalling) statement).getProcedure();
-                  Procedure calledProc = getScope().getProcedure(called);
+                  Procedure calledProc = getProgramScope().getProcedure(called);
                   modified.addAll(getModifiedVars(calledProc, visited));
                }
             }

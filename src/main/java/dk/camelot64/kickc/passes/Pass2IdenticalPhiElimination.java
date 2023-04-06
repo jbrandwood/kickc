@@ -37,7 +37,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
                   boolean identical = true;
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      if(phiRValue.getrValue() instanceof SymbolVariableRef) {
-                        Variable symbolVar = (Variable) getScope().getSymbol((SymbolVariableRef) phiRValue.getrValue());
+                        Variable symbolVar = (Variable) getProgramScope().getSymbol((SymbolVariableRef) phiRValue.getrValue());
                         if(symbolVar.getRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
                            // Do not collapse PHI's for variables with declared registers (this prevents procedure parameters from being turned into constants)
                            identical = false;
@@ -71,7 +71,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
          RValue alias = phiIdentical.get(var);
          getLog().append("Identical Phi Values " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
-      deleteSymbols(getScope(), phiIdentical.keySet());
+      deleteSymbols(getProgramScope(), phiIdentical.keySet());
       return phiIdentical.size() > 0;
    }
 

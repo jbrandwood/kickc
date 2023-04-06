@@ -49,7 +49,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          ConstantVariableValue constVarVal = constants.get(constRef);
          Scope scope = variable.getScope();
          ConstantValue constVal = constVarVal.getConstantValue();
-         SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
+         SymbolType valueType = SymbolTypeInference.inferType(getProgramScope(), constVal);
          SymbolType variableType = variable.getType();
 
          if(!SymbolType.NUMBER.equals(variableType) && SymbolType.NUMBER.equals(valueType)) {
@@ -64,7 +64,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          else if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
             ConstantLiteral constantLiteral = null;
             try {
-               constantLiteral = constVal.calculateLiteral(getScope());
+               constantLiteral = constVal.calculateLiteral(getProgramScope());
             } catch(ConstantNotLiteral e) {
                // ignore
             }
@@ -141,7 +141,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {
                   VariableRef varRef = (VariableRef) lValue;
-                  Variable var = getScope().getVariable(varRef);
+                  Variable var = getProgramScope().getVariable(varRef);
                   if(var.isVolatile() || var.isKindLoadStore())
                      // Do not examine volatiles and non-versioned variables
                      continue;
@@ -160,7 +160,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
                      if(getConstant(phiRValue.getrValue()) != null) {
                         VariableRef varRef = phiVariable.getVariable();
-                        Variable var = getScope().getVariable(varRef);
+                        Variable var = getProgramScope().getVariable(varRef);
                         if(var.isVolatile() || var.isKindLoadStore())
                            // Do not examine volatiles and non-versioned variables
                            continue;
@@ -174,14 +174,14 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
 
       // Look for constants among non-versioned variables
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getProgramScope().getAllVariables(true)) {
          if(variable.isVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
          if(variable.getRegister() != null && variable.getRegister().isMem())
             // Skip variables allocated into memory
             continue;
-         final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable.getRef(), getGraph(), getScope());
+         final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable.getRef(), getGraph(), getProgramScope());
          if(varAssignments.size() == 1) {
             final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
             if(!VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type) || !(varAssignment.statementLValue instanceof StatementAssignment))

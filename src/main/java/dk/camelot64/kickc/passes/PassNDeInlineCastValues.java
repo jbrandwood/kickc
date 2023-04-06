@@ -51,7 +51,7 @@ public class PassNDeInlineCastValues extends Pass2SsaOptimization {
       final CastValue castValue = (CastValue) castProgramValue.get();
       if(!pass1)
          getLog().append("De-inlining cast " + castValue.toString());
-      final Scope scope = getScope().getScope(currentBlock.getScope());
+      final Scope scope = getProgramScope().getScope(currentBlock.getScope());
       SymbolType toType = castValue.getToType();
       final Variable tmpVar = VariableBuilder.createIntermediate(scope, toType, getProgram());
       castProgramValue.set(tmpVar.getRef());

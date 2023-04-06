@@ -175,8 +175,7 @@ public class ControlFlowBlock {
    }
 
 
-   public String toString(Program program) {
-      ControlFlowGraph graph = program.getGraph();
+   public String toString(Program program, ControlFlowGraph graph) {
       StringBuffer out = new StringBuffer();
 
       if(isProcedureEntry(program)) {

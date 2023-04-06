@@ -32,7 +32,7 @@ public class PassNStructUnwoundPlaceholderRemoval extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(assignment.getrValue2() instanceof StructUnwoundPlaceholder && assignment.getlValue() instanceof VariableRef)
-                  if(getScope().getVariable((SymbolVariableRef) assignment.getlValue()).isStructClassic()) {
+                  if(getProgramScope().getVariable((SymbolVariableRef) assignment.getlValue()).isStructClassic()) {
                      getLog().append("Removing C-classic struct-unwound assignment "+assignment.toString(getProgram(), false));
                      stmtIt.remove();
                   }

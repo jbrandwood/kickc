@@ -49,12 +49,12 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                // TODO: Handle constant values?
                if(assignment.getOperator() == null && assignment.getrValue2() instanceof CastValue) {
                   CastValue castValue = (CastValue) assignment.getrValue2();
-                  SymbolType subValType = SymbolTypeInference.inferType(getScope(), castValue.getValue());
+                  SymbolType subValType = SymbolTypeInference.inferType(getProgramScope(), castValue.getValue());
                   final SymbolType castToType = castValue.getToType();
                   boolean isNopCast = isNopCast(castToType, subValType);
                   if(isNopCast && assignment.getlValue() instanceof VariableRef) {
 
-                     final Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
+                     final Variable assignmentVar = getProgramScope().getVariable((VariableRef) assignment.getlValue());
                      if(assignmentVar.isKindLoadStore())
                         continue;
 
@@ -76,7 +76,7 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               // 3. Delete the cast variable
                               delete.add((SymbolRef) castValue.getValue());
                               // Change the type of the assignment variable
-                              Variable castVar = getScope().getVariable((VariableRef) castValue.getValue());
+                              Variable castVar = getProgramScope().getVariable((VariableRef) castValue.getValue());
                               // Copy type qualifiers from the variable being assigned
                               SymbolType qualifiedType = castVar.getType().getQualified(assignmentVar.getType().isVolatile(), assignmentVar.getType().isNomodify());
                               assignmentVar.setType(qualifiedType);
@@ -124,7 +124,7 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
          // 2. Perform second replace
          replaceVariables(replace2);
          // 3. Delete unused symbols
-         deleteSymbols(getScope(), delete);
+         deleteSymbols(getProgramScope(), delete);
       }
 
       return (replace1.size() > 0);

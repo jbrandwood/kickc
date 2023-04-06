@@ -39,7 +39,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
             Collection<VariableRef> obsoleteVars = new ArrayList<>();
             obsoleteVars.add(obsoleteConditionVar);
             removeAssignments(getGraph(), obsoleteVars);
-            deleteSymbols(getScope(), obsoleteVars);
+            deleteSymbols(getProgramScope(), obsoleteVars);
             modified = true;
          } else {
             done = true;
@@ -106,7 +106,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       // Found an if with a logical && condition - rewrite to if(c1) if(c2) { xx }
       getLog().append("Rewriting && if()-condition to two if()s " + conditionAssignment.toString(getProgram(), false));
       ScopeRef currentScopeRef = block.getScope();
-      Scope currentScope = getScope().getScope(currentScopeRef);
+      Scope currentScope = getProgramScope().getScope(currentScopeRef);
       // Add a new block containing the second part of the && condition expression
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
@@ -140,7 +140,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
    private void rewriteLogicOr(ControlFlowBlock block, StatementConditionalJump conditional, StatementAssignment conditionAssignment) {
       getLog().append("Rewriting || if()-condition to two if()s " + conditionAssignment.toString(getProgram(), false));
       ScopeRef currentScopeRef = block.getScope();
-      Scope currentScope = getScope().getScope(currentScopeRef);
+      Scope currentScope = getProgramScope().getScope(currentScopeRef);
       // Add a new block containing the second part of the && condition expression
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);

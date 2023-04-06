@@ -34,7 +34,7 @@ public class Pass2ConstantIntrinsics extends Pass2SsaOptimization {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementCall) {
                final StatementCall call = (StatementCall) statement;
-               final Procedure procedure = getScope().getProcedure(call.getProcedure());
+               final Procedure procedure = getProgramScope().getProcedure(call.getProcedure());
                if(procedure.isDeclaredIntrinsic()) {
                   if(procedure.getFullName().equals(Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4)) {
                      List<ConstantValue> constParams = new ArrayList<>();

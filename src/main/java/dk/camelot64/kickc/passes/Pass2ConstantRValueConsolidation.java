@@ -37,7 +37,7 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(assignment.getrValue1() != null || assignment.getOperator() != null || !(assignment.getrValue2() instanceof ConstantValue)) {
-                  SymbolType lValueType = SymbolTypeInference.inferType(getScope(), assignment.getlValue());
+                  SymbolType lValueType = SymbolTypeInference.inferType(getProgramScope(), assignment.getlValue());
                   ConstantValue constant = getConstantAssignmentValue(assignment, lValueType);
                   if(constant != null) {
                      getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
@@ -79,25 +79,25 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
                Pass2ConstantIdentification.getConstant(assignment.getrValue1()),
                (OperatorBinary) assignment.getOperator(),
                Pass2ConstantIdentification.getConstant(assignment.getrValue2()),
-               getScope());
+               getProgramScope());
       } else if(Operators.BYTE1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getProgramScope(), assignment.getrValue2());
          if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 2)
             return new ConstantInteger(0l, SymbolType.BYTE);
       } else if(Operators.BYTE2.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getProgramScope(), assignment.getrValue2());
          if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 3)
             return new ConstantInteger(0l, SymbolType.BYTE);
          else if(rVal2Type instanceof SymbolTypePointer)
             return new ConstantInteger(0l, SymbolType.BYTE);
       } else if(Operators.BYTE3.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getProgramScope(), assignment.getrValue2());
          if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 4)
             return new ConstantInteger(0l, SymbolType.BYTE);
          else if(rVal2Type instanceof SymbolTypePointer)
             return new ConstantInteger(0l, SymbolType.BYTE);
       } else if(Operators.WORD1.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         final SymbolType rVal2Type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+         final SymbolType rVal2Type = SymbolTypeInference.inferType(getProgramScope(), assignment.getrValue2());
          if(SymbolType.isInteger(rVal2Type) && rVal2Type.getSizeBytes() < 3)
             return new ConstantInteger(0l, SymbolType.WORD);
          else if(rVal2Type instanceof SymbolTypePointer)

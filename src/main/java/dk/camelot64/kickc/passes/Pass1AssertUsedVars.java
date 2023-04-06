@@ -38,7 +38,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
       ControlFlowBlock startBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.START_PROC_NAME));
       final LinkedHashSet<SymbolVariableRef> defined = new LinkedHashSet<>();
       // Add all variables with an init-value
-      for(Variable var : getScope().getAllVars(true)) {
+      for(Variable var : getProgramScope().getAllVars(true)) {
          if(var.getInitValue()!=null) {
             defined.add(var.getRef());
          }
@@ -122,7 +122,6 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param predecessor The block jumping into this block (used for phi analysis)
     * @param referenceInfos Information about assigned/used variables in statements
     * @param defined Variables already assigned a value at the point of the first execution of the block
-    * @param visited Blocks already visited
     */
 
    private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined) {
@@ -148,7 +147,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
                throw new CompileError("Variable used before being defined " + usedRef.toString(getProgram()) + " in " + phiBlock.toString(getProgram(), false), phiBlock.getSource());
             }
          }
-         // Add all variables fefined by the PHI block
+         // Add all variables defined by the PHI block
          Collection<VariableRef> defd = referenceInfos.getDefinedVars(phiBlock);
          for(VariableRef definedRef : defd) {
             defined.add(definedRef);

@@ -102,7 +102,7 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
          }
          getGraph().getAllBlocks().remove(removeBlock);
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
-         Label removeBlockLabel = getScope().getLabel(removeBlockLabelRef);
+         Label removeBlockLabel = getProgramScope().getLabel(removeBlockLabelRef);
          removeBlockLabel.getScope().remove(removeBlockLabel);
          if(!pass1)
             getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));

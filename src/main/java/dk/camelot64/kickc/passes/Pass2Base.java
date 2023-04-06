@@ -18,10 +18,6 @@ public class Pass2Base {
       return program.getLog();
    }
 
-   public ControlFlowGraph getGraph() {
-      return program.getGraph();
-   }
-
    public ProgramScope getSymbols() {
       return program.getScope();
    }

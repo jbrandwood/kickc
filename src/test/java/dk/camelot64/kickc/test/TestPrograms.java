@@ -194,7 +194,7 @@ public class TestPrograms {
       String baseFileName = FileNameUtils.removeExtension(fileName);
       success &= helper.testOutput(baseFileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, true, false, false), program));
       success &= helper.testOutput(baseFileName, ".sym", program.getScope().toStringVars(program, false));
-      success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
+      success &= helper.testOutput(baseFileName, ".cfg", program.prettyControlFlowGraph());
       success &= helper.testOutput(baseFileName, ".log", program.getLog().toString());
       if(!success) {
          // System.out.println("\nCOMPILE LOG");

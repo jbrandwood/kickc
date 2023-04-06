@@ -80,7 +80,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param source The statement source - usable for error messages
     */
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
-      Variable assignedVar = getScope().getVariable(lValueRef);
+      Variable assignedVar = getProgramScope().getVariable(lValueRef);
       if(assignedVar.isKindPhiMaster()) {
          if(assignedVar.isVolatile())
             throw new InternalError("Error! Volatiles can not be versioned ", source);
@@ -132,7 +132,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
-      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValue);
+      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getProgramScope().getVariable(lValue);
       if(variable.isKindPhiVersion()) {
          blockVersions.put(variable.getPhiMaster(), variable);
       }
@@ -153,7 +153,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<Variable, Variable> blockNewPhis) {
       Variable version = null;
       if(rValue instanceof VariableRef) {
-         Variable rValueVar = getScope().getVariable((VariableRef) rValue);
+         Variable rValueVar = getProgramScope().getVariable((VariableRef) rValue);
          if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
@@ -200,7 +200,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                   if(phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
-                     Variable versioned = getScope().getVariable(phiLValVarRef);
+                     Variable versioned = getProgramScope().getVariable(phiLValVarRef);
                      Variable unversioned = versioned.getPhiMaster();
                      List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
                      for(ControlFlowBlock predecessor : predecessors) {
@@ -295,7 +295,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
 
    private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
-         Variable lValueVar = getScope().getVariable((VariableRef) lValue);
+         Variable lValueVar = getProgramScope().getVariable((VariableRef) lValue);
          if(lValueVar.isKindPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();

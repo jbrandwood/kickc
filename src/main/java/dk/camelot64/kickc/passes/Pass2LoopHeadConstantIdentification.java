@@ -142,7 +142,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
             isVol.set(true);
          }
          if(programValue.get() instanceof VariableRef) {
-            Variable variable = getScope().getVariable((VariableRef) programValue.get());
+            Variable variable = getProgramScope().getVariable((VariableRef) programValue.get());
             if(variable.isVolatile())
                isVol.set(true);
          }

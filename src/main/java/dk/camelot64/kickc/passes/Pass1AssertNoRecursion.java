@@ -18,7 +18,7 @@ public class Pass1AssertNoRecursion extends Pass1Base {
    @Override
    public boolean step() {
       CallGraph callGraph = getProgram().getCallGraph();
-      Collection<Procedure> procedures = getScope().getAllProcedures(true);
+      Collection<Procedure> procedures = getProgramScope().getAllProcedures(true);
       for(Procedure procedure : procedures) {
          Collection<ScopeRef> recursiveCalls = callGraph.getRecursiveCalls(procedure.getRef());
          if(recursiveCalls.contains(procedure.getRef()) && !Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {

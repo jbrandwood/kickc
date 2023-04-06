@@ -115,7 +115,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
             }
             , null, null, null);
       for(SymbolVariableRef varRef : varRefs) {
-         Variable var = getScope().getVariable(varRef);
+         Variable var = getProgramScope().getVariable(varRef);
          if(!var.getScope().getRef().equals(scopeRef))
             return false;
       }
@@ -175,7 +175,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          ProgramValueHandler loadStoreIdentificator = (programValue, currentStmt, stmtIt, currentBlock) -> {
             Value value = programValue.get();
             if(value instanceof VariableRef) {
-               Variable var = getScope().getVar((VariableRef) value);
+               Variable var = getProgramScope().getVar((VariableRef) value);
                if(var.isKindLoadStore())
                   isLoadStore.set(true);
             }
@@ -191,7 +191,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
             if(programValue.get() instanceof PointerDereference)
                isVol.set(true);
             if(programValue.get() instanceof VariableRef) {
-               Variable variable = getScope().getVariable((VariableRef) programValue.get());
+               Variable variable = getProgramScope().getVariable((VariableRef) programValue.get());
                if(variable.isVolatile())
                   isVol.set(true);
             }
@@ -222,11 +222,11 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.WORD0)) return true;
          if(operator.equals(Operators.WORD1)) return true;
          if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) {
-            final SymbolType type1 = SymbolTypeInference.inferType(getScope(), rValue1);
+            final SymbolType type1 = SymbolTypeInference.inferType(getProgramScope(), rValue1);
             return type1.getSizeBytes() == 1;
          }
          if(operator.equals(Operators.PLUS) && rValue1 instanceof ConstantValue) {
-            final SymbolType type2 = SymbolTypeInference.inferType(getScope(), rValue2);
+            final SymbolType type2 = SymbolTypeInference.inferType(getProgramScope(), rValue2);
             return type2.getSizeBytes() == 1;
          }
          return false;

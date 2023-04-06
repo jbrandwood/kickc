@@ -35,7 +35,7 @@ public class Pass1UnrollConditionVariableSsa extends Pass2SsaOptimization {
                   findAllReferencedVars(referencedVars, conditionalJump.getrValue1());
                   findAllReferencedVars(referencedVars, conditionalJump.getrValue2());
                   for(VariableRef referencedVar : referencedVars) {
-                     final Variable variable = getScope().getVariable(referencedVar);
+                     final Variable variable = getProgramScope().getVariable(referencedVar);
                      if(variable.isKindLoadStore()) {
                         // Convert the variable to versioned if it is load/store
                         getLog().append("Converting unrolled condition variable to single-static-assignment "+variable);
@@ -60,7 +60,7 @@ public class Pass1UnrollConditionVariableSsa extends Pass2SsaOptimization {
       for(VariableRef varRef : directReferenced) {
          if(varRef.isIntermediate()) {
             // Found an intermediate variable - recurse to the definition
-            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(varRef, getGraph(), getScope());
+            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(varRef, getGraph(), getProgramScope());
             for(VarAssignments.VarAssignment varAssignment : varAssignments) {
                if(VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type)) {
                   if(varAssignment.statementLValue instanceof StatementAssignment) {

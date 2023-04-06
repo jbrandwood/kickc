@@ -27,7 +27,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
       boolean modified = false;
 
       // Update all types in variables
-      for(Variable variable : getScope().getAllVars(true)) {
+      for(Variable variable : getProgramScope().getAllVars(true)) {
          modified |= fixStructSize(variable.getType());
       }
 
@@ -46,15 +46,15 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
       });
 
       // Update all SIZEOF_XXX constants
-      for(Scope subScope : getScope().getAllScopes(false)) {
+      for(Scope subScope : getProgramScope().getAllScopes(false)) {
          if(subScope instanceof StructDefinition) {
             SymbolTypeStruct typeStruct = new SymbolTypeStruct((StructDefinition) subScope, false, false);
-            StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
-            int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
+            StructDefinition structDefinition = typeStruct.getStructDefinition(getProgramScope());
+            int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getProgramScope());
             if(sizeBytes != typeStruct.getSizeBytes()) {
                getLog().append("Fixing struct type SIZE_OF " + typeStruct.toCDecl() + " to " + sizeBytes);
                typeStruct.setSizeBytes(sizeBytes);
-               SizeOfConstants.fixSizeOfConstantVar(getScope(), typeStruct);
+               SizeOfConstants.fixSizeOfConstantVar(getProgramScope(), typeStruct);
             }
          }
       }
@@ -71,8 +71,8 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
    private boolean fixStructSize(SymbolType type) {
       if(type instanceof SymbolTypeStruct) {
          SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
-         StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
-         int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
+         StructDefinition structDefinition = typeStruct.getStructDefinition(getProgramScope());
+         int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getProgramScope());
          if(sizeBytes != typeStruct.getSizeBytes()) {
             getLog().append("Fixing struct type size " + type.toCDecl() + " to " + sizeBytes);
             typeStruct.setSizeBytes(sizeBytes);

@@ -1,13 +1,11 @@
 package dk.camelot64.kickc.model.statements;
 
 import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
-import org.antlr.v4.runtime.RuleContext;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +22,7 @@ public class StatementPhiBlock extends StatementBase {
    private List<PhiVariable> phiVariables;
 
    public StatementPhiBlock(List<Comment> comments) {
-      super(new StatementSource(RuleContext.EMPTY), comments);
+      super(StatementSource.NONE, comments);
       this.phiVariables = new ArrayList<>();
    }
 

@@ -20,9 +20,9 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
    @Override
    public boolean step() {
 
-      List<ControlFlowBlock> entryPointBlocks = getProgram().getEntryPointBlocks();
+      List<Graph.Block> entryPointBlocks = getProgram().getEntryPointBlocks();
 
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+      for(var entryPointBlock : entryPointBlocks) {
          pushTodo(entryPointBlock);
       }
 

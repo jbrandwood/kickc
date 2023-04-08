@@ -157,6 +157,22 @@ public interface Graph {
          return successors;
       }
 
+      public List<Comment> getComments();
+
+      void setComments(List<Comment> comments);
+
+      void setDefaultSuccessor(LabelRef defaultSuccessor);
+
+      void setConditionalSuccessor(LabelRef conditionalSuccessor);
+
+      void setCallSuccessor(LabelRef callSuccessor);
+
+      void addStatement(Statement statement);
+
+      void addStatementAfter(Statement newStatement, Statement predecessor);
+
+      void addStatementBeforeCall(Statement newStatement);
+
 
       String toString(Program program, Graph graph);
    }

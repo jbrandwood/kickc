@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.GraphBaseVisitor;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementProcedureBegin;
 import dk.camelot64.kickc.model.statements.StatementProcedureEnd;
@@ -15,7 +15,7 @@ public class Pass2AssertNoProcs extends Pass2SsaAssertion {
    @Override
    public void check() throws AssertionFailed {
 
-      ControlFlowGraphBaseVisitor<Void> checkCalls = new ControlFlowGraphBaseVisitor<Void>() {
+      GraphBaseVisitor<Void> checkCalls = new GraphBaseVisitor<Void>() {
 
          @Override
          public Void visitProcedureBegin(StatementProcedureBegin procedureBegin) {

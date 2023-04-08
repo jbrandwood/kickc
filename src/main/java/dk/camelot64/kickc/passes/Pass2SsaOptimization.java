@@ -57,7 +57,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     * @param replacements Variables that have alias values.
     */
    public void replaceLabels(Graph.Block block, final Map<LabelRef, LabelRef> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+      GraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitBlock(block);
    }
 
@@ -67,13 +67,13 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     * @param replacements Variables that have alias values.
     */
    public void replaceLabels(Statement statement, final Map<LabelRef, LabelRef> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+      GraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitStatement(statement);
    }
 
    /** Creates a visitor that can replace labels. */
-   private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
-      return new ControlFlowGraphBaseVisitor<Void>() {
+   private GraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
+      return new GraphBaseVisitor<Void>() {
 
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {

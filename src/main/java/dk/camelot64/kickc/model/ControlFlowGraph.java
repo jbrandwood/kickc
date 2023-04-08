@@ -2,7 +2,6 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 
 import java.util.*;
 
@@ -103,55 +102,4 @@ public class ControlFlowGraph implements Graph {
       }
    }
 
-   /**
-    * Get all statements executed between two statements (none of these are included in the result)
-    *
-    * @param from The statement to start at
-    * @param to The statement to end at
-    * @return All statements executed between the two passed statements
-    */
-   public Collection<Statement> getStatementsBetween(Statement from, Statement to, StatementInfos statementInfos) {
-      Collection<Statement> between = new LinkedHashSet<>();
-      final Graph.Block block = statementInfos.getBlock(from);
-      populateStatementsBetween(from, to, false, between, block);
-      return between;
-   }
-
-   /**
-    * Fill the between collection with all statements executed between two statements (none of these are included in the result)
-    *
-    * @param from The statement to start at
-    * @param to The statement to end at
-    * @param between The between collection
-    * @param block The block to start from
-    */
-   private void populateStatementsBetween(Statement from, Statement to, boolean isBetween, Collection<Statement> between, Graph.Block block) {
-      for(Statement statement : block.getStatements()) {
-         if(between.contains(statement))
-            // Stop infinite recursion
-            return;
-         if(isBetween) {
-            if(statement.equals(to))
-               // The end was reached!
-               isBetween = false;
-            else
-               // We are between - add the statement
-               between.add(statement);
-         } else {
-            if(statement.equals(from))
-               // We are now between!
-               isBetween = true;
-         }
-      }
-      if(isBetween) {
-         // Recurse to successor blocks
-         final Collection<LabelRef> successors = block.getSuccessors();
-         for(LabelRef successor : successors) {
-            if(successor.getFullName().equals(ProcedureRef.PROCEXIT_BLOCK_NAME))
-               continue;
-            final ControlFlowBlock successorBlock = getBlock(successor);
-            populateStatementsBetween(from, to, true, between, successorBlock);
-         }
-      }
-   }
 }

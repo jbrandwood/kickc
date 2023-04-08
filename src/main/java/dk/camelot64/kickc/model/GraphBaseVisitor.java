@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.statements.*;
 import java.util.Collection;
 
 /** Base visitor for iterating through a control flow graph */
-public class ControlFlowGraphBaseVisitor<T> {
+public class GraphBaseVisitor<T> {
 
    public T visitGraph(Graph graph) {
       Collection<Graph.Block> blocks = graph.getAllBlocks();

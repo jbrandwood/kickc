@@ -103,8 +103,8 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
     */
    private Set<LabelRef> getReferencedBlocks() {
       Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
-      List<ControlFlowBlock> entryPointBlocks = getProgram().getEntryPointBlocks();
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+      List<Graph.Block> entryPointBlocks = getProgram().getEntryPointBlocks();
+      for(var entryPointBlock : entryPointBlocks) {
          findReferencedBlocks(entryPointBlock, referencedBlocks);
       }
 

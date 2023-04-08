@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.GraphBaseVisitor;
 import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
@@ -62,7 +61,7 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
             continue;
 
          // In all phi functions of a successor blocks make a copy of the phi assignment for each predecessor
-         ControlFlowGraphBaseVisitor<Void> phiFixVisitor = new ControlFlowGraphBaseVisitor<Void>() {
+         GraphBaseVisitor<Void> phiFixVisitor = new GraphBaseVisitor<Void>() {
             @Override
             public Void visitPhiBlock(StatementPhiBlock phi) {
                for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {

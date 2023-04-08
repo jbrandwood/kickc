@@ -33,7 +33,7 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
       }
    }
 
-   private static class BlockReferenceChecker extends ControlFlowGraphBaseVisitor<Void> {
+   private static class BlockReferenceChecker extends GraphBaseVisitor<Void> {
 
       Set<LabelRef> seenBlocks;
       private Graph graph;

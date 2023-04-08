@@ -65,7 +65,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    private List<SimpleCondition> getSimpleConditionTodos() {
       final VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
       List<SimpleCondition> todos = new ArrayList<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
@@ -127,7 +127,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                   // A referenced load/store-variable is modified in a statement between the assignment and the condition!
                   getLog().append("Condition not simple " + simpleCondition.conditionVar.toString(getProgram()) + " " + simpleCondition.conditionalJump.toString(getProgram(), false));
                   // Create an intermediate variable copy of the load/store-variable at the position of the condition-variable to preserve the value
-                  final ControlFlowBlock conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
+                  final Graph.Block conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
                   final ScopeRef conditionDefineScopeRef = conditionDefineBlock.getScope();
                   final Scope conditionDefineScope = getProgramScope().getScope(conditionDefineScopeRef);
                   SymbolType typeQualified = referencedLoadStoreVariable.getType().getQualified(false, referencedLoadStoreVariable.getType().isNomodify());

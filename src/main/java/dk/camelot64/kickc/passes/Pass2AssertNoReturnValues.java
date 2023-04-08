@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementReturn;
@@ -17,7 +18,7 @@ public class Pass2AssertNoReturnValues extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ScopeRef blockScopeRef = block.getScope();
          Scope scope = getScope().getScope(blockScopeRef);
          if(scope instanceof Procedure) {

@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.DominatorsBlock;
-import dk.camelot64.kickc.model.DominatorsGraph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -17,6 +14,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
+import java.lang.InternalError;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +37,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
       // All RValues in the program
       Set<AssignmentWithRValue> rValues = new HashSet<>();
 
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment thisAssignment = (StatementAssignment) statement;
@@ -148,13 +146,13 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
     * Represents an RValue of an assignment.
     */
    private class AssignmentWithRValue {
-      private ControlFlowBlock block;
+      private Graph.Block block;
       private StatementAssignment assignment;
       private RValue rValue1;
       private Operator operator;
       private RValue rValue2;
 
-      public AssignmentWithRValue(StatementAssignment assignment, ControlFlowBlock block) {
+      public AssignmentWithRValue(StatementAssignment assignment, Graph.Block block) {
          this.block = block;
          this.assignment = assignment;
          this.rValue1 = assignment.getrValue1();

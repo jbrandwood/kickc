@@ -47,7 +47,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     */
    private boolean unwindStructReferences() {
       boolean modified = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -91,7 +91,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     *
     * @param call The call to unwind
     */
-   private boolean unwindCall(StatementCall call, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private boolean unwindCall(StatementCall call, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       final Procedure procedure = getProgramScope().getProcedure(call.getProcedure());
 
       // Unwind struct value return value
@@ -166,7 +166,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param currentBlock current block
     * @return The unwound ValueList. null if the value is not unwindable.
     */
-   private RValue unwindValue(ValueSource lValueSource, Statement statement, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private RValue unwindValue(ValueSource lValueSource, Statement statement, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       if(lValueSource == null) {
          return null;
       } else if(lValueSource.isSimple()) {
@@ -189,7 +189,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param statementReturn The return to unwind
     */
 
-   private boolean unwindReturn(StatementReturn statementReturn, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private boolean unwindReturn(StatementReturn statementReturn, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       final RValue returnValue = statementReturn.getValue();
       if(returnValue == null)
          return false;
@@ -247,7 +247,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param stmtIt The statement iterator used for adding/removing statements
     * @param currentBlock The current code block
     */
-   public static boolean unwindAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Program program) {
+   public static boolean unwindAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, Graph.Block currentBlock, Program program) {
       LValue lValue = assignment.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(program.getScope(), lValue);
 
@@ -279,7 +279,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       return false;
    }
 
-   public static boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt, Program program) {
+   public static boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, Graph.Block currentBlock, ListIterator<Statement> stmtIt, Program program) {
       if(lValueSource == null || rValueSource == null)
          return false;
       if(rValueSource instanceof ValueSourceParamValue && lValueSource.equals(((ValueSourceParamValue) rValueSource).getValueSource()))

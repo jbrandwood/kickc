@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CallingConventionStack;
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
@@ -72,7 +69,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       }
 
       // Convert procedure return xxx to stackidx(RETURN) = xxx;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -95,7 +92,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       }
 
       // Convert xxx = callfinalize to xxx = stackpull(type);
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -125,7 +122,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       }
 
       // Convert callprepare(xxx,yyy,) to stackpush(type)=xxx, ...;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();

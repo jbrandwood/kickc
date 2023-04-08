@@ -55,7 +55,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       });
 
       // Examine all assignments - performing constant consolidation for +/-
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;

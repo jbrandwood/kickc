@@ -22,7 +22,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             try {
                if(statement instanceof StatementLValue) {

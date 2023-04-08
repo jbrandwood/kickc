@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
@@ -34,7 +35,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
       boolean modified = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();

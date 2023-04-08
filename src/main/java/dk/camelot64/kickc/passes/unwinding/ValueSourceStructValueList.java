@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes.unwinding;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -56,7 +56,7 @@ public class ValueSourceStructValueList extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       int memberIndex = getMemberNames(programScope).indexOf(memberName);
       final RValue memberValue = valueList.getList().get(memberIndex);
       return ValueSourceFactory.getValueSource(memberValue, program, programScope, currentStmt, stmtIt, currentBlock);

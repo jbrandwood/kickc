@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.PhiTransitions;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -20,7 +21,7 @@ public class PassNCalcPhiTransitions extends PassNCalcBase<Map<LabelRef, PhiTran
    @Override
    public Map<LabelRef, PhiTransitions> calculate() {
       LinkedHashMap<LabelRef, PhiTransitions> phiTransitions = new LinkedHashMap<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          PhiTransitions blockTransitions = new PhiTransitions(getProgram(), block);
          phiTransitions.put(block.getLabel(), blockTransitions);
       }

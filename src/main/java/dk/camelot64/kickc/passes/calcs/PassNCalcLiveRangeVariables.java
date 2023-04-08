@@ -82,7 +82,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       boolean modified = false;
       LiveRangeVariables.LiveRangeVariablesByStatement liveRangeVariablesByStatement = liveRanges.getLiveRangeVariablesByStatement();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement nextStmt : block.getStatements()) {
             List<VariableRef> aliveNextStmt = liveRangeVariablesByStatement.getAlive(nextStmt.getIndex());
             Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(nextStmt);
@@ -138,7 +138,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   }
                } else if(PreviousStatement.Type.BEFORE_METHOD.equals(previousStmt.getType())) {
                   // Add all alive variables to previous that are used inside the method
-                  ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(nextStmt);
+                  Graph.Block procBlock = getProgram().getStatementInfos().getBlock(nextStmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
                   Collection<VariableRef> procReferenced = procedureReferencedVars.get(procedure.getRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
@@ -184,7 +184,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
       if(nextStmt instanceof StatementPhiBlock) {
          // If next statement is a phi add the used variables to previous based on the phi entries
          StatementPhiBlock phi = (StatementPhiBlock) nextStmt;
-         ControlFlowBlock previousBlock =
+         Graph.Block previousBlock =
                getProgram().getStatementInfos().getBlock(previousStmt.getStatementIdx());
          for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
             for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
@@ -260,7 +260,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
          ProcedureRef procedure = call.getProcedure();
          if(procedure!=null) {
             LabelRef procedureReturnBlock = procedure.getReturnBlock();
-            ControlFlowBlock returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);
+            Graph.Block returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);
             if(returnBlock != null) {
                Collection<Statement> lastStatements = getLastInBlock(returnBlock, getGraph());
                for(Statement lastStatement : lastStatements) {
@@ -275,8 +275,8 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
          }
       } else {
          // No preceding statements. Examine if this is the first statement in a call.
-         ControlFlowBlock block = getProgram().getStatementInfos().getBlock(statement);
-         if(block.isProcedureEntry(getProgram())) {
+         Graph.Block block = getProgram().getStatementInfos().getBlock(statement);
+         if(getProgram().isProcedureEntry(block)) {
             // Current is first statement of a call - add the statement preceding the call.
             Collection<CallGraph.CallBlock.Call> callers = getProgram().getCallGraph().getCallers((ProcedureRef) block.getScope());
             for(CallGraph.CallBlock.Call call : callers) {
@@ -320,10 +320,10 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * Multiple statements are returned if the current statement is the first in a block with multiple predecessor blocks.
     * Zero statements are returned if the current statement is the first statement in the program or the first statement in a method.
     */
-   static Collection<Statement> getPrecedingStatement(Statement statement, ControlFlowGraph graph, StatementInfos statementInfos) {
+   static Collection<Statement> getPrecedingStatement(Statement statement, Graph graph, StatementInfos statementInfos) {
       Statement previousStmt = null;
       Statement prev = null;
-      ControlFlowBlock block = statementInfos.getBlock(statement);
+      Graph.Block block = statementInfos.getBlock(statement);
       List<Statement> statements = block.getStatements();
       for(Statement stmt : statements) {
          if(statement.getIndex().equals(stmt.getIndex())) {
@@ -349,7 +349,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * @return The last statement(s). May contain multiple statements if the block is empty and has multiple predecessors.
     * This method never traces back through calls, so the result may also be empty (if the block is an empty method).
     */
-   private static Collection<Statement> getLastInBlock(ControlFlowBlock block, ControlFlowGraph graph) {
+   private static Collection<Statement> getLastInBlock(Graph.Block block, Graph graph) {
       List<Statement> statements = block.getStatements();
       if(statements.size() > 0) {
          return Arrays.asList(statements.get(statements.size() - 1));
@@ -366,10 +366,10 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * @return The last statement(s). May contain multiple statements if the block is empty and has multiple predecessors.
     * This method never traces back through calls, so the result may also be empty (if the block is an empty method).
     */
-   private static Collection<Statement> getLastInPredecessors(ControlFlowBlock block, ControlFlowGraph graph) {
-      List<ControlFlowBlock> predecessors = graph.getPredecessors(block);
+   private static Collection<Statement> getLastInPredecessors(Graph.Block block, Graph graph) {
+      List<Graph.Block> predecessors = graph.getPredecessors(block);
       ArrayList<Statement> last = new ArrayList<>();
-      for(ControlFlowBlock predecessor : predecessors) {
+      for(var predecessor : predecessors) {
          if(block.getLabel().equals(predecessor.getDefaultSuccessor()) || block.getLabel().equals(predecessor.getConditionalSuccessor())) {
             last.addAll(getLastInBlock(predecessor, graph));
          }

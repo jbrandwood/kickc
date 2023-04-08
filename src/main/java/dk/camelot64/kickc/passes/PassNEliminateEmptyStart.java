@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -42,10 +43,10 @@ public class PassNEliminateEmptyStart extends Pass2SsaOptimization {
     * @return The single no-args no-return call
     */
    private StatementCall getSingleCall(ProcedureRef procedureRef) {
-      final List<ControlFlowBlock> startBlocks = getGraph().getScopeBlocks(procedureRef);
+      final List<Graph.Block> startBlocks = getGraph().getScopeBlocks(procedureRef);
       // The single no-args no-return call of the procedure (if found)
       StatementCall singleCall = null;
-      for(ControlFlowBlock block : startBlocks) {
+      for(var block : startBlocks) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                if(singleCall != null)

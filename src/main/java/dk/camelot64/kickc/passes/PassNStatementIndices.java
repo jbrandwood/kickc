@@ -5,6 +5,7 @@ package dk.camelot64.kickc.passes;
  */
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 
@@ -21,7 +22,7 @@ public class PassNStatementIndices extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       int currentIdx = 0;
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             statement.setIndex(currentIdx++);
          }

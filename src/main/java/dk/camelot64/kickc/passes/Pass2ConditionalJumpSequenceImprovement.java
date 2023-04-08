@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -19,9 +20,9 @@ public class Pass2ConditionalJumpSequenceImprovement extends Pass2SsaOptimizatio
    @Override
    public boolean step() {
       boolean modified = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         ControlFlowBlock conditionalSuccessor = getGraph().getConditionalSuccessor(block);
-         ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
+      for(var block : getGraph().getAllBlocks()) {
+         Graph.Block conditionalSuccessor = getGraph().getConditionalSuccessor(block);
+         Graph.Block defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if(conditionalSuccessor != null && defaultSuccessor != null) {
             if(conditionalSuccessor.getDefaultSuccessor().equals(defaultSuccessor.getLabel())) {
                if(conditionalSuccessor.equals(block)) continue;
@@ -35,7 +36,7 @@ public class Pass2ConditionalJumpSequenceImprovement extends Pass2SsaOptimizatio
       return modified;
    }
 
-   private boolean negateCondition(ControlFlowBlock block) {
+   private boolean negateCondition(Graph.Block block) {
       LabelRef defaultSuccessor = block.getDefaultSuccessor();
       LabelRef conditionalSuccessor = block.getConditionalSuccessor();
       for(Statement statement : block.getStatements()) {

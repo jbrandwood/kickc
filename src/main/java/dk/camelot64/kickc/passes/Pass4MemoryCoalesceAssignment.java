@@ -55,7 +55,7 @@ public class Pass4MemoryCoalesceAssignment extends Pass2Base {
       public CoalesceVarScores(Program program) {
          this.scores = new LinkedHashMap<>();
          VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
-         for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for(var block : program.getGraph().getAllBlocks()) {
             for(Statement statement : block.getStatements()) {
                Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
                Collection<VariableRef> usedVars = variableReferenceInfos.getUsedVars(statement);

@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -26,10 +23,10 @@ public class Pass1ProcedureInline extends Pass1Base {
 
    @Override
    public boolean step() {
-      List<ControlFlowBlock> allBlocks = getGraph().getAllBlocks();
-      ListIterator<ControlFlowBlock> blocksIt = allBlocks.listIterator();
+      List<Graph.Block> allBlocks = getGraph().getAllBlocks();
+      ListIterator<Graph.Block> blocksIt = allBlocks.listIterator();
       while(blocksIt.hasNext()) {
-         ControlFlowBlock block = blocksIt.next();
+         Graph.Block block = blocksIt.next();
          List<Statement> blockStatements = block.getStatements();
          ListIterator<Statement> statementsIt = blockStatements.listIterator();
          while(statementsIt.hasNext()) {
@@ -62,7 +59,7 @@ public class Pass1ProcedureInline extends Pass1Base {
     * @param block The block containing the call
     * @param blocksIt The block iterator pointing to the block containing the call
     */
-   private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, ControlFlowBlock block, ListIterator<ControlFlowBlock> blocksIt) {
+   private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, Graph.Block block, ListIterator<Graph.Block> blocksIt) {
       Scope callScope = getProgramScope().getScope(block.getScope());
       // Remove call
       statementsIt.remove();
@@ -75,8 +72,8 @@ public class Pass1ProcedureInline extends Pass1Base {
       // Create a new block label for the rest of the calling block
       Label restBlockLabel = callScope.addLabelIntermediate();
       // Copy all procedure blocks
-      List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
-      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+      List<Graph.Block> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
+      for(var procedureBlock : procedureBlocks) {
          LabelRef procBlockLabelRef = procedureBlock.getLabel();
          Symbol procBlockLabel = getProgramScope().getSymbol(procBlockLabelRef);
          Label inlinedBlockLabel;
@@ -247,7 +244,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       }
 
       @Override
-      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
          Value rValue = programValue.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;

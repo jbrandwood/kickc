@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -18,7 +19,7 @@ public class Pass3AssertNoMulDivMod extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(Graph.Block block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;

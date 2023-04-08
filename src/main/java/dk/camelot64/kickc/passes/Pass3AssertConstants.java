@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAsm;
@@ -33,7 +34,7 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementKickAsm) {
                RValue bytes = ((StatementKickAsm) statement).getBytes();

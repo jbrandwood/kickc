@@ -24,11 +24,11 @@ public class Pass1CallPhiParameters {
    private Map<LabelRef, LabelRef> splitBlockMap = new LinkedHashMap<>();
 
    public void execute() {
-      final List<ControlFlowBlock> todoBlocks = getGraph().getAllBlocks();
-      List<ControlFlowBlock> doneBlocks = new ArrayList<>();
+      final List<Graph.Block> todoBlocks = getGraph().getAllBlocks();
+      List<Graph.Block> doneBlocks = new ArrayList<>();
 
       while(!todoBlocks.isEmpty()) {
-         final ControlFlowBlock block = todoBlocks.get(0);
+         final Graph.Block block = todoBlocks.get(0);
          todoBlocks.remove(0);
          doneBlocks.add(block);
 
@@ -48,7 +48,7 @@ public class Pass1CallPhiParameters {
                }
             }
             if(statement instanceof StatementReturn) {
-               Procedure procedure = block.getProcedure(program);
+               Procedure procedure = program.getProcedure(block);
                // Handle PHI-calls
                if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                   // Add self-assignments for all variables modified in the procedure
@@ -68,7 +68,7 @@ public class Pass1CallPhiParameters {
       program.getGraph().setAllBlocks(doneBlocks);
 
       // Fix phi predecessors for any blocks has a split block as predecessor
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(Graph.Block block : getGraph().getAllBlocks()) {
          if(block.hasPhiBlock()) {
             for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
@@ -86,11 +86,11 @@ public class Pass1CallPhiParameters {
       return program.getScope();
    }
 
-   private ControlFlowGraph getGraph() {
+   private Graph getGraph() {
       return program.getGraph();
    }
 
-   private ControlFlowBlock handlePhiCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, ControlFlowBlock block) {
+   private ControlFlowBlock handlePhiCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, Graph.Block block) {
 
       List<Variable> parameterDefs = procedure.getParameters();
       List<RValue> parameterValues = call.getParameters();
@@ -141,7 +141,7 @@ public class Pass1CallPhiParameters {
       call.setlValue(procReturnVarRef);
 
       // Create a new block in the program, splitting the current block at the call/return (call finalize)
-      Scope currentBlockScope = block.getProcedure(program);
+      Scope currentBlockScope = program.getProcedure(block);
       if(currentBlockScope==null) currentBlockScope = getScope().getScope(ScopeRef.ROOT);
       LabelRef splitBlockNewLabelRef = currentBlockScope.addLabelIntermediate().getRef();
       ControlFlowBlock newBlock = new ControlFlowBlock(splitBlockNewLabelRef, block.getScope());

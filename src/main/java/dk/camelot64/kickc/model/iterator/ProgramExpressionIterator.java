@@ -41,7 +41,7 @@ public class ProgramExpressionIterator {
       ProgramValueIterator.execute(program.getScope(), programValueHandler);
 
       // Iterate all blocks/statements
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement stmt = stmtIt.next();

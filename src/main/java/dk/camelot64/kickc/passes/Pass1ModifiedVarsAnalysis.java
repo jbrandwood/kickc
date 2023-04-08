@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.ProcedureModifiedVars;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -47,8 +48,8 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
 
       Set<VariableRef> modified = new LinkedHashSet<>();
       ScopeRef procScope = procedure.getRef();
-      List<ControlFlowBlock> procBlocks = getProgram().getGraph().getScopeBlocks(procScope);
-      for(ControlFlowBlock block : procBlocks) {
+      List<Graph.Block> procBlocks = getProgram().getGraph().getScopeBlocks(procScope);
+      for(var block : procBlocks) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                LValue lValue = ((StatementLValue) statement).getlValue();

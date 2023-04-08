@@ -1,15 +1,8 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCalling;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.util.*;
 
@@ -17,7 +10,7 @@ import java.util.*;
  * The control flow graph of the program.
  * The control flow  graph is a set of connected basic blocks.
  */
-public class ControlFlowGraph {
+public class ControlFlowGraph implements Graph {
 
    private List<ControlFlowBlock> blocks;
 
@@ -43,8 +36,8 @@ public class ControlFlowGraph {
       blocks.add(block);
    }
 
-   public List<ControlFlowBlock> getAllBlocks() {
-      return blocks;
+   public List<Block> getAllBlocks() {
+      return Collections.unmodifiableList(blocks);
    }
 
    public void setAllBlocks(List<ControlFlowBlock> blocks) {
@@ -60,47 +53,6 @@ public class ControlFlowGraph {
             return;
          }
       }
-   }
-
-   public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
-      if(block.getDefaultSuccessor() != null) {
-         return getBlock(block.getDefaultSuccessor());
-      } else {
-         return null;
-      }
-   }
-
-   public ControlFlowBlock getCallSuccessor(ControlFlowBlock block) {
-      if(block.getCallSuccessor() != null) {
-         return getBlock(block.getCallSuccessor());
-      } else {
-         return null;
-      }
-   }
-
-   public ControlFlowBlock getConditionalSuccessor(ControlFlowBlock block) {
-      if(block.getConditionalSuccessor() != null) {
-         return getBlock(block.getConditionalSuccessor());
-      } else {
-         return null;
-      }
-   }
-
-   public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
-      ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
-      for(ControlFlowBlock other : getAllBlocks()) {
-         if(block.getLabel().equals(other.getDefaultSuccessor())) {
-            predecessorBlocks.add(other);
-         }
-         if(block.getLabel().equals(other.getConditionalSuccessor())) {
-            predecessorBlocks.add(other);
-         }
-         if(block.getLabel().equals(other.getCallSuccessor())) {
-            predecessorBlocks.add(other);
-         }
-      }
-      Collections.sort(predecessorBlocks, Comparator.comparing(o -> o.getLabel().getFullName()));
-      return predecessorBlocks;
    }
 
    public List<LabelRef> getSequence() {
@@ -119,78 +71,12 @@ public class ControlFlowGraph {
       this.blocks = seqBlocks;
    }
 
-   public ControlFlowBlock getMainBlock() {
-      for(ControlFlowBlock block : getAllBlocks()) {
-         LabelRef label = block.getLabel();
-         if(label.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) {
-            return block;
-         }
-      }
-      return null;
-   }
-
-   public ControlFlowBlock getStartBlock() {
-      for(ControlFlowBlock block : getAllBlocks()) {
-         LabelRef label = block.getLabel();
-         if(label.getFullName().equals(SymbolRef.START_PROC_NAME)) {
-            return block;
-         }
-      }
-      return null;
-   }
-
-
-   /**
-    * Get all blocks that are program entry points.
-    * This is the start-block and any blocks referenced by the address-off operator (&)
-    *
-    * @param program The program
-    * @return All entry-point blocks
-    */
-   public List<ControlFlowBlock> getEntryPointBlocks(Program program) {
-      List<ControlFlowBlock> entryPointBlocks = new ArrayList<>();
-      for(Procedure procedure : program.getScope().getAllProcedures(true)) {
-         if(ProcedureUtils.isEntrypoint(procedure.getRef(), program) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention()) || Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
-            // Address-of is used on the procedure
-            Label procedureLabel = procedure.getLabel();
-            ControlFlowBlock procedureBlock = getBlock(procedureLabel.getRef());
-            entryPointBlocks.add(procedureBlock);
-         }
-      }
-      return entryPointBlocks;
-   }
-
-   /**
-    * Get all called procedures in the graph
-    *
-    * @return All called procedures
-    */
-   public Set<ProcedureRef> getAllCalledProcedures() {
-      Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
-      for(ControlFlowBlock block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCalling) {
-               StatementCalling call = (StatementCalling) statement;
-               ProcedureRef procedureRef = call.getProcedure();
-               calledProcedures.add(procedureRef);
-            }
-         }
-      }
-      return calledProcedures;
-   }
 
    @Override
    public String toString() {
       return toString(null);
    }
 
-   public String toString(Program program) {
-      StringBuffer out = new StringBuffer();
-      for(ControlFlowBlock block : getAllBlocks()) {
-         out.append(block.toString(program, this));
-      }
-      return out.toString();
-   }
 
    @Override
    public boolean equals(Object o) {
@@ -207,49 +93,15 @@ public class ControlFlowGraph {
    }
 
    /**
-    * Get a statement from its statement index
-    *
-    * @param statementIdx The statement index
-    * @return The statement
-    */
-   public Statement getStatementByIndex(int statementIdx) {
-      for(ControlFlowBlock block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement.getIndex() != null && statementIdx == statement.getIndex()) {
-               return statement;
-            }
-         }
-      }
-      return null;
-   }
-
-   /**
     * Clear all statement indices,
     */
    public void clearStatementIndices() {
-      for(ControlFlowBlock block : getAllBlocks()) {
+      for(Graph.Block block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             statement.setIndex(null);
          }
       }
    }
-
-   /**
-    * Get all blocks that are part of the execution of a specific scope. (mostly a procedure)
-    *
-    * @param scope The scope to find blocks for
-    * @return All blocks that are part of the execution of the scope
-    */
-   public List<ControlFlowBlock> getScopeBlocks(ScopeRef scope) {
-      ArrayList<ControlFlowBlock> scopeBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : getAllBlocks()) {
-         if(block.getScope().equals(scope)) {
-            scopeBlocks.add(block);
-         }
-      }
-      return scopeBlocks;
-   }
-
 
    /**
     * Get all statements executed between two statements (none of these are included in the result)
@@ -260,7 +112,7 @@ public class ControlFlowGraph {
     */
    public Collection<Statement> getStatementsBetween(Statement from, Statement to, StatementInfos statementInfos) {
       Collection<Statement> between = new LinkedHashSet<>();
-      final ControlFlowBlock block = statementInfos.getBlock(from);
+      final Graph.Block block = statementInfos.getBlock(from);
       populateStatementsBetween(from, to, false, between, block);
       return between;
    }
@@ -273,7 +125,7 @@ public class ControlFlowGraph {
     * @param between The between collection
     * @param block The block to start from
     */
-   private void populateStatementsBetween(Statement from, Statement to, boolean isBetween, Collection<Statement> between, ControlFlowBlock block) {
+   private void populateStatementsBetween(Statement from, Statement to, boolean isBetween, Collection<Statement> between, Graph.Block block) {
       for(Statement statement : block.getStatements()) {
          if(between.contains(statement))
             // Stop infinite recursion

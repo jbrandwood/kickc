@@ -31,12 +31,12 @@ public class Pass3PhiLifting {
    }
 
    public void perform() {
-      ControlFlowGraph graph = program.getGraph();
+      Graph graph = program.getGraph();
       ProgramScope programScope = program.getScope();
-      List<ControlFlowBlock> blocks = graph.getAllBlocks();
-      ListIterator<ControlFlowBlock> blocksIt = blocks.listIterator();
+      List<Graph.Block> blocks = graph.getAllBlocks();
+      ListIterator<Graph.Block> blocksIt = blocks.listIterator();
       while(blocksIt.hasNext()) {
-         ControlFlowBlock block = blocksIt.next();
+         Graph.Block block = blocksIt.next();
          // Maps old predecessors to new blocks created
          Map<LabelRef, LabelRef> newBlocks = new HashMap<>();
          if(block.hasPhiBlock()) {
@@ -45,7 +45,7 @@ public class Pass3PhiLifting {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                   if(!(phiRValue.getrValue() instanceof ConstantValue)) {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
-                     ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
+                     Graph.Block predecessorBlock = graph.getBlock(predecessorRef);
                      //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
@@ -66,7 +66,7 @@ public class Pass3PhiLifting {
                      StatementAssignment newAssignment = new StatementAssignment((LValue) newVar.getRef(), phiRValue.getrValue(), false, phiBlock.getSource(), Comment.NO_COMMENTS);
                      if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - replace labels where appropriate
-                        ControlFlowBlock newBlock;
+                        Graph.Block newBlock;
                         LabelRef newBlockRef = newBlocks.get(predecessorRef);
                         if(newBlockRef == null) {
                            // Create new block

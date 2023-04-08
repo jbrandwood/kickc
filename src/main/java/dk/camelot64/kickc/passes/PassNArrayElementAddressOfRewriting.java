@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -23,7 +24,7 @@ public class PassNArrayElementAddressOfRewriting extends Pass2SsaOptimization {
    public boolean step() {
       AtomicBoolean modified = new AtomicBoolean(false);
       // Examine all statements
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;

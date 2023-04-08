@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
@@ -19,7 +20,7 @@ public class Pass2LoopUnrollAssertComplete extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                if(((StatementConditionalJump) statement).isWasUnrolled()) {

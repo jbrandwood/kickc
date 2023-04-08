@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
@@ -49,8 +50,8 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
          program.getLog().append("Removing unused procedure " + procedureRef);
       }
       Procedure procedure = program.getScope().getProcedure(procedureRef);
-      List<ControlFlowBlock> procedureBlocks = program.getGraph().getScopeBlocks(procedureRef);
-      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+      List<Graph.Block> procedureBlocks = program.getGraph().getScopeBlocks(procedureRef);
+      for(var procedureBlock : procedureBlocks) {
          program.getGraph().remove(procedureBlock.getLabel());
       }
       procedure.getScope().remove(procedure);

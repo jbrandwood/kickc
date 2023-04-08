@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -26,7 +27,7 @@ public class ValueSourceFactory {
     * @param currentBlock The current block
     * @return The value source for copying. null if no value source can be created.
     */
-   public static ValueSource getValueSource(Value value, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public static ValueSource getValueSource(Value value, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       if(value == null)
          return null;
       final SymbolType valueType = SymbolTypeInference.inferType(programScope, (RValue) value);

@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableBuilder;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionBinary;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
@@ -47,7 +44,7 @@ public class PassNDeInlineCastValues extends Pass2SsaOptimization {
       return false;
    }
 
-   private void deInlineCastValue(ProgramValue castProgramValue, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
+   private void deInlineCastValue(ProgramValue castProgramValue, ListIterator<Statement> stmtIt, Graph.Block currentBlock, Statement currentStmt) {
       final CastValue castValue = (CastValue) castProgramValue.get();
       if(!pass1)
          getLog().append("De-inlining cast " + castValue.toString());

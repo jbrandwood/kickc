@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
@@ -51,7 +52,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       while(aliasSetListIterator.hasNext()) {
          AliasSet aliasSet = aliasSetListIterator.next();
          boolean removeSet = false;
-         for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for(var block : program.getGraph().getAllBlocks()) {
             if(block.hasPhiBlock()) {
                StatementPhiBlock phi = block.getPhiBlock();
                boolean lMatch = false;
@@ -119,7 +120,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     */
    private static Aliases findAliasesCandidates(final Program program) {
       Aliases aliases = new Aliases();
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
@@ -286,7 +287,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     * @param aliases The aliases
     */
    private void removeAliasAssignments(Aliases aliases) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if(statement instanceof StatementAssignment) {

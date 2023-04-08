@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.ControlFlowBlockSuccessorClosure;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCallExecute;
@@ -23,7 +24,7 @@ public class PassNCalcBlockSuccessorClosure extends PassNCalcBase<ControlFlowBlo
    @Override
    public ControlFlowBlockSuccessorClosure calculate() {
       LinkedHashMap<LabelRef, Collection<LabelRef>> blockSuccessors = new LinkedHashMap<>();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
          LinkedHashSet<LabelRef> successorClosure = new LinkedHashSet<>();
          findSuccessorClosure(block.getLabel(), successorClosure, new ArrayList<>());
@@ -43,7 +44,7 @@ public class PassNCalcBlockSuccessorClosure extends PassNCalcBase<ControlFlowBlo
       if(labelRef == null || visited.contains(labelRef))
          return;
       visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
+      Graph.Block block = getProgram().getGraph().getBlock(labelRef);
       if(block == null)
          return;
       successorClosure.add(labelRef);

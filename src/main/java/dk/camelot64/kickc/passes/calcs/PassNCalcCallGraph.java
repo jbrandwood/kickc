@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCalling;
@@ -20,7 +21,7 @@ public class PassNCalcCallGraph extends PassNCalcBase<CallGraph> {
 
    public CallGraph calculate() {
       CallGraph callGraph = new CallGraph();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ScopeRef scopeRef = getScopeRef(block, getProgram());
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCalling) {
@@ -39,7 +40,7 @@ public class PassNCalcCallGraph extends PassNCalcBase<CallGraph> {
     * @param block The block
     * @return The scope containing the block. The outermost scope has a label containing an empty string.
     */
-   public static ScopeRef getScopeRef(ControlFlowBlock block, Program program) {
+   public static ScopeRef getScopeRef(Graph.Block block, Program program) {
       Symbol blockSymbol = program.getScope().getSymbol(block.getLabel());
       if(blockSymbol instanceof Procedure) {
          return ((Procedure) blockSymbol).getRef();

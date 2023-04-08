@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes.unwinding;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -58,7 +58,7 @@ public class ValueSourceParamValue extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       final ValueSource memberUnwinding = valueSource.getMemberUnwinding(memberName, program, programScope, currentStmt, stmtIt, currentBlock);
       return new ValueSourceParamValue(memberUnwinding);
    }

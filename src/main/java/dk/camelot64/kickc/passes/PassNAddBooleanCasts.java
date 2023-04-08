@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableBuilder;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionUnary;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -33,7 +30,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock currentBlock : getGraph().getAllBlocks()) {
+      for(var currentBlock : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = currentBlock.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement currentStmt = stmtIt.next();
@@ -74,7 +71,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       return false;
    }
 
-   private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       Scope currentScope = getProgramScope().getScope(currentBlock.getScope());
       stmtIt.previous();
       Variable tmpVar = VariableBuilder.createIntermediate(currentScope, SymbolType.BOOLEAN, getProgram());

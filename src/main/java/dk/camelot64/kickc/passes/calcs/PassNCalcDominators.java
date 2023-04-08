@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes.calcs;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.DominatorsBlock;
-import dk.camelot64.kickc.model.DominatorsGraph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -47,7 +44,7 @@ public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
       DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
       firstDominators.add(firstBlock);
       firstBlocks.add(firstBlock);
-      List<LabelRef> procedureBlocks = getGraph().getScopeBlocks(scope.getRef()).stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
+      List<LabelRef> procedureBlocks = getGraph().getScopeBlocks(scope.getRef()).stream().map(Graph.Block::getLabel).collect(Collectors.toList());
       for(LabelRef procedureBlock : procedureBlocks) {
          if(!firstBlocks.contains(procedureBlock)) {
             DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(procedureBlock);
@@ -63,11 +60,11 @@ public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
          change = false;
          for(LabelRef procedureBlock : procedureBlocks) {
             if(!firstBlocks.contains(procedureBlock)) {
-               ControlFlowBlock block = getGraph().getBlock(procedureBlock);
-               List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
+               Graph.Block block = getGraph().getBlock(procedureBlock);
+               List<Graph.Block> predecessors = getGraph().getPredecessors(block);
                DominatorsBlock newDominators = new DominatorsBlock();
                newDominators.addAll(procedureBlocks);
-               for(ControlFlowBlock predecessor : predecessors) {
+               for(var predecessor : predecessors) {
                   DominatorsBlock predecessorDominators = dominatorsGraph.getDominators(predecessor.getLabel());
                   newDominators.intersect(predecessorDominators);
                }

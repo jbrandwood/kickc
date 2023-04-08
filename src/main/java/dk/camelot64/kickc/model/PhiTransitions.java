@@ -19,23 +19,23 @@ public class PhiTransitions {
    private Program program;
 
    /** The destination block for the phi transitions */
-   private ControlFlowBlock toBlock;
+   private Graph.Block toBlock;
 
    /** The phi-block of the to-block. */
    private StatementPhiBlock phiBlock;
 
    /** Maps from-block to the transition from the from-block to the to-block. */
-   private Map<ControlFlowBlock, PhiTransition> transitions;
+   private Map<Graph.Block, PhiTransition> transitions;
 
-   public PhiTransitions(Program program, ControlFlowBlock toBlock) {
+   public PhiTransitions(Program program, Graph.Block toBlock) {
       this.program = program;
       this.toBlock = toBlock;
       this.transitions = new LinkedHashMap<>();
       if(toBlock.hasPhiBlock()) {
          this.phiBlock = toBlock.getPhiBlock();
-         List<ControlFlowBlock> predecessors = new ArrayList<>(program.getGraph().getPredecessors(toBlock));
+         List<Graph.Block> predecessors = new ArrayList<>(program.getGraph().getPredecessors(toBlock));
          predecessors.sort(Comparator.comparing(o -> o.getLabel().getFullName()));
-         for(ControlFlowBlock predecessor : predecessors) {
+         for(Graph.Block predecessor : predecessors) {
             PhiTransition transition = findTransition(predecessor);
             transitions.put(predecessor, transition);
          }
@@ -49,7 +49,7 @@ public class PhiTransitions {
     * @param fromBlock The block where the transition starts
     * @return The transition into the passed block
     */
-   private PhiTransition findTransition(ControlFlowBlock fromBlock) {
+   private PhiTransition findTransition(Graph.Block fromBlock) {
       PhiTransition transition = new PhiTransition(fromBlock, toBlock, phiBlock, program);
       boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
       if(!isCallTransition) {
@@ -64,7 +64,7 @@ public class PhiTransitions {
       return transition;
    }
 
-   public Collection<ControlFlowBlock> getFromBlocks() {
+   public Collection<Graph.Block> getFromBlocks() {
       return transitions.keySet();
    }
 
@@ -74,7 +74,7 @@ public class PhiTransitions {
     * @param fromBlock The from-block
     * @return The transition from the from-block into the to-block
     */
-   public PhiTransition getTransition(ControlFlowBlock fromBlock) {
+   public PhiTransition getTransition(Graph.Block fromBlock) {
       return transitions.get(fromBlock);
    }
 
@@ -104,20 +104,20 @@ public class PhiTransitions {
       private Program program;
 
       /** The block we are entering into. */
-      private ControlFlowBlock toBlock;
+      private Graph.Block toBlock;
 
       /** The phi statement of the to-block. */
       private StatementPhiBlock phiBlock;
 
       /** The block we are entering from. */
-      private List<ControlFlowBlock> fromBlocks;
+      private List<Graph.Block> fromBlocks;
 
       /** The assignments when transitioning between the two blocks. */
       private List<PhiTransition.PhiAssignment> assignments;
 
       private int nextIdx;
 
-      PhiTransition(ControlFlowBlock fromBlock, ControlFlowBlock toBlock, StatementPhiBlock phiBlock, Program program) {
+      PhiTransition(Graph.Block fromBlock, Graph.Block toBlock, StatementPhiBlock phiBlock, Program program) {
          this.program = program;
          this.toBlock = toBlock;
          this.phiBlock = phiBlock;
@@ -127,7 +127,7 @@ public class PhiTransitions {
          initAssignments(fromBlock);
       }
 
-      private void initAssignments(ControlFlowBlock fromBlock) {
+      private void initAssignments(Graph.Block fromBlock) {
          this.assignments = new ArrayList<>();
          if(phiBlock != null) {
             List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phiBlock.getPhiVariables());
@@ -153,7 +153,7 @@ public class PhiTransitions {
          StringBuilder id = new StringBuilder();
          id.append("phi:");
          boolean first = true;
-         for(ControlFlowBlock fromBlock : fromBlocks) {
+         for(Graph.Block fromBlock : fromBlocks) {
             if(!first) {
                id.append("/");
             }
@@ -168,7 +168,7 @@ public class PhiTransitions {
          return assignments;
       }
 
-      void addFromBlock(ControlFlowBlock fromBlock) {
+      void addFromBlock(Graph.Block fromBlock) {
          fromBlocks.add(fromBlock);
       }
 
@@ -208,7 +208,7 @@ public class PhiTransitions {
          return true;
       }
 
-      public List<ControlFlowBlock> getFromBlocks() {
+      public List<Graph.Block> getFromBlocks() {
          return fromBlocks;
       }
 

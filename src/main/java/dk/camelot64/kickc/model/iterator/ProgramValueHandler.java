@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.statements.Statement;
 
 import java.util.ListIterator;
@@ -19,6 +20,6 @@ public interface ProgramValueHandler {
     * @param stmtIt The statement iterator - just past the current statement. Can be used for modifying the control flow block.
     * @param currentBlock The current block that the value is a part of
     */
-   void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock);
+   void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock);
 
 }

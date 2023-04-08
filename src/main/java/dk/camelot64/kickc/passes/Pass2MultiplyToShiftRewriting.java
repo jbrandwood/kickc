@@ -22,7 +22,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       boolean optimized = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          Scope scope = getProgramScope().getScope(block.getScope());
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {

@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementInfos;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -66,8 +63,8 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
          for(VariableReferenceInfos.ReferenceToSymbolVar use : uses) {
             if(use instanceof VariableReferenceInfos.ReferenceInStatement) {
                final Integer statementIdx = ((VariableReferenceInfos.ReferenceInStatement) use).getStatementIdx();
-               final ControlFlowBlock block = statementInfos.getBlock(statementIdx);
-               final Procedure useProcedure = block.getProcedure(program);
+               final Graph.Block block = statementInfos.getBlock(statementIdx);
+               final Procedure useProcedure = program.getProcedure(block);
                if(!procedureRef.equals(useProcedure.getRef())) {
                   // Usage in a another procedure
                   return true;
@@ -94,9 +91,9 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
     * @return true if the procedure body is empty.
     */
    private boolean hasEmptyBody(ProcedureRef procedureRef) {
-      final List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedureRef);
+      final List<Graph.Block> procedureBlocks = getGraph().getScopeBlocks(procedureRef);
       // The single no-args no-return call of the procedure (if found)
-      for(ControlFlowBlock block : procedureBlocks) {
+      for(var block : procedureBlocks) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn && ((StatementReturn) statement).getValue() == null) {
                // An empty return is OK
@@ -115,8 +112,8 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
     * @param removeProcRef The procedure to remove calls for
     * @param blocks The blocks to remove the calls from
     */
-   public static void removeAllCalls(ProcedureRef removeProcRef, List<ControlFlowBlock> blocks, CompileLog log) {
-      for(ControlFlowBlock block : blocks) {
+   public static void removeAllCalls(ProcedureRef removeProcRef, List<Graph.Block> blocks, CompileLog log) {
+      for(var block : blocks) {
          final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();

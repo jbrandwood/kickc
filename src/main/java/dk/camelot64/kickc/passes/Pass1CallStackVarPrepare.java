@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -58,7 +59,7 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
       for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          if(procedure.isDeclaredIntrinsic()) continue;
          if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-            final ControlFlowBlock procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
+            final Graph.Block procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
             final ArrayList<Variable> params = new ArrayList<>(procedure.getParameters());
             Collections.reverse(params);
             for(Variable param : params) {

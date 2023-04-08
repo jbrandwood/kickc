@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes.utils;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
@@ -24,13 +25,13 @@ public class VarAssignments {
     * @param variable The variable to find the assignment for
     * @return All assignments of values to the variable
     */
-   public static List<VarAssignment> get(SymbolVariableRef variable, ControlFlowGraph graph, ProgramScope programScope) {
+   public static List<VarAssignment> get(SymbolVariableRef variable, Graph graph, ProgramScope programScope) {
       ArrayList<VarAssignment> varAssignments = new ArrayList<>();
       Variable varDef = programScope.getVariable(variable);
       if(varDef.getInitValue() != null) {
          varAssignments.add(new VarAssignment(VarAssignment.Type.INIT_VALUE, null, null, null, null, varDef));
       }
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
+      for(var block : graph.getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                StatementLValue assignment = (StatementLValue) statement;
@@ -65,7 +66,7 @@ public class VarAssignments {
       public final Type type;
 
       /** The block  containing the assignment statement. Null if type is not STATEMENT_LVALUE or STATEMENT_PHI */
-      public final ControlFlowBlock block;
+      public final Graph.Block block;
 
       /* The LValue-statement. Null if type is not STATEMENT_LVALUE. */
       public final StatementLValue statementLValue;
@@ -77,7 +78,7 @@ public class VarAssignments {
       /* The Variable with initValue. Null if type is not INIT_VALUE. */
       public final Variable variableInitValue;
 
-      public VarAssignment(Type type, ControlFlowBlock block, StatementLValue statementLValue, StatementPhiBlock statementPhi, StatementPhiBlock.PhiVariable statementPhiVariable, Variable variableInitValue) {
+      public VarAssignment(Type type, Graph.Block block, StatementLValue statementLValue, StatementPhiBlock statementPhi, StatementPhiBlock.PhiVariable statementPhiVariable, Variable variableInitValue) {
          this.type = type;
          this.block = block;
          this.statementLValue = statementLValue;

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 
@@ -25,5 +26,7 @@ public class Pass2Base {
    public Program getProgram() {
       return program;
    }
+
+   public Graph getGraph() { return program.getGraph(); }
 
 }

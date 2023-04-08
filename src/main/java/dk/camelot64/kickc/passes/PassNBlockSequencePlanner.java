@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -19,7 +20,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
    @Override
    public boolean step() {
 
-      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
+      List<ControlFlowBlock> entryPointBlocks = getProgram().getEntryPointBlocks();
 
       for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
          pushTodo(entryPointBlock);
@@ -27,7 +28,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
       List<LabelRef> sequence = new ArrayList<>();
       while(hasTodo()) {
-         ControlFlowBlock block = popTodo();
+         Graph.Block block = popTodo();
          if(block == null) {
             break;
          }
@@ -39,8 +40,8 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          if(block.getCallSuccessor() != null) {
             pushCallTodo(getGraph().getCallSuccessor(block));
          }
-         ControlFlowBlock conditionalSuccessor = getGraph().getConditionalSuccessor(block);
-         ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
+         Graph.Block conditionalSuccessor = getGraph().getConditionalSuccessor(block);
+         Graph.Block defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if(conditionalSuccessor != null && defaultSuccessor != null) {
             // Both conditional and default successor
             if(conditionalSuccessor.getDefaultSuccessor().equals(defaultSuccessor.getLabel())) {
@@ -77,7 +78,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
    }
 
-   void pushTodo(ControlFlowBlock block) {
+   void pushTodo(Graph.Block block) {
       LabelRef blockRef = block.getLabel();
       Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
@@ -91,7 +92,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       newScopeTodo.pushTodo(block);
    }
 
-   void pushCallTodo(ControlFlowBlock block) {
+   void pushCallTodo(Graph.Block block) {
       LabelRef blockRef = block.getLabel();
       Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
@@ -115,9 +116,9 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       return !todoScopes.isEmpty();
    }
 
-   ControlFlowBlock popTodo() {
+   Graph.Block popTodo() {
       ScopeTodo scopeTodo = todoScopes.peek();
-      ControlFlowBlock block = scopeTodo.todo.pop();
+      Graph.Block block = scopeTodo.todo.pop();
       if(scopeTodo.todo.isEmpty()) {
          todoScopes.pop();
       }
@@ -128,18 +129,18 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
       Scope scope;
 
-      Deque<ControlFlowBlock> todo;
+      Deque<Graph.Block> todo;
 
       public ScopeTodo(Scope scope) {
          this.scope = scope;
          this.todo = new LinkedList<>();
       }
 
-      public void pushTodo(ControlFlowBlock block) {
+      public void pushTodo(Graph.Block block) {
          todo.addFirst(block);
       }
 
-      public void addTodo(ControlFlowBlock block) {
+      public void addTodo(Graph.Block block) {
          todo.addLast(block);
       }
 

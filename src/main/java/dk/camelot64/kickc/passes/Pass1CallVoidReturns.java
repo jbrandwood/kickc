@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -29,7 +26,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
       getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                final ProcedureRef procedureRef = ((StatementCall) statement).getProcedure();

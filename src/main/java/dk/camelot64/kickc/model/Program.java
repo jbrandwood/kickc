@@ -6,13 +6,16 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.passes.calcs.*;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
@@ -142,6 +145,27 @@ public class Program {
       this.registerUpliftProgram = null;
    }
 
+   /**
+    * Get a read-only control flow graph for the entire program.
+    * @return The control flow graph
+    */
+   public Graph getGraph() {
+      return new Graph() {
+         @Override
+         public Block getBlock(LabelRef symbol) {
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(graph -> graph.getBlock(symbol)).filter(Objects::nonNull).findFirst().orElse(null);
+         }
+
+         @Override
+         public List<Block> getAllBlocks() {
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).collect(Collectors.toList());
+         }
+      };
+   }
+
+   private Collection<ProcedureCompilation> getProcedureCompilations() {
+      return procedureCompilations.values();
+   }
 
    /**
     * Pretty-print the entire control flow graph of all procedures.
@@ -149,8 +173,7 @@ public class Program {
     */
    public String prettyControlFlowGraph() {
       StringBuilder graphPretty = new StringBuilder();
-      for(ProcedureRef procedureRef : procedureCompilations.keySet()) {
-         final ProcedureCompilation procedureCompilation = procedureCompilations.get(procedureRef);
+      for(ProcedureCompilation procedureCompilation : getProcedureCompilations()) {
          graphPretty.append(procedureCompilation.getGraph().toString(this));
       }
       return graphPretty.toString();
@@ -382,7 +405,7 @@ public class Program {
     * Clear index numbers for all statements in the control flow graph.
     */
    public void clearStatementIndices() {
-      procedureCompilations.values().forEach(proc -> proc.getGraph().clearStatementIndices());
+      getProcedureCompilations().forEach(proc -> proc.getGraph().clearStatementIndices());
    }
 
    public SymbolInfos getSymbolInfos() {
@@ -493,7 +516,7 @@ public class Program {
       StringBuilder sizeInfo = new StringBuilder();
       sizeInfo.append(getScope().getSizeInfo());
 
-      final List<ControlFlowBlock> allBlocks = procedureCompilations.values().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).toList();
+      final List<Graph.Block> allBlocks = getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).toList();
       sizeInfo.append("SIZE blocks ").append(allBlocks.size()).append("\n");
       int numStmt = allBlocks.stream().mapToInt(block -> block.getStatements().size()).sum();
       sizeInfo.append("SIZE statements ").append(numStmt).append("\n");
@@ -511,4 +534,50 @@ public class Program {
       return sizeInfo.toString();
    }
 
+   /**
+    * Get the procedure, that the block is part of. Null if the block is not part of a procedure.
+    *
+    * @param block The control flow graph block
+    * @return the procedure, that the block is part of
+    */
+   public Procedure getProcedure(Graph.Block block) {
+      final ScopeRef scopeRef = block.getScope();
+      final Scope scope = getScope().getScope(scopeRef);
+      if(scope instanceof Procedure) {
+         return (Procedure) scope;
+      } else {
+         return null;
+      }
+   }
+
+   /**
+    * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
+    *
+    * @param block
+    * @return true if this is the entry of a procedure
+    */
+   public boolean isProcedureEntry(Graph.Block block) {
+      Symbol symbol = getScope().getSymbol(block.getLabel());
+      return (symbol instanceof Procedure);
+   }
+
+   /**
+    * Get all blocks that are program entry points.
+    * This is the start-block and any blocks referenced by the address-off operator (&)
+    *
+    * @param graph@return All entry-point blocks
+    */
+   public List<Graph.Block> getEntryPointBlocks() {
+      final Graph graph = getGraph();
+      List<Graph.Block> entryPointBlocks = new ArrayList<>();
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(ProcedureUtils.isEntrypoint(procedure.getRef(), this) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention()) || Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            Graph.Block procedureBlock = graph.getBlock(procedureLabel.getRef());
+            entryPointBlocks.add(procedureBlock);
+         }
+      }
+      return entryPointBlocks;
+   }
 }

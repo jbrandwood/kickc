@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes.unwinding;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Initializers;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
@@ -48,7 +48,7 @@ public class ValueSourceZero extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
       final SymbolType memberType = structDefinition.getMember(memberName).getType();
       final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();

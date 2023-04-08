@@ -56,7 +56,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     *
     * @param replacements Variables that have alias values.
     */
-   public void replaceLabels(ControlFlowBlock block, final Map<LabelRef, LabelRef> replacements) {
+   public void replaceLabels(Graph.Block block, final Map<LabelRef, LabelRef> replacements) {
       ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitBlock(block);
    }
@@ -110,8 +110,8 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     *
     * @param variables The variables to eliminate
     */
-   public static void removeAssignments(ControlFlowGraph graph, Collection<? extends LValue> variables) {
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
+   public static void removeAssignments(Graph graph, Collection<? extends LValue> variables) {
+      for(var block : graph.getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if(statement instanceof StatementAssignment) {

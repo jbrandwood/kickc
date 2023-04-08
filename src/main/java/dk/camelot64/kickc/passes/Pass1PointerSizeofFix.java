@@ -31,7 +31,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -95,7 +95,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     * @param assignment The assignment statement
     */
 
-   private void fixPointerBinary(ControlFlowBlock block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
+   private void fixPointerBinary(Graph.Block block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
       SymbolTypePointer pointerType = getPointerType(assignment.getrValue1());
       if(pointerType != null) {
          if(SymbolType.VOID.equals(pointerType.getElementType())) {

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -41,7 +42,7 @@ public class AsmEncodingHelper {
     public static Set<StringEncoding> getEncoding(Value value) {
        LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
        ProgramValue programValue = new ProgramValue.GenericValue(value);
-       ProgramValueHandler handler = (ProgramValue pVal, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) -> {
+       ProgramValueHandler handler = (ProgramValue pVal, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) -> {
           Value val = pVal.get();
           if(val instanceof ConstantChar) {
              encodings.add(((ConstantChar) val).getEncoding());

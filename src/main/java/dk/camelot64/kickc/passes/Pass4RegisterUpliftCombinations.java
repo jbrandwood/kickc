@@ -154,7 +154,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             Integer statementIdx = asmChunk.getStatementIdx();
             int maxLoopDepth = 1;
             if(statementIdx != null) {
-               ControlFlowBlock block = program.getStatementInfos().getBlock(statementIdx);
+               Graph.Block block = program.getStatementInfos().getBlock(statementIdx);
                maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
             }
             score += asmChunkCycles * Math.pow(10, maxLoopDepth);
@@ -170,7 +170,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @return true if the register allocation contains an overlapping allocation. false otherwise.
     */
    public static boolean isAllocationOverlapping(Program program) {
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(isStatementAllocationOverlapping(program, statement)) {
                return true;

@@ -24,9 +24,9 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
       blockReferenceFinder.visitGraph(getGraph());
 
       Set<LabelRef> seenBlocks = blockReferenceFinder.getSeenBlocks();
-      Collection<ControlFlowBlock> allBlocks = getGraph().getAllBlocks();
+      Collection<Graph.Block> allBlocks = getGraph().getAllBlocks();
       for(LabelRef seenBlock : seenBlocks) {
-         ControlFlowBlock block = getGraph().getBlock(seenBlock);
+         Graph.Block block = getGraph().getBlock(seenBlock);
          if(!allBlocks.contains(block)) {
             throw new AssertionFailed("Compilation Process Error! A block in the program is not contained in the allBocks list (probably a block sequence problem). " + seenBlock);
          }
@@ -36,9 +36,9 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
    private static class BlockReferenceChecker extends ControlFlowGraphBaseVisitor<Void> {
 
       Set<LabelRef> seenBlocks;
-      private ControlFlowGraph graph;
+      private Graph graph;
 
-      public BlockReferenceChecker(ControlFlowGraph graph) {
+      public BlockReferenceChecker(Graph graph) {
          this.graph = graph;
          this.seenBlocks = new HashSet<>();
       }
@@ -55,14 +55,14 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
             return;
          }
          seenBlocks.add(blockLabel);
-         ControlFlowBlock block = graph.getBlock(blockLabel);
+         Graph.Block block = graph.getBlock(blockLabel);
          if(block == null) {
             throw new AssertionFailed("Compilation Process Error! Block referenced, but not found in program. " + blockLabel);
          }
       }
 
       @Override
-      public Void visitBlock(ControlFlowBlock block) {
+      public Void visitBlock(Graph.Block block) {
          assertBlock(block.getDefaultSuccessor());
          assertBlock(block.getCallSuccessor());
          assertBlock(block.getConditionalSuccessor());

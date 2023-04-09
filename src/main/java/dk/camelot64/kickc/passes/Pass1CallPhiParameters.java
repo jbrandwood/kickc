@@ -15,17 +15,27 @@ import java.util.*;
 /** Handle calling convention {@link Procedure.CallingConvention#PHI_CALL} by passing parameters through variables */
 public class Pass1CallPhiParameters {
 
-   private Program program;
+   private final Program program;
 
    public Pass1CallPhiParameters(Program program) {
       this.program = program;
    }
 
-   private Map<LabelRef, LabelRef> splitBlockMap = new LinkedHashMap<>();
-
    public void execute() {
-      final List<Graph.Block> todoBlocks = getGraph().getAllBlocks();
+      for(ProcedureCompilation procedureCompilation : this.program.getProcedureCompilations()) {
+         handleProcedure(procedureCompilation);
+      }
+   }
+
+   private void handleProcedure(ProcedureCompilation procedureCompilation) {
+
+      final Graph graph = procedureCompilation.getGraph();
+
+      final List<Graph.Block> todoBlocks = new ArrayList<>(graph.getAllBlocks());
       List<Graph.Block> doneBlocks = new ArrayList<>();
+
+      Map<LabelRef, LabelRef> splitBlockMap = new LinkedHashMap<>();
+
 
       while(!todoBlocks.isEmpty()) {
          final Graph.Block block = todoBlocks.get(0);
@@ -35,14 +45,13 @@ public class Pass1CallPhiParameters {
          final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
-            if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
+            if(statement instanceof StatementCall call) {
                // Generate parameter passing assignments
                ProcedureRef procedureRef = call.getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
                // Handle PHI-calls
                if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
-                  final ControlFlowBlock newBlock = handlePhiCall(call, procedure, stmtIt, block);
+                  final ControlFlowBlock newBlock = handlePhiCall(call, procedure, stmtIt, block, splitBlockMap);
                   // The current block was split into two blocks - add the new block at the front of the todoBlocks
                   todoBlocks.add(0, newBlock);
                }
@@ -57,18 +66,19 @@ public class Pass1CallPhiParameters {
                   for(VariableRef modifiedVar : modifiedVars) {
                      if(getScope().getVariable(modifiedVar).isKindLoadStore())
                         continue;
-                     stmtIt.add(new StatementAssignment(modifiedVar, modifiedVar, false, ((StatementReturn) statement).getSource(), Comment.NO_COMMENTS));
+                     stmtIt.add(new StatementAssignment(modifiedVar, modifiedVar, false, statement.getSource(), Comment.NO_COMMENTS));
                   }
                   stmtIt.next();
                }
             }
          }
       }
+
       // Update graph blocks to include the new blocks added
-      program.getGraph().setAllBlocks(doneBlocks);
+      procedureCompilation.setGraph(new ControlFlowGraph(doneBlocks));
 
       // Fix phi predecessors for any blocks has a split block as predecessor
-      for(Graph.Block block : getGraph().getAllBlocks()) {
+      for(var block : procedureCompilation.getGraph().getAllBlocks()) {
          if(block.hasPhiBlock()) {
             for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
@@ -86,11 +96,7 @@ public class Pass1CallPhiParameters {
       return program.getScope();
    }
 
-   private Graph getGraph() {
-      return program.getGraph();
-   }
-
-   private ControlFlowBlock handlePhiCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, Graph.Block block) {
+   private ControlFlowBlock handlePhiCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, Graph.Block block, Map<LabelRef, LabelRef> splitBlockMap) {
 
       List<Variable> parameterDefs = procedure.getParameters();
       List<RValue> parameterValues = call.getParameters();

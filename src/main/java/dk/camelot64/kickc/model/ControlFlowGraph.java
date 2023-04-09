@@ -11,19 +11,19 @@ import java.util.*;
  */
 public class ControlFlowGraph implements Graph {
 
-   private List<ControlFlowBlock> blocks;
+   private List<Graph.Block> blocks;
 
    /**
     * Sequence of blocks used when generating ASM
     */
    private List<LabelRef> sequence;
 
-   public ControlFlowGraph(List<ControlFlowBlock> blocks) {
+   public ControlFlowGraph(List<Graph.Block> blocks) {
       this.blocks = blocks;
    }
 
-   public ControlFlowBlock getBlock(LabelRef symbol) {
-      for(ControlFlowBlock block : blocks) {
+   public Graph.Block getBlock(LabelRef symbol) {
+      for(var block : blocks) {
          if(block.getLabel().equals(symbol)) {
             return block;
          }
@@ -31,7 +31,7 @@ public class ControlFlowGraph implements Graph {
       return null;
    }
 
-   public void addBlock(ControlFlowBlock block) {
+   public void addBlock(Graph.Block block) {
       blocks.add(block);
    }
 
@@ -39,37 +39,16 @@ public class ControlFlowGraph implements Graph {
       return Collections.unmodifiableList(blocks);
    }
 
-   public void setAllBlocks(List<ControlFlowBlock> blocks) {
-      this.blocks = blocks;
-   }
-
    public void remove(LabelRef label) {
-      ListIterator<ControlFlowBlock> blocksIt = blocks.listIterator();
+      ListIterator<Graph.Block> blocksIt = blocks.listIterator();
       while(blocksIt.hasNext()) {
-         ControlFlowBlock block = blocksIt.next();
+         var block = blocksIt.next();
          if(block.getLabel().equals(label)) {
             blocksIt.remove();
             return;
          }
       }
    }
-
-   public List<LabelRef> getSequence() {
-      return sequence;
-   }
-
-   public void setSequence(List<LabelRef> sequence) {
-      if(sequence.size() != blocks.size()) {
-         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: " + sequence.size() + " Blocks: " + blocks.size());
-      }
-      this.sequence = sequence;
-      ArrayList<ControlFlowBlock> seqBlocks = new ArrayList<>();
-      for(LabelRef labelRef : sequence) {
-         seqBlocks.add(getBlock(labelRef));
-      }
-      this.blocks = seqBlocks;
-   }
-
 
    @Override
    public String toString() {
@@ -95,7 +74,7 @@ public class ControlFlowGraph implements Graph {
     * Clear all statement indices,
     */
    public void clearStatementIndices() {
-      for(Graph.Block block : getAllBlocks()) {
+      for(var block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             statement.setIndex(null);
          }

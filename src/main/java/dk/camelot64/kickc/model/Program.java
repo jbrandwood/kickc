@@ -4,7 +4,6 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.OutputFileManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
-import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -158,12 +157,17 @@ public class Program {
 
          @Override
          public List<Block> getAllBlocks() {
-            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).collect(Collectors.toList());
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
+         }
+
+         @Override
+         public void addBlock(Block block) {
+            throw new CompileError("Internal Error! Cannot add blocks to the read-only total control flow graph!");
          }
       };
    }
 
-   private Collection<ProcedureCompilation> getProcedureCompilations() {
+   public Collection<ProcedureCompilation> getProcedureCompilations() {
       return procedureCompilations.values();
    }
 

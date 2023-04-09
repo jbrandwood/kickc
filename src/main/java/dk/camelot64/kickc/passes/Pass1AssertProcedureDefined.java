@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ProcedureCompilation;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 
@@ -29,7 +26,7 @@ public class Pass1AssertProcedureDefined extends Pass1Base {
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          if(procedureCompilation == null)
             throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
-         final ControlFlowBlock procedureBlock = procedureCompilation.getGraph().getBlock(procedureLabel.getRef());
+         final Graph.Block procedureBlock = procedureCompilation.getGraph().getBlock(procedureLabel.getRef());
          if(procedureBlock == null)
             throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
       }

@@ -1,10 +1,10 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.GraphBaseVisitor;
-import dk.camelot64.kickc.model.Graph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 
@@ -100,10 +100,19 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
             }
             replaceLabels(predecessor, replace);
          }
-         getGraph().getAllBlocks().remove(removeBlock);
+
+
+
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
          Label removeBlockLabel = getProgramScope().getLabel(removeBlockLabelRef);
-         removeBlockLabel.getScope().remove(removeBlockLabel);
+         final Scope removeBlockScope = removeBlockLabel.getScope();
+         final Procedure procedure = removeBlockScope.getProcedure();
+         final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
+         final List<Graph.Block> updatedBlocks = new ArrayList<>(procedureCompilation.getGraph().getAllBlocks());
+         updatedBlocks.removeIf(block -> block.getLabel().equals(removeBlockLabelRef));
+         procedureCompilation.setGraph(new ControlFlowGraph(updatedBlocks));
+
+         removeBlockScope.remove(removeBlockLabel);
          if(!pass1)
             getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }

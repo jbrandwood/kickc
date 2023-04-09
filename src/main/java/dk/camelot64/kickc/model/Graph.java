@@ -16,6 +16,8 @@ public interface Graph {
 
    List<Block> getAllBlocks();
 
+   void addBlock(Graph.Block block);
+
    default List<Graph.Block> getPredecessors(Graph.Block block) {
       ArrayList<Block> predecessorBlocks = new ArrayList<>();
       for(Graph.Block other : getAllBlocks()) {

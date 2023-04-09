@@ -1,12 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Graph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
 public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
@@ -62,7 +62,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          }
 
       }
-      getGraph().setSequence(sequence);
+      setSequence(sequence);
 
       if(getLog().isVerboseSequencePlan()) {
          StringBuilder entry = new StringBuilder();
@@ -76,6 +76,21 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
       return false;
 
+   }
+
+   public void setSequence(List<LabelRef> sequence) {
+      if(sequence.size() != getGraph().getAllBlocks().size()) {
+         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: " + sequence.size() + " Blocks: " + getGraph().getAllBlocks().size());
+      }
+      for(var procedureCompilation : getProgram().getProcedureCompilations()) {
+         final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
+         final List<LabelRef> procedureLabels = procedureGraph.getAllBlocks().stream().map(Graph.Block::getLabel).toList();
+         final List<Graph.Block> procedureSequence = sequence.stream().filter(procedureLabels::contains).map(procedureGraph::getBlock).toList();
+         if(procedureSequence.size() != procedureGraph.getAllBlocks().size()) {
+            throw new CompileError("ERROR! Sequence does not contain all blocks for "+procedureCompilation.getProcedureRef()+". Sequence: " + procedureSequence.size() + " Blocks: " + procedureGraph.getAllBlocks().size());
+         }
+         procedureCompilation.setGraph(new ControlFlowGraph(procedureSequence));
+      }
    }
 
    void pushTodo(Graph.Block block) {

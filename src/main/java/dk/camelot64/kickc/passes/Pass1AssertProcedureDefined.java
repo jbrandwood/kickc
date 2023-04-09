@@ -26,7 +26,10 @@ public class Pass1AssertProcedureDefined extends Pass1Base {
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          if(procedureCompilation == null)
             throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
-         final Graph.Block procedureBlock = procedureCompilation.getGraph().getBlock(procedureLabel.getRef());
+         final ControlFlowGraph graph = procedureCompilation.getGraph();
+         if(graph == null)
+            throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
+         final Graph.Block procedureBlock = graph.getBlock(procedureLabel.getRef());
          if(procedureBlock == null)
             throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
       }

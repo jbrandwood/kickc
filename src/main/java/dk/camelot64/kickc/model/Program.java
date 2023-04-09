@@ -152,12 +152,12 @@ public class Program {
       return new Graph() {
          @Override
          public Block getBlock(LabelRef symbol) {
-            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(graph -> graph.getBlock(symbol)).filter(Objects::nonNull).findFirst().orElse(null);
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).map(graph -> graph.getBlock(symbol)).filter(Objects::nonNull).findFirst().orElse(null);
          }
 
          @Override
          public List<Block> getAllBlocks() {
-            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).toList();
          }
 
          @Override
@@ -413,7 +413,7 @@ public class Program {
     * Clear index numbers for all statements in the control flow graph.
     */
    public void clearStatementIndices() {
-      getProcedureCompilations().forEach(proc -> proc.getGraph().clearStatementIndices());
+      getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).forEach(ControlFlowGraph::clearStatementIndices);
    }
 
    public SymbolInfos getSymbolInfos() {

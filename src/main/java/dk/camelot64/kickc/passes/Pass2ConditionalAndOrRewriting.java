@@ -77,11 +77,11 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
                            if(conditionDefineStatement instanceof StatementAssignment conditionAssignment) {
                               if(Operators.LOGIC_AND.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical && condition - rewrite to if(c1) if(c2) { xx }
-                                 rewriteLogicAnd(block, conditional, conditionAssignment, getGraph());
+                                 rewriteLogicAnd(block, conditional, conditionAssignment, graph);
                                  return conditionVar;
                               } else if(Operators.LOGIC_OR.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical || condition - rewrite to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
-                                 rewriteLogicOr(block, conditional, conditionAssignment, getGraph());
+                                 rewriteLogicOr(block, conditional, conditionAssignment, graph);
                                  return conditionVar;
                               } else if(Operators.LOGIC_NOT.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical ! condition - rewrite to if(!c1) goto x else goto end, x:{ xx } end:

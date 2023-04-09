@@ -31,27 +31,29 @@ public class Pass1ProcedureInline extends Pass1Base {
 
    private boolean inlineProcedure(ProcedureCompilation procedureCompilation) {
       final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
-      final List<Graph.Block> procedureBlocks = new ArrayList<>(procedureGraph.getAllBlocks());
-      ListIterator<Graph.Block> blocksIt = procedureBlocks.listIterator();
-      while(blocksIt.hasNext()) {
-         Graph.Block block = blocksIt.next();
-         List<Statement> blockStatements = block.getStatements();
-         ListIterator<Statement> statementsIt = blockStatements.listIterator();
-         while(statementsIt.hasNext()) {
-            Statement statement = statementsIt.next();
-            if(statement instanceof StatementCall call) {
-               ProcedureRef procedureRef = call.getProcedure();
-               Procedure procedure = getProgramScope().getProcedure(procedureRef);
-               if(procedure.isDeclaredInline()) {
-                  procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
-                  if(procedure.getInterruptType()!=null) {
-                     throw new CompileError("Error! Interrupts cannot be inlined. "+procedure.getRef().toString());
+      if(procedureGraph!=null) {
+         final List<Graph.Block> procedureBlocks = new ArrayList<>(procedureGraph.getAllBlocks());
+         ListIterator<Graph.Block> blocksIt = procedureBlocks.listIterator();
+         while(blocksIt.hasNext()) {
+            Graph.Block block = blocksIt.next();
+            List<Statement> blockStatements = block.getStatements();
+            ListIterator<Statement> statementsIt = blockStatements.listIterator();
+            while(statementsIt.hasNext()) {
+               Statement statement = statementsIt.next();
+               if(statement instanceof StatementCall call) {
+                  ProcedureRef procedureRef = call.getProcedure();
+                  Procedure procedure = getProgramScope().getProcedure(procedureRef);
+                  if(procedure.isDeclaredInline()) {
+                     procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
+                     if(procedure.getInterruptType() != null) {
+                        throw new CompileError("Error! Interrupts cannot be inlined. " + procedure.getRef().toString());
+                     }
+                     inlineProcedureCall(call, procedure, statementsIt, block, blocksIt);
+                     // Update the procedure graph
+                     procedureCompilation.setGraph(new ControlFlowGraph(procedureBlocks));
+                     // Exit and restart
+                     return true;
                   }
-                  inlineProcedureCall(call, procedure, statementsIt, block, blocksIt);
-                  // Update the procedure graph
-                  procedureCompilation.setGraph(new ControlFlowGraph(procedureBlocks));
-                  // Exit and restart
-                  return true;
                }
             }
          }

@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
@@ -285,7 +286,15 @@ public class Unroller {
          // Create the new block
          LabelRef newBlockLabel = blocksOriginalToCopied.get(origBlock.getLabel());
          ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel, origBlock.getScope());
-         program.getGraph().addBlock(newBlock);
+
+         // Add the new graph to the appropriate procedure
+         final Procedure containingProcedure = program.getScope().getSymbol(origBlock.getLabel()).getContainingProcedure();
+         final ProcedureCompilation procedureCompilation = program.getProcedureCompilation(containingProcedure.getRef());
+         final List<Graph.Block> procedureBlocks = new ArrayList<>(procedureCompilation.getGraph().getAllBlocks());
+         procedureBlocks.add(newBlock);
+         procedureCompilation.setGraph(new ControlFlowGraph(procedureBlocks));
+
+
          for(Statement origStatement : origBlock.getStatements()) {
             Statement newStatement = unrollStatement(origStatement, origBlock.getLabel());
             newBlock.addStatement(newStatement);

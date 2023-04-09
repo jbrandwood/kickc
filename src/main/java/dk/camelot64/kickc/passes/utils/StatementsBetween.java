@@ -1,5 +1,6 @@
-package dk.camelot64.kickc.model;
+package dk.camelot64.kickc.passes.utils;
 
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;

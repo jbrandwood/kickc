@@ -1,10 +1,8 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.*;
@@ -91,26 +89,6 @@ public interface Graph {
          return null;
       }
    }
-
-   /**
-    * Get all called procedures in the graph
-    *
-    * @return All called procedures
-    */
-   default Set<ProcedureRef> getAllCalledProcedures() {
-      Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
-      for(Graph.Block block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCalling) {
-               StatementCalling call = (StatementCalling) statement;
-               ProcedureRef procedureRef = call.getProcedure();
-               calledProcedures.add(procedureRef);
-            }
-         }
-      }
-      return calledProcedures;
-   }
-
 
    default String toString(Program program) {
       StringBuffer out = new StringBuffer();

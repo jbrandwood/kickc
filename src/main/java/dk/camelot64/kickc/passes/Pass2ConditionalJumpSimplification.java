@@ -16,6 +16,7 @@ import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.utils.AliasReplacer;
 
+import dk.camelot64.kickc.passes.utils.StatementsBetween;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;

@@ -551,6 +551,18 @@ public class Program {
    }
 
    /**
+    * Delete an entire procedure.
+    * Removes the entire control flow graph and all symbols.
+    * Does not check that the removal results in a legal program.
+    * @param procedureRef The procedure to remove.
+    */
+   public void removeProcedure(ProcedureRef procedureRef) {
+      Procedure procedure = getScope().getProcedure(procedureRef);
+      procedure.getScope().remove(procedure);
+      procedureCompilations.remove(procedureRef);
+   }
+
+   /**
     * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
     *
     * @param block
@@ -580,4 +592,5 @@ public class Program {
       }
       return entryPointBlocks;
    }
+
 }

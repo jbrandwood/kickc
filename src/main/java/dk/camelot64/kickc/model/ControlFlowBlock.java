@@ -161,7 +161,7 @@ public class ControlFlowBlock implements Graph.Block {
       out.append(" scope:[" + this.scope.getFullName() + "] ");
       out.append(" from");
       if(graph != null) {
-         List<Graph.Block> predecessors = graph.getPredecessors(this);
+         List<Graph.Block> predecessors = program.getGraph().getPredecessors(this);
          if(predecessors.size() > 0) {
             for(Graph.Block predecessor : predecessors) {
                out.append(" " + predecessor.getLabel().getFullName());

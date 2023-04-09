@@ -106,7 +106,7 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
          Label removeBlockLabel = getProgramScope().getLabel(removeBlockLabelRef);
          final Scope removeBlockScope = removeBlockLabel.getScope();
-         final Procedure procedure = removeBlockScope.getProcedure();
+         final Procedure procedure = removeBlockScope.getContainingProcedure();
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          final List<Graph.Block> updatedBlocks = new ArrayList<>(procedureCompilation.getGraph().getAllBlocks());
          updatedBlocks.removeIf(block -> block.getLabel().equals(removeBlockLabelRef));

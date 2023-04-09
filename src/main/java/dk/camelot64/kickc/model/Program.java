@@ -68,7 +68,7 @@ public class Program {
    private CallGraph callGraph;
 
    /** The procedures being compiled. PASS 1-5 (DYNAMIC)*/
-   private final LinkedHashMap<ProcedureRef, ProcedureCompilation> procedureCompilations;
+   private List<ProcedureCompilation> procedureCompilations;
 
    /** Variables modified inside procedures. PASS 1 (STATIC) */
    private ProcedureModifiedVars procedureModifiedVars;
@@ -113,7 +113,7 @@ public class Program {
       this.loadedFiles = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
-      this.procedureCompilations = new LinkedHashMap<>();
+      this.procedureCompilations = new ArrayList<>();
    }
 
    /**
@@ -167,8 +167,12 @@ public class Program {
       };
    }
 
-   public Collection<ProcedureCompilation> getProcedureCompilations() {
-      return procedureCompilations.values();
+   public List<ProcedureCompilation> getProcedureCompilations() {
+      return procedureCompilations;
+   }
+
+   public void setProcedureCompilations(List<ProcedureCompilation> procedureCompilations) {
+      this.procedureCompilations = procedureCompilations;
    }
 
    /**
@@ -276,15 +280,15 @@ public class Program {
    }
 
    public ProcedureCompilation createProcedureCompilation(ProcedureRef procedureRef) {
-      if(procedureCompilations.get(procedureRef)!=null)
+      if(getProcedureCompilation(procedureRef)!=null)
          throw new CompileError("Error! Procedure already defined "+procedureRef.getFullName());
       final ProcedureCompilation procedureCompilation = new ProcedureCompilation(procedureRef);
-      procedureCompilations.put(procedureRef, procedureCompilation);
+      procedureCompilations.add(procedureCompilation);
       return procedureCompilation;
    }
 
    public ProcedureCompilation getProcedureCompilation(ProcedureRef procedureRef) {
-      return procedureCompilations.get(procedureRef);
+      return procedureCompilations.stream().filter(pc -> pc.getProcedureRef().equals(procedureRef)).findFirst().orElse(null);
    }
 
    public ProgramScope getScope() {
@@ -479,9 +483,6 @@ public class Program {
       this.registerPotentials = registerPotentials;
    }
 
-
-
-
    /**
     * Adds a bunch of reserved zero-page addresses that the compiler is not allowed to use.
     *
@@ -563,7 +564,7 @@ public class Program {
    public void removeProcedure(ProcedureRef procedureRef) {
       Procedure procedure = getScope().getProcedure(procedureRef);
       procedure.getScope().remove(procedure);
-      procedureCompilations.remove(procedureRef);
+      procedureCompilations.remove(getProcedureCompilation(procedureRef));
    }
 
    /**
@@ -580,8 +581,6 @@ public class Program {
    /**
     * Get all blocks that are program entry points.
     * This is the start-block and any blocks referenced by the address-off operator (&)
-    *
-    * @param graph@return All entry-point blocks
     */
    public List<Graph.Block> getEntryPointBlocks() {
       final Graph graph = getGraph();

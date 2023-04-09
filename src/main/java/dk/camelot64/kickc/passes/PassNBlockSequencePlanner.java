@@ -1,12 +1,11 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
 public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
@@ -82,15 +81,29 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       if(sequence.size() != getGraph().getAllBlocks().size()) {
          throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: " + sequence.size() + " Blocks: " + getGraph().getAllBlocks().size());
       }
+
+      // First re-order the procedureCompilations
+      List<ProcedureCompilation> updatedProgramSequence = new ArrayList<>();
+      for(LabelRef labelRef : sequence) {
+         final Procedure procedure = getProgramScope().getSymbol(labelRef).getContainingProcedure();
+         final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
+         if(!updatedProgramSequence.contains(procedureCompilation)) {
+            updatedProgramSequence.add(procedureCompilation);
+         }
+      }
+      getProgram().setProcedureCompilations(updatedProgramSequence);
+
+      // Now re-order the blocks for each procedure
       for(var procedureCompilation : getProgram().getProcedureCompilations()) {
          final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
          final List<LabelRef> procedureLabels = procedureGraph.getAllBlocks().stream().map(Graph.Block::getLabel).toList();
-         final List<Graph.Block> procedureSequence = sequence.stream().filter(procedureLabels::contains).map(procedureGraph::getBlock).toList();
-         if(procedureSequence.size() != procedureGraph.getAllBlocks().size()) {
-            throw new CompileError("ERROR! Sequence does not contain all blocks for "+procedureCompilation.getProcedureRef()+". Sequence: " + procedureSequence.size() + " Blocks: " + procedureGraph.getAllBlocks().size());
+         final List<Graph.Block> updatedProcedureSequence = sequence.stream().filter(procedureLabels::contains).map(procedureGraph::getBlock).toList();
+         if(updatedProcedureSequence.size() != procedureGraph.getAllBlocks().size()) {
+            throw new CompileError("ERROR! Sequence does not contain all blocks for "+procedureCompilation.getProcedureRef()+". Sequence: " + updatedProcedureSequence.size() + " Blocks: " + procedureGraph.getAllBlocks().size());
          }
-         procedureCompilation.setGraph(new ControlFlowGraph(procedureSequence));
+         procedureCompilation.setGraph(new ControlFlowGraph(updatedProcedureSequence));
       }
+
    }
 
    void pushTodo(Graph.Block block) {

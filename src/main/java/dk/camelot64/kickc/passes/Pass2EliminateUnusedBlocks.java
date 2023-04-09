@@ -57,7 +57,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       for(LabelRef unusedBlock : unusedBlocks) {
          Symbol unusedSymbol = getProgramScope().getSymbol(unusedBlock);
          if(unusedSymbol instanceof Label) {
-            final Procedure procedure = unusedSymbol.getScope().getProcedure();
+            final Procedure procedure = unusedSymbol.getScope().getContainingProcedure();
             final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
             final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
             procedureGraph.remove(unusedBlock);

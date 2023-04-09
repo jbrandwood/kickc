@@ -38,13 +38,13 @@ public abstract class Scope implements Symbol {
     * Get the containing procedure.
     * @return The procedure containing the scope. Null if the scope is not contained in a procedure.
     */
-   public Procedure getProcedure() {
+   public Procedure getContainingProcedure() {
       if(this instanceof Procedure)
          return (Procedure)  this;
       else if(this instanceof ProgramScope)
          return null;
       else
-         return this.getScope().getProcedure();
+         return this.getScope().getContainingProcedure();
    }
 
    private void setFullName() {

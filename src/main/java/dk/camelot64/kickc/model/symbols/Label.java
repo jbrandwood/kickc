@@ -46,6 +46,11 @@ public class Label implements Symbol {
    }
 
    @Override
+   public Procedure getContainingProcedure() {
+      return getScope().getContainingProcedure();
+   }
+
+   @Override
    public int getScopeDepth() {
       if(scope == null) {
          return 0;

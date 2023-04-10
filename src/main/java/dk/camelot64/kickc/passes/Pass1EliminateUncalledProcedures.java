@@ -46,14 +46,11 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
     */
    public static Set<ProcedureRef> getAllCalledProcedures(Graph graph) {
       Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
-      for(Graph.Block block : graph.getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCalling) {
-               StatementCalling call = (StatementCalling) statement;
+      for(var statement : graph.getAllStatements()) {
+            if(statement instanceof StatementCalling call) {
                ProcedureRef procedureRef = call.getProcedure();
                calledProcedures.add(procedureRef);
             }
-         }
       }
       return calledProcedures;
    }

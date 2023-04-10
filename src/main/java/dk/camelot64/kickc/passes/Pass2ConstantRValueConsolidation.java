@@ -1,12 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -33,20 +30,17 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       boolean modified = false;
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getrValue1() != null || assignment.getOperator() != null || !(assignment.getrValue2() instanceof ConstantValue)) {
-                  SymbolType lValueType = SymbolTypeInference.inferType(getProgramScope(), assignment.getlValue());
-                  ConstantValue constant = getConstantAssignmentValue(assignment, lValueType);
-                  if(constant != null) {
-                     getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
-                     assignment.setrValue2(constant);
-                     assignment.setOperator(null);
-                     assignment.setrValue1(null);
-                     modified = true;
-                  }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementAssignment assignment) {
+            if(assignment.getrValue1() != null || assignment.getOperator() != null || !(assignment.getrValue2() instanceof ConstantValue)) {
+               SymbolType lValueType = SymbolTypeInference.inferType(getProgramScope(), assignment.getlValue());
+               ConstantValue constant = getConstantAssignmentValue(assignment);
+               if(constant != null) {
+                  getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
+                  assignment.setrValue2(constant);
+                  assignment.setOperator(null);
+                  assignment.setrValue1(null);
+                  modified = true;
                }
             }
          }
@@ -58,10 +52,9 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
     * Examine the right side of an assignment and if it is constant then return the constant value.
     *
     * @param assignment The assignment to examine
-    * @param lValueType The type of the lvalue
     * @return The constant value if the right side is constant
     */
-   private ConstantValue getConstantAssignmentValue(StatementAssignment assignment, SymbolType lValueType) {
+   private ConstantValue getConstantAssignmentValue(StatementAssignment assignment) {
 
       if(assignment.getrValue1() == null && Pass2ConstantIdentification.getConstant(assignment.getrValue2()) != null) {
          if(assignment.getOperator() == null) {

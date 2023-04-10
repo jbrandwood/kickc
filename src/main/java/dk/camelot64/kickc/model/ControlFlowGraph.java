@@ -74,10 +74,8 @@ public class ControlFlowGraph implements Graph {
     * Clear all statement indices,
     */
    public void clearStatementIndices() {
-      for(var block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            statement.setIndex(null);
-         }
+      for (Statement statement : getAllStatements()) {
+         statement.setIndex(null);
       }
    }
 

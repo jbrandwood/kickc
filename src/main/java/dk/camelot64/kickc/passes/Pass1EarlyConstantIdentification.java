@@ -75,8 +75,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
          }
       }
       // Remove the statements
-      for(var allBlock : getGraph().getAllBlocks()) {
-         allBlock.getStatements().removeIf(removeStmt::contains);
+      for(var block : getGraph().getAllBlocks()) {
+         block.getStatements().removeIf(removeStmt::contains);
       }
       // Replace all variable refs with constant refs
       ProgramValueIterator.execute(getProgram(), new AliasReplacer(aliases));

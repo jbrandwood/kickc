@@ -35,39 +35,37 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               Operator operator = conditionalJump.getOperator();
-               if(operator!=null && conditionalJump.getrValue2() instanceof ConstantValue) {
-                  SymbolType valueType = SymbolTypeInference.inferType(getProgramScope(), conditionalJump.getrValue1());
-                  ConstantValue constantValue = (ConstantValue) conditionalJump.getrValue2();
-                  ConstantLiteral constantLiteral = null;
-                  try {
-                     constantLiteral = constantValue.calculateLiteral(getProgramScope());
-                  } catch(ConstantNotLiteral e) {
-                     // Ignore
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementConditionalJump) {
+            StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
+            Operator operator = conditionalJump.getOperator();
+            if(operator!=null && conditionalJump.getrValue2() instanceof ConstantValue) {
+               SymbolType valueType = SymbolTypeInference.inferType(getProgramScope(), conditionalJump.getrValue1());
+               ConstantValue constantValue = (ConstantValue) conditionalJump.getrValue2();
+               ConstantLiteral constantLiteral = null;
+               try {
+                  constantLiteral = constantValue.calculateLiteral(getProgramScope());
+               } catch(ConstantNotLiteral e) {
+                  // Ignore
+               }
+               if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
+                  // Found > C - rewrite to >= C+1 if possible
+                  Long longValue = (Long) constantLiteral.getValue();
+                  if(longValue > 0x00L && longValue < 0xffL) {
+                     // Rewrite is possible - do it
+                     getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
+                     conditionalJump.setOperator(Operators.GE);
+                     conditionalJump.setrValue2(new ConstantBinary(constantValue, Operators.PLUS, new ConstantInteger(1L)));
                   }
-                  if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
-                     // Found > C - rewrite to >= C+1 if possible
-                     Long longValue = (Long) constantLiteral.getValue();
-                     if(longValue > 0x00L && longValue < 0xffL) {
-                        // Rewrite is possible - do it
-                        getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
-                        conditionalJump.setOperator(Operators.GE);
-                        conditionalJump.setrValue2(new ConstantBinary(constantValue, Operators.PLUS, new ConstantInteger(1L)));
-                     }
-                  }
-                  if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
-                     // Found <= C - rewrite to < C+1 if possible
-                     Long longValue = (Long) constantLiteral.getValue();
-                     if(longValue > 0x00L && longValue < 0xffL) {
-                        // Rewrite is possible - do it
-                        getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
-                        conditionalJump.setOperator(Operators.LT);
-                        conditionalJump.setrValue2(new ConstantBinary(constantValue, Operators.PLUS, new ConstantInteger(1L)));
-                     }
+               }
+               if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
+                  // Found <= C - rewrite to < C+1 if possible
+                  Long longValue = (Long) constantLiteral.getValue();
+                  if(longValue > 0x00L && longValue < 0xffL) {
+                     // Rewrite is possible - do it
+                     getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
+                     conditionalJump.setOperator(Operators.LT);
+                     conditionalJump.setrValue2(new ConstantBinary(constantValue, Operators.PLUS, new ConstantInteger(1L)));
                   }
                }
             }

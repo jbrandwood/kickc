@@ -27,21 +27,20 @@ public class Pass1UnrollConditionVariableSsa extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               final StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               if(conditionalJump.isDeclaredUnroll()) {
-                  Collection<VariableRef> referencedVars = new LinkedHashSet<>();
-                  findAllReferencedVars(referencedVars, conditionalJump.getrValue1());
-                  findAllReferencedVars(referencedVars, conditionalJump.getrValue2());
-                  for(VariableRef referencedVar : referencedVars) {
-                     final Variable variable = getProgramScope().getVariable(referencedVar);
-                     if(variable.isKindLoadStore()) {
-                        // Convert the variable to versioned if it is load/store
-                        getLog().append("Converting unrolled condition variable to single-static-assignment "+variable);
-                        variable.setKind(Variable.Kind.PHI_MASTER);
-                     }
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof final StatementConditionalJump conditionalJump) {
+            if (conditionalJump.isDeclaredUnroll()) {
+               Collection<VariableRef> referencedVars = new LinkedHashSet<>();
+               findAllReferencedVars(referencedVars, conditionalJump.getrValue1());
+               findAllReferencedVars(referencedVars, conditionalJump.getrValue2());
+               for (VariableRef referencedVar : referencedVars) {
+                  final Variable variable = getProgramScope().getVariable(referencedVar);
+                  if (variable.isKindLoadStore()) {
+                     // Convert the variable to versioned if it is load/store
+                     getLog().append(
+                         "Converting unrolled condition variable to single-static-assignment "
+                             + variable);
+                     variable.setKind(Variable.Kind.PHI_MASTER);
                   }
                }
             }

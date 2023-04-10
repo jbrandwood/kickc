@@ -24,13 +24,11 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               checkAssignment((StatementAssignment) statement);
-            }
-            // TODO: Implement checking for calls / ...
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof final StatementAssignment assignment) {
+            checkAssignment(assignment);
          }
+         // TODO: Implement checking for calls / ...
       }
       for(Variable var : getScope().getAllVars(true)) {
          if(var.getInitValue()!=null) {

@@ -49,20 +49,21 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Version all non-versioned non-intermediary being assigned a value.
     */
    private void versionAllAssignments() {
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               StatementLValue statementLValue = (StatementLValue) statement;
-               LValue lValue = statementLValue.getlValue();
-               if(lValue instanceof VariableRef) {
-                  versionAssignment((VariableRef) lValue, new ProgramValue.ProgramValueLValue(statementLValue), statementLValue.getSource());
-               } else if(lValue instanceof ValueList) {
-                  List<RValue> lValueList = ((ValueList) lValue).getList();
-                  for(int i = 0; i < lValueList.size(); i++) {
-                     LValue lVal = (LValue) lValueList.get(i);
-                     if(lVal instanceof VariableRef) {
-                        versionAssignment((VariableRef) lVal, new ProgramValue.ProgramValueListElement((ValueList) lValue, i), statementLValue.getSource());
-                     }
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof StatementLValue statementLValue) {
+            LValue lValue = statementLValue.getlValue();
+            if (lValue instanceof VariableRef) {
+               versionAssignment((VariableRef) lValue,
+                   new ProgramValue.ProgramValueLValue(statementLValue),
+                   statementLValue.getSource());
+            } else if (lValue instanceof ValueList) {
+               List<RValue> lValueList = ((ValueList) lValue).getList();
+               for (int i = 0; i < lValueList.size(); i++) {
+                  LValue lVal = (LValue) lValueList.get(i);
+                  if (lVal instanceof VariableRef) {
+                     versionAssignment((VariableRef) lVal,
+                         new ProgramValue.ProgramValueListElement((ValueList) lValue, i),
+                         statementLValue.getSource());
                   }
                }
             }
@@ -107,8 +108,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                programValue.set(version.getRef());
             }
             // Update map of versions encountered in the block
-            if(currentStmt instanceof StatementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
-               StatementLValue statementLValue = (StatementLValue) currentStmt;
+            if(currentStmt instanceof StatementLValue statementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
                LValue lValue = statementLValue.getlValue();
                if(lValue instanceof VariableRef) {
                   updateBlockVersions((VariableRef) lValue, blockVersions);

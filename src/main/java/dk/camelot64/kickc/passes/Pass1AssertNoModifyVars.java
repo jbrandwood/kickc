@@ -20,14 +20,16 @@ public class Pass1AssertNoModifyVars extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               StatementLValue statementLValue = (StatementLValue) statement;
-               if(!statementLValue.isInitialAssignment() && statementLValue.getlValue() instanceof VariableRef) {
-                  Variable assignedVar = getProgramScope().getVariable((VariableRef) statementLValue.getlValue());
-                  if(assignedVar.isNoModify())
-                     throw new CompileError("const variable may not be modified! " + assignedVar.toString(), statement);
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof StatementLValue) {
+            StatementLValue statementLValue = (StatementLValue) statement;
+            if (!statementLValue.isInitialAssignment()
+                && statementLValue.getlValue() instanceof VariableRef) {
+               Variable assignedVar = getProgramScope().getVariable(
+                   (VariableRef) statementLValue.getlValue());
+               if (assignedVar.isNoModify()) {
+                  throw new CompileError(
+                      "const variable may not be modified! " + assignedVar.toString(), statement);
                }
             }
          }

@@ -170,11 +170,9 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @return true if the register allocation contains an overlapping allocation. false otherwise.
     */
    public static boolean isAllocationOverlapping(Program program) {
-      for(var block : program.getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(isStatementAllocationOverlapping(program, statement)) {
-               return true;
-            }
+      for(var statement : program.getGraph().getAllStatements()) {
+         if(isStatementAllocationOverlapping(program, statement)) {
+            return true;
          }
       }
       return false;

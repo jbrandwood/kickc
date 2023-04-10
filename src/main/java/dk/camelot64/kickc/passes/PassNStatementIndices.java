@@ -22,10 +22,8 @@ public class PassNStatementIndices extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       int currentIdx = 0;
-      for(var block : getProgram().getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            statement.setIndex(currentIdx++);
-         }
+      for(var statement : getProgram().getGraph().getAllStatements()) {
+         statement.setIndex(currentIdx++);
       }
       return false;
    }

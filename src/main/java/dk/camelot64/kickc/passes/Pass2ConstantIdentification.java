@@ -59,7 +59,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // NULL pointer assigment is OK
             ;
          else if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
-            ConstantLiteral constantLiteral = null;
+            ConstantLiteral<?> constantLiteral = null;
             try {
                constantLiteral = constVal.calculateLiteral(getProgramScope());
             } catch(ConstantNotLiteral e) {
@@ -92,16 +92,16 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    private static class ConstantVariableValue {
 
       /** The variable that has been determined to be constant. */
-      private VariableRef variableRef;
+      private final VariableRef variableRef;
 
       /** The constant value of the variable. */
-      private ConstantValue constantValue;
+      private final ConstantValue constantValue;
 
       /**
        * The statement that assigns the variable its value (the assignment will be removed at the end).
        * Either a {@link StatementAssignment} or a {@link StatementPhiBlock}.
        */
-      private Statement assignment;
+      private final Statement assignment;
 
       public ConstantVariableValue(VariableRef variableRef, ConstantValue constantValue, Statement assignment) {
          this.variableRef = variableRef;
@@ -131,39 +131,34 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       final Map<VariableRef, ConstantVariableValue> constants = new LinkedHashMap<>();
 
       // Look for constants among versions, intermediates & declared constants
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef) {
-                  VariableRef varRef = (VariableRef) lValue;
-                  Variable var = getProgramScope().getVariable(varRef);
-                  if(var.isVolatile() || var.isKindLoadStore())
-                     // Do not examine volatiles and non-versioned variables
-                     continue;
-                  if(var.getRegister() != null && var.getRegister().isMem())
-                     // Skip variables allocated into memory
-                     continue;
-                  ConstantValue constant = getConstant(assignment.getrValue2());
-                  if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
-                     constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
-                  }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementAssignment assignment) {
+            LValue lValue = assignment.getlValue();
+            if(lValue instanceof VariableRef varRef) {
+               Variable var = getProgramScope().getVariable(varRef);
+               if(var.isVolatile() || var.isKindLoadStore())
+                  // Do not examine volatiles and non-versioned variables
+                  continue;
+               if(var.getRegister() != null && var.getRegister().isMem())
+                  // Skip variables allocated into memory
+                  continue;
+               ConstantValue constant = getConstant(assignment.getrValue2());
+               if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
+                  constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
                }
-            } else if(statement instanceof StatementPhiBlock) {
-               StatementPhiBlock phi = (StatementPhiBlock) statement;
-               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-                  if(phiVariable.getValues().size() == 1) {
-                     StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
-                     if(getConstant(phiRValue.getrValue()) != null) {
-                        VariableRef varRef = phiVariable.getVariable();
-                        Variable var = getProgramScope().getVariable(varRef);
-                        if(var.isVolatile() || var.isKindLoadStore())
-                           // Do not examine volatiles and non-versioned variables
-                           continue;
-                        ConstantValue constant = getConstant(phiRValue.getrValue());
-                        constants.put(varRef, new ConstantVariableValue(varRef, constant, phi));
-                     }
+            }
+         } else if(statement instanceof StatementPhiBlock phi) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               if(phiVariable.getValues().size() == 1) {
+                  StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+                  if(getConstant(phiRValue.getrValue()) != null) {
+                     VariableRef varRef = phiVariable.getVariable();
+                     Variable var = getProgramScope().getVariable(varRef);
+                     if(var.isVolatile() || var.isKindLoadStore())
+                        // Do not examine volatiles and non-versioned variables
+                        continue;
+                     ConstantValue constant = getConstant(phiRValue.getrValue());
+                     constants.put(varRef, new ConstantVariableValue(varRef, constant, phi));
                   }
                }
             }
@@ -186,8 +181,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                continue;
             StatementAssignment assignment = (StatementAssignment) varAssignment.statementLValue;
             LValue lValue = assignment.getlValue();
-            if(lValue instanceof VariableRef) {
-               VariableRef varRef = (VariableRef) lValue;
+            if(lValue instanceof VariableRef varRef) {
                ConstantValue constant = getConstant(assignment.getrValue2());
                if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
                   constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
@@ -209,11 +203,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    public static ConstantValue getConstant(RValue rValue) {
       if(rValue instanceof ConstantValue) {
          return (ConstantValue) rValue;
-      } else if(rValue instanceof Variable && ((Variable) rValue).isKindConstant()) {
-         Variable constantVar = (Variable) rValue;
+      } else if(rValue instanceof Variable constantVar && ((Variable) rValue).isKindConstant()) {
          return constantVar.getConstantRef();
-      } else if(rValue instanceof CastValue) {
-         CastValue castValue = (CastValue) rValue;
+      } else if(rValue instanceof CastValue castValue) {
          ConstantValue castConstant = getConstant(castValue.getValue());
          if(castConstant != null) {
             return new ConstantCastValue(castValue.getToType(), castConstant);
@@ -236,47 +228,43 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          return new ConstantBinary(c1, operator, c2);
       }
 
-      switch(operator.getOperator()) {
-         case "-":
-         case "*":
-         case "/":
-         case "%":
-         case "&":
-         case "|":
-         case "&&":
-         case "||":
-         case "^":
-         case "<<":
-         case ">>":
-         case "==":
-         case "!=":
-         case ">":
-         case "<":
-         case ">=":
-         case "<=":
-            return new ConstantBinary(c1, operator, c2);
-         case "w=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(256L)), Operators.PLUS, c2);
-         case "dw=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(65536L)), Operators.PLUS, c2);
-         case "byte0=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffffff00L)), Operators.BOOL_OR, c2);
-         case "byte1=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff00ffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x100L)));
-         case "byte2=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xff00ffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
-         case "byte3=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x00ffffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x1000000L)));
-         case "word0=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff0000L)), Operators.BOOL_OR, c2);
-         case "word1=":
-            return new ConstantBinary(new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x0000ffffL)), Operators.BOOL_OR, new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
-         case "*idx":
+      return switch (operator.getOperator()) {
+         case "-", "*", "/", "%", "&", "|", "&&", "||", "^", "<<", ">>", "==", "!=", ">", "<", ">=", "<=" ->
+             new ConstantBinary(c1, operator, c2);
+         case "w=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(256L)), Operators.PLUS,
+             c2);
+         case "dw=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(65536L)),
+             Operators.PLUS, c2);
+         case "byte0=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffffff00L)),
+             Operators.BOOL_OR, c2);
+         case "byte1=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff00ffL)),
+             Operators.BOOL_OR,
+             new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x100L)));
+         case "byte2=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xff00ffffL)),
+             Operators.BOOL_OR,
+             new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
+         case "byte3=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x00ffffffL)),
+             Operators.BOOL_OR,
+             new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x1000000L)));
+         case "word0=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0xffff0000L)),
+             Operators.BOOL_OR, c2);
+         case "word1=" -> new ConstantBinary(
+             new ConstantBinary(c1, Operators.BOOL_AND, new ConstantInteger(0x0000ffffL)),
+             Operators.BOOL_OR,
+             new ConstantBinary(c2, Operators.MULTIPLY, new ConstantInteger(0x10000L)));
+         case "*idx" ->
             // Pointer dereference - not constant
-            return null;
-         default:
-            throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
-      }
+             null;
+         default ->
+             throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
+      };
    }
 
 
@@ -301,13 +289,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
 
       // Examine all statements
-      for(var block : program.getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && procedureRef.equals(assignment.getrValue2())) {
-                  return true;
-               }
+      for(var statement : program.getGraph().getAllStatements()) {
+         if(statement instanceof StatementAssignment assignment) {
+            if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && procedureRef.equals(assignment.getrValue2())) {
+               return true;
             }
          }
       }

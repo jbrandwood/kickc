@@ -55,20 +55,18 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       });
 
       // Examine all assignments - performing constant consolidation for +/-
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               Operator operator = assignment.getOperator();
-               if(operator != null) {
-                  switch(operator.getOperator()) {
-                     case "+":
-                        optimized[0] |= optimizePlus(assignment);
-                        break;
-                     case "*idx":
-                        optimized[0] |= optimizeArrayDeref(assignment);
-                        break;
-                  }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementAssignment) {
+            StatementAssignment assignment = (StatementAssignment) statement;
+            Operator operator = assignment.getOperator();
+            if(operator != null) {
+               switch(operator.getOperator()) {
+                  case "+":
+                     optimized[0] |= optimizePlus(assignment);
+                     break;
+                  case "*idx":
+                     optimized[0] |= optimizeArrayDeref(assignment);
+                     break;
                }
             }
          }

@@ -62,11 +62,9 @@ public interface Graph {
     * @return The statement
     */
    default Statement getStatementByIndex(int statementIdx) {
-      for(Graph.Block block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement.getIndex() != null && statementIdx == statement.getIndex()) {
-               return statement;
-            }
+      for (Statement statement : getAllStatements()) {
+         if (statement.getIndex() != null && statementIdx == statement.getIndex()) {
+            return statement;
          }
       }
       return null;

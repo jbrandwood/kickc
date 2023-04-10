@@ -66,33 +66,29 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    private List<SimpleCondition> getSimpleConditionTodos() {
       final VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
       List<SimpleCondition> todos = new ArrayList<>();
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
-                  RValue conditionRValue = conditionalJump.getrValue2();
-                  if(conditionRValue instanceof VariableRef) {
-                     VariableRef conditionVar = (VariableRef) conditionRValue;
-                     final Collection<Integer> conditionRvalueUsages = variableReferenceInfos.getVarUseStatements(conditionVar);
-                     final Integer conditionDefineStmtIdx = variableReferenceInfos.getVarDefineStatement(conditionVar);
-                     if(conditionRvalueUsages.size() == 1 && conditionDefineStmtIdx != null) {
-                        final Statement conditionDefineStmt = getGraph().getStatementByIndex(conditionDefineStmtIdx);
-                        if(conditionDefineStmt instanceof StatementAssignment && ((StatementAssignment) conditionDefineStmt).getOperator() != null) {
-                           StatementAssignment conditionAssignment = (StatementAssignment) conditionDefineStmt;
-                           switch(conditionAssignment.getOperator().getOperator()) {
-                              case "==":
-                              case "<>":
-                              case "!=":
-                              case "<":
-                              case ">":
-                              case "<=":
-                              case "=<":
-                              case ">=":
-                              case "=>":
-                                 todos.add(new SimpleCondition(conditionalJump, conditionAssignment, conditionVar));
-                              default:
-                           }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementConditionalJump conditionalJump) {
+            if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
+               RValue conditionRValue = conditionalJump.getrValue2();
+               if(conditionRValue instanceof VariableRef conditionVar) {
+                  final Collection<Integer> conditionRvalueUsages = variableReferenceInfos.getVarUseStatements(conditionVar);
+                  final Integer conditionDefineStmtIdx = variableReferenceInfos.getVarDefineStatement(conditionVar);
+                  if(conditionRvalueUsages.size() == 1 && conditionDefineStmtIdx != null) {
+                     final Statement conditionDefineStmt = getGraph().getStatementByIndex(conditionDefineStmtIdx);
+                     if(conditionDefineStmt instanceof StatementAssignment conditionAssignment
+                         && ((StatementAssignment) conditionDefineStmt).getOperator() != null) {
+                        switch(conditionAssignment.getOperator().getOperator()) {
+                           case "==":
+                           case "<>":
+                           case "!=":
+                           case "<":
+                           case ">":
+                           case "<=":
+                           case "=<":
+                           case ">=":
+                           case "=>":
+                              todos.add(new SimpleCondition(conditionalJump, conditionAssignment, conditionVar));
+                           default:
                         }
                      }
                   }

@@ -24,17 +24,15 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
 
       Map<VariableRef, Statement> assignments = new LinkedHashMap<>();
 
-      for(var block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               LValue lValue = ((StatementLValue) statement).getlValue();
-               if(lValue instanceof VariableRef) {
-                  checkAssignment(assignments, (VariableRef) lValue, statement);
-               }
-            } else if(statement instanceof StatementPhiBlock) {
-               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  checkAssignment(assignments, phiVariable.getVariable(), statement);
-               }
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof StatementLValue) {
+            LValue lValue = ((StatementLValue) statement).getlValue();
+            if (lValue instanceof VariableRef) {
+               checkAssignment(assignments, (VariableRef) lValue, statement);
+            }
+         } else if (statement instanceof StatementPhiBlock) {
+            for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+               checkAssignment(assignments, phiVariable.getVariable(), statement);
             }
          }
       }

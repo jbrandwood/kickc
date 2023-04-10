@@ -925,28 +925,39 @@ public class Pass4CodeGeneration {
                 }
             } else if (statement instanceof StatementCallExecute) {
                 // TODO: This part seems never to be executed! Old code?
-                StatementCallExecute call = (StatementCallExecute) statement;
-                RValue procedureRVal = call.getProcedureRVal();
-                // Generate ASM for a call
-                AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
-                if (!(procedureRVal instanceof ProcedureRef)) {
-                    asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-                }
 //                StatementCallExecute call = (StatementCallExecute) statement;
-//                Procedure procedure = getScope().getProcedure(call.getProcedure());
-//                Procedure procedureFrom = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
 //                RValue procedureRVal = call.getProcedureRVal();
-//                // Same as PHI
-//                if(procedure.isDeclaredBanked() && procedureFrom.getBank() != procedure.getBank()) {
-//                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallPrepare(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
-//                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallExecute(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
-//                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallFinalize(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
-//                } else {
-//                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
-//                }
+//                // Generate ASM for a call
+//                AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
 //                if (!(procedureRVal instanceof ProcedureRef)) {
 //                    asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
 //                }
+                StatementCallExecute call = (StatementCallExecute) statement;
+                ProcedureRef procedureRef = call.getProcedure();
+                if(procedureRef != null) {
+                    ProgramScope scope = getScope();
+                    Procedure procedure = scope.getProcedure(procedureRef);
+                    Procedure procedureFrom = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
+                    RValue procedureRVal = call.getProcedureRVal();
+                    // Same as PHI
+                    if (procedure.isDeclaredBanked() && procedureFrom.getBank() != procedure.getBank()) {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallPrepare(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallExecute(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.bankCallFinalize(procedure.getBankArea(), procedure.getBank(), call.getProcedure().getFullName(), program), program);
+                    } else {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                    }
+                    if (!(procedureRVal instanceof ProcedureRef)) {
+                        asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                    }
+                } else {
+                    RValue procedureRVal = call.getProcedureRVal();
+                    // Generate ASM for a call
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                    if (!(procedureRVal instanceof ProcedureRef)) {
+                        asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                    }
+                }
             } else if (statement instanceof StatementExprSideEffect) {
                 AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program), program);
             } else if (statement instanceof StatementReturn) {

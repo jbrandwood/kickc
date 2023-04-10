@@ -14,7 +14,6 @@ import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {

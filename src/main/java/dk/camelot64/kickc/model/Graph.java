@@ -18,6 +18,10 @@ public interface Graph {
 
    void addBlock(Graph.Block block);
 
+   default List<Statement> getAllStatements() {
+      return getAllBlocks().stream().map(Block::getStatements).flatMap(Collection::stream).toList();
+   }
+
    default List<Graph.Block> getPredecessors(Graph.Block block) {
       ArrayList<Block> predecessorBlocks = new ArrayList<>();
       for(Graph.Block other : getAllBlocks()) {

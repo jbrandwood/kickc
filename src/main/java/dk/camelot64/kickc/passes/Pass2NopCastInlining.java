@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -13,8 +11,11 @@ import dk.camelot64.kickc.model.values.CastValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
+import java.util.Set;
 
 /**
  * Compiler Pass inlining cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
@@ -45,11 +46,9 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement stmt = stmtIt.next();
-            if(stmt instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) stmt;
+            if(stmt instanceof StatementAssignment assignment) {
                // TODO: Handle constant values?
-               if(assignment.getOperator() == null && assignment.getrValue2() instanceof CastValue) {
-                  CastValue castValue = (CastValue) assignment.getrValue2();
+               if(assignment.getOperator() == null && assignment.getrValue2() instanceof CastValue castValue) {
                   SymbolType subValType = SymbolTypeInference.inferType(getProgramScope(), castValue.getValue());
                   final SymbolType castToType = castValue.getToType();
                   boolean isNopCast = isNopCast(castToType, subValType);
@@ -59,10 +58,8 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                      if(assignmentVar.isKindLoadStore())
                         continue;
 
-                     boolean isIntermediateVar = false;
-                     if(castValue.getValue() instanceof VariableRef && ((VariableRef) castValue.getValue()).isIntermediate()) {
-                        isIntermediateVar = true;
-                     }
+                     boolean isIntermediateVar = castValue.getValue() instanceof VariableRef
+                         && ((VariableRef) castValue.getValue()).isIntermediate();
                      if(isIntermediateVar) {
                         if(mode == null || mode == Mode.VARS) {
                            mode = Mode.VARS;
@@ -91,8 +88,7 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                         while(castVal instanceof CastValue) {
                            castVal = ((CastValue) castVal).getValue();
                         }
-                        if(castVal instanceof VariableRef) {
-                           VariableRef castVarRef = (VariableRef) castVal;
+                        if(castVal instanceof VariableRef castVarRef) {
                            VariableRef lValueRef = (VariableRef) assignment.getlValue();
                            if(castVarRef.getScopeNames().equals(lValueRef.getScopeNames())) {
                               // Same scope - optimize away

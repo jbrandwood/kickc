@@ -155,7 +155,6 @@ public interface Graph {
 
       void addStatementBeforeCall(Statement newStatement);
 
-
       String toString(Program program, Graph graph);
    }
 }

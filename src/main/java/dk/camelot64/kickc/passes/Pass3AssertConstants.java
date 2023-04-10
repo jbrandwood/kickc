@@ -2,12 +2,12 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAsm;
 import dk.camelot64.kickc.model.statements.StatementKickAsm;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -42,29 +42,30 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
             }
             List<SymbolRef> uses = statementKickAsm.getUses();
             for(SymbolRef use : uses) {
-               if(!(use instanceof ConstantRef)) {
-                  throw new CompileError("Inline KickAsm reference is not constant " + use, statement);
-               }
+               checkReference(statement, use);
             }
          } else if(statement instanceof StatementAsm statementAsm) {
             Map<String, SymbolRef> referenced = statementAsm.getReferenced();
             for(String label : referenced.keySet()) {
                SymbolRef symbolRef = referenced.get(label);
-               Symbol symbol = getScope().getSymbol(symbolRef);
-               if(symbol instanceof Procedure)
-                  // Referencing procedures are fine!
-                  continue;
-               else if(symbol instanceof Variable && ((Variable) symbol).isKindConstant())
-                  // Referencing constants are fine!
-                  continue;
-               else if(symbol instanceof Variable && ((Variable) symbol).isKindLoadStore())
-                  // Referencing load/store is fine!
-                  continue;
-               else
-                  throw new CompileError("Inline ASM reference is not constant " + label, statement);
+               checkReference(statement, symbolRef);
             }
          }
       }
    }
 
+   private void checkReference(Statement statement, SymbolRef symbolRef) {
+      Symbol symbol = getScope().getSymbol(symbolRef);
+      if(symbol instanceof Procedure)
+         // Referencing procedures are fine!
+         return;
+      else if(symbol instanceof Variable && ((Variable) symbol).isKindConstant())
+         // Referencing constants are fine!
+         return;
+      else if(symbol instanceof Variable && ((Variable) symbol).isKindLoadStore())
+         // Referencing load/store is fine!
+         return;
+      else
+         throw new CompileError("Inline ASM reference is not constant " + symbolRef, statement);
+   }
 }

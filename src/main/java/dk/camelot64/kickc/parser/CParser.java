@@ -111,7 +111,7 @@ public class CParser {
      */
     public static final String PRAGMA_BANK = "bank";
     /**
-     * #pragma nobank specifies the scope of the sequent functions to be near. Segments are defined in the linker file.
+     * #pragma nobank Changes the current bank to the default bank.
      */
     public static final String PRAGMA_NOBANK = "nobank";
 

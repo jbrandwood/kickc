@@ -582,7 +582,7 @@ public class Pass4CodeGeneration {
                         // Set segment
                         // We check first the bank of the variable. Only local variables can be stored in the bank.
                         // Parameters must be stored in main memory.
-                        if(!variable.getDataSegment().equals("Data")) {
+                        if(!variable.getDataSegment().equals(Scope.SEGMENT_DATA_DEFAULT)) {
                             if(scope instanceof Procedure) {
                                 Procedure procedure = (Procedure) scope;
                                 List<Variable> parameters = procedure.getParameters();
@@ -590,7 +590,7 @@ public class Pass4CodeGeneration {
                                     Variable master = variable.getPhiMaster();
                                     if (master != null) {
                                         if (parameters.contains(master) || master.getLocalName().equals("return")) {
-                                            variable.setDataSegment("Data");
+                                            variable.setDataSegment(Scope.SEGMENT_DATA_DEFAULT);
                                         }
                                     }
                                 }

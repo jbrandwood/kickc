@@ -108,6 +108,14 @@ public class Bank {
    private final String bankArea; // The bank method to apply.
    private Long bank; // The bank number.
 
+   /**
+    * Creates a new Bank which collects the necessary data to handle banking.
+    * For example, on the Commander X16, RAM is banked from address 0xA000 till 0xBFFF.
+    * Zeropage 0x00 configures this banked RAM, with a number from 0x00 till 0xff.
+    * So banked RAM is is a bankArea, and the bank is a configurable bank number in the bankArea.
+    * @param bankArea A bank area is a memory range that is banked on a target platform.
+    * @param bank A bank is a number that defines a bank configuration in a bank area.
+    */
    public Bank(String bankArea, Long bank) {
       this.bankArea = bankArea;
       this.bank = bank;

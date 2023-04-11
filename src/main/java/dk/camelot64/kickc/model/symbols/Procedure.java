@@ -34,7 +34,7 @@ public class Procedure extends Scope {
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
-   /** The data and code segment to put the procedure into. */
+   /** The data and code segment to put the procedure into. When null the procedure is not assigned to the code segment. */
    private String segmentCode;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
@@ -42,7 +42,9 @@ public class Procedure extends Scope {
    private boolean isConstructor;
    /** The source of the procedure definition. */
    private StatementSource definitionSource;
-   /** The bank segment information. Collected during parsing. These are used to compare with the current currentBank to decide a near or a far call, and to keep inline calling routines.*/
+   /** The bank segment information. Collected during parsing. These are used to compare with the current currentBank to decide a near or a far call, and to keep inline calling routines.
+    * When this value is null, the procedure is not allocated to a bank.
+    */
    private Bank bankLocation;
 
 
@@ -106,7 +108,6 @@ public class Procedure extends Scope {
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.segmentCode = segmentCode;
-      this.segmentData = segmentData; // The parameter dataSegment was foreseen, but never implemented.
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
       this.isConstructor = false;
@@ -133,10 +134,6 @@ public class Procedure extends Scope {
    }
 
    public void setSegmentCode(String segmentCode) {
-      this.segmentCode = segmentCode;
-   }
-
-   public void setCodeSegment(String codeSegment) {
       this.segmentCode = segmentCode;
    }
 
@@ -300,7 +297,7 @@ public class Procedure extends Scope {
          res.append("__intrinsic ");
       }
       if(isDeclaredBanked()) {
-         res.append("__bank(").append("bank").append(") ");
+         res.append("__bank(").append(this.getBankArea()).append(", ").append(this.getBank()).append(") ");
       }
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");

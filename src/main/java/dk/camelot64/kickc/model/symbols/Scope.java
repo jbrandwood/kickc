@@ -26,7 +26,7 @@ public abstract class Scope implements Symbol {
    private int blockCount = 1;
    private Scope parentScope;
    private String fullName;
-   protected String segmentData;
+   private String segmentData;
 
    public Scope(String name, Scope parentScope, String segmentData) {
       this.name = name;

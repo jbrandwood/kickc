@@ -106,7 +106,6 @@ public class Program {
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
    /** All #pragma code segments. Collected during parsing. These are used by the bank() pragmas to validate if the code segment exists during compilation.*/
-   private final Map<String, KickCParser.PragmaContext> pragmaCodeSegs;
 
    public Program() {
       this.outputFileManager = new OutputFileManager();
@@ -119,8 +118,6 @@ public class Program {
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
       this.procedureCompilations = new LinkedHashMap<>();
-      this.pragmaCodeSegs = new HashMap<>(); // Used to collect all pragma code segments.
-
    }
 
    /**
@@ -539,9 +536,5 @@ public class Program {
       if(getAsm() != null)
          sizeInfo.append(getAsm().getSizeInfo());
       return sizeInfo.toString();
-   }
-
-   public Map<String, KickCParser.PragmaContext> getPragmaCodeSegs() {
-      return pragmaCodeSegs;
    }
 }

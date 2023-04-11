@@ -1257,17 +1257,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDirectiveBank(KickCParser.DirectiveBankContext ctx) {
-      String bankArea = "";
-      Long bank = -1L;
-      if(this.currentBank != null) {
-         bankArea = this.currentBank.getBankArea();
-         bank = this.currentBank.getBank();
-      }
 
-      if(ctx.getChildCount() >= 5) {
-         bankArea = ctx.getChild(2).getText();
-         bank = Long.valueOf(ctx.getChild(4).getText());
-      }
+      String bankArea = ctx.getChild(2).getText();
+      Long bank = Long.valueOf(ctx.getChild(4).getText());
 
       return new Directive.Bank(bankArea, bank);
    }

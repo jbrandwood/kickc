@@ -42,7 +42,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** Used to build the scopes of the source file. */
    private final Stack<Scope> scopeStack;
    /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
-   private final List<KickCParser.PragmaContext> pragmaConstructorFors;
+   private final List<KickCParser.PragmaParametersContext> pragmaConstructorFors;
 
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding, String defaultInterruptType) {
@@ -148,7 +148,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       // Handle #pragma constructor_for()
       List<ProcedureRef> constructorProcs = new ArrayList<>();
-      for(KickCParser.PragmaContext pragmaConstructorFor : pragmaConstructorFors) {
+      for(KickCParser.PragmaParametersContext pragmaConstructorFor : pragmaConstructorFors) {
          final List<KickCParser.PragmaParamContext> names = pragmaConstructorFor.pragmaParam();
          if(names.size() < 2)
             throw new CompileError("#pragma constructor_for requires at least 2 parameters.", new StatementSource(pragmaConstructorFor));
@@ -237,8 +237,29 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
+   // #pragma NAME without parameters are registered in the parser as #pragma NAME ().
+   // The CPreprocessor.java parses first the #pragma statements and modifies them
+   // and selects which pragmas are allowed to be passed to the main parser.
+   // #pragma nobank is such a pragma, that must be passed. The CPreprocessor adds
+   // parentheses after the NAME, which comply with the KickCParser.g4 definition.
+   // But the programmer can write #pragma nobank without issues.
+   public Object visitPragmaNoParameters(KickCParser.PragmaNoParametersContext ctx) {
+      final String pragmaName = ctx.NAME().getText();
+      switch(pragmaName) {
+         case CParser.PRAGMA_TARGET:
+            throw new InternalError("Error! #pragma target() should be handled in preprocessor!");
+         case CParser.PRAGMA_NOBANK:
+            this.currentBank = null; // When the current segment is null, the procedure will not be declared as far.
+            break;
+         default:
+            program.getLog().append("Warning! Unknown #pragma " + pragmaName);
+
+      }
+      return null;
+   }
+
    @Override
-   public Object visitPragma(KickCParser.PragmaContext ctx) {
+   public Object visitPragmaParameters(KickCParser.PragmaParametersContext ctx) {
       final String pragmaName = ctx.NAME().getText();
       switch(pragmaName) {
          case CParser.PRAGMA_TARGET:
@@ -340,7 +361,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param ctx The #pragma
     * @return The single parameter
     */
-   private static KickCParser.PragmaParamContext pragmaParamSingle(KickCParser.PragmaContext ctx) {
+   private static KickCParser.PragmaParamContext pragmaParamSingle(KickCParser.PragmaParametersContext ctx) {
       if(ctx.pragmaParam().size() != 1)
          throw new CompileError("#pragma expects a single parameter!", new StatementSource(ctx));
       return ctx.pragmaParam().get(0);

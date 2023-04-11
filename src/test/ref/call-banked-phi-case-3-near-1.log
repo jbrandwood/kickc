@@ -2,22 +2,6 @@ Loading link script "call-banked-phi.ld"
 
 CONTROL FLOW GRAPH SSA
 
-void main()
-main: scope:[main]  from __start
-  plus::a#0 = '0'
-  plus::b#0 = 7
-  call plus
-  plus::return#0 = plus::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  plus::return#3 = phi( main/plus::return#0 )
-  main::$0 = plus::return#3
-  SCREEN[0] = main::$0
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-
 __bank(cx16_ram, 1) char plus(char a , char b)
 plus: scope:[plus]  from main
   plus::b#1 = phi( main/plus::b#0 )
@@ -30,15 +14,15 @@ plus: scope:[plus]  from main
 plus::@1: scope:[plus]  from plus
   min::return#3 = phi( plus/min::return#0 )
   plus::$0 = min::return#3
-  plus::return#1 = plus::$0
+  plus::return#0 = plus::$0
   to:plus::@return
 plus::@return: scope:[plus]  from plus::@1
-  plus::return#4 = phi( plus::@1/plus::return#1 )
-  plus::return#2 = plus::return#4
+  plus::return#3 = phi( plus::@1/plus::return#0 )
+  plus::return#1 = plus::return#3
   return 
   to:@return
 
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 min: scope:[min]  from plus
   min::b#1 = phi( plus/min::b#0 )
   min::a#1 = phi( plus/min::a#0 )
@@ -48,6 +32,22 @@ min: scope:[min]  from plus
 min::@return: scope:[min]  from min
   min::return#4 = phi( min/min::return#1 )
   min::return#2 = min::return#4
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  plus::a#0 = '0'
+  plus::b#0 = 7
+  call plus
+  plus::return#2 = plus::return#1
+  to:main::@1
+main::@1: scope:[main]  from main
+  plus::return#4 = phi( main/plus::return#2 )
+  main::$0 = plus::return#4
+  SCREEN[0] = main::$0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
@@ -66,7 +66,7 @@ __constant char * const SCREEN = (char *)$400
 void __start()
 void main()
 char main::$0
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::$0
 char min::a
 char min::a#0
@@ -107,10 +107,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (char) 7
 Finalized unsigned number type (char) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias plus::return#0 = plus::return#3 
 Alias min::return#0 = min::return#3 
-Alias plus::return#1 = plus::$0 plus::return#4 plus::return#2 
+Alias plus::return#0 = plus::$0 plus::return#3 plus::return#1 
 Alias min::return#1 = min::$0 min::return#4 min::return#2 
+Alias plus::return#2 = plus::return#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values plus::a#1 plus::a#0
 Identical Phi Values plus::b#1 plus::b#0
@@ -123,31 +123,31 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant min::a#0 = plus::a#0
 Constant min::b#0 = plus::b#0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [5] SCREEN[0] = main::$0
+Simplifying expression containing zero SCREEN in [15] SCREEN[0] = main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [9] min::return#1 = min::a#0 + min::b#0
+Constant right-side identified [4] min::return#1 = min::a#0 + min::b#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant min::return#1 = min::a#0+min::b#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant min::return#0 = min::return#1
 Successful SSA optimization Pass2ConstantIdentification
-Constant plus::return#1 = min::return#0
+Constant plus::return#0 = min::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant plus::return#0 = plus::return#1
+Constant plus::return#2 = plus::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant main::$0 = plus::return#0
+Constant main::$0 = plus::return#2
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings min::return#0
 Constant inlined plus::return#0 = min::return#1
 Constant inlined main::$0 = min::return#1
-Constant inlined plus::return#1 = min::return#1
 Constant inlined min::a#0 = plus::a#0
 Constant inlined min::return#0 = min::return#1
+Constant inlined plus::return#2 = min::return#1
 Constant inlined min::b#0 = plus::b#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
@@ -188,7 +188,7 @@ plus::@return: scope:[plus]  from plus
   [6] return 
   to:@return
 
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 min: scope:[min]  from plus
   [7] phi()
   to:min::@return
@@ -199,7 +199,7 @@ min::@return: scope:[min]  from min
 
 VARIABLE REGISTER WEIGHTS
 void main()
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::a
 char min::b
 char min::return
@@ -215,14 +215,14 @@ Statement [1] call plus [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [2] *SCREEN = min::return#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
 Uplift Scope [plus] 
 Uplift Scope [min] 
+Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 90 combination 
 Uplifting [plus] best 90 combination 
 Uplifting [min] best 90 combination 
+Uplifting [main] best 90 combination 
 Uplifting [] best 90 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -341,7 +341,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 __constant char * const SCREEN = (char *) 1024
 void main()
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::a
 char min::b
 char min::return

@@ -245,6 +245,14 @@ public class CPreprocessor implements TokenSource {
          pragmaTokens.addAll(pragmaBody);
          // Pass on the #pragma to the parser - and mark it as already handled
          cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
+      } else {
+         ArrayList<Token> parenthesizedBody = new ArrayList<>();
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "("));
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")"));
+         pragmaBody = parenthesizedBody;
+         pragmaTokens.addAll(pragmaBody);
+         // Pass on the #pragma to the parser - and mark it as already handled
+         cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
       }
       parserPragmas.add(inputToken);
       return true;

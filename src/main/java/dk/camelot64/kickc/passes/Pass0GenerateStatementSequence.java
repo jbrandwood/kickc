@@ -296,20 +296,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             break;
          case CParser.PRAGMA_BANK:
             try {
-               final int size = ctx.getChildCount();
-               if(size==7) {
-                  final String pragmaBankArea = pragmaParamName(ctx.pragmaParam(0));
-                  final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
-                  this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
-               } else {
-                  throw new CompileError("Expected at least 2 pragma parameters. Found '" + ctx.getText() + "'.", new StatementSource(ctx));
-               }
+               final String pragmaBankArea = pragmaParamName(ctx.pragmaParam(0));
+               final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
+               this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
             } catch(IllegalArgumentException e) {
                throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
             }
             break;
          case CParser.PRAGMA_NOBANK:
-            this.currentBank = null; // When the current far segment is null, any function that is far will be called as far.
+            this.currentBank = null; // When the current segment is null, the procedure will not be declared as far.
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));

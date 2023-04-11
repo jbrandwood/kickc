@@ -82,7 +82,7 @@ char mul_f(char m) {
 }
 
 
-#pragma nobank(dummy) // The sequent functions will consider no banking calculations anymore.
+#pragma nobank // The sequent functions will consider no banking calculations anymore.
 
 #pragma code_seg(Bank1) // The sequent functions will be addressed specified by segment bank1 in the linker.
 // The __bank directive declares this function to be banked using call method ram in bank number 1 of banked ram.

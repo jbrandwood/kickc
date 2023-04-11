@@ -107,7 +107,7 @@ public class CParser {
      */
     public static final String PRAGMA_RESOURCE = "resource";
     /**
-     * #pragma bank(...) specifies the scope of the sequent functions to be located in a bank using a specific banking area.
+     * #pragma bank(...) changes the current bank. Functionsand variables will be placed in the specified bank.
      */
     public static final String PRAGMA_BANK = "bank";
     /**

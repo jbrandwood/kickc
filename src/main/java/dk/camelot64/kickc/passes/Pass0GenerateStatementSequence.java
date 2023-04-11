@@ -590,7 +590,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          procedure.setParameters(parameterList);
          procedure.setSegmentData(currentDataSegment); // When a procedure is defined, the currentDataSegment is to be set.
          procedure.setSegmentCode(currentCodeSegment); // When a procedure is defined, the currentCodeSegment is to be set.
-         procedure.setBankLocation(currentBank); // When a procedure is defined, the currentBank is to be set, or far calls won't work.
+         if(procedure.getBankLocation() == null && currentBank != null) {
+            procedure.setBankLocation(currentBank); // When a procedure is defined, the currentBank is to be set, or far calls won't work.
+         }
          // Add return variable
          if(!SymbolType.VOID.equals(procedure.getReturnType())) {
             final VariableBuilder builder = new VariableBuilder("return", procedure, false, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());

@@ -1780,14 +1780,14 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
     jmp __b1
     // __start::@1
   __b1:
-    // [7] call main
+    // [7] call main -- call_phi_near 
     jsr main
     jmp __breturn
     // __start::@return
@@ -1825,7 +1825,7 @@ conio_c64_init: {
     // [14] call gotoxy
     // [35] phi from conio_c64_init::@1 to gotoxy [phi:conio_c64_init::@1->gotoxy]
   gotoxy_from___b1:
-    // [35] phi gotoxy::y#4 = gotoxy::y#2 [phi:conio_c64_init::@1->gotoxy#0] -- register_copy 
+    // [35] phi gotoxy::y#4 = gotoxy::y#2 [phi:conio_c64_init::@1->gotoxy#0] -- call_phi_near 
     jsr gotoxy
     jmp __breturn
     // conio_c64_init::@return
@@ -1843,7 +1843,7 @@ main: {
     sta $d018
     // [17] call clrscr
   // Clear screen
-    // [50] phi from main to clrscr [phi:main->clrscr]
+    // [50] phi from main to clrscr [phi:main->clrscr] -- call_phi_near 
   clrscr_from_main:
     jsr clrscr
     // [18] phi from main to main::@1 [phi:main->main::@1]
@@ -1864,7 +1864,7 @@ main: {
     // [20] call cputc
     // [66] phi from main::@1 to cputc [phi:main::@1->cputc]
   cputc_from___b1:
-    // [66] phi cputc::c#2 = cputc::c#0 [phi:main::@1->cputc#0] -- register_copy 
+    // [66] phi cputc::c#2 = cputc::c#0 [phi:main::@1->cputc#0] -- call_phi_near 
     jsr cputc
     jmp __b4
     // main::@4
@@ -1888,7 +1888,7 @@ main: {
     // [25] call gotoxy
     // [35] phi from main::@3 to gotoxy [phi:main::@3->gotoxy]
   gotoxy_from___b3:
-    // [35] phi gotoxy::y#4 = gotoxy::y#3 [phi:main::@3->gotoxy#0] -- register_copy 
+    // [35] phi gotoxy::y#4 = gotoxy::y#3 [phi:main::@3->gotoxy#0] -- call_phi_near 
     jsr gotoxy
     // [26] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   __b2_from___b3:
@@ -1905,7 +1905,7 @@ main: {
   __b2:
     // [27] toupper::ch#0 = main::c1#2 -- vbuaa=vbuz1 
     lda.z c1
-    // [28] call toupper
+    // [28] call toupper -- call_phi_near 
     jsr toupper
     // [29] toupper::return#3 = toupper::return#2
     jmp __b5
@@ -1915,7 +1915,7 @@ main: {
     // [31] call cputc
     // [66] phi from main::@5 to cputc [phi:main::@5->cputc]
   cputc_from___b5:
-    // [66] phi cputc::c#2 = cputc::c#1 [phi:main::@5->cputc#0] -- register_copy 
+    // [66] phi cputc::c#2 = cputc::c#1 [phi:main::@5->cputc#0] -- call_phi_near 
     jsr cputc
     jmp __b6
     // main::@6
@@ -2159,7 +2159,7 @@ cputc: {
     jmp __b3
     // cputc::@3
   __b3:
-    // [73] call cputln
+    // [73] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
     // cputc::@return
@@ -2171,7 +2171,7 @@ cputc: {
     jmp __b1
     // cputc::@1
   __b1:
-    // [76] call cputln
+    // [76] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
 }
@@ -2231,7 +2231,7 @@ cputln: {
     sta.z conio_cursor_x
     // [85] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
-    // [86] call cscroll
+    // [86] call cscroll -- call_phi_near 
     jsr cscroll
     jmp __breturn
     // cputln::@return
@@ -2259,7 +2259,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [101] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [101] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -2278,7 +2278,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [101] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [101] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -2294,7 +2294,7 @@ cscroll: {
   memset_from___b3:
     // [111] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [111] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [111] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -2310,7 +2310,7 @@ cscroll: {
   memset_from___b4:
     // [111] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [111] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [111] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28
@@ -2766,11 +2766,11 @@ __start: {
     lda #>COLORRAM
     sta.z conio_line_color+1
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
-    // [7] call main
+    // [7] call main -- call_phi_near 
     jsr main
     // __start::@return
     // [8] return 
@@ -2801,7 +2801,7 @@ conio_c64_init: {
     // [13] gotoxy::y#2 = conio_c64_init::line#2
     // [14] call gotoxy
     // [35] phi from conio_c64_init::@1 to gotoxy [phi:conio_c64_init::@1->gotoxy]
-    // [35] phi gotoxy::y#4 = gotoxy::y#2 [phi:conio_c64_init::@1->gotoxy#0] -- register_copy 
+    // [35] phi gotoxy::y#4 = gotoxy::y#2 [phi:conio_c64_init::@1->gotoxy#0] -- call_phi_near 
     jsr gotoxy
     // conio_c64_init::@return
     // }
@@ -2820,7 +2820,7 @@ main: {
     // clrscr()
     // [17] call clrscr
   // Clear screen
-    // [50] phi from main to clrscr [phi:main->clrscr]
+    // [50] phi from main to clrscr [phi:main->clrscr] -- call_phi_near 
     jsr clrscr
     // [18] phi from main to main::@1 [phi:main->main::@1]
     // [18] phi main::c#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -2836,7 +2836,7 @@ main: {
     lda.z c
     // [20] call cputc
     // [66] phi from main::@1 to cputc [phi:main::@1->cputc]
-    // [66] phi cputc::c#2 = cputc::c#0 [phi:main::@1->cputc#0] -- register_copy 
+    // [66] phi cputc::c#2 = cputc::c#0 [phi:main::@1->cputc#0] -- call_phi_near 
     jsr cputc
     // main::@4
     // for(char c:0..0xff)
@@ -2856,7 +2856,7 @@ main: {
     inx
     // [25] call gotoxy
     // [35] phi from main::@3 to gotoxy [phi:main::@3->gotoxy]
-    // [35] phi gotoxy::y#4 = gotoxy::y#3 [phi:main::@3->gotoxy#0] -- register_copy 
+    // [35] phi gotoxy::y#4 = gotoxy::y#3 [phi:main::@3->gotoxy#0] -- call_phi_near 
     jsr gotoxy
     // [26] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
     // [26] phi main::c1#2 = 0 [phi:main::@3->main::@2#0] -- vbuz1=vbuc1 
@@ -2870,7 +2870,7 @@ main: {
     // toupper(c)
     // [27] toupper::ch#0 = main::c1#2 -- vbuaa=vbuz1 
     lda.z c1
-    // [28] call toupper
+    // [28] call toupper -- call_phi_near 
     jsr toupper
     // [29] toupper::return#3 = toupper::return#2
     // main::@5
@@ -2878,7 +2878,7 @@ main: {
     // [30] cputc::c#1 = toupper::return#3
     // [31] call cputc
     // [66] phi from main::@5 to cputc [phi:main::@5->cputc]
-    // [66] phi cputc::c#2 = cputc::c#1 [phi:main::@5->cputc#0] -- register_copy 
+    // [66] phi cputc::c#2 = cputc::c#1 [phi:main::@5->cputc#0] -- call_phi_near 
     jsr cputc
     // main::@6
     // for(char c:0..0xff)
@@ -3118,7 +3118,7 @@ cputc: {
     // [72] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
     // cputln()
-    // [73] call cputln
+    // [73] call cputln -- call_phi_near 
     jsr cputln
     // cputc::@return
   __breturn:
@@ -3129,7 +3129,7 @@ cputc: {
     // cputc::@1
   __b1:
     // cputln()
-    // [76] call cputln
+    // [76] call cputln -- call_phi_near 
     jsr cputln
     rts
 }
@@ -3191,7 +3191,7 @@ cputln: {
     // [85] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // cscroll()
-    // [86] call cscroll
+    // [86] call cscroll -- call_phi_near 
     jsr cscroll
     // cputln::@return
     // }
@@ -3216,7 +3216,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [101] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [101] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -3232,7 +3232,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [101] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [101] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -3245,7 +3245,7 @@ cscroll: {
     // [111] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
     // [111] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [111] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [111] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -3258,7 +3258,7 @@ cscroll: {
     // [111] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
     // [111] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [111] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [111] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28

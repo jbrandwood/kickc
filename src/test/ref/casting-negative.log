@@ -3802,7 +3802,7 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
@@ -3810,7 +3810,7 @@ __start: {
     // __start::@1
   __b1:
     // [7] call main
-    // [27] phi from __start::@1 to main [phi:__start::@1->main]
+    // [27] phi from __start::@1 to main [phi:__start::@1->main] -- call_phi_near 
   main_from___b1:
     jsr main
     jmp __breturn
@@ -3846,7 +3846,7 @@ conio_c64_init: {
     // conio_c64_init::@1
   __b1:
     // [13] gotoxy::y#2 = conio_c64_init::line#2
-    // [14] call gotoxy
+    // [14] call gotoxy -- call_phi_near 
     jsr gotoxy
     jmp __breturn
     // conio_c64_init::@return
@@ -3887,7 +3887,7 @@ cputc: {
     jmp __b3
     // cputc::@3
   __b3:
-    // [23] call cputln
+    // [23] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
     // cputc::@return
@@ -3899,7 +3899,7 @@ cputc: {
     jmp __b1
     // cputc::@1
   __b1:
-    // [26] call cputln
+    // [26] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
 }
@@ -3907,7 +3907,7 @@ cputc: {
 main: {
     .label signed_char_value = $17
     // [28] call clrscr
-    // [55] phi from main to clrscr [phi:main->clrscr]
+    // [55] phi from main to clrscr [phi:main->clrscr] -- call_phi_near 
   clrscr_from_main:
     jsr clrscr
     // [29] phi from main to main::@1 [phi:main->main::@1]
@@ -3939,7 +3939,7 @@ main: {
     lda #$ff
   !:
     sta.z test_casting.signed_short_value+1
-    // [34] call test_casting
+    // [34] call test_casting -- call_phi_near 
     jsr test_casting
     // [29] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
@@ -4069,7 +4069,7 @@ cputln: {
     sta.z conio_cursor_x
     // [52] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
-    // [53] call cscroll
+    // [53] call cscroll -- call_phi_near 
     jsr cscroll
     jmp __breturn
     // cputln::@return
@@ -4183,7 +4183,7 @@ clrscr: {
 test_casting: {
     .label signed_short_value = 4
     // [71] printf_sint::value#1 = test_casting::signed_short_value#0
-    // [72] call printf_sint
+    // [72] call printf_sint -- call_phi_near 
     jsr printf_sint
     // [73] phi from test_casting to test_casting::@1 [phi:test_casting->test_casting::@1]
   __b1_from_test_casting:
@@ -4198,7 +4198,7 @@ test_casting: {
     sta.z printf_str.putc
     lda #>cputc
     sta.z printf_str.putc+1
-    // [99] phi printf_str::s#4 = test_casting::s [phi:test_casting::@1->printf_str#1] -- pbuz1=pbuc1 
+    // [99] phi printf_str::s#4 = test_casting::s [phi:test_casting::@1->printf_str#1] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -4234,7 +4234,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [108] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [108] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -4253,7 +4253,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [108] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [108] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -4269,7 +4269,7 @@ cscroll: {
   memset_from___b3:
     // [118] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [118] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [118] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -4285,7 +4285,7 @@ cscroll: {
   memset_from___b4:
     // [118] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [118] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [118] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28
@@ -4354,7 +4354,7 @@ printf_sint: {
   __b2:
     // [94] utoa::value#1 = (unsigned int)printf_sint::value#4
     // [95] call utoa
-    // [126] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa]
+    // [126] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa] -- call_phi_near 
   utoa_from___b2:
     jsr utoa
     jmp __b3
@@ -4364,7 +4364,7 @@ printf_sint: {
     lda printf_buffer
     // [97] call printf_number_buffer
   // Print using format
-    // [147] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer]
+    // [147] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer] -- call_phi_near 
   printf_number_buffer_from___b3:
     jsr printf_number_buffer
     jmp __breturn
@@ -4630,7 +4630,7 @@ utoa: {
     // [141] utoa_append::value#0 = utoa::value#2
     // [142] utoa_append::sub#0 = utoa::digit_value#0
     // [143] call utoa_append
-    // [155] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
+    // [155] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append] -- call_phi_near 
   utoa_append_from___b5:
     jsr utoa_append
     // [144] utoa_append::return#0 = utoa_append::value#2
@@ -4686,7 +4686,7 @@ printf_number_buffer: {
     sta.z printf_str.putc
     lda #>printf_sint.putc
     sta.z printf_str.putc+1
-    // [99] phi printf_str::s#4 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->printf_str#1] -- pbuz1=pbuc1 
+    // [99] phi printf_str::s#4 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->printf_str#1] -- call_phi_near 
     lda #<buffer_digits
     sta.z printf_str.s
     lda #>buffer_digits
@@ -5199,12 +5199,12 @@ __start: {
     lda #>COLORRAM
     sta.z conio_line_color+1
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [7] call main
-    // [27] phi from __start::@1 to main [phi:__start::@1->main]
+    // [27] phi from __start::@1 to main [phi:__start::@1->main] -- call_phi_near 
     jsr main
     // __start::@return
     // [8] return 
@@ -5233,7 +5233,7 @@ conio_c64_init: {
   __b1:
     // gotoxy(0, line)
     // [13] gotoxy::y#2 = conio_c64_init::line#2
-    // [14] call gotoxy
+    // [14] call gotoxy -- call_phi_near 
     jsr gotoxy
     // conio_c64_init::@return
     // }
@@ -5272,7 +5272,7 @@ cputc: {
     // [22] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
     // cputln()
-    // [23] call cputln
+    // [23] call cputln -- call_phi_near 
     jsr cputln
     // cputc::@return
   __breturn:
@@ -5283,7 +5283,7 @@ cputc: {
     // cputc::@1
   __b1:
     // cputln()
-    // [26] call cputln
+    // [26] call cputln -- call_phi_near 
     jsr cputln
     rts
 }
@@ -5292,7 +5292,7 @@ main: {
     .label signed_char_value = $17
     // clrscr()
     // [28] call clrscr
-    // [55] phi from main to clrscr [phi:main->clrscr]
+    // [55] phi from main to clrscr [phi:main->clrscr] -- call_phi_near 
     jsr clrscr
     // [29] phi from main to main::@1 [phi:main->main::@1]
     // [29] phi main::signed_char_value#2 = -5 [phi:main->main::@1#0] -- vbsz1=vbsc1 
@@ -5323,7 +5323,7 @@ main: {
     lda #$ff
   !:
     sta.z test_casting.signed_short_value+1
-    // [34] call test_casting
+    // [34] call test_casting -- call_phi_near 
     jsr test_casting
     // [29] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [29] phi main::signed_char_value#2 = main::signed_char_value#1 [phi:main::@2->main::@1#0] -- register_copy 
@@ -5455,7 +5455,7 @@ cputln: {
     // [52] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // cscroll()
-    // [53] call cscroll
+    // [53] call cscroll -- call_phi_near 
     jsr cscroll
     // cputln::@return
     // }
@@ -5570,7 +5570,7 @@ test_casting: {
     .label signed_short_value = 4
     // printf("%d\n", signed_short_value)
     // [71] printf_sint::value#1 = test_casting::signed_short_value#0
-    // [72] call printf_sint
+    // [72] call printf_sint -- call_phi_near 
     jsr printf_sint
     // [73] phi from test_casting to test_casting::@1 [phi:test_casting->test_casting::@1]
     // test_casting::@1
@@ -5582,7 +5582,7 @@ test_casting: {
     sta.z printf_str.putc
     lda #>cputc
     sta.z printf_str.putc+1
-    // [99] phi printf_str::s#4 = test_casting::s [phi:test_casting::@1->printf_str#1] -- pbuz1=pbuc1 
+    // [99] phi printf_str::s#4 = test_casting::s [phi:test_casting::@1->printf_str#1] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -5615,7 +5615,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [108] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [108] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -5631,7 +5631,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [108] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [108] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -5644,7 +5644,7 @@ cscroll: {
     // [118] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
     // [118] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [118] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [118] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -5657,7 +5657,7 @@ cscroll: {
     // [118] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
     // [118] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [118] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [118] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28
@@ -5729,7 +5729,7 @@ printf_sint: {
     // utoa(uvalue, printf_buffer.digits, format.radix)
     // [94] utoa::value#1 = (unsigned int)printf_sint::value#4
     // [95] call utoa
-    // [126] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa]
+    // [126] phi from printf_sint::@2 to utoa [phi:printf_sint::@2->utoa] -- call_phi_near 
     jsr utoa
     // printf_sint::@3
     // printf_number_buffer(putc, printf_buffer, format)
@@ -5737,7 +5737,7 @@ printf_sint: {
     lda printf_buffer
     // [97] call printf_number_buffer
   // Print using format
-    // [147] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer]
+    // [147] phi from printf_sint::@3 to printf_number_buffer [phi:printf_sint::@3->printf_number_buffer] -- call_phi_near 
     jsr printf_number_buffer
     // printf_sint::@return
     // }
@@ -5993,7 +5993,7 @@ utoa: {
     // [141] utoa_append::value#0 = utoa::value#2
     // [142] utoa_append::sub#0 = utoa::digit_value#0
     // [143] call utoa_append
-    // [155] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append]
+    // [155] phi from utoa::@5 to utoa_append [phi:utoa::@5->utoa_append] -- call_phi_near 
     jsr utoa_append
     // utoa_append(buffer++, value, digit_value)
     // [144] utoa_append::return#0 = utoa_append::value#2
@@ -6043,7 +6043,7 @@ printf_number_buffer: {
     sta.z printf_str.putc
     lda #>printf_sint.putc
     sta.z printf_str.putc+1
-    // [99] phi printf_str::s#4 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->printf_str#1] -- pbuz1=pbuc1 
+    // [99] phi printf_str::s#4 = printf_number_buffer::buffer_digits#0 [phi:printf_number_buffer::@2->printf_str#1] -- call_phi_near 
     lda #<buffer_digits
     sta.z printf_str.s
     lda #>buffer_digits

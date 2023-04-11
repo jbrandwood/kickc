@@ -75,29 +75,21 @@ public interface AsmFragmentSignature {
      */
     class CallBanked implements AsmFragmentSignature {
 
+        final private String distance;
+        final private String callingConvention;
         final private String bankArea;
         final private Long bank;
-        final private String targetPlatform;
 
-        public enum PrepareExecuteFinalize {
-            Prepare,
-            Execute,
-            Finalize
-        }
-
-        final private PrepareExecuteFinalize fragment;
-
-
-        public CallBanked(String bankArea, Long bank, String targetPlatform, PrepareExecuteFinalize fragment) {
+        public CallBanked(String distance, String callingConvention, String bankArea, Long bank) {
+            this.distance  = distance;
+            this.callingConvention = callingConvention;
             this.bankArea = bankArea;
             this.bank = bank;
-            this.targetPlatform = targetPlatform;
-            this.fragment = fragment;
         }
 
         @Override
         public String getName() {
-            return "call_far" + "_" + targetPlatform.toLowerCase() + "_" + bankArea.toLowerCase() + "_" + fragment.name().toLowerCase();
+            return "call_" + callingConvention.toLowerCase() + "_" + distance.toLowerCase() + ((bankArea.isEmpty()) ? "" : ("_" + bankArea.toLowerCase()));
         }
     }
 

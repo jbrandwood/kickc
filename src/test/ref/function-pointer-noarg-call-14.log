@@ -1541,7 +1541,7 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
@@ -1549,7 +1549,7 @@ __start: {
     // __start::@1
   __b1:
     // [7] call main
-    // [33] phi from __start::@1 to main [phi:__start::@1->main]
+    // [33] phi from __start::@1 to main [phi:__start::@1->main] -- call_phi_near 
   main_from___b1:
     jsr main
     jmp __breturn
@@ -1563,7 +1563,7 @@ world: {
     // [10] call printf_str
     // [38] phi from world to printf_str [phi:world->printf_str]
   printf_str_from_world:
-    // [38] phi printf_str::s#4 = world::s [phi:world->printf_str#0] -- pbuz1=pbuc1 
+    // [38] phi printf_str::s#4 = world::s [phi:world->printf_str#0] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -1584,7 +1584,7 @@ hello: {
     // [13] call printf_str
     // [38] phi from hello to printf_str [phi:hello->printf_str]
   printf_str_from_hello:
-    // [38] phi printf_str::s#4 = hello::s [phi:hello->printf_str#0] -- pbuz1=pbuc1 
+    // [38] phi printf_str::s#4 = hello::s [phi:hello->printf_str#0] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -1627,7 +1627,7 @@ conio_c64_init: {
     // conio_c64_init::@1
   __b1:
     // [19] gotoxy::y#2 = conio_c64_init::line#2
-    // [20] call gotoxy
+    // [20] call gotoxy -- call_phi_near 
     jsr gotoxy
     jmp __breturn
     // conio_c64_init::@return
@@ -1668,7 +1668,7 @@ cputc: {
     jmp __b3
     // cputc::@3
   __b3:
-    // [29] call cputln
+    // [29] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
     // cputc::@return
@@ -1680,7 +1680,7 @@ cputc: {
     jmp __b1
     // cputc::@1
   __b1:
-    // [32] call cputln
+    // [32] call cputln -- call_phi_near 
     jsr cputln
     jmp __breturn
 }
@@ -1689,7 +1689,7 @@ main: {
     // [34] call f1
     // [67] phi from main to f1 [phi:main->f1]
   f1_from_main:
-    // [67] phi f1::fn#2 = &hello [phi:main->f1#0] -- pprz1=pprc1 
+    // [67] phi f1::fn#2 = &hello [phi:main->f1#0] -- call_phi_near 
     lda #<hello
     sta.z f1.fn
     lda #>hello
@@ -1703,7 +1703,7 @@ main: {
     // [36] call f1
     // [67] phi from main::@1 to f1 [phi:main::@1->f1]
   f1_from___b1:
-    // [67] phi f1::fn#2 = &world [phi:main::@1->f1#0] -- pprz1=pprc1 
+    // [67] phi f1::fn#2 = &world [phi:main::@1->f1#0] -- call_phi_near 
     lda #<world
     sta.z f1.fn
     lda #>world
@@ -1876,7 +1876,7 @@ cputln: {
     sta.z conio_cursor_x
     // [64] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
-    // [65] call cscroll
+    // [65] call cscroll -- call_phi_near 
     jsr cscroll
     jmp __breturn
     // cputln::@return
@@ -1919,7 +1919,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [83] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -1938,7 +1938,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [83] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -1954,7 +1954,7 @@ cscroll: {
   memset_from___b3:
     // [93] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [93] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -1970,7 +1970,7 @@ cscroll: {
   memset_from___b4:
     // [93] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [93] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28
@@ -2381,12 +2381,12 @@ __start: {
     lda #>COLORRAM
     sta.z conio_line_color+1
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
-    // [5] call conio_c64_init
+    // [5] call conio_c64_init -- call_phi_near 
     jsr conio_c64_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [7] call main
-    // [33] phi from __start::@1 to main [phi:__start::@1->main]
+    // [33] phi from __start::@1 to main [phi:__start::@1->main] -- call_phi_near 
     jsr main
     // __start::@return
     // [8] return 
@@ -2397,7 +2397,7 @@ world: {
     // printf("world!")
     // [10] call printf_str
     // [38] phi from world to printf_str [phi:world->printf_str]
-    // [38] phi printf_str::s#4 = world::s [phi:world->printf_str#0] -- pbuz1=pbuc1 
+    // [38] phi printf_str::s#4 = world::s [phi:world->printf_str#0] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -2417,7 +2417,7 @@ hello: {
     // printf("hello ")
     // [13] call printf_str
     // [38] phi from hello to printf_str [phi:hello->printf_str]
-    // [38] phi printf_str::s#4 = hello::s [phi:hello->printf_str#0] -- pbuz1=pbuc1 
+    // [38] phi printf_str::s#4 = hello::s [phi:hello->printf_str#0] -- call_phi_near 
     lda #<s
     sta.z printf_str.s
     lda #>s
@@ -2455,7 +2455,7 @@ conio_c64_init: {
   __b1:
     // gotoxy(0, line)
     // [19] gotoxy::y#2 = conio_c64_init::line#2
-    // [20] call gotoxy
+    // [20] call gotoxy -- call_phi_near 
     jsr gotoxy
     // conio_c64_init::@return
     // }
@@ -2494,7 +2494,7 @@ cputc: {
     // [28] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
     // cputln()
-    // [29] call cputln
+    // [29] call cputln -- call_phi_near 
     jsr cputln
     // cputc::@return
   __breturn:
@@ -2505,7 +2505,7 @@ cputc: {
     // cputc::@1
   __b1:
     // cputln()
-    // [32] call cputln
+    // [32] call cputln -- call_phi_near 
     jsr cputln
     rts
 }
@@ -2514,7 +2514,7 @@ main: {
     // f1(&hello)
     // [34] call f1
     // [67] phi from main to f1 [phi:main->f1]
-    // [67] phi f1::fn#2 = &hello [phi:main->f1#0] -- pprz1=pprc1 
+    // [67] phi f1::fn#2 = &hello [phi:main->f1#0] -- call_phi_near 
     lda #<hello
     sta.z f1.fn
     lda #>hello
@@ -2525,7 +2525,7 @@ main: {
     // f1(&world)
     // [36] call f1
     // [67] phi from main::@1 to f1 [phi:main::@1->f1]
-    // [67] phi f1::fn#2 = &world [phi:main::@1->f1#0] -- pprz1=pprc1 
+    // [67] phi f1::fn#2 = &world [phi:main::@1->f1#0] -- call_phi_near 
     lda #<world
     sta.z f1.fn
     lda #>world
@@ -2698,7 +2698,7 @@ cputln: {
     // [64] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // cscroll()
-    // [65] call cscroll
+    // [65] call cscroll -- call_phi_near 
     jsr cscroll
     // cputln::@return
     // }
@@ -2738,7 +2738,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [83] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void *)DEFAULT_SCREEN+$28 [phi:cscroll::@1->memcpy#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$28
@@ -2754,7 +2754,7 @@ cscroll: {
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [83] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void *)COLORRAM+$28 [phi:cscroll::@2->memcpy#1] -- call_phi_near 
     lda #<COLORRAM+$28
     sta.z memcpy.source
     lda #>COLORRAM+$28
@@ -2767,7 +2767,7 @@ cscroll: {
     // [93] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
     // [93] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [93] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void *)DEFAULT_SCREEN+(unsigned int)$19*$28-$28 [phi:cscroll::@3->memset#1] -- call_phi_near 
     lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$28-$28
@@ -2780,7 +2780,7 @@ cscroll: {
     // [93] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
     // [93] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuxx=vbuc1 
     ldx #LIGHT_BLUE
-    // [93] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void *)COLORRAM+(unsigned int)$19*$28-$28 [phi:cscroll::@4->memset#1] -- call_phi_near 
     lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
     lda #>COLORRAM+$19*$28-$28

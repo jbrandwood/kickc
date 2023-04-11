@@ -10,11 +10,11 @@ void main(void) {
 }
 
 #pragma code_seg(RAM_Bank1)
-__bank(cx16_ram, 1) plus(char a, char b) {
-    return min(a, b); // near call
+__bank(cx16_ram, 1) char plus(char a, char b) {
+    return min(a, b); // close call
 }
 
 #pragma code_seg(ROM_Bank1)
-__bank(cx16_rom, 1) min(char a, char b) {
+__bank(cx16_rom, 1) char min(char a, char b) {
     return a+b;
 }

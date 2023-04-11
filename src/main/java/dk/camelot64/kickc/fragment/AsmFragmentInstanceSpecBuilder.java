@@ -42,58 +42,25 @@ final public class AsmFragmentInstanceSpecBuilder {
     }
 
     /**
-     * Create a fragment instance spec factory for a bank call prepare
+     * Create a fragment instance spec factory for a subroutine call
      *
+     * @param distance          The string expressing the distance of the call: "near", "close", "far".
+     * @param callingConvention The string expressing the calling convention supported by the fragment.
      * @param bankArea          The bank area where the procedure is to be called.
      * @param bank              The bank where the procedure is to be called.
      * @param procedureName     The full name of the procedure.
      * @param program           The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec bankCallPrepare(String bankArea, Long bank, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec callBanked(String distance, String callingConvention, String bankArea, Long bank, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(bankArea, bank, program.getTargetPlatform().getName(), AsmFragmentSignature.CallBanked.PrepareExecuteFinalize.Prepare);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(distance, callingConvention, bankArea, bank);
         ScopeRef codeScope = program.getScope().getRef();
         bindings.bind("c1", new ConstantInteger(bank));
         bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 
-    /**
-     * Create a fragment instance spec factory for a bank call execute
-     *
-     * @param bankArea          The bank area where the procedure is to be called.
-     * @param bank              The bank where the procedure is to be called.
-     * @param procedureName     The full name of the procedure.
-     * @param program           The program
-     * @return the fragment instance spec factory
-     */
-    public static AsmFragmentInstanceSpec bankCallExecute(String bankArea, Long bank, String procedureName, Program program) {
-        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(bankArea, bank, program.getTargetPlatform().getName(), AsmFragmentSignature.CallBanked.PrepareExecuteFinalize.Execute);
-        ScopeRef codeScope = program.getScope().getRef();
-        bindings.bind("c1", new ConstantInteger(bank));
-        bindings.bind("la1", new LabelRef(procedureName));
-        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-    }
-
-    /**
-     * Create a fragment instance spec factory for a bank call finalize
-     *
-     * @param bankArea          The bank area where the procedure is to be called.
-     * @param bank              The bank where the procedure is to be called.
-     * @param procedureName     The full name of the procedure.
-     * @param program       The program
-     * @return the fragment instance spec factory
-     */
-    public static AsmFragmentInstanceSpec bankCallFinalize(String bankArea, Long bank, String procedureName, Program program) {
-        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(bankArea, bank, program.getTargetPlatform().getName(), AsmFragmentSignature.CallBanked.PrepareExecuteFinalize.Finalize);
-        ScopeRef codeScope = program.getScope().getRef();
-        bindings.bind("c1", new ConstantInteger(bank));
-        bindings.bind("la1", new LabelRef(procedureName));
-        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
-    }
 
 
     /**

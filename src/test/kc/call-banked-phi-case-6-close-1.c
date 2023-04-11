@@ -12,7 +12,7 @@ void main(void) {
 #pragma code_seg(RAM_Bank1)
 #pragma bank(cx16_ram, 1)
 char plus(char a, char b) {
-    return min(a, b); // near call
+    return min(a, b); // close call
 }
 
 #pragma code_seg(ROM_Bank1)

@@ -1496,64 +1496,75 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank0() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-0.c");
+   public void testBankedPhiCase1Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank1() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-1.c");
+   public void testBankedPhiCase1Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank2() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-2.c");
+   public void testBankedPhiCase2Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank3() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-3.c");
+   public void testBankedPhiCase2Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank4() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-4.c");
+   public void testBankedPhiCase3Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionPhiBank5() throws IOException {
-      compileAndCompare("procedure-callingconvention-phi-bank-5.c");
+   public void testBankedPhiCase3Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank5() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-5.c");
+   public void testBankedPhiCase4Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank4() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-4.c");
+   public void testBankedPhiCase4Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank3() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-3.c");
+   public void testBankedPhiCase5Far0() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank2() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-2.c");
+   public void testBankedPhiCase5Far1() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-1.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank1() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-1.c");
+   public void testBankedPhiCase6Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-0.c");
    }
 
    @Test
-   public void testProcedureCallingConventionStackBank0() throws IOException {
-      compileAndCompare("procedure-callingconvention-stack-bank-0.c");
+   public void testBankedPhiCase6Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-1.c");
    }
+
+   @Test
+   public void testBankedStackCase2Close0() throws IOException {
+      assertError("call-banked-stack-case-2-close-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
+   @Test
+   public void testBankedStackCase5Far0() throws IOException {
+      assertError("call-banked-stack-case-5-far-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
 
    @Test
    public void testProcedureCallingConventionStack13() throws IOException {

@@ -10,11 +10,11 @@ void main(void) {
 }
 
 #pragma code_seg(RAM_Bank1)
-char __bank(cx16_ram, 1) plus(char a, char b) {
+__bank(cx16_ram, 1) char plus(char a, char b) {
     return min(a, b); // far call
 }
 
 #pragma code_seg(RAM_Bank2)
-char __bank(cx16_ram, 2) min(char a, char b) {
+__stackcall __bank(cx16_ram, 2) char min(char a, char b) {
     return a+b;
 }

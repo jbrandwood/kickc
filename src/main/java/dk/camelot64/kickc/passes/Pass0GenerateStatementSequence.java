@@ -298,7 +298,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             try {
                final int size = ctx.getChildCount();
                if(size==7) {
-                  final String pragmaBankArea = pragmaParamBankArea(ctx.pragmaParam(0));
+                  final String pragmaBankArea = pragmaParamName(ctx.pragmaParam(0));
                   final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
                   this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
                } else {

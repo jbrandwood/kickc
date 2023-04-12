@@ -547,6 +547,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testPragmaNoParametersNoParenthesis() throws IOException {
+      compileAndCompare("pragma-noparam-noparen.c");
+   }
+
+   @Test
    public void testErrorFormatter() throws IOException {
       // Error on a char
       assertError("printf-error-6.c", "printf-error-6.c:7:5: error: printf missing parameter with index 1");

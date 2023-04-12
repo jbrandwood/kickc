@@ -57,6 +57,7 @@ main: {
 }
 .segment RAM_Bank1
 // char plus(char a, char b)
+// banked : bank area='cx16_ram', bank=1
 plus: {
     .const a = '0'
     .const b = 7

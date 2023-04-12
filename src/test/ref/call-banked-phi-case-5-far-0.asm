@@ -57,6 +57,7 @@ main: {
 }
 .segment RAM_Bank1
 // char plus(char a, char b)
+// banked : bank area='cx16_ram', bank=1
 plus: {
     .label a = '0'
     .label b = 7
@@ -70,6 +71,7 @@ plus: {
 }
 .segment RAM_Bank2
 // char min(char a, char b)
+// banked : bank area='cx16_ram', bank=2
 min: {
     .label return = plus.a+plus.b
     rts

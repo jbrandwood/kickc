@@ -219,7 +219,8 @@ public class Pass4CodeGeneration {
     }
 
     /**
-     * Generate a comment that describes the procedure signature and parameter transfer
+     * Generate a comment that describes the procedure signature and parameter transfer.
+     * We have added here also the banking information.
      *
      * @param asm       The assembler program being generated
      * @param procedure The procedure
@@ -239,6 +240,13 @@ public class Pass4CodeGeneration {
         signature.append(")");
         if (i > 0) {
             asm.addComment(signature.toString(), false);
+        }
+        // Banking information of the procedure.
+        Bank bank = procedure.getBankLocation();
+        if(bank != null) {
+            StringBuilder signatureBank = new StringBuilder();
+            signatureBank.append(" " + bank.toString()); // This procedure is in a bank and in a banking area.
+            asm.addComment(signatureBank.toString(), false);
         }
     }
 

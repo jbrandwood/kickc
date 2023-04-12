@@ -103,7 +103,7 @@ package dk.camelot64.kickc.model;
  * The KickC compiler contains several test cases and examples which demonstrate the usage of the banking system.
  *
  */
-public class Bank {
+public class Bank extends Object {
 
    private final String bankArea; // The bank method to apply.
    private Long bank; // The bank number.
@@ -131,5 +131,12 @@ public class Bank {
 
    public void setBank(Long bank) {
       this.bank = bank;
+   }
+
+   @Override
+   public String toString() {
+      return "banked : " +
+              "bank area='" + bankArea + '\'' +
+              ", bank=" + bank;
    }
 }

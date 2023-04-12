@@ -1,6 +1,7 @@
+lda $0
+pha
 lda #{c1}
 sta $0
-pha
 jsr {la1}
 pla
 sta $0

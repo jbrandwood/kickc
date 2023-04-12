@@ -43,9 +43,10 @@
 .segment Code
 main: {
     // plus('0', 7)
+    lda.z 0
+    pha
     lda #1
     sta.z 0
-    pha
     jsr plus
     pla
     sta.z 0

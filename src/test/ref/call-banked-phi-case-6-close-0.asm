@@ -43,9 +43,10 @@
 .segment Code
 main: {
     // plus('0', 7)
+    lda.z 0
+    pha
     lda #1
     sta.z 0
-    pha
     jsr plus
     pla
     sta.z 0
@@ -62,9 +63,10 @@ plus: {
     .label a = '0'
     .label b = 7
     // min(a, b)
+    lda.z 1
+    pha
     lda #1
     sta.z 1
-    pha
     jsr min
     pla
     sta.z 1

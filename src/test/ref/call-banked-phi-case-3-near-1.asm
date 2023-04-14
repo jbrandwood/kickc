@@ -69,6 +69,7 @@ plus: {
 }
 .segment Code
 // char min(char a, char b)
+// banked : bank area='cx16_ram', bank=1
 min: {
     .label return = plus.a+plus.b
     rts

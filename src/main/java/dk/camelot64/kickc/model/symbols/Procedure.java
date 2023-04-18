@@ -337,7 +337,7 @@ public class Procedure extends Scope {
       Procedure procedure = (Procedure) o;
       return variableLengthParameterList == procedure.variableLengthParameterList &&
             declaredInline == procedure.declaredInline &&
-            isDeclaredBanked() == procedure.isDeclaredBanked() &&
+            Objects.equals(bankLocation, procedure.bankLocation) &&
             declaredIntrinsic == procedure.declaredIntrinsic &&
             isConstructor == procedure.isConstructor &&
             Objects.equals(procedureType, procedure.procedureType) &&

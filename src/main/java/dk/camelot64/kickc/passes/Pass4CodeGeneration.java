@@ -961,14 +961,6 @@ public class Pass4CodeGeneration {
                     }
                 }
             } else if (statement instanceof StatementCallExecute) {
-                // TODO: This part seems never to be executed! Old code?
-//                StatementCallExecute call = (StatementCallExecute) statement;
-//                RValue procedureRVal = call.getProcedureRVal();
-//                // Generate ASM for a call
-//                AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
-//                if (!(procedureRVal instanceof ProcedureRef)) {
-//                    asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
-//                }
                 StatementCallExecute call = (StatementCallExecute) statement;
                 ProcedureRef procedureRef = call.getProcedure();
                 if(procedureRef != null) {

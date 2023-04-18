@@ -2,6 +2,7 @@ package dk.camelot64.kickc.fragment.signature;
 
 import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureLexer;
 import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureParser;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -75,21 +76,17 @@ public interface AsmFragmentSignature {
      */
     class CallBanked implements AsmFragmentSignature {
 
-        final private String distance;
+        final private Procedure.CallingDistance callingDistance;
         final private String callingConvention;
-        final private String bankArea;
-        final private Long bank;
 
-        public CallBanked(String distance, String callingConvention, String bankArea, Long bank) {
-            this.distance  = distance;
+        public CallBanked(Procedure.CallingDistance callingDistance, String callingConvention) {
+            this.callingDistance = callingDistance;
             this.callingConvention = callingConvention;
-            this.bankArea = bankArea;
-            this.bank = bank;
         }
 
         @Override
         public String getName() {
-            return "call_" + callingConvention.toLowerCase() + "_" + distance.toLowerCase() + ((bankArea.isEmpty()) ? "" : ("_" + bankArea.toLowerCase()));
+            return "call_" + callingConvention.toLowerCase() + "_" + callingDistance.getFragmentName().toLowerCase();
         }
     }
 

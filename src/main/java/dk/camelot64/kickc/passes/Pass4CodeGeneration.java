@@ -906,56 +906,13 @@ public class Pass4CodeGeneration {
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                         }
                     }
-                    /*
-                        The following variations exist related to banked calls:
-                            #1 - unbanked to unbanked and no banking areas
-                            #2 - unbanked to banked to any bank area
-                            #3 - banked to unbanked from any bank area
-                            #4 - banked to same bank in same bank area
-                            #5 - banked to different bank in same bank area
-                            #6 - banked to any bank between different bank areas
-
-                        This brings us to the call types:
-                            near - case #1, #3, #4
-                            close - case #2, #6
-                            far - case #5
-                     */
-                    String fromBankArea = fromProcedure.getBankArea();
-                    String toBankArea = toProcedure.getBankArea();
-                    Boolean fromIsBanked = fromProcedure.isDeclaredBanked();
-                    Boolean toIsBanked = toProcedure.isDeclaredBanked();
-                    Long fromBank = fromProcedure.getBank();
-                    Long toBank = toProcedure.getBank();
-                    if( ((!fromIsBanked && !toIsBanked)) ||
-                        ((fromIsBanked && !toIsBanked)) ||
-                        ((fromIsBanked && toIsBanked) && (fromBank == toBank) && (fromBankArea.contentEquals(toBankArea)))
-                    ) {
-                        // near call - case #1, #3, #4
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked( "near","phi", "", 0L, call.getProcedure().getFullName(), program), program);
-//                            // Otherwise, Generate AM for a normal near call.
-//                            asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
-                    } else {
-                        if( (!fromIsBanked && toIsBanked) ||
-                            ((fromIsBanked && toIsBanked) && (!fromBankArea.contentEquals(toBankArea)))
-                        ) {
-                            // close call - case #2, #6
-                            AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked( "close","phi", toBankArea, toBank, call.getProcedure().getFullName(), program), program);
-                        } else {
-                            // far call - case #5
-                            AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked( "far","phi", toBankArea, toBank, call.getProcedure().getFullName(), program), program);
-                        }
-                    }
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(new Procedure.CallingDistance(fromProcedure, toProcedure),"phi", call.getProcedure().getFullName(), program), program);
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
-                    // Same as PHI
-                    String fromBankArea = fromProcedure.getBankArea();
-                    String toBankArea = toProcedure.getBankArea();
-                    Boolean fromIsBanked = fromProcedure.isDeclaredBanked();
                     Boolean toIsBanked = toProcedure.isDeclaredBanked();
                     Long fromBank = fromProcedure.getBank();
                     Long toBank = toProcedure.getBank();
                     if(toIsBanked && fromBank != toBank) {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
-//                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked("far", "stack", toProcedure.getBankArea(), toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
                     } else {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }
@@ -967,20 +924,12 @@ public class Pass4CodeGeneration {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
                     Procedure fromProcedure = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
-                    String fromBankArea = fromProcedure.getBankArea();
-                    String toBankArea = toProcedure.getBankArea();
-                    Boolean fromIsBanked = fromProcedure.isDeclaredBanked();
-                    Boolean toIsBanked = toProcedure.isDeclaredBanked();
-                    Long fromBank = fromProcedure.getBank();
-                    Long toBank = toProcedure.getBank();
                     RValue procedureRVal = call.getProcedureRVal();
                     // Same as PHI
                     if (toProcedure.isDeclaredBanked() && fromProcedure.getBank() != toProcedure.getBank()) {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
-//                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked( "far", "stack", toProcedure.getBankArea(), toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
                     } else {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
-//                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked( "near", "stack", toProcedure.getBankArea(), toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
                     }
                     if (!(procedureRVal instanceof ProcedureRef)) {
                         asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);

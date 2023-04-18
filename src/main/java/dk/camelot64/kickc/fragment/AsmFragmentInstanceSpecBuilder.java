@@ -14,6 +14,7 @@ import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -44,19 +45,17 @@ final public class AsmFragmentInstanceSpecBuilder {
     /**
      * Create a fragment instance spec factory for a subroutine call
      *
-     * @param distance          The string expressing the distance of the call: "near", "close", "far".
+     * @param callingDistance   The class expressing the distance of the call: "near", "close", "far" plus bankArea and bank information calculated from the from and to procedure.
      * @param callingConvention The string expressing the calling convention supported by the fragment.
-     * @param bankArea          The bank area where the procedure is to be called.
-     * @param bank              The bank where the procedure is to be called.
      * @param procedureName     The full name of the procedure.
      * @param program           The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec callBanked(String distance, String callingConvention, String bankArea, Long bank, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec callBanked(Procedure.CallingDistance callingDistance, String callingConvention, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(distance, callingConvention, bankArea, bank);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(callingDistance, callingConvention);
         ScopeRef codeScope = program.getScope().getRef();
-        bindings.bind("c1", new ConstantInteger(bank));
+        bindings.bind("c1", new ConstantInteger(callingDistance.getBank()));
         bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }

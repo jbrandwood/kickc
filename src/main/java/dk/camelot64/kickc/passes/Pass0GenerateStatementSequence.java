@@ -16,7 +16,6 @@ import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -295,12 +294,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             this.currentSegmentData = pragmaParamName(pragmaParamSingle(ctx));
             break;
          case CParser.PRAGMA_BANK:
+            if(ctx.pragmaParam().size() != 2)
+               throw new CompileError("#pragma expects two parameters!", new StatementSource(ctx));
             try {
                final String pragmaBankArea = pragmaParamName(ctx.pragmaParam(0));
                final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
                this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
             } catch(IllegalArgumentException e) {
-               throw new CompileError("Illegal parameter " + ctx.getText(), new StatementSource(ctx));
+               throw new CompileError("Illegal bank parameter " + ctx.getText(), new StatementSource(ctx));
             }
             break;
          case CParser.PRAGMA_NOBANK:
@@ -377,25 +378,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(callingConvention == null)
          throw new CompileError("Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       return callingConvention;
-   }
-
-   /**
-    * Parse the BANK AREA parameter of a #pragma
-    * If the parameter is not a BANK AREA the compiler will fail out
-    *
-    * @param paramCtx The parameter to parse
-    * @return The name
-    */
-   private String pragmaParamBankArea(KickCParser.PragmaParamContext paramCtx) {
-      if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
-         throw new CompileError("Expected a BANK AREA parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
-      final String pragmaBankArea = ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
-//      if(this.program.getPragmaCodeSegs().get(pragmaBankArea) != null) {
-//         return pragmaBankArea;
-//      } else {
-//         throw new CompileError("Expected a previously declared CODE_SEG parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
-//      }
-      return pragmaBankArea;
    }
 
 
@@ -584,8 +566,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          procedure.setParameters(parameterList);
          procedure.setSegmentData(currentSegmentData); // When a procedure is defined, the currentDataSegment is to be set.
          procedure.setSegmentCode(currentSegmentCode); // When a procedure is defined, the currentSegmentCode is to be set.
-         if(procedure.getBankLocation() == null && currentBank != null) {
-            procedure.setBankLocation(currentBank); // When a procedure is defined, the currentBank is to be set, or far calls won't work.
+         if(procedure.getBank() == null && currentBank != null) {
+            procedure.setBank(currentBank); // When a procedure is defined, the currentBank is to be set, or far calls won't work.
          }
          // Add return variable
          if(!SymbolType.VOID.equals(procedure.getReturnType())) {
@@ -1209,9 +1191,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
             procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
-         } else if(directive instanceof Directive.Bank) {
-            Bank bank = new Bank(((Directive.Bank) directive).getBankArea(), ((Directive.Bank) directive).getBank());
-            procedure.setBankLocation(bank);
+         } else if(directive instanceof Directive.Bank directiveBank) {
+            Bank bank = new Bank(directiveBank.getBankArea(), directiveBank.getBankNumber());
+            procedure.setBank(bank);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
@@ -1257,11 +1239,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDirectiveBank(KickCParser.DirectiveBankContext ctx) {
-
-      String bankArea = ctx.getChild(2).getText();
-      Long bank = Long.valueOf(ctx.getChild(4).getText());
-
-      return new Directive.Bank(bankArea, bank);
+      String bankArea = ctx.NAME().getText();
+      Number bankNumber = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      return new Directive.Bank(bankArea, bankNumber.longValue());
    }
 
    @Override

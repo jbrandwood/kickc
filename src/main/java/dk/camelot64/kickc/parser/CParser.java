@@ -107,11 +107,11 @@ public class CParser {
      */
     public static final String PRAGMA_RESOURCE = "resource";
     /**
-     * #pragma bank(...) changes the current bank. Functionsand variables will be placed in the specified bank.
+     * #pragma bank(...) changes the current bank. Functions and variables will be placed in the specified bank.
      */
     public static final String PRAGMA_BANK = "bank";
     /**
-     * #pragma nobank Changes the current bank to the default bank.
+     * #pragma nobank Changes the current bank to the default/common bank.
      */
     public static final String PRAGMA_NOBANK = "nobank";
 

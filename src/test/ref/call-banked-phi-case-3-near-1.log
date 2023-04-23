@@ -38,7 +38,7 @@ plus::@return: scope:[plus]  from plus::@1
   return 
   to:@return
 
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 min: scope:[min]  from plus
   min::b#1 = phi( plus/min::b#0 )
   min::a#1 = phi( plus/min::a#0 )
@@ -66,7 +66,7 @@ __constant char * const SCREEN = (char *)$400
 void __start()
 void main()
 char main::$0
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::$0
 char min::a
 char min::a#0
@@ -188,7 +188,7 @@ plus::@return: scope:[plus]  from plus
   [6] return 
   to:@return
 
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 min: scope:[min]  from plus
   [7] phi()
   to:min::@return
@@ -199,7 +199,7 @@ min::@return: scope:[min]  from min
 
 VARIABLE REGISTER WEIGHTS
 void main()
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::a
 char min::b
 char min::return
@@ -299,12 +299,12 @@ main: {
 .segment RAM_Bank1
   // plus
 // char plus(char a, char b)
-// banked : bank area='cx16_ram', bank=1
+// __bank(cx16_ram, 1) 
 plus: {
     .label a = '0'
     .label b = 7
     // [5] call min
-    // [7] phi from plus to min [phi:plus->min] -- call_phi_near 
+    // [7] phi from plus to min [phi:plus->min]
   min_from_plus:
     jsr min
     jmp __breturn
@@ -316,7 +316,6 @@ plus: {
 .segment Code
   // min
 // char min(char a, char b)
-// banked : bank area='cx16_ram', bank=1
 min: {
     .label return = plus.a+plus.b
     jmp __breturn
@@ -344,7 +343,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 __constant char * const SCREEN = (char *) 1024
 void main()
-__bank(cx16_ram, 1) char min(char a , char b)
+char min(char a , char b)
 char min::a
 char min::b
 char min::return
@@ -432,13 +431,13 @@ main: {
 .segment RAM_Bank1
   // plus
 // char plus(char a, char b)
-// banked : bank area='cx16_ram', bank=1
+// __bank(cx16_ram, 1) 
 plus: {
     .label a = '0'
     .label b = 7
     // min(a, b)
     // [5] call min
-    // [7] phi from plus to min [phi:plus->min] -- call_phi_near 
+    // [7] phi from plus to min [phi:plus->min]
     jsr min
     // plus::@return
     // }
@@ -448,7 +447,6 @@ plus: {
 .segment Code
   // min
 // char min(char a, char b)
-// banked : bank area='cx16_ram', bank=1
 min: {
     .label return = plus.a+plus.b
     // min::@return

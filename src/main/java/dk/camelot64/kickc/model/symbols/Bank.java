@@ -1,9 +1,6 @@
-package dk.camelot64.kickc.model;
-
-
+package dk.camelot64.kickc.model.symbols;
 
 /**
- *
  * <p>
  * Specific target computer platforms implement a memory layout that can be banked either in ram or rom.
  * This class models the capability to calculate which function call implementations are banked and which not.
@@ -99,44 +96,28 @@ package dk.camelot64.kickc.model;
  *         <b>__bank( <i>method</i>, <i>number</i> )</b> directive to calculate the function call implementation
  *         at the function calling locations!</li>
  * </ul>
- *
+ * <p>
  * The KickC compiler contains several test cases and examples which demonstrate the usage of the banking system.
  *
+ * @param bankArea The bankable area name.
+ * @param bankNumber The bank number.
  */
-public class Bank extends Object {
-
-   private final String bankArea; // The bank method to apply.
-   private Long bank; // The bank number.
+public record Bank(String bankArea, Long bankNumber) {
 
    /**
     * Creates a new Bank which collects the necessary data to handle banking.
     * For example, on the Commander X16, RAM is banked from address 0xA000 till 0xBFFF.
     * Zeropage 0x00 configures this banked RAM, with a number from 0x00 till 0xff.
-    * So banked RAM is is a bankArea, and the bank is a configurable bank number in the bankArea.
+    * So "Banked RAM" is is a bankArea, and the bank is a configurable bank number in the bankArea.
+    *
     * @param bankArea A bank area is a memory range that is banked on a target platform.
-    * @param bank A bank is a number that defines a bank configuration in a bank area.
+    * @param bankNumber A bank is a number that defines a bank configuration in a bank area.
     */
-   public Bank(String bankArea, Long bank) {
-      this.bankArea = bankArea;
-      this.bank = bank;
-   }
-
-   public String getBankArea() {
-      return bankArea;
-   }
-
-   public Long getBank() {
-      return bank;
-   }
-
-   public void setBank(Long bank) {
-      this.bank = bank;
+   public Bank {
    }
 
    @Override
    public String toString() {
-      return "banked : " +
-              "bank area='" + bankArea + '\'' +
-              ", bank=" + bank;
+      return "__bank(" + this.bankArea() + ", " + this.bankNumber() + ") ";
    }
 }

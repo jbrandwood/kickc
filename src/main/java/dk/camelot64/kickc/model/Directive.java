@@ -52,20 +52,20 @@ public class Directive {
    static public class Bank extends Directive {
 
       private String bankArea; // A bank area is a memory range that is banked on a target platform.
-      private Long bank; // A bank is a number that defines a bank configuration in a bank area.
+      private Long bankNumber; // A bank is a number that defines a bank configuration in a bank area.
 
-      public Bank(String bankArea, Long bank) {
+      public Bank(String bankArea, Long bankNumber) {
          super("bank" );
          this.bankArea = bankArea;
-         this.bank = bank;
+         this.bankNumber = bankNumber;
       }
 
       public String getBankArea() {
          return bankArea;
       }
 
-      public Long getBank() {
-         return bank;
+      public Long getBankNumber() {
+         return bankNumber;
       }
    }
 

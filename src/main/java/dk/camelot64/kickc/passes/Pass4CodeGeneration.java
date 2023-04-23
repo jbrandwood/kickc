@@ -220,7 +220,6 @@ public class Pass4CodeGeneration {
 
     /**
      * Generate a comment that describes the procedure signature and parameter transfer.
-     * We have added here also the banking information.
      *
      * @param asm       The assembler program being generated
      * @param procedure The procedure
@@ -241,12 +240,8 @@ public class Pass4CodeGeneration {
         if (i > 0) {
             asm.addComment(signature.toString(), false);
         }
-        // Banking information of the procedure.
-        Bank bank = procedure.getBankLocation();
-        if(bank != null) {
-            StringBuilder signatureBank = new StringBuilder();
-            signatureBank.append(" " + bank.toString()); // This procedure is in a bank and in a banking area.
-            asm.addComment(signatureBank.toString(), false);
+        if(procedure.getBank() != null) {
+            asm.addComment(" " + procedure.getBank(), false);
         }
     }
 
@@ -896,6 +891,7 @@ public class Pass4CodeGeneration {
                     }
                 } else if (Procedure.CallingConvention.PHI_CALL.equals(toProcedure.getCallingConvention())) {
                     // Generate PHI transition
+                    boolean generatedPhis = false;
                     if (genCallPhiEntry) {
                         ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                         if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
@@ -904,17 +900,21 @@ public class Pass4CodeGeneration {
                                 throw new InternalError("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
                             }
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
+                            generatedPhis = true;
                         }
                     }
-                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(new Procedure.CallingDistance(fromProcedure, toProcedure),"phi", call.getProcedure().getFullName(), program), program);
-                } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
-                    Boolean toIsBanked = toProcedure.isDeclaredBanked();
-                    Long fromBank = fromProcedure.getBank();
-                    Long toBank = toProcedure.getBank();
-                    if(toIsBanked && fromBank != toBank) {
-                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
-                    } else {
+                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
+                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    }  else {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(callingDistance,"phi", call.getProcedure().getFullName(), program), program);
+                    }
+                } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
+                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
+                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
+                        asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    } else {
+                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
                     }
                 }
             } else if (statement instanceof StatementCallExecute) {
@@ -923,14 +923,14 @@ public class Pass4CodeGeneration {
                 if(procedureRef != null) {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
-                    Procedure fromProcedure = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
-                    RValue procedureRVal = call.getProcedureRVal();
-                    // Same as PHI
-                    if (toProcedure.isDeclaredBanked() && fromProcedure.getBank() != toProcedure.getBank()) {
-                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
-                    } else {
+                    Procedure fromProcedure = block.getProcedure(this.program);
+                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
+                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                    } else {
+                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
                     }
+                    RValue procedureRVal = call.getProcedureRVal();
                     if (!(procedureRVal instanceof ProcedureRef)) {
                         asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
                     }

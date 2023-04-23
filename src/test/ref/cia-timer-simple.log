@@ -657,7 +657,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segment Code
   // main
 main: {
-    // [1] call clock_start -- call_phi_near 
+    // [1] call clock_start
     // Reset & start the CIA#2 timer A+B
     jsr clock_start
     // [2] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
@@ -666,14 +666,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] call clock -- call_phi_near 
+    // [3] call clock
     jsr clock
     // [4] clock::return#2 = clock::return#0
     jmp __b2
     // main::@2
   __b2:
     // [5] print_ulong_at::dw#0 = clock::return#2
-    // [6] call print_ulong_at -- call_phi_near 
+    // [6] call print_ulong_at
     jsr print_ulong_at
     jmp __b1_from___b2
 }
@@ -760,7 +760,7 @@ print_ulong_at: {
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [22] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- call_phi_near 
+    // [22] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __b1
     // print_ulong_at::@1
@@ -778,7 +778,7 @@ print_ulong_at: {
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [22] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- call_phi_near 
+    // [22] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __breturn
     // print_ulong_at::@return
@@ -800,7 +800,7 @@ print_uint_at: {
     // [30] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
   print_uchar_at_from_print_uint_at:
     // [30] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- call_phi_near 
+    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __b1
     // print_uint_at::@1
@@ -820,7 +820,7 @@ print_uint_at: {
     // [30] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
   print_uchar_at_from___b1:
     // [30] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- call_phi_near 
+    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __breturn
     // print_uint_at::@return
@@ -853,7 +853,7 @@ print_uchar_at: {
     // [40] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
   print_char_at_from_print_uchar_at:
     // [40] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [40] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- call_phi_near 
+    // [40] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __b1
     // print_uchar_at::@1
@@ -876,7 +876,7 @@ print_uchar_at: {
     // [40] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
   print_char_at_from___b1:
     // [40] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [40] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- call_phi_near 
+    // [40] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __breturn
     // print_uchar_at::@return
@@ -1030,20 +1030,20 @@ Score: 467
   // main
 main: {
     // clock_start()
-    // [1] call clock_start -- call_phi_near 
+    // [1] call clock_start
     // Reset & start the CIA#2 timer A+B
     jsr clock_start
     // [2] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
     // main::@1
   __b1:
     // clock()
-    // [3] call clock -- call_phi_near 
+    // [3] call clock
     jsr clock
     // [4] clock::return#2 = clock::return#0
     // main::@2
     // print_ulong_at(clock(), SCREEN)
     // [5] print_ulong_at::dw#0 = clock::return#2
-    // [6] call print_ulong_at -- call_phi_near 
+    // [6] call print_ulong_at
     jsr print_ulong_at
     jmp __b1
 }
@@ -1136,7 +1136,7 @@ print_ulong_at: {
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [22] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- call_phi_near 
+    // [22] phi print_uint_at::w#2 = print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@1
     // print_uint_at(WORD0(dw), at+4)
@@ -1152,7 +1152,7 @@ print_ulong_at: {
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [22] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- call_phi_near 
+    // [22] phi print_uint_at::w#2 = print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@return
     // }
@@ -1173,7 +1173,7 @@ print_uint_at: {
     // [25] call print_uchar_at
     // [30] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
     // [30] phi print_uchar_at::at#2 = print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- call_phi_near 
+    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@1
     // print_uchar_at(BYTE0(w), at+2)
@@ -1191,7 +1191,7 @@ print_uint_at: {
     // [28] call print_uchar_at
     // [30] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
     // [30] phi print_uchar_at::at#2 = print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- call_phi_near 
+    // [30] phi print_uchar_at::b#2 = print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@return
     // }
@@ -1224,7 +1224,7 @@ print_uchar_at: {
   // Table of hexadecimal digits
     // [40] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
     // [40] phi print_char_at::at#2 = print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [40] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- call_phi_near 
+    // [40] phi print_char_at::ch#2 = print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@1
     // b&$f
@@ -1246,7 +1246,7 @@ print_uchar_at: {
     // [38] call print_char_at
     // [40] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
     // [40] phi print_char_at::at#2 = print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [40] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- call_phi_near 
+    // [40] phi print_char_at::ch#2 = print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@return
     // }

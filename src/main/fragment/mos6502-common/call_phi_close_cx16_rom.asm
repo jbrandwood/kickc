@@ -5,4 +5,3 @@ sta $1
 jsr {la1}
 pla
 sta $1
-

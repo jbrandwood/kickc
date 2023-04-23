@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.Bank;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -42,10 +41,12 @@ public class Procedure extends Scope {
    private boolean isConstructor;
    /** The source of the procedure definition. */
    private StatementSource definitionSource;
-   /** The bank segment information. Collected during parsing. These are used to compare with the current currentBank to decide a near or a far call, and to keep inline calling routines.
-    * When this value is null, the procedure is not allocated to a bank.
+   /**
+    * The bank that the procedure code is placed in.
+    * Used to decide whether to produce near, close or far call when generating code.
+    * If null, the procedure is in a common bank (always visible) and all calls will be near.
     */
-   private Bank bankLocation;
+   private Bank bank;
 
 
    /** The names of all legal intrinsic procedures. */
@@ -56,12 +57,12 @@ public class Procedure extends Scope {
          Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 
-   public Bank getBankLocation() {
-      return bankLocation;
+   public Bank getBank() {
+      return bank;
    }
 
-   public void setBankLocation(Bank bankLocation) {
-      this.bankLocation = bankLocation;
+   public void setBank(Bank bank) {
+      this.bank = bank;
    }
 
    public enum CallingProximity {
@@ -109,16 +110,16 @@ public class Procedure extends Scope {
          return bankArea;
       }
 
-      public Long getBank() {
+      public Long getBankNumber() {
          return bank;
       }
 
 
       public CallingDistance(Procedure from, Procedure to) {
-         if (((!from.isDeclaredBanked() && !to.isDeclaredBanked())) ||
-                 ((from.isDeclaredBanked() && !to.isDeclaredBanked())) ||
-                 ((from.isDeclaredBanked() && to.isDeclaredBanked()) &&
-                         (from.getBank() == to.getBank()) &&
+         if (((!from.isBanked() && !to.isBanked())) ||
+                 ((from.isBanked() && !to.isBanked())) ||
+                 ((from.isBanked() && to.isBanked()) &&
+                         (from.getBankNumber() == to.getBankNumber()) &&
                          (from.getBankArea().contentEquals(to.getBankArea()))
                  )
          ) {
@@ -127,18 +128,18 @@ public class Procedure extends Scope {
             this.bankArea = "";
             this.bank = 0L;
          } else {
-            if ((!from.isDeclaredBanked() && to.isDeclaredBanked()) ||
-                    ((from.isDeclaredBanked() && to.isDeclaredBanked()) && (!from.getBankArea().contentEquals(to.getBankArea())))
+            if ((!from.isBanked() && to.isBanked()) ||
+                    ((from.isBanked() && to.isBanked()) && (!from.getBankArea().contentEquals(to.getBankArea())))
             ) {
                // close call - case #2, #6
                this.proximity = CallingProximity.CLOSE;
                this.bankArea = to.getBankArea();
-               this.bank = to.getBank();
+               this.bank = to.getBankNumber();
             } else {
                // far call - case #5
                this.proximity = CallingProximity.FAR;
                this.bankArea = to.getBankArea();
-               this.bank = to.getBank();
+               this.bank = to.getBankNumber();
             }
          }
       }
@@ -183,11 +184,11 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String segmentCode, String segmentData, CallingConvention callingConvention, Bank bankLocation) {
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String segmentCode, String segmentData, CallingConvention callingConvention, Bank bank) {
       super(name, parentScope, segmentData);
       this.procedureType = procedureType;
       this.declaredInline = false;
-      this.bankLocation = bankLocation;
+      this.bank = bank;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.segmentCode = segmentCode;
@@ -301,20 +302,20 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
-   public boolean isDeclaredBanked() {
-      return bankLocation != null;
+   public boolean isBanked() {
+      return bank != null;
    }
 
-   public Long getBank() {
-      if(bankLocation != null)
-         return bankLocation.getBank();
+   public Long getBankNumber() {
+      if(bank != null)
+         return bank.bankNumber();
       else
          return 0L;
    }
 
    public String getBankArea() {
-      if(bankLocation != null)
-         return bankLocation.getBankArea();
+      if(bank != null)
+         return bank.bankArea();
       else
          return "";
    }
@@ -379,8 +380,8 @@ public class Procedure extends Scope {
       if(declaredIntrinsic) {
          res.append("__intrinsic ");
       }
-      if(isDeclaredBanked()) {
-         res.append("__bank(").append(this.getBankArea()).append(", ").append(this.getBank()).append(") ");
+      if(isBanked()) {
+         res.append("__bank(").append(this.getBankArea()).append(", ").append(this.getBankNumber()).append(") ");
       }
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
@@ -418,23 +419,11 @@ public class Procedure extends Scope {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       Procedure procedure = (Procedure) o;
-      return variableLengthParameterList == procedure.variableLengthParameterList &&
-            declaredInline == procedure.declaredInline &&
-            Objects.equals(bankLocation, procedure.bankLocation) &&
-            declaredIntrinsic == procedure.declaredIntrinsic &&
-            isConstructor == procedure.isConstructor &&
-            Objects.equals(procedureType, procedure.procedureType) &&
-            Objects.equals(parameterNames, procedure.parameterNames) &&
-            Objects.equals(interruptType, procedure.interruptType) &&
-            Objects.equals(comments, procedure.comments) &&
-            Objects.equals(reservedZps, procedure.reservedZps) &&
-            Objects.equals(segmentCode, procedure.segmentCode) &&
-            Objects.equals(constructorRefs, procedure.constructorRefs) &&
-            callingConvention == procedure.callingConvention;
+      return variableLengthParameterList == procedure.variableLengthParameterList && declaredInline == procedure.declaredInline && declaredIntrinsic == procedure.declaredIntrinsic && isConstructor == procedure.isConstructor && Objects.equals(procedureType, procedure.procedureType) && Objects.equals(parameterNames, procedure.parameterNames) && Objects.equals(interruptType, procedure.interruptType) && Objects.equals(comments, procedure.comments) && Objects.equals(reservedZps, procedure.reservedZps) && Objects.equals(segmentCode, procedure.segmentCode) && Objects.equals(constructorRefs, procedure.constructorRefs) && Objects.equals(definitionSource, procedure.definitionSource) && Objects.equals(bank, procedure.bank) && callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, callingConvention);
+      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, definitionSource, bank, callingConvention);
    }
 }

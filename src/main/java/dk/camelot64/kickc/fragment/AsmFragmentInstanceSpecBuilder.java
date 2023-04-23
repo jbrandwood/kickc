@@ -55,7 +55,7 @@ final public class AsmFragmentInstanceSpecBuilder {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
         AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(callingDistance, callingConvention);
         ScopeRef codeScope = program.getScope().getRef();
-        bindings.bind("c1", new ConstantInteger(callingDistance.getBank()));
+        bindings.bind("c1", new ConstantInteger(callingDistance.getBankNumber()));
         bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }

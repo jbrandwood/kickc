@@ -1582,6 +1582,12 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testBankedPhiMemvars() throws IOException {
+      compileAndCompare("call-banked-phi-memvars.c", log());
+   }
+
+
+   @Test
    public void testBankedStackCase2Close0() throws IOException {
       assertError("call-banked-stack-case-2-close-0.c", "Stack Call procedure not supported in banked mode");
    }

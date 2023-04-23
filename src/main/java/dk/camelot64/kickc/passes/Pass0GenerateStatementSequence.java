@@ -136,7 +136,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          initProc.setParameters(new ArrayList<>());
          program.getScope().add(initProc);
          program.createProcedureCompilation(initProc.getRef());
-         program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
       }
       return initProc;
    }
@@ -180,9 +180,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(initCompilation != null) {
          final StatementSequence initSequence = initCompilation.getStatementSequence();
          final Label initReturnLabel = program.getScope().getProcedure(initProcedureRef).addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         initSequence.addStatement(new StatementLabel(initReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         initSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         initSequence.addStatement(new StatementProcedureEnd(initProcedureRef, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementLabel(initReturnLabel.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementReturn(null, StatementSource.NONE, Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementProcedureEnd(initProcedureRef, StatementSource.NONE, Comment.NO_COMMENTS));
       }
 
       // Add the _start() procedure to the program
@@ -193,16 +193,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          program.getScope().add(startProcedure);
          final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
          final StatementSequence startSequence = startProcedureCompilation.getStatementSequence();
-         startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
          if(initCompilation != null)
-            startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), StatementSource.NONE, Comment.NO_COMMENTS));
          final Procedure mainProc = program.getScope().getLocalProcedure(SymbolRef.MAIN_PROC_NAME);
          if(mainProc == null)
             throw new CompileError("Required main() not defined in program.");
          if(!SymbolType.VOID.equals(mainProc.getReturnType()) && !SymbolType.SWORD.equals(mainProc.getReturnType()))
             throw new CompileError("return of main() must be 'void' or of type 'int'.", mainProc.getDefinitionSource());
          if(mainProc.getParameterNames().size() == 0) {
-            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), StatementSource.NONE, Comment.NO_COMMENTS));
          } else if(mainProc.getParameterNames().size() == 2) {
             final List<Variable> parameters = mainProc.getParameters();
             final Variable argc = parameters.get(0);
@@ -214,15 +214,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             final ArrayList<RValue> params = new ArrayList<>();
             params.add(new ConstantInteger(0L, SymbolType.SWORD));
             params.add(new ConstantPointer(0L, new SymbolTypePointer(SymbolType.BYTE)));
-            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, params, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, params, StatementSource.NONE, Comment.NO_COMMENTS));
          } else
             throw new CompileError("main() has wrong number of parameters. It must have zero or 2 parameters.", mainProc.getDefinitionSource());
 
 
          final Label startReturnLabel = startProcedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         startSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         startSequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementReturn(null, StatementSource.NONE, Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
       }
 
    }
@@ -1964,12 +1964,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public RValue visitInitUnion(KickCParser.InitUnionContext ctx) {
+      final String memberName = ctx.NAME().getText();
+      final RValue rValue = (RValue) visit(ctx.expr());
+      return new UnionDesignator(memberName, rValue);
+   }
+
+   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
       for(KickCParser.ExprContext initializer : ctx.expr()) {
          RValue rValue = (RValue) visit(initializer);
-         initValues.add(rValue);
-      }
+            initValues.add(rValue);
+         }
       return new ValueList(initValues);
    }
 

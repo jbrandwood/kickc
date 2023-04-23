@@ -62,9 +62,7 @@ public class Pass1CallVar extends Pass2SsaOptimization {
                   final LValue lValue = call.getlValue();
                   if(lValue!=null) {
                      Variable returnVar = procedure.getLocalVariable("return");
-                     stmtIt.previous();
                      generateCallFinalize(lValue, returnVar,  source, comments, stmtIt, statement);
-                     stmtIt.next();
                   }
                   stmtIt.remove();
                }
@@ -105,7 +103,9 @@ public class Pass1CallVar extends Pass2SsaOptimization {
       if(!(lValue instanceof ValueList) || !(returnType instanceof SymbolTypeStruct)) {
          // A simple value - add simple assignment
          final StatementAssignment stackPull = new StatementAssignment(lValue, returnVar.getRef(), false, source, comments);
+         stmtIt.previous();
          stmtIt.add(stackPull);
+         stmtIt.next();
          getLog().append("Calling convention " + Procedure.CallingConvention.VAR_CALL + " adding return value assignment " + stackPull);
       } else {
          final CastValue structLValue = new CastValue(returnType, lValue);
@@ -113,21 +113,6 @@ public class Pass1CallVar extends Pass2SsaOptimization {
          final ValueSource lValueSource = ValueSourceFactory.getValueSource(structLValue, getProgram(), getScope(), currentStmt, stmtIt, null);
          final ValueSource rValueSource = ValueSourceFactory.getValueSource(returnVar.getRef(), getProgram(), getScope(), currentStmt, stmtIt, null);
          Pass1UnwindStructValues.copyValues(lValueSource, rValueSource, null, false, currentStmt, null, stmtIt, getProgram());
-
-
-         /*
-         final List<RValue> memberLValues = ((ValueList) lValue).getList();
-         final StructVariableMemberUnwinding structVariableMemberUnwinding = getProgram().getStructVariableMemberUnwinding();
-         final StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = structVariableMemberUnwinding.getVariableUnwinding(returnVar.getRef());
-         for(RValue memberLValue : memberLValues) {
-
-         }
-         for(int i = 0; i < structMemberVars.size(); i++) {
-            final Variable memberVar = structMemberVars.get(i);
-            final RValue memberValue = memberLValues.get(i);
-            generateCallFinalize(memberValue, memberVar.getType(), source, comments, stmtIt);
-         }
-         */
       }
    }
 

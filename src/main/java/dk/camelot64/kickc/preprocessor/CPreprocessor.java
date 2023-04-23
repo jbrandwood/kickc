@@ -223,29 +223,26 @@ public class CPreprocessor implements TokenSource {
       pragmaTokens.add(pragmaType);
       pragmaTokens.addAll(skipWhitespace(cTokenSource));
       ArrayList<Token> pragmaBody = readBody(cTokenSource);
-      if(pragmaBody.size()>0) {
-         final Token pragmaBodyStart = pragmaBody.get(0);
-         // Convert space-based pragma to parenthesis-based for easier parsing
-         // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
-         if (pragmaBodyStart.getType() != KickCLexer.PAR_BEGIN) {
-            ArrayList<Token> parenthesizedBody = new ArrayList<>();
-            parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "("));
-            // Parenthesize the parameter list
-            boolean first = true;
-            for (Token token : pragmaBody) {
-               if (token.getChannel() != CParser.CHANNEL_WHITESPACE && !first) {
-                  parenthesizedBody.add(new CommonToken(KickCLexer.COMMA, ","));
-               }
-               parenthesizedBody.add(token);
-               first = false;
+      // Convert space-based pragma to parenthesis-based for easier parsing
+      // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
+      if(pragmaBody.isEmpty() || pragmaBody.get(0).getType() != KickCLexer.PAR_BEGIN) {
+         ArrayList<Token> parenthesizedBody = new ArrayList<>();
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "("));
+         // Parenthesize the parameter list
+         boolean first = true;
+         for(Token token : pragmaBody) {
+            if(token.getChannel() != CParser.CHANNEL_WHITESPACE && !first) {
+               parenthesizedBody.add(new CommonToken(KickCLexer.COMMA, ","));
             }
-            parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")"));
-            pragmaBody = parenthesizedBody;
+            parenthesizedBody.add(token);
+            first = false;
          }
-         pragmaTokens.addAll(pragmaBody);
-         // Pass on the #pragma to the parser - and mark it as already handled
-         cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")"));
+         pragmaBody = parenthesizedBody;
       }
+      pragmaTokens.addAll(pragmaBody);
+      // Pass on the #pragma to the parser - and mark it as already handled
+      cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
       parserPragmas.add(inputToken);
       return true;
    }

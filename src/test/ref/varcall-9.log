@@ -1,0 +1,711 @@
+Converting parameter in __varcall procedure to load/store plus::a
+Converting parameter in __varcall procedure to load/store plus::b
+Converting return in __varcall procedure to load/store plus::return
+Eliminating unused variable with no statement plus::a
+Eliminating unused variable with no statement plus::b
+Eliminating unused variable with no statement plus::a_normal
+Eliminating unused variable with no statement plus::a_error
+Eliminating unused variable with no statement plus::b_normal
+Eliminating unused variable with no statement plus::b_error
+Calling convention __varcall adding prepare/execute/finalize for main::$0 = call plus(main::a_normal_border, main::a_normal_bg, main::a_error_border, main::a_error_bg, main::b_normal_border, main::b_normal_bg, main::b_error_border, main::b_error_bg)
+Calling convention __varcall adding prepare/execute/finalize for main::$1 = call plus(main::b_normal_border, main::b_normal_bg, main::b_error_border, main::b_error_bg, main::c_normal_border, main::c_normal_bg, main::c_error_border, main::c_error_bg)
+Calling convention VAR_CALL adding return value assignment main::$0 = plus::return
+Calling convention VAR_CALL adding return value assignment main::$1 = plus::return
+
+CONTROL FLOW GRAPH SSA
+
+__varcall char plus(char a_normal_border , char a_normal_bg , char a_error_border , char a_error_bg , char b_normal_border , char b_normal_bg , char b_error_border , char b_error_bg)
+plus: scope:[plus]  from
+  plus::$0 = plus::a_normal_border + plus::b_normal_border
+  plus::$1 = plus::$0 + plus::a_normal_bg
+  plus::$2 = plus::$1 + plus::b_normal_bg
+  plus::$3 = plus::$2 + plus::a_error_border
+  plus::$4 = plus::$3 + plus::b_error_border
+  plus::$5 = plus::$4 + plus::a_error_bg
+  plus::$6 = plus::$5 + plus::b_error_bg
+  plus::return = plus::$6
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  plus::a_normal_border = main::a_normal_border
+  plus::a_normal_bg = main::a_normal_bg
+  plus::a_error_border = main::a_error_border
+  plus::a_error_bg = main::a_error_bg
+  plus::b_normal_border = main::b_normal_border
+  plus::b_normal_bg = main::b_normal_bg
+  plus::b_error_border = main::b_error_border
+  plus::b_error_bg = main::b_error_bg
+  callexecute plus 
+  main::$0 = plus::return
+  *COLS = main::$0
+  plus::a_normal_border = main::b_normal_border
+  plus::a_normal_bg = main::b_normal_bg
+  plus::a_error_border = main::b_error_border
+  plus::a_error_bg = main::b_error_bg
+  plus::b_normal_border = main::c_normal_border
+  plus::b_normal_bg = main::c_normal_bg
+  plus::b_error_border = main::c_error_border
+  plus::b_error_bg = main::c_error_bg
+  callexecute plus 
+  main::$1 = plus::return
+  *COLS = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char * const COLS = (char *)$d020
+void __start()
+void main()
+char main::$0
+char main::$1
+struct Col main::a_error
+__constant char main::a_error_bg = 4
+__constant char main::a_error_border = 3
+struct Col main::a_normal
+__constant char main::a_normal_bg = 2
+__constant char main::a_normal_border = 1
+struct Col main::b_error
+__constant char main::b_error_bg = 8
+__constant char main::b_error_border = 7
+struct Col main::b_normal
+__constant char main::b_normal_bg = 6
+__constant char main::b_normal_border = 5
+struct Col main::c_error
+__constant char main::c_error_bg = $c
+__constant char main::c_error_border = $b
+struct Col main::c_normal
+__constant char main::c_normal_bg = $a
+__constant char main::c_normal_border = 9
+__varcall char plus(char a_normal_border , char a_normal_bg , char a_error_border , char a_error_bg , char b_normal_border , char b_normal_bg , char b_error_border , char b_error_bg)
+char plus::$0
+char plus::$1
+char plus::$2
+char plus::$3
+char plus::$4
+char plus::$5
+char plus::$6
+__loadstore char plus::a_error_bg
+__loadstore char plus::a_error_border
+__loadstore char plus::a_normal_bg
+__loadstore char plus::a_normal_border
+__loadstore char plus::b_error_bg
+__loadstore char plus::b_error_border
+__loadstore char plus::b_normal_bg
+__loadstore char plus::b_normal_border
+__loadstore char plus::return
+
+Simplifying constant pointer cast (char *) 53280
+Successful SSA optimization PassNCastSimplification
+Alias candidate removed (volatile)plus::return = plus::$6 
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)plus::return = plus::$6 
+Alias candidate removed (volatile)plus::return = plus::$6 
+Alias candidate removed (volatile)plus::return = plus::$6 
+CALL GRAPH
+Calls in [main] to plus:8 plus:19 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] plus::a_normal_border = main::a_normal_border
+  [1] plus::a_normal_bg = main::a_normal_bg
+  [2] plus::a_error_border = main::a_error_border
+  [3] plus::a_error_bg = main::a_error_bg
+  [4] plus::b_normal_border = main::b_normal_border
+  [5] plus::b_normal_bg = main::b_normal_bg
+  [6] plus::b_error_border = main::b_error_border
+  [7] plus::b_error_bg = main::b_error_bg
+  [8] callexecute plus 
+  [9] main::$0 = plus::return
+  [10] *COLS = main::$0
+  [11] plus::a_normal_border = main::b_normal_border
+  [12] plus::a_normal_bg = main::b_normal_bg
+  [13] plus::a_error_border = main::b_error_border
+  [14] plus::a_error_bg = main::b_error_bg
+  [15] plus::b_normal_border = main::c_normal_border
+  [16] plus::b_normal_bg = main::c_normal_bg
+  [17] plus::b_error_border = main::c_error_border
+  [18] plus::b_error_bg = main::c_error_bg
+  [19] callexecute plus 
+  [20] main::$1 = plus::return
+  [21] *COLS = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  [22] return 
+  to:@return
+
+__varcall char plus(char a_normal_border , char a_normal_bg , char a_error_border , char a_error_bg , char b_normal_border , char b_normal_bg , char b_error_border , char b_error_bg)
+plus: scope:[plus]  from
+  [23] plus::$0 = plus::a_normal_border + plus::b_normal_border
+  [24] plus::$1 = plus::$0 + plus::a_normal_bg
+  [25] plus::$2 = plus::$1 + plus::b_normal_bg
+  [26] plus::$3 = plus::$2 + plus::a_error_border
+  [27] plus::$4 = plus::$3 + plus::b_error_border
+  [28] plus::$5 = plus::$4 + plus::a_error_bg
+  [29] plus::$6 = plus::$5 + plus::b_error_bg
+  [30] plus::return = plus::$6
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [31] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+char main::$0 // 4.0
+char main::$1 // 4.0
+struct Col main::a_error
+struct Col main::a_normal
+struct Col main::b_error
+struct Col main::b_normal
+struct Col main::c_error
+struct Col main::c_normal
+__varcall char plus(char a_normal_border , char a_normal_bg , char a_error_border , char a_error_bg , char b_normal_border , char b_normal_bg , char b_error_border , char b_error_bg)
+char plus::$0 // 22.0
+char plus::$1 // 22.0
+char plus::$2 // 22.0
+char plus::$3 // 22.0
+char plus::$4 // 22.0
+char plus::$5 // 22.0
+char plus::$6 // 22.0
+__loadstore char plus::a_error_bg // 1.0
+__loadstore char plus::a_error_border // 1.0
+__loadstore char plus::a_normal_bg // 1.0
+__loadstore char plus::a_normal_border // 0.9375
+__loadstore char plus::b_error_bg // 1.875
+__loadstore char plus::b_error_border // 1.875
+__loadstore char plus::b_normal_bg // 1.875
+__loadstore char plus::b_normal_border // 1.875
+__loadstore char plus::return // 3.75
+
+Initial phi equivalence classes
+Added variable plus::a_normal_border to live range equivalence class [ plus::a_normal_border ]
+Added variable plus::a_normal_bg to live range equivalence class [ plus::a_normal_bg ]
+Added variable plus::a_error_border to live range equivalence class [ plus::a_error_border ]
+Added variable plus::a_error_bg to live range equivalence class [ plus::a_error_bg ]
+Added variable plus::b_normal_border to live range equivalence class [ plus::b_normal_border ]
+Added variable plus::b_normal_bg to live range equivalence class [ plus::b_normal_bg ]
+Added variable plus::b_error_border to live range equivalence class [ plus::b_error_border ]
+Added variable plus::b_error_bg to live range equivalence class [ plus::b_error_bg ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable plus::$0 to live range equivalence class [ plus::$0 ]
+Added variable plus::$1 to live range equivalence class [ plus::$1 ]
+Added variable plus::$2 to live range equivalence class [ plus::$2 ]
+Added variable plus::$3 to live range equivalence class [ plus::$3 ]
+Added variable plus::$4 to live range equivalence class [ plus::$4 ]
+Added variable plus::$5 to live range equivalence class [ plus::$5 ]
+Added variable plus::$6 to live range equivalence class [ plus::$6 ]
+Added variable plus::return to live range equivalence class [ plus::return ]
+Complete equivalence classes
+[ plus::a_normal_border ]
+[ plus::a_normal_bg ]
+[ plus::a_error_border ]
+[ plus::a_error_bg ]
+[ plus::b_normal_border ]
+[ plus::b_normal_bg ]
+[ plus::b_error_border ]
+[ plus::b_error_bg ]
+[ main::$0 ]
+[ main::$1 ]
+[ plus::$0 ]
+[ plus::$1 ]
+[ plus::$2 ]
+[ plus::$3 ]
+[ plus::$4 ]
+[ plus::$5 ]
+[ plus::$6 ]
+[ plus::return ]
+Allocated zp[1]:2 [ plus::$0 ]
+Allocated zp[1]:3 [ plus::$1 ]
+Allocated zp[1]:4 [ plus::$2 ]
+Allocated zp[1]:5 [ plus::$3 ]
+Allocated zp[1]:6 [ plus::$4 ]
+Allocated zp[1]:7 [ plus::$5 ]
+Allocated zp[1]:8 [ plus::$6 ]
+Allocated zp[1]:9 [ main::$0 ]
+Allocated zp[1]:10 [ main::$1 ]
+Allocated zp[1]:11 [ plus::return ]
+Allocated zp[1]:12 [ plus::b_normal_border ]
+Allocated zp[1]:13 [ plus::b_normal_bg ]
+Allocated zp[1]:14 [ plus::b_error_border ]
+Allocated zp[1]:15 [ plus::b_error_bg ]
+Allocated zp[1]:16 [ plus::a_normal_bg ]
+Allocated zp[1]:17 [ plus::a_error_border ]
+Allocated zp[1]:18 [ plus::a_error_bg ]
+Allocated zp[1]:19 [ plus::a_normal_border ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] plus::a_normal_border = main::a_normal_border [ plus::a_normal_border ] (  [ plus::a_normal_border ] { }  ) always clobbers reg byte a 
+Statement [1] plus::a_normal_bg = main::a_normal_bg [ plus::a_normal_border plus::a_normal_bg ] (  [ plus::a_normal_border plus::a_normal_bg ] { }  ) always clobbers reg byte a 
+Statement [2] plus::a_error_border = main::a_error_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border ] { }  ) always clobbers reg byte a 
+Statement [3] plus::a_error_bg = main::a_error_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg ] { }  ) always clobbers reg byte a 
+Statement [4] plus::b_normal_border = main::b_normal_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border ] { }  ) always clobbers reg byte a 
+Statement [5] plus::b_normal_bg = main::b_normal_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg ] { }  ) always clobbers reg byte a 
+Statement [6] plus::b_error_border = main::b_error_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border ] { }  ) always clobbers reg byte a 
+Statement [7] plus::b_error_bg = main::b_error_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border plus::b_error_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border plus::b_error_bg ] { }  ) always clobbers reg byte a 
+Statement [11] plus::a_normal_border = main::b_normal_border [ plus::a_normal_border ] (  [ plus::a_normal_border ] { }  ) always clobbers reg byte a 
+Statement [12] plus::a_normal_bg = main::b_normal_bg [ plus::a_normal_border plus::a_normal_bg ] (  [ plus::a_normal_border plus::a_normal_bg ] { }  ) always clobbers reg byte a 
+Statement [13] plus::a_error_border = main::b_error_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border ] { }  ) always clobbers reg byte a 
+Statement [14] plus::a_error_bg = main::b_error_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg ] { }  ) always clobbers reg byte a 
+Statement [15] plus::b_normal_border = main::c_normal_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border ] { }  ) always clobbers reg byte a 
+Statement [16] plus::b_normal_bg = main::c_normal_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg ] { }  ) always clobbers reg byte a 
+Statement [17] plus::b_error_border = main::c_error_border [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border ] { }  ) always clobbers reg byte a 
+Statement [18] plus::b_error_bg = main::c_error_bg [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border plus::b_error_bg ] (  [ plus::a_normal_border plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_border plus::b_normal_bg plus::b_error_border plus::b_error_bg ] { }  ) always clobbers reg byte a 
+Statement [23] plus::$0 = plus::a_normal_border + plus::b_normal_border [ plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$0 ] ( plus:8 [ plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$0 ] { }  plus:19 [ plus::a_normal_bg plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$0 ] { }  ) always clobbers reg byte a 
+Statement [24] plus::$1 = plus::$0 + plus::a_normal_bg [ plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$1 ] ( plus:8 [ plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$1 ] { }  plus:19 [ plus::a_error_border plus::a_error_bg plus::b_normal_bg plus::b_error_border plus::b_error_bg plus::$1 ] { }  ) always clobbers reg byte a 
+Statement [25] plus::$2 = plus::$1 + plus::b_normal_bg [ plus::a_error_border plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$2 ] ( plus:8 [ plus::a_error_border plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$2 ] { }  plus:19 [ plus::a_error_border plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$2 ] { }  ) always clobbers reg byte a 
+Statement [26] plus::$3 = plus::$2 + plus::a_error_border [ plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$3 ] ( plus:8 [ plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$3 ] { }  plus:19 [ plus::a_error_bg plus::b_error_border plus::b_error_bg plus::$3 ] { }  ) always clobbers reg byte a 
+Statement [27] plus::$4 = plus::$3 + plus::b_error_border [ plus::a_error_bg plus::b_error_bg plus::$4 ] ( plus:8 [ plus::a_error_bg plus::b_error_bg plus::$4 ] { }  plus:19 [ plus::a_error_bg plus::b_error_bg plus::$4 ] { }  ) always clobbers reg byte a 
+Statement [28] plus::$5 = plus::$4 + plus::a_error_bg [ plus::b_error_bg plus::$5 ] ( plus:8 [ plus::b_error_bg plus::$5 ] { }  plus:19 [ plus::b_error_bg plus::$5 ] { }  ) always clobbers reg byte a 
+Statement [29] plus::$6 = plus::$5 + plus::b_error_bg [ plus::$6 ] ( plus:8 [ plus::$6 ] { }  plus:19 [ plus::$6 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:19 [ plus::a_normal_border ] : zp[1]:19 , 
+Potential registers zp[1]:16 [ plus::a_normal_bg ] : zp[1]:16 , 
+Potential registers zp[1]:17 [ plus::a_error_border ] : zp[1]:17 , 
+Potential registers zp[1]:18 [ plus::a_error_bg ] : zp[1]:18 , 
+Potential registers zp[1]:12 [ plus::b_normal_border ] : zp[1]:12 , 
+Potential registers zp[1]:13 [ plus::b_normal_bg ] : zp[1]:13 , 
+Potential registers zp[1]:14 [ plus::b_error_border ] : zp[1]:14 , 
+Potential registers zp[1]:15 [ plus::b_error_bg ] : zp[1]:15 , 
+Potential registers zp[1]:9 [ main::$0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::$1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ plus::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ plus::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ plus::$2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ plus::$3 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ plus::$4 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ plus::$5 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ plus::$6 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ plus::return ] : zp[1]:11 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 22: zp[1]:2 [ plus::$0 ] 22: zp[1]:3 [ plus::$1 ] 22: zp[1]:4 [ plus::$2 ] 22: zp[1]:5 [ plus::$3 ] 22: zp[1]:6 [ plus::$4 ] 22: zp[1]:7 [ plus::$5 ] 22: zp[1]:8 [ plus::$6 ] 3.75: zp[1]:11 [ plus::return ] 1.88: zp[1]:12 [ plus::b_normal_border ] 1.88: zp[1]:13 [ plus::b_normal_bg ] 1.88: zp[1]:14 [ plus::b_error_border ] 1.88: zp[1]:15 [ plus::b_error_bg ] 1: zp[1]:16 [ plus::a_normal_bg ] 1: zp[1]:17 [ plus::a_error_border ] 1: zp[1]:18 [ plus::a_error_bg ] 0.94: zp[1]:19 [ plus::a_normal_border ] 
+Uplift Scope [main] 4: zp[1]:9 [ main::$0 ] 4: zp[1]:10 [ main::$1 ] 
+Uplift Scope [Col] 
+Uplift Scope [Cols] 
+Uplift Scope [] 
+
+Uplifting [plus] best 195 combination reg byte a [ plus::$0 ] reg byte a [ plus::$1 ] reg byte a [ plus::$2 ] reg byte a [ plus::$3 ] zp[1]:6 [ plus::$4 ] zp[1]:7 [ plus::$5 ] zp[1]:8 [ plus::$6 ] zp[1]:11 [ plus::return ] zp[1]:12 [ plus::b_normal_border ] zp[1]:13 [ plus::b_normal_bg ] zp[1]:14 [ plus::b_error_border ] zp[1]:15 [ plus::b_error_bg ] zp[1]:16 [ plus::a_normal_bg ] zp[1]:17 [ plus::a_error_border ] zp[1]:18 [ plus::a_error_bg ] zp[1]:19 [ plus::a_normal_border ] 
+Limited combination testing to 100 combinations of 16384 possible.
+Uplifting [main] best 183 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [Col] best 183 combination 
+Uplifting [Cols] best 183 combination 
+Uplifting [] best 183 combination 
+Attempting to uplift remaining variables inzp[1]:6 [ plus::$4 ]
+Uplifting [plus] best 177 combination reg byte a [ plus::$4 ] 
+Attempting to uplift remaining variables inzp[1]:7 [ plus::$5 ]
+Uplifting [plus] best 171 combination reg byte a [ plus::$5 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ plus::$6 ]
+Uplifting [plus] best 165 combination reg byte a [ plus::$6 ] 
+Attempting to uplift remaining variables inzp[1]:11 [ plus::return ]
+Uplifting [plus] best 165 combination zp[1]:11 [ plus::return ] 
+Attempting to uplift remaining variables inzp[1]:12 [ plus::b_normal_border ]
+Uplifting [plus] best 165 combination zp[1]:12 [ plus::b_normal_border ] 
+Attempting to uplift remaining variables inzp[1]:13 [ plus::b_normal_bg ]
+Uplifting [plus] best 165 combination zp[1]:13 [ plus::b_normal_bg ] 
+Attempting to uplift remaining variables inzp[1]:14 [ plus::b_error_border ]
+Uplifting [plus] best 165 combination zp[1]:14 [ plus::b_error_border ] 
+Attempting to uplift remaining variables inzp[1]:15 [ plus::b_error_bg ]
+Uplifting [plus] best 165 combination zp[1]:15 [ plus::b_error_bg ] 
+Attempting to uplift remaining variables inzp[1]:16 [ plus::a_normal_bg ]
+Uplifting [plus] best 165 combination zp[1]:16 [ plus::a_normal_bg ] 
+Attempting to uplift remaining variables inzp[1]:17 [ plus::a_error_border ]
+Uplifting [plus] best 165 combination zp[1]:17 [ plus::a_error_border ] 
+Attempting to uplift remaining variables inzp[1]:18 [ plus::a_error_bg ]
+Uplifting [plus] best 165 combination zp[1]:18 [ plus::a_error_bg ] 
+Attempting to uplift remaining variables inzp[1]:19 [ plus::a_normal_border ]
+Uplifting [plus] best 165 combination zp[1]:19 [ plus::a_normal_border ] 
+Allocated (was zp[1]:11) zp[1]:2 [ plus::return ]
+Allocated (was zp[1]:12) zp[1]:3 [ plus::b_normal_border ]
+Allocated (was zp[1]:13) zp[1]:4 [ plus::b_normal_bg ]
+Allocated (was zp[1]:14) zp[1]:5 [ plus::b_error_border ]
+Allocated (was zp[1]:15) zp[1]:6 [ plus::b_error_bg ]
+Allocated (was zp[1]:16) zp[1]:7 [ plus::a_normal_bg ]
+Allocated (was zp[1]:17) zp[1]:8 [ plus::a_error_border ]
+Allocated (was zp[1]:18) zp[1]:9 [ plus::a_error_bg ]
+Allocated (was zp[1]:19) zp[1]:10 [ plus::a_normal_border ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Struct of struct parameter value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .const a_normal_border = 1
+    .const a_normal_bg = 2
+    .const a_error_border = 3
+    .const a_error_bg = 4
+    .const b_normal_border = 5
+    .const b_normal_bg = 6
+    .const b_error_border = 7
+    .const b_error_bg = 8
+    .const c_normal_border = 9
+    .const c_normal_bg = $a
+    .const c_error_border = $b
+    .const c_error_bg = $c
+    // [0] plus::a_normal_border = main::a_normal_border -- vbuz1=vbuc1 
+    lda #a_normal_border
+    sta.z plus.a_normal_border
+    // [1] plus::a_normal_bg = main::a_normal_bg -- vbuz1=vbuc1 
+    lda #a_normal_bg
+    sta.z plus.a_normal_bg
+    // [2] plus::a_error_border = main::a_error_border -- vbuz1=vbuc1 
+    lda #a_error_border
+    sta.z plus.a_error_border
+    // [3] plus::a_error_bg = main::a_error_bg -- vbuz1=vbuc1 
+    lda #a_error_bg
+    sta.z plus.a_error_bg
+    // [4] plus::b_normal_border = main::b_normal_border -- vbuz1=vbuc1 
+    lda #b_normal_border
+    sta.z plus.b_normal_border
+    // [5] plus::b_normal_bg = main::b_normal_bg -- vbuz1=vbuc1 
+    lda #b_normal_bg
+    sta.z plus.b_normal_bg
+    // [6] plus::b_error_border = main::b_error_border -- vbuz1=vbuc1 
+    lda #b_error_border
+    sta.z plus.b_error_border
+    // [7] plus::b_error_bg = main::b_error_bg -- vbuz1=vbuc1 
+    lda #b_error_bg
+    sta.z plus.b_error_bg
+    // [8] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [9] main::$0 = plus::return -- vbuaa=vbuz1 
+    lda.z plus.return
+    // [10] *COLS = main::$0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // [11] plus::a_normal_border = main::b_normal_border -- vbuz1=vbuc1 
+    lda #b_normal_border
+    sta.z plus.a_normal_border
+    // [12] plus::a_normal_bg = main::b_normal_bg -- vbuz1=vbuc1 
+    lda #b_normal_bg
+    sta.z plus.a_normal_bg
+    // [13] plus::a_error_border = main::b_error_border -- vbuz1=vbuc1 
+    lda #b_error_border
+    sta.z plus.a_error_border
+    // [14] plus::a_error_bg = main::b_error_bg -- vbuz1=vbuc1 
+    lda #b_error_bg
+    sta.z plus.a_error_bg
+    // [15] plus::b_normal_border = main::c_normal_border -- vbuz1=vbuc1 
+    lda #c_normal_border
+    sta.z plus.b_normal_border
+    // [16] plus::b_normal_bg = main::c_normal_bg -- vbuz1=vbuc1 
+    lda #c_normal_bg
+    sta.z plus.b_normal_bg
+    // [17] plus::b_error_border = main::c_error_border -- vbuz1=vbuc1 
+    lda #c_error_border
+    sta.z plus.b_error_border
+    // [18] plus::b_error_bg = main::c_error_bg -- vbuz1=vbuc1 
+    lda #c_error_bg
+    sta.z plus.b_error_bg
+    // [19] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [20] main::$1 = plus::return -- vbuaa=vbuz1 
+    lda.z plus.return
+    // [21] *COLS = main::$1 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [22] return 
+    rts
+}
+  // plus
+// __zp(2) char plus(__zp($a) char a_normal_border, __zp(7) char a_normal_bg, __zp(8) char a_error_border, __zp(9) char a_error_bg, __zp(3) char b_normal_border, __zp(4) char b_normal_bg, __zp(5) char b_error_border, __zp(6) char b_error_bg)
+plus: {
+    .label return = 2
+    .label a_normal_border = $a
+    .label a_normal_bg = 7
+    .label a_error_border = 8
+    .label a_error_bg = 9
+    .label b_normal_border = 3
+    .label b_normal_bg = 4
+    .label b_error_border = 5
+    .label b_error_bg = 6
+    // [23] plus::$0 = plus::a_normal_border + plus::b_normal_border -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z a_normal_border
+    clc
+    adc.z b_normal_border
+    // [24] plus::$1 = plus::$0 + plus::a_normal_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_normal_bg
+    // [25] plus::$2 = plus::$1 + plus::b_normal_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_normal_bg
+    // [26] plus::$3 = plus::$2 + plus::a_error_border -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_error_border
+    // [27] plus::$4 = plus::$3 + plus::b_error_border -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_error_border
+    // [28] plus::$5 = plus::$4 + plus::a_error_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_error_bg
+    // [29] plus::$6 = plus::$5 + plus::b_error_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_error_bg
+    // [30] plus::return = plus::$6 -- vbuz1=vbuaa 
+    sta.z return
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [31] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const COLS = (char *) 53280
+void main()
+char main::$0 // reg byte a 4.0
+char main::$1 // reg byte a 4.0
+struct Col main::a_error
+__constant char main::a_error_bg = 4
+__constant char main::a_error_border = 3
+struct Col main::a_normal
+__constant char main::a_normal_bg = 2
+__constant char main::a_normal_border = 1
+struct Col main::b_error
+__constant char main::b_error_bg = 8
+__constant char main::b_error_border = 7
+struct Col main::b_normal
+__constant char main::b_normal_bg = 6
+__constant char main::b_normal_border = 5
+struct Col main::c_error
+__constant char main::c_error_bg = $c
+__constant char main::c_error_border = $b
+struct Col main::c_normal
+__constant char main::c_normal_bg = $a
+__constant char main::c_normal_border = 9
+__varcall char plus(char a_normal_border , char a_normal_bg , char a_error_border , char a_error_bg , char b_normal_border , char b_normal_bg , char b_error_border , char b_error_bg)
+char plus::$0 // reg byte a 22.0
+char plus::$1 // reg byte a 22.0
+char plus::$2 // reg byte a 22.0
+char plus::$3 // reg byte a 22.0
+char plus::$4 // reg byte a 22.0
+char plus::$5 // reg byte a 22.0
+char plus::$6 // reg byte a 22.0
+__loadstore char plus::a_error_bg // zp[1]:9 1.0
+__loadstore char plus::a_error_border // zp[1]:8 1.0
+__loadstore char plus::a_normal_bg // zp[1]:7 1.0
+__loadstore char plus::a_normal_border // zp[1]:10 0.9375
+__loadstore char plus::b_error_bg // zp[1]:6 1.875
+__loadstore char plus::b_error_border // zp[1]:5 1.875
+__loadstore char plus::b_normal_bg // zp[1]:4 1.875
+__loadstore char plus::b_normal_border // zp[1]:3 1.875
+__loadstore char plus::return // zp[1]:2 3.75
+
+zp[1]:10 [ plus::a_normal_border ]
+zp[1]:7 [ plus::a_normal_bg ]
+zp[1]:8 [ plus::a_error_border ]
+zp[1]:9 [ plus::a_error_bg ]
+zp[1]:3 [ plus::b_normal_border ]
+zp[1]:4 [ plus::b_normal_bg ]
+zp[1]:5 [ plus::b_error_border ]
+zp[1]:6 [ plus::b_error_bg ]
+reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
+reg byte a [ plus::$0 ]
+reg byte a [ plus::$1 ]
+reg byte a [ plus::$2 ]
+reg byte a [ plus::$3 ]
+reg byte a [ plus::$4 ]
+reg byte a [ plus::$5 ]
+reg byte a [ plus::$6 ]
+zp[1]:2 [ plus::return ]
+
+
+FINAL ASSEMBLER
+Score: 159
+
+  // File Comments
+// Test __varcall calling convention
+// Struct of struct parameter value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    .const a_normal_border = 1
+    .const a_normal_bg = 2
+    .const a_error_border = 3
+    .const a_error_bg = 4
+    .const b_normal_border = 5
+    .const b_normal_bg = 6
+    .const b_error_border = 7
+    .const b_error_bg = 8
+    .const c_normal_border = 9
+    .const c_normal_bg = $a
+    .const c_error_border = $b
+    .const c_error_bg = $c
+    // plus(a, b)
+    // [0] plus::a_normal_border = main::a_normal_border -- vbuz1=vbuc1 
+    lda #a_normal_border
+    sta.z plus.a_normal_border
+    // [1] plus::a_normal_bg = main::a_normal_bg -- vbuz1=vbuc1 
+    lda #a_normal_bg
+    sta.z plus.a_normal_bg
+    // [2] plus::a_error_border = main::a_error_border -- vbuz1=vbuc1 
+    lda #a_error_border
+    sta.z plus.a_error_border
+    // [3] plus::a_error_bg = main::a_error_bg -- vbuz1=vbuc1 
+    lda #a_error_bg
+    sta.z plus.a_error_bg
+    // [4] plus::b_normal_border = main::b_normal_border -- vbuz1=vbuc1 
+    lda #b_normal_border
+    sta.z plus.b_normal_border
+    // [5] plus::b_normal_bg = main::b_normal_bg -- vbuz1=vbuc1 
+    lda #b_normal_bg
+    sta.z plus.b_normal_bg
+    // [6] plus::b_error_border = main::b_error_border -- vbuz1=vbuc1 
+    lda #b_error_border
+    sta.z plus.b_error_border
+    // [7] plus::b_error_bg = main::b_error_bg -- vbuz1=vbuc1 
+    lda #b_error_bg
+    sta.z plus.b_error_bg
+    // [8] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [9] main::$0 = plus::return -- vbuaa=vbuz1 
+    lda.z plus.return
+    // *COLS = plus(a, b)
+    // [10] *COLS = main::$0 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // plus(b, c)
+    // [11] plus::a_normal_border = main::b_normal_border -- vbuz1=vbuc1 
+    lda #b_normal_border
+    sta.z plus.a_normal_border
+    // [12] plus::a_normal_bg = main::b_normal_bg -- vbuz1=vbuc1 
+    lda #b_normal_bg
+    sta.z plus.a_normal_bg
+    // [13] plus::a_error_border = main::b_error_border -- vbuz1=vbuc1 
+    lda #b_error_border
+    sta.z plus.a_error_border
+    // [14] plus::a_error_bg = main::b_error_bg -- vbuz1=vbuc1 
+    lda #b_error_bg
+    sta.z plus.a_error_bg
+    // [15] plus::b_normal_border = main::c_normal_border -- vbuz1=vbuc1 
+    lda #c_normal_border
+    sta.z plus.b_normal_border
+    // [16] plus::b_normal_bg = main::c_normal_bg -- vbuz1=vbuc1 
+    lda #c_normal_bg
+    sta.z plus.b_normal_bg
+    // [17] plus::b_error_border = main::c_error_border -- vbuz1=vbuc1 
+    lda #c_error_border
+    sta.z plus.b_error_border
+    // [18] plus::b_error_bg = main::c_error_bg -- vbuz1=vbuc1 
+    lda #c_error_bg
+    sta.z plus.b_error_bg
+    // [19] callexecute plus  -- call_vprc1 
+    jsr plus
+    // [20] main::$1 = plus::return -- vbuaa=vbuz1 
+    lda.z plus.return
+    // *COLS = plus(b, c)
+    // [21] *COLS = main::$1 -- _deref_pbuc1=vbuaa 
+    sta COLS
+    // main::@return
+    // }
+    // [22] return 
+    rts
+}
+  // plus
+// __zp(2) char plus(__zp($a) char a_normal_border, __zp(7) char a_normal_bg, __zp(8) char a_error_border, __zp(9) char a_error_bg, __zp(3) char b_normal_border, __zp(4) char b_normal_bg, __zp(5) char b_error_border, __zp(6) char b_error_bg)
+plus: {
+    .label return = 2
+    .label a_normal_border = $a
+    .label a_normal_bg = 7
+    .label a_error_border = 8
+    .label a_error_bg = 9
+    .label b_normal_border = 3
+    .label b_normal_bg = 4
+    .label b_error_border = 5
+    .label b_error_bg = 6
+    // a.normal.border + b.normal.border
+    // [23] plus::$0 = plus::a_normal_border + plus::b_normal_border -- vbuaa=vbuz1_plus_vbuz2 
+    lda.z a_normal_border
+    clc
+    adc.z b_normal_border
+    // a.normal.border + b.normal.border + a.normal.bg
+    // [24] plus::$1 = plus::$0 + plus::a_normal_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_normal_bg
+    // a.normal.border + b.normal.border + a.normal.bg + b.normal.bg
+    // [25] plus::$2 = plus::$1 + plus::b_normal_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_normal_bg
+    // a.normal.border + b.normal.border + a.normal.bg + b.normal.bg + a.error.border
+    // [26] plus::$3 = plus::$2 + plus::a_error_border -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_error_border
+    // a.normal.border + b.normal.border + a.normal.bg + b.normal.bg + a.error.border + b.error.border
+    // [27] plus::$4 = plus::$3 + plus::b_error_border -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_error_border
+    // a.normal.border + b.normal.border + a.normal.bg + b.normal.bg + a.error.border + b.error.border + a.error.bg
+    // [28] plus::$5 = plus::$4 + plus::a_error_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z a_error_bg
+    // a.normal.border + b.normal.border + a.normal.bg + b.normal.bg + a.error.border + b.error.border + a.error.bg + b.error.bg
+    // [29] plus::$6 = plus::$5 + plus::b_error_bg -- vbuaa=vbuaa_plus_vbuz1 
+    clc
+    adc.z b_error_bg
+    // return a.normal.border + b.normal.border + a.normal.bg + b.normal.bg + a.error.border + b.error.border + a.error.bg + b.error.bg;
+    // [30] plus::return = plus::$6 -- vbuz1=vbuaa 
+    sta.z return
+    // plus::@return
+    // }
+    // [31] return 
+    rts
+}
+  // File Data
+

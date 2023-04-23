@@ -1,0 +1,176 @@
+Fixing struct type size union B to 4
+Fixing struct type size union B to 4
+Fixing struct type SIZE_OF union B to 4
+Fixing struct type SIZE_OF union B to 4
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  SCREEN[0] = ((char *)&b1+OFFSET_UNION_B_B)[0]
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char OFFSET_UNION_B_B = 0
+__constant char * const SCREEN = (char *)$400
+void __start()
+__loadstore union B b1 = { a: { b: 1 } }
+void main()
+
+Adding number conversion cast (unumber) 0 in SCREEN[0] = ((char *)&b1+OFFSET_UNION_B_B)[0]
+Adding number conversion cast (unumber) 0 in SCREEN[0] = ((char *)&b1+OFFSET_UNION_B_B)[(unumber)0]
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (char *)&b1+OFFSET_UNION_B_B in [0] SCREEN[0] = ((char *)&b1+OFFSET_UNION_B_B)[0]
+Simplifying expression containing zero (char *)&b1 in [0] SCREEN[0] = *((char *)&b1+OFFSET_UNION_B_B)
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = *((char *)&b1)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_UNION_B_B
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (char) 4
+Finalized unsigned number type (char) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *SCREEN = *((char *)&b1)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__loadstore union B b1 = { a: { b: 1 } }
+void main()
+
+Initial phi equivalence classes
+Added variable b1 to live range equivalence class [ b1 ]
+Complete equivalence classes
+[ b1 ]
+Allocated mem[4] [ b1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *SCREEN = *((char *)&b1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers mem[4] [ b1 ] : mem[4] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [A] 
+Uplift Scope [B] 
+Uplift Scope [main] 
+Uplift Scope [] 0: mem[4] [ b1 ] 
+
+Uplifting [A] best 17 combination 
+Uplifting [B] best 17 combination 
+Uplifting [main] best 17 combination 
+Uplifting [] best 17 combination mem[4] [ b1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// More extensive union with C99 style designator initialization behaviour using const expressions.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-13.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [0] *SCREEN = *((char *)&b1) -- _deref_pbuc1=_deref_pbuc2 
+    lda b1
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+.segment Data
+  b1: .byte 1
+  .fill 1, 0
+  .fill 2, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const SCREEN = (char *) 1024
+__loadstore union B b1 = { a: { b: 1 } } // mem[4]
+void main()
+
+mem[4] [ b1 ]
+
+
+FINAL ASSEMBLER
+Score: 14
+
+  // File Comments
+// More extensive union with C99 style designator initialization behaviour using const expressions.
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="union-13.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // SCREEN[0] = b1.b[0]
+    // [0] *SCREEN = *((char *)&b1) -- _deref_pbuc1=_deref_pbuc2 
+    lda b1
+    sta SCREEN
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+.segment Data
+  b1: .byte 1
+  .fill 1, 0
+  .fill 2, 0
+

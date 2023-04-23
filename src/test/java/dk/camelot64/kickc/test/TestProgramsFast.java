@@ -374,17 +374,33 @@ public class TestProgramsFast extends TestPrograms {
    public void testStructUnwinding2() throws IOException {
       compileAndCompare("struct-unwinding-2.c");
    }
-
    @Test
    public void testStructUnwinding1() throws IOException {
       compileAndCompare("struct-unwinding-1.c");
    }
 
-   //@Test
-   //public void testVarCall5() throws IOException {
-   //   compileAndCompare("varcall-5.c", log().verboseCreateSsa().verboseStructUnwind());
-   //}
+   @Test
+   public void testVarCall9() throws IOException {
+      compileAndCompare("varcall-9.c");
+   }
 
+   @Test
+   public void testVarCall8() throws IOException {
+      compileAndCompare("varcall-8.c");
+   }
+
+   @Test
+   public void testVarCall7() throws IOException {
+      compileAndCompare("varcall-7.c");
+   }
+   @Test
+   public void testVarCall6() throws IOException {
+      compileAndCompare("varcall-6.c");
+   }
+   @Test
+   public void testVarCall5() throws IOException {
+      compileAndCompare("varcall-5.c");
+   }
    @Test
    public void testVarCall4() throws IOException {
       compileAndCompare("varcall-4.c");
@@ -528,6 +544,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testPragmaUnknown() throws IOException {
       compileAndCompare("pragma-unknown.c");
+   }
+
+   @Test
+   public void testPragmaNoParametersNoParenthesis() throws IOException {
+      compileAndCompare("pragma-noparam-noparen.c");
    }
 
    @Test
@@ -2610,6 +2631,31 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testWeeipBbbsList() throws IOException {
       compileAndCompare("weeip-bbslist.c");
+   }
+
+   @Test
+   public void testUnion13() throws IOException {
+      compileAndCompare("union-13.c");
+   }
+
+   @Test
+   public void testUnion12() throws IOException {
+      compileAndCompare("union-12.c");
+   }
+
+   @Test
+   public void testUnion11() throws IOException {
+      compileAndCompare("union-11.c");
+   }
+
+   @Test
+   public void testUnion10() throws IOException {
+      compileAndCompare("union-10.c");
+   }
+
+   @Test
+   public void testUnion9() throws IOException {
+      compileAndCompare("union-9.c");
    }
 
    @Test

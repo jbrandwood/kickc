@@ -89,6 +89,8 @@ public class Initializers {
                return new ConstantCastValue(toType, (ConstantValue) constantSub);
             }
          }
+      } else if(initValue instanceof UnionDesignator) {
+         initValue = constantifyUnion((UnionDesignator) initValue, (SymbolTypeStruct) typeSpec.getType(), program, source);
       } else if(initValue instanceof ValueList) {
          ValueList initList = (ValueList) initValue;
          if(typeSpec.getType() instanceof SymbolTypePointer && ((SymbolTypePointer) typeSpec.getType()).getArraySpec() != null) {
@@ -96,7 +98,7 @@ public class Initializers {
             initValue = constantifyArray(initList, (SymbolTypePointer) typeSpec.getType(), program, source);
          } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
             // Type is a struct
-            initValue = constantifyStruct(initList, (SymbolTypeStruct) typeSpec.getType(), program, source);
+            initValue = constantifyStructOrUnion(initList, (SymbolTypeStruct) typeSpec.getType(), program, source);
          } else {
             throw new CompileError("Value list cannot initialize type " + typeSpec.getType(), source);
          }
@@ -128,6 +130,41 @@ public class Initializers {
    }
 
    /**
+    * Convert a union designator initializer to a constant.
+    *
+    * @param unionInit The union initializer
+    * @param structType The union type
+    * @param program The program
+    * @param source The source line
+    * @return The constantified value
+    */
+   private static RValue constantifyUnion(UnionDesignator unionInit, SymbolTypeStruct structType, Program program, StatementSource source) {
+      StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
+      Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
+
+      final String memberName = unionInit.getMemberName();
+      final RValue initValue = unionInit.getMemberValue();
+
+      Variable memberDef = null;
+      for(Variable definition : memberDefinitions) {
+         if(definition.getLocalName().equals(memberName)) {
+            memberDef = definition;
+         }
+      }
+      if(memberDef==null)
+         throw new CompileError( "Union member not found", source);
+
+      RValue constantifiedMemberValue = constantify(initValue, new ValueTypeSpec(memberDef.getType()), program, source);
+      if(constantifiedMemberValue instanceof ConstantValue) {
+         LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
+         constMemberMap.put(memberDef.getRef(), (ConstantValue) constantifiedMemberValue);
+         return new ConstantStructValue(structType, constMemberMap);
+      } else {
+         throw new CompileError( "Union initializer is not constant", source);
+      }
+   }
+
+   /**
     * Convert as much as possible of a struct to constants.
     *
     * @param valueList The value list
@@ -136,7 +173,7 @@ public class Initializers {
     * @param source The source line
     * @return The constantified value
     */
-   private static RValue constantifyStruct(ValueList valueList, SymbolTypeStruct structType, Program program, StatementSource source) {
+   private static RValue constantifyStructOrUnion(ValueList valueList, SymbolTypeStruct structType, Program program, StatementSource source) {
       // Recursively cast all sub-elements
       StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
       Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
@@ -144,7 +181,7 @@ public class Initializers {
       if(structInitNeedSize != valueList.getList().size()) {
          if(structDefinition.isUnion()) {
             throw new CompileError(
-                  "Union initializer has too many values, since only one is allowed.\n" +
+                  "Union initializer has wrong size. One value is required.\n" +
                         " Union initializer: " + valueList.toString(program),
                   source);
          } else {

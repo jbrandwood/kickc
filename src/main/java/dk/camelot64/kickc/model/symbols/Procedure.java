@@ -74,6 +74,7 @@ public class Procedure extends Scope {
       /** A trampoline bank change is needed. Caller and callee are different banks of the same banking area. */
       FAR;
 
+
       public static CallingProximity forCall(Bank from, Bank to) {
          if(to==null) {
             // NEAR: call to the common bank
@@ -92,27 +93,40 @@ public class Procedure extends Scope {
             return FAR;
          }
       }
+
+      @Override
+      public String toString() {
+         return name().toLowerCase();
+      }
+      
    }
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
       /** Parameters and return value handled through PHI-transitions. */
-      PHI_CALL("__phicall"),
+      PHI_CALL("__phicall", "phi"),
       /** Parameters and return value over the stack. */
-      STACK_CALL("__stackcall"),
+      STACK_CALL("__stackcall", "stack"),
       /** Parameters and return value handled through shared variables. */
-      VAR_CALL("__varcall"),
+      VAR_CALL("__varcall", "var"),
       /** Intrinsic calling. Will be converted to intrinsic ASM late in the compile. */
-      INTRINSIC_CALL("__intrinsiccall");
+      INTRINSIC_CALL("__intrinsiccall", "intrinsic");
 
       private final String name;
 
-      CallingConvention(String name) {
+      private final String shortName;
+
+      CallingConvention(String name, String shortName) {
          this.name = name;
+         this.shortName = shortName;
       }
 
       public String getName() {
          return name;
+      }
+
+      public String getShortName() {
+         return shortName;
       }
 
       /** Get a calling convention by name. */

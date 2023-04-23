@@ -905,7 +905,7 @@ public class Pass4CodeGeneration {
                     if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }  else {
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked("phi", callingProximity, toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(Procedure.CallingConvention.PHI_CALL, callingProximity, toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
                     }
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
                     final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());

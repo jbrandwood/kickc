@@ -250,15 +250,18 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmBytes(KickCParser.AsmBytesContext ctx) {
+         List<KickCParser.AsmExprContext> asmExpr = ctx.asmExpr();
          ArrayList<String> values = new ArrayList<>();
-         for(int i = 1; i < ctx.getChildCount(); i = i + 2) {
-            values.add(ctx.getChild(i).getText());
+         for(int i = 0; i < asmExpr.size(); i++) {
+            if(asmExpr.get(i) != null) {
+               AsmParameter par = (AsmParameter)this.visit(asmExpr.get(i));
+               values.add(par.getParam());
+            }
          }
          AsmDataNumeric data = new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values);
          handleTags(data, ctx.ASM_TAG());
          return null;
       }
-
       @Override
       public Object visitAsmInstruction(KickCParser.AsmInstructionContext ctx) {
          KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();

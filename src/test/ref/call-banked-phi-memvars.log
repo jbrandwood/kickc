@@ -3,6 +3,9 @@ Updating intermediate variable memory area to MAIN_MEMORY main::$0
 Updating intermediate variable memory area to MAIN_MEMORY main::$1
 Updating intermediate variable memory area to MAIN_MEMORY main::$2
 Updating intermediate variable memory area to MAIN_MEMORY main::$3
+Fixing banked procedure parameter/return value to default segment plus::a
+Fixing banked procedure parameter/return value to default segment plus::b
+Fixing banked procedure parameter/return value to default segment plus::return
 
 CONTROL FLOW GRAPH SSA
 
@@ -359,11 +362,12 @@ Uplifting [plus] best 2226 combination mem[2] [ plus::r#1 ] mem[2] [ plus::r#2 ]
 Uplifting [main] best 1866 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::$4 ] reg byte x [ main::$5 ] mem[2] [ main::$1 ] mem[2] [ main::$3 ] reg byte x [ main::$2 ] 
 Limited combination testing to 100 combinations of 144 possible.
 Uplifting [] best 1866 combination 
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 ] ] with [ mem[2] [ plus::return#2 ] ] - score: 1
 Coalescing zero page register [ mem[2] [ plus::return#0 ] ] with [ mem[2] [ main::$1 ] ] - score: 1
-Coalescing zero page register [ mem[2] [ plus::return#0 main::$1 ] ] with [ mem[2] [ plus::return#2 ] ] - score: 1
 Coalescing zero page register [ mem[2] [ plus::return#1 ] ] with [ mem[2] [ main::$3 ] ] - score: 1
 Coalescing zero page register [ mem[2] [ plus::r#1 ] ] with [ mem[2] [ plus::r#2 ] ] - score: 1
-Coalescing zero page register [ mem[2] [ plus::return#0 main::$1 plus::return#2 ] ] with [ mem[2] [ plus::return#1 main::$3 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 ] ] with [ mem[2] [ plus::return#0 main::$1 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 plus::return#0 main::$1 ] ] with [ mem[2] [ plus::return#1 main::$3 ] ] - score: 1
 Coalescing zero page register [ mem[2] [ plus::r#1 plus::r#2 ] ] with [ mem[2] [ plus::r#3 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -498,8 +502,8 @@ main: {
     // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
   .segment Data
-    .label __1 = plus.return
-    .label __3 = plus.return
+    .label __1 = plus.b
+    .label __3 = plus.b
 }
 .segment RAM_Bank1
   // plus
@@ -530,13 +534,13 @@ plus: {
     lda r+1
     adc a+1
     sta r+1
-    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm3 
-    lda r
+    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm1 
     clc
-    adc b
+    lda return
+    adc r
     sta return
-    lda r+1
-    adc b+1
+    lda return+1
+    adc r+1
     sta return+1
     jmp __breturn
     // plus::@return
@@ -545,7 +549,7 @@ plus: {
     rts
   .segment Data
     b: .word 0
-    return: .word 0
+    .label return = b
   .segment RAM_Bank1
     r: .word 0
   .segment Data
@@ -599,8 +603,7 @@ int plus::return#2 // return mem[2] 30.75
 
 reg byte y [ main::i#2 main::i#1 ]
 mem[2] [ plus::a#2 ]
-mem[2] [ plus::b#2 plus::b#0 plus::b#1 ]
-mem[2] [ plus::return#0 main::$1 plus::return#2 plus::return#1 main::$3 ]
+mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 plus::return#0 main::$1 plus::return#1 main::$3 ]
 reg byte x [ main::$4 ]
 reg byte x [ main::$2 ]
 reg byte x [ main::$5 ]
@@ -740,8 +743,8 @@ main: {
     // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
   .segment Data
-    .label __1 = plus.return
-    .label __3 = plus.return
+    .label __1 = plus.b
+    .label __3 = plus.b
 }
 .segment RAM_Bank1
   // plus
@@ -776,13 +779,13 @@ plus: {
     adc a+1
     sta r+1
     // r += b
-    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm3 
-    lda r
+    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm1 
     clc
-    adc b
+    lda return
+    adc r
     sta return
-    lda r+1
-    adc b+1
+    lda return+1
+    adc r+1
     sta return+1
     // plus::@return
     // }
@@ -790,7 +793,7 @@ plus: {
     rts
   .segment Data
     b: .word 0
-    return: .word 0
+    .label return = b
   .segment RAM_Bank1
     r: .word 0
   .segment Data

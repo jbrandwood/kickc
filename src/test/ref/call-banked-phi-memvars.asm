@@ -93,8 +93,8 @@ main: {
     iny
     jmp __b1
   .segment Data
-    .label __1 = plus.return
-    .label __3 = plus.return
+    .label __1 = plus.b
+    .label __3 = plus.b
 }
 .segment RAM_Bank1
 // __mem() int plus(__mem() int a, __mem() int b)
@@ -125,18 +125,18 @@ plus: {
     adc a+1
     sta r+1
     // r += b
-    lda r
     clc
-    adc b
+    lda return
+    adc r
     sta return
-    lda r+1
-    adc b+1
+    lda return+1
+    adc r+1
     sta return+1
     // }
     rts
   .segment Data
     b: .word 0
-    return: .word 0
+    .label return = b
   .segment RAM_Bank1
     r: .word 0
   .segment Data

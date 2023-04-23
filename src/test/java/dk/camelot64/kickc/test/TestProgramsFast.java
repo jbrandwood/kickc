@@ -1583,7 +1583,7 @@ public class TestProgramsFast extends TestPrograms {
 
    @Test
    public void testBankedPhiMemvars() throws IOException {
-      compileAndCompare("call-banked-phi-memvars.c", log());
+      compileAndCompare("call-banked-phi-memvars.c");
    }
 
 

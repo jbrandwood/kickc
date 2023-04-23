@@ -583,30 +583,6 @@ public class Pass4CodeGeneration {
                     if (registerMainMem.getAddress() == null) {
                         // Generate into the data segment
                         // Set segment
-                        // We check first the bank of the variable. Only local variables can be stored in the bank.
-                        // Parameters must be stored in main memory.
-                        if(!variable.getDataSegment().equals(Scope.SEGMENT_DATA_DEFAULT)) {
-                            if(scope instanceof Procedure) {
-                                Procedure procedure = (Procedure) scope;
-                                List<Variable> parameters = procedure.getParameters();
-                                if (variable.isKindPhiVersion()) {
-                                    Variable master = variable.getPhiMaster();
-                                    if (master != null) {
-                                        if (parameters.contains(master) || master.getLocalName().equals("return")) {
-                                            variable.setDataSegment(Scope.SEGMENT_DATA_DEFAULT);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Intermediate variables are placed at the banked data segment, but parameters and return values are kept untouched.
-                        if (variable.isKindIntermediate()) {
-                            if (scope instanceof Procedure) {
-                                Procedure procedure = (Procedure) scope;
-                                variable.setDataSegment(procedure.getSegmentData());
-                            }
-                        }
                         setCurrentSegment(variable.getDataSegment(), asm);
                         // Add any comments
                         generateComments(asm, variable.getComments());

@@ -262,7 +262,6 @@ public class AsmFragmentInstance {
          handleTags(data, ctx.ASM_TAG());
          return null;
       }
-
       @Override
       public Object visitAsmInstruction(KickCParser.AsmInstructionContext ctx) {
          KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();

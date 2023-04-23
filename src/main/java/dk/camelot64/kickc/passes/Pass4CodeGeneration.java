@@ -891,7 +891,6 @@ public class Pass4CodeGeneration {
                     }
                 } else if (Procedure.CallingConvention.PHI_CALL.equals(toProcedure.getCallingConvention())) {
                     // Generate PHI transition
-                    boolean generatedPhis = false;
                     if (genCallPhiEntry) {
                         ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                         if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
@@ -900,18 +899,17 @@ public class Pass4CodeGeneration {
                                 throw new InternalError("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
                             }
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
-                            generatedPhis = true;
                         }
                     }
-                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
-                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
+                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }  else {
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(callingDistance,"phi", call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked("phi", callingProximity, toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
                     }
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
-                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
-                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
+                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     } else {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
@@ -924,8 +922,8 @@ public class Pass4CodeGeneration {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
                     Procedure fromProcedure = block.getProcedure(this.program);
-                    final Procedure.CallingDistance callingDistance = new Procedure.CallingDistance(fromProcedure, toProcedure);
-                    if(Procedure.CallingProximity.NEAR.equals(callingDistance.getProximity())) {
+                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
                     } else {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));

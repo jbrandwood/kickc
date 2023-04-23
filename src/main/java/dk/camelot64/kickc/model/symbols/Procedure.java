@@ -65,87 +65,32 @@ public class Procedure extends Scope {
       this.bank = bank;
    }
 
+   /** The different distances between banked code, which will determine the type of call needed. */
    public enum CallingProximity {
-      NEAR("near"),
-      CLOSE("close"),
-      FAR("far");
+      /** No bank change is needed. Caller and callee are both in the same bank or in the common bank.  */
+      NEAR,
+      /** A direct bank change is needed. Caller is in the common bank or a different banking area. */
+      CLOSE,
+      /** A trampoline bank change is needed. Caller and callee are different banks of the same banking area. */
+      FAR;
 
-      public String getProximity() {
-         return proximity;
-      }
-
-      private final String proximity;
-
-      CallingProximity(String proximity) {
-         this.proximity = proximity;
-      }
-   }
-
-   /** The method for expressing the call distance to implement banking
-    *
-    * The following variations exist related to banked calls:
-    *    - #1 - unbanked to unbanked and no banking areas
-    *    - #2 - unbanked to banked to any bank area
-    *    - #3 - banked to unbanked from any bank area
-    *    - #4 - banked to same bank in same bank area
-    *    - #5 - banked to different bank in same bank area
-    *    - #6 - banked to any bank between different bank areas
-    *
-    * This brings us to the call types:
-    *    - CallingDistance.NEAR - case #1, #3, #4
-    *    - CallingDistance.CLOSE - case #2, #6
-    *    - CallingDistance.FAR - case #5
-   */
-   public static class CallingDistance {
-
-      private CallingProximity proximity;
-      private String bankArea;
-      private Long bank;
-
-      public CallingProximity getProximity() {
-         return proximity;
-      }
-
-      public String getBankArea() {
-         return bankArea;
-      }
-
-      public Long getBankNumber() {
-         return bank;
-      }
-
-
-      public CallingDistance(Procedure from, Procedure to) {
-         if (((!from.isBanked() && !to.isBanked())) ||
-                 ((from.isBanked() && !to.isBanked())) ||
-                 ((from.isBanked() && to.isBanked()) &&
-                         (from.getBankNumber() == to.getBankNumber()) &&
-                         (from.getBankArea().contentEquals(to.getBankArea()))
-                 )
-         ) {
-            // near call - case #1, #3, #4
-            this.proximity = CallingProximity.NEAR;
-            this.bankArea = "";
-            this.bank = 0L;
+      public static CallingProximity forCall(Bank from, Bank to) {
+         if(to==null) {
+            // NEAR: call to the common bank
+            return NEAR;
+         } else if(to.equals(from)) {
+            // NEAR: call to the same bank in the same banking area
+            return NEAR;
+         } else if(from==null) {
+            // CLOSE: call from common bank to any bank
+            return CLOSE;
+         } else if(!from.bankArea().equals(to.bankArea())) {
+            // CLOSE: from one banking area to another
+            return CLOSE;
          } else {
-            if ((!from.isBanked() && to.isBanked()) ||
-                    ((from.isBanked() && to.isBanked()) && (!from.getBankArea().contentEquals(to.getBankArea())))
-            ) {
-               // close call - case #2, #6
-               this.proximity = CallingProximity.CLOSE;
-               this.bankArea = to.getBankArea();
-               this.bank = to.getBankNumber();
-            } else {
-               // far call - case #5
-               this.proximity = CallingProximity.FAR;
-               this.bankArea = to.getBankArea();
-               this.bank = to.getBankNumber();
-            }
+            // FAR:   banked to different bank in same bank area
+            return FAR;
          }
-      }
-
-      public String getFragmentName() {
-         return this.proximity.getProximity() + (this.bankArea.isEmpty() ? "" : "_" + this.bankArea);
       }
    }
 

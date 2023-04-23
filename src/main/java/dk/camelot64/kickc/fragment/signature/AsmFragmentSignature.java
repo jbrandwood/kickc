@@ -2,6 +2,7 @@ package dk.camelot64.kickc.fragment.signature;
 
 import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureLexer;
 import dk.camelot64.kickc.asm.fragment.signature.AsmFragmentSignatureParser;
+import dk.camelot64.kickc.model.symbols.Bank;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -55,7 +56,7 @@ public interface AsmFragmentSignature {
     }
 
     /**
-     * ASM fragment signature for a conditional jump <code>if(A) goto B</code>.
+     * ASM fragment signature for a call
      */
     class Call implements AsmFragmentSignature {
 
@@ -72,21 +73,25 @@ public interface AsmFragmentSignature {
     }
 
     /**
-     * ASM fragment signature for a banked jsr <code>if(A) goto B</code>.
+     * ASM fragment signature for a banked call
      */
     class CallBanked implements AsmFragmentSignature {
 
-        final private Procedure.CallingDistance callingDistance;
         final private String callingConvention;
 
-        public CallBanked(Procedure.CallingDistance callingDistance, String callingConvention) {
-            this.callingDistance = callingDistance;
+        final private Procedure.CallingProximity proximity;
+
+        final private Bank toBank;
+
+        public CallBanked(String callingConvention, Procedure.CallingProximity proximity, Bank toBank) {
             this.callingConvention = callingConvention;
+            this.proximity = proximity;
+            this.toBank = toBank;
         }
 
         @Override
         public String getName() {
-            return "call_" + callingConvention.toLowerCase() + "_" + callingDistance.getFragmentName().toLowerCase();
+            return "call_" + callingConvention.toLowerCase() + "_" + proximity.toString().toLowerCase() + (proximity.equals(Procedure.CallingProximity.NEAR)?"":("_"+toBank.bankArea()));
         }
     }
 

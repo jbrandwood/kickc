@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Bank;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -51,16 +52,14 @@ final public class AsmFragmentInstanceSpecBuilder {
      * @param program           The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec callBanked(Procedure.CallingDistance callingDistance, String callingConvention, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec callBanked(String callingConvention, Procedure.CallingProximity proximity, Bank toBank, String procedureName, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
-        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(callingDistance, callingConvention);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(callingConvention, proximity, toBank);
         ScopeRef codeScope = program.getScope().getRef();
-        bindings.bind("c1", new ConstantInteger(callingDistance.getBankNumber()));
+        bindings.bind("c1", new ConstantInteger(toBank.bankNumber()));
         bindings.bind("la1", new LabelRef(procedureName));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
-
-
 
     /**
      * Create a fragment instance spec factory for an interrupt routine entry

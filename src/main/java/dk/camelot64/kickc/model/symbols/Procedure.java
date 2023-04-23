@@ -63,41 +63,6 @@ public class Procedure extends Scope {
       this.bank = Objects.requireNonNull(bank);
    }
 
-   /** The bank distance between a caller and callee, which will determine the type of call needed. */
-   public enum CallingDistance {
-      /** Caller and callee are both in the same bank or in the common bank. No bank change is needed.  */
-      NEAR,
-      /** Caller is in the common bank or a different banking area. A direct bank change is needed. */
-      CLOSE,
-      /** Caller and callee are different banks of the same banking area. A trampoline bank change is needed. */
-      FAR;
-
-      public static CallingDistance forCall(Bank from, Bank to) {
-         if(to.isCommon()) {
-            // NEAR: call to the common bank
-            return NEAR;
-         } else if(to.equals(from)) {
-            // NEAR: call to the same bank in the same banking area
-            return NEAR;
-         } else if(from.isCommon()) {
-            // CLOSE: call from common bank to any bank
-            return CLOSE;
-         } else if(!from.bankArea().equals(to.bankArea())) {
-            // CLOSE: from one banking area to another
-            return CLOSE;
-         } else {
-            // FAR:   banked to different bank in same bank area
-            return FAR;
-         }
-      }
-
-      @Override
-      public String toString() {
-         return name().toLowerCase();
-      }
-      
-   }
-
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
       /** Parameters and return value handled through PHI-transitions. */
@@ -355,11 +320,23 @@ public class Procedure extends Scope {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       Procedure procedure = (Procedure) o;
-      return variableLengthParameterList == procedure.variableLengthParameterList && declaredInline == procedure.declaredInline && declaredIntrinsic == procedure.declaredIntrinsic && isConstructor == procedure.isConstructor && Objects.equals(procedureType, procedure.procedureType) && Objects.equals(parameterNames, procedure.parameterNames) && Objects.equals(interruptType, procedure.interruptType) && Objects.equals(comments, procedure.comments) && Objects.equals(reservedZps, procedure.reservedZps) && Objects.equals(segmentCode, procedure.segmentCode) && Objects.equals(constructorRefs, procedure.constructorRefs) && Objects.equals(definitionSource, procedure.definitionSource) && Objects.equals(bank, procedure.bank) && callingConvention == procedure.callingConvention;
+      return variableLengthParameterList == procedure.variableLengthParameterList &&
+            declaredInline == procedure.declaredInline &&
+            declaredIntrinsic == procedure.declaredIntrinsic &&
+            isConstructor == procedure.isConstructor &&
+            Objects.equals(procedureType, procedure.procedureType) &&
+            Objects.equals(parameterNames, procedure.parameterNames) &&
+            Objects.equals(interruptType, procedure.interruptType) &&
+            Objects.equals(comments, procedure.comments) &&
+            Objects.equals(reservedZps, procedure.reservedZps) &&
+            Objects.equals(segmentCode, procedure.segmentCode) &&
+            Objects.equals(constructorRefs, procedure.constructorRefs) &&
+            Objects.equals(bank, procedure.bank) &&
+            callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, definitionSource, bank, callingConvention);
+      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, bank, callingConvention);
    }
 }

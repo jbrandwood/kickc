@@ -135,4 +135,39 @@ public record Bank(String bankArea, Long bankNumber) {
          return "__bank(" + this.bankArea() + ", " + this.bankNumber() + ") ";
       }
    }
+
+   /** The bank distance between a caller and callee, which will determine the type of call needed. */
+   public enum CallingDistance {
+      /** Caller and callee are both in the same bank or in the common bank. No bank change is needed.  */
+      NEAR,
+      /** Caller is in the common bank or a different banking area. A direct bank change is needed. */
+      CLOSE,
+      /** Caller and callee are different banks of the same banking area. A trampoline bank change is needed. */
+      FAR;
+
+      public static CallingDistance forCall(Bank from, Bank to) {
+         if(to.isCommon()) {
+            // NEAR: call to the common bank
+            return NEAR;
+         } else if(to.equals(from)) {
+            // NEAR: call to the same bank in the same banking area
+            return NEAR;
+         } else if(from.isCommon()) {
+            // CLOSE: call from common bank to any bank
+            return CLOSE;
+         } else if(!from.bankArea().equals(to.bankArea())) {
+            // CLOSE: from one banking area to another
+            return CLOSE;
+         } else {
+            // FAR:   banked to different bank in same bank area
+            return FAR;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return name().toLowerCase();
+      }
+
+   }
 }

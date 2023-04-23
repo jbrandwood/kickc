@@ -111,7 +111,7 @@ public class CParser {
      */
     public static final String PRAGMA_BANK = "bank";
     /**
-     * #pragma nobank Changes the current bank to the default/common bank.
+     * #pragma nobank Changes the current bank to the default/common/shared bank.
      */
     public static final String PRAGMA_NOBANK = "nobank";
 

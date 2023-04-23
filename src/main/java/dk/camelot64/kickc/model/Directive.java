@@ -44,15 +44,12 @@ public class Directive {
    }
 
    /**
-    * Creates a new Bank which collects the necessary data to handle banking.
-    * For example, on the Commander X16, RAM is banked from address 0xA000 till 0xBFFF.
-    * Zeropage 0x00 configures this banked RAM, with a number from 0x00 till 0xff.
-    * So banked RAM is is a bankArea, and the bank is a configurable bank number in the bankArea.
+    * Bank to place code into. Used for determining call distance.
     */
    static public class Bank extends Directive {
 
-      private String bankArea; // A bank area is a memory range that is banked on a target platform.
-      private Long bankNumber; // A bank is a number that defines a bank configuration in a bank area.
+      private String bankArea;
+      private Long bankNumber;
 
       public Bank(String bankArea, Long bankNumber) {
          super("bank" );

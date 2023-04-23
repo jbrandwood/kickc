@@ -51,13 +51,13 @@ final public class AsmFragmentInstanceSpecBuilder {
      * @param program The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec callBanked(Procedure toProcedure, Procedure.CallingDistance callingDistance, Program program) {
+    public static AsmFragmentInstanceSpec callBanked(Procedure toProcedure, Bank.CallingDistance callingDistance, Program program) {
         final Bank toBank = toProcedure.getBank();
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
         AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(
               toProcedure.getCallingConvention().getShortName(),
               callingDistance.toString(),
-              (callingDistance.equals(Procedure.CallingDistance.NEAR)?null:toBank.bankArea()));
+              (callingDistance.equals(Bank.CallingDistance.NEAR)?null:toBank.bankArea()));
         ScopeRef codeScope = program.getScope().getRef();
         bindings.bind("c1", new ConstantInteger(toBank.bankNumber()));
         bindings.bind("la1", new LabelRef(toProcedure.getFullName()));

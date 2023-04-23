@@ -46,22 +46,21 @@ final public class AsmFragmentInstanceSpecBuilder {
     /**
      * Create a fragment instance spec factory for a banked call
      *
-     * @param callingConvention The calling convention
-     * @param proximity The calling distance of the call
-     * @param toBank The bank of the procedure being called
-     * @param procedureName The full name of the procedure being called.
+     * @param toProcedure The procedure being called
+     * @param callingDistance The calling distance of the call
      * @param program The program
      * @return the fragment instance spec factory
      */
-    public static AsmFragmentInstanceSpec callBanked(Procedure.CallingConvention callingConvention, Procedure.CallingProximity proximity, Bank toBank, String procedureName, Program program) {
+    public static AsmFragmentInstanceSpec callBanked(Procedure toProcedure, Procedure.CallingDistance callingDistance, Program program) {
+        final Bank toBank = toProcedure.getBank();
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
         AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(
-              callingConvention.getShortName(),
-              proximity.toString(),
-              (proximity.equals(Procedure.CallingProximity.NEAR)?null:toBank.bankArea()));
+              toProcedure.getCallingConvention().getShortName(),
+              callingDistance.toString(),
+              (callingDistance.equals(Procedure.CallingDistance.NEAR)?null:toBank.bankArea()));
         ScopeRef codeScope = program.getScope().getRef();
         bindings.bind("c1", new ConstantInteger(toBank.bankNumber()));
-        bindings.bind("la1", new LabelRef(procedureName));
+        bindings.bind("la1", new LabelRef(toProcedure.getFullName()));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 

@@ -33,7 +33,7 @@ public class Procedure extends Scope {
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
-   /** The data and code segment to put the procedure into. When null the procedure is not assigned to the code segment. */
+   /** The code segment to put the procedure code into. When null the procedure is not assigned to the code segment. */
    private String segmentCode;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
@@ -43,7 +43,7 @@ public class Procedure extends Scope {
    private StatementSource definitionSource;
    /**
     * The bank that the procedure code is placed in.
-    * Used to decide whether to produce near, close or far call when generating code.
+    * Used to decide whether to produce near, close or far call code when generating calls.
     * If null, the procedure is in a common bank (always visible) and all calls will be near.
     */
    private Bank bank;
@@ -65,17 +65,16 @@ public class Procedure extends Scope {
       this.bank = bank;
    }
 
-   /** The different distances between banked code, which will determine the type of call needed. */
-   public enum CallingProximity {
-      /** No bank change is needed. Caller and callee are both in the same bank or in the common bank.  */
+   /** The bank distance between a caller and callee, which will determine the type of call needed. */
+   public enum CallingDistance {
+      /** Caller and callee are both in the same bank or in the common bank. No bank change is needed.  */
       NEAR,
-      /** A direct bank change is needed. Caller is in the common bank or a different banking area. */
+      /** Caller is in the common bank or a different banking area. A direct bank change is needed. */
       CLOSE,
-      /** A trampoline bank change is needed. Caller and callee are different banks of the same banking area. */
+      /** Caller and callee are different banks of the same banking area. A trampoline bank change is needed. */
       FAR;
 
-
-      public static CallingProximity forCall(Bank from, Bank to) {
+      public static CallingDistance forCall(Bank from, Bank to) {
          if(to==null) {
             // NEAR: call to the common bank
             return NEAR;

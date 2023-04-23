@@ -901,15 +901,15 @@ public class Pass4CodeGeneration {
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                         }
                     }
-                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
-                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
+                    final Procedure.CallingDistance callingDistance = Procedure.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingDistance.NEAR.equals(callingDistance)) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     }  else {
-                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(Procedure.CallingConvention.PHI_CALL, callingProximity, toProcedure.getBank(), call.getProcedure().getFullName(), program), program);
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(toProcedure, callingDistance, program), program);
                     }
                 } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
-                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
-                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
+                    final Procedure.CallingDistance callingDistance = Procedure.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingDistance.NEAR.equals(callingDistance)) {
                         asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
                     } else {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
@@ -922,8 +922,8 @@ public class Pass4CodeGeneration {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
                     Procedure fromProcedure = block.getProcedure(this.program);
-                    final Procedure.CallingProximity callingProximity = Procedure.CallingProximity.forCall(fromProcedure.getBank(), toProcedure.getBank());
-                    if(Procedure.CallingProximity.NEAR.equals(callingProximity)) {
+                    final Procedure.CallingDistance callingDistance = Procedure.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Procedure.CallingDistance.NEAR.equals(callingDistance)) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
                     } else {
                         throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));

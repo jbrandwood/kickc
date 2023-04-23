@@ -77,19 +77,19 @@ public interface AsmFragmentSignature {
 
         final private String callingConvention;
 
-        final private String proximity;
+        final private String callingDistance;
 
         final private String toBankArea;
 
-        public CallBanked(String callingConvention, String proximity, String toBankArea) {
+        public CallBanked(String callingConvention, String callingDistance, String toBankArea) {
             this.callingConvention = callingConvention;
-            this.proximity = proximity;
+            this.callingDistance = callingDistance;
             this.toBankArea = toBankArea;
         }
 
         @Override
         public String getName() {
-            return "call_" + callingConvention + "_" + proximity + ((toBankArea==null)?"":("_"+toBankArea));
+            return "call_" + callingConvention + "_" + callingDistance + ((toBankArea==null)?"":("_"+toBankArea));
         }
     }
 

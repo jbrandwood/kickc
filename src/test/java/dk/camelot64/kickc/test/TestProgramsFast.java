@@ -767,6 +767,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("examples/cx16/cx16-rasterbars.c");
    }
 
+   //@Test
+   //public void testCx16Banking() throws IOException {
+   //   compileAndCompare("examples/cx16/banking/cx16-banking.c");
+   //}
+
    @Test
    public void testMega65Camelot1536Dots() throws IOException {
       compileAndCompare("examples/mega65/camelot-1536dots.c");

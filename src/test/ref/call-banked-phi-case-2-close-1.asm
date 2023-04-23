@@ -43,25 +43,54 @@
 .segment Code
 main: {
     // plus('0', 7)
+    ldx #7
+    lda #'0'
+    sta.z $ff
     lda.z 0
     pha
     lda #1
     sta.z 0
+    lda.z $ff
     jsr plus
+    sta.z $ff
     pla
     sta.z 0
+    lda.z $ff
+    // plus('0', 7)
+    txa
     // SCREEN[0] = plus('0', 7)
-    lda #plus.return
     sta SCREEN
+    // plus('1', 6)
+    ldx #6
+    lda #'1'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus('1', 6)
+    txa
+    // SCREEN[1] = plus('1', 6)
+    // close call
+    sta SCREEN+1
     // }
     rts
 }
 .segment RAM_Bank1
-// char plus(char a, char b)
+// __register(X) char plus(__register(A) char a, __register(X) char b)
 // __bank(cx16_ram, 1) 
 plus: {
-    .const a = '0'
-    .const b = 7
-    .label return = a+b
+    // a+b
+    stx.z $ff
+    clc
+    adc.z $ff
+    tax
+    // }
     rts
 }

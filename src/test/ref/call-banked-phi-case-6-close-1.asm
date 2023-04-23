@@ -43,40 +43,77 @@
 .segment Code
 main: {
     // plus('0', 7)
+    ldx #7
+    lda #'0'
+    sta.z $ff
     lda.z 0
     pha
     lda #1
     sta.z 0
+    lda.z $ff
     jsr plus
+    sta.z $ff
     pla
     sta.z 0
+    lda.z $ff
+    // plus('0', 7)
+    txa
     // SCREEN[0] = plus('0', 7)
-    lda #min.return
     sta SCREEN
+    // plus('1', 6)
+    ldx #6
+    lda #'1'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus('1', 6)
+    txa
+    // SCREEN[1] = plus('1', 6)
+    // close call
+    sta SCREEN+1
     // }
     rts
 }
 .segment RAM_Bank1
-// char plus(char a, char b)
+// __register(X) char plus(__register(A) char a, __register(X) char b)
 // __bank(cx16_ram, 1) 
 plus: {
-    .label a = '0'
-    .label b = 7
-    // min(a, b)
+    // add(a, b)
+    sta.z add.a
+    txa
+    sta.z $ff
     lda.z 1
     pha
     lda #1
     sta.z 1
-    jsr min
+    lda.z $ff
+    jsr add
+    sta.z $ff
     pla
     sta.z 1
+    lda.z $ff
+    txa
+    tax
     // }
     rts
 }
 .segment ROM_Bank1
-// char min(char a, char b)
+// __register(X) char add(__zp(2) char a, __register(A) char b)
 // __bank(cx16_rom, 1) 
-min: {
-    .label return = plus.a+plus.b
+add: {
+    .label a = 2
+    // a+b
+    clc
+    adc.z a
+    tax
+    // }
     rts
 }

@@ -32,14 +32,15 @@ char* const SCREEN = (char*)0x0400;
 #pragma code_seg(Code)
 void main(void) {
     SCREEN[0] = plus('0', 7); // near call
+    SCREEN[1] = plus('1', 6); // near call
 }
 
 #pragma code_seg(Code)
 char plus(char a, char b) {
-    return min(a, b); // near call
+    return add(a, b); // near call
 }
 
 #pragma code_seg(Code)
-char min(char a, char b) {
+char add(char a, char b) {
     return a+b;
 }

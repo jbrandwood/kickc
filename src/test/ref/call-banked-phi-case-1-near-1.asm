@@ -42,24 +42,37 @@
 .segment Code
 main: {
     // plus('0', 7)
+    lda #7
+    ldx #'0'
     jsr plus
+    // plus('0', 7)
     // SCREEN[0] = plus('0', 7)
-    lda #min.return
     sta SCREEN
+    // plus('1', 6)
+    lda #6
+    ldx #'1'
+    jsr plus
+    // plus('1', 6)
+    // SCREEN[1] = plus('1', 6)
+    // near call
+    sta SCREEN+1
     // }
     rts
 }
-// char plus(char a, char b)
+// __register(A) char plus(__register(X) char a, __register(A) char b)
 plus: {
-    .label a = '0'
-    .label b = 7
-    // min(a, b)
-    jsr min
+    // add(a, b)
+    stx.z add.a
+    jsr add
     // }
     rts
 }
-// char min(char a, char b)
-min: {
-    .label return = plus.a+plus.b
+// __register(A) char add(__zp(2) char a, __register(A) char b)
+add: {
+    .label a = 2
+    // a+b
+    clc
+    adc.z a
+    // }
     rts
 }

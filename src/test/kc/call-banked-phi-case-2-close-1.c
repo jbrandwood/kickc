@@ -28,12 +28,12 @@
 
 #pragma link("call-banked-phi.ld")
 
-
 char* const SCREEN = (char*)0x0400;
 
 #pragma code_seg(Code)
 void main(void) {
     SCREEN[0] = plus('0', 7); // close call
+    SCREEN[1] = plus('1', 6); // close call
 }
 
 #pragma code_seg(RAM_Bank1)
@@ -41,8 +41,3 @@ void main(void) {
 char plus(char a, char b) {
     return a+b;
 }
-
-#pragma code_seg(Code)
-#pragma nobank
-
-

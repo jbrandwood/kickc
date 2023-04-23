@@ -33,14 +33,15 @@ char* const SCREEN = (char*)0x0400;
 #pragma code_seg(Code)
 void main(void) {
     SCREEN[0] = plus('0', 7); // close call
+    SCREEN[1] = plus('1', 6); // close call
 }
 
 #pragma code_seg(RAM_Bank1)
 __bank(cx16_ram, 1) char plus(char a, char b) {
-    return min(a, b); // far call
+    return add(a, b); // far call
 }
 
 #pragma code_seg(RAM_Bank2)
-__bank(cx16_ram, 2) char min(char a, char b) {
+__bank(cx16_ram, 2) char add(char a, char b) {
     return a+b;
 }

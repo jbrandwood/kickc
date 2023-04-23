@@ -10,6 +10,7 @@
  */
 
 // The linker specification of the different segments.
+#pragma target(cx16)
 #pragma link("cx16-banking.ld")
 #pragma var_model(mem)
 

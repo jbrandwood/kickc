@@ -130,7 +130,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
       if(initProc == null) {
          // Create the _init() procedure
-         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, null);
+         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, Bank.COMMON);
          initProc.setDeclaredInline(true);
          initProc.setParameters(new ArrayList<>());
          program.getScope().add(initProc);
@@ -187,7 +187,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Add the _start() procedure to the program
       {
          program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
-         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, null);
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, Bank.COMMON);
          startProcedure.setParameters(new ArrayList<>());
          program.getScope().add(startProcedure);
          final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
@@ -305,7 +305,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
             break;
          case CParser.PRAGMA_NOBANK:
-            this.currentBank = null; // When the current segment is null, the procedure will not be declared as far.
+            this.currentBank = Bank.COMMON; // When the current segment is null, the procedure will not be declared as far.
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
@@ -450,7 +450,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private String currentSegmentData = Scope.SEGMENT_DATA_DEFAULT;
 
    /** The current far segment. If null, the sequent procedures won't be banked. */
-   private Bank currentBank;
+   private Bank currentBank = Bank.COMMON;
 
    /** The current default interrupt type. */
    private String currentInterruptType;
@@ -564,10 +564,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             parameterList.add(paramVar);
          }
          procedure.setParameters(parameterList);
-         procedure.setSegmentData(currentSegmentData); // When a procedure is defined, the currentDataSegment is to be set.
-         procedure.setSegmentCode(currentSegmentCode); // When a procedure is defined, the currentSegmentCode is to be set.
-         if(procedure.getBank() == null && currentBank != null) {
-            procedure.setBank(currentBank); // When a procedure is defined, the currentBank is to be set, or far calls won't work.
+         procedure.setSegmentData(currentSegmentData);
+         procedure.setSegmentCode(currentSegmentCode);
+         if(procedure.getBank().isCommon()) {
+            procedure.setBank(currentBank);
          }
          // Add return variable
          if(!SymbolType.VOID.equals(procedure.getReturnType())) {
@@ -2508,7 +2508,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                      new SymbolTypeProcedure(SymbolType.DWORD, Arrays.asList(new SymbolType[]{SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE})),
                      program.getScope(),
                      Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT,
-                     Procedure.CallingConvention.INTRINSIC_CALL, null);
+                     Procedure.CallingConvention.INTRINSIC_CALL, Bank.COMMON);
                makeword4.setDeclaredIntrinsic(true);
                final Variable hihi = new Variable("hihi", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
                makeword4.add(hihi);

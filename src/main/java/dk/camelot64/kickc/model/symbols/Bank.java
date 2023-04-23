@@ -116,8 +116,23 @@ public record Bank(String bankArea, Long bankNumber) {
    public Bank {
    }
 
+   /** The common/shared bank which is always visible. */
+   public static Bank COMMON = new Bank("", 0L);
+
+   /**
+    * Is this the common/shared bank which is always visible.
+    * @return True if this is the common bank
+    */
+   public boolean isCommon() {
+      return COMMON.equals(this);
+   }
+
    @Override
    public String toString() {
-      return "__bank(" + this.bankArea() + ", " + this.bankNumber() + ") ";
+      if(isCommon()) {
+         return "";
+      } else {
+         return "__bank(" + this.bankArea() + ", " + this.bankNumber() + ") ";
+      }
    }
 }

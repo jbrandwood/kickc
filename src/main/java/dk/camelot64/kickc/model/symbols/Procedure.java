@@ -44,10 +44,8 @@ public class Procedure extends Scope {
    /**
     * The bank that the procedure code is placed in.
     * Used to decide whether to produce near, close or far call code when generating calls.
-    * If null, the procedure is in a common bank (always visible) and all calls will be near.
     */
    private Bank bank;
-
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
@@ -62,7 +60,7 @@ public class Procedure extends Scope {
    }
 
    public void setBank(Bank bank) {
-      this.bank = bank;
+      this.bank = Objects.requireNonNull(bank);
    }
 
    /** The bank distance between a caller and callee, which will determine the type of call needed. */
@@ -75,13 +73,13 @@ public class Procedure extends Scope {
       FAR;
 
       public static CallingDistance forCall(Bank from, Bank to) {
-         if(to==null) {
+         if(to.isCommon()) {
             // NEAR: call to the common bank
             return NEAR;
          } else if(to.equals(from)) {
             // NEAR: call to the same bank in the same banking area
             return NEAR;
-         } else if(from==null) {
+         } else if(from.isCommon()) {
             // CLOSE: call from common bank to any bank
             return CLOSE;
          } else if(!from.bankArea().equals(to.bankArea())) {
@@ -146,10 +144,10 @@ public class Procedure extends Scope {
       super(name, parentScope, segmentData);
       this.procedureType = procedureType;
       this.declaredInline = false;
-      this.bank = bank;
+      this.bank = Objects.requireNonNull(bank);
       this.interruptType = null;
       this.comments = new ArrayList<>();
-      this.segmentCode = segmentCode;
+      this.segmentCode = Objects.requireNonNull(segmentCode);
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
       this.isConstructor = false;
@@ -260,24 +258,6 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
-   public boolean isBanked() {
-      return bank != null;
-   }
-
-   public Long getBankNumber() {
-      if(bank != null)
-         return bank.bankNumber();
-      else
-         return 0L;
-   }
-
-   public String getBankArea() {
-      if(bank != null)
-         return bank.bankArea();
-      else
-         return "";
-   }
-
    public String getInterruptType() {
       return interruptType;
    }
@@ -338,9 +318,7 @@ public class Procedure extends Scope {
       if(declaredIntrinsic) {
          res.append("__intrinsic ");
       }
-      if(isBanked()) {
-         res.append("__bank(").append(this.getBankArea()).append(", ").append(this.getBankNumber()).append(") ");
-      }
+      res.append(bank.toString());
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
       }

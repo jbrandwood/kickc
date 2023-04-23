@@ -30,7 +30,7 @@ public abstract class Scope implements Symbol {
       this.name = name;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
-      this.segmentData = segmentData;
+      this.segmentData = Objects.requireNonNull(segmentData);
       setFullName();
    }
 

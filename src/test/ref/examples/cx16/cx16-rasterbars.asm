@@ -9,7 +9,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-
   .const VERA_DCSEL = 2
   .const VERA_LINE = 2
   .const isr_vsync = $314
@@ -55,17 +54,17 @@
   .label BRAM = 0
   .label BROM = 1
   // The horizontal start
-  .label hstart = $26
+  .label hstart = 6
   // The horizontal stop
-  .label hstop = $27
+  .label hstop = 7
   // The vertical start
-  .label vstart = $28
+  .label vstart = 8
   // The vertical stop
-  .label vstop = $29
+  .label vstop = 9
   // The countdown
-  .label cnt = $25
+  .label cnt = 5
   // The sin idx
-  .label sin_idx = $2a
+  .label sin_idx = $a
 .segment Code
 __start: {
     // __export volatile __address(0x00) unsigned char BRAM = 0
@@ -97,8 +96,8 @@ __start: {
 }
 // LINE Interrupt Routine
 irq_line: {
-    .label idx = $24
-    .label bar = $22
+    .label idx = 4
+    .label bar = 2
     // *VERA_CTRL |= VERA_DCSEL
     // Update the border
     lda #VERA_DCSEL
@@ -253,7 +252,7 @@ memset: {
     .const c = 0
     .label str = BARS
     .label end = str+num
-    .label dst = $22
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str
